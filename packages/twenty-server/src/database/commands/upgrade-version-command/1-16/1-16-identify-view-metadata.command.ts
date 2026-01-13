@@ -177,7 +177,7 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       const formattedViewName =
         viewEntity.name === ALL_ENTITY_VIEW_NAME
           ? computeAllEntityViewName({ flatObjectMetadata })
-          : uncapitalize(viewEntity.name.split(' ').join(''));
+          : uncapitalize(viewEntity.name.split(' ').map(capitalize).join(''));
       this.logger.log(formattedViewName);
       const viewConfig = objectViews[formattedViewName];
       const universalIdentifier = viewConfig?.universalIdentifier;
