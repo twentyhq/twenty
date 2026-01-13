@@ -25292,15 +25292,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-grid-layout@npm:^1":
-  version: 1.3.5
-  resolution: "@types/react-grid-layout@npm:1.3.5"
-  dependencies:
-    "@types/react": "npm:*"
-  checksum: 10c0/abd2a1dda9625c753ff2571a10b69740b2fb9ed1d3141755d54d5814cc12a9701c7c5cd78e8797e945486b441303b82543be71043a32d6a988b57a14237f93c6
-  languageName: node
-  linkType: hard
-
 "@types/react@npm:*, @types/react@npm:>=16, @types/react@npm:^19, @types/react@npm:^19.0.8":
   version: 19.1.0
   resolution: "@types/react@npm:19.1.0"
@@ -51523,9 +51514,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-grid-layout@npm:^1.5.2":
-  version: 1.5.2
-  resolution: "react-grid-layout@npm:1.5.2"
+"react-grid-layout@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "react-grid-layout@npm:2.2.2"
   dependencies:
     clsx: "npm:^2.1.1"
     fast-equals: "npm:^4.0.3"
@@ -51536,7 +51527,7 @@ __metadata:
   peerDependencies:
     react: ">= 16.3.0"
     react-dom: ">= 16.3.0"
-  checksum: 10c0/b6605d1435fe116c3720d168100a5a08da924c6905686fe8a486c33b82abbde8ccacbb59e5c6243fa52f5e808ad393a7bdf0c09a3446ebf76efe43f29d9f13ee
+  checksum: 10c0/4b38496948136b3d63689c141bcdfaece5e6ce9d228bffad89f751d3b510f6ab1589609982c6fa340a805bda7e0533b212bdff0185b8a52293e031a2e57ebdb9
   languageName: node
   linkType: hard
 
@@ -57454,7 +57445,6 @@ __metadata:
     "@types/js-cookie": "npm:^3.0.3"
     "@types/json-logic-js": "npm:^2"
     "@types/marked": "npm:^6.0.0"
-    "@types/react-grid-layout": "npm:^1"
     "@typescript-eslint/eslint-plugin": "npm:^8.39.0"
     "@typescript-eslint/utils": "npm:^8.39.0"
     "@xyflow/react": "npm:^12.4.2"
@@ -57501,7 +57491,7 @@ __metadata:
     react-datepicker: "npm:^6.7.1"
     react-dropzone: "npm:^14.2.3"
     react-error-boundary: "npm:^4.0.11"
-    react-grid-layout: "npm:^1.5.2"
+    react-grid-layout: "npm:^2.2.2"
     react-helmet-async: "npm:^1.3.0"
     react-hook-form: "npm:^7.45.1"
     react-hotkeys-hook: "npm:^4.4.4"
