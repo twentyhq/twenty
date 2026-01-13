@@ -1,0 +1,67 @@
+{
+    "name": "Linear AI Agent Auto-Assignment",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "linear-task",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "name": "Webhook - New Task",
+        "type": "n8n-nodes-base.webhook",
+        "position": [250, 300]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Auto-assign role based on task keywords\nconst task = $input.item.json;\nconst title = task.title?.toLowerCase() || '';\nconst description = task.description?.toLowerCase() || '';\nconst content = title + ' ' + description;\n\n// Role assignment logic\nlet assignedRole = 'role:lead-dev'; // default\nlet trackLetter = 'A'; // default\n\nconst roleKeywords = {\n  'role:scrum-master': [\n    'coordinate', 'plan', 'sprint', 'blocker', 'standup',\n    'retrospective', 'velocity', 'backlog', 'prioritize',\n    'stakeholder', 'meeting', 'facilitate'\n  ],\n  'role:lead-dev': [\n    'api', 'database', 'supabase', 'n8n', 'workflow',\n    'backend', 'integration', 'architecture', 'function',\n    'webhook', 'auth', 'security', 'performance'\n  ],\n  'role:ux-designer': [\n    'design', 'interface', 'ui', 'layout', 'component',\n    'bubble', 'frontend', 'visual', 'style', 'mockup',\n    'prototype', 'wireframe', 'flow'\n  ],\n  'role:ux-specialist': [\n    'user', 'testing', 'research', 'feedback', 'usability',\n    'a/b test', 'analytics', 'journey', 'persona',\n    'pain point', 'interview', 'survey'\n  ]\n};\n\n// Find best matching role\nlet maxMatches = 0;\nfor (const [role, keywords] of Object.entries(roleKeywords)) {\n  const matches = keywords.filter(kw => content.includes(kw)).length;\n  if (matches > maxMatches) {\n    maxMatches = matches;\n    assignedRole = role;\n  }\n}\n\n// Assign track based on role (for parallel work)\nconst trackMap = {\n  'role:scrum-master': 'A',\n  'role:lead-dev': 'B',\n  'role:ux-designer': 'C',\n  'role:ux-specialist': 'D'\n};\ntrackLetter = trackMap[assignedRole] || 'A';\n\n// Priority logic\nlet priority = 0; // No priority\nif (content.includes('urgent') || content.includes('critical')) {\n  priority = 1; // Urgent\n} else if (content.includes('important') || content.includes('high')) {\n  priority = 2; // High\n} else if (content.includes('normal')) {\n  priority = 3; // Normal\n}\n\nreturn {\n  ...task,\n  assignedRole,\n  trackLabel: `track:${trackLetter}`,\n  priority,\n  matchCount: maxMatches,\n  aiAnalysis: `Auto-assigned to ${assignedRole.replace('role:', '')} (${maxMatches} keyword matches)`\n};"
+        },
+        "name": "AI Role Assignment",
+        "type": "n8n-nodes-base.code",
+        "position": [450, 300]
+      },
+      {
+        "parameters": {
+          "resource": "issue",
+          "operation": "create",
+          "teamId": "={{ $json.teamId }}",
+          "title": "={{ $json.title }}",
+          "additionalFields": {
+            "description": "={{ $json.description }}\\n\\n---\\n🤖 {{ $json.aiAnalysis }}",
+            "labelIds": "={{ [$json.assignedRole, $json.trackLabel] }}",
+            "priority": "={{ $json.priority }}",
+            "projectId": "={{ $json.projectId }}"
+          }
+        },
+        "name": "Create Linear Issue",
+        "type": "n8n-nodes-base.linear",
+        "position": [650, 300],
+        "credentials": {
+          "linearApi": {
+            "id": "1",
+            "name": "Linear API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ { \n  success: true,\n  issueId: $json.id,\n  issueUrl: $json.url,\n  assignedRole: $('AI Role Assignment').item.json.assignedRole,\n  track: $('AI Role Assignment').item.json.trackLabel\n} }}"
+        },
+        "name": "Response",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "position": [850, 300]
+      }
+    ],
+    "connections": {
+      "Webhook - New Task": {
+        "main": [[{"node": "AI Role Assignment", "type": "main", "index": 0}]]
+      },
+      "AI Role Assignment": {
+        "main": [[{"node": "Create Linear Issue", "type": "main", "index": 0}]]
+      },
+      "Create Linear Issue": {
+        "main": [[{"node": "Response", "type": "main", "index": 0}]]
+      }
+    }
+  }

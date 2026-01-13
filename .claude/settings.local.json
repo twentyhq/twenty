@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Skill(linear-protocol)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "serena",
+    "n8n-smartout-mcp",
+    "bubble-mcp",
+    "MCP_DOCKER"
+  ],
+  "disabledMcpjsonServers": []
+}

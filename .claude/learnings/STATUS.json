@@ -1,0 +1,19 @@
+{
+  "agent": "journey-crm-specialist",
+  "last_sync": "2026-01-12T21:45:00Z",
+  "sync_status": "fresh",
+  "stale_threshold_days": 7,
+  "infrastructure_audited": {
+    "journey_engine": true,
+    "onboarding_module": true,
+    "crm_twenty": false,
+    "bubble_crm": false
+  },
+  "templates_defined": [],
+  "integrations_active": [],
+  "pending_work": [
+    "Audit Twenty CRM structure when available",
+    "Create first employee onboarding journey template",
+    "Configure n8n webhooks for CRM sync"
+  ]
+}

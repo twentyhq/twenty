@@ -1,0 +1,124 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Write",
+      "Edit",
+      "Skill(*)",
+      "Task",
+      "WebSearch",
+      "WebFetch(domain:*)",
+      "Bash(bun *)",
+      "Bash(bunx *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(nx *)",
+      "Bash(node *)",
+      "Bash(git *)",
+      "Bash(yarn *)",
+      "Bash(docker *)",
+      "Bash(docker-compose *)",
+      "Bash(supabase *)",
+      "Bash(cat *)",
+      "Bash(ls *)",
+      "Bash(dir *)",
+      "Bash(echo *)",
+      "Bash(mkdir *)",
+      "Bash(rm *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(tree *)",
+      "Bash(grep *)",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "Bash(test *)",
+      "Bash(bash *)",
+      "Bash(sh *)",
+      "Bash(powershell *)",
+      "Bash(pwsh *)",
+      "Bash(cd *)",
+      "Bash(pwd)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(sort *)",
+      "Bash(uniq *)",
+      "Bash(find *)",
+      "Bash(sed *)",
+      "Bash(awk *)",
+      "Bash(jq *)",
+      "Bash(chmod *)",
+      "Bash(touch *)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Write(.env)",
+      "Write(.env.*)",
+      "Bash(*rm -rf /*)",
+      "Bash(*rm -rf ~/*)",
+      "Bash(*sudo*)",
+      "Bash(*> /dev/*)",
+      "Bash(*mkfs*)",
+      "Bash(*dd if=*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File .claude/hooks/scripts/session-start.ps1",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File .claude/hooks/scripts/session-end.ps1",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write(*.ts)|Edit(*.ts)|Write(*.tsx)|Edit(*.tsx)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx nx typecheck twenty-front --quiet 2>$null; exit 0",
+            "timeout": 30000
+          }
+        ]
+      },
+      {
+        "matcher": "Write(.claude/commands/*)|Edit(.claude/commands/*)",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "You just modified a command file. Check if it references any .claude/agents/*.md files, and verify those agent files actually exist.",
+            "statusMessage": "Validating agent references..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write(.claude/agents/*)|Edit(.claude/agents/*)",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "You just created/modified an agent. Verify it has: 1) YAML frontmatter at line 1, 2) name field, 3) description field, 4) proper markdown structure.",
+            "statusMessage": "Validating agent structure..."
+          }
+        ]
+      }
+    ]
+  }
+}

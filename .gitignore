@@ -47,6 +47,9 @@ dump.rdb
 .react-email/
 
 mcp.json
+.mcp.json
+tmpclaude-*
+nul
 /.junie/
 TRANSLATION_QA_REPORT.md
 *.key

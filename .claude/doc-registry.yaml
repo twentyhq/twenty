@@ -1,0 +1,183 @@
+# Documentation Registry
+# Tracks all key documents for freshness and dependency management
+#
+# Usage:
+#   - Check freshness: jq '.documents[] | select(.stale == true)' doc-registry.yaml
+#   - Update after editing: set last_updated to current date, recalculate stale
+#   - Hook: SessionStart loads staleness summary
+
+version: 1
+updated: 2026-01-12T00:45:00Z
+
+# Global settings
+settings:
+  stale_threshold_days: 14  # Documents older than this are considered stale
+  critical_threshold_days: 30  # Documents this old require immediate attention
+  review_frequency: weekly  # How often to run staleness check
+
+# Document categories
+categories:
+  architecture:
+    description: "System structure, rules, conventions"
+    stale_threshold_days: 30  # Architecture changes slowly
+    owners: ["orchestrator"]
+
+  api:
+    description: "API endpoints, tool definitions"
+    stale_threshold_days: 7  # APIs change frequently
+    owners: ["orchestrator"]
+
+  engine:
+    description: "Engine specifications and docs"
+    stale_threshold_days: 14
+    owners: ["*-specialist"]  # Each engine's specialist
+
+  learnings:
+    description: "Agent learnings and discoveries"
+    stale_threshold_days: 7  # Should be updated per session
+    owners: ["*-specialist"]
+
+  plans:
+    description: "Implementation plans"
+    stale_threshold_days: 3  # Active plans need frequent updates
+    owners: ["orchestrator"]
+
+# Document registry
+documents:
+  # === ARCHITECTURE (source of truth) ===
+  - path: docs/architecture/ai-layer-architecture.md
+    category: architecture
+    last_updated: 2026-01-08
+    version: "2.0.0"
+    stale: false
+    dependencies: []  # No dependencies (source of truth)
+    dependents:
+      - docs/AI-LAYER-PRD.md
+      - CLAUDE.md
+    description: "System structure, rules, conventions"
+
+  - path: docs/AI-LAYER-PRD.md
+    category: architecture
+    last_updated: 2026-01-08
+    version: "1.0.0"
+    stale: false
+    dependencies:
+      - docs/architecture/ai-layer-architecture.md
+    dependents:
+      - engines/*/README.md
+    description: "Product requirements, engine scope"
+
+  - path: CLAUDE.md
+    category: architecture
+    last_updated: 2026-01-10
+    version: null
+    stale: false
+    dependencies:
+      - docs/architecture/ai-layer-architecture.md
+      - CODE-OF-CONDUCT.md
+    dependents: []
+    description: "Claude Code context file"
+
+  - path: CODE-OF-CONDUCT.md
+    category: architecture
+    last_updated: 2026-01-10
+    version: "2.0.0"
+    stale: false
+    dependencies: []
+    dependents:
+      - CLAUDE.md
+    description: "Mandatory standards"
+
+  # === API DOCUMENTATION ===
+  - path: docs/api/API-INDEX.md
+    category: api
+    last_updated: 2026-01-10
+    version: "1.6.0"
+    stale: false
+    dependencies:
+      - deployments/ctx-mcp/src/**
+      - deployments/kb-mcp/src/**
+      - deployments/salary-mcp/src/**
+    dependents: []
+    description: "Docker network, MCP tools, endpoints"
+    update_triggers:
+      - "New MCP tool added"
+      - "Webhook created"
+      - "Port allocation changed"
+      - "Service added/removed"
+
+  # === CONTEXT ENGINE ===
+  - path: docs/architecture/context-engine/INFRASTRUCTURE-MAP.md
+    category: engine
+    last_updated: 2026-01-11
+    version: "1.1.0"
+    stale: false
+    dependencies:
+      - supabase/migrations/*
+      - config/docling/*
+    dependents:
+      - docs/architecture/context-engine/GAP-ANALYSIS.md
+    description: "Event handlers, data flows, infrastructure"
+    owner: context-engine-specialist
+
+  - path: docs/architecture/context-engine/GAP-ANALYSIS.md
+    category: engine
+    last_updated: 2026-01-11
+    version: "1.0"
+    stale: false
+    dependencies:
+      - docs/architecture/context-engine/INFRASTRUCTURE-MAP.md
+    dependents: []
+    description: "Gap between current and target architecture"
+    owner: context-engine-specialist
+
+  # === LEARNINGS ===
+  - path: .claude/learnings/INDEX.md
+    category: learnings
+    last_updated: 2026-01-12
+    stale: false
+    dependencies:
+      - .claude/learnings/*/LEARNINGS.md
+      - .claude/learnings/*/STATUS.json
+    dependents: []
+    description: "Master index of all agent learnings"
+
+  - path: .claude/learnings/context-engine/LEARNINGS.md
+    category: learnings
+    last_updated: 2026-01-11
+    stale: false
+    dependencies: []
+    dependents:
+      - .claude/learnings/INDEX.md
+    description: "Context engine discoveries and infrastructure findings"
+    owner: context-engine-specialist
+
+  # === WORKFLOW STATE ===
+  - path: .claude/workflow-state.yaml
+    category: plans
+    last_updated: 2026-01-12
+    stale: false
+    dependencies: []
+    dependents: []
+    description: "Plan lifecycle tracking"
+    owner: orchestrator
+
+  - path: .claude/decisions.yaml
+    category: plans
+    last_updated: 2026-01-12
+    stale: false
+    dependencies: []
+    dependents: []
+    description: "Technical decisions log"
+    owner: orchestrator
+
+# Staleness summary (auto-generated by check script)
+staleness_summary:
+  last_check: 2026-01-12T01:00:00Z
+  total_documents: 11
+  stale_count: 0
+  critical_count: 0
+  stale_documents: []
+
+# Dependency alerts (when source changed but dependents not updated)
+dependency_alerts: []

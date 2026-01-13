@@ -1,0 +1,29 @@
+{
+  "description": "n8n-mcp tool enforcement hooks",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__n8n-mcp__.*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "CRITICAL n8n-mcp validation. Tool: $TOOL_NAME, Input: $TOOL_INPUT\n\nVALIDATE:\n1. If tool is n8n_create_workflow or n8n_update_partial_workflow:\n   - Workflow name MUST start with 'smartout-rag-' (BLOCK if not)\n   - All node types MUST have full prefix 'n8n-nodes-base.' or '@n8n/n8n-nodes-langchain.' (BLOCK if short names like 'webhook')\n   - Connection syntax MUST use parameter format with source/target strings (BLOCK if object format)\n\n2. If any tool call:\n   - Check if validate_node or validate_workflow was called in transcript BEFORE this create/update\n   - If creating/updating workflow without prior validation, return 'deny' with reason 'Must run validate_workflow before deploying'\n\n3. If tool is search_nodes, get_node, validate_node, validate_workflow, tools_documentation, search_templates:\n   - Always 'approve' (these are safe discovery/validation tools)\n\nReturn JSON: {\"decision\": \"approve|deny\", \"reason\": \"explanation\"}",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "mcp__n8n-mcp__n8n_create_workflow|mcp__n8n-mcp__n8n_update_partial_workflow",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Workflow created/updated. Tool result: $TOOL_RESULT\n\nRemind Claude:\n1. Run n8n_validate_workflow({id}) to verify deployment\n2. Add sticky notes for documentation (header green, input blue, process yellow, output purple)\n3. Test workflow with n8n_test_workflow if appropriate\n\nReturn: {\"systemMessage\": \"Post-deploy: Run n8n_validate_workflow, add sticky notes, test workflow.\"}",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

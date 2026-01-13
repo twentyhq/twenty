@@ -1,0 +1,266 @@
+# Development Pipeline - Active Work
+# Excludes: completed, archived, deprecated
+# Contains full attributes for trigger-based automation
+#
+# When Claude picks up a plan, the `triggers` section determines:
+#   - Which MCP servers to verify/load
+#   - Which skills to activate
+#   - Which docs must be read first
+#
+# The `affects` section determines:
+#   - What parts of the system are touched
+#   - Where documentation should go (docs_output)
+
+version: 1
+updated: 2026-01-09T15:30:00Z
+
+# AI Layer Taxonomy Reference
+# ----------------------------
+# engines:     context, knowledge, journey, payroll, communication, operation, learning, business
+# modules:     happenings, onboarding, reporting, tasks, compliance, scheduling, handoff
+# deployments: ctx-mcp, kb-mcp, salary-mcp, n8n-mcp, dashboard, gateway, restaurant-simulator
+# adapters:    bubble-mcp
+# stacks:      supabase, redis, docker, n8n, docling, digital-ocean, sendgrid, twilio
+# schemas:     core, ctx, knowledge, journey, payroll, communication, operation, learning, business, events, sys
+
+# Valid statuses (in lifecycle order)
+statuses:
+  - draft
+  - ready
+  - started
+  - in_progress
+  - blocked
+  - stopped
+  - ready_for_test
+  - ready_for_docs
+
+# Active pipeline items grouped by status
+pipeline:
+  draft:
+    - plan: "2026-01-09-development-state-machine-design"
+      path: docs/plans/2026-01-09-development-state-machine-design.md
+      created: 2026-01-09T14:25:00Z
+      title: "Development State Machine"
+      description: "State tracking, decision logging, workflow hooks for Claude Code agents"
+      affects:
+        engines: []
+        modules: []
+        deployments: []
+        adapters: []
+        stacks: []
+        schemas: []
+        claude_code: true  # Special: affects Claude Code config
+      triggers:
+        mcp_servers: []
+        skills: [hook-development, command-development]
+        docs_required:
+          - .claude/settings.json
+          - .claude/templates/plan.md
+          - docs/architecture/ai-layer-architecture.md
+      docs_output:
+        primary: .claude/
+        guide: docs/guides/development-workflow.md
+
+    - plan: "2026-01-09-error-infrastructure-extension-design"
+      path: docs/plans/2026-01-09-error-infrastructure-extension-design.md
+      created: 2026-01-09T14:09:00Z
+      title: "Error Infrastructure Extension"
+      description: "Extend error tracking to all engines with metrics and anomaly detection"
+      affects:
+        engines: [context, knowledge, payroll]
+        modules: []
+        deployments: [ctx-mcp, kb-mcp, salary-mcp]
+        adapters: [bubble-mcp]
+        stacks: [docker, supabase]
+        schemas: [sys]
+        claude_code: false
+      triggers:
+        mcp_servers: [ctx-mcp]
+        skills: [error-handling, observability]
+        docs_required:
+          - deployments/ctx-mcp/src/services/error-tracking/
+          - docs/api/API-INDEX.md
+      docs_output:
+        primary: docs/architecture/
+        runbook: docs/runbooks/error-tracking.md
+
+  ready:
+    - plan: "2026-01-09-auth-gateway-testing"
+      path: docs/plans/2026-01-09-auth-gateway-testing.md
+      created: 2026-01-09T13:00:00Z
+      ready_at: 2026-01-09T13:55:00Z
+      title: "Auth Gateway Testing"
+      description: "End-to-end testing procedure for auth flow"
+      affects:
+        engines: []
+        modules: []
+        deployments: [gateway, dashboard]
+        adapters: []
+        stacks: [supabase, docker]
+        schemas: []
+        claude_code: false
+      triggers:
+        mcp_servers: [supabase-mcp]
+        skills: [testing, authentication]
+        docs_required:
+          - deployments/gateway/README.md
+          - deployments/gateway/INTEGRATION.md
+      docs_output:
+        primary: docs/guides/
+        guide: docs/guides/auth-testing.md
+
+  started: []
+
+  in_progress:
+    - plan: "2026-01-09-profile-id-migration"
+      path: docs/plans/2026-01-09-profile-id-migration.md
+      started: 2026-01-09T08:13:00Z
+      assignee: null
+      title: "Profile ID Migration"
+      description: "Rename user_id to profile_id for GDPR compliance"
+      affects:
+        engines: [context, knowledge, payroll]
+        modules: []
+        deployments: [ctx-mcp, kb-mcp, salary-mcp]
+        adapters: [bubble-mcp]
+        stacks: [supabase]
+        schemas: [ctx, knowledge, payroll, core]
+        claude_code: false
+      triggers:
+        mcp_servers: [ctx-mcp, kb-mcp, salary-mcp, supabase-mcp]
+        skills: [migrations, gdpr]
+        docs_required:
+          - docs/architecture/ai-layer-architecture.md
+          - engines/context/README.md
+      docs_output:
+        primary: docs/architecture/
+        decision: docs/decisions/002-profile-id-standard.md
+        migration: docs/guides/profile-id-migration.md
+
+  blocked: []
+
+  stopped: []
+
+  ready_for_test:
+    - plan: "2026-01-09-global-env-management"
+      path: docs/plans/2026-01-09-global-env-management.md
+      code_complete: 2026-01-09T17:47:00Z
+      title: "Global Environment Management"
+      description: "Centralized env var management with 1Password integration"
+      affects:
+        engines: []
+        modules: []
+        deployments: [ctx-mcp, kb-mcp, salary-mcp, gateway, dashboard]
+        adapters: [bubble-mcp]
+        stacks: [docker]
+        schemas: []
+        claude_code: false
+      triggers:
+        mcp_servers: []
+        skills: [secrets-management]
+        docs_required:
+          - CLAUDE.md
+          - docker-compose.yml
+      docs_output:
+        primary: docs/guides/
+        guide: docs/guides/environment-setup.md
+
+    - plan: "2026-01-09-error-tracking-implementation"
+      path: docs/plans/2026-01-09-error-tracking-implementation.md
+      code_complete: 2026-01-09T15:00:00Z
+      title: "Error Tracking Implementation"
+      description: "Sentry integration across all MCP deployments"
+      affects:
+        engines: [context]
+        modules: []
+        deployments: [ctx-mcp]
+        adapters: []
+        stacks: [docker]
+        schemas: [sys]
+        claude_code: false
+      triggers:
+        mcp_servers: [ctx-mcp]
+        skills: [error-handling, observability]
+        docs_required:
+          - deployments/ctx-mcp/README.md
+          - docs/api/API-INDEX.md
+      docs_output:
+        primary: deployments/ctx-mcp/
+        api: docs/api/API-INDEX.md
+        runbook: docs/runbooks/error-tracking.md
+
+    - plan: "2026-01-09-dashboard-docker-integration"
+      path: docs/plans/2026-01-09-dashboard-docker-integration.md
+      code_complete: 2026-01-09T15:00:00Z
+      title: "Dashboard Docker Integration"
+      description: "Add dashboard to main docker-compose with shared Redis"
+      affects:
+        engines: [context]
+        modules: [reporting]
+        deployments: [dashboard]
+        adapters: []
+        stacks: [docker, redis, supabase]
+        schemas: []
+        claude_code: false
+      triggers:
+        mcp_servers: []
+        skills: [docker-compose, nextjs]
+        docs_required:
+          - deployments/dashboard/README.md
+          - docker-compose.yml
+      docs_output:
+        primary: deployments/dashboard/
+
+    - plan: "2026-01-09-engine-validation-tests"
+      path: docs/plans/2026-01-09-engine-validation-tests.md
+      code_complete: 2026-01-09T15:00:00Z
+      title: "Engine Validation Tests"
+      description: "Test suite for all engine handlers and presenters"
+      affects:
+        engines: [context, knowledge, payroll]
+        modules: []
+        deployments: [ctx-mcp, kb-mcp, salary-mcp]
+        adapters: []
+        stacks: [supabase]
+        schemas: [ctx, knowledge, payroll]
+        claude_code: false
+      triggers:
+        mcp_servers: [ctx-mcp, kb-mcp, salary-mcp]
+        skills: [testing, tdd]
+        docs_required:
+          - engines/context/README.md
+          - engines/knowledge/README.md
+          - docs/architecture/ai-layer-architecture.md
+      docs_output:
+        primary: docs/guides/
+        guide: docs/guides/testing-engines.md
+
+  ready_for_docs: []
+
+# Summary statistics (auto-calculated by hooks)
+summary:
+  total_active: 9
+  by_status:
+    draft: 2
+    ready: 1
+    started: 0
+    in_progress: 1
+    blocked: 0
+    stopped: 0
+    ready_for_test: 4
+    ready_for_docs: 0
+  blocked_count: 0
+  ready_for_action: 5  # ready + ready_for_test + ready_for_docs
+
+# Documentation routing rules (reference)
+# ----------------------------------------
+# Single engine      -> engines/{engine}/
+# Single deployment  -> deployments/{deployment}/
+# Single module      -> modules/{module}/
+# Single adapter     -> adapters/{adapter}/
+# Single stack       -> stacks/{stack}/
+# Multiple engines   -> docs/architecture/
+# Multiple deploys   -> docs/guides/
+# Schema changes     -> docs/decisions/ + engine
+# API changes        -> docs/api/
+# Claude Code        -> .claude/

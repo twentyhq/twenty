@@ -5,37 +5,30 @@
       "command": "uv",
       "args": ["run", "postgres-mcp", "--access-mode=unrestricted"],
       "env": {
-        "DATABASE_URI": "postgres://postgres:postgres@localhost:5432/default"
+        "DATABASE_URI": "${PG_DATABASE_URL}"
       }
     },
     "playwright": {
       "type": "stdio",
-      "command": "cmd",
-      "args": ["/c", "npx", "@playwright/mcp@latest", "--no-sandbox", "--headless"],
+      "command": "npx",
+      "args": ["@playwright/mcp@latest", "--no-sandbox", "--headless"],
       "env": {}
     },
     "context7": {
       "type": "stdio",
-      "command": "cmd",
-      "args": ["/c", "npx", "-y", "@upstash/context7-mcp"],
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
       "env": {}
     },
     "n8n-smartout-mcp": {
-      "command": "cmd",
-      "args": ["/c", "npx", "n8n-mcp"],
+      "command": "npx",
+      "args": ["n8n-mcp"],
       "env": {
         "MCP_MODE": "stdio",
         "LOG_LEVEL": "error",
         "DISABLE_CONSOLE_OUTPUT": "true",
         "N8N_API_URL": "https://n8n.smartout.org",
         "N8N_API_KEY": "${N8N_API_KEY}"
-      }
-    },
-    "linear": {
-      "command": "cmd",
-      "args": ["/c", "npx", "-y", "@ibraheem4/linear-mcp"],
-      "env": {
-        "LINEAR_API_KEY": "LINEAR_API_KEY"
       }
     }
   }

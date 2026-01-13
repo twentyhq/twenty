@@ -1,0 +1,132 @@
+{
+  "session_id": "test-123",
+  "ended_at": "2026-01-12T04:39:03Z",
+  "reason": "manual",
+  "transcript": ""
+}
+{
+  "session_id": "b14bba7c-323f-4211-aa6c-8d2f19c2523b",
+  "ended_at": "2026-01-12T04:47:32Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\b14bba7c-323f-4211-aa6c-8d2f19c2523b.jsonl"
+}
+{
+  "session_id": "test-1768193712",
+  "ended_at": "2026-01-12T04:55:13Z",
+  "reason": "user_request",
+  "transcript": "C:/Users/sxtnl/AppData/Local/Temp/test-transcript.md"
+}
+{
+  "session_id": "b14bba7c-323f-4211-aa6c-8d2f19c2523b",
+  "ended_at": "2026-01-12T04:55:27Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\b14bba7c-323f-4211-aa6c-8d2f19c2523b.jsonl"
+}
+{
+  "session_id": "b14bba7c-323f-4211-aa6c-8d2f19c2523b",
+  "ended_at": "2026-01-12T05:04:07Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\b14bba7c-323f-4211-aa6c-8d2f19c2523b.jsonl"
+}
+{
+  "session_id": "3a347e45-c85c-45b5-b31b-6bfcfcda8c74",
+  "ended_at": "2026-01-12T05:05:51Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\3a347e45-c85c-45b5-b31b-6bfcfcda8c74.jsonl"
+}
+{
+  "session_id": "7fe57051-1118-4b5e-af8b-a8ab943dd772",
+  "ended_at": "2026-01-12T05:28:12Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\7fe57051-1118-4b5e-af8b-a8ab943dd772.jsonl"
+}
+{
+  "session_id": "e8cf62e1-c0e0-4b9b-b4e6-d26794bdba13",
+  "ended_at": "2026-01-12T05:29:32Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\e8cf62e1-c0e0-4b9b-b4e6-d26794bdba13.jsonl"
+}
+{
+  "session_id": "3a347e45-c85c-45b5-b31b-6bfcfcda8c74",
+  "ended_at": "2026-01-12T05:30:20Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\3a347e45-c85c-45b5-b31b-6bfcfcda8c74.jsonl"
+}
+{
+  "session_id": "e8cf62e1-c0e0-4b9b-b4e6-d26794bdba13",
+  "ended_at": "2026-01-12T05:30:44Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\e8cf62e1-c0e0-4b9b-b4e6-d26794bdba13.jsonl"
+}
+{
+  "session_id": "e8466aa6-3931-4959-ad58-ef6ebd31b340",
+  "ended_at": "2026-01-12T05:33:14Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\e8466aa6-3931-4959-ad58-ef6ebd31b340.jsonl"
+}
+{
+  "session_id": "e8466aa6-3931-4959-ad58-ef6ebd31b340",
+  "ended_at": "2026-01-12T05:34:03Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\e8466aa6-3931-4959-ad58-ef6ebd31b340.jsonl"
+}
+{
+  "session_id": "7fe57051-1118-4b5e-af8b-a8ab943dd772",
+  "ended_at": "2026-01-12T05:34:14Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\7fe57051-1118-4b5e-af8b-a8ab943dd772.jsonl"
+}
+{
+  "session_id": "7fe57051-1118-4b5e-af8b-a8ab943dd772",
+  "ended_at": "2026-01-12T05:39:17Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\7fe57051-1118-4b5e-af8b-a8ab943dd772.jsonl"
+}
+{
+  "session_id": "13deabb7-7ec6-4653-bc3a-6d337a0a042e",
+  "ended_at": "2026-01-12T05:41:28Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\13deabb7-7ec6-4653-bc3a-6d337a0a042e.jsonl"
+}
+{
+  "session_id": "e8466aa6-3931-4959-ad58-ef6ebd31b340",
+  "ended_at": "2026-01-12T05:43:00Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\e8466aa6-3931-4959-ad58-ef6ebd31b340.jsonl"
+}
+{
+  "session_id": "13deabb7-7ec6-4653-bc3a-6d337a0a042e",
+  "ended_at": "2026-01-12T05:48:39Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\13deabb7-7ec6-4653-bc3a-6d337a0a042e.jsonl"
+}
+{
+  "session_id": "e8466aa6-3931-4959-ad58-ef6ebd31b340",
+  "ended_at": "2026-01-12T05:49:26Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\e8466aa6-3931-4959-ad58-ef6ebd31b340.jsonl"
+}
+{
+  "session_id": "1603b071-27a9-40b6-b0f4-755f8edf8339",
+  "ended_at": "2026-01-12T05:50:25Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\1603b071-27a9-40b6-b0f4-755f8edf8339.jsonl"
+}
+{
+  "session_id": "1603b071-27a9-40b6-b0f4-755f8edf8339",
+  "ended_at": "2026-01-12T05:54:54Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\1603b071-27a9-40b6-b0f4-755f8edf8339.jsonl"
+}
+{
+  "session_id": "13deabb7-7ec6-4653-bc3a-6d337a0a042e",
+  "ended_at": "2026-01-12T05:57:11Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\13deabb7-7ec6-4653-bc3a-6d337a0a042e.jsonl"
+}
+{
+  "session_id": "2402740a-7982-463d-b733-845b7ae5a48b",
+  "ended_at": "2026-01-12T05:57:18Z",
+  "reason": "unknown",
+  "transcript": "C:\\Users\\sxtnl\\.claude\\projects\\c--Users-sxtnl-Dev-ai-layer\\2402740a-7982-463d-b733-845b7ae5a48b.jsonl"
+}

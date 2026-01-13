@@ -1,0 +1,99 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Write",
+      "Edit",
+      "Skill(*)",
+      "WebSearch",
+      "WebFetch(domain:*)",
+      "Bash(bun *)",
+      "Bash(bunx *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(git *)",
+      "Bash(docker *)",
+      "Bash(docker-compose *)",
+      "Bash(supabase *)",
+      "Bash(cat *)",
+      "Bash(ls *)",
+      "Bash(echo *)",
+      "Bash(mkdir *)",
+      "Bash(rm *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(tree *)",
+      "Bash(grep *)",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "Bash(test *)",
+      "Bash(bash *)",
+      "Bash(sh *)",
+      "Bash(cd *)",
+      "Bash(pwd)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(sort *)",
+      "Bash(uniq *)",
+      "Bash(find *)",
+      "Bash(sed *)",
+      "Bash(awk *)",
+      "Bash(jq *)",
+      "Bash(chmod *)",
+      "Bash(touch *)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Write(.env)",
+      "Write(.env.*)",
+      "Bash(*rm -rf /*)",
+      "Bash(*rm -rf ~/*)",
+      "Bash(*sudo*)",
+      "Bash(*--force*)",
+      "Bash(*> /dev/*)",
+      "Bash(*mkfs*)",
+      "Bash(*dd if=*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/scripts/session-start.sh",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/scripts/session-end.sh",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write(*.ts)|Edit(*.ts)|Write(*.tsx)|Edit(*.tsx)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run typecheck --quiet 2>/dev/null || true",
+            "timeout": 30000
+          }
+        ]
+      }
+    ]
+  }
+}

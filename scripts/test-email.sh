@@ -4,10 +4,37 @@
 
 echo "Testing email configuration..."
 
-# Load environment variables (export them)
-set -a
-source .env
-set +a
+# Safe env file parser - prevents code injection from malformed .env files
+# Only exports KEY=VALUE pairs, ignores comments and empty lines
+load_env_safely() {
+    local env_file="$1"
+    if [ ! -f "$env_file" ]; then
+        echo "❌ .env file not found at: $env_file"
+        return 1
+    fi
+
+    while IFS= read -r line || [ -n "$line" ]; do
+        # Skip empty lines and comments
+        [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+
+        # Only process valid KEY=VALUE patterns (alphanumeric keys, no spaces before =)
+        if [[ "$line" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; then
+            # Extract key and value safely
+            local key="${line%%=*}"
+            local value="${line#*=}"
+            # Remove surrounding quotes if present
+            value="${value#\"}"
+            value="${value%\"}"
+            value="${value#\'}"
+            value="${value%\'}"
+            # Export the variable
+            export "$key=$value"
+        fi
+    done < "$env_file"
+}
+
+# Load environment variables safely (no code execution)
+load_env_safely ".env" || exit 1
 
 if [ -z "$EMAIL_SMTP_HOST" ]; then
     echo "❌ Email not configured. Check .env file."
