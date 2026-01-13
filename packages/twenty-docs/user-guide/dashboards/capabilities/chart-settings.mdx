@@ -3,6 +3,8 @@ title: Chart Settings
 description: Configure your charts to display data exactly how you need it.
 ---
 
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
 ## Accessing Chart Settings
 
 1. Click on any widget to select it
@@ -23,7 +25,7 @@ Some settings only appear when other settings are configured. For example, **Dat
 
 ## Data Settings
 
-### Source
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="database"  /> Source </div>
 
 Choose which object to pull data from.
 
@@ -32,7 +34,8 @@ Choose which object to pull data from.
 
 All your standard and custom objects are available. Changing the source resets other settings since field options depend on the selected object.
 
-### Filter
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="filter"  /> Filter </div>
+
 
 Limit which records are included in the chart.
 
@@ -52,13 +55,13 @@ Filters work the same as in table views. Use them to focus on specific segments 
 
 These settings control the horizontal axis of bar and line charts—typically how your data is grouped into categories.
 
-### Data on display
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="axis-x" /> Data on display </div>
 
 Select the field to group your data by. This determines the categories shown on the X axis.
 
 **Example**: Select "Stage" to see data grouped by pipeline stage, or "Created date" to see data over time.
 
-### Date granularity
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="calendar" /> Date granularity </div>
 
 When grouping by a date field, choose the time period for grouping.
 
@@ -75,7 +78,7 @@ When grouping by a date field, choose the time period for grouping.
 
 The "of week/year" options aggregate across all time. Use **Day of week** to see which weekday typically gets the most deals. Use **Month** to see trends month by month.
 
-### Sort by
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="arrows-sort" /> Sort by </div>
 
 Control the order of categories on the X axis.
 
@@ -90,7 +93,7 @@ Control the order of categories on the X axis.
 The options shown depend on your field type. Select fields have all options; date and text fields show fewer.
 </Note>
 
-### Omit zero values
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="eye-off" /> Omit zero values </div>
 
 Hide categories that have zero or no data.
 
@@ -105,7 +108,7 @@ Use this to clean up charts with sparse data.
 
 These settings control what you're measuring and how it's displayed.
 
-### Data on display
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="axis-y" /> Data on display </div>
 
 Select the field and operation to calculate your metric.
 
@@ -131,7 +134,7 @@ For Select, Multi-select, or Checkbox fields, you can calculate the percentage o
 
 **Example**: Show "Won" deals as a percentage of all opportunities. If you have 10 Won out of 50 total, the chart shows 20%.
 
-### Group by
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="filters" /> Group by </div>
 
 Add a second dimension to create multiple series (multiple bars or lines).
 
@@ -143,17 +146,17 @@ Add a second dimension to create multiple series (multiple bars or lines).
 
 When Group by is set, you'll see multiple colors in your chart and a legend appears.
 
-### Date granularity
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="calendar" /> Date granularity </div>
 
 When Group by is a date field, choose the time period (same options as X axis).
 
-### Sort by
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="arrows-sort" /> Sort by </div>
 
 When **Group by** is set, control the order of grouped series (e.g., which owner's bar appears first within each category).
 
 Same options as X axis sorting—Position, Alphabetical, and Manual—except **value-based sorting is not available** for secondary grouping.
 
-### Cumulative
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="chart-bar-popular" /> Cumulative </div>
 
 Show running totals instead of individual values.
 
@@ -166,7 +169,7 @@ Show running totals instead of individual values.
 
 Use cumulative to track progress toward a goal over time.
 
-### Min range / Max range
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="math-min" /> Min range / <ChartIcon icon="math-max" /> Max range </div>
 
 Set fixed minimum and maximum values for the Y axis.
 
@@ -182,7 +185,7 @@ Set fixed minimum and maximum values for the Y axis.
 
 ## Style Settings
 
-### Colors
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="color-swatch" /> Colors </div>
 
 Set the color scheme for your chart. Choose from a variety of color palettes.
 
@@ -190,7 +193,7 @@ Set the color scheme for your chart. Choose from a variety of color palettes.
 When grouping by a Select field, the chart automatically uses the colors defined for each option in your field settings.
 </Note>
 
-### Axis name
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="gizmo" /> Axis name </div>
 
 Control visibility of axis labels (bar and line charts only).
 
@@ -201,7 +204,7 @@ Control visibility of axis labels (bar and line charts only).
 | **Y axis** | Only the vertical axis label |
 | **Both** | Both axis labels |
 
-### Stacked bars / Stacked lines
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="stack-2" /> Stacked bars / Stacked lines </div>
 
 When Group by is set, choose how multiple series are displayed.
 
@@ -212,14 +215,14 @@ When Group by is set, choose how multiple series are displayed.
 - Grouped: See each owner's exact numbers side by side
 - Stacked: See total deals per stage, with each owner's contribution stacked
 
-### Data labels
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="badge-2k" /> Data labels </div>
 
 Show values directly on chart elements (bars, points, slices).
 
 - **On**: Values appear on the chart
 - **Off**: No values shown (cleaner look)
 
-### Legend
+### <div style={{ display: 'flex', alignItems: 'center' }}> <ChartIcon icon="text-caption" /> Legend </div>
 
 Show or hide the legend (only appears when Group by is set).
 
@@ -230,6 +233,11 @@ Show or hide the legend (only appears when Group by is set).
 
 ## Chart-Specific Notes
 
-- **Pie charts**: Use "Each slice represents" to define grouping. "Hide empty category" removes zero-value slices. Toggle "Show value in center" to display the total.
-- **Aggregate charts**: Add Prefix (e.g., `$`) or Suffix (e.g., `%`) in Style to format the displayed number.
-- **Bar/Line charts**: Enable "Stacked" in Style (when Group by is set) to stack series instead of showing them side by side.
+### Pie charts
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Each slice represents** – Define how slices are grouped
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Hide empty category** – Remove zero-value slices
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Show value in center** – Display the total
+
+### Aggregate charts
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Prefix** – Add text before the number (e.g., `$`)
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Suffix** – Add text after the number (e.g., `%`)
