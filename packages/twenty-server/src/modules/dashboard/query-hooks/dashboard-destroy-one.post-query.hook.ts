@@ -8,7 +8,6 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { DashboardToPageLayoutSyncService } from 'src/modules/dashboard/services/dashboard-to-page-layout-sync.service';
 import { type DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 
@@ -23,7 +22,6 @@ export class DashboardDestroyOnePostQueryHook
 
   constructor(
     private readonly dashboardToPageLayoutSyncService: DashboardToPageLayoutSyncService,
-    private readonly pageLayoutService: PageLayoutService,
   ) {}
 
   async execute(
@@ -41,15 +39,17 @@ export class DashboardDestroyOnePostQueryHook
       return;
     }
 
-    const pageLayoutIds = destroyedDashboards
-      .map((dashboard) => dashboard.pageLayoutId)
+    const dashboardIds = destroyedDashboards
+      .map((dashboard) => dashboard.id)
       .filter(isDefined);
 
     try {
-      await this.pageLayoutService.destroyMany({
-        ids: pageLayoutIds,
-        workspaceId: workspace.id,
-      });
+      await this.dashboardToPageLayoutSyncService.destroyPageLayoutsForDashboards(
+        {
+          dashboardIds,
+          workspaceId: workspace.id,
+        },
+      );
     } catch (error) {
       this.logger.error(
         `Failed to destroy page layouts for dashboards, restoring dashboards: ${error}`,
