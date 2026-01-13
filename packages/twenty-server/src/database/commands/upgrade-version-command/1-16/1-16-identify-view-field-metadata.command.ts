@@ -31,7 +31,7 @@ type StandardViewFieldMetadata = {
   universalIdentifier: string;
 };
 
-type AllWarnings = 'unknown_object' | 'unknown_view' | 'unknown_view_field';
+type AllWarnings = 'unknown_object' | 'unknown_view';
 
 type ViewFieldMetadataWarning = {
   viewFieldEntity: ViewFieldEntity;
@@ -42,7 +42,8 @@ type AllExceptions =
   | 'existing_universal_id_mismatch'
   | 'view_not_found'
   | 'object_not_found'
-  | 'field_not_found';
+  | 'field_not_found'
+  | 'unknown_standard_view_field';
 
 type ViewFieldMetadataException = {
   viewFieldEntity: ViewFieldEntity;
@@ -219,13 +220,9 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
       const universalIdentifier = viewFieldConfig?.universalIdentifier;
 
       if (!isDefined(universalIdentifier)) {
-        warnings.push({
+        exceptions.push({
           viewFieldEntity,
-          warning: 'unknown_view_field',
-        });
-        customViewFieldMetadataEntities.push({
-          viewFieldEntity,
-          fromStandard: true,
+          exception: 'unknown_standard_view_field',
         });
         continue;
       }

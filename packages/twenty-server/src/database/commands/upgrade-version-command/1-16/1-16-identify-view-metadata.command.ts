@@ -171,6 +171,15 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
           : null;
 
       if (!isDefined(objectViews)) {
+        warnings.push({
+          viewEntity,
+          warning: 'unknown_object',
+          objectNameSingular: flatObjectMetadata.nameSingular,
+        });
+        customViewMetadataEntities.push({
+          viewEntity,
+          fromStandard: true,
+        });
         continue;
       }
 
