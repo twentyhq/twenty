@@ -1,3 +1,4 @@
+import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useLastAuthenticatedMethod } from '@/auth/sign-in-up/hooks/useLastAuthenticatedMethod';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import {
@@ -32,6 +33,7 @@ export const SignInUpWithGoogle = ({
   const { lastAuthenticatedMethod, setLastAuthenticatedMethod } =
     useLastAuthenticatedMethod();
   const { signInWithGoogle } = useSignInWithGoogle();
+  const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 
   const handleClick = () => {
     setLastAuthenticatedMethod(AuthenticatedMethod.GOOGLE);
@@ -50,7 +52,9 @@ export const SignInUpWithGoogle = ({
           variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
           fullWidth
         />
-        {isLastUsed && <StyledLastUsedPill label={t`Last`} />}
+        {isLastUsed && hasMultipleAuthMethods && (
+          <StyledLastUsedPill label={t`Last`} />
+        )}
       </StyledSSOButtonContainer>
       <HorizontalSeparator visible={false} />
     </>

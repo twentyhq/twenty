@@ -3,11 +3,13 @@ import { type SubmitHandler, type UseFormReturn } from 'react-hook-form';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { useLastAuthenticatedMethod } from '@/auth/sign-in-up/hooks/useLastAuthenticatedMethod';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
@@ -31,6 +33,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const { isCaptchaReady } = useCaptcha();
+  const { setLastAuthenticatedMethod } = useLastAuthenticatedMethod();
 
   const location = useLocation();
 
@@ -121,6 +124,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
       const token = readCaptchaToken();
       try {
+        setLastAuthenticatedMethod(AuthenticatedMethod.EMAIL);
+
         if (
           !isInviteMode &&
           signInUpMode === SignInUpMode.SignIn &&
@@ -190,6 +195,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       enqueueErrorSnackBar,
       buildSearchParamsFromUrlSyncedStates,
       isOnAWorkspace,
+      setLastAuthenticatedMethod,
       t,
     ],
   );

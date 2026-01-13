@@ -1,3 +1,5 @@
+import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
+import { useLastAuthenticatedMethod } from '@/auth/sign-in-up/hooks/useLastAuthenticatedMethod';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import {
@@ -7,6 +9,11 @@ import {
 
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/internal/SignInUpEmailField';
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/internal/SignInUpPasswordField';
+import {
+  StyledLastUsedPill,
+  StyledSSOButtonContainer,
+} from '@/auth/sign-in-up/components/internal/SignInUpSSOButtonStyles';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { captchaState } from '@/client-config/states/captchaState';
@@ -36,6 +43,8 @@ export const SignInUpWithCredentials = () => {
   const isRequestingCaptchaToken = useRecoilValue(
     isRequestingCaptchaTokenState,
   );
+  const { lastAuthenticatedMethod } = useLastAuthenticatedMethod();
+  const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 
   const {
     signInUpMode,
@@ -43,6 +52,11 @@ export const SignInUpWithCredentials = () => {
     continueWithCredentials,
     submitCredentials,
   } = useSignInUp(form);
+
+  const isLastUsed =
+    signInUpStep === SignInUpStep.Init &&
+    lastAuthenticatedMethod === AuthenticatedMethod.EMAIL &&
+    hasMultipleAuthMethods;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -132,16 +146,19 @@ export const SignInUpWithCredentials = () => {
               signInUpMode={signInUpMode}
             />
           )}
-          <MainButton
-            title={buttonTitle}
-            type="submit"
-            variant={
-              signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
-            }
-            Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
-            disabled={isSubmitButtonDisabled}
-            fullWidth
-          />
+          <StyledSSOButtonContainer>
+            <MainButton
+              title={buttonTitle}
+              type="submit"
+              variant={
+                signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
+              }
+              Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
+              disabled={isSubmitButtonDisabled}
+              fullWidth
+            />
+            {isLastUsed && <StyledLastUsedPill label={t`Last`} />}
+          </StyledSSOButtonContainer>
         </StyledForm>
       )}
     </>

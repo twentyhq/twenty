@@ -1,3 +1,4 @@
+import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useLastAuthenticatedMethod } from '@/auth/sign-in-up/hooks/useLastAuthenticatedMethod';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
 import {
@@ -28,6 +29,7 @@ export const SignInUpWithMicrosoft = ({
   const { lastAuthenticatedMethod, setLastAuthenticatedMethod } =
     useLastAuthenticatedMethod();
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
+  const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 
   const handleClick = () => {
     setLastAuthenticatedMethod(AuthenticatedMethod.MICROSOFT);
@@ -46,7 +48,9 @@ export const SignInUpWithMicrosoft = ({
           variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
           fullWidth
         />
-        {isLastUsed && <StyledLastUsedPill label={t`Last`} />}
+        {isLastUsed && hasMultipleAuthMethods && (
+          <StyledLastUsedPill label={t`Last`} />
+        )}
       </StyledSSOButtonContainer>
       <HorizontalSeparator visible={false} />
     </>

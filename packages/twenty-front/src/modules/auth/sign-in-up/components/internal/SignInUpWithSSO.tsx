@@ -1,3 +1,4 @@
+import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useLastAuthenticatedMethod } from '@/auth/sign-in-up/hooks/useLastAuthenticatedMethod';
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import {
@@ -25,6 +26,7 @@ export const SignInUpWithSSO = () => {
   const signInUpStep = useRecoilValue(signInUpStepState);
   const { lastAuthenticatedMethod, setLastAuthenticatedMethod } =
     useLastAuthenticatedMethod();
+  const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 
   const { redirectToSSOLoginPage } = useSSO();
 
@@ -52,7 +54,9 @@ export const SignInUpWithSSO = () => {
           variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
           fullWidth
         />
-        {isLastUsed && <StyledLastUsedPill label={t`Last`} />}
+        {isLastUsed && hasMultipleAuthMethods && (
+          <StyledLastUsedPill label={t`Last`} />
+        )}
       </StyledSSOButtonContainer>
       <HorizontalSeparator visible={false} />
     </>
