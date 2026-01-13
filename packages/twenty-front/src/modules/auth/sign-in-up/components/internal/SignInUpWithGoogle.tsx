@@ -1,6 +1,6 @@
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
-import { useLastAuthenticatedMethod } from '@/auth/sign-in-up/hooks/useLastAuthenticatedMethod';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -10,13 +10,11 @@ import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { memo } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { HorizontalSeparator, IconGoogle } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
-import {
-  StyledLastUsedPill,
-  StyledSSOButtonContainer,
-} from './SignInUpSSOButtonStyles';
+import { LastUsedPill } from './LastUsedPill';
+import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
 
 const GoogleIcon = memo(() => {
   const theme = useTheme();
@@ -25,13 +23,16 @@ const GoogleIcon = memo(() => {
 
 export const SignInUpWithGoogle = ({
   action,
+  isGlobalScope,
 }: {
   action: SocialSSOSignInUpActionType;
+  isGlobalScope?: boolean;
 }) => {
   const { t } = useLingui();
   const signInUpStep = useRecoilValue(signInUpStepState);
-  const { lastAuthenticatedMethod, setLastAuthenticatedMethod } =
-    useLastAuthenticatedMethod();
+  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useRecoilState(
+    lastAuthenticatedMethodState,
+  );
   const { signInWithGoogle } = useSignInWithGoogle();
   const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 
@@ -52,8 +53,8 @@ export const SignInUpWithGoogle = ({
           variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
           fullWidth
         />
-        {isLastUsed && hasMultipleAuthMethods && (
-          <StyledLastUsedPill label={t`Last`} />
+        {isLastUsed && (isGlobalScope || hasMultipleAuthMethods) && (
+          <LastUsedPill />
         )}
       </StyledSSOButtonContainer>
       <HorizontalSeparator visible={false} />

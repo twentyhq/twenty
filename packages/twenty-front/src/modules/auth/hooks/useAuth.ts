@@ -122,7 +122,7 @@ export const useAuth = () => {
   const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
 
   const clearSession = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       async () => {
         const emptySnapshot = snapshot_UNSTABLE();
 
@@ -175,7 +175,6 @@ export const useAuth = () => {
           set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
           set(domainConfigurationState, domainConfiguration);
           set(isCaptchaScriptLoadedState, isCaptchaScriptLoaded);
-          set(lastAuthenticatedMethodState, lastAuthenticatedMethod);
           return undefined;
         });
 
@@ -183,6 +182,8 @@ export const useAuth = () => {
         localStorage.clear();
 
         goToRecoilSnapshot(initialSnapshot);
+
+        set(lastAuthenticatedMethodState, lastAuthenticatedMethod);
 
         await client.clearStore();
         setLastAuthenticateWorkspaceDomain(null);

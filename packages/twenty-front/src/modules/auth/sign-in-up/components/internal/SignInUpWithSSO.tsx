@@ -1,6 +1,6 @@
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
-import { useLastAuthenticatedMethod } from '@/auth/sign-in-up/hooks/useLastAuthenticatedMethod';
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -9,14 +9,12 @@ import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, IconLock } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
-import {
-  StyledLastUsedPill,
-  StyledSSOButtonContainer,
-} from './SignInUpSSOButtonStyles';
+import { LastUsedPill } from './LastUsedPill';
+import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
 
 export const SignInUpWithSSO = () => {
   const theme = useTheme();
@@ -24,8 +22,9 @@ export const SignInUpWithSSO = () => {
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
   const signInUpStep = useRecoilValue(signInUpStepState);
-  const { lastAuthenticatedMethod, setLastAuthenticatedMethod } =
-    useLastAuthenticatedMethod();
+  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useRecoilState(
+    lastAuthenticatedMethodState,
+  );
   const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 
   const { redirectToSSOLoginPage } = useSSO();
@@ -54,9 +53,7 @@ export const SignInUpWithSSO = () => {
           variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
           fullWidth
         />
-        {isLastUsed && hasMultipleAuthMethods && (
-          <StyledLastUsedPill label={t`Last`} />
-        )}
+        {isLastUsed && hasMultipleAuthMethods && <LastUsedPill />}
       </StyledSSOButtonContainer>
       <HorizontalSeparator visible={false} />
     </>

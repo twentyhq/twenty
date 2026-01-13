@@ -3,7 +3,7 @@ import { type SubmitHandler, type UseFormReturn } from 'react-hook-form';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { useLastAuthenticatedMethod } from '@/auth/sign-in-up/hooks/useLastAuthenticatedMethod';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import {
   SignInUpStep,
@@ -18,7 +18,7 @@ import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCu
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
@@ -33,7 +33,9 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const { isCaptchaReady } = useCaptcha();
-  const { setLastAuthenticatedMethod } = useLastAuthenticatedMethod();
+  const setLastAuthenticatedMethod = useSetRecoilState(
+    lastAuthenticatedMethodState,
+  );
 
   const location = useLocation();
 

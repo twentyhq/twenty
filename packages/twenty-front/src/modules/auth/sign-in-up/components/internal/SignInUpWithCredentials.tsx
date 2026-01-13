@@ -1,18 +1,16 @@
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
-import { useLastAuthenticatedMethod } from '@/auth/sign-in-up/hooks/useLastAuthenticatedMethod';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 
+import { LastUsedPill } from '@/auth/sign-in-up/components/internal/LastUsedPill';
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/internal/SignInUpEmailField';
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/internal/SignInUpPasswordField';
-import {
-  StyledLastUsedPill,
-  StyledSSOButtonContainer,
-} from '@/auth/sign-in-up/components/internal/SignInUpSSOButtonStyles';
+import { StyledSSOButtonContainer } from '@/auth/sign-in-up/components/internal/SignInUpSSOButtonStyles';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
@@ -33,7 +31,11 @@ const StyledForm = styled.form`
   width: 100%;
 `;
 
-export const SignInUpWithCredentials = () => {
+export const SignInUpWithCredentials = ({
+  isGlobalScope,
+}: {
+  isGlobalScope?: boolean;
+}) => {
   const { t } = useLingui();
   const form = useFormContext<Form>();
 
@@ -43,7 +45,7 @@ export const SignInUpWithCredentials = () => {
   const isRequestingCaptchaToken = useRecoilValue(
     isRequestingCaptchaTokenState,
   );
-  const { lastAuthenticatedMethod } = useLastAuthenticatedMethod();
+  const lastAuthenticatedMethod = useRecoilValue(lastAuthenticatedMethodState);
   const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 
   const {
@@ -56,7 +58,7 @@ export const SignInUpWithCredentials = () => {
   const isLastUsed =
     signInUpStep === SignInUpStep.Init &&
     lastAuthenticatedMethod === AuthenticatedMethod.EMAIL &&
-    hasMultipleAuthMethods;
+    (isGlobalScope || hasMultipleAuthMethods);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -157,7 +159,7 @@ export const SignInUpWithCredentials = () => {
               disabled={isSubmitButtonDisabled}
               fullWidth
             />
-            {isLastUsed && <StyledLastUsedPill label={t`Last`} />}
+            {isLastUsed && <LastUsedPill />}
           </StyledSSOButtonContainer>
         </StyledForm>
       )}
