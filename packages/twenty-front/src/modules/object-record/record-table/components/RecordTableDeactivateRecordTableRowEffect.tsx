@@ -6,7 +6,7 @@ import { useRecoilCallback } from 'recoil';
 export const RecordTableDeactivateRecordTableRowEffect = () => {
   const { deactivateRecordTableRow } = useActiveRecordTableRow();
 
-  const checkAndDeactivate = useRecoilCallback(
+  const deactivateRowIfMenuClosed = useRecoilCallback(
     ({ snapshot }) =>
       () => {
         const isCommandMenuOpened = snapshot
@@ -20,7 +20,7 @@ export const RecordTableDeactivateRecordTableRowEffect = () => {
     [deactivateRecordTableRow],
   );
 
-  useListenToSidePanelClosing(() => setTimeout(checkAndDeactivate, 0));
+  useListenToSidePanelClosing(() => setTimeout(deactivateRowIfMenuClosed, 0));
 
   return null;
 };
