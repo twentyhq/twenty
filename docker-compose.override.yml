@@ -1,3 +1,6 @@
+# Override file for Twenty CRM Production
+# Connects to smartout-ai-network for AI Layer services
+
 services:
   nginx:
     image: nginx:alpine
@@ -9,9 +12,11 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
     depends_on:
-      - server
+      server:
+        condition: service_healthy
     networks:
       - default
+      - smartout-ai-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1/health"]
@@ -19,3 +24,33 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+  server:
+    networks:
+      - default
+      - twenty-dev_default
+      - smartout-ai-network
+    environment:
+      # AI Layer Services
+      CTX_MCP_URL: http://ctx-mcp:3100
+      KB_MCP_URL: http://kb-mcp:3110
+      N8N_API_URL: http://n8n:5678
+      REDIS_AI_URL: redis://redis:6379
+
+  worker:
+    networks:
+      - default
+      - twenty-dev_default
+      - smartout-ai-network
+
+  redis:
+    # Use Twenty's own Redis, not AI Layer's
+
+  db:
+    # Keep default port 5432
+
+networks:
+  twenty-dev_default:
+    external: true
+  smartout-ai-network:
+    external: true
