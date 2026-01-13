@@ -1780,8 +1780,17 @@ export const STANDARD_OBJECTS = {
       workflowName: {
         universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflowName,
       },
-      settings: {
-        universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.settings,
+      label: {
+        universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.label,
+      },
+      icon: {
+        universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.icon,
+      },
+      isPinned: {
+        universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.isPinned,
+      },
+      availability: {
+        universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.availability,
       },
     },
     indexes: {

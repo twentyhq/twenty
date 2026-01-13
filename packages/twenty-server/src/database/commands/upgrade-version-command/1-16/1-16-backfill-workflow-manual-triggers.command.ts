@@ -15,6 +15,7 @@ import {
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
+import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 @Command({
   name: 'upgrade:1-16:backfill-workflow-manual-triggers',
@@ -136,6 +137,12 @@ export class BackfillWorkflowManualTriggersCommand extends ActiveOrSuspendedWork
           (workflowVersion) => {
             assertWorkflowVersionTriggerIsDefined(workflowVersion);
 
+            if (workflowVersion.trigger.type !== WorkflowTriggerType.MANUAL) {
+              throw new Error(
+                `Expected MANUAL trigger type for workflow version ${workflowVersion.id}`,
+              );
+            }
+
             const workflowName = workflowVersion.workflow?.name;
 
             if (!workflowName) {
@@ -144,11 +151,16 @@ export class BackfillWorkflowManualTriggersCommand extends ActiveOrSuspendedWork
               );
             }
 
+            const settings = workflowVersion.trigger.settings;
+
             return {
               workflowId: workflowVersion.workflowId,
               workflowVersionId: workflowVersion.id,
-              settings: workflowVersion.trigger.settings,
               workflowName,
+              label: workflowName,
+              icon: settings.icon,
+              isPinned: settings.isPinned,
+              availability: settings.availability,
             };
           },
         );

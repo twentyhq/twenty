@@ -1,4 +1,3 @@
-import { isGlobalManualTrigger } from '@/action-menu/actions/record-actions/utils/isGlobalManualTrigger';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -6,18 +5,20 @@ import { type ManualTriggerEntity } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 
 const isGlobalTrigger = (manualTrigger: ManualTriggerEntity): boolean => {
-  const trigger = {
-    type: 'MANUAL' as const,
-    settings: manualTrigger.settings,
-  };
-  return isGlobalManualTrigger(trigger);
+  const availability = manualTrigger.availability;
+
+  if (!isDefined(availability)) {
+    return false;
+  }
+
+  return availability.type === 'GLOBAL';
 };
 
 const isObjectSpecificTrigger = (
   manualTrigger: ManualTriggerEntity,
   objectNameSingular: string,
 ): boolean => {
-  const availability = manualTrigger.settings?.availability;
+  const availability = manualTrigger.availability;
 
   if (!isDefined(availability)) {
     return false;
@@ -47,7 +48,10 @@ export const useWorkflowManualTriggers = ({
     objectNameSingular: CoreObjectNameSingular.ManualTrigger,
     recordGqlFields: {
       id: true,
-      settings: true,
+      label: true,
+      icon: true,
+      isPinned: true,
+      availability: true,
       workflowVersionId: true,
       workflowId: true,
       workflowName: true,

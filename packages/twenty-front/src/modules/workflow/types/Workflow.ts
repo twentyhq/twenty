@@ -87,6 +87,7 @@ export type WorkflowDatabaseEventTrigger = z.infer<
 export type WorkflowManualTriggerSchema = z.infer<
   typeof workflowManualTriggerSchema
 >;
+export type WorkflowManualTrigger = WorkflowManualTriggerSchema;
 export type WorkflowCronTrigger = z.infer<typeof workflowCronTriggerSchema>;
 export type WorkflowWebhookTrigger = z.infer<
   typeof workflowWebhookTriggerSchema
@@ -157,7 +158,10 @@ export type WorkflowWithCurrentVersion = Workflow & {
 
 export type ManualTriggerEntity = {
   id: string;
-  settings: WorkflowManualTriggerSettings;
+  label: string;
+  icon: string | null;
+  isPinned: boolean | null;
+  availability: WorkflowManualTriggerAvailabilityV2 | null;
   workflowVersionId: string;
   workflowId: string;
   workflowName: string;

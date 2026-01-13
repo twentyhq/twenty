@@ -446,7 +446,10 @@ export const MANUAL_TRIGGER_STANDARD_FIELD_IDS = {
   workflowVersion: '20202020-3319-4234-a34c-9a1b2c3d4e5f',
   workflow: '20202020-3319-4234-a34c-0b1c2d3e4f5a',
   workflowName: '20202020-3319-4234-a34c-2d3e4f5a6b7c',
-  settings: '20202020-3319-4234-a34c-1c2d3e4f5a6b',
+  label: '20202020-3319-4234-a34c-3e4f5a6b7c8d',
+  icon: '20202020-3319-4234-a34c-4f5a6b7c8d9e',
+  isPinned: '20202020-3319-4234-a34c-5a6b7c8d9e0f',
+  availability: '20202020-3319-4234-a34c-6b7c8d9e0f1a',
 } as const;
 
 export const WORKFLOW_STANDARD_FIELD_IDS = {

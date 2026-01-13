@@ -1,5 +1,4 @@
 import { Action } from '@/action-menu/actions/components/Action';
-import { isBulkRecordsManualTrigger } from '@/action-menu/actions/record-actions/utils/isBulkRecordsManualTrigger';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -14,15 +13,12 @@ import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 const isBulkTrigger = (manualTrigger: ManualTriggerEntity): boolean => {
-  const trigger = {
-    type: 'MANUAL' as const,
-    settings: manualTrigger.settings,
-  };
-  return isBulkRecordsManualTrigger(trigger);
+  const availability = manualTrigger.availability;
+  return isDefined(availability) && availability.type === 'BULK_RECORDS';
 };
 
 export const useRunWorkflowRecordActions = ({
@@ -110,22 +106,17 @@ export const useRunWorkflowRecordActions = ({
   );
 
   return manualTriggers.map((manualTrigger, index) => {
-    const name = capitalize(manualTrigger.workflowName);
-
-    const Icon = getIcon(
-      manualTrigger.settings?.icon,
-      COMMAND_MENU_DEFAULT_ICON,
-    );
+    const Icon = getIcon(manualTrigger.icon, COMMAND_MENU_DEFAULT_ICON);
 
     return {
       type: ActionType.WorkflowRun,
       key: `workflow-run-${manualTrigger.workflowVersionId}`,
       scope: ActionScope.RecordSelection,
-      label: name,
-      shortLabel: name,
+      label: manualTrigger.label,
+      shortLabel: manualTrigger.label,
       position: index,
       Icon,
-      isPinned: manualTrigger.settings?.isPinned,
+      isPinned: manualTrigger.isPinned,
       shouldBeRegistered: () => true,
       component: (
         <Action

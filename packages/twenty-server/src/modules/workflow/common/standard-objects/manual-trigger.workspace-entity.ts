@@ -1,9 +1,22 @@
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
-import { type ManualTriggerSettings } from 'src/modules/workflow/workflow-trigger/manual-trigger/constants/manual-trigger-settings';
 
 import { type WorkflowVersionWorkspaceEntity } from './workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from './workflow.workspace-entity';
+
+export type ManualTriggerAvailability =
+  | {
+      type: 'GLOBAL';
+      locations?: string[];
+    }
+  | {
+      type: 'SINGLE_RECORD';
+      objectNameSingular: string;
+    }
+  | {
+      type: 'BULK_RECORDS';
+      objectNameSingular: string;
+    };
 
 export class ManualTriggerWorkspaceEntity extends BaseWorkspaceEntity {
   workflowVersion: EntityRelation<WorkflowVersionWorkspaceEntity>;
@@ -11,5 +24,8 @@ export class ManualTriggerWorkspaceEntity extends BaseWorkspaceEntity {
   workflow: EntityRelation<WorkflowWorkspaceEntity>;
   workflowId: string;
   workflowName: string;
-  settings: ManualTriggerSettings;
+  label: string;
+  icon: string | null;
+  isPinned: boolean | null;
+  availability: ManualTriggerAvailability | null;
 }

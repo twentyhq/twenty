@@ -38,8 +38,11 @@ export class ManualTriggerWorkspaceService {
         await manualTriggerRepository.insert({
           workflowId,
           workflowVersionId,
-          settings,
           workflowName,
+          label: workflowName,
+          icon: settings.icon,
+          isPinned: settings.isPinned,
+          availability: settings.availability,
         });
       },
     );

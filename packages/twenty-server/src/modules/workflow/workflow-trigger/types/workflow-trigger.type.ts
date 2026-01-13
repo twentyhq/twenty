@@ -40,6 +40,7 @@ export type WorkflowManualTrigger = BaseTrigger & {
   settings: BaseWorkflowTriggerSettings & {
     objectType?: string;
     icon?: string;
+    isPinned?: boolean;
     availability?:
       | GlobalAvailability
       | SingleRecordAvailability
