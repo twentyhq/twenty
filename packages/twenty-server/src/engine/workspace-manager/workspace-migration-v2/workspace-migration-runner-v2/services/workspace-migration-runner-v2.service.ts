@@ -180,18 +180,19 @@ export class WorkspaceMigrationRunnerV2Service {
         `Cache invalidation ${flatEntitiesCacheToInvalidate.join()}`,
       );
 
-      const invalidationResults = await Promise.allSettled([
-        this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-          workspaceId,
-          flatMapsKeys: flatEntitiesCacheToInvalidate,
-        }),
-        ...this.getLegacyCacheInvalidationPromises({
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: flatEntitiesCacheToInvalidate,
+      });
+
+      const invalidationResults = await Promise.allSettled(
+        this.getLegacyCacheInvalidationPromises({
           workspaceMigration: {
             actions,
             workspaceId,
           },
         }),
-      ]);
+      );
 
       const invalidationFailures = invalidationResults.filter(
         (result) => result.status === 'rejected',
