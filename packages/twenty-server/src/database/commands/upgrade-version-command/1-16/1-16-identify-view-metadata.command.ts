@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined, uncapitalize } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -16,6 +16,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -31,7 +32,7 @@ type StandardViewMetadata = {
   universalIdentifier: string;
 };
 
-type AllWarnings = 'unknown_view_name' | 'unknown_object';
+type AllWarnings = 'unknown_object';
 
 type ViewMetadataWarning = {
   viewEntity: ViewEntity;
@@ -39,7 +40,10 @@ type ViewMetadataWarning = {
   objectNameSingular?: string;
 };
 
-type AllExceptions = 'existing_universal_id_mismatch' | 'not_found_object';
+type AllExceptions =
+  | 'existing_universal_id_mismatch'
+  | 'not_found_object'
+  | 'unknown_standard_view_name';
 
 type ViewMetadataException = {
   viewEntity: ViewEntity;
@@ -47,6 +51,13 @@ type ViewMetadataException = {
   objectNameSingular?: string;
 };
 
+const ALL_ENTITY_VIEW_NAME = 'All {objectLabelPlural}';
+
+const computeAllEntityViewName = ({
+  flatObjectMetadata,
+}: {
+  flatObjectMetadata: FlatObjectMetadata;
+}) => `all${capitalize(flatObjectMetadata.namePlural)}`;
 @Command({
   name: 'upgrade:1-16:identify-view-metadata',
   description: 'Identify standard view metadata',
@@ -160,30 +171,22 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
           : null;
 
       if (!isDefined(objectViews)) {
-        warnings.push({
-          viewEntity,
-          warning: 'unknown_object',
-          objectNameSingular: flatObjectMetadata.nameSingular,
-        });
-        customViewMetadataEntities.push({
-          viewEntity,
-          fromStandard: true,
-        });
         continue;
       }
 
-      const viewConfig = objectViews[viewEntity.name];
+      const formattedViewName =
+        viewEntity.name === ALL_ENTITY_VIEW_NAME
+          ? computeAllEntityViewName({ flatObjectMetadata })
+          : uncapitalize(viewEntity.name.split(' ').join(''));
+      this.logger.log(formattedViewName);
+      const viewConfig = objectViews[formattedViewName];
       const universalIdentifier = viewConfig?.universalIdentifier;
 
       if (!isDefined(universalIdentifier)) {
-        warnings.push({
+        exceptions.push({
           viewEntity,
-          warning: 'unknown_view_name',
+          exception: 'unknown_standard_view_name',
           objectNameSingular: flatObjectMetadata.nameSingular,
-        });
-        customViewMetadataEntities.push({
-          viewEntity,
-          fromStandard: true,
         });
         continue;
       }
