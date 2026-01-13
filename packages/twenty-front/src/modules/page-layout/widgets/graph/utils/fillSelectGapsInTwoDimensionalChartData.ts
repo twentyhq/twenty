@@ -1,6 +1,6 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { type FillSelectGapsResult } from '@/page-layout/widgets/graph/types/FillSelectGapsResult';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { createEmptySelectGroup } from '@/page-layout/widgets/graph/utils/createEmptySelectGroup';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,9 +14,9 @@ export const fillSelectGapsInTwoDimensionalChartData = ({
   data,
   selectOptions,
   aggregateKeys,
-}: TwoDimensionalFillSelectGapsParams): FillSelectGapsResult => {
+}: TwoDimensionalFillSelectGapsParams): GroupByRawResult[] => {
   const existingGroupsMap = new Map<string, GroupByRawResult>();
-  const uniqueSecondDimensionValues = new Set<string | null>();
+  const uniqueSecondDimensionValues = new Set<RawDimensionValue>();
 
   for (const item of data) {
     const primaryDimensionValue = item.groupByDimensionValues?.[0];
@@ -25,9 +25,8 @@ export const fillSelectGapsInTwoDimensionalChartData = ({
       continue;
     }
 
-    const secondDimensionValue = (item.groupByDimensionValues?.[1] ?? null) as
-      | string
-      | null;
+    const secondDimensionValue = (item.groupByDimensionValues?.[1] ??
+      null) as RawDimensionValue;
     uniqueSecondDimensionValues.add(secondDimensionValue);
 
     const key = `${String(primaryDimensionValue)}_${String(secondDimensionValue)}`;
@@ -48,5 +47,5 @@ export const fillSelectGapsInTwoDimensionalChartData = ({
     }),
   );
 
-  return { data: filledData };
+  return filledData;
 };

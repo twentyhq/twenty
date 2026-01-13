@@ -249,16 +249,14 @@ export const transformGroupByDataToBarChartData = ({
   const isSingleSelectField = groupByFieldX.type === FieldMetadataType.SELECT;
   const shouldApplySelectGapFill = isSingleSelectField && !omitNullValues;
 
-  const selectGapFillResult = shouldApplySelectGapFill
+  const resultsWithAllGapsFilled = shouldApplySelectGapFill
     ? fillSelectGapsInChartData({
         data: filteredResultsWithDateGaps,
         selectOptions: groupByFieldX.options,
         aggregateKeys: [aggregateField.name],
         hasSecondDimension: isDefined(groupByFieldY),
       })
-    : { data: filteredResultsWithDateGaps };
-
-  const resultsWithAllGapsFilled = selectGapFillResult.data;
+    : filteredResultsWithDateGaps;
 
   const baseResult = isDefined(groupByFieldY)
     ? transformTwoDimensionalGroupByToBarChartData({

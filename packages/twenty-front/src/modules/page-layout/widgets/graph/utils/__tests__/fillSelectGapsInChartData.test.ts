@@ -20,7 +20,7 @@ describe('fillSelectGapsInChartData', () => {
         aggregateKeys: ['count'],
       });
 
-      expect(result.data).toEqual(data);
+      expect(result).toEqual(data);
     });
 
     it('returns data unchanged when selectOptions is null', () => {
@@ -35,7 +35,7 @@ describe('fillSelectGapsInChartData', () => {
         aggregateKeys: ['count'],
       });
 
-      expect(result.data).toEqual(data);
+      expect(result).toEqual(data);
     });
 
     it('returns data unchanged when selectOptions is empty', () => {
@@ -50,7 +50,7 @@ describe('fillSelectGapsInChartData', () => {
         aggregateKeys: ['count'],
       });
 
-      expect(result.data).toEqual(data);
+      expect(result).toEqual(data);
     });
 
     it('returns empty data unchanged', () => {
@@ -60,7 +60,7 @@ describe('fillSelectGapsInChartData', () => {
         aggregateKeys: ['count'],
       });
 
-      expect(result.data).toEqual([]);
+      expect(result).toEqual([]);
     });
 
     it('fills missing select options with zero values', () => {
@@ -75,16 +75,16 @@ describe('fillSelectGapsInChartData', () => {
         aggregateKeys: ['count'],
       });
 
-      expect(result.data).toHaveLength(3);
-      expect(result.data[0]).toEqual({
+      expect(result).toHaveLength(3);
+      expect(result[0]).toEqual({
         groupByDimensionValues: ['A'],
         count: 5,
       });
-      expect(result.data[1]).toEqual({
+      expect(result[1]).toEqual({
         groupByDimensionValues: ['B'],
         count: 0,
       });
-      expect(result.data[2]).toEqual({
+      expect(result[2]).toEqual({
         groupByDimensionValues: ['C'],
         count: 3,
       });
@@ -106,20 +106,20 @@ describe('fillSelectGapsInChartData', () => {
         hasSecondDimension: true,
       });
 
-      expect(result.data).toHaveLength(6);
+      expect(result).toHaveLength(6);
 
       expect(
-        result.data.filter((r) => r.groupByDimensionValues[0] === 'A'),
+        result.filter((r) => r.groupByDimensionValues[0] === 'A'),
       ).toHaveLength(2);
       expect(
-        result.data.filter((r) => r.groupByDimensionValues[0] === 'B'),
+        result.filter((r) => r.groupByDimensionValues[0] === 'B'),
       ).toHaveLength(2);
       expect(
-        result.data.filter((r) => r.groupByDimensionValues[0] === 'C'),
+        result.filter((r) => r.groupByDimensionValues[0] === 'C'),
       ).toHaveLength(2);
 
       expect(
-        result.data.find(
+        result.find(
           (r) =>
             r.groupByDimensionValues[0] === 'B' &&
             r.groupByDimensionValues[1] === 'X',

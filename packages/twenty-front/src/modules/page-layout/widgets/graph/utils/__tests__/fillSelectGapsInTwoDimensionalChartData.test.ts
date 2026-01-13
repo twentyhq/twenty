@@ -20,16 +20,16 @@ describe('fillSelectGapsInTwoDimensionalChartData', () => {
       aggregateKeys: ['count'],
     });
 
-    expect(result.data).toHaveLength(6);
+    expect(result).toHaveLength(6);
 
     expect(
-      result.data.filter((r) => r.groupByDimensionValues[0] === 'A'),
+      result.filter((r) => r.groupByDimensionValues[0] === 'A'),
     ).toHaveLength(2);
     expect(
-      result.data.filter((r) => r.groupByDimensionValues[0] === 'B'),
+      result.filter((r) => r.groupByDimensionValues[0] === 'B'),
     ).toHaveLength(2);
     expect(
-      result.data.filter((r) => r.groupByDimensionValues[0] === 'C'),
+      result.filter((r) => r.groupByDimensionValues[0] === 'C'),
     ).toHaveLength(2);
   });
 
@@ -45,10 +45,10 @@ describe('fillSelectGapsInTwoDimensionalChartData', () => {
       aggregateKeys: ['count'],
     });
 
-    expect(result.data).toHaveLength(6);
+    expect(result).toHaveLength(6);
 
     expect(
-      result.data.find(
+      result.find(
         (r) =>
           r.groupByDimensionValues[0] === 'B' &&
           r.groupByDimensionValues[1] === 'X',
@@ -59,7 +59,7 @@ describe('fillSelectGapsInTwoDimensionalChartData', () => {
     });
 
     expect(
-      result.data.find(
+      result.find(
         (r) =>
           r.groupByDimensionValues[0] === 'A' &&
           r.groupByDimensionValues[1] === 'Y',
@@ -86,10 +86,10 @@ describe('fillSelectGapsInTwoDimensionalChartData', () => {
       aggregateKeys: ['count'],
     });
 
-    expect(result.data).toHaveLength(6);
+    expect(result).toHaveLength(6);
 
     expect(
-      result.data.find(
+      result.find(
         (r) =>
           r.groupByDimensionValues[0] === 'A' &&
           r.groupByDimensionValues[1] === 'X',
@@ -112,7 +112,7 @@ describe('fillSelectGapsInTwoDimensionalChartData', () => {
       aggregateKeys: ['count'],
     });
 
-    const primaryValues = result.data.map((r) => r.groupByDimensionValues[0]);
+    const primaryValues = result.map((r) => r.groupByDimensionValues[0]);
     const uniquePrimary = [...new Set(primaryValues)];
 
     expect(uniquePrimary[0]).toBe('A');
@@ -132,10 +132,10 @@ describe('fillSelectGapsInTwoDimensionalChartData', () => {
       aggregateKeys: ['count'],
     });
 
-    expect(result.data).toHaveLength(3);
+    expect(result).toHaveLength(3);
 
     expect(
-      result.data.find(
+      result.find(
         (r) =>
           r.groupByDimensionValues[0] === 'B' &&
           r.groupByDimensionValues[1] === null,
@@ -158,7 +158,7 @@ describe('fillSelectGapsInTwoDimensionalChartData', () => {
       aggregateKeys: ['count'],
     });
 
-    const secondaryValues = result.data.map((r) => r.groupByDimensionValues[1]);
+    const secondaryValues = result.map((r) => r.groupByDimensionValues[1]);
     const uniqueSecondary = [...new Set(secondaryValues)];
 
     expect(uniqueSecondary).toHaveLength(2);

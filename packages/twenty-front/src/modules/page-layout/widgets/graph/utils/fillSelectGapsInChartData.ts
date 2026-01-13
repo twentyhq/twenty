@@ -1,5 +1,4 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { type FillSelectGapsResult } from '@/page-layout/widgets/graph/types/FillSelectGapsResult';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { fillSelectGapsInOneDimensionalChartData } from '@/page-layout/widgets/graph/utils/fillSelectGapsInOneDimensionalChartData';
 import { fillSelectGapsInTwoDimensionalChartData } from '@/page-layout/widgets/graph/utils/fillSelectGapsInTwoDimensionalChartData';
@@ -17,13 +16,13 @@ export const fillSelectGapsInChartData = ({
   selectOptions,
   aggregateKeys,
   hasSecondDimension = false,
-}: FillSelectGapsParams): FillSelectGapsResult => {
+}: FillSelectGapsParams): GroupByRawResult[] => {
   if (
     !isDefined(selectOptions) ||
     selectOptions.length === 0 ||
     data.length === 0
   ) {
-    return { data };
+    return data;
   }
 
   return hasSecondDimension

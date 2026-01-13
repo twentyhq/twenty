@@ -158,16 +158,14 @@ export const transformGroupByDataToLineChartData = ({
   const isSingleSelectField = groupByFieldX.type === FieldMetadataType.SELECT;
   const shouldApplySelectGapFill = isSingleSelectField && !omitNullValues;
 
-  const selectGapFillResult = shouldApplySelectGapFill
+  const resultsWithSelectGaps = shouldApplySelectGapFill
     ? fillSelectGapsInChartData({
         data: filteredResults,
         selectOptions: groupByFieldX.options,
         aggregateKeys: [aggregateField.name],
         hasSecondDimension: isDefined(groupByFieldY),
       })
-    : { data: filteredResults };
-
-  const resultsWithSelectGaps = selectGapFillResult.data;
+    : filteredResults;
 
   const isDateField = isFieldMetadataDateKind(groupByFieldX.type);
   const isNestedDateField = isRelationNestedFieldDateKind({

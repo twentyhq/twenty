@@ -19,16 +19,16 @@ describe('fillSelectGapsInOneDimensionalChartData', () => {
       aggregateKeys: ['count'],
     });
 
-    expect(result.data).toHaveLength(3);
-    expect(result.data[0]).toEqual({
+    expect(result).toHaveLength(3);
+    expect(result[0]).toEqual({
       groupByDimensionValues: ['A'],
       count: 5,
     });
-    expect(result.data[1]).toEqual({
+    expect(result[1]).toEqual({
       groupByDimensionValues: ['B'],
       count: 0,
     });
-    expect(result.data[2]).toEqual({
+    expect(result[2]).toEqual({
       groupByDimensionValues: ['C'],
       count: 3,
     });
@@ -47,8 +47,8 @@ describe('fillSelectGapsInOneDimensionalChartData', () => {
       aggregateKeys: ['count', 'sum'],
     });
 
-    expect(result.data).toHaveLength(3);
-    expect(result.data).toEqual(data);
+    expect(result).toHaveLength(3);
+    expect(result).toEqual(data);
   });
 
   it('preserves selectOptions order', () => {
@@ -63,10 +63,10 @@ describe('fillSelectGapsInOneDimensionalChartData', () => {
       aggregateKeys: ['count'],
     });
 
-    expect(result.data).toHaveLength(3);
-    expect(result.data[0].groupByDimensionValues[0]).toBe('A');
-    expect(result.data[1].groupByDimensionValues[0]).toBe('B');
-    expect(result.data[2].groupByDimensionValues[0]).toBe('C');
+    expect(result).toHaveLength(3);
+    expect(result[0].groupByDimensionValues[0]).toBe('A');
+    expect(result[1].groupByDimensionValues[0]).toBe('B');
+    expect(result[2].groupByDimensionValues[0]).toBe('C');
   });
 
   it('works with multiple aggregate keys', () => {
@@ -78,8 +78,8 @@ describe('fillSelectGapsInOneDimensionalChartData', () => {
       aggregateKeys: ['count', 'sum'],
     });
 
-    expect(result.data).toHaveLength(3);
-    expect(result.data[1]).toEqual({
+    expect(result).toHaveLength(3);
+    expect(result[1]).toEqual({
       groupByDimensionValues: ['B'],
       count: 0,
       sum: 0,

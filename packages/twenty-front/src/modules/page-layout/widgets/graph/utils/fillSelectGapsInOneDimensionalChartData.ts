@@ -1,5 +1,4 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { type FillSelectGapsResult } from '@/page-layout/widgets/graph/types/FillSelectGapsResult';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { createEmptySelectGroup } from '@/page-layout/widgets/graph/utils/createEmptySelectGroup';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,7 +13,7 @@ export const fillSelectGapsInOneDimensionalChartData = ({
   data,
   selectOptions,
   aggregateKeys,
-}: OneDimensionalFillSelectGapsParams): FillSelectGapsResult => {
+}: OneDimensionalFillSelectGapsParams): GroupByRawResult[] => {
   const existingGroupsMap = new Map<string, GroupByRawResult>();
 
   for (const item of data) {
@@ -33,5 +32,5 @@ export const fillSelectGapsInOneDimensionalChartData = ({
       : createEmptySelectGroup([option.value], aggregateKeys);
   });
 
-  return { data: filledData };
+  return filledData;
 };
