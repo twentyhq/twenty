@@ -9,7 +9,6 @@ import { MockedProvider } from '@apollo/client/testing';
 import { type ReactNode, act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
-import { expect } from 'storybook/test';
 
 import {
   email,

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`createOne FieldMetadataService name/label sync should return an error when name and label are not synced but isLabelSyncedWithName is true 1`] = `
 {

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Page layout widget creation should succeed should create a page layout widget with AGGREGATE_CHART full configuration 1`] = `
 {

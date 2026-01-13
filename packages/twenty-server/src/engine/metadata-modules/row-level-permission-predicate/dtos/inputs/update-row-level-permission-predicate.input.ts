@@ -12,6 +12,9 @@ export class UpdateRowLevelPermissionPredicateInput {
   @Field(() => String)
   id: string;
 
+  @Field(() => String, { nullable: true })
+  fieldMetadataId?: string;
+
   @Field(() => RowLevelPermissionPredicateOperand, { nullable: true })
   operand?: RowLevelPermissionPredicateOperand;
 

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test suite Failure cases should fail when morphRelationsCreationPayload has different relation types 1`] = `
 {

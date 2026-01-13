@@ -7,7 +7,6 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
-import { expect } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated-metadata/graphql';
 import { PageLayoutType, WidgetConfigurationType } from '~/generated/graphql';
