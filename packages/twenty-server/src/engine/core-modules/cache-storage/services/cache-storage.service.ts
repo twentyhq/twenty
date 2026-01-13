@@ -106,6 +106,32 @@ export class CacheStorageService {
     });
   }
 
+  async setRemove(key: string, values: string[]): Promise<number> {
+    if (values.length === 0) {
+      return 0;
+    }
+
+    if (this.isRedisCache()) {
+      return (this.cache as RedisCache).store.client.sRem(
+        this.getKey(key),
+        values,
+      );
+    }
+
+    const existing = await this.get<string[]>(key);
+
+    if (!existing) {
+      return 0;
+    }
+
+    const filtered = existing.filter((v) => !values.includes(v));
+    const removed = existing.length - filtered.length;
+
+    await this.set(key, filtered);
+
+    return removed;
+  }
+
   async countAllSetMembers(cacheKeys: string[]) {
     return (
       await Promise.all(cacheKeys.map((key) => this.getSetLength(key) || 0))
@@ -141,6 +167,14 @@ export class CacheStorageService {
     return this.get(key).then((res: string[]) => {
       return res.length;
     });
+  }
+
+  async setMembers(key: string): Promise<string[]> {
+    if (this.isRedisCache()) {
+      return (this.cache as RedisCache).store.client.sMembers(this.getKey(key));
+    }
+
+    return (await this.get<string[]>(key)) ?? [];
   }
 
   async flush() {

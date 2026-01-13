@@ -1,29 +1,32 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 
-import { ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AddQuerySubscriptionInput } from 'src/engine/subscriptions/dtos/add-query-subscription.input';
-import { EventSubscriptionDTO } from 'src/engine/subscriptions/dtos/event-subscription.dto';
-import { ObjectRecordEventDTO } from 'src/engine/subscriptions/dtos/object-record-event.dto';
+import {
+  EventSubscriptionDTO,
+  EventWithQueryIdsDTO,
+} from 'src/engine/subscriptions/dtos/event-subscription.dto';
 import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
 import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input';
 import { RemoveQueryFromEventStreamInput } from 'src/engine/subscriptions/dtos/remove-query-subscription.input';
-import { SubscriptionMatchesDTO } from 'src/engine/subscriptions/dtos/subscription-matches.dto';
-import { SubscriptionInput } from 'src/engine/subscriptions/dtos/subscription.input';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
+import { wrapAsyncIteratorWithCleanup } from 'src/engine/workspace-event-emitter/utils/wrap-async-iterator-with-cleanup';
+
+import { eventStreamIdToChannelId } from './utils/get-channel-id-from-event-stream-id';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
@@ -68,119 +71,53 @@ export class WorkspaceEventEmitterResolver {
     });
   }
 
-  @Subscription(() => SubscriptionMatchesDTO, {
-    nullable: true,
-    resolve: async function (
-      this: WorkspaceEventEmitterResolver,
-      payload: { onDbEvents: OnDbEventDTO[] },
-      args: { subscriptions: SubscriptionInput[] },
-      context: { req: { workspace: { id: string } } },
-    ): Promise<SubscriptionMatchesDTO> {
-      const workspaceId = context.req.workspace.id;
-
-      const matches: { subscriptionIds: string[]; event: OnDbEventDTO }[] = [];
-
-      for (const event of payload.onDbEvents) {
-        const matchedSubscriptionIds = await Promise.all(
-          args.subscriptions.map(async (subscription) => {
-            const isMatch =
-              await this.subscriptionService.isSubscriptionMatchingEvent(
-                subscription,
-                event,
-                workspaceId,
-              );
-
-            return isMatch ? subscription.id : null;
-          }),
-        );
-
-        const filteredIds = matchedSubscriptionIds.filter(
-          (id): id is string => id !== null,
-        );
-
-        if (filteredIds.length > 0) {
-          matches.push({
-            subscriptionIds: filteredIds,
-            event,
-          });
-        }
-      }
-
-      return { matches };
-    },
-  })
-  onSubscriptionMatch(
-    @Args('subscriptions', { type: () => [SubscriptionInput] })
-    _: SubscriptionInput[],
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ) {
-    return this.subscriptionService.subscribe({
-      channel: SubscriptionChannel.WORKSPACE_EVENT_BATCH_CHANNEL,
-      workspaceId: workspace.id,
-    });
-  }
-
   @Subscription(() => EventSubscriptionDTO, {
     nullable: true,
-    resolve: async function (
-      this: WorkspaceEventEmitterResolver,
-      payload: { workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent> },
-      args: { eventStreamId: string },
-      context: { req: { workspace: { id: string } } },
-    ): Promise<EventSubscriptionDTO> {
-      const workspaceId = context.req.workspace.id;
-      const { eventStreamId } = args;
-
-      const queries = await this.eventStreamService.getQueries(
-        workspaceId,
-        eventStreamId,
-      );
-
-      const objectNameSingular =
-        payload.workspaceEventBatch.objectMetadata.nameSingular;
-
-      const eventWithQueryIdsList: {
-        queryIds: string[];
-        event: ObjectRecordEventDTO;
-      }[] = [];
-
-      for (const event of payload.workspaceEventBatch.events) {
-        const eventName = parseEventNameOrThrow(
-          payload.workspaceEventBatch.name,
-        );
-
-        const action = eventName.action;
-
-        const eventWithObjectName = {
-          ...event,
-          objectNameSingular,
-          action,
-        };
-
-        const matchedQueryIds =
-          await this.eventStreamService.matchQueriesWithEvent(
-            queries,
-            eventWithObjectName,
-          );
-
-        if (matchedQueryIds.length > 0) {
-          eventWithQueryIdsList.push({
-            queryIds: matchedQueryIds,
-            event: eventWithObjectName,
-          });
-        }
-      }
-
-      return { eventStreamId, eventWithQueryIdsList };
+    resolve: (
+      payload: EventWithQueryIdsDTO[],
+      variables: { eventStreamId: string },
+    ) => {
+      return {
+        eventStreamId: variables.eventStreamId,
+        eventWithQueryIdsList: payload,
+      };
     },
   })
-  onEventSubscription(
-    @Args('eventStreamId') _: string,
+  async onEventSubscription(
+    @Args('eventStreamId') eventStreamId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: UserEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
-    return this.subscriptionService.subscribe({
-      channel: SubscriptionChannel.WORKSPACE_EVENT_BATCH_CHANNEL,
+    const eventStreamChannelId = eventStreamIdToChannelId(eventStreamId);
+
+    await this.eventStreamService.createEventStream({
       workspaceId: workspace.id,
+      eventStreamChannelId,
+      userId: user.id,
+      userWorkspaceId,
+    });
+
+    let iterator: AsyncIterableIterator<EventWithQueryIdsDTO[]>;
+
+    try {
+      iterator = await this.subscriptionService.subscribeToEventStream({
+        workspaceId: workspace.id,
+        eventStreamChannelId,
+      });
+    } catch (error) {
+      await this.eventStreamService.destroyEventStream({
+        workspaceId: workspace.id,
+        eventStreamChannelId,
+      });
+      throw error;
+    }
+
+    return wrapAsyncIteratorWithCleanup(iterator, async () => {
+      await this.eventStreamService.destroyEventStream({
+        workspaceId: workspace.id,
+        eventStreamChannelId,
+      });
     });
   }
 
@@ -189,9 +126,11 @@ export class WorkspaceEventEmitterResolver {
     @Args('input') input: AddQuerySubscriptionInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
+    const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
+
     await this.eventStreamService.addQuery({
       workspaceId: workspace.id,
-      eventStreamId: input.eventStreamId,
+      eventStreamChannelId,
       queryId: input.queryId,
       operationSignature: input.operationSignature,
     });
@@ -204,9 +143,11 @@ export class WorkspaceEventEmitterResolver {
     @Args('input') input: RemoveQueryFromEventStreamInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
+    const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
+
     await this.eventStreamService.removeQuery({
       workspaceId: workspace.id,
-      eventStreamId: input.eventStreamId,
+      eventStreamChannelId,
       queryId: input.queryId,
     });
 

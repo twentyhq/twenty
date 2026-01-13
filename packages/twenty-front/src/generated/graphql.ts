@@ -4094,7 +4094,6 @@ export type Subscription = {
   __typename?: 'Subscription';
   onDbEvent: OnDbEvent;
   onEventSubscription?: Maybe<EventSubscription>;
-  onSubscriptionMatch?: Maybe<SubscriptionMatches>;
   serverlessFunctionLogs: ServerlessFunctionLogs;
 };
 
@@ -4109,36 +4108,14 @@ export type SubscriptionOnEventSubscriptionArgs = {
 };
 
 
-export type SubscriptionOnSubscriptionMatchArgs = {
-  subscriptions: Array<SubscriptionInput>;
-};
-
-
 export type SubscriptionServerlessFunctionLogsArgs = {
   input: ServerlessFunctionLogsInput;
-};
-
-export type SubscriptionInput = {
-  id: Scalars['String'];
-  query: Scalars['String'];
-  selectedEventActions?: InputMaybe<Array<DatabaseEventAction>>;
 };
 
 export enum SubscriptionInterval {
   Month = 'Month',
   Year = 'Year'
 }
-
-export type SubscriptionMatch = {
-  __typename?: 'SubscriptionMatch';
-  event: OnDbEvent;
-  subscriptionIds: Array<Scalars['String']>;
-};
-
-export type SubscriptionMatches = {
-  __typename?: 'SubscriptionMatches';
-  matches: Array<SubscriptionMatch>;
-};
 
 export enum SubscriptionStatus {
   Active = 'Active',
@@ -5187,6 +5164,27 @@ export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
 
 export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: any, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } }> | null }> | null } };
 
+export type AddQueryToEventStreamMutationVariables = Exact<{
+  input: AddQuerySubscriptionInput;
+}>;
+
+
+export type AddQueryToEventStreamMutation = { __typename?: 'Mutation', addQueryToEventStream: boolean };
+
+export type RemoveQueryFromEventStreamMutationVariables = Exact<{
+  input: RemoveQueryFromEventStreamInput;
+}>;
+
+
+export type RemoveQueryFromEventStreamMutation = { __typename?: 'Mutation', removeQueryFromEventStream: boolean };
+
+export type OnEventSubscriptionSubscriptionVariables = Exact<{
+  eventStreamId: Scalars['String'];
+}>;
+
+
+export type OnEventSubscriptionSubscription = { __typename?: 'Subscription', onEventSubscription?: { __typename?: 'EventSubscription', eventStreamId: string, eventWithQueryIdsList: Array<{ __typename?: 'EventWithQueryIds', queryIds: Array<string>, event: { __typename?: 'ObjectRecordEvent', objectNameSingular: string, recordId: string, userId?: string | null, workspaceMemberId?: string | null, properties: { __typename?: 'ObjectRecordEventProperties', updatedFields?: Array<string> | null, before?: any | null, after?: any | null, diff?: any | null } } }> } | null };
+
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
 export type ViewFilterFragmentFragment = { __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null };
@@ -5858,6 +5856,113 @@ export function useUpdatePageLayoutWithTabsAndWidgetsMutation(baseOptions?: Apol
 export type UpdatePageLayoutWithTabsAndWidgetsMutationHookResult = ReturnType<typeof useUpdatePageLayoutWithTabsAndWidgetsMutation>;
 export type UpdatePageLayoutWithTabsAndWidgetsMutationResult = Apollo.MutationResult<UpdatePageLayoutWithTabsAndWidgetsMutation>;
 export type UpdatePageLayoutWithTabsAndWidgetsMutationOptions = Apollo.BaseMutationOptions<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>;
+export const AddQueryToEventStreamDocument = gql`
+    mutation AddQueryToEventStream($input: AddQuerySubscriptionInput!) {
+  addQueryToEventStream(input: $input)
+}
+    `;
+export type AddQueryToEventStreamMutationFn = Apollo.MutationFunction<AddQueryToEventStreamMutation, AddQueryToEventStreamMutationVariables>;
+
+/**
+ * __useAddQueryToEventStreamMutation__
+ *
+ * To run a mutation, you first call `useAddQueryToEventStreamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddQueryToEventStreamMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addQueryToEventStreamMutation, { data, loading, error }] = useAddQueryToEventStreamMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAddQueryToEventStreamMutation(baseOptions?: Apollo.MutationHookOptions<AddQueryToEventStreamMutation, AddQueryToEventStreamMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddQueryToEventStreamMutation, AddQueryToEventStreamMutationVariables>(AddQueryToEventStreamDocument, options);
+      }
+export type AddQueryToEventStreamMutationHookResult = ReturnType<typeof useAddQueryToEventStreamMutation>;
+export type AddQueryToEventStreamMutationResult = Apollo.MutationResult<AddQueryToEventStreamMutation>;
+export type AddQueryToEventStreamMutationOptions = Apollo.BaseMutationOptions<AddQueryToEventStreamMutation, AddQueryToEventStreamMutationVariables>;
+export const RemoveQueryFromEventStreamDocument = gql`
+    mutation RemoveQueryFromEventStream($input: RemoveQueryFromEventStreamInput!) {
+  removeQueryFromEventStream(input: $input)
+}
+    `;
+export type RemoveQueryFromEventStreamMutationFn = Apollo.MutationFunction<RemoveQueryFromEventStreamMutation, RemoveQueryFromEventStreamMutationVariables>;
+
+/**
+ * __useRemoveQueryFromEventStreamMutation__
+ *
+ * To run a mutation, you first call `useRemoveQueryFromEventStreamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveQueryFromEventStreamMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeQueryFromEventStreamMutation, { data, loading, error }] = useRemoveQueryFromEventStreamMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemoveQueryFromEventStreamMutation(baseOptions?: Apollo.MutationHookOptions<RemoveQueryFromEventStreamMutation, RemoveQueryFromEventStreamMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveQueryFromEventStreamMutation, RemoveQueryFromEventStreamMutationVariables>(RemoveQueryFromEventStreamDocument, options);
+      }
+export type RemoveQueryFromEventStreamMutationHookResult = ReturnType<typeof useRemoveQueryFromEventStreamMutation>;
+export type RemoveQueryFromEventStreamMutationResult = Apollo.MutationResult<RemoveQueryFromEventStreamMutation>;
+export type RemoveQueryFromEventStreamMutationOptions = Apollo.BaseMutationOptions<RemoveQueryFromEventStreamMutation, RemoveQueryFromEventStreamMutationVariables>;
+export const OnEventSubscriptionDocument = gql`
+    subscription OnEventSubscription($eventStreamId: String!) {
+  onEventSubscription(eventStreamId: $eventStreamId) {
+    eventStreamId
+    eventWithQueryIdsList {
+      queryIds
+      event {
+        objectNameSingular
+        recordId
+        userId
+        workspaceMemberId
+        properties {
+          updatedFields
+          before
+          after
+          diff
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useOnEventSubscriptionSubscription__
+ *
+ * To run a query within a React component, call `useOnEventSubscriptionSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useOnEventSubscriptionSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOnEventSubscriptionSubscription({
+ *   variables: {
+ *      eventStreamId: // value for 'eventStreamId'
+ *   },
+ * });
+ */
+export function useOnEventSubscriptionSubscription(baseOptions: Apollo.SubscriptionHookOptions<OnEventSubscriptionSubscription, OnEventSubscriptionSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<OnEventSubscriptionSubscription, OnEventSubscriptionSubscriptionVariables>(OnEventSubscriptionDocument, options);
+      }
+export type OnEventSubscriptionSubscriptionHookResult = ReturnType<typeof useOnEventSubscriptionSubscription>;
+export type OnEventSubscriptionSubscriptionResult = Apollo.SubscriptionResult<OnEventSubscriptionSubscription>;
 export const CreateCoreViewDocument = gql`
     mutation CreateCoreView($input: CreateViewInput!) {
   createCoreView(input: $input) {
