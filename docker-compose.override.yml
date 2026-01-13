@@ -26,16 +26,25 @@ services:
       start_period: 40s
 
   server:
+    env_file:
+      - .env
+      - .env.ai-layer
     networks:
       - default
       - twenty-dev_default
       - smartout-ai-network
     environment:
-      # AI Layer Services
-      CTX_MCP_URL: http://ctx-mcp:3100
-      KB_MCP_URL: http://kb-mcp:3110
-      N8N_API_URL: http://n8n:5678
-      REDIS_AI_URL: redis://redis:6379
+      # AI Layer Services (can be overridden by .env.ai-layer)
+      CTX_MCP_URL: ${CTX_MCP_URL:-http://ctx-mcp:3100}
+      KB_MCP_URL: ${KB_MCP_URL:-http://kb-mcp:3110}
+      N8N_API_URL: ${N8N_API_URL:-http://n8n:5678}
+      REDIS_AI_URL: ${REDIS_AI_URL:-redis://redis:6379}
+      # Error Reporting
+      AI_LAYER_ERROR_REPORTING_ENABLED: ${AI_LAYER_ERROR_REPORTING_ENABLED:-true}
+      AI_LAYER_ERROR_ENDPOINT: ${AI_LAYER_ERROR_ENDPOINT:-http://ctx-mcp:3100/api/errors/report}
+      # Logging
+      AI_LAYER_LOG_FORMAT: ${AI_LAYER_LOG_FORMAT:-json}
+      AI_LAYER_LOG_LEVEL: ${AI_LAYER_LOG_LEVEL:-info}
 
   worker:
     networks:
