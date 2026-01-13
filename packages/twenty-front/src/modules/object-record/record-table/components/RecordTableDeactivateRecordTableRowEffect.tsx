@@ -1,4 +1,3 @@
-import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
@@ -7,26 +6,21 @@ import { useRecoilCallback } from 'recoil';
 export const RecordTableDeactivateRecordTableRowEffect = () => {
   const { deactivateRecordTableRow } = useActiveRecordTableRow();
 
-  const handleSidePanelClosing = useRecoilCallback(
+  const checkAndDeactivate = useRecoilCallback(
     ({ snapshot }) =>
       () => {
         const isCommandMenuOpened = snapshot
           .getLoadable(isCommandMenuOpenedState)
           .getValue();
-        const isCommandMenuClosing = snapshot
-          .getLoadable(isCommandMenuClosingState)
-          .getValue();
 
-        if (isCommandMenuOpened || isCommandMenuClosing) {
-          return;
+        if (!isCommandMenuOpened) {
+          deactivateRecordTableRow();
         }
-
-        deactivateRecordTableRow();
       },
     [deactivateRecordTableRow],
   );
 
-  useListenToSidePanelClosing(handleSidePanelClosing);
+  useListenToSidePanelClosing(() => setTimeout(checkAndDeactivate, 0));
 
   return null;
 };
