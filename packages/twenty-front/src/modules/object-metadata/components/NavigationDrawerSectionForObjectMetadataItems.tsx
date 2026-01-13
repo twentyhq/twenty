@@ -20,8 +20,6 @@ const ORDERED_FIRST_STANDARD_OBJECTS: string[] = [
 
 const ORDERED_LAST_STANDARD_OBJECTS: string[] = [
   CoreObjectNameSingular.Workflow,
-  CoreObjectNameSingular.WorkflowVersion,
-  CoreObjectNameSingular.WorkflowRun,
   CoreObjectNameSingular.Dashboard,
 ];
 
