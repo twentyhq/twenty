@@ -12,7 +12,6 @@ import {
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { isGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-network-error.util';
 
 export type ConnectedAccountTokens = {
   accessToken: string;
@@ -157,13 +156,6 @@ export class ConnectedAccountRefreshTokensService {
           );
       }
     } catch (error) {
-      if (isGmailNetworkError(error)) {
-        throw new ConnectedAccountRefreshAccessTokenException(
-          `Error refreshing tokens for connected account ${connectedAccount.id} in workspace ${workspaceId}: ${error.code}`,
-          ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
-        );
-      }
-
       this.logger.log(
         `Error while refreshing tokens on connected account ${connectedAccount.id} in workspace ${workspaceId}`,
         error,
