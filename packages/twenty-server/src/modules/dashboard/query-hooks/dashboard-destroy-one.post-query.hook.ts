@@ -1,5 +1,3 @@
-import { Logger } from '@nestjs/common';
-
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
@@ -18,8 +16,6 @@ import { type DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-ob
 export class DashboardDestroyOnePostQueryHook
   implements WorkspacePostQueryHookInstance
 {
-  private readonly logger = new Logger(DashboardDestroyOnePostQueryHook.name);
-
   constructor(
     private readonly dashboardToPageLayoutSyncService: DashboardToPageLayoutSyncService,
   ) {}
@@ -51,10 +47,6 @@ export class DashboardDestroyOnePostQueryHook
         },
       );
     } catch (error) {
-      this.logger.error(
-        `Failed to destroy page layouts for dashboards, restoring dashboards: ${error}`,
-      );
-
       await this.dashboardToPageLayoutSyncService.restoreDestroyedDashboardsToSoftDeletedState(
         {
           dashboards: destroyedDashboards,
