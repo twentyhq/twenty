@@ -9,7 +9,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type WorkflowManualTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-manual-trigger.workspace-entity';
+import { type ManualTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/manual-trigger.workspace-entity';
 import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
@@ -51,10 +51,10 @@ export class BackfillWorkflowManualTriggersCommand extends ActiveOrSuspendedWork
             { shouldBypassPermissionChecks: true },
           );
 
-        const workflowManualTriggerRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowManualTriggerWorkspaceEntity>(
+        const manualTriggerRepository =
+          await this.globalWorkspaceOrmManager.getRepository<ManualTriggerWorkspaceEntity>(
             workspaceId,
-            'workflowManualTrigger',
+            'manualTrigger',
             { shouldBypassPermissionChecks: true },
           );
 
@@ -84,13 +84,12 @@ export class BackfillWorkflowManualTriggersCommand extends ActiveOrSuspendedWork
           (version) => version.id,
         );
 
-        const existingManualTriggers =
-          await workflowManualTriggerRepository.find({
-            where: {
-              workflowVersionId: In(workflowVersionIds),
-            },
-            select: ['workflowVersionId'],
-          });
+        const existingManualTriggers = await manualTriggerRepository.find({
+          where: {
+            workflowVersionId: In(workflowVersionIds),
+          },
+          select: ['workflowVersionId'],
+        });
 
         const existingWorkflowVersionIds = new Set(
           existingManualTriggers.map((trigger) => trigger.workflowVersionId),
@@ -154,7 +153,7 @@ export class BackfillWorkflowManualTriggersCommand extends ActiveOrSuspendedWork
           },
         );
 
-        await workflowManualTriggerRepository.insert(manualTriggersToInsert);
+        await manualTriggerRepository.insert(manualTriggersToInsert);
 
         this.logger.log(
           `Created ${manualTriggersToInsert.length} ManualTrigger entities`,

@@ -5,15 +5,15 @@ import {
   createStandardIndexFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
-export const buildWorkflowManualTriggerStandardFlatIndexMetadatas = ({
+export const buildManualTriggerStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardIndexArgs<'workflowManualTrigger'>, 'context'>): Record<
-  AllStandardObjectIndexName<'workflowManualTrigger'>,
+}: Omit<CreateStandardIndexArgs<'manualTrigger'>, 'context'>): Record<
+  AllStandardObjectIndexName<'manualTrigger'>,
   FlatIndexMetadata
 > => ({
   workflowVersionIdIndex: createStandardIndexFlatMetadata({

@@ -5,7 +5,7 @@ import { type ManualTriggerSettings } from 'src/modules/workflow/workflow-trigge
 import { type WorkflowVersionWorkspaceEntity } from './workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from './workflow.workspace-entity';
 
-export class WorkflowManualTriggerWorkspaceEntity extends BaseWorkspaceEntity {
+export class ManualTriggerWorkspaceEntity extends BaseWorkspaceEntity {
   workflowVersion: EntityRelation<WorkflowVersionWorkspaceEntity>;
   workflowVersionId: string;
   workflow: EntityRelation<WorkflowWorkspaceEntity>;

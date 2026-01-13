@@ -6,8 +6,8 @@ import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migr
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { type ManualTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/manual-trigger.workspace-entity';
 import { type WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
-import { type WorkflowManualTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-manual-trigger.workspace-entity';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
@@ -32,7 +32,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   versions: EntityRelation<WorkflowVersionWorkspaceEntity[]>;
   runs: EntityRelation<WorkflowRunWorkspaceEntity[]>;
   automatedTriggers: EntityRelation<WorkflowAutomatedTriggerWorkspaceEntity[]>;
-  manualTriggers: EntityRelation<WorkflowManualTriggerWorkspaceEntity[]>;
+  manualTriggers: EntityRelation<ManualTriggerWorkspaceEntity[]>;
   favorites: EntityRelation<FavoriteWorkspaceEntity[]>;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
   attachments: EntityRelation<AttachmentWorkspaceEntity[]>;

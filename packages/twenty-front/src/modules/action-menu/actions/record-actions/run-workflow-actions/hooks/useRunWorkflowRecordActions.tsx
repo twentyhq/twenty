@@ -9,7 +9,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useWorkflowManualTriggers } from '@/workflow/hooks/useWorkflowManualTriggers';
-import { type WorkflowManualTriggerEntity } from '@/workflow/types/Workflow';
+import { type ManualTriggerEntity } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
@@ -17,7 +17,7 @@ import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
-const isBulkTrigger = (manualTrigger: WorkflowManualTriggerEntity): boolean => {
+const isBulkTrigger = (manualTrigger: ManualTriggerEntity): boolean => {
   const trigger = {
     type: 'MANUAL' as const,
     settings: manualTrigger.settings,
@@ -54,7 +54,7 @@ export const useRunWorkflowRecordActions = ({
     ({ snapshot }) =>
       async (
         selectedRecordIds: string[],
-        manualTrigger: WorkflowManualTriggerEntity,
+        manualTrigger: ManualTriggerEntity,
       ) => {
         if (selectedRecordIds.length > QUERY_MAX_RECORDS) {
           const selectedCountFormatted =

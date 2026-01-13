@@ -2,12 +2,10 @@ import { isGlobalManualTrigger } from '@/action-menu/actions/record-actions/util
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { type WorkflowManualTriggerEntity } from '@/workflow/types/Workflow';
+import { type ManualTriggerEntity } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 
-const isGlobalTrigger = (
-  manualTrigger: WorkflowManualTriggerEntity,
-): boolean => {
+const isGlobalTrigger = (manualTrigger: ManualTriggerEntity): boolean => {
   const trigger = {
     type: 'MANUAL' as const,
     settings: manualTrigger.settings,
@@ -16,7 +14,7 @@ const isGlobalTrigger = (
 };
 
 const isObjectSpecificTrigger = (
-  manualTrigger: WorkflowManualTriggerEntity,
+  manualTrigger: ManualTriggerEntity,
   objectNameSingular: string,
 ): boolean => {
   const availability = manualTrigger.settings?.availability;
@@ -45,18 +43,17 @@ export const useWorkflowManualTriggers = ({
   objectMetadataItem?: ObjectMetadataItem;
   skip?: boolean;
 }) => {
-  const { records: manualTriggers } =
-    useFindManyRecords<WorkflowManualTriggerEntity>({
-      objectNameSingular: CoreObjectNameSingular.WorkflowManualTrigger,
-      recordGqlFields: {
-        id: true,
-        settings: true,
-        workflowVersionId: true,
-        workflowId: true,
-        workflowName: true,
-      },
-      skip,
-    });
+  const { records: manualTriggers } = useFindManyRecords<ManualTriggerEntity>({
+    objectNameSingular: CoreObjectNameSingular.ManualTrigger,
+    recordGqlFields: {
+      id: true,
+      settings: true,
+      workflowVersionId: true,
+      workflowId: true,
+      workflowName: true,
+    },
+    skip,
+  });
 
   const records = isDefined(objectMetadataItem)
     ? manualTriggers.filter((manualTrigger) =>

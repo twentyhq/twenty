@@ -336,7 +336,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       isUIReadOnly: true,
-      targetObjectName: 'workflowManualTrigger',
+      targetObjectName: 'manualTrigger',
       targetFieldName: 'workflowVersion',
       settings: {
         relationType: RelationType.ONE_TO_MANY,

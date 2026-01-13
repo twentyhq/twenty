@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type WorkflowManualTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-manual-trigger.workspace-entity';
+import { type ManualTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/manual-trigger.workspace-entity';
 import { type ManualTriggerSettings } from 'src/modules/workflow/workflow-trigger/manual-trigger/constants/manual-trigger-settings';
 
 @Injectable()
@@ -29,13 +29,13 @@ export class ManualTriggerWorkspaceService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       authContext,
       async () => {
-        const workflowManualTriggerRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowManualTriggerWorkspaceEntity>(
+        const manualTriggerRepository =
+          await this.globalWorkspaceOrmManager.getRepository<ManualTriggerWorkspaceEntity>(
             workspaceId,
-            'workflowManualTrigger',
+            'manualTrigger',
           );
 
-        await workflowManualTriggerRepository.insert({
+        await manualTriggerRepository.insert({
           workflowId,
           workflowVersionId,
           settings,
@@ -57,13 +57,13 @@ export class ManualTriggerWorkspaceService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       authContext,
       async () => {
-        const workflowManualTriggerRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowManualTriggerWorkspaceEntity>(
+        const manualTriggerRepository =
+          await this.globalWorkspaceOrmManager.getRepository<ManualTriggerWorkspaceEntity>(
             workspaceId,
-            'workflowManualTrigger',
+            'manualTrigger',
           );
 
-        await workflowManualTriggerRepository.delete({
+        await manualTriggerRepository.delete({
           workflowVersionId,
         });
       },

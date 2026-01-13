@@ -35,5 +35,5 @@ export enum CoreObjectNamePlural {
   MessageChannelMessageAssociation = 'messageChannelMessageAssociations',
   WorkflowVersion = 'workflowVersions',
   WorkflowRun = 'workflowRuns',
-  WorkflowManualTrigger = 'workflowManualTriggers',
+  ManualTrigger = 'manualTriggers',
 }

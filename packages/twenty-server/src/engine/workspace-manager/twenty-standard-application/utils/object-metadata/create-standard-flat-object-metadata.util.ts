@@ -756,27 +756,26 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  workflowManualTrigger: ({
+  manualTrigger: ({
     now,
     workspaceId,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
   }: Omit<
-    CreateStandardObjectArgs<'workflowManualTrigger'>,
+    CreateStandardObjectArgs<'manualTrigger'>,
     'context' | 'objectName'
   >) =>
     createStandardObjectFlatMetadata({
-      objectName: 'workflowManualTrigger',
+      objectName: 'manualTrigger',
       dependencyFlatEntityMaps,
       context: {
-        universalIdentifier:
-          STANDARD_OBJECTS.workflowManualTrigger.universalIdentifier,
-        nameSingular: 'workflowManualTrigger',
-        namePlural: 'workflowManualTriggers',
-        labelSingular: 'Workflow Manual Trigger',
-        labelPlural: 'Workflow Manual Triggers',
-        description: 'A workflow manual trigger',
+        universalIdentifier: STANDARD_OBJECTS.manualTrigger.universalIdentifier,
+        nameSingular: 'manualTrigger',
+        namePlural: 'manualTriggers',
+        labelSingular: 'Manual Trigger',
+        labelPlural: 'Manual Triggers',
+        description: 'A manual trigger',
         icon: 'IconSettingsAutomation',
         isSystem: true,
         labelIdentifierFieldMetadataName: 'id',

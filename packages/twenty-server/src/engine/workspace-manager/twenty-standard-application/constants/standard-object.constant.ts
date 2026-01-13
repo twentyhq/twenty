@@ -12,6 +12,7 @@ import {
   DASHBOARD_STANDARD_FIELD_IDS,
   FAVORITE_FOLDER_STANDARD_FIELD_IDS,
   FAVORITE_STANDARD_FIELD_IDS,
+  MANUAL_TRIGGER_STANDARD_FIELD_IDS,
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS,
   MESSAGE_CHANNEL_STANDARD_FIELD_IDS,
   MESSAGE_FOLDER_STANDARD_FIELD_IDS,
@@ -26,7 +27,6 @@ import {
   TASK_TARGET_STANDARD_FIELD_IDS,
   TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
   WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS,
-  WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS,
   WORKFLOW_RUN_STANDARD_FIELD_IDS,
   WORKFLOW_STANDARD_FIELD_IDS,
   WORKFLOW_VERSION_STANDARD_FIELD_IDS,
@@ -1756,8 +1756,8 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
-  workflowManualTrigger: {
-    universalIdentifier: STANDARD_OBJECT_IDS.workflowManualTrigger,
+  manualTrigger: {
+    universalIdentifier: STANDARD_OBJECT_IDS.manualTrigger,
     fields: {
       id: {
         universalIdentifier: '20202020-f02a-4181-8a81-abcdefabcdef',
@@ -1772,20 +1772,16 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-f02d-4184-9d84-defabcdefabc',
       },
       workflowVersion: {
-        universalIdentifier:
-          WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflowVersion,
+        universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflowVersion,
       },
       workflow: {
-        universalIdentifier:
-          WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflow,
+        universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflow,
       },
       workflowName: {
-        universalIdentifier:
-          WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflowName,
+        universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflowName,
       },
       settings: {
-        universalIdentifier:
-          WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS.settings,
+        universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.settings,
       },
     },
     indexes: {

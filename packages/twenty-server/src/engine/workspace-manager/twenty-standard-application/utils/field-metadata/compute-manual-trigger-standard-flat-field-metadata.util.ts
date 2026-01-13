@@ -13,7 +13,7 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 
-export const buildWorkflowManualTriggerStandardFlatFieldMetadatas = ({
+export const buildManualTriggerStandardFlatFieldMetadatas = ({
   now,
   objectName,
   workspaceId,
@@ -21,12 +21,9 @@ export const buildWorkflowManualTriggerStandardFlatFieldMetadatas = ({
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<
-  CreateStandardFieldArgs<'workflowManualTrigger', FieldMetadataType>,
+  CreateStandardFieldArgs<'manualTrigger', FieldMetadataType>,
   'context'
->): Record<
-  AllStandardObjectFieldName<'workflowManualTrigger'>,
-  FlatFieldMetadata
-> => ({
+>): Record<AllStandardObjectFieldName<'manualTrigger'>, FlatFieldMetadata> => ({
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

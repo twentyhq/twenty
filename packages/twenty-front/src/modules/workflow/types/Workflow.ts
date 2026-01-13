@@ -155,11 +155,11 @@ export type WorkflowWithCurrentVersion = Workflow & {
   currentVersion: WorkflowVersion;
 };
 
-export type WorkflowManualTriggerEntity = {
+export type ManualTriggerEntity = {
   id: string;
   settings: WorkflowManualTriggerSettings;
   workflowVersionId: string;
   workflowId: string;
   workflowName: string;
-  __typename: 'WorkflowManualTrigger';
+  __typename: 'ManualTrigger';
 };
