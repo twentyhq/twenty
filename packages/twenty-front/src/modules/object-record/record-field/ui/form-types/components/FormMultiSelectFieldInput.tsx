@@ -37,6 +37,7 @@ type FormMultiSelectFieldInputProps = {
   placeholder?: string;
   testId?: string;
   hint?: string;
+  dropdownWidth?: number;
 };
 
 const StyledDisplayModeReadonlyContainer = styled.div`
@@ -86,6 +87,7 @@ export const FormMultiSelectFieldInput = ({
   placeholder,
   testId,
   hint,
+  dropdownWidth,
 }: FormMultiSelectFieldInputProps) => {
   const instanceId = useId();
   const theme = useTheme();
@@ -269,7 +271,9 @@ export const FormMultiSelectFieldInput = ({
                   onCancel={onCancel}
                   onOptionSelected={onOptionSelected}
                   values={selectedNames}
-                  dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+                  dropdownWidth={
+                    dropdownWidth ?? GenericDropdownContentWidth.ExtraLarge
+                  }
                 />
               </OverlayContainer>
             )}

@@ -117,7 +117,7 @@ describe('WorkspaceEntityManager', () => {
       shortcut: null,
       standardId: null,
       standardOverrides: null,
-      applicationId: null,
+      applicationId: 'test-application-id',
       isLabelSyncedWithName: false,
       isUIReadOnly: false,
       duplicateCriteria: null,
@@ -161,7 +161,7 @@ describe('WorkspaceEntityManager', () => {
       relationTargetFieldMetadataId: null,
       relationTargetObjectMetadataId: null,
       morphId: null,
-      applicationId: null,
+      applicationId: 'application-id',
     };
 
     const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
