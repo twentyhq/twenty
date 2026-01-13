@@ -1,0 +1,558 @@
+# Plan Workflow State - Full History
+# Managed by Claude Code hooks
+#
+# This file tracks ALL plans ever created, including completed/archived.
+# For active work only, see pipeline.yaml
+
+version: 1
+updated: 2026-01-13T16:30:00Z
+
+# Current active session (managed by orchestrator)
+# This block tracks the active work session for resume capability
+current_session:
+  id: "2026-01-13-session-n8n-workflow-action-design"
+  started: 2026-01-13T15:00:00Z
+  ended: 2026-01-13T16:30:00Z
+  plan: "2026-01-13-n8n-workflow-action"
+  plan_path: "docs/plans/2026-01-13-n8n-workflow-action.md"
+  status: completed
+  current_step: null
+  skills_loaded:
+    - brainstorming
+    - writing-plans
+    - frontend-design
+  last_checkpoint: 2026-01-13T16:30:00Z
+  tasks_completed:
+    - "Brainstormed n8n workflow action requirements with user"
+    - "Explored Twenty CRM workflow system architecture"
+    - "Identified 3 implementation approaches (via MCP, direct webhook, direct API)"
+    - "Chose Option B: Direct webhook URL (simplest, no dependencies)"
+    - "Designed backend action structure matching existing patterns"
+    - "Designed frontend form component matching Twenty UI"
+    - "Created 18-task implementation plan with exact file paths and code"
+    - "Committed plan to docs/plans/2026-01-13-n8n-workflow-action.md"
+  tasks_remaining: []
+
+# State definitions:
+#   draft           - Initial idea, requirements unclear
+#   ready           - Requirements clear, can be started
+#   started         - Work has begun
+#   in_progress     - Actively being worked on
+#   blocked         - Cannot proceed, waiting on dependency
+#   stopped         - Paused, needs manual intervention
+#   ready_for_test  - Code complete, needs testing
+#   ready_for_docs  - Tests pass, needs documentation
+#   completed       - Done, archived
+
+plans:
+  # === COMPLETED ===
+  2026-01-11-journey-engine-remediation:
+    status: completed
+    path: docs/plans/2026-01-11-journey-engine-remediation.md
+    created_at: 2026-01-11T19:00:00Z
+    ready_at: 2026-01-11T19:30:00Z
+    started_at: 2026-01-11T20:00:00Z
+    in_progress_at: 2026-01-11T20:05:00Z
+    ready_for_test_at: 2026-01-11T21:30:00Z
+    ready_for_docs_at: 2026-01-11T21:45:00Z
+    completed_at: 2026-01-11T22:00:00Z
+    implementation_doc: docs/decisions/002-hookify-enforcement-mode.md
+    tracks_executed:
+      - "Phase 0: Prerequisites"
+      - "Track A: Engine Backend"
+      - "Track B: Database Migrations"
+      - "Track C: Editor"
+      - "Track D: Integration Tests"
+    migrations_applied:
+      - supabase/migrations/20260111202530_journey_schema_tables.sql
+      - supabase/migrations/20260111202708_journey_rpc_functions.sql
+      - supabase/migrations/20260111204246_journey_cloudevents.sql
+      - supabase/migrations/20260111204415_workspace_compound_fk.sql
+      - supabase/migrations/20260111204454_journey_timeout_processing.sql
+      - supabase/migrations/20260111204631_journey_performance_indexes.sql
+    learnings_captured: 5
+
+  2026-01-09-auth-gateway-implementation:
+    status: completed
+    path: docs/plans/2026-01-09-auth-gateway-implementation.md
+    created_at: 2026-01-09T08:00:00Z
+    ready_at: 2026-01-09T08:30:00Z
+    started_at: 2026-01-09T09:00:00Z
+    in_progress_at: 2026-01-09T09:05:00Z
+    ready_for_test_at: 2026-01-09T12:00:00Z
+    ready_for_docs_at: 2026-01-09T13:00:00Z
+    completed_at: 2026-01-09T14:05:00Z
+    implementation_doc: docs/decisions/001-auth-gateway-architecture.md
+    pr: https://github.com/SXTNmedia21/ai-layer/pull/1
+
+  # === IN PROGRESS ===
+  2026-01-09-error-tracking-implementation:
+    status: ready_for_test
+    path: docs/plans/2026-01-09-error-tracking-implementation.md
+    created_at: 2026-01-09T06:00:00Z
+    ready_at: 2026-01-09T06:30:00Z
+    started_at: 2026-01-09T07:00:00Z
+    in_progress_at: 2026-01-09T07:05:00Z
+    blocked_at: null
+    stopped_at: null
+    ready_for_test_at: 2026-01-09T15:00:00Z
+    ready_for_docs_at: null
+    completed_at: null
+    implementation_doc: deployments/ctx-mcp/src/services/error-tracking/sentry.service.ts
+
+  2026-01-09-profile-id-migration:
+    status: in_progress
+    path: docs/plans/2026-01-09-profile-id-migration.md
+    created_at: 2026-01-09T08:00:00Z
+    ready_at: 2026-01-09T08:10:00Z
+    started_at: 2026-01-09T08:13:00Z
+    in_progress_at: 2026-01-09T08:15:00Z
+    blocked_at: null
+    stopped_at: null
+    ready_for_test_at: null
+    ready_for_docs_at: null
+    completed_at: null
+    implementation_doc: null
+
+  # === READY ===
+  2026-01-09-global-env-management:
+    status: ready_for_test
+    path: docs/plans/2026-01-09-global-env-management.md
+    created_at: 2026-01-09T10:00:00Z
+    ready_at: 2026-01-09T13:19:00Z
+    started_at: 2026-01-09T15:35:00Z
+    in_progress_at: 2026-01-09T15:35:00Z
+    blocked_at: null
+    stopped_at: null
+    ready_for_test_at: 2026-01-09T17:47:00Z
+    ready_for_docs_at: null
+    completed_at: null
+    implementation_doc: docs/guides/environment-setup.md
+
+  2026-01-09-dashboard-docker-integration:
+    status: ready_for_test
+    path: docs/plans/2026-01-09-dashboard-docker-integration.md
+    created_at: 2026-01-09T07:00:00Z
+    ready_at: 2026-01-09T08:05:00Z
+    started_at: 2026-01-09T09:00:00Z
+    in_progress_at: 2026-01-09T09:05:00Z
+    blocked_at: null
+    stopped_at: null
+    ready_for_test_at: 2026-01-09T15:00:00Z
+    ready_for_docs_at: null
+    completed_at: null
+    implementation_doc: docker-compose.yml
+
+  2026-01-09-auth-gateway-testing:
+    status: ready
+    path: docs/plans/2026-01-09-auth-gateway-testing.md
+    created_at: 2026-01-09T13:00:00Z
+    ready_at: 2026-01-09T13:55:00Z
+    started_at: null
+    in_progress_at: null
+    blocked_at: null
+    stopped_at: null
+    ready_for_test_at: null
+    ready_for_docs_at: null
+    completed_at: null
+    implementation_doc: null
+
+  2026-01-09-engine-validation-tests:
+    status: ready_for_test
+    path: docs/plans/2026-01-09-engine-validation-tests.md
+    created_at: 2026-01-09T05:00:00Z
+    ready_at: 2026-01-09T06:14:00Z
+    started_at: 2026-01-09T07:00:00Z
+    in_progress_at: 2026-01-09T07:05:00Z
+    blocked_at: null
+    stopped_at: null
+    ready_for_test_at: 2026-01-09T15:00:00Z
+    ready_for_docs_at: null
+    completed_at: null
+    implementation_doc: deployments/ctx-mcp/tests/
+
+  # === READY ===
+  2026-01-12-journey-engine-verification:
+    status: ready
+    path: docs/plans/2026-01-12-journey-engine-verification.md
+    created_at: 2026-01-12T20:30:00Z
+    ready_at: 2026-01-12T20:45:00Z
+    started_at: null
+    in_progress_at: null
+    blocked_at: null
+    stopped_at: null
+    ready_for_test_at: null
+    ready_for_docs_at: null
+    completed_at: null
+    implementation_doc: null
+    tasks_total: 9
+    purpose: "Verify Journey Engine remediation complete before production unblock"
+
+  2026-01-10-context-lab-design:
+    status: ready
+    path: docs/plans/2026-01-10-context-lab-design.md
+    created_at: 2026-01-10T15:00:00Z
+    ready_at: 2026-01-11T23:45:00Z
+    started_at: null
+    in_progress_at: null
+    blocked_at: null
+    stopped_at: null
+    ready_for_test_at: null
+    ready_for_docs_at: null
+    completed_at: null
+    implementation_doc: null
+    prerequisites_completed:
+      - "Context Engine Specialist agent created"
+      - "Infrastructure audit complete (INFRASTRUCTURE-MAP.md v1.1)"
+      - "7 Supabase schemas documented"
+      - "8 event handlers identified"
+      - "6 event stores mapped"
+    tasks_total: 14
+    tasks_remaining: 14
+
+  2026-01-12-design-agent-skills:
+    status: completed
+    path: docs/plans/2026-01-12-design-agent-skills.md
+    created_at: 2026-01-12T21:00:00Z
+    ready_at: 2026-01-12T21:05:00Z
+    started_at: 2026-01-12T21:05:00Z
+    in_progress_at: 2026-01-12T21:10:00Z
+    blocked_at: null
+    stopped_at: null
+    ready_for_test_at: null
+    ready_for_docs_at: null
+    completed_at: 2026-01-12T21:30:00Z
+    implementation_doc: null
+    files_created:
+      - ".claude/agents/design-specialist.md"
+      - ".claude/skills/ui-greenfield/SKILL.md"
+      - ".claude/skills/ui-brownfield/SKILL.md"
+      - ".claude/skills/ui-component-spec/SKILL.md"
+      - ".claude/skills/ui-design-setup/SKILL.md"
+    purpose: "AI-assisted UI design for SmartOut Figma→Bubble.io pipeline"
+
+  2026-01-12-agent-ui-testing-plan:
+    status: completed
+    path: engines/journey/docs/plans/2026-01-12-agent-ui-testing-plan.md
+    created_at: 2026-01-12T17:00:00Z
+    ready_at: 2026-01-12T17:30:00Z
+    started_at: 2026-01-12T18:00:00Z
+    in_progress_at: 2026-01-12T18:05:00Z
+    blocked_at: null
+    stopped_at: null
+    ready_for_test_at: 2026-01-12T23:00:00Z
+    ready_for_docs_at: null
+    completed_at: 2026-01-13T00:30:00Z
+    implementation_doc: engines/journey/editor/e2e/fixtures.ts
+    files_modified:
+      - engines/journey/editor/e2e/fixtures.ts
+      - engines/journey/editor/e2e/connections.spec.ts
+    files_created:
+      - engines/journey/editor/e2e/visual-regression.spec.ts
+      - engines/journey/editor/e2e/visual-regression.spec.ts-snapshots/*.png (6 images)
+    tests_passing: 39/39 (100%)
+    purpose: "Complete Journey Editor E2E test suite with visual regression"
+
+  # === READY (Twenty CRM) ===
+  2026-01-13-n8n-workflow-action:
+    status: ready
+    path: docs/plans/2026-01-13-n8n-workflow-action.md
+    created_at: 2026-01-13T16:30:00Z
+    ready_at: 2026-01-13T16:30:00Z
+    started_at: null
+    in_progress_at: null
+    blocked_at: null
+    stopped_at: null
+    ready_for_test_at: null
+    ready_for_docs_at: null
+    completed_at: null
+    implementation_doc: null
+    tasks_total: 18
+    purpose: "Add n8n workflow action to Twenty CRM for triggering n8n workflows via webhook"
+    design_decisions:
+      - "Fire-and-forget pattern (no waiting for response)"
+      - "Direct webhook URL approach (simplest, no MCP dependency)"
+      - "JSON template payload with variable placeholders"
+      - "10 second HTTP timeout for initial request"
+    files_to_create:
+      backend:
+        - "packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/n8n/"
+      shared:
+        - "packages/twenty-shared/src/workflow/schemas/n8n-action-schema.ts"
+        - "packages/twenty-shared/src/workflow/schemas/n8n-action-settings-schema.ts"
+      frontend:
+        - "packages/twenty-front/src/modules/workflow/workflow-steps/workflow-actions/n8n-action/"
+        - "packages/twenty-front/src/modules/workflow/workflow-steps/workflow-actions/constants/actions/N8nAction.ts"
+
+  # === DRAFT ===
+  2026-01-09-development-state-machine-design:
+    status: draft
+    path: docs/plans/2026-01-09-development-state-machine-design.md
+    created_at: 2026-01-09T14:25:00Z
+    ready_at: null
+    started_at: null
+    in_progress_at: null
+    blocked_at: null
+    stopped_at: null
+    ready_for_test_at: null
+    ready_for_docs_at: null
+    completed_at: null
+    implementation_doc: null
+
+  2026-01-09-error-infrastructure-extension-design:
+    status: draft
+    path: docs/plans/2026-01-09-error-infrastructure-extension-design.md
+    created_at: 2026-01-09T14:09:00Z
+    ready_at: null
+    started_at: null
+    in_progress_at: null
+    blocked_at: null
+    stopped_at: null
+    ready_for_test_at: null
+    ready_for_docs_at: null
+    completed_at: null
+    implementation_doc: null
+
+# Session history
+sessions:
+  - id: "2026-01-13-session-n8n-workflow-action-design"
+    started: 2026-01-13T15:00:00Z
+    ended: 2026-01-13T16:30:00Z
+    plan: "2026-01-13-n8n-workflow-action"
+    docs_checked:
+      - packages/twenty-server/src/modules/workflow/workflow-executor/factories/workflow-action.factory.ts
+      - packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type.ts
+      - packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum.ts
+      - packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/http-request/
+      - packages/twenty-shared/src/workflow/schemas/http-request-action-schema.ts
+      - packages/twenty-front/src/modules/workflow/types/Workflow.ts
+      - packages/twenty-front/src/modules/workflow/workflow-steps/workflow-actions/constants/
+    docs_created:
+      - docs/plans/2026-01-13-n8n-workflow-action.md
+    docs_updated: []
+    learnings_captured: 0
+    outcome: "SUCCESS - Created comprehensive 18-task implementation plan for n8n workflow action"
+
+  - id: "2026-01-13-session-twenty-crm-security-fixes"
+    started: 2026-01-13T14:00:00Z
+    ended: 2026-01-13T14:30:00Z
+    plan: null
+    docs_checked:
+      - docker-compose.yml
+      - docker-compose.dev.yml
+      - scripts/env-manager.sh
+      - scripts/rotate-linear-keys.sh
+      - scripts/test-email.sh
+      - scripts/health-check.sh
+      - scripts/test-s3-connection.sh
+      - scripts/export-env.sh
+      - docs/plans/2026-01-12-twenty-crm-infrastructure.md
+    docs_created: []
+    docs_updated:
+      - scripts/rotate-linear-keys.sh (safe env parser)
+      - scripts/test-email.sh (safe env parser)
+    learnings_captured: 1
+    outcome: "SUCCESS - Fixed 2 critical source command injection vulnerabilities in shell scripts"
+
+  - id: "2026-01-13-session-twenty-crm-code-review"
+    started: 2026-01-13T11:30:00Z
+    ended: 2026-01-13T12:30:00Z
+    plan: null
+    docs_checked:
+      - .mcp.json
+      - .gitignore
+      - nginx/nginx.conf
+      - packages/twenty-shared/tsconfig.json
+      - packages/twenty-shared/tsconfig.lib.json
+      - packages/twenty-shared/vite.config.ts
+    docs_created:
+      - .mcp.json.example
+    docs_updated:
+      - .mcp.json (removed hardcoded API key)
+      - .gitignore (added .mcp.json, tmpclaude-*, nul)
+      - nginx/nginx.conf (reverted rate limits)
+      - .nvmrc (restored)
+      - packages/twenty-shared/tsconfig.json (reverted)
+      - packages/twenty-shared/tsconfig.lib.json (reverted)
+      - packages/twenty-shared/vite.config.ts (reverted)
+    learnings_captured: 2
+    outcome: "SUCCESS - Fixed security vulnerability (exposed API key), reverted unplanned changes, cleaned up repo"
+
+  - id: "2026-01-12-session-journey-editor-e2e-completion"
+    started: 2026-01-12T22:00:00Z
+    ended: 2026-01-13T00:30:00Z
+    plan: "2026-01-12-agent-ui-testing-plan"
+    docs_checked:
+      - engines/journey/docs/plans/2026-01-12-agent-ui-testing-plan.md
+      - engines/journey/editor/e2e/fixtures.ts
+      - engines/journey/editor/e2e/connections.spec.ts
+    docs_created:
+      - engines/journey/editor/e2e/visual-regression.spec.ts
+      - engines/journey/editor/e2e/visual-regression.spec.ts-snapshots/*.png (6 baseline images)
+    docs_updated:
+      - engines/journey/editor/e2e/fixtures.ts (dialog timing, case-insensitive selectors)
+      - engines/journey/editor/e2e/connections.spec.ts (unicode character fix)
+      - deployments/ctx-mcp/src/services/error-tracking/*.ts (pure formatting)
+    learnings_captured: 3
+    commits:
+      - sha: "577bd26"
+        message: "test(journey-editor): fix connection dialog tests and generate visual baselines"
+        files: 4
+      - sha: "0b95c29"
+        message: "style(ctx-mcp): apply consistent code formatting"
+        files: 13
+    outcome: "SUCCESS - 100% E2E test pass rate (39/39), visual regression baselines generated"
+
+  - id: "2026-01-12-session-design-agent-skills"
+    started: 2026-01-12T21:00:00Z
+    ended: 2026-01-12T21:30:00Z
+    plan: "2026-01-12-design-agent-skills"
+    docs_checked:
+      - development/bubble-front-end/SmartOut-UI-Design-PRD.md
+    docs_created:
+      - .claude/agents/design-specialist.md
+      - .claude/skills/ui-greenfield/SKILL.md
+      - .claude/skills/ui-brownfield/SKILL.md
+      - .claude/skills/ui-component-spec/SKILL.md
+      - .claude/skills/ui-design-setup/SKILL.md
+      - docs/plans/2026-01-12-design-agent-skills.md
+    docs_updated: []
+    learnings_captured: 0
+    outcome: "SUCCESS - Design specialist agent + 4 UI skills created and working"
+
+  - id: "2026-01-12-session-journey-verification-plan"
+    started: 2026-01-12T20:15:00Z
+    ended: 2026-01-12T20:45:00Z
+    plan: "2026-01-12-journey-engine-verification"
+    docs_checked:
+      - engines/journey/README.md
+      - engines/journey/docs/plans/2026-01-11-journey-engine-remediation.md
+      - deployments/journey-mcp/IMPLEMENTATION_STATUS.md
+    docs_created:
+      - docs/plans/2026-01-12-journey-engine-verification.md
+    docs_updated: []
+    learnings_captured: 0
+    outcome: "SUCCESS - Created verification plan for Journey Engine production unblock"
+
+  - id: "2026-01-12-session-journey-editor-testing"
+    started: 2026-01-12T17:00:00Z
+    ended: 2026-01-12T18:30:00Z
+    plan: "2026-01-12-agent-ui-testing-plan"
+    docs_checked:
+      - engines/journey/docs/plans/2026-01-12-agent-ui-testing-plan.md
+      - engines/journey/editor/src/hooks/useJourneySave.ts
+      - engines/journey/editor/src/hooks/useJourneyTest.ts
+      - engines/journey/editor/e2e/fixtures.ts
+    docs_created: []
+    docs_updated:
+      - engines/journey/editor/src/hooks/useJourneySave.ts
+      - engines/journey/editor/playwright.config.ts
+      - engines/journey/editor/e2e/fixtures.ts
+    learnings_captured: 1
+    outcome: "SUCCESS - Fixed Vite ESM type imports, all 8 E2E tests passing"
+
+  - id: "2026-01-12-session-hooks-agents-fix"
+    started: 2026-01-12T19:00:00Z
+    ended: 2026-01-12T19:45:00Z
+    plan: null
+    docs_checked:
+      - .claude/settings.json
+      - .claude/hooks/scripts/session-start.sh
+      - .claude/hooks/scripts/session-end.sh
+      - .claude/agents/context-engine-specialist.md
+      - .claude/agents/orchestrator.md
+    docs_created:
+      - .claude/commands/end-session.md
+    docs_updated:
+      - .claude/settings.json
+      - .claude/agents/context-engine-specialist.md
+      - .claude/agents/orchestrator.md
+      - .claude/templates/agent-template.md
+      - .claude/hooks/scripts/session-start.sh
+    learnings_captured: 0
+    outcome: "SUCCESS - Fixed hooks wiring and agent discovery, created end-session command"
+
+  - id: "2026-01-12-session-hook-maintenance"
+    started: 2026-01-12T05:40:00Z
+    ended: 2026-01-12T06:00:00Z
+    plan: null
+    docs_checked: []
+    docs_created:
+      - .claude/hooks/scripts/test-hooks.sh
+    docs_updated:
+      - .claude/hooks/scripts/session-start.sh
+      - .claude/hooks/scripts/session-end.sh
+    learnings_captured: 0
+    outcome: "SUCCESS - Fixed hook shell compatibility issues and created test utility"
+
+  - id: "2026-01-11-session-context-engine-specialist"
+    started: 2026-01-11T21:00:00Z
+    ended: 2026-01-12T00:00:00Z
+    plan: null
+    instruction_doc: engines/context/INSTRUCTION_CREATE_CONTEXT_ENGINE_AGENT.md
+    tasks_completed: 7
+    tasks_total: 7
+    docs_checked:
+      - docs/architecture/context-engine/GAP-ANALYSIS.md
+      - docs/architecture/context-engine/INFRASTRUCTURE-MAP.md
+      - docs/AI-LAYER-PRD.md
+      - CODE-OF-CONDUCT.md
+    docs_created:
+      - .claude/agents/context-engine-specialist.md
+      - .claude/learnings/context-engine/LEARNINGS.md
+      - .claude/learnings/context-engine/QUERIES.md
+      - .claude/learnings/context-engine/STATUS.json
+      - .claude/learnings/INDEX.md
+    docs_updated:
+      - docs/architecture/context-engine/INFRASTRUCTURE-MAP.md (v1.1)
+      - docs/architecture/context-engine/GAP-ANALYSIS.md (Section 8-9)
+    infrastructure_audited:
+      - bubble: true
+      - n8n: true
+      - supabase: true
+      - event_handlers: 8
+      - event_stores: 6
+      - docling_workflows: 5
+      - schemas: 7
+      - migrations: 258
+    learnings_captured: 7
+    outcome: "SUCCESS - Context Engine Specialist agent fully set up"
+
+  - id: "2026-01-09-session-auth-gateway"
+    started: 2026-01-09T09:00:00Z
+    ended: 2026-01-09T14:05:00Z
+    plan: "2026-01-09-auth-gateway-implementation"
+    docs_checked:
+      - docs/architecture/ai-layer-architecture.md
+      - deployments/dashboard/README.md
+    docs_missing: []
+
+  - id: "2026-01-09-session-state-machine"
+    started: 2026-01-09T14:20:00Z
+    ended: null
+    plan: "2026-01-09-development-state-machine-design"
+    docs_checked:
+      - docs/architecture/ai-layer-architecture.md
+      - .claude/templates/plan.md
+      - .claude/templates/STORY.md
+    docs_missing: []
+
+  - id: "2026-01-09-session-global-env"
+    started: 2026-01-09T15:35:00Z
+    ended: 2026-01-09T17:47:00Z
+    plan: "2026-01-09-global-env-management"
+    docs_checked:
+      - CLAUDE.md
+      - docker-compose.yml
+      - scripts/setup-env.ps1
+      - scripts/validate-env.sh
+    docs_missing: []
+    artifacts_created:
+      - .env.template
+      - scripts/setup-env.ps1
+      - scripts/validate-env.sh
+      - deployments/ctx-mcp/.env.ctx.example
+      - deployments/kb-mcp/.env.kb.example
+      - deployments/salary-mcp/.env.salary.example
+      - docs/guides/environment-setup.md
+      - docs/deployment-checklist.md
