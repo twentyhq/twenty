@@ -1,6 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 
+import { AIChatModule } from 'src/engine/api/rest/ai-chat/ai-chat.module';
 import { MetadataQueryBuilderModule } from 'src/engine/api/rest/metadata/query-builder/metadata-query-builder.module';
 import { RestApiMetadataService } from 'src/engine/api/rest/metadata/rest-api-metadata.service';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
@@ -12,6 +13,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 
 @Module({
   imports: [
+    AIChatModule,
     MetadataQueryBuilderModule,
     WorkspaceCacheStorageModule,
     AuthModule,

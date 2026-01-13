@@ -2,6 +2,9 @@ import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
+import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
+
 import { AGENT_CONFIGS } from '../constants/agents';
 import {
   activeAgentState,
@@ -55,16 +58,23 @@ export const useAIChat = () => {
         };
 
         // Call backend API
-        const response = await fetch('/api/ai-chat/message', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const tokenPair = getTokenPair();
+        const token = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
+
+        const response = await fetch(
+          `${REACT_APP_SERVER_BASE_URL}/rest/ai-chat/message`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify({
+              content,
+              context,
+            }),
           },
-          body: JSON.stringify({
-            content,
-            context,
-          }),
-        });
+        );
 
         if (!response.ok) {
           throw new Error('Failed to send message');

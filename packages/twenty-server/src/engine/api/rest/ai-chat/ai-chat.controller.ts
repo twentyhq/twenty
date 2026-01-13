@@ -2,7 +2,6 @@ import { Controller, Post, Body, UseGuards, Req, Logger } from '@nestjs/common';
 
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { AIChatService } from './ai-chat.service';
 import { SendMessageDto } from './dtos/send-message.dto';
@@ -14,8 +13,8 @@ type AgentType =
   | 'context'
   | 'content';
 
-@Controller('ai-chat')
-@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
+@Controller('rest/ai-chat')
+@UseGuards(JwtAuthGuard)
 export class AIChatController {
   private readonly logger = new Logger(AIChatController.name);
 
