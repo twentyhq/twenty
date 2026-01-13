@@ -3,6 +3,7 @@ import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -47,23 +48,29 @@ export const useOpenRecordInCommandMenu = () => {
         isNewRecord?: boolean;
         resetNavigationStack?: boolean;
       }) => {
-        const navigationStack = getSnapshotValue(
-          snapshot,
-          commandMenuNavigationStackState,
-        );
+        const isCommandMenuOpened = snapshot
+          .getLoadable(isCommandMenuOpenedState)
+          .getValue();
 
-        const currentNavigationStackItem = navigationStack.at(-1);
-
-        if (isDefined(currentNavigationStackItem)) {
-          const currentRecordId = getSnapshotValue(
+        if (isCommandMenuOpened && !resetNavigationStack) {
+          const navigationStack = getSnapshotValue(
             snapshot,
-            viewableRecordIdComponentState.atomFamily({
-              instanceId: currentNavigationStackItem.pageId,
-            }),
+            commandMenuNavigationStackState,
           );
 
-          if (currentRecordId === recordId) {
-            return;
+          const currentNavigationStackItem = navigationStack.at(-1);
+
+          if (isDefined(currentNavigationStackItem)) {
+            const currentRecordId = getSnapshotValue(
+              snapshot,
+              viewableRecordIdComponentState.atomFamily({
+                instanceId: currentNavigationStackItem.pageId,
+              }),
+            );
+
+            if (currentRecordId === recordId) {
+              return;
+            }
           }
         }
 
