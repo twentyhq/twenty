@@ -8,14 +8,12 @@ export enum DashboardExceptionCode {
   DASHBOARD_NOT_FOUND = 'DASHBOARD_NOT_FOUND',
   DASHBOARD_DUPLICATION_FAILED = 'DASHBOARD_DUPLICATION_FAILED',
   PAGE_LAYOUT_NOT_FOUND = 'PAGE_LAYOUT_NOT_FOUND',
-  DASHBOARD_RESTORATION_TO_SOFT_DELETED_STATE_FAILED = 'DASHBOARD_RESTORATION_TO_SOFT_DELETED_STATE_FAILED',
 }
 
 export enum DashboardExceptionMessageKey {
   DASHBOARD_NOT_FOUND = 'DASHBOARD_NOT_FOUND',
   DASHBOARD_DUPLICATION_FAILED = 'DASHBOARD_DUPLICATION_FAILED',
   PAGE_LAYOUT_NOT_FOUND = 'PAGE_LAYOUT_NOT_FOUND',
-  DASHBOARD_RESTORATION_TO_SOFT_DELETED_STATE_FAILED = 'DASHBOARD_RESTORATION_TO_SOFT_DELETED_STATE_FAILED',
 }
 
 const getDashboardExceptionUserFriendlyMessage = (
@@ -28,8 +26,6 @@ const getDashboardExceptionUserFriendlyMessage = (
       return msg`Failed to duplicate dashboard.`;
     case DashboardExceptionCode.PAGE_LAYOUT_NOT_FOUND:
       return msg`Page layout not found.`;
-    case DashboardExceptionCode.DASHBOARD_RESTORATION_TO_SOFT_DELETED_STATE_FAILED:
-      return msg`Failed to restore dashboard(s) to soft deleted state.`;
     default:
       assertUnreachable(code);
   }
@@ -59,8 +55,6 @@ export const generateDashboardExceptionMessage = (
       return `Failed to duplicate dashboard: ${value}`;
     case DashboardExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND:
       return `Page layout for dashboard "${value}" not found`;
-    case DashboardExceptionMessageKey.DASHBOARD_RESTORATION_TO_SOFT_DELETED_STATE_FAILED:
-      return `Failed to restore dashboard(s) to soft deleted state: ${value}`;
     default:
       assertUnreachable(key);
   }
