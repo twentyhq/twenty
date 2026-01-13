@@ -6,6 +6,7 @@ import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupB
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformOneDimensionalGroupByToLineChartData';
 import { transformTwoDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformTwoDimensionalGroupByToLineChartData';
+import { fillSelectGapsInChartData } from '@/page-layout/widgets/graph/utils/fillSelectGapsInChartData';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
@@ -16,6 +17,7 @@ import {
   isDefined,
   isFieldMetadataDateKind,
 } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   AxisNameDisplay,
   type LineChartConfiguration,
@@ -152,6 +154,19 @@ export const transformGroupByDataToLineChartData = ({
   const showDataLabels = configuration.displayDataLabel ?? false;
   const showLegend = configuration.displayLegend ?? true;
 
+  const omitNullValues = configuration.omitNullValues ?? false;
+  const isSingleSelectField = groupByFieldX.type === FieldMetadataType.SELECT;
+  const shouldApplySelectGapFill = isSingleSelectField && !omitNullValues;
+
+  const resultsWithSelectGaps = shouldApplySelectGapFill
+    ? fillSelectGapsInChartData({
+        data: filteredResults,
+        selectOptions: groupByFieldX.options,
+        aggregateKeys: [aggregateField.name],
+        hasSecondDimension: isDefined(groupByFieldY),
+      })
+    : filteredResults;
+
   const isDateField = isFieldMetadataDateKind(groupByFieldX.type);
   const isNestedDateField = isRelationNestedFieldDateKind({
     relationField: groupByFieldX,
@@ -190,7 +205,7 @@ export const transformGroupByDataToLineChartData = ({
 
   const baseResult = isDefined(groupByFieldY)
     ? transformTwoDimensionalGroupByToLineChartData({
-        rawResults: filteredResults,
+        rawResults: resultsWithSelectGaps,
         groupByFieldX,
         groupByFieldY,
         aggregateField,
@@ -202,7 +217,7 @@ export const transformGroupByDataToLineChartData = ({
         firstDayOfTheWeek,
       })
     : transformOneDimensionalGroupByToLineChartData({
-        rawResults: filteredResults,
+        rawResults: resultsWithSelectGaps,
         groupByFieldX,
         aggregateField,
         configuration: sanitizedConfiguration,

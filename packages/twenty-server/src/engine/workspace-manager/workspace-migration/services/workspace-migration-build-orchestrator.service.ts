@@ -475,6 +475,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
             buildOptions,
             dependencyOptimisticFlatEntityMaps: {
               flatRoleMaps: optimisticAllFlatEntityMaps.flatRoleMaps,
+              flatObjectMetadataMaps:
+                optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
             },
             workspaceId,
           },
@@ -1050,15 +1052,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.pageLayoutWidget.update,
           ///
 
-          // Row level permission predicates
-          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
-            .delete,
-          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
-            .create,
-          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
-            .update,
-          ///
-
           // Row level permission predicate groups
           ...aggregatedOrchestratorActionsReport
             .rowLevelPermissionPredicateGroup.delete,
@@ -1066,6 +1059,15 @@ export class WorkspaceMigrationBuildOrchestratorService {
             .rowLevelPermissionPredicateGroup.create,
           ...aggregatedOrchestratorActionsReport
             .rowLevelPermissionPredicateGroup.update,
+          ///
+
+          // Row level permission predicates
+          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
+            .delete,
+          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
+            .create,
+          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
+            .update,
           ///
         ],
         workspaceId,

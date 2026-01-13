@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`settingsDataModelObjectAboutFormSchema fails when isLabelSyncedWithName is not a boolean 1`] = `
 [ZodError: [

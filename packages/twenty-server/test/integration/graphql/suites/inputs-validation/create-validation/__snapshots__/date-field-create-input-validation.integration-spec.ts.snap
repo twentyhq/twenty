@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Create input validation - DATE Gql create input - failure DATE - should fail with : {"dateField":"malformed-date"} 1`] = `"Invalid value 'malformed-date' for date or date-time field "dateField""`;
 
