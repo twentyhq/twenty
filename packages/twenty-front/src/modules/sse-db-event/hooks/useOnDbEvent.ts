@@ -1,5 +1,5 @@
-import { ON_DB_EVENT } from '@/subscription/graphql/subscriptions/onDbEvent';
-import { useSseClient } from '@/subscription/hooks/useSseClient.util';
+import { ON_DB_EVENT } from '@/sse-db-event/graphql/subscriptions/onDbEvent';
+import { useSseClient } from '@/sse-db-event/hooks/useSseClient.util';
 import { useEffect } from 'react';
 import {
   type Subscription,
