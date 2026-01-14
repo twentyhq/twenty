@@ -2,7 +2,7 @@ import { GraphColor } from 'src/modules/dashboard/chart-data/types/graph-color.e
 import { parseGraphColor } from 'src/modules/dashboard/chart-data/utils/parse-graph-color.util';
 
 describe('parseGraphColor', () => {
-  it('should return valid GraphColor for valid color string', () => {
+  it('should return valid GraphColor for valid lowercase color string', () => {
     expect(parseGraphColor('red')).toBe(GraphColor.RED);
     expect(parseGraphColor('blue')).toBe(GraphColor.BLUE);
     expect(parseGraphColor('green')).toBe(GraphColor.GREEN);
@@ -27,10 +27,11 @@ describe('parseGraphColor', () => {
     expect(parseGraphColor('#FF0000')).toBeUndefined();
   });
 
-  it('should be case sensitive', () => {
-    expect(parseGraphColor('RED')).toBeUndefined();
-    expect(parseGraphColor('Blue')).toBeUndefined();
-    expect(parseGraphColor('GREEN')).toBeUndefined();
+  it('should be case insensitive and normalize to uppercase', () => {
+    expect(parseGraphColor('RED')).toBe(GraphColor.RED);
+    expect(parseGraphColor('Blue')).toBe(GraphColor.BLUE);
+    expect(parseGraphColor('GREEN')).toBe(GraphColor.GREEN);
+    expect(parseGraphColor('red')).toBe(GraphColor.RED);
   });
 
   it('should return valid GraphColor for all supported colors', () => {
@@ -66,7 +67,7 @@ describe('parseGraphColor', () => {
       const result = parseGraphColor(color);
 
       expect(result).toBeDefined();
-      expect(result).toBe(color);
+      expect(result).toBe(color.toUpperCase());
     }
   });
 });

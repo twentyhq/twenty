@@ -2,41 +2,41 @@ import { registerEnumType } from '@nestjs/graphql';
 
 export enum GraphColor {
   // Reds
-  RED = 'red',
-  RUBY = 'ruby',
-  CRIMSON = 'crimson',
-  TOMATO = 'tomato',
+  RED = 'RED',
+  RUBY = 'RUBY',
+  CRIMSON = 'CRIMSON',
+  TOMATO = 'TOMATO',
 
   // Oranges & Yellows
-  ORANGE = 'orange',
-  AMBER = 'amber',
-  YELLOW = 'yellow',
+  ORANGE = 'ORANGE',
+  AMBER = 'AMBER',
+  YELLOW = 'YELLOW',
 
   // Greens
-  LIME = 'lime',
-  GRASS = 'grass',
-  GREEN = 'green',
-  JADE = 'jade',
-  MINT = 'mint',
+  LIME = 'LIME',
+  GRASS = 'GRASS',
+  GREEN = 'GREEN',
+  JADE = 'JADE',
+  MINT = 'MINT',
 
   // Cyans & Blues
-  TURQUOISE = 'turquoise',
-  CYAN = 'cyan',
-  SKY = 'sky',
-  BLUE = 'blue',
+  TURQUOISE = 'TURQUOISE',
+  CYAN = 'CYAN',
+  SKY = 'SKY',
+  BLUE = 'BLUE',
 
   // Purples & Pinks
-  IRIS = 'iris',
-  VIOLET = 'violet',
-  PURPLE = 'purple',
-  PLUM = 'plum',
-  PINK = 'pink',
+  IRIS = 'IRIS',
+  VIOLET = 'VIOLET',
+  PURPLE = 'PURPLE',
+  PLUM = 'PLUM',
+  PINK = 'PINK',
 
   // Earth tones & Neutrals
-  BRONZE = 'bronze',
-  GOLD = 'gold',
-  BROWN = 'brown',
-  GRAY = 'gray',
+  BRONZE = 'BRONZE',
+  GOLD = 'GOLD',
+  BROWN = 'BROWN',
+  GRAY = 'GRAY',
 }
 
 registerEnumType(GraphColor, {

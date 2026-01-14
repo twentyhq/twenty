@@ -25,9 +25,10 @@ export const getSelectOptionColorForValue = ({
   }
 
   const VALID_COLORS = Object.values(GraphColor);
+  const normalizedColor = option.color.toUpperCase();
 
-  if (VALID_COLORS.includes(option.color as GraphColor)) {
-    return option.color as GraphColor;
+  if (VALID_COLORS.includes(normalizedColor as GraphColor)) {
+    return normalizedColor as GraphColor;
   }
 
   return undefined;

@@ -15,8 +15,10 @@ export const parseGraphColor = (
     return undefined;
   }
 
-  if (VALID_COLORS.includes(value as GraphColor)) {
-    return value as GraphColor;
+  const normalizedValue = value.toUpperCase();
+
+  if (VALID_COLORS.includes(normalizedValue as GraphColor)) {
+    return normalizedValue as GraphColor;
   }
 
   return undefined;

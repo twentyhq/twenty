@@ -9,6 +9,7 @@ import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from 'src/modules/dashboard/
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { LineChartDataService } from 'src/modules/dashboard/chart-data/services/line-chart-data.service';
 import { GraphColorMode } from 'src/modules/dashboard/chart-data/types/graph-color-mode.enum';
+import { GraphColor } from 'src/modules/dashboard/chart-data/types/graph-color.enum';
 
 describe('LineChartDataService', () => {
   let service: LineChartDataService;
@@ -107,7 +108,7 @@ describe('LineChartDataService', () => {
         { x: 'Proposal', y: 280000 },
         { x: 'Closed Won', y: 450000 },
       ]);
-      expect(result.series[0].color).toBe('blue');
+      expect(result.series[0].color).toBe(GraphColor.BLUE);
       expect(result.hasTooManyGroups).toBe(false);
     });
 

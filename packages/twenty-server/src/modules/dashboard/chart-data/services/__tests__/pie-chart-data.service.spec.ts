@@ -9,6 +9,7 @@ import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from 'src/modules/dashboard/chart-
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { PieChartDataService } from 'src/modules/dashboard/chart-data/services/pie-chart-data.service';
 import { GraphColorMode } from 'src/modules/dashboard/chart-data/types/graph-color-mode.enum';
+import { GraphColor } from 'src/modules/dashboard/chart-data/types/graph-color.enum';
 
 describe('PieChartDataService', () => {
   let service: PieChartDataService;
@@ -175,7 +176,7 @@ describe('PieChartDataService', () => {
         } as any,
       });
 
-      expect(result.data[0].color).toBe('red');
+      expect(result.data[0].color).toBe(GraphColor.RED);
       expect(result.colorMode).toBe(GraphColorMode.EXPLICIT_SINGLE_COLOR);
     });
 
@@ -206,8 +207,8 @@ describe('PieChartDataService', () => {
         } as any,
       });
 
-      expect(result.data[0].color).toBe('green');
-      expect(result.data[1].color).toBe('red');
+      expect(result.data[0].color).toBe(GraphColor.GREEN);
+      expect(result.data[1].color).toBe(GraphColor.RED);
       expect(result.colorMode).toBe(GraphColorMode.SELECT_FIELD_OPTION_COLORS);
     });
 
