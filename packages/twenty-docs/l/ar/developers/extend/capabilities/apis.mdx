@@ -1,6 +1,6 @@
 ---
 title: واجهات برمجة التطبيقات
-description: Query and modify your CRM data programmatically using REST or GraphQL.
+description: استعلم وعدّل بيانات إدارة علاقات العملاء (CRM) لديك برمجياً باستخدام REST أو GraphQL.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
@@ -9,7 +9,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## النموذج الأول للمطورين
 
-Twenty generates APIs specifically for your data model:
+تقوم Twenty بإنشاء واجهات برمجة التطبيقات خصيصاً لنموذج بياناتك:
 
 * **لا حاجة إلى معرفات طويلة**: استخدم أسماء الكائنات والحقول مباشرة في نقاط النهاية
 * **معالجة متساوية للأشياء القياسية والمخصصة**: تحصل أشياؤك المخصصة على نفس معاملة واجهة برمجة التطبيقات كما هو الحال مع الأشياء المضمنة
@@ -17,52 +17,52 @@ Twenty generates APIs specifically for your data model:
 * **وثائق مخصصة**: يتم إنشاؤها خصيصًا لنموذج بيانات مساحة عملك
 
 <Note>
-  Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
+  وثائق واجهة برمجة التطبيقات المخصصة لك متاحة ضمن **الإعدادات → API & Webhooks** بعد إنشاء مفتاح API. نظرًا لأن Twenty تُنشئ واجهات برمجة تطبيقات تتطابق مع نموذج البيانات المخصص لديك، فإن الوثائق فريدة لمساحة عملك.
 </Note>
 
-## The Two API Types
+## نوعا واجهات برمجة التطبيقات
 
 ### واجهة برمجة التطبيقات الأساسية
 
 يتم الوصول إليها عبر `/rest/` أو `/graphql/`
 
-Work with your actual **records** (the data):
+تعامَل مع **السجلات** الفعلية لديك (البيانات):
 
-* Create, read, update, delete People, Companies, Opportunities, etc.
-* Query and filter data
+* إنشاء وقراءة وتحديث وحذف الأشخاص والشركات والفرص، إلخ.
+* استعلام وتصفية البيانات
 * إدارة العلاقات بين السجلات
 
 ### واجهة برمجة البيانات الوصفية
 
 يتم الوصول إليها عبر `/rest/metadata/` أو `/metadata/`
 
-Manage your **workspace and data model**:
+إدارة **مساحة العمل ونموذج البيانات** لديك:
 
 * إنشاء أو تعديل أو حذف الكائنات والحقول
 * تكوين إعدادات مساحة العمل
-* Define relationships between objects
+* تعريف العلاقات بين الكائنات
 
-## REST vs GraphQL
+## REST مقابل GraphQL
 
-Both Core and Metadata APIs are available in REST and GraphQL formats:
+تتوفر واجهات برمجة التطبيقات الأساسية وواجهات البيانات الوصفية بصيغتي REST وGraphQL:
 
-| التنسيق     | Available Operations                                       |
-| ----------- | ---------------------------------------------------------- |
-| **REST**    | CRUD, batch operations, upserts                            |
-| **GraphQL** | Same + **batch upserts**, relationship queries in one call |
+| التنسيق     | العمليات المتاحة                                                              |
+| ----------- | ----------------------------------------------------------------------------- |
+| **REST**    | CRUD، عمليات الدفعات، إدراج/تحديث                                             |
+| **GraphQL** | نفس الشيء + **عمليات إدراج/تحديث مجمعة**، واستعلامات العلاقات في استدعاء واحد |
 
-Choose based on your needs — both formats access the same data.
+اختر بناءً على احتياجاتك — كلا الصيغتين تصلان إلى البيانات نفسها.
 
 ## نقاط نهاية API
 
-| Environment     | Base URL                  |
-| --------------- | ------------------------- |
-| **Cloud**       | `https://api.twenty.com/` |
-| **Self-Hosted** | `https://{your-domain}/`  |
+| البيئة                | عنوان URL الأساسي         |
+| --------------------- | ------------------------- |
+| **السحابة**           | `https://api.twenty.com/` |
+| **الاستضافة الذاتية** | `https://{your-domain}/`  |
 
 ## المصادقة
 
-Every API request requires an API key in the header:
+كل طلب API يتطلب تضمين مفتاح API في رأس الطلب:
 
 ```
 Authorization: Bearer YOUR_API_KEY
@@ -70,78 +70,78 @@ Authorization: Bearer YOUR_API_KEY
 
 ### قم بإنشاء مفتاح API
 
-1. Go to **Settings → APIs & Webhooks**
-2. Click **+ Create key**
-3. Configure:
-   * **Name**: Descriptive name for the key
-   * **Expiration Date**: When the key expires
+1. انتقل إلى **الإعدادات → APIs & Webhooks**
+2. انقر على **+ إنشاء مفتاح**
+3. التكوين:
+   * **الاسم**: اسم وصفي للمفتاح
+   * **تاريخ الانتهاء**: متى تنتهي صلاحية المفتاح
 4. انقر على **حفظ**
-5. **Copy immediately** — the key is only shown once
+5. **انسخه فوراً** — يظهر المفتاح مرة واحدة فقط
 
-<VimeoEmbed videoId="928786722" title="Creating API key" />
+<VimeoEmbed videoId="928786722" title="إنشاء مفتاح API" />
 
 <Warning>
-  Your API key grants access to sensitive data. Don't share it with untrusted services. If compromised, disable it immediately and generate a new one.
+  يمنح مفتاح API الخاص بك الوصول إلى بيانات حساسة. لا تشاركه مع خدمات غير موثوقة. إذا تم اختراقه، عطّلْه فوراً وأنشئ مفتاحاً جديداً.
 </Warning>
 
-### Assign a Role to an API Key
+### تعيين دور لمفتاح API
 
-For better security, assign a specific role to limit access:
+لتحسين الأمان، عيّن دوراً محدداً لتقييد الوصول:
 
 1. اذهب إلى **الإعدادات → الأدوار**
-2. Click on the role to assign
+2. انقر على الدور الذي ترغب في تعيينه
 3. افتح علامة التبويب **التعيين**
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key
+4. ضمن **مفاتيح API**، انقر على **+ تعيين إلى مفتاح API**
+5. حدد مفتاح API
 
-The key will inherit that role's permissions. See [Permissions](/l/ar/user-guide/permissions-access/capabilities/permissions) for details.
+سيرث المفتاح أذونات ذلك الدور. راجع [الأذونات](/l/ar/user-guide/permissions-access/capabilities/permissions) للحصول على التفاصيل.
 
 ### إدارة مفاتيح API
 
-**Regenerate**: Settings → APIs & Webhooks → Click key → **Regenerate**
+**إعادة التوليد**: الإعدادات → APIs & Webhooks → انقر على المفتاح → **إعادة التوليد**
 
-**Delete**: Settings → APIs & Webhooks → Click key → **Delete**
+**حذف**: الإعدادات → APIs & Webhooks → انقر على المفتاح → **حذف**
 
-## API Playground
+## ملعب واجهة برمجة التطبيقات
 
-Test your APIs directly in the browser with our built-in playground — available for both **REST** and **GraphQL**.
+اختبر واجهات برمجة التطبيقات لديك مباشرة في المتصفح باستخدام الملعب المدمج لدينا — متاح لكلٍ من **REST** و**GraphQL**.
 
-### Access the Playground
+### الوصول إلى الملعب
 
-1. Go to **Settings → APIs & Webhooks**
-2. Create an API key (required)
-3. Click on **REST API** or **GraphQL API** to open the playground
+1. انتقل إلى **الإعدادات → APIs & Webhooks**
+2. أنشئ مفتاح API (مطلوب)
+3. انقر على **REST API** أو **GraphQL API** لفتح الملعب
 
-### What You Get
+### ما الذي ستحصل عليه
 
-* **Interactive documentation**: Generated for your specific data model
-* **Live testing**: Execute real API calls against your workspace
-* **Schema explorer**: Browse available objects, fields, and relationships
-* **Request builder**: Construct queries with autocomplete
+* **وثائق تفاعلية**: يتم إنشاؤها لنموذج البيانات المحدد لديك
+* **اختبارات حيّة**: تنفيذ استدعاءات API فعلية على مساحة عملك
+* **مستكشف المخطط**: تصفح الكائنات والحقول والعلاقات المتاحة
+* **منشئ الطلبات**: أنشئ الاستعلامات مع الإكمال التلقائي
 
-The playground reflects your custom objects and fields, so documentation is always accurate for your workspace.
+يعكس الملعب الكائنات والحقول المخصصة لديك، لذا تكون الوثائق دائماً دقيقة لمساحة عملك.
 
 ## عمليات المجموعة
 
-Both REST and GraphQL support batch operations:
+كلٌ من REST وGraphQL يدعمان عمليات الدفعات:
 
 * **حجم المجموعة**: حتى 60 سجل لكل طلب
-* **Operations**: Create, update, delete multiple records
+* **العمليات**: إنشاء وتحديث وحذف سجلات متعددة
 
-**GraphQL-only features:**
+**ميزات خاصة بـ GraphQL:**
 
-* **Batch Upsert**: Create or update in one call
-* Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
+* **إدراج/تحديث دفعي**: إنشاء أو تحديث في استدعاء واحد
+* استخدم الأسماء الجمع للكائنات (على سبيل المثال، `CreateCompanies` بدلاً من `CreateCompany`)
 
-## Rate Limits
+## حدود المعدل
 
-API requests are throttled to ensure platform stability:
+يتم تنظيم طلبات API لضمان استقرار المنصة:
 
-| Limit          | القيمة               |
-| -------------- | -------------------- |
-| **Requests**   | 100 calls per minute |
-| **Batch size** | 60 records per call  |
+| الحد           | القيمة                 |
+| -------------- | ---------------------- |
+| **الطلبات**    | 100 استدعاء في الدقيقة |
+| **حجم الدفعة** | 60 سجل لكل استدعاء     |
 
 <Tip>
-  Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
+  استخدم عمليات الدفعات لزيادة الإنتاجية — عالج ما يصل إلى 60 سجلًا في استدعاء API واحد بدلاً من إجراء طلبات فردية.
 </Tip>
