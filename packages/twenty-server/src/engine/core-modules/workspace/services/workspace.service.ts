@@ -37,6 +37,7 @@ import {
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -44,8 +45,8 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
 import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-dashboards';
 import { prefillOpportunities } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-opportunities';
@@ -102,6 +103,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly objectMetadataService: ObjectMetadataService,
     private readonly customDomainManagerService: CustomDomainManagerService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -282,20 +284,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     });
   }
 
-  /**
-   * @deprecated Should be removed once AddWorkspaceForeignKeysMigrationCommand has been run successfully in production
-   * As we will be able to rely on foreignKey delete cascading
-   */
-  async deleteMetadataSchemaCacheAndUserWorkspace(workspace: WorkspaceEntity) {
-    await this.userWorkspaceService.deleteUserWorkspace({
-      userWorkspaceId: workspace.id,
-    });
-
-    await this.workspaceManagerService.delete(workspace.id);
-
-    return workspace;
-  }
-
   async deleteWorkspace(id: string, softDelete = false) {
     const workspace = await this.workspaceRepository.findOne({
       where: { id },
@@ -320,13 +308,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     }
     this.logger.log(`workspace ${id} user workspaces deleted`);
 
-    await this.workspaceCacheStorageService.flush(
-      workspace.id,
-      workspace.metadataVersion,
-    );
-    await this.flatEntityMapsCacheService.flushFlatEntityMaps({
-      workspaceId: workspace.id,
-    });
     this.logger.log(`workspace ${id} cache flushed`);
 
     if (this.billingService.isBillingEnabled()) {
@@ -341,9 +322,24 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       return workspace;
     }
 
-    await this.deleteMetadataSchemaCacheAndUserWorkspace(workspace);
+    await this.userWorkspaceService.deleteUserWorkspace({
+      userWorkspaceId: workspace.id,
+    });
+
+    // Note: not relying on workspace id FK cascade deletion here to avoid query read timeout later on workspace deletion
+    await this.objectMetadataService.deleteWorkspaceAllObjectMetadata({
+      workspaceId: workspace.id,
+    });
 
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspace.id);
+
+    await this.workspaceCacheStorageService.flush(
+      workspace.id,
+      workspace.metadataVersion,
+    );
+    await this.flatEntityMapsCacheService.flushFlatEntityMaps({
+      workspaceId: workspace.id,
+    });
 
     await this.messageQueueService.add<FileWorkspaceFolderDeletionJobData>(
       FileWorkspaceFolderDeletionJob.name,

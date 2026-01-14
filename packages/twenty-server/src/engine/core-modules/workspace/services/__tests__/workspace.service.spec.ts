@@ -280,16 +280,10 @@ describe('WorkspaceService', () => {
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
-      jest
-        .spyOn(service, 'deleteMetadataSchemaCacheAndUserWorkspace')
-        .mockResolvedValue({} as WorkspaceEntity);
 
       await service.deleteWorkspace(mockWorkspace.id, false);
 
       expect(workspaceRepository.delete).toHaveBeenCalledWith(mockWorkspace.id);
-      expect(
-        service.deleteMetadataSchemaCacheAndUserWorkspace,
-      ).toHaveBeenCalled();
       expect(workspaceRepository.softDelete).not.toHaveBeenCalled();
       expect(workspaceCacheStorageService.flush).toHaveBeenCalledWith(
         mockWorkspace.id,
@@ -331,9 +325,6 @@ describe('WorkspaceService', () => {
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
-      jest
-        .spyOn(service, 'deleteMetadataSchemaCacheAndUserWorkspace')
-        .mockResolvedValue({} as WorkspaceEntity);
 
       await service.deleteWorkspace(mockWorkspace.id, false);
 
