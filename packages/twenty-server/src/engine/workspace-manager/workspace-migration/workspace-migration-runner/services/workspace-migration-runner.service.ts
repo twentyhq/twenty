@@ -202,7 +202,7 @@ export class WorkspaceMigrationRunnerService {
         invalidationFailures.forEach((err) =>
           this.logger.error(
             `Failed to invalidate a legacy cache ${err.reason}`,
-            err.status,
+            'Runner',
           ),
         );
         throw new Error(
