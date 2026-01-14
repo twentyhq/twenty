@@ -28,9 +28,6 @@ import {
   GroupByRawResult,
 } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
-import { determineChartItemColor } from 'src/modules/dashboard/chart-data/utils/determine-chart-item-color.util';
-import { determineGraphColorMode } from 'src/modules/dashboard/chart-data/utils/determine-graph-color-mode.util';
-import { parseGraphColor } from 'src/modules/dashboard/chart-data/utils/parse-graph-color.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data.util';
 
 type GetBarChartDataParams = {
@@ -236,7 +233,6 @@ export class BarChartDataService {
     type InternalBarDatum = {
       formattedValue: string;
       aggregateValue: number;
-      color?: string;
       rawValue: RawDimensionValue;
     };
 
@@ -254,16 +250,9 @@ export class BarChartDataService {
           formattedToRawLookup.set(formattedValue, rawValue);
         }
 
-        const color = determineChartItemColor({
-          configurationColor: parseGraphColor(configuration.color),
-          selectOptions,
-          rawValue: isDefined(rawValue) ? String(rawValue) : null,
-        });
-
         return {
           formattedValue,
           aggregateValue: result.aggregateValue,
-          color,
           rawValue,
         };
       },
@@ -299,10 +288,6 @@ export class BarChartDataService {
           [aggregateValueKey]: item.aggregateValue,
         };
 
-        if (isDefined(item.color)) {
-          datum.color = item.color;
-        }
-
         return datum;
       },
     );
@@ -313,11 +298,6 @@ export class BarChartDataService {
         label: aggregateField.label,
       },
     ];
-
-    const colorMode = determineGraphColorMode({
-      configurationColor: configuration.color,
-      selectFieldOptions: selectOptions,
-    });
 
     const showCategoryLabel = isHorizontal
       ? configuration.axisNameDisplay === AxisNameDisplay.Y ||
@@ -351,7 +331,6 @@ export class BarChartDataService {
       groupMode: configuration.groupMode ?? BarChartGroupMode.GROUPED,
       hasTooManyGroups:
         filteredResults.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
-      colorMode,
       formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
     };
   }
@@ -510,23 +489,10 @@ export class BarChartDataService {
       : limitedData;
 
     const series: BarChartSeriesDTO[] = limitedKeys.map((key) => {
-      const rawValue = secondaryFormattedToRawLookup.get(key);
-      const color = determineChartItemColor({
-        configurationColor: parseGraphColor(configuration.color),
-        selectOptions: secondarySelectOptions,
-        rawValue: isDefined(rawValue) ? String(rawValue) : null,
-      });
-
       return {
         key,
         label: key,
-        color,
       };
-    });
-
-    const colorMode = determineGraphColorMode({
-      configurationColor: configuration.color,
-      selectFieldOptions: secondarySelectOptions,
     });
 
     const showCategoryLabel = isHorizontal
@@ -564,7 +530,6 @@ export class BarChartDataService {
       layout,
       groupMode: configuration.groupMode ?? BarChartGroupMode.GROUPED,
       hasTooManyGroups,
-      colorMode,
       formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
     };
   }
@@ -680,7 +645,6 @@ export class BarChartDataService {
     data: Array<{
       formattedValue: string;
       aggregateValue: number;
-      color?: string;
       rawValue: RawDimensionValue;
     }>,
     rangeMin?: number | null,
@@ -688,13 +652,11 @@ export class BarChartDataService {
   ): Array<{
     formattedValue: string;
     aggregateValue: number;
-    color?: string;
     rawValue: RawDimensionValue;
   }> {
     const result: Array<{
       formattedValue: string;
       aggregateValue: number;
-      color?: string;
       rawValue: RawDimensionValue;
     }> = [];
     let runningTotal = 0;

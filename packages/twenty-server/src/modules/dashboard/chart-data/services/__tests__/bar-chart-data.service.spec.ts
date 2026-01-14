@@ -10,7 +10,6 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from 'src/modules/dashboard/chart-data/constants/bar-chart.constants';
 import { BarChartDataService } from 'src/modules/dashboard/chart-data/services/bar-chart-data.service';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
-import { GraphColorMode } from 'src/modules/dashboard/chart-data/types/graph-color-mode.enum';
 
 describe('BarChartDataService', () => {
   let service: BarChartDataService;
@@ -244,23 +243,6 @@ describe('BarChartDataService', () => {
       expect(result.data.length).toBeLessThanOrEqual(
         BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
       );
-    });
-
-    it('should use explicit single color mode when color is set', async () => {
-      mockExecuteGroupByQuery.mockResolvedValue([
-        { groupByDimensionValues: ['Active'], aggregateValue: 10 },
-      ]);
-
-      const result = await service.getBarChartData({
-        workspaceId,
-        objectMetadataId,
-        configuration: {
-          ...baseConfiguration,
-          color: 'blue',
-        } as any,
-      });
-
-      expect(result.colorMode).toBe(GraphColorMode.EXPLICIT_SINGLE_COLOR);
     });
   });
 

@@ -8,8 +8,6 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from 'src/modules/dashboard/chart-data/constants/pie-chart.constants';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { PieChartDataService } from 'src/modules/dashboard/chart-data/services/pie-chart-data.service';
-import { GraphColorMode } from 'src/modules/dashboard/chart-data/types/graph-color-mode.enum';
-import { GraphColor } from 'src/modules/dashboard/chart-data/types/graph-color.enum';
 
 describe('PieChartDataService', () => {
   let service: PieChartDataService;
@@ -112,12 +110,10 @@ describe('PieChartDataService', () => {
       expect(result.data[0]).toEqual({
         id: 'Active',
         value: 10,
-        color: undefined,
       });
       expect(result.data[1]).toEqual({
         id: 'Inactive',
         value: 5,
-        color: undefined,
       });
       expect(result.showLegend).toBe(true);
       expect(result.hasTooManyGroups).toBe(false);
@@ -136,8 +132,8 @@ describe('PieChartDataService', () => {
       });
 
       expect(result.data).toEqual([
-        { id: 'Not Set', value: 2, color: undefined },
-        { id: 'Active', value: 5, color: undefined },
+        { id: 'Not Set', value: 2 },
+        { id: 'Active', value: 5 },
       ]);
       expect(result.formattedToRawLookup?.['Not Set']).toBeUndefined();
       expect(result.formattedToRawLookup?.['Active']).toBe('Active');
@@ -160,56 +156,6 @@ describe('PieChartDataService', () => {
 
       expect(result.data).toHaveLength(1);
       expect(result.data[0].id).toBe('Active');
-    });
-
-    it('should honor color configuration', async () => {
-      mockExecuteGroupByQuery.mockResolvedValue([
-        { groupByDimensionValues: ['Active'], aggregateValue: 10 },
-      ]);
-
-      const result = await service.getPieChartData({
-        workspaceId,
-        objectMetadataId,
-        configuration: {
-          ...baseConfiguration,
-          color: 'red',
-        } as any,
-      });
-
-      expect(result.data[0].color).toBe(GraphColor.RED);
-      expect(result.colorMode).toBe(GraphColorMode.EXPLICIT_SINGLE_COLOR);
-    });
-
-    it('should use select field option colors when grouping by select field', async () => {
-      mockGetOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue({
-        flatObjectMetadataMaps: {
-          byId: { [objectMetadataId]: mockObjectMetadata },
-        },
-        flatFieldMetadataMaps: {
-          byId: {
-            [mockSelectField.id]: mockSelectField,
-            [mockAggregateField.id]: mockAggregateField,
-          },
-        },
-      });
-
-      mockExecuteGroupByQuery.mockResolvedValue([
-        { groupByDimensionValues: ['open'], aggregateValue: 10 },
-        { groupByDimensionValues: ['closed'], aggregateValue: 5 },
-      ]);
-
-      const result = await service.getPieChartData({
-        workspaceId,
-        objectMetadataId,
-        configuration: {
-          ...baseConfiguration,
-          groupByFieldMetadataId: mockSelectField.id,
-        } as any,
-      });
-
-      expect(result.data[0].color).toBe(GraphColor.GREEN);
-      expect(result.data[1].color).toBe(GraphColor.RED);
-      expect(result.colorMode).toBe(GraphColorMode.SELECT_FIELD_OPTION_COLORS);
     });
 
     it('should flag too many groups and limit slices', async () => {
@@ -282,6 +228,37 @@ describe('PieChartDataService', () => {
       });
 
       expect(result.showCenterMetric).toBe(false);
+    });
+
+    it('should format select field values using option labels', async () => {
+      mockGetOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue({
+        flatObjectMetadataMaps: {
+          byId: { [objectMetadataId]: mockObjectMetadata },
+        },
+        flatFieldMetadataMaps: {
+          byId: {
+            [mockSelectField.id]: mockSelectField,
+            [mockAggregateField.id]: mockAggregateField,
+          },
+        },
+      });
+
+      mockExecuteGroupByQuery.mockResolvedValue([
+        { groupByDimensionValues: ['open'], aggregateValue: 10 },
+        { groupByDimensionValues: ['closed'], aggregateValue: 5 },
+      ]);
+
+      const result = await service.getPieChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: {
+          ...baseConfiguration,
+          groupByFieldMetadataId: mockSelectField.id,
+        } as any,
+      });
+
+      expect(result.data[0].id).toBe('Open');
+      expect(result.data[1].id).toBe('Closed');
     });
   });
 

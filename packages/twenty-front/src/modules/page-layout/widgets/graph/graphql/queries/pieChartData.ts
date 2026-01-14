@@ -6,13 +6,11 @@ export const PIE_CHART_DATA = gql`
       data {
         id
         value
-        color
       }
       showLegend
       showDataLabels
       showCenterMetric
       hasTooManyGroups
-      colorMode
       formattedToRawLookup
     }
   }

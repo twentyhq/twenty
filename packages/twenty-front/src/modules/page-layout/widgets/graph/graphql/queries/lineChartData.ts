@@ -6,7 +6,6 @@ export const LINE_CHART_DATA = gql`
       series {
         id
         label
-        color
         data {
           x
           y
@@ -17,7 +16,6 @@ export const LINE_CHART_DATA = gql`
       showLegend
       showDataLabels
       hasTooManyGroups
-      colorMode
       formattedToRawLookup
     }
   }

@@ -5,7 +5,6 @@ import { GraphQLJSON } from 'graphql-type-json';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { BarChartSeriesDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/bar-chart-series.dto';
-import { GraphColorMode } from 'src/modules/dashboard/chart-data/types/graph-color-mode.enum';
 
 @ObjectType('BarChartDataOutput')
 export class BarChartDataOutputDTO {
@@ -41,9 +40,6 @@ export class BarChartDataOutputDTO {
 
   @Field(() => Boolean)
   hasTooManyGroups: boolean;
-
-  @Field(() => GraphColorMode)
-  colorMode: GraphColorMode;
 
   @Field(() => GraphQLJSON, { nullable: true })
   formattedToRawLookup?: Record<string, unknown>;

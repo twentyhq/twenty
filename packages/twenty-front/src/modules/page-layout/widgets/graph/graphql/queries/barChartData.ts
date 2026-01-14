@@ -9,7 +9,6 @@ export const BAR_CHART_DATA = gql`
       series {
         key
         label
-        color
       }
       xAxisLabel
       yAxisLabel
@@ -18,7 +17,6 @@ export const BAR_CHART_DATA = gql`
       layout
       groupMode
       hasTooManyGroups
-      colorMode
       formattedToRawLookup
     }
   }

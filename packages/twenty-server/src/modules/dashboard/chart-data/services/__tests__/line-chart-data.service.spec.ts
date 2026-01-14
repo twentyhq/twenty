@@ -8,8 +8,6 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from 'src/modules/dashboard/chart-data/constants/line-chart.constants';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { LineChartDataService } from 'src/modules/dashboard/chart-data/services/line-chart-data.service';
-import { GraphColorMode } from 'src/modules/dashboard/chart-data/types/graph-color-mode.enum';
-import { GraphColor } from 'src/modules/dashboard/chart-data/types/graph-color.enum';
 
 describe('LineChartDataService', () => {
   let service: LineChartDataService;
@@ -86,7 +84,6 @@ describe('LineChartDataService', () => {
       primaryAxisGroupByFieldMetadataId: mockGroupByFieldX.id,
       aggregateFieldMetadataId: mockAggregateField.id,
       aggregateOperation: AggregateOperations.SUM,
-      color: 'blue',
     };
 
     it('should transform simple one-dimensional line chart data', async () => {
@@ -108,7 +105,6 @@ describe('LineChartDataService', () => {
         { x: 'Proposal', y: 280000 },
         { x: 'Closed Won', y: 450000 },
       ]);
-      expect(result.series[0].color).toBe(GraphColor.BLUE);
       expect(result.hasTooManyGroups).toBe(false);
     });
 
@@ -240,7 +236,6 @@ describe('LineChartDataService', () => {
       secondaryAxisGroupByFieldMetadataId: mockGroupByFieldY.id,
       aggregateFieldMetadataId: mockAggregateField.id,
       aggregateOperation: AggregateOperations.SUM,
-      color: 'blue',
     };
 
     it('should create multiple series from 2D groupBy results', async () => {
@@ -371,49 +366,6 @@ describe('LineChartDataService', () => {
 
       expect(result.series).toHaveLength(1);
       expect(result.series[0].data).toHaveLength(1);
-    });
-  });
-
-  describe('Color mode', () => {
-    const baseConfiguration = {
-      configurationType: WidgetConfigurationType.LINE_CHART,
-      primaryAxisGroupByFieldMetadataId: mockGroupByFieldX.id,
-      aggregateFieldMetadataId: mockAggregateField.id,
-      aggregateOperation: AggregateOperations.SUM,
-    };
-
-    it('should use explicit single color mode when color is set', async () => {
-      mockExecuteGroupByQuery.mockResolvedValue([
-        { groupByDimensionValues: ['Active'], aggregateValue: 10 },
-      ]);
-
-      const result = await service.getLineChartData({
-        workspaceId,
-        objectMetadataId,
-        configuration: {
-          ...baseConfiguration,
-          color: 'blue',
-        } as any,
-      });
-
-      expect(result.colorMode).toBe(GraphColorMode.EXPLICIT_SINGLE_COLOR);
-    });
-
-    it('should use automatic palette when no color is set', async () => {
-      mockExecuteGroupByQuery.mockResolvedValue([
-        { groupByDimensionValues: ['Active'], aggregateValue: 10 },
-      ]);
-
-      const result = await service.getLineChartData({
-        workspaceId,
-        objectMetadataId,
-        configuration: {
-          ...baseConfiguration,
-          color: undefined,
-        } as any,
-      });
-
-      expect(result.colorMode).toBe(GraphColorMode.AUTOMATIC_PALETTE);
     });
   });
 });

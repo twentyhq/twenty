@@ -26,11 +26,7 @@ import {
   ChartDataQueryService,
   GroupByRawResult,
 } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
-import { GraphColor } from 'src/modules/dashboard/chart-data/types/graph-color.enum';
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
-import { determineChartItemColor } from 'src/modules/dashboard/chart-data/utils/determine-chart-item-color.util';
-import { determineGraphColorMode } from 'src/modules/dashboard/chart-data/utils/determine-graph-color-mode.util';
-import { parseGraphColor } from 'src/modules/dashboard/chart-data/utils/parse-graph-color.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data.util';
 
 type GetLineChartDataParams = {
@@ -45,8 +41,6 @@ type FieldMetadataOption = {
   color?: string;
   position: number;
 };
-
-const GRAPH_DEFAULT_COLOR = GraphColor.BLUE;
 
 @Injectable()
 export class LineChartDataService {
@@ -273,21 +267,13 @@ export class LineChartDataService {
       }),
     );
 
-    const color = parseGraphColor(configuration.color) ?? GRAPH_DEFAULT_COLOR;
-
     const series: LineChartSeriesDTO[] = [
       {
         id: aggregateField.name,
         label: aggregateField.label,
-        color,
         data: dataPoints,
       },
     ];
-
-    const colorMode = determineGraphColorMode({
-      configurationColor: configuration.color,
-      selectFieldOptions: selectOptions,
-    });
 
     const showXAxis =
       configuration.axisNameDisplay === AxisNameDisplay.X ||
@@ -310,7 +296,6 @@ export class LineChartDataService {
       showDataLabels: configuration.displayDataLabel ?? false,
       hasTooManyGroups:
         filteredResults.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
-      colorMode,
       formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
     };
   }
@@ -448,13 +433,6 @@ export class LineChartDataService {
 
     const series: LineChartSeriesDTO[] = limitedSeriesIds.map((seriesId) => {
       const xToYMap = seriesMap.get(seriesId) ?? new Map();
-      const rawValue = secondaryFormattedToRawLookup.get(seriesId);
-
-      const color = determineChartItemColor({
-        configurationColor: parseGraphColor(configuration.color),
-        selectOptions: secondarySelectOptions,
-        rawValue: isDefined(rawValue) ? String(rawValue) : null,
-      });
 
       let dataPoints: LineChartDataPointDTO[] = limitedXValues.map(
         (xValue) => ({
@@ -474,14 +452,8 @@ export class LineChartDataService {
       return {
         id: seriesId,
         label: seriesId,
-        color: color ?? GRAPH_DEFAULT_COLOR,
         data: dataPoints,
       };
-    });
-
-    const colorMode = determineGraphColorMode({
-      configurationColor: configuration.color,
-      selectFieldOptions: secondarySelectOptions,
     });
 
     const showXAxis =
@@ -508,7 +480,6 @@ export class LineChartDataService {
       showLegend: configuration.displayLegend ?? true,
       showDataLabels: configuration.displayDataLabel ?? false,
       hasTooManyGroups,
-      colorMode,
       formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
     };
   }

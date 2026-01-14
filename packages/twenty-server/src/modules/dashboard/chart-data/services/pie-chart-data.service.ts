@@ -21,9 +21,6 @@ import {
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
-import { determineChartItemColor } from 'src/modules/dashboard/chart-data/utils/determine-chart-item-color.util';
-import { determineGraphColorMode } from 'src/modules/dashboard/chart-data/utils/determine-graph-color-mode.util';
-import { parseGraphColor } from 'src/modules/dashboard/chart-data/utils/parse-graph-color.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data.util';
 
 type GetPieChartDataParams = {
@@ -199,11 +196,6 @@ export class PieChartDataService {
         return {
           id: formattedValue,
           value: result.aggregateValue,
-          color: determineChartItemColor({
-            configurationColor: parseGraphColor(configuration.color),
-            selectOptions,
-            rawValue: rawValueString,
-          }),
           rawValue: rawValueString,
         };
       });
@@ -222,11 +214,6 @@ export class PieChartDataService {
       ({ rawValue: _rawValue, ...item }) => item,
     );
 
-    const colorMode = determineGraphColorMode({
-      configurationColor: configuration.color,
-      selectFieldOptions: selectOptions,
-    });
-
     return {
       data,
       showLegend: configuration.displayLegend ?? true,
@@ -234,7 +221,6 @@ export class PieChartDataService {
       showCenterMetric: configuration.showCenterMetric ?? true,
       hasTooManyGroups:
         filteredResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
-      colorMode,
       formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
     };
   }
