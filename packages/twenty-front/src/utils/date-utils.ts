@@ -187,7 +187,13 @@ const getTimePattern = (timeFormat: TimeFormat) => {
   return timeFormat === TimeFormat.HOUR_12 ? 'hh:mm a' : 'HH:mm';
 };
 
-export const getDateTimeFormatStringFoDatePickerInputMask = ({ dateFormat, timeFormat }: {dateFormat: DateFormat, timeFormat: TimeFormat}): string => {
+export const getDateTimeFormatStringFoDatePickerInputMask = ({
+  dateFormat,
+  timeFormat,
+}: {
+  dateFormat: DateFormat;
+  timeFormat: TimeFormat;
+}): string => {
   const timePattern = getTimePattern(timeFormat);
   switch (dateFormat) {
     case DateFormat.DAY_FIRST:
