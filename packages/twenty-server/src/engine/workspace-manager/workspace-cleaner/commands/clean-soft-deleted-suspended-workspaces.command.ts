@@ -76,20 +76,31 @@ export class HardDeleteSoftDeletedSuspendedWorkspacesCommand extends MigrationCo
   ): Promise<void> {
     const { dryRun, force } = options;
 
-    const suspendedWorkspaces = await this.fetchSuspendedSoftDeletedWorkspaces({
-      workspaceIds: this.workspaceIds,
-    });
+    const softDeletedSuspendedWorkspaces =
+      await this.fetchSuspendedSoftDeletedWorkspaces({
+        workspaceIds: this.workspaceIds,
+      });
+    let deletedWorkspaceCounter = 0;
 
     this.logger.log(
-      `${dryRun ? 'DRY RUN - ' : ''}${force ? 'FORCE HARD DELETE - ' : ''}Destroying ${suspendedWorkspaces.length} suspended workspaces`,
+      `${dryRun ? 'DRY RUN - ' : ''}${force ? 'FORCE HARD DELETE - ' : ''}Iterating over ${softDeletedSuspendedWorkspaces.length} soft deleted suspended workspaces`,
     );
 
-    for (const workspace of suspendedWorkspaces) {
-      await this.cleanerWorkspaceService.hardDeleteSoftDeletedWorkspace({
-        workspace,
-        dryRun,
-        force,
-      });
+    for (const workspace of softDeletedSuspendedWorkspaces) {
+      const result =
+        await this.cleanerWorkspaceService.hardDeleteSoftDeletedWorkspace({
+          workspace,
+          dryRun,
+          force,
+        });
+
+      if (isDefined(result)) {
+        deletedWorkspaceCounter++;
+      }
     }
+
+    this.logger.log(
+      `Destroyed ${deletedWorkspaceCounter}/${softDeletedSuspendedWorkspaces}`,
+    );
   }
 }
