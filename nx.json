@@ -131,8 +131,7 @@
       ],
       "inputs": [
         "^default",
-        "excludeStories",
-        "{workspaceRoot}/jest.preset.js"
+        "excludeStories"
       ],
       "outputs": [
         "{projectRoot}/coverage"
@@ -308,8 +307,7 @@
       "cache": true,
       "inputs": [
         "^default",
-        "excludeStories",
-        "{workspaceRoot}/jest.preset.js"
+        "excludeStories"
       ],
       "options": {
         "passWithNoTests": true
@@ -326,7 +324,7 @@
       "inputs": [
         "default",
         "{workspaceRoot}/eslint.config.mjs",
-        "{workspaceRoot}/tools/eslint-rules/**/*"
+        "{workspaceRoot}/packages/twenty-eslint-rules/**/*"
       ]
     },
     "@nx/vite:test": {

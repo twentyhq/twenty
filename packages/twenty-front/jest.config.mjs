@@ -19,7 +19,7 @@ const jestConfig = {
   // Prettier v3 will should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
   prettierPath: null,
   displayName: 'twenty-front',
-  preset: '../../jest.preset.js',
+  preset: '@nx/jest/preset',
   setupFilesAfterEnv: ['./setupTests.ts'],
   testEnvironment: 'jsdom',
 

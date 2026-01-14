@@ -11,7 +11,7 @@ const tsConfig = JSON.parse(readFileSync(tsConfigPath, 'utf8'));
 
 const jestConfig = {
   displayName: 'twenty-ui',
-  preset: '../../jest.preset.js',
+  preset: '@nx/jest/preset',
   setupFilesAfterEnv: ['./setupTests.ts'],
   testEnvironment: 'jsdom',
   transformIgnorePatterns: ['../../node_modules/'],
