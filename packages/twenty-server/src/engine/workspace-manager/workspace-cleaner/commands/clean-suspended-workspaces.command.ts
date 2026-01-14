@@ -11,6 +11,10 @@ import {
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
+type CleanSuspendedWorkspacesCommandOptions = MigrationCommandOptions & {
+  force?: boolean;
+};
+
 @Command({
   name: 'workspace:clean',
   description: 'Clean suspended workspace',
@@ -38,6 +42,16 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
     return this.workspaceIds;
   }
 
+  @Option({
+    flags: '-f, --force',
+    description:
+      'Force hard delete of soft-deleted workspaces without waiting for the minimum grace period',
+    required: false,
+  })
+  parseForce(): boolean {
+    return true;
+  }
+
   async fetchSuspendedWorkspaceIds(): Promise<string[]> {
     const suspendedWorkspaces = await this.workspaceRepository.find({
       select: ['id'],
@@ -52,9 +66,9 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
 
   override async runMigrationCommand(
     _passedParams: string[],
-    options: MigrationCommandOptions,
+    options: CleanSuspendedWorkspacesCommandOptions,
   ): Promise<void> {
-    const { dryRun } = options;
+    const { dryRun, force } = options;
 
     const suspendedWorkspaceIds =
       this.workspaceIds.length > 0
@@ -62,12 +76,13 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
         : await this.fetchSuspendedWorkspaceIds();
 
     this.logger.log(
-      `${dryRun ? 'DRY RUN - ' : ''}Cleaning ${suspendedWorkspaceIds.length} suspended workspaces`,
+      `${dryRun ? 'DRY RUN - ' : ''}${force ? 'FORCE MODE - ' : ''}Cleaning ${suspendedWorkspaceIds.length} suspended workspaces`,
     );
 
-    await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
-      suspendedWorkspaceIds,
+    await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces({
+      workspaceIds: suspendedWorkspaceIds,
       dryRun,
-    );
+      force,
+    });
   }
 }

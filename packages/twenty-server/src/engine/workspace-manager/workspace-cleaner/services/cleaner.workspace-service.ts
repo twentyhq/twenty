@@ -24,7 +24,6 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
 import {
   WorkspaceCleanerException,
@@ -49,7 +48,6 @@ export class CleanerWorkspaceService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly i18nService: I18nService,
@@ -331,12 +329,17 @@ export class CleanerWorkspaceService {
     }
   }
 
-  async batchWarnOrCleanSuspendedWorkspaces(
-    workspaceIds: string[],
+  async batchWarnOrCleanSuspendedWorkspaces({
+    workspaceIds,
     dryRun = false,
-  ): Promise<void> {
+    force = false,
+  }: {
+    workspaceIds: string[];
+    dryRun?: boolean;
+    force?: boolean;
+  }): Promise<void> {
     this.logger.log(
-      `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces running...`,
+      `${dryRun ? 'DRY RUN - ' : ''}${force ? 'FORCE MODE - ' : ''}batchWarnOrCleanSuspendedWorkspaces running...`,
     );
 
     const workspaces = await this.workspaceRepository.find({
@@ -362,13 +365,18 @@ export class CleanerWorkspaceService {
             ? differenceInDays(new Date(), workspace.deletedAt)
             : 0;
 
-          if (
+          const hasPassedGracePeriod =
             daysSinceSoftDeleted >
-              this.inactiveDaysBeforeDelete -
-                this.inactiveDaysBeforeSoftDelete &&
+            this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete;
+
+          const isWithinDeletionLimit =
             deletedWorkspacesCount <
-              this.maxNumberOfWorkspacesDeletedPerExecution
-          ) {
+            this.maxNumberOfWorkspacesDeletedPerExecution;
+
+          const canHardDelete =
+            force || (hasPassedGracePeriod && isWithinDeletionLimit);
+
+          if (canHardDelete) {
             this.logger.log(
               `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
             );
