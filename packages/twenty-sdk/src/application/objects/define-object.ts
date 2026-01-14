@@ -1,6 +1,6 @@
+import { isEmpty } from 'lodash';
 import { type ObjectManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 /**
  * Define an object configuration with validation.
@@ -58,19 +58,19 @@ export const defineObject = <T extends ObjectManifest>(config: T): T => {
 
   // Validate each field
   for (const field of config.fields ?? []) {
-    if (!isDefined(field.universalIdentifier)) {
+    if (isEmpty(field.universalIdentifier)) {
       throw new Error(`Field "${field.label}" must have a universalIdentifier`);
     }
 
-    if (!isDefined(field.type)) {
+    if (isEmpty(field.type)) {
       throw new Error(`Field "${field.label}" must have a type`);
     }
 
-    if (!isDefined(field.name)) {
+    if (isEmpty(field.name)) {
       throw new Error('Field must have a name');
     }
 
-    if (!isDefined(field.label)) {
+    if (isEmpty(field.label)) {
       throw new Error('Field must have a label');
     }
 
