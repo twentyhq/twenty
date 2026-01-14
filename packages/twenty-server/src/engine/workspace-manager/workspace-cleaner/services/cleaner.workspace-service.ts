@@ -408,7 +408,7 @@ export class CleanerWorkspaceService {
           const result = await this.hardDeleteSoftDeletedWorkspace({
             workspace,
             dryRun,
-            force: false,
+            ignoreGracePeriod: false,
           });
 
           if (isDefined(result)) {
