@@ -64,8 +64,11 @@ export class WorkspaceEventEmitterService {
       activeStreamIds,
     );
 
+    const streamIdsToRemove: string[] = [];
+
     for (const [streamChannelId, streamData] of streamsData) {
       if (!isDefined(streamData)) {
+        streamIdsToRemove.push(streamChannelId);
         continue;
       }
 
@@ -75,6 +78,11 @@ export class WorkspaceEventEmitterService {
         workspaceEventBatch,
       );
     }
+
+    await this.eventStreamService.removeFromActiveStreams(
+      workspaceId,
+      streamIdsToRemove,
+    );
   }
 
   private async processStreamEvents(

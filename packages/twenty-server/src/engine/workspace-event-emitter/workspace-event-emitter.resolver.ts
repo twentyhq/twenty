@@ -3,10 +3,12 @@ import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -86,16 +88,20 @@ export class WorkspaceEventEmitterResolver {
   async onEventSubscription(
     @Args('eventStreamId') eventStreamId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUser() user: UserEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ) {
     const eventStreamChannelId = eventStreamIdToChannelId(eventStreamId);
 
     await this.eventStreamService.createEventStream({
       workspaceId: workspace.id,
       eventStreamChannelId,
-      userId: user.id,
-      userWorkspaceId,
+      authContext: {
+        userId: user?.id,
+        userWorkspaceId,
+        apiKeyId: apiKey?.id,
+      },
     });
 
     let iterator: AsyncIterableIterator<EventWithQueryIdsDTO[]>;

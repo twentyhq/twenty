@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -23,18 +24,15 @@ export class EventStreamService {
   async createEventStream({
     workspaceId,
     eventStreamChannelId,
-    userId,
-    userWorkspaceId,
+    authContext,
   }: {
     workspaceId: string;
     eventStreamChannelId: string;
-    userId: string;
-    userWorkspaceId: string;
+    authContext: SerializableAuthContext;
   }): Promise<void> {
     const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
     const streamData: EventStreamData = {
-      userId,
-      userWorkspaceId,
+      authContext,
       workspaceId,
       queries: {},
       createdAt: Date.now(),
@@ -45,9 +43,11 @@ export class EventStreamService {
     const activeStreamsKey = this.getActiveStreamsKey(workspaceId);
 
     await this.cacheLockService.withLock(async () => {
-      await this.cacheStorageService.setAdd(activeStreamsKey, [
-        eventStreamChannelId,
-      ]);
+      await this.cacheStorageService.setAdd(
+        activeStreamsKey,
+        [eventStreamChannelId],
+        EVENT_STREAM_TTL_MS,
+      );
     }, activeStreamsKey);
   }
 
@@ -75,6 +75,24 @@ export class EventStreamService {
     return this.cacheStorageService.setMembers(
       this.getActiveStreamsKey(workspaceId),
     );
+  }
+
+  async removeFromActiveStreams(
+    workspaceId: string,
+    streamIdsToRemove: string[],
+  ): Promise<void> {
+    if (streamIdsToRemove.length === 0) {
+      return;
+    }
+
+    const activeStreamsKey = this.getActiveStreamsKey(workspaceId);
+
+    await this.cacheLockService.withLock(async () => {
+      await this.cacheStorageService.setRemove(
+        activeStreamsKey,
+        streamIdsToRemove,
+      );
+    }, activeStreamsKey);
   }
 
   async getStreamsData(
