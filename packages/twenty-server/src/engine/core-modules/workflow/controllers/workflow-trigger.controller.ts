@@ -7,12 +7,15 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Request } from 'express';
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { WorkflowTriggerRestApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-rest-api-exception.filter';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
@@ -39,6 +42,8 @@ export class WorkflowTriggerController {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   @Post('workflows/:workspaceId/:workflowId')
@@ -73,6 +78,17 @@ export class WorkflowTriggerController {
     payload?: object;
     workspaceId: string;
   }) {
+    const workspaceExists = await this.workspaceRepository.existsBy({
+      id: workspaceId,
+    });
+
+    if (!workspaceExists) {
+      throw new WorkflowTriggerException(
+        `[Webhook trigger] Workspace ${workspaceId} not found`,
+        WorkflowTriggerExceptionCode.NOT_FOUND,
+      );
+    }
+
     const authContext = buildSystemAuthContext(workspaceId);
 
     const { workflow } =
