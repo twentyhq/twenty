@@ -1,1 +1,1 @@
-export type { ServerlessFunctionEvent } from 'twenty-shared/types';
+export type { ServerlessFunctionEvent as RoutePayload } from 'twenty-shared/types';
