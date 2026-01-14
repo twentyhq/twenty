@@ -3,12 +3,21 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { isImapFlowError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-imap-flow-error.util';
+import { isImapNetworkError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-imap-network-error.util';
 
 export const parseImapMessagesImportError = (
   error: Error,
   messageExternalId: string,
   options?: { cause?: Error },
 ): MessageImportDriverException => {
+  if (isImapNetworkError(error)) {
+    return new MessageImportDriverException(
+      `IMAP network error: ${error.message}`,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      { cause: options?.cause },
+    );
+  }
+
   if (!error) {
     return new MessageImportDriverException(
       `Unknown IMAP message import error for message ${messageExternalId}: No error provided`,
