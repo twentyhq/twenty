@@ -4,6 +4,7 @@ import {
   buildServerlessFunctionEvent,
   extractBody,
   filterRequestHeaders,
+  normalizePathParameters,
   normalizeQueryStringParameters,
 } from 'src/engine/metadata-modules/route-trigger/utils/build-serverless-function-event.util';
 
@@ -196,12 +197,12 @@ describe('normalizeQueryStringParameters', () => {
     expect(result).toEqual({ page: '1', limit: '10' });
   });
 
-  it('should handle array parameters', () => {
+  it('should join array parameters with commas', () => {
     const query = { ids: ['1', '2', '3'] };
 
     const result = normalizeQueryStringParameters(query);
 
-    expect(result).toEqual({ ids: ['1', '2', '3'] });
+    expect(result).toEqual({ ids: '1,2,3' });
   });
 
   it('should skip undefined parameters', () => {
@@ -228,12 +229,46 @@ describe('normalizeQueryStringParameters', () => {
     expect(result).toEqual({ filter: '{"name":"test"}' });
   });
 
-  it('should filter non-string values from arrays', () => {
+  it('should filter non-string values from arrays and join with commas', () => {
     const query = { ids: ['1', undefined as unknown as string, '2'] };
 
     const result = normalizeQueryStringParameters(query);
 
-    expect(result).toEqual({ ids: ['1', '2'] });
+    expect(result).toEqual({ ids: '1,2' });
+  });
+});
+
+describe('normalizePathParameters', () => {
+  it('should handle simple string parameters', () => {
+    const pathParams = { id: '123', slug: 'test' };
+
+    const result = normalizePathParameters(pathParams);
+
+    expect(result).toEqual({ id: '123', slug: 'test' });
+  });
+
+  it('should join array parameters with commas', () => {
+    const pathParams = { ids: ['1', '2', '3'] };
+
+    const result = normalizePathParameters(pathParams);
+
+    expect(result).toEqual({ ids: '1,2,3' });
+  });
+
+  it('should skip undefined parameters', () => {
+    const pathParams = { id: '123', missing: undefined };
+
+    const result = normalizePathParameters(pathParams);
+
+    expect(result).toEqual({ id: '123' });
+  });
+
+  it('should handle empty object', () => {
+    const pathParams = {};
+
+    const result = normalizePathParameters(pathParams);
+
+    expect(result).toEqual({});
   });
 });
 

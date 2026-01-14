@@ -8,11 +8,11 @@ export type ServerlessFunctionEvent<TBody = object> = {
   /** HTTP headers (filtered by forwardedRequestHeaders in route trigger) */
   headers: Record<string, string | undefined>;
 
-  /** Query string parameters */
-  queryStringParameters: Record<string, string | string[] | undefined>;
+  /** Query string parameters (multiple values are joined with commas, e.g., "1,2,3") */
+  queryStringParameters: Record<string, string | undefined>;
 
-  /** Path parameters extracted from the route pattern (e.g., /users/:id → { id: '123' }) */
-  pathParameters: Record<string, string | string[] | undefined>;
+  /** Path parameters extracted from the route pattern (e.g., /users/:id → { id: '123' }). Multiple values are joined with commas. */
+  pathParameters: Record<string, string | undefined>;
 
   /** Request body */
   body: TBody | null;

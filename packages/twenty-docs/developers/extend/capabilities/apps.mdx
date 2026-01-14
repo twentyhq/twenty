@@ -443,18 +443,18 @@ Each function file uses `defineFunction()` to export a configuration with a hand
 ```typescript
 // src/app/createPostCard.function.ts
 import { defineFunction } from 'twenty-sdk';
-import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload } from 'twenty-sdk';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
 import Twenty, { type Person } from '../../generated';
 
 const handler = async (
   params:
-    | { name?: string }
+    | RoutePayload
     | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
     | CronPayload,
 ) => {
   const client = new Twenty(); // generated typed client
-  const name = 'name' in params
-    ? params.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
     : 'Hello world';
 
   const result = await client.mutation({
@@ -553,8 +553,8 @@ The `RoutePayload` type has the following structure:
 | Property | Type | Description |
 |----------|------|-------------|
 | `headers` | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`) |
-| `queryStringParameters` | `Record<string, string \| string[] \| undefined>` | Query string parameters |
-| `pathParameters` | `Record<string, string \| string[] \| undefined>` | Path parameters extracted from the route pattern (e.g., `/users/:id` → `{ id: '123' }`) |
+| `queryStringParameters` | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas) |
+| `pathParameters` | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern (e.g., `/users/:id` → `{ id: '123' }`) |
 | `body` | `object \| null` | Parsed request body (JSON) |
 | `isBase64Encoded` | `boolean` | Whether the body is base64 encoded |
 | `requestContext.http.method` | `string` | HTTP method (GET, POST, PUT, PATCH, DELETE) |

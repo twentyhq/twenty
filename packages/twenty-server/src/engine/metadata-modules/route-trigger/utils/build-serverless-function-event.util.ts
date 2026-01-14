@@ -70,13 +70,13 @@ export const extractBody = (request: Request): object | null => {
 };
 
 /**
- * Converts Express query parameters to AWS HTTP API v2 format
- * Express already parses query params, we just need to normalize the format
+ * Converts Express query parameters to a normalized string format
+ * Arrays are joined with commas (e.g., ['1', '2', '3'] → '1,2,3')
  */
 export const normalizeQueryStringParameters = (
   query: Request['query'],
-): Record<string, string | string[] | undefined> => {
-  const normalized: Record<string, string | string[] | undefined> = {};
+): Record<string, string | undefined> => {
+  const normalized: Record<string, string | undefined> = {};
 
   for (const [key, value] of Object.entries(query)) {
     if (value === undefined) {
@@ -84,14 +84,42 @@ export const normalizeQueryStringParameters = (
     }
 
     if (Array.isArray(value)) {
-      // Filter out undefined/null values and ensure all are strings
-      normalized[key] = value.filter((v): v is string => typeof v === 'string');
+      // Join array values with commas
+      const stringValues = value.filter(
+        (v): v is string => typeof v === 'string',
+      );
+
+      normalized[key] = stringValues.join(',');
     } else if (typeof value === 'string') {
       normalized[key] = value;
     } else if (typeof value === 'object') {
       // Handle nested query objects (e.g., ?foo[bar]=baz)
       // This is uncommon in REST APIs, convert to JSON string as fallback
       normalized[key] = JSON.stringify(value);
+    }
+  }
+
+  return normalized;
+};
+
+/**
+ * Normalizes path parameters to string format
+ * Arrays are joined with commas (e.g., ['1', '2', '3'] → '1,2,3')
+ */
+export const normalizePathParameters = (
+  pathParams: Record<string, string | string[] | undefined>,
+): Record<string, string | undefined> => {
+  const normalized: Record<string, string | undefined> = {};
+
+  for (const [key, value] of Object.entries(pathParams)) {
+    if (value === undefined) {
+      continue;
+    }
+
+    if (Array.isArray(value)) {
+      normalized[key] = value.join(',');
+    } else {
+      normalized[key] = value;
     }
   }
 
@@ -117,7 +145,7 @@ export const buildServerlessFunctionEvent = ({
       forwardedRequestHeaders,
     }),
     queryStringParameters: normalizeQueryStringParameters(request.query),
-    pathParameters,
+    pathParameters: normalizePathParameters(pathParameters),
     body: extractBody(request),
     isBase64Encoded: false,
     requestContext: {
