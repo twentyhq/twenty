@@ -131,7 +131,8 @@
       ],
       "inputs": [
         "^default",
-        "excludeStories"
+        "excludeStories",
+        "{workspaceRoot}/jest.preset.js"
       ],
       "outputs": [
         "{projectRoot}/coverage"
@@ -307,7 +308,8 @@
       "cache": true,
       "inputs": [
         "^default",
-        "excludeStories"
+        "excludeStories",
+        "{workspaceRoot}/jest.preset.js"
       ],
       "options": {
         "passWithNoTests": true

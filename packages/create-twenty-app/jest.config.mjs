@@ -1,6 +1,6 @@
 const jestConfig = {
   displayName: 'twenty-cli',
-  preset: '@nx/jest/preset',
+  preset: '../../jest.preset.js',
   testEnvironment: 'node',
   transformIgnorePatterns: ['../../node_modules/'],
   transform: {

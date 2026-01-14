@@ -2,7 +2,7 @@
 export default {
   displayName: 'eslint-rules',
   silent: false,
-  preset: '@nx/jest/preset',
+  preset: '../../jest.preset.js',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
