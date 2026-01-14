@@ -7,7 +7,7 @@ import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidget
 import { assertLineChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertLineChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
-import { isChartDrillDownSupported } from '@/page-layout/widgets/graph/utils/isChartDrillDownSupported';
+import { isFilteredViewRedirectionSupported } from '@/page-layout/widgets/graph/utils/isFilteredViewRedirectionSupported';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -84,8 +84,8 @@ export const GraphWidgetLineChartRenderer = () => {
   const primaryGroupByField = objectMetadataItem.fields.find(
     (field) => field.id === configuration.primaryAxisGroupByFieldMetadataId,
   );
-  const isFilteredViewRedirectionSupported =
-    isChartDrillDownSupported(primaryGroupByField);
+  const canRedirectToFilteredView =
+    isFilteredViewRedirectionSupported(primaryGroupByField);
 
   const handlePointClick = (point: Point<LineSeries>) => {
     const xValue = (point.data as LineChartDataPoint).x;
@@ -135,7 +135,7 @@ export const GraphWidgetLineChartRenderer = () => {
         colorMode={colorMode}
         displayType="shortNumber"
         onSliceClick={
-          isPageLayoutInEditMode || !isFilteredViewRedirectionSupported
+          isPageLayoutInEditMode || !canRedirectToFilteredView
             ? undefined
             : handlePointClick
         }

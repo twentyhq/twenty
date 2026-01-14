@@ -3,7 +3,7 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isDefined } from 'twenty-shared/utils';
 
-export const isChartDrillDownSupported = (
+export const isFilteredViewRedirectionSupported = (
   field: FieldMetadataItem | undefined,
 ): boolean => {
   if (!isDefined(field)) {
