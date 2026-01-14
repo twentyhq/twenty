@@ -2,23 +2,27 @@ import { SseClientContext } from '@/sse-db-event/contexts/SseClientContext';
 import { ON_EVENT_SUBSCRIPTION } from '@/sse-db-event/graphql/subscriptions/OnEventSubscription';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { dispatchObjectRecordEventsWithQueryIds } from '@/sse-db-event/utils/dispatchObjectRecordEventsWithQueryIds';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ExecutionResult, print } from 'graphql';
 import { useContext, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { type EventSubscription } from '~/generated/graphql';
+import { type EventSubscription, FeatureFlagKey } from '~/generated/graphql';
 
 export const SSEProviderEffect = () => {
   const sseClient = useContext(SseClientContext);
+  const isSseDbEventsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_SSE_DB_EVENTS_ENABLED,
+  );
 
   const [sseEventStreamId, setSseEventStreamId] = useRecoilState(
     sseEventStreamIdState,
   );
 
   useEffect(() => {
-    if (!isDefined(sseClient)) {
+    if (!isSseDbEventsEnabled || !isDefined(sseClient)) {
       return;
     }
 
@@ -56,7 +60,7 @@ export const SSEProviderEffect = () => {
     return () => {
       unsubscribe();
     };
-  }, [sseClient, sseEventStreamId, setSseEventStreamId]);
+  }, [isSseDbEventsEnabled, sseClient, sseEventStreamId, setSseEventStreamId]);
 
   return null;
 };
