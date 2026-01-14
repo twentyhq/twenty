@@ -328,18 +328,58 @@ export class CleanerWorkspaceService {
       );
     }
   }
+  async hardDeleteSoftDeletedWorkspace({
+    workspace,
+    force = false,
+    dryRun = false,
+  }: {
+    force?: boolean;
+    dryRun?: boolean;
+    workspace: WorkspaceEntity;
+  }): Promise<WorkspaceEntity | undefined> {
+    if (!isDefined(workspace.deletedAt)) {
+      return;
+    }
+
+    const daysSinceSoftDeleted = workspace.deletedAt
+      ? differenceInDays(new Date(), workspace.deletedAt)
+      : 0;
+
+    const hasPassedGracePeriod =
+      daysSinceSoftDeleted >
+      this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete;
+
+    const canHardDelete = force || hasPassedGracePeriod;
+
+    if (!canHardDelete) {
+      return;
+    }
+
+    this.logger.log(
+      `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
+    );
+    if (dryRun) {
+      return;
+    }
+
+    await this.workspaceService.deleteWorkspace(workspace.id);
+    this.metricsService.incrementCounter({
+      key: MetricsKeys.CronJobDeletedWorkspace,
+      shouldStoreInCache: false,
+    });
+
+    return workspace;
+  }
 
   async batchWarnOrCleanSuspendedWorkspaces({
     workspaceIds,
     dryRun = false,
-    forceHardDelete = false,
   }: {
     workspaceIds: string[];
     dryRun?: boolean;
-    forceHardDelete?: boolean;
   }): Promise<void> {
     this.logger.log(
-      `${dryRun ? 'DRY RUN - ' : ''}${forceHardDelete ? 'FORCE HARD DELETE - ' : ''}batchWarnOrCleanSuspendedWorkspaces running...`,
+      `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces running...`,
     );
 
     const workspaces = await this.workspaceRepository.find({
@@ -359,34 +399,18 @@ export class CleanerWorkspaceService {
 
       try {
         const isSoftDeletedWorkspace = isDefined(workspace.deletedAt);
+        const isWithinDeletionLimit =
+          deletedWorkspacesCount <
+          this.maxNumberOfWorkspacesDeletedPerExecution;
 
-        if (isSoftDeletedWorkspace) {
-          const daysSinceSoftDeleted = workspace.deletedAt
-            ? differenceInDays(new Date(), workspace.deletedAt)
-            : 0;
+        if (isSoftDeletedWorkspace && isWithinDeletionLimit) {
+          const result = await this.hardDeleteSoftDeletedWorkspace({
+            workspace,
+            dryRun,
+            force: false,
+          });
 
-          const hasPassedGracePeriod =
-            daysSinceSoftDeleted >
-            this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete;
-
-          const isWithinDeletionLimit =
-            deletedWorkspacesCount <
-            this.maxNumberOfWorkspacesDeletedPerExecution;
-
-          const canHardDelete =
-            forceHardDelete || (hasPassedGracePeriod && isWithinDeletionLimit);
-
-          if (canHardDelete) {
-            this.logger.log(
-              `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
-            );
-            if (!dryRun) {
-              await this.workspaceService.deleteWorkspace(workspace.id);
-              this.metricsService.incrementCounter({
-                key: MetricsKeys.CronJobDeletedWorkspace,
-                shouldStoreInCache: false,
-              });
-            }
+          if (isDefined(result)) {
             deletedWorkspacesCount++;
           }
           continue;
