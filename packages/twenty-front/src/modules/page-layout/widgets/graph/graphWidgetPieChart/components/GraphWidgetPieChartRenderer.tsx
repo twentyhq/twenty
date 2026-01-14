@@ -63,7 +63,8 @@ export const GraphWidgetPieChartRenderer = () => {
   const groupByField = objectMetadataItem.fields.find(
     (field) => field.id === widget.configuration.groupByFieldMetadataId,
   );
-  const isDrillDownSupported = isChartDrillDownSupported(groupByField);
+  const isFilteredViewRedirectionSupported =
+    isChartDrillDownSupported(groupByField);
 
   const handleSliceClick = (datum: PieChartDataItem) => {
     const rawValue = formattedToRawLookup.get(datum.id) ?? null;
@@ -108,7 +109,7 @@ export const GraphWidgetPieChartRenderer = () => {
         colorMode={colorMode}
         displayType="shortNumber"
         onSliceClick={
-          isPageLayoutInEditMode || !isDrillDownSupported
+          isPageLayoutInEditMode || !isFilteredViewRedirectionSupported
             ? undefined
             : handleSliceClick
         }

@@ -84,7 +84,8 @@ export const GraphWidgetLineChartRenderer = () => {
   const primaryGroupByField = objectMetadataItem.fields.find(
     (field) => field.id === configuration.primaryAxisGroupByFieldMetadataId,
   );
-  const isDrillDownSupported = isChartDrillDownSupported(primaryGroupByField);
+  const isFilteredViewRedirectionSupported =
+    isChartDrillDownSupported(primaryGroupByField);
 
   const handlePointClick = (point: Point<LineSeries>) => {
     const xValue = (point.data as LineChartDataPoint).x;
@@ -134,7 +135,7 @@ export const GraphWidgetLineChartRenderer = () => {
         colorMode={colorMode}
         displayType="shortNumber"
         onSliceClick={
-          isPageLayoutInEditMode || !isDrillDownSupported
+          isPageLayoutInEditMode || !isFilteredViewRedirectionSupported
             ? undefined
             : handlePointClick
         }

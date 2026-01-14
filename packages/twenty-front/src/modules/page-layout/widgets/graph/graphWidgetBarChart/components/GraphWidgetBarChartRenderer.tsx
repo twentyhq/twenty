@@ -83,7 +83,8 @@ export const GraphWidgetBarChartRenderer = () => {
   const primaryGroupByField = objectMetadataItem.fields.find(
     (field) => field.id === configuration.primaryAxisGroupByFieldMetadataId,
   );
-  const isDrillDownSupported = isChartDrillDownSupported(primaryGroupByField);
+  const isFilteredViewRedirectionSupported =
+    isChartDrillDownSupported(primaryGroupByField);
 
   const handleSliceClick = (slice: BarChartSlice) => {
     const displayValue = slice.indexValue;
@@ -137,7 +138,7 @@ export const GraphWidgetBarChartRenderer = () => {
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
         onSliceClick={
-          isPageLayoutInEditMode || !isDrillDownSupported
+          isPageLayoutInEditMode || !isFilteredViewRedirectionSupported
             ? undefined
             : handleSliceClick
         }
