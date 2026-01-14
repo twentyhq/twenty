@@ -7,7 +7,7 @@ import { CustomError, isDefined } from 'twenty-shared/utils';
 import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { isImapNetworkError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-imap-network-error.util';
+import { parseImapAuthenticationError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-imap-authentication-error.util';
 
 type ConnectedAccountIdentifier = Pick<
   ConnectedAccountWorkspaceEntity,
@@ -61,7 +61,7 @@ export class ImapClientProvider {
         error.stack,
       );
 
-      throw isImapNetworkError(error);
+      throw parseImapAuthenticationError(error);
     }
   }
 
