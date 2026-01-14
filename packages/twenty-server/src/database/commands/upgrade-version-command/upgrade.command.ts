@@ -24,7 +24,6 @@ import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrad
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
-import { BackfillWorkflowManualTriggersCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-workflow-manual-triggers.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
 import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
@@ -69,7 +68,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly addWorkspaceForeignKeysMigrationCommand: AddWorkspaceForeignKeysMigrationCommand,
 
     // 1.16 Commands
-    protected readonly backfillWorkflowManualTriggersCommand: BackfillWorkflowManualTriggersCommand,
     protected readonly updateTaskOnDeleteActionCommand: UpdateTaskOnDeleteActionCommand,
     protected readonly backfillOpportunityOwnerFieldCommand: BackfillOpportunityOwnerFieldCommand,
     protected readonly backfillStandardPageLayoutsCommand: BackfillStandardPageLayoutsCommand,
@@ -111,7 +109,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     ];
 
     const commands_1160: VersionCommands = [
-      this.backfillWorkflowManualTriggersCommand,
       this.updateTaskOnDeleteActionCommand,
       this.backfillOpportunityOwnerFieldCommand,
       this.backfillStandardPageLayoutsCommand,
