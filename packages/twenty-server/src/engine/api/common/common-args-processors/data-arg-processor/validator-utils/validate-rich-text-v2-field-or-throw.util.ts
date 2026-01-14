@@ -1,5 +1,6 @@
 import { inspect } from 'util';
 
+import { msg } from '@lingui/core/macro';
 import { isNull, isObject } from '@sniptt/guards';
 import {
   compositeTypeDefinitions,
@@ -48,6 +49,7 @@ export const validateRichTextV2FieldOrThrow = (
     throw new CommonQueryRunnerException(
       `Invalid rich text v2 value ${inspect(value)} for field "${fieldName}" - ${error.message}`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      { userFriendlyMessage: msg`Invalid value for rich text.` },
     );
   }
 };

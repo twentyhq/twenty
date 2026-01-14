@@ -1,12 +1,13 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { isMinMaxRangeValid } from '@/command-menu/pages/page-layout/utils/isMinMaxRangeValid';
-import { GraphType } from '~/generated/graphql';
+import { BarChartLayout, WidgetConfigurationType } from '~/generated/graphql';
 
 describe('isMinMaxRangeValid', () => {
   const mockConfiguration = {
     __typename: 'BarChartConfiguration',
-    graphType: GraphType.VERTICAL_BAR,
+    configurationType: WidgetConfigurationType.BAR_CHART,
+    layout: BarChartLayout.VERTICAL,
     rangeMin: 10,
     rangeMax: 100,
   } as ChartConfiguration;
@@ -78,7 +79,8 @@ describe('isMinMaxRangeValid', () => {
     it('should be valid when new rangeMin is negative and greater than existing rangeMax', () => {
       const configWithNegatives = {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         rangeMin: -100,
         rangeMax: -10,
       } as ChartConfiguration;
@@ -101,7 +103,8 @@ describe('isMinMaxRangeValid', () => {
     it('should be valid when new rangeMin is zero and greater than existing rangeMax', () => {
       const configWithZero = {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         rangeMin: 0,
         rangeMax: 100,
       } as ChartConfiguration;
@@ -119,7 +122,8 @@ describe('isMinMaxRangeValid', () => {
     it('should be valid when setting rangeMin on configuration without any range values', () => {
       const emptyConfig = {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
       } as ChartConfiguration;
 
       const result = isMinMaxRangeValid(
@@ -134,7 +138,8 @@ describe('isMinMaxRangeValid', () => {
     it('should be valid when setting rangeMax on configuration without any range values', () => {
       const emptyConfig = {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
       } as ChartConfiguration;
 
       const result = isMinMaxRangeValid(
@@ -149,7 +154,8 @@ describe('isMinMaxRangeValid', () => {
     it('should be valid when setting rangeMin without existing rangeMax', () => {
       const configWithOnlyMin = {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         rangeMin: 10,
       } as ChartConfiguration;
 
@@ -165,7 +171,8 @@ describe('isMinMaxRangeValid', () => {
     it('should be valid when setting rangeMax without existing rangeMin', () => {
       const configWithOnlyMax = {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         rangeMax: 100,
       } as ChartConfiguration;
 
@@ -181,7 +188,8 @@ describe('isMinMaxRangeValid', () => {
     it('should be invalid when setting rangeMin that would exceed existing rangeMax', () => {
       const configWithOnlyMax = {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         rangeMax: 100,
       } as ChartConfiguration;
 
@@ -197,7 +205,8 @@ describe('isMinMaxRangeValid', () => {
     it('should be invalid when setting rangeMax that would be less than existing rangeMin', () => {
       const configWithOnlyMin = {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         rangeMin: 50,
       } as ChartConfiguration;
 

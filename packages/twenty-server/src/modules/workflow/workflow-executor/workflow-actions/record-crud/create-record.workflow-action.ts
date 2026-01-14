@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
@@ -14,7 +13,7 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
+import { buildWorkflowActorMetadata } from 'src/modules/workflow/workflow-executor/utils/build-workflow-actor-metadata.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { resolveRichTextFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-fields-in-record.util';
 import { type WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
@@ -65,12 +64,12 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const createdBy = this.buildCreatedByActor(executionContext);
+    const createdBy = buildWorkflowActorMetadata(executionContext);
 
     const toolOutput = await this.createRecordService.execute({
       objectName: workflowActionInput.objectName,
       objectRecord: workflowActionInput.objectRecord,
-      workspaceId,
+      authContext: executionContext.authContext,
       createdBy,
       rolePermissionConfig: executionContext.rolePermissionConfig,
     });
@@ -84,21 +83,6 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
 
     return {
       result: toolOutput.result,
-    };
-  }
-
-  private buildCreatedByActor(
-    executionContext: WorkflowExecutionContext,
-  ): ActorMetadata {
-    if (executionContext.isActingOnBehalfOfUser) {
-      return executionContext.initiator;
-    }
-
-    return {
-      source: FieldActorSource.WORKFLOW,
-      name: 'Workflow',
-      workspaceMemberId: null,
-      context: {},
     };
   }
 }

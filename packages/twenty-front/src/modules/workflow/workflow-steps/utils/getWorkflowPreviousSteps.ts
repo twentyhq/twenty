@@ -18,6 +18,12 @@ const isParentStep = ({
     );
   }
 
+  if (potentialParentStep.type === 'IF_ELSE') {
+    return !!potentialParentStep.settings.input.branches?.some((branch) =>
+      branch.nextStepIds?.includes(currentStep.id),
+    );
+  }
+
   if (currentStep.type === 'ITERATOR') {
     return !!(
       potentialParentStep.nextStepIds?.includes(currentStep.id) &&

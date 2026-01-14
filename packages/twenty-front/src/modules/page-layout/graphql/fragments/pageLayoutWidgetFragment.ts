@@ -17,17 +17,19 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
     }
     configuration {
       ... on BarChartConfiguration {
-        graphType
+        configurationType
         aggregateFieldMetadataId
         aggregateOperation
         primaryAxisGroupByFieldMetadataId
         primaryAxisGroupBySubFieldName
         primaryAxisDateGranularity
         primaryAxisOrderBy
+        primaryAxisManualSortOrder
         secondaryAxisGroupByFieldMetadataId
         secondaryAxisGroupBySubFieldName
         secondaryAxisGroupByDateGranularity
         secondaryAxisOrderBy
+        secondaryAxisManualSortOrder
         omitNullValues
         axisNameDisplay
         displayDataLabel
@@ -38,22 +40,25 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         description
         filter
         groupMode
+        layout
         isCumulative
         timezone
         firstDayOfTheWeek
       }
       ... on LineChartConfiguration {
-        graphType
+        configurationType
         aggregateFieldMetadataId
         aggregateOperation
         primaryAxisGroupByFieldMetadataId
         primaryAxisGroupBySubFieldName
         primaryAxisDateGranularity
         primaryAxisOrderBy
+        primaryAxisManualSortOrder
         secondaryAxisGroupByFieldMetadataId
         secondaryAxisGroupBySubFieldName
         secondaryAxisGroupByDateGranularity
         secondaryAxisOrderBy
+        secondaryAxisManualSortOrder
         omitNullValues
         axisNameDisplay
         displayDataLabel
@@ -69,13 +74,14 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         firstDayOfTheWeek
       }
       ... on PieChartConfiguration {
-        graphType
+        configurationType
         groupByFieldMetadataId
         aggregateFieldMetadataId
         aggregateOperation
         groupBySubFieldName
         dateGranularity
         orderBy
+        manualSortOrder
         displayDataLabel
         showCenterMetric
         displayLegend
@@ -86,7 +92,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         firstDayOfTheWeek
       }
       ... on AggregateChartConfiguration {
-        graphType
+        configurationType
         aggregateFieldMetadataId
         aggregateOperation
         label
@@ -104,7 +110,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         }
       }
       ... on GaugeChartConfiguration {
-        graphType
+        configurationType
         aggregateFieldMetadataId
         aggregateOperation
         displayDataLabel
@@ -115,13 +121,54 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         firstDayOfTheWeek
       }
       ... on IframeConfiguration {
+        configurationType
         url
       }
       ... on StandaloneRichTextConfiguration {
+        configurationType
         body {
           blocknote
           markdown
         }
+      }
+      ... on CalendarConfiguration {
+        configurationType
+      }
+      ... on EmailsConfiguration {
+        configurationType
+      }
+      ... on FieldConfiguration {
+        configurationType
+      }
+      ... on FieldRichTextConfiguration {
+        configurationType
+      }
+      ... on FieldsConfiguration {
+        configurationType
+      }
+      ... on FilesConfiguration {
+        configurationType
+      }
+      ... on NotesConfiguration {
+        configurationType
+      }
+      ... on TasksConfiguration {
+        configurationType
+      }
+      ... on TimelineConfiguration {
+        configurationType
+      }
+      ... on ViewConfiguration {
+        configurationType
+      }
+      ... on WorkflowConfiguration {
+        configurationType
+      }
+      ... on WorkflowRunConfiguration {
+        configurationType
+      }
+      ... on WorkflowVersionConfiguration {
+        configurationType
       }
     }
     pageLayoutTabId

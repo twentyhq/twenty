@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   appendCommonExceptionCode,
@@ -11,13 +12,19 @@ export const WorkspaceCacheExceptionCode = appendCommonExceptionCode({
   INVALID_PARAMETERS: 'INVALID_PARAMETERS',
 } as const);
 
-const workspaceCacheExceptionUserFriendlyMessages: Record<
-  keyof typeof WorkspaceCacheExceptionCode,
-  MessageDescriptor
-> = {
-  MISSING_DECORATOR: msg`Missing decorator configuration.`,
-  INVALID_PARAMETERS: msg`Invalid parameters provided.`,
-  INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
+const getWorkspaceCacheExceptionUserFriendlyMessage = (
+  code: keyof typeof WorkspaceCacheExceptionCode,
+) => {
+  switch (code) {
+    case WorkspaceCacheExceptionCode.MISSING_DECORATOR:
+      return msg`Missing decorator configuration.`;
+    case WorkspaceCacheExceptionCode.INVALID_PARAMETERS:
+      return msg`Invalid parameters provided.`;
+    case WorkspaceCacheExceptionCode.INTERNAL_SERVER_ERROR:
+      return msg`An unexpected error occurred.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class WorkspaceCacheException extends CustomException<
@@ -31,7 +38,7 @@ export class WorkspaceCacheException extends CustomException<
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        workspaceCacheExceptionUserFriendlyMessages[code],
+        getWorkspaceCacheExceptionUserFriendlyMessage(code),
     });
   }
 }

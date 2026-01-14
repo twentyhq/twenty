@@ -3,16 +3,17 @@ import { RecoilRoot } from 'recoil';
 
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
+import { type TypedBarChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedBarChartConfiguration';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   AggregateOperations,
   AxisNameDisplay,
-  type BarChartConfiguration,
   BarChartGroupMode,
+  BarChartLayout,
   FieldMetadataType,
   GraphOrderBy,
-  GraphType,
+  WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
 import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
 
@@ -59,13 +60,12 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
 } as ObjectMetadataItem;
 
 const buildBarChartConfiguration = (
-  overrides: Partial<BarChartConfiguration>,
-): BarChartConfiguration =>
+  overrides: Partial<TypedBarChartConfiguration>,
+): TypedBarChartConfiguration =>
   ({
     __typename: 'BarChartConfiguration',
     aggregateFieldMetadataId: 'field-amount',
     aggregateOperation: AggregateOperations.SUM,
-    graphType: GraphType.VERTICAL_BAR,
     primaryAxisGroupByFieldMetadataId: 'field-company-name',
     primaryAxisGroupBySubFieldName: null,
     secondaryAxisGroupByFieldMetadataId: null,
@@ -76,7 +76,7 @@ const buildBarChartConfiguration = (
     displayDataLabel: false,
     groupMode: 'GROUPED',
     ...overrides,
-  }) as BarChartConfiguration;
+  }) as TypedBarChartConfiguration;
 
 const renderUseChartSettingsValues = (configuration: ChartConfiguration) => {
   return renderHook(
@@ -102,7 +102,6 @@ const renderUseChartSettingsValues = (configuration: ChartConfiguration) => {
 describe('useChartSettingsValues', () => {
   describe('Vertical bar chart (1D - single grouping)', () => {
     const verticalBarConfig = buildBarChartConfiguration({
-      graphType: GraphType.VERTICAL_BAR,
       primaryAxisGroupByFieldMetadataId: 'field-company-name',
       secondaryAxisGroupByFieldMetadataId: null,
     });
@@ -172,7 +171,7 @@ describe('useChartSettingsValues', () => {
 
   describe('Horizontal bar chart (1D - single grouping)', () => {
     const horizontalBarConfig = buildBarChartConfiguration({
-      graphType: GraphType.HORIZONTAL_BAR,
+      layout: BarChartLayout.HORIZONTAL,
       primaryAxisGroupByFieldMetadataId: 'field-company-name',
       secondaryAxisGroupByFieldMetadataId: null,
     });
@@ -213,7 +212,7 @@ describe('useChartSettingsValues', () => {
 
   describe('Vertical bar chart (2D - with secondary grouping)', () => {
     const verticalBar2DConfig = buildBarChartConfiguration({
-      graphType: GraphType.VERTICAL_BAR,
+      layout: BarChartLayout.VERTICAL,
       primaryAxisGroupByFieldMetadataId: 'field-company-name',
       secondaryAxisGroupByFieldMetadataId: 'field-stage',
       secondaryAxisOrderBy: GraphOrderBy.FIELD_DESC,
@@ -253,7 +252,7 @@ describe('useChartSettingsValues', () => {
 
   describe('Horizontal bar chart (2D - with secondary grouping)', () => {
     const horizontalBar2DConfig = buildBarChartConfiguration({
-      graphType: GraphType.HORIZONTAL_BAR,
+      layout: BarChartLayout.HORIZONTAL,
       primaryAxisGroupByFieldMetadataId: 'field-company-name',
       secondaryAxisGroupByFieldMetadataId: 'field-stage',
       secondaryAxisOrderBy: GraphOrderBy.FIELD_DESC,
@@ -282,7 +281,7 @@ describe('useChartSettingsValues', () => {
 
   describe('Composite field with subfield', () => {
     const configWithSubField = buildBarChartConfiguration({
-      graphType: GraphType.VERTICAL_BAR,
+      layout: BarChartLayout.VERTICAL,
       primaryAxisGroupByFieldMetadataId: 'field-full-name',
       primaryAxisGroupBySubFieldName: 'firstName',
     });
@@ -345,7 +344,7 @@ describe('useChartSettingsValues', () => {
     it('should return capitalized color when color is set', () => {
       const config = buildBarChartConfiguration({
         color: 'blue',
-      } as Partial<BarChartConfiguration>);
+      });
 
       const { result } = renderUseChartSettingsValues(config);
 
@@ -525,7 +524,7 @@ describe('useChartSettingsValues', () => {
   describe('Critical: Proves no swapping occurs', () => {
     it('horizontal bar with NULL secondary should still return primary for DATA_ON_DISPLAY_X', () => {
       const horizontalConfig = buildBarChartConfiguration({
-        graphType: GraphType.HORIZONTAL_BAR,
+        layout: BarChartLayout.HORIZONTAL,
         primaryAxisGroupByFieldMetadataId: 'field-company-name',
         secondaryAxisGroupByFieldMetadataId: null,
       });
@@ -554,12 +553,14 @@ describe('useChartSettingsValues', () => {
 
       const verticalConfig = buildBarChartConfiguration({
         ...baseConfig,
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
       });
 
       const horizontalConfig = buildBarChartConfiguration({
         ...baseConfig,
-        graphType: GraphType.HORIZONTAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.HORIZONTAL,
       });
 
       const { result: verticalResult } =

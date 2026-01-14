@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type RestoreOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -18,6 +20,9 @@ export class WorkspaceMemberDeleteOnePreQueryHook
     throw new CommonQueryRunnerException(
       'Please use /deleteUserFromWorkspace to remove a workspace member.',
       CommonQueryRunnerExceptionCode.BAD_REQUEST,
+      {
+        userFriendlyMessage: msg`Please use Settings to remove a workspace member.`,
+      },
     );
   }
 }

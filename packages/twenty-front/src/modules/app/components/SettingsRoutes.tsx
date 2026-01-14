@@ -171,6 +171,12 @@ const SettingsAgentTurnDetail = lazy(() =>
   })),
 );
 
+const SettingsSkillForm = lazy(() =>
+  import('~/pages/settings/ai/SettingsSkillForm').then((module) => ({
+    default: module.SettingsSkillForm,
+  })),
+);
+
 const SettingsWorkspaceMembers = lazy(() =>
   import('~/pages/settings/members/SettingsWorkspaceMembers').then(
     (module) => ({
@@ -217,14 +223,6 @@ const SettingsBilling = lazy(() =>
   import('~/pages/settings/SettingsBilling').then((module) => ({
     default: module.SettingsBilling,
   })),
-);
-
-const SettingsIntegrations = lazy(() =>
-  import('~/pages/settings/integrations/SettingsIntegrations').then(
-    (module) => ({
-      default: module.SettingsIntegrations,
-    }),
-  ),
 );
 
 const SettingsObjects = lazy(() =>
@@ -440,6 +438,18 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.AIAgentTurnDetail}
           element={<SettingsAgentTurnDetail />}
         />
+        <Route
+          path={SettingsPath.AINewSkill}
+          element={<SettingsSkillForm mode="create" />}
+        />
+        <Route
+          path={SettingsPath.AISkillDetail}
+          element={<SettingsSkillForm mode="edit" />}
+        />
+        <Route
+          path={SettingsPath.ServerlessFunctionDetail}
+          element={<SettingsServerlessFunctionDetail />}
+        />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
         <Route
@@ -553,10 +563,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.WebhookDetail}
           element={<SettingsDevelopersWebhookDetail />}
-        />
-        <Route
-          path={SettingsPath.Integrations}
-          element={<SettingsIntegrations />}
         />
       </Route>
 

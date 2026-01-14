@@ -16,6 +16,7 @@ import {
   getFindDuplicatesResponse200,
   getFindManyResponse200,
   getFindOneResponse200,
+  getGroupByResponse200,
   getJsonResponse,
   getMergeManyResponse200,
   getRestoreManyResponse200,
@@ -321,6 +322,40 @@ export const computeMergeManyResultPath = (
         '200': getMergeManyResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
+      },
+    },
+  } as OpenAPIV3_1.PathItemObject;
+};
+
+export const computeGroupByResultPath = (
+  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
+  _flatObjectMetadataMaps: Pick<
+    AllFlatEntityMaps,
+    'flatObjectMetadataMaps'
+  >['flatObjectMetadataMaps'],
+  _flatFieldMetadataMaps: Pick<
+    AllFlatEntityMaps,
+    'flatFieldMetadataMaps'
+  >['flatFieldMetadataMaps'],
+): OpenAPIV3_1.PathItemObject => {
+  return {
+    get: {
+      tags: [item.namePlural],
+      summary: `Group By ${item.namePlural}`,
+      description: `Groups **${item.namePlural}** by specified fields and optionally computes aggregate values for each group.`,
+      operationId: `groupBy${capitalize(item.namePlural)}`,
+      parameters: [
+        { $ref: '#/components/parameters/groupBy' },
+        { $ref: '#/components/parameters/filter' },
+        { $ref: '#/components/parameters/orderBy' },
+        { $ref: '#/components/parameters/limit' },
+        { $ref: '#/components/parameters/viewId' },
+        { $ref: '#/components/parameters/aggregate' },
+        { $ref: '#/components/parameters/includeRecordsSample' },
+        { $ref: '#/components/parameters/orderByForRecords' },
+      ],
+      responses: {
+        '200': getGroupByResponse200(item),
       },
     },
   } as OpenAPIV3_1.PathItemObject;

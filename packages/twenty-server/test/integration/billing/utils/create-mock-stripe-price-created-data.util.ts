@@ -16,7 +16,6 @@ export const createMockStripePriceCreatedData = (
     nickname: null,
     product: 'prod_RLN',
     recurring: {
-      aggregate_usage: null,
       interval: 'month',
       interval_count: 1,
       meter: null,

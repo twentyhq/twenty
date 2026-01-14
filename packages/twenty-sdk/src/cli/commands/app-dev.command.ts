@@ -2,7 +2,11 @@ import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-directory';
 import { ApiService } from '@/cli/services/api.service';
+import { ManifestValidationError } from '@/cli/utils/validate-manifest';
+import { displayEntitySummary } from '@/cli/utils/display-entity-summary';
 import { loadManifest } from '@/cli/utils/load-manifest';
+import { displayWarnings } from '@/cli/utils/display-warnings';
+import { displayErrors } from '@/cli/utils/display-errors';
 
 export class AppDevCommand {
   private apiService = new ApiService();
@@ -11,35 +15,45 @@ export class AppDevCommand {
     appPath?: string;
     debounce: string;
   }): Promise<void> {
-    try {
-      const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
+    const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
-      const debounceMs = parseInt(options.debounce, 10);
+    const debounceMs = parseInt(options.debounce, 10);
 
-      this.logStartupInfo(appPath, debounceMs);
+    this.logStartupInfo(appPath, debounceMs);
 
-      await this.synchronize(appPath);
+    await this.synchronize(appPath);
 
-      const watcher = this.setupFileWatcher(appPath, debounceMs);
+    const watcher = this.setupFileWatcher(appPath, debounceMs);
 
-      this.setupGracefulShutdown(watcher);
-    } catch (error) {
-      console.error(
-        chalk.red('Development mode failed:'),
-        error instanceof Error ? error.message : error,
-      );
-      process.exit(1);
-    }
+    this.setupGracefulShutdown(watcher);
   }
 
   private async synchronize(appPath: string) {
-    const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
+    try {
+      const { manifest, packageJson, yarnLock, warnings } =
+        await loadManifest(appPath);
 
-    await this.apiService.syncApplication({
-      manifest,
-      packageJson,
-      yarnLock,
-    });
+      displayEntitySummary(manifest);
+
+      displayWarnings(warnings);
+
+      await this.apiService.syncApplication({
+        manifest,
+        packageJson,
+        yarnLock,
+      });
+
+      console.log(chalk.green('  ✓ Synced with server'));
+    } catch (error) {
+      if (error instanceof ManifestValidationError) {
+        displayErrors(error);
+      } else {
+        console.error(
+          chalk.red('  ✗ Sync failed:'),
+          error instanceof Error ? error.message : error,
+        );
+      }
+    }
   }
 
   private logStartupInfo(appPath: string, debounceMs: number): void {

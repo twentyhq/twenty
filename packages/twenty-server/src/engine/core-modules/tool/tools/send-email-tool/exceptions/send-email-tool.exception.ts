@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -12,16 +13,25 @@ export enum SendEmailToolExceptionCode {
   INVALID_FILE_ID = 'INVALID_FILE_ID',
 }
 
-const sendEmailToolExceptionUserFriendlyMessages: Record<
-  SendEmailToolExceptionCode,
-  MessageDescriptor
-> = {
-  [SendEmailToolExceptionCode.INVALID_CONNECTED_ACCOUNT_ID]: msg`Invalid connected account ID.`,
-  [SendEmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND]: msg`Connected account not found.`,
-  [SendEmailToolExceptionCode.INVALID_EMAIL]: msg`Invalid email address.`,
-  [SendEmailToolExceptionCode.WORKSPACE_ID_NOT_FOUND]: msg`Workspace not found.`,
-  [SendEmailToolExceptionCode.FILE_NOT_FOUND]: msg`File not found.`,
-  [SendEmailToolExceptionCode.INVALID_FILE_ID]: msg`Invalid file ID.`,
+const getSendEmailToolExceptionUserFriendlyMessage = (
+  code: SendEmailToolExceptionCode,
+) => {
+  switch (code) {
+    case SendEmailToolExceptionCode.INVALID_CONNECTED_ACCOUNT_ID:
+      return msg`Invalid connected account ID.`;
+    case SendEmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND:
+      return msg`Connected account not found.`;
+    case SendEmailToolExceptionCode.INVALID_EMAIL:
+      return msg`Invalid email address.`;
+    case SendEmailToolExceptionCode.WORKSPACE_ID_NOT_FOUND:
+      return msg`Workspace not found.`;
+    case SendEmailToolExceptionCode.FILE_NOT_FOUND:
+      return msg`File not found.`;
+    case SendEmailToolExceptionCode.INVALID_FILE_ID:
+      return msg`Invalid file ID.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class SendEmailToolException extends CustomException<SendEmailToolExceptionCode> {
@@ -32,7 +42,8 @@ export class SendEmailToolException extends CustomException<SendEmailToolExcepti
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? sendEmailToolExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ??
+        getSendEmailToolExceptionUserFriendlyMessage(code),
     });
   }
 }

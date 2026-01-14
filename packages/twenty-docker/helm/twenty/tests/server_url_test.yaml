@@ -1,0 +1,71 @@
+suite: server url
+templates:
+  - templates/deployment-server.yaml
+release:
+  name: my-twenty
+  namespace: default
+tests:
+  - it: derives from ingress with paths
+    set:
+      server.ingress.enabled: true
+      server.ingress.hosts:
+        - host: crm.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+      server.ingress.tls:
+        - secretName: example-tls
+          hosts:
+            - crm.example.com
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[0].value
+          value: "https://crm.example.com:443"
+  - it: falls back to service when ingress disabled
+    set:
+      server.ingress.enabled: false
+      server.service.port: 3000
+      server.env.SERVER_URL: ""
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].env[0].value
+          pattern: ^http://my-twenty-twenty-server\.default\.svc\.cluster\.local:3000$
+---
+suite: ingress configuration
+templates:
+  - templates/ingress.yaml
+release:
+  name: my-twenty
+  namespace: default
+tests:
+  - it: renders with host and paths
+    set:
+      server.ingress.hosts:
+        - host: twenty.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+      server.ingress.tls:
+        - hosts:
+            - twenty.example.com
+          secretName: twenty-tls
+    asserts:
+      - equal:
+          path: spec.rules[0].host
+          value: twenty.example.com
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /
+      - equal:
+          path: spec.tls[0].hosts[0]
+          value: twenty.example.com
+      - equal:
+          path: spec.tls[0].secretName
+          value: twenty-tls
+  - it: adds cert-manager annotation when acme true
+    set:
+      server.ingress.acme: true
+    asserts:
+      - equal:
+          path: metadata.annotations[cert-manager.io/cluster-issuer]
+          value: letsencrypt-prod

@@ -1,6 +1,6 @@
 ---
-title: Kanban Board Views
-description: Learn how to use Kanban views to visualize and manage your workflows.
+title: Vizualizări pentru tabloul Kanban
+description: Aflați cum să utilizați vizualizările Kanban pentru a vizualiza și gestiona fluxurile de lucru.
 image: /images/user-guide/kanban-views/kanban.png
 ---
 
@@ -8,15 +8,15 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Despre vizualizările Kanban
 
-Kanban views visually map out process flows, where each column stands for a distinct stage and each card represents a record.
+Vizualizările Kanban cartografiază vizual fluxurile de proces, unde fiecare coloană reprezintă o etapă distinctă și fiecare card reprezintă o înregistrare.
 
 ## Mută Carduri între Etape
 
-You can move each card between stages as it goes through your workflow by dragging and dropping. Pentru a continua, ține apăsat pe un card și mută-l la etapa următoare.
+Puteți muta fiecare card între etape pe măsură ce parcurge fluxul de lucru, prin glisare și fixare. Pentru a continua, ține apăsat pe un card și mută-l la etapa următoare.
 
 <VimeoEmbed videoId="927888627" title="Demonstrație video" />
 
-## Add and Delete Stages
+## Adăugați și ștergeți etape
 
 Poți personaliza fluxul de lucru pentru a se potrivi nevoilor tale folosind etape, care reprezintă o valoare într-un Câmp Selectează:
 
@@ -28,11 +28,11 @@ Pentru a adăuga o etapă, accesează setările câmpului Selectează navigând 
 
 ### Elimină Etape
 
-To remove a stage, hover the stage name or the `⋮` icon, click `Edit from settings` in the Select field settings, and then click **Delete** next to the relevant stage.
+Pentru a elimina o etapă, treceți cursorul peste numele etapei sau pictograma `⋮`, faceți clic pe `Edit from settings` în setările câmpului Select și apoi faceți clic pe **Șterge** lângă etapa relevantă.
 
-## Display Fields
+## Afișare câmpuri
 
-Poți configura panoul Kanban pentru a afișa unele câmpuri și a ascunde altele. To hide a field, click on **Options** on the top right, then on **Fields** to bring up the list of options. Look for the field needed in the Hidden Fields section and click on the eye button to display the field.
+Poți configura panoul Kanban pentru a afișa unele câmpuri și a ascunde altele. Pentru a ascunde un câmp, faceți clic pe **Opțiuni** în colțul din dreapta sus, apoi pe **Câmpuri** pentru a deschide lista de opțiuni. Căutați câmpul necesar în secțiunea Câmpuri ascunse și faceți clic pe butonul în formă de ochi pentru a afișa câmpul.
 
 Poți, de asemenea, să rearanjezi ordinea câmpurilor ținând apăsat numele câmpului și trăgându-l acolo unde îl dorești.
 
@@ -40,60 +40,60 @@ Poți, de asemenea, să rearanjezi ordinea câmpurilor ținând apăsat numele c
 
 ## Vizualizare Compactă
 
-You can hide all the fields and get an overview of all records at a glance. To enable:
+Puteți ascunde toate câmpurile și obține o imagine de ansamblu a tuturor înregistrărilor dintr-o privire. Pentru activare:
 
-1. Click **Options** on the top right
-2. Turn on the toggle for **Compact view**
+1. Faceți clic pe **Opțiuni** în dreapta sus
+2. Activați comutatorul pentru **Vizualizare compactă**
 
 <img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
 
-## Column Aggregations
+## Agregări pe coloană
 
-Each column in a Kanban view can display aggregated values at the top, helping you understand your data at a glance.
+Fiecare coloană dintr-o vizualizare Kanban poate afișa valori agregate în partea de sus, ajutându-vă să înțelegeți datele dintr-o privire.
 
-### Available Aggregations
+### Agregări disponibile
 
-| Aggregation | Descriere                                     |
-| ----------- | --------------------------------------------- |
-| **Count**   | Number of records in the column               |
-| **Sum**     | Total of a numeric field (e.g., deal amounts) |
-| **Average** | Average value of a numeric field              |
-| **Min**     | Lowest value                                  |
-| **Max**     | Highest value                                 |
+| Agregare  | Descriere                                                |
+| --------- | -------------------------------------------------------- |
+| **Număr** | Numărul de înregistrări din coloană                      |
+| **Sumă**  | Totalul unui câmp numeric (de ex., sumele tranzacțiilor) |
+| **Medie** | Valoarea medie a unui câmp numeric                       |
+| **Minim** | Cea mai mică valoare                                     |
+| **Maxim** | Cea mai mare valoare                                     |
 
-### Configuring Aggregations
+### Configurarea agregărilor
 
-1. Click on the number displayed next to the Stage value, at the top of a column
-2. Select the aggregation type
-3. Choose the field to aggregate
+1. Faceți clic pe numărul afișat lângă valoarea etapei, în partea de sus a unei coloane
+2. Selectați tipul de agregare
+3. Alegeți câmpul pe care să îl agregați
 
-**Example:** Show total deal value per stage by aggregating the Amount field with Sum.
+**Exemplu:** Afișați valoarea totală a tranzacțiilor pe etapă prin agregarea câmpului Sumă cu operația Sumă.
 
-## When to Use Kanban Views
+## Când să utilizați vizualizările Kanban
 
-Kanban views are ideal for:
+Vizualizările Kanban sunt ideale pentru:
 
-* **Sales pipelines**: Track deals through stages from lead to close
-* **Project management**: Monitor tasks through workflow states
-* **Recruitment**: Track candidates through hiring stages
-* **Any staged process**: Visualize any workflow with defined stages
+* **Pipeline-uri de vânzări**: Urmăriți tranzacțiile prin etape, de la lead până la închidere
+* **Managementul proiectelor**: Monitorizați sarcinile prin stările fluxului de lucru
+* **Recrutare**: Urmăriți candidații prin etapele de angajare
+* **Orice proces etapizat**: Vizualizați orice flux de lucru cu etape definite
 
 ## Cele mai bune practici
 
-### Organize Your Stages
+### Organizați-vă etapele
 
-* **Limit stages**: 5-7 stages is ideal for visibility
-* **Clear naming**: Use descriptive stage names
-* **Logical order**: Arrange stages in process order
+* **Limitați etapele**: 5-7 etape sunt ideale pentru vizibilitate
+* **Denumire clară**: Folosiți denumiri de etape descriptive
+* **Ordine logică**: Aranjați etapele în ordinea procesului
 
-### Optimize Card Display
+### Optimizați afișarea cardurilor
 
-* **Show key fields**: Display only the most important information
-* **Use compact view**: For high-level overviews
-* **Color coding**: Use stage colors to quickly identify status
+* **Afișați câmpurile cheie**: Afișați doar cele mai importante informații
+* **Utilizați vizualizarea compactă**: Pentru vederi de ansamblu la nivel înalt
+* **Coduri de culoare**: Folosiți culorile etapelor pentru a identifica rapid starea
 
-### Maintain Data Quality
+### Mențineți calitatea datelor
 
-* **Update regularly**: Keep cards moving through stages
-* **Archive completed**: Move closed items out of active view
-* **Review stale cards**: Follow up on cards stuck in stages
+* **Actualizați regulat**: Mențineți cardurile în mișcare prin etape
+* **Arhivați elementele finalizate**: Mutați elementele închise în afara vizualizării active
+* **Revizuiți cardurile învechite**: Reluați urmărirea cardurilor blocate în etape

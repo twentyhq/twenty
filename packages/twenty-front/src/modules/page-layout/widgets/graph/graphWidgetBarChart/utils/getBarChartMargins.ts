@@ -1,6 +1,6 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
-import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { isDefined } from 'twenty-shared/utils';
+import { BarChartLayout } from '~/generated/graphql';
 
 const BAR_CHART_MARGINS = {
   top: COMMON_CHART_CONSTANTS.MARGIN_TOP,

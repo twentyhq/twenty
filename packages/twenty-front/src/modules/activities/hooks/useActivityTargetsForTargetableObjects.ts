@@ -7,7 +7,7 @@ import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
+import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 export const useActivityTargetsForTargetableObjects = ({
@@ -28,11 +28,13 @@ export const useActivityTargetsForTargetableObjects = ({
   activityTargetsOrderByVariables: RecordGqlOperationOrderBy;
   limit: number;
 }) => {
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
   const activityTargetsFilter = getActivityTargetsFilter({
     targetableObjects: targetableObjects,
+    activityObjectNameSingular: objectNameSingular,
+    objectMetadataItems,
   });
-
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE =
     findActivityTargetsOperationSignatureFactory({

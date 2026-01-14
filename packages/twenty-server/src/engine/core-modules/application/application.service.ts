@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryRunner, Repository } from 'typeorm';
+import { type QueryRunner, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -33,13 +33,17 @@ export class ApplicationService {
         workspaceId: string;
         workspace?: never;
       }
-    | { workspace: WorkspaceEntity; workspaceId?: never }) {
+    | {
+        workspace: WorkspaceEntity;
+        workspaceId?: never;
+      }) {
     const workspace = isDefined(workspaceInput)
       ? workspaceInput
       : await this.workspaceRepository.findOne({
           where: {
             id: workspaceId,
           },
+          withDeleted: true,
         });
 
     if (!isDefined(workspace)) {
@@ -144,6 +148,32 @@ export class ApplicationService {
         workspaceId,
       },
     });
+  }
+
+  async findTwentyStandardApplicationOrThrow(workspaceId: string): Promise<{
+    application: ApplicationEntity;
+    workspace: WorkspaceEntity;
+  }> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+    });
+
+    if (!isDefined(workspace)) {
+      throw new ApplicationException(
+        `Could not find workspace ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const { twentyStandardFlatApplication } =
+      await this.findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
+        workspace,
+      });
+
+    return {
+      application: twentyStandardFlatApplication as ApplicationEntity,
+      workspace,
+    };
   }
 
   async createTwentyStandardApplication(

@@ -1,9 +1,7 @@
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import {
-  type FlatObjectMetadata,
-  objectMetadataEntityRelationProperties,
-} from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export const fromObjectMetadataEntityToFlatObjectMetadata = (
@@ -11,11 +9,16 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
 ): FlatObjectMetadata => {
   const objectMetadataEntityWithoutRelations = removePropertiesFromRecord(
     objectMetadataEntity,
-    objectMetadataEntityRelationProperties,
+    getMetadataEntityRelationProperties('objectMetadata'),
   );
 
   return {
     ...objectMetadataEntityWithoutRelations,
+    // TODO remove once MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand has been run once
+    universalIdentifier:
+      objectMetadataEntityWithoutRelations.universalIdentifier ??
+      objectMetadataEntityWithoutRelations.standardId ??
+      objectMetadataEntityWithoutRelations.id,
     createdAt: objectMetadataEntity.createdAt.toISOString(),
     updatedAt: objectMetadataEntity.updatedAt.toISOString(),
     viewIds: objectMetadataEntity.views.map((viewEntity) => viewEntity.id),
@@ -25,8 +28,5 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
     fieldMetadataIds: objectMetadataEntity.fields.map(
       (fieldEntity) => fieldEntity.id,
     ),
-    universalIdentifier:
-      objectMetadataEntityWithoutRelations.standardId ??
-      objectMetadataEntityWithoutRelations.id,
   };
 };

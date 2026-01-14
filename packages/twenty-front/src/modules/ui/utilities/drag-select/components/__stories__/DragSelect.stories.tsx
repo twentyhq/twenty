@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
+import { userEvent, within } from 'storybook/test';
 
+import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 
 const StyledContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.light};

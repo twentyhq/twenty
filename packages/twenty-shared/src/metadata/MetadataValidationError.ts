@@ -17,10 +17,10 @@ export type MetadataValidationErrorResponse = {
   summary: {
     totalErrors: number;
   } & {
-    [P in AllMetadataName as `invalid${Capitalize<P>}`]: number;
+    [P in AllMetadataName as P]?: number;
   };
   errors: {
-    [P in AllMetadataName]: FailedMetadataValidation[];
+    [P in AllMetadataName]?: FailedMetadataValidation[];
   };
 };
 

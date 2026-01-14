@@ -1,94 +1,94 @@
 ---
-title: Import Relations Between Objects
-description: Import relationships between records via CSV.
+title: Импорт связей между объектами
+description: Импорт связей между записями с помощью CSV.
 ---
 
 ## Обзор
 
-Twenty supports importing relationships between objects during CSV import. This allows you to link records (e.g., attach People to Companies) as part of your data migration.
+Twenty поддерживает импорт связей между объектами при импорте CSV. Это позволяет связывать записи (например, прикреплять Людей к Компаниям) в рамках миграции данных.
 
-<Note>**Currently supported for import**: One-to-many relations pointing to a single object type on each side (e.g., People → Companies). Relations pointing to multiple object types are not yet supported in import/export.</Note>
+<Note>**В настоящее время поддерживается для импорта**: связи «один-ко-многим», указывающие на один тип объекта с каждой стороны (например, Люди → Компании). Связи, указывающие на несколько типов объектов, пока не поддерживаются для импорта/экспорта.</Note>
 
-## How Relations Work in Twenty
+## Как работают связи в Twenty
 
-### One to Many / Many to One
+### Один-ко-многим / Многие-к-одному
 
-Twenty supports standard relations where one record links to many others:
+Twenty поддерживает стандартные связи, когда одна запись связана со многими другими:
 
-* **One Company → Many People**: A company can have multiple employees, but each person belongs to one company
-* **One Company → Many Opportunities**: A company can have multiple deals, but each opportunity belongs to one company
+* **Одна Компания → Многие Люди**: у компании может быть несколько сотрудников, но каждый человек принадлежит одной компании
+* **Одна Компания → Многие Сделки**: у компании может быть несколько сделок, но каждая сделка принадлежит одной компании
 
-### Relations That Can Point to Multiple Object Types
+### Связи, которые могут указывать на несколько типов объектов
 
-Some relations can connect to different types of objects. This works in two ways:
+Некоторые связи могут связывать разные типы объектов. Это работает двумя способами:
 
-**Pattern 1: Many records linking to one record each from different object types**
+**Паттерн 1: Многие записи, каждая из которых связана с одной записью каждого типа объекта**
 
-Several Notes, Tasks, or Activities can each be attached to multiple object types at once:
+Несколько Заметок, Задач или Активностей могут одновременно быть привязаны к нескольким типам объектов:
 
-* **Notes** can be linked to one Person, one Company, and one Opportunity simultaneously
-* **Tasks** can be linked to one Person, one Company, and one Opportunity simultaneously
+* **Заметки** могут одновременно быть связаны с одним Человеком, одной Компанией и одной Сделкой
+* **Задачи** могут одновременно быть связаны с одним Человеком, одной Компанией и одной Сделкой
 
-Here, the Notes/Tasks are on the "many" side. Each links to one record per object type.
+Здесь Заметки/Задачи находятся на стороне «многие». Каждая из них связывается с одной записью каждого типа объекта.
 
 <img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
 
-**Pattern 2: One record receiving links from many records of different object types**
+**Паттерн 2: Одна запись, получающая связи от многих записей разных типов объектов**
 
-A Project can receive links from multiple records across different object types:
+Проект может получать связи от множества записей разных типов объектов:
 
-* **A Project** can have many People linked to it, many Companies linked to it, and many Notes attached to it
+* **Проект** может иметь много связанных с ним Людей, много связанных Компаний и много прикреплённых к нему Заметок
 
-Here, the Project is on the "one" side. Multiple records from different objects can all link to the same Project.
+Здесь Проект находится на стороне «один». Несколько записей из разных объектов могут ссылаться на один и тот же Проект.
 
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Import/Export limitation**: Relations that point to multiple object types (like Notes → People/Companies/Opportunities) are **not yet supported** in CSV import or export.
+  **Ограничение импорта/экспорта**: связи, указывающие на несколько типов объектов (например, Заметки → Люди/Компании/Сделки), **пока не поддерживаются** при импорте или экспорте CSV.
 
-  * **Import**: Only one-to-many relations pointing to a single object type on each side can be imported
-  * **Export**: Columns for relations pointing to multiple object types are currently left empty
+  * **Импорт**: можно импортировать только связи «один-ко-многим», указывающие на один тип объекта с каждой стороны
+  * **Экспорт**: столбцы для связей, указывающих на несколько типов объектов, на данный момент остаются пустыми
 
-  This is on our roadmap.
+  Это запланировано в нашей дорожной карте.
 </Warning>
 
-### What's Not Supported Today
+### Что пока не поддерживается
 
-**Many to Many relations** are not yet available. For example, you cannot currently create a relation where:
+**Связи «многие-ко-многим»** пока недоступны. Например, сейчас вы не можете создать связь, где:
 
-* Many People are linked to many Projects
+* Многие Люди связаны со многими Проектами
 
-<Note>Many to Many relations are planned for H1 2026.</Note>
+<Note>Связи «многие-ко-многим» запланированы на 1 полугодие 2026 года.</Note>
 
-## Linking Records During Import
+## Связывание записей при импорте
 
-<Note>**Reminder**: Only one-to-many relations pointing to a single object type can be imported (e.g., People → Companies). Relations pointing to multiple object types (e.g., Notes → People/Companies/Opportunities) are not yet supported.</Note>
+<Note>**Напоминание**: можно импортировать только связи «один-ко-многим», указывающие на один тип объекта (например, Люди → Компании). Связи, указывающие на несколько типов объектов (например, Заметки → Люди/Компании/Сделки), пока не поддерживаются.</Note>
 
-### Step 1: Identify the "One" and "Many" Sides
+### Шаг 1: Определите стороны «один» и «многие»
 
-First, determine which object is on the "one" side and which is on the "many" side of the relationship.
+Сначала определите, какой объект находится на стороне «один», а какой — на стороне «многие» в этой связи.
 
 **Пример**:
 
-* **Company** is the "one" side (one company has many employees)
-* **People** is the "many" side (each person belongs to one company)
+* **Компания** — это сторона «один» (у одной компании много сотрудников)
+* **Люди** — это сторона «многие» (каждый человек принадлежит одной компании)
 
-### Step 2: Ensure the "One" Side Records Exist
+### Шаг 2: Убедитесь, что записи стороны «один» существуют
 
-Before importing the "many" side, the "one" side records must already exist in Twenty.
+Прежде чем импортировать сторону «многие», записи стороны «один» уже должны существовать в Twenty.
 
-* Import or create the "one" side records first (e.g., Companies)
-* Validate their unique identifier. This can be:
-  * The `id` (Twenty's UUID)
-  * A field set as unique (e.g., `domain` for Companies, or an external ID from your previous system)
+* Сначала импортируйте или создайте записи стороны «один» (например, Компании)
+* Проверьте их уникальный идентификатор. Это может быть:
+  * `id` (UUID в Twenty)
+  * Поле, помеченное как уникальное (например, `domain` для Компаний или внешний идентификатор из вашей предыдущей системы)
 
-<Warning>The import will fail if a reference is made to a record that does not exist.</Warning>
+<Warning>Импорт завершится с ошибкой, если ссылка указывает на несуществующую запись.</Warning>
 
-### Step 3: Prepare Your CSV File
+### Шаг 3: Подготовьте файл CSV
 
-Add a column in your "many" side CSV file that references the "one" side record.
+Добавьте столбец в CSV-файл для стороны «многие», который ссылается на запись стороны «один».
 
-**Example**: For a People CSV file linking to Companies:
+**Пример**: для CSV-файла Людей, связывающего с Компаниями:
 
 ```
 firstName,lastName,email,companyDomain
@@ -96,53 +96,53 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-**Important**:
+**Важно**:
 
-* The value must **exactly match** the unique field on the Company record
-* For domains, use the **Domain URL** (e.g., `https://acme.com`), not the Domain Label
-* Map only **one** unique identifier per relation: this leads to a smoother import
+* Значение должно **в точности совпадать** с уникальным полем в записи Компании
+* Для доменов используйте **URL домена** (например, `https://acme.com`), а не метку домена
+* Сопоставляйте только **один** уникальный идентификатор на связь: так импорт пройдёт более гладко
 
-### Step 4: Ensure the Relation Field Exists
+### Шаг 4: Убедитесь, что поле связи существует
 
-Before uploading your file, make sure the relation field exists between your objects.
+Перед загрузкой файла убедитесь, что между вашими объектами существует поле связи.
 
-If it doesn't exist:
+Если его нет:
 
-1. Go to **Settings → Data Model**
-2. Select your object (e.g., People)
-3. Create a relation field pointing to the target object (e.g., Company)
+1. Перейдите в **Настройки → Модель данных**
+2. Выберите ваш объект (например, Люди)
+3. Создайте поле связи, указывающее на целевой объект (например, Компания)
 
-### Step 5: Upload and Map the Relation
+### Шаг 5: Загрузите и сопоставьте связь
 
-1. Upload your CSV file via the import UI
-2. In the field mapping step, find your relation column (e.g., `companyDomain`)
-3. Map it to the relation field (e.g., Company)
-4. Twenty will automatically link each record to the matching parent
+1. Загрузите ваш CSV-файл через интерфейс импорта
+2. На шаге сопоставления полей найдите столбец связи (например, `companyDomain`)
+3. Сопоставьте его с полем связи (например, Компания)
+4. Twenty автоматически свяжет каждую запись с соответствующим родителем
 
-### Available Unique Fields for Relations
+### Доступные уникальные поля для связей
 
-| Объект                                | Unique Fields Available                 |
-| ------------------------------------- | --------------------------------------- |
-| **Компании**                          | `id`, `domain`, any custom unique field |
-| **People**                            | `id`, `email`, any custom unique field  |
-| **Участники рабочего пространства**   | `id`, `email` (not name)                |
-| **Other standard and custom objects** | `id`, any field marked as unique        |
+| Объект                                            | Доступные уникальные поля                              |
+| ------------------------------------------------- | ------------------------------------------------------ |
+| **Компании**                                      | `id`, `domain`, любое пользовательское уникальное поле |
+| **Люди**                                          | `id`, `email`, любое пользовательское уникальное поле  |
+| **Участники рабочего пространства**               | `id`, `email` (не имя)                                 |
+| **Прочие стандартные и пользовательские объекты** | `id`, любое поле, помеченное как уникальное            |
 
-<Note>**Linking to Workspace Members**: When the relation points to Workspace Members (your team logging into Twenty), reference them by their **email address**, not their name.</Note>
+<Note>**Связь с участниками рабочего пространства**: когда связь указывает на Участников рабочего пространства (ваша команда, входящая в Twenty), указывайте их по **адресу электронной почты**, а не по имени.</Note>
 
-<Note>We recommend using `domain` for Companies and `email` for People, as these are human-readable and easy to maintain in spreadsheets.</Note>
+<Note>Мы рекомендуем использовать `domain` для Компаний и `email` для Людей, так как эти значения человекочитаемы и их легко поддерживать в таблицах.</Note>
 
-<Note>**Reminder**: Soft-deleted records (visible under Command Menu → See deleted records) count toward uniqueness criteria. If you import a record with the same unique value as a deleted record, the deleted record will be restored. See [Uniqueness Constraints](/l/ru/user-guide/data-migration/capabilities/uniqueness-constraints) for more details.</Note>
+<Note>**Напоминание**: Мягко удалённые записи (видны в Командном меню → Показать удалённые записи) учитываются при проверке уникальности. Если вы импортируете запись с тем же уникальным значением, что и у удалённой записи, удалённая запись будет восстановлена. См. [Ограничения уникальности](/l/ru/user-guide/data-migration/capabilities/uniqueness-constraints) для подробностей.</Note>
 
-## Import Order Rule
+## Правило порядка импорта
 
 <Warning>
-  **Always import the "one" side first!**
+  **Всегда сначала импортируйте сторону «один»!**
 
-  1. **Companies** first (no dependencies)
-  2. **People** second (linked to Companies)
-  3. **Opportunities** third (linked to Companies/People)
-  4. **Custom objects** following their dependencies
+  1. **Компании** в первую очередь (без зависимостей)
+  2. **Люди** во вторую очередь (связаны с Компаниями)
+  3. **Сделки** в третью очередь (связаны с Компаниями/Людьми)
+  4. **Пользовательские объекты** с учётом их зависимостей
 
-  The parent record must exist before you can reference it.
+  Родительская запись должна существовать до того, как вы сможете на неё сослаться.
 </Warning>

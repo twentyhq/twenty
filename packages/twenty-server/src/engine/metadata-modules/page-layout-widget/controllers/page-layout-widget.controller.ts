@@ -54,10 +54,10 @@ export class PageLayoutWidgetController {
       );
     }
 
-    return this.pageLayoutWidgetService.findByPageLayoutTabId(
-      workspace.id,
+    return this.pageLayoutWidgetService.findByPageLayoutTabId({
+      workspaceId: workspace.id,
       pageLayoutTabId,
-    );
+    });
   }
 
   @Get(':id')
@@ -66,7 +66,10 @@ export class PageLayoutWidgetController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO | null> {
-    return this.pageLayoutWidgetService.findByIdOrThrow(id, workspace.id);
+    return this.pageLayoutWidgetService.findByIdOrThrow({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 
   @Post()
@@ -75,7 +78,10 @@ export class PageLayoutWidgetController {
     @Body() input: CreatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.create(input, workspace.id);
+    return this.pageLayoutWidgetService.create({
+      input,
+      workspaceId: workspace.id,
+    });
   }
 
   @Patch(':id')
@@ -85,15 +91,22 @@ export class PageLayoutWidgetController {
     @Body() input: UpdatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.update(id, workspace.id, input);
+    return this.pageLayoutWidgetService.update({
+      id,
+      workspaceId: workspace.id,
+      updateData: input,
+    });
   }
 
   @Delete(':id')
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
-  async delete(
+  async destroy(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.delete(id, workspace.id);
+  ): Promise<boolean> {
+    return this.pageLayoutWidgetService.destroy({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 }

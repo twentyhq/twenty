@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`successful update default value option value and side effect on records should update existing records when default value option value is changed and not mutate when default option is changed 1`] = `
 [

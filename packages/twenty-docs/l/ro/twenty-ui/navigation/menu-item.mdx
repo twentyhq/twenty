@@ -18,18 +18,18 @@ Un element de meniu versatil, conceput pentru a fi utilizat într-un meniu sau l
 
     export const MyComponent = () => {
       const handleMenuItemClick = (event) => {
-        console.log("Menu item clicked!", event);
+        console.log("S-a făcut clic pe elementul de meniu!", event);
       };
 
       const handleButtonClick = (event) => {
-        console.log("Icon button clicked!", event);
+        console.log("S-a făcut clic pe butonul cu pictogramă!", event);
       };
 
       return (
         <MenuItem
           LeftIcon={IconBell}
           accent="default"
-          text="Menu item text"
+          text="Textul elementului de meniu"
           iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
           isTooltipOpen={true}
           testId="menu-item-1"
@@ -71,13 +71,13 @@ Un element de meniu de tip comandă într-un meniu pentru a indica scurtăturile
 
     export const MyComponent = () => {
       const handleCommandClick = () => {
-        console.log("Command clicked!");
+        console.log("S-a făcut clic pe comandă!");
       };
 
       return (
         <MenuItemCommand
           LeftIcon={IconBell}
-          text="First Option"
+          text="Prima opțiune"
           firstHotKey="⌘"
           secondHotKey="1"
           isSelected={true}
@@ -115,7 +115,7 @@ Un element de meniu drag realizat pentru a fi utilizat într-un meniu sau listă
 
     export const MyComponent = () => {
       const handleMenuItemClick = (event) => {
-        console.log("Menu item clicked!", event);
+        console.log("S-a făcut clic pe elementul de meniu!", event);
       };
 
       return (
@@ -125,7 +125,7 @@ Un element de meniu drag realizat pentru a fi utilizat într-un meniu sau listă
           iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
           isTooltipOpen={false}
           onClick={handleMenuItemClick}
-          text="Menu item draggable"
+          text="Element de meniu glisabil"
           isDragDisabled={false}
           className
         />
@@ -421,8 +421,8 @@ Un element de meniu cu un comutator asociat pentru a permite utilizatorilor să 
     | LeftIcon       | IconComponent | O pictogramă opțională la stânga afișată înaintea textului din elementul de meniu |
     | text           | string        | Conținutul text al elementului de meniu                                           |
     | comutat        | boolean       | Indică dacă comutatorul este în starea „activat” sau „dezactivat”                 |
-    | onToggleChange | funcție       | Callback function triggered when the toggle switch state changes                  |
-    | toggleSize     | string        | Dimensiunea comutatorului. It can be either \                                     |
+    | onToggleChange | funcție       | Funcție de callback declanșată când se schimbă starea comutatorului               |
+    | toggleSize     | string        | Dimensiunea comutatorului. Poate fi fie \                                         |
     | numeClasă      | string        | Nume opțional pentru stilizare suplimentară                                       |
   </Tab>
 </Tabs>

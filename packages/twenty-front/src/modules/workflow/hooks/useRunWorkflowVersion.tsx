@@ -135,13 +135,13 @@ export const useRunWorkflowVersion = () => {
 
     setRecordInStore(recordCreatedInCache);
 
+    await mutate({
+      variables: { input: { workflowVersionId, workflowRunId, payload } },
+    });
+
     openRecordInCommandMenu({
       objectNameSingular: CoreObjectNameSingular.WorkflowRun,
       recordId: workflowRunId,
-    });
-
-    await mutate({
-      variables: { input: { workflowVersionId, workflowRunId, payload } },
     });
   };
 

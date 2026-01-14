@@ -31,12 +31,12 @@ import {
   ViewException,
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { workspaceMigrationBuilderExceptionV2Formatter } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { workspaceMigrationBuilderExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter';
 
 export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
-  if (error instanceof WorkspaceMigrationBuilderExceptionV2) {
-    return workspaceMigrationBuilderExceptionV2Formatter(error, i18n);
+  if (error instanceof WorkspaceMigrationBuilderException) {
+    return workspaceMigrationBuilderExceptionFormatter(error, i18n);
   }
 
   if (error instanceof ViewException) {
@@ -100,6 +100,14 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
       case ViewFilterGroupExceptionCode.VIEW_NOT_FOUND:
         throw new NotFoundError(error.message);
       case ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA:
+        throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
+      case ViewFilterGroupExceptionCode.CIRCULAR_DEPENDENCY:
+        throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
+      case ViewFilterGroupExceptionCode.MAX_DEPTH_EXCEEDED:
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });

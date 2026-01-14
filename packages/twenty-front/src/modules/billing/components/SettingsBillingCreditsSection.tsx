@@ -14,7 +14,6 @@ import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
-import { BACKGROUND_LIGHT } from 'twenty-ui/theme';
 import { SubscriptionStatus } from '~/generated/graphql';
 import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 
@@ -44,15 +43,20 @@ export const SettingsBillingCreditsSection = ({
 
   const { getWorkflowNodeExecutionUsage } = useGetWorkflowNodeExecutionUsage();
 
-  const { usedCredits, grantedCredits, unitPriceCents } =
-    getWorkflowNodeExecutionUsage();
+  const {
+    usedCredits,
+    grantedCredits,
+    rolloverCredits,
+    totalGrantedCredits,
+    unitPriceCents,
+  } = getWorkflowNodeExecutionUsage();
 
-  const progressBarValue = (usedCredits / grantedCredits) * 100;
+  const progressBarValue = (usedCredits / totalGrantedCredits) * 100;
   const displayedProgressBarValue = progressBarValue < 3 ? 3 : progressBarValue;
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
 
-  const extraCreditsUsed = Math.max(0, usedCredits - grantedCredits);
+  const extraCreditsUsed = Math.max(0, usedCredits - totalGrantedCredits);
 
   const costPer1kExtraCredits = (unitPriceCents / 100) * 1000;
 
@@ -74,19 +78,45 @@ export const SettingsBillingCreditsSection = ({
         <SubscriptionInfoContainer>
           <SettingsBillingLabelValueItem
             label={t`Credits Used`}
-            value={`${formatNumber(usedCredits)}/${formatNumber(grantedCredits, { abbreviate: true, decimals: 2 })}`}
+            value={`${formatNumber(usedCredits)}/${formatNumber(totalGrantedCredits, { abbreviate: true, decimals: 2 })}`}
           />
           <ProgressBar
             value={displayedProgressBarValue}
             barColor={
               progressBarValue > 100 ? theme.color.red8 : theme.color.blue
             }
-            backgroundColor={BACKGROUND_LIGHT.tertiary}
+            backgroundColor={theme.background.tertiary}
             withBorderRadius={true}
           />
 
           {!isTrialing && (
             <>
+              <StyledLineSeparator />
+              <SettingsBillingLabelValueItem
+                label={t`Base Credits`}
+                value={formatNumber(grantedCredits, {
+                  abbreviate: true,
+                  decimals: 2,
+                })}
+              />
+              {rolloverCredits > 0 && (
+                <SettingsBillingLabelValueItem
+                  label={t`Rollover Credits`}
+                  value={formatNumber(rolloverCredits, {
+                    abbreviate: true,
+                    decimals: 2,
+                  })}
+                />
+              )}
+              {rolloverCredits > 0 && (
+                <SettingsBillingLabelValueItem
+                  label={t`Total Available`}
+                  value={formatNumber(totalGrantedCredits, {
+                    abbreviate: true,
+                    decimals: 2,
+                  })}
+                />
+              )}
               <StyledLineSeparator />
               <SettingsBillingLabelValueItem
                 label={t`Extra Credits Used`}

@@ -12,11 +12,10 @@ alwaysApply: true
 npx nx run twenty-front:build
 npx nx run twenty-server:test
 
-# Lint changed files only (recommended - much faster!)
-npx nx lint:changed twenty-front           # Lint only files changed vs main
-npx nx lint:changed twenty-server
-npx nx lint:changed twenty-front --configuration=fix  # Auto-fix changed files
-npx nx lint:changed twenty-front --configuration=staged  # Lint staged files
+# Lint diff with main (recommended - much faster!)
+npx nx lint:diff-with-main twenty-front           # Lint only files changed vs main
+npx nx lint:diff-with-main twenty-server
+npx nx lint:diff-with-main twenty-front --configuration=fix  # Auto-fix changed files
 
 # Run target for all projects (slower)
 npx nx run-many --target=build --all
@@ -51,9 +50,8 @@ npx nx g @nx/react:component my-component
 
 ## Linting Strategy
 For faster development, always prefer linting only changed files:
-- Use `npx nx lint:changed <project>` to lint only files changed vs main branch
+- Use `npx nx lint:diff-with-main <project>` to lint only files changed vs main branch
 - Use `--configuration=fix` to auto-fix issues in changed files
-- Use `--configuration=staged` to lint only staged files (useful for pre-commit hooks)
 - Only use `npx nx lint <project>` when you need to lint the entire project
 
 ## Dependency Graph

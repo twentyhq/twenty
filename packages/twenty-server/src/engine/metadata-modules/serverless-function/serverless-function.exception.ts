@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -15,19 +16,31 @@ export enum ServerlessFunctionExceptionCode {
   SERVERLESS_FUNCTION_EXECUTION_TIMEOUT = 'SERVERLESS_FUNCTION_EXECUTION_TIMEOUT',
 }
 
-const serverlessFunctionExceptionUserFriendlyMessages: Record<
-  ServerlessFunctionExceptionCode,
-  MessageDescriptor
-> = {
-  [ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND]: msg`Function not found.`,
-  [ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_VERSION_NOT_FOUND]: msg`Function version not found.`,
-  [ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_ALREADY_EXIST]: msg`A function with this name already exists.`,
-  [ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_READY]: msg`Function is not ready.`,
-  [ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_BUILDING]: msg`Function is currently building.`,
-  [ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED]: msg`Function code is unchanged.`,
-  [ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED]: msg`Function execution limit reached.`,
-  [ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CREATE_FAILED]: msg`Failed to create function.`,
-  [ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_TIMEOUT]: msg`Function execution timed out.`,
+const getServerlessFunctionExceptionUserFriendlyMessage = (
+  code: ServerlessFunctionExceptionCode,
+) => {
+  switch (code) {
+    case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND:
+      return msg`Function not found.`;
+    case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_VERSION_NOT_FOUND:
+      return msg`Function version not found.`;
+    case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_ALREADY_EXIST:
+      return msg`A function with this name already exists.`;
+    case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_READY:
+      return msg`Function is not ready.`;
+    case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_BUILDING:
+      return msg`Function is currently building.`;
+    case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED:
+      return msg`Function code is unchanged.`;
+    case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED:
+      return msg`Function execution limit reached.`;
+    case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CREATE_FAILED:
+      return msg`Failed to create function.`;
+    case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_TIMEOUT:
+      return msg`Function execution timed out.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class ServerlessFunctionException extends CustomException<ServerlessFunctionExceptionCode> {
@@ -39,7 +52,7 @@ export class ServerlessFunctionException extends CustomException<ServerlessFunct
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        serverlessFunctionExceptionUserFriendlyMessages[code],
+        getServerlessFunctionExceptionUserFriendlyMessage(code),
     });
   }
 }

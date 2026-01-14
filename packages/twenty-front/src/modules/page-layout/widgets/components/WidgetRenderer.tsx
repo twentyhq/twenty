@@ -8,7 +8,9 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
+import { PageLayoutWidgetInvalidConfigDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
+import { useIsCurrentWidgetLastOfTab } from '@/page-layout/widgets/hooks/useIsCurrentWidgetLastOfTab';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useWidgetActions } from '@/page-layout/widgets/hooks/useWidgetActions';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
@@ -18,12 +20,22 @@ import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardV
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { type MouseEvent } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/display';
 import { WidgetType } from '~/generated/graphql';
+
+const StyledNoAccessContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+`;
 
 type WidgetRendererProps = {
   widget: PageLayoutWidget;
@@ -60,8 +72,12 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const { layoutMode } = usePageLayoutContentContext();
   const { isInPinnedTab } = useIsInPinnedTab();
+  const { isInRightDrawer } = useLayoutRenderingContext();
+  const isMobile = useIsMobile();
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+
+  const isLastWidget = useIsCurrentWidgetLastOfTab(widget.id);
 
   // TODO: when we have more widgets without headers, we should use a more generic approach to hide the header
   // each widget type could have metadata (e.g., hasHeader: boolean or headerMode: 'always' | 'editOnly' | 'never')
@@ -99,6 +115,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     layoutMode,
     isInPinnedTab,
     pageLayoutType: currentPageLayout.type,
+    isMobile,
+    isInRightDrawer,
   });
 
   const actions = useWidgetActions({ widget });
@@ -113,6 +131,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         isEditing={isEditing}
         isDragging={isDragging}
         isResizing={isResizing}
+        isLastWidget={isLastWidget}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         data-widget-id={widget.id}
@@ -138,12 +157,20 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         )}
 
         <WidgetCardContent variant={variant}>
-          {hasAccess && <WidgetContentRenderer widget={widget} />}
+          {hasAccess && (
+            <ErrorBoundary
+              FallbackComponent={PageLayoutWidgetInvalidConfigDisplay}
+            >
+              <WidgetContentRenderer widget={widget} />
+            </ErrorBoundary>
+          )}
           {!hasAccess && (
-            <IconLock
-              color={theme.font.color.tertiary}
-              stroke={theme.icon.stroke.sm}
-            />
+            <StyledNoAccessContainer>
+              <IconLock
+                color={theme.font.color.tertiary}
+                stroke={theme.icon.stroke.sm}
+              />
+            </StyledNoAccessContainer>
           )}
         </WidgetCardContent>
       </WidgetCard>

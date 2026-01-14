@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isNull, isUndefined } from '@sniptt/guards';
 import {
   FieldMetadataRelationSettings,
@@ -44,6 +45,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { transformEmailsValue } from 'src/engine/core-modules/record-transformer/utils/transform-emails-value.util';
@@ -112,6 +114,7 @@ export class DataArgProcessor {
           throw new CommonQueryRunnerException(
             `Object ${flatObjectMetadata.nameSingular} doesn't have any "${key}" field.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
         }
 
@@ -121,6 +124,7 @@ export class DataArgProcessor {
           throw new CommonQueryRunnerException(
             `Field metadata not found for field ${key}`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
         }
 
@@ -132,6 +136,7 @@ export class DataArgProcessor {
           throw new CommonQueryRunnerException(
             `Field ${key} is not nullable and has no default value.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: msg`A required field is missing.` },
           );
         }
 
@@ -221,6 +226,7 @@ export class DataArgProcessor {
           throw new CommonQueryRunnerException(
             `One-to-many relation ${key} field does not support write operations.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
         }
 
@@ -276,6 +282,7 @@ export class DataArgProcessor {
         throw new CommonQueryRunnerException(
           `${key} ${fieldMetadata.type}-typed field does not support write operations`,
           CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
         );
       default:
         assertUnreachable(

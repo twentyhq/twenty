@@ -2,10 +2,8 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import {
-  type FlatFieldMetadata,
-  FIELD_METADATA_RELATION_PROPERTIES,
-} from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export const fromFieldMetadataEntityToFlatFieldMetadata = <
   T extends FieldMetadataType,
@@ -15,11 +13,16 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
 ): FlatFieldMetadata => {
   const fieldMetadataWithoutRelations = removePropertiesFromRecord(
     fieldMetadataEntity,
-    FIELD_METADATA_RELATION_PROPERTIES,
+    getMetadataEntityRelationProperties('fieldMetadata'),
   );
 
   return {
     ...fieldMetadataWithoutRelations,
+    // TODO remove once MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand has been run once
+    universalIdentifier:
+      fieldMetadataWithoutRelations.universalIdentifier ??
+      fieldMetadataWithoutRelations.standardId ??
+      fieldMetadataWithoutRelations.id,
     createdAt: fieldMetadataWithoutRelations.createdAt.toISOString(),
     updatedAt: fieldMetadataWithoutRelations.updatedAt.toISOString(),
     kanbanAggregateOperationViewIds:
@@ -30,8 +33,5 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
       [],
     viewFieldIds: fieldMetadataEntity.viewFields.map(({ id }) => id),
     viewFilterIds: fieldMetadataEntity.viewFilters.map(({ id }) => id),
-    universalIdentifier:
-      fieldMetadataWithoutRelations.standardId ??
-      fieldMetadataWithoutRelations.id,
   };
 };

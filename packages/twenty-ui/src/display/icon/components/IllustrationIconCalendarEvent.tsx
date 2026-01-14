@@ -9,12 +9,11 @@ export const IllustrationIconCalendarEvent = (
 ) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
-  const { color, fill } = theme.IllustrationIcon;
   return (
     <IllustrationIconWrapper>
       <IllustrationIconCalendarEventRaw
-        fill={fill.blue}
-        color={color.blue}
+        fill={theme.accent.accent3}
+        color={theme.accent.accent8}
         height={size}
         width={size}
       />

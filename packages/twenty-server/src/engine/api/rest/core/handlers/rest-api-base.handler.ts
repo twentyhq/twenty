@@ -15,7 +15,7 @@ import { RestToCommonSelectedFieldsHandler } from 'src/engine/api/rest/core/rest
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
-import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
+import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -35,8 +35,6 @@ import {
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -57,7 +55,7 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
-  protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
+  protected readonly actorFromAuthContextService: ActorFromAuthContextService;
   @Inject()
   protected readonly workspaceCacheStorageService: WorkspaceCacheStorageService;
   @Inject()
@@ -251,22 +249,6 @@ export abstract class RestApiBaseHandler {
 
       throw new BadRequestException(
         `object '${parsedObject}' not found. ${hint}`,
-      );
-    }
-
-    const workspaceFeatureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
-
-    // Check if this entity is workspace-gated and should be blocked from workspace API
-    if (
-      shouldExcludeFromWorkspaceApi(
-        flatObjectMetadataItem,
-        standardObjectMetadataDefinitions,
-        workspaceFeatureFlagsMap,
-      )
-    ) {
-      throw new BadRequestException(
-        `object '${parsedObject}' not found. ${parsedObject} is not available via REST API.`,
       );
     }
 

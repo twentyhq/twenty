@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
@@ -6,7 +6,7 @@ import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/graphWidgetPieC
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 import {
   AggregateOperations,
-  GraphType,
+  WidgetConfigurationType,
   type PieChartConfiguration,
 } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -26,7 +26,7 @@ const mockObjectMetadataItemId = companyObjectMetadataItem.id;
 const mockConfiguration: PieChartConfiguration = {
   aggregateFieldMetadataId: idField.id,
   aggregateOperation: AggregateOperations.COUNT,
-  graphType: GraphType.PIE,
+  configurationType: WidgetConfigurationType.PIE_CHART,
   groupByFieldMetadataId: idField.id,
 };
 
@@ -75,6 +75,17 @@ const meta: Meta<typeof GraphWidgetPieChart> = {
     showDataLabels: {
       control: 'boolean',
     },
+    colorMode: {
+      control: 'select',
+      options: [
+        'automaticPalette',
+        'explicitSingleColor',
+        'selectFieldOptionColors',
+      ],
+    },
+  },
+  args: {
+    colorMode: 'automaticPalette',
   },
 };
 
@@ -109,6 +120,7 @@ export const Default: Story = {
         id={args.id}
         objectMetadataItemId={mockObjectMetadataItemId}
         configuration={mockConfiguration}
+        colorMode={args.colorMode}
       />
     </Container>
   ),
@@ -132,6 +144,7 @@ export const WithCenterMetric: Story = {
         id={args.id}
         objectMetadataItemId={mockObjectMetadataItemId}
         configuration={mockConfiguration}
+        colorMode={args.colorMode}
       />
     </Container>
   ),
@@ -155,6 +168,7 @@ export const WithDataLabels: Story = {
         id={args.id}
         objectMetadataItemId={mockObjectMetadataItemId}
         configuration={mockConfiguration}
+        colorMode={args.colorMode}
       />
     </Container>
   ),
@@ -184,6 +198,7 @@ export const Revenue: Story = {
         id={args.id}
         objectMetadataItemId={mockObjectMetadataItemId}
         configuration={mockConfiguration}
+        colorMode={args.colorMode}
       />
     </Container>
   ),
@@ -212,6 +227,7 @@ export const TaskStatus: Story = {
         id={args.id}
         objectMetadataItemId={mockObjectMetadataItemId}
         configuration={mockConfiguration}
+        colorMode={args.colorMode}
       />
     </Container>
   ),
@@ -239,6 +255,7 @@ export const TwoSlices: Story = {
         id={args.id}
         objectMetadataItemId={mockObjectMetadataItemId}
         configuration={mockConfiguration}
+        colorMode={args.colorMode}
       />
     </Container>
   ),
@@ -271,6 +288,7 @@ export const ManySlices: Story = {
         id={args.id}
         objectMetadataItemId={mockObjectMetadataItemId}
         configuration={mockConfiguration}
+        colorMode={args.colorMode}
       />
     </Container>
   ),
@@ -299,6 +317,7 @@ export const WithoutLegend: Story = {
         id={args.id}
         objectMetadataItemId={mockObjectMetadataItemId}
         configuration={mockConfiguration}
+        colorMode={args.colorMode}
       />
     </Container>
   ),
@@ -328,6 +347,7 @@ export const MarketShare: Story = {
         id={args.id}
         objectMetadataItemId={mockObjectMetadataItemId}
         configuration={mockConfiguration}
+        colorMode={args.colorMode}
       />
     </Container>
   ),
@@ -357,6 +377,7 @@ export const Storage: Story = {
         id={args.id}
         objectMetadataItemId={mockObjectMetadataItemId}
         configuration={mockConfiguration}
+        colorMode={args.colorMode}
       />
     </Container>
   ),
@@ -421,6 +442,7 @@ export const Catalog: Story = {
         id={args.id}
         objectMetadataItemId={mockObjectMetadataItemId}
         configuration={mockConfiguration}
+        colorMode={args.colorMode}
       />
     </Container>
   ),

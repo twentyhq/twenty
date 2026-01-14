@@ -9,8 +9,10 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldWidgetDisplay } from '@/page-layout/widgets/field/components/FieldWidgetDisplay';
-import { FieldWidgetMorphRelation } from '@/page-layout/widgets/field/components/FieldWidgetMorphRelation';
-import { FieldWidgetRelation } from '@/page-layout/widgets/field/components/FieldWidgetRelation';
+import { FieldWidgetMorphRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetMorphRelationCard';
+import { FieldWidgetMorphRelationField } from '@/page-layout/widgets/field/components/FieldWidgetMorphRelationField';
+import { FieldWidgetRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetRelationCard';
+import { FieldWidgetRelationField } from '@/page-layout/widgets/field/components/FieldWidgetRelationField';
 import { assertFieldWidgetOrThrow } from '@/page-layout/widgets/field/utils/assertFieldWidgetOrThrow';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -29,7 +31,7 @@ import {
 } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(1)};
+  box-sizing: border-box;
   width: 100%;
 `;
 
@@ -108,9 +110,21 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     labelWidth: 90,
   });
 
+  const layout = widget.configuration.layout;
+
   if (isFieldMorphRelation(fieldDefinition)) {
+    if (layout === 'CARD') {
+      return (
+        <FieldWidgetMorphRelationCard
+          fieldDefinition={fieldDefinition}
+          recordId={targetRecord.id}
+          isInRightDrawer={isInRightDrawer}
+        />
+      );
+    }
+
     return (
-      <FieldWidgetMorphRelation
+      <FieldWidgetMorphRelationField
         fieldDefinition={fieldDefinition}
         recordId={targetRecord.id}
         isInRightDrawer={isInRightDrawer}
@@ -119,8 +133,18 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   }
 
   if (isFieldRelation(fieldDefinition)) {
+    if (layout === 'CARD') {
+      return (
+        <FieldWidgetRelationCard
+          fieldDefinition={fieldDefinition}
+          relationValue={record}
+          isInRightDrawer={isInRightDrawer}
+        />
+      );
+    }
+
     return (
-      <FieldWidgetRelation
+      <FieldWidgetRelationField
         fieldDefinition={fieldDefinition}
         relationValue={record}
         isInRightDrawer={isInRightDrawer}

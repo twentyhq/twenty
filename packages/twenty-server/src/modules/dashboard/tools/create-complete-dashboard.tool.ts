@@ -1,8 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   gridPositionSchema,
@@ -92,32 +94,42 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
         columnSpan: number;
       };
       objectMetadataId?: string;
-      configuration?: Record<string, unknown>;
+      configuration?: AllPageLayoutWidgetConfiguration;
     }>;
   }) => {
     try {
       const tabTitle = parameters.tabTitle ?? 'Main';
       const widgets = parameters.widgets ?? [];
 
-      const pageLayout = await deps.pageLayoutService.create(
-        { name: parameters.title, type: PageLayoutType.DASHBOARD },
-        context.workspaceId,
-      );
+      const pageLayout = await deps.pageLayoutService.create({
+        createPageLayoutInput: {
+          name: parameters.title,
+          type: PageLayoutType.DASHBOARD,
+        },
+        workspaceId: context.workspaceId,
+      });
 
-      const pageLayoutTab = await deps.pageLayoutTabService.create(
-        { title: tabTitle, pageLayoutId: pageLayout.id, position: 0 },
-        context.workspaceId,
-      );
+      const pageLayoutTab = await deps.pageLayoutTabService.create({
+        createPageLayoutTabInput: {
+          title: tabTitle,
+          pageLayoutId: pageLayout.id,
+          position: 0,
+        },
+        workspaceId: context.workspaceId,
+      });
 
       const createdWidgets = [];
       const widgetErrors = [];
 
       for (const widget of widgets) {
         try {
-          const createdWidget = await deps.pageLayoutWidgetService.create(
-            { ...widget, pageLayoutTabId: pageLayoutTab.id },
-            context.workspaceId,
-          );
+          const createdWidget = await deps.pageLayoutWidgetService.create({
+            input: {
+              ...widget,
+              pageLayoutTabId: pageLayoutTab.id,
+            } as CreatePageLayoutWidgetInput,
+            workspaceId: context.workspaceId,
+          });
 
           createdWidgets.push({
             id: createdWidget.id,

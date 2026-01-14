@@ -1,7 +1,7 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-many-to-one-relations.constant';
+import { ALL_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -12,8 +12,8 @@ import { type MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modu
 import { type MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 
 type AddFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrowArgs<
   T extends AllMetadataName,
@@ -36,22 +36,29 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow
         flatEntityAndRelatedMapsToMutate[flatEntityMapsKey],
     });
 
-    const manyToOneRelatedMetadataName = Object.entries(
-      ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY[metadataName],
-    ) as Array<
-      [
-        keyof MetadataFlatEntity<T>,
-        {
-          metadataName: AllMetadataName;
-          flatEntityForeignKeyAggregator: keyof MetadataFlatEntity<AllMetadataName>;
-        },
-      ]
-    >;
+    const manyToOneRelations = Object.values(
+      ALL_METADATA_RELATIONS[metadataName].manyToOne,
+    ) as Array<{
+      metadataName: AllMetadataName;
+      flatEntityForeignKeyAggregator: keyof MetadataFlatEntity<AllMetadataName>;
+      foreignKey: keyof MetadataFlatEntity<T>;
+    } | null>;
 
-    for (const [
-      foreignKey,
-      { metadataName: relatedMetadataName, flatEntityForeignKeyAggregator },
-    ] of manyToOneRelatedMetadataName) {
+    for (const relation of manyToOneRelations) {
+      if (!isDefined(relation)) {
+        continue;
+      }
+
+      const {
+        metadataName: relatedMetadataName,
+        flatEntityForeignKeyAggregator,
+        foreignKey,
+      } = relation;
+
+      if (!isDefined(flatEntityForeignKeyAggregator)) {
+        continue;
+      }
+
       const relatedFlatEntityMapsKey =
         getMetadataFlatEntityMapsKey(relatedMetadataName);
       const relatedFlatEntityMetadataMaps = flatEntityAndRelatedMapsToMutate[

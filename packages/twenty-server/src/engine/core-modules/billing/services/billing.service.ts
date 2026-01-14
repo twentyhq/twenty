@@ -70,28 +70,35 @@ export class BillingService {
   async canBillMeteredProduct(
     workspaceId: string,
     productKey: BillingProductKey,
-  ) {
+  ): Promise<boolean> {
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId },
       );
 
-    if (
-      ![SubscriptionStatus.Active, SubscriptionStatus.Trialing].includes(
-        subscription.status,
-      )
-    ) {
+    const billableStatuses = [
+      SubscriptionStatus.Active,
+      SubscriptionStatus.Trialing,
+    ];
+
+    if (!billableStatuses.includes(subscription.status)) {
       return false;
     }
 
     const planKey = getPlanKeyFromSubscription(subscription);
     const products =
       await this.billingProductService.getProductsByPlan(planKey);
+
     const targetProduct = products.find(
       ({ metadata }) => metadata.productKey === productKey,
     );
+
+    if (!targetProduct) {
+      return false;
+    }
+
     const subscriptionItem = subscription.billingSubscriptionItems.find(
-      (item) => item.stripeProductId === targetProduct?.stripeProductId,
+      (item) => item.stripeProductId === targetProduct.stripeProductId,
     );
 
     return subscriptionItem?.hasReachedCurrentPeriodCap === false;

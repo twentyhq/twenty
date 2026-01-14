@@ -1,0 +1,127 @@
+---
+title: Notificați colegii despre o notă de revizuit
+description: Trimiteți notificări automate prin e-mail când atribuiți unui coleg revizuirea unei note.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Note>
+  **Etichetarea colegilor direct în note nu este încă suportată.** Această funcție este planificată pentru a doua jumătate a anului 2026. Între timp, acest flux de lucru oferă o soluție practică de ocolire.
+</Note>
+
+## Provocarea
+
+Doriți să etichetați un coleg într-o notă, astfel încât să primească o notificare pentru a o revizui. În prezent, Twenty nu suportă mențiuni cu @ în note sau sarcini.
+
+## Soluția de ocolire
+
+În loc să etichetați în textul notei, puteți:
+
+1. Creați un câmp de relație **Reviewer** pe obiectul Note
+2. Atribuiți recenzentul atunci când creați sau editați nota
+3. Un flux de lucru trimite automat un e-mail recenzentului cu un link către notă
+
+<Warning>
+  **Limitare**: Această abordare permite atribuirea unui singur recenzent per câmp. Dacă trebuie să notificați mai multe persoane, creați câmpuri de relație suplimentare (de ex., Reviewer 1, Reviewer 2). Aceasta nu scalează bine dacă trebuie să etichetați mulți colaboratori deodată.
+</Warning>
+
+## Configurare pas cu pas
+
+### Pasul 1: Creați câmpul Reviewer
+
+<img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
+
+1. Accesați **Setări → Model de date → Note**
+2. Faceți clic pe **Adaugă câmp**
+3. Configurați:
+
+| Setare             | Valoare                                      |
+| ------------------ | -------------------------------------------- |
+| **Name**           | Reviewer                                     |
+| **Tip**            | Relație                                      |
+| **Obiect asociat** | Membru al Spațiului de Lucru                 |
+| **Tipul relației** | Multe note → Un membru al spațiului de lucru |
+
+4. Salvați câmpul
+
+### Pasul 2: Creați fluxul de lucru
+
+<VimeoEmbed videoId="1151897168" title="Demonstrație video" />
+
+#### Creați declanșatorul fluxului de lucru
+
+1. Accesați vizualizarea principală și creați un nou flux de lucru
+2. Selectați **Record Updated** ca declanșator
+3. Alegeți **Note** ca obiect și specificați câmpul Reviewer.
+4. Acesta se va declanșa ori de câte ori recenzentul unei note este actualizat.
+
+#### Adăugați un filtru pentru a verifica dacă recenzentul tocmai a fost atribuit
+
+Adăugați o acțiune **Filter** pentru a vă asigura că fluxul de lucru continuă doar atunci când este atribuit un recenzent:
+
+| Condiție     | Valoare     |
+| ------------ | ----------- |
+| **Reviewer** | nu este gol |
+
+#### Căutați membrul spațiului de lucru
+
+1. Adăugați o acțiune **Search Records**
+2. Selectați **Workspace Member** (sub obiecte avansate)
+3. Adăugați un filtru:
+
+| Condiție | Valoare                       |
+| -------- | ----------------------------- |
+| **ID**   | egal cu `{{note.reviewerId}}` |
+
+Aceasta preia înregistrarea completă a membrului spațiului de lucru, inclusiv adresa de e-mail și numele.
+
+#### Trimiteți e-mailul de notificare
+
+1. Adăugați o acțiune **Send Email**
+2. Configurați:
+
+| Câmp        | Valoare                                             |
+| ----------- | --------------------------------------------------- |
+| **Către**   | Search Record → First Workspace Member → User Email |
+| **Subiect** | O notă are nevoie de revizuirea dvs.                |
+| **Corp**    | Consultați exemplul de mai jos                      |
+
+**Exemplu de corp al e-mailului:**
+
+```text
+Hi {{searchRecord.firstWorkspaceMember.name.firstName}},
+
+You've been assigned to review a note.
+
+View the note here:
+https://yourSubDomain.twenty.com/object/note/{{recordIsUpdated.id}}
+
+Best,
+Twenty
+```
+
+<Note>
+  Înlocuiți `yourSubDomain` cu subdomeniul real al spațiului dvs. de lucru Twenty.
+</Note>
+
+#### Testați și activați
+
+1. Faceți clic pe **Test** pentru a rula manual fluxul de lucru
+2. Creați sau editați o notă și atribuiți un recenzent
+3. Verificați căsuța de e-mail a recenzentului pentru e-mailul de notificare
+4. Activați fluxul de lucru
+
+## Utilizare
+
+După configurare, echipa dvs. poate utiliza acest flux de lucru astfel:
+
+1. Creând o notă nouă (sau editând una existentă)
+2. Selectând un coleg în câmpul **Reviewer**
+3. Colegul primește automat un e-mail cu un link direct către notă
+
+## Conexe
+
+* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+* [Trimiteți e-mailuri din fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Creați câmpuri personalizate](/l/ro/user-guide/data-model/how-tos/create-custom-fields)
+* [Creați câmpuri de relație](/l/ro/user-guide/data-model/how-tos/create-relation-fields)

@@ -8,7 +8,12 @@ import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { createOneCronTrigger } from 'test/integration/metadata/suites/serverless-function/utils/create-one-cron-trigger.util';
+import { createOneDatabaseEventTrigger } from 'test/integration/metadata/suites/serverless-function/utils/create-one-database-event-trigger.util';
+import { createOneRouteTrigger } from 'test/integration/metadata/suites/serverless-function/utils/create-one-route-trigger.util';
+import { createOneServerlessFunction } from 'test/integration/metadata/suites/serverless-function/utils/create-one-serverless-function.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { HTTPMethod } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
@@ -188,6 +193,54 @@ describe('Successful user and workspace creation', () => {
       expectToFail: false,
     });
 
+    // Create a serverless function with route, cron, and database event triggers
+    const {
+      data: { createOneServerlessFunction: serverlessFunction },
+    } = await createOneServerlessFunction({
+      input: {
+        name: 'test-function-for-deletion',
+        description: 'A test serverless function for workspace deletion test',
+      },
+      token: newWorkspaceAccessToken,
+      expectToFail: false,
+    });
+
+    // Create a route trigger for the serverless function
+    await createOneRouteTrigger({
+      input: {
+        path: '/test-route-for-deletion',
+        isAuthRequired: true,
+        httpMethod: HTTPMethod.GET,
+        serverlessFunctionId: serverlessFunction.id,
+      },
+      token: newWorkspaceAccessToken,
+      expectToFail: false,
+    });
+
+    // Create a cron trigger for the serverless function
+    await createOneCronTrigger({
+      input: {
+        settings: {
+          pattern: '0 0 * * *',
+        },
+        serverlessFunctionId: serverlessFunction.id,
+      },
+      token: newWorkspaceAccessToken,
+      expectToFail: false,
+    });
+
+    // Create a database event trigger for the serverless function
+    await createOneDatabaseEventTrigger({
+      input: {
+        settings: {
+          eventName: 'company.created',
+        },
+        serverlessFunctionId: serverlessFunction.id,
+      },
+      token: newWorkspaceAccessToken,
+      expectToFail: false,
+    });
+
     const workspaceBeforeDeletion = await testDataSource.query(
       'SELECT * FROM core.workspace WHERE id = $1',
       [workspaceId],
@@ -201,7 +254,6 @@ describe('Successful user and workspace creation', () => {
       'fieldMetadata',
       'indexMetadata',
       'searchFieldMetadata',
-      'workspaceMigration',
       'role',
       'roleTarget',
       'objectPermission',
@@ -210,8 +262,6 @@ describe('Successful user and workspace creation', () => {
       'serverlessFunction',
       'serverlessFunctionLayer',
       'agent',
-      'remoteServer',
-      'remoteTable',
       'databaseEventTrigger',
       'view',
       'viewField',

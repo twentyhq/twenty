@@ -68,44 +68,72 @@ export const RecordTableVirtualizedDataChangedEffect = () => {
           return;
         }
 
-        if (lastObjectOperation.data.type === 'update-one') {
-          const updatedFieldNames =
-            Object.keys(lastObjectOperation?.data.result.updateInput ?? {}) ??
-            [];
+        const updatedFieldNames = new Set<string>();
 
-          const updatedFieldMetadataItems = activeFieldMetadataItems.filter(
-            (fieldMetadataItemToFilter) =>
-              updatedFieldNames.includes(fieldMetadataItemToFilter.name) ||
-              (fieldMetadataItemToFilter.type === FieldMetadataType.RELATION &&
-                updatedFieldNames.includes(
-                  `${fieldMetadataItemToFilter.name}Id`,
-                )),
-          );
+        let thereIsAnUpdateOnAFilteredField = false;
+        let thereIsAnUpdateOnASortedField = false;
 
-          const updatedFieldMetadataItemIds =
-            updatedFieldMetadataItems.map(mapById);
+        if (
+          lastObjectOperation.data.type === 'update-one' ||
+          lastObjectOperation.data.type === 'update-many'
+        ) {
+          const updateInputs =
+            lastObjectOperation.data.type === 'update-one'
+              ? [lastObjectOperation.data.result.updateInput]
+              : lastObjectOperation.data.result.updateInputs;
 
-          const thereIsAnUpdateOnAFilteredField = currentRecordFilters.some(
-            (recordFilter) =>
-              updatedFieldMetadataItemIds.includes(
-                recordFilter.fieldMetadataId,
-              ),
-          );
+          for (const updateInput of updateInputs) {
+            const fieldNamesForUpdateInput =
+              Object.keys(updateInput ?? {}) ?? [];
 
-          const thereIsAnUpdateOnASortedField = currentRecordSorts.some(
-            (recordSort) =>
+            for (const fieldName of fieldNamesForUpdateInput) {
+              updatedFieldNames.add(fieldName);
+            }
+
+            const updatedFieldMetadataItems = activeFieldMetadataItems.filter(
+              (fieldMetadataItemToFilter) =>
+                fieldNamesForUpdateInput.includes(
+                  fieldMetadataItemToFilter.name,
+                ) ||
+                (fieldMetadataItemToFilter.type ===
+                  FieldMetadataType.RELATION &&
+                  fieldNamesForUpdateInput.includes(
+                    `${fieldMetadataItemToFilter.name}Id`,
+                  )),
+            );
+
+            const updatedFieldMetadataItemIds =
+              updatedFieldMetadataItems.map(mapById);
+
+            const updateOnAFilteredField = currentRecordFilters.some(
+              (recordFilter) =>
+                updatedFieldMetadataItemIds.includes(
+                  recordFilter.fieldMetadataId,
+                ),
+            );
+
+            const updateOnASortedField = currentRecordSorts.some((recordSort) =>
               updatedFieldMetadataItemIds.includes(recordSort.fieldMetadataId),
-          );
+            );
 
-          if (updatedFieldNames.includes('position')) {
-            resetVirtualizationBecauseDataChanged();
-          } else if (
-            thereIsAnUpdateOnAFilteredField ||
-            thereIsAnUpdateOnASortedField
-          ) {
-            resetVirtualizationBecauseDataChanged();
+            if (updateOnAFilteredField) {
+              thereIsAnUpdateOnAFilteredField = true;
+            }
+
+            if (updateOnASortedField) {
+              thereIsAnUpdateOnASortedField = true;
+            }
           }
         } else {
+          resetVirtualizationBecauseDataChanged();
+        }
+
+        if (updatedFieldNames.has('position')) {
+          resetVirtualizationBecauseDataChanged();
+        } else if (
+          thereIsAnUpdateOnAFilteredField ||
+          thereIsAnUpdateOnASortedField
+        ) {
           resetVirtualizationBecauseDataChanged();
         }
       }
