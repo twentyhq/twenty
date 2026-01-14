@@ -331,10 +331,10 @@ export class CleanerWorkspaceService {
 
   async hardDeleteSoftDeletedWorkspace({
     workspace,
-    force = false,
+    ignoreGracePeriod = false,
     dryRun = false,
   }: {
-    force?: boolean;
+    ignoreGracePeriod?: boolean;
     dryRun?: boolean;
     workspace: WorkspaceEntity;
   }): Promise<WorkspaceEntity | undefined> {
@@ -350,7 +350,7 @@ export class CleanerWorkspaceService {
       daysSinceSoftDeleted >
       this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete;
 
-    const canHardDelete = force || hasPassedGracePeriod;
+    const canHardDelete = ignoreGracePeriod || hasPassedGracePeriod;
 
     if (!canHardDelete) {
       return;

@@ -14,7 +14,7 @@ import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-
 
 type HardDeleteSoftDeletedSuspendedWorkspacesCommandOptions =
   MigrationCommandOptions & {
-    force?: boolean;
+    ignoreGracePeriod?: boolean;
   };
 
 @Command({
@@ -45,12 +45,12 @@ export class HardDeleteSoftDeletedSuspendedWorkspacesCommand extends MigrationCo
   }
 
   @Option({
-    flags: '--force',
+    flags: '--ignore-grace-period',
     description:
-      'Force hard deletion of soft-deleted workspaces, bypassing the grace period and deletion limit',
+      'Ignore the grace period and hard delete soft-deleted workspaces immediately',
     required: false,
   })
-  parseForceHardDelete(): boolean {
+  parseIgnoreGracePeriod(): boolean {
     return true;
   }
 
@@ -69,14 +69,14 @@ export class HardDeleteSoftDeletedSuspendedWorkspacesCommand extends MigrationCo
     _passedParams: string[],
     options: HardDeleteSoftDeletedSuspendedWorkspacesCommandOptions,
   ): Promise<void> {
-    const { dryRun, force } = options;
+    const { dryRun, ignoreGracePeriod } = options;
 
     const softDeletedSuspendedWorkspaces =
       await this.fetchSuspendedSoftDeletedWorkspaces();
     let deletedWorkspaceCounter = 0;
 
     this.logger.log(
-      `${dryRun ? 'DRY RUN - ' : ''}${force ? 'FORCE HARD DELETE - ' : ''}Iterating over ${softDeletedSuspendedWorkspaces.length} soft deleted suspended workspaces`,
+      `${dryRun ? 'DRY RUN - ' : ''}${ignoreGracePeriod ? 'IGNORING GRACE PERIOD - ' : ''}Iterating over ${softDeletedSuspendedWorkspaces.length} soft deleted suspended workspaces`,
     );
 
     for (const workspace of softDeletedSuspendedWorkspaces) {
@@ -84,7 +84,7 @@ export class HardDeleteSoftDeletedSuspendedWorkspacesCommand extends MigrationCo
         await this.cleanerWorkspaceService.hardDeleteSoftDeletedWorkspace({
           workspace,
           dryRun,
-          force,
+          ignoreGracePeriod,
         });
 
       if (isDefined(result)) {
