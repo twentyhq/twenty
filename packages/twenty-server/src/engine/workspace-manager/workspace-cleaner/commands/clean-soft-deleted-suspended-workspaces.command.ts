@@ -80,15 +80,22 @@ export class HardDeleteSoftDeletedSuspendedWorkspacesCommand extends MigrationCo
     );
 
     for (const workspace of softDeletedSuspendedWorkspaces) {
-      const result =
-        await this.cleanerWorkspaceService.hardDeleteSoftDeletedWorkspace({
-          workspace,
-          dryRun,
-          ignoreGracePeriod,
-        });
+      try {
+        const result =
+          await this.cleanerWorkspaceService.hardDeleteSoftDeletedWorkspace({
+            workspace,
+            dryRun,
+            ignoreGracePeriod,
+          });
 
-      if (isDefined(result)) {
-        deletedWorkspaceCounter++;
+        if (isDefined(result)) {
+          deletedWorkspaceCounter++;
+        }
+      } catch (error) {
+        this.logger.error(
+          `Failed to destroy soft deleted workspace ${workspace.id}`,
+          error,
+        );
       }
     }
 
