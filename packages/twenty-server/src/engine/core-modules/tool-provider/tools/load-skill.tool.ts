@@ -6,7 +6,8 @@ export const LOAD_SKILL_TOOL_NAME = 'load_skill';
 
 export const loadSkillInputSchema = z.object({
   skillNames: z
-    .array(z.string())
+    .array(z.string().min(1, 'Skill name cannot be empty'))
+    .min(1, 'At least one skill name is required')
     .describe(
       'Names of the skills to load (e.g., ["workflow-building", "data-manipulation"])',
     ),

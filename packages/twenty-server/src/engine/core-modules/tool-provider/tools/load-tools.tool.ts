@@ -9,7 +9,8 @@ export const LOAD_TOOLS_TOOL_NAME = 'load_tools' as const;
 
 export const loadToolsInputSchema = z.object({
   toolNames: z
-    .array(z.string())
+    .array(z.string().min(1, 'Tool name cannot be empty'))
+    .min(1, 'At least one tool name is required')
     .describe(
       'Array of tool names to load. Use the exact names from the tool catalog.',
     ),
