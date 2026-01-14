@@ -7,6 +7,8 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -20,6 +22,7 @@ import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/ut
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 @Injectable()
 export class DevSeederService {
@@ -124,6 +127,17 @@ export class DevSeederService {
       isDashboardV2Enabled,
       workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
+
+    const relatedPageLayoutCacheKeysToInvalidate = [
+      ...getMetadataRelatedMetadataNames(ALL_METADATA_NAME.pageLayout),
+      ...getMetadataRelatedMetadataNames(ALL_METADATA_NAME.pageLayoutTab),
+      ...getMetadataRelatedMetadataNames(ALL_METADATA_NAME.pageLayoutWidget),
+    ].map(getMetadataFlatEntityMapsKey);
+
+    await this.workspaceCacheService.invalidateAndRecompute(
+      workspaceId,
+      relatedPageLayoutCacheKeysToInvalidate,
+    );
 
     await this.devSeederDataService.seed({
       schemaName: dataSourceMetadata.schema,
