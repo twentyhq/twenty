@@ -5,6 +5,7 @@ import { useGraphPieChartWidgetData } from '@/page-layout/widgets/graph/graphWid
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { assertPieChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertPieChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
+import { isChartDrillDownSupported } from '@/page-layout/widgets/graph/utils/isChartDrillDownSupported';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -59,6 +60,11 @@ export const GraphWidgetPieChartRenderer = () => {
 
   const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
 
+  const groupByField = objectMetadataItem.fields.find(
+    (field) => field.id === widget.configuration.groupByFieldMetadataId,
+  );
+  const isDrillDownSupported = isChartDrillDownSupported(groupByField);
+
   const handleSliceClick = (datum: PieChartDataItem) => {
     const rawValue = formattedToRawLookup.get(datum.id) ?? null;
 
@@ -101,7 +107,11 @@ export const GraphWidgetPieChartRenderer = () => {
         showLegend={showLegend}
         colorMode={colorMode}
         displayType="shortNumber"
-        onSliceClick={isPageLayoutInEditMode ? undefined : handleSliceClick}
+        onSliceClick={
+          isPageLayoutInEditMode || !isDrillDownSupported
+            ? undefined
+            : handleSliceClick
+        }
         showDataLabels={showDataLabels}
         showCenterMetric={showCenterMetric}
       />
