@@ -9,6 +9,8 @@ import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permissio
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
 import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate.dto';
+import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
 
 @ObjectType('ApiKeyForRole')
 export class ApiKeyForRoleDTO {
@@ -95,4 +97,10 @@ export class RoleDTO {
 
   @Field(() => [FieldPermissionDTO], { nullable: true })
   fieldPermissions?: FieldPermissionDTO[];
+
+  @Field(() => [RowLevelPermissionPredicateDTO], { nullable: true })
+  rowLevelPermissionPredicates?: RowLevelPermissionPredicateDTO[];
+
+  @Field(() => [RowLevelPermissionPredicateGroupDTO], { nullable: true })
+  rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroupDTO[];
 }

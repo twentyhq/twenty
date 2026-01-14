@@ -1,5 +1,5 @@
 import { ActorFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ActorFieldDisplay';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { AuthContextDecorator } from '~/testing/decorators/AuthContextDecorator';

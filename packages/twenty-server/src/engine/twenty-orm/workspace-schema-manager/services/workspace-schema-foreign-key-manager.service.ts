@@ -1,7 +1,7 @@
 import { type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaForeignKeyDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-foreign-key-definition.type';
-import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
+import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export class WorkspaceSchemaForeignKeyManagerService {
   async createForeignKey({
@@ -88,5 +88,42 @@ export class WorkspaceSchemaForeignKeyManagerService {
     const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER CONSTRAINT "${safeForeignKeyName}" DEFERRABLE`;
 
     await queryRunner.query(sql);
+  }
+
+  async getForeignKeyName({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+  }): Promise<string | undefined> {
+    const safeSchemaName = removeSqlDDLInjection(schemaName);
+    const safeTableName = removeSqlDDLInjection(tableName);
+    const safeColumnName = removeSqlDDLInjection(columnName);
+
+    const foreignKeys = await queryRunner.query(
+      `
+      SELECT
+        tc.constraint_name AS constraint_name
+      FROM
+        information_schema.table_constraints AS tc
+      JOIN
+        information_schema.key_column_usage AS kcu
+        ON tc.constraint_name = kcu.constraint_name
+        AND tc.table_schema = kcu.table_schema
+      WHERE
+        tc.constraint_type = 'FOREIGN KEY'
+        AND tc.table_schema = $1
+        AND tc.table_name = $2
+        AND kcu.column_name = $3
+    `,
+      [safeSchemaName, safeTableName, safeColumnName],
+    );
+
+    return foreignKeys[0]?.constraint_name;
   }
 }

@@ -8,6 +8,7 @@
  */
 
 export { applyDiff } from './applyDiff';
+export { compareArraysOfObjectsByProperty } from './array/compareArraysOfObjectsByProperty';
 export { filterOutByProperty } from './array/filterOutByProperty';
 export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';
@@ -17,7 +18,8 @@ export { isNonEmptyArray } from './array/isNonEmptyArray';
 export { mapById } from './array/mapById';
 export { mapByProperty } from './array/mapByProperty';
 export { sumByProperty } from './array/sumByProperty';
-export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfObjectComparingId';
+export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfObjectsComparingId';
+export { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from './array/upsertPropertiesOfItemIntoArrayOfObjectsComparingId';
 export { assertUnreachable } from './assertUnreachable';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { isPlainDateAfter } from './date/isPlainDateAfter';

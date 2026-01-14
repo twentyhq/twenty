@@ -2,6 +2,7 @@ import { H2Title, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type ServerlessFunction } from '~/generated/graphql';
 import { useLingui } from '@lingui/react/macro';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { SettingsDatabaseEventsForm } from '@/settings/components/SettingsDatabaseEventsForm';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -122,7 +123,9 @@ export const SettingsServerlessFunctionTriggersTab = ({
             {routeTriggers.map((routeTrigger, index) => (
               <StyledRouteTriggerTableRow key={index}>
                 <StyledTableCell>
-                  <OverflowingTextWithTooltip text={routeTrigger.path} />
+                  <OverflowingTextWithTooltip
+                    text={`${REACT_APP_SERVER_BASE_URL}/s${routeTrigger.path}`}
+                  />
                 </StyledTableCell>
                 <StyledTableCell>{routeTrigger.httpMethod}</StyledTableCell>
                 <StyledTableCell>

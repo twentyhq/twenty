@@ -87,7 +87,9 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     },
   ];
 
-  const isDirty = !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
+  const isDirty =
+    isDefined(settingsPersistedRole) &&
+    !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
 
   const handleCancel = () => {
     if (isCreateMode) {

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`failing createOne FieldMetadataService morph relation fields v2 Morh relation collision tests suite it should fail to create a already existing morph relation with samefield 1`] = `
 {

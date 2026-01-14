@@ -18,12 +18,12 @@ image: /images/user-guide/tips/light-bulb.png
       return (
         <>
           <p id="hoverText" style={{ display: "inline-block" }}>
-            Customer Insights
+            رؤى العملاء
           </p>
           <AppTooltip
             className
             anchorSelect="#hoverText"
-            content="Explore customer behavior and preferences"
+            content="استكشاف سلوك العملاء وتفضيلاتهم"
             delayHide={0}
             offset={6}
             noArrow={false}
@@ -38,21 +38,21 @@ image: /images/user-guide/tips/light-bulb.png
   </Tab>
 
   <Tab title="المحددات">
-    | المحددات           | النوع                                    | الوصف                                                                                                                                                                                      |
-    | ------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-    | اسم الفئة          | نص                                       | فئة CSS اختيارية للتنسيق الإضافي                                                                                                                                                           |
-    | اختيار الربط       | محدد CSS                                 | Selector for the tooltip anchor (the element that triggers the tooltip)                                                                                                                    |
-    | المحتوى            | نص                                       | The content you want to display within the tooltip                                                                                                                                         |
-    | تأخير الإخفاء      | رقم                                      | The delay in seconds before hiding the tooltip after the cursor leaves the anchor                                                                                                          |
-    | الإزاحة            | رقم                                      | The offset in pixels for positioning the tooltip                                                                                                                                           |
-    | بدون سهم           | قيمة منطقية                              | إذا كانت القيمة `صحيح`, سيتم إخفاء السهم في المربط التنبيهي                                                                                                                                |
-    | مفتوح              | قيمة منطقية                              | إذا كانت القيمة `صحيح`, يكون المربط التنبيهي مفتوحًا افتراضيًا                                                                                                                             |
-    | المكان             | `PlacesType` string from `react-tooltip` | يحدد موضع المربط التنبيهي. Values include `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, and `left-end` |
-    | استراتيجية الوضعية | نص `PositionStrategy` من `react-tooltip` | استراتيجية وضعية للمربط التنبيهي. Has two values: `absolute` and `fixed`                                                                                                                   |
+    | المحددات           | النوع                                    | الوصف                                                                                                                                                                                |
+    | ------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | اسم الفئة          | نص                                       | فئة CSS اختيارية للتنسيق الإضافي                                                                                                                                                     |
+    | اختيار الربط       | محدد CSS                                 | المحدِّد لمرساة التلميح (العنصر الذي يُفعّل التلميح)                                                                                                                                 |
+    | المحتوى            | نص                                       | المحتوى الذي تريد عرضه داخل التلميح                                                                                                                                                  |
+    | تأخير الإخفاء      | رقم                                      | التأخير بالثواني قبل إخفاء التلميح بعد مغادرة المؤشر للمرساة                                                                                                                         |
+    | الإزاحة            | رقم                                      | الإزاحة بالبكسل لتحديد موضع التلميح                                                                                                                                                  |
+    | بدون سهم           | قيمة منطقية                              | إذا كانت القيمة `صحيح`, سيتم إخفاء السهم في المربط التنبيهي                                                                                                                          |
+    | مفتوح              | قيمة منطقية                              | إذا كانت القيمة `صحيح`, يكون المربط التنبيهي مفتوحًا افتراضيًا                                                                                                                       |
+    | المكان             | نص `PlacesType` من `react-tooltip`       | يحدد موضع المربط التنبيهي. تتضمن القيم `bottom`، `left`، `right`، `top`، `top-start`، `top-end`، `right-start`، `right-end`، `bottom-start`، `bottom-end`، `left-start`، و`left-end` |
+    | استراتيجية الوضعية | نص `PositionStrategy` من `react-tooltip` | استراتيجية وضعية للمربط التنبيهي. له قيمتان: `absolute` و`fixed`                                                                                                                     |
   </Tab>
 </Tabs>
 
-## Overflowing Text with Tooltip
+## نص متجاوز مع تلميح
 
 يعالج النص الزائد ويعرض مربط تنبيهي عند فيضان النص.
 
@@ -63,7 +63,7 @@ image: /images/user-guide/tips/light-bulb.png
 
     export const MyComponent = () => {
       const crmTaskDescription =
-        'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+        'المتابعة مع العميل بشأن استفساره الأخير عن المنتج. مناقشة خيارات التسعير، ومعالجة أي مخاوف، وتقديم معلومات إضافية عن المنتج. تسجيل تفاصيل المحادثة في نظام إدارة علاقات العملاء (CRM) للرجوع إليها لاحقاً.';
 
       return <OverflowingTextWithTooltip text={crmTaskDescription} />;
     };
@@ -71,8 +71,8 @@ image: /images/user-guide/tips/light-bulb.png
   </Tab>
 
   <Tab title="الخصائص">
-    | الخصائص | النوع  | الوصف                                                        |
-    | ------- | ------ | ------------------------------------------------------------ |
-    | نص      | string | The content you want to display in the overflowing text area |
+    | الخصائص | النوع  | الوصف                                         |
+    | ------- | ------ | --------------------------------------------- |
+    | نص      | string | المحتوى الذي تريد عرضه في منطقة النص المتجاوز |
   </Tab>
 </Tabs>

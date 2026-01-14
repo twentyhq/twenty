@@ -156,9 +156,9 @@ Trebuie să rulați toate comenzile în pașii următori de la rădăcina proiec
     Veți vedea un rezultat similar cu:
 
     ```bash
-     Role name | Attributes  | Member of
+     Nume rol | Atribute  | Membru al
      -----------+-------------+-----------
-     john      | Superuser   | {}
+     john      | Superutilizator   | {}
     ```
 
     Dacă nu vedeți un rol `postgres` listat, mergeți la pasul următor.
@@ -260,7 +260,7 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/ro/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+  **Modul Multi-Workspace:** În mod implicit, Twenty rulează în modul cu un singur spațiu de lucru, în care poate fi creat un singur spațiu de lucru. Pentru a activa suportul multi-spațiu de lucru (util pentru testarea funcționalităților bazate pe subdomenii), setați `IS_MULTIWORKSPACE_ENABLED=true` în fișierul `.env` al serverului. Consultați [Modul Multi-Workspace](/l/ro/developers/self-host/capabilities/setup#multi-workspace-mode) pentru detalii.
 </Info>
 
 ## Pasul 6: Instalarea dependențelor
@@ -301,7 +301,7 @@ Setați baza de date cu următoarea comandă:
 npx nx database:reset twenty-server
 ```
 
-Start the server, the worker and the frontend services:
+Porniți serverul, worker-ul și serviciile frontend:
 
 ```bash
 npx nx start twenty-server

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`View Field Resolver - Failing Create Operation - v2 Should fail to create a conflicting view field on view and field metadata 1`] = `
 {

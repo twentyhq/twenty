@@ -14,12 +14,12 @@ import { useReapplyRowSelection } from '@/object-record/record-table/virtualizat
 
 import { useResetTableFocuses } from '@/object-record/record-table/virtualization/hooks/useResetTableFocuses';
 import { useResetVirtualizedRowTreadmill } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizedRowTreadmill';
-import { dataLoadingStatusByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilyState';
+import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilySelector';
 import { dataPagesLoadedComponentState } from '@/object-record/record-table/virtualization/states/dataPagesLoadedComponentState';
 import { isInitializingVirtualTableDataLoadingComponentState } from '@/object-record/record-table/virtualization/states/isInitializingVirtualTableDataLoadingComponentState';
 import { lastRealIndexSetComponentState } from '@/object-record/record-table/virtualization/states/lastRealIndexSetComponentState';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
-import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
+import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 import { scrollAtRealIndexComponentState } from '@/object-record/record-table/virtualization/states/scrollAtRealIndexComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -56,14 +56,14 @@ export const useTriggerInitialRecordTableDataLoad = () => {
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const recordIdByRealIndexCallbackState =
+  const recordIdByRealIndexCallbackSelector =
     useRecoilComponentFamilyCallbackState(
-      recordIdByRealIndexComponentFamilyState,
+      recordIdByRealIndexComponentFamilySelector,
     );
 
-  const dataLoadingStatusByRealIndexCallbackState =
-    useRecoilComponentCallbackState(
-      dataLoadingStatusByRealIndexComponentFamilyState,
+  const dataLoadingStatusByRealIndexCallbackSelector =
+    useRecoilComponentFamilyCallbackState(
+      dataLoadingStatusByRealIndexComponentFamilySelector,
     );
 
   const setIsRecordTableScrolledHorizontally = useSetRecoilComponentState(
@@ -144,20 +144,12 @@ export const useTriggerInitialRecordTableDataLoad = () => {
           records = SIGN_IN_BACKGROUND_MOCK_COMPANIES;
           totalCount = SIGN_IN_BACKGROUND_MOCK_COMPANIES.length;
         } else {
-          for (const [index] of currentRecordIds.entries()) {
+          for (const [realIndex] of currentRecordIds.entries()) {
             set(
-              dataLoadingStatusByRealIndexCallbackState({
-                realIndex: index,
-              }),
-              null,
+              dataLoadingStatusByRealIndexCallbackSelector(realIndex),
+              'not-loaded',
             );
-
-            set(
-              recordIdByRealIndexCallbackState({
-                realIndex: index,
-              }),
-              null,
-            );
+            set(recordIdByRealIndexCallbackSelector(realIndex), undefined);
           }
 
           const { records: findManyRecords, totalCount: findManyTotalCount } =
@@ -215,8 +207,8 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       setIsRecordTableScrolledVertically,
       scrollTableToPosition,
       findManyRecordsLazy,
-      dataLoadingStatusByRealIndexCallbackState,
-      recordIdByRealIndexCallbackState,
+      dataLoadingStatusByRealIndexCallbackSelector,
+      recordIdByRealIndexCallbackSelector,
       totalNumberOfRecordsToVirtualizeCallbackState,
       upsertRecordsInStore,
       loadRecordsToVirtualRows,

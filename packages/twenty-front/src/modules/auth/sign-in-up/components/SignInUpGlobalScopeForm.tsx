@@ -4,39 +4,29 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 import { FormProvider } from 'react-hook-form';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { SignInUpEmailField } from '@/auth/sign-in-up/components/internal/SignInUpEmailField';
-import { SignInUpPasswordField } from '@/auth/sign-in-up/components/internal/SignInUpPasswordField';
+import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
-import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
-import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
-import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
-import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import { isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
   HorizontalSeparator,
   IconChevronRight,
   IconPlus,
 } from 'twenty-ui/display';
-import { Loader } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
 import { type AvailableWorkspace } from '~/generated/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
@@ -44,13 +34,6 @@ const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
   margin-top: ${({ theme }) => theme.spacing(4)};
   min-width: 200px;
-`;
-
-const StyledForm = styled.form`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
 `;
 
 const StyledWorkspaceContainer = styled.div`
@@ -147,42 +130,11 @@ export const SignInUpGlobalScopeForm = () => {
   const { signOut } = useAuth();
 
   const { createWorkspace } = useSignUpInNewWorkspace();
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
-  const [signInUpMode] = useRecoilState(signInUpModeState);
   const availableWorkspaces = useRecoilValue(availableWorkspacesState);
   const theme = useTheme();
   const { t } = useLingui();
 
-  const isRequestingCaptchaToken = useRecoilValue(
-    isRequestingCaptchaTokenState,
-  );
-  const { isCaptchaReady } = useCaptcha();
-
-  const [showErrors, setShowErrors] = useState(false);
-
   const { form } = useSignInUpForm();
-
-  const { submitCredentials, continueWithCredentials } = useSignInUp(form);
-
-  const handleSubmit = async () => {
-    if (isDefined(form?.formState?.errors?.email)) {
-      setShowErrors(true);
-      return;
-    }
-
-    if (signInUpStep === SignInUpStep.Password) {
-      await submitCredentials(form.getValues());
-      return;
-    }
-
-    await continueWithCredentials();
-  };
-
-  const onEmailChange = (email: string) => {
-    if (email !== form.getValues('email')) {
-      setSignInUpStep(SignInUpStep.Email);
-    }
-  };
 
   const getAvailableWorkspaceUrl = (availableWorkspace: AvailableWorkspace) => {
     const { pathname, searchParams } = getAvailableWorkspacePathAndSearchParams(
@@ -263,48 +215,23 @@ export const SignInUpGlobalScopeForm = () => {
       {signInUpStep !== SignInUpStep.WorkspaceSelection && (
         <StyledContentContainer>
           {authProviders.google && (
-            <SignInUpWithGoogle action="list-available-workspaces" />
+            <SignInUpWithGoogle
+              action="list-available-workspaces"
+              isGlobalScope
+            />
           )}
           {authProviders.microsoft && (
-            <SignInUpWithMicrosoft action="list-available-workspaces" />
+            <SignInUpWithMicrosoft
+              action="list-available-workspaces"
+              isGlobalScope
+            />
           )}
           {(authProviders.google || authProviders.microsoft) && (
             <HorizontalSeparator />
           )}
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <FormProvider {...form}>
-            <StyledForm onSubmit={form.handleSubmit(handleSubmit)}>
-              <SignInUpEmailField
-                showErrors={showErrors}
-                onInputChange={onEmailChange}
-              />
-              {signInUpStep === SignInUpStep.Password && (
-                <SignInUpPasswordField
-                  showErrors={showErrors}
-                  signInUpMode={signInUpMode}
-                />
-              )}
-              <MainButton
-                disabled={
-                  isRequestingCaptchaToken ||
-                  form.formState.isSubmitting ||
-                  (signInUpStep !== SignInUpStep.Password && !isCaptchaReady)
-                }
-                title={
-                  signInUpStep === SignInUpStep.Password
-                    ? signInUpMode === SignInUpMode.SignIn
-                      ? t`Sign In`
-                      : t`Sign Up`
-                    : t`Continue`
-                }
-                type="submit"
-                variant={
-                  signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
-                }
-                Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
-                fullWidth
-              />
-            </StyledForm>
+            <SignInUpWithCredentials isGlobalScope />
           </FormProvider>
         </StyledContentContainer>
       )}

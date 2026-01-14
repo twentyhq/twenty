@@ -3,6 +3,7 @@ import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPi
 import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartEnrichedData';
 import { calculatePieChartPercentage } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/calculatePieChartPercentage';
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -11,11 +12,13 @@ import { useMemo } from 'react';
 type UsePieChartDataProps = {
   data: PieChartDataItem[];
   colorRegistry: GraphColorRegistry;
+  colorMode: GraphColorMode;
 };
 
 export const usePieChartData = ({
   data,
   colorRegistry,
+  colorMode,
 }: UsePieChartDataProps) => {
   const hiddenLegendIds = useRecoilComponentValue(
     graphWidgetHiddenLegendIdsComponentState,
@@ -24,12 +27,14 @@ export const usePieChartData = ({
   const allEnrichedData = useMemo((): PieChartEnrichedData[] => {
     const totalValue = data.reduce((sum, item) => sum + item.value, 0);
 
+    const shouldApplyGradient = colorMode === 'explicitSingleColor';
+
     return data.map((item, index) => {
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: item.color,
         fallbackIndex: index,
-        totalGroups: data.length,
+        totalGroups: shouldApplyGradient ? data.length : undefined,
       });
 
       const percentage = calculatePieChartPercentage(item.value, totalValue);
@@ -40,7 +45,7 @@ export const usePieChartData = ({
         percentage,
       };
     });
-  }, [data, colorRegistry]);
+  }, [data, colorRegistry, colorMode]);
 
   const legendItems: GraphWidgetLegendItem[] = allEnrichedData.map((item) => ({
     id: item.id,

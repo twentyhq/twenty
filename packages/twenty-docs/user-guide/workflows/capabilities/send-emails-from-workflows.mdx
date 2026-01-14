@@ -115,6 +115,29 @@ The Team
    - Subject: Following up on our conversation
    - Body: Reference meeting details from trigger
 
+## Email Attachments
+
+You can attach files to emails sent from workflows. The attachment is a static file that you upload when configuring the workflow.
+
+### How to Add an Attachment
+
+1. In the **Send Email** action, click on the **Attachments** button
+2. Click to upload a file from your computer
+3. The file will be attached to all emails sent by this action
+
+### Common Use Cases
+
+| Use Case | Example File |
+|----------|--------------|
+| **Welcome emails** | Company brochure (PDF) |
+| **Onboarding sequences** | Getting started guide |
+| **Sales follow-ups** | Product catalog or price list |
+| **Event confirmations** | Event details or agenda |
+
+<Note>
+Attachments are static—the same file is sent to all recipients. For dynamic documents (like personalized quotes), generate and attach files using a [Serverless Function](/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
+</Note>
+
 ## Best Practices
 
 ### Email Content
@@ -134,10 +157,6 @@ The Team
 - Check recipient email address is valid
 - Review workflow runs for error messages
 - Test with your own email address first
-
-<Note>
-**Coming soon**: Email attachments will be available in Q1 2026.
-</Note>
 
 ## Related
 

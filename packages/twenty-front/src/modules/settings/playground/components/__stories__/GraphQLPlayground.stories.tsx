@@ -1,9 +1,9 @@
 import { GraphQLPlayground } from '@/settings/playground/components/GraphQLPlayground';
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { action } from 'storybook/actions';
 import {
   ComponentDecorator,
   ComponentWithRouterDecorator,

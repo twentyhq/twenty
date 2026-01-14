@@ -1,170 +1,170 @@
 ---
 title: Řešení problémů s workflow
-description: Common workflow issues and how to resolve them.
+description: Běžné problémy s pracovními postupy a jak je vyřešit.
 ---
 
 ## Běžné problémy a řešení
 
 ### Workflow se nespouští
 
-**Symptoms**: Your workflow doesn't run when you expect it to.
+**Příznaky**: Váš pracovní postup se nespustí, když to očekáváte.
 
-**Possible Causes**:
+**Možné příčiny**:
 
-1. **Workflow not activated**: Ensure the workflow is set to "Active" not "Draft"
-2. **Trigger conditions not met**: Verify the trigger matches your expected event
-3. **Field not monitored**: For "Record is Updated" triggers, ensure the specific field is being watched
-4. **Permissions**: Check you have permission to run workflows
+1. **Pracovní postup není aktivován**: Ujistěte se, že je pracovní postup nastaven na "Active", ne na "Draft"
+2. **Podmínky spouštěče nesplněny**: Ověřte, že spouštěč odpovídá očekávané události
+3. **Pole není sledováno**: U spouštěčů "Record is Updated" se ujistěte, že je dané pole sledováno
+4. **Oprávnění**: Zkontrolujte, že máte oprávnění spouštět pracovní postupy
 
 **Řešení**:
 
-* Verify workflow status in the workflow list
-* Test with the specific action you expect to trigger it
-* Review trigger configuration
-* Contact your admin about permissions
+* Ověřte stav pracovního postupu v seznamu pracovních postupů
+* Otestujte to konkrétní akcí, u které očekáváte, že jej spustí
+* Zkontrolujte konfiguraci spouštěče
+* Kontaktujte svého administrátora ohledně oprávnění
 
-### Workflow Triggers Too Early (Empty Fields)
+### Spouštění pracovního postupu příliš brzy (prázdná pole)
 
-**Symptoms**: When manually creating a record in the UI, your workflow triggers before you've had time to fill in all the fields. The workflow runs with mostly empty field values.
+**Příznaky**: Při ručním vytváření záznamu v UI se váš pracovní postup spustí dříve, než máte čas vyplnit všechna pole. Pracovní postup běží převážně s prázdnými hodnotami polí.
 
-**Why this happens**: Twenty saves everything in real-time — there's no separate "edit" vs "read" mode. When you create a record, it's saved immediately, triggering the "Record is created" event before you can fill in additional fields.
+**Proč k tomu dochází**: Twenty ukládá vše v reálném čase — neexistuje oddělený režim "edit" vs "read". Když vytvoříte záznam, ihned se uloží, což vyvolá událost "Record is created" dříve, než stihnete vyplnit další pole.
 
-**When "Record is created" works well**:
+**Kdy se "Record is created" hodí**:
 
-* Records created via API calls (fields are populated in a single request)
-* Records created via import
-* Automated record creation from other workflows
+* Záznamy vytvořené přes volání API (pole jsou vyplněna v jednom požadavku)
+* Záznamy vytvořené pomocí importu
+* Automatické vytváření záznamů z jiných pracovních postupů
 
-**Solution**: For records created manually in the UI, use **"Record is created or updated"** as your trigger instead. This way:
+**Řešení**: Pro záznamy vytvořené ručně v UI použijte jako spouštěč místo toho **"Record is created or updated"**. Tímto způsobem:
 
-* The workflow triggers after the user has finished filling in and saving the fields
-* You get the complete data rather than empty values
+* Pracovní postup se spustí poté, co uživatel dokončí vyplňování polí a jejich uložení
+* Získáte kompletní data namísto prázdných hodnot
 
 <Tip>
-  If you only want the workflow to run once per record, add a Filter action to check a field like `createdAt equals updatedAt` (first save) or use a custom checkbox field to track if the workflow has already run.
+  Pokud chcete, aby se pracovní postup spustil jen jednou na záznam, přidejte akci Filter, která zkontroluje pole jako `createdAt equals updatedAt` (první uložení), nebo použijte vlastní zaškrtávací pole ke sledování, zda už pracovní postup běžel.
 </Tip>
 
-### Actions Failing
+### Selhávající akce
 
-**Symptoms**: Workflow runs but some actions fail.
+**Příznaky**: Pracovní postup běží, ale některé akce selhávají.
 
-**Possible Causes**:
+**Možné příčiny**:
 
-1. **Missing data**: Required fields are empty
-2. **Invalid references**: Variables from previous steps don't exist
-3. **API errors**: External services returning errors
-4. **Permission issues**: Action requires permissions you don't have
-
-**Řešení**:
-
-* Check the workflow run details for error messages
-* Verify all required fields have values
-* Test API connections independently
-* Review role permissions
-
-### HTTP Request Errors
-
-**Symptoms**: HTTP Request actions fail or return unexpected results.
-
-**Common Error Codes**:
-
-* **400**: Bad request - check your request body format
-* **401**: Unauthorized - verify API key
-* **403**: Forbidden - check API permissions
-* **404**: Not found - verify endpoint URL
-* **429**: Too many requests - implement rate limiting
-* **500**: Server error - external service issue
+1. **Chybějící data**: Povinná pole jsou prázdná
+2. **Neplatné odkazy**: Proměnné z předchozích kroků neexistují
+3. **Chyby API**: Externí služby vracejí chyby
+4. **Problémy s oprávněními**: Akce vyžaduje oprávnění, která nemáte
 
 **Řešení**:
 
-* Verify API endpoint URL
-* Check authentication headers
-* Test the API call outside of Twenty first
-* Add error handling in Code actions
+* Zkontrolujte podrobnosti běhu pracovního postupu kvůli chybovým zprávám
+* Ověřte, že všechna povinná pole mají hodnoty
+* Otestujte připojení k API samostatně
+* Projděte oprávnění rolí
 
-### Code Action Errors
+### Chyby požadavků HTTP
 
-**Symptoms**: JavaScript code fails to execute.
+**Příznaky**: Akce HTTP Request selhávají nebo vracejí neočekávané výsledky.
 
-**Common Issues**:
+**Běžné chybové kódy**:
 
-1. **Syntax errors**: Typos or invalid JavaScript
-2. **Undefined variables**: Referencing variables that don't exist
-3. **Type errors**: Operations on wrong data types
-4. **Timeouts**: Code taking too long to execute
-
-**Řešení**:
-
-* Use the built-in code editor validation
-* Test code logic in a JavaScript console first
-* Add console.log statements for debugging
-* Simplify complex operations
-
-### Email Not Sending
-
-**Symptoms**: Send Email action doesn't deliver emails.
-
-**Possible Causes**:
-
-1. **No email account connected**: Check Settings → Accounts
-2. **Invalid email address**: Recipient email is malformed
-3. **Sending limits**: Email provider rate limits reached
-4. **Spam filters**: Emails being blocked
+* **400**: Neplatný požadavek - zkontrolujte formát těla požadavku
+* **401**: Neautorizováno - ověřte klíč API
+* **403**: Zakázáno - zkontrolujte oprávnění API
+* **404**: Nenalezeno - ověřte URL endpointu
+* **429**: Příliš mnoho požadavků - zaveďte omezení četnosti požadavků
+* **500**: Chyba serveru - problém v externí službě
 
 **Řešení**:
 
-* Verify email account connection
-* Validate recipient email addresses
-* Check email provider limits
-* Review email content for spam triggers
+* Ověřte URL endpointu API
+* Zkontrolujte autentizační hlavičky
+* Nejprve otestujte volání API mimo Twenty
+* Přidejte zpracování chyb v akcích Code
 
-## Debugging Workflows
+### Chyby akcí Code
 
-### Using Workflow Runs
+**Příznaky**: Kód JavaScriptu se nedaří spustit.
 
-1. Go to the workflow editor
-2. Open the **Runs** panel
-3. Find the failed run
-4. Click to see step-by-step details
-5. Review error messages and output data
+**Běžné problémy**:
 
-### Testing Individual Steps
+1. **Syntaktické chyby**: Překlepy nebo neplatný JavaScript
+2. **Nedefinované proměnné**: Odkazování na proměnné, které neexistují
+3. **Chyby typů**: Operace na nesprávných datových typech
+4. **Vypršení časového limitu**: Kód se spouští příliš dlouho
 
-1. For Code actions, use the **Test** button
-2. For HTTP requests, test the endpoint separately
-3. Create test records to trigger workflows
-4. Use manual triggers for controlled testing
+**Řešení**:
 
-### Common Debugging Patterns
+* Použijte vestavěnou validaci editoru kódu
+* Nejprve otestujte logiku kódu v konzoli JavaScriptu
+* Přidejte výpisy console.log pro ladění
+* Zjednodušte složité operace
 
-**Add logging**:
-Use Code actions to log intermediate values for debugging.
+### E-mail se neodesílá
 
-**Isolate steps**:
-Test each step independently to identify failures.
+**Příznaky**: Akce Send Email nedoručuje e-maily.
 
-**Check data flow**:
-Verify that each step receives the expected input data.
+**Možné příčiny**:
 
-## Best Practices to Avoid Issues
+1. **Není připojen e-mailový účet**: Zkontrolujte Nastavení → Účty
+2. **Neplatná e-mailová adresa**: E-mail příjemce má neplatný formát
+3. **Limity odesílání**: Byly dosaženy limity poskytovatele e-mailu
+4. **Spamové filtry**: E-maily jsou blokovány
 
-### Before Activation
+**Řešení**:
 
-* Test thoroughly in draft mode
-* Validate all API connections
-* Review trigger conditions carefully
-* Document expected behavior
+* Ověřte připojení e-mailového účtu
+* Ověřte e-mailové adresy příjemců
+* Zkontrolujte limity poskytovatele e-mailu
+* Zkontrolujte obsah e-mailu kvůli spouštěčům spamu
 
-### During Development
+## Ladění pracovních postupů
 
-* Use descriptive step names
-* Add comments in Code actions
-* Test with realistic data
-* Plan for edge cases
+### Používání běhů pracovního postupu
 
-### After Activation
+1. Přejděte do editoru pracovního postupu
+2. Otevřete panel **Runs**
+3. Najděte neúspěšný běh
+4. Klikněte pro zobrazení podrobných informací krok za krokem
+5. Projděte chybové zprávy a výstupní data
 
-* Monitor initial runs closely
-* Set up alerts for failures
-* Review run history regularly
-* Keep workflows simple when possible
+### Testování jednotlivých kroků
+
+1. U akcí Code použijte tlačítko **Test**
+2. U požadavků HTTP otestujte endpoint samostatně
+3. Vytvářejte testovací záznamy pro spuštění pracovních postupů
+4. Pro řízené testování použijte manuální spouštěče
+
+### Běžné vzory ladění
+
+**Přidejte logování**:
+Použijte akce Code k zaznamenávání mezilehlých hodnot pro ladění.
+
+**Izolujte kroky**:
+Testujte každý krok samostatně, abyste identifikovali selhání.
+
+**Zkontrolujte tok dat**:
+Ověřte, že každý krok dostává očekávaná vstupní data.
+
+## Osvědčené postupy k předcházení problémům
+
+### Před aktivací
+
+* Důkladně testujte v režimu konceptu
+* Ověřte všechna připojení k API
+* Pečlivě zkontrolujte podmínky spouštěče
+* Zdokumentujte očekávané chování
+
+### Během vývoje
+
+* Používejte výstižné názvy kroků
+* Přidejte komentáře v akcích Code
+* Testujte s realistickými daty
+* Plánujte i okrajové případy
+
+### Po aktivaci
+
+* Pečlivě sledujte počáteční běhy
+* Nastavte upozornění na selhání
+* Pravidelně procházejte historii běhů
+* Udržujte pracovní postupy co nejjednodušší

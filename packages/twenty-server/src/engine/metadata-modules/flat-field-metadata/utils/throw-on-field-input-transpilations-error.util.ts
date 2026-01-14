@@ -2,8 +2,8 @@ import {
   type FieldInputTranspilationResult,
   type SuccessfulFieldInputTranspilation,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
-import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-failure-report.constant';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 // This could be improved by still running the build and validate with available valid inputs
 type ThrowOnFieldInputTranspilationsErrorArgs = <T>(
@@ -21,8 +21,8 @@ export const throwOnFieldInputTranspilationsError: ThrowOnFieldInputTranspilatio
     );
 
     if (failedInputTranspilationErrors.length > 0) {
-      // We should create a dedicated exceptions instead of hacking through the WorkspaceMigrationBuilderExceptionV2
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      // We should create a dedicated exceptions instead of hacking through the WorkspaceMigrationBuilderException
+      throw new WorkspaceMigrationBuilderException(
         {
           report: {
             ...EMPTY_ORCHESTRATOR_FAILURE_REPORT(),

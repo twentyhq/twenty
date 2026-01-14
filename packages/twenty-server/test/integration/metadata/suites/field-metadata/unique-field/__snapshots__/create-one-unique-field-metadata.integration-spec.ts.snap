@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`failing createOne unique field metadata should fail for composite type without unique subfields (FULL_NAME) 1`] = `
 {

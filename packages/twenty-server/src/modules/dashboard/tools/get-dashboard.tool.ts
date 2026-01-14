@@ -55,10 +55,10 @@ export const createGetDashboardTool = (
         };
       }
 
-      const pageLayout = await deps.pageLayoutService.findByIdOrThrow(
-        dashboard.pageLayoutId,
-        context.workspaceId,
-      );
+      const pageLayout = await deps.pageLayoutService.findByIdOrThrow({
+        id: dashboard.pageLayoutId,
+        workspaceId: context.workspaceId,
+      });
 
       const tabs =
         pageLayout.tabs?.map((tab) => ({

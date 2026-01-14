@@ -1,0 +1,169 @@
+# Default image used by all components
+image:
+  repository: twentycrm/twenty
+  tag: ""  # defaults to Chart.yaml appVersion
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Global security context (uid/gid for all pods)
+securityContext:
+  runAsUser: 1000
+  fsGroup: 1000
+
+# Storage backend: local or s3
+storage:
+  type: local
+  s3:
+    bucket: ""
+    region: ""
+    endpoint: ""
+    accessKeyId: ""
+    secretAccessKey: ""
+
+# Auth tokens (random if not provided)
+secrets:
+  tokens:
+    create: true
+    name: tokens
+    accessToken: ""
+
+# Server deployment
+server:
+  enabled: true
+  replicaCount: 1
+  image: {}  # override repository/tag/pullPolicy per component
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+
+  env:
+    SIGN_IN_PREFILLED: "false"
+    ACCESS_TOKEN_EXPIRES_IN: "7d"
+    LOGIN_TOKEN_EXPIRES_IN: "1h"
+
+  service:
+    type: ClusterIP
+    port: 3000
+
+  ingress:
+    enabled: true
+    className: nginx
+    acme: true  # add cert-manager annotation for Let's Encrypt
+    annotations: {}
+    hosts:
+      - host: crm.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: twenty-tls
+        hosts:
+          - crm.example.com
+
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: ""
+    existingClaim: ""
+    accessModes:
+      - ReadWriteOnce
+
+  dockerDataPersistence:
+    enabled: true
+    size: 100Mi
+    storageClass: ""
+    existingClaim: ""
+    accessModes:
+      - ReadWriteOnce
+
+  extraVolumeMounts: []
+
+# Worker deployment
+worker:
+  enabled: true
+  replicaCount: 1
+  image: {}
+  command: ["yarn", "worker:prod"]
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1024Mi
+    limits:
+      cpu: 1000m
+      memory: 2048Mi
+
+# PostgreSQL
+db:
+  enabled: true
+  internal:
+    database: twenty
+    appUser: twenty_app_user
+    appPassword: ""  # random if empty
+    image:
+      repository: twentycrm/twenty-postgres-spilo
+      tag: 3.3-p2
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 1024Mi
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: ""
+      existingClaim: ""
+      accessModes:
+        - ReadWriteOnce
+    env:
+      PGUSER_SUPERUSER: postgres
+      PGPASSWORD_SUPERUSER: postgres
+      SPILO_PROVIDER: local
+      ALLOW_NOSSL: "true"
+
+  external:
+    host: ""
+    port: 5432
+    user: twenty_app_user
+    password: ""
+    database: twenty
+    ssl: false
+
+# Redis
+redisInternal:
+  enabled: true
+  image:
+    repository: redis/redis-stack-server
+    tag: 7.2.0-v10
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1024Mi
+    limits:
+      cpu: 500m
+      memory: 2048Mi
+  service:
+    port: 6379
+  persistence:
+    enabled: false
+    size: 1Gi
+    storageClass: ""
+    existingClaim: ""
+    accessModes:
+      - ReadWriteOnce
+
+# External Redis (when redisInternal.enabled=false)
+redis:
+  external:
+    host: ""
+    port: 6379
