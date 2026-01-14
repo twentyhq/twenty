@@ -3,11 +3,13 @@ import { type SubmitHandler, type UseFormReturn } from 'react-hook-form';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
@@ -16,7 +18,7 @@ import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCu
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
@@ -31,6 +33,9 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const { isCaptchaReady } = useCaptcha();
+  const setLastAuthenticatedMethod = useSetRecoilState(
+    lastAuthenticatedMethodState,
+  );
 
   const location = useLocation();
 
@@ -121,6 +126,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
       const token = readCaptchaToken();
       try {
+        setLastAuthenticatedMethod(AuthenticatedMethod.EMAIL);
+
         if (
           !isInviteMode &&
           signInUpMode === SignInUpMode.SignIn &&
@@ -190,6 +197,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       enqueueErrorSnackBar,
       buildSearchParamsFromUrlSyncedStates,
       isOnAWorkspace,
+      setLastAuthenticatedMethod,
       t,
     ],
   );
