@@ -332,14 +332,14 @@ export class CleanerWorkspaceService {
   async batchWarnOrCleanSuspendedWorkspaces({
     workspaceIds,
     dryRun = false,
-    force = false,
+    forceHardDelete = false,
   }: {
     workspaceIds: string[];
     dryRun?: boolean;
-    force?: boolean;
+    forceHardDelete?: boolean;
   }): Promise<void> {
     this.logger.log(
-      `${dryRun ? 'DRY RUN - ' : ''}${force ? 'FORCE MODE - ' : ''}batchWarnOrCleanSuspendedWorkspaces running...`,
+      `${dryRun ? 'DRY RUN - ' : ''}${forceHardDelete ? 'FORCE HARD DELETE - ' : ''}batchWarnOrCleanSuspendedWorkspaces running...`,
     );
 
     const workspaces = await this.workspaceRepository.find({
@@ -374,7 +374,7 @@ export class CleanerWorkspaceService {
             this.maxNumberOfWorkspacesDeletedPerExecution;
 
           const canHardDelete =
-            force || (hasPassedGracePeriod && isWithinDeletionLimit);
+            forceHardDelete || (hasPassedGracePeriod && isWithinDeletionLimit);
 
           if (canHardDelete) {
             this.logger.log(

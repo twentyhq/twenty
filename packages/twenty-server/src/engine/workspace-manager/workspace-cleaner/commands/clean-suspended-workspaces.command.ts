@@ -12,7 +12,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
 type CleanSuspendedWorkspacesCommandOptions = MigrationCommandOptions & {
-  force?: boolean;
+  forceHardDelete?: boolean;
 };
 
 @Command({
@@ -43,12 +43,12 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
   }
 
   @Option({
-    flags: '-f, --force',
+    flags: '--force-hard-delete',
     description:
-      'Force hard delete of soft-deleted workspaces without waiting for the minimum grace period',
+      'Force hard deletion of soft-deleted workspaces, bypassing the grace period and deletion limit',
     required: false,
   })
-  parseForce(): boolean {
+  parseForceHardDelete(): boolean {
     return true;
   }
 
@@ -68,7 +68,7 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
     _passedParams: string[],
     options: CleanSuspendedWorkspacesCommandOptions,
   ): Promise<void> {
-    const { dryRun, force } = options;
+    const { dryRun, forceHardDelete } = options;
 
     const suspendedWorkspaceIds =
       this.workspaceIds.length > 0
@@ -76,13 +76,13 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
         : await this.fetchSuspendedWorkspaceIds();
 
     this.logger.log(
-      `${dryRun ? 'DRY RUN - ' : ''}${force ? 'FORCE MODE - ' : ''}Cleaning ${suspendedWorkspaceIds.length} suspended workspaces`,
+      `${dryRun ? 'DRY RUN - ' : ''}${forceHardDelete ? 'FORCE HARD DELETE - ' : ''}Cleaning ${suspendedWorkspaceIds.length} suspended workspaces`,
     );
 
     await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces({
       workspaceIds: suspendedWorkspaceIds,
       dryRun,
-      force,
+      forceHardDelete,
     });
   }
 }
