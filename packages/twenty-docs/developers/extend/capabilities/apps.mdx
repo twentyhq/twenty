@@ -595,7 +595,7 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-Header names are case-insensitive. `'Content-Type'`, `'content-type'`, and `'CONTENT-TYPE'` are equivalent.
+  Header names are normalized to lowercase. Access them using lowercase keys (for example, `event.headers['content-type']`).
 </Note>
 
 You can create new functions in two ways:
