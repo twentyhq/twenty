@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -22,7 +23,6 @@ import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/ut
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 @Injectable()
 export class DevSeederService {
