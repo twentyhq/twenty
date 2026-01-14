@@ -18,13 +18,13 @@ export class ManualTriggerWorkspaceService {
     workflowId,
     workflowVersionId,
     settings,
-    workflowName,
+    label,
     workspaceId,
   }: {
     workflowId: string;
     workflowVersionId: string;
     settings: ManualTriggerSettings;
-    workflowName: string;
+    label: string;
     workspaceId: string;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
@@ -53,8 +53,7 @@ export class ManualTriggerWorkspaceService {
         await manualTriggerRepository.insert({
           workflowId,
           workflowVersionId,
-          workflowName,
-          label: workflowName,
+          label,
           icon: settings.icon,
           isPinned: settings.isPinned,
           availabilityType,

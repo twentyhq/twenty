@@ -13,7 +13,6 @@ export class ManualTriggerWorkspaceEntity extends BaseWorkspaceEntity {
   workflowVersion: EntityRelation<WorkflowVersionWorkspaceEntity>;
   workflowVersionId: string;
   workflowId: string;
-  workflowName: string;
   label: string;
   icon: string | null;
   isPinned: boolean | null;

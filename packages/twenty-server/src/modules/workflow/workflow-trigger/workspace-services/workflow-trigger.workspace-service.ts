@@ -319,10 +319,10 @@ export class WorkflowTriggerWorkspaceService {
       case WorkflowTriggerType.MANUAL: {
         const settings = workflowVersion.trigger.settings;
 
-        const workflowName = workflow.name;
+        const label = workflow.name;
 
         assertIsDefinedOrThrow(
-          workflowName,
+          label,
           new WorkflowTriggerException(
             'Workflow name is required for manual trigger',
             WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
@@ -333,7 +333,7 @@ export class WorkflowTriggerWorkspaceService {
           workflowId: workflowVersion.workflowId,
           workflowVersionId: workflowVersion.id,
           settings,
-          workflowName,
+          label,
           workspaceId,
         });
 

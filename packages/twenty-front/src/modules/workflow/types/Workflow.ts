@@ -171,6 +171,5 @@ export type ManualTriggerEntity = {
   availabilityObjectNameSingular: string | null;
   workflowVersionId: string;
   workflowId: string;
-  workflowName: string;
   __typename: 'ManualTrigger';
 };

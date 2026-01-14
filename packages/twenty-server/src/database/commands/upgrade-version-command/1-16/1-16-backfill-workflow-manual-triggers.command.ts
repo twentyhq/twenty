@@ -146,9 +146,9 @@ export class BackfillWorkflowManualTriggersCommand extends ActiveOrSuspendedWork
               );
             }
 
-            const workflowName = workflowVersion.workflow?.name;
+            const label = workflowVersion.workflow?.name;
 
-            if (!workflowName) {
+            if (!label) {
               throw new Error(
                 `Workflow name not found for workflow version ${workflowVersion.id}`,
               );
@@ -172,8 +172,7 @@ export class BackfillWorkflowManualTriggersCommand extends ActiveOrSuspendedWork
             return {
               workflowId: workflowVersion.workflowId,
               workflowVersionId: workflowVersion.id,
-              workflowName,
-              label: workflowName,
+              label,
               icon: settings.icon,
               isPinned: settings.isPinned,
               availabilityType,

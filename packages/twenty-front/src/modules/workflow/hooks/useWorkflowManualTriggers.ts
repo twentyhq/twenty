@@ -51,7 +51,6 @@ export const useWorkflowManualTriggers = ({
       availabilityObjectNameSingular: true,
       workflowVersionId: true,
       workflowId: true,
-      workflowName: true,
     },
     skip,
   });
