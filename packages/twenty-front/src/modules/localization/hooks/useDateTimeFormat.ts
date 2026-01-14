@@ -1,6 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
+import { resolveDateFormat } from '@/localization/utils/resolveDateFormat';
 import { resolveTimeFormat } from '@/localization/utils/resolveTimeFormat';
 
 export const useDateTimeFormat = () => {
@@ -10,7 +11,7 @@ export const useDateTimeFormat = () => {
 
   return {
     timeZone: workspaceMemberFormatPreferences.timeZone,
-    dateFormat: workspaceMemberFormatPreferences.dateFormat,
+    dateFormat: resolveDateFormat(workspaceMemberFormatPreferences.dateFormat),
     timeFormat: resolveTimeFormat(workspaceMemberFormatPreferences.timeFormat),
     calendarStartDay: workspaceMemberFormatPreferences.calendarStartDay,
   };
