@@ -2,10 +2,8 @@ import styled from '@emotion/styled';
 import { plural } from '@lingui/core/macro';
 import {
   useMemo,
-  useRef,
   useState,
   useCallback,
-  useEffect,
   type MouseEvent,
 } from 'react';
 
@@ -93,30 +91,11 @@ export const SettingsMorphRelationMultiSelect = ({
   dropdownOffset,
   hasRightElement,
 }: SettingsMorphRelationMultiSelectProps) => {
-  const selectContainerRef = useRef<HTMLDivElement>(null);
-  const lastDeselectedIdRef = useRef<string | null>(null);
-  const previousSelectedIdsRef = useRef<string[]>(selectedObjectMetadataIds);
-
-  // Track when items are deselected
-  useEffect(() => {
-    const previous = previousSelectedIdsRef.current;
-    const current = selectedObjectMetadataIds;
-
-    // If an item was removed (deselected), track it
-    if (previous.length > current.length) {
-      const deselectedId = previous.find((id) => !current.includes(id));
-      if (deselectedId) {
-        lastDeselectedIdRef.current = deselectedId;
-      }
-    } else {
-      // If selection changed but no item was removed, clear the tracking
-      lastDeselectedIdRef.current = null;
-    }
-
-    previousSelectedIdsRef.current = selectedObjectMetadataIds;
-  }, [selectedObjectMetadataIds]);
-
   const [searchInputValue, setSearchInputValue] = useState('');
+  const [lastDeselectedId, setLastDeselectedId] = useState<string | null>(null);
+  const [containerWidth, setContainerWidth] = useState<number | undefined>(
+    undefined,
+  );
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
@@ -153,9 +132,7 @@ export const SettingsMorphRelationMultiSelect = ({
   const { closeDropdown } = useCloseDropdown();
 
   const dropDownMenuWidth =
-    dropdownWidthAuto && selectContainerRef.current?.clientWidth
-      ? selectContainerRef.current?.clientWidth
-      : dropdownWidth;
+    dropdownWidthAuto && containerWidth ? containerWidth : dropdownWidth;
 
   const selectableItemIdArray = filteredOptions.map((option) => option.label);
 
@@ -172,19 +149,6 @@ export const SettingsMorphRelationMultiSelect = ({
     }
   };
 
-  const addOrRemoveFromArray = useCallback((array: string[], item: string) => {
-    let newArray = new Set(array);
-    if (newArray.has(item)) {
-      if (newArray.size <= 1) {
-        return array;
-      }
-      newArray.delete(item);
-    } else {
-      newArray.add(item);
-    }
-    return Array.from(newArray);
-  }, []);
-
   const handleToggleSelection = useCallback(
     (objectMetadataId: string) => {
       const isCurrentlySelected =
@@ -195,6 +159,12 @@ export const SettingsMorphRelationMultiSelect = ({
         const newSelectedObjectMetadataIds = selectedObjectMetadataIds.filter(
           (id) => id !== objectMetadataId,
         );
+        // Track the deselected item only if selection becomes empty
+        if (newSelectedObjectMetadataIds.length === 0) {
+          setLastDeselectedId(objectMetadataId);
+        } else {
+          setLastDeselectedId(null);
+        }
         onChange?.(newSelectedObjectMetadataIds);
       } else {
         // Add the item
@@ -202,22 +172,53 @@ export const SettingsMorphRelationMultiSelect = ({
         // (likely reverted by form validation), replace the entire selection
         // with just the new item to prevent the old item from being included
         if (
-          lastDeselectedIdRef.current &&
-          selectedObjectMetadataIds.includes(lastDeselectedIdRef.current)
+          lastDeselectedId &&
+          selectedObjectMetadataIds.includes(lastDeselectedId)
         ) {
           // The form reverted to include the deselected item, so replace it entirely
           onChange?.([objectMetadataId]);
-          lastDeselectedIdRef.current = null;
+          setLastDeselectedId(null);
         } else {
           // Normal case: add the item
           const newSelectedObjectMetadataIds = Array.from(
             new Set([...selectedObjectMetadataIds, objectMetadataId]),
           );
           onChange?.(newSelectedObjectMetadataIds);
+          setLastDeselectedId(null);
         }
       }
     },
-    [selectedObjectMetadataIds, onChange],
+    [selectedObjectMetadataIds, onChange, lastDeselectedId],
+  );
+
+  const handleContainerRef = useCallback(
+    (element: HTMLDivElement | null) => {
+      if (element && dropdownWidthAuto) {
+        setContainerWidth(element.clientWidth);
+      }
+    },
+    [dropdownWidthAuto],
+  );
+
+  const handleContainerBlur = useCallback(
+    (event: React.FocusEvent<HTMLDivElement>) => {
+      // Check if focus is moving outside the container
+      const currentTarget = event.currentTarget;
+      const relatedTarget = event.relatedTarget as Node | null;
+
+      if (
+        !currentTarget.contains(relatedTarget) &&
+        selectedObjectMetadataIds.length === 0 &&
+        lastDeselectedId
+      ) {
+        // Dropdown closed with 0 selections, re-add the last deselected item
+        onChange?.([lastDeselectedId]);
+        setLastDeselectedId(null);
+      }
+
+      onBlur?.();
+    },
+    [selectedObjectMetadataIds, lastDeselectedId, onChange, onBlur],
   );
 
   return (
@@ -225,8 +226,8 @@ export const SettingsMorphRelationMultiSelect = ({
       className={className}
       fullWidth={fullWidth}
       tabIndex={0}
-      onBlur={onBlur}
-      ref={selectContainerRef}
+      onBlur={handleContainerBlur}
+      ref={handleContainerRef}
     >
       {!!label && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
