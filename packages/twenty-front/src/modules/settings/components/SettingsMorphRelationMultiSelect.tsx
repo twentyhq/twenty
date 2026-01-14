@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { plural } from '@lingui/core/macro';
-import { useMemo, useRef, useState, useEffect, type MouseEvent } from 'react';
+import { useMemo, useRef, useState, useCallback, type MouseEvent } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -87,12 +87,6 @@ export const SettingsMorphRelationMultiSelect = ({
   hasRightElement,
 }: SettingsMorphRelationMultiSelectProps) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
-  const selectedObjectMetadataIdsRef = useRef<string[]>(selectedObjectMetadataIds);
-  
-  // Keep ref in sync with prop to avoid stale closures
-  useEffect(() => {
-    selectedObjectMetadataIdsRef.current = selectedObjectMetadataIds;
-  }, [selectedObjectMetadataIds]);
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
@@ -150,18 +144,32 @@ export const SettingsMorphRelationMultiSelect = ({
     }
   };
 
-  const addOrRemoveFromArray = (array: string[], item: string) => {
-    let newArray = new Set(array);
-    if (newArray.has(item)) {
-      if (newArray.size <= 1) {
-        return array;
+  const addOrRemoveFromArray = useCallback(
+    (array: string[], item: string) => {
+      let newArray = new Set(array);
+      if (newArray.has(item)) {
+        if (newArray.size <= 1) {
+          return array;
+        }
+        newArray.delete(item);
+      } else {
+        newArray.add(item);
       }
-      newArray.delete(item);
-    } else {
-      newArray.add(item);
-    }
-    return Array.from(newArray);
-  };
+      return Array.from(newArray);
+    },
+    [],
+  );
+
+  const handleToggleSelection = useCallback(
+    (objectMetadataId: string) => {
+      const newSelectedObjectMetadataIds = addOrRemoveFromArray(
+        selectedObjectMetadataIds,
+        objectMetadataId,
+      );
+      onChange?.(newSelectedObjectMetadataIds);
+    },
+    [selectedObjectMetadataIds, addOrRemoveFromArray, onChange],
+  );
 
   return (
     <StyledContainer
@@ -235,12 +243,7 @@ export const SettingsMorphRelationMultiSelect = ({
                         key={`${option.objectMetadataId}-${option.label}`}
                         itemId={option.label}
                         onEnter={() => {
-                          const newSelectedObjectMetadataIds =
-                            addOrRemoveFromArray(
-                              selectedObjectMetadataIdsRef.current,
-                              option.objectMetadataId,
-                            );
-                          onChange?.(newSelectedObjectMetadataIds);
+                          handleToggleSelection(option.objectMetadataId);
                           onBlur?.();
                           closeDropdown(dropdownId);
                         }}
@@ -256,13 +259,7 @@ export const SettingsMorphRelationMultiSelect = ({
                           )}
                           isKeySelected={selectedItemId === option.label}
                           onSelectChange={() => {
-                            let newSelectedObjectMetadataIds =
-                              addOrRemoveFromArray(
-                                selectedObjectMetadataIdsRef.current,
-                                option.objectMetadataId,
-                              );
-
-                            onChange?.(newSelectedObjectMetadataIds);
+                            handleToggleSelection(option.objectMetadataId);
                             onBlur?.();
                           }}
                         />
