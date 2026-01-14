@@ -213,7 +213,7 @@ export class IdentifyObjectMetadataCommand extends WorkspacesMigrationCommandRun
       );
 
       this.logger.log(
-        `Invalidating caches: ${relatedCacheKeysToInvalidate.join(' ')}`,
+        `Invalidating caches: flatObjectMetadataMaps ${relatedCacheKeysToInvalidate.join(' ')}`,
       );
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatObjectMetadataMaps',

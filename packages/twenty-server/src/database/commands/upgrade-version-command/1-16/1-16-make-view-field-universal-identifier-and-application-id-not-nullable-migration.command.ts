@@ -61,8 +61,8 @@ export class MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigratio
       this.hasRunOnce = true;
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      this.logger.log(
-        `Rollbacking MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: ${error.message}`,
+      this.logger.error(
+        `Rolling back MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: ${error.message}`,
       );
     } finally {
       await queryRunner.release();

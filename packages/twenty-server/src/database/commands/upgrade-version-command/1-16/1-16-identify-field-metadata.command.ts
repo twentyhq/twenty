@@ -221,7 +221,7 @@ export class IdentifyFieldMetadataCommand extends WorkspacesMigrationCommandRunn
       );
 
       this.logger.log(
-        `Invalidating caches: ${relatedCacheKeysToInvalidate.join(' ')}`,
+        `Invalidating caches: flatFieldMetadataMaps ${relatedCacheKeysToInvalidate.join(' ')}`,
       );
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatFieldMetadataMaps',
