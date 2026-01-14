@@ -380,6 +380,28 @@ export type BarChartConfiguration = {
   timezone?: Maybe<Scalars['String']>;
 };
 
+export type BarChartDataInput = {
+  configuration: Scalars['JSON'];
+  objectMetadataId: Scalars['UUID'];
+};
+
+export type BarChartDataOutput = {
+  __typename?: 'BarChartDataOutput';
+  colorMode: GraphColorMode;
+  data: Array<Scalars['JSON']>;
+  formattedToRawLookup?: Maybe<Scalars['JSON']>;
+  groupMode?: Maybe<BarChartGroupMode>;
+  hasTooManyGroups: Scalars['Boolean'];
+  indexBy: Scalars['String'];
+  keys: Array<Scalars['String']>;
+  layout: BarChartLayout;
+  series: Array<BarChartSeries>;
+  showDataLabels: Scalars['Boolean'];
+  showLegend: Scalars['Boolean'];
+  xAxisLabel?: Maybe<Scalars['String']>;
+  yAxisLabel?: Maybe<Scalars['String']>;
+};
+
 /** Display mode for bar charts with secondary grouping */
 export enum BarChartGroupMode {
   GROUPED = 'GROUPED',
@@ -391,6 +413,13 @@ export enum BarChartLayout {
   HORIZONTAL = 'HORIZONTAL',
   VERTICAL = 'VERTICAL'
 }
+
+export type BarChartSeries = {
+  __typename?: 'BarChartSeries';
+  color?: Maybe<GraphColor>;
+  key: Scalars['String'];
+  label?: Maybe<Scalars['String']>;
+};
 
 export type Billing = {
   __typename?: 'Billing';
@@ -1578,6 +1607,42 @@ export type GetWebhookInput = {
   id: Scalars['UUID'];
 };
 
+/** Available colors for graph elements */
+export enum GraphColor {
+  AMBER = 'AMBER',
+  BLUE = 'BLUE',
+  BRONZE = 'BRONZE',
+  BROWN = 'BROWN',
+  CRIMSON = 'CRIMSON',
+  CYAN = 'CYAN',
+  GOLD = 'GOLD',
+  GRASS = 'GRASS',
+  GRAY = 'GRAY',
+  GREEN = 'GREEN',
+  IRIS = 'IRIS',
+  JADE = 'JADE',
+  LIME = 'LIME',
+  MINT = 'MINT',
+  ORANGE = 'ORANGE',
+  PINK = 'PINK',
+  PLUM = 'PLUM',
+  PURPLE = 'PURPLE',
+  RED = 'RED',
+  RUBY = 'RUBY',
+  SKY = 'SKY',
+  TOMATO = 'TOMATO',
+  TURQUOISE = 'TURQUOISE',
+  VIOLET = 'VIOLET',
+  YELLOW = 'YELLOW'
+}
+
+/** Mode for determining chart element colors */
+export enum GraphColorMode {
+  AUTOMATIC_PALETTE = 'AUTOMATIC_PALETTE',
+  EXPLICIT_SINGLE_COLOR = 'EXPLICIT_SINGLE_COLOR',
+  SELECT_FIELD_OPTION_COLORS = 'SELECT_FIELD_OPTION_COLORS'
+}
+
 /** Order by options for graph widgets */
 export enum GraphOrderBy {
   FIELD_ASC = 'FIELD_ASC',
@@ -1803,6 +1868,37 @@ export type LineChartConfiguration = {
   secondaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
   timezone?: Maybe<Scalars['String']>;
+};
+
+export type LineChartDataInput = {
+  configuration: Scalars['JSON'];
+  objectMetadataId: Scalars['UUID'];
+};
+
+export type LineChartDataOutput = {
+  __typename?: 'LineChartDataOutput';
+  colorMode: GraphColorMode;
+  formattedToRawLookup?: Maybe<Scalars['JSON']>;
+  hasTooManyGroups: Scalars['Boolean'];
+  series: Array<LineChartSeries>;
+  showDataLabels: Scalars['Boolean'];
+  showLegend: Scalars['Boolean'];
+  xAxisLabel?: Maybe<Scalars['String']>;
+  yAxisLabel?: Maybe<Scalars['String']>;
+};
+
+export type LineChartDataPoint = {
+  __typename?: 'LineChartDataPoint';
+  x: Scalars['String'];
+  y?: Maybe<Scalars['Float']>;
+};
+
+export type LineChartSeries = {
+  __typename?: 'LineChartSeries';
+  color?: Maybe<GraphColor>;
+  data: Array<LineChartDataPoint>;
+  id: Scalars['String'];
+  label?: Maybe<Scalars['String']>;
 };
 
 export type LinkMetadata = {
@@ -3291,6 +3387,29 @@ export type PieChartConfiguration = {
   timezone?: Maybe<Scalars['String']>;
 };
 
+export type PieChartDataInput = {
+  configuration: Scalars['JSON'];
+  objectMetadataId: Scalars['UUID'];
+};
+
+export type PieChartDataItem = {
+  __typename?: 'PieChartDataItem';
+  color?: Maybe<GraphColor>;
+  id: Scalars['String'];
+  value: Scalars['Float'];
+};
+
+export type PieChartDataOutput = {
+  __typename?: 'PieChartDataOutput';
+  colorMode: GraphColorMode;
+  data: Array<PieChartDataItem>;
+  formattedToRawLookup?: Maybe<Scalars['JSON']>;
+  hasTooManyGroups: Scalars['Boolean'];
+  showCenterMetric: Scalars['Boolean'];
+  showDataLabels: Scalars['Boolean'];
+  showLegend: Scalars['Boolean'];
+};
+
 export type PlaceDetailsResult = {
   __typename?: 'PlaceDetailsResult';
   city?: Maybe<Scalars['String']>;
@@ -3349,6 +3468,7 @@ export type Query = {
   agentTurns: Array<AgentTurn>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
+  barChartData: BarChartDataOutput;
   billingPortalSession: BillingSessionOutput;
   chatMessages: Array<AgentMessage>;
   chatThread: AgentChatThread;
@@ -3422,9 +3542,11 @@ export type Query = {
   getToolIndex: Array<ToolIndexEntry>;
   index: Index;
   indexMetadatas: IndexConnection;
+  lineChartData: LineChartDataOutput;
   listPlans: Array<BillingPlanOutput>;
   object: Object;
   objects: ObjectConnection;
+  pieChartData: PieChartDataOutput;
   search: SearchResultConnection;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
@@ -3442,6 +3564,11 @@ export type QueryAgentTurnsArgs = {
 
 export type QueryApiKeyArgs = {
   input: GetApiKeyInput;
+};
+
+
+export type QueryBarChartDataArgs = {
+  input: BarChartDataInput;
 };
 
 
@@ -3734,6 +3861,11 @@ export type QueryIndexMetadatasArgs = {
 };
 
 
+export type QueryLineChartDataArgs = {
+  input: LineChartDataInput;
+};
+
+
 export type QueryObjectArgs = {
   id: Scalars['UUID'];
 };
@@ -3742,6 +3874,11 @@ export type QueryObjectArgs = {
 export type QueryObjectsArgs = {
   filter?: ObjectFilter;
   paging?: CursorPaging;
+};
+
+
+export type QueryPieChartDataArgs = {
+  input: PieChartDataInput;
 };
 
 

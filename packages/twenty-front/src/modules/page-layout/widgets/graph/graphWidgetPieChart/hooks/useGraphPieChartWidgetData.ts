@@ -1,14 +1,11 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from '@/page-layout/widgets/graph/constants/ExtraItemToDetectTooManyGroups';
-import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
+import { PIE_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/pieChartData';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
-import { transformGroupByDataToPieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/transformGroupByDataToPieChartData';
-import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
-import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 import { type PieChartConfiguration } from '~/generated/graphql';
 
@@ -38,46 +35,58 @@ export const useGraphPieChartWidgetData = ({
     objectId: objectMetadataItemId,
   });
 
+  const apolloCoreClient = useApolloCoreClient();
+
   const {
-    data: groupByData,
+    data: queryData,
     loading,
     error,
-    aggregateOperation,
-  } = useGraphWidgetGroupByQuery({
-    objectMetadataItemId,
-    configuration,
-    limit:
-      PIE_CHART_MAXIMUM_NUMBER_OF_SLICES + EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
+  } = useQuery(PIE_CHART_DATA, {
+    client: apolloCoreClient,
+    variables: {
+      input: {
+        objectMetadataId: objectMetadataItemId,
+        configuration,
+      },
+    },
   });
 
-  const { userTimezone } = useUserTimezone();
-  const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
+  const chartData = useMemo((): PieChartDataItem[] => {
+    if (!queryData?.pieChartData?.data) {
+      return [];
+    }
 
-  const transformedData = useMemo(
-    () =>
-      transformGroupByDataToPieChartData({
-        groupByData,
-        objectMetadataItem,
-        configuration,
-        aggregateOperation,
-        userTimezone,
-        firstDayOfTheWeek: userFirstDayOfTheWeek,
+    return queryData.pieChartData.data.map(
+      (item: { id: string; value: number; color?: string }) => ({
+        id: item.id,
+        value: item.value,
+        color: item.color,
       }),
-    [
-      groupByData,
-      objectMetadataItem,
-      configuration,
-      aggregateOperation,
-      userTimezone,
-      userFirstDayOfTheWeek,
-    ],
-  );
+    );
+  }, [queryData?.pieChartData?.data]);
+
+  const formattedToRawLookup = useMemo((): Map<string, RawDimensionValue> => {
+    const lookup = queryData?.pieChartData?.formattedToRawLookup;
+
+    if (!lookup || typeof lookup !== 'object') {
+      return new Map();
+    }
+
+    return new Map(Object.entries(lookup));
+  }, [queryData?.pieChartData?.formattedToRawLookup]);
+
+  const colorMode: GraphColorMode =
+    queryData?.pieChartData?.colorMode ?? 'automaticPalette';
 
   return {
-    ...transformedData,
-    objectMetadataItem,
+    data: chartData,
+    showLegend: queryData?.pieChartData?.showLegend ?? true,
     showDataLabels: configuration.displayDataLabel ?? false,
     showCenterMetric: configuration.showCenterMetric ?? true,
+    hasTooManyGroups: queryData?.pieChartData?.hasTooManyGroups ?? false,
+    colorMode,
+    formattedToRawLookup,
+    objectMetadataItem,
     loading,
     error,
   };

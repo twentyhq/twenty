@@ -1,0 +1,19 @@
+import { Field, ObjectType } from '@nestjs/graphql';
+
+import { GraphColor } from 'src/modules/dashboard/chart-data/types/graph-color.enum';
+import { LineChartDataPointDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/line-chart-data-point.dto';
+
+@ObjectType('LineChartSeries')
+export class LineChartSeriesDTO {
+  @Field(() => String)
+  id: string;
+
+  @Field(() => String, { nullable: true })
+  label?: string;
+
+  @Field(() => GraphColor, { nullable: true })
+  color?: GraphColor;
+
+  @Field(() => [LineChartDataPointDTO])
+  data: LineChartDataPointDTO[];
+}
