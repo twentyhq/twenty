@@ -11,14 +11,14 @@ import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entit
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
+import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 describe('McpProtocolService', () => {
   let service: McpProtocolService;
   let featureFlagService: jest.Mocked<FeatureFlagService>;
-  let toolProviderService: jest.Mocked<ToolProviderService>;
+  let toolRegistryService: jest.Mocked<ToolRegistryService>;
   let userRoleService: jest.Mocked<UserRoleService>;
   let mcpToolExecutorService: jest.Mocked<McpToolExecutorService>;
   let apiKeyRoleService: jest.Mocked<ApiKeyRoleService>;
@@ -37,8 +37,8 @@ describe('McpProtocolService', () => {
       isFeatureEnabled: jest.fn(),
     };
 
-    const mockToolProviderService = {
-      getTools: jest.fn(),
+    const mockToolRegistryService = {
+      getToolsByCategories: jest.fn(),
     };
 
     const mockUserRoleService = {
@@ -62,8 +62,8 @@ describe('McpProtocolService', () => {
           useValue: mockFeatureFlagService,
         },
         {
-          provide: ToolProviderService,
-          useValue: mockToolProviderService,
+          provide: ToolRegistryService,
+          useValue: mockToolRegistryService,
         },
         {
           provide: UserRoleService,
@@ -82,7 +82,7 @@ describe('McpProtocolService', () => {
 
     service = module.get<McpProtocolService>(McpProtocolService);
     featureFlagService = module.get(FeatureFlagService);
-    toolProviderService = module.get(ToolProviderService);
+    toolRegistryService = module.get(ToolRegistryService);
     userRoleService = module.get(UserRoleService);
     mcpToolExecutorService = module.get(McpToolExecutorService);
     apiKeyRoleService = module.get(ApiKeyRoleService);
@@ -227,7 +227,7 @@ describe('McpProtocolService', () => {
         testTool: mockTool,
       };
 
-      toolProviderService.getTools.mockResolvedValue(mockToolsMap);
+      toolRegistryService.getToolsByCategories.mockResolvedValue(mockToolsMap);
 
       const mockToolCallResponse = {
         id: '123',
@@ -282,7 +282,7 @@ describe('McpProtocolService', () => {
         testTool: mockTool,
       };
 
-      toolProviderService.getTools.mockResolvedValue(mockToolsMap);
+      toolRegistryService.getToolsByCategories.mockResolvedValue(mockToolsMap);
 
       const mockToolCallResponse = {
         id: '123',
@@ -316,7 +316,7 @@ describe('McpProtocolService', () => {
       });
 
       expect(result).toEqual(mockToolCallResponse);
-      expect(toolProviderService.getTools).toHaveBeenCalled();
+      expect(toolRegistryService.getToolsByCategories).toHaveBeenCalled();
     });
 
     it('should handle tools listing', async () => {
@@ -330,7 +330,7 @@ describe('McpProtocolService', () => {
         },
       };
 
-      toolProviderService.getTools.mockResolvedValue(mockToolsMap);
+      toolRegistryService.getToolsByCategories.mockResolvedValue(mockToolsMap);
 
       const mockToolsListingResponse = {
         id: '123',
@@ -398,7 +398,7 @@ describe('McpProtocolService', () => {
     it('should handle error when tool is not found', async () => {
       featureFlagService.isFeatureEnabled.mockResolvedValue(true);
       userRoleService.getRoleIdForUserWorkspace.mockResolvedValue(mockRoleId);
-      toolProviderService.getTools.mockResolvedValue({});
+      toolRegistryService.getToolsByCategories.mockResolvedValue({});
 
       mcpToolExecutorService.handleToolCall.mockRejectedValue(
         new HttpException(

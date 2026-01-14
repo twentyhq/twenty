@@ -9,6 +9,7 @@ import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart
 import { graphWidgetPieTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetPieChart/states/graphWidgetPieTooltipComponentState';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { getPieChartFormattedValue } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/getPieChartFormattedValue';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
@@ -34,6 +35,7 @@ type GraphWidgetPieChartProps = {
   id: string;
   objectMetadataItemId: string;
   configuration: PieChartConfiguration;
+  colorMode: GraphColorMode;
   onSliceClick?: (datum: PieChartDataItem) => void;
   showDataLabels?: boolean;
   showCenterMetric?: boolean;
@@ -72,6 +74,7 @@ export const GraphWidgetPieChart = ({
   id,
   objectMetadataItemId,
   configuration,
+  colorMode,
   displayType,
   decimals,
   prefix,
@@ -99,6 +102,7 @@ export const GraphWidgetPieChart = ({
   const { enrichedData, legendItems } = usePieChartData({
     data,
     colorRegistry,
+    colorMode,
   });
 
   const handleSliceMove = useCallback(

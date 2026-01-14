@@ -85,6 +85,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -105,6 +106,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -134,6 +136,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -157,6 +160,7 @@ describe('useLineChartData', () => {
         data: [],
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -179,6 +183,7 @@ describe('useLineChartData', () => {
         data: dataWithoutLabel,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -193,6 +198,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -210,6 +216,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -224,6 +231,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -239,6 +247,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -255,6 +264,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 

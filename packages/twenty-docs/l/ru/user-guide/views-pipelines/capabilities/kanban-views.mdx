@@ -1,38 +1,38 @@
 ---
-title: Kanban Board Views
-description: Learn how to use Kanban views to visualize and manage your workflows.
+title: Представления канбан-доски
+description: Узнайте, как использовать канбан-представления для визуализации и управления вашими рабочими процессами.
 image: /images/user-guide/kanban-views/kanban.png
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Kanban Views
+## О канбан-представлениях
 
-Kanban views visually map out process flows, where each column stands for a distinct stage and each card represents a record.
+Канбан-представления наглядно отображают потоки процессов: каждый столбец соответствует отдельному этапу, а каждая карточка представляет запись.
 
-## Move Cards between Stages
+## Перемещайте карточки между этапами
 
 Каждая карта может перемещаться по мере прохождения рабочего процесса путем перетаскивания. Для продолжения удерживайте нажатие на карточке и переместите её в следующую стадию.
 
 <VimeoEmbed videoId="927888627" title="Видеодемонстрация" />
 
-## Add and Delete Stages
+## Добавление и удаление этапов
 
 Вы можете настроить ваш рабочий процесс в соответствии с вашими нуждами, используя стадии, которые представляют значение в поле выбора:
 
 ### Добавить стадии
 
-To add a stage, access the Select field settings by navigating to Settings > Data Model, selecting your object, and then the field your Kanban board depends on.
+Чтобы добавить этап, откройте настройки поля выбора, перейдя в Настройки > Модель данных, выберите объект, а затем поле, от которого зависит ваша канбан-доска.
 
 <VimeoEmbed videoId="927890428" title="Видеодемонстрация" />
 
 ### Удалить стадии
 
-To remove a stage, hover the stage name or the `⋮` icon, click `Edit from settings` in the Select field settings, and then click **Delete** next to the relevant stage.
+Чтобы удалить этап, наведите курсор на название этапа или значок `⋮`, щёлкните `Редактировать в настройках` в настройках поля выбора, затем нажмите **Удалить** рядом с соответствующим этапом.
 
-## Display Fields
+## Отображаемые поля
 
-Вы можете настроить доску Канбан для отображения некоторых полей и скрытия других. To hide a field, click on **Options** on the top right, then on **Fields** to bring up the list of options. Look for the field needed in the Hidden Fields section and click on the eye button to display the field.
+Вы можете настроить доску Канбан для отображения некоторых полей и скрытия других. Чтобы скрыть поле, нажмите **Параметры** в правом верхнем углу, затем нажмите **Поля**, чтобы открыть список параметров. Найдите нужное поле в разделе Скрытые поля и нажмите на значок в виде глаза, чтобы отобразить поле.
 
 Вы также можете изменить порядок полей, удерживая имя поля и перетаскивая его туда, где хотите видеть.
 
@@ -40,60 +40,60 @@ To remove a stage, hover the stage name or the `⋮` icon, click `Edit from sett
 
 ## Компактный Вид
 
-You can hide all the fields and get an overview of all records at a glance. To enable:
+Вы можете скрыть все поля и получить обзор всех записей одним взглядом. Чтобы включить:
 
-1. Click **Options** on the top right
-2. Turn on the toggle for **Compact view**
+1. Нажмите **Параметры** в правом верхнем углу
+2. Включите переключатель **Компактный вид**
 
 <img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
 
-## Column Aggregations
+## Агрегирование в столбцах
 
-Each column in a Kanban view can display aggregated values at the top, helping you understand your data at a glance.
+Каждый столбец в канбан-представлении может отображать вверху агрегированные значения, что помогает быстро оценить данные.
 
-### Available Aggregations
+### Доступные агрегирования
 
-| Aggregation | Описание                                      |
-| ----------- | --------------------------------------------- |
-| **Count**   | Number of records in the column               |
-| **Sum**     | Total of a numeric field (e.g., deal amounts) |
-| **Average** | Average value of a numeric field              |
-| **Min**     | Lowest value                                  |
-| **Max**     | Highest value                                 |
+| Агрегирование  | Описание                                               |
+| -------------- | ------------------------------------------------------ |
+| **Количество** | Количество записей в столбце                           |
+| **Сумма**      | Сумма значений числового поля (например, суммы сделок) |
+| **Среднее**    | Среднее значение числового поля                        |
+| **Минимум**    | Минимальное значение                                   |
+| **Максимум**   | Максимальное значение                                  |
 
-### Configuring Aggregations
+### Настройка агрегирования
 
-1. Click on the number displayed next to the Stage value, at the top of a column
-2. Select the aggregation type
-3. Choose the field to aggregate
+1. Щёлкните по числу, отображаемому рядом со значением этапа вверху столбца
+2. Выберите тип агрегирования
+3. Выберите поле для агрегирования
 
-**Example:** Show total deal value per stage by aggregating the Amount field with Sum.
+**Пример:** Показать общую стоимость сделок по этапам, агрегируя поле Amount с помощью Sum.
 
-## When to Use Kanban Views
+## Когда использовать канбан-представления
 
-Kanban views are ideal for:
+Канбан-представления лучше всего подходят для:
 
-* **Sales pipelines**: Track deals through stages from lead to close
-* **Project management**: Monitor tasks through workflow states
-* **Recruitment**: Track candidates through hiring stages
-* **Any staged process**: Visualize any workflow with defined stages
+* **Воронки продаж**: Отслеживайте сделки по этапам — от лида до закрытия
+* **Управление проектами**: Отслеживайте задачи по состояниям рабочего процесса
+* **Подбор персонала**: Отслеживайте кандидатов по этапам найма
+* **Любой поэтапный процесс**: Визуализируйте любой рабочий процесс с определёнными этапами
 
 ## Лучшие практики
 
-### Organize Your Stages
+### Организуйте этапы
 
-* **Limit stages**: 5-7 stages is ideal for visibility
-* **Clear naming**: Use descriptive stage names
-* **Logical order**: Arrange stages in process order
+* **Ограничьте число этапов**: 5-7 этапов — оптимально для наглядности
+* **Понятные названия**: Используйте описательные названия этапов
+* **Логичный порядок**: Расположите этапы в порядке процесса
 
-### Optimize Card Display
+### Оптимизируйте отображение карточек
 
-* **Show key fields**: Display only the most important information
-* **Use compact view**: For high-level overviews
-* **Color coding**: Use stage colors to quickly identify status
+* **Показывайте ключевые поля**: Отображайте только самую важную информацию
+* **Используйте компактный вид**: Для общего обзора
+* **Цветовое кодирование**: Используйте цвета этапов для быстрого определения статуса
 
-### Maintain Data Quality
+### Поддерживайте качество данных
 
-* **Update regularly**: Keep cards moving through stages
-* **Archive completed**: Move closed items out of active view
-* **Review stale cards**: Follow up on cards stuck in stages
+* **Регулярно обновляйте**: Продвигайте карточки по этапам
+* **Архивируйте завершённые**: Перемещайте закрытые элементы из активного представления
+* **Проверяйте «застаивающиеся» карточки**: Отслеживайте карточки, застрявшие на этапах

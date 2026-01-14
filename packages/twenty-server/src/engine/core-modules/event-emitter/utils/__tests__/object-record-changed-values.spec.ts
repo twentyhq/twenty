@@ -22,7 +22,7 @@ const mockObjectMetadata = {
   indexMetadataIds: [],
   fieldMetadataIds: [],
   viewIds: [],
-  applicationId: null,
+  applicationId: 'test-application-id',
   isLabelSyncedWithName: false,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),

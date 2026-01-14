@@ -1,56 +1,56 @@
 ---
-title: Send Email Alerts with Tasks Due
-description: Automatically notify team members about their upcoming or overdue tasks.
+title: Odesílejte e-mailová upozornění na úkoly s blížícím se termínem
+description: Automaticky upozorňujte členy týmu na jejich blížící se nebo zpožděné úkoly.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
 
-Send daily email reminders to each team member about their tasks due today.
+Posílejte každému členovi týmu denní e-mailová připomenutí na úkoly, které mají termín dnes.
 
 ## Přehled
 
-This workflow runs on a schedule and:
+Tento pracovní postup běží podle plánu a:
 
-1. Fetches all workspace members
-2. Loops through each member
-3. Finds their tasks due today
-4. Formats and sends a personalized email
+1. Načte všechny členy pracovního prostoru
+2. Projde každého člena
+3. Najde jejich úkoly, které mají termín dnes
+4. Naformátuje a odešle personalizovaný e-mail
 
-## Step-by-Step Setup
+## Nastavení krok za krokem
 
-<VimeoEmbed videoId="1147463514" title="Video demonstration" />
+<VimeoEmbed videoId="1147463514" title="Ukázka videa" />
 
-### Step 1: Configure the Trigger
+### Krok 1: Nakonfigurujte spouštěč
 
-1. Go to **Settings → Workflows** and create a new workflow
-2. Select **On a Schedule** as the trigger
-3. Use a cron expression for daily at 8:00 AM: `0 8 * * *`
+1. Přejděte do **Nastavení → Pracovní postupy** a vytvořte nový pracovní postup
+2. Vyberte **Podle plánu** jako spouštěč
+3. Použijte výraz cron pro denní spuštění v 8:00: `0 8 * * *`
 
-### Step 2: Search for All Workspace Members
+### Krok 2: Vyhledejte všechny členy pracovního prostoru
 
-1. Add a **Search Records** action
-2. Select **Workspace Members** (under advanced objects)
-3. No filters needed — this returns all members
+1. Přidejte akci **Vyhledat záznamy**
+2. Vyberte **Členové pracovního prostoru** (v části pokročilé objekty)
+3. Filtry nejsou potřeba — toto vrátí všechny členy
 
-### Step 3: Add an Iterator
+### Krok 3: Přidejte iterátor
 
-1. Add an **Iterator** action
-2. Set the input array to the workspace members from the previous step
-3. All actions inside the iterator will run once per member
+1. Přidejte akci **Iterator**
+2. Nastavte vstupní pole na členy pracovního prostoru z předchozího kroku
+3. Všechny akce uvnitř iterátoru se spustí jednou pro každého člena
 
-### Step 4: Search for Tasks Due Today (Inside Iterator)
+### Krok 4: Vyhledejte úkoly s termínem dnes (uvnitř iterátoru)
 
-1. Inside the iterator, add a **Search Records** action
-2. Select **Tasks** as the object
-3. Add filters:
-   * **Assignee** = current workspace member (from the iterator)
-   * **Due Date** = today
+1. Uvnitř iterátoru přidejte akci **Vyhledat záznamy**
+2. Vyberte jako objekt **Úkoly**
+3. Přidejte filtry:
+   * **Přiřazený** = aktuální člen pracovního prostoru (z iterátoru)
+   * **Termín splnění** = dnes
 
-### Step 5: Format Tasks into Email Body (Inside Iterator)
+### Krok 5: Naformátujte úkoly do těla e-mailu (uvnitř iterátoru)
 
-Add a **Code** action to format the tasks into a readable list with links:
+Přidejte akci **Code** pro naformátování úkolů do čitelného seznamu s odkazy:
 
 ```javascript
 export const main = async (params: {
@@ -79,28 +79,28 @@ export const main = async (params: {
 ```
 
 <Note>
-  Replace `yourSubDomain` with your actual Twenty workspace subdomain.
+  Nahraďte `yourSubDomain` skutečnou subdoménou vašeho pracovního prostoru Twenty.
 </Note>
 
-### Step 6: Send Email (Inside Iterator)
+### Krok 6: Odešlete e-mail (uvnitř iterátoru)
 
-1. Add a **Send Email** action (still inside the iterator)
-2. Configure:
+1. Přidejte akci **Odeslat e-mail** (stále uvnitř iterátoru)
+2. Nakonfigurujte:
 
-| Pole        | Hodnota                                                         |
-| ----------- | --------------------------------------------------------------- |
-| **To**      | `{{iterator.currentItem.userEmail}}` (workspace member's email) |
-| **Subject** | Your Tasks Due Today                                            |
-| **Body**    | `{{code.formattedTasks}}`                                       |
+| Pole            | Hodnota                                                                 |
+| --------------- | ----------------------------------------------------------------------- |
+| **Komu**        | `{{iterator.currentItem.userEmail}}` (e-mail člena pracovního prostoru) |
+| **Předmět**     | Vaše úkoly s termínem dnes                                              |
+| **Text zprávy** | `{{code.formattedTasks}}`                                               |
 
-### Step 7: Test and Activate
+### Krok 7: Otestujte a aktivujte
 
-1. Click **Test** to run the workflow manually
-2. Check inboxes for the emails
-3. Activate the workflow
+1. Klikněte na **Test** a spusťte pracovní postup ručně
+2. Zkontrolujte doručenou poštu, zda e-maily dorazily
+3. Aktivujte pracovní postup
 
-## Related
+## Související
 
-* [Workflow Actions](/l/cs/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Handle Arrays in Code Actions](/l/cs/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Odesílání e-mailů z pracovních postupů](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Práce s poli v akcích Code](/l/cs/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

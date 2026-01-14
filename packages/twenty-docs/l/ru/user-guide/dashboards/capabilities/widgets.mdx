@@ -1,131 +1,131 @@
 ---
 title: Виджеты
-description: Explore the widget types and visualization options in Twenty.
+description: Изучите типы виджетов и варианты визуализации в Twenty.
 ---
 
-## Available Widgets
+## Доступные виджеты
 
-Twenty provides various widget types to visualize your CRM data.
+Twenty предоставляет различные типы виджетов для визуализации данных вашей CRM-системы.
 
-### Bar Charts
+### Гистограммы
 
-Display data as horizontal or vertical bars.
+Отображайте данные в виде горизонтальных или вертикальных столбцов.
 
-**Best for:**
+**Лучше всего подходит для:**
 
-* Comparing values across categories
-* Showing rankings
-* Tracking metrics by time period
+* Сравнение значений по категориям
+* Отображение рейтингов
+* Отслеживание метрик по периодам времени
 
-**Example uses:**
+**Примеры использования:**
 
-* Deals by stage
-* Revenue by sales rep
-* Contacts added per month
+* Сделки по этапам
+* Выручка по менеджерам по продажам
+* Контакты, добавленные по месяцам
 
 <Note>
-  **Display limits**: Bar charts can show a maximum of 100 bars (horizontal) or 50 bars (vertical). If you see the warning "Undisplayed data: max X bars per chart", add filters to narrow down your data or change the grouping (e.g., group by week instead of days).
+  **Ограничения отображения**: Гистограммы могут показывать максимум 100 столбцов (горизонтально) или 50 столбцов (вертикально). Если вы видите предупреждение "Undisplayed data: max X bars per chart", добавьте фильтры, чтобы сузить данные, или измените группировку (например, группируйте по неделям вместо дней).
 </Note>
 
-### Pie Charts
+### Круговые диаграммы
 
-Show proportions of a whole.
+Показывайте доли целого.
 
-**Best for:**
+**Лучше всего подходит для:**
 
-* Showing composition or distribution
-* Comparing parts to whole
-* Highlighting major segments
+* Отражение состава или распределения
+* Сравнение частей с целым
+* Выделение ключевых сегментов
 
-**Example uses:**
+**Примеры использования:**
 
-* Deal distribution by source
-* Contact breakdown by industry
-* Pipeline composition by owner
+* Распределение сделок по источникам
+* Разбивка контактов по отраслям
+* Состав воронки по ответственным
 
-### Line Charts
+### Линейные диаграммы
 
-Display trends over time.
+Отображайте динамику во времени.
 
-**Best for:**
+**Лучше всего подходит для:**
 
-* Tracking changes over time
-* Identifying trends
-* Comparing multiple metrics
+* Отслеживание изменений во времени
+* Определение тенденций
+* Сравнение нескольких метрик
 
-**Example uses:**
+**Примеры использования:**
 
-* Monthly deal count trend
-* Revenue growth over quarters
-* Activity levels over time
+* Динамика количества сделок по месяцам
+* Рост выручки по кварталам
+* Динамика уровня активности
 
-### Number Metrics
+### Числовые метрики
 
-Display single key values prominently.
+Наглядно отображайте отдельные ключевые значения.
 
-**Best for:**
+**Лучше всего подходит для:**
 
-* Highlighting KPIs
-* Showing totals or averages
-* Quick status checks
+* Выделение KPI
+* Показ итогов или средних значений
+* Быстрые проверки статуса
 
-**Example uses:**
+**Примеры использования:**
 
-* Total pipeline value
-* Number of open opportunities
-* Conversion rate
+* Общий объем воронки
+* Число открытых сделок
+* Коэффициент конверсии
 
-**Advanced options:**
+**Расширенные параметры:**
 
-* **Ratio**: For Select fields, calculate ratios between values. Go to **Data on display** → select your field → enable the **Ratio** option.
-* **Prefix & Suffix**: Add custom text before or after the number (e.g., "$" prefix or "%" suffix) for better readability.
+* **Ratio**: Для полей типа Select вычисляйте соотношения между значениями. Перейдите в **Отображаемые данные** → выберите поле → включите параметр **Ratio**.
+* **Префикс и суффикс**: Добавляйте произвольный текст до или после числа (например, префикс "$" или суффикс "%") для лучшей читаемости.
 
 ### iFrames
 
-Embed external tools and content directly in your dashboard.
+Встраивайте внешние инструменты и контент прямо в ваш дашборд.
 
-**Best for:**
+**Лучше всего подходит для:**
 
-* Displaying external reports or dashboards
-* Integrating third-party sales tools
-* Showing live content from other systems
+* Отображение внешних отчетов или дашбордов
+* Интеграция сторонних инструментов продаж
+* Отображение данных в реальном времени из других систем
 
-**Example uses:**
+**Примеры использования:**
 
-* Metrics from your Support tool
-* Metrics from your dialer
-* Live content from your Sales sequence tool
+* Метрики из вашего сервиса поддержки
+* Метрики из вашей системы обзвона
+* Контент в реальном времени из вашего инструмента последовательностей продаж
 
 <Note>
-  **Coming soon**: Gauge charts and tables are not yet available but are on our roadmap.
+  **Скоро**: Индикаторные диаграммы и таблицы пока недоступны, но есть в нашей дорожной карте.
 </Note>
 
-## Configuring Widgets
+## Настройка виджетов
 
-### Data Source
+### Источник данных
 
-1. Select the object to visualize (Opportunities, People, etc.)
-2. Choose the metric to display (count, sum, average)
-3. Apply filters to focus on specific data
+1. Выберите объект для визуализации (Сделки, Контакты и т. д.)
+2. Выберите метрику для отображения (количество, сумма, среднее)
+3. Примените фильтры, чтобы сосредоточиться на конкретных данных
 
-### Grouping
+### Группировка
 
-Group data by:
+Группируйте данные по:
 
-* Fields (stage, owner, industry)
-* Time periods (day, week, month, quarter)
-* Custom segments
+* Поля (этап, ответственный, отрасль)
+* Периоды времени (день, неделя, месяц, квартал)
+* Пользовательские сегменты
 
 ### Стилизация
 
-Customize your charts with:
+Настройте диаграммы с помощью:
 
-* Colors and themes
-* Labels and legends
-* Size and positioning
+* Цвета и темы
+* Подписи и легенды
+* Размер и расположение
 
-### Duplicating Widgets
+### Дублирование виджетов
 
-1. Click on the widget
-2. Open **Options**
-3. Click **Duplicate widget**
+1. Нажмите на виджет
+2. Откройте **Параметры**
+3. Нажмите **Дублировать виджет**

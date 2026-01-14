@@ -11,7 +11,7 @@ import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { convertViewTypeToCore } from '@/views/utils/convertViewTypeToCore';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
-import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
+import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { ViewCalendarLayout } from '~/generated/graphql';
@@ -19,7 +19,8 @@ import { ViewCalendarLayout } from '~/generated/graphql';
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const { updateCurrentView } = useUpdateCurrentView();
   const setRecordIndexViewType = useSetRecoilState(recordIndexViewTypeState);
-  const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
+  const { availableFieldsForGrouping } =
+    useGetAvailableFieldsToGroupRecordsBy();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
@@ -60,11 +61,11 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
         switch (viewType) {
           case ViewType.Kanban: {
-            if (availableFieldsForKanban.length === 0) {
+            if (availableFieldsForGrouping.length === 0) {
               throw new Error('No fields for kanban - should not happen');
             }
 
-            const mainGroupByFieldMetadataId = availableFieldsForKanban[0].id;
+            const mainGroupByFieldMetadataId = availableFieldsForGrouping[0].id;
             updateCurrentViewParams.mainGroupByFieldMetadataId =
               mainGroupByFieldMetadataId;
 
@@ -154,7 +155,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         }
       },
     [
-      availableFieldsForKanban,
+      availableFieldsForGrouping,
       setRecordIndexViewType,
       updateCurrentView,
       availableFieldsForCalendar,

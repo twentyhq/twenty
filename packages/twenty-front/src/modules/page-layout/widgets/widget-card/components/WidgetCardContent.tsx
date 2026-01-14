@@ -3,13 +3,11 @@ import styled from '@emotion/styled';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
 
 const StyledWidgetCardContent = styled.div<{ variant: WidgetCardVariant }>`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  flex: 1;
-  overflow: hidden;
-  justify-content: center;
   box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  height: 100%;
+  overflow: hidden;
 
   ${({ theme, variant }) => {
     if (variant === 'dashboard') {

@@ -24,10 +24,12 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         primaryAxisGroupBySubFieldName
         primaryAxisDateGranularity
         primaryAxisOrderBy
+        primaryAxisManualSortOrder
         secondaryAxisGroupByFieldMetadataId
         secondaryAxisGroupBySubFieldName
         secondaryAxisGroupByDateGranularity
         secondaryAxisOrderBy
+        secondaryAxisManualSortOrder
         omitNullValues
         axisNameDisplay
         displayDataLabel
@@ -51,10 +53,12 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         primaryAxisGroupBySubFieldName
         primaryAxisDateGranularity
         primaryAxisOrderBy
+        primaryAxisManualSortOrder
         secondaryAxisGroupByFieldMetadataId
         secondaryAxisGroupBySubFieldName
         secondaryAxisGroupByDateGranularity
         secondaryAxisOrderBy
+        secondaryAxisManualSortOrder
         omitNullValues
         axisNameDisplay
         displayDataLabel
@@ -77,6 +81,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         groupBySubFieldName
         dateGranularity
         orderBy
+        manualSortOrder
         displayDataLabel
         showCenterMetric
         displayLegend
@@ -125,6 +130,45 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
           blocknote
           markdown
         }
+      }
+      ... on CalendarConfiguration {
+        configurationType
+      }
+      ... on EmailsConfiguration {
+        configurationType
+      }
+      ... on FieldConfiguration {
+        configurationType
+      }
+      ... on FieldRichTextConfiguration {
+        configurationType
+      }
+      ... on FieldsConfiguration {
+        configurationType
+      }
+      ... on FilesConfiguration {
+        configurationType
+      }
+      ... on NotesConfiguration {
+        configurationType
+      }
+      ... on TasksConfiguration {
+        configurationType
+      }
+      ... on TimelineConfiguration {
+        configurationType
+      }
+      ... on ViewConfiguration {
+        configurationType
+      }
+      ... on WorkflowConfiguration {
+        configurationType
+      }
+      ... on WorkflowRunConfiguration {
+        configurationType
+      }
+      ... on WorkflowVersionConfiguration {
+        configurationType
       }
     }
     pageLayoutTabId

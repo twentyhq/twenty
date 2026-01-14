@@ -1,23 +1,23 @@
 ---
 title: Триггеры рабочего процесса
-description: Learn about the different triggers that start your workflows.
+description: Узнайте о различных триггерах, которые запускают ваши рабочие процессы.
 ---
 
-## About Triggers
+## О триггерах
 
 Рабочие процессы всегда начинаются с единственного триггера, который определяет, когда должна выполняться автоматизация.
 
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
+  **Поддерживаются расширенные объекты!** Помимо стандартных объектов CRM (люди, компании, сделки), вы также можете запускать рабочие процессы и выполнять действия с:
 
   * Участники рабочего пространства
-  * Calendar Events
-  * Messages (Emails)
-  * Tasks, Notes, and many other system objects
+  * События календаря
+  * Сообщения (электронные письма)
+  * Задачи, заметки и многие другие системные объекты
 
-  This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
+  Это открывает возможности мощной автоматизации, например уведомление участников команды при создании событий календаря или автоматическую обработку входящих писем.
 </Tip>
 
 ## Запись создана
@@ -27,9 +27,9 @@ description: Learn about the different triggers that start your workflows.
 **Настройка**: Выберите тип объекта для отслеживания новых записей.
 
 <Note>
-  * This trigger is great for records created by csv, mailbox and calendar synchronization, API.
-  * **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
-    To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
+  * Этот триггер отлично подходит для записей, созданных через CSV, синхронизацию почтового ящика и календаря, а также через API.
+  * **Не рекомендуется для записей, создаваемых вручную**: с этим триггером рабочие процессы запускаются сразу после создания записи. Поскольку интерфейс Twenty предлагает автосохранение на лету (нет режима редактирования и последующего подтверждения для сохранения записей), рабочий процесс будет запущен до того, как пользователь введет все поля.
+    Чтобы запускать этот рабочий процесс для записей, создаваемых вручную, рекомендуется вместо этого использовать триггер `Record is created or updated`.
 </Note>
 
 ## Запись обновлена
@@ -62,26 +62,26 @@ description: Learn about the different triggers that start your workflows.
 
 **Настройка**: Выберите тип объекта для отслеживания удалений.
 
-## Manual Trigger
+## Ручной триггер
 
-Запускает рабочий процесс, когда он инициируется пользователем. This trigger can be accessed through the `Cmd+K` menu or via a custom button that will be displayed in the top navbar after selecting record(s).
+Запускает рабочий процесс, когда он инициируется пользователем. Доступ к этому триггеру можно получить через меню `Cmd+K` или с помощью настраиваемой кнопки, которая будет отображаться на верхней панели навигации после выбора записей.
 
 <img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
 
 **Настройка доступности**: Выберите, как рабочий процесс должен обрабатывать выбор записи:
 
-* **Глобально**: Для запуска этого рабочего процесса запись не требуется. The workflow is triggered from the command menu `Cmd + K` anywhere (from any object) and does not use record(s) as input.
+* **Глобально**: Для запуска этого рабочего процесса запись не требуется. Рабочий процесс запускается из командного меню `Cmd + K` в любом месте (с любого объекта) и не использует записи в качестве входных данных.
 
-* **Одиночная**: Выбранные записи будут переданы в ваш рабочий процесс. Это настроено для заданного объекта. Несколько записей могут быть выбраны до запуска рабочего процесса. The workflow will run from beginning to end as many times as there are records selected.
+* **Одиночная**: Выбранные записи будут переданы в ваш рабочий процесс. Это настроено для заданного объекта. Несколько записей могут быть выбраны до запуска рабочего процесса. Рабочий процесс будет выполняться от начала до конца столько раз, сколько выбрано записей.
 
   <Note>
-    **Soft limit: 100 runs/minute**. Beyond this, workflows remain in "Not Started" status and are processed gradually—either by a background job or when another workflow enters the queue. This means you can select more than 100 records with a Single trigger; execution will just be slower.
+    **Мягкий лимит: 100 запусков в минуту**. При превышении этого значения рабочие процессы остаются в статусе "Not Started" и обрабатываются постепенно — либо фоновой задачей, либо когда другой рабочий процесс попадает в очередь. Это означает, что вы можете выбрать более 100 записей с помощью одного триггера; выполнение просто будет медленнее.
   </Note>
 
-* **Групповая обработка**: Выбранные записи будут переданы в ваш рабочий процесс. Это настроено для заданного объекта. Несколько записей могут быть выбраны до запуска рабочего процесса. Рабочий процесс будет выполнен один раз, предоставляя весь список записей в качестве входных данных. This means the workflow needs to contain an [Iterator action](/l/ru/user-guide/workflows/capabilities/workflow-actions#iterator).
+* **Групповая обработка**: Выбранные записи будут переданы в ваш рабочий процесс. Это настроено для заданного объекта. Несколько записей могут быть выбраны до запуска рабочего процесса. Рабочий процесс будет выполнен один раз, предоставляя весь список записей в качестве входных данных. Это означает, что рабочий процесс должен содержать [действие Iterator](/l/ru/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
-  This is more advanced, and best for people who want to optimize the number of workflow runs.
+  Это более продвинутый вариант и лучше всего подходит для тех, кто хочет оптимизировать количество запусков рабочего процесса.
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
@@ -94,10 +94,10 @@ description: Learn about the different triggers that start your workflows.
 
 **Методы доступа**:
 
-* `Cmd+K` menu to find and launch manual workflows
+* Меню `Cmd+K` для поиска и запуска ручных рабочих процессов
 * Пользовательская кнопка в верхней навигационной панели (если настроено)
 
-## Time-Based Trigger: On a Schedule
+## Триггер по времени: по расписанию
 
 Запускает рабочий процесс на регулярной основе, которую вы определяете.
 
@@ -107,10 +107,10 @@ description: Learn about the different triggers that start your workflows.
 * Введите значение или используйте пользовательские cron-выражения для сложного планирования
 
 <Note>
-  **Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
+  **Часовой пояс**: Запланированные рабочие процессы выполняются в **UTC**. При указании часов для ежедневных расписаний переводите ваше местное время в UTC.
 </Note>
 
-## External Trigger: Webhook
+## Внешний триггер: вебхук
 
 Запускает рабочий процесс при получении GET или POST-запроса от внешнего сервиса.
 
@@ -118,18 +118,18 @@ description: Learn about the different triggers that start your workflows.
 
 **Настройка**:
 
-* The workflow provides a unique webhook URL—copy this and add it to your external system as the endpoint to call.
-* For POST requests, define the expected body structure so Twenty knows what data to expect. Add here the fields you will receive that will be needed below in your workflow.
-* Configure authentication (coming soon).
+* Рабочий процесс предоставляет уникальный URL вебхука — скопируйте его и добавьте в вашу внешнюю систему в качестве вызываемой конечной точки.
+* Для запросов POST определите ожидаемую структуру тела, чтобы система Twenty понимала, какие данные ожидать. Добавьте здесь поля, которые вы получите и которые понадобятся ниже в вашем рабочем процессе.
+* Настройте аутентификацию (скоро будет).
 
-## Choosing the Right Trigger
+## Выбор подходящего триггера
 
-| Use Case                    | Recommended Trigger          |
-| --------------------------- | ---------------------------- |
-| New leads need processing   | Запись создана               |
-| Data changes need sync      | Запись обновлена             |
-| Import/manual data handling | Запись обновлена или создана |
-| Cleanup after deletion      | Запись удалена               |
-| User-initiated action       | Запуск вручную               |
-| Recurring reports           | По расписанию                |
-| External integration        | Webhook or On a Schedule     |
+| Сценарий использования                 | Рекомендуемый триггер        |
+| -------------------------------------- | ---------------------------- |
+| Новые лиды требуют обработки           | Запись создана               |
+| Изменения данных требуют синхронизации | Запись обновлена             |
+| Импорт/ручная обработка данных         | Запись обновлена или создана |
+| Очистка после удаления                 | Запись удалена               |
+| Действие, инициированное пользователем | Запуск вручную               |
+| Регулярные отчеты                      | По расписанию                |
+| Внешняя интеграция                     | Вебхук или по расписанию     |

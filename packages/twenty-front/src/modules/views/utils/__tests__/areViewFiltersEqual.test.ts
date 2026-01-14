@@ -1,6 +1,6 @@
 import { type ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterOperand } from 'twenty-shared/types';
 import { areViewFiltersEqual } from '@/views/utils/areViewFiltersEqual';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 describe('areViewFiltersEqual', () => {
   const baseFilter: ViewFilter = {
@@ -19,13 +19,6 @@ describe('areViewFiltersEqual', () => {
     const filterB = { ...baseFilter };
 
     expect(areViewFiltersEqual(filterA, filterB)).toBe(true);
-  });
-
-  it('should return false when displayValue is different', () => {
-    const filterA = { ...baseFilter };
-    const filterB = { ...baseFilter, displayValue: 'different' };
-
-    expect(areViewFiltersEqual(filterA, filterB)).toBe(false);
   });
 
   it('should return false when fieldMetadataId is different', () => {

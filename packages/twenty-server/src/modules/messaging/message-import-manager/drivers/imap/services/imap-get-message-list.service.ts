@@ -110,7 +110,7 @@ export class ImapGetMessageListService {
       );
 
       const nextCursor = createSyncCursor(
-        messageUids.map((uid) => ({ uid })),
+        messageUids,
         previousCursor,
         mailboxState,
       );

@@ -10,8 +10,8 @@ Fiecare caz de utilizare va avea propria clasă de coadă extinsă din `MessageQ
 ## Pași pentru a crea și utiliza o coadă nouă
 
 1. Adăugați un nume pentru noua coadă sub enum `MESSAGE_QUEUES`.
-2. Provide the factory implementation of the queue with the queue name as the dependency token.
-3. Inject the queue that you created in the required module/service with the queue name as the dependency token.
+2. Furnizează implementarea de tip factory a cozii, folosind numele cozii ca token de dependență.
+3. Injectează coada pe care ai creat-o în modulul/serviciul necesar, folosind numele cozii ca token de dependență.
 4. Adăugați o clasă lucrător cu injectare bazată pe simbol, la fel ca producătorul.
 
 ### Exemplu de utilizare

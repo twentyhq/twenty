@@ -3,15 +3,20 @@ import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import { join } from 'path';
 import camelcase from 'lodash.camelcase';
+import kebabcase from 'lodash.kebabcase';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-directory';
-import { getObjectDecoratedClass } from '@/cli/utils/get-object-decorated-class';
+import { getNewObjectFileContent } from '@/cli/utils/get-new-object-file-content';
 import { getFunctionBaseFile } from '@/cli/utils/get-function-base-file';
+import { getRoleBaseFile } from '@/cli/utils/get-role-base-file';
 import { convertToLabel } from '@/cli/utils/convert-to-label';
+
+const APP_FOLDER = 'src/app';
 
 export enum SyncableEntity {
   AGENT = 'agent',
   OBJECT = 'object',
   FUNCTION = 'function',
+  ROLE = 'role',
 }
 
 export const isSyncableEntity = (value: string): value is SyncableEntity => {
@@ -21,7 +26,10 @@ export const isSyncableEntity = (value: string): value is SyncableEntity => {
 export class AppAddCommand {
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
-      const appPath = join(CURRENT_EXECUTION_DIRECTORY, path ?? '');
+      // Default to src/app/ folder, allow override with path parameter
+      const appPath = path
+        ? join(CURRENT_EXECUTION_DIRECTORY, path)
+        : join(CURRENT_EXECUTION_DIRECTORY, APP_FOLDER);
 
       await fs.ensureDir(appPath);
 
@@ -32,14 +40,22 @@ export class AppAddCommand {
 
         const name = entityData.nameSingular;
 
-        const objectFileName = `${camelcase(name)}.ts`;
+        // Use *.object.ts naming convention
+        const objectFileName = `${camelcase(name)}.object.ts`;
 
-        const decoratedObject = getObjectDecoratedClass({
+        const decoratedObject = getNewObjectFileContent({
           data: entityData,
           name,
         });
 
-        await fs.writeFile(join(appPath, objectFileName), decoratedObject);
+        const filePath = join(appPath, objectFileName);
+
+        await fs.writeFile(filePath, decoratedObject);
+
+        console.log(
+          chalk.green(`✓ Created object:`),
+          chalk.cyan(filePath.replace(CURRENT_EXECUTION_DIRECTORY + '/', '')),
+        );
 
         return;
       }
@@ -47,15 +63,42 @@ export class AppAddCommand {
       if (entity === SyncableEntity.FUNCTION) {
         const entityName = await this.getEntityName(entity);
 
-        const objectFileName = `${camelcase(entityName)}.ts`;
+        // Use *.function.ts naming convention
+        const functionFileName = `${kebabcase(entityName)}.function.ts`;
 
         const decoratedServerlessFunction = getFunctionBaseFile({
           name: entityName,
         });
 
-        await fs.writeFile(
-          join(appPath, objectFileName),
-          decoratedServerlessFunction,
+        const filePath = join(appPath, functionFileName);
+
+        await fs.writeFile(filePath, decoratedServerlessFunction);
+
+        console.log(
+          chalk.green(`✓ Created function:`),
+          chalk.cyan(filePath.replace(CURRENT_EXECUTION_DIRECTORY + '/', '')),
+        );
+
+        return;
+      }
+
+      if (entity === SyncableEntity.ROLE) {
+        const entityName = await this.getEntityName(entity);
+
+        // Use *.role.ts naming convention
+        const roleFileName = `${kebabcase(entityName)}.role.ts`;
+
+        const roleFileContent = getRoleBaseFile({
+          name: entityName,
+        });
+
+        const filePath = join(appPath, roleFileName);
+
+        await fs.writeFile(filePath, roleFileContent);
+
+        console.log(
+          chalk.green(`✓ Created role:`),
+          chalk.cyan(filePath.replace(CURRENT_EXECUTION_DIRECTORY + '/', '')),
         );
 
         return;
@@ -76,7 +119,7 @@ export class AppAddCommand {
         name: 'entity',
         message: `What entity do you want to create?`,
         default: '',
-        choices: [SyncableEntity.FUNCTION, SyncableEntity.OBJECT],
+        choices: [SyncableEntity.FUNCTION, SyncableEntity.OBJECT, SyncableEntity.ROLE],
       },
     ]);
 

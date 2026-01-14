@@ -1,140 +1,140 @@
 ---
-title: Closed Won Automations
-description: Automate post-win activities when opportunities close.
+title: Автоматизации для стадии «Закрыта — выиграна»
+description: Автоматизируйте действия после выигрыша, когда возможность закрывается.
 ---
 
-When a deal closes, multiple things need to happen: update company status, notify team members, create onboarding tasks. Automate all of this with a single workflow.
+Когда сделка закрывается, нужно сделать несколько вещей: обновить статус компании, уведомить участников команды, создать задачи по онбордингу. Автоматизируйте всё это одним рабочим процессом.
 
-## The Problem
+## Проблема
 
-When an opportunity moves to "Closed Won":
+Когда возможность переходит в стадию «Закрыта — выиграна»:
 
-* Company type needs to change from "Prospect" to "Customer"
-* Onboarding tasks need to be created
-* Customer success team needs to be notified
-* Sales rep needs confirmation
+* Тип компании должен измениться с «Потенциальный клиент» на «Клиент»
+* Нужно создать задачи по онбордингу
+* Команду Customer Success необходимо уведомить
+* Менеджеру по продажам нужно подтверждение
 
-Doing this manually is time-consuming and error-prone.
+Вручную это занимает много времени и приводит к ошибкам.
 
-## The Solution
+## Решение
 
-Create a workflow that handles all post-win activities automatically.
+Создайте рабочий процесс, который автоматически выполнит все действия после выигрыша.
 
-## Complete Workflow Setup
+## Полная настройка рабочего процесса
 
-### Step 1: Create the Workflow
+### Шаг 1: Создайте рабочий процесс
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it "Deal Won - Post-Win Automation"
+1. Перейдите в **Настройки → Рабочие процессы**
+2. Нажмите **+ Новый рабочий процесс**
+3. Назовите его "Deal Won - Post-Win Automation"
 
-### Step 2: Configure the Trigger
+### Шаг 2: Настройте триггер
 
-1. Select **Record is Updated**
-2. Choose **Opportunities**
-3. Under "Fields to monitor", select **Stage**
+1. Выберите **Запись обновлена**
+2. Выберите **Возможности**
+3. В разделе "Поля для отслеживания" выберите **Стадия**
 
-### Step 3: Add Stage Filter
+### Шаг 3: Добавьте фильтр по стадии
 
-1. Add **Filter** action
-2. Condition: `{{trigger.object.stage}}` equals "Closed Won"
+1. Добавьте действие **Фильтр**
+2. Условие: `{{trigger.object.stage}}` равно «Закрыта выиграна»
 
-### Step 4: Update Company Type
+### Шаг 4: Обновите тип компании
 
-1. Add **Update Record** action
+1. Добавьте действие **Обновить запись**
 2. Настроить:
 
-| Поле                  | Значение                        |
-| --------------------- | ------------------------------- |
-| **Object**            | Компании                        |
-| **Record**            | `{{trigger.object.company.id}}` |
-| **Тип**               | Клиент                          |
-| **First Deal Date**   | `{{trigger.object.closedAt}}`   |
-| **Владелец аккаунта** | `{{trigger.object.owner.id}}`   |
+| Поле                   | Значение                        |
+| ---------------------- | ------------------------------- |
+| **Объект**             | Компании                        |
+| **Запись**             | `{{trigger.object.company.id}}` |
+| **Тип**                | Клиент                          |
+| **Дата первой сделки** | `{{trigger.object.closedAt}}`   |
+| **Владелец аккаунта**  | `{{trigger.object.owner.id}}`   |
 
-### Step 5: Create Onboarding Task
+### Шаг 5: Создайте задачу по онбордингу
 
-1. Add **Create Record** action
+1. Добавьте действие **Создать запись**
 2. Настроить:
 
-| Поле                    | Значение                                                                                             |
-| ----------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Object**              | Задачи                                                                                               |
-| **Title**               | `Onboarding: {{trigger.object.name}}`                                                                |
-| **Assignee**            | Customer Success team member                                                                         |
-| **Due Date**            | 3 days from now                                                                                      |
-| **Priority**            | High                                                                                                 |
-| **Related Company**     | `{{trigger.object.company.id}}`                                                                      |
-| **Related Opportunity** | `{{trigger.object.id}}`                                                                              |
-| **Description**         | `New customer onboarding for {{trigger.object.company.name}}. Deal value: {{trigger.object.amount}}` |
+| Поле                      | Значение                                                                                             |
+| ------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Объект**                | Задачи                                                                                               |
+| **Заголовок**             | `Onboarding: {{trigger.object.name}}`                                                                |
+| **Исполнитель**           | Сотрудник команды Customer Success                                                                   |
+| **Срок исполнения**       | Через 3 дня                                                                                          |
+| **Приоритет**             | Высокий                                                                                              |
+| **Связанная компания**    | `{{trigger.object.company.id}}`                                                                      |
+| **Связанная возможность** | `{{trigger.object.id}}`                                                                              |
+| **Описание**              | `New customer onboarding for {{trigger.object.company.name}}. Deal value: {{trigger.object.amount}}` |
 
-### Step 6: Notify Customer Success
+### Шаг 6: Уведомите команду Customer Success
 
-1. Add **Send Email** action
+1. Добавьте действие **Send Email**
 2. Настроить:
 
-| Поле        | Значение                                           |
-| ----------- | -------------------------------------------------- |
-| **To**      | customer-success@yourcompany.com                   |
-| **Subject** | `🎉 New Customer: {{trigger.object.company.name}}` |
-| **Body**    | See example below                                  |
+| Поле      | Значение                                           |
+| --------- | -------------------------------------------------- |
+| **Кому**  | customer-success@yourcompany.com                   |
+| **Тема**  | `🎉 New Customer: {{trigger.object.company.name}}` |
+| **Текст** | См. пример ниже                                    |
 
-**Email body example**:
+**Пример текста письма**:
 
 ```
-Hi CS Team,
+Привет, команда Customer Success,
 
-We have a new customer!
+У нас новый клиент!
 
-Company: {{trigger.object.company.name}}
-Deal: {{trigger.object.name}}
-Value: {{trigger.object.amount}}
-Sales Rep: {{trigger.object.owner.name}}
-Close Date: {{trigger.object.closedAt}}
+Компания: {{trigger.object.company.name}}
+Сделка: {{trigger.object.name}}
+Сумма: {{trigger.object.amount}}
+Менеджер по продажам: {{trigger.object.owner.name}}
+Дата закрытия: {{trigger.object.closedAt}}
 
-An onboarding task has been created automatically.
+Задача по онбордингу создана автоматически.
 
-Let's give them a great start!
+Давайте обеспечим им отличный старт!
 ```
 
-### Step 7: Confirm to Sales Rep
+### Шаг 7: Отправьте подтверждение менеджеру по продажам
 
-1. Add another **Send Email** action
+1. Добавьте ещё одно действие **Send Email**
 2. Настроить:
 
-| Поле        | Значение                                                                                                             |
-| ----------- | -------------------------------------------------------------------------------------------------------------------- |
-| **To**      | `{{trigger.object.owner.email}}`                                                                                     |
-| **Subject** | `✅ Deal Closed: {{trigger.object.name}}`                                                                             |
-| **Body**    | Congratulations! Your deal has been processed. The customer success team has been notified and onboarding has begun. |
+| Поле      | Значение                                                                                   |
+| --------- | ------------------------------------------------------------------------------------------ |
+| **Кому**  | `{{trigger.object.owner.email}}`                                                           |
+| **Тема**  | `✅ Deal Closed: {{trigger.object.name}}`                                                   |
+| **Текст** | Поздравляем! Ваша сделка обработана. Команда Customer Success уведомлена, онбординг начат. |
 
-### Step 8: Test and Activate
+### Шаг 8: Протестируйте и активируйте
 
-1. Test by moving a test opportunity to "Closed Won"
+1. Протестируйте, переместив тестовую возможность в стадию «Закрыта выиграна»
 2. Проверить:
-   * Company type changed to "Customer"
-   * Onboarding task created
-   * CS team received email
-   * Sales rep received confirmation
-3. Activate when ready
+   * Тип компании изменился на «Клиент»
+   * Задача по онбордингу создана
+   * Команда Customer Success получила письмо
+   * Менеджер по продажам получил подтверждение
+3. Активируйте, когда будете готовы
 
-## Handling Closed Lost
+## Обработка статуса «Закрыта проиграна»
 
-Create a similar workflow for lost deals:
+Создайте аналогичный рабочий процесс для проигранных сделок:
 
 ### Триггер
 
-* Record is Updated (Opportunities, Stage = "Closed Lost")
+* Запись обновлена (Возможности, стадия = «Закрыта проиграна»)
 
 ### Действия
 
-1. **Create Record**: Task for "Lost Deal Analysis"
-2. **Update Record**: Add lost reason to company record
-3. **Send Email**: Notify manager of lost deal
+1. **Создать запись**: Задача «Анализ проигранной сделки»
+2. **Обновить запись**: Добавьте причину проигрыша в запись компании
+3. **Send Email**: Уведомите менеджера о проигранной сделке
 
-## Advanced: Multi-Step Onboarding
+## Продвинутое: многошаговый онбординг
 
-For complex onboarding, create multiple tasks:
+Для сложного онбординга создайте несколько задач:
 
 ```javascript
 export const main = async (params) => {
@@ -149,31 +149,31 @@ export const main = async (params) => {
 };
 ```
 
-Use **Iterator** to create each task from the array.
+Используйте **Iterator** для создания каждой задачи из массива.
 
-## Customization Ideas
+## Идеи для настройки
 
-### Keep your other tools up-to-date
+### Держите другие инструменты в актуальном состоянии
 
-* Create customer in billing system with an **HTTP Request**
+* Создайте клиента в биллинговой системе с помощью **HTTP Request**
 
-### Conditional Actions
+### Условные действия
 
-Use **Filter** actions to:
+Используйте действия **Фильтр**, чтобы:
 
-* Different onboarding for enterprise vs SMB
-* Different assignees based on region
-* Skip notifications for small deals
+* Разный онбординг для Enterprise и SMB
+* Разные исполнители в зависимости от региона
+* Пропускать уведомления для небольших сделок
 
-### Include Deal Details
+### Включите детали сделки
 
-Use **Code** action to format:
+Используйте действие **Code** для форматирования:
 
-* Deal summary documents
-* Handoff notes for CS team
-* Custom onboarding checklists
+* Документы с краткой сводкой по сделке
+* Заметки для передачи команде Customer Success
+* Пользовательские контрольные списки онбординга
 
-## Related
+## Связанные материалы
 
-* [Workflow Actions](/l/ru/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/ru/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Действия рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-actions)
+* [Отправка писем из рабочих процессов](/l/ru/user-guide/workflows/capabilities/send-emails-from-workflows)

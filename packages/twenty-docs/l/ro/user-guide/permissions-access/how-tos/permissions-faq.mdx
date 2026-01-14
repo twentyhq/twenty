@@ -1,126 +1,126 @@
 ---
-title: Permissions FAQ
-description: Frequently asked questions about roles and permissions.
+title: Întrebări frecvente despre permisiuni
+description: Întrebări frecvente despre roluri și permisiuni.
 ---
 
 ## Roluri
 
 <AccordionGroup>
-  <Accordion title="What roles come with Twenty by default?">
-    Twenty comes with an **Admin** and **Member** roles by default. You can create additional custom roles based on your team's needs (e.g., Sales Rep, Manager, Read-Only User).
+  <Accordion title="Ce roluri sunt incluse implicit în Twenty?">
+    Twenty include în mod implicit rolurile **Admin** și **Member**. Puteți crea roluri personalizate suplimentare în funcție de nevoile echipei dvs. (de exemplu, Reprezentant de vânzări, Manager, Utilizator doar pentru citire).
   </Accordion>
 
-  <Accordion title="Can I delete the Admin role?">
-    No, the Admin role cannot be deleted. There must always be at least one member assigned to the Admin role.
+  <Accordion title="Pot să șterg rolul Admin?">
+    Nu, rolul Admin nu poate fi șters. Trebuie să existe întotdeauna cel puțin un membru atribuit rolului Admin.
   </Accordion>
 
-  <Accordion title="What happens when I delete a role?">
-    Any workspace member assigned to that role will be automatically reassigned to the default role.
+  <Accordion title="Ce se întâmplă când șterg un rol?">
+    Orice membru al spațiului de lucru atribuit acelui rol va fi reatribuit automat rolului implicit.
   </Accordion>
 
-  <Accordion title="How do I set a default role for new members?">
-    Go to **Settings → Roles**, find the **Default Role** option, and select which role new members should automatically receive when they join.
+  <Accordion title="Cum setez un rol implicit pentru noii membri?">
+    Accesați **Settings → Roles**, găsiți opțiunea **Default Role** și selectați ce rol ar trebui să primească automat noii membri când se alătură.
   </Accordion>
 
-  <Accordion title="Can I assign multiple roles to one user?">
-    No, each user can only have one role at a time. Create a custom role if you need a combination of permissions.
+  <Accordion title="Pot să atribui mai multe roluri unui singur utilizator?">
+    Nu, fiecare utilizator poate avea un singur rol la un moment dat. Creați un rol personalizat dacă aveți nevoie de o combinație de permisiuni.
   </Accordion>
 </AccordionGroup>
 
 ## Permisiuni
 
 <AccordionGroup>
-  <Accordion title="What's the difference between object and field permissions?">
-    * **Object permissions**: Control access to entire records (e.g., can see/edit/delete People records)
-    * **Field permissions**: Control access to specific fields within an object (e.g., can see but not edit the Salary field)
+  <Accordion title="Care este diferența dintre permisiunile la nivel de obiect și cele la nivel de câmp?">
+    * **Permisiuni pentru obiecte**: Controlează accesul la înregistrări întregi (de exemplu, pot vedea/edita/șterge înregistrări People)
+    * **Permisiuni pentru câmpuri**: Controlează accesul la câmpuri specifice dintr-un obiect (de exemplu, pot vedea, dar nu pot edita câmpul Salary)
 
-    Field permissions allow more granular control over sensitive data.
+    Permisiunile pentru câmpuri permit un control mai granular asupra datelor sensibile.
   </Accordion>
 
-  <Accordion title="How do permission overrides work?">
-    Permissions cascade from global to specific:
+  <Accordion title="Cum funcționează suprascrierile permisiunilor?">
+    Permisiunile se propagă în cascadă de la global la specific:
 
-    1. **All Objects** sets the baseline for all objects
-    2. **Object-Level Permissions** can override the global setting for specific objects
-    3. **Field-Level Permissions** can override the object setting for specific fields
+    1. **All Objects** stabilește configurația de bază pentru toate obiectele
+    2. **Object-Level Permissions** pot suprascrie setarea globală pentru anumite obiecte
+    3. **Field-Level Permissions** pot suprascrie setarea la nivel de obiect pentru anumite câmpuri
 
-    More specific settings always take precedence.
+    Setările mai specifice au întotdeauna prioritate.
   </Accordion>
 
-  <Accordion title="What do the different permission levels mean?">
-    For objects:
+  <Accordion title="Ce înseamnă diferitele niveluri de permisiuni?">
+    Pentru obiecte:
 
-    * **See Records**: View records in lists and detail pages
-    * **Edit Records**: Modify existing records
-    * **Delete Records**: Soft-delete records (can be restored)
-    * **Destroy Records**: Permanently delete records
+    * **See Records**: Vizualizați înregistrările în liste și în paginile de detaliu
+    * **Edit Records**: Modificați înregistrările existente
+    * **Delete Records**: Ștergeți temporar înregistrările (pot fi restaurate)
+    * **Destroy Records**: Ștergeți definitiv înregistrările
 
-    For fields:
+    Pentru câmpuri:
 
-    * **See Field**: View the field value
-    * **Edit Field**: Modify the field value
-    * **No Access**: Field is completely hidden
+    * **See Field**: Vizualizați valoarea câmpului
+    * **Edit Field**: Modificați valoarea câmpului
+    * **No Access**: Câmpul este complet ascuns
   </Accordion>
 
-  <Accordion title="Can I restrict access to specific records (row-level permissions)?">
-    Row-level permissions will be available on the **Organization** plan by Q1 2026. This allows you to restrict access to specific records based on criteria (e.g., only see your own opportunities).
+  <Accordion title="Pot restricționa accesul la anumite înregistrări (permisiuni la nivel de rând)?">
+    Permisiunile la nivel de rând vor fi disponibile în planul **Organization** până în trimestrul I 2026. Acest lucru vă permite să restricționați accesul la anumite înregistrări pe baza unor criterii (de exemplu, să vedeți doar propriile oportunități).
   </Accordion>
 
-  <Accordion title="How do I make a field read-only for certain users?">
+  <Accordion title="Cum fac un câmp doar pentru citire pentru anumiți utilizatori?">
     1. Accesați **Setări → Roluri**
-    2. Select the role
-    3. Navigate to the object containing the field
-    4. Set the field permission to **See Field** (without Edit Field)
+    2. Selectați rolul
+    3. Navigați la obiectul care conține câmpul
+    4. Setați permisiunea câmpului la **See Field** (fără Edit Field)
   </Accordion>
 </AccordionGroup>
 
-## Settings & Actions
+## Setări și acțiuni
 
 <AccordionGroup>
-  <Accordion title="What settings permissions are available?">
-    You can control access to:
+  <Accordion title="Ce permisiuni pentru setări sunt disponibile?">
+    Puteți controla accesul la:
 
-    * API key generation
-    * Workspace preferences
-    * Role assignment
-    * Data model configuration
-    * Security settings
-    * Workflow management
+    * Generarea cheilor API
+    * Preferințe ale spațiului de lucru
+    * Atribuirea rolurilor
+    * Configurarea modelului de date
+    * Setări de securitate
+    * Gestionarea fluxurilor de lucru
 
-    Use **Settings All Access** to grant full access, or enable specific permissions.
+    Folosiți **Settings All Access** pentru a acorda acces complet, sau activați permisiuni specifice.
   </Accordion>
 
-  <Accordion title="What action permissions are available?">
-    You can control:
+  <Accordion title="Ce permisiuni pentru acțiuni sunt disponibile?">
+    Puteți controla:
 
-    * **Send Email**: Ability to send emails from Twenty
-    * **Import CSV**: Ability to import data via CSV
-    * **Export CSV**: Ability to export data to CSV
+    * **Send Email**: Posibilitatea de a trimite e-mailuri din Twenty
+    * **Import CSV**: Posibilitatea de a importa date prin CSV
+    * **Export CSV**: Posibilitatea de a exporta date în CSV
 
-    Use **Application All Access** to grant all actions, or enable specific ones.
+    Folosiți **Application All Access** pentru a permite toate acțiunile, sau activați doar pe cele specifice.
   </Accordion>
 </AccordionGroup>
 
 ## Autentificare Unică
 
 <AccordionGroup>
-  <Accordion title="Is SSO available on all plans?">
-    No, SSO is a Premium feature available on the **Organization** plan only.
+  <Accordion title="Este SSO disponibil pe toate planurile?">
+    Nu, SSO este o funcționalitate Premium disponibilă doar în planul **Organization**.
   </Accordion>
 
-  <Accordion title="Which identity providers are supported?">
-    Twenty supports:
+  <Accordion title="Ce furnizori de identitate sunt acceptați?">
+    Twenty acceptă:
 
-    * **SAML 2.0** (works with most enterprise identity providers)
+    * **SAML 2.0** (funcționează cu majoritatea furnizorilor de identitate pentru întreprinderi)
     * **Google Workspace**
-    * **Microsoft Entra ID** (formerly Azure AD)
+    * **Microsoft Entra ID** (fostul Azure AD)
   </Accordion>
 
-  <Accordion title="What is Just-in-Time (JIT) provisioning?">
-    With JIT provisioning, user accounts are automatically created in Twenty when someone logs in via SSO for the first time. They're assigned the default role automatically.
+  <Accordion title="Ce este provisionarea Just-in-Time (JIT)?">
+    Cu provisionarea JIT, conturile de utilizator sunt create automat în Twenty atunci când cineva se autentifică prin SSO pentru prima dată. Li se atribuie automat rolul implicit.
   </Accordion>
 
-  <Accordion title="Can I require SSO for all users?">
-    Yes, once SSO is configured, you can disable password login for SSO users to enforce authentication through your identity provider.
+  <Accordion title="Pot impune SSO pentru toți utilizatorii?">
+    Da, odată ce SSO este configurat, puteți dezactiva autentificarea cu parolă pentru utilizatorii SSO, pentru a impune autentificarea prin furnizorul dvs. de identitate.
   </Accordion>
 </AccordionGroup>

@@ -1,92 +1,92 @@
 ---
 title: Campi di Relazione
-description: Connect records across different objects using relation fields.
+description: Collega i record tra oggetti diversi utilizzando campi di relazione.
 ---
 
-## Types of Relations
+## Tipi di relazioni
 
-### One-to-Many
+### Uno-a-molti
 
-One record in Object A can be linked to many records in Object B.
+Un record nell'Oggetto A può essere collegato a molti record nell'Oggetto B.
 
-**Example:** One Company can have many People (employees).
+**Esempio:** Un'Azienda può avere molte Persone (dipendenti).
 
-### Many-to-One
+### Molti-a-uno
 
-Many records in Object A can be linked to one record in Object B.
+Molti record nell'Oggetto A possono essere collegati a un record nell'Oggetto B.
 
-**Example:** Many People can belong to one Company.
+**Esempio:** Molte Persone possono appartenere a un'Azienda.
 
-### Relations to Multiple Object Types
+### Relazioni che puntano a più tipi di oggetto
 
-Some objects can link to multiple object types on one side of the relation.
+Alcuni oggetti possono collegarsi a più tipi di oggetto su un lato della relazione.
 
-**Example:** A Note can be attached to one Person AND one Company AND one Opportunity simultaneously. The Note is on the "many" side, connecting to multiple "one" sides.
+**Esempio:** Una Nota può essere collegata a una Persona E a un'Azienda E a un'Opportunità contemporaneamente. La Nota si trova sul lato "molti", collegandosi a più lati "uno".
 
 <img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
 
-Similarly, a Project (on the "one" side) could receive links from multiple People, multiple Companies, and multiple Notes.
+Analogamente, un Progetto (sul lato "uno") potrebbe ricevere collegamenti da più Persone, più Aziende e più Note.
 
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Import/Export limitation**: Relations pointing to multiple object types are not yet supported for CSV import/export. This is on our roadmap.
+  **Limitazione di importazione/esportazione**: Le relazioni che puntano a più tipi di oggetto non sono ancora supportate per l'importazione/esportazione CSV. È nella nostra roadmap.
 </Warning>
 
-### Many-to-Many
+### Molti-a-molti
 
-Many records in Object A can be linked to many records in Object B.
+Molti record nell'Oggetto A possono essere collegati a molti record nell'Oggetto B.
 
-**Example:** Many People can be linked to many Projects, and vice versa.
+**Esempio:** Molte Persone possono essere collegate a molti Progetti, e viceversa.
 
 <Warning>
-  **Many-to-Many is not yet supported.**
+  **Molti-a-molti non è ancora supportato.**
 
-  This relation type is planned for H1 2026. As a workaround, create an intermediate "junction" object (e.g., "Project Assignments") that has Many-to-One relations to both objects.
+  Questo tipo di relazione è previsto per H1 2026. Come soluzione temporanea, crea un oggetto intermedio "di giunzione" (ad es., "Assegnazioni di progetto") che abbia relazioni Molti-a-uno con entrambi gli oggetti.
 </Warning>
 
-## Creating a Relation Field
+## Creazione di un campo di relazione
 
-1. Go to **Settings → Data Model**
-2. Select the object where you want to add the relation
-3. Click **+ Add Field**
-4. Select **Relation** as the field type
-5. Choose the target object(s) to relate to
-6. Configure the relation settings:
-   * **Field name on source object**: The name of the relation field on the object you're editing
-   * **Field name on destination object**: The name of the relation field that will appear on the target object
-   * Relation type (one-to-many, many-to-one)
+1. Vai a **Impostazioni → Modello dati**
+2. Seleziona l'oggetto in cui vuoi aggiungere la relazione
+3. Fai clic su **+ Aggiungi campo**
+4. Seleziona **Relazione** come tipo di campo
+5. Scegli l'oggetto o gli oggetti di destinazione a cui collegare
+6. Configura le impostazioni della relazione:
+   * **Nome del campo sull'oggetto di origine**: il nome del campo di relazione sull'oggetto che stai modificando
+   * **Nome del campo sull'oggetto di destinazione**: il nome del campo di relazione che apparirà sull'oggetto di destinazione
+   * Tipo di relazione (uno-a-molti, molti-a-uno)
 7. Clicca su **Salva**
 
-## Standard Relations
+## Relazioni standard
 
-Twenty comes with pre-built relations between standard objects:
+Twenty offre relazioni predefinite tra oggetti standard:
 
-| From Object | To Object | Relation Type |
-| ----------- | --------- | ------------- |
-| Persone     | Aziende   | Many-to-One   |
-| Opportunità | Aziende   | Many-to-One   |
-| Opportunità | Persone   | Many-to-One   |
+| Oggetto di origine | Oggetto di destinazione | Tipo di relazione |
+| ------------------ | ----------------------- | ----------------- |
+| Persone            | Aziende                 | Molti-a-uno       |
+| Opportunità        | Aziende                 | Molti-a-uno       |
+| Opportunità        | Persone                 | Molti-a-uno       |
 
 ## Migliori Pratiche
 
-### Planning Relations
+### Pianificazione delle relazioni
 
-* **Map your data model**: Plan relations before creating them
-* **Consider direction**: Think about which object "owns" the relationship
-* **Avoid circular dependencies**: Keep your data model clean
+* **Mappa il tuo modello di dati**: pianifica le relazioni prima di crearle
+* **Considera la direzione**: pensa a quale oggetto "possiede" la relazione
+* **Evita le dipendenze circolari**: mantieni pulito il tuo modello di dati
 
-### Naming Relations
+### Denominare le relazioni
 
-* **Use clear names**: Make it obvious what the relation represents
-* **Be consistent**: Use similar naming patterns across relations
-* **Consider both sides**: Name both sides of the relation appropriately
+* **Usa nomi chiari**: rendi evidente ciò che la relazione rappresenta
+* **Sii coerente**: usa schemi di denominazione simili tra le relazioni
+* **Considera entrambi i lati**: assegna un nome appropriato a entrambi i lati della relazione
 
-### Performance
+### Prestazioni
 
-* **Don't over-relate**: Too many relations can slow down your workspace
+* **Non esagerare con le relazioni**: troppe relazioni possono rallentare il tuo spazio di lavoro
 
-## Limitations
+## Limitazioni
 
-* **Deleting relations** removes the link but not the related records
-* **Circular relations** should be avoided for data integrity
+* **L'eliminazione delle relazioni** rimuove il collegamento ma non i record correlati
+* **Le relazioni circolari** dovrebbero essere evitate per l'integrità dei dati

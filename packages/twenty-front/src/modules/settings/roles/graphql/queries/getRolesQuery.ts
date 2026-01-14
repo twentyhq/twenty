@@ -4,6 +4,8 @@ import { FIELD_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/fi
 import { OBJECT_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/objectPermissionFragment';
 import { PERMISSION_FLAG_FRAGMENT } from '@/settings/roles/graphql/fragments/permissionFlagFragment';
 import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
+import { ROW_LEVEL_PERMISSION_PREDICATE_FRAGMENT } from '@/settings/roles/graphql/fragments/rowLevelPermissionPredicateFragment';
+import { ROW_LEVEL_PERMISSION_PREDICATE_GROUP_FRAGMENT } from '@/settings/roles/graphql/fragments/rowLevelPermissionPredicateGroupFragment';
 import { PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/partialWorkspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
 
@@ -15,6 +17,8 @@ export const GET_ROLES = gql`
   ${PERMISSION_FLAG_FRAGMENT}
   ${OBJECT_PERMISSION_FRAGMENT}
   ${FIELD_PERMISSION_FRAGMENT}
+  ${ROW_LEVEL_PERMISSION_PREDICATE_FRAGMENT}
+  ${ROW_LEVEL_PERMISSION_PREDICATE_GROUP_FRAGMENT}
   query GetRoles {
     getRoles {
       ...RoleFragment
@@ -35,6 +39,12 @@ export const GET_ROLES = gql`
       }
       fieldPermissions {
         ...FieldPermissionFragment
+      }
+      rowLevelPermissionPredicates {
+        ...RowLevelPermissionPredicateFragment
+      }
+      rowLevelPermissionPredicateGroups {
+        ...RowLevelPermissionPredicateGroupFragment
       }
     }
   }

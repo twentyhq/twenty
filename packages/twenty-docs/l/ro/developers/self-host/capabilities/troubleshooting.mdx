@@ -28,7 +28,7 @@ docker compose down --volumes
 docker compose up -d
 ```
 
-#### CR line breaks found [Windows]
+#### S-au găsit întreruperi de linie CR [Windows]
 
 Acest lucru se datorează caracterelor de pauză de linie ale Windows și configurației git. Încercați să rulați:
 
@@ -68,11 +68,11 @@ Acesta ar trebui să funcționeze implicit cu extensia eslint instalată. Dacă 
 
 În `packages/twenty-front/.env` decomentați `VITE_DISABLE_TYPESCRIPT_CHECKER=true` și `VITE_DISABLE_ESLINT_CHECKER=true` pentru a dezactiva verificările de fundal, astfel reducând cantitatea de RAM necesară.
 
-**If it does not work:**
-Run only the services you need, instead of `npx nx start`. De exemplu, dacă lucrați la server, rulați doar `npx nx worker twenty-server`
+**Dacă nu funcționează:**
+Rulați doar serviciile de care aveți nevoie, în loc de `npx nx start`. De exemplu, dacă lucrați la server, rulați doar `npx nx worker twenty-server`
 
-**If it does not work:**
-If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:
+**Dacă nu funcționează:**
+Dacă ați încercat să rulați doar `npx nx run twenty-server:start` pe WSL și nu reușește cu eroarea de memorie de mai jos:
 
 `EROARE FATALĂ: Mark-compacts ineficiente lângă limita heap-ului Alocarea a eșuat - JavaScript heap out of memory`
 
@@ -83,11 +83,11 @@ Soluția este să executați comanda de mai jos în terminal sau să o adăugaț
 Flag-ul --max-old-space-size=8192 setează o limită superioară de 8 GB pentru heap-ul Node.js; utilizarea se adaptează la cerințele aplicației.
 Referință: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
-**If it does not work:**
-Investigate which processes are taking you most of your machine RAM. La Twenty, am observat că unele extensii VScode consumau multă RAM, așa că le dezactivăm temporar.
+**Dacă nu funcționează:**
+Investigați care procese consumă cea mai mare parte din RAM-ul mașinii dvs. La Twenty, am observat că unele extensii VScode consumau multă RAM, așa că le dezactivăm temporar.
 
-**If it does not work:**
-Restart your machine helps to clean up ghost processes.
+**Dacă nu funcționează:**
+Repornirea mașinii ajută la curățarea proceselor fantomă.
 
 #### În timp ce rulați `npx nx start` apar [0] și [1] ciudate în jurnale
 
@@ -120,7 +120,7 @@ Acest lucru este așteptat deoarece utilizatorul este neautorizat când este dec
 * Accesați [webhook-test.com](https://webhook-test.com/) și copiați **Your Unique Webhook URL**.
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook test" />
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Test de webhook" />
 </div>
 
 * Deschideți aplicația Twenty, navigați la `/settings` și activați comutatorul **Avansat** în colțul din stânga jos al ecranului.
@@ -142,7 +142,7 @@ Acest lucru este așteptat deoarece utilizatorul este neautorizat când este dec
 
 #### Front-end-ul nu pornește și returnează eroarea TS5042: Opțiunea 'project' nu poate fi amestecată cu fișiere sursă pe linia de comandă
 
-Comment out checker plugin in `packages/twenty-ui/vite-config.ts` like in example below
+Comentați pluginul checker în `packages/twenty-ui/vite-config.ts`, ca în exemplul de mai jos
 
 ```
 plugins: [

@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{ $isEditMode: boolean }>`
+  box-sizing: border-box;
   border-radius: ${({ theme }) => theme.border.radius.md};
   background: ${({ theme }) => theme.background.primary};
   display: flex;

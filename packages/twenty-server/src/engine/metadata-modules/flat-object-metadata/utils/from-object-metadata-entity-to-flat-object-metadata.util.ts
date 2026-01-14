@@ -14,6 +14,11 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
 
   return {
     ...objectMetadataEntityWithoutRelations,
+    // TODO remove once MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand has been run once
+    universalIdentifier:
+      objectMetadataEntityWithoutRelations.universalIdentifier ??
+      objectMetadataEntityWithoutRelations.standardId ??
+      objectMetadataEntityWithoutRelations.id,
     createdAt: objectMetadataEntity.createdAt.toISOString(),
     updatedAt: objectMetadataEntity.updatedAt.toISOString(),
     viewIds: objectMetadataEntity.views.map((viewEntity) => viewEntity.id),
@@ -23,8 +28,5 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
     fieldMetadataIds: objectMetadataEntity.fields.map(
       (fieldEntity) => fieldEntity.id,
     ),
-    universalIdentifier:
-      objectMetadataEntityWithoutRelations.standardId ??
-      objectMetadataEntityWithoutRelations.id,
   };
 };

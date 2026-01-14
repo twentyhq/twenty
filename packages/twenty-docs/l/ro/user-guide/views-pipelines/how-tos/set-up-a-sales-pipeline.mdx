@@ -1,120 +1,120 @@
 ---
-title: Set Up a Sales Pipeline
-description: Configure your sales pipeline to track opportunities through stages.
+title: Configurați un pipeline de vânzări
+description: Configurați-vă pipeline-ul de vânzări pentru a urmări oportunitățile prin etape.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-A sales pipeline in Twenty is a Kanban view of your Opportunities object, where each column represents a stage in your sales process.
+Un pipeline de vânzări în Twenty este o vizualizare Kanban a obiectului Oportunități, în care fiecare coloană reprezintă o etapă în procesul dvs. de vânzări.
 
-## Step 1: Configure Your Stages
+## Pasul 1: Configurați etapele
 
-Stages are defined in the Opportunities object's **Stage** field.
+Etapele sunt definite în câmpul **Etapă** al obiectului Oportunități.
 
-1. Go to **Settings → Data Model**
-2. Select **Opportunities**
-3. Find and click the **Stage** field
-4. Add, remove, or rename stages to match your process
+1. Accesați **Setări → Model de date**
+2. Selectați **Oportunități**
+3. Găsiți și faceți clic pe câmpul **Etapă**
+4. Adăugați, eliminați sau redenumiți etapele pentru a se potrivi procesului dvs.
 
 <VimeoEmbed videoId="927890428" title="Demonstrație video" />
 
-### Recommended Stages
+### Etape recomandate
 
-| Etapa           | Purpose                             |
-| --------------- | ----------------------------------- |
-| **New**         | Fresh opportunities just identified |
-| **Qualified**   | Confirmed as a good fit             |
-| **Meeting**     | Engaged in discussions              |
-| **Proposal**    | Proposal sent                       |
-| **Negotiation** | Working on terms                    |
-| **Closed Won**  | Deal successful                     |
-| **Closed Lost** | Deal unsuccessful                   |
+| Etapa               | Scop                                 |
+| ------------------- | ------------------------------------ |
+| **Nou**             | Oportunități noi tocmai identificate |
+| **Calificat**       | Confirmată ca o potrivire bună       |
+| **Întâlnire**       | Se poartă discuții                   |
+| **Propunere**       | Propunere trimisă                    |
+| **Negociere**       | Se negociază termenii                |
+| **Închis câștigat** | Tranzacție reușită                   |
+| **Închis pierdut**  | Tranzacție nereușită                 |
 
 <Note>
-  **5-7 stages is optimal.** Too many stages makes the pipeline hard to scan; too few loses visibility into deal progress.
+  **5-7 etape sunt optime.** Prea multe etape fac pipeline-ul greu de parcurs; prea puține reduc vizibilitatea asupra progresului tranzacțiilor.
 </Note>
 
-## Step 2: Create a Pipeline View
+## Pasul 2: Creați o vizualizare pentru pipeline
 
-1. Go to **Opportunities**
-2. Click the view dropdown → **+ Add view**
-3. Name it "Sales Pipeline"
-4. Click **Create**
-5. Open **Options** and select **Kanban** as the layout
+1. Accesați **Oportunități**
+2. Faceți clic pe meniul derulant al vizualizării → **+ Adaugă vizualizare**
+3. Denumiți-o "Sales Pipeline"
+4. Faceți clic pe **Creare**
+5. Deschideți **Opțiuni** și selectați **Kanban** ca tip de afișare
 
-The view automatically uses the Stage field for columns.
+Vizualizarea folosește automat câmpul **Etapă** pentru coloane.
 
-## Step 3: Configure Your View
+## Pasul 3: Configurați vizualizarea
 
-### Show Key Fields
+### Afișați câmpurile cheie
 
-1. Click **Options → Fields**
-2. Look for fields in the "Hidden Fields" section
-3. Click the **eye icon** to display: Company, Amount, Close Date, Owner
+1. Faceți clic pe **Opțiuni → Câmpuri**
+2. Căutați câmpurile în secțiunea "Câmpuri ascunse"
+3. Faceți clic pe **pictograma ochi** pentru a afișa: Companie, Sumă, Data închiderii, Proprietar
 
-### Enable Aggregations
+### Activați agregările
 
-Show totals at the top of each column:
+Afișați totalurile în partea de sus a fiecărei coloane:
 
-1. Click the number displayed next to a Stage name at the top of a column
-2. Select the aggregation type (Count, Sum, Average, etc.)
-3. Choose the field to aggregate (e.g., Amount)
+1. Faceți clic pe numărul afișat lângă numele unei etape în partea de sus a unei coloane
+2. Selectați tipul de agregare (Număr, Sumă, Medie etc.)
+3. Alegeți câmpul pe care să îl agregați (de ex., Sumă)
 
-**Example:** Show total deal value per stage by aggregating Amount with Sum.
+**Exemplu:** Afișați valoarea totală a tranzacțiilor pe etapă prin agregarea câmpului Sumă cu operația Sumă.
 
-### Use Compact View (Optional)
+### Utilizați vizualizarea compactă (opțional)
 
-For a high-level overview with minimal card content:
+Pentru o privire de ansamblu la nivel înalt, cu conținut minim pe card:
 
-1. Click **Options**
-2. Turn on the toggle for **Compact view**
+1. Faceți clic pe **Opțiuni**
+2. Activați comutatorul pentru **Vizualizare compactă**
 
-## Step 4: Create Personal and Team Views
+## Pasul 4: Creați vizualizări personale și de echipă
 
-### "My Pipeline"
+### "Pipeline-ul meu"
 
-* **Filter**: Owner = Me
-* **Visibility**: Unlisted (personal view)
+* **Filtru**: Proprietar = Eu
+* **Vizibilitate**: Nelistată (vizualizare personală)
 
-### "Team Pipeline"
+### "Pipeline-ul echipei"
 
-* **Filter**: None (show all)
-* **Visibility**: Workspace (shared view)
+* **Filtru**: Niciunul (afișează tot)
+* **Vizibilitate**: Workspace (vizualizare partajată)
 
-### "Closing This Month"
+### "Se închid luna aceasta"
 
-* **Type**: Table
-* **Filter**: Close Date = This month, Stage ≠ Closed Won, Stage ≠ Closed Lost
-* **Sort**: Close Date ascending
+* **Tip**: Tabel
+* **Filtru**: Data închiderii = Luna aceasta, Etapa ≠ Închis câștigat, Etapa ≠ Închis pierdut
+* **Sortare**: Data închiderii crescător
 
-## Working with Opportunities
+## Lucrul cu oportunitățile
 
-### Creating Opportunities
+### Crearea oportunităților
 
-* Click **+ New** in the Opportunities view
-* Or click **+** in a specific stage column
+* Faceți clic pe **+ Nou** în vizualizarea Oportunități
+* Sau faceți clic pe **+** într-o coloană a unei etape specifice
 
-### Moving Through Stages
+### Trecerea prin etape
 
-Drag and drop opportunity cards between columns to update their stage.
+Trageți și plasați cardurile oportunităților între coloane pentru a le actualiza etapa.
 
 <VimeoEmbed videoId="927888627" title="Demonstrație video" />
 
 ## Cele mai bune practici
 
-### Pipeline Hygiene
+### Igiena pipeline-ului
 
-* Update deals daily as they progress
-* Move or close stale deals promptly
-* Keep close dates realistic
+* Actualizați zilnic tranzacțiile pe măsură ce progresează
+* Mutați sau închideți prompt tranzacțiile stagnante
+* Mențineți datele de închidere realiste
 
-### Stage Discipline
+### Disciplina etapelor
 
-* Define clear criteria for each stage
-* Move deals promptly when criteria are met
-* Don't let deals sit in stages too long
+* Definiți criterii clare pentru fiecare etapă
+* Mutați tranzacțiile prompt atunci când criteriile sunt îndeplinite
+* Nu lăsați tranzacțiile să stea prea mult timp în etape
 
-## Related
+## Conexe
 
-* [Kanban Views](/l/ro/user-guide/views-pipelines/capabilities/kanban-views) — aggregations and compact view
-* [Filters and Sorting](/l/ro/user-guide/views-pipelines/capabilities/filters-and-sorting) — creating filtered views
+* [Vizualizări Kanban](/l/ro/user-guide/views-pipelines/capabilities/kanban-views) — agregări și vizualizare compactă
+* [Filtre și sortare](/l/ro/user-guide/views-pipelines/capabilities/filters-and-sorting) — crearea vizualizărilor filtrate

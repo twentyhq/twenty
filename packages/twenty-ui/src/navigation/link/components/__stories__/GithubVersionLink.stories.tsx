@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { ComponentWithRouterDecorator } from '@ui/testing';
 import { GithubVersionLink } from '../GithubVersionLink';

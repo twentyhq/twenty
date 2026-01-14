@@ -34,21 +34,21 @@ Un element vizual pe care îl puteți folosi ca un container clicabil sau non-cl
   </Tab>
 
   <Tab title="Proprietăți">
-    | Proprietăți  | Tip                        | Descriere                                                                                    |
-    | ------------ | -------------------------- | -------------------------------------------------------------------------------------------- |
-    | linkToEntity | șir                        | Legătura către entitate                                                                      |
-    | entitateId   | șir                        | Identificatorul unic pentru entitate                                                         |
-    | nume         | șir                        | Numele entității                                                                             |
-    | pictureUrl   | șir                        | imagine a lui s                                                                              |
-    | tipAvatar    | Tip Avatar                 | Tipul de avatar pe care doriți să îl afișați. Has two options: `rounded` and `squared`       |
-    | variant      | `Enumul EntityChipVariant` | Variant of the entity chip you want to display. Are două opțiuni: `regulat` și `transparent` |
-    | IconaStânga  | ComponentaIcoana           | O componentă React care reprezintă o icona. Afișată pe partea stângă a fișei                 |
+    | Proprietăți  | Tip                        | Descriere                                                                                               |
+    | ------------ | -------------------------- | ------------------------------------------------------------------------------------------------------- |
+    | linkToEntity | șir                        | Legătura către entitate                                                                                 |
+    | entitateId   | șir                        | Identificatorul unic pentru entitate                                                                    |
+    | nume         | șir                        | Numele entității                                                                                        |
+    | pictureUrl   | șir                        | imagine a lui s                                                                                         |
+    | tipAvatar    | Tip Avatar                 | Tipul de avatar pe care doriți să îl afișați. Are două opțiuni: `rounded` și `squared`                  |
+    | variant      | `Enumul EntityChipVariant` | Varianta chip-ului entității pe care dorești să o afișezi. Are două opțiuni: `regulat` și `transparent` |
+    | IconaStânga  | ComponentaIcoana           | O componentă React care reprezintă o icona. Afișată pe partea stângă a fișei                            |
   </Tab>
 </Tabs>
 
 ## Exemple
 
-### Transparent Disabled Chip
+### Chip transparent dezactivat
 
 ```jsx
 import { Chip } from 'twenty-ui/components';
@@ -73,7 +73,7 @@ export const MyComponent = () => {
 
 <br />
 
-### Disabled Chip with Tooltip
+### Chip dezactivat cu tooltip
 
 ```jsx
 import { Chip } from "twenty-ui/components";
@@ -82,7 +82,7 @@ export const MyComponent = () => {
   return (
       <Chip 
       size="large"
-      label="Disabled chip that triggers a tooltip when overflowing."
+      label="Chip dezactivat care declanșează un tooltip când depășește spațiul."
       clickable={false}
       variant="regular"
       accent="text-primary"
@@ -95,9 +95,9 @@ export const MyComponent = () => {
 };
 ```
 
-## Entity Chip
+## Chip de entitate
 
-A Chip-like element to display information about an entity.
+Un element de tip Chip pentru a afișa informații despre o entitate.
 
 <Tabs>
   <Tab title="Utilizare">
@@ -125,14 +125,14 @@ A Chip-like element to display information about an entity.
   </Tab>
 
   <Tab title="Proprietăți">
-    | Proprietăți  | Tip                        | Descriere                                                                                    |
-    | ------------ | -------------------------- | -------------------------------------------------------------------------------------------- |
-    | linkToEntity | șir                        | Legătura către entitate                                                                      |
-    | entitateId   | șir                        | Identificatorul unic pentru entitate                                                         |
-    | nume         | șir                        | Numele entității                                                                             |
-    | pictureUrl   | șir                        | imagine a lui s                                                                              |
-    | tipAvatar    | Tip Avatar                 | Tipul de avatar pe care doriți să îl afișați. Has two options: `rounded` and `squared`       |
-    | variant      | `Enumul EntityChipVariant` | Variant of the entity chip you want to display. Are două opțiuni: `regulat` și `transparent` |
-    | IconaStânga  | ComponentaIcoana           | O componentă React care reprezintă o icona. Afișată pe partea stângă a fișei                 |
+    | Proprietăți  | Tip                        | Descriere                                                                                               |
+    | ------------ | -------------------------- | ------------------------------------------------------------------------------------------------------- |
+    | linkToEntity | șir                        | Legătura către entitate                                                                                 |
+    | entitateId   | șir                        | Identificatorul unic pentru entitate                                                                    |
+    | nume         | șir                        | Numele entității                                                                                        |
+    | pictureUrl   | șir                        | imagine a lui s                                                                                         |
+    | tipAvatar    | Tip Avatar                 | Tipul de avatar pe care doriți să îl afișați. Are două opțiuni: `rounded` și `squared`                  |
+    | variant      | `Enumul EntityChipVariant` | Varianta chip-ului entității pe care dorești să o afișezi. Are două opțiuni: `regulat` și `transparent` |
+    | IconaStânga  | ComponentaIcoana           | O componentă React care reprezintă o icona. Afișată pe partea stângă a fișei                            |
   </Tab>
 </Tabs>

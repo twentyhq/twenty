@@ -1,4 +1,3 @@
-import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { transformGroupByDataToPieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/transformGroupByDataToPieChartData';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
@@ -45,7 +44,6 @@ describe('transformGroupByDataToPieChartData', () => {
       namePlural: 'companies',
       fields: [groupByField, aggregateField],
     } as any;
-    const objectMetadataItems = [objectMetadataItem];
 
     const configuration = {
       __typename: 'PieChartConfiguration',
@@ -77,7 +75,6 @@ describe('transformGroupByDataToPieChartData', () => {
     const result = transformGroupByDataToPieChartData({
       groupByData,
       objectMetadataItem,
-      objectMetadataItems,
       configuration,
       aggregateOperation: 'COUNT',
       userTimezone,
@@ -85,8 +82,8 @@ describe('transformGroupByDataToPieChartData', () => {
     });
 
     expect(result.data).toEqual([
-      { id: 'Not Set', value: 2, color: GRAPH_DEFAULT_COLOR },
-      { id: 'Active', value: 5, color: GRAPH_DEFAULT_COLOR },
+      { id: 'Not Set', value: 2, color: undefined },
+      { id: 'Active', value: 5, color: undefined },
     ]);
     expect(result.formattedToRawLookup.get('Not Set')).toBeNull();
     expect(result.formattedToRawLookup.get('Active')).toBe('Active');
@@ -114,7 +111,6 @@ describe('transformGroupByDataToPieChartData', () => {
       namePlural: 'companies',
       fields: [groupByField, aggregateField],
     } as any;
-    const objectMetadataItems = [objectMetadataItem];
 
     const configuration = {
       __typename: 'PieChartConfiguration',
@@ -146,7 +142,6 @@ describe('transformGroupByDataToPieChartData', () => {
     const result = transformGroupByDataToPieChartData({
       groupByData,
       objectMetadataItem,
-      objectMetadataItems,
       configuration,
       aggregateOperation: 'COUNT',
       userTimezone,

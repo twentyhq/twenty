@@ -1,6 +1,6 @@
 ---
 title: Arhitectura Folderului
-info: A detailed look into our server folder architecture
+info: O privire detaliată asupra arhitecturii folderului serverului nostru
 ---
 
 Structura directorului backend este următoarea:
@@ -83,7 +83,7 @@ workspace
   └───workspace.factory.ts
 ```
 
-The root of the workspace directory includes the `workspace.factory.ts`, a file containing the `createGraphQLSchema` function. Această funcție generează schema specifică spațiului de lucru folosind metadatele pentru a personaliza o schemă pentru spațiile de lucru individuale. Prin separarea construcției de schema și rezolvatori, folosim funcția `makeExecutableSchema`, care combină aceste elemente discrete.
+Rădăcina directorului workspace include `workspace.factory.ts`, un fișier care conține funcția `createGraphQLSchema`. Această funcție generează schema specifică spațiului de lucru folosind metadatele pentru a personaliza o schemă pentru spațiile de lucru individuale. Prin separarea construcției de schema și rezolvatori, folosim funcția `makeExecutableSchema`, care combină aceste elemente discrete.
 
 Această strategie nu este doar despre organizare, ci ajută și la optimizare, cum ar fi caching-ul definițiilor de tip generate pentru a îmbunătăți performanța și scalabilitatea.
 

@@ -19,7 +19,7 @@ const StyledEdge = styled.div<StyledEdgeProps>`
     side === 'right' ? 'right' : 'left'}: -${RESIZE_EDGE_WIDTH_PX / 2}px;
   width: ${RESIZE_EDGE_WIDTH_PX}px;
   cursor: col-resize;
-  z-index: 100;
+
   display: flex;
   align-items: center;
   justify-content: center;

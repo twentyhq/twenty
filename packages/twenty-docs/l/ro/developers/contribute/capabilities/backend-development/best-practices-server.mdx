@@ -2,7 +2,7 @@
 title: Cele mai bune practici
 ---
 
-This document outlines the best practices you should follow when working on the backend.
+Acest document prezintă cele mai bune practici pe care ar trebui să le urmați atunci când lucrați la backend.
 
 ## Urmați o abordare modulară
 
@@ -17,6 +17,6 @@ De asemenea, ar trebui să expuneți serviciile pe care doriți să le utilizaț
 
 ## Evitați utilizarea tipului `any`
 
-Când declarați o variabilă ca fiind `any`, verificatorul de tip al TypeScript nu realizează niciun control de tip, făcând posibilă atribuirea oricărui tip de valori variabilei. TypeScript utilizează inferența tipului pentru a determina tipul variabilei pe baza valorii. Declarându-l ca `any`, TypeScript nu mai poate deduce tipul. This makes it hard to catch type-related errors during development, leading to runtime errors and makes the code less maintainable, less reliable, and harder to understand for others.
+Când declarați o variabilă ca fiind `any`, verificatorul de tip al TypeScript nu realizează niciun control de tip, făcând posibilă atribuirea oricărui tip de valori variabilei. TypeScript utilizează inferența tipului pentru a determina tipul variabilei pe baza valorii. Declarându-l ca `any`, TypeScript nu mai poate deduce tipul. Acest lucru îngreunează depistarea erorilor de tip în timpul dezvoltării, ceea ce duce la erori la rulare și face codul mai greu de întreținut, mai puțin fiabil și mai greu de înțeles pentru ceilalți.
 
 De aceea, totul ar trebui să aibă un tip. Astfel, dacă creați un nou obiect cu un prenume și un nume de familie, ar trebui să creați o interfață sau tip care să conțină un prenume și un nume de familie care să definească forma obiectului pe care îl manipulați.

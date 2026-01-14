@@ -1,56 +1,56 @@
 ---
-title: Detect Stale Opportunities
-description: Automatically notify managers when opportunities haven't been updated.
+title: Ruhende Gelegenheiten erkennen
+description: Manager automatisch benachrichtigen, wenn Gelegenheiten nicht aktualisiert wurden.
 ---
 
-Keep your pipeline healthy by alerting managers when opportunities go stale. This workflow checks for opportunities that haven't been updated in a specified number of days.
+Halten Sie Ihre Pipeline gesund, indem Sie Manager benachrichtigen, wenn Gelegenheiten ruhend werden. Dieser Workflow prüft Gelegenheiten, die seit einer festgelegten Anzahl von Tagen nicht aktualisiert wurden.
 
-## The Problem
+## Das Problem
 
-Opportunities sitting without updates lead to:
+Nicht aktualisierte Gelegenheiten führen zu:
 
-* Deals going cold
-* Unreliable forecasts
-* Lost revenue
+* Erkaltende Deals
+* Unzuverlässige Prognosen
+* Entgangener Umsatz
 
-## The Solution
+## Die Lösung
 
-Create a scheduled workflow that finds stale opportunities and emails their managers.
+Erstellen Sie einen geplanten Workflow, der ruhende Gelegenheiten findet und deren Manager per E-Mail benachrichtigt.
 
-## Step-by-Step Setup
+## Schritt-für-Schritt-Einrichtung
 
-### Step 1: Create the Workflow
+### Schritt 1: Workflow erstellen
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it "Stale Opportunity Alert"
+1. Gehen Sie zu **Einstellungen → Workflows**
+2. Klicken Sie auf **+ Neuer Workflow**
+3. Benennen Sie ihn "Benachrichtigung für ruhende Gelegenheiten"
 
-### Step 2: Configure the Trigger
+### Schritt 2: Trigger konfigurieren
 
-1. Select **On a Schedule**
-2. Set to run daily (e.g., every day at 8 AM)
+1. Wählen Sie **Nach Zeitplan**
+2. Auf täglich festlegen (z. B. jeden Tag um 8 Uhr)
 
-### Step 3: Search for Stale Opportunities
+### Schritt 3: Nach ruhenden Gelegenheiten suchen
 
-1. Add **Search Records** action
+1. Fügen Sie die Aktion **Datensätze suchen** hinzu
 2. Konfigurieren:
 
-| Feld       | Wert                                            |
-| ---------- | ----------------------------------------------- |
-| **Object** | Opportunities                                   |
-| **Filter** | Updated At is before (today - 7 days)           |
-| **Filter** | Stage is not "Closed Won" AND not "Closed Lost" |
-| **Limit**  | 100                                             |
+| Feld       | Wert                                                 |
+| ---------- | ---------------------------------------------------- |
+| **Objekt** | Opportunities                                        |
+| **Filter** | Aktualisiert am ist vor (heute - 7 Tage)             |
+| **Filter** | Phase ist nicht "Closed Won" UND nicht "Closed Lost" |
+| **Limit**  | 100                                                  |
 
-### Step 4: Check If Any Found
+### Schritt 4: Prüfen, ob Einträge gefunden wurden
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. If no stale opportunities, the workflow stops here
+1. Fügen Sie eine **Filter**-Aktion hinzu
+2. Bedingung: `{{searchRecords.length}}` ist größer als 0
+3. Wenn keine ruhenden Gelegenheiten vorhanden sind, endet der Workflow hier
 
-### Step 5: Format the Alert (Code Action)
+### Schritt 5: Benachrichtigung formatieren (Code-Aktion)
 
-Add a **Code** action to format the email:
+Fügen Sie eine **Code**-Aktion hinzu, um die E-Mail zu formatieren:
 
 ```javascript
 export const main = async (params) => {
@@ -88,49 +88,49 @@ export const main = async (params) => {
 };
 ```
 
-### Step 6: Send Alert Email
+### Schritt 6: Benachrichtigungs-E-Mail senden
 
-Add **Send Email** action:
+Fügen Sie eine **E-Mail senden**-Aktion hinzu:
 
-| Feld        | Wert                                                        |
-| ----------- | ----------------------------------------------------------- |
-| **To**      | sales-manager@yourcompany.com                               |
-| **Subject** | `🚨 {{code.totalCount}} Stale Opportunities Need Attention` |
-| **Body**    | `{{code.summary}}`                                          |
+| Feld        | Wert                                                                    |
+| ----------- | ----------------------------------------------------------------------- |
+| **An**      | sales-manager@yourcompany.com                                           |
+| **Betreff** | `🚨 {{code.totalCount}} ruhende Gelegenheiten erfordern Aufmerksamkeit` |
+| **Inhalt**  | `{{code.summary}}`                                                      |
 
-### Step 7: Test and Activate
+### Schritt 7: Testen und aktivieren
 
-1. Click **Test** to run the workflow
-2. Check that the email contains the right data
-3. Activate when ready
+1. Klicken Sie auf **Test**, um den Workflow auszuführen
+2. Überprüfen Sie, dass die E-Mail die richtigen Daten enthält
+3. Aktivieren Sie, sobald alles bereit ist
 
-## Customization Options
+## Anpassungsoptionen
 
-### Change Staleness Threshold
+### Schwellenwert für Inaktivität ändern
 
-Modify the Search Records filter to change from 7 days to your preferred period:
+Passen Sie den Filter der Aktion Datensätze suchen an, um statt 7 Tagen Ihren bevorzugten Zeitraum zu verwenden:
 
-* 3 days for high-velocity sales
-* 14 days for enterprise deals
-* 30 days for long sales cycles
+* 3 Tage für schnelllebige Verkäufe
+* 14 Tage für Enterprise-Deals
+* 30 Tage für lange Verkaufszyklen
 
-### Alert Individual Reps
+### Einzelne Vertriebsmitarbeiter benachrichtigen
 
-Instead of one manager email, use **Iterator** to send personalized emails to each rep about their own stale deals.
+Verwenden Sie statt einer einzelnen Manager-E-Mail den **Iterator**, um jedem Vertriebsmitarbeiter personalisierte E-Mails zu seinen eigenen ruhenden Deals zu senden.
 
-### Add Escalation
+### Eskalation hinzufügen
 
-Create multiple workflows with increasing severity:
+Erstellen Sie mehrere Workflows mit zunehmender Dringlichkeit:
 
-1. Day 7: Email to rep
-2. Day 14: Email to rep + manager
-3. Day 21: Create task for manager to intervene
+1. Tag 7: E-Mail an den Vertriebsmitarbeiter
+2. Tag 14: E-Mail an Vertriebsmitarbeiter + Manager
+3. Tag 21: Aufgabe für den Manager erstellen, um einzugreifen
 
-### Include in Slack
+### In Slack einbinden
 
-Use **HTTP Request** to post to a Slack webhook instead of or in addition to email.
+Verwenden Sie **HTTP Request**, um an einen Slack-Webhook zu posten, anstelle von oder zusätzlich zu E-Mail.
 
-## Related
+## Verwandt
 
-* [Workflow Actions](/l/de/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/de/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [E-Mails aus Workflows senden](/l/de/user-guide/workflows/capabilities/send-emails-from-workflows)

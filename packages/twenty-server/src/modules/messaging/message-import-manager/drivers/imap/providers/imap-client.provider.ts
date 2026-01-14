@@ -123,16 +123,6 @@ export class ImapClientProvider {
         `Connected to IMAP server for ${connectedAccount.handle}`,
       );
 
-      try {
-        const mailboxes = await client.list();
-
-        this.logger.log(
-          `Available mailboxes for ${connectedAccount.handle}: ${mailboxes.map((m) => m.path).join(', ')}`,
-        );
-      } catch (error) {
-        this.logger.warn(`Failed to list mailboxes: ${error.message}`);
-      }
-
       return client;
     } catch (error) {
       if (timeoutId) {

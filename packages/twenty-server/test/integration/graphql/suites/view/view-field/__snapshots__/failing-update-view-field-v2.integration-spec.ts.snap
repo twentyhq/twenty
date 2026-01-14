@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`View Field Resolver - Failing Update Operation - v2 should fail to update view field when non-existent view field 1`] = `
 {

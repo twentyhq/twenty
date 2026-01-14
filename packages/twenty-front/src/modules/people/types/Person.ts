@@ -23,6 +23,7 @@ export type Person = {
   };
   city: string;
   email: string;
+  /** @deprecated */
   phone: string;
   companyId?: string;
   position?: number;

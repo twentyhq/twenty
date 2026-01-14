@@ -27,7 +27,7 @@ import { VIEW_PICKER_TYPE_SELECT_OPTIONS } from '@/views/view-picker/constants/V
 import { VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerViewTypeDropdownId';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
-import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
+import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarFieldMetadataIdComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
@@ -92,7 +92,8 @@ export const ViewPickerContentCreateMode = () => {
 
   const { createViewFromCurrentState } = useCreateViewFromCurrentState();
 
-  const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
+  const { availableFieldsForGrouping } =
+    useGetAvailableFieldsToGroupRecordsBy();
 
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
 
@@ -105,7 +106,7 @@ export const ViewPickerContentCreateMode = () => {
 
       if (
         viewPickerType === ViewType.Kanban &&
-        availableFieldsForKanban.length === 0
+        availableFieldsForGrouping.length === 0
       ) {
         return;
       }
@@ -117,7 +118,7 @@ export const ViewPickerContentCreateMode = () => {
       viewPickerIsPersisting,
       createViewFromCurrentState,
       viewPickerType,
-      availableFieldsForKanban,
+      availableFieldsForGrouping,
       availableFieldsForCalendar,
     ],
   });
@@ -200,8 +201,8 @@ export const ViewPickerContentCreateMode = () => {
                   setViewPickerMainGroupByFieldMetadataId(value);
                 }}
                 options={
-                  availableFieldsForKanban.length > 0
-                    ? availableFieldsForKanban.map((field) => ({
+                  availableFieldsForGrouping.length > 0
+                    ? availableFieldsForGrouping.map((field) => ({
                         value: field.id,
                         label: field.label,
                       }))
@@ -210,7 +211,7 @@ export const ViewPickerContentCreateMode = () => {
                 dropdownId={VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID}
               />
             </ViewPickerSelectContainer>
-            {availableFieldsForKanban.length === 0 && (
+            {availableFieldsForGrouping.length === 0 && (
               <StyledFieldAvailableContainer>
                 <Trans>
                   Set up a Select field on {objectLabel} to create a Kanban

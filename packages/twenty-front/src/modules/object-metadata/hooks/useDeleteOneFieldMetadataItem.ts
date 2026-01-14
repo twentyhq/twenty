@@ -13,6 +13,7 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { CrudOperationType } from 'twenty-shared/types';
 
 export const useDeleteOneFieldMetadataItem = () => {
   const [deleteOneFieldMetadataItemMutation] =
@@ -80,6 +81,7 @@ export const useDeleteOneFieldMetadataItem = () => {
       if (error instanceof ApolloError) {
         handleMetadataError(error, {
           primaryMetadataName: 'fieldMetadata',
+          operationType: CrudOperationType.DELETE,
         });
       } else {
         enqueueErrorSnackBar({ message: t`An error occurred.` });

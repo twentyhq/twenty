@@ -11,7 +11,7 @@ import {
   type FlatViewGroupsToDeleteUpdateAndCreate,
   recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-view-groups-on-flat-field-metadata-options-update.util';
-import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
+import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/types/property-update.type';
 
 type HandleEnumFlatFieldMetadataOptionsUpdateSideEffectsArgs = FromTo<
   FlatFieldMetadata<EnumFieldMetadataType>,

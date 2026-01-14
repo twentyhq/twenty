@@ -1,92 +1,88 @@
 ---
-title: Use Iterator
-description: Loop through arrays of records to perform actions on each item.
+title: Utilizați Iterator
+description: Parcurgeți array-uri de înregistrări pentru a executa acțiuni asupra fiecărui element.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Iterator lets you loop through an array of records and perform actions on each one. It's essential for workflows that need to process multiple records returned by Search Records or received via webhooks.
+Iterator vă permite să parcurgeți un array de înregistrări și să efectuați acțiuni pe fiecare în parte. Este esențial pentru fluxuri de lucru care trebuie să proceseze mai multe înregistrări returnate de Search Records sau primite prin webhook-uri.
 
-<Note>
-  Iterator is currently in beta. Activate it under **Settings → Releases → Lab**.
-</Note>
+## Când să folosiți Iterator
 
-## When to Use Iterator
+| Scenariu                              | Exemplu                                                |
+| ------------------------------------- | ------------------------------------------------------ |
+| **Procesați rezultatele căutării**    | Trimiteți e-mail fiecărei persoane găsite              |
+| **Gestionați array-urile de webhook** | Creați înregistrări pentru fiecare element, în ordine  |
+| **Actualizări în masă**               | Actualizați mai multe înregistrări cu valori calculate |
+| **Notificări**                        | Alertați mai multe persoane despre un eveniment        |
 
-| Scenario                   | Exemplu                                        |
-| -------------------------- | ---------------------------------------------- |
-| **Process search results** | Send email to each person found                |
-| **Handle webhook arrays**  | Create records for each item in order          |
-| **Bulk updates**           | Update multiple records with calculated values |
-| **Notifications**          | Alert multiple people about an event           |
+## Înțelegerea Iteratorului
 
-## Understanding Iterator
+Iterator așteaptă un **array** ca intrare. Apoi:
 
-Iterator expects an **array** as input. It then:
+1. Preia primul element din array
+2. Rulează toate acțiunile din interiorul Iteratorului cu acel element
+3. Trece la următorul element
+4. Repetă până când toate elementele sunt procesate
 
-1. Takes the first item from the array
-2. Runs all actions inside the iterator with that item
-3. Moves to the next item
-4. Repeats until all items are processed
+## Configurare de bază
 
-## Basic Setup
+### Exemplu: Trimiteți e-mail tuturor din rezultatele căutării
 
-### Example: Email Everyone in Search Results
+**Obiectiv**: Găsiți toate contactele dintr-o companie specifică și trimiteți fiecăruia un e-mail personalizat.
 
-**Goal**: Find all contacts in a specific company and send each one a personalized email.
+### Pasul 1: Căutați înregistrări
 
-### Step 1: Search for Records
+1. Adăugați acțiunea **Search Records**
+2. Obiect: **Persoane**
+3. Filtru: Compania este egală cu "Acme Inc"
+4. Aceasta returnează un array de persoane
 
-1. Add **Search Records** action
-2. Object: **People**
-3. Filter: Company equals "Acme Inc"
-4. This returns an array of people
+### Pasul 2: Verificați dacă există rezultate
 
-### Step 2: Check Results Exist
+1. Adăugați acțiunea **Filter**
+2. Condiție: `{{searchRecords.length}}` este mai mare decât 0
+3. Aceasta previne erorile Iteratorului când rezultatele sunt goale
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. This prevents Iterator errors on empty results
+### Pasul 3: Adăugați un Iterator
 
-### Step 3: Add Iterator
+1. Adăugați acțiunea **Iterator**
+2. Intrare pentru array: selectați `{{searchRecords}}`
+3. Aceasta creează o buclă
 
-1. Add **Iterator** action
-2. Array input: Select `{{searchRecords}}`
-3. This creates a loop
+### Pasul 4: Adăugați acțiuni în interiorul Iteratorului
 
-### Step 4: Add Actions Inside Iterator
+Acțiunile plasate după Iterator rulează pentru fiecare element:
 
-Actions placed after Iterator run for each item:
-
-1. Add **Send Email** action (inside iterator)
-2. To: `{{iterator.currentItem.email}}`
-3. Subject: Hello `{{iterator.currentItem.firstName}}`!
-4. Body: Personalized message using current item fields
+1. Adăugați acțiunea **Send Email** (în interiorul Iteratorului)
+2. Către: `{{iterator.currentItem.email}}`
+3. Subiect: Salut `{{iterator.currentItem.firstName}}`!
+4. Conținut: Mesaj personalizat folosind câmpurile elementului curent
 
 ### Rezultat
 
-If Search Records returns 5 people, the Iterator:
+Dacă Search Records returnează 5 persoane, Iteratorul:
 
-* Sends email to person 1
-* Sends email to person 2
-* ... continues for all 5
+* Trimite e-mail persoanei 1
+* Trimite e-mail persoanei 2
+* ... continuă pentru toate cele 5
 
-## Accessing Current Item Data
+## Accesarea datelor elementului curent
 
-Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
+În interiorul Iteratorului, folosiți `{{iterator.currentItem}}` pentru a accesa înregistrarea curentă:
 
-| Variable                                | Descriere                           |
-| --------------------------------------- | ----------------------------------- |
-| `{{iterator.currentItem}}`              | The entire current record object    |
-| `{{iterator.currentItem.id}}`           | Record ID                           |
-| `{{iterator.currentItem.email}}`        | Email field                         |
-| `{{iterator.currentItem.company.name}}` | Related company name                |
-| `{{iterator.index}}`                    | Current position in array (0-based) |
+| Variabilă                               | Descriere                                   |
+| --------------------------------------- | ------------------------------------------- |
+| `{{iterator.currentItem}}`              | Întregul obiect al înregistrării curente    |
+| `{{iterator.currentItem.id}}`           | ID-ul înregistrării                         |
+| `{{iterator.currentItem.email}}`        | Câmp de e-mail                              |
+| `{{iterator.currentItem.company.name}}` | Numele companiei asociate                   |
+| `{{iterator.index}}`                    | Poziția curentă în array (indexare de la 0) |
 
-## Common Patterns
+## Tipare comune
 
-### Update Multiple Records
+### Actualizați mai multe înregistrări
 
-**Goal**: Mark all overdue tasks as "Late"
+**Obiectiv**: Marcați toate sarcinile întârziate ca "Late"
 
 ```
 1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
@@ -98,9 +94,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Status: Late
 ```
 
-### Create Records from Array
+### Creați înregistrări dintr-un array
 
-**Goal**: Webhook receives order with multiple items, create a record for each
+**Obiectiv**: Webhook-ul primește o comandă cu mai multe articole, creați o înregistrare pentru fiecare
 
 ```
 1. Webhook Trigger (receives items array)
@@ -113,9 +109,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Related Order: {{trigger.body.orderId}}
 ```
 
-### Conditional Processing Inside Loop
+### Procesare condițională în interiorul buclei
 
-**Goal**: Only send email to contacts with valid emails
+**Obiectiv**: Trimiteți e-mail doar contactelor cu adrese valide
 
 ```
 1. Search Records (People)
@@ -129,52 +125,52 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
 
 ### "Iterator expects an array"
 
-**Cause**: You passed a single record instead of an array.
+**Cauză**: Ați transmis o singură înregistrare în loc de un array.
 
-**Fix**: Make sure you're passing the result of Search Records or an array field, not a single record.
+**Remediere**: Asigurați-vă că transmiteți rezultatul acțiunii Search Records sau un câmp de tip array, nu o singură înregistrare.
 
 ```
 ✅ Correct: {{searchRecords}}
 ❌ Wrong: {{searchRecords[0]}}
 ```
 
-### Iterator Doesn't Run
+### Iteratorul nu rulează
 
-**Cause**: The array is empty.
+**Cauză**: Array-ul este gol.
 
-**Fix**: Add a Filter before Iterator to check array length:
+**Remediere**: Adăugați un Filter înainte de Iterator pentru a verifica lungimea array-ului:
 
 ```
 Filter: {{searchRecords.length}} > 0
 ```
 
-### Actions Run Too Many Times
+### Acțiunile rulează de prea multe ori
 
-**Cause**: Search Records returned more records than expected.
+**Cauză**: Search Records a returnat mai multe înregistrări decât era de așteptat.
 
-**Fix**:
+**Remediere**:
 
-* Add more specific filters to Search Records
-* Set a limit on Search Records (max 200)
-* Add Filter inside Iterator for additional conditions
+* Adăugați filtre mai specifice în Search Records
+* Setați o limită în Search Records (maxim 200)
+* Adăugați un Filter în interiorul Iteratorului pentru condiții suplimentare
 
-## Performance Considerations
+## Considerații de performanță
 
-* **Credit usage**: Each iteration consumes credits for its actions
-* **Time**: Large arrays take longer to process
-* **Limits**: Consider batching very large operations
-* **Rate limits**: External API calls may hit rate limits with many iterations
+* **Utilizarea creditelor**: Fiecare iterație consumă credite pentru acțiunile sale
+* **Timp**: Array-urile mari necesită mai mult timp pentru a fi procesate
+* **Limite**: Luați în considerare procesarea în loturi a operațiunilor foarte mari
+* **Limite de rată**: Apelurile către API-uri externe pot atinge limitele de rată la multe iterații
 
 ## Cele mai bune practici
 
-1. **Always check array length** before Iterator to avoid errors
-2. **Add filters inside loops** when not all items need processing
-3. **Rename your Iterator step** to describe what it's looping through
-4. **Test with small arrays** before processing large datasets
-5. **Monitor workflow runs** to ensure iterations complete as expected
+1. **Verificați întotdeauna lungimea array-ului** înainte de Iterator pentru a evita erorile
+2. **Adăugați filtre în interiorul buclelor** când nu toate elementele trebuie procesate
+3. **Redenumiți pasul Iterator** pentru a descrie prin ce iterează
+4. **Testați cu array-uri mici** înainte de a procesa seturi mari de date
+5. **Monitorizați rulările fluxurilor de lucru** pentru a vă asigura că iterațiile se finalizează conform așteptărilor
 
-## Related
+## Conexe
 
-* [Workflow Actions](/l/ro/user-guide/workflows/capabilities/workflow-actions)
-* [How to Use Branches](/l/ro/user-guide/workflows/capabilities/use-branches-in-workflows)
-* [Workflows FAQ](/l/ro/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Cum să utilizați ramurile](/l/ro/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [Întrebări frecvente despre fluxurile de lucru](/l/ro/user-guide/workflows/how-tos/need-more-help/workflows-faq)

@@ -124,7 +124,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       targetFieldName: 'taskTargets',
       settings: {
         relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
+        onDelete: RelationOnDeleteAction.CASCADE,
         joinColumnName: 'taskId',
       },
     },

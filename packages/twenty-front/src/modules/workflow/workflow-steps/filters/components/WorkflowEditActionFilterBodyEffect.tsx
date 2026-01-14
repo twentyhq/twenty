@@ -1,4 +1,5 @@
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
@@ -13,6 +14,7 @@ import {
   convertViewFilterOperandToCoreOperand,
   isDefined,
 } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type FilterSettingsWithPotentiallyDeprecatedOperand = {
   stepFilterGroups?: StepFilterGroup[];
@@ -42,6 +44,13 @@ export const WorkflowEditActionFilterBodyEffect = ({
     { stepId },
   );
 
+  const currentStepFilters = useRecoilComponentValue(
+    currentStepFiltersComponentState,
+  );
+  const currentStepFilterGroups = useRecoilComponentValue(
+    currentStepFilterGroupsComponentState,
+  );
+
   const setCurrentStepFilters = useSetRecoilComponentState(
     currentStepFiltersComponentState,
   );
@@ -58,8 +67,20 @@ export const WorkflowEditActionFilterBodyEffect = ({
   }, [defaultValue?.stepFilters]);
 
   useEffect(() => {
-    if (!hasInitializedCurrentStepFilters && isDefined(stepFiltersConverted)) {
-      setCurrentStepFilters(stepFiltersConverted ?? []);
+    if (!isDefined(stepFiltersConverted)) {
+      return;
+    }
+
+    if (
+      hasInitializedCurrentStepFilters &&
+      isDeeplyEqual(currentStepFilters, stepFiltersConverted)
+    ) {
+      return;
+    }
+
+    setCurrentStepFilters(stepFiltersConverted ?? []);
+
+    if (!hasInitializedCurrentStepFilters) {
       setHasInitializedCurrentStepFilters(true);
     }
   }, [
@@ -67,15 +88,34 @@ export const WorkflowEditActionFilterBodyEffect = ({
     hasInitializedCurrentStepFilters,
     setHasInitializedCurrentStepFilters,
     stepFiltersConverted,
+    currentStepFilters,
   ]);
 
   useEffect(() => {
+    if (!isDefined(defaultValue?.stepFilterGroups)) {
+      return;
+    }
+
     if (
       !hasInitializedCurrentStepFilterGroups &&
-      isDefined(defaultValue?.stepFilterGroups) &&
-      defaultValue.stepFilterGroups.length > 0
+      defaultValue.stepFilterGroups.length === 0
     ) {
-      setCurrentStepFilterGroups(defaultValue.stepFilterGroups ?? []);
+      return;
+    }
+
+    if (
+      hasInitializedCurrentStepFilterGroups &&
+      isDeeplyEqual(
+        currentStepFilterGroups,
+        defaultValue.stepFilterGroups ?? [],
+      )
+    ) {
+      return;
+    }
+
+    setCurrentStepFilterGroups(defaultValue.stepFilterGroups ?? []);
+
+    if (!hasInitializedCurrentStepFilterGroups) {
       setHasInitializedCurrentStepFilterGroups(true);
     }
   }, [
@@ -83,6 +123,7 @@ export const WorkflowEditActionFilterBodyEffect = ({
     hasInitializedCurrentStepFilterGroups,
     setHasInitializedCurrentStepFilterGroups,
     defaultValue?.stepFilterGroups,
+    currentStepFilterGroups,
   ]);
 
   return null;

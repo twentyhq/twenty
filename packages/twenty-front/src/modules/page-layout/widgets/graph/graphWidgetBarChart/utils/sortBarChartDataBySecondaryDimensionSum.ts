@@ -23,9 +23,11 @@ export const sortBarChartDataBySecondaryDimensionSum = ({
   const dataWithSecondaryDimensionSums = data.map((datum) => {
     const secondaryDimensionSum = keys.reduce((sumAccumulator, segmentKey) => {
       const segmentValue = datum[segmentKey];
+
       if (isDefined(segmentValue) && typeof segmentValue === 'number') {
         return sumAccumulator + segmentValue;
       }
+
       return sumAccumulator;
     }, 0);
 

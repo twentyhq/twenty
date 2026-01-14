@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`formatDateByGranularity quarter calculations should calculate quarter for 2024-01-15 1`] = `"Q1 2024"`;
 

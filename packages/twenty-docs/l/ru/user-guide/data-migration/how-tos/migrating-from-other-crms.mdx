@@ -1,133 +1,133 @@
 ---
 title: "Миграция с других CRM-систем "
-description: Step-by-step guide to migrate your data from any CRM to Twenty.
+description: Пошаговое руководство по миграции ваших данных из любой CRM в Twenty.
 ---
 
 ## Обзор
 
-This guide walks you through migrating your data from any CRM to Twenty. The process involves auditing your data, preparing your Twenty workspace, exporting from your current system, and importing into Twenty.
+Это руководство проведет вас через процесс миграции ваших данных из любой CRM в Twenty. Процесс включает аудит ваших данных, подготовку рабочего пространства Twenty, экспорт из вашей текущей системы и импорт в Twenty.
 
-<Note>Views, workflows, and permissions must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>Представления, рабочие процессы и права доступа необходимо воссоздать вручную после миграции. Запланируйте время на эту настройку.</Note>
 
-## Step 1: Audit Your Current Data
+## Шаг 1: Проведите аудит текущих данных
 
-Migration is an opportunity for a fresh start. Don't bring over clutter.
+Миграция — это возможность начать с чистого листа. Не переносите лишние данные.
 
-**What to keep:**
+**Что сохранить:**
 
-* Active contacts and companies
-* Open opportunities and deals
-* Important notes and activities
-* Custom fields you actually use
+* Активные контакты и компании
+* Открытые возможности и сделки
+* Важные заметки и активности
+* Пользовательские поля, которые вы действительно используете
 
-**What to leave behind:**
+**Что не переносить:**
 
-* Outdated contacts (no activity in 2+ years)
-* Duplicate records
-* Test data
-* Unused custom fields
+* Устаревшие контакты (нет активности более 2 лет)
+* Дубликаты записей
+* Тестовые данные
+* Неиспользуемые пользовательские поля
 
-## Step 2: Map Your Data Model
+## Шаг 2: Сопоставьте модель данных
 
-Create a mapping document between your current CRM and Twenty:
+Создайте документ сопоставления между вашей текущей CRM и Twenty:
 
-| Your CRM               | Twenty               |
-| ---------------------- | -------------------- |
-| Account / Organization | **Company**          |
-| Contact / Person       | **People**           |
-| Deal / Opportunity     | **Opportunity**      |
-| Activity               | **Task** or **Note** |
-| Custom Object          | **Custom Object**    |
+| Ваша CRM                | Twenty                      |
+| ----------------------- | --------------------------- |
+| Аккаунт / Организация   | **Компания**                |
+| Контакт / Персона       | **Люди**                    |
+| Сделка / Возможность    | **Возможность**             |
+| Активность              | **Задача** или **Заметка**  |
+| Пользовательский объект | **Пользовательский объект** |
 
-**For each field, document:**
+**Для каждого поля задокументируйте:**
 
-* The source field name
-* The target Twenty field
-* Any format transformations needed (dates, phone numbers, etc.)
+* Имя исходного поля
+* Целевое поле Twenty
+* Необходимые преобразования формата (даты, номера телефонов и т. д.)
 
-<Note>Keep this mapping document handy during import—you'll reference it when mapping columns.</Note>
+<Note>Держите этот документ сопоставления под рукой во время импорта — вы будете ссылаться на него при сопоставлении столбцов.</Note>
 
-## Step 3: Set Up Your Twenty Workspace
+## Шаг 3: Настройте рабочее пространство Twenty
 
-Before importing data, prepare your Twenty workspace:
+Прежде чем импортировать данные, подготовьте рабочее пространство Twenty:
 
-### Create Custom Objects and Fields
+### Создайте пользовательские объекты и поля
 
-1. Go to **Settings → Data Model**
-2. Create any custom objects you need
-3. Add custom fields to standard and custom objects
-4. Configure field settings (unique, required, select options, etc.)
-
-<Warning>
-  **Fields must exist before import.**
-
-  The CSV import creates records, not fields. Create all custom fields in Settings → Data Model before importing.
-</Warning>
-
-### Invite Your Team
+1. Перейдите в **Настройки → Модель данных**
+2. Создайте все нужные пользовательские объекты
+3. Добавьте пользовательские поля к стандартным и пользовательским объектам
+4. Настройте параметры полей (уникальность, обязательность, варианты выбора и т. д.)
 
 <Warning>
-  **Invite users BEFORE importing data.**
+  **Все поля должны существовать до начала импорта.**
 
-  If your data includes user references (Account Owner, Assignee, etc.), those users must exist in Twenty before import. Otherwise, those relations cannot be mapped.
+  Импорт CSV создаёт записи, а не поля. Создайте все пользовательские поля в разделе Настройки → Модель данных перед импортом.
 </Warning>
 
-1. Go to **Settings → Members**
-2. Invite all team members
-3. **Wait for everyone to accept** their invitation
-4. Verify all users appear in your Members list
+### Пригласите свою команду
 
-## Step 4: Export from Your Current CRM
+<Warning>
+  **Пригласите пользователей ПЕРЕД импортом данных.**
 
-Export your data from your current CRM:
+  Если ваши данные содержат ссылки на пользователей (владелец аккаунта, исполнитель и т. д.), эти пользователи должны существовать в Twenty до импорта. В противном случае эти связи нельзя будет сопоставить.
+</Warning>
 
-1. Look for an **Export** function (usually under Settings, Data Management, or Admin)
-2. Export to **CSV format** when possible
-3. Export each object type separately (Companies, Contacts, Deals, etc.)
-4. Include all fields you want to migrate
+1. Перейдите в **Настройки → Участники**
+2. Пригласите всех участников команды
+3. **Дождитесь, пока все примут** приглашения
+4. Проверьте, что все пользователи отображаются в списке «Участники»
 
-**Export these objects (in this order for reference):**
+## Шаг 4: Экспорт из вашей текущей CRM
 
-1. Companies / Accounts / Organizations
-2. Contacts / People
-3. Deals / Opportunities
-4. Notes and Activities
+Экспортируйте данные из вашей текущей CRM:
+
+1. Найдите функцию **Export** (обычно в разделах Настройки, Управление данными или Администрирование)
+2. По возможности экспортируйте в **формат CSV**
+3. Экспортируйте каждый тип объектов отдельно (компании, контакты, сделки и т. д.)
+4. Включите все поля, которые вы хотите перенести
+
+**Экспортируйте следующие объекты (в этом порядке, для справки):**
+
+1. Компании / Аккаунты / Организации
+2. Контакты / Люди
+3. Сделки / Возможности
+4. Заметки и активности
 5. Пользовательские объекты
 
-## Step 5: Clean and Format Your Data
+## Шаг 5: Очистите и отформатируйте данные
 
-Open each exported CSV in a spreadsheet application and prepare it for Twenty.
+Откройте каждый экспортированный CSV в табличном приложении и подготовьте его для Twenty.
 
-### Remove Duplicates
+### Удалите дубликаты
 
-1. Sort by the unique field (email for People, domain for Companies)
-2. Remove or merge duplicate rows
-3. Verify no duplicates exist in Twenty already
+1. Отсортируйте по уникальному полю (электронная почта для контактов, домен для компаний)
+2. Удалите или объедините строки-дубликаты
+3. Убедитесь, что в Twenty уже нет дубликатов
 
-### Format Fields Correctly
+### Правильно отформатируйте поля
 
-| Field Type            | Required Format                                   |
-| --------------------- | ------------------------------------------------- |
-| **Domain**            | `https://domain.com`                              |
-| **Электронная почта** | `name@domain.com` (must be unique)                |
-| **Date**              | `YYYY-MM-DD`                                      |
-| **Phone**             | Three columns: Number, Country Code, Calling Code |
-| **Boolean**           | `TRUE` or `FALSE` (uppercase)                     |
-| **Select fields**     | Use API names, not display labels                 |
+| Тип поля              | Требуемый формат                               |
+| --------------------- | ---------------------------------------------- |
+| **Домен**             | `https://domain.com`                           |
+| **Электронная почта** | `name@domain.com` (должен быть уникальным)     |
+| **Дата**              | `YYYY-MM-DD`                                   |
+| **Телефон**           | Три столбца: номер, код страны, телефонный код |
+| **Логический тип**    | `TRUE` или `FALSE` (прописными буквами)        |
+| **Поля Select**       | Используйте имена API, а не отображаемые метки |
 
 <Warning>
-  **Domain format is critical.**
+  **Формат домена критически важен.**
 
-  Use `https://domain.com` (not `domain.com` or `www.domain.com`). This matches Twenty's format and prevents duplicates when you connect email/calendar sync.
+  Используйте `https://domain.com` (не `domain.com` и не `www.domain.com`). Это соответствует формату Twenty и предотвращает дубликаты при подключении синхронизации электронной почты/календаря.
 </Warning>
 
-See [How to Prepare Your CSV Files](/l/ru/user-guide/data-migration/how-tos/prepare-your-csv-files) for complete formatting requirements for all field types.
+См. [как подготовить файлы CSV](/l/ru/user-guide/data-migration/how-tos/prepare-your-csv-files) для полного перечня требований к форматированию для всех типов полей.
 
-### Add Relation Columns
+### Добавьте столбцы для связей
 
-To link records (e.g., People to Companies), add a column with the parent's unique identifier.
+Чтобы связать записи (например, контакты с компаниями), добавьте столбец с уникальным идентификатором родительской записи.
 
-**Example: People CSV with Company link**
+**Пример: CSV контактов со ссылкой на компанию**
 
 ```csv
 firstName,lastName,email,companyDomain
@@ -135,159 +135,159 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-See [How to Import Relations](/l/ru/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions on linking records.
+См. [как импортировать связи](/l/ru/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) для подробных инструкций по связыванию записей.
 
-### Update User References
+### Обновите ссылки на пользователей
 
-If your data includes user assignments (Owner, Assignee):
+Если ваши данные содержат назначения пользователей (владелец, исполнитель):
 
-1. Add a column with the **user's email** (not just their ID from the old system)
-2. Use the same email addresses that users used to join your Twenty workspace
+1. Добавьте столбец с **электронной почтой пользователя** (а не только его ID из старой системы)
+2. Используйте те же адреса электронной почты, которые пользователи использовали для присоединения к вашему рабочему пространству Twenty
 
-See [How to Prepare Your CSV Files](/l/ru/user-guide/data-migration/how-tos/prepare-your-csv-files) for complete formatting guide.
+См. [как подготовить файлы CSV](/l/ru/user-guide/data-migration/how-tos/prepare-your-csv-files) для полного руководства по форматированию.
 
-## Step 6: Import to Twenty
+## Шаг 6: Импорт в Twenty
 
 <Warning>
-  **Import Order Matters!**
+  **Порядок импорта имеет значение!**
 
-  Always import in this order:
+  Всегда импортируйте в следующем порядке:
 
-  1. **Companies** first (no dependencies)
-  2. **People** second (link to Companies)
-  3. **Opportunities** third (link to Companies/People)
-  4. **Notes and Tasks** (link to records)
-  5. **Custom objects** following their dependencies
+  1. **Компании** в первую очередь (без зависимостей)
+  2. **Контакты** во вторую очередь (связь с компаниями)
+  3. **Возможности** в третью очередь (связь с компаниями/контактами)
+  4. **Заметки и задачи** (связь с записями)
+  5. **Пользовательские объекты** с учётом их зависимостей
 
-  The parent record must exist before you can reference it.
+  Родительская запись должна существовать до того, как вы сможете на неё сослаться.
 </Warning>
 
-### Import Each Object
+### Импортируйте каждый объект
 
-For each CSV file, in order:
+Для каждого CSV-файла, по порядку:
 
-1. Navigate to the object in Twenty
-2. Click **⋮ → Import records**
-3. Upload the CSV file
-4. Map columns to fields:
-   * Map user email columns to the appropriate relation fields
-   * Map relation columns (like `companyDomain`) to relation fields
-5. Review and fix any errors in the UI
-6. Confirm the import
-7. Verify a few records before proceeding to the next file
+1. Перейдите к объекту в Twenty
+2. Нажмите **⋮ → Импорт записей**
+3. Загрузите файл CSV
+4. Сопоставьте столбцы с полями:
+   * Сопоставьте столбцы с адресами электронной почты пользователей соответствующим полям связей
+   * Сопоставьте столбцы связей (например, `companyDomain`) с полями связей
+5. Проверьте и исправьте любые ошибки в интерфейсе
+6. Подтвердите импорт
+7. Проверьте несколько записей, прежде чем переходить к следующему файлу
 
-**Detailed guides:**
+**Подробные руководства:**
 
-* [How to Import Companies](/l/ru/user-guide/data-migration/how-tos/import-companies-via-csv)
-* [How to Import Contacts](/l/ru/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [How to Import Relations](/l/ru/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Как импортировать компании](/l/ru/user-guide/data-migration/how-tos/import-companies-via-csv)
+* [Как импортировать контакты](/l/ru/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Как импортировать связи](/l/ru/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
 
-## Step 7: Large Migrations (50,000+ Records)
+## Шаг 7: Крупные миграции (50,000+ записей)
 
-For large migrations:
+Для крупных миграций:
 
-| Volume                  | Recommended Approach          |
-| ----------------------- | ----------------------------- |
-| Under 10,000 records    | Single CSV import             |
-| 10,000 - 50,000 records | Split into multiple CSV files |
-| 50,000+ records         | Use the API                   |
+| Объём                   | Рекомендуемый подход              |
+| ----------------------- | --------------------------------- |
+| Менее 10,000 записей    | Импорт одним CSV-файлом           |
+| 10,000 - 50,000 записей | Разделите на несколько CSV-файлов |
+| 50,000+ записей         | Используйте API                   |
 
-**For API imports:**
+**Для импорта через API:**
 
-* Faster and more reliable for large datasets
-* Supports batch operations (up to 60 records per call)
-* See [How to Import Data via API](/l/ru/user-guide/data-migration/how-tos/import-data-via-api)
+* Быстрее и надёжнее для больших наборов данных
+* Поддерживает пакетные операции (до 60 записей за вызов)
+* См. [как импортировать данные через API](/l/ru/user-guide/data-migration/how-tos/import-data-via-api)
 
-## Step 8: Post-Migration Setup
+## Шаг 8: Настройка после миграции
 
-After importing data, complete your workspace configuration:
+После импорта данных завершите настройку рабочего пространства:
 
-### Recreate Views
+### Воссоздайте представления
 
-* Set up saved views with filters, sorts, and column configurations
-* Create any kanban or calendar views you need
+* Настройте сохранённые представления с фильтрами, сортировками и настройками столбцов
+* Создайте при необходимости канбан- или календарные представления
 
 ### Воссоздайте рабочие процессы
 
-* Rebuild your automations in **Settings → Workflows**
-* Start with the most critical workflows
-* Test each one before relying on it
+* Воссоздайте автоматизации в **Настройки → Рабочие процессы**
+* Начните с наиболее критичных рабочих процессов
+* Протестируйте каждый из них, прежде чем полагаться на него
 
-### Configure Roles and Permissions
+### Настройте роли и разрешения
 
-* Set up roles in **Settings → Roles**
-* Assign users to appropriate roles
+* Настройте роли в **Настройки → Роли**
+* Назначьте пользователей на соответствующие роли
 
-### Connect Email and Calendar
+### Подключите электронную почту и календарь
 
-* Each user connects their own account in **Settings → Accounts**
-* Twenty will start syncing emails to contact records
-* See [Email & Calendar](/l/ru/user-guide/calendar-emails/overview)
+* Каждый пользователь подключает свою учётную запись в разделе **Настройки → Учётные записи**
+* Twenty начнёт синхронизировать электронные письма с записями контактов
+* См. [Электронная почта и календарь](/l/ru/user-guide/calendar-emails/overview)
 
-### Train Your Team
+### Обучите свою команду
 
-* Walk through the new interface together
-* Document any team-specific processes
+* Совместно ознакомьтесь с новым интерфейсом
+* Задокументируйте любые процессы, специфичные для команды
 
 ## Распространенные проблемы и решения
 
-| Issue                   | Cause                       | Solution                                                                             |
-| ----------------------- | --------------------------- | ------------------------------------------------------------------------------------ |
-| **Duplicate errors**    | Email/domain already exists | Remove duplicates from file, or include unique identifier to update existing records |
-| **Relation not found**  | Parent record doesn't exist | Import parent objects first (Companies before People)                                |
-| **Missing fields**      | Custom field doesn't exist  | Create field in Settings → Data Model before importing                               |
-| **Select field errors** | Using display labels        | Use API names (enable Advanced mode in Settings to find them)                        |
-| **User relation empty** | User hasn't accepted invite | Ensure all users accept invitations before importing                                 |
+| Проблема                         | Причина                                      | Решение                                                                                              |
+| -------------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Ошибки из-за дубликатов**      | Адрес электронной почты/домен уже существует | Удалите дубликаты из файла или включите уникальный идентификатор, чтобы обновить существующие записи |
+| **Связь не найдена**             | Родительская запись не существует            | Импортируйте сначала родительские объекты (компании перед контактами)                                |
+| **Отсутствующие поля**           | Пользовательское поле не существует          | Создайте поле в разделе Настройки → Модель данных перед импортом                                     |
+| **Ошибки полей Select**          | Используются отображаемые метки              | Используйте имена API (включите расширенный режим в Настройках, чтобы их найти)                      |
+| **Пустая связь с пользователем** | Пользователь не принял приглашение           | Убедитесь, что все пользователи приняли приглашения перед импортом                                   |
 
-See [How to Fix Import Errors](/l/ru/user-guide/data-migration/how-tos/fix-import-errors) for detailed troubleshooting steps.
+См. [как исправить ошибки импорта](/l/ru/user-guide/data-migration/how-tos/fix-import-errors) для подробных шагов по устранению неполадок.
 
 ## Послемиграционный контрольный список
 
-### Data Integrity
+### Целостность данных
 
-<Check>All records imported (compare counts with source system)</Check>
-<Check>Relations working correctly (People linked to Companies)</Check>
-<Check>User assignments mapped correctly (Owner, Assignee)</Check>
-<Check>Custom fields populated</Check>
-<Check>No unexpected duplicates</Check>
+<Check>Все записи импортированы (сравните количество с исходной системой)</Check>
+<Check>Связи работают корректно (контакты связаны с компаниями)</Check>
+<Check>Назначения пользователей сопоставлены корректно (владелец, исполнитель)</Check>
+<Check>Пользовательские поля заполнены</Check>
+<Check>Нет неожиданных дубликатов</Check>
 
 ### Конфигурация
 
-<Check>Views recreated</Check>
-<Check>Workflows recreated and tested</Check>
-<Check>Roles and permissions configured</Check>
-<Check>Email/calendar sync connected</Check>
+<Check>Представления воссозданы</Check>
+<Check>Рабочие процессы воссозданы и протестированы</Check>
+<Check>Роли и разрешения настроены</Check>
+<Check>Синхронизация электронной почты/календаря подключена</Check>
 
-### Team Readiness
+### Готовность команды
 
-<Check>Team trained on new system</Check>
-<Check>Old CRM access plan decided (keep for reference? When to disable?)</Check>
+<Check>Команда обучена новой системе</Check>
+<Check>Определён план доступа к старой CRM (оставить для справки? Когда отключить?)</Check>
 
-## FAQ
+## Часто задаваемые вопросы
 
 <AccordionGroup>
-  <Accordion title="Can I migrate workflows automatically?">
-    Not currently. Workflows must be recreated manually in Twenty.
+  <Accordion title="Можно ли автоматически перенести рабочие процессы?">
+    Пока нет. Рабочие процессы необходимо воссоздать вручную в Twenty.
   </Accordion>
 
-  <Accordion title="What about file attachments?">
-    File attachments are not included in CSV exports. You'll need to re-upload them manually, migrate via API, or contact our team for assistance.
+  <Accordion title="Что насчёт вложений?">
+    Вложения не включаются в экспорт CSV. Вам потребуется загрузить их вручную повторно, перенести через API или связаться с нашей командой за помощью.
   </Accordion>
 
-  <Accordion title="Can I keep both systems running during migration?">
-    Yes, we recommend keeping your old CRM running until you've verified the migration is complete. Just be careful not to create new data in both places.
+  <Accordion title="Можно ли держать обе системы запущенными во время миграции?">
+    Да, мы рекомендуем оставлять вашу старую CRM запущенной, пока вы не убедитесь, что миграция завершена. Просто следите за тем, чтобы не создавать новые данные в обеих системах.
   </Accordion>
 
-  <Accordion title="How long does migration typically take?">
-    Depends on data volume and complexity. Small migrations (under 10,000 records) can be done in a few hours. Large migrations may take several days including data cleanup and testing.
+  <Accordion title="Сколько обычно занимает миграция?">
+    Зависит от объёма и сложности данных. Небольшие миграции (менее 10,000 записей) можно выполнить за несколько часов. Крупные миграции могут занять несколько дней, включая очистку данных и тестирование.
   </Accordion>
 </AccordionGroup>
 
 ## Нужна Помощь?
 
-For complex migrations or large datasets:
+Для сложных миграций или больших наборов данных:
 
-* **Guided setup:** Book a 4-hour onboarding pack
-* **Full migration service:** Our partners can handle the entire migration
+* **Настройка с сопровождением:** забронируйте 4-часовой пакет онбординга
+* **Полная услуга по миграции:** наши партнёры могут выполнить всю миграцию
 
-Contact [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/ru/user-guide/getting-started/capabilities/implementation-services).
+Свяжитесь с нами по адресу [contact@twenty.com](mailto:contact@twenty.com) или изучите наши [услуги по внедрению](/l/ru/user-guide/getting-started/capabilities/implementation-services).

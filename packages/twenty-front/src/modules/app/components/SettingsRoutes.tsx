@@ -225,14 +225,6 @@ const SettingsBilling = lazy(() =>
   })),
 );
 
-const SettingsIntegrations = lazy(() =>
-  import('~/pages/settings/integrations/SettingsIntegrations').then(
-    (module) => ({
-      default: module.SettingsIntegrations,
-    }),
-  ),
-);
-
 const SettingsObjects = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjects').then((module) => ({
     default: module.SettingsObjects,
@@ -454,6 +446,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.AISkillDetail}
           element={<SettingsSkillForm mode="edit" />}
         />
+        <Route
+          path={SettingsPath.ServerlessFunctionDetail}
+          element={<SettingsServerlessFunctionDetail />}
+        />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
         <Route
@@ -567,10 +563,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.WebhookDetail}
           element={<SettingsDevelopersWebhookDetail />}
-        />
-        <Route
-          path={SettingsPath.Integrations}
-          element={<SettingsIntegrations />}
         />
       </Route>
 

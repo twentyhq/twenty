@@ -1,6 +1,6 @@
 ---
 title: Datenmodell
-description: Learn what a data model is and how to design one that fits your business.
+description: Erfahren Sie, was ein Datenmodell ist und wie Sie eines entwerfen, das zu Ihrem Unternehmen passt.
 image: /images/user-guide/fields/custom_data_model.png
 ---
 
@@ -8,120 +8,120 @@ image: /images/user-guide/fields/custom_data_model.png
   <img src="/images/user-guide/fields/custom_data_model.png" alt="Datenmodell" />
 </Frame>
 
-## What is a Data Model?
+## Was ist ein Datenmodell?
 
-Ein Datenmodell ist die Struktur, die definiert, wie Informationen in Ihrem CRM organisiert sind. Think of it as the **blueprint** of your customer data — you design it once, then fill it with your actual data.
+Ein Datenmodell ist die Struktur, die definiert, wie Informationen in Ihrem CRM organisiert sind. Betrachten Sie es als den **Bauplan** Ihrer Kundendaten — Sie entwerfen ihn einmal und füllen ihn dann mit Ihren tatsächlichen Daten.
 
-## Key Concepts
+## Wichtige Konzepte
 
 ### Objekte
 
-**Objects** are the main categories of data in your CRM. Each object represents a type of thing you want to track.
+**Objekte** sind die Hauptkategorien der Daten in Ihrem CRM. Jedes Objekt repräsentiert eine Art von Element, das Sie nachverfolgen möchten.
 
-Twenty comes with standard objects:
+Twenty enthält Standardobjekte:
 
-* **People** — individuals (contacts, leads, partners)
-* **Companies** — organizations
-* **Opportunities** — deals or sales
-* **Notes** — attached notes on records
-* **Tasks** — to-dos linked to records
+* **People** — Einzelpersonen (Kontakte, Leads, Partner)
+* **Companies** — Organisationen
+* **Opportunities** — Deals oder Verkäufe
+* **Notes** — an Datensätzen angehängte Notizen
+* **Tasks** — mit Datensätzen verknüpfte To-dos
 
-You can also create **custom objects** for anything specific to your business (e.g., Projects, Subscriptions, Events).
+Sie können außerdem **benutzerdefinierte Objekte** für alles erstellen, was spezifisch für Ihr Unternehmen ist (z. B. Projects, Subscriptions, Events).
 
 ### Felder
 
-**Fields** are the properties or attributes that describe each object. They store the actual information.
+**Felder** sind die Eigenschaften oder Attribute, die jedes Objekt beschreiben. Sie speichern die eigentlichen Informationen.
 
-For example, the **People** object has fields like:
+Zum Beispiel hat das **People**-Objekt Felder wie:
 
 * Name
 * E-Mail
 * Telefon
 * Berufsbezeichnung
-* Company (a relation to the Companies object)
+* Company (eine Beziehung zum Companies-Objekt)
 
-Fields have different **types**: text, number, date, select, multi-select, relation, and more. You can add custom fields to any object.
+Felder haben unterschiedliche **Typen**: Text, Zahl, Datum, Auswahl, Mehrfachauswahl, Beziehung und mehr. Sie können benutzerdefinierte Felder zu jedem Objekt hinzufügen.
 
 ### Datensätze
 
-**Records** are the individual entries within an object — the actual data you create and manage.
+**Datensätze** sind die einzelnen Einträge innerhalb eines Objekts — die tatsächlichen Daten, die Sie erstellen und verwalten.
 
 Zum Beispiel:
 
-* "John Smith" is a **record** in the People object
-* "Acme Corp" is a **record** in the Companies object
+* "John Smith" ist ein **Datensatz** im People-Objekt
+* "Acme Corp" ist ein **Datensatz** im Companies-Objekt
 
-**An analogy:**
+**Eine Analogie:**
 
-| Data Model Concept | Real-World Analogy                         |
-| ------------------ | ------------------------------------------ |
-| **Objects**        | Sections in a book (the categories)        |
-| **Felder**         | Columns in a spreadsheet (the properties)  |
-| **Records**        | Rows in a spreadsheet (the actual entries) |
+| Konzept des Datenmodells | Analogie aus der realen Welt                                     |
+| ------------------------ | ---------------------------------------------------------------- |
+| **Objekte**              | Abschnitte in einem Buch (die Kategorien)                        |
+| **Felder**               | Spalten in einer Tabellenkalkulation (die Eigenschaften)         |
+| **Datensätze**           | Zeilen in einer Tabellenkalkulation (die tatsächlichen Einträge) |
 
-You design the data model (objects + fields) once, then create many records within that structure.
+Sie entwerfen das Datenmodell (Objekte + Felder) einmal und erstellen dann viele Datensätze innerhalb dieser Struktur.
 
-## Why Customize Your Data Model?
+## Warum Ihr Datenmodell anpassen?
 
-Jedes Unternehmen arbeitet anders. Customizing your data model means you can shape Twenty around **your** processes instead of forcing yours into a rigid system.
+Jedes Unternehmen arbeitet anders. Die Anpassung Ihres Datenmodells bedeutet, dass Sie Twenty um **Ihre** Prozesse herum gestalten können, anstatt Ihre in ein starres System zu zwängen.
 
-Twenty offers full flexibility:
+Twenty bietet volle Flexibilität:
 
-* Create as many custom objects as you need
-* Add unlimited custom fields
-* The price doesn't change based on customization
+* Erstellen Sie so viele benutzerdefinierte Objekte, wie Sie benötigen
+* Fügen Sie unbegrenzt viele benutzerdefinierte Felder hinzu
+* Der Preis ändert sich durch Anpassungen nicht.
 
-## Tips to Design Your Data Model
+## Tipps zur Gestaltung Ihres Datenmodells
 
-### 1. Start with Your Core Objects
+### 1. Beginnen Sie mit Ihren Kernobjekten
 
-Identify the main concepts you work with. Twenty already provides:
+Identifizieren Sie die wichtigsten Konzepte, mit denen Sie arbeiten. Twenty bietet bereits:
 
-* **People** — your contacts
-* **Companies** — your accounts
-* **Opportunities** — your deals
+* **People** — Ihre Kontakte
+* **Companies** — Ihre Accounts
+* **Opportunities** — Ihre Deals
 
-Think about what else you might need:
+Überlegen Sie, was Sie sonst noch benötigen könnten:
 
-* Stripe would need a `Subscriptions` object
-* Airbnb would need a `Trips` object
-* An accelerator would need a `Batches` object
+* Stripe bräuchte ein `Subscriptions`-Objekt
+* Airbnb bräuchte ein `Trips`-Objekt
+* Ein Accelerator bräuchte ein `Batches`-Objekt
 
-### 2. Use Fields for Variations, Not New Objects
+### 2. Verwenden Sie Felder für Varianten, statt neuer Objekte
 
-If something is just a characteristic of an existing object, make it a **field**.
+Wenn etwas nur ein Merkmal eines bestehenden Objekts ist, machen Sie es zu einem **Feld**.
 
-**Use fields for:**
+**Verwenden Sie Felder für:**
 
-* Categories and labels (e.g., `Industry` for Companies)
-* Status values (e.g., `Stage` for Opportunities)
-* Attributes and properties
+* Kategorien und Labels (z. B. `Industry` für Companies)
+* Statuswerte (z. B. `Stage` für Opportunities)
+* Attribute und Eigenschaften
 
-### 3. Create an Object When It Stands on Its Own
+### 3. Erstellen Sie ein Objekt, wenn es eigenständig ist
 
-If the concept has its own lifecycle, properties, or relationships, it deserves an object.
+Wenn das Konzept einen eigenen Lebenszyklus, eigene Eigenschaften oder Beziehungen hat, verdient es ein eigenes Objekt.
 
-**Create an object for:**
+**Erstellen Sie ein Objekt für:**
 
-* **Projects** — have deadlines, owners, and tasks
-* **Subscriptions** — connect companies, products, and invoices
-* **Events** — involve attendees and follow-up actions
+* **Projects** — haben Fristen, Verantwortliche und Aufgaben
+* **Subscriptions** — verbinden Unternehmen, Produkte und Rechnungen
+* **Events** — beziehen Teilnehmer und Folgeaktionen ein
 
 Dies geht über ein einzelnes Feld hinaus, da sie ihre eigenen Daten und Beziehungen haben.
 
-### 4. Create an Object When Records Are Open-Ended
+### 4. Erstellen Sie ein Objekt, wenn die Anzahl der Einträge offen ist
 
-If something can be linked multiple times and you don't know how many, use an object.
+Wenn etwas mehrfach verknüpft werden kann und Sie nicht wissen, wie oft, verwenden Sie ein Objekt.
 
-**Bad approach:**
-Creating fields like `Product 1`, `Product 2`, `Product 3`...
+**Schlechter Ansatz:**
+Felder wie `Product 1`, `Product 2`, `Product 3` erstellen ...
 
-**Good approach:**
-Create a `Products` object and relate it to records. This supports one, two, or a hundred products without changing your model.
+**Guter Ansatz:**
+Erstellen Sie ein `Products`-Objekt und verknüpfen Sie es mit Datensätzen. Dies unterstützt ein, zwei oder hundert Produkte, ohne Ihr Modell zu ändern.
 
-### 5. Keep It Simple First
+### 5. Halten Sie es zunächst einfach
 
-Start with fields. Move to new objects only when you feel the limits:
+Beginnen Sie mit Feldern. Move to new objects only when you feel the limits:
 
 * Too many fields on one object
 * Repeated records that should be separate

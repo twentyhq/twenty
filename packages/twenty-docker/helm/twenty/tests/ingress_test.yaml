@@ -1,0 +1,120 @@
+suite: ingress rendering
+templates:
+  - templates/ingress.yaml
+release:
+  name: my-twenty
+  namespace: default
+tests:
+  - it: renders with host and paths
+    set:
+      server.ingress.enabled: true
+      server.ingress.hosts:
+        - host: twenty.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+      server.ingress.tls:
+        - hosts:
+            - twenty.example.com
+          secretName: twenty-tls
+    asserts:
+      - equal:
+          path: spec.rules[0].host
+          value: twenty.example.com
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: Prefix
+      - equal:
+          path: spec.tls[0].hosts[0]
+          value: twenty.example.com
+      - equal:
+          path: spec.tls[0].secretName
+          value: twenty-tls
+
+  - it: adds cert-manager annotation when acme is true
+    set:
+      server.ingress.enabled: true
+      server.ingress.acme: true
+      server.ingress.hosts:
+        - host: twenty.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+    asserts:
+      - equal:
+          path: metadata.annotations["cert-manager.io/cluster-issuer"]
+          value: letsencrypt-prod
+
+  - it: supports multiple hosts with different paths
+    set:
+      server.ingress.enabled: true
+      server.ingress.hosts:
+        - host: twenty.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+        - host: crm.example.com
+          paths:
+            - path: /api
+              pathType: Prefix
+            - path: /graphql
+              pathType: Exact
+    asserts:
+      - equal:
+          path: spec.rules[0].host
+          value: twenty.example.com
+      - equal:
+          path: spec.rules[1].host
+          value: crm.example.com
+      - equal:
+          path: spec.rules[1].http.paths[0].path
+          value: /api
+      - equal:
+          path: spec.rules[1].http.paths[1].path
+          value: /graphql
+      - equal:
+          path: spec.rules[1].http.paths[1].pathType
+          value: Exact
+
+  - it: does not render when ingress disabled
+    set:
+      server.ingress.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: supports custom annotations
+    set:
+      server.ingress.enabled: true
+      server.ingress.annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+        custom.annotation/key: "value"
+      server.ingress.hosts:
+        - host: twenty.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+    asserts:
+      - equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/proxy-body-size"]
+          value: "50m"
+      - equal:
+          path: metadata.annotations["custom.annotation/key"]
+          value: "value"
+
+  - it: supports custom className
+    set:
+      server.ingress.enabled: true
+      server.ingress.className: nginx
+      server.ingress.hosts:
+        - host: twenty.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+    asserts:
+      - equal:
+          path: spec.ingressClassName
+          value: nginx

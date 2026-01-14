@@ -3,9 +3,10 @@ export type ParsedMessageId = {
   uid: number;
 };
 
+const MESSAGE_ID_REGEX = /^(.+):(\d+)$/;
+
 export function parseMessageId(messageId: string): ParsedMessageId | null {
-  const regex = /^(.+):(\d+)$/;
-  const match = regex.exec(messageId);
+  const match = MESSAGE_ID_REGEX.exec(messageId);
 
   if (!match) {
     return null;

@@ -13,6 +13,7 @@ export type FieldManifest<
   >,
 > = SyncableEntityOptions & {
   type: T;
+  name: string;
   label: string;
   description?: string;
   icon?: string;

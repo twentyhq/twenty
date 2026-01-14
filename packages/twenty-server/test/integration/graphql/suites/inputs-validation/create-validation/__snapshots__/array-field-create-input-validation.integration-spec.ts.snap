@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Create input validation - ARRAY Gql create input - failure ARRAY - should fail with : {"arrayField":1} 1`] = `"String cannot represent a non string value: 1"`;
 

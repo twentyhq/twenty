@@ -23,4 +23,7 @@ export class RowLevelPermissionPredicateGroupDTO {
 
   @Field(() => String)
   roleId: string;
+
+  @Field(() => String)
+  objectMetadataId: string;
 }

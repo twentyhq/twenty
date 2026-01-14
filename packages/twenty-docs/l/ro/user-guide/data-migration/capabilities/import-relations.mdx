@@ -1,94 +1,94 @@
 ---
-title: Import Relations Between Objects
-description: Import relationships between records via CSV.
+title: Importați relațiile dintre obiecte
+description: Importați relațiile dintre înregistrări prin CSV.
 ---
 
 ## Prezentare generală
 
-Twenty supports importing relationships between objects during CSV import. This allows you to link records (e.g., attach People to Companies) as part of your data migration.
+Twenty acceptă importul relațiilor dintre obiecte în timpul importului CSV. Acest lucru vă permite să conectați înregistrări (de ex., să atașați Persoane la Companii) ca parte a migrării datelor.
 
-<Note>**Currently supported for import**: One-to-many relations pointing to a single object type on each side (e.g., People → Companies). Relations pointing to multiple object types are not yet supported in import/export.</Note>
+<Note>**În prezent acceptat pentru import**: Relații de tip unu-la-mulți care indică spre un singur tip de obiect pe fiecare parte (de ex., Persoane → Companii). Relațiile care indică către mai multe tipuri de obiecte nu sunt încă acceptate pentru import/export.</Note>
 
-## How Relations Work in Twenty
+## Cum funcționează relațiile în Twenty
 
-### One to Many / Many to One
+### Unu la mulți / Mulți la unu
 
-Twenty supports standard relations where one record links to many others:
+Twenty acceptă relații standard în care o înregistrare se leagă de multe altele:
 
-* **One Company → Many People**: A company can have multiple employees, but each person belongs to one company
-* **One Company → Many Opportunities**: A company can have multiple deals, but each opportunity belongs to one company
+* **O Companie → Multe Persoane**: O companie poate avea mai mulți angajați, dar fiecare persoană aparține unei singure companii
+* **O Companie → Multe Oportunități**: O companie poate avea mai multe oportunități, dar fiecare oportunitate aparține unei singure companii
 
-### Relations That Can Point to Multiple Object Types
+### Relații care pot indica către mai multe tipuri de obiecte
 
-Some relations can connect to different types of objects. This works in two ways:
+Unele relații se pot conecta la diferite tipuri de obiecte. Acest lucru funcționează în două moduri:
 
-**Pattern 1: Many records linking to one record each from different object types**
+**Modelul 1: Multe înregistrări care se leagă fiecare de o singură înregistrare din tipuri de obiecte diferite**
 
-Several Notes, Tasks, or Activities can each be attached to multiple object types at once:
+Mai multe Note, Sarcini sau Activități pot fi atașate, fiecare, simultan la mai multe tipuri de obiecte:
 
-* **Notes** can be linked to one Person, one Company, and one Opportunity simultaneously
-* **Tasks** can be linked to one Person, one Company, and one Opportunity simultaneously
+* **Notele** pot fi legate simultan de o Persoană, o Companie și o Oportunitate
+* **Sarcinile** pot fi legate simultan de o Persoană, o Companie și o Oportunitate
 
-Here, the Notes/Tasks are on the "many" side. Each links to one record per object type.
+Aici, Notele/Sarcinile se află pe partea „mulți”. Fiecare se leagă de o singură înregistrare pentru fiecare tip de obiect.
 
 <img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
 
-**Pattern 2: One record receiving links from many records of different object types**
+**Modelul 2: O înregistrare care primește legături de la multe înregistrări din tipuri de obiecte diferite**
 
-A Project can receive links from multiple records across different object types:
+Un Proiect poate primi legături de la multiple înregistrări din diferite tipuri de obiecte:
 
-* **A Project** can have many People linked to it, many Companies linked to it, and many Notes attached to it
+* **Un Proiect** poate avea multe Persoane legate de el, multe Companii legate de el și multe Note atașate la el
 
-Here, the Project is on the "one" side. Multiple records from different objects can all link to the same Project.
+Aici, Proiectul se află pe partea „unu”. Mai multe înregistrări din obiecte diferite se pot conecta toate la același Proiect.
 
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Import/Export limitation**: Relations that point to multiple object types (like Notes → People/Companies/Opportunities) are **not yet supported** in CSV import or export.
+  **Limitare de import/export**: Relațiile care indică către mai multe tipuri de obiecte (cum ar fi Note → Persoane/Companii/Oportunități) nu sunt **încă acceptate** la importul sau exportul CSV.
 
-  * **Import**: Only one-to-many relations pointing to a single object type on each side can be imported
-  * **Export**: Columns for relations pointing to multiple object types are currently left empty
+  * **Import**: Numai relațiile unu-la-mulți care indică spre un singur tip de obiect pe fiecare parte pot fi importate
+  * **Export**: Coloanele pentru relațiile care indică către mai multe tipuri de obiecte sunt în prezent lăsate necompletate
 
-  This is on our roadmap.
+  Această funcționalitate este în planul nostru de dezvoltare.
 </Warning>
 
-### What's Not Supported Today
+### Ce nu este acceptat astăzi
 
-**Many to Many relations** are not yet available. For example, you cannot currently create a relation where:
+**Relațiile mulți-la-mulți** nu sunt încă disponibile. De exemplu, în prezent nu puteți crea o relație în care:
 
-* Many People are linked to many Projects
+* Multe Persoane sunt legate de multe Proiecte
 
-<Note>Many to Many relations are planned for H1 2026.</Note>
+<Note>Relațiile mulți-la-mulți sunt planificate pentru H1 2026.</Note>
 
-## Linking Records During Import
+## Asocierea înregistrărilor în timpul importului
 
-<Note>**Reminder**: Only one-to-many relations pointing to a single object type can be imported (e.g., People → Companies). Relations pointing to multiple object types (e.g., Notes → People/Companies/Opportunities) are not yet supported.</Note>
+<Note>**Reamintire**: Doar relațiile unu-la-mulți care indică spre un singur tip de obiect pot fi importate (de ex., Persoane → Companii). Relațiile care indică către mai multe tipuri de obiecte (de ex., Note → Persoane/Companii/Oportunități) nu sunt încă acceptate.</Note>
 
-### Step 1: Identify the "One" and "Many" Sides
+### Pasul 1: Identificați părțile „unu” și „mulți”
 
-First, determine which object is on the "one" side and which is on the "many" side of the relationship.
+Mai întâi, determinați care obiect se află pe partea „unu” și care pe partea „mulți” a relației.
 
-**Example**:
+**Exemplu**:
 
-* **Company** is the "one" side (one company has many employees)
-* **People** is the "many" side (each person belongs to one company)
+* **Compania** este partea „unu” (o companie are mulți angajați)
+* **Persoane** este partea „mulți” (fiecare persoană aparține unei singure companii)
 
-### Step 2: Ensure the "One" Side Records Exist
+### Pasul 2: Asigurați existența înregistrărilor de pe partea „unu”
 
-Before importing the "many" side, the "one" side records must already exist in Twenty.
+Înainte de a importa partea „mulți”, înregistrările de pe partea „unu” trebuie să existe deja în Twenty.
 
-* Import or create the "one" side records first (e.g., Companies)
-* Validate their unique identifier. This can be:
-  * The `id` (Twenty's UUID)
-  * A field set as unique (e.g., `domain` for Companies, or an external ID from your previous system)
+* Importați sau creați mai întâi înregistrările de pe partea „unu” (de ex., Companii)
+* Validați identificatorul lor unic. Acesta poate fi:
+  * `id` (UUID-ul Twenty)
+  * Un câmp setat ca unic (de ex., `domain` pentru Companii sau un ID extern din sistemul dvs. anterior)
 
-<Warning>The import will fail if a reference is made to a record that does not exist.</Warning>
+<Warning>Importul va eșua dacă se face referire la o înregistrare care nu există.</Warning>
 
-### Step 3: Prepare Your CSV File
+### Pasul 3: Pregătiți fișierul CSV
 
-Add a column in your "many" side CSV file that references the "one" side record.
+Adăugați o coloană în fișierul CSV pentru partea „mulți” care face referire la înregistrarea de pe partea „unu”.
 
-**Example**: For a People CSV file linking to Companies:
+**Exemplu**: Pentru un fișier CSV cu Persoane care se leagă de Companii:
 
 ```
 firstName,lastName,email,companyDomain
@@ -98,51 +98,51 @@ Jane,Doe,jane@widgets.co,https://widgets.co
 
 **Important**:
 
-* The value must **exactly match** the unique field on the Company record
-* For domains, use the **Domain URL** (e.g., `https://acme.com`), not the Domain Label
-* Map only **one** unique identifier per relation: this leads to a smoother import
+* Valoarea trebuie să se potrivească **exact** cu câmpul unic din înregistrarea Companiei
+* Pentru domenii, folosiți **URL-ul domeniului** (de ex., `https://acme.com`), nu eticheta domeniului
+* Mapați doar **un** identificator unic per relație: acest lucru duce la un import mai lin
 
-### Step 4: Ensure the Relation Field Exists
+### Pasul 4: Verificați existența câmpului de relație
 
-Before uploading your file, make sure the relation field exists between your objects.
+Înainte de a încărca fișierul, asigurați-vă că există câmpul de relație între obiectele dvs.
 
-If it doesn't exist:
+Dacă nu există:
 
-1. Go to **Settings → Data Model**
-2. Select your object (e.g., People)
-3. Create a relation field pointing to the target object (e.g., Company)
+1. Accesați **Setări → Model de date**
+2. Selectați obiectul (de ex., Persoane)
+3. Creați un câmp de relație care indică spre obiectul țintă (de ex., Companie)
 
-### Step 5: Upload and Map the Relation
+### Pasul 5: Încărcați și mapați relația
 
-1. Upload your CSV file via the import UI
-2. In the field mapping step, find your relation column (e.g., `companyDomain`)
-3. Map it to the relation field (e.g., Company)
-4. Twenty will automatically link each record to the matching parent
+1. Încărcați fișierul CSV prin interfața de import
+2. În pasul de mapare a câmpurilor, găsiți coloana relației (de ex., `companyDomain`)
+3. Mapați-o la câmpul de relație (de ex., Companie)
+4. Twenty va lega automat fiecare înregistrare de părintele corespunzător
 
-### Available Unique Fields for Relations
+### Câmpuri unice disponibile pentru relații
 
-| Obiect                                | Unique Fields Available                 |
-| ------------------------------------- | --------------------------------------- |
-| **Companii**                          | `id`, `domain`, any custom unique field |
-| **People**                            | `id`, `email`, any custom unique field  |
-| **Membri ai spațiului de lucru**      | `id`, `email` (not name)                |
-| **Other standard and custom objects** | `id`, any field marked as unique        |
+| Obiect                                     | Câmpuri unice disponibile                    |
+| ------------------------------------------ | -------------------------------------------- |
+| **Companii**                               | `id`, `domain`, orice câmp unic personalizat |
+| **Persoane**                               | `id`, `email`, orice câmp unic personalizat  |
+| **Membri ai spațiului de lucru**           | `id`, `email` (nu numele)                    |
+| **Alte obiecte standard și personalizate** | `id`, orice câmp marcat ca unic              |
 
-<Note>**Linking to Workspace Members**: When the relation points to Workspace Members (your team logging into Twenty), reference them by their **email address**, not their name.</Note>
+<Note>**Conectarea la Membrii Workspace-ului**: Când relația indică către Membrii Workspace-ului (echipa dvs. care se autentifică în Twenty), referiți-vă la ei prin **adresa de email**, nu prin nume.</Note>
 
-<Note>We recommend using `domain` for Companies and `email` for People, as these are human-readable and easy to maintain in spreadsheets.</Note>
+<Note>Recomandăm folosirea `domain` pentru Companii și `email` pentru Persoane, deoarece acestea sunt ușor de citit și ușor de întreținut în foi de calcul.</Note>
 
-<Note>**Reminder**: Soft-deleted records (visible under Command Menu → See deleted records) count toward uniqueness criteria. If you import a record with the same unique value as a deleted record, the deleted record will be restored. See [Uniqueness Constraints](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints) for more details.</Note>
+<Note>**Reamintire**: Înregistrările șterse soft (vizibile în Command Menu → See deleted records) se iau în calcul pentru criteriile de unicitate. Dacă importați o înregistrare cu aceeași valoare unică ca o înregistrare ștearsă, înregistrarea ștearsă va fi restaurată. Consultați [Constrângeri de unicitate](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints) pentru mai multe detalii.</Note>
 
-## Import Order Rule
+## Regula ordinii de import
 
 <Warning>
-  **Always import the "one" side first!**
+  **Importați întotdeauna mai întâi partea „unu”!**
 
-  1. **Companies** first (no dependencies)
-  2. **People** second (linked to Companies)
-  3. **Opportunities** third (linked to Companies/People)
-  4. **Custom objects** following their dependencies
+  1. **Companii** mai întâi (fără dependențe)
+  2. **Persoane** în al doilea rând (legate de Companii)
+  3. **Oportunități** în al treilea rând (legate de Companii/Persoane)
+  4. **Obiecte personalizate** respectând dependențele lor
 
-  The parent record must exist before you can reference it.
+  Înregistrarea părinte trebuie să existe înainte de a o putea referi.
 </Warning>

@@ -9,14 +9,14 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
+import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class MCPMetadataService {
   constructor(
     private readonly featureFlagService: FeatureFlagService,
-    private readonly toolProvider: ToolProviderService,
+    private readonly toolRegistry: ToolRegistryService,
     private readonly metricsService: MetricsService,
   ) {}
 
@@ -50,11 +50,18 @@ export class MCPMetadataService {
   }
 
   async getTools(workspaceId: string): Promise<ToolSet> {
-    return this.toolProvider.getTools({
-      workspaceId,
-      categories: [ToolCategory.METADATA],
-      wrapWithErrorContext: false,
-    });
+    // Metadata tools don't require role-based permissions, using empty roleId
+    return this.toolRegistry.getToolsByCategories(
+      {
+        workspaceId,
+        roleId: '',
+        rolePermissionConfig: { unionOf: [] },
+      },
+      {
+        categories: [ToolCategory.METADATA],
+        wrapWithErrorContext: false,
+      },
+    );
   }
 
   async handleToolCall(

@@ -276,7 +276,6 @@ export const WorkflowEditActionIfElseBody = ({
                   />
                 </>
               )}
-              {isElse && <HorizontalSeparator noMargin />}
               <WorkflowIfElseBranchEditor
                 action={action}
                 branch={branch}

@@ -1,103 +1,103 @@
 ---
-title: Import Relations Between Objects via CSV
-description: Complete step-by-step guide to linking records during CSV import.
+title: Импорт связей между объектами с помощью CSV
+description: Полное пошаговое руководство по связыванию записей при импорте CSV.
 ---
 
 ## Обзор
 
-This guide walks you through importing relations between objects—for example, linking People to Companies, or Opportunities to People.
+В этом руководстве показано, как импортировать связи между объектами — например, связывать Людей с Компаниями, или Возможности с Людьми.
 
-<Note>**What can be imported:** Only one-to-many relations pointing to a single object type. Relations pointing to multiple object types (like Notes linking to People AND Companies) are not yet supported for import.</Note>
+<Note>**Что можно импортировать:** Только связи типа «один-ко-многим», указывающие на один тип объекта. Связи, указывающие на несколько типов объектов (например, Заметки, связанные с Людьми И Компаниями), пока не поддерживаются для импорта.</Note>
 
-## Understanding Relations
+## Понимание связей
 
-### What is a "One-to-Many" Relation?
+### Что такое связь «один-ко-многим»?
 
-In a one-to-many relation:
+В связи «один-ко-многим»:
 
-* **One** Company has **many** People (employees)
-* **One** Company has **many** Opportunities
-* **One** Person has **many** Tasks
+* **Одна** компания имеет **много** людей (сотрудников)
+* **Одна** компания имеет **много** возможностей
+* **Один** человек имеет **много** задач
 
-The "one" side is the **parent**. The "many" side is the **child**.
+Сторона «один» — это **родитель**. Сторона «многие» — это **дочерняя** сторона.
 
-### Common Relations in Twenty
+### Типичные связи в Twenty
 
-| Связь                     | "One" Side (Parent) | "Many" Side (Child) |
-| ------------------------- | ------------------- | ------------------- |
-| Companies → People        | Компания            | Люди                |
-| Companies → Opportunities | Компания            | Возможности         |
-| People → Tasks            | Person              | Задачи              |
-| People → Notes            | Person              | Заметки             |
+| Связь                  | Сторона «один» (родитель) | Сторона «многие» (дочерняя) |
+| ---------------------- | ------------------------- | --------------------------- |
+| Компании → Люди        | Компания                  | Люди                        |
+| Компании → Возможности | Компания                  | Возможности                 |
+| Люди → Задачи          | Человек                   | Задачи                      |
+| Люди → Заметки         | Человек                   | Заметки                     |
 
-## Step 1: Identify the "One" and "Many" Sides
+## Шаг 1: Определите стороны «один» и «многие»
 
-Before importing, determine which object is the parent and which is the child.
+Перед импортом определите, какой объект является родительским, а какой — дочерним.
 
-**Ask yourself:** "Does ONE [Object A] have MANY [Object B]?"
+**Спросите себя:** «У одного [Объект A] есть много [Объект B]?»
 
-* One Company → Many People ✓ (Company is parent)
-* One Person → Many Companies ✗ (This is wrong—a person belongs to one company)
+* Одна Компания → Много Людей ✓ (Компания — родитель)
+* Один Человек → Много Компаний ✗ (Это неверно — человек принадлежит одной компании)
 
-## Step 2: Import the Parent Records First
+## Шаг 2: Сначала импортируйте родительские записи
 
-The parent ("one" side) must exist in Twenty before you can reference it.
+Родительская запись (сторона «один») должна существовать в Twenty, прежде чем вы сможете на неё сослаться.
 
-**Import order:**
+**Порядок импорта:**
 
-1. **Companies** first (no dependencies)
-2. **People** second (link to Companies)
-3. **Opportunities** third (link to Companies and/or People)
-4. **Tasks/Notes** (link to any of the above)
+1. **Компании** в первую очередь (без зависимостей)
+2. **Люди** во вторую очередь (связь с компаниями)
+3. **Возможности** в третью очередь (связь с компаниями и/или людьми)
+4. **Задачи/Заметки** (связь с любым из вышеперечисленных)
 
 <Warning>
-  **If the parent record doesn't exist, the import will fail.**
+  **Если родительская запись не существует, импорт завершится с ошибкой.**
 
-  Always verify that Companies are imported before importing People with company references.
+  Всегда проверяйте, что Компании импортированы до импорта Людей со ссылками на компании.
 </Warning>
 
-## Step 3: Note the Parent's Unique Identifier
+## Шаг 3: Запишите уникальный идентификатор родительской записи
 
-You need to reference the parent record using a **unique identifier**. Available options:
+Вам нужно ссылаться на родительскую запись с помощью **уникального идентификатора**. Доступные варианты:
 
-| Parent Object                       | Available Unique Identifiers                                    |
-| ----------------------------------- | --------------------------------------------------------------- |
-| **Компании**                        | `id` (UUID), `domain` (recommended), or any custom unique field |
-| **People**                          | `id` (UUID), `email`, or any custom unique field                |
-| **Участники рабочего пространства** | `id` (UUID), `email` (not name)                                 |
-| **Пользовательские объекты**        | `id` (UUID), or any field marked as unique                      |
+| Родительский объект                 | Доступные уникальные идентификаторы                                              |
+| ----------------------------------- | -------------------------------------------------------------------------------- |
+| **Компании**                        | `id` (UUID), `domain` (рекомендуется) или любое пользовательское уникальное поле |
+| **Люди**                            | `id` (UUID), `email` или любое пользовательское уникальное поле                  |
+| **Участники рабочего пространства** | `id` (UUID), `email` (не имя)                                                    |
+| **Пользовательские объекты**        | `id` (UUID) или любое поле, отмеченное как уникальное                            |
 
-<Note>**Recommended:** Use `domain` for Companies and `email` for People. These are human-readable and easy to verify in your spreadsheet.</Note>
+<Note>**Рекомендуется:** Используйте `domain` для Компаний и `email` для Людей. Они удобочитаемы и их легко проверить в вашей таблице.</Note>
 
-### Finding the Identifier
+### Поиск идентификатора
 
-If you need the `id`:
+Если вам нужен `id`:
 
-1. Export the parent records from Twenty
-2. The export includes the `id` column
-3. Use these IDs in your child records file
+1. Экспортируйте родительские записи из Twenty
+2. Экспорт включает столбец `id`
+3. Используйте эти ID в файле дочерних записей
 
-## Step 4: Verify the Relation Field Exists
+## Шаг 4: Убедитесь, что поле связи существует
 
-Before importing, ensure the relation field exists between your objects.
+Перед импортом убедитесь, что между вашими объектами существует поле связи.
 
-**To check or create:**
+**Чтобы проверить или создать:**
 
-1. Go to **Settings → Data Model**
-2. Select your child object (e.g., People)
-3. Look for a relation field pointing to the parent (e.g., Company)
-4. If it doesn't exist, create it:
-   * Click **+ Add field**
-   * Select **Relation** type
-   * Choose the parent object
+1. Перейдите в **Настройки → Модель данных**
+2. Выберите ваш дочерний объект (например, Люди)
+3. Найдите поле связи, указывающее на родителя (например, Компания)
+4. Если его нет, создайте его:
+   * Нажмите **+ Добавить поле**
+   * Выберите тип **Связь**
+   * Выберите родительский объект
 
-## Step 5: Prepare Your CSV File
+## Шаг 5: Подготовьте ваш файл CSV
 
-Add a column to your child CSV that references the parent using its unique identifier.
+Добавьте в ваш дочерний CSV столбец, который ссылается на родителя по его уникальному идентификатору.
 
-### Example: People Linking to Companies
+### Пример: Связывание Людей с Компаниями
 
-**Your People CSV:**
+**Ваш CSV-файл для Людей:**
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain
@@ -106,66 +106,66 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co
 Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
 ```
 
-The `companyDomain` column references the Company's domain.
+Столбец `companyDomain` ссылается на домен Компании.
 
-### Format Requirements
+### Требования к формату
 
-| Идентификатор     | Формат         | Пример                                 |
-| ----------------- | -------------- | -------------------------------------- |
-| Домен             | URL format     | `https://acme.com`                     |
-| Электронная почта | Standard email | `john@acme.com`                        |
-| ID                | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| Идентификатор     | Формат                              | Пример                                 |
+| ----------------- | ----------------------------------- | -------------------------------------- |
+| Домен             | Формат URL                          | `https://acme.com`                     |
+| Электронная почта | Стандартный адрес электронной почты | `john@acme.com`                        |
+| ID                | UUID                                | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **Domain format matters!**
+  **Формат домена имеет значение!**
 
-  Use `https://domain.com` (not just `domain.com`). This matches how Twenty stores Company domains and prevents matching errors.
+  Используйте `https://domain.com` (не просто `domain.com`). Это соответствует тому, как Twenty хранит домены Компаний, и предотвращает ошибки сопоставления.
 </Warning>
 
-### Important Rules
+### Важные правила
 
-1. **Exact match required** — the value must exactly match the parent record
-2. **Map only ONE unique identifier** — don't include both `companyId` AND `companyDomain`
-3. **Case sensitive** — `Acme.com` ≠ `acme.com`
+1. **Требуется точное совпадение** — значение должно в точности соответствовать родительской записи
+2. **Сопоставляйте только ОДИН уникальный идентификатор** — не указывайте одновременно `companyId` И `companyDomain`
+3. **С учётом регистра** — `Acme.com` ≠ `acme.com`
 
-## Step 6: Upload and Map the Relation
+## Шаг 6: Загрузите и сопоставьте связь
 
-1. Navigate to the child object (e.g., People)
-2. Click **⋮** → **Import records**
-3. Upload your CSV file
-4. In the field mapping step:
-   * Find your relation column (e.g., `companyDomain`)
-   * Map it to the **Company** relation field
-5. Complete the remaining mapping
-6. Review errors and confirm
+1. Перейдите к дочернему объекту (например, Люди)
+2. Нажмите **⋮** → **Импорт записей**
+3. Загрузите ваш CSV-файл
+4. На шаге сопоставления полей:
+   * Найдите столбец связи (например, `companyDomain`)
+   * Сопоставьте его с полем связи **Компания**
+5. Завершите оставшееся сопоставление
+6. Проверьте ошибки и подтвердите
 
-Twenty will automatically link each child record to the matching parent.
+Twenty автоматически свяжет каждую дочернюю запись с соответствующим родителем.
 
-## Step 7: Verify the Import
+## Шаг 7: Проверьте импорт
 
-After importing:
+После импорта:
 
-1. Open a few child records (e.g., People)
-2. Verify the relation field shows the correct parent (e.g., Company)
-3. Open a parent record and check the related records section
+1. Откройте несколько дочерних записей (например, Люди)
+2. Убедитесь, что в поле связи указан правильный родитель (например, Компания)
+3. Откройте родительскую запись и проверьте раздел связанных записей
 
-## Common Mistakes to Avoid
+## Распространённые ошибки, которых следует избегать
 
-| Mistake                    | Problem                                            | Solution                                                |
-| -------------------------- | -------------------------------------------------- | ------------------------------------------------------- |
-| **Wrong import order**     | Importing People before Companies                  | Always import parents first, then children              |
-| **Wrong domain format**    | Using `acme.com` instead of `https://acme.com`     | Use full URL format with `https://`                     |
-| **Multiple unique fields** | Mapping both `companyId` AND `companyDomain`       | Map only ONE unique identifier                          |
-| **Missing relation field** | The relation field doesn't exist in the data model | Create it in **Settings → Data Model** before importing |
-| **Non-existent records**   | The parent record doesn't exist in Twenty          | Import parent records first, or check for typos         |
-| **Case mismatch**          | `Acme.com` in file but `acme.com` in Twenty        | Ensure exact case matching                              |
+| Ошибка                           | Проблема                                                 | Решение                                                         |
+| -------------------------------- | -------------------------------------------------------- | --------------------------------------------------------------- |
+| **Неправильный порядок импорта** | Импорт Людей раньше Компаний                             | Всегда сначала импортируйте родительские записи, затем дочерние |
+| **Неверный формат домена**       | Использование `acme.com` вместо `https://acme.com`       | Используйте полный формат URL с `https://`                      |
+| **Несколько уникальных полей**   | Сопоставление одновременно `companyId` И `companyDomain` | Сопоставляйте только ОДИН уникальный идентификатор              |
+| **Отсутствует поле связи**       | Поля связи нет в модели данных                           | Создайте его в **Настройки → Модель данных** перед импортом     |
+| **Несуществующие записи**        | Родительская запись не существует в Twenty               | Сначала импортируйте родительские записи или проверьте опечатки |
+| **Несовпадение регистра**        | `Acme.com` в файле, но `acme.com` в Twenty               | Обеспечьте точное совпадение регистра                           |
 
-## Linking to Workspace Members
+## Связь с участниками рабочего пространства
 
-When linking to Workspace Members (your team):
+При связывании с участниками рабочего пространства (вашей командой):
 
-* Use their **email address**, not their name
-* Example: `owner@yourcompany.com`, not "John Smith"
+* Используйте их **адрес электронной почты**, а не имя
+* Пример: `owner@yourcompany.com`, а не «John Smith»
 
 ```csv
 taskName,assignedTo
@@ -173,56 +173,56 @@ Follow up with client,john@yourcompany.com
 Review proposal,jane@yourcompany.com
 ```
 
-## FAQ
+## Часто задаваемые вопросы
 
 <AccordionGroup>
-  <Accordion title="What if my parent record doesn't have a domain or email?">
-    You have two options:
+  <Accordion title="Что, если у моей родительской записи нет домена или адреса электронной почты?">
+    У вас есть два варианта:
 
-    1. Use the Twenty `id` (export parent records to get their IDs)
-    2. Create a custom unique field in your data model to store an external ID from your previous system
+    1. Используйте Twenty `id` (экспортируйте родительские записи, чтобы получить их ID)
+    2. Создайте пользовательское уникальное поле в вашей модели данных для хранения внешнего ID из вашей предыдущей системы
   </Accordion>
 
-  <Accordion title="Can I update relations on existing records?">
-    Да! Include the child record's unique identifier (e.g., `email` for People) and the new relation value. The import will update the relation.
+  <Accordion title="Могу ли я обновлять связи у существующих записей?">
+    Да! Укажите уникальный идентификатор дочерней записи (например, `email` для Людей) и новое значение связи. Импорт обновит связь.
   </Accordion>
 
-  <Accordion title="Can I import Many-to-Many relationships?">
-    Many-to-Many relations are not yet supported for import. This is planned for H1 2026.
+  <Accordion title="Могу ли я импортировать связи многие-ко-многим?">
+    Связи многие-ко-многим пока не поддерживаются для импорта. Это запланировано на первое полугодие 2026 года.
   </Accordion>
 
-  <Accordion title="Can I link to multiple object types (like Notes to People AND Companies)?">
-    Relations pointing to multiple object types are not yet supported for import/export. This is on our roadmap.
+  <Accordion title="Могу ли я связывать с несколькими типами объектов (например, Заметки с Людьми И Компаниями)?">
+    Связи, указывающие на несколько типов объектов, пока не поддерживаются для импорта/экспорта. Это запланировано в нашей дорожной карте.
   </Accordion>
 
-  <Accordion title="What happens if a parent record doesn't exist?">
-    The import will show an error for that row. Вы можете либо:
+  <Accordion title="Что происходит, если родительской записи не существует?">
+    Импорт покажет ошибку для этой строки. Вы можете либо:
 
-    * Import the parent record first, then re-import
-    * Fix the reference value
-    * Remove the row from import
+    * Сначала импортируйте родительскую запись, затем повторите импорт
+    * Исправьте ссылочное значение
+    * Исключите строку из импорта
   </Accordion>
 
-  <Accordion title="Why is my relation not linking correctly?">
-    Common causes:
+  <Accordion title="Почему связь устанавливается некорректно?">
+    Распространённые причины:
 
-    * Wrong format (use `https://domain.com` for domains)
-    * Case mismatch (check exact spelling)
-    * Parent doesn't exist (import parents first)
-    * Mapping multiple identifiers (use only one)
+    * Неверный формат (для доменов используйте `https://domain.com`)
+    * Несовпадение регистра (проверьте точное написание)
+    * Родитель не существует (сначала импортируйте родителей)
+    * Сопоставление нескольких идентификаторов (используйте только один)
   </Accordion>
 </AccordionGroup>
 
 <Warning>
-  **Remember: Soft-deleted records count toward uniqueness.**
+  **Помните: записи, помеченные как удалённые, учитываются при проверке уникальности.**
 
-  If you're getting "not found" errors but the record seems to exist, check Command Menu → See deleted records. The parent may have been soft-deleted.
+  Если вы получаете ошибки «not found», но запись, кажется, существует, проверьте Command Menu → See deleted records. Возможно, родитель был помечен как удалённый.
 </Warning>
 
 ## Устранение неполадок
 
-Having issues? Check:
+Возникли проблемы? Проверьте:
 
-* [How to Fix Import Errors](/l/ru/user-guide/data-migration/how-tos/fix-import-errors)
-* [Import Relations Capabilities](/l/ru/user-guide/data-migration/capabilities/import-relations)
-* [Uniqueness Constraints](/l/ru/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [Как исправить ошибки импорта](/l/ru/user-guide/data-migration/how-tos/fix-import-errors)
+* [Возможности импорта связей](/l/ru/user-guide/data-migration/capabilities/import-relations)
+* [Ограничения уникальности](/l/ru/user-guide/data-migration/capabilities/uniqueness-constraints)

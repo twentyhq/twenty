@@ -22,6 +22,7 @@ import {
 } from 'src/engine/core-modules/message-queue/message-queue.module-definition';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 
 @Global()
 @Module({})
@@ -77,6 +78,7 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
 
     return {
       ...dynamicModule,
+      imports: [...(dynamicModule.imports ?? []), MetricsModule],
       providers: [
         ...(dynamicModule.providers ?? []),
         driverProvider,
@@ -91,17 +93,17 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
     };
   }
 
-  static async createDriver({ type, options }: typeof OPTIONS_TYPE) {
-    switch (type) {
+  static async createDriver(config: typeof OPTIONS_TYPE) {
+    switch (config.type) {
       case MessageQueueDriverType.BullMQ: {
-        return new BullMQDriver(options);
+        return new BullMQDriver(config.options, config.metricsService);
       }
       case MessageQueueDriverType.Sync: {
         return new SyncDriver();
       }
       default: {
         this.logger.warn(
-          `Unsupported message queue driver type: ${type}. Using SyncDriver by default.`,
+          `Unsupported message queue driver type: ${(config as { type: string })?.type}. Using SyncDriver by default.`,
         );
 
         return new SyncDriver();

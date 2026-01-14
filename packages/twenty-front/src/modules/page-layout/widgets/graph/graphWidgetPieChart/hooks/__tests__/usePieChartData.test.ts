@@ -67,6 +67,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -86,6 +87,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: [],
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -99,6 +101,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: singleData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -110,6 +113,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -122,6 +126,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -140,6 +145,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -157,6 +163,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -170,6 +177,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -184,6 +192,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -199,6 +208,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 

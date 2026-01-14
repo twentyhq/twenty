@@ -2,17 +2,17 @@
 title: Ghid de actualizare
 ---
 
-## General guidelines
+## Linii directoare generale
 
-**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+**Asigurați-vă întotdeauna că realizați un backup al bazei de date înainte de a începe procesul de actualizare** utilizând comanda `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
 
-To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+Pentru a restaura backup-ul, executați comanda `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
 
 Dacă ați utilizat Docker Compose, urmați acești pași:
 
 1. Într-un terminal, pe găzduitorul unde rulează Twenty, opriți Twenty: `docker compose down`.
 
-2. Actualizați versiunea modificând valoarea `TAG` din fișierul .env în apropierea docker-compose-ului. ( We recommend consuming `major.minor` version such as `v0.53` )
+2. Actualizați versiunea modificând valoarea `TAG` din fișierul .env în apropierea docker-compose-ului. ( Vă recomandăm să utilizați o versiune de tip `major.minor`, cum ar fi `v0.53` )
 
 3. Repuneți Twenty în funcțiune cu comanda `docker compose up -d`.
 
@@ -316,8 +316,8 @@ Comanda `yarn command:prod upgrade-0.31` se ocupă de migrația datelor pentru t
 
 Actualizați instanța Twenty pentru a utiliza imaginea v0.30.0
 
-**Breaking change**:
-To enhance performances, Twenty now requires redis cache to be configured. Am actualizat [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) pentru a reflecta acest lucru.
+**Schimbare importantă**:
+Pentru a îmbunătăți performanțele, Twenty necesită acum cache de tip Redis configurat. Am actualizat [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) pentru a reflecta acest lucru.
 Asigurați-vă că vă actualizați configurația și actualizați variabilele de mediu corespunzător:
 
 ```

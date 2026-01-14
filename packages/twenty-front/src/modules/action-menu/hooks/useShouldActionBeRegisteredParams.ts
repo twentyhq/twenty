@@ -14,10 +14,8 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem,
@@ -25,9 +23,6 @@ export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem?: ObjectMetadataItem;
 }): ShouldBeRegisteredFunctionParams => {
   const { sortedFavorites: favorites } = useFavorites();
-  const isWorkflowRunStoppageEnabled =
-    useIsFeatureEnabled(FeatureFlagKey.IS_WORKFLOW_RUN_STOPPAGE_ENABLED) ??
-    false;
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -124,6 +119,5 @@ export const useShouldActionBeRegisteredParams = ({
     getTargetObjectReadPermission: getObjectReadPermission,
     getTargetObjectWritePermission: getObjectWritePermission,
     forceRegisteredActionsByKey,
-    isWorkflowRunStoppageEnabled,
   };
 };

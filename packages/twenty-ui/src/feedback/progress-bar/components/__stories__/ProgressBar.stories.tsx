@@ -1,7 +1,7 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { ProgressBar } from '../ProgressBar';
-import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useProgressAnimation } from '@ui/feedback/progress-bar/hooks/useProgressAnimation';
+import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
+import { ProgressBar } from '../ProgressBar';
 
 const meta: Meta<typeof ProgressBar> = {
   title: 'UI/Feedback/ProgressBar/ProgressBar',

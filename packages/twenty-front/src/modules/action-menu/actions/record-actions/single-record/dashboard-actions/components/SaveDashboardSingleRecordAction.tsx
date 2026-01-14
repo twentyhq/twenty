@@ -21,9 +21,12 @@ export const SaveDashboardSingleRecordAction = () => {
   const { closeCommandMenu } = useCommandMenu();
 
   const handleClick = async () => {
-    await savePageLayout();
-    closeCommandMenu();
-    setIsPageLayoutInEditMode(false);
+    const result = await savePageLayout();
+
+    if (result.status === 'successful') {
+      closeCommandMenu();
+      setIsPageLayoutInEditMode(false);
+    }
   };
 
   return <Action onClick={handleClick} />;

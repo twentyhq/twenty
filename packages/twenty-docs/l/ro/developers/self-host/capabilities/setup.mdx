@@ -2,7 +2,7 @@
 title: Configurare
 ---
 
-# Configuration Management
+# Gestionarea configurației
 
 <Warning>
   **Prima instalare?** Urmați [ghidul de instalare Docker Compose](/l/ro/developers/self-host/capabilities/docker-compose) pentru a rula Twenty, apoi reveniți aici pentru configurare.
@@ -35,7 +35,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # implicit
 * **E-mail** - setări SMTP, șabloane, verificare
 * **Stocare** - configurație S3, căi stocare locală
 * **Integrări** - Gmail, Google Calendar, servicii Microsoft
-* **Workflow & Rate Limiting** - Execution limits, API throttling
+* **Flux de lucru și limitarea ratei** - limite de execuție, limitarea ratei pentru API
 * **Și multe altele...**
 
 ![Variabile de Configurare Panou Admin](/images/user-guide/setup/admin-panel-config-variables.png)
@@ -60,61 +60,61 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 3. Reporniți containerele pentru ca schimbările să aibă efect
 4. Panoul de administrare va afișa valorile curente, dar nu le poate modifica
 
-## Multi-Workspace Mode
+## Mod cu mai multe spații de lucru
 
-By default, Twenty runs in **single-workspace mode** — ideal for most self-hosted deployments where you need one CRM instance for your organization.
+În mod implicit, Twenty rulează în **modul cu un singur spațiu de lucru** — ideal pentru majoritatea implementărilor auto-găzduite în care aveți nevoie de o singură instanță CRM pentru organizația dvs.
 
-### Single-Workspace Mode (Default)
+### Modul cu un singur spațiu de lucru (implicit)
 
 ```bash
 IS_MULTIWORKSPACE_ENABLED=false  # default
 ```
 
-* One workspace per Twenty instance
-* First user automatically becomes admin with full privileges (`canImpersonate` and `canAccessFullAdminPanel`)
-* New signups are disabled after the first workspace is created
-* Simple URL structure: `https://your-domain.com`
+* Un spațiu de lucru pentru fiecare instanță Twenty
+* Primul utilizator devine automat administrator cu privilegii complete (`canImpersonate` și `canAccessFullAdminPanel`)
+* Înregistrările noi sunt dezactivate după crearea primului spațiu de lucru
+* Structură URL simplă: `https://your-domain.com`
 
-### Enabling Multi-Workspace Mode
+### Activarea modului cu mai multe spații de lucru
 
 ```bash
 IS_MULTIWORKSPACE_ENABLED=true
 DEFAULT_SUBDOMAIN=app  # default value
 ```
 
-Enable multi-workspace mode for SaaS-like deployments where multiple independent teams need their own workspaces on the same Twenty instance.
+Activați modul cu mai multe spații de lucru pentru implementări de tip SaaS, în care mai multe echipe independente au nevoie de propriile spații de lucru pe aceeași instanță Twenty.
 
-**Key differences from single-workspace mode:**
+**Diferențe cheie față de modul cu un singur spațiu de lucru:**
 
-* Multiple workspaces can be created on the same instance
-* Each workspace gets its own subdomain (e.g., `sales.your-domain.com`, `marketing.your-domain.com`)
-* Users sign up and log in at `{DEFAULT_SUBDOMAIN}.your-domain.com` (e.g., `app.your-domain.com`)
-* No automatic admin privileges — first user in each workspace is a regular user
-* Workspace-specific settings like subdomain and custom domain become available in workspace settings
+* Pe aceeași instanță pot fi create mai multe spații de lucru
+* Fiecare spațiu de lucru primește propriul subdomeniu (de ex., `sales.your-domain.com`, `marketing.your-domain.com`)
+* Utilizatorii se înregistrează și se autentifică la `{DEFAULT_SUBDOMAIN}.your-domain.com` (de ex., `app.your-domain.com`)
+* Fără privilegii administrative automate — primul utilizator din fiecare spațiu de lucru este un utilizator obișnuit
+* Setări specifice spațiului de lucru, precum subdomeniu și domeniu personalizat, devin disponibile în setările spațiului de lucru
 
 <Warning>
-  **Environment-only setting:** `IS_MULTIWORKSPACE_ENABLED` can only be configured via `.env` file and requires a restart. It cannot be changed through the admin panel.
+  **Setare exclusiv de mediu:** `IS_MULTIWORKSPACE_ENABLED` poate fi configurată doar prin fișierul `.env` și necesită o repornire. Nu poate fi modificată prin panoul de administrare.
 </Warning>
 
-### DNS Configuration for Multi-Workspace
+### Configurarea DNS pentru modul cu mai multe spații de lucru
 
-When using multi-workspace mode, configure your DNS with a wildcard record to allow dynamic subdomain creation:
+Când folosiți modul cu mai multe spații de lucru, configurați DNS-ul cu o înregistrare wildcard pentru a permite crearea dinamică de subdomenii:
 
 ```
 *.your-domain.com -> your-server-ip
 ```
 
-This enables automatic subdomain routing for new workspaces without manual DNS configuration.
+Acest lucru permite rutarea automată a subdomeniilor pentru spațiile de lucru noi, fără configurare DNS manuală.
 
-### Restricting Workspace Creation
+### Restricționarea creării de spații de lucru
 
-In multi-workspace mode, you may want to limit who can create new workspaces:
+În modul cu mai multe spații de lucru, este posibil să doriți să limitați cine poate crea spații de lucru noi:
 
 ```bash
 IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 ```
 
-When enabled, only users with `canAccessFullAdminPanel` can create additional workspaces. Users can still create their first workspace during initial signup.
+Când este activată, doar utilizatorii cu `canAccessFullAdminPanel` pot crea spații de lucru suplimentare. Utilizatorii își pot crea în continuare primul spațiu de lucru în timpul înregistrării inițiale.
 
 ## Integrare Gmail & Google Calendar
 
@@ -133,8 +133,8 @@ When enabled, only users with `canAccessFullAdminPanel` can create additional wo
 1. Mergeți la [Credentials](https://console.cloud.google.com/apis/credentials)
 2. Creați Client ID OAuth 2.0
 3. Adăugați aceste URI-uri de redirecționare:
-   * `https://{your-domain}/auth/google/redirect` (for SSO)
-   * `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+   * `https://{your-domain}/auth/google/redirect` (pentru SSO)
+   * `https://{your-domain}/auth/google-apis/get-access-token` (pentru integrări)
 
 ### Configurați în Twenty
 
@@ -194,7 +194,7 @@ Notă: "Mail.ReadWrite" și "Mail.Send" sunt obligatorii doar dacă doriți să 
 
 Trebuie să adăugați următoarele URI-uri de redirecționare în proiectul dvs.:
 
-* `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+* `https://{your-domain}/auth/microsoft/redirect` dacă doriți să utilizați SSO Microsoft
 * `https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 ### Configurați în Twenty
@@ -214,7 +214,7 @@ Trebuie să adăugați următoarele URI-uri de redirecționare în proiectul dvs
   **Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
 </Warning>
 
-### Configure scopes
+### Configurați scopurile
 
 [Consultați codul sursă relevant](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
 
@@ -232,7 +232,7 @@ Dacă aplicația dvs. este în modul de test, va trebui să adăugați utilizato
 
 Adăugați utilizatorii de test în secțiunea "Utilizatori și grupuri".
 
-## Background Jobs for Calendar & Messaging
+## Procese în fundal pentru Calendar și Mesagerie
 
 După configurarea integrărilor Gmail, Google Calendar, sau Microsoft 365, trebuie să porniți joburile de fundal care sincronizează datele.
 

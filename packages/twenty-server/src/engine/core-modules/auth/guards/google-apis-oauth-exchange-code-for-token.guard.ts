@@ -53,6 +53,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
         redirectLocation: state.redirectLocation,
         calendarVisibility: state.calendarVisibility,
         messageVisibility: state.messageVisibility,
+        skipMessageChannelConfiguration: state.skipMessageChannelConfiguration,
       });
 
       return (await super.canActivate(context)) as boolean;

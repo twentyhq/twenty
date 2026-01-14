@@ -9,7 +9,8 @@ import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
+import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
+
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { forwardRef, type ReactNode } from 'react';
@@ -55,13 +56,13 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
     );
 
     const nextRecordId = useRecoilComponentFamilyValue(
-      recordIdByRealIndexComponentFamilyState,
-      { realIndex: focusIndex + 1 },
+      recordIdByRealIndexComponentFamilySelector,
+      focusIndex + 1,
     );
 
     const isNextRecordIdFirstOfGroup = useRecoilComponentFamilyValue(
       isRecordIdFirstOfGroupComponentFamilySelector,
-      { recordId: nextRecordId ?? '' },
+      nextRecordId,
     );
 
     const isFocused = useRecoilComponentFamilyValue(

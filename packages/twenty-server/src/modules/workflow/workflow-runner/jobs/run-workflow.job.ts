@@ -142,13 +142,13 @@ export class RunWorkflowJob {
       );
     }
 
-    const lastExecutedStepResult =
-      workflowRun.state?.stepInfos[lastExecutedStepId]?.result;
+    const lastExecutedStepOutput =
+      workflowRun.state?.stepInfos[lastExecutedStepId];
 
     const nextStepIdsToExecute =
       await this.workflowExecutorWorkspaceService.getNextStepIdsToExecute({
         executedStep: lastExecutedStep,
-        executedStepResult: lastExecutedStepResult,
+        executedStepOutput: lastExecutedStepOutput,
       });
 
     if (!isDefined(nextStepIdsToExecute) || nextStepIdsToExecute.length === 0) {

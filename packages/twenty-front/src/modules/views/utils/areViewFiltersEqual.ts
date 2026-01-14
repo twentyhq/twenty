@@ -10,7 +10,6 @@ export const areViewFiltersEqual = (
     'viewFilterGroupId',
     'positionInViewFilterGroup',
     'value',
-    'displayValue',
     'operand',
     'subFieldName',
   ];

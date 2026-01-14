@@ -57,11 +57,11 @@ Only provide fields you want to change - others remain unchanged.`,
         Object.entries(updates).filter(([, value]) => isDefined(value)),
       );
 
-      const widget = await deps.pageLayoutWidgetService.update(
-        widgetId,
-        context.workspaceId,
+      const widget = await deps.pageLayoutWidgetService.update({
+        id: widgetId,
+        workspaceId: context.workspaceId,
         updateData,
-      );
+      });
 
       return {
         success: true,

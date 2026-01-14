@@ -6,7 +6,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
+import { type StartNodeCreationParams } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useCallback, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -42,12 +42,7 @@ export const useStartNodeCreation = () => {
       nextStepId,
       position,
       connectionOptions,
-    }: {
-      parentStepId: string | undefined;
-      nextStepId: string | undefined;
-      position?: { x: number; y: number };
-      connectionOptions?: WorkflowStepConnectionOptions;
-    }) => {
+    }: StartNodeCreationParams) => {
       setWorkflowInsertStepIds({
         parentStepId,
         nextStepId,

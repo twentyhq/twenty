@@ -1,90 +1,90 @@
 ---
-title: Use Branches in Workflows
-description: Understand how branches work and how to control which path is executed.
+title: Usare le diramazioni nei flussi di lavoro
+description: Comprendi come funzionano le diramazioni e come controllare quale percorso viene eseguito.
 ---
 
-## How Branches Work
+## Come funzionano le diramazioni
 
-In the workflow editor, you can create multiple paths (branches) going out from a single node. This allows you to build complex automations with different outcomes.
+Nell'editor dei flussi di lavoro, puoi creare più percorsi (diramazioni) che partono da un singolo nodo. Questo ti consente di creare automazioni complesse con risultati diversi.
 
-**Important**: When a workflow runs, **all branches execute in parallel by default**. There is no built-in "if/else" logic to choose one branch over another—every path will run simultaneously.
+**Importante**: Quando viene eseguito un flusso di lavoro, **tutte le diramazioni vengono eseguite in parallelo per impostazione predefinita**. Non esiste una logica "if/else" integrata per scegliere una diramazione rispetto a un'altra — ogni percorso verrà eseguito simultaneamente.
 
-## Controlling Which Branch Runs
+## Controllare quale diramazione viene eseguita
 
-To execute only one branch based on specific conditions, **add a Filter node at the beginning of each branch**.
+Per eseguire una sola diramazione in base a condizioni specifiche, **aggiungi un nodo Filtro all'inizio di ogni diramazione**.
 
-### Example Setup
+### Esempio di configurazione
 
-1. Create your workflow with multiple branches from a single node
-2. Add a **Filter** node as the first step in each branch
-3. Set conditions on each Filter to determine when that branch should continue
-4. Only the branch(es) whose Filter conditions are met will proceed
+1. Crea il tuo flusso di lavoro con più diramazioni da un singolo nodo
+2. Aggiungi un nodo **Filtro** come primo passaggio in ogni diramazione
+3. Imposta le condizioni su ciascun Filtro per determinare quando quella diramazione deve continuare
+4. Procederanno solo le diramazioni per cui le condizioni del Filtro sono soddisfatte
 
 <img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
 
-### How Filters Work
+### Come funzionano i filtri
 
-* If the Filter condition is **met**: The branch continues executing
-* If the Filter condition is **not met**: The branch stops at the Filter node
+* Se la condizione del Filtro è **soddisfatta**: la diramazione continua l'esecuzione
+* Se la condizione del Filtro **non è soddisfatta**: la diramazione si ferma al nodo Filtro
 
-This effectively creates conditional logic where only the appropriate branch runs based on your data.
+Questo crea di fatto una logica condizionale in cui, in base ai tuoi dati, viene eseguita solo la diramazione appropriata.
 
-## Example: Route by Deal Size
+## Esempio: instradare in base al valore dell'opportunità
 
-**Scenario**: When a deal is closed, send different notifications based on deal size.
+**Scenario**: Quando un'opportunità viene chiusa, invia notifiche diverse in base al valore dell'opportunità.
 
-1. **Trigger**: Opportunity updated (Stage = Closed Won)
-2. **Branch 1**: Filter for Amount > $10,000 → Send Slack message to #big-deals
-3. **Branch 2**: Filter for Amount ≤ $10,000 → Send email to sales manager
+1. **Trigger**: Opportunità aggiornata (Fase = Chiusa vinta)
+2. **Diramazione 1**: Filtro per Importo > $10.000 → Invia un messaggio Slack a #big-deals
+3. **Diramazione 2**: Filtro per Importo ≤ $10.000 → Invia un'email al responsabile vendite
 
-Both branches start, but only the one matching the deal amount will continue past its Filter.
+Entrambe le diramazioni iniziano, ma solo quella che corrisponde all'importo dell'opportunità continuerà oltre il suo Filtro.
 
-## Creating Branches
+## Creare le diramazioni
 
 <Note>
-  To create a new branch from an existing step, click the **+** button on the step and add your action. You can add multiple branches by clicking **+** multiple times.
+  Per creare una nuova diramazione da un passaggio esistente, fai clic sul pulsante **+** nel passaggio e aggiungi la tua azione. Puoi aggiungere più diramazioni facendo clic su **+** più volte.
 </Note>
 
-1. In the workflow editor, select the step you want to branch from
-2. Click the **+** button to add an action
-3. This creates one branch
-4. Click **+** again on the same step to create additional branches
-5. Each branch can have its own sequence of actions
+1. Nell'editor dei flussi di lavoro, seleziona il passaggio da cui vuoi creare la diramazione
+2. Fai clic su **+** per aggiungere un'azione
+3. Questo crea una diramazione
+4. Fai di nuovo clic su **+** sullo stesso passaggio per creare diramazioni aggiuntive
+5. Ogni diramazione può avere la propria sequenza di azioni
 
-## Merging Branches Back Together
+## Riunire le diramazioni
 
-After parallel branches complete their work, you can merge them back into a single path:
+Dopo che le diramazioni parallele hanno completato il loro lavoro, puoi riunirle in un unico percorso:
 
-1. Complete your branched actions
-2. Add a new step that should run after all branches
-3. Drag a connection from the last step of each branch to this new step
-4. The merged step waits for all connected branches to complete before executing
+1. Completa le azioni nelle diramazioni
+2. Aggiungi un nuovo passaggio che deve essere eseguito dopo tutte le diramazioni
+3. Trascina una connessione dall'ultimo passaggio di ciascuna diramazione verso questo nuovo passaggio
+4. Il passaggio riunito attende il completamento di tutte le diramazioni collegate prima di essere eseguito
 
-### Example: Process Then Notify
+### Esempio: elabora quindi notifica
 
 ```
 Trigger
    │
-   ├── Branch A: Update Customer Record
+   ├── Diramazione A: Aggiorna il record cliente
    │
-   └── Branch B: Create Support Ticket
+   └── Diramazione B: Crea ticket di assistenza
 
        ↘  ↙
 
-   Merged Step: Send Confirmation Email
+   Passaggio riunito: Invia email di conferma
 ```
 
-The confirmation email sends only after both the customer update and ticket creation are done.
+L'email di conferma viene inviata solo dopo che sia l'aggiornamento del cliente sia la creazione del ticket sono stati completati.
 
 ## Migliori Pratiche
 
-* Always use **Filter nodes** at the start of branches when you want conditional execution
-* Keep branch conditions **mutually exclusive** to avoid duplicate actions
-* Test your workflows with different data to ensure the correct branches run
-* **Rename branch steps** descriptively so it's clear what each path does
-* **Merge branches** when you need a final action after parallel processing
+* Usa sempre i **nodi Filtro** all'inizio delle diramazioni quando desideri un'esecuzione condizionale
+* Mantieni le condizioni delle diramazioni **mutuamente esclusive** per evitare azioni duplicate
+* Testa i tuoi flussi di lavoro con dati diversi per assicurarti che vengano eseguite le diramazioni corrette
+* **Rinomina i passaggi delle diramazioni** in modo descrittivo, così è chiaro cosa fa ogni percorso
+* **Riunisci le diramazioni** quando ti serve un'azione finale dopo l'elaborazione parallela
 
-## Related
+## Correlati
 
-* [Workflows FAQ](/l/it/user-guide/workflows/how-tos/need-more-help/workflows-faq) — answers about parallel execution
-* [Workflow Actions](/l/it/user-guide/workflows/capabilities/workflow-actions) — available actions for branches
+* [Domande frequenti sui flussi di lavoro](/l/it/user-guide/workflows/how-tos/need-more-help/workflows-faq) — risposte sull'esecuzione parallela
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions) — azioni disponibili per le diramazioni

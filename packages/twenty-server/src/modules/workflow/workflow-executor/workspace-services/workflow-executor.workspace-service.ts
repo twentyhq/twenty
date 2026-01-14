@@ -171,7 +171,7 @@ export class WorkflowExecutorWorkspaceService {
 
     const nextStepIdsToExecute = await this.getNextStepIdsToExecute({
       executedStep: stepToExecute,
-      executedStepResult: actionOutput,
+      executedStepOutput: actionOutput,
     });
 
     if (isDefined(nextStepIdsToExecute) && nextStepIdsToExecute.length > 0) {
@@ -187,15 +187,15 @@ export class WorkflowExecutorWorkspaceService {
 
   async getNextStepIdsToExecute({
     executedStep,
-    executedStepResult,
+    executedStepOutput,
   }: {
     executedStep: WorkflowAction;
-    executedStepResult: WorkflowActionOutput;
+    executedStepOutput: WorkflowActionOutput;
   }): Promise<string[] | undefined> {
     const isIteratorStep = isWorkflowIteratorAction(executedStep);
 
     if (isIteratorStep) {
-      const iteratorStepResult = executedStepResult.result as
+      const iteratorStepResult = executedStepOutput.result as
         | WorkflowIteratorResult
         | undefined;
 
@@ -207,7 +207,7 @@ export class WorkflowExecutorWorkspaceService {
     }
 
     if (isWorkflowIfElseAction(executedStep)) {
-      const ifElseResult = executedStepResult.result as
+      const ifElseResult = executedStepOutput.result as
         | WorkflowIfElseResult
         | undefined;
 

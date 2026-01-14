@@ -1,72 +1,72 @@
 ---
-title: Create Custom Fields
-description: Step-by-step guide to adding custom fields to any object.
+title: Özel Alanlar Oluşturma
+description: Herhangi bir nesneye özel alan eklemeye yönelik adım adım kılavuz.
 ---
 
-Custom fields let you capture information specific to your business. Add them to any object—standard or custom.
+Özel alanlar, işinize özgü bilgileri kaydetmenize olanak tanır. Standart ya da özel fark etmeksizin bunları herhangi bir nesneye ekleyin.
 
-## Steps
+## Adımlar
 
-1. Go to **Settings → Data Model**
-2. Select the object you want to add a field to
-3. Click **+ Add Field**
-4. Choose a **field type** (see [Fields](/l/tr/user-guide/data-model/capabilities/fields) for all types)
-5. Enter the **field name** and optional description
-6. Configure field-specific settings (see below)
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Alan eklemek istediğiniz nesneyi seçin
+3. **+ Alan Ekle**'ye tıklayın
+4. **alan türü** seçin (tüm türler için [Alanlar](/l/tr/user-guide/data-model/capabilities/fields) bölümüne bakın)
+5. **alan adını** ve isteğe bağlı açıklamayı girin
+6. Alana özel ayarları yapılandırın (aşağıya bakın)
 7. **Kaydet**'e tıklayın
 
-**Quick method:** Click the **+** at the end of column headers in any table view → **Customize fields**.
+**Hızlı yöntem:** Herhangi bir tablo görünümünde sütun başlıklarının sonundaki **+** simgesine tıklayın → **Alanları özelleştir**.
 
-## Show the Field in Views
+## Alanı Görünümlerde Göster
 
-New fields aren't automatically visible. To display:
+Yeni alanlar otomatik olarak görünmez. Görüntülemek için:
 
-1. Open the object's table view
-2. Click **Options → Fields**
-3. Click the **eye icon** next to your field to show it
-4. Drag to reorder
+1. Nesnenin tablo görünümünü açın
+2. **Seçenekler → Alanlar**'a tıklayın
+3. Alanınızın yanındaki **göz simgesine** tıklayarak gösterin
+4. Yeniden sıralamak için sürükleyin
 
-## Configuration Options
+## Yapılandırma Seçenekleri
 
-### For Select / Multi-Select
+### Seçim / Çoklu Seçim için
 
-1. Click **+ Add option** to create choices
-2. Set a **default option** if desired
-3. Drag to reorder options
-
-<Note>
-  **Use API names for imports.** Enable **Advanced mode** in Settings to see API names. See [Field Mapping](/l/tr/user-guide/data-migration/capabilities/field-mapping).
-</Note>
-
-### For Currency Fields
-
-Set the **default currency** (USD, EUR, etc.) for new records.
-
-### For Phone Fields
-
-Set the **default country code** to pre-fill for new phone numbers.
-
-### Making a Field Unique
-
-Toggle **Unique** to prevent duplicate values across records.
+1. Seçenekler oluşturmak için **+ Seçenek Ekle**'ye tıklayın
+2. İsterseniz bir **varsayılan seçenek** belirleyin
+3. Seçenekleri yeniden sıralamak için sürükleyin
 
 <Note>
-  If duplicates exist (including in deleted records), you'll get an error. Clean up duplicates first.
+  **İçe aktarmalar için API adlarını kullanın.** API adlarını görmek için Ayarlar'da **Gelişmiş modu** etkinleştirin. Bkz. [Alan Eşleme](/l/tr/user-guide/data-migration/capabilities/field-mapping).
 </Note>
 
-### Setting Default Values
+### Para Birimi Alanları için
 
-For Select fields, you can choose which option is pre-selected for new records. For Checkbox fields, set whether it's checked or unchecked by default.
+**varsayılan para birimini** ayarlayın (USD, EUR vb.) yeni kayıtlar için.
 
-## Deactivating a Field
+### Telefon Alanları için
 
-1. Go to **Settings → Data Model**
-2. Find the field
-3. Click **⋮ → Deactivate**
+Yeni telefon numaraları için önceden doldurulacak **varsayılan ülke kodunu** ayarlayın.
 
-Data is preserved. You can reactivate or permanently delete later.
+### Bir Alanı Benzersiz Yapma
 
-## Related
+Kayıtlar arasında yinelenen değerleri önlemek için **Benzersiz** seçeneğini etkinleştirin.
 
-* [Fields](/l/tr/user-guide/data-model/capabilities/fields) — all field types explained
-* [Data Model FAQ](/l/tr/user-guide/data-model/how-tos/data-model-faq) — common questions
+<Note>
+  Yinelenenler varsa (silinmiş kayıtlardakiler dahil) bir hata alırsınız. Önce yinelenenleri temizleyin.
+</Note>
+
+### Varsayılan Değerleri Ayarlama
+
+Seçim alanlarında yeni kayıtlar için önceden seçilecek seçeneği belirleyebilirsiniz. Onay kutusu alanlarında, varsayılan olarak işaretli mi işaretsiz mi olacağını ayarlayın.
+
+## Bir Alanı Devre Dışı Bırakma
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Alanı bulun
+3. **⋮ → Devre Dışı Bırak**'a tıklayın
+
+Veriler korunur. Daha sonra yeniden etkinleştirebilir veya kalıcı olarak silebilirsiniz.
+
+## İlgili
+
+* [Alanlar](/l/tr/user-guide/data-model/capabilities/fields) — tüm alan türleri açıklanır
+* [Veri Modeli SSS](/l/tr/user-guide/data-model/how-tos/data-model-faq) — sık sorulan sorular

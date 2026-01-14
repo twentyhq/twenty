@@ -1,7 +1,7 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { ComponentDecorator } from '@ui/testing';
-import { IconBuildingSkyscraper, IconUser } from '@ui/display';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MultipleAvatarChip } from '@ui/components';
+import { IconBuildingSkyscraper, IconUser } from '@ui/display';
+import { ComponentDecorator } from '@ui/testing';
 
 const meta: Meta<typeof MultipleAvatarChip> = {
   title: 'UI/Components/MultipleAvatarChip',

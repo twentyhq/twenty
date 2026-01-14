@@ -8,6 +8,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
 import { isGroupByRelationField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-relation-field.util';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
@@ -86,12 +87,38 @@ export const prepareForOrderByRelationFieldParsing = ({
     );
   }
 
-  const associatedGroupByField = groupByFields.find(
-    (groupByField) =>
-      isGroupByRelationField(groupByField) &&
-      groupByField.fieldMetadata.id === fieldMetadata.id &&
-      groupByField.nestedFieldMetadata.id === nestedFieldMetadataId,
-  ) as GroupByRelationField | undefined;
+  let compositeSubFieldName: string | undefined;
+
+  if (
+    isCompositeFieldMetadataType(nestedFieldMetadata.type) &&
+    isObject(nestedFieldOrderByValue)
+  ) {
+    const compositeSubFields = Object.keys(nestedFieldOrderByValue);
+
+    if (compositeSubFields.length === 1) {
+      compositeSubFieldName = compositeSubFields[0];
+    }
+  }
+
+  const associatedGroupByField = groupByFields.find((groupByField) => {
+    if (!isGroupByRelationField(groupByField)) {
+      return false;
+    }
+
+    if (groupByField.fieldMetadata.id !== fieldMetadata.id) {
+      return false;
+    }
+
+    if (groupByField.nestedFieldMetadata.id !== nestedFieldMetadataId) {
+      return false;
+    }
+
+    if (isDefined(compositeSubFieldName)) {
+      return groupByField.nestedSubFieldName === compositeSubFieldName;
+    }
+
+    return true;
+  }) as GroupByRelationField | undefined;
 
   if (!isDefined(associatedGroupByField)) {
     throw new UserInputError(

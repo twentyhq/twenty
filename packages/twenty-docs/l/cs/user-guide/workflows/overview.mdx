@@ -1,6 +1,6 @@
 ---
 title: Pracovní postupy
-description: Learn how to build automations in Twenty.
+description: Naučte se vytvářet automatizace v Twenty.
 image: /images/user-guide/workflows/workflow.png
 ---
 
@@ -21,52 +21,52 @@ Doporučujeme vytvářet automatizace pro dva hlavní účely:
 1. **Interní automatizace k usnadnění každodenní činnosti vašeho týmu**: Snižte množství manuálních vstupů a opakujících se úkolů, které zpomalují váš tým.
 2. **Přenášení dat do a z Twenty**: Připojte Twenty přes API volání a webhooks k vaší databázi a dalším nástrojům.
 
-## Building Your First Workflow
+## Vytvoření prvního pracovního postupu
 
-### Step 1: Create a New Workflow
+### Krok 1: Vytvořte nový pracovní postup
 
-1. Go to **Workflows** accessible below the other objects
-2. Click **+ New Record**
-3. Give your workflow a name
+1. Přejděte na **Pracovní postupy**, které jsou dostupné pod ostatními objekty
+2. Klikněte na **+ New Record**
+3. Pojmenujte svůj pracovní postup
 
-### Step 2: Add a Trigger
+### Krok 2: Přidejte spouštěč
 
-Every workflow starts with a trigger. Choose from:
+Každý pracovní postup začíná spouštěčem. Vyberte z následujících možností:
 
-* **Record events**: When a record is created, updated, or deleted
-* **Schedule**: Run at specific times (daily, weekly, etc.)
-* **Manual**: Triggered by a user action
-* **Webhook**: Triggered by a webhook
+* **Události záznamů**: Když je záznam vytvořen, aktualizován nebo smazán
+* **Plán**: Spouští se v konkrétních časech (denně, týdně apod.)
+* **Ruční**: Spouštěno akcí uživatele
+* **Webhook**: Spouštěno pomocí webhooku
 
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
-### Step 3: Add Actions
+### Krok 3: Přidejte akce
 
-After your trigger, add one or more actions:
+Po spouštěči přidejte jednu nebo více akcí:
 
-* **Create Record**: Add new records to any object
-* **Update Record**: Modify existing record data
-* **Delete Record**: Remove records from objects
-* **Search Records**: Find records matching criteria
-* **Upsert Record**: Create or update based on matching criteria
-* **Iterator**: Loop through arrays of records
-* **Filter**: Control which records proceed
-* **Delay**: Wait before continuing (duration or scheduled date)
-* **Send Email**: Send emails via your connected account
-* **Code**: Run custom JavaScript
-* **HTTP Request**: Call external APIs
-* **Form**: Get inputs from users within Twenty UI at the time of execution
-* **AI Agent** (Coming soon): Run intelligent AI tasks
+* **Vytvořit záznam**: Přidejte nové záznamy do libovolného objektu
+* **Aktualizovat záznam**: Upravte data existujícího záznamu
+* **Smazat záznam**: Odstraňte záznamy z objektů
+* **Vyhledat záznamy**: Najděte záznamy odpovídající kritériím
+* **Vložit nebo aktualizovat záznam**: Vytvořte nebo aktualizujte na základě odpovídajících kritérií
+* **Iterátor**: Procházejte pole záznamů
+* **Filtr**: Určete, které záznamy postoupí
+* **Prodleva**: Počkejte před pokračováním (doba trvání nebo naplánované datum)
+* **Odeslat e-mail**: Odesílejte e-maily prostřednictvím svého propojeného účtu
+* **Kód**: Spouštějte vlastní JavaScript
+* **HTTP požadavek**: Volejte externí API
+* **Formulář**: Získejte vstupy od uživatelů v rámci Twenty UI v době spuštění
+* **AI Agent** (Již brzy): Spouštějte inteligentní úlohy s AI
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
-### Step 4: Test and Activate
+### Krok 4: Otestujte a aktivujte
 
-1. Use the **Test** button to run your workflow with sample data
-2. Review the results to ensure it works as expected
-3. Toggle the workflow **Active** when ready
+1. Pomocí tlačítka **Test** spusťte svůj pracovní postup se vzorovými daty
+2. Zkontrolujte výsledky, abyste se ujistili, že vše funguje podle očekávání
+3. Až budete připraveni, přepněte pracovní postup na **Active**
 
-## Workflow Best Practices
+## Osvědčené postupy pro pracovní postupy
 
 * **Upravte názvy kroků**: Přejmenujte kroky vašeho workflowu a jasně popište, co každý z nich dělá. To pomáhá s údržbou a usnadňuje předání spolupracovníkům
 * **Využijte data z předchozích kroků**: Můžete použít pole záznamů vrácených z jakéhokoli předchozího kroku ve vašem workflowu
@@ -75,6 +75,6 @@ After your trigger, add one or more actions:
 
 ## Další kroky
 
-* [Workflow Triggers](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/cs/user-guide/workflows/capabilities/workflow-actions)
-* [CRM Automations](/l/cs/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+* [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Automatizace CRM](/l/cs/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

@@ -156,7 +156,7 @@ export const mockPersonFlatObjectMetadata = (
     indexMetadataIds: [],
     fieldMetadataIds: mockFieldMetadatas.map((field) => field.id),
     viewIds: [],
-    applicationId: null,
+    applicationId: 'test-application-id',
     isLabelSyncedWithName: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

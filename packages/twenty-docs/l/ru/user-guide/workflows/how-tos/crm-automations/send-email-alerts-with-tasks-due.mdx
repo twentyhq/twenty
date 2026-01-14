@@ -1,56 +1,56 @@
 ---
-title: Send Email Alerts with Tasks Due
-description: Automatically notify team members about their upcoming or overdue tasks.
+title: Отправка уведомлений по электронной почте о задачах со сроком выполнения
+description: Автоматически уведомляйте членов команды об их предстоящих или просроченных задачах.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
 
-Send daily email reminders to each team member about their tasks due today.
+Отправляйте ежедневные напоминания по электронной почте каждому члену команды о задачах, срок выполнения которых сегодня.
 
 ## Обзор
 
-This workflow runs on a schedule and:
+Этот рабочий процесс запускается по расписанию и:
 
-1. Fetches all workspace members
-2. Loops through each member
-3. Finds their tasks due today
-4. Formats and sends a personalized email
+1. Получает всех участников рабочего пространства
+2. Последовательно обрабатывает каждого участника
+3. Находит их задачи, срок выполнения которых сегодня
+4. Форматирует и отправляет персонализированное письмо
 
-## Step-by-Step Setup
+## Пошаговая настройка
 
 <VimeoEmbed videoId="1147463514" title="Видеодемонстрация" />
 
-### Step 1: Configure the Trigger
+### Шаг 1: Настройте триггер
 
-1. Go to **Settings → Workflows** and create a new workflow
-2. Select **On a Schedule** as the trigger
-3. Use a cron expression for daily at 8:00 AM: `0 8 * * *`
+1. Перейдите в **Настройки → Рабочие процессы** и создайте новый рабочий процесс
+2. Выберите **On a Schedule** в качестве триггера
+3. Используйте выражение cron для ежедневного запуска в 8:00: `0 8 * * *`
 
-### Step 2: Search for All Workspace Members
+### Шаг 2: Поиск всех участников рабочего пространства
 
-1. Add a **Search Records** action
-2. Select **Workspace Members** (under advanced objects)
-3. No filters needed — this returns all members
+1. Добавьте действие **Search Records**
+2. Выберите **Workspace Members** (в разделе расширенных объектов)
+3. Фильтры не требуются — это вернет всех участников
 
-### Step 3: Add an Iterator
+### Шаг 3: Добавьте итератор
 
-1. Add an **Iterator** action
-2. Set the input array to the workspace members from the previous step
-3. All actions inside the iterator will run once per member
+1. Добавьте действие **Iterator**
+2. Укажите в качестве входного массива участников рабочего пространства из предыдущего шага
+3. Все действия внутри итератора выполнятся один раз для каждого участника
 
-### Step 4: Search for Tasks Due Today (Inside Iterator)
+### Шаг 4: Поиск задач со сроком на сегодня (внутри итератора)
 
-1. Inside the iterator, add a **Search Records** action
-2. Select **Tasks** as the object
-3. Add filters:
-   * **Assignee** = current workspace member (from the iterator)
-   * **Due Date** = today
+1. Внутри итератора добавьте действие **Search Records**
+2. Выберите **Задачи** в качестве объекта
+3. Добавьте фильтры:
+   * **Assignee** = текущий участник рабочего пространства (из итератора)
+   * **Due Date** = сегодня
 
-### Step 5: Format Tasks into Email Body (Inside Iterator)
+### Шаг 5: Отформатируйте задачи в текст письма (внутри итератора)
 
-Add a **Code** action to format the tasks into a readable list with links:
+Добавьте действие **Code**, чтобы отформатировать задачи в удобочитаемый список со ссылками:
 
 ```javascript
 export const main = async (params: {
@@ -79,28 +79,28 @@ export const main = async (params: {
 ```
 
 <Note>
-  Replace `yourSubDomain` with your actual Twenty workspace subdomain.
+  Замените `yourSubDomain` на фактический поддомен рабочего пространства Twenty.
 </Note>
 
-### Step 6: Send Email (Inside Iterator)
+### Шаг 6: Отправьте письмо (внутри итератора)
 
-1. Add a **Send Email** action (still inside the iterator)
-2. Configure:
+1. Добавьте действие **Send Email** (по-прежнему внутри итератора)
+2. Настроить:
 
-| Поле        | Значение                                                        |
-| ----------- | --------------------------------------------------------------- |
-| **To**      | `{{iterator.currentItem.userEmail}}` (workspace member's email) |
-| **Subject** | Your Tasks Due Today                                            |
-| **Body**    | `{{code.formattedTasks}}`                                       |
+| Поле      | Значение                                                                                 |
+| --------- | ---------------------------------------------------------------------------------------- |
+| **Кому**  | `{{iterator.currentItem.userEmail}}` (электронная почта участника рабочего пространства) |
+| **Тема**  | Ваши задачи на сегодня                                                                   |
+| **Текст** | `{{code.formattedTasks}}`                                                                |
 
-### Step 7: Test and Activate
+### Шаг 7: Протестируйте и активируйте
 
-1. Click **Test** to run the workflow manually
-2. Check inboxes for the emails
-3. Activate the workflow
+1. Нажмите **Test**, чтобы запустить рабочий процесс вручную
+2. Проверьте входящие на наличие писем
+3. Активируйте рабочий процесс
 
-## Related
+## Связанные материалы
 
-* [Workflow Actions](/l/ru/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/ru/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Handle Arrays in Code Actions](/l/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+* [Действия рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-actions)
+* [Отправка писем из рабочих процессов](/l/ru/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Обработка массивов в действиях Code](/l/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

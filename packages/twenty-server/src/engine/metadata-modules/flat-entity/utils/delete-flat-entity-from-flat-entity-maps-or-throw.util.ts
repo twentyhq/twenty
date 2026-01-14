@@ -45,7 +45,7 @@ export const deleteFlatEntityFromFlatEntityMapsOrThrow = <
       );
 
       if (
-        isDefined(stillPresentUniversalIdentifiers) ||
+        !isDefined(stillPresentUniversalIdentifiers) ||
         isEmpty(stillPresentUniversalIdentifiers)
       ) {
         return undefined;

@@ -2,12 +2,12 @@ import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import {
-  generateFindManyRecordsQuery,
   type QueryCursorDirection,
-} from '@/object-record/utils/generateFindManyRecordsQuery';
+  type RecordGqlOperationGqlRecordFields,
+} from 'twenty-shared/types';
 
 export const useFindManyRecordsQuery = ({
   objectNameSingular,

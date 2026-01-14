@@ -8,6 +8,7 @@
  */
 
 export { applyDiff } from './applyDiff';
+export { compareArraysOfObjectsByProperty } from './array/compareArraysOfObjectsByProperty';
 export { filterOutByProperty } from './array/filterOutByProperty';
 export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';
@@ -17,7 +18,8 @@ export { isNonEmptyArray } from './array/isNonEmptyArray';
 export { mapById } from './array/mapById';
 export { mapByProperty } from './array/mapByProperty';
 export { sumByProperty } from './array/sumByProperty';
-export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfObjectComparingId';
+export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfObjectsComparingId';
+export { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from './array/upsertPropertiesOfItemIntoArrayOfObjectsComparingId';
 export { assertUnreachable } from './assertUnreachable';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { isPlainDateAfter } from './date/isPlainDateAfter';
@@ -37,6 +39,9 @@ export { evalFromContext } from './evalFromContext';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationFieldName } from './fieldMetadata/compute-morph-relation-field-name';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
+export { isFieldMetadataNumericKind } from './fieldMetadata/isFieldMetadataNumericKind';
+export { isFieldMetadataSelectKind } from './fieldMetadata/isFieldMetadataSelectKind';
+export { isFieldMetadataTextKind } from './fieldMetadata/isFieldMetadataTextKind';
 export { checkIfShouldComputeEmptinessFilter } from './filter/checkIfShouldComputeEmptinessFilter';
 export { checkIfShouldSkipFiltering } from './filter/checkIfShouldSkipFiltering';
 export { computeGqlOperationFilterForEmails } from './filter/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForEmails';

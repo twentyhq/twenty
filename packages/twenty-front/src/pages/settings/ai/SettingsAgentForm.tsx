@@ -367,52 +367,16 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       : agent?.label
     : t`New Agent`;
 
-  const renderActiveTabContent = () => {
-    switch (activeTabId) {
-      case SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.ROLE:
-        return (
-          <SettingsAgentRoleTab
-            formValues={formValues}
-            onFieldChange={handleFieldChange}
-            disabled={isReadonlyMode || (isEditMode ? !agent?.isCustom : false)}
-            agentId={agentId}
-            agentLabel={formValues.label}
-          />
-        );
+  const isRoleTab = activeTabId === SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.ROLE;
+  const isSettingsTab =
+    activeTabId === SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS;
+  const isEvalsTab = activeTabId === SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.EVALS;
+  const isLogsTab = activeTabId === SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.LOGS;
 
-      case SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS:
-        return (
-          <SettingsAgentSettingsTab
-            formValues={formValues}
-            onFieldChange={handleFieldChange}
-            disabled={isReadonlyMode || (isEditMode ? !agent?.isCustom : false)}
-            agent={agent}
-          />
-        );
-
-      case SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.EVALS:
-        return (
-          <SettingsAgentEvalsTab
-            agentId={agentId}
-            evaluationInputs={formValues.evaluationInputs}
-            onEvaluationInputsChange={(inputs) =>
-              handleFieldChange('evaluationInputs', inputs)
-            }
-            disabled={
-              process.env.NODE_ENV === 'development'
-                ? isReadonlyMode
-                : isReadonlyMode || (isEditMode ? !agent?.isCustom : false)
-            }
-          />
-        );
-
-      case SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.LOGS:
-        return <SettingsAgentLogsTab agentId={agentId} />;
-
-      default:
-        return <></>;
-    }
-  };
+  const isFormDisabled =
+    isReadonlyMode || (isEditMode ? !agent?.isCustom : false);
+  const isEvalsDisabled =
+    process.env.NODE_ENV === 'development' ? isReadonlyMode : isFormDisabled;
 
   return (
     <>
@@ -451,7 +415,34 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                   componentInstanceId={tabListComponentId}
                 />
                 <StyledContentContainer>
-                  {renderActiveTabContent()}
+                  {isRoleTab && (
+                    <SettingsAgentRoleTab
+                      formValues={formValues}
+                      onFieldChange={handleFieldChange}
+                      disabled={isFormDisabled}
+                      agentId={agentId}
+                      agentLabel={formValues.label}
+                    />
+                  )}
+                  {isSettingsTab && (
+                    <SettingsAgentSettingsTab
+                      formValues={formValues}
+                      onFieldChange={handleFieldChange}
+                      disabled={isFormDisabled}
+                      agent={agent}
+                    />
+                  )}
+                  {isEvalsTab && (
+                    <SettingsAgentEvalsTab
+                      agentId={agentId}
+                      evaluationInputs={formValues.evaluationInputs}
+                      onEvaluationInputsChange={(inputs) =>
+                        handleFieldChange('evaluationInputs', inputs)
+                      }
+                      disabled={isEvalsDisabled}
+                    />
+                  )}
+                  {isLogsTab && <SettingsAgentLogsTab agentId={agentId} />}
                 </StyledContentContainer>
               </>
             )}

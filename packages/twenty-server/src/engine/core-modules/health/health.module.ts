@@ -7,7 +7,6 @@ import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/ap
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 
 import { ConnectedAccountHealth } from './indicators/connected-account.health';
 import { DatabaseHealthIndicator } from './indicators/database.health';
@@ -17,7 +16,6 @@ import { WorkerHealthIndicator } from './indicators/worker.health';
   imports: [
     TerminusModule,
     RedisClientModule,
-    WorkspaceMigrationModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
     MetricsModule,
   ],

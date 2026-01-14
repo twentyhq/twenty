@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Standard field metadata update should be ignored when trying to update isLabelSyncedWithName on standard field 1`] = `
 {

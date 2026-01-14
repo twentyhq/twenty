@@ -43,6 +43,7 @@ export const GraphWidgetLineChartRenderer = () => {
     hasTooManyGroups,
     loading,
     formattedToRawLookup,
+    colorMode,
     objectMetadataItem,
   } = useGraphLineChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
@@ -124,6 +125,7 @@ export const GraphWidgetLineChartRenderer = () => {
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
         groupMode={groupMode}
+        colorMode={colorMode}
         displayType="shortNumber"
         onSliceClick={isPageLayoutInEditMode ? undefined : handlePointClick}
       />

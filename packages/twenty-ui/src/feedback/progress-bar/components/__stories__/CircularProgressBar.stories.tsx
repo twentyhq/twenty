@@ -1,8 +1,8 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { CatalogDecorator, type CatalogStory } from '@ui/testing';
 
-import { CircularProgressBar } from '../CircularProgressBar';
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
+import { CircularProgressBar } from '../CircularProgressBar';
 
 const meta: Meta<typeof CircularProgressBar> = {
   title: 'UI/Feedback/CircularProgressBar/CircularProgressBar',

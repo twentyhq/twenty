@@ -69,6 +69,7 @@ export const SyncEmails = () => {
       redirectLocation: AppPath.Index,
       messageVisibility: visibility,
       calendarVisibility: calendarChannelVisibility,
+      skipMessageChannelConfiguration: true,
     });
   };
 

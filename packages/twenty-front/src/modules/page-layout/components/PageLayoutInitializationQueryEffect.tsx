@@ -17,6 +17,7 @@ import { DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT } from '@/page-layout/constants/Defaul
 import { DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowRunPageLayoutId';
 import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT } from '@/page-layout/constants/DefaultWorkflowVersionPageLayout';
 import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowVersionPageLayoutId';
+import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLayoutWithRelationWidgets';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -84,11 +85,13 @@ export const PageLayoutInitializationQueryEffect = ({
     skip: isDefaultLayout,
   });
 
-  const pageLayout: PageLayout | undefined = isDefaultLayout
+  const basePageLayout: PageLayout | undefined = isDefaultLayout
     ? getDefaultLayoutById(pageLayoutId)
     : data?.getPageLayout
       ? transformPageLayout(data.getPageLayout)
       : undefined;
+
+  const pageLayout = usePageLayoutWithRelationWidgets(basePageLayout);
 
   const pageLayoutPersistedComponentCallbackState =
     useRecoilComponentCallbackState(pageLayoutPersistedComponentState);

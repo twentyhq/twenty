@@ -40,6 +40,7 @@ export const GraphWidgetPieChartRenderer = () => {
     showDataLabels,
     showCenterMetric,
     formattedToRawLookup,
+    colorMode,
   } = useGraphPieChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration,
@@ -98,6 +99,7 @@ export const GraphWidgetPieChartRenderer = () => {
         objectMetadataItemId={widget.objectMetadataId}
         configuration={widget.configuration}
         showLegend={showLegend}
+        colorMode={colorMode}
         displayType="shortNumber"
         onSliceClick={isPageLayoutInEditMode ? undefined : handleSliceClick}
         showDataLabels={showDataLabels}

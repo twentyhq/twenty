@@ -1,4 +1,5 @@
 import {
+  FieldMetadataType,
   type ObjectRecord,
   type ObjectRecordOrderByForCompositeField,
   type ObjectRecordOrderByForScalarField,
@@ -13,6 +14,8 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 const isOrderByDirection = (value: unknown): value is OrderByDirection => {
   return Object.values(OrderByDirection).includes(value as OrderByDirection);
@@ -90,4 +93,32 @@ export const validateAndGetOrderByForCompositeField = (
   }
 
   return keyOrderBy;
+};
+
+export const countRelationFieldsInOrderBy = (
+  orderBy: ObjectRecordOrderBy,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  fieldIdByName: Record<string, string>,
+): number => {
+  return orderBy.filter((orderByItem) => {
+    const fieldName = Object.keys(orderByItem)[0];
+    const fieldMetadataId = fieldIdByName[fieldName];
+    const fieldMetadata = flatFieldMetadataMaps.byId[fieldMetadataId];
+
+    return fieldMetadata?.type === FieldMetadataType.RELATION;
+  }).length;
+};
+
+export const hasRelationFieldInOrderBy = (
+  orderBy: ObjectRecordOrderBy,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  fieldIdByName: Record<string, string>,
+): boolean => {
+  return (
+    countRelationFieldsInOrderBy(
+      orderBy,
+      flatFieldMetadataMaps,
+      fieldIdByName,
+    ) > 0
+  );
 };

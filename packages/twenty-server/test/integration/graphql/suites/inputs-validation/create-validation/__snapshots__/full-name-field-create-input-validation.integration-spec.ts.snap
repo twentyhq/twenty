@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Create input validation - FULL_NAME Gql create input - failure FULL_NAME - should fail with : {"fullNameField":"not-a-full-name"} 1`] = `"Expected type "FullNameCreateInput" to be an object."`;
 

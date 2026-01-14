@@ -1,23 +1,23 @@
 ---
 title: Spouštěče pracovních postupů
-description: Learn about the different triggers that start your workflows.
+description: Seznamte se s různými spouštěči, které zahajují vaše pracovní postupy.
 ---
 
-## About Triggers
+## O spouštěčích
 
 Pracovní postupy vždy začínají jedním spouštěčem, který určuje, kdy by měla být automatizace spuštěna.
 
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
+  **Pokročilé objekty jsou podporovány!** Kromě standardních CRM objektů (Lidé, Společnosti, Příležitosti) můžete také spouštět pracovní postupy a provádět akce nad:
 
   * Členové pracovního prostoru
-  * Calendar Events
-  * Messages (Emails)
-  * Tasks, Notes, and many other system objects
+  * Události v kalendáři
+  * Zprávy (e-maily)
+  * Úkoly, poznámky a mnoho dalších systémových objektů
 
-  This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
+  To umožňuje výkonné automatizace, například upozorňovat členy týmu, když jsou v kalendáři vytvořeny události, nebo automaticky zpracovávat příchozí e-maily.
 </Tip>
 
 ## Záznam je vytvořen
@@ -27,9 +27,9 @@ Spouští pracovní postup, když je vytvořen nový záznam ve vybraném objekt
 **Konfigurace**: Vyberte typ objektu, který chcete sledovat ohledně nových záznamů.
 
 <Note>
-  * This trigger is great for records created by csv, mailbox and calendar synchronization, API.
-  * **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
-    To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
+  * Tento spouštěč je skvělý pro záznamy vytvořené pomocí CSV, synchronizace poštovní schránky a kalendáře nebo API.
+  * **Nedoporučuje se pro záznamy vytvářené ručně**: s tímto spouštěčem se pracovní postupy spouštějí okamžitě po vytvoření záznamu. Protože Twenty UI nabízí průběžné automatické ukládání (neexistuje režim úprav a následné potvrzení pro uložení záznamů), pracovní postup bude spuštěn dříve, než uživatel vyplní všechna pole.
+    Chcete-li tento pracovní postup spouštět u záznamů vytvořených ručně, doporučujeme místo toho použít spouštěč `Record is created or updated`.
 </Note>
 
 ## Záznam je aktualizován
@@ -62,43 +62,43 @@ Spouští pracovní postup, když je záznam odstraněn z objektu.
 
 **Konfigurace**: Vyberte typ objektu, který chcete sledovat ohledně odstranění.
 
-## Manual Trigger
+## Ruční spouštěč
 
-Spustí pracovní postup, když jej vyvolá uživatelská akce. This trigger can be accessed through the `Cmd+K` menu or via a custom button that will be displayed in the top navbar after selecting record(s).
+Spustí pracovní postup, když jej vyvolá uživatelská akce. K tomuto spouštěči je možné přistupovat prostřednictvím nabídky `Cmd+K` nebo pomocí vlastního tlačítka, které se zobrazí v horní navigační liště po výběru záznamu nebo záznamů.
 
 <img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
 
 **Konfigurace dostupnosti**:
 Vyberte, jak má pracovní postup zpracovávat výběr záznamů:
 
-* **Global**: No record is required to trigger this workflow. The workflow is triggered from the command menu `Cmd + K` anywhere (from any object) and does not use record(s) as input.
+* **Globální**: K aktivaci tohoto pracovního postupu není vyžadován žádný záznam. Pracovní postup se spouští z příkazové nabídky `Cmd + K` odkudkoli (z jakéhokoli objektu) a nepoužívá jako vstup žádné záznamy.
 
-* **Single**: The selected record(s) will be passed to your workflow. Toto je nastaveno pro daný objekt. Před spuštěním pracovního postupu je možné vybrat několik záznamů. The workflow will run from beginning to end as many times as there are records selected.
+* **Jednotlivé**: Vybraný záznam či záznamy budou předány vašemu pracovnímu postupu. Toto je nastaveno pro daný objekt. Před spuštěním pracovního postupu je možné vybrat několik záznamů. Pracovní postup se spustí od začátku do konce tolikrát, kolik je vybraných záznamů.
 
   <Note>
-    **Soft limit: 100 runs/minute**. Beyond this, workflows remain in "Not Started" status and are processed gradually—either by a background job or when another workflow enters the queue. This means you can select more than 100 records with a Single trigger; execution will just be slower.
+    **Měkký limit: 100 běhů za minutu**. Po překročení tohoto limitu zůstanou pracovní postupy ve stavu "Not Started" a budou zpracovávány postupně—buď úlohou na pozadí, nebo když do fronty vstoupí další pracovní postup. To znamená, že se spouštěčem Jednotlivé můžete vybrat více než 100 záznamů; provádění bude jen pomalejší.
   </Note>
 
-* **Hromadné**: Vybrané záznamy budou předány do vašeho pracovního postupu. Toto je nastaveno pro daný objekt. Před spuštěním pracovního postupu je možné vybrat několik záznamů. Pracovní postup poběží jednou, přičemž celý seznam záznamů bude použit jako vstup. This means the workflow needs to contain an [Iterator action](/l/cs/user-guide/workflows/capabilities/workflow-actions#iterator).
+* **Hromadné**: Vybrané záznamy budou předány do vašeho pracovního postupu. Toto je nastaveno pro daný objekt. Před spuštěním pracovního postupu je možné vybrat několik záznamů. Pracovní postup poběží jednou, přičemž celý seznam záznamů bude použit jako vstup. To znamená, že pracovní postup musí obsahovat [akci Iterator](/l/cs/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
-  This is more advanced, and best for people who want to optimize the number of workflow runs.
+  Toto je pokročilejší a hodí se pro uživatele, kteří chtějí optimalizovat počet běhů pracovního postupu.
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
 
-**Additional Configuration**:
+**Dodatečné nastavení**:
 
-* Select the target object (for Single and Bulk availability)
+* Vyberte cílový objekt (pro dostupnost v režimu Jednotlivé a Hromadné)
 * Vyberte ikonu příkazu pro spuštění pracovního postupu
 * Nakonfigurujte umístění v navigaci (připnuté nebo nepřipnuté)
 
 **Způsoby přístupu**:
 
-* `Cmd+K` menu to find and launch manual workflows
+* Nabídka `Cmd+K` pro vyhledání a spuštění ručních pracovních postupů
 * Vlastní tlačítko v horní navigaci (pokud je nastaveno)
 
-## Time-Based Trigger: On a Schedule
+## Časový spouštěč: Podle plánu
 
 Spouští pracovní postup v opakovaných intervalech, které definujete.
 
@@ -108,29 +108,29 @@ Spouští pracovní postup v opakovaných intervalech, které definujete.
 * Zadejte hodnotu nebo použijte vlastní cron výrazy pro rozšířené plánování
 
 <Note>
-  **Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
+  **Časové pásmo**: Plánované pracovní postupy běží v **UTC**. Při nastavování hodin pro denní plány převeďte svůj místní čas na UTC.
 </Note>
 
-## External Trigger: Webhook
+## Externí spouštěč: Webhook
 
-Starts the workflow when a GET or POST request is received from an external service.
+Spustí pracovní postup, když je z externí služby přijat požadavek typu GET nebo POST.
 
 <img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
 
 **Konfigurace**:
 
-* The workflow provides a unique webhook URL—copy this and add it to your external system as the endpoint to call.
-* For POST requests, define the expected body structure so Twenty knows what data to expect. Add here the fields you will receive that will be needed below in your workflow.
-* Configure authentication (coming soon).
+* Pracovní postup poskytne jedinečnou URL adresu webhooku—zkopírujte ji a přidejte do svého externího systému jako koncový bod, který se má volat.
+* Pro požadavky POST definujte očekávanou strukturu těla, aby Twenty vědělo, jaká data očekávat. Zde přidejte pole, která obdržíte a která budou dále ve vašem pracovním postupu potřeba.
+* Nakonfigurujte ověřování (již brzy).
 
-## Choosing the Right Trigger
+## Výběr správného spouštěče
 
-| Use Case                    | Recommended Trigger                  |
-| --------------------------- | ------------------------------------ |
-| New leads need processing   | Záznam je vytvořen                   |
-| Data changes need sync      | Záznam je aktualizován               |
-| Import/manual data handling | Záznam je aktualizován nebo vytvořen |
-| Cleanup after deletion      | Záznam je odstraněn                  |
-| User-initiated action       | Spustit manuálně                     |
-| Recurring reports           | On a Schedule                        |
-| External integration        | Webhook or On a Schedule             |
+| Případ použití                                 | Doporučený spouštěč                  |
+| ---------------------------------------------- | ------------------------------------ |
+| Nové potenciální kontakty je potřeba zpracovat | Záznam je vytvořen                   |
+| Změny dat je potřeba synchronizovat            | Záznam je aktualizován               |
+| Import/ruční zpracování dat                    | Záznam je aktualizován nebo vytvořen |
+| Čištění po smazání                             | Záznam je odstraněn                  |
+| Akce spuštěná uživatelem                       | Spustit manuálně                     |
+| Pravidelné reporty                             | Podle plánu                          |
+| Externí integrace                              | Webhook nebo Podle plánu             |

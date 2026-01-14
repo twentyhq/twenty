@@ -1,5 +1,6 @@
 import { ObjectType } from '@nestjs/graphql';
 
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
@@ -10,12 +11,10 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { IDField } from '@ptc-org/nestjs-query-graphql';
-
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 
 @Entity({
   name: 'applicationVariable',
@@ -55,7 +54,7 @@ export class ApplicationVariableEntity {
     },
   )
   @JoinColumn({ name: 'applicationId' })
-  application: Relation<ApplicationEntity> | null;
+  application: EntityRelation<ApplicationEntity> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

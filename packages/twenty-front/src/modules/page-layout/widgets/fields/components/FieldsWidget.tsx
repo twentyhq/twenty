@@ -36,6 +36,7 @@ import {
 } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -49,7 +50,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   const targetRecord = useTargetRecord();
   const { isInRightDrawer } = useLayoutRenderingContext();
 
-  const instanceId = `fields-widget-${widget.id}-${targetRecord.id}${isInRightDrawer ? '-right-drawer' : ''}`;
+  const instanceId = `${widget.id}-${targetRecord.id}${isInRightDrawer ? '-right-drawer' : ''}`;
 
   const { recordLoading, isPrefetchLoading } = useRecordShowContainerData({
     objectRecordId: targetRecord.id,

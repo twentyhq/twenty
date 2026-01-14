@@ -19,6 +19,7 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { calculateValueRangeFromLineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/calculateValueRangeFromLineChartSeries';
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
@@ -60,6 +61,7 @@ type GraphWidgetLineChartProps = {
   rangeMax?: number;
   omitNullValues?: boolean;
   groupMode?: 'stacked';
+  colorMode: GraphColorMode;
   onSliceClick?: (point: Point<LineSeries>) => void;
 } & GraphValueFormatOptions;
 
@@ -86,6 +88,7 @@ export const GraphWidgetLineChart = ({
   omitNullValues: _omitNullValues = false,
   displayType,
   groupMode,
+  colorMode,
   decimals,
   prefix,
   suffix,
@@ -111,6 +114,7 @@ export const GraphWidgetLineChart = ({
       data,
       colorRegistry,
       id,
+      colorMode,
     });
 
   const calculatedValueRange =

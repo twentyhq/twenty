@@ -12,6 +12,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import { t } from '@lingui/core/macro';
+import { CrudOperationType } from 'twenty-shared/types';
 import {
   type CreateOneServerlessFunctionItemMutation,
   type CreateOneServerlessFunctionItemMutationVariables,
@@ -72,6 +73,7 @@ export const usePersistServerlessFunction = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'serverlessFunction',
+            operationType: CrudOperationType.CREATE,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });
@@ -114,6 +116,7 @@ export const usePersistServerlessFunction = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'serverlessFunction',
+            operationType: CrudOperationType.UPDATE,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });
@@ -157,6 +160,7 @@ export const usePersistServerlessFunction = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'serverlessFunction',
+            operationType: CrudOperationType.DELETE,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });

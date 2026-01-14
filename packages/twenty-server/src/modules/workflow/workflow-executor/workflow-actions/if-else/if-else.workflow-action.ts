@@ -36,14 +36,14 @@ export class IfElseWorkflowAction implements WorkflowAction {
     if (!branches || branches.length === 0) {
       throw new WorkflowStepExecutorException(
         'If-else action must have at least one branch',
-        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 
     if (!stepFilterGroups || !stepFilters) {
       throw new WorkflowStepExecutorException(
         'If-else action must have stepFilterGroups and stepFilters defined',
-        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 

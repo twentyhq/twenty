@@ -1,31 +1,31 @@
 ---
-title: Bring Product Data into Twenty
-description: Sync product catalog data from a data warehouse into your CRM on a schedule.
+title: Importați datele despre produse în Twenty
+description: Sincronizați datele catalogului de produse dintr-un depozit de date în CRM-ul dvs., conform unui program.
 ---
 
-Use this pattern to keep Twenty in sync with product data from your data warehouse (e.g., Snowflake, BigQuery, PostgreSQL).
+Folosiți acest model pentru a menține Twenty sincronizat cu datele despre produse din depozitul dvs. de date (de ex., Snowflake, BigQuery, PostgreSQL).
 
-## Workflow Structure
+## Structura fluxului de lucru
 
-1. **Trigger**: On a Schedule
-2. **Code**: Query your data warehouse
-3. **Code** (optional): Format data as array
-4. **Iterator**: Loop through each product
-5. **Upsert Record**: Create or update in Twenty
+1. **Declanșator**: Conform unui program
+2. **Code**: Interogați depozitul de date
+3. **Code** (opțional): Formatați datele ca tablou
+4. **Iterator**: Parcurgeți fiecare produs
+5. **Upsert Record**: Creați sau actualizați în Twenty
 
 <img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
 
-## Step 1: Schedule the Trigger
+## Pasul 1: Programați declanșatorul
 
-Set the workflow to run at a frequency matching your data freshness needs:
+Configurați fluxul de lucru să ruleze la o frecvență care corespunde nevoilor dvs. privind actualitatea datelor:
 
-* Every 5 minutes for near real-time sync
-* Every hour for less critical data
-* Daily for batch updates
+* La fiecare 5 minute pentru sincronizare aproape în timp real
+* La fiecare oră pentru date mai puțin critice
+* Zilnic pentru actualizări în lot
 
-## Step 2: Query Your Data Warehouse
+## Pasul 2: Interogați depozitul dvs. de date
 
-Add a **Code** action to fetch recent data:
+Adăugați o acțiune **Code** pentru a prelua datele recente:
 
 ```javascript
 export const main = async () => {
@@ -54,14 +54,14 @@ export const main = async () => {
 ```
 
 <Tip>
-  Filter by `updated_at >= last X minutes` to retrieve only recently changed records. This keeps the sync efficient.
+  Filtrați după `updated_at >= last X minutes` pentru a prelua doar înregistrările modificate recent. Acest lucru menține sincronizarea eficientă.
 </Tip>
 
-## Step 3: Format Data (Optional)
+## Pasul 3: Formatați datele (opțional)
 
-If your warehouse returns data in a format that needs transformation, add another **Code** action. Common transformations include type conversions, field renaming, and data cleanup.
+Dacă depozitul dvs. de date returnează date într-un format care necesită transformare, adăugați o altă acțiune **Code**. Transformările uzuale includ conversii de tip, redenumirea câmpurilor și curățarea datelor.
 
-### Example: User Data with Boolean and Status Fields
+### Exemplu: Date despre utilizatori cu câmpuri booleene și de stare
 
 ```javascript
 export const main = async (params: {
@@ -86,7 +86,7 @@ export const main = async (params: {
 };
 ```
 
-### Example: Product Data with Type Conversions
+### Exemplu: Date de produs cu conversii de tip
 
 ```javascript
 export const main = async (params: { products: any }) => {
@@ -107,7 +107,7 @@ export const main = async (params: { products: any }) => {
 };
 ```
 
-### Example: Date and Currency Formatting
+### Exemplu: Formatarea datelor calendaristice și a valorilor monetare
 
 ```javascript
 export const main = async (params: { deals: any }) => {
@@ -131,52 +131,52 @@ export const main = async (params: { deals: any }) => {
 };
 ```
 
-### Common Transformations
+### Transformări uzuale
 
-| Source Format        | Target Format    | Cod                                      |
+| Format sursă         | Format țintă     | Cod                                      |
 | -------------------- | ---------------- | ---------------------------------------- |
 | `"true"` / `"false"` | `true` / `false` | `v === true \|\| v === "true"`           |
 | `"123.45"`           | `123.45`         | `parseFloat(value)`                      |
 | `"active"`           | `"ACTIVE"`       | `value.toUpperCase()`                    |
-| `1704067200` (Unix)  | ISO date         | `new Date(v * 1000).toISOString()`       |
+| `1704067200` (Unix)  | Dată ISO         | `new Date(v * 1000).toISOString()`       |
 | `"$1,234.56"`        | `1234.56`        | `parseFloat(v.replace(/[^0-9.-]/g, ""))` |
 | `null` / `undefined` | `""`             | `value \|\| ""`                          |
 
-## Step 4: Iterate Through Products
+## Pasul 4: Parcurgeți produsele
 
-Add an **Iterator** action:
+Adăugați o acțiune **Iterator**:
 
-* Input: `{{code.products}}`
+* Intrare: `{{code.products}}`
 
-This loops through each product in the array.
+Aceasta parcurge fiecare produs din array.
 
-## Step 5: Upsert Each Record
+## Pasul 5: Efectuați upsert pentru fiecare înregistrare
 
-Inside the iterator, add an **Upsert Record** action:
+În interiorul iteratorului, adăugați o acțiune **Upsert Record**:
 
-| Setting      | Valoare                                |
-| ------------ | -------------------------------------- |
-| **Object**   | Your custom Product object             |
-| **Match by** | External ID or SKU (unique identifier) |
-| **Name**     | `{{iterator.item.name}}`               |
-| **SKU**      | `{{iterator.item.sku}}`                |
-| **Price**    | `{{iterator.item.price}}`              |
+| Setare             | Valoare                                |
+| ------------------ | -------------------------------------- |
+| **Obiect**         | Obiectul dvs. Product personalizat     |
+| **Potrivire după** | ID extern sau SKU (identificator unic) |
+| **Nume**           | `{{iterator.item.name}}`               |
+| **SKU**            | `{{iterator.item.sku}}`                |
+| **Preț**           | `{{iterator.item.price}}`              |
 
 <Tip>
-  Use **Upsert** (update or create) instead of building separate branches for create vs. update. It's faster to build and easier to debug.
+  Utilizați **Upsert** (actualizare sau creare) în loc să construiți ramuri separate pentru creare vs. actualizare. Se construiește mai rapid și este mai ușor de depanat.
 </Tip>
 
-## Example Use Cases
+## Exemple de cazuri de utilizare
 
-| Sursa                   | Date                                |
-| ----------------------- | ----------------------------------- |
-| **ERP system**          | Product catalog, pricing, inventory |
-| **E-commerce platform** | Orders, customers, product updates  |
-| **Data warehouse**      | Aggregated metrics, enriched data   |
-| **Inventory system**    | Stock levels, reorder alerts        |
+| Sursa                       | Date                                        |
+| --------------------------- | ------------------------------------------- |
+| **Sistem ERP**              | Catalog de produse, prețuri, stocuri        |
+| **Platformă de e-commerce** | Comenzi, clienți, actualizări de produse    |
+| **Depozit de date**         | Metrici agregate, date îmbogățite           |
+| **Sistem de inventar**      | Niveluri de stoc, alerte de reaprovizionare |
 
-## Related
+## Conexe
 
-* [Workflow Triggers](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ro/user-guide/workflows/capabilities/workflow-actions)
-* [Handle Arrays in Code Actions](/l/ro/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Gestionați array-urile în acțiunile Code](/l/ro/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

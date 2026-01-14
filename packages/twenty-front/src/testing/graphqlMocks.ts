@@ -16,7 +16,6 @@ import { mockedFavoriteFoldersData } from '~/testing/mock-data/favorite-folders'
 import { mockedNotes } from '~/testing/mock-data/notes';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
-import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
@@ -35,7 +34,6 @@ import {
   workflowQueryResult,
 } from '~/testing/mock-data/workflow';
 import { oneSucceededWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
-import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
 const peopleMock = getPeopleRecordConnectionMock();
@@ -627,20 +625,6 @@ export const graphqlMocks = {
               endCursor: null,
             },
           },
-        },
-      });
-    }),
-    graphql.query('GetOneDatabaseConnection', () => {
-      return HttpResponse.json({
-        data: {
-          findOneRemoteServerById: mockedRemoteServers[0],
-        },
-      });
-    }),
-    graphql.query('GetManyRemoteTables', () => {
-      return HttpResponse.json({
-        data: {
-          findDistantTablesWithStatus: mockedRemoteTables,
         },
       });
     }),

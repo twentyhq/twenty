@@ -1,12 +1,12 @@
 ---
-title: Feature Flags
+title: Steaguri de caracteristici
 ---
 
-Feature flags are used to hide experimental features. Pentru Twenty, acestea sunt setate la nivel de spațiu de lucru și nu la nivel de utilizator.
+Steagurile de caracteristici sunt utilizate pentru a ascunde caracteristici experimentale. Pentru Twenty, acestea sunt setate la nivel de spațiu de lucru și nu la nivel de utilizator.
 
-## Adding a new feature flag
+## Adăugarea unui nou steag de caracteristici
 
-In `FeatureFlagKey.ts` add the feature flag:
+În `FeatureFlagKey.ts` adăugați steagul de caracteristici:
 
 ```ts
 type FeatureFlagKey =
@@ -14,7 +14,7 @@ type FeatureFlagKey =
   | ...;
 ```
 
-Also add it to the enum in `feature-flag.entity.ts`:
+Adăugați-l și în enumul din `feature-flag.entity.ts`:
 
 ```ts
 enum FeatureFlagKeys {
@@ -23,7 +23,7 @@ enum FeatureFlagKeys {
 }
 ```
 
-To apply a feature flag on a **backend** feature use:
+Pentru a aplica un steag de caracteristici la o funcționalitate de **backend**, utilizați:
 
 ```ts
 @Gate({
@@ -31,15 +31,15 @@ To apply a feature flag on a **backend** feature use:
 })
 ```
 
-To apply a feature flag on a **frontend** feature use:
+Pentru a aplica un steag de caracteristici la o funcționalitate de **frontend**, utilizați:
 
 ```ts
 const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
 ```
 
-## Configure feature flags for the deployment
+## Configurați steagurile de caracteristici pentru implementare
 
-Change the corresponding record in the Table `core.featureFlag`:
+Modificați înregistrarea corespunzătoare în tabelul `core.featureFlag`:
 
 | id        | cheie                    | IdSpațiuDeLucru | valoare    |
 | --------- | ------------------------ | --------------- | ---------- |

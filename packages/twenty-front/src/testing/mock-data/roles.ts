@@ -39,6 +39,8 @@ const rolesMock: Role[] = [
         canDestroyObjectRecords: true,
       },
     ],
+    rowLevelPermissionPredicateGroups: [],
+    rowLevelPermissionPredicates: [],
   },
   {
     __typename: 'Role',
@@ -70,6 +72,8 @@ const rolesMock: Role[] = [
         canDestroyObjectRecords: false,
       },
     ],
+    rowLevelPermissionPredicateGroups: [],
+    rowLevelPermissionPredicates: [],
   },
 ];
 

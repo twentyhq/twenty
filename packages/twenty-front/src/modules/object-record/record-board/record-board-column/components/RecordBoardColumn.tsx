@@ -3,13 +3,11 @@ import { Droppable } from '@hello-pangea/dnd';
 
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { emptyRecordGroupByIdComponentFamilyState } from '@/object-record/record-group/states/emptyRecordGroupByIdComponentFamilyState';
+import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { DragAndDropLibraryLegacyReRenderBreaker } from '@/ui/drag-and-drop/components/DragAndDropReRenderBreaker';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -44,16 +42,9 @@ export const RecordBoardColumn = ({
     recordBoardColumnId,
   );
 
-  const shouldHideEmptyRecordGroups = useRecoilComponentValue(
-    recordIndexShouldHideEmptyRecordGroupsComponentState,
-  );
+  const shouldHide = useShouldHideRecordGroup(recordBoardColumnId);
 
-  const isRecordGroupEmpty = useRecoilComponentFamilyValue(
-    emptyRecordGroupByIdComponentFamilyState,
-    recordBoardColumnId,
-  );
-
-  if (shouldHideEmptyRecordGroups && isRecordGroupEmpty) {
+  if (shouldHide) {
     return null;
   }
 

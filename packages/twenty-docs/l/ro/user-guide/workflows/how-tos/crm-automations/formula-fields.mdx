@@ -1,37 +1,37 @@
 ---
-title: Formula Fields
-description: Create formula fields using workflows until native support is available.
+title: Câmpuri de formulă
+description: Creează câmpuri de formulă folosind fluxuri de lucru până când va fi disponibil suportul nativ.
 ---
 
-Twenty doesn't yet support native formula fields yet (coming in 2026), but you can achieve the same result using workflows. This workaround lets you automatically calculate and populate field values—from simple concatenations to complex business logic.
+Twenty nu oferă încă suport nativ pentru câmpuri de formulă (va veni în 2026), dar poți obține același rezultat folosind fluxuri de lucru. Această soluție temporară îți permite să calculezi și să completezi automat valorile câmpurilor — de la concatenări simple la logică de business complexă.
 
 ## Cazuri de Utilizare Comune
 
-| Use Case            | Formula Example                   |
-| ------------------- | --------------------------------- |
-| **Full name**       | First Name + " " + Last Name      |
-| **Expected amount** | Amount × Probability              |
-| **Days until due**  | Due Date - Today                  |
-| **Days in stage**   | Today - Stage Entry Date          |
-| **Lead score**      | Points based on multiple criteria |
+| Caz de utilizare          | Exemplu de formulă                 |
+| ------------------------- | ---------------------------------- |
+| **Nume complet**          | Prenume + " " + Nume               |
+| **Sumă estimată**         | Sumă × Probabilitate               |
+| **Zile până la scadență** | Data scadenței - Astăzi            |
+| **Zile în stadiu**        | Astăzi - Data intrării în stadiu   |
+| **Scor lead**             | Puncte bazate pe criterii multiple |
 
 <Tip>
-  For a complete example of tracking time in pipeline stages, see [Track How Long Opportunities Stay in Each Stage](/l/ro/user-guide/views-pipelines/how-tos/track-time-in-stage).
+  Pentru un exemplu complet de urmărire a timpului în stadiile din pipeline, vezi [Urmărește cât timp rămân oportunitățile în fiecare stadiu](/l/ro/user-guide/views-pipelines/how-tos/track-time-in-stage).
 </Tip>
 
-## Basic Formula: Concatenation
+## Formulă de bază: Concatenare
 
-### Example: Auto-Fill Full Name
+### Exemplu: Autocompletare nume complet
 
-**Goal**: Automatically combine first and last name into a full name field.
+**Obiectiv**: Combină automat prenumele și numele într-un câmp de nume complet.
 
 ### Configurare
 
-1. **Trigger**: Record is Updated or Created (People)
+1. **Declanșator**: Înregistrarea este actualizată sau creată (Persoane)
 
-2. **Filter**: Check that first name or last name changed
+2. **Filtru**: Verifică dacă prenumele sau numele s-a schimbat
 
-3. **Code action**:
+3. **Acțiune de cod**:
 
 ```javascript
 export const main = async (params) => {
@@ -45,21 +45,21 @@ export const main = async (params) => {
 };
 ```
 
-4. **Update Record**: Set Full Name to `{{code.fullName}}`
+4. **Actualizează înregistrarea**: Setează Nume complet la `{{code.fullName}}`
 
-## Numeric Formula: Expected Amount
+## Formulă numerică: Sumă estimată
 
-### Example: Calculate Expected Revenue
+### Exemplu: Calculează venitul estimat
 
-**Goal**: Multiply opportunity amount by probability to get expected amount.
+**Obiectiv**: Înmulțește suma oportunității cu probabilitatea pentru a obține suma estimată.
 
-See [How to Show Expected Amount in Pipeline](/l/ro/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) for the complete workflow.
+Vezi [Cum să afișezi suma estimată în pipeline](/l/ro/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) pentru fluxul de lucru complet.
 
-### Quick Setup
+### Configurare rapidă
 
-1. **Trigger**: Record is Updated (Opportunities, Amount OR Probability field)
+1. **Declanșator**: Înregistrarea este actualizată (Oportunități, câmpul Sumă SAU Probabilitate)
 
-2. **Code action**:
+2. **Acțiune de cod**:
 
 ```javascript
 export const main = async (params) => {
@@ -71,19 +71,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Expected Amount to `{{code.expectedAmount}}`
+3. **Actualizează înregistrarea**: Setează Suma estimată la `{{code.expectedAmount}}`
 
-## Date Formula: Days Calculation
+## Formulă de dată: Calculul zilelor
 
-### Example: Days Until Task Due
+### Exemplu: Zile până la scadența sarcinii
 
-**Goal**: Calculate how many days remain until a task's due date.
+**Obiectiv**: Calculează câte zile rămân până la data scadenței unei sarcini.
 
 ### Configurare
 
-1. **Trigger**: Record is Updated or Created (Tasks, Due Date field)
+1. **Declanșator**: Înregistrarea este actualizată sau creată (Sarcini, câmp Data scadenței)
 
-2. **Code action**:
+2. **Acțiune de cod**:
 
 ```javascript
 export const main = async (params) => {
@@ -102,23 +102,23 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Days Until Due to `{{code.daysUntilDue}}`
+3. **Actualizează înregistrarea**: Setează Zile până la scadență la `{{code.daysUntilDue}}`
 
 <Note>
-  Negative values indicate overdue tasks. You can use this field to filter or sort tasks by urgency.
+  Valorile negative indică sarcini întârziate. Poți folosi acest câmp pentru a filtra sau sorta sarcinile după urgență.
 </Note>
 
-## Conditional Formula: Lead Score
+## Formulă condițională: Scor lead
 
-### Example: Calculate Lead Score Based on Criteria
+### Exemplu: Calculează scorul lead pe baza criteriilor
 
-**Goal**: Score leads based on company size, industry, and engagement.
+**Obiectiv**: Punctează lead-urile pe baza dimensiunii companiei, industriei și nivelului de implicare.
 
 ### Configurare
 
-1. **Trigger**: Record is Updated (People or Companies)
+1. **Declanșator**: Înregistrarea este actualizată (Persoane sau Companii)
 
-2. **Code action**:
+2. **Acțiune de cod**:
 
 ```javascript
 export const main = async (params) => {
@@ -147,19 +147,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Lead Score to `{{code.leadScore}}`
+3. **Actualizează înregistrarea**: Setează Scor lead la `{{code.leadScore}}`
 
-## Text Formula: Domain Extraction
+## Formulă de text: Extracția domeniului
 
-### Example: Extract Domain from Email
+### Exemplu: Extrage domeniul din e-mail
 
-**Goal**: Automatically extract and store the email domain.
+**Obiectiv**: Extrage și stochează automat domeniul e-mailului.
 
 ### Configurare
 
-1. **Trigger**: Record is Updated (People, Email field)
+1. **Declanșator**: Înregistrarea este actualizată (Persoane, câmp E-mail)
 
-2. **Code action**:
+2. **Acțiune de cod**:
 
 ```javascript
 export const main = async (params) => {
@@ -173,30 +173,30 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Domain field to `{{code.domain}}`
+3. **Actualizează înregistrarea**: Setează câmpul Domeniu la `{{code.domain}}`
 
 ## Cele mai bune practici
 
-### Performance
+### Performanță
 
-* Only trigger on relevant field changes
-* Use filters to skip records that don't need calculation
-* Avoid complex calculations in high-volume workflows
+* Declanșează doar la modificări relevante ale câmpurilor
+* Folosește filtre pentru a omite înregistrările care nu necesită calcul
+* Evită calcule complexe în fluxurile de lucru cu volum mare
 
-### Error Handling
+### Gestionarea erorilor
 
-* Check for null/undefined values before calculations
-* Use default values when data is missing
-* Return clear error messages when calculations fail
+* Verifică valorile null/undefined înainte de calcule
+* Folosește valori implicite când lipsesc datele
+* Returnează mesaje de eroare clare când calculele eșuează
 
 ### Testare
 
-* Test with edge cases (empty fields, zero values)
-* Verify calculations manually before activating
-* Monitor workflow runs for unexpected results
+* Testează cu cazuri-limită (câmpuri goale, valori zero)
+* Verifică manual calculele înainte de activare
+* Monitorizează rulările fluxurilor de lucru pentru rezultate neașteptate
 
-## Related
+## Conexe
 
-* [How to Show Expected Amount in Pipeline](/l/ro/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
-* [How to Track Time in Stage](/l/ro/user-guide/views-pipelines/how-tos/track-time-in-stage)
-* [Workflow Actions](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Cum să afișezi suma estimată în pipeline](/l/ro/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+* [Cum să urmărești timpul în stadiu](/l/ro/user-guide/views-pipelines/how-tos/track-time-in-stage)
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)

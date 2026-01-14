@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Create input validation - UUID Gql create input - failure UUID - should fail with : {"uuidField":"non-uuid"} 1`] = `"Invalid UUID"`;
 

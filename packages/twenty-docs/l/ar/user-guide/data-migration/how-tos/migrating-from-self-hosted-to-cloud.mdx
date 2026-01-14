@@ -1,73 +1,73 @@
 ---
 title: التحويل من نظام ذاتي الاستضافة إلى السحابة
-description: Step-by-step guide to migrate your Twenty self-hosted instance to Twenty Cloud.
+description: دليل خطوة بخطوة لترحيل مثيل Twenty ذاتي الاستضافة الخاص بك إلى Twenty Cloud.
 ---
 
 ## نظرة عامة
 
-This guide walks you through migrating your data from a Twenty self-hosted instance to Twenty Cloud. The process involves setting up your cloud workspace, exporting your data, and re-importing it.
+يرشدك هذا الدليل خلال ترحيل بياناتك من مثيل Twenty ذاتي الاستضافة إلى Twenty Cloud. تتضمن العملية إعداد مساحة العمل السحابية الخاصة بك، وتصدير بياناتك، ثم إعادة استيرادها.
 
-<Note>Views, workflows, and roles must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>يجب إعادة إنشاء العروض، وسير العمل، والأدوار يدويًا بعد الترحيل. خطط وقتًا لهذا العمل الخاص بالإعداد.</Note>
 
-## Step 1: Create Your Cloud Workspace
+## الخطوة 1: إنشاء مساحة العمل السحابية الخاصة بك
 
-1. Go to [app.twenty.com](https://app.twenty.com) and create a new workspace
-2. Complete the initial setup wizard
-3. Note your new workspace URL
+1. انتقل إلى [app.twenty.com](https://app.twenty.com) وأنشئ مساحة عمل جديدة
+2. أكمل معالج الإعداد الأولي
+3. دوّن عنوان URL لمساحة العمل الجديدة لديك
 
-## Step 2: Recreate Your Data Model
+## الخطوة 2: إعادة إنشاء نموذج البيانات الخاص بك
 
-Before importing data, recreate your custom objects and fields:
+قبل استيراد البيانات، أعد إنشاء الكائنات والحقول المخصّصة لديك:
 
-1. Go to **Settings → Data Model** in your cloud instance
-2. Create custom objects that match your self-hosted setup
-3. Add custom fields to standard and custom objects
-4. Configure field settings (unique, required, etc.)
+1. انتقل إلى **الإعدادات → نموذج البيانات** في مثيلك السحابي
+2. أنشئ كائنات مخصّصة تتطابق مع إعدادك ذاتي الاستضافة
+3. أضف حقولًا مخصّصة إلى الكائنات القياسية والمخصّصة
+4. قم بضبط إعدادات الحقول (فريد، مطلوب، إلخ.)
 
-<Note>Take screenshots of your self-hosted data model for reference, or keep both instances open side by side.</Note>
+<Note>التقط لقطات شاشة لنموذج البيانات ذاتي الاستضافة لديك كمرجع، أو اترك المثيلين مفتوحين جنبًا إلى جنب.</Note>
 
-## Step 3: Invite All Users
+## الخطوة 3: دعوة جميع المستخدمين
 
 <Warning>
-  **Critical: Invite users BEFORE importing data.**
+  **هام: قم بدعوة المستخدمين قبل استيراد البيانات.**
 
-  Users must accept their invitations before you import any records that reference them (like Account Owner fields). If users don't exist yet, those relations cannot be mapped.
+  يجب على المستخدمين قبول دعواتهم قبل أن تستورد أي سجلات تُشير إليهم (مثل حقول مالك الحساب). إذا لم يكن المستخدمون موجودين بعد، فلن يمكن تعيين تلك العلاقات.
 </Warning>
 
-1. Go to **Settings → Members** in your cloud instance
-2. Invite all team members who had accounts on self-hosted
-3. **Wait for everyone to accept** their invitation
-4. Verify all users appear in your Members list
+1. انتقل إلى **الإعدادات → الأعضاء** في مثيلك السحابي
+2. ادعُ جميع أعضاء الفريق الذين كانت لديهم حسابات على المثيل ذاتي الاستضافة
+3. **انتظر أن يقبل الجميع** دعواتهم
+4. تحقق من ظهور جميع المستخدمين في قائمة الأعضاء لديك
 
-## Step 4: Export Data from Self-Hosted
+## الخطوة 4: تصدير البيانات من المثيل ذاتي الاستضافة
 
-Export each object from your self-hosted instance:
+صدِّر كل كائن من مثيلك ذاتي الاستضافة:
 
-1. Navigate to each object (Companies, People, Opportunities, etc.)
-2. Configure the view to show **all columns** you want to migrate
-3. Click **⋮ → Export view**
-4. Save each CSV file with a clear name (e.g., `companies-export.csv`)
+1. انتقل إلى كل كائن (الشركات، الأشخاص، الفرص، إلخ.)
+2. قم بإعداد العرض ليُظهر **جميع الأعمدة** التي تريد ترحيلها
+3. انقر **⋮ → Export view**
+4. احفظ كل ملف CSV باسم واضح (مثلًا، `companies-export.csv`)
 
-**Export in this order** (for reference when importing):
+**صدِّر بالترتيب التالي** (للرجوع إليه عند الاستيراد):
 
 1. الشركات
 2. الأشخاص
 3. الفرص
-4. Custom objects (following their dependencies)
-5. Tasks, Notes
+4. الكائنات المخصّصة (وفقًا لتبعياتها)
+5. المهام، الملاحظات
 
-## Step 5: Update Workspace Member References
+## الخطوة 5: تحديث مراجع أعضاء مساحة العمل
 
-The exported CSVs contain user IDs from your self-hosted instance. These IDs won't match your cloud instance, so you need to replace them with emails.
+تحتوي ملفات CSV المُصدَّرة على معرّفات المستخدمين من مثيلك ذاتي الاستضافة. هذه المعرّفات لن تتطابق مع مثيلك السحابي، لذا تحتاج إلى استبدالها بعناوين البريد الإلكتروني.
 
-**For each CSV file with user references (Owner, Assignee, etc.):**
+**لكل ملف CSV يحتوي على مراجع للمستخدمين (المالك، المسند إليه، إلخ.):**
 
-1. Open the CSV in a spreadsheet application
-2. Add a new column next to each user ID column (e.g., `accountOwnerEmail` next to `accountOwnerId`)
-3. Fill in the **email address** of each user
-4. You can delete the old ID column or leave it (it will be skipped during import)
+1. افتح ملف CSV في تطبيق جداول بيانات
+2. أضِف عمودًا جديدًا بجوار كل عمود لمعرّف المستخدم (مثلًا، `accountOwnerEmail` بجوار `accountOwnerId`)
+3. املأ **عنوان البريد الإلكتروني** لكل مستخدم
+4. يمكنك حذف عمود المعرّف القديم أو تركه (سيتم تخطيه أثناء الاستيراد)
 
-**Example:**
+**مثال:**
 
 قبل:
 
@@ -83,89 +83,89 @@ name,domain,accountOwnerEmail
 Acme Corp,https://acme.com,john@yourcompany.com
 ```
 
-<Note>Use the same email addresses that users used to accept their cloud workspace invitation.</Note>
+<Note>استخدم عناوين البريد الإلكتروني نفسها التي استخدمها المستخدمون لقبول دعوتهم إلى مساحة العمل السحابية.</Note>
 
-## Step 6: Plan Your Import Order
+## الخطوة 6: التخطيط لترتيب الاستيراد
 
-Import files in the correct order to maintain relationships:
+استورد الملفات بالترتيب الصحيح للحفاظ على العلاقات:
 
-1. **Companies** first (no dependencies)
-2. **People** second (link to Companies)
-3. **Opportunities** third (link to Companies and People)
-4. **Custom objects** (following their dependencies)
-5. **Tasks and Notes** last (link to other records)
+1. **الشركات** أولًا (من دون تبعيات)
+2. **الأشخاص** ثانيًا (مرتبطون بالشركات)
+3. **الفرص** ثالثًا (مرتبطة بالشركات والأشخاص)
+4. **الكائنات المخصّصة** (وفقًا لتبعياتها)
+5. **المهام والملاحظات** أخيرًا (مرتبطة بسجلات أخرى)
 
-See [How to Import Relations](/l/ar/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for details on maintaining relationships.
+اطّلع على [كيفية استيراد العلاقات](/l/ar/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) لمعرفة تفاصيل الحفاظ على العلاقات.
 
-## Step 7: Import to Cloud
+## الخطوة 7: الاستيراد إلى السحابة
 
-For each CSV file, in order:
+لكل ملف CSV، بالتسلسل:
 
-1. Navigate to the object in your cloud instance
-2. Click **⋮ → Import records**
-3. Upload the CSV file
-4. Map columns to fields:
-   * Map user email columns to the appropriate relation fields
-   * Map other columns as usual
-5. Review and fix any errors
-6. Confirm the import
-7. Verify a few records before proceeding to the next file
+1. انتقل إلى الكائن في مثيلك السحابي
+2. انقر **⋮ → Import records**
+3. ارفع ملف CSV
+4. طابق الأعمدة مع الحقول:
+   * طابِق أعمدة بريد المستخدم الإلكتروني مع حقول العلاقات المناسبة
+   * طابق الأعمدة الأخرى كالمعتاد
+5. راجِع وأصلِح أي أخطاء
+6. أكِّد عملية الاستيراد
+7. تحقّق من عدد قليل من السجلات قبل المتابعة إلى الملف التالي
 
-## Step 8: Recreate Configuration
+## الخطوة 8: إعادة إنشاء الإعدادات
 
-After importing data, manually recreate:
+بعد استيراد البيانات، أعد إنشاء ما يلي يدويًا:
 
 ### العروض
 
-* Recreate saved views with filters, sorts, and column configurations
-* Set up any kanban or calendar views
+* أعد إنشاء العروض المحفوظة مع عوامل التصفية والترتيب وتكوينات الأعمدة
+* قم بإعداد أي عروض كانبان أو تقويم
 
 ### سير العمل
 
-* Recreate automations in **Settings → Workflows**
-* Test each workflow before relying on it
+* أعد إنشاء الأتمتة في **الإعدادات → سير العمل**
+* اختبر كل سير عمل قبل الاعتماد عليه
 
-### Roles and Permissions
+### الأدوار والصلاحيات
 
-* Configure roles in **Settings → Roles**
-* Assign users to appropriate roles
+* قم بتكوين الأدوار في **الإعدادات → الأدوار**
+* عيّن المستخدمين إلى الأدوار المناسبة
 
 ### التكاملات
 
-* Reconnect email and calendar sync for each user
-* Reconfigure any API integrations with new API keys
+* أعد توصيل مزامنة البريد الإلكتروني والتقويم لكل مستخدم
+* أعد تكوين أي تكاملات API بمفاتيح API جديدة
 
 ## قائمة التحقق بعد التحويل
 
-<Check>All data imported successfully</Check>
-<Check>Relations between objects working correctly</Check>
-<Check>User assignments (Owner, Assignee) mapped correctly</Check>
-<Check>Views recreated</Check>
-<Check>Workflows recreated and tested</Check>
-<Check>Roles and permissions configured</Check>
-<Check>Email/calendar sync reconnected</Check>
-<Check>API integrations updated with new keys</Check>
+<Check>تم استيراد جميع البيانات بنجاح</Check>
+<Check>العلاقات بين الكائنات تعمل بشكل صحيح</Check>
+<Check>تعيينات المستخدمين (المالك، المسند إليه) تمت مطابقتها بشكل صحيح</Check>
+<Check>تمت إعادة إنشاء العروض</Check>
+<Check>تمت إعادة إنشاء سير العمل واختبارها</Check>
+<Check>تم تكوين الأدوار والصلاحيات</Check>
+<Check>تمت إعادة توصيل مزامنة البريد الإلكتروني/التقويم</Check>
+<Check>تم تحديث تكاملات API بمفاتيح جديدة</Check>
 
-## FAQ
+## الأسئلة الشائعة
 
 <AccordionGroup>
-  <Accordion title="Can I migrate workflows automatically?">
-    Not currently. Workflows must be recreated manually in your cloud instance.
+  <Accordion title="هل يمكنني ترحيل سير العمل تلقائيًا؟">
+    ليس في الوقت الحالي. يجب إعادة إنشاء سير العمل يدويًا في مثيلك السحابي.
   </Accordion>
 
-  <Accordion title="What about file attachments and images?">
-    File attachments are not included in CSV exports. You'll need to re-upload any attachments manually, migrate them via API or contact our team for assistance with large migrations.
+  <Accordion title="ماذا عن مرفقات الملفات والصور؟">
+    مرفقات الملفات غير متضمنة في صادرات CSV. ستحتاج إلى إعادة رفع أي مرفقات يدويًا، أو ترحيلها عبر API، أو التواصل مع فريقنا للحصول على المساعدة في عمليات الترحيل الكبيرة.
   </Accordion>
 
-  <Accordion title="Can I keep both instances running during migration?">
-    Yes, we recommend keeping your self-hosted instance running until you've verified the cloud migration is complete. Just be careful not to create new data in both places.
+  <Accordion title="هل يمكنني إبقاء المثيلين يعملان أثناء الترحيل؟">
+    نعم، نوصي بإبقاء مثيلك ذاتي الاستضافة قيد التشغيل حتى تتحقق من اكتمال الترحيل إلى السحابة. فقط احرص على عدم إنشاء بيانات جديدة في كلا المكانين.
   </Accordion>
 
-  <Accordion title="What if a user hasn't accepted their invitation yet?">
-    Records referencing that user will fail to import or the relation will be empty. Ensure all users accept invitations before importing data.
+  <Accordion title="ماذا لو لم يقبل مستخدم دعوته بعد؟">
+    السجلات التي تُشير إلى ذلك المستخدم ستفشل في الاستيراد أو ستكون العلاقة فارغة. تأكّد من أن جميع المستخدمين يقبلون الدعوات قبل استيراد البيانات.
   </Accordion>
 </AccordionGroup>
 
 ## هل تحتاج إلى مساعدة؟
 
-For complex migrations or large datasets, contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/ar/user-guide/getting-started/capabilities/implementation-services).
+بالنسبة لعمليات الترحيل المعقّدة أو مجموعات البيانات الكبيرة، تواصل معنا عبر [contact@twenty.com](mailto:contact@twenty.com) أو اطّلع على [خدمات التنفيذ](/l/ar/user-guide/getting-started/capabilities/implementation-services).

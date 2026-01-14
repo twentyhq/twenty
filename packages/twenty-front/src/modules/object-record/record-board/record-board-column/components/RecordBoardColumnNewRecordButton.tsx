@@ -59,8 +59,8 @@ export const RecordBoardColumnNewRecordButton = () => {
 
   return (
     <StyledNewButton
-      onClick={() => {
-        createNewIndexRecord({
+      onClick={async () => {
+        await createNewIndexRecord({
           position: 'last',
           [selectFieldMetadataItem.name]: columnDefinition.value,
         });

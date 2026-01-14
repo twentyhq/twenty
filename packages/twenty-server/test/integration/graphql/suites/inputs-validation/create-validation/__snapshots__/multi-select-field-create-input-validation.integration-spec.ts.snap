@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Create input validation - MULTI_SELECT Gql create input - failure MULTI_SELECT - should fail with : {"multiSelectField":"not-a-select-option"} 1`] = `"Value "not-a-select-option" does not exist in "ApiInputValidationTestObjectMultiSelectFieldEnum" enum."`;
 

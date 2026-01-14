@@ -1,170 +1,170 @@
 ---
 title: Risoluzione dei problemi del flusso di lavoro
-description: Common workflow issues and how to resolve them.
+description: Problemi comuni dei flussi di lavoro e come risolverli.
 ---
 
 ## Problemi comuni e soluzioni
 
 ### Flusso di lavoro non attivato
 
-**Symptoms**: Your workflow doesn't run when you expect it to.
+**Sintomi**: Il flusso di lavoro non viene eseguito quando previsto.
 
-**Possible Causes**:
+**Possibili cause**:
 
-1. **Workflow not activated**: Ensure the workflow is set to "Active" not "Draft"
-2. **Trigger conditions not met**: Verify the trigger matches your expected event
-3. **Field not monitored**: For "Record is Updated" triggers, ensure the specific field is being watched
-4. **Permissions**: Check you have permission to run workflows
+1. **Flusso di lavoro non attivato**: Assicurati che il flusso di lavoro sia impostato su "Attivo" e non su "Bozza"
+2. **Condizioni del trigger non soddisfatte**: Verifica che il trigger corrisponda all'evento previsto
+3. **Campo non monitorato**: Per i trigger "Record is Updated", assicurati che il campo specifico sia monitorato
+4. **Autorizzazioni**: Verifica di avere l'autorizzazione per eseguire i flussi di lavoro
 
 **Soluzioni**:
 
-* Verify workflow status in the workflow list
-* Test with the specific action you expect to trigger it
-* Review trigger configuration
-* Contact your admin about permissions
+* Verifica lo stato del flusso di lavoro nell'elenco dei flussi di lavoro
+* Esegui un test con l'azione specifica che dovrebbe attivarlo
+* Rivedi la configurazione del trigger
+* Contatta l'amministratore per le autorizzazioni
 
-### Workflow Triggers Too Early (Empty Fields)
+### Il flusso di lavoro si attiva troppo presto (campi vuoti)
 
-**Symptoms**: When manually creating a record in the UI, your workflow triggers before you've had time to fill in all the fields. The workflow runs with mostly empty field values.
+**Sintomi**: Quando crei manualmente un record nell'interfaccia utente, il flusso di lavoro si attiva prima che tu abbia il tempo di compilare tutti i campi. Il flusso di lavoro viene eseguito con valori di campo per la maggior parte vuoti.
 
-**Why this happens**: Twenty saves everything in real-time — there's no separate "edit" vs "read" mode. When you create a record, it's saved immediately, triggering the "Record is created" event before you can fill in additional fields.
+**Perché accade**: Twenty salva tutto in tempo reale — non esiste una modalità separata "modifica" vs "lettura". Quando crei un record, questo viene salvato immediatamente, attivando l'evento "Record is created" prima che tu possa compilare i campi aggiuntivi.
 
-**When "Record is created" works well**:
+**Quando "Record is created" funziona bene**:
 
-* Records created via API calls (fields are populated in a single request)
-* Records created via import
-* Automated record creation from other workflows
+* Record creati tramite chiamate API (i campi vengono popolati in un'unica richiesta)
+* Record creati tramite importazione
+* Creazione automatizzata di record da altri flussi di lavoro
 
-**Solution**: For records created manually in the UI, use **"Record is created or updated"** as your trigger instead. This way:
+**Soluzione**: Per i record creati manualmente nell'interfaccia utente, usa **"Record is created or updated"** come trigger. In questo modo:
 
-* The workflow triggers after the user has finished filling in and saving the fields
-* You get the complete data rather than empty values
+* Il flusso di lavoro si attiva dopo che l'utente ha terminato di compilare e salvare i campi
+* Ottieni i dati completi invece di valori vuoti
 
 <Tip>
-  If you only want the workflow to run once per record, add a Filter action to check a field like `createdAt equals updatedAt` (first save) or use a custom checkbox field to track if the workflow has already run.
+  Se desideri che il flusso di lavoro venga eseguito solo una volta per record, aggiungi un'azione Filter per verificare un campo come `createdAt equals updatedAt` (primo salvataggio) oppure usa un campo casella di controllo personalizzato per tracciare se il flusso di lavoro è già stato eseguito.
 </Tip>
 
-### Actions Failing
+### Azioni non riuscite
 
-**Symptoms**: Workflow runs but some actions fail.
+**Sintomi**: Il flusso di lavoro viene eseguito ma alcune azioni non riescono.
 
-**Possible Causes**:
+**Possibili cause**:
 
-1. **Missing data**: Required fields are empty
-2. **Invalid references**: Variables from previous steps don't exist
-3. **API errors**: External services returning errors
-4. **Permission issues**: Action requires permissions you don't have
-
-**Soluzioni**:
-
-* Check the workflow run details for error messages
-* Verify all required fields have values
-* Test API connections independently
-* Review role permissions
-
-### HTTP Request Errors
-
-**Symptoms**: HTTP Request actions fail or return unexpected results.
-
-**Common Error Codes**:
-
-* **400**: Bad request - check your request body format
-* **401**: Unauthorized - verify API key
-* **403**: Forbidden - check API permissions
-* **404**: Not found - verify endpoint URL
-* **429**: Too many requests - implement rate limiting
-* **500**: Server error - external service issue
+1. **Dati mancanti**: I campi obbligatori sono vuoti
+2. **Riferimenti non validi**: Le variabili dei passaggi precedenti non esistono
+3. **Errori API**: I servizi esterni restituiscono errori
+4. **Problemi di autorizzazioni**: L'azione richiede autorizzazioni che non possiedi
 
 **Soluzioni**:
 
-* Verify API endpoint URL
-* Check authentication headers
-* Test the API call outside of Twenty first
-* Add error handling in Code actions
+* Controlla i dettagli dell'esecuzione del flusso di lavoro per eventuali messaggi di errore
+* Verifica che tutti i campi obbligatori abbiano un valore
+* Testa le connessioni API in modo indipendente
+* Rivedi le autorizzazioni del ruolo
 
-### Code Action Errors
+### Errori delle richieste HTTP
 
-**Symptoms**: JavaScript code fails to execute.
+**Sintomi**: Le azioni HTTP Request non riescono o restituiscono risultati inattesi.
 
-**Common Issues**:
+**Codici di errore comuni**:
 
-1. **Syntax errors**: Typos or invalid JavaScript
-2. **Undefined variables**: Referencing variables that don't exist
-3. **Type errors**: Operations on wrong data types
-4. **Timeouts**: Code taking too long to execute
-
-**Soluzioni**:
-
-* Use the built-in code editor validation
-* Test code logic in a JavaScript console first
-* Add console.log statements for debugging
-* Simplify complex operations
-
-### Email Not Sending
-
-**Symptoms**: Send Email action doesn't deliver emails.
-
-**Possible Causes**:
-
-1. **No email account connected**: Check Settings → Accounts
-2. **Invalid email address**: Recipient email is malformed
-3. **Sending limits**: Email provider rate limits reached
-4. **Spam filters**: Emails being blocked
+* **400**: Richiesta non valida - controlla il formato del corpo della richiesta
+* **401**: Non autorizzato - verifica la chiave API
+* **403**: Vietato - controlla le autorizzazioni dell'API
+* **404**: Non trovato - verifica l'URL dell'endpoint
+* **429**: Troppe richieste - implementa la limitazione della frequenza
+* **500**: Errore del server - problema del servizio esterno
 
 **Soluzioni**:
 
-* Verify email account connection
-* Validate recipient email addresses
-* Check email provider limits
-* Review email content for spam triggers
+* Verifica l'URL dell'endpoint API
+* Controlla le intestazioni di autenticazione
+* Esegui prima il test della chiamata API al di fuori di Twenty
+* Aggiungi la gestione degli errori nelle azioni di Codice
 
-## Debugging Workflows
+### Errori delle azioni di Codice
 
-### Using Workflow Runs
+**Sintomi**: Il codice JavaScript non viene eseguito.
 
-1. Go to the workflow editor
-2. Open the **Runs** panel
-3. Find the failed run
-4. Click to see step-by-step details
-5. Review error messages and output data
+**Problemi comuni**:
 
-### Testing Individual Steps
+1. **Errori di sintassi**: Refusi o JavaScript non valido
+2. **Variabili non definite**: Riferimento a variabili che non esistono
+3. **Errori di tipo**: Operazioni su tipi di dati errati
+4. **Timeout**: Il codice impiega troppo tempo per essere eseguito
 
-1. For Code actions, use the **Test** button
-2. For HTTP requests, test the endpoint separately
-3. Create test records to trigger workflows
-4. Use manual triggers for controlled testing
+**Soluzioni**:
 
-### Common Debugging Patterns
+* Usa la convalida dell'editor di codice integrato
+* Verifica prima la logica del codice in una console JavaScript
+* Aggiungi istruzioni console.log per il debug
+* Semplifica le operazioni complesse
 
-**Add logging**:
-Use Code actions to log intermediate values for debugging.
+### Le email non vengono inviate
 
-**Isolate steps**:
-Test each step independently to identify failures.
+**Sintomi**: L'azione Invia email non recapita le email.
 
-**Check data flow**:
-Verify that each step receives the expected input data.
+**Possibili cause**:
 
-## Best Practices to Avoid Issues
+1. **Nessun account email connesso**: Controlla Impostazioni → Account
+2. **Indirizzo email non valido**: L'email del destinatario non è valida
+3. **Limiti di invio**: Raggiunti i limiti di frequenza del provider email
+4. **Filtri antispam**: Le email vengono bloccate
 
-### Before Activation
+**Soluzioni**:
 
-* Test thoroughly in draft mode
-* Validate all API connections
-* Review trigger conditions carefully
-* Document expected behavior
+* Verifica la connessione dell'account email
+* Convalida gli indirizzi email dei destinatari
+* Controlla i limiti del provider email
+* Rivedi il contenuto dell'email per possibili trigger di spam
 
-### During Development
+## Debug dei flussi di lavoro
 
-* Use descriptive step names
-* Add comments in Code actions
-* Test with realistic data
-* Plan for edge cases
+### Utilizzo delle esecuzioni del flusso di lavoro
 
-### After Activation
+1. Vai all'editor dei flussi di lavoro
+2. Apri il pannello **Esecuzioni**
+3. Trova l'esecuzione non riuscita
+4. Fai clic per vedere i dettagli passo dopo passo
+5. Rivedi i messaggi di errore e i dati di output
 
-* Monitor initial runs closely
-* Set up alerts for failures
-* Review run history regularly
-* Keep workflows simple when possible
+### Test dei singoli passaggi
+
+1. Per le azioni di Codice, usa il pulsante **Test**
+2. Per le richieste HTTP, testa separatamente l'endpoint
+3. Crea record di test per attivare i flussi di lavoro
+4. Usa trigger manuali per test controllati
+
+### Schemi comuni di debug
+
+**Aggiungi logging**:
+Usa le azioni di Codice per registrare valori intermedi per il debug.
+
+**Isola i passaggi**:
+Testa ogni passaggio in modo indipendente per identificare gli errori.
+
+**Controlla il flusso dei dati**:
+Verifica che ogni passaggio riceva i dati di input previsti.
+
+## Buone pratiche per evitare problemi
+
+### Prima dell'attivazione
+
+* Esegui test approfonditi in modalità bozza
+* Convalida tutte le connessioni API
+* Rivedi attentamente le condizioni del trigger
+* Documenta il comportamento previsto
+
+### Durante lo sviluppo
+
+* Usa nomi di passaggio descrittivi
+* Aggiungi commenti nelle azioni di Codice
+* Testa con dati realistici
+* Pianifica i casi limite
+
+### Dopo l'attivazione
+
+* Monitora attentamente le esecuzioni iniziali
+* Configura avvisi per gli errori
+* Rivedi regolarmente la cronologia delle esecuzioni
+* Mantieni i flussi di lavoro semplici quando possibile

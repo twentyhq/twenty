@@ -3,8 +3,9 @@ import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelId
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilySelector';
 import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
-import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
+import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import styled from '@emotion/styled';
@@ -50,8 +51,13 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
   );
 
   const recordId = useRecoilComponentFamilyValue(
-    recordIdByRealIndexComponentFamilyState,
-    { realIndex },
+    recordIdByRealIndexComponentFamilySelector,
+    realIndex,
+  );
+
+  const dataLoadingStatus = useRecoilComponentFamilyValue(
+    dataLoadingStatusByRealIndexComponentFamilySelector,
+    realIndex,
   );
 
   const pixelsFromTop =
@@ -84,6 +90,9 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
       <StyledDebugColumn width={300}>
         id:
         {recordId}
+      </StyledDebugColumn>
+      <StyledDebugColumn width={100}>
+        status :{isDefined(dataLoadingStatus) ? dataLoadingStatus : 'undefined'}
       </StyledDebugColumn>
     </StyledDebugRow>
   );

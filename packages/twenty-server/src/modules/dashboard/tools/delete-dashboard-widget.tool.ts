@@ -18,15 +18,15 @@ export const createDeleteDashboardWidgetTool = (
   inputSchema: deleteDashboardWidgetSchema,
   execute: async (parameters: { widgetId: string }) => {
     try {
-      const widget = await deps.pageLayoutWidgetService.findByIdOrThrow(
-        parameters.widgetId,
-        context.workspaceId,
-      );
+      const widget = await deps.pageLayoutWidgetService.findByIdOrThrow({
+        id: parameters.widgetId,
+        workspaceId: context.workspaceId,
+      });
 
-      await deps.pageLayoutWidgetService.destroy(
-        parameters.widgetId,
-        context.workspaceId,
-      );
+      await deps.pageLayoutWidgetService.destroy({
+        id: parameters.widgetId,
+        workspaceId: context.workspaceId,
+      });
 
       return {
         success: true,

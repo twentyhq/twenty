@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
   PageDecorator,
@@ -6,7 +6,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { within } from '@storybook/test';
+import { within } from 'storybook/test';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 import { SettingsExperience } from '~/pages/settings/profile/appearance/components/SettingsExperience';
 

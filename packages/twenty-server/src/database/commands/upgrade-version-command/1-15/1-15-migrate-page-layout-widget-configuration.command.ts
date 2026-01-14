@@ -8,6 +8,8 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -278,8 +280,12 @@ export class MigratePageLayoutWidgetConfigurationCommand extends ActiveOrSuspend
         `Invalidating and recomputing cache for workspace ${workspaceId}`,
       );
 
+      const flatCacheToInvalidate =
+        getMetadataRelatedMetadataNames('pageLayoutWidget');
+
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatPageLayoutWidgetMaps',
+        ...flatCacheToInvalidate.map(getMetadataFlatEntityMapsKey),
       ]);
 
       this.logger.log(`Cache invalidated and recomputed successfully`);

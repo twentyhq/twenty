@@ -13,7 +13,9 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type Task } from '@/activities/types/Task';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenCreateActivityDrawer = ({
   activityObjectNameSingular,
@@ -52,6 +54,8 @@ export const useOpenCreateActivityDrawer = ({
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const openCreateActivityDrawer = async ({
     targetableObjects,
     customAssignee,
@@ -72,7 +76,31 @@ export const useOpenCreateActivityDrawer = ({
     });
 
     if (targetableObjects.length > 0) {
-      const targetableObjectRelationIdName = `${targetableObjects[0].targetObjectNameSingular}Id`;
+      const activityTargetObjectNameSingular =
+        activityObjectNameSingular === CoreObjectNameSingular.Task
+          ? CoreObjectNameSingular.TaskTarget
+          : CoreObjectNameSingular.NoteTarget;
+
+      const activityTargetObjectMetadata = objectMetadataItems.find(
+        (item) => item.nameSingular === activityTargetObjectNameSingular,
+      );
+
+      const targetObjectMetadataItem = objectMetadataItems.find(
+        (item) =>
+          item.nameSingular === targetableObjects[0].targetObjectNameSingular,
+      );
+
+      const targetField = activityTargetObjectMetadata?.fields.find(
+        (field) =>
+          field.relation?.targetObjectMetadata.id ===
+          targetObjectMetadataItem?.id,
+      );
+
+      const joinColumnName = targetField?.settings?.joinColumnName;
+
+      const targetableObjectRelationIdName = isDefined(joinColumnName)
+        ? joinColumnName
+        : `${targetableObjects[0].targetObjectNameSingular}Id`;
 
       await createOneActivityTarget({
         ...(activityObjectNameSingular === CoreObjectNameSingular.Task

@@ -1,120 +1,120 @@
 ---
-title: Set Up a Sales Pipeline
-description: Configure your sales pipeline to track opportunities through stages.
+title: Настройка воронки продаж
+description: Настройте воронку продаж для отслеживания возможностей по стадиям.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-A sales pipeline in Twenty is a Kanban view of your Opportunities object, where each column represents a stage in your sales process.
+В Twenty воронка продаж — это представление Канбан объекта «Возможности», где каждый столбец соответствует стадии вашего процесса продаж.
 
-## Step 1: Configure Your Stages
+## Шаг 1: Настройте стадии
 
-Stages are defined in the Opportunities object's **Stage** field.
+Стадии задаются в поле **Stage** объекта «Возможности».
 
-1. Go to **Settings → Data Model**
-2. Select **Opportunities**
-3. Find and click the **Stage** field
-4. Add, remove, or rename stages to match your process
+1. Перейдите в **Настройки → Модель данных**
+2. Выберите **Возможности**
+3. Найдите и нажмите поле **Stage**
+4. Добавьте, удалите или переименуйте стадии в соответствии с вашим процессом
 
 <VimeoEmbed videoId="927890428" title="Видеодемонстрация" />
 
-### Recommended Stages
+### Рекомендуемые стадии
 
-| Этап            | Purpose                             |
-| --------------- | ----------------------------------- |
-| **New**         | Fresh opportunities just identified |
-| **Qualified**   | Confirmed as a good fit             |
-| **Meeting**     | Engaged in discussions              |
-| **Proposal**    | Proposal sent                       |
-| **Negotiation** | Working on terms                    |
-| **Closed Won**  | Deal successful                     |
-| **Closed Lost** | Deal unsuccessful                   |
+| Этап                    | Назначение                        |
+| ----------------------- | --------------------------------- |
+| **Новый**               | Только что выявленные возможности |
+| **Квалифицированные**   | Подтверждённое соответствие       |
+| **Встреча**             | Ведутся обсуждения                |
+| **Предложение**         | Предложение отправлено            |
+| **Переговоры**          | Обсуждение условий                |
+| **Закрыта — выиграно**  | Сделка успешно завершена          |
+| **Закрыта — проиграно** | Сделка неуспешна                  |
 
 <Note>
-  **5-7 stages is optimal.** Too many stages makes the pipeline hard to scan; too few loses visibility into deal progress.
+  **Оптимально 5–7 стадий.** Слишком много стадий усложняет просмотр воронки; слишком мало — снижает прозрачность прогресса по сделкам.
 </Note>
 
-## Step 2: Create a Pipeline View
+## Шаг 2: Создайте представление воронки
 
-1. Go to **Opportunities**
-2. Click the view dropdown → **+ Add view**
-3. Name it "Sales Pipeline"
-4. Click **Create**
-5. Open **Options** and select **Kanban** as the layout
+1. Перейдите в **Возможности**
+2. Откройте выпадающее меню представления → **+ Добавить представление**
+3. Назовите его «Воронка продаж»
+4. Нажмите **Создать**
+5. Откройте **Параметры** и выберите **Канбан** в качестве макета
 
-The view automatically uses the Stage field for columns.
+Представление автоматически использует поле Stage для столбцов.
 
-## Step 3: Configure Your View
+## Шаг 3: Настройте ваше представление
 
-### Show Key Fields
+### Отображение ключевых полей
 
-1. Click **Options → Fields**
-2. Look for fields in the "Hidden Fields" section
-3. Click the **eye icon** to display: Company, Amount, Close Date, Owner
+1. Нажмите **Параметры → Поля**
+2. Найдите поля в разделе «Скрытые поля»
+3. Нажмите **значок глаза**, чтобы отобразить: Company, Amount, Close Date, Owner
 
-### Enable Aggregations
+### Включите агрегирование
 
-Show totals at the top of each column:
+Показывайте итоги вверху каждого столбца:
 
-1. Click the number displayed next to a Stage name at the top of a column
-2. Select the aggregation type (Count, Sum, Average, etc.)
-3. Choose the field to aggregate (e.g., Amount)
+1. Щёлкните по числу, отображаемому рядом с названием стадии вверху столбца
+2. Выберите тип агрегации (Count, Sum, Average и т. д.)
+3. Выберите поле для агрегации (например, Amount)
 
-**Example:** Show total deal value per stage by aggregating Amount with Sum.
+**Пример:** Показать общую стоимость сделок по стадиям, агрегируя Amount с помощью Sum.
 
-### Use Compact View (Optional)
+### Используйте компактный вид (необязательно)
 
-For a high-level overview with minimal card content:
+Для обзорного вида с минимальным содержимым карточек:
 
-1. Click **Options**
-2. Turn on the toggle for **Compact view**
+1. Нажмите **Параметры**
+2. Включите переключатель **Компактный вид**
 
-## Step 4: Create Personal and Team Views
+## Шаг 4: Создайте личные и командные представления
 
-### "My Pipeline"
+### "Моя воронка"
 
-* **Filter**: Owner = Me
-* **Visibility**: Unlisted (personal view)
+* **Фильтр**: Owner = Me
+* **Видимость**: Unlisted (личное представление)
 
-### "Team Pipeline"
+### "Командная воронка"
 
-* **Filter**: None (show all)
-* **Visibility**: Workspace (shared view)
+* **Фильтр**: None (показать всё)
+* **Видимость**: Workspace (общее представление)
 
-### "Closing This Month"
+### "Закрытия в этом месяце"
 
-* **Type**: Table
-* **Filter**: Close Date = This month, Stage ≠ Closed Won, Stage ≠ Closed Lost
-* **Sort**: Close Date ascending
+* **Тип**: Table
+* **Фильтр**: Close Date = This month, Stage ≠ Closed Won, Stage ≠ Closed Lost
+* **Сортировка**: Close Date по возрастанию
 
-## Working with Opportunities
+## Работа с возможностями
 
-### Creating Opportunities
+### Создание возможностей
 
-* Click **+ New** in the Opportunities view
-* Or click **+** in a specific stage column
+* Нажмите **+ New** в представлении «Возможности»
+* Либо нажмите **+** в столбце нужной стадии
 
-### Moving Through Stages
+### Переход между стадиями
 
-Drag and drop opportunity cards between columns to update their stage.
+Перетаскивайте карточки возможностей между столбцами, чтобы обновить их стадию.
 
 <VimeoEmbed videoId="927888627" title="Видеодемонстрация" />
 
 ## Лучшие практики
 
-### Pipeline Hygiene
+### Гигиена воронки
 
-* Update deals daily as they progress
-* Move or close stale deals promptly
-* Keep close dates realistic
+* Ежедневно обновляйте сделки по мере их продвижения
+* Своевременно перемещайте или закрывайте «застоявшиеся» сделки
+* Поддерживайте реалистичные даты закрытия
 
-### Stage Discipline
+### Дисциплина стадий
 
-* Define clear criteria for each stage
-* Move deals promptly when criteria are met
-* Don't let deals sit in stages too long
+* Определите чёткие критерии для каждой стадии
+* Своевременно переводите сделки при выполнении критериев
+* Не допускайте, чтобы сделки слишком долго застревали на стадиях
 
-## Related
+## Связанные материалы
 
-* [Kanban Views](/l/ru/user-guide/views-pipelines/capabilities/kanban-views) — aggregations and compact view
-* [Filters and Sorting](/l/ru/user-guide/views-pipelines/capabilities/filters-and-sorting) — creating filtered views
+* [Канбан-представления](/l/ru/user-guide/views-pipelines/capabilities/kanban-views) — агрегации и компактный вид
+* [Фильтры и сортировка](/l/ru/user-guide/views-pipelines/capabilities/filters-and-sorting) — создание отфильтрованных представлений

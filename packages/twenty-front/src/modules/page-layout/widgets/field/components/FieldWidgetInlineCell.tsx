@@ -175,6 +175,8 @@ export const FieldWidgetInlineCell = ({
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
     readonly: isReadOnly,
     buttonIcon: buttonIcon,
+    label: fieldDefinition.label,
+    labelWidth: fieldDefinition.labelWidth,
     editModeContent: <FieldInput />,
     displayModeContent: <FieldDisplay />,
     isDisplayModeFixHeight: isDisplayModeFixHeight,

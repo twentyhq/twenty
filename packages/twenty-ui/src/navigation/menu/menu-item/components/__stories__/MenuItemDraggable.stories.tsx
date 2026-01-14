@@ -1,5 +1,5 @@
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { action } from 'storybook/actions';
 
 import { IconBell, IconMinus } from '@ui/display';
 import {

@@ -1,1 +1,1 @@
-export type CronPayload = {};
+export type CronPayload = Record<string, never>;

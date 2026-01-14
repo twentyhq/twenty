@@ -1,6 +1,6 @@
 ---
 title: Модель данных
-description: Learn what a data model is and how to design one that fits your business.
+description: Узнайте, что такое модель данных и как спроектировать её под ваш бизнес.
 image: /images/user-guide/fields/custom_data_model.png
 ---
 
@@ -8,120 +8,120 @@ image: /images/user-guide/fields/custom_data_model.png
   <img src="/images/user-guide/fields/custom_data_model.png" alt="Модель данных" />
 </Frame>
 
-## What is a Data Model?
+## Что такое модель данных?
 
-Модель данных — это структура, определяющая, как информация организована в вашей CRM. Think of it as the **blueprint** of your customer data — you design it once, then fill it with your actual data.
+Модель данных — это структура, определяющая, как информация организована в вашей CRM. Представьте это как **чертёж** ваших данных о клиентах — вы проектируете его один раз, а затем заполняете фактическими данными.
 
-## Key Concepts
+## Ключевые понятия
 
 ### Объекты
 
-**Objects** are the main categories of data in your CRM. Each object represents a type of thing you want to track.
+**Объекты** — это основные категории данных в вашей CRM. Каждый объект представляет тип сущности, которую вы хотите отслеживать.
 
-Twenty comes with standard objects:
+В Twenty предусмотрены стандартные объекты:
 
-* **People** — individuals (contacts, leads, partners)
-* **Companies** — organizations
-* **Opportunities** — deals or sales
-* **Notes** — attached notes on records
-* **Tasks** — to-dos linked to records
+* **People** — физические лица (контакты, лиды, партнёры)
+* **Companies** — организации
+* **Opportunities** — сделки или продажи
+* **Notes** — прикреплённые к записям заметки
+* **Tasks** — задачи, связанные с записями
 
-You can also create **custom objects** for anything specific to your business (e.g., Projects, Subscriptions, Events).
+Вы также можете создать **пользовательские объекты** для всего, что специфично для вашего бизнеса (например, Projects, Subscriptions, Events).
 
 ### Поля
 
-**Fields** are the properties or attributes that describe each object. They store the actual information.
+**Поля** — это свойства или атрибуты, которые описывают каждый объект. Они хранят фактическую информацию.
 
-For example, the **People** object has fields like:
+Например, у объекта **People** есть такие поля, как:
 
 * Имя
 * Электронная почта
 * Телефон
 * Должность
-* Company (a relation to the Companies object)
+* Company (связь с объектом Companies)
 
-Fields have different **types**: text, number, date, select, multi-select, relation, and more. You can add custom fields to any object.
+Поля имеют разные **типы**: текст, число, дата, список, множественный выбор, связь и другие. Вы можете добавлять пользовательские поля к любому объекту.
 
 ### Записи
 
-**Records** are the individual entries within an object — the actual data you create and manage.
+**Записи** — это отдельные элементы внутри объекта — реальные данные, которые вы создаёте и которыми управляете.
 
 Например:
 
-* "John Smith" is a **record** in the People object
-* "Acme Corp" is a **record** in the Companies object
+* "John Smith" — это **запись** в объекте People
+* "Acme Corp" — это **запись** в объекте Companies
 
-**An analogy:**
+**Аналогия:**
 
-| Data Model Concept | Real-World Analogy                         |
-| ------------------ | ------------------------------------------ |
-| **Objects**        | Sections in a book (the categories)        |
-| **Поля**           | Columns in a spreadsheet (the properties)  |
-| **Records**        | Rows in a spreadsheet (the actual entries) |
+| Концепция модели данных | Аналогия из реального мира                     |
+| ----------------------- | ---------------------------------------------- |
+| **Объекты**             | Разделы в книге (категории)                    |
+| **Поля**                | Столбцы в электронной таблице (свойства)       |
+| **Записи**              | Строки в электронной таблице (реальные записи) |
 
-You design the data model (objects + fields) once, then create many records within that structure.
+Вы проектируете модель данных (объекты + поля) один раз, затем создаёте множество записей в рамках этой структуры.
 
-## Why Customize Your Data Model?
+## Зачем настраивать вашу модель данных?
 
-Каждый бизнес работает по-своему. Customizing your data model means you can shape Twenty around **your** processes instead of forcing yours into a rigid system.
+Каждый бизнес работает по-своему. Настройка вашей модели данных означает, что вы можете адаптировать Twenty под **ваши** процессы, а не загонять их в жёсткую систему.
 
-Twenty offers full flexibility:
+Twenty предоставляет полную гибкость:
 
-* Create as many custom objects as you need
-* Add unlimited custom fields
-* The price doesn't change based on customization
+* Создавайте столько пользовательских объектов, сколько вам нужно
+* Добавляйте неограниченное количество пользовательских полей
+* Цена не меняется в зависимости от настроек
 
-## Tips to Design Your Data Model
+## Советы по проектированию вашей модели данных
 
-### 1. Start with Your Core Objects
+### 1. Начните с основных объектов
 
-Identify the main concepts you work with. Twenty already provides:
+Определите основные сущности, с которыми вы работаете. В Twenty уже предусмотрено:
 
-* **People** — your contacts
-* **Companies** — your accounts
-* **Opportunities** — your deals
+* **People** — ваши контакты
+* **Companies** — ваши компании
+* **Opportunities** — ваши сделки
 
-Think about what else you might need:
+Подумайте, что ещё может понадобиться:
 
-* Stripe would need a `Subscriptions` object
-* Airbnb would need a `Trips` object
-* An accelerator would need a `Batches` object
+* Stripe нужен объект `Subscriptions`
+* Airbnb нужен объект `Trips`
+* Акселератору нужен объект `Batches`
 
-### 2. Use Fields for Variations, Not New Objects
+### 2. Используйте поля для вариаций, а не новые объекты
 
-If something is just a characteristic of an existing object, make it a **field**.
+Если что-то является лишь характеристикой существующего объекта, сделайте это **полем**.
 
-**Use fields for:**
+**Используйте поля для:**
 
-* Categories and labels (e.g., `Industry` for Companies)
-* Status values (e.g., `Stage` for Opportunities)
-* Attributes and properties
+* Категорий и меток (например, `Industry` для Companies)
+* Значений статуса (например, `Stage` для Opportunities)
+* Атрибутов и свойств
 
-### 3. Create an Object When It Stands on Its Own
+### 3. Создавайте объект, если он существует сам по себе
 
-If the concept has its own lifecycle, properties, or relationships, it deserves an object.
+Если у концепции есть свой жизненный цикл, свойства или отношения, она заслуживает отдельного объекта.
 
-**Create an object for:**
+**Создавайте объект для:**
 
-* **Projects** — have deadlines, owners, and tasks
-* **Subscriptions** — connect companies, products, and invoices
-* **Events** — involve attendees and follow-up actions
+* **Projects** — со сроками, владельцами и задачами
+* **Subscriptions** — связывают компании, продукты и счета
+* **Events** — включают участников и последующие действия
 
 Они выходят за рамки одного поля, поскольку несут свои данные и связи.
 
-### 4. Create an Object When Records Are Open-Ended
+### 4. Создавайте объект, когда число записей не ограничено
 
-If something can be linked multiple times and you don't know how many, use an object.
+Если что-то может связываться многократно, и вы не знаете, сколько раз, используйте объект.
 
-**Bad approach:**
-Creating fields like `Product 1`, `Product 2`, `Product 3`...
+**Плохой подход:**
+Создание полей вроде `Product 1`, `Product 2`, `Product 3`...
 
-**Good approach:**
-Create a `Products` object and relate it to records. This supports one, two, or a hundred products without changing your model.
+**Хороший подход:**
+Создайте объект `Products` и свяжите его с записями. Таким образом, вы можете поддерживать один, два или сто товаров без изменения вашей модели.
 
-### 5. Keep It Simple First
+### 5. Сначала — простота
 
-Start with fields. Move to new objects only when you feel the limits:
+Начните с полей. Move to new objects only when you feel the limits:
 
 * Too many fields on one object
 * Repeated records that should be separate

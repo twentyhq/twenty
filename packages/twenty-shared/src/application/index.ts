@@ -13,10 +13,13 @@ export type { ApplicationVariables } from './applicationVariablesType';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export type { FieldManifest } from './fieldManifestType';
+export type { ObjectExtensionManifest } from './objectExtensionManifestType';
 export type { ObjectManifest } from './objectManifestType';
 export type { PackageJson } from './packageJsonType';
+export type { RelationFieldManifest } from './relationFieldManifestType';
 export type { RoleManifest } from './roleManifestType';
 export type {
+  InputJsonSchema,
   ServerlessFunctionManifest,
   DatabaseEventTrigger,
   CronTrigger,

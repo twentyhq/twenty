@@ -182,6 +182,7 @@ export const getPageLayoutWidgetDataSeedsV2 = (
             aggregateFieldMetadataId: companyIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             groupByFieldMetadataId: companyLinkedinLinkFieldId,
+            groupBySubFieldName: 'primaryLinkUrl',
             orderBy: GraphOrderBy.VALUE_DESC,
             displayDataLabel: true,
             timezone: 'UTC',

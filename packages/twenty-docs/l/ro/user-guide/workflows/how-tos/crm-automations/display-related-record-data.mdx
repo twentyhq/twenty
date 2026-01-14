@@ -1,130 +1,130 @@
 ---
-title: Display Related Record Data
-description: Show data from related records (e.g., Company info on Opportunities) using workflows.
+title: Afișarea datelor din înregistrări asociate
+description: Afișați date din înregistrări asociate (de ex., informații despre Companie pe Oportunități) folosind fluxuri de lucru.
 ---
 
-Display data from related records directly on your records — for example, show the employee count from a Company on its Opportunities. This workflow workaround is useful until nested fields are natively available.
+Afișați date din înregistrări asociate direct pe înregistrările dvs. — de exemplu, afișați numărul de angajați al unei Companii pe Oportunitățile sale. Această soluție de ocolire prin fluxuri de lucru este utilă până când câmpurile imbricate vor fi disponibile nativ.
 
 ## Cazuri de Utilizare Comune
 
-| Sursa        | Destination  | Fields to Copy                  |
-| ------------ | ------------ | ------------------------------- |
-| Companie     | Oportunitate | Industry, Company Size, ARR     |
-| Persoană     | Oportunitate | Email, Phone, Title             |
-| Oportunitate | Companie     | Last Deal Amount, Last Won Date |
+| Sursa        | Destinație   | Câmpuri de copiat                                          |
+| ------------ | ------------ | ---------------------------------------------------------- |
+| Companie     | Oportunitate | Industrie, Dimensiunea Companiei, ARR                      |
+| Persoană     | Oportunitate | Email, Telefon, Funcție                                    |
+| Oportunitate | Companie     | Suma ultimei tranzacții, Data ultimei tranzacții câștigate |
 
-## Basic Field Copy
+## Copiere de câmpuri de bază
 
-### Example: Copy Contact Email to Opportunity
+### Exemplu: Copiați Emailul Contactului în Oportunitate
 
-**Goal**: When setting a Point of Contact on an opportunity, copy their email to the opportunity for easy access.
+**Obiectiv**: Atunci când setați un Punct de Contact pe o oportunitate, copiați emailul persoanei în oportunitate pentru acces facil.
 
-### Prerequisite
+### Condiție prealabilă
 
-Create the destination fields in **Settings → Data Model → Opportunities** before building the workflow:
+Creați câmpurile destinație în **Settings → Data Model → Opportunities** înainte de a construi fluxul de lucru:
 
-* Contact Email (type: Email)
-* Contact Phone (type: Phone)
-
-### Configurare
-
-1. **Trigger**: Record is Updated (Opportunities, Point of Contact field)
-
-2. **Filter**: Check that Point of Contact is not empty
-
-3. **Search Records**: Find the linked person
-   * Object: People
-   * Filter: ID equals `{{trigger.object.pointOfContact.id}}`
-
-4. **Update Record**:
-   * Object: Opportunities
-   * Record: `{{trigger.object.id}}`
-   * Contact Email: `{{searchRecords[0].email}}`
-   * Contact Phone: `{{searchRecords[0].phone}}`
-
-## Copy Multiple Fields
-
-### Example: Sync Company Info to All Related Opportunities
-
-**Goal**: When company details change, update all related opportunities.
+* Email Contact (tip: Email)
+* Telefon Contact (tip: Phone)
 
 ### Configurare
 
-1. **Trigger**: Record is Updated (Companies)
-   * Fields: Industry, Company Size, Annual Revenue
+1. **Declanșator**: Înregistrarea este actualizată (Oportunități, câmp Punct de Contact)
 
-2. **Search Records**: Find all opportunities for this company
-   * Object: Opportunities
-   * Filter: Company ID equals `{{trigger.object.id}}`
+2. **Filtru**: Verificați că Punctul de Contact nu este gol
 
-3. **Iterator**: Loop through each opportunity
+3. **Căutare înregistrări**: Găsiți persoana asociată
+   * Obiect: Persoane
+   * Filtru: ID egal cu `{{trigger.object.pointOfContact.id}}`
 
-4. **Update Record** (inside iterator):
-   * Object: Opportunities
-   * Record: `{{iterator.currentItem.id}}`
-   * Company Industry: `{{trigger.object.industry}}`
-   * Company Size: `{{trigger.object.companySize}}`
-   * Company ARR: `{{trigger.object.annualRevenue}}`
+4. **Actualizați Înregistrarea**:
+   * Obiect: Oportunități
+   * Înregistrare: `{{trigger.object.id}}`
+   * Email Contact: `{{searchRecords[0].email}}`
+   * Telefon Contact: `{{searchRecords[0].phone}}`
 
-## Copy on Record Creation
+## Copierea mai multor câmpuri
 
-### Example: Pre-fill Opportunity with Company Data
+### Exemplu: Sincronizați informațiile Companiei cu toate Oportunitățile asociate
 
-**Goal**: When creating an opportunity linked to a company, automatically copy key company info.
-
-### Prerequisite
-
-Create the destination fields in **Settings → Data Model → Opportunities**:
-
-* Company Industry (type: Text)
-* Company Size (type: Number)
+**Obiectiv**: Când se schimbă detaliile companiei, actualizați toate oportunitățile asociate.
 
 ### Configurare
 
-1. **Trigger**: Record is Created (Opportunities)
-   * Filter: Company is not empty
+1. **Declanșator**: Înregistrarea este actualizată (Companii)
+   * Câmpuri: Industrie, Dimensiunea Companiei, Venit Anual
 
-2. **Search Records**: Get the linked company's details
-   * Object: Companies
-   * Filter: ID equals `{{trigger.object.company.id}}`
+2. **Căutare înregistrări**: Găsiți toate oportunitățile pentru această companie
+   * Obiect: Oportunități
+   * Filtru: ID Companie egal cu `{{trigger.object.id}}`
 
-3. **Update Record**:
-   * Object: Opportunities
-   * Record: `{{trigger.object.id}}`
-   * Company Industry: `{{searchRecords[0].industry}}`
-   * Company Size: `{{searchRecords[0].employees}}`
+3. **Iterator**: Parcurgeți fiecare oportunitate
+
+4. **Actualizați Înregistrarea** (în interiorul iteratorului):
+   * Obiect: Oportunități
+   * Înregistrare: `{{iterator.currentItem.id}}`
+   * Industria Companiei: `{{trigger.object.industry}}`
+   * Dimensiunea Companiei: `{{trigger.object.companySize}}`
+   * ARR al Companiei: `{{trigger.object.annualRevenue}}`
+
+## Copiere la crearea înregistrării
+
+### Exemplu: Precompletați Oportunitatea cu datele Companiei
+
+**Obiectiv**: La crearea unei oportunități legate de o companie, copiați automat informațiile esențiale ale companiei.
+
+### Condiție prealabilă
+
+Creați câmpurile destinație în **Settings → Data Model → Opportunities**:
+
+* Industria Companiei (tip: Text)
+* Dimensiunea Companiei (tip: Number)
+
+### Configurare
+
+1. **Declanșator**: Înregistrarea este creată (Oportunități)
+   * Filtru: Compania nu este goală
+
+2. **Căutare înregistrări**: Obțineți detaliile companiei asociate
+   * Obiect: Companii
+   * Filtru: ID egal cu `{{trigger.object.company.id}}`
+
+3. **Actualizați Înregistrarea**:
+   * Obiect: Oportunități
+   * Înregistrare: `{{trigger.object.id}}`
+   * Industria Companiei: `{{searchRecords[0].industry}}`
+   * Dimensiunea Companiei: `{{searchRecords[0].employees}}`
 
 <Note>
-  **Tasks and Notes limitation**: Relations on Tasks and Notes are hardcoded as many-to-many and are not yet available in workflow triggers or actions. To access these relations, use the [API](/l/ro/developers/extend/capabilities/apis) instead.
+  **Limitare Tasks and Notes**: Relațiile pentru Tasks și Notes sunt codificate ca many-to-many și nu sunt încă disponibile în declanșatoare sau acțiuni de flux de lucru. Pentru a accesa aceste relații, utilizați [API-ul](/l/ro/developers/extend/capabilities/apis) în schimb.
 </Note>
 
-## Bidirectional Sync
+## Sincronizare bidirecțională
 
-### Example: Keep Primary Contact in Sync
+### Exemplu: Mențineți contactul principal sincronizat
 
-**Goal**: When a company's primary contact changes, update the contact. When a person becomes primary, update the company.
+**Obiectiv**: Când se schimbă contactul principal al unei companii, actualizați contactul. Când o persoană devine principală, actualizați compania.
 
-### Workflow 1: Company → Person
+### Flux de lucru 1: Companie → Persoană
 
-1. **Trigger**: Record is Updated (Companies, Primary Contact field)
-2. **Update Record**: Set person's "Is Primary Contact" to true
-3. **Search Records**: Find previous primary contact
-4. **Update Record**: Set previous contact's "Is Primary Contact" to false
+1. **Declanșator**: Înregistrarea este actualizată (Companii, câmp Contact principal)
+2. **Actualizați Înregistrarea**: Setați "Is Primary Contact" al persoanei la true
+3. **Căutare înregistrări**: Găsiți contactul principal anterior
+4. **Actualizați Înregistrarea**: Setați "Is Primary Contact" al contactului anterior la false
 
-### Workflow 2: Person → Company
+### Flux de lucru 2: Persoană → Companie
 
-1. **Trigger**: Record is Updated (People, Is Primary Contact = true)
-2. **Update Record**: Set company's Primary Contact to this person
+1. **Declanșator**: Înregistrarea este actualizată (Persoane, Is Primary Contact = true)
+2. **Actualizați Înregistrarea**: Setați Contactul principal al companiei la această persoană
 
 <Note>
-  Be careful with bidirectional syncs to avoid infinite loops. Use filters to check if the value actually changed before updating.
+  Aveți grijă cu sincronizările bidirecționale pentru a evita buclele infinite. Folosiți filtre pentru a verifica dacă valoarea chiar s-a schimbat înainte de a actualiza.
 </Note>
 
-## Using Code for Complex Mapping
+## Utilizarea codului pentru mapare complexă
 
-### Example: Transform Data During Copy
+### Exemplu: Transformați datele în timpul copierii
 
-**Goal**: Copy and format phone number from person to opportunity.
+**Obiectiv**: Copiați și formatați numărul de telefon de la persoană în oportunitate.
 
 ```javascript
 export const main = async (params) => {
@@ -146,25 +146,25 @@ export const main = async (params) => {
 
 ## Cele mai bune practici
 
-### Avoid Loops
+### Evitați buclele
 
-* Don't create workflows that trigger each other endlessly
-* Use specific field conditions
-* Add checks to see if value actually changed
+* Nu creați fluxuri de lucru care se declanșează reciproc la nesfârșit
+* Folosiți condiții specifice pe câmpuri
+* Adăugați verificări pentru a vedea dacă valoarea chiar s-a schimbat
 
-### Handle Missing Data
+### Gestionați datele lipsă
 
-* Always check if source record exists before copying
-* Provide default values for optional fields
-* Use filters to skip when source field is empty
+* Verificați întotdeauna dacă înregistrarea sursă există înainte de copiere
+* Furnizați valori implicite pentru câmpurile opționale
+* Folosiți filtre pentru a omite atunci când câmpul sursă este gol
 
-### Performance
+### Performanță
 
-* Batch updates when copying to many records
-* Use scheduled workflows for bulk sync operations
-* Consider using Iterator for multiple record updates
+* Grupați actualizările când copiați către multe înregistrări
+* Utilizați fluxuri de lucru programate pentru operațiuni de sincronizare în masă
+* Luați în considerare utilizarea Iterator pentru actualizări multiple ale înregistrărilor
 
-## Related
+## Conexe
 
-* [Workflow Actions](/l/ro/user-guide/workflows/capabilities/workflow-actions)
-* [Workflow Triggers](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)

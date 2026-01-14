@@ -1,0 +1,182 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Twenty Helm Chart Values",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "image": {
+      "type": "object",
+      "properties": {
+        "repository": { "type": "string" },
+        "tag": { "type": "string" },
+        "pullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"] }
+      }
+    },
+    "nameOverride": { "type": "string" },
+    "fullnameOverride": { "type": "string" },
+    "namespaceOverride": { "type": "string" },
+
+    "secrets": {
+      "type": "object",
+      "properties": {
+        "tokens": {
+          "type": "object",
+          "properties": {
+            "create": { "type": "boolean" },
+            "name": { "type": "string" },
+            "accessToken": { "type": "string" }
+          },
+          "required": ["create", "name"]
+        }
+      }
+    },
+
+    "server": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "replicaCount": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of server replicas. When using local storage with ReadWriteOnce (RWO) PersistentVolumeClaims (the default), multiple replicas cannot share the same PVC and pods will fail to schedule if replicaCount > 1. Use replicaCount = 1 for local/RWO storage, or configure a shared storage backend such as S3 before increasing this value."
+        },
+        "podSecurityContext": { "type": "object" },
+        "containerSecurityContext": { "type": "object" },
+        "env": {
+          "type": "object",
+          "properties": {
+            "NODE_PORT": { "type": "integer", "minimum": 1 },
+            "PG_DATABASE_URL": { "type": "string" },
+            "REDIS_URL": { "type": "string" },
+            "SIGN_IN_PREFILLED": { "type": "string" },
+            "STORAGE_TYPE": { "type": "string" },
+            "ACCESS_TOKEN_EXPIRES_IN": { "type": "string" },
+            "LOGIN_TOKEN_EXPIRES_IN": { "type": "string" },
+            "EMAIL_DRIVER": { "type": "string" },
+            "EMAIL_SMTP_HOST": { "type": "string" },
+            "EMAIL_SMTP_PORT": { "type": "integer" },
+            "EMAIL_SMTP_USER": { "type": "string" },
+            "EMAIL_SMTP_PASSWORD": { "type": "string" },
+            "EMAIL_SMTP_NO_TLS": { "type": "boolean" },
+            "EMAIL_FROM_ADDRESS": { "type": "string" },
+            "EMAIL_FROM_NAME": { "type": "string" },
+            "EMAIL_SYSTEM_ADDRESS": { "type": "string" },
+            "IS_EMAIL_VERIFICATION_REQUIRED": { "type": "boolean" },
+            "EMAIL_VERIFICATION_TOKEN_EXPIRES_IN": { "type": "string" },
+            "PASSWORD_RESET_TOKEN_EXPIRES_IN": { "type": "string" }
+          }
+        },
+        "service": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["ClusterIP", "NodePort", "LoadBalancer"] },
+            "port": { "type": "integer", "minimum": 1 },
+            "sessionAffinity": { "type": "string", "enum": ["None", "ClientIP"] },
+            "sessionAffinityTimeoutSeconds": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "ingress": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "className": { "type": "string" },
+            "acme": { "type": "boolean" },
+            "hosts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "host": { "type": "string" },
+                  "paths": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "path": { "type": "string" },
+                        "pathType": { "type": "string", "enum": ["Prefix", "Exact", "ImplementationSpecific"] }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "tls": { "type": "array" }
+          }
+        },
+        "persistence": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "existingClaim": { "type": "string" },
+            "storageClass": { "type": "string" },
+            "accessModes": { "type": "array", "items": { "type": "string" } },
+            "size": { "type": "string" }
+          }
+        },
+        "dockerDataPersistence": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "existingClaim": { "type": "string" },
+            "storageClass": { "type": "string" },
+            "accessModes": { "type": "array", "items": { "type": "string" } },
+            "size": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "worker": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "replicaCount": { "type": "integer", "minimum": 1 },
+        "podSecurityContext": { "type": "object" },
+        "containerSecurityContext": { "type": "object" },
+        "env": {
+          "type": "object",
+          "properties": {
+            "PG_DATABASE_URL": { "type": "string" },
+            "REDIS_URL": { "type": "string" },
+            "STORAGE_TYPE": { "type": "string" },
+            "DISABLE_DB_MIGRATIONS": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "storage": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["local", "s3"] },
+        "s3": {
+          "type": "object",
+          "properties": {
+            "bucket": { "type": "string" },
+            "region": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "accessKeyId": { "type": "string" },
+            "secretAccessKey": { "type": "string" },
+            "secretName": { "type": "string" },
+            "accessKeyIdKey": { "type": "string" },
+            "secretAccessKeyKey": { "type": "string" }
+          }
+        }
+      },
+      "required": ["type"],
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "s3" } }, "required": ["type"] },
+          "then": {
+            "required": ["s3"],
+            "properties": {
+              "s3": {
+                "required": ["bucket", "region", "accessKeyId", "secretAccessKey"]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

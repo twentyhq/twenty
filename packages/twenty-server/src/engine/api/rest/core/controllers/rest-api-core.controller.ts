@@ -67,7 +67,6 @@ export class RestApiCoreController {
     res.status(201).send(result);
   }
 
-  //TODO: Refacto-common - Document this endpoint
   @Get('*path/groupBy')
   async handleApiGroupBy(
     @Req() request: AuthenticatedRequest,

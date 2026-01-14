@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should handle adding new options while maintaining existing view filter 1`] = `
 {

@@ -1,103 +1,103 @@
 ---
-title: Import Relations Between Objects via CSV
-description: Complete step-by-step guide to linking records during CSV import.
+title: CSV ile Nesneler Arasındaki İlişkileri İçe Aktarma
+description: CSV içe aktarma sırasında kayıtları bağlamaya yönelik eksiksiz adım adım kılavuz.
 ---
 
 ## Genel Bakış
 
-This guide walks you through importing relations between objects—for example, linking People to Companies, or Opportunities to People.
+Bu kılavuz, nesneler arasındaki ilişkileri içe aktarma konusunda size yol gösterir—örneğin, Kişileri Şirketlere ya da Fırsatları Kişilere bağlama.
 
-<Note>**What can be imported:** Only one-to-many relations pointing to a single object type. Relations pointing to multiple object types (like Notes linking to People AND Companies) are not yet supported for import.</Note>
+<Note>**İçe aktarılabilecekler:** Yalnızca tek bir nesne türüne işaret eden bire-çoğa ilişkiler. Birden fazla nesne türüne işaret eden ilişkiler (ör. Notların Kişilere VE Şirketlere bağlanması) henüz içe aktarmada desteklenmiyor.</Note>
 
-## Understanding Relations
+## İlişkileri Anlama
 
-### What is a "One-to-Many" Relation?
+### "Bire-Çoğa" İlişki Nedir?
 
-In a one-to-many relation:
+Bir bire-çoğa ilişkide:
 
-* **One** Company has **many** People (employees)
-* **One** Company has **many** Opportunities
-* **One** Person has **many** Tasks
+* **Bir** Şirketin **birçok** Kişisi (çalışanı) vardır
+* **Bir** Şirketin **birçok** Fırsatı vardır
+* **Bir** Kişinin **birçok** Görevi vardır
 
-The "one" side is the **parent**. The "many" side is the **child**.
+"Bir" taraf **ana** taraftır. "Çok" taraf **alt** taraftır.
 
-### Common Relations in Twenty
+### Twenty'de Yaygın İlişkiler
 
-| İlişki                    | "One" Side (Parent) | "Many" Side (Child) |
-| ------------------------- | ------------------- | ------------------- |
-| Companies → People        | Şirket              | İnsanlar            |
-| Companies → Opportunities | Şirket              | Fırsatlar           |
-| People → Tasks            | Kişi                | Görevler            |
-| People → Notes            | Kişi                | Notlar              |
+| İlişki                | "Bir" Taraf (Ana) | "Çok" Taraf (Alt) |
+| --------------------- | ----------------- | ----------------- |
+| Şirketler → Kişiler   | Şirket            | İnsanlar          |
+| Şirketler → Fırsatlar | Şirket            | Fırsatlar         |
+| Kişiler → Görevler    | Kişi              | Görevler          |
+| Kişiler → Notlar      | Kişi              | Notlar            |
 
-## Step 1: Identify the "One" and "Many" Sides
+## Adım 1: "Bir" ve "Çok" Tarafları Belirleyin
 
-Before importing, determine which object is the parent and which is the child.
+İçe aktarmadan önce hangi nesnenin ana, hangisinin alt olduğunu belirleyin.
 
-**Ask yourself:** "Does ONE [Object A] have MANY [Object B]?"
+**Kendinize sorun:** "BİR [Nesne A]'nın ÇOK [Nesne B]'si var mı?"
 
-* One Company → Many People ✓ (Company is parent)
-* One Person → Many Companies ✗ (This is wrong—a person belongs to one company)
+* Bir Şirket → Çok Kişi ✓ (Şirket ana taraftır)
+* Bir Kişi → Çok Şirket ✗ (Bu yanlıştır—bir kişi bir şirkete aittir)
 
-## Step 2: Import the Parent Records First
+## Adım 2: Önce Ana Kayıtları İçe Aktarın
 
-The parent ("one" side) must exist in Twenty before you can reference it.
+Ana ("bir" taraf) kaydı, ona referans verebilmeden önce Twenty'de mevcut olmalıdır.
 
-**Import order:**
+**İçe aktarma sırası:**
 
-1. **Companies** first (no dependencies)
-2. **People** second (link to Companies)
-3. **Opportunities** third (link to Companies and/or People)
-4. **Tasks/Notes** (link to any of the above)
+1. Önce **Şirketler** (bağımlılık yok)
+2. İkinci olarak **Kişiler** (Şirketlere bağlanır)
+3. Üçüncü olarak **Fırsatlar** (Şirketlere ve/veya Kişilere bağlanır)
+4. **Görevler/Notlar** (yukarıdakilerin herhangi birine bağlanır)
 
 <Warning>
-  **If the parent record doesn't exist, the import will fail.**
+  **Ana kayıt mevcut değilse içe aktarma başarısız olur.**
 
-  Always verify that Companies are imported before importing People with company references.
+  Şirket referansları olan Kişileri içe aktarmadan önce, Şirketlerin içe aktarılmış olduğunu her zaman doğrulayın.
 </Warning>
 
-## Step 3: Note the Parent's Unique Identifier
+## Adım 3: Ana kaydın benzersiz tanımlayıcısını not edin
 
-You need to reference the parent record using a **unique identifier**. Available options:
+Ana kayda **benzersiz bir tanımlayıcı** kullanarak referans vermeniz gerekir. Kullanılabilir seçenekler:
 
-| Parent Object             | Available Unique Identifiers                                    |
-| ------------------------- | --------------------------------------------------------------- |
-| **Şirketler**             | `id` (UUID), `domain` (recommended), or any custom unique field |
-| **People**                | `id` (UUID), `email`, or any custom unique field                |
-| **Çalışma Alanı Üyeleri** | `id` (UUID), `email` (not name)                                 |
-| **Özel Nesneler**         | `id` (UUID), or any field marked as unique                      |
+| Ana Nesne                 | Kullanılabilir Benzersiz Tanımlayıcılar                                |
+| ------------------------- | ---------------------------------------------------------------------- |
+| **Şirketler**             | `id` (UUID), `domain` (önerilir) veya herhangi bir özel benzersiz alan |
+| **Kişiler**               | `id` (UUID), `email` veya herhangi bir özel benzersiz alan             |
+| **Çalışma Alanı Üyeleri** | `id` (UUID), `email` (isim değil)                                      |
+| **Özel Nesneler**         | `id` (UUID) veya benzersiz olarak işaretlenmiş herhangi bir alan       |
 
-<Note>**Recommended:** Use `domain` for Companies and `email` for People. These are human-readable and easy to verify in your spreadsheet.</Note>
+<Note>**Önerilir:** Şirketler için `domain`, Kişiler için `email` kullanın. Bunlar insan tarafından okunabilirdir ve e-tablonuzda doğrulanması kolaydır.</Note>
 
-### Finding the Identifier
+### Tanımlayıcıyı Bulma
 
-If you need the `id`:
+`id` gerekiyorsa:
 
-1. Export the parent records from Twenty
-2. The export includes the `id` column
-3. Use these IDs in your child records file
+1. Ana kayıtları Twenty'den dışa aktarın
+2. Dışa aktarma `id` sütununu içerir
+3. Bu kimlikleri alt kayıtlar dosyanızda kullanın
 
-## Step 4: Verify the Relation Field Exists
+## Adım 4: İlişki Alanının Var Olduğunu Doğrulayın
 
-Before importing, ensure the relation field exists between your objects.
+İçe aktarmadan önce, nesneleriniz arasında ilişki alanının mevcut olduğundan emin olun.
 
-**To check or create:**
+**Kontrol etmek veya oluşturmak için:**
 
-1. Go to **Settings → Data Model**
-2. Select your child object (e.g., People)
-3. Look for a relation field pointing to the parent (e.g., Company)
-4. If it doesn't exist, create it:
-   * Click **+ Add field**
-   * Select **Relation** type
-   * Choose the parent object
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Alt nesnenizi seçin (ör. Kişiler)
+3. Ana tarafa işaret eden bir ilişki alanı olup olmadığına bakın (ör. Şirket)
+4. Yoksa oluşturun:
+   * **+ Alan Ekle**'ye tıklayın
+   * **İlişki** türünü seçin
+   * Ana nesneyi seçin
 
-## Step 5: Prepare Your CSV File
+## Adım 5: CSV Dosyanızı Hazırlayın
 
-Add a column to your child CSV that references the parent using its unique identifier.
+Alt CSV'nize, ana tarafa benzersiz tanımlayıcısıyla referans veren bir sütun ekleyin.
 
-### Example: People Linking to Companies
+### Örnek: Kişilerin Şirketlere Bağlanması
 
-**Your People CSV:**
+**Kişiler CSV'niz:**
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain
@@ -106,66 +106,66 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co
 Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
 ```
 
-The `companyDomain` column references the Company's domain.
+`companyDomain` sütunu, Şirketin alan adına referans verir.
 
-### Format Requirements
+### Biçim Gereksinimleri
 
-| Tanımlayıcı | Biçim          | Örnek                                  |
-| ----------- | -------------- | -------------------------------------- |
-| Alan Adı    | URL format     | `https://acme.com`                     |
-| E-posta     | Standard email | `john@acme.com`                        |
-| Kimlik      | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| Tanımlayıcı | Biçim            | Örnek                                  |
+| ----------- | ---------------- | -------------------------------------- |
+| Alan Adı    | URL biçimi       | `https://acme.com`                     |
+| E-posta     | Standart e-posta | `john@acme.com`                        |
+| Kimlik      | UUID             | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **Domain format matters!**
+  **Alan adı biçimi önemlidir!**
 
-  Use `https://domain.com` (not just `domain.com`). This matches how Twenty stores Company domains and prevents matching errors.
+  `https://domain.com` kullanın (yalnızca `domain.com` değil). Bu, Twenty'nin Şirket alan adlarını saklama biçimiyle eşleşir ve eşleştirme hatalarını önler.
 </Warning>
 
-### Important Rules
+### Önemli Kurallar
 
-1. **Exact match required** — the value must exactly match the parent record
-2. **Map only ONE unique identifier** — don't include both `companyId` AND `companyDomain`
-3. **Case sensitive** — `Acme.com` ≠ `acme.com`
+1. **Bire bir eşleşme gerekir** — değer ana kayda tam olarak uymalıdır
+2. **Yalnızca TEK bir benzersiz tanımlayıcıyı eşleyin** — hem `companyId` HEM DE `companyDomain` eklemeyin
+3. **Büyük/küçük harf duyarlı** — `Acme.com` ≠ `acme.com`
 
-## Step 6: Upload and Map the Relation
+## Adım 6: İlişkiyi Yükleyin ve Eşleyin
 
-1. Navigate to the child object (e.g., People)
-2. Click **⋮** → **Import records**
-3. Upload your CSV file
-4. In the field mapping step:
-   * Find your relation column (e.g., `companyDomain`)
-   * Map it to the **Company** relation field
-5. Complete the remaining mapping
-6. Review errors and confirm
+1. Alt nesneye gidin (ör. Kişiler)
+2. **⋮** → **Kayıtları içe aktar**'ı tıklayın
+3. CSV dosyanızı yükleyin
+4. Alan eşleme adımında:
+   * İlişki sütununuzu bulun (ör. `companyDomain`)
+   * Bunu **Şirket** ilişki alanına eşleyin
+5. Kalan eşlemeleri tamamlayın
+6. Hataları gözden geçirin ve onaylayın
 
-Twenty will automatically link each child record to the matching parent.
+Twenty, her alt kaydı otomatik olarak eşleşen ana kayda bağlar.
 
-## Step 7: Verify the Import
+## Adım 7: İçe Aktarmayı Doğrulayın
 
-After importing:
+İçe aktardıktan sonra:
 
-1. Open a few child records (e.g., People)
-2. Verify the relation field shows the correct parent (e.g., Company)
-3. Open a parent record and check the related records section
+1. Birkaç alt kaydı açın (ör. Kişiler)
+2. İlişki alanının doğru ana kaydı gösterdiğini doğrulayın (ör. Şirket)
+3. Bir ana kaydı açın ve ilişkili kayıtlar bölümünü kontrol edin
 
-## Common Mistakes to Avoid
+## Kaçınılması Gereken Yaygın Hatalar
 
-| Mistake                    | Problem                                            | Solution                                                |
-| -------------------------- | -------------------------------------------------- | ------------------------------------------------------- |
-| **Wrong import order**     | Importing People before Companies                  | Always import parents first, then children              |
-| **Wrong domain format**    | Using `acme.com` instead of `https://acme.com`     | Use full URL format with `https://`                     |
-| **Multiple unique fields** | Mapping both `companyId` AND `companyDomain`       | Map only ONE unique identifier                          |
-| **Missing relation field** | The relation field doesn't exist in the data model | Create it in **Settings → Data Model** before importing |
-| **Non-existent records**   | The parent record doesn't exist in Twenty          | Import parent records first, or check for typos         |
-| **Case mismatch**          | `Acme.com` in file but `acme.com` in Twenty        | Ensure exact case matching                              |
+| Hata                             | Sorun                                          | Çözüm                                                             |
+| -------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------- |
+| **Yanlış içe aktarma sırası**    | Şirketlerden önce Kişileri içe aktarmak        | Her zaman önce ana kayıtları, sonra alt kayıtları içe aktarın     |
+| **Yanlış alan adı biçimi**       | `https://acme.com` yerine `acme.com` kullanmak | `https://` ile tam URL biçimini kullanın                          |
+| **Birden fazla benzersiz alan**  | Hem `companyId` HEM DE `companyDomain` eşlemek | Yalnızca TEK bir benzersiz tanımlayıcıyı eşleyin                  |
+| **İlişki alanı eksik**           | İlişki alanı veri modelinde yok                | İçe aktarmadan önce **Ayarlar → Veri Modeli** içinde oluşturun    |
+| **Mevcut olmayan kayıtlar**      | Ana kayıt Twenty'de mevcut değil               | Önce ana kayıtları içe aktarın veya yazım hatalarını kontrol edin |
+| **Büyük/küçük harf uyumsuzluğu** | Dosyada `Acme.com`, Twenty'de ise `acme.com`   | Bire bir büyük/küçük harf eşleşmesini sağlayın                    |
 
-## Linking to Workspace Members
+## İş Alanı Üyelerine Bağlama
 
-When linking to Workspace Members (your team):
+İş Alanı Üyelerine (ekibiniz) bağlarken:
 
-* Use their **email address**, not their name
-* Example: `owner@yourcompany.com`, not "John Smith"
+* Adları yerine **e-posta adreslerini** kullanın
+* Örnek: `owner@yourcompany.com`, "John Smith" değil
 
 ```csv
 taskName,assignedTo
@@ -173,56 +173,56 @@ Follow up with client,john@yourcompany.com
 Review proposal,jane@yourcompany.com
 ```
 
-## FAQ
+## SSS
 
 <AccordionGroup>
-  <Accordion title="What if my parent record doesn't have a domain or email?">
-    You have two options:
+  <Accordion title="Ana kaydımın alan adı veya e-postası yoksa ne olur?">
+    İki seçeneğiniz var:
 
-    1. Use the Twenty `id` (export parent records to get their IDs)
-    2. Create a custom unique field in your data model to store an external ID from your previous system
+    1. Twenty `id` değerini kullanın (kimlikleri almak için ana kayıtları dışa aktarın)
+    2. Önceki sisteminizden gelen harici bir kimliği saklamak için veri modelinizde özel bir benzersiz alan oluşturun
   </Accordion>
 
-  <Accordion title="Can I update relations on existing records?">
-    Evet! Include the child record's unique identifier (e.g., `email` for People) and the new relation value. The import will update the relation.
+  <Accordion title="Mevcut kayıtlardaki ilişkileri güncelleyebilir miyim?">
+    Evet! Alt kaydın benzersiz tanımlayıcısını (ör. Kişiler için `email`) ve yeni ilişki değerini ekleyin. İçe aktarma ilişkiyi günceller.
   </Accordion>
 
-  <Accordion title="Can I import Many-to-Many relationships?">
-    Many-to-Many relations are not yet supported for import. This is planned for H1 2026.
+  <Accordion title="Çoktan-çoka ilişkileri içe aktarabilir miyim?">
+    Çoktan-çoka ilişkiler henüz içe aktarmada desteklenmiyor. Bu, 2026'nın ilk yarısı için planlanıyor.
   </Accordion>
 
-  <Accordion title="Can I link to multiple object types (like Notes to People AND Companies)?">
-    Relations pointing to multiple object types are not yet supported for import/export. This is on our roadmap.
+  <Accordion title="Birden fazla nesne türüne bağlantı verebilir miyim (ör. Notları Kişilere VE Şirketlere)?">
+    Birden fazla nesne türüne işaret eden ilişkiler henüz içe/dışa aktarma için desteklenmiyor. Bu özellik yol haritamızda.
   </Accordion>
 
-  <Accordion title="What happens if a parent record doesn't exist?">
-    The import will show an error for that row. Aşağıdakileri yapabilirsiniz:
+  <Accordion title="Ana kayıt mevcut değilse ne olur?">
+    İçe aktarma, o satır için bir hata gösterir. Aşağıdakileri yapabilirsiniz:
 
-    * Import the parent record first, then re-import
-    * Fix the reference value
-    * Remove the row from import
+    * Önce ana kaydı içe aktarın, ardından yeniden içe aktarın
+    * Referans değerini düzeltin
+    * Satırı içe aktarmadan çıkarın
   </Accordion>
 
-  <Accordion title="Why is my relation not linking correctly?">
-    Common causes:
+  <Accordion title="İlişkim neden doğru şekilde bağlanmıyor?">
+    Yaygın nedenler:
 
-    * Wrong format (use `https://domain.com` for domains)
-    * Case mismatch (check exact spelling)
-    * Parent doesn't exist (import parents first)
-    * Mapping multiple identifiers (use only one)
+    * Yanlış biçim (alan adları için `https://domain.com` kullanın)
+    * Büyük/küçük harf uyumsuzluğu (yazımı tam olarak kontrol edin)
+    * Ana kayıt mevcut değil (önce ana kayıtları içe aktarın)
+    * Birden fazla tanımlayıcıyı eşleme (yalnızca birini kullanın)
   </Accordion>
 </AccordionGroup>
 
 <Warning>
-  **Remember: Soft-deleted records count toward uniqueness.**
+  **Unutmayın: Yumuşak silinmiş kayıtlar benzersizliğe dahildir.**
 
-  If you're getting "not found" errors but the record seems to exist, check Command Menu → See deleted records. The parent may have been soft-deleted.
+  "bulunamadı" hataları alıyorsanız ancak kayıt var gibi görünüyorsa, Komut Menüsü → Silinen kayıtları göster'i kontrol edin. Ana kayıt yumuşak silinmiş olabilir.
 </Warning>
 
 ## Sorun Giderme
 
-Having issues? Check:
+Sorun mu yaşıyorsunuz? Şunları kontrol edin:
 
-* [How to Fix Import Errors](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)
-* [Import Relations Capabilities](/l/tr/user-guide/data-migration/capabilities/import-relations)
-* [Uniqueness Constraints](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [İçe Aktarma Hataları Nasıl Düzeltilir](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)
+* [İlişkileri İçe Aktarma Yetenekleri](/l/tr/user-guide/data-migration/capabilities/import-relations)
+* [Benzersizlik Kısıtlamaları](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)

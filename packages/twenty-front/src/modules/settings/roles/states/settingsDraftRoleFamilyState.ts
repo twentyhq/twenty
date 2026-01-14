@@ -23,6 +23,8 @@ export const settingsDraftRoleFamilyState = createFamilyState<
     permissionFlags: [],
     objectPermissions: [],
     fieldPermissions: [],
+    rowLevelPermissionPredicates: [],
+    rowLevelPermissionPredicateGroups: [],
     canBeAssignedToAgents: false,
     canBeAssignedToApiKeys: false,
     canBeAssignedToUsers: false,

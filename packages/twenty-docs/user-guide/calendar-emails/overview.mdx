@@ -30,11 +30,10 @@ image: /images/user-guide/emails/emails_header.png
 
 ### SMTP/CalDAV Setup (Other Providers)
 For other email and calendar providers:
-1. Go to **Settings → Releases → Lab** to enable the feature
-2. Return to **Settings → Accounts**
-3. Configure SMTP settings for email
-4. Configure CalDAV settings for calendar
-5. Test the connection
+1. Go to **Settings → Accounts**
+2. Configure SMTP settings for email
+3. Configure CalDAV settings for calendar
+4. Test the connection
 
 ### Multiple Mailboxes
 - **Unlimited Accounts**: Connect multiple email accounts per user
@@ -64,10 +63,9 @@ Choose different levels of visibility for your emails:
 
 <Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
 
-### Control which emails get sync with Message Folder Selection (Lab Feature)
+### Control which emails get synced with Message Folder Selection
 Control which email folders sync with Twenty:
-1. Go to **Settings → Releases → Lab** and enable **Message Folder**
-2. Return to **Settings → Accounts** and select your connected email account
+1. Go to **Settings → Accounts** and select your connected email account
 3. Choose which folders to sync:
    - **Inbox**: Primary incoming emails
    - **Sent**: Outgoing emails you've sent
@@ -114,7 +112,7 @@ Choose what will be visible to other users in your workspace:
 **Updates every 5 minutes**: Both email and calendar data sync automatically every 5 minutes after the initial import.
 
 <Note>
-**Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes—up to a few hours depending on volume. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
+**Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes. Twenty imports emails at approximately **400 messages per minute** (limited by Gmail API rate limiting), so a mailbox with 10,000 emails takes about 25 minutes. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
 </Note>
 
 ## Next Steps

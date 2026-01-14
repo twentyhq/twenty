@@ -38,10 +38,10 @@ export class PageLayoutController {
     @Query('objectMetadataId') objectMetadataId?: string,
   ): Promise<PageLayoutDTO[]> {
     if (isDefined(objectMetadataId)) {
-      return this.pageLayoutService.findByObjectMetadataId(
-        workspace.id,
+      return this.pageLayoutService.findByObjectMetadataId({
+        workspaceId: workspace.id,
         objectMetadataId,
-      );
+      });
     }
 
     return this.pageLayoutService.findByWorkspaceId(workspace.id);
@@ -53,7 +53,10 @@ export class PageLayoutController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO | null> {
-    return this.pageLayoutService.findByIdOrThrow(id, workspace.id);
+    return this.pageLayoutService.findByIdOrThrow({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 
   @Post()
@@ -62,7 +65,10 @@ export class PageLayoutController {
     @Body() input: CreatePageLayoutInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
-    return this.pageLayoutService.create(input, workspace.id);
+    return this.pageLayoutService.create({
+      createPageLayoutInput: input,
+      workspaceId: workspace.id,
+    });
   }
 
   @Patch(':id')
@@ -72,26 +78,24 @@ export class PageLayoutController {
     @Body() input: UpdatePageLayoutInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
-    const updatedPageLayout = await this.pageLayoutService.update(
+    const updatedPageLayout = await this.pageLayoutService.update({
       id,
-      workspace.id,
-      input,
-    );
+      workspaceId: workspace.id,
+      updateData: input,
+    });
 
     return updatedPageLayout;
   }
 
   @Delete(':id')
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
-  async delete(
+  async destroy(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<PageLayoutDTO> {
-    const deletedPageLayout = await this.pageLayoutService.delete(
+  ): Promise<boolean> {
+    return this.pageLayoutService.destroy({
       id,
-      workspace.id,
-    );
-
-    return deletedPageLayout;
+      workspaceId: workspace.id,
+    });
   }
 }

@@ -1,6 +1,6 @@
 ---
 title: نموذج البيانات
-description: Learn what a data model is and how to design one that fits your business.
+description: تعرّف إلى نموذج البيانات وكيفية تصميم نموذج يناسب نشاطك التجاري.
 image: /images/user-guide/fields/custom_data_model.png
 ---
 
@@ -8,120 +8,120 @@ image: /images/user-guide/fields/custom_data_model.png
   <img src="/images/user-guide/fields/custom_data_model.png" alt="نموذج البيانات" />
 </Frame>
 
-## What is a Data Model?
+## ما هو نموذج البيانات؟
 
-A data model is the structure that defines how information is organized in your CRM. Think of it as the **blueprint** of your customer data — you design it once, then fill it with your actual data.
+نموذج البيانات هو الهيكل الذي يحدّد كيفية تنظيم المعلومات في نظام إدارة علاقات العملاء (CRM) لديك. فكّر فيه باعتباره **المخطط** لبيانات عملائك — تصمّمه مرة واحدة، ثم تملؤه ببياناتك الفعلية.
 
-## Key Concepts
+## المفاهيم الأساسية
 
 ### كائنات
 
-**Objects** are the main categories of data in your CRM. Each object represents a type of thing you want to track.
+**الكائنات** هي الفئات الرئيسية للبيانات في نظام إدارة علاقات العملاء (CRM) لديك. يمثّل كل كائن نوعًا من الأشياء التي تريد تتبّعها.
 
-Twenty comes with standard objects:
+يوفّر Twenty كائنات قياسية:
 
-* **People** — individuals (contacts, leads, partners)
-* **Companies** — organizations
-* **Opportunities** — deals or sales
-* **Notes** — attached notes on records
-* **Tasks** — to-dos linked to records
+* **الأشخاص** — أفراد (جهات اتصال، عملاء محتملون، شركاء)
+* **الشركات** — مؤسسات
+* **الفرص** — صفقات أو مبيعات
+* **الملاحظات** — ملاحظات مرفقة بالسجلات
+* **المهام** — عناصر قائمة المهام المرتبطة بالسجلات
 
-You can also create **custom objects** for anything specific to your business (e.g., Projects, Subscriptions, Events).
+يمكنك أيضًا إنشاء **كائنات مخصّصة** لأي شيء خاص بنشاطك التجاري (مثل: المشروعات، الاشتراكات، الأحداث).
 
 ### الحقول
 
-**Fields** are the properties or attributes that describe each object. They store the actual information.
+**الحقول** هي الخصائص أو السمات التي تصف كل كائن. إنها تخزّن المعلومات الفعلية.
 
-For example, the **People** object has fields like:
+على سبيل المثال، يحتوي كائن **الأشخاص** على حقول مثل:
 
 * الاسم
 * البريد الإلكتروني
 * هاتف
 * المسمى الوظيفي
-* Company (a relation to the Companies object)
+* الشركة (علاقة بكائن الشركات)
 
-Fields have different **types**: text, number, date, select, multi-select, relation, and more. You can add custom fields to any object.
+للحقول **أنواع** مختلفة: نص، رقم، تاريخ، اختيار، اختيار متعدد، علاقة، وغير ذلك. يمكنك إضافة حقول مخصّصة إلى أي كائن.
 
 ### السجلات
 
-**Records** are the individual entries within an object — the actual data you create and manage.
+**السجلات** هي الإدخالات الفردية داخل الكائن — البيانات الفعلية التي تنشئها وتديرها.
 
 على سبيل المثال:
 
-* "John Smith" is a **record** in the People object
-* "Acme Corp" is a **record** in the Companies object
+* "John Smith" هو **سجل** في كائن الأشخاص
+* "Acme Corp" هو **سجل** في كائن الشركات
 
-**An analogy:**
+**تشبيه:**
 
-| Data Model Concept | Real-World Analogy                         |
-| ------------------ | ------------------------------------------ |
-| **Objects**        | Sections in a book (the categories)        |
-| **حقول**           | Columns in a spreadsheet (the properties)  |
-| **Records**        | Rows in a spreadsheet (the actual entries) |
+| مفهوم نموذج البيانات | تشبيه من الواقع                         |
+| -------------------- | --------------------------------------- |
+| **الكائنات**         | أقسام في كتاب (الفئات)                  |
+| **حقول**             | أعمدة في جدول بيانات (الخصائص)          |
+| **السجلات**          | صفوف في جدول بيانات (الإدخالات الفعلية) |
 
-You design the data model (objects + fields) once, then create many records within that structure.
+تصمّم نموذج البيانات (الكائنات + الحقول) مرة واحدة، ثم تنشئ العديد من السجلات ضمن تلك البنية.
 
-## Why Customize Your Data Model?
+## لماذا تخصّص نموذج البيانات الخاص بك؟
 
-كل شركة تعمل بطريقة مختلفة. Customizing your data model means you can shape Twenty around **your** processes instead of forcing yours into a rigid system.
+كل شركة تعمل بطريقة مختلفة. يعني تخصيص نموذج البيانات أنك تستطيع تكييف Twenty حول عملياتك بدلاً من فرض عملياتك داخل نظام جامد.
 
-Twenty offers full flexibility:
+توفر Twenty مرونة كاملة:
 
-* Create as many custom objects as you need
-* Add unlimited custom fields
-* The price doesn't change based on customization
+* أنشئ عددًا من الكائنات المخصّصة بقدر ما تحتاج
+* أضِف حقولًا مخصّصة غير محدودة
+* لا يتغيّر السعر بناءً على التخصيص
 
-## Tips to Design Your Data Model
+## نصائح لتصميم نموذج البيانات الخاص بك
 
-### 1. Start with Your Core Objects
+### 1. ابدأ بكائناتك الأساسية
 
-Identify the main concepts you work with. Twenty already provides:
+حدّد المفاهيم الرئيسية التي تعمل بها. توفّر Twenty مسبقًا:
 
-* **People** — your contacts
-* **Companies** — your accounts
-* **Opportunities** — your deals
+* **الأشخاص** — جهات الاتصال لديك
+* **الشركات** — حساباتك
+* **الفرص** — صفقاتك
 
-Think about what else you might need:
+فكّر فيما قد تحتاج إليه أيضًا:
 
-* Stripe would need a `Subscriptions` object
-* Airbnb would need a `Trips` object
-* An accelerator would need a `Batches` object
+* ستحتاج Stripe إلى كائن `Subscriptions`
+* ستحتاج Airbnb إلى كائن `Trips`
+* ستحتاج مُسرِّعة أعمال إلى كائن `Batches`
 
-### ٢. Use Fields for Variations, Not New Objects
+### ٢. استخدم الحقول للاختلافات، وليس كائنات جديدة
 
-If something is just a characteristic of an existing object, make it a **field**.
+إذا كان الشيء مجرد سمة لكائن موجود، فاجعله **حقلًا**.
 
-**Use fields for:**
+**استخدم الحقول من أجل:**
 
-* Categories and labels (e.g., `Industry` for Companies)
-* Status values (e.g., `Stage` for Opportunities)
-* Attributes and properties
+* الفئات والوسوم (مثل `Industry` للشركات)
+* قيم الحالة (مثل `Stage` للفرص)
+* السمات والخصائص
 
-### ٣. Create an Object When It Stands on Its Own
+### ٣. أنشئ كائنًا عندما يكون قائمًا بذاته
 
-If the concept has its own lifecycle, properties, or relationships, it deserves an object.
+إذا كان للمفهوم دورة حياة أو خصائص أو علاقات خاصة به، فهو يستحق كائنًا مستقلًا.
 
-**Create an object for:**
+**أنشئ كائنًا من أجل:**
 
-* **Projects** — have deadlines, owners, and tasks
-* **Subscriptions** — connect companies, products, and invoices
-* **Events** — involve attendees and follow-up actions
+* **المشروعات** — لها مواعيد نهائية ومالكون ومهام
+* **الاشتراكات** — تربط بين الشركات والمنتجات والفواتير
+* **الأحداث** — تتضمن الحضور وإجراءات المتابعة
 
 تتجاوز هذه الأشياء مجرد ما يمكن تضمينه في حقل واحد لأنها تحمل بياناتها وعلاقاتها الخاصة.
 
-### 4. Create an Object When Records Are Open-Ended
+### 4. أنشئ كائنًا عندما تكون السجلات مفتوحة وغير محددة العدد
 
-If something can be linked multiple times and you don't know how many, use an object.
+إذا كان بالإمكان ربط الشيء مراتٍ متعددة ولا تعرف عددها، فاستخدم كائنًا.
 
-**Bad approach:**
-Creating fields like `Product 1`, `Product 2`, `Product 3`...
+**نهج غير جيد:**
+إنشاء حقول مثل `Product 1`، `Product 2`، `Product 3`...
 
-**Good approach:**
-Create a `Products` object and relate it to records. This supports one, two, or a hundred products without changing your model.
+**نهج جيد:**
+أنشئ كائنًا `Products` واربطه بالسجلات. يسمح ذلك بدعم منتج واحد أو اثنين أو حتى مائة منتج دون تغيير نموذجك.
 
-### 5. Keep It Simple First
+### 5. حافظ على البساطة أولًا
 
-Start with fields. Move to new objects only when you feel the limits:
+ابدأ بالحقول. انتقل إلى كائنات جديدة فقط عندما تشعر بالقيود:
 
 * Too many fields on one object
 * Repeated records that should be separate

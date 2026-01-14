@@ -1,92 +1,92 @@
 ---
 title: حقول العلاقات
-description: Connect records across different objects using relation fields.
+description: اربط السجلات عبر كائنات مختلفة باستخدام حقول العلاقة.
 ---
 
-## Types of Relations
+## أنواع العلاقات
 
-### One-to-Many
+### واحد-إلى-متعدد
 
-One record in Object A can be linked to many records in Object B.
+يمكن ربط سجل واحد في الكائن A بالعديد من السجلات في الكائن B.
 
-**Example:** One Company can have many People (employees).
+**مثال:** يمكن أن يكون لدى شركة واحدة العديد من الأشخاص (الموظفين).
 
-### Many-to-One
+### متعدد-إلى-واحد
 
-Many records in Object A can be linked to one record in Object B.
+يمكن ربط سجلات متعددة في الكائن A بسجل واحد في الكائن B.
 
-**Example:** Many People can belong to one Company.
+**مثال:** يمكن أن ينتمي العديد من الأشخاص إلى شركة واحدة.
 
-### Relations to Multiple Object Types
+### العلاقات إلى أنواع كائنات متعددة
 
-Some objects can link to multiple object types on one side of the relation.
+يمكن لبعض الكائنات الارتباط بأنواع كائنات متعددة على جانب واحد من العلاقة.
 
-**Example:** A Note can be attached to one Person AND one Company AND one Opportunity simultaneously. The Note is on the "many" side, connecting to multiple "one" sides.
+**مثال:** يمكن إرفاق ملاحظة بشخص واحد وشركة واحدة وفرصة واحدة في الوقت نفسه. الملاحظة على جانب "العديد"، وتتصل بعدة جوانب "الواحد".
 
 <img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
 
-Similarly, a Project (on the "one" side) could receive links from multiple People, multiple Companies, and multiple Notes.
+وبالمثل، يمكن لمشروع (على جانب "الواحد") أن يتلقى روابط من عدة أشخاص، وعدة شركات، وعدة ملاحظات.
 
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Import/Export limitation**: Relations pointing to multiple object types are not yet supported for CSV import/export. This is on our roadmap.
+  **قيد الاستيراد/التصدير**: العلاقات التي تشير إلى أنواع كائنات متعددة غير مدعومة بعد لاستيراد/تصدير CSV. هذا على خارطة الطريق لدينا.
 </Warning>
 
-### Many-to-Many
+### متعدد-إلى-متعدد
 
-Many records in Object A can be linked to many records in Object B.
+يمكن ربط سجلات متعددة في الكائن A بسجلات متعددة في الكائن B.
 
-**Example:** Many People can be linked to many Projects, and vice versa.
+**مثال:** يمكن ربط العديد من الأشخاص بالعديد من المشاريع، والعكس صحيح.
 
 <Warning>
-  **Many-to-Many is not yet supported.**
+  **متعدد-إلى-متعدد غير مدعوم بعد.**
 
-  This relation type is planned for H1 2026. As a workaround, create an intermediate "junction" object (e.g., "Project Assignments") that has Many-to-One relations to both objects.
+  هذا النوع من العلاقات مُخطّط للنصف الأول من عام 2026. كحل بديل، أنشئ كائنًا وسيطًا "junction" (مثال: "Project Assignments") لديه علاقات من نوع متعدد-إلى-واحد مع كلا الكائنين.
 </Warning>
 
-## Creating a Relation Field
+## إنشاء حقل علاقة
 
-1. Go to **Settings → Data Model**
-2. Select the object where you want to add the relation
-3. Click **+ Add Field**
-4. Select **Relation** as the field type
-5. Choose the target object(s) to relate to
-6. Configure the relation settings:
-   * **Field name on source object**: The name of the relation field on the object you're editing
-   * **Field name on destination object**: The name of the relation field that will appear on the target object
-   * Relation type (one-to-many, many-to-one)
+1. اذهب إلى **الإعدادات → نموذج البيانات**
+2. حدد الكائن الذي تريد إضافة العلاقة إليه
+3. انقر **+ إضافة حقل**
+4. اختر **العلاقة** كنوع الحقل
+5. اختر الكائن(ات) الهدف للربط بها
+6. كوّن إعدادات العلاقة:
+   * **اسم الحقل على الكائن المصدر**: اسم حقل العلاقة على الكائن الذي تقوم بتحريره
+   * **اسم الحقل على كائن الوجهة**: اسم حقل العلاقة الذي سيظهر على الكائن الهدف
+   * نوع العلاقة (واحد-إلى-متعدد، متعدد-إلى-واحد)
 7. انقر على **حفظ**
 
-## Standard Relations
+## العلاقات القياسية
 
-Twenty comes with pre-built relations between standard objects:
+تأتي Twenty بعلاقات مبنية مسبقًا بين الكائنات القياسية:
 
-| From Object | To Object | Relation Type |
-| ----------- | --------- | ------------- |
-| الأشخاص     | الشركات   | Many-to-One   |
-| الفرص       | الشركات   | Many-to-One   |
-| الفرص       | الأشخاص   | Many-to-One   |
+| من الكائن | إلى الكائن | نوع العلاقة    |
+| --------- | ---------- | -------------- |
+| الأشخاص   | الشركات    | متعدد-إلى-واحد |
+| الفرص     | الشركات    | متعدد-إلى-واحد |
+| الفرص     | الأشخاص    | متعدد-إلى-واحد |
 
 ## أفضل الممارسات
 
-### Planning Relations
+### تخطيط العلاقات
 
-* **Map your data model**: Plan relations before creating them
-* **Consider direction**: Think about which object "owns" the relationship
-* **Avoid circular dependencies**: Keep your data model clean
+* **ارسم خريطة نموذج البيانات**: خطط للعلاقات قبل إنشائها
+* **ضع الاتجاه في الاعتبار**: فكّر في الكائن الذي "يمتلك" العلاقة
+* **تجنّب الاعتماديات الدائرية**: حافظ على نظافة نموذج بياناتك
 
-### Naming Relations
+### تسمية العلاقات
 
-* **Use clear names**: Make it obvious what the relation represents
-* **Be consistent**: Use similar naming patterns across relations
-* **Consider both sides**: Name both sides of the relation appropriately
+* **استخدم أسماء واضحة**: اجعل ما تمثّله العلاقة واضحًا
+* **كن متسقًا**: استخدم أنماط تسمية متشابهة عبر العلاقات
+* **ضع كلا الجانبين في الاعتبار**: قم بتسمية كلا جانبي العلاقة بشكل مناسب
 
-### Performance
+### الأداء
 
-* **Don't over-relate**: Too many relations can slow down your workspace
+* **لا تفرط في إنشاء العلاقات**: كثرة العلاقات قد تبطئ مساحة عملك
 
-## Limitations
+## القيود
 
-* **Deleting relations** removes the link but not the related records
-* **Circular relations** should be avoided for data integrity
+* **حذف العلاقات** يزيل الرابط لكنه لا يزيل السجلات المرتبطة
+* **العلاقات الدائرية** ينبغي تجنبها للحفاظ على سلامة البيانات

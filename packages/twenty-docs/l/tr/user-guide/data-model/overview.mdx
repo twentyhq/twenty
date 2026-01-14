@@ -1,6 +1,6 @@
 ---
 title: Veri modeli
-description: Learn what a data model is and how to design one that fits your business.
+description: Veri modelinin ne olduğunu ve işinize uygun bir modeli nasıl tasarlayacağınızı öğrenin.
 image: /images/user-guide/fields/custom_data_model.png
 ---
 
@@ -8,120 +8,120 @@ image: /images/user-guide/fields/custom_data_model.png
   <img src="/images/user-guide/fields/custom_data_model.png" alt="Veri modeli" />
 </Frame>
 
-## What is a Data Model?
+## Veri modeli nedir?
 
-Veri modeli, CRM'nizde bilgilerin nasıl organize edildiğini tanımlayan yapıdır. Think of it as the **blueprint** of your customer data — you design it once, then fill it with your actual data.
+Veri modeli, CRM'nizde bilgilerin nasıl organize edildiğini tanımlayan yapıdır. Bunu müşteri verilerinizin **mimari planı** olarak düşünün — bir kez tasarlarsınız, sonra gerçek verilerinizle doldurursunuz.
 
-## Key Concepts
+## Temel Kavramlar
 
 ### Nesneler
 
-**Objects** are the main categories of data in your CRM. Each object represents a type of thing you want to track.
+**Objects**, CRM'inizdeki verilerin ana kategorileridir. Her nesne, izlemek istediğiniz bir şeyin türünü temsil eder.
 
-Twenty comes with standard objects:
+Twenty, standart nesnelerle birlikte gelir:
 
-* **People** — individuals (contacts, leads, partners)
-* **Companies** — organizations
-* **Opportunities** — deals or sales
-* **Notes** — attached notes on records
-* **Tasks** — to-dos linked to records
+* **People** — bireyler (kişiler, potansiyel müşteriler, iş ortakları)
+* **Companies** — kuruluşlar
+* **Opportunities** — anlaşmalar veya satışlar
+* **Notes** — kayıtlara ekli notlar
+* **Tasks** — kayıtlara bağlı yapılacaklar
 
-You can also create **custom objects** for anything specific to your business (e.g., Projects, Subscriptions, Events).
+İşinize özgü herhangi bir şey için **özel nesneler** de oluşturabilirsiniz (ör. Projects, Subscriptions, Events).
 
 ### Alanlar
 
-**Fields** are the properties or attributes that describe each object. They store the actual information.
+**Alanlar**, her nesneyi tanımlayan özellikler ya da özniteliklerdir. Gerçek bilgiyi depolarlar.
 
-For example, the **People** object has fields like:
+Örneğin, **People** nesnesinde şu gibi alanlar vardır:
 
 * İsim
 * E-posta
 * Telefon
 * İş Unvanı
-* Company (a relation to the Companies object)
+* Company (Companies nesnesine bir ilişki)
 
-Fields have different **types**: text, number, date, select, multi-select, relation, and more. You can add custom fields to any object.
+Alanların farklı **türleri** vardır: metin, sayı, tarih, seçim, çoklu seçim, ilişki ve daha fazlası. Her nesneye özel alanlar ekleyebilirsiniz.
 
 ### Kayıtlar
 
-**Records** are the individual entries within an object — the actual data you create and manage.
+**Kayıtlar**, bir nesne içindeki tekil girdilerdir — oluşturup yönettiğiniz gerçek verilerdir.
 
 Örneğin:
 
-* "John Smith" is a **record** in the People object
-* "Acme Corp" is a **record** in the Companies object
+* "John Smith", People nesnesinde bir kayıttır
+* "Acme Corp", Companies nesnesinde bir kayıttır
 
-**An analogy:**
+**Bir benzetme:**
 
-| Data Model Concept | Real-World Analogy                         |
-| ------------------ | ------------------------------------------ |
-| **Objects**        | Sections in a book (the categories)        |
-| **Alan**           | Columns in a spreadsheet (the properties)  |
-| **Records**        | Rows in a spreadsheet (the actual entries) |
+| Veri Modeli Kavramı | Gerçek Dünya Benzetmesi                             |
+| ------------------- | --------------------------------------------------- |
+| **Nesneler**        | Bir kitaptaki bölümler (kategoriler)                |
+| **Alan**            | Bir elektronik tablodaki sütunlar (özellikler)      |
+| **Kayıtlar**        | Bir elektronik tablodaki satırlar (gerçek girdiler) |
 
-You design the data model (objects + fields) once, then create many records within that structure.
+Veri modelini (nesneler + alanlar) bir kez tasarlar, ardından bu yapı içinde birçok kayıt oluşturursunuz.
 
-## Why Customize Your Data Model?
+## Veri modelinizi neden özelleştirmelisiniz?
 
-Her iş farklı çalışır. Customizing your data model means you can shape Twenty around **your** processes instead of forcing yours into a rigid system.
+Her iş farklı çalışır. Veri modelinizi özelleştirmek, süreçlerinizi katı bir sisteme uydurmaya çalışmak yerine Twenty'yi **sizin** süreçleriniz etrafında şekillendirebilmeniz demektir.
 
-Twenty offers full flexibility:
+Twenty tam esneklik sunar:
 
-* Create as many custom objects as you need
-* Add unlimited custom fields
-* The price doesn't change based on customization
+* Gereksinim duyduğunuz kadar özel nesne oluşturun
+* Sınırsız özel alan ekleyin
+* Fiyat, özelleştirmeye göre değişmez
 
-## Tips to Design Your Data Model
+## Veri Modelinizi Tasarlamak İçin İpuçları
 
-### 1. Start with Your Core Objects
+### 1. Önce Temel Nesnelerinizle Başlayın
 
-Identify the main concepts you work with. Twenty already provides:
+Üzerinde çalıştığınız temel kavramları belirleyin. Twenty zaten şunları sunar:
 
-* **People** — your contacts
-* **Companies** — your accounts
-* **Opportunities** — your deals
+* **People** — kişileriniz
+* **Companies** — hesaplarınız
+* **Opportunities** — anlaşmalarınız
 
-Think about what else you might need:
+Başka nelere ihtiyaç duyabileceğinizi düşünün:
 
-* Stripe would need a `Subscriptions` object
-* Airbnb would need a `Trips` object
-* An accelerator would need a `Batches` object
+* Stripe'ın bir `Subscriptions` nesnesine ihtiyacı olurdu
+* Airbnb'nin bir `Trips` nesnesine ihtiyacı olurdu
+* Bir hızlandırıcının bir `Batches` nesnesine ihtiyacı olurdu
 
-### 2. Use Fields for Variations, Not New Objects
+### 2. Varyasyonlar için yeni nesneler değil, alanlar kullanın
 
-If something is just a characteristic of an existing object, make it a **field**.
+Bir şey mevcut bir nesnenin yalnızca bir özelliğiyse, onu bir **alan** yapın.
 
-**Use fields for:**
+**Alanları şunlar için kullanın:**
 
-* Categories and labels (e.g., `Industry` for Companies)
-* Status values (e.g., `Stage` for Opportunities)
-* Attributes and properties
+* Kategoriler ve etiketler (ör. Companies için `Industry`)
+* Durum değerleri (ör. Opportunities için `Stage`)
+* Öznitelikler ve özellikler
 
-### 3. Create an Object When It Stands on Its Own
+### 3. Bağımsız Olduğunda Bir Nesne Oluşturun
 
-If the concept has its own lifecycle, properties, or relationships, it deserves an object.
+Kavramın kendi yaşam döngüsü, özellikleri veya ilişkileri varsa, bir nesneyi hak eder.
 
-**Create an object for:**
+**Şunlar için bir nesne oluşturun:**
 
-* **Projects** — have deadlines, owners, and tasks
-* **Subscriptions** — connect companies, products, and invoices
-* **Events** — involve attendees and follow-up actions
+* **Projects** — son tarihleri, sahipleri ve görevleri olan
+* **Subscriptions** — şirketleri, ürünleri ve faturaları bağlar
+* **Events** — katılımcıları ve takip eylemlerini içerir
 
 Bunlar, kendi verilerini ve ilişkilerini taşıdığından dolayı tek bir alandan daha fazlasıdır.
 
-### 4. Create an Object When Records Are Open-Ended
+### 4. Kayıtlar Ucu Açık Olduğunda Bir Nesne Oluşturun
 
-If something can be linked multiple times and you don't know how many, use an object.
+Bir şey birden çok kez ilişkilendirilebiliyorsa ve kaç tane olacağını bilmiyorsanız, bir nesne kullanın.
 
-**Bad approach:**
-Creating fields like `Product 1`, `Product 2`, `Product 3`...
+**Kötü yaklaşım:**
+`Product 1`, `Product 2`, `Product 3` gibi alanlar oluşturmak...
 
-**Good approach:**
-Create a `Products` object and relate it to records. This supports one, two, or a hundred products without changing your model.
+**İyi yaklaşım:**
+Bir `Products` nesnesi oluşturun ve kayıtlarla ilişkilendirin. Bu, modelinizi değiştirmeden bir, iki veya yüz ürünü destekler.
 
-### 5. Keep It Simple First
+### 5. Önce Basit Tutun
 
-Start with fields. Move to new objects only when you feel the limits:
+Alanlarla başlayın. Move to new objects only when you feel the limits:
 
 * Too many fields on one object
 * Repeated records that should be separate

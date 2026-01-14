@@ -22,6 +22,7 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND:
         throw new NotFoundError(exception);
       case ApplicationExceptionCode.FORBIDDEN:
+      case ApplicationExceptionCode.INVALID_INPUT:
         throw new UserInputError(exception);
       default: {
         assertUnreachable(exception.code);

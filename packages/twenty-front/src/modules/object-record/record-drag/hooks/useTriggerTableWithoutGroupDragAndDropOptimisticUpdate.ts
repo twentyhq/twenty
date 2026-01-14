@@ -1,12 +1,14 @@
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
-import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
+import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
+
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
 import { findById, isDefined } from 'twenty-shared/utils';
@@ -15,8 +17,10 @@ import { sortByProperty } from '~/utils/array/sortByProperty';
 // TODO: does not work when scrolling while dragging and does not work if not paired with a network refetch right after
 // But it's sufficient right now for the main use case
 export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
-  const recordIdByRealIndexCallbackFamilyState =
-    useRecoilComponentCallbackState(recordIdByRealIndexComponentFamilyState);
+  const recordIdByRealIndexCallbackSelector =
+    useRecoilComponentFamilyCallbackState(
+      recordIdByRealIndexComponentFamilySelector,
+    );
 
   const lastScrollPositionCallbackState = useRecoilComponentCallbackState(
     lastScrollPositionComponentState,
@@ -64,7 +68,7 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
         ) {
           const recordIdAtRealIndex = getSnapshotValue(
             snapshot,
-            recordIdByRealIndexCallbackFamilyState({ realIndex }),
+            recordIdByRealIndexCallbackSelector(realIndex),
           );
 
           if (!isDefined(recordIdAtRealIndex)) {
@@ -115,7 +119,7 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
     [
       lastScrollPositionCallbackState,
       loadRecordsToVirtualRows,
-      recordIdByRealIndexCallbackFamilyState,
+      recordIdByRealIndexCallbackSelector,
       scrollWrapperHTMLElement?.clientHeight,
       totalNumberOfRecordsToVirtualizeCallbackState,
     ],

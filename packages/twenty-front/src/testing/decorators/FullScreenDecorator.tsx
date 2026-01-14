@@ -1,7 +1,7 @@
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
 import styled from '@emotion/styled';
-import { action } from '@storybook/addon-actions';
-import { type Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react-vite';
+import { action } from 'storybook/actions';
 const StyledT = styled.div`
   height: 100%;
   width: 100%;

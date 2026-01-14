@@ -1,11 +1,11 @@
+import { FormCurrencyFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput';
 import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { CurrencyCode } from 'twenty-shared/constants';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormCurrencyFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput';
 
 const meta: Meta<typeof FormCurrencyFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormCurrencyFieldInput',

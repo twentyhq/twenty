@@ -76,6 +76,7 @@ describe('useBarChartData', () => {
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -91,6 +92,7 @@ describe('useBarChartData', () => {
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -119,6 +121,7 @@ describe('useBarChartData', () => {
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -150,6 +153,7 @@ describe('useBarChartData', () => {
         series: undefined,
         colorRegistry: mockColorRegistry,
         seriesLabels: { sales: 'Revenue', costs: 'Expenses' },
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -165,6 +169,7 @@ describe('useBarChartData', () => {
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -179,6 +184,7 @@ describe('useBarChartData', () => {
         keys: [],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -195,6 +201,7 @@ describe('useBarChartData', () => {
         series: undefined,
         colorRegistry: mockColorRegistry,
         seriesLabels: undefined,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -210,6 +217,7 @@ describe('useBarChartData', () => {
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -217,7 +225,7 @@ describe('useBarChartData', () => {
     expect(result.current.legendItems[0]).toMatchObject({
       id: 'sales',
       label: 'Sales',
-      color: 'green5',
+      color: 'greenSolid',
     });
   });
 
@@ -231,6 +239,7 @@ describe('useBarChartData', () => {
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -249,6 +258,7 @@ describe('useBarChartData', () => {
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -265,6 +275,7 @@ describe('useBarChartData', () => {
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -282,6 +293,7 @@ describe('useBarChartData', () => {
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -301,6 +313,7 @@ describe('useBarChartData', () => {
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 

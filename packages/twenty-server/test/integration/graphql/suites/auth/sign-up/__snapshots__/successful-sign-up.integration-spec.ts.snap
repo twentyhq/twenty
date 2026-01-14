@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Successful User Sign Up (integration) should sign up, delete and signup same new user successfully 1`] = `
 {

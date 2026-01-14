@@ -1,0 +1,57 @@
+{{- if .Values.redisInternal.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "twenty.fullname" . }}-redis
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "twenty.name" . }}
+      app.kubernetes.io/component: redis
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "twenty.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: redis
+    spec:
+      containers:
+        - name: redis
+          image: {{ .Values.redisInternal.image.repository }}:{{ .Values.redisInternal.image.tag }}
+          imagePullPolicy: {{ default "IfNotPresent" .Values.redisInternal.image.pullPolicy }}
+          command:
+            - redis-stack-server
+          args:
+            - "--port"
+            - {{ .Values.redisInternal.service.port | quote }}
+            - "--maxmemory-policy"
+            - "noeviction"
+          ports:
+            - containerPort: {{ .Values.redisInternal.service.port }}
+              name: redis
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.redisInternal.resources | nindent 12 }}
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+    volumes:
+      - name: redis-data
+        {{- if .Values.redisInternal.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.redisInternal.persistence.existingClaim | default (printf "%s-redis" (include "twenty.fullname" .)) }}
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
+{{- end }}

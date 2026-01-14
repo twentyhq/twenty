@@ -12,7 +12,7 @@ import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
+import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -21,7 +21,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 export class McpProtocolService {
   constructor(
     private readonly featureFlagService: FeatureFlagService,
-    private readonly toolProvider: ToolProviderService,
+    private readonly toolRegistry: ToolRegistryService,
     private readonly userRoleService: UserRoleService,
     private readonly mcpToolExecutorService: McpToolExecutorService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
@@ -143,16 +143,22 @@ export class McpProtocolService {
         apiKey,
       );
 
-      const toolSet = await this.toolProvider.getTools({
-        workspaceId: workspace.id,
-        categories: [ToolCategory.DATABASE_CRUD, ToolCategory.ACTION],
-        rolePermissionConfig: { unionOf: [roleId] },
-        authContext,
-        wrapWithErrorContext: false,
-        // Exclude code_interpreter from MCP to prevent recursive execution attacks
-        // (code running in the sandbox could call code_interpreter via MCP)
-        excludeTools: [ToolType.CODE_INTERPRETER],
-      });
+      // Exclude code_interpreter from MCP to prevent recursive execution attacks
+      // (code running in the sandbox could call code_interpreter via MCP)
+      const toolSet = await this.toolRegistry.getToolsByCategories(
+        {
+          workspaceId: workspace.id,
+          roleId,
+          rolePermissionConfig: { unionOf: [roleId] },
+          authContext,
+          userWorkspaceId,
+        },
+        {
+          categories: [ToolCategory.DATABASE_CRUD, ToolCategory.ACTION],
+          excludeTools: [ToolType.CODE_INTERPRETER],
+          wrapWithErrorContext: false,
+        },
+      );
 
       if (method === 'tools/call' && params) {
         return await this.mcpToolExecutorService.handleToolCall(

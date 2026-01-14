@@ -1,56 +1,56 @@
 ---
-title: Detect Stale Opportunities
-description: Automatically notify managers when opportunities haven't been updated.
+title: Rileva opportunità stagnanti
+description: Notifica automaticamente i responsabili quando le opportunità non sono state aggiornate.
 ---
 
-Keep your pipeline healthy by alerting managers when opportunities go stale. This workflow checks for opportunities that haven't been updated in a specified number of days.
+Mantieni in salute la tua pipeline avvisando i responsabili quando le opportunità diventano stagnanti. Questo flusso di lavoro verifica le opportunità che non sono state aggiornate in un numero di giorni specificato.
 
-## The Problem
+## Il problema
 
-Opportunities sitting without updates lead to:
+Le opportunità senza aggiornamenti comportano:
 
-* Deals going cold
-* Unreliable forecasts
-* Lost revenue
+* Trattative che si raffreddano
+* Previsioni inaffidabili
+* Perdita di ricavi
 
-## The Solution
+## La soluzione
 
-Create a scheduled workflow that finds stale opportunities and emails their managers.
+Crea un flusso di lavoro pianificato che individua le opportunità stagnanti e invia un'email ai loro responsabili.
 
-## Step-by-Step Setup
+## Configurazione passo-passo
 
-### Step 1: Create the Workflow
+### Passaggio 1: Crea il flusso di lavoro
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it "Stale Opportunity Alert"
+1. Vai a **Impostazioni → Flussi di lavoro**
+2. Fai clic su **+ Nuovo flusso di lavoro**
+3. Assegna il nome "Avviso di opportunità stagnanti"
 
-### Step 2: Configure the Trigger
+### Passaggio 2: Configura il trigger
 
-1. Select **On a Schedule**
-2. Set to run daily (e.g., every day at 8 AM)
+1. Seleziona **On a Schedule**
+2. Imposta l'esecuzione giornaliera (ad es., ogni giorno alle 8:00)
 
-### Step 3: Search for Stale Opportunities
+### Passaggio 3: Cerca le opportunità stagnanti
 
-1. Add **Search Records** action
+1. Aggiungi un'azione **Search Records**
 2. Configura:
 
-| Campo      | Valore                                          |
-| ---------- | ----------------------------------------------- |
-| **Object** | Opportunità                                     |
-| **Filter** | Updated At is before (today - 7 days)           |
-| **Filter** | Stage is not "Closed Won" AND not "Closed Lost" |
-| **Limit**  | 100                                             |
+| Campo       | Valore                                         |
+| ----------- | ---------------------------------------------- |
+| **Oggetto** | Opportunità                                    |
+| **Filtro**  | Updated At è precedente a (oggi - 7 giorni)    |
+| **Filtro**  | Stage non è "Closed Won" AND non "Closed Lost" |
+| **Limite**  | 100                                            |
 
-### Step 4: Check If Any Found
+### Passaggio 4: Verifica se ne sono state trovate
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. If no stale opportunities, the workflow stops here
+1. Aggiungi l'azione **Filter**
+2. Condizione: `{{searchRecords.length}}` è maggiore di 0
+3. Se non ci sono opportunità stagnanti, il flusso di lavoro si ferma qui
 
-### Step 5: Format the Alert (Code Action)
+### Passaggio 5: Formatta l'avviso (azione Code)
 
-Add a **Code** action to format the email:
+Aggiungi un'azione **Code** per formattare l'email:
 
 ```javascript
 export const main = async (params) => {
@@ -88,49 +88,49 @@ export const main = async (params) => {
 };
 ```
 
-### Step 6: Send Alert Email
+### Passaggio 6: Invia l'email di avviso
 
-Add **Send Email** action:
+Aggiungi l'azione **Send Email**:
 
-| Campo       | Valore                                                      |
-| ----------- | ----------------------------------------------------------- |
-| **To**      | sales-manager@yourcompany.com                               |
-| **Subject** | `🚨 {{code.totalCount}} Stale Opportunities Need Attention` |
-| **Body**    | `{{code.summary}}`                                          |
+| Campo       | Valore                                                               |
+| ----------- | -------------------------------------------------------------------- |
+| **A**       | sales-manager@yourcompany.com                                        |
+| **Oggetto** | `🚨 {{code.totalCount}} opportunità stagnanti richiedono attenzione` |
+| **Corpo**   | `{{code.summary}}`                                                   |
 
-### Step 7: Test and Activate
+### Passaggio 7: Testa e attiva
 
-1. Click **Test** to run the workflow
-2. Check that the email contains the right data
-3. Activate when ready
+1. Fai clic su **Test** per eseguire il flusso di lavoro
+2. Verifica che l'email contenga i dati corretti
+3. Attiva quando sei pronto
 
-## Customization Options
+## Opzioni di personalizzazione
 
-### Change Staleness Threshold
+### Modifica la soglia di stagnazione
 
-Modify the Search Records filter to change from 7 days to your preferred period:
+Modifica il filtro di **Search Records** per passare da 7 giorni al periodo preferito:
 
-* 3 days for high-velocity sales
-* 14 days for enterprise deals
-* 30 days for long sales cycles
+* 3 giorni per vendite ad alta velocità
+* 14 giorni per trattative enterprise
+* 30 giorni per cicli di vendita lunghi
 
-### Alert Individual Reps
+### Avvisa i singoli rappresentanti
 
-Instead of one manager email, use **Iterator** to send personalized emails to each rep about their own stale deals.
+Invece di un'unica email al responsabile, usa **Iterator** per inviare email personalizzate a ciascun rappresentante sulle proprie trattative stagnanti.
 
-### Add Escalation
+### Aggiungi un'escalation
 
-Create multiple workflows with increasing severity:
+Crea più flussi di lavoro con gravità crescente:
 
-1. Day 7: Email to rep
-2. Day 14: Email to rep + manager
-3. Day 21: Create task for manager to intervene
+1. Giorno 7: Email al rappresentante
+2. Giorno 14: Email al rappresentante + al responsabile
+3. Giorno 21: Crea un'attività per il responsabile affinché intervenga
 
-### Include in Slack
+### Includi in Slack
 
-Use **HTTP Request** to post to a Slack webhook instead of or in addition to email.
+Usa **HTTP Request** per inviare a un webhook Slack invece o in aggiunta all'email.
 
-## Related
+## Correlati
 
-* [Workflow Actions](/l/it/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/it/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Inviare email dai flussi di lavoro](/l/it/user-guide/workflows/capabilities/send-emails-from-workflows)

@@ -1,0 +1,21 @@
+{{- if .Values.server.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "twenty.fullname" . }}-server
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: server
+spec:
+  type: {{ .Values.server.service.type | default "ClusterIP" }}
+  selector:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/component: server
+  ports:
+    - name: http-tcp
+      port: {{ .Values.server.service.port }}
+      targetPort: {{ include "twenty.server.containerPort" . }}
+      protocol: TCP
+{{- end }}

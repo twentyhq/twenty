@@ -3,6 +3,7 @@ import { FieldRichTextCard } from '@/ui/layout/show-page/components/FieldRichTex
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   width: 100%;

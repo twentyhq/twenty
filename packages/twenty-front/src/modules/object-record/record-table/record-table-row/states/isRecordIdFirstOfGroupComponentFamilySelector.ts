@@ -3,9 +3,11 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { createComponentFamilySelector } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
+import { type Nullable } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const isRecordIdFirstOfGroupComponentFamilySelector =
-  createComponentFamilySelector<boolean, { recordId: string }>({
+  createComponentFamilySelector<boolean, Nullable<string>>({
     key: 'isRecordIdFirstOfGroupComponentFamilySelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
@@ -19,6 +21,10 @@ export const isRecordIdFirstOfGroupComponentFamilySelector =
 
         const hasRecordGroups = recordGroupIds.length > 0;
 
+        if (!isDefined(familyKey)) {
+          return false;
+        }
+
         if (hasRecordGroups) {
           for (const recordGroupId of recordGroupIds) {
             const recordIdsForThisGroup = get(
@@ -28,7 +34,7 @@ export const isRecordIdFirstOfGroupComponentFamilySelector =
               }),
             );
 
-            if (recordIdsForThisGroup[0] === familyKey.recordId) {
+            if (recordIdsForThisGroup[0] === familyKey) {
               return true;
             }
           }
@@ -39,7 +45,7 @@ export const isRecordIdFirstOfGroupComponentFamilySelector =
             }),
           );
 
-          if (allRecordIds[0] === familyKey.recordId) {
+          if (allRecordIds[0] === familyKey) {
             return true;
           }
         }

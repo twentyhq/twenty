@@ -96,150 +96,150 @@ Eşleştirme ölçütlerine göre yeni bir kayıt oluşturur veya mevcut bir kay
 
 * Alanları doldurmak için önceki adımlardan gelen verileri kullanın
 
-**How it works**:
+**Nasıl Çalışır**:
 
-1. Searches for a record matching your criteria
-2. If found → updates the existing record
-3. If not found → creates a new record
+1. Kriterlerinize uyan bir kaydı arar
+2. Bulunursa → mevcut kaydı günceller
+3. Bulunamazsa → yeni bir kayıt oluşturur
 
-**Output**: The created or updated record data is available for use in subsequent steps.
+**Çıktı**: Oluşturulan veya güncellenen kayıt verileri, sonraki adımlarda kullanılmak üzere mevcuttur.
 
-## Flow Actions
+## Akış Eylemleri
 
 ### Yineleyici
 
-**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
+**Önceki bir adımdan dönen kayıt dizisi üzerinde döngü oluşturur**, her kayıt üzerinde ayrı ayrı işlem yapmanıza olanak tanır.
 
 **Yapılandırma**:
 
-* Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
+* Önceki bir adımdan gelen kayıt dizisini seçin (ör. Kayıt Ara sonuçları, Toplu kullanılabilirliğe sahip bir Manuel tetikleyici, bir kod düğümü)
 * Döngüde her kayıt üzerinde gerçekleştireceğiniz işlemleri tanımlayın.
 
 <Note>
-  - You can add several actions within an iterator.
-  - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
+  - Bir yineleyici içinde birden fazla eylem ekleyebilirsiniz.
+  - Bir yineleyici içinde dallar kullanırken, her dalın son adımının döngüyü kapatmak için yineleyiciye geri bağlandığından emin olun.
 </Note>
 
-* Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
+* `Current Item` Alanlarına Erişim: şu anda işlenen kayıttaki alanları kullanmak için **Iterator** adımına tıklayın, ardından **Current item** seçin. Bu kayıttan kullanılabilir alanların listesi görüntülenir ve sonraki eylemlerde kullanılmak üzere seçilebilir.
 
-<VimeoEmbed videoId="1146577247" title="Video demonstration" />
+<VimeoEmbed videoId="1146577247" title="Video gösterimi" />
 
 ### Filtre
 
-Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
+Belirtilen koşullara göre kayıtları filtreler ve yalnızca kriterleri karşılayan kayıtların geçmesine izin verir.
 
 **Yapılandırma**:
 
-* Select the record to filter
+* Filtrelenecek kaydı seçin
 * Filtre koşullarını ve kriterlerini tanımlayın
 * Sonraki adımlara geçmesi gereken kayıtları yapılandırın
 
 <Note>
-  1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
-  2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
+  1. **Çıktı**: Filtre düğümleri veri döndürmez—geçit görevi görürler. Koşullar karşılanırsa iş akışı devam eder. Karşılanmazsa iş akışı o dalda durur.
+  2. `IS` işleci sayısal alanlarla kullanılabilir. Bir `EQUAL` gibi çalışır.
 </Note>
 
-### Delay
+### Gecikme
 
-Pauses workflow execution for a specified duration or until a specific date/time.
+İş akışının yürütülmesini belirtilen bir süre boyunca veya belirli bir tarih/saate kadar duraklatır.
 
-**Delay Types**:
+**Gecikme Türleri**:
 
-| Tür                | Açıklama                                                           |
-| ------------------ | ------------------------------------------------------------------ |
-| **Duration**       | Wait for a specific amount of time (days, hours, minutes, seconds) |
-| **Scheduled Date** | Wait until a specific date and time                                |
+| Tür                   | Açıklama                                              |
+| --------------------- | ----------------------------------------------------- |
+| **Süre**              | Belirli bir süre bekleyin (gün, saat, dakika, saniye) |
+| **Zamanlanmış Tarih** | Belirli bir tarih ve saate kadar bekleyin             |
 
-**Configuration for Duration**:
+**Süre için yapılandırma**:
 
-* Set days, hours, minutes, and/or seconds
-* Combine multiple units (e.g., 2 days and 4 hours)
+* Gün, saat, dakika ve/veya saniye ayarlayın
+* Birden fazla birimi birleştirin (ör. 2 gün ve 4 saat)
 
-**Configuration for Scheduled Date**:
+**Zamanlanmış Tarih için yapılandırma**:
 
-* Select a date and time
-* Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
+* Bir tarih ve saat seçin
+* Önceki bir adımdaki bir tarih alanına referans verebilir (ör. bir toplantıdan 3 gün sonra takip)
 
 **Kullanım alanları**:
 
-* Wait 24 hours before sending a follow-up email
-* Pause until an opportunity's close date
-* Schedule actions for business hours
+* Takip e-postası göndermeden önce 24 saat bekleyin
+* Bir fırsatın kapanış tarihine kadar duraklatın
+* Eylemleri mesai saatlerine göre zamanlayın
 
 <Note>
-  The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
+  Planlanan tarih geçmişte olamaz. Önceki bir adımdaki tarih alanı kullanılırsa ve tarih zaten geçmişse, iş akışı başarısız olur.
 </Note>
 
-**Limits & Credits**:
+**Sınırlar ve Krediler**:
 
-* **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
-* **1 credit consumed** when the Delay node executes, regardless of duration
-* **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
+* **Maksimum süre sınırı yoktur**—dakika, gün, hafta veya daha uzun gecikmeler ayarlayabilirsiniz.
+* Süreye bakılmaksızın Gecikme düğümü çalıştığında **1 kredi harcanır**
+* Beklerken **kredi harcanmaz**—5 dakikalık bir gecikmenin maliyeti 5 günlük bir gecikmeyle aynıdır
 
-## Communication Actions
+## İletişim Eylemleri
 
 ### E-posta Gönder
 
-İş akışınızdan bir e-posta gönderir. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
-Not suited for newsletters (which require richer formatting) or automated email sequences.
+İş akışınızdan bir e-posta gönderir. Bu, şablonlu grup e-postaları için harikadır. E-postalar, posta kutunuzdan gönderdiğiniz e-postalara benzeyecektir.
+Bültenler (daha zengin biçimlendirme gerektirir) veya otomatik e-posta dizileri için uygun değildir.
 
-**Prerequisites**: Add an email account in Settings → Accounts
+**Ön Koşullar**: Ayarlar → Hesaplar bölümüne bir e-posta hesabı ekleyin
 
 **Yapılandırma**:
 
-* Select the sender email account
+* Gönderen e-posta hesabını seçin
 
 <Note>
-  You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
+  Yalnızca kendi Twenty hesabınıza senkronize edilmiş posta kutularından e-posta gönderebilirsiniz. Diğer ekip üyelerinin posta kutularından gönderim (ör. hesap sahibinin e-postası) yol haritasındadır.
 </Note>
 
-For all the following steps, you can reference variables from previous steps for personalization.
+Aşağıdaki tüm adımlar için kişiselleştirme amacıyla önceki adımlardan gelen değişkenleri kullanabilirsiniz.
 
 * Alıcı e-posta adresini girin.
 
 <Note>
-  Only one recipient is possible at the moment.
+  Şu anda yalnızca bir alıcı mümkündür.
 </Note>
 
 * Konu satırını ayarlayın.
-* Mesaj gövdesini yazın. You can format links, create numbered list, bullet point lists, add attachments.
+* Mesaj gövdesini yazın. Bağlantıları biçimlendirebilir, numaralı listeler ve madde işaretli listeler oluşturabilir, ekler ekleyebilirsiniz.
 
 <Note>
-  Adding HTML signatures is not possible at the moment.
+  Şu anda HTML imzaları eklemek mümkün değildir.
 </Note>
 
 ### Form
 
-İş akışı gerçekleştirilirken kullanıcı girdisi toplamak için bir form açar. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+İş akışı gerçekleştirilirken kullanıcı girdisi toplamak için bir form açar. Yanıtlar daha sonra sonraki adımlarda, girdiye bağlı olarak kayıtlar oluşturmak, e-postalar göndermek veya başka herhangi bir eylemi yürütmek için kullanılabilir.
 
 <Warning>
-  **Forms are designed for manual triggers only**. Diğer tetikleyicilerle (Kayıt Oluşturuldu, Güncellendi, vb.) iş akışlarında, formlar yalnızca iş akışı çalıştırma arayüzü üzerinden erişilebilir olup, bu beklenen kullanıcı deneyimi değildir. 2026'da formların otomatik iş akışlarını doğru bir şekilde desteklemesi için bir bildirim merkezi yayınlanacaktır.
+  **Formlar yalnızca manuel tetikleyiciler için tasarlanmıştır**. Diğer tetikleyicilerle (Kayıt Oluşturuldu, Güncellendi, vb.) iş akışlarında, formlar yalnızca iş akışı çalıştırma arayüzü üzerinden erişilebilir olup, bu beklenen kullanıcı deneyimi değildir. 2026'da formların otomatik iş akışlarını doğru bir şekilde desteklemesi için bir bildirim merkezi yayınlanacaktır.
 </Warning>
 
 **Yapılandırma**:
 
-* Configure the fields that users will be asked to fill. For each field, choose
-  * a type among text, number, date, a given record, a select field. Select fields from all objects are available.
-  * a label
-  * a default value under `Placeholder` (optional)
-* Edit the form title
+* Kullanıcılardan doldurmaları istenecek alanları yapılandırın. Her alan için şunları seçin
+  * metin, sayı, tarih, belirli bir kayıt veya bir seçim alanı türü. Tüm nesnelerden seçim alanları kullanılabilir.
+  * bir etiket
+  * `Placeholder` altında varsayılan bir değer (isteğe bağlı)
+* Form başlığını düzenleyin
 
 **Çıktı**: Form yanıtları, sonraki adımlarda kullanılmak üzere mevcuttur.
 
-**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+**Örnek**: "Quick Lead" iş akışı varsayılan olarak tüm çalışma alanlarında kullanılabilir ve Komut Menüsü `Cmd + K` içinde her yerden erişilebilir.
 
-**How to fill the form**:
+**Form nasıl doldurulur**:
 
-* Trigger your manual workflow from the command menu `Cmd K`
-* Fill the form that is displayed in the side panel and click `Submit`.
+* Manuel iş akışınızı komut menüsünden `Cmd K` ile tetikleyin
+* Kenar panelde görüntülenen formu doldurun ve `Submit` düğmesine tıklayın.
 
 <Note>
-  The fields cannot be made mandatory.
+  Alanlar zorunlu hale getirilemez.
 </Note>
 
-<VimeoEmbed videoId="1147277989" title="Video demonstration" />
+<VimeoEmbed videoId="1147277989" title="Video gösterimi" />
 
-## Integration Actions
+## Entegrasyon Eylemleri
 
 ### Kod
 
@@ -247,24 +247,24 @@ For all the following steps, you can reference variables from previous steps for
 
 **Yapılandırma**:
 
-* Önceki adımlardan gelen değişkenlere erişin. You can edit the variables names dynamically.
+* Önceki adımlardan gelen değişkenlere erişin. Değişken adlarını dinamik olarak düzenleyebilirsiniz.
 
-<VimeoEmbed videoId="1147281795" title="Video demonstration" />
+<VimeoEmbed videoId="1147281795" title="Video gösterimi" />
 
 * Düzenleyicide JavaScript kodu yazın
 * Sonraki adımlarda kullanılmak üzere değişkenler döndürün
 * Kodu doğrudan adımda test edin
 
 <Note>
-  If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
+  Kodunuzda harici API anahtarlarını kullanmanız gerekiyorsa, bunları doğrudan fonksiyon gövdesine girmeniz gerekir. API anahtarlarını başka bir yerde yapılandıramaz ve bunlara serverless fonksiyon içinde referans veremezsiniz.
 </Note>
 
 <Tip>
-  **Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
+  **Dizilerle mi çalışıyorsunuz?** Harici sistemlerden veya önceki adımlardan gelen diziler metin (string) olarak gelebilir. Çözüm için [Kod eylemlerinde diziler nasıl ele alınır](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) bölümüne bakın.
 </Tip>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  Kod düzenleyicisinin sağ üst kısmındaki kare simgeye tıklayarak tam ekranda görüntüleyin — varsayılan düzenleyici genişliği sınırlı olduğundan faydalıdır.
 </Tip>
 
 ### HTTP İsteği
@@ -275,37 +275,37 @@ For all the following steps, you can reference variables from previous steps for
 
 **Yapılandırma**:
 
-* API endpoint URL'sini girin. Using parameters from previous steps is possible.
+* API endpoint URL'sini girin. Önceki adımlardaki parametreleri kullanmak mümkündür.
 * HTTP yöntemini seçin (GET, POST, PUT, PATCH, DELETE)
 * Gerekli başlıkları ve değerleri ekleyin
 * Yapı önizlemesi için örnek yanıt sağlayın
 
-## AI Actions
+## Yapay Zeka Eylemleri
 
-### AI Agent - Coming Soon
+### Yapay Zeka Aracısı - Çok Yakında
 
-Runs an AI agent within your workflow to perform intelligent tasks.
+İş akışınız içinde akıllı görevler gerçekleştirmek için bir yapay zeka aracısını çalıştırır.
 
 **Yapılandırma**:
 
-* **Agent**: Select an existing AI agent or use the default agent
-* **Prompt**: Write the instruction for the AI agent
-* Reference variables from previous steps in the prompt
+* **Aracı**: Mevcut bir yapay zeka aracısını seçin veya varsayılan aracıyı kullanın
+* **İstem**: Yapay zeka aracısı için talimatı yazın
+* İstemde önceki adımlardaki değişkenlere başvurun
 
-**What AI Agents can do**:
+**Yapay Zeka Aracıları neler yapabilir**:
 
-* Analyze and summarize data
-* Classify or categorize records
-* Generate text content
-* Make decisions based on data
-* Interact with your CRM data using tools
+* Verileri analiz edip özetleyin
+* Kayıtları sınıflandırın veya kategorilere ayırın
+* Metin içeriği oluşturun
+* Verilere dayalı kararlar verin
+* Araçlar kullanarak CRM verilerinizle etkileşim kurun
 
-**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
+**Çıktı**: Yapay zeka aracısının yanıtı, sonraki adımlarda kullanılmak üzere mevcuttur. Aracın yapılandırılmış bir çıktı şeması varsa, yanıt bu biçimi izler.
 
 <Note>
-  AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/l/tr/user-guide/workflows/capabilities/workflow-credits) for details.
+  Yapay Zeka Aracısı eylemleri, kullanılan yapay zeka modeline bağlı olarak iş akışı kredileri tüketir. Ayrıntılar için [İş Akışı Kredileri](/l/tr/user-guide/workflows/capabilities/workflow-credits) bölümüne bakın.
 </Note>
 
 <Note>
-  AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/l/tr/user-guide/permissions-access/capabilities/permissions) for details.
+  Yapay zeka aracıları role dayalı izinlere uyar. **Ayarlar → Roller** altında aracılara hangi verilere erişebileceklerini kontrol etmek için belirli roller atayabilirsiniz. Ayrıntılar için [İzinler](/l/tr/user-guide/permissions-access/capabilities/permissions) bölümüne bakın.
 </Note>

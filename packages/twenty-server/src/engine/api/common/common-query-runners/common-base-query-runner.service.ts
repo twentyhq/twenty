@@ -129,7 +129,11 @@ export abstract class CommonBaseQueryRunnerService<
       args.selectedFields,
     );
 
-    this.validateQueryComplexity(selectedFieldsResult, args);
+    this.validateQueryComplexity(
+      selectedFieldsResult,
+      args,
+      queryRunnerContext,
+    );
 
     const processedArgs = {
       ...(await this.processArgs(args, queryRunnerContext, this.operationName)),
@@ -174,6 +178,7 @@ export abstract class CommonBaseQueryRunnerService<
   protected computeQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
     _args: CommonInput<Args>,
+    _queryRunnerContext: CommonBaseQueryRunnerContext,
   ): number {
     const simpleFieldsComplexity = 1;
     const selectedFieldsComplexity =
@@ -406,6 +411,7 @@ export abstract class CommonBaseQueryRunnerService<
   private validateQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
     args: CommonInput<Args>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
   ) {
     const maximumComplexity = this.twentyConfigService.get(
       'COMMON_QUERY_COMPLEXITY_LIMIT',
@@ -424,6 +430,7 @@ export abstract class CommonBaseQueryRunnerService<
     const queryComplexity = this.computeQueryComplexity(
       selectedFieldsResult,
       args,
+      queryRunnerContext,
     );
 
     if (queryComplexity > maximumComplexity) {

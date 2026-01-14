@@ -33,13 +33,17 @@ export class ApplicationService {
         workspaceId: string;
         workspace?: never;
       }
-    | { workspace: WorkspaceEntity; workspaceId?: never }) {
+    | {
+        workspace: WorkspaceEntity;
+        workspaceId?: never;
+      }) {
     const workspace = isDefined(workspaceInput)
       ? workspaceInput
       : await this.workspaceRepository.findOne({
           where: {
             id: workspaceId,
           },
+          withDeleted: true,
         });
 
     if (!isDefined(workspace)) {

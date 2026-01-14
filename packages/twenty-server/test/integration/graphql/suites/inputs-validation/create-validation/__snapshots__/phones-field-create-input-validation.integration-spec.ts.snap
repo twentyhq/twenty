@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Create input validation - PHONES Gql create input - failure PHONES - should fail with : {"phonesField":"not-a-phone"} 1`] = `"Expected type "PhonesCreateInput" to be an object."`;
 

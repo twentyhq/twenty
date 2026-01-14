@@ -58,6 +58,7 @@ export const classifyMetadataError = ({
     ];
     const relatedFailingMetadataNames = failingMetadataNames.filter(
       (metadataName) =>
+        isDefined(extensions.errors[metadataName]) &&
         extensions.errors[metadataName].length > 0 &&
         metadataName !== primaryMetadataName,
     );

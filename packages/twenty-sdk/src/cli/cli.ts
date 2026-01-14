@@ -1,10 +1,13 @@
 #!/usr/bin/env node
+import { inspect } from 'util';
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
 import { AppCommand } from '@/cli/commands/app.command';
 import { AuthCommand } from '@/cli/commands/auth.command';
 import { ConfigService } from '@/cli/services/config.service';
 import packageJson from '../../package.json';
+
+inspect.defaultOptions.depth = 10;
 
 const program = new Command();
 

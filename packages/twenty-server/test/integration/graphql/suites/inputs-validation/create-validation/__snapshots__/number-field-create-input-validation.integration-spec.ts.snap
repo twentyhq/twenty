@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Create input validation - NUMBER Gql create input - failure NUMBER - should fail with : {"numberField":"string"} 1`] = `"Float cannot represent non numeric value: "string""`;
 

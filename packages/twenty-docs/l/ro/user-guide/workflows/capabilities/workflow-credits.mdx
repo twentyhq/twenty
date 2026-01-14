@@ -1,21 +1,21 @@
 ---
-title: Workflow Credits
-description: Understand workflow credit consumption and management.
+title: Credite pentru fluxuri de lucru
+description: Înțelegeți consumul și gestionarea creditelor pentru fluxurile de lucru.
 ---
 
 Creditele fluxului de lucru stimulează automatizările dvs. în Twenty. Înțelegerea modului în care funcționează vă ajută să optimizați costurile și să gestionați eficient bugetul de automatizare.
 
-## Credit Allocation
+## Alocarea creditelor
 
-Workflow credits are allocated based on your billing cycle, not your plan tier:
+Creditele pentru fluxurile de lucru sunt alocate în funcție de ciclul de facturare, nu de nivelul planului:
 
-| Billing Cycle            | Credits                     |
-| ------------------------ | --------------------------- |
-| **Monthly subscription** | 5 million credits per month |
-| **Yearly subscription**  | 50 million credits per year |
+| Ciclu de facturare  | Credite                         |
+| ------------------- | ------------------------------- |
+| **Abonament lunar** | 5 milioane de credite pe lună   |
+| **Abonament anual** | 50 de milioane de credite pe an |
 
 <Note>
-  5 million monthly credits are generous for standard automations. Most teams won't exceed this limit with typical workflow usage. Additional credits are primarily needed for advanced Code actions and AI-powered workflows.
+  5 milioane de credite lunare sunt generoase pentru automatizările standard. Majoritatea echipelor nu vor depăși această limită cu utilizarea tipică a fluxurilor de lucru. Credite suplimentare sunt necesare în principal pentru acțiuni Code avansate și pentru fluxuri de lucru bazate pe AI.
 </Note>
 
 ## Cum funcționează consumul de credite
@@ -35,14 +35,14 @@ Creditele sunt consumate când fluxurile de lucru se execută, nu atunci când l
   * Acțiuni de cod (execuție JavaScript)
   * Solicitări HTTP către servicii externe
 
-* **AI features**: Higher credit consumption
-  * AI Agent actions consume credits based on the AI model used
-  * More complex prompts and longer outputs use more credits
+* **Funcționalități AI**: Consum mai ridicat de credite
+  * Acțiunile agentului AI consumă credite în funcție de modelul AI utilizat
+  * Prompturile mai complexe și rezultatele mai lungi utilizează mai multe credite
 
-* **Delay actions**: Minimal credit consumption
-  * The Delay node consumes **1 credit** when it executes
-  * **No credits are consumed** during the wait period
-  * A 5-minute delay costs the same as a 5-day delay
+* **Acțiuni Delay**: Consum minim de credite
+  * Nodul Delay consumă **1 credit** la execuție
+  * **Nu se consumă credite** în perioada de așteptare
+  * O întârziere de 5 minute costă la fel ca o întârziere de 5 zile
 
 ### Deducere în timp real
 
@@ -71,6 +71,6 @@ Dacă aveți nevoie de mai multe credite decât alocarea planificată:
 ## Cele mai bune practici
 
 * **Procesare loturi**: Utilizați operațiuni în masă și acțiuni cu Iteratoare eficient
-* **Manual Trigger Optimization**: For manual triggers, choose `Bulk` availability to process multiple records in a single workflow run
+* **Optimizare pentru declanșatorul manual**: Pentru declanșatoarele manuale, alegeți disponibilitatea `Bulk` pentru a procesa mai multe înregistrări într-o singură rulare a fluxului de lucru
 * Optimizați acțiunile de cod pentru eficiență
-* Batch operations to reduce individual action calls
+* Operațiuni în lot pentru a reduce apelurile individuale ale acțiunilor

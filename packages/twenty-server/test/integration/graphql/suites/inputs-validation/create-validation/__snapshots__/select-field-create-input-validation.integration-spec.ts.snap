@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Create input validation - SELECT Gql create input - failure SELECT - should fail with : {"selectField":"not-a-select-option"} 1`] = `"Value "not-a-select-option" does not exist in "ApiInputValidationTestObjectSelectFieldEnum" enum."`;
 

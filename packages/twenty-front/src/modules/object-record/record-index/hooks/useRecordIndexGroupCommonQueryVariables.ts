@@ -1,3 +1,4 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -5,6 +6,7 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
+import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/utils/computeRecordGroupOptionsFilter';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -12,12 +14,12 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
-  isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
 export const useRecordIndexGroupCommonQueryVariables = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,
@@ -50,7 +52,11 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
       filterValue: anyFieldFilterValue,
     });
 
-  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
+  const orderBy = turnSortsIntoOrderBy(
+    objectMetadataItem,
+    currentRecordSorts,
+    objectMetadataItems,
+  );
 
   const recordGroupFieldMetadata = useRecoilComponentValue(
     recordIndexGroupFieldMetadataItemComponentState,
@@ -73,13 +79,10 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     (recordGroupDefinition) => recordGroupDefinition.value,
   );
 
-  const recordGroupOptionsFilter = isDefined(recordGroupFieldMetadata)
-    ? {
-        [recordGroupFieldMetadata.name]: {
-          in: recordGroupValues,
-        },
-      }
-    : {};
+  const recordGroupOptionsFilter = computeRecordGroupOptionsFilter({
+    recordGroupFieldMetadata,
+    recordGroupValues,
+  });
 
   const combinedFilters = combineFilters([
     anyFieldFilter,

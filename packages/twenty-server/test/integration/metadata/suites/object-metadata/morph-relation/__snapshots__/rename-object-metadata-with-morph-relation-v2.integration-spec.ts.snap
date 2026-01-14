@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Rename an object metadata with morph relation should succeed should update indexes on ONE_TO_MANY morph field related target object name update 1`] = `
 {

@@ -1,7 +1,7 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { ComponentDecorator } from 'twenty-ui/testing';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof DropdownMenuInput> = {
   title: 'UI/Layout/Dropdown/DropdownMenuInput',

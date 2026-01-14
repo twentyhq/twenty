@@ -23,6 +23,8 @@ export class MicrosoftAPIsOauthRequestCodeStrategy extends MicrosoftAPIsOauthCom
         redirectLocation: req.params.redirectLocation,
         calendarVisibility: req.params.calendarVisibility,
         messageVisibility: req.params.messageVisibility,
+        skipMessageChannelConfiguration:
+          req.params.skipMessageChannelConfiguration,
       }),
     };
 

@@ -468,3 +468,57 @@ export const getMergeManyResponse200 = (
     },
   };
 };
+
+export const getGroupByResponse200 = (
+  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
+) => {
+  const schemaRef = `#/components/schemas/${capitalize(
+    item.nameSingular,
+  )}ForResponse`;
+
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [`${item.namePlural}GroupBy`]: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      groupByDimensionValues: {
+                        type: 'array',
+                        description:
+                          'Array of values representing each dimension in the group',
+                        items: {
+                          type: 'string',
+                        },
+                      },
+                      records: {
+                        type: 'array',
+                        description:
+                          'Sample of records for this group (only present when include_records_sample is true)',
+                        items: {
+                          $ref: schemaRef,
+                        },
+                      },
+                    },
+                    additionalProperties: {
+                      type: 'number',
+                      description: 'Aggregate values (e.g., countNotEmptyId)',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+};

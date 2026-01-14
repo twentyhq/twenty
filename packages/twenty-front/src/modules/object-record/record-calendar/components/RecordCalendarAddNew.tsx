@@ -1,5 +1,6 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
+import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -11,7 +12,6 @@ import { useRecoilValue } from 'recoil';
 import { type Temporal } from 'temporal-polyfill';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 
 const StyledButton = styled(Button)`
   padding: ${({ theme }) => theme.spacing(0.5)};
@@ -70,8 +70,8 @@ export const RecordCalendarAddNew = ({
 
   return (
     <StyledButton
-      onClick={() => {
-        createNewIndexRecord({
+      onClick={async () => {
+        await createNewIndexRecord({
           [calendarFieldMetadataItem.name]: cardDate
             .toZonedDateTime(userTimezone)
             .toInstant()

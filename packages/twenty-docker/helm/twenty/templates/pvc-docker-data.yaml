@@ -1,0 +1,20 @@
+{{- if and .Values.server.enabled .Values.server.dockerDataPersistence.enabled (not .Values.server.dockerDataPersistence.existingClaim) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "twenty.fullname" . }}-docker-data
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: server
+spec:
+  accessModes:
+{{ toYaml .Values.server.dockerDataPersistence.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.server.dockerDataPersistence.size }}
+  {{- if .Values.server.dockerDataPersistence.storageClass }}
+  storageClassName: {{ .Values.server.dockerDataPersistence.storageClass }}
+  {{- end }}
+{{- end }}

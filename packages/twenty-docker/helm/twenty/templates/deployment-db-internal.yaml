@@ -1,0 +1,62 @@
+{{- if .Values.db.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "twenty.fullname" . }}-db
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "twenty.name" . }}
+      app.kubernetes.io/component: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "twenty.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: db
+    spec:
+      volumes:
+        {{- if .Values.db.internal.persistence.enabled }}
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: {{ if .Values.db.internal.persistence.existingClaim }}{{ .Values.db.internal.persistence.existingClaim }}{{ else }}{{ include "twenty.fullname" . }}-db{{ end }}
+        {{- end }}
+      containers:
+        - name: db
+          image: {{ .Values.db.internal.image.repository }}:{{ .Values.db.internal.image.tag }}
+          imagePullPolicy: {{ .Values.db.internal.image.pullPolicy | default "IfNotPresent" }}
+          env:
+            - name: PGUSER_SUPERUSER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-superuser
+                  key: username
+            - name: PGPASSWORD_SUPERUSER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-superuser
+                  key: password
+            - name: SPILO_PROVIDER
+              value: {{ .Values.db.internal.env.SPILO_PROVIDER | quote }}
+            - name: ALLOW_NOSSL
+              value: {{ .Values.db.internal.env.ALLOW_NOSSL | quote }}
+          ports:
+            - containerPort: 5432
+              name: tcp
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.db.internal.resources | nindent 12 }}
+          {{- if .Values.db.internal.persistence.enabled }}
+          volumeMounts:
+            - name: db-data
+              mountPath: /home/postgres/pgdata
+          {{- end }}
+{{- end }}

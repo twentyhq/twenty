@@ -35,8 +35,6 @@ import {
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -251,22 +249,6 @@ export abstract class RestApiBaseHandler {
 
       throw new BadRequestException(
         `object '${parsedObject}' not found. ${hint}`,
-      );
-    }
-
-    const workspaceFeatureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
-
-    // Check if this entity is workspace-gated and should be blocked from workspace API
-    if (
-      shouldExcludeFromWorkspaceApi(
-        flatObjectMetadataItem,
-        standardObjectMetadataDefinitions,
-        workspaceFeatureFlagsMap,
-      )
-    ) {
-      throw new BadRequestException(
-        `object '${parsedObject}' not found. ${parsedObject} is not available via REST API.`,
       );
     }
 

@@ -1,7 +1,7 @@
-import type { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import type { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 export const formatValidationErrors = (
-  error: WorkspaceMigrationBuilderExceptionV2,
+  error: WorkspaceMigrationBuilderException,
 ): string => {
   const report = error.failedWorkspaceMigrationBuildResult.report;
   const errorMessages: string[] = [];

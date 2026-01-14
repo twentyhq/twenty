@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from '@ui/testing';
 import { useState } from 'react';
 import { AnimatedExpandableContainer } from '../components/AnimatedExpandableContainer';
@@ -37,7 +37,7 @@ const StyledContent = styled.div<{
   ${({ dimension, mode }) =>
     dimension === 'height' && mode === 'scroll-height' && `height: 200px;`}
   ${({ dimension }) => dimension === 'width' && `width: 400px;`}
-  
+
   p {
     color: ${({ theme }) => theme.font.color.primary};
     margin-bottom: ${({ theme }) => theme.spacing(2)};

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { GaxiosError } from 'gaxios';
 import { google } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,6 +9,7 @@ import {
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
 import { type ConnectedAccountTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+import { parseGoogleOAuthError } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/utils/parse-google-oauth-error.util';
 
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
@@ -39,17 +39,11 @@ export class GoogleAPIRefreshAccessTokenService {
         refreshToken,
       };
     } catch (error) {
-      if (
-        error instanceof GaxiosError &&
-        error.response?.data?.error === 'invalid_grant'
-      ) {
-        throw new ConnectedAccountRefreshAccessTokenException(
-          'Error refreshing Google tokens: Invalid refresh token',
-          ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
-        );
+      if (error instanceof ConnectedAccountRefreshAccessTokenException) {
+        throw error;
       }
 
-      throw error;
+      throw parseGoogleOAuthError(error);
     }
   }
 }

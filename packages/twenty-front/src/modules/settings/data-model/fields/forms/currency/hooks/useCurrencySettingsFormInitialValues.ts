@@ -2,11 +2,10 @@ import { useFormContext } from 'react-hook-form';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { type SettingsDataModelFieldCurrencyFormValues } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
-import { isNonEmptyString } from '@sniptt/guards';
 import { CurrencyCode } from 'twenty-shared/constants';
+import { getFieldMetadataItemInitialValues } from '~/pages/settings/data-model/utils/getFieldMetadataItemInitialValues';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
-import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 type UseCurrencySettingsFormInitialValuesArgs = {
   existingFieldMetadataId: string;
@@ -18,24 +17,22 @@ export const useCurrencySettingsFormInitialValues = ({
     existingFieldMetadataId,
   );
 
-  const initialAmountMicrosValue =
-    (fieldMetadataItem?.defaultValue?.amountMicros as number | null) ?? null;
-  const initialCurrencyCodeValue = isNonEmptyString(
-    stripSimpleQuotesFromString(fieldMetadataItem?.defaultValue?.currencyCode),
-  )
-    ? fieldMetadataItem?.defaultValue?.currencyCode
-    : applySimpleQuotesToString(CurrencyCode.USD);
+  const { settings, defaultValue } =
+    getFieldMetadataItemInitialValues(fieldMetadataItem);
 
   const initialFormValues: SettingsDataModelFieldCurrencyFormValues = {
-    settings: {
-      format: fieldMetadataItem?.settings?.format ?? 'short',
-      decimals: fieldMetadataItem?.settings?.decimals ?? DEFAULT_DECIMAL_VALUE,
+    settings: settings ?? {
+      format: 'short',
+      decimals: DEFAULT_DECIMAL_VALUE,
     },
-    defaultValue: {
-      amountMicros: initialAmountMicrosValue,
-      currencyCode: initialCurrencyCodeValue,
+    defaultValue: defaultValue ?? {
+      amountMicros: null,
+      currencyCode: applySimpleQuotesToString(CurrencyCode.USD),
     },
   };
+
+  const initialAmountMicrosValue = initialFormValues.defaultValue.amountMicros;
+  const initialCurrencyCodeValue = initialFormValues.defaultValue.currencyCode;
 
   const { resetField } =
     useFormContext<SettingsDataModelFieldCurrencyFormValues>();

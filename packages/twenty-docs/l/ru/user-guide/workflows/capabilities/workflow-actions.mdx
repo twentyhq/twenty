@@ -96,150 +96,150 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 * Используйте данные из предыдущих шагов для заполнения полей
 
-**How it works**:
+**Как это работает**:
 
-1. Searches for a record matching your criteria
-2. If found → updates the existing record
-3. If not found → creates a new record
+1. Ищет запись, соответствующую вашим критериям
+2. Если найдена → обновляет существующую запись
+3. Если не найдена → создает новую запись
 
-**Output**: The created or updated record data is available for use in subsequent steps.
+**Вывод**: Данные созданной или обновленной записи доступны для использования в последующих шагах.
 
-## Flow Actions
+## Действия потока
 
 ### Итератор
 
-**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
+**Перебирает массив записей**, возвращенный на предыдущем этапе, позволяя выполнять действия для каждой записи по отдельности.
 
 **Настройка**:
 
-* Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
+* Выберите массив записей с предыдущего шага (например, результаты из Search Records, из Manual trigger with Bulk availability, из code node)
 * Определите действия, которые нужно выполнить для каждой записи в цикле.
 
 <Note>
-  - You can add several actions within an iterator.
-  - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
+  - Внутри итератора можно добавить несколько действий.
+  - При использовании ветвлений внутри итератора убедитесь, что последний шаг каждой ветки возвращается к итератору, чтобы замкнуть цикл.
 </Note>
 
-* Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
+* Доступ к полям `Current Item`: чтобы использовать поля записи, которая обрабатывается в данный момент, нажмите на шаг **Iterator**, затем выберите **Current item**. Будет отображен список доступных полей этой записи, и их можно выбрать для использования в последующих действиях.
 
 <VimeoEmbed videoId="1146577247" title="Видеодемонстрация" />
 
 ### Фильтр
 
-Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
+Фильтрует записи на основе указанных условий, пропуская только записи, соответствующие критериям.
 
 **Настройка**:
 
-* Select the record to filter
+* Выберите запись для фильтрации
 * Определите условия фильтрации и критерии
 * Настройте, какие записи должны пройти через последующие шаги
 
 <Note>
-  1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
-  2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
+  1. **Вывод**: Узлы фильтра не возвращают данные — они работают как шлюзы. Если условия выполнены, рабочий процесс продолжается. Если нет, рабочий процесс останавливается на этой ветке.
+  2. Оператор `IS` можно использовать с числовыми полями. Он работает как `EQUAL`.
 </Note>
 
-### Delay
+### Задержка
 
-Pauses workflow execution for a specified duration or until a specific date/time.
+Приостанавливает выполнение рабочего процесса на указанное время или до определенной даты/времени.
 
-**Delay Types**:
+**Типы задержек**:
 
-| Тип                | Описание                                                           |
-| ------------------ | ------------------------------------------------------------------ |
-| **Duration**       | Wait for a specific amount of time (days, hours, minutes, seconds) |
-| **Scheduled Date** | Wait until a specific date and time                                |
+| Тип                      | Описание                                                         |
+| ------------------------ | ---------------------------------------------------------------- |
+| **Длительность**         | Ожидать заданный промежуток времени (дни, часы, минуты, секунды) |
+| **Запланированная дата** | Ждать до определенной даты и времени                             |
 
-**Configuration for Duration**:
+**Настройка длительности**:
 
-* Set days, hours, minutes, and/or seconds
-* Combine multiple units (e.g., 2 days and 4 hours)
+* Укажите дни, часы, минуты и/или секунды
+* Объединяйте несколько единиц (например, 2 дня и 4 часа)
 
-**Configuration for Scheduled Date**:
+**Настройка запланированной даты**:
 
-* Select a date and time
-* Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
+* Выберите дату и время
+* Можно ссылаться на поле даты с предыдущего шага (например, связаться повторно через 3 дня после встречи)
 
 **Сценарии использования**:
 
-* Wait 24 hours before sending a follow-up email
-* Pause until an opportunity's close date
-* Schedule actions for business hours
+* Подождать 24 часа перед отправкой повторного письма
+* Пауза до даты закрытия сделки
+* Запланировать действия на рабочие часы
 
 <Note>
-  The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
+  Запланированная дата не может быть в прошлом. Если используется поле даты с предыдущего шага и эта дата уже прошла, рабочий процесс завершится с ошибкой.
 </Note>
 
-**Limits & Credits**:
+**Ограничения и кредиты**:
 
-* **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
-* **1 credit consumed** when the Delay node executes, regardless of duration
-* **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
+* **Нет максимального ограничения по длительности** — вы можете задавать задержки в минутах, днях, неделях или больше
+* **Списывается 1 кредит** при выполнении узла Задержка, независимо от длительности
+* **Кредиты не списываются** во время ожидания — задержка на 5 минут стоит столько же, сколько задержка на 5 дней
 
-## Communication Actions
+## Коммуникационные действия
 
 ### Отправить письмо
 
-Отправляет email из вашего рабочего процесса. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
-Not suited for newsletters (which require richer formatting) or automated email sequences.
+Отправляет email из вашего рабочего процесса. Подходит для шаблонных групповых писем. Письма будут выглядеть так же, как те, что вы отправляете из своего почтового ящика.
+Не подходит для рассылок (им требуется более богатое форматирование) или автоматических цепочек писем.
 
-**Prerequisites**: Add an email account in Settings → Accounts
+**Предварительные условия**: добавьте учетную запись электронной почты в Настройки → Учетные записи
 
 **Настройка**:
 
-* Select the sender email account
+* Выберите учетную запись электронной почты отправителя
 
 <Note>
-  You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
+  Вы можете отправлять письма только из почтовых ящиков, синхронизированных с вашей собственной учетной записью Twenty. Отправка из почтовых ящиков других участников команды (например, из электронной почты владельца учетной записи) запланирована.
 </Note>
 
-For all the following steps, you can reference variables from previous steps for personalization.
+Для всех следующих шагов вы можете использовать переменные из предыдущих шагов для персонализации.
 
 * Введите email-адрес получателя.
 
 <Note>
-  Only one recipient is possible at the moment.
+  На данный момент возможен только один получатель.
 </Note>
 
 * Установите строку темы.
-* Составьте текст сообщения. You can format links, create numbered list, bullet point lists, add attachments.
+* Составьте текст сообщения. Можно форматировать ссылки, создавать нумерованные и маркированные списки, добавлять вложения.
 
 <Note>
-  Adding HTML signatures is not possible at the moment.
+  Добавление HTML-подписей пока невозможно.
 </Note>
 
 ### Форма
 
-Выводит форму во время выполнения рабочего процесса для сбора информации от пользователя. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+Выводит форму во время выполнения рабочего процесса для сбора информации от пользователя. Ответы затем можно использовать на последующих шагах для создания записей, отправки писем или выполнения любых других действий на основе введенных данных.
 
 <Warning>
-  **Forms are designed for manual triggers only**. Для рабочих процессов с другими триггерами (запись создана, обновлена и т. д.) формы доступны только через интерфейс запуска рабочего процесса, и это не ожидаемый пользователем опыт. Центр уведомлений будет выпущен в 2026 году для полноценной поддержки форм в автоматизированных рабочих процессах.
+  **Формы предназначены только для ручных триггеров**. Для рабочих процессов с другими триггерами (запись создана, обновлена и т. д.) формы доступны только через интерфейс запуска рабочего процесса, и это не ожидаемый пользователем опыт. Центр уведомлений будет выпущен в 2026 году для полноценной поддержки форм в автоматизированных рабочих процессах.
 </Warning>
 
 **Настройка**:
 
-* Configure the fields that users will be asked to fill. For each field, choose
-  * a type among text, number, date, a given record, a select field. Select fields from all objects are available.
-  * a label
-  * a default value under `Placeholder` (optional)
-* Edit the form title
+* Настройте поля, которые пользователям предложат заполнить. Для каждого поля выберите
+  * тип: текст, число, дата, заданная запись, поле выбора. Поля выбора доступны для всех объектов.
+  * метку
+  * значение по умолчанию в `Placeholder` (необязательно)
+* Отредактируйте заголовок формы
 
 **Вывод**: ответы формы доступны для использования в последующих шагах.
 
-**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+**Пример**: Рабочий процесс "Quick Lead" доступен по умолчанию во всех рабочих пространствах, доступен в любом месте через Command Menu `Cmd + K`.
 
-**How to fill the form**:
+**Как заполнить форму**:
 
-* Trigger your manual workflow from the command menu `Cmd K`
-* Fill the form that is displayed in the side panel and click `Submit`.
+* Запустите свой ручной рабочий процесс из командного меню `Cmd K`
+* Заполните форму, отображаемую в боковой панели, и нажмите `Submit`.
 
 <Note>
-  The fields cannot be made mandatory.
+  Поля нельзя сделать обязательными.
 </Note>
 
 <VimeoEmbed videoId="1147277989" title="Видеодемонстрация" />
 
-## Integration Actions
+## Интеграционные действия
 
 ### Код
 
@@ -247,7 +247,7 @@ For all the following steps, you can reference variables from previous steps for
 
 **Настройка**:
 
-* Получайте доступ к переменным из предыдущих шагов. You can edit the variables names dynamically.
+* Получайте доступ к переменным из предыдущих шагов. Вы можете динамически изменять имена переменных.
 
 <VimeoEmbed videoId="1147281795" title="Видеодемонстрация" />
 
@@ -256,15 +256,15 @@ For all the following steps, you can reference variables from previous steps for
 * Проверяйте код непосредственно в шаге
 
 <Note>
-  If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
+  Если вам нужно использовать внешние ключи API в вашем коде, их необходимо вводить прямо в тело функции. Нельзя настроить ключи API в другом месте и ссылаться на них в бессерверной функции.
 </Note>
 
 <Tip>
-  **Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/l/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
+  **Работаете с массивами?** Массивы из внешних систем или с предыдущих шагов могут приходить как строки. См. [Как обрабатывать массивы в действиях Code](/l/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) для решения.
 </Tip>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  Нажмите квадратный значок в правом верхнем углу редактора кода, чтобы отобразить его на весь экран — это полезно, поскольку ширина редактора по умолчанию ограничена.
 </Tip>
 
 ### HTTP-запрос
@@ -275,37 +275,37 @@ For all the following steps, you can reference variables from previous steps for
 
 **Настройка**:
 
-* Введите URL конечной точки API. Using parameters from previous steps is possible.
+* Введите URL конечной точки API. Можно использовать параметры из предыдущих шагов.
 * Выберите метод HTTP (GET, POST, PUT, PATCH, DELETE)
 * Добавьте необходимые заголовки и значения
 * Предоставьте пример ответа для предварительного просмотра структуры
 
-## AI Actions
+## Действия ИИ
 
-### AI Agent - Coming Soon
+### ИИ-агент — скоро
 
-Runs an AI agent within your workflow to perform intelligent tasks.
+Запускает ИИ-агента внутри вашего рабочего процесса для выполнения интеллектуальных задач.
 
 **Настройка**:
 
-* **Agent**: Select an existing AI agent or use the default agent
-* **Prompt**: Write the instruction for the AI agent
-* Reference variables from previous steps in the prompt
+* **Агент**: Выберите существующего ИИ-агента или используйте агента по умолчанию
+* **Промпт**: Напишите инструкцию для ИИ-агента
+* Ссылайтесь на переменные из предыдущих шагов в промпте
 
-**What AI Agents can do**:
+**Что могут делать ИИ-агенты**:
 
-* Analyze and summarize data
-* Classify or categorize records
-* Generate text content
-* Make decisions based on data
-* Interact with your CRM data using tools
+* Анализировать и резюмировать данные
+* Классифицировать или категоризировать записи
+* Генерировать текстовый контент
+* Принимать решения на основе данных
+* Взаимодействовать с данными вашей CRM с помощью инструментов
 
-**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
+**Вывод**: Ответ ИИ-агента доступен для использования в последующих шагах. Если у агента есть схема структурированного вывода, ответ будет соответствовать этому формату.
 
 <Note>
-  AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/l/ru/user-guide/workflows/capabilities/workflow-credits) for details.
+  Действия ИИ-агента потребляют кредиты рабочего процесса в зависимости от используемой модели ИИ. См. [Кредиты рабочих процессов](/l/ru/user-guide/workflows/capabilities/workflow-credits) для подробностей.
 </Note>
 
 <Note>
-  AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/l/ru/user-guide/permissions-access/capabilities/permissions) for details.
+  ИИ-агенты соблюдают права доступа на основе ролей. Вы можете назначать агентам конкретные роли в **Настройки → Роли**, чтобы контролировать, к каким данным у них есть доступ. См. [Разрешения](/l/ru/user-guide/permissions-access/capabilities/permissions) для подробностей.
 </Note>

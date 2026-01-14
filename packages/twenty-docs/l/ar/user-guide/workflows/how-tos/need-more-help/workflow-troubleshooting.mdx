@@ -1,170 +1,170 @@
 ---
 title: استكشاف مشكلات سير العمل وإصلاحها
-description: Common workflow issues and how to resolve them.
+description: المشكلات الشائعة في سير العمل وكيفية حلّها.
 ---
 
 ## المشاكل الشائعة والحلول
 
 ### لم يتم تشغيل سير العمل
 
-**Symptoms**: Your workflow doesn't run when you expect it to.
+**الأعراض**: لا يعمل سير العمل كما تتوقع.
 
-**Possible Causes**:
+**الأسباب المحتملة**:
 
-1. **Workflow not activated**: Ensure the workflow is set to "Active" not "Draft"
-2. **Trigger conditions not met**: Verify the trigger matches your expected event
-3. **Field not monitored**: For "Record is Updated" triggers, ensure the specific field is being watched
-4. **Permissions**: Check you have permission to run workflows
+1. **لم يتم تفعيل سير العمل**: تأكّد من تعيين سير العمل إلى "Active" وليس "Draft"
+2. **شروط المُحفِّز غير مستوفاة**: تحقّق من أن المُحفِّز يطابق الحدث الذي تتوقعه
+3. **حقل غير مُراقَب**: بالنسبة لمُحفِّزات "Record is Updated"، تأكّد من مراقبة الحقل المحدد
+4. **الأذونات**: تحقّق من أن لديك الإذن لتشغيل سير العمل
 
 **حلول**:
 
-* Verify workflow status in the workflow list
-* Test with the specific action you expect to trigger it
-* Review trigger configuration
-* Contact your admin about permissions
+* تحقّق من حالة سير العمل في قائمة سير العمل
+* اختبر بالإجراء المحدد الذي تتوقع أن يُشغِّله
+* راجِع إعداد المُحفِّز
+* تواصَل مع المسؤول لديك بشأن الأذونات
 
-### Workflow Triggers Too Early (Empty Fields)
+### مُحفِّزات سير العمل تعمل مبكراً جداً (حقول فارغة)
 
-**Symptoms**: When manually creating a record in the UI, your workflow triggers before you've had time to fill in all the fields. The workflow runs with mostly empty field values.
+**الأعراض**: عند إنشاء سجل يدوياً في واجهة المستخدم، يتم تشغيل سير العمل قبل أن تتمكّن من ملء جميع الحقول. يعمل سير العمل مع قيم حقول فارغة في الغالب.
 
-**Why this happens**: Twenty saves everything in real-time — there's no separate "edit" vs "read" mode. When you create a record, it's saved immediately, triggering the "Record is created" event before you can fill in additional fields.
+**سبب حدوث هذا**: تقوم Twenty بحفظ كل شيء في الزمن الحقيقي — لا يوجد وضع منفصل "edit" مقابل "read". عند إنشاء سجل، يتم حفظه فوراً، مما يؤدي إلى تشغيل حدث "Record is created" قبل أن تتمكّن من ملء حقول إضافية.
 
-**When "Record is created" works well**:
+**متى يعمل "Record is created" بشكل جيد**:
 
-* Records created via API calls (fields are populated in a single request)
-* Records created via import
-* Automated record creation from other workflows
+* السجلات التي تُنشأ عبر استدعاءات API (تُملأ الحقول في طلب واحد)
+* السجلات التي تُنشأ عبر الاستيراد
+* إنشاء السجلات تلقائياً من سير عمل أخرى
 
-**Solution**: For records created manually in the UI, use **"Record is created or updated"** as your trigger instead. This way:
+**الحل**: بالنسبة للسجلات التي تُنشأ يدوياً في واجهة المستخدم، استخدم **"Record is created or updated"** كمحفّز بدلاً من ذلك. بهذه الطريقة:
 
-* The workflow triggers after the user has finished filling in and saving the fields
-* You get the complete data rather than empty values
+* سيتم تشغيل سير العمل بعد أن يُنهي المستخدم ملء الحقول وحفظها
+* ستحصل على البيانات الكاملة بدلاً من القيم الفارغة
 
 <Tip>
-  If you only want the workflow to run once per record, add a Filter action to check a field like `createdAt equals updatedAt` (first save) or use a custom checkbox field to track if the workflow has already run.
+  إذا كنت تريد تشغيل سير العمل مرة واحدة فقط لكل سجل، أضِف إجراء تصفية لفحص حقل مثل `createdAt equals updatedAt` (الحفظ الأول) أو استخدم حقلاً مخصصاً من نوع خانة اختيار لتتبع ما إذا كان سير العمل قد تم تشغيله بالفعل.
 </Tip>
 
-### Actions Failing
+### فشل الإجراءات
 
-**Symptoms**: Workflow runs but some actions fail.
+**الأعراض**: يعمل سير العمل لكن بعض الإجراءات تفشل.
 
-**Possible Causes**:
+**الأسباب المحتملة**:
 
-1. **Missing data**: Required fields are empty
-2. **Invalid references**: Variables from previous steps don't exist
-3. **API errors**: External services returning errors
-4. **Permission issues**: Action requires permissions you don't have
-
-**حلول**:
-
-* Check the workflow run details for error messages
-* Verify all required fields have values
-* Test API connections independently
-* Review role permissions
-
-### HTTP Request Errors
-
-**Symptoms**: HTTP Request actions fail or return unexpected results.
-
-**Common Error Codes**:
-
-* **400**: Bad request - check your request body format
-* **401**: Unauthorized - verify API key
-* **403**: Forbidden - check API permissions
-* **404**: Not found - verify endpoint URL
-* **429**: Too many requests - implement rate limiting
-* **500**: Server error - external service issue
+1. **بيانات مفقودة**: الحقول المطلوبة فارغة
+2. **مراجع غير صالحة**: المتغيّرات من الخطوات السابقة غير موجودة
+3. **أخطاء API**: تعيد الخدمات الخارجية أخطاء
+4. **مشكلات الأذونات**: يتطلب الإجراء أذونات لا تملكها
 
 **حلول**:
 
-* Verify API endpoint URL
-* Check authentication headers
-* Test the API call outside of Twenty first
-* Add error handling in Code actions
+* راجِع تفاصيل تشغيل سير العمل بحثاً عن رسائل الخطأ
+* تحقّق من أن جميع الحقول المطلوبة تحتوي على قيم
+* اختبر اتصالات API بشكل مستقل
+* راجِع أذونات الدور
 
-### Code Action Errors
+### أخطاء طلبات HTTP
 
-**Symptoms**: JavaScript code fails to execute.
+**الأعراض**: تفشل إجراءات طلب HTTP أو تُرجِع نتائج غير متوقعة.
 
-**Common Issues**:
+**رموز الأخطاء الشائعة**:
 
-1. **Syntax errors**: Typos or invalid JavaScript
-2. **Undefined variables**: Referencing variables that don't exist
-3. **Type errors**: Operations on wrong data types
-4. **Timeouts**: Code taking too long to execute
-
-**حلول**:
-
-* Use the built-in code editor validation
-* Test code logic in a JavaScript console first
-* Add console.log statements for debugging
-* Simplify complex operations
-
-### Email Not Sending
-
-**Symptoms**: Send Email action doesn't deliver emails.
-
-**Possible Causes**:
-
-1. **No email account connected**: Check Settings → Accounts
-2. **Invalid email address**: Recipient email is malformed
-3. **Sending limits**: Email provider rate limits reached
-4. **Spam filters**: Emails being blocked
+* **400**: طلب غير صالح - تحقّق من تنسيق جسم الطلب
+* **401**: غير مُخوَّل - تحقّق من مفتاح API
+* **403**: محظور - تحقّق من أذونات API
+* **404**: غير موجود - تحقّق من عنوان URL لنقطة النهاية
+* **429**: عدد كبير جداً من الطلبات - نفّذ تحديداً لمعدل الطلبات
+* **500**: خطأ في الخادم - مشكلة في خدمة خارجية
 
 **حلول**:
 
-* Verify email account connection
-* Validate recipient email addresses
-* Check email provider limits
-* Review email content for spam triggers
+* تحقّق من عنوان URL لنقطة نهاية API
+* تحقّق من ترويسات المصادقة
+* اختبر استدعاء API خارج Twenty أولاً
+* أضِف معالجة للأخطاء في إجراءات الكود
 
-## Debugging Workflows
+### أخطاء إجراءات الكود
 
-### Using Workflow Runs
+**الأعراض**: يفشل كود JavaScript في التنفيذ.
 
-1. Go to the workflow editor
-2. Open the **Runs** panel
-3. Find the failed run
-4. Click to see step-by-step details
-5. Review error messages and output data
+**المشكلات الشائعة**:
 
-### Testing Individual Steps
+1. **أخطاء الصياغة**: أخطاء إملائية أو JavaScript غير صالح
+2. **متغيّرات غير معرّفة**: الإشارة إلى متغيّرات غير موجودة
+3. **أخطاء النوع**: إجراء عمليات على أنواع بيانات خاطئة
+4. **انتهاء المهلة**: يستغرق الكود وقتاً طويلاً للتنفيذ
 
-1. For Code actions, use the **Test** button
-2. For HTTP requests, test the endpoint separately
-3. Create test records to trigger workflows
-4. Use manual triggers for controlled testing
+**حلول**:
 
-### Common Debugging Patterns
+* استخدم التحقق المدمج في محرر الكود
+* اختبر منطق الكود في وحدة تحكم JavaScript أولاً
+* أضِف عبارات console.log لأغراض تصحيح الأخطاء
+* بسّط العمليات المعقّدة
 
-**Add logging**:
-Use Code actions to log intermediate values for debugging.
+### البريد الإلكتروني لا يُرسَل
 
-**Isolate steps**:
-Test each step independently to identify failures.
+**الأعراض**: لا يقوم إجراء إرسال البريد الإلكتروني بتسليم الرسائل.
 
-**Check data flow**:
-Verify that each step receives the expected input data.
+**الأسباب المحتملة**:
 
-## Best Practices to Avoid Issues
+1. **لا يوجد حساب بريد إلكتروني متصل**: تحقّق من الإعدادات → الحسابات
+2. **عنوان بريد إلكتروني غير صالح**: عنوان بريد المستلم غير صحيح التنسيق
+3. **قيود الإرسال**: تم الوصول إلى حدود معدل مزوّد البريد الإلكتروني
+4. **مرشّحات البريد العشوائي**: يتم حظر الرسائل
 
-### Before Activation
+**حلول**:
 
-* Test thoroughly in draft mode
-* Validate all API connections
-* Review trigger conditions carefully
-* Document expected behavior
+* تحقّق من اتصال حساب البريد الإلكتروني
+* تحقّق من صحة عناوين بريد المستلمين
+* تحقّق من حدود مزوّد البريد الإلكتروني
+* راجِع محتوى البريد بحثاً عن عناصر قد تُحفِّز مرشّحات البريد العشوائي
 
-### During Development
+## تصحيح أخطاء سير العمل
 
-* Use descriptive step names
-* Add comments in Code actions
-* Test with realistic data
-* Plan for edge cases
+### استخدام عمليات تشغيل سير العمل
 
-### After Activation
+1. انتقل إلى محرر سير العمل
+2. افتح لوحة **Runs**
+3. اعثر على عملية التشغيل التي فشلت
+4. انقر لعرض التفاصيل خطوة بخطوة
+5. راجِع رسائل الخطأ وبيانات المخرجات
 
-* Monitor initial runs closely
-* Set up alerts for failures
-* Review run history regularly
-* Keep workflows simple when possible
+### اختبار الخطوات بشكل فردي
+
+1. بالنسبة لإجراءات الكود، استخدم زر **Test**
+2. بالنسبة لطلبات HTTP، اختبر نقطة النهاية بشكل منفصل
+3. أنشئ سجلات اختبار لتشغيل سير العمل
+4. استخدم المُحفِّزات اليدوية للاختبار المُتحكَّم فيه
+
+### أنماط شائعة لتصحيح الأخطاء
+
+**أضِف التسجيل**:
+استخدم إجراءات الكود لتسجيل القيم الوسيطة لأغراض تصحيح الأخطاء.
+
+**اعزل الخطوات**:
+اختبر كل خطوة بشكل مستقل لتحديد مواضع الفشل.
+
+**تحقّق من تدفق البيانات**:
+تأكّد من أن كل خطوة تتلقى بيانات الإدخال المتوقعة.
+
+## أفضل الممارسات لتجنّب المشكلات
+
+### قبل التفعيل
+
+* اختبر بدقة في وضع المسودة
+* تحقّق من صحة جميع اتصالات API
+* راجِع شروط المُحفِّز بعناية
+* وثّق السلوك المتوقع
+
+### أثناء التطوير
+
+* استخدم أسماء خطوات وصفية
+* أضِف تعليقات في إجراءات الكود
+* اختبر ببيانات واقعية
+* خطّط للحالات الحدّية
+
+### بعد التفعيل
+
+* راقِب عمليات التشغيل الأولى عن كثب
+* قم بإعداد تنبيهات لحالات الفشل
+* راجِع سجلّ التشغيل بانتظام
+* اجعل سير العمل بسيطًا قدر الإمكان

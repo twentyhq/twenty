@@ -1,31 +1,31 @@
 ---
-title: Bring Product Data into Twenty
-description: Sync product catalog data from a data warehouse into your CRM on a schedule.
+title: Импортируйте данные о товарах в Twenty
+description: Синхронизируйте данные каталога товаров из хранилища данных с вашей CRM по расписанию.
 ---
 
-Use this pattern to keep Twenty in sync with product data from your data warehouse (e.g., Snowflake, BigQuery, PostgreSQL).
+Используйте этот шаблон, чтобы поддерживать синхронизацию Twenty с данными о товарах из вашего хранилища данных (например, Snowflake, BigQuery, PostgreSQL).
 
-## Workflow Structure
+## Структура рабочего процесса
 
-1. **Trigger**: On a Schedule
-2. **Code**: Query your data warehouse
-3. **Code** (optional): Format data as array
-4. **Iterator**: Loop through each product
-5. **Upsert Record**: Create or update in Twenty
+1. **Триггер**: По расписанию
+2. **Code**: Запрос к вашему хранилищу данных
+3. **Code** (необязательно): Отформатируйте данные как массив
+4. **Iterator**: Цикл по каждому товару
+5. **Upsert Record**: Создать или обновить в Twenty
 
 <img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
 
-## Step 1: Schedule the Trigger
+## Шаг 1: Запланируйте триггер
 
-Set the workflow to run at a frequency matching your data freshness needs:
+Настройте запуск рабочего процесса с частотой, соответствующей требованиям к актуальности данных:
 
-* Every 5 minutes for near real-time sync
-* Every hour for less critical data
-* Daily for batch updates
+* Каждые 5 минут для синхронизации, близкой к реальному времени
+* Каждый час для менее критичных данных
+* Ежедневно для пакетных обновлений
 
-## Step 2: Query Your Data Warehouse
+## Шаг 2: Выполните запрос к вашему хранилищу данных
 
-Add a **Code** action to fetch recent data:
+Добавьте действие **Code** для получения последних данных:
 
 ```javascript
 export const main = async () => {
@@ -54,14 +54,14 @@ export const main = async () => {
 ```
 
 <Tip>
-  Filter by `updated_at >= last X minutes` to retrieve only recently changed records. This keeps the sync efficient.
+  Отфильтруйте по `updated_at >= last X minutes`, чтобы получать только недавно изменённые записи. Это делает синхронизацию эффективной.
 </Tip>
 
-## Step 3: Format Data (Optional)
+## Шаг 3: Отформатируйте данные (необязательно)
 
-If your warehouse returns data in a format that needs transformation, add another **Code** action. Common transformations include type conversions, field renaming, and data cleanup.
+Если ваше хранилище возвращает данные в формате, требующем преобразования, добавьте ещё одно действие **Code**. К распространённым преобразованиям относятся преобразование типов, переименование полей и очистка данных.
 
-### Example: User Data with Boolean and Status Fields
+### Пример: данные пользователей с булевыми и статусными полями
 
 ```javascript
 export const main = async (params: {
@@ -86,7 +86,7 @@ export const main = async (params: {
 };
 ```
 
-### Example: Product Data with Type Conversions
+### Пример: данные о товарах с преобразованием типов
 
 ```javascript
 export const main = async (params: { products: any }) => {
@@ -107,7 +107,7 @@ export const main = async (params: { products: any }) => {
 };
 ```
 
-### Example: Date and Currency Formatting
+### Пример: форматирование даты и валюты
 
 ```javascript
 export const main = async (params: { deals: any }) => {
@@ -131,52 +131,52 @@ export const main = async (params: { deals: any }) => {
 };
 ```
 
-### Common Transformations
+### Распространённые преобразования
 
-| Source Format        | Target Format    | Код                                      |
-| -------------------- | ---------------- | ---------------------------------------- |
-| `"true"` / `"false"` | `true` / `false` | `v === true \|\| v === "true"`           |
-| `"123.45"`           | `123.45`         | `parseFloat(value)`                      |
-| `"active"`           | `"ACTIVE"`       | `value.toUpperCase()`                    |
-| `1704067200` (Unix)  | ISO date         | `new Date(v * 1000).toISOString()`       |
-| `"$1,234.56"`        | `1234.56`        | `parseFloat(v.replace(/[^0-9.-]/g, ""))` |
-| `null` / `undefined` | `""`             | `value \|\| ""`                          |
+| Исходный формат      | Целевой формат     | Код                                      |
+| -------------------- | ------------------ | ---------------------------------------- |
+| `"true"` / `"false"` | `true` / `false`   | `v === true \|\| v === "true"`           |
+| `"123.45"`           | `123.45`           | `parseFloat(value)`                      |
+| `"active"`           | `"ACTIVE"`         | `value.toUpperCase()`                    |
+| `1704067200` (Unix)  | Дата в формате ISO | `new Date(v * 1000).toISOString()`       |
+| `"$1,234.56"`        | `1234.56`          | `parseFloat(v.replace(/[^0-9.-]/g, ""))` |
+| `null` / `undefined` | `""`               | `value \|\| ""`                          |
 
-## Step 4: Iterate Through Products
+## Шаг 4: Переберите товары
 
-Add an **Iterator** action:
+Добавьте действие **Iterator**:
 
-* Input: `{{code.products}}`
+* Вход: `{{code.products}}`
 
-This loops through each product in the array.
+Это проходит по каждому товару в массиве.
 
-## Step 5: Upsert Each Record
+## Шаг 5: Выполните Upsert для каждой записи
 
-Inside the iterator, add an **Upsert Record** action:
+Внутри итератора добавьте действие **Upsert Record**:
 
-| Настройка    | Значение                               |
-| ------------ | -------------------------------------- |
-| **Object**   | Your custom Product object             |
-| **Match by** | External ID or SKU (unique identifier) |
-| **Name**     | `{{iterator.item.name}}`               |
-| **SKU**      | `{{iterator.item.sku}}`                |
-| **Price**    | `{{iterator.item.price}}`              |
+| Настройка            | Значение                                      |
+| -------------------- | --------------------------------------------- |
+| **Объект**           | Ваш пользовательский объект Product           |
+| **Сопоставление по** | Внешний ID или SKU (уникальный идентификатор) |
+| **Название**         | `{{iterator.item.name}}`                      |
+| **SKU**              | `{{iterator.item.sku}}`                       |
+| **Цена**             | `{{iterator.item.price}}`                     |
 
 <Tip>
-  Use **Upsert** (update or create) instead of building separate branches for create vs. update. It's faster to build and easier to debug.
+  Используйте **Upsert** (обновление или создание) вместо построения отдельных веток для создания и обновления. Так быстрее реализовать и проще отлаживать.
 </Tip>
 
-## Example Use Cases
+## Примеры случаев использования
 
-| Источник                | Данные                              |
-| ----------------------- | ----------------------------------- |
-| **ERP system**          | Product catalog, pricing, inventory |
-| **E-commerce platform** | Orders, customers, product updates  |
-| **Data warehouse**      | Aggregated metrics, enriched data   |
-| **Inventory system**    | Stock levels, reorder alerts        |
+| Источник                            | Данные                                     |
+| ----------------------------------- | ------------------------------------------ |
+| **ERP-система**                     | Каталог товаров, цены, запасы              |
+| **Платформа электронной коммерции** | Заказы, клиенты, обновления товаров        |
+| **Хранилище данных**                | Агрегированные метрики, обогащённые данные |
+| **Система управления запасами**     | Уровни запасов, оповещения о дозаказах     |
 
-## Related
+## Связанные материалы
 
-* [Workflow Triggers](/l/ru/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ru/user-guide/workflows/capabilities/workflow-actions)
-* [Handle Arrays in Code Actions](/l/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+* [Триггеры рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-triggers)
+* [Действия рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-actions)
+* [Обработка массивов в действиях Code](/l/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

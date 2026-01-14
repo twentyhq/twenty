@@ -1,12 +1,3 @@
-export type GraphColor =
-  | 'auto'
-  | 'blue'
-  | 'purple'
-  | 'turquoise'
-  | 'orange'
-  | 'pink'
-  | 'yellow'
-  | 'red'
-  | 'green'
-  | 'sky'
-  | 'gray';
+import { type ThemeColor } from 'twenty-ui/theme';
+
+export type GraphColor = ThemeColor | 'auto';

@@ -12,7 +12,7 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import {
   SEARCH_FIELDS_FOR_WORKSPACE_MEMBER,
   WorkspaceMemberNumberFormatEnum,
@@ -587,6 +587,29 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'workspaceMember',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  ownedOpportunities: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'ownedOpportunities',
+      label: 'Owned opportunities',
+      description: 'Opportunities owned by the workspace member',
+      icon: 'IconTargetArrow',
+      isNullable: false,
+      isUIReadOnly: true,
+      targetObjectName: 'opportunity',
+      targetFieldName: 'owner',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

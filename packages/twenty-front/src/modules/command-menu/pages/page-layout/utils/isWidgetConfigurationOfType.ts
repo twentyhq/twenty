@@ -3,13 +3,24 @@ import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguratio
 import {
   type AggregateChartConfiguration,
   type BarChartConfiguration,
+  type CalendarConfiguration,
+  type EmailsConfiguration,
+  type FieldRichTextConfiguration,
+  type FilesConfiguration,
   type GaugeChartConfiguration,
   type IframeConfiguration,
   type LineChartConfiguration,
+  type NotesConfiguration,
   type PieChartConfiguration,
   type StandaloneRichTextConfiguration,
+  type TasksConfiguration,
+  type TimelineConfiguration,
+  type ViewConfiguration,
   type WidgetConfiguration,
   type WidgetConfigurationType,
+  type WorkflowConfiguration,
+  type WorkflowRunConfiguration,
+  type WorkflowVersionConfiguration,
 } from '~/generated/graphql';
 
 type WidgetConfigurationTypenameMap = {
@@ -21,6 +32,27 @@ type WidgetConfigurationTypenameMap = {
   };
   BarChartConfiguration: Omit<BarChartConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.BAR_CHART;
+  };
+  CalendarConfiguration: Omit<CalendarConfiguration, 'configurationType'> & {
+    configurationType: WidgetConfigurationType.CALENDAR;
+  };
+  EmailsConfiguration: Omit<EmailsConfiguration, 'configurationType'> & {
+    configurationType: WidgetConfigurationType.EMAILS;
+  };
+  FieldConfiguration: Omit<FieldConfiguration, 'configurationType'> & {
+    configurationType: WidgetConfigurationType.FIELD;
+  };
+  FieldRichTextConfiguration: Omit<
+    FieldRichTextConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.FIELD_RICH_TEXT;
+  };
+  FieldsConfiguration: Omit<FieldsConfiguration, 'configurationType'> & {
+    configurationType: WidgetConfigurationType.FIELDS;
+  };
+  FilesConfiguration: Omit<FilesConfiguration, 'configurationType'> & {
+    configurationType: WidgetConfigurationType.FILES;
   };
   GaugeChartConfiguration: Omit<
     GaugeChartConfiguration,
@@ -34,6 +66,9 @@ type WidgetConfigurationTypenameMap = {
   LineChartConfiguration: Omit<LineChartConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.LINE_CHART;
   };
+  NotesConfiguration: Omit<NotesConfiguration, 'configurationType'> & {
+    configurationType: WidgetConfigurationType.NOTES;
+  };
   PieChartConfiguration: Omit<PieChartConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.PIE_CHART;
   };
@@ -42,6 +77,30 @@ type WidgetConfigurationTypenameMap = {
     'configurationType'
   > & {
     configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT;
+  };
+  TasksConfiguration: Omit<TasksConfiguration, 'configurationType'> & {
+    configurationType: WidgetConfigurationType.TASKS;
+  };
+  TimelineConfiguration: Omit<TimelineConfiguration, 'configurationType'> & {
+    configurationType: WidgetConfigurationType.TIMELINE;
+  };
+  ViewConfiguration: Omit<ViewConfiguration, 'configurationType'> & {
+    configurationType: WidgetConfigurationType.VIEW;
+  };
+  WorkflowConfiguration: Omit<WorkflowConfiguration, 'configurationType'> & {
+    configurationType: WidgetConfigurationType.WORKFLOW;
+  };
+  WorkflowRunConfiguration: Omit<
+    WorkflowRunConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.WORKFLOW_RUN;
+  };
+  WorkflowVersionConfiguration: Omit<
+    WorkflowVersionConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.WORKFLOW_VERSION;
   };
 };
 

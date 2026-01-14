@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { type ZodObject, type ZodRawShape } from 'zod';
 
 import {
   type ToolProvider,
@@ -18,6 +19,10 @@ import {
   type Tool,
   type ToolExecutionContext,
 } from 'src/engine/core-modules/tool/types/tool.type';
+import {
+  stripLoadingMessage,
+  wrapSchemaForExecution,
+} from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
@@ -98,9 +103,11 @@ export class ActionToolProvider implements ToolProvider {
   private createToolEntry(tool: Tool, context: ToolExecutionContext) {
     return {
       description: tool.description,
-      inputSchema: tool.inputSchema,
-      execute: async (parameters: { input: ToolInput }) =>
-        tool.execute(parameters.input, context),
+      inputSchema: wrapSchemaForExecution(
+        tool.inputSchema as ZodObject<ZodRawShape>,
+      ),
+      execute: async (parameters: ToolInput) =>
+        tool.execute(stripLoadingMessage(parameters), context),
     };
   }
 }

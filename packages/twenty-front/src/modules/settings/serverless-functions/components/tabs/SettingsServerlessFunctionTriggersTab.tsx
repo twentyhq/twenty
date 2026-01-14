@@ -2,6 +2,7 @@ import { H2Title, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type ServerlessFunction } from '~/generated/graphql';
 import { useLingui } from '@lingui/react/macro';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { SettingsDatabaseEventsForm } from '@/settings/components/SettingsDatabaseEventsForm';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -26,6 +27,16 @@ const StyledRouteTriggerTableHeaderRow = styled(StyledRouteTriggerTableRow)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledEmptyState = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.md};
+  height: 160px;
+  justify-content: center;
+  text-align: center;
+`;
+
 export const SettingsServerlessFunctionTriggersTab = ({
   serverlessFunction,
 }: {
@@ -45,6 +56,25 @@ export const SettingsServerlessFunctionTriggersTab = ({
 
     return { object, action };
   });
+
+  const hasNoTriggers =
+    databaseEvents.length === 0 &&
+    cronTriggers.length === 0 &&
+    routeTriggers.length === 0;
+
+  if (hasNoTriggers) {
+    return (
+      <Section>
+        <H2Title
+          title={t`Triggers`}
+          description={t`Configure when this function should be executed`}
+        />
+        <StyledEmptyState>
+          {t`No triggers configured for this function.`}
+        </StyledEmptyState>
+      </Section>
+    );
+  }
 
   return (
     <>
@@ -93,7 +123,9 @@ export const SettingsServerlessFunctionTriggersTab = ({
             {routeTriggers.map((routeTrigger, index) => (
               <StyledRouteTriggerTableRow key={index}>
                 <StyledTableCell>
-                  <OverflowingTextWithTooltip text={routeTrigger.path} />
+                  <OverflowingTextWithTooltip
+                    text={`${REACT_APP_SERVER_BASE_URL}/s${routeTrigger.path}`}
+                  />
                 </StyledTableCell>
                 <StyledTableCell>{routeTrigger.httpMethod}</StyledTableCell>
                 <StyledTableCell>

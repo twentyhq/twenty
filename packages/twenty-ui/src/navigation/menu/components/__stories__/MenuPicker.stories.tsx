@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconChartPie, TooltipDelay } from '@ui/display';
 import { MenuPicker } from '@ui/navigation/menu/components/MenuPicker';
 import { ComponentDecorator } from '@ui/testing';

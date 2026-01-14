@@ -1,4 +1,4 @@
-import { type RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
+import { type RecordGqlOperationVariables } from 'twenty-shared/types';
 
 export type CachedObjectRecordQueryVariables = Omit<
   RecordGqlOperationVariables,

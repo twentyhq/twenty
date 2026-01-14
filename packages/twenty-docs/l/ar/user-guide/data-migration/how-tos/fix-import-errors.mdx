@@ -1,122 +1,122 @@
 ---
-title: Fix Import Errors
-description: Complete troubleshooting guide for resolving CSV import errors.
+title: إصلاح أخطاء الاستيراد
+description: دليل شامل لاستكشاف أخطاء استيراد CSV وإصلاحها.
 ---
 
 ## نظرة عامة
 
-Import not working? This guide helps you identify and fix common import errors step by step.
+هل تواجه مشكلة في الاستيراد؟ يساعدك هذا الدليل على تحديد أخطاء الاستيراد الشائعة وإصلاحها خطوة بخطوة.
 
-## How Import Validation Works
+## كيف تعمل عملية التحقّق من الاستيراد
 
-After uploading your file and mapping columns, Twenty validates your data:
+بعد رفع ملفك وتعيين الأعمدة، تتحقّق Twenty من بياناتك:
 
-1. **Validation runs** — Twenty checks each row for errors
-2. **Errors are highlighted** — problematic rows appear in **yellow**
-3. **You can fix in-place** — edit cells directly in the import UI
-4. **Or remove rows** — skip problematic records entirely
+1. **تُجرى عملية التحقّق** — تتحقّق Twenty من كل صف بحثًا عن الأخطاء
+2. **تمييز الأخطاء** — تظهر الصفوف ذات المشكلات باللون **الأصفر**
+3. **يمكنك الإصلاح مباشرةً** — حرّر الخلايا مباشرةً في واجهة الاستيراد
+4. **أو إزالة الصفوف** — تخطَّ السجلات التي بها مشكلات تمامًا
 
-<Note>**Fix errors in the UI.** You don't need to go back to your spreadsheet. Edit cells directly during import to save time.</Note>
+<Note>**أصلِح الأخطاء في الواجهة.** لست مضطرًا للعودة إلى جدول البيانات الخاص بك. حرّر الخلايا مباشرة أثناء الاستيراد لتوفير الوقت.</Note>
 
-## Step-by-Step Troubleshooting
+## استكشاف الأخطاء وإصلاحها خطوة بخطوة
 
-### Step 1: Identify the Error Type
+### الخطوة 1: تحديد نوع الخطأ
 
-Click on a highlighted row to see the specific error message. Common error types:
+انقر على صف مميّز للاطلاع على رسالة الخطأ المحددة. أنواع الأخطاء الشائعة:
 
-| Error Message                                                         | What It Means                                                |
-| --------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Duplicate values highlighted in yellow                                | Value already exists in Twenty or appears twice in your file |
-| `{field} is not a valid {type}` (hover on yellow cell)                | Data doesn't match expected format                           |
-| Required field highlighted                                            | A required field is empty                                    |
-| `Can't connect to {object}. No unique record found...` (import fails) | Referenced record doesn't exist                              |
-| `Too many records. Up to 10000 allowed` (upload blocked)              | File has more than 10,000 records                            |
+| رسالة الخطأ                                                             | ماذا يعني ذلك                                        |
+| ----------------------------------------------------------------------- | ---------------------------------------------------- |
+| تم تمييز القيم المكرّرة باللون الأصفر                                   | القيمة موجودة مسبقًا في Twenty أو تظهر مرتين في ملفك |
+| `{field} is not a valid {type}` (مرّر المؤشر فوق الخلية الصفراء)        | البيانات لا تطابق التنسيق المتوقع                    |
+| تم تمييز الحقل المطلوب                                                  | الحقل المطلوب فارغ                                   |
+| `Can't connect to {object}. No unique record found...` (يفشل الاستيراد) | السجل المشار إليه غير موجود                          |
+| `Too many records. Up to 10000 allowed` (تم حظر التحميل)                | يحتوي الملف على أكثر من 10,000 سجل                   |
 
-### Step 2: Fix the Error
+### الخطوة 2: إصلاح الخطأ
 
-Follow the specific instructions below for each error type.
+اتّبع الإرشادات المحددة أدناه لكل نوع من الأخطاء.
 
 ---
 
-## Error: Duplicate Value
+## خطأ: قيمة مكرّرة
 
 ### ما ستراه
 
-Rows with duplicate values are **highlighted in yellow** in the import UI before the import starts.
+تُميَّز الصفوف ذات القيم المكرّرة باللون **الأصفر** في واجهة الاستيراد قبل بدء الاستيراد.
 
-### What It Means
+### ماذا يعني ذلك
 
-A unique field (email, domain) either:
+حقل فريد (البريد الإلكتروني، النطاق) إمّا:
 
-* Already exists in Twenty
-* Appears twice in your file
+* موجود مسبقًا في Twenty
+* يظهر مرتين في ملفك
 
-### How to Fix
+### كيفية الإصلاح
 
-**Option 1: Edit the duplicate value**
+**الخيار 1: تعديل القيمة المكرّرة**
 
-1. Click the cell with the error
-2. Change to a unique value
-3. Continue with import
+1. انقر فوق الخلية التي تحتوي على الخطأ
+2. غيّرها إلى قيمة فريدة
+3. تابع الاستيراد
 
-**Option 2: Remove the duplicate row**
+**الخيار 2: إزالة الصف المكرّر**
 
-1. Click the X next to the row
-2. The row will be skipped during import
+1. انقر الرمز X بجوار الصف
+2. سيتم تخطّي الصف أثناء الاستيراد
 
-**Option 3: Let Twenty update the existing record**
+**الخيار 3: دع Twenty تحدّث السجل الموجود**
 
-1. Ensure your file includes a unique identifier (`email`, `domain`, or `id`)
-2. Map the unique identifier field
-3. Twenty will update the existing record instead of creating a duplicate
+1. تأكّد من أن ملفك يتضمن معرّفًا فريدًا (`email`، `domain`، أو `id`)
+2. قم بتعيين حقل المعرّف الفريد
+3. ستقوم Twenty بتحديث السجل الموجود بدلًا من إنشاء نسخة مكرّرة
 
 <Note>
-  **You can update unique fields too.**
+  **يمكنك تحديث الحقول الفريدة أيضًا.**
 
-  * If you keep the `id` but change the `email` → the email will be updated
-  * If you keep the `email` but change the `id` → the id will be updated
+  * إذا أبقيت على `id` لكن غيّرت `email` → فسيتم تحديث البريد الإلكتروني
+  * إذا أبقيت على `email` لكن غيّرت `id` → فسيتم تحديث المعرّف
 
-  As long as one unique identifier matches, Twenty updates the record.
+  طالما أن أحد المعرّفات الفريدة يطابق، تقوم Twenty بتحديث السجل.
 </Note>
 
-### How to Prevent This Error
+### كيفية منع هذا الخطأ
 
-Before importing:
+قبل الاستيراد:
 
-1. Sort your spreadsheet by the unique field
-2. Remove duplicate rows
-3. Check if records already exist in Twenty
+1. رتّب جدول البيانات حسب الحقل الفريد
+2. أزل الصفوف المكرّرة
+3. تحقّق مما إذا كانت السجلات موجودة مسبقًا في Twenty
 
 <Warning>
-  **Soft-deleted records count toward uniqueness.**
+  **السجلات المحذوفة حذفًا ناعمًا تُحتسب ضمن التفرد.**
 
-  Check Command Menu → See deleted records. Records there still enforce uniqueness. Permanently delete them or restore and update.
+  تحقّق من قائمة الأوامر → اعرض السجلات المحذوفة. السجلات هناك ما تزال تفرض شرط التفرد. احذفها نهائيًا أو استعدها وقم بتحديثها.
 </Warning>
 
-For more details: [Uniqueness Constraints](/l/ar/user-guide/data-migration/capabilities/uniqueness-constraints)
+لمزيد من التفاصيل: [قيود التفرد](/l/ar/user-guide/data-migration/capabilities/uniqueness-constraints)
 
 ---
 
-## Error: Invalid Format
+## خطأ: تنسيق غير صالح
 
 ### ما ستراه
 
-The cell value is highlighted in yellow. Hover over it to see the error message:
+تم تمييز قيمة الخلية باللون الأصفر. مرّر المؤشر فوقها للاطلاع على رسالة الخطأ:
 
 ```
 {field name} is not a valid {field type}
 ```
 
-### What It Means
+### ماذا يعني ذلك
 
-The data doesn't match the expected format for that field type.
+لا تطابق البيانات التنسيق المتوقع لذلك النوع من الحقول.
 
-### How to Fix — By Field Type
+### كيفية الإصلاح — حسب نوع الحقل
 
 #### البريد الإلكتروني
 
-**Problem:** Invalid email format
-**Solution:** Use format `name@domain.com`
+**المشكلة:** تنسيق بريد إلكتروني غير صالح
+**الحل:** استخدم التنسيق `name@domain.com`
 
 ```
 ❌ john.smith@
@@ -126,8 +126,8 @@ The data doesn't match the expected format for that field type.
 
 #### النطاق
 
-**Problem:** Inconsistent format may cause duplicates
-**Solution:** Use `https://domain.com` format (recommended)
+**المشكلة:** قد يتسبب عدم اتساق التنسيق في حدوث تكرارات
+**الحل:** استخدم تنسيق `https://domain.com` (موصى به)
 
 ```
 ⚠️ acme.com         (valid, but not recommended)
@@ -135,12 +135,12 @@ The data doesn't match the expected format for that field type.
 ✅ https://acme.com  (recommended)
 ```
 
-<Note>All formats are valid, but `https://domain.com` is recommended because it matches the format used by email/calendar sync. Using other formats may create duplicate companies.</Note>
+<Note>جميع التنسيقات صالحة، لكن يُوصى بـ `https://domain.com` لأنه يطابق التنسيق المستخدم في مزامنة البريد الإلكتروني/التقويم. قد يؤدي استخدام تنسيقات أخرى إلى إنشاء شركات مكرّرة.</Note>
 
 #### تاريخ
 
-**Problem:** Unrecognized date format
-**Solution:** Use consistent format throughout file
+**المشكلة:** تنسيق تاريخ غير معروف
+**الحل:** استخدم تنسيقًا متّسقًا في جميع أنحاء الملف
 
 ```
 ✓ 2024-03-15        (YYYY-MM-DD - recommended)
@@ -150,10 +150,10 @@ The data doesn't match the expected format for that field type.
 
 #### هاتف
 
-**Problem:** Missing required columns
-**Solution:** Include all phone columns
+**المشكلة:** أعمدة مطلوبة مفقودة
+**الحل:** تضمين جميع أعمدة الهاتف
 
-| Column                                  | مثال         |
+| العمود                                  | مثال         |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
@@ -161,8 +161,8 @@ The data doesn't match the expected format for that field type.
 
 #### قيمة منطقية
 
-**Problem:** Wrong boolean value
-**Solution:** Use uppercase `TRUE` or `FALSE`
+**المشكلة:** قيمة منطقية خاطئة
+**الحل:** استخدم `TRUE` أو `FALSE` بحروف كبيرة
 
 ```
 ❌ true
@@ -172,17 +172,17 @@ The data doesn't match the expected format for that field type.
 ✓ FALSE
 ```
 
-#### Select / Multi-Select
+#### اختيار / اختيار متعدد
 
-**Problem:** Value doesn't match existing options
-**Solution:** Use **API names**, not display labels
+**المشكلة:** لا تطابق القيمة الخيارات الموجودة
+**الحل:** استخدم **أسماء واجهة برمجة التطبيقات (API)**، وليس تسميات العرض
 
-How to find API names:
+كيفية العثور على أسماء واجهة برمجة التطبيقات:
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
-4. Use the API name (e.g., `OPTION_1`, not "Option 1")
+1. اذهب إلى **الإعدادات → نموذج البيانات**
+2. اختر الكائن والحقل
+3. فعّل **الوضع المتقدم** (زر التبديل في أسفل اليمين)
+4. استخدم اسم واجهة برمجة التطبيقات (على سبيل المثال، `OPTION_1`، وليس "Option 1")
 
 ```
 ❌ High Priority
@@ -191,18 +191,18 @@ How to find API names:
 
 #### العملة
 
-**Problem:** Missing amount or currency code
-**Solution:** Fill both columns
+**المشكلة:** المبلغ أو رمز العملة مفقود
+**الحل:** املأ كلا العمودين
 
-| Column                | مثال      |
-| --------------------- | --------- |
-| **Amount / Amount**   | `1234.56` |
-| **Amount / Currency** | `USD`     |
+| العمود              | مثال      |
+| ------------------- | --------- |
+| **المبلغ / المبلغ** | `1234.56` |
+| **المبلغ / العملة** | `USD`     |
 
 #### رقم
 
-**Problem:** Non-numeric characters
-**Solution:** Numbers only, period for decimals
+**المشكلة:** أحرف غير رقمية
+**الحل:** أرقام فقط، ونقطة للفواصل العشرية
 
 ```
 ❌ $1,234.56
@@ -210,221 +210,221 @@ How to find API names:
 ✓ 1234.56
 ```
 
-For complete format reference: [Field Mapping](/l/ar/user-guide/data-migration/capabilities/field-mapping)
+للاطلاع على مرجع التنسيقات الكامل: [مرجع تعيين الحقول](/l/ar/user-guide/data-migration/capabilities/field-mapping)
 
 ---
 
-## Error: Required Field Missing
+## خطأ: حقل مطلوب مفقود
 
 ### ما ستراه
 
-The row is highlighted in yellow with the required field cell marked.
+تم تمييز الصف باللون الأصفر مع وضع علامة على خلية الحقل المطلوب.
 
-### What It Means
+### ماذا يعني ذلك
 
-A required field is empty for this row.
+الحقل المطلوب فارغ لهذا الصف.
 
-### How to Fix
+### كيفية الإصلاح
 
-**Option 1: Enter a value**
+**الخيار 1: إدخال قيمة**
 
-1. Click the empty cell
-2. Enter a value
-3. Continue with import
+1. انقر فوق الخلية الفارغة
+2. أدخل قيمة
+3. تابع الاستيراد
 
-**Option 2: Remove the row**
+**الخيار 2: إزالة الصف**
 
-1. If you don't have the data, click X to skip the row
+1. إذا لم تكن لديك البيانات، انقر X لتخطّي الصف
 
-### How to Prevent This Error
+### كيفية منع هذا الخطأ
 
-Before importing, identify required fields:
+قبل الاستيراد، حدّد الحقول المطلوبة:
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Check which fields are marked as required
+1. اذهب إلى **الإعدادات → نموذج البيانات**
+2. اختر الكائن الخاص بك
+3. تحقّق من الحقول المُعلمة كمطلوبة
 
 ---
 
-## Error: Relation Not Found
+## خطأ: العلاقة غير موجودة
 
 ### ما ستراه
 
-This error appears **after the import starts** — the import fails with a message like:
+يظهر هذا الخطأ **بعد بدء الاستيراد** — يفشل الاستيراد برسالة مثل:
 
 ```
 Can't connect to company. No unique record found with condition: id = 7776ee49-f608-4a77-8cc8-6fe96ae1e43f
 ```
 
-This means there is no Company in Twenty with that specific identifier.
+هذا يعني أنه لا توجد شركة في Twenty بذلك المعرّف المحدّد.
 
-<Note>Unlike other errors, this one is not caught during the data review step. The import will start and then fail when it encounters the missing relation.</Note>
+<Note>على عكس الأخطاء الأخرى، لا يُلتقط هذا الخطأ أثناء خطوة مراجعة البيانات. سيبدأ الاستيراد ثم يفشل عند مواجهة العلاقة المفقودة.</Note>
 
-### What It Means
+### ماذا يعني ذلك
 
-You're trying to link to a record that doesn't exist in Twenty.
+تحاول ربط سجل غير موجود في Twenty.
 
-### How to Fix
+### كيفية الإصلاح
 
-**Option 1: Import parent records first**
+**الخيار 1: استيراد سجلات الأصل أولًا**
 
-1. Cancel the current import
-2. Import the parent records (e.g., Companies)
-3. Then import the child records (e.g., People)
+1. ألغِ الاستيراد الحالي
+2. استورد سجلات الأصل (مثلًا، الشركات)
+3. ثم استورد سجلات التابع (مثلًا، الأشخاص)
 
-**Option 2: Fix the reference value**
+**الخيار 2: أصلِح قيمة المرجع**
 
-1. Check the reference value in your file
-2. Ensure it exactly matches an existing record
-3. Verify format: domains should be `https://domain.com`
+1. تحقّق من قيمة المرجع في ملفك
+2. تأكّد من أنه يطابق سجلًا موجودًا تمامًا
+3. تحقّق من التنسيق: يجب أن تكون النطاقات بصيغة `https://domain.com`
 
-**Option 3: Remove the relation**
+**الخيار 3: إزالة العلاقة**
 
-1. Clear the cell to import without the relation
-2. Add the relation manually later
+1. امسح الخلية للاستيراد دون العلاقة
+2. أضِف العلاقة يدويًا لاحقًا
 
-### How to Prevent This Error
+### كيفية منع هذا الخطأ
 
-1. **Import in the correct order:**
-   * Companies first
-   * People second (with company references)
-   * Opportunities third
+1. **استورد بالترتيب الصحيح:**
+   * الشركات أولًا
+   * الأشخاص ثانيًا (مع مراجع الشركة)
+   * الفرص ثالثًا
 
-2. **Verify reference values:**
-   * Export parent records to get exact identifiers
-   * Use domain format `https://domain.com`
-   * Check for typos and case sensitivity
+2. **تحقّق من قيم المراجع:**
+   * صدّر سجلات الأصل للحصول على معرّفات دقيقة
+   * استخدم تنسيق النطاق `https://domain.com`
+   * تحقّق من الأخطاء الإملائية وحساسية حالة الأحرف
 
 <Warning>
-  **Import will fail if a reference is made to a non-existent record.**
+  **سيفشل الاستيراد إذا تمت الإشارة إلى سجل غير موجود.**
 
-  Always import parent objects before child objects.
+  استورد دائمًا كائنات الأصل قبل كائنات التابع.
 </Warning>
 
-For more details: [Import Relations](/l/ar/user-guide/data-migration/capabilities/import-relations)
+لمزيد من التفاصيل: [استيراد العلاقات](/l/ar/user-guide/data-migration/capabilities/import-relations)
 
 ---
 
-## Error: File Too Large
+## خطأ: ملف كبير جدًا
 
 ### ما ستراه
 
-This error appears **when uploading your file** — the upload is blocked entirely:
+يظهر هذا الخطأ **عند رفع ملفك** — يتم حظر التحميل بالكامل:
 
 ```
 Too many records. Up to 10000 allowed
 ```
 
-You won't be able to proceed to the data review step until you reduce the file size.
+لن تتمكّن من الانتقال إلى خطوة مراجعة البيانات حتى تقلّل حجم الملف.
 
-### What It Means
+### ماذا يعني ذلك
 
-Your file has more than 10,000 records.
+يحتوي ملفك على أكثر من 10,000 سجل.
 
-### How to Fix
+### كيفية الإصلاح
 
-**Option 1: Split into multiple files**
+**الخيار 1: التقسيم إلى عدة ملفات**
 
-1. Divide your data into files of 10,000 records or fewer
-2. Import each file separately
-3. Maintain import order (Companies before People)
+1. قسّم بياناتك إلى ملفات تحتوي على 10,000 سجل أو أقل
+2. استورد كل ملف على حدة
+3. حافظ على ترتيب الاستيراد (الشركات قبل الأشخاص)
 
-**Option 2: Use API import**
-For very large datasets, use the API which has no record limit.
-See: [How to Import Data via API](/l/ar/user-guide/data-migration/how-tos/import-data-via-api)
-
----
-
-## Error: Field Not Recognized
-
-### What It Means
-
-A column in your file can't be mapped because the field doesn't exist in Twenty.
-
-### How to Fix
-
-1. Go to **Settings → Data Model**
-2. Select the object you're importing
-3. Click **+ Add field**
-4. Create the custom field with the appropriate type
-5. Re-upload your file
-
-<Note>The CSV import creates records, not fields. All fields must exist before importing.</Note>
+**الخيار 2: استخدم الاستيراد عبر واجهة برمجة التطبيقات (API)**
+بالنسبة لمجموعات البيانات الكبيرة جدًا، استخدم واجهة برمجة التطبيقات التي لا تحتوي على حد لعدد السجلات.
+راجع: [كيفية استيراد البيانات عبر واجهة برمجة التطبيقات (API)](/l/ar/user-guide/data-migration/how-tos/import-data-via-api)
 
 ---
 
-## Error: User Relation Empty
+## خطأ: لم يتم التعرّف على الحقل
 
-### What It Means
+### ماذا يعني ذلك
 
-You're trying to assign a record to a user (Owner, Assignee) but the relation isn't being mapped.
+لا يمكن تعيين عمود في ملفك لأن الحقل غير موجود في Twenty.
 
-### Common Causes
+### كيفية الإصلاح
 
-1. **User hasn't accepted their invitation** — the user doesn't exist in Twenty yet
-2. **Using user ID from old system** — Twenty can't match IDs from another system
-3. **Wrong email format** — the email doesn't match the user's Twenty account
+1. اذهب إلى **الإعدادات → نموذج البيانات**
+2. اختر الكائن الذي تستورده
+3. انقر **+ إضافة حقل**
+4. أنشئ الحقل المخصّص بالنوع المناسب
+5. أعد رفع ملفك
 
-### How to Fix
+<Note>يُنشئ استيراد CSV سجلات، وليس حقولًا. يجب أن تكون جميع الحقول موجودة قبل الاستيراد.</Note>
 
-1. Ensure all users have **accepted their invitation** to your Twenty workspace
-2. Use the user's **email address** (not their name or old system ID)
-3. Use the same email they used to join Twenty
+---
+
+## خطأ: علاقة المستخدم فارغة
+
+### ماذا يعني ذلك
+
+تحاول إسناد سجل إلى مستخدم (المالك، المعيَّن) لكن العلاقة لا يتم تعيينها.
+
+### أسباب شائعة
+
+1. **لم يقبل المستخدم دعوته** — المستخدم غير موجود في Twenty بعد
+2. **استخدام معرّف مستخدم من نظام قديم** — لا تستطيع Twenty مطابقة المعرّفات من نظام آخر
+3. **تنسيق بريد إلكتروني خاطئ** — البريد الإلكتروني لا يطابق حساب المستخدم في Twenty
+
+### كيفية الإصلاح
+
+1. تأكّد من أن جميع المستخدمين قد **قبلوا دعوتهم** إلى مساحة عمل Twenty الخاصة بك
+2. استخدم **عنوان البريد الإلكتروني** الخاص بالمستخدم (وليس اسمه أو معرّف النظام القديم)
+3. استخدم البريد الإلكتروني نفسه الذي استخدموه للانضمام إلى Twenty
 
 <Warning>
-  **Users must accept invitations before importing.**
+  **يجب على المستخدمين قبول الدعوات قبل الاستيراد.**
 
-  If a user hasn't accepted their invitation, records referencing them will have empty user relations.
+  إذا لم يقبل المستخدم دعوته، فستكون علاقات المستخدم فارغة في السجلات التي تشير إليه.
 </Warning>
 
 ---
 
-## Pre-Import Checklist
+## قائمة ما قبل الاستيراد
 
-Avoid errors by checking these before importing:
+تجنّب الأخطاء من خلال التحقّق مما يلي قبل الاستيراد:
 
-### File Requirements
+### متطلبات الملف
 
-<Check>File is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>File uses UTF-8 encoding</Check>
+<Check>الملف بتنسيق CSV أو XLSX أو XLS</Check>
+<Check>يحتوي الملف على أقل من 10,000 سجل</Check>
+<Check>يستخدم الملف ترميز UTF-8</Check>
 
-### Data Quality
+### جودة البيانات
 
-<Check>No duplicate emails (for People)</Check>
-<Check>No duplicate domains (for Companies)</Check>
-<Check>All dates use consistent format</Check>
-<Check>All domains use `https://domain.com` format</Check>
+<Check>لا توجد رسائل بريد إلكتروني مكرّرة (للأشخاص)</Check>
+<Check>لا توجد نطاقات مكرّرة (للشركات)</Check>
+<Check>جميع التواريخ تستخدم تنسيقًا متّسقًا</Check>
+<Check>جميع النطاقات تستخدم تنسيق `https://domain.com`</Check>
 
-### Field Formats
+### تنسيقات الحقول
 
-<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
-<Check>Select fields use API names, not display labels</Check>
-<Check>Phone fields have all required columns</Check>
-<Check>Currency fields have both Amount and Currency Code</Check>
+<Check>الحقول المنطقية تستخدم `TRUE` أو `FALSE` (أحرف كبيرة)</Check>
+<Check>حقول الاختيار تستخدم أسماء واجهة برمجة التطبيقات (API)، وليس تسميات العرض</Check>
+<Check>حقول الهاتف تحتوي على جميع الأعمدة المطلوبة</Check>
+<Check>حقول العملة تتضمن كلًا من المبلغ ورمز العملة</Check>
 
 ### العلاقات
 
-<Check>Parent records imported before child records</Check>
-<Check>Relation columns reference existing records</Check>
-<Check>Domain format matches Twenty's format exactly</Check>
+<Check>تم استيراد سجلات الأصل قبل سجلات التابع</Check>
+<Check>أعمدة العلاقات تشير إلى سجلات موجودة</Check>
+<Check>تنسيق النطاق يطابق تنسيق Twenty تمامًا</Check>
 
 ### نموذج البيانات
 
-<Check>All custom fields exist in Settings → Data Model</Check>
-<Check>Select options exist before importing</Check>
+<Check>جميع الحقول المخصّصة موجودة في الإعدادات → نموذج البيانات</Check>
+<Check>خيارات الاختيار موجودة قبل الاستيراد</Check>
 
 ---
 
-## Still Having Issues?
+## هل لا تزال تواجه مشكلات؟
 
-If you've tried the above solutions:
+إذا كنت قد جرّبت الحلول أعلاه:
 
-1. **Download the sample file** — see the exact format Twenty expects
-2. **Export existing records** — compare your file to working data
-3. **Test with a small batch** — try 5-10 rows first
-4. **Check the reference articles:**
-   * [Field Mapping](/l/ar/user-guide/data-migration/capabilities/field-mapping)
-   * [Uniqueness Constraints](/l/ar/user-guide/data-migration/capabilities/uniqueness-constraints)
-   * [Import Relations](/l/ar/user-guide/data-migration/capabilities/import-relations)
-   * [Error Handling](/l/ar/user-guide/data-migration/capabilities/error-handling)
+1. **نزّل ملف العيّنة** — اطّلع على التنسيق الدقيق الذي تتوقعه Twenty
+2. **صدّر السجلات الموجودة** — قارن ملفك بالبيانات التي تعمل بشكل صحيح
+3. **اختبر بدفعة صغيرة** — جرّب 5-10 صفوف أولًا
+4. **اطّلع على مقالات المرجع:**
+   * [مرجع تعيين الحقول](/l/ar/user-guide/data-migration/capabilities/field-mapping)
+   * [قيود التفرد](/l/ar/user-guide/data-migration/capabilities/uniqueness-constraints)
+   * [كيفية استيراد العلاقات](/l/ar/user-guide/data-migration/capabilities/import-relations)
+   * [التعامل مع الأخطاء](/l/ar/user-guide/data-migration/capabilities/error-handling)

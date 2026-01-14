@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsIn,
@@ -71,6 +72,12 @@ export class BarChartConfigurationDTO
   @IsOptional()
   primaryAxisOrderBy?: GraphOrderBy;
 
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  primaryAxisManualSortOrder?: string[];
+
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
   @IsOptional()
@@ -93,6 +100,12 @@ export class BarChartConfigurationDTO
   @IsEnum(GraphOrderBy)
   @IsOptional()
   secondaryAxisOrderBy?: GraphOrderBy;
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  secondaryAxisManualSortOrder?: string[];
 
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()

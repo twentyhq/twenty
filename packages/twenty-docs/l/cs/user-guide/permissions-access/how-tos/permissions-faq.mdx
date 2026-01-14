@@ -1,126 +1,126 @@
 ---
-title: Permissions FAQ
-description: Frequently asked questions about roles and permissions.
+title: Nejčastější dotazy k oprávněním
+description: Často kladené otázky týkající se rolí a oprávnění.
 ---
 
 ## Role
 
 <AccordionGroup>
-  <Accordion title="What roles come with Twenty by default?">
-    Twenty comes with an **Admin** and **Member** roles by default. You can create additional custom roles based on your team's needs (e.g., Sales Rep, Manager, Read-Only User).
+  <Accordion title="Jaké role jsou ve Twenty ve výchozím nastavení?">
+    Twenty ve výchozím stavu obsahuje role **Administrátor** a **Člen**. Můžete vytvářet další vlastní role podle potřeb vašeho týmu (např. obchodní zástupce, manažer, uživatel pouze pro čtení).
   </Accordion>
 
-  <Accordion title="Can I delete the Admin role?">
-    No, the Admin role cannot be deleted. There must always be at least one member assigned to the Admin role.
+  <Accordion title="Mohu smazat roli Administrátor?">
+    Ne, roli Administrátor nelze smazat. Musí být vždy alespoň jeden člen přiřazen k roli Administrátor.
   </Accordion>
 
-  <Accordion title="What happens when I delete a role?">
-    Any workspace member assigned to that role will be automatically reassigned to the default role.
+  <Accordion title="Co se stane, když smažu roli?">
+    Každý člen pracovního prostoru přiřazený k této roli bude automaticky přeřazen na výchozí roli.
   </Accordion>
 
-  <Accordion title="How do I set a default role for new members?">
-    Go to **Settings → Roles**, find the **Default Role** option, and select which role new members should automatically receive when they join.
+  <Accordion title="Jak nastavím výchozí roli pro nové členy?">
+    Přejděte do **Nastavení → Role**, najděte možnost **Výchozí role** a vyberte, kterou roli mají noví členové po připojení automaticky získat.
   </Accordion>
 
-  <Accordion title="Can I assign multiple roles to one user?">
-    No, each user can only have one role at a time. Create a custom role if you need a combination of permissions.
+  <Accordion title="Mohu jednomu uživateli přiřadit více rolí?">
+    Ne, každý uživatel může mít najednou pouze jednu roli. Pokud potřebujete kombinaci oprávnění, vytvořte vlastní roli.
   </Accordion>
 </AccordionGroup>
 
 ## Oprávnění
 
 <AccordionGroup>
-  <Accordion title="What's the difference between object and field permissions?">
-    * **Object permissions**: Control access to entire records (e.g., can see/edit/delete People records)
-    * **Field permissions**: Control access to specific fields within an object (e.g., can see but not edit the Salary field)
+  <Accordion title="Jaký je rozdíl mezi oprávněními objektu a pole?">
+    * **Oprávnění objektu**: Řídí přístup k celým záznamům (např. může zobrazovat/upravovat/mazat záznamy People)
+    * **Oprávnění pole**: Řídí přístup ke konkrétním polím v rámci objektu (např. může vidět pole Salary, ale nemůže ho upravovat)
 
-    Field permissions allow more granular control over sensitive data.
+    Oprávnění na úrovni pole umožňují podrobnější kontrolu nad citlivými daty.
   </Accordion>
 
-  <Accordion title="How do permission overrides work?">
-    Permissions cascade from global to specific:
+  <Accordion title="Jak fungují přepsání oprávnění?">
+    Oprávnění se kaskádovitě aplikují od globálních ke specifickým:
 
-    1. **All Objects** sets the baseline for all objects
-    2. **Object-Level Permissions** can override the global setting for specific objects
-    3. **Field-Level Permissions** can override the object setting for specific fields
+    1. **Všechny objekty** určují základní nastavení pro všechny objekty
+    2. **Oprávnění na úrovni objektu** mohou přepsat globální nastavení pro konkrétní objekty
+    3. **Oprávnění na úrovni pole** mohou přepsat nastavení objektu pro konkrétní pole
 
-    More specific settings always take precedence.
+    Specifičtější nastavení mají vždy přednost.
   </Accordion>
 
-  <Accordion title="What do the different permission levels mean?">
-    For objects:
+  <Accordion title="Co znamenají jednotlivé úrovně oprávnění?">
+    Pro objekty:
 
-    * **See Records**: View records in lists and detail pages
-    * **Edit Records**: Modify existing records
-    * **Delete Records**: Soft-delete records (can be restored)
-    * **Destroy Records**: Permanently delete records
+    * **Zobrazit záznamy**: Zobrazit záznamy v seznamech a na detailních stránkách
+    * **Upravit záznamy**: Upravit existující záznamy
+    * **Smazat záznamy**: Dočasně smazat záznamy (lze obnovit)
+    * **Trvale odstranit záznamy**: Trvale smazat záznamy
 
-    For fields:
+    Pro pole:
 
-    * **See Field**: View the field value
-    * **Edit Field**: Modify the field value
-    * **No Access**: Field is completely hidden
+    * **Zobrazit pole**: Zobrazit hodnotu pole
+    * **Upravit pole**: Změnit hodnotu pole
+    * **Bez přístupu**: Pole je zcela skryté
   </Accordion>
 
-  <Accordion title="Can I restrict access to specific records (row-level permissions)?">
-    Row-level permissions will be available on the **Organization** plan by Q1 2026. This allows you to restrict access to specific records based on criteria (e.g., only see your own opportunities).
+  <Accordion title="Mohu omezit přístup ke konkrétním záznamům (oprávnění na úrovni řádků)?">
+    Oprávnění na úrovni řádků budou k dispozici v tarifu **Organization** v 1. čtvrtletí 2026. To umožní omezit přístup ke konkrétním záznamům na základě kritérií (např. zobrazovat pouze vlastní příležitosti).
   </Accordion>
 
-  <Accordion title="How do I make a field read-only for certain users?">
+  <Accordion title="Jak nastavím pole jen pro čtení pro určité uživatele?">
     1. Přejděte na **Nastavení → Role**
-    2. Select the role
-    3. Navigate to the object containing the field
-    4. Set the field permission to **See Field** (without Edit Field)
+    2. Vyberte roli
+    3. Přejděte k objektu, který pole obsahuje
+    4. Nastavte oprávnění pole na **Zobrazit pole** (bez Upravit pole)
   </Accordion>
 </AccordionGroup>
 
-## Settings & Actions
+## Nastavení a akce
 
 <AccordionGroup>
-  <Accordion title="What settings permissions are available?">
-    You can control access to:
+  <Accordion title="Jaká oprávnění k nastavení jsou k dispozici?">
+    Můžete řídit přístup k:
 
-    * API key generation
-    * Workspace preferences
-    * Role assignment
-    * Data model configuration
-    * Security settings
-    * Workflow management
+    * Generování klíčů API
+    * Předvolby pracovního prostoru
+    * Přiřazování rolí
+    * Konfigurace datového modelu
+    * Nastavení zabezpečení
+    * Správa pracovních postupů
 
-    Use **Settings All Access** to grant full access, or enable specific permissions.
+    Použijte **Settings All Access** pro udělení plného přístupu, nebo povolte konkrétní oprávnění.
   </Accordion>
 
-  <Accordion title="What action permissions are available?">
-    You can control:
+  <Accordion title="Jaká oprávnění k akcím jsou k dispozici?">
+    Můžete řídit:
 
-    * **Send Email**: Ability to send emails from Twenty
-    * **Import CSV**: Ability to import data via CSV
-    * **Export CSV**: Ability to export data to CSV
+    * **Odeslat e-mail**: Možnost odesílat e-maily z Twenty
+    * **Import CSV**: Možnost importovat data přes CSV
+    * **Export CSV**: Možnost exportovat data do CSV
 
-    Use **Application All Access** to grant all actions, or enable specific ones.
+    Použijte **Application All Access** k povolení všech akcí, nebo povolte jen konkrétní.
   </Accordion>
 </AccordionGroup>
 
 ## Jednotné přihlášení
 
 <AccordionGroup>
-  <Accordion title="Is SSO available on all plans?">
-    No, SSO is a Premium feature available on the **Organization** plan only.
+  <Accordion title="Je SSO dostupné ve všech tarifech?">
+    Ne, SSO je prémiová funkce dostupná pouze v tarifu **Organization**.
   </Accordion>
 
-  <Accordion title="Which identity providers are supported?">
-    Twenty supports:
+  <Accordion title="Kteří poskytovatelé identity jsou podporováni?">
+    Twenty podporuje:
 
-    * **SAML 2.0** (works with most enterprise identity providers)
+    * **SAML 2.0** (funguje s většinou podnikových poskytovatelů identity)
     * **Google Workspace**
-    * **Microsoft Entra ID** (formerly Azure AD)
+    * **Microsoft Entra ID** (dříve Azure AD)
   </Accordion>
 
-  <Accordion title="What is Just-in-Time (JIT) provisioning?">
-    With JIT provisioning, user accounts are automatically created in Twenty when someone logs in via SSO for the first time. They're assigned the default role automatically.
+  <Accordion title="Co je zřizování Just-in-Time (JIT)?">
+    Při zřizování JIT se uživatelské účty v Twenty vytvoří automaticky, když se někdo poprvé přihlásí přes SSO. Automaticky jim je přiřazena výchozí role.
   </Accordion>
 
-  <Accordion title="Can I require SSO for all users?">
-    Yes, once SSO is configured, you can disable password login for SSO users to enforce authentication through your identity provider.
+  <Accordion title="Mohu vyžadovat SSO pro všechny uživatele?">
+    Ano, jakmile je SSO nakonfigurováno, můžete pro uživatele SSO zakázat přihlášení heslem a vynutit ověřování přes vašeho poskytovatele identity.
   </Accordion>
 </AccordionGroup>
