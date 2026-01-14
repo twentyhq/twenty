@@ -21,6 +21,7 @@ export const fromCreateRouteTriggerInputToFlatRouteTrigger = ({
     path: createRouteTriggerInput.path,
     isAuthRequired: createRouteTriggerInput.isAuthRequired,
     httpMethod: createRouteTriggerInput.httpMethod,
+    forwardedRequestHeaders: createRouteTriggerInput.forwardedRequestHeaders ?? [],
     serverlessFunctionId: createRouteTriggerInput.serverlessFunctionId,
     workspaceId,
     createdAt: now.toISOString(),

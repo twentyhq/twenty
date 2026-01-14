@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsNotEmpty,
@@ -27,6 +28,14 @@ class UpdateRouteTriggerInputUpdates {
   @IsNotEmpty()
   @Field(() => HTTPMethod)
   httpMethod: HTTPMethod;
+
+  @IsArray()
+  @IsString({ each: true })
+  @Field(() => [String], {
+    description:
+      'List of HTTP header names to forward to the serverless function event',
+  })
+  forwardedRequestHeaders: string[];
 }
 
 @InputType()

@@ -1361,6 +1361,7 @@ export class ApplicationSyncService {
           path: triggerToSync.path,
           httpMethod: triggerToSync.httpMethod as HTTPMethod,
           isAuthRequired: triggerToSync.isAuthRequired,
+          forwardedRequestHeaders: triggerToSync.forwardedRequestHeaders ?? [],
         },
       };
 
@@ -1379,6 +1380,7 @@ export class ApplicationSyncService {
         path: triggerToCreate.path,
         httpMethod: triggerToCreate.httpMethod as HTTPMethod,
         isAuthRequired: triggerToCreate.isAuthRequired,
+        forwardedRequestHeaders: triggerToCreate.forwardedRequestHeaders ?? [],
         serverlessFunctionId,
       };
 
