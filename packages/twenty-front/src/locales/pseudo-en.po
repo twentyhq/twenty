@@ -1369,9 +1369,9 @@ msgstr ""
 msgid "Amber"
 msgstr ""
 
-#. js-lingui-id: hehnjM
+#. js-lingui-id: s46CyD
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
-msgid "Amount"
+msgid "Amount Micros"
 msgstr ""
 
 #. js-lingui-id: Vw8l6h
@@ -4643,6 +4643,11 @@ msgstr ""
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Enter agent name*"
+msgstr ""
+
+#. js-lingui-id: lU5cVU
+#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
+msgid "Enter amount x 1 000 000 (e.g. $3.21 → 3210000)"
 msgstr ""
 
 #. js-lingui-id: wgNkIh
@@ -10541,11 +10546,6 @@ msgstr ""
 #. js-lingui-id: 4FANIj
 #: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellDisplayContainer.tsx
 msgid "Set {placeholderForEmptyCell}"
-msgstr ""
-
-#. js-lingui-id: EIFxcV
-#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
-msgid "Set 3.21 for $3.21"
 msgstr ""
 
 #. js-lingui-id: YZwx1e
