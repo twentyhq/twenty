@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Page layout with tabs update should succeed should update page layout with multiple tabs and different widget types 1`] = `
 {

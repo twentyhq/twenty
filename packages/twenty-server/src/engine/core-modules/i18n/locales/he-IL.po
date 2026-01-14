@@ -566,6 +566,51 @@ msgstr "לא ניתן לתת הרשאת כתיבה ללא הרשאת קריאה.
 msgid "Cannot have more than one active workflow version"
 msgstr "לא ניתן להחזיק ביותר מגרסת תהליך עבודה פעילה אחת"
 
+#. js-lingui-id: DAGexD
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+msgid "Cannot modify predicate belonging to a different object."
+msgstr ""
+
+#. js-lingui-id: xO923u
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+msgid "Cannot modify predicate belonging to a different role."
+msgstr ""
+
+#. js-lingui-id: 3niIR5
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
+msgid "Cannot modify predicate group belonging to a different role."
+msgstr ""
+
+#. js-lingui-id: jm1hwE
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Cannot modify predicate group to change its role"
+msgstr ""
+
+#. js-lingui-id: mV16wS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Cannot modify predicate group to change its role from {existingRoleId} to {updatedRoleId}"
+msgstr ""
+
+#. js-lingui-id: HDo5ie
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Cannot modify predicate to change its object"
+msgstr ""
+
+#. js-lingui-id: BNrNUY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Cannot modify predicate to change its object from {existingObjectMetadataId} to {updatedObjectMetadataId}"
+msgstr ""
+
+#. js-lingui-id: 7JaPm8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Cannot modify predicate to change its role"
+msgstr ""
+
+#. js-lingui-id: sn8IgB
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Cannot modify predicate to change its role from {existingRoleId} to {updatedRoleId}"
+msgstr ""
+
 #. js-lingui-id: Q0diyJ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
@@ -2427,6 +2472,11 @@ msgstr "ObjectMetadataId נדרש ליצירת תצוגה."
 msgid "October"
 msgstr "אוקטובר"
 
+#. js-lingui-id: Tp2ptT
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-on-delete.util.ts
+msgid "On delete action is only supported for many to one relations"
+msgstr ""
+
 #. js-lingui-id: eWQQpx
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
@@ -2515,11 +2565,6 @@ msgstr "ערך האפשרות חייב להיות מחרוזת של לפחות 
 msgid "Options are required for enum fields"
 msgstr "נדרשות אפשרויות עבור שדות enum"
 
-#. js-lingui-id: xCAYz6
-#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
-msgid "Page layout is not deleted and cannot be restored"
-msgstr "פריסת העמוד לא נמחקה ולא ניתן לשחזרה"
-
 #. js-lingui-id: ZKtamk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
@@ -2536,11 +2581,6 @@ msgstr "פריסת העמוד לא נמצאה"
 msgid "Page layout not found."
 msgstr "פריסת העמוד לא נמצאה."
 
-#. js-lingui-id: tR9faK
-#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
-msgid "Page layout tab is not deleted and cannot be restored"
-msgstr "לשונית פריסת העמוד לא נמחקה ולא ניתן לשחזרה"
-
 #. js-lingui-id: qJ9V6q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
@@ -2556,40 +2596,20 @@ msgstr "לשונית פריסת העמוד לא נמצאה"
 msgid "Page layout tab not found."
 msgstr "לשונית פריסת העמוד לא נמצאה."
 
-#. js-lingui-id: CWtQfv
-#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
-msgid "Page layout tab to delete not found"
-msgstr "לא נמצאה לשונית פריסת עמוד למחיקה"
-
 #. js-lingui-id: LTouJ4
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-destroy-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
 msgid "Page layout tab to destroy not found"
 msgstr "לא נמצאה לשונית פריסת עמוד להשמדה"
-
-#. js-lingui-id: BaYGVl
-#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
-msgid "Page layout tab to restore not found"
-msgstr "לא נמצאה לשונית פריסת עמוד לשחזור"
 
 #. js-lingui-id: m8tBqi
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-update-page-layout-tab-input-to-flat-page-layout-tab-to-update-or-throw.util.ts
 msgid "Page layout tab to update not found"
 msgstr "לא נמצאה לשונית פריסת עמוד לעדכון"
 
-#. js-lingui-id: eQHXfb
-#: src/engine/metadata-modules/flat-page-layout/utils/from-delete-page-layout-input-to-flat-page-layout-or-throw.util.ts
-msgid "Page layout to delete not found"
-msgstr "לא נמצאה פריסת עמוד למחיקה"
-
 #. js-lingui-id: zrm54u
 #: src/engine/metadata-modules/flat-page-layout/utils/from-destroy-page-layout-input-to-flat-page-layout-or-throw.util.ts
 msgid "Page layout to destroy not found"
 msgstr "לא נמצאה פריסת עמוד להשמדה"
-
-#. js-lingui-id: TsrNXq
-#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
-msgid "Page layout to restore not found"
-msgstr "לא נמצאה פריסת עמוד לשחזור"
 
 #. js-lingui-id: /5c/t7
 #: src/engine/metadata-modules/flat-page-layout/utils/from-update-page-layout-input-to-flat-page-layout-to-update-or-throw.util.ts
@@ -2601,11 +2621,6 @@ msgstr "לא נמצאה פריסת עמוד לעדכון"
 msgid "Page layout widget already exists"
 msgstr "וידג'ט פריסת עמוד כבר קיים"
 
-#. js-lingui-id: A3hsQ6
-#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
-msgid "Page layout widget is not deleted and cannot be restored"
-msgstr "וידג'ט פריסת העמוד לא נמחק ולא ניתן לשחזרו"
-
 #. js-lingui-id: GcU04G
 #: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
@@ -2614,7 +2629,6 @@ msgstr "ווידג'ט פריסת עמוד לא נמצא."
 #. js-lingui-id: 7QlaTN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-delete-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to delete not found"
 msgstr "לא נמצא וידג'ט פריסת עמוד למחיקה"
 
@@ -2622,11 +2636,6 @@ msgstr "לא נמצא וידג'ט פריסת עמוד למחיקה"
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-destroy-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to destroy not found"
 msgstr "לא נמצא וידג'ט פריסת עמוד להשמדה"
-
-#. js-lingui-id: fDTVnj
-#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
-msgid "Page layout widget to restore not found"
-msgstr "לא נמצא וידג'ט פריסת עמוד לשחזור"
 
 #. js-lingui-id: yCsIxc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts

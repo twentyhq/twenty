@@ -259,7 +259,7 @@ export const SettingsMorphRelationMultiSelect = ({
                             onChange?.(newSelectedObjectMetadataIds);
                             onBlur?.();
                           }}
-                        />{' '}
+                        />
                       </SelectableListItem>
                     ))}
                   </SelectableList>

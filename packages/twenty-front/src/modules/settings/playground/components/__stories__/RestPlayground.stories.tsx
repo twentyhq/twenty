@@ -1,13 +1,13 @@
+import { RestPlayground } from '@/settings/playground/components/RestPlayground';
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, http } from 'msw';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { action } from 'storybook/actions';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { RestPlayground } from '@/settings/playground/components/RestPlayground';
 
 const PlaygroundApiKeySetterEffect = () => {
   const setPlaygroundApiKey = useSetRecoilState(playgroundApiKeyState);

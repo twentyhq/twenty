@@ -101,28 +101,35 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
       const tabTitle = parameters.tabTitle ?? 'Main';
       const widgets = parameters.widgets ?? [];
 
-      const pageLayout = await deps.pageLayoutService.create(
-        { name: parameters.title, type: PageLayoutType.DASHBOARD },
-        context.workspaceId,
-      );
+      const pageLayout = await deps.pageLayoutService.create({
+        createPageLayoutInput: {
+          name: parameters.title,
+          type: PageLayoutType.DASHBOARD,
+        },
+        workspaceId: context.workspaceId,
+      });
 
-      const pageLayoutTab = await deps.pageLayoutTabService.create(
-        { title: tabTitle, pageLayoutId: pageLayout.id, position: 0 },
-        context.workspaceId,
-      );
+      const pageLayoutTab = await deps.pageLayoutTabService.create({
+        createPageLayoutTabInput: {
+          title: tabTitle,
+          pageLayoutId: pageLayout.id,
+          position: 0,
+        },
+        workspaceId: context.workspaceId,
+      });
 
       const createdWidgets = [];
       const widgetErrors = [];
 
       for (const widget of widgets) {
         try {
-          const createdWidget = await deps.pageLayoutWidgetService.create(
-            {
+          const createdWidget = await deps.pageLayoutWidgetService.create({
+            input: {
               ...widget,
               pageLayoutTabId: pageLayoutTab.id,
             } as CreatePageLayoutWidgetInput,
-            context.workspaceId,
-          );
+            workspaceId: context.workspaceId,
+          });
 
           createdWidgets.push({
             id: createdWidget.id,

@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import {
+  FieldMetadataType,
   RecordFilterGroupLogicalOperator,
   type CompositeFieldSubFieldName,
   type PartialFieldMetadataItemOption,
@@ -28,6 +29,7 @@ import { RowLevelPermissionPredicateGroupLogicalOperator } from 'src/engine/meta
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { type RowLevelPermissionPredicateValue } from 'src/engine/metadata-modules/row-level-permission-predicate/types/row-level-permission-predicate-value.type';
+import { validateEnumValueCompatibility } from 'src/engine/twenty-orm/utils/validate-enum-value-compatibility.util';
 
 type BuildRowLevelPermissionRecordFilterArgs = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
@@ -116,10 +118,29 @@ export const buildRowLevelPermissionRecordFilter = ({
         }
 
         if (!isDefined(predicateValue)) {
-          throw new PermissionsException(
-            `Workspace member data missing for field ${workspaceMemberFieldMetadata.name}`,
-            PermissionsExceptionCode.INVALID_ARG,
-          );
+          return null;
+        }
+
+        // Validate that workspace member enum value is compatible with target field enum options
+        const isEnumValueCompatible = validateEnumValueCompatibility({
+          workspaceMemberFieldMetadata,
+          targetFieldMetadata: fieldMetadata,
+          predicateValue,
+        });
+
+        if (!isEnumValueCompatible) {
+          return null;
+        }
+
+        // When workspace member field is SELECT or MULTI_SELECT and value is a string,
+        // wrap it in an array to match the frontend format (which uses multi-select UI)
+        if (
+          (workspaceMemberFieldMetadata.type === FieldMetadataType.SELECT ||
+            workspaceMemberFieldMetadata.type ===
+              FieldMetadataType.MULTI_SELECT) &&
+          typeof predicateValue === 'string'
+        ) {
+          predicateValue = [predicateValue];
         }
       }
 
@@ -127,10 +148,12 @@ export const buildRowLevelPermissionRecordFilter = ({
         | CompositeFieldSubFieldName
         | undefined;
 
+      let filterValue = convertViewFilterValueToString(predicateValue);
+
       return {
         id: predicate.id,
         fieldMetadataId: predicate.fieldMetadataId,
-        value: convertViewFilterValueToString(predicateValue),
+        value: filterValue,
         type: getFilterTypeFromFieldType(fieldMetadata.type),
         operand: predicate.operand as unknown as RecordFilter['operand'],
         recordFilterGroupId: predicate.rowLevelPermissionPredicateGroupId,

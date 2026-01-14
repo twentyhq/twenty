@@ -9,7 +9,7 @@ import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { RecordTableRowVirtualizedSkeleton } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedSkeleton';
-import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
+import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -25,7 +25,7 @@ export const RecordTableRowVirtualizedFullData = ({
 }: RecordTableRowVirtualizedFullDataProps) => {
   const isFocused = useRecoilComponentFamilyValue(
     isRecordTableRowFocusedComponentFamilyState,
-    realIndex ?? 0,
+    realIndex,
   );
 
   const isRowFocusActive = useRecoilComponentValue(
@@ -33,8 +33,8 @@ export const RecordTableRowVirtualizedFullData = ({
   );
 
   const recordId = useRecoilComponentFamilyValue(
-    recordIdByRealIndexComponentFamilyState,
-    { realIndex },
+    recordIdByRealIndexComponentFamilySelector,
+    realIndex,
   );
 
   if (!isDefined(recordId)) {

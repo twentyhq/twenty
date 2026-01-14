@@ -17,4 +17,7 @@ export class CreateRowLevelPermissionPredicateGroupInput {
 
   @Field(() => String)
   roleId: string;
+
+  @Field(() => String)
+  objectMetadataId: string;
 }

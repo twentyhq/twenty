@@ -1,8 +1,9 @@
 import { EventRowMainObjectUpdated } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -44,6 +45,7 @@ const meta: Meta<typeof EventRowMainObjectUpdated> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     RouterDecorator,
+    I18nFrontDecorator,
   ],
 };
 

@@ -1,16 +1,16 @@
-import { useArgs } from '@storybook/preview-api';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useArgs } from 'storybook/preview-api';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { sleep } from '~/utils/sleep';
 
-import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   IconPicker,
   type IconPickerProps,
 } from '@/ui/input/components/IconPicker';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 type RenderProps = IconPickerProps;
 const Render = (args: RenderProps) => {
