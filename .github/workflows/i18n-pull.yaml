@@ -89,7 +89,7 @@ jobs:
           create_pull_request: false
           skip_ref_checkout: true
           dryrun_action: false
-          config: 'crowdin-app.yml'
+          config: '.github/crowdin-app.yml'
         env:
           GITHUB_TOKEN: ${{ github.token }}
           # App translations project

@@ -164,7 +164,7 @@ export const CustomCrosshairLayer = ({
         width={innerWidth}
         height={innerHeight}
         fill="transparent"
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: isDefined(onSliceClick) ? 'pointer' : 'default' }}
         onMouseEnter={handleMouseMove}
         onMouseMove={handleMouseMove}
         onMouseLeave={(event) => onRectLeave(event.relatedTarget)}

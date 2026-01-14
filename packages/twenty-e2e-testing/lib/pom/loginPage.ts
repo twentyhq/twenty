@@ -85,6 +85,13 @@ export class LoginPage {
     await this.loginWithEmailButton.click();
   }
 
+  async clickLoginWithEmailIfVisible() {
+    const isVisible = await this.loginWithEmailButton.isVisible();
+    if (isVisible) {
+      await this.loginWithEmailButton.click();
+    }
+  }
+
   async clickContinueButton() {
     await this.continueButton.click();
   }
