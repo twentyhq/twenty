@@ -6,6 +6,7 @@ import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUUID,
   ValidateNested,
@@ -31,7 +32,9 @@ class UpdateRouteTriggerInputUpdates {
 
   @IsArray()
   @IsString({ each: true })
+  @IsOptional()
   @Field(() => [String], {
+    defaultValue: [],
     description:
       'List of HTTP header names to forward to the serverless function event',
   })
