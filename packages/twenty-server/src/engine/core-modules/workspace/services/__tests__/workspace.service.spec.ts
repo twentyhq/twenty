@@ -26,6 +26,7 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -58,6 +59,12 @@ describe('WorkspaceService', () => {
           provide: getRepositoryToken(ApprovedAccessDomainEntity),
           useValue: {
             findOneBy: jest.fn(),
+          },
+        },
+        {
+          provide: ObjectMetadataService,
+          useValue: {
+            deleteWorkspaceAllObjectMetadata: jest.fn(),
           },
         },
         {
