@@ -1,5 +1,5 @@
-import { type ObjectManifest } from 'twenty-shared/application';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type ObjectManifest } from 'twenty-shared/application';
 import { validateFieldsOrThrow } from './validate-fields';
 
 /**
