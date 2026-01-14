@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { In, Not } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -92,7 +91,6 @@ export class WorkflowRunEnqueueWorkspaceService {
             );
 
           let totalEnqueuedCount = 0;
-          const alreadyEnqueuedIds: string[] = [];
 
           while (remainingWorkflowRunToEnqueueCount > 0) {
             const batchSize = Math.min(
@@ -103,9 +101,6 @@ export class WorkflowRunEnqueueWorkspaceService {
             const batchRuns = await workflowRunRepository.find({
               where: {
                 status: WorkflowRunStatus.NOT_STARTED,
-                ...(alreadyEnqueuedIds.length > 0
-                  ? { id: Not(In(alreadyEnqueuedIds)) }
-                  : {}),
               },
               select: {
                 id: true,
@@ -139,7 +134,6 @@ export class WorkflowRunEnqueueWorkspaceService {
               );
             }
 
-            alreadyEnqueuedIds.push(...batchIds);
             totalEnqueuedCount += batchRuns.length;
             remainingWorkflowRunToEnqueueCount -= batchRuns.length;
           }
