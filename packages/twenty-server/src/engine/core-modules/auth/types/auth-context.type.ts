@@ -22,6 +22,14 @@ export type AuthContext = {
   };
 };
 
+export type SerializableAuthContext = {
+  userId?: string;
+  userWorkspaceId?: string;
+  workspaceMemberId?: string;
+  apiKeyId?: string;
+  applicationId?: string;
+};
+
 export enum JwtTokenTypeEnum {
   ACCESS = 'ACCESS',
   REFRESH = 'REFRESH',

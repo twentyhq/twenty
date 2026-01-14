@@ -1,4 +1,4 @@
- 
+
 export default {
   displayName: 'eslint-rules',
   silent: false,

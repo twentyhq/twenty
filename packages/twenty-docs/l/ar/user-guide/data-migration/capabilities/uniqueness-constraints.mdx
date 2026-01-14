@@ -1,72 +1,72 @@
 ---
-title: Uniqueness Constraints
-description: How Twenty enforces data uniqueness during import.
+title: قيود التفرّد
+description: كيف يفرض Twenty تفرد البيانات أثناء الاستيراد.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## نظرة عامة
 
-Twenty enforces uniqueness on certain fields to prevent duplicate records and ensure data integrity. Understanding these constraints is essential for successful imports.
+يفرض Twenty التفرّد على حقول معيّنة لمنع تكرار السجلات وضمان سلامة البيانات. فهم هذه القيود أمرٌ أساسي لنجاح عمليات الاستيراد.
 
-## Default Unique Fields
+## الحقول الفريدة الافتراضية
 
-| كائن             | Unique Fields          |
-| ---------------- | ---------------------- |
-| **People**       | `id`, `email`          |
-| **الشركات**      | `id`, `domain`         |
-| **كائنات مخصصة** | `id` only (by default) |
+| كائن             | الحقول الفريدة       |
+| ---------------- | -------------------- |
+| **الأشخاص**      | `id`, `email`        |
+| **الشركات**      | `id`, `domain`       |
+| **كائنات مخصصة** | `id` فقط (افتراضيًا) |
 
-<Note>The `id` field is Twenty's internal identifier, auto-generated for each record. It uses UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>حقل `id` هو المعرّف الداخلي الخاص بـ Twenty، يتم إنشاؤه تلقائيًا لكل سجل. يستخدم تنسيق UUID (مثلًا: `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
 
-## Custom Unique Fields
+## حقول فريدة مخصّصة
 
-You can define additional unique fields under **Settings → Data Model**:
+يمكنك تعريف حقول فريدة إضافية ضمن **الإعدادات → نموذج البيانات**:
 
-1. Go to **Settings → Data Model**
-2. Select the object
-3. Click on a field
-4. Enable **Unique** in field settings
+1. اذهب إلى **الإعدادات → نموذج البيانات**
+2. اختر الكائن
+3. انقر على حقل
+4. فعِّل **فريد** في إعدادات الحقل
 
-### Use Cases for Custom Unique Fields
+### حالات استخدام للحقول الفريدة المخصّصة
 
-* **External IDs**: Store IDs from other systems (Salesforce ID, HubSpot ID)
-* **Business identifiers**: Employee numbers, customer codes
-* **Alternative contact info**: LinkedIn profile, phone number
+* **معرّفات خارجية**: خزّن معرّفات من أنظمة أخرى (Salesforce ID, HubSpot ID)
+* **معرّفات الأعمال**: أرقام الموظفين، رموز العملاء
+* **معلومات اتصال بديلة**: ملف LinkedIn، رقم الهاتف
 
-<Note>The field name `id` is reserved for Twenty's internal ID. Use a different name like `externalId` or `legacyId` for external identifiers.</Note>
+<Note>اسم الحقل `id` محجوز للمعرّف الداخلي الخاص بـ Twenty. استخدم اسمًا مختلفًا مثل `externalId` أو `legacyId` للمعرّفات الخارجية.</Note>
 
-## Import Behavior
+## سلوك الاستيراد
 
-### Creating New Records
+### إنشاء سجلات جديدة
 
-If a unique field value doesn't exist, a new record is created.
+إذا لم تكن قيمة الحقل الفريد موجودة، فسيتم إنشاء سجل جديد.
 
-### Updating Existing Records
+### تحديث السجلات الموجودة
 
-If a unique field value matches an existing record, that record is **updated** with the new data.
-<Warning>To **update existing records**, it is recommended to **only match one unique field**.</Warning>
+إذا طابقت قيمة حقل فريد سجلًا موجودًا، فسيتم **تحديث** ذلك السجل بالبيانات الجديدة.
+<Warning>لـ **تحديث السجلات الموجودة**، يُنصَح بـ **مطابقة حقل فريد واحد فقط**.</Warning>
 
-### Soft-Deleted Records
+### السجلات المحذوفة حذفًا غير نهائي
 
 <Warning>
-  **Deleted records count toward uniqueness.**
+  **السجلات المحذوفة تُحتسب ضمن التفرّد.**
 
-  Soft-deleted records (visible under Command Menu → See deleted records) are included in uniqueness checks. If you import a record with the same unique value as a deleted record, the deleted record will be **restored** with the new data.
+  السجلات المحذوفة حذفًا غير نهائي (مرئية ضمن Command Menu → See deleted records) مُدرجة ضمن فحوصات التفرّد. إذا قمت باستيراد سجل بالقيمة الفريدة نفسها لسجل محذوف، فسيتم **استعادة** السجل المحذوف مع البيانات الجديدة.
 </Warning>
 
-## Duplicate Detection During Import
+## اكتشاف التكرارات أثناء الاستيراد
 
-During the validation phase:
+أثناء مرحلة التحقق:
 
-* Duplicates within your file are highlighted in yellow
-* You can edit or remove duplicate rows from the UI before starting the import
+* يتم تمييز التكرارات داخل ملفك باللون الأصفر
+* يمكنك تعديل الصفوف المكرّرة أو إزالتها من واجهة المستخدم قبل بدء الاستيراد
 
-<VimeoEmbed videoId="1145246326" title="Video demonstration" />
+<VimeoEmbed videoId="1145246326" title="عرض توضيحي بالفيديو" />
 
 ## أفضل الممارسات
 
-1. **Remove duplicates** from your file before importing
-2. **Check for existing records** in Twenty before importing
-3. **Use external IDs** when migrating from other systems
-4. **Include unique fields** if you want to update existing records
+1. **أزل التكرارات** من ملفك قبل الاستيراد
+2. **تحقّق من السجلات الموجودة** في Twenty قبل الاستيراد
+3. **استخدم المعرّفات الخارجية** عند الترحيل من أنظمة أخرى
+4. **ضمّن الحقول الفريدة** إذا كنت تريد تحديث السجلات الموجودة

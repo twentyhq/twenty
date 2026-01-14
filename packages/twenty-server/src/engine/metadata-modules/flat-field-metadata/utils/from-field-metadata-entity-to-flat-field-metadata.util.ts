@@ -18,6 +18,11 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
 
   return {
     ...fieldMetadataWithoutRelations,
+    // TODO remove once MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand has been run once
+    universalIdentifier:
+      fieldMetadataWithoutRelations.universalIdentifier ??
+      fieldMetadataWithoutRelations.standardId ??
+      fieldMetadataWithoutRelations.id,
     createdAt: fieldMetadataWithoutRelations.createdAt.toISOString(),
     updatedAt: fieldMetadataWithoutRelations.updatedAt.toISOString(),
     kanbanAggregateOperationViewIds:

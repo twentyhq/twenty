@@ -8,6 +8,7 @@ import { IconGripVertical } from 'twenty-ui/display';
 
 import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { DashboardBlockDragHandleMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { isDefined } from 'twenty-shared/utils';
 
 type DashboardEditorSideMenuProps = {
@@ -17,6 +18,7 @@ type DashboardEditorSideMenuProps = {
 
 const StyledSideMenuContainer = styled.div`
   display: flex;
+  z-index: ${RootStackingContextZIndices.DropdownPortalBelowModal};
 `;
 
 const StyledDragHandleContainerWrapper = styled.div`
