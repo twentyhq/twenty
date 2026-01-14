@@ -1,6 +1,13 @@
 import styled from '@emotion/styled';
 import { plural } from '@lingui/core/macro';
-import { useMemo, useRef, useState, useCallback, type MouseEvent } from 'react';
+import {
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  type MouseEvent,
+} from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -87,6 +94,27 @@ export const SettingsMorphRelationMultiSelect = ({
   hasRightElement,
 }: SettingsMorphRelationMultiSelectProps) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
+  const lastDeselectedIdRef = useRef<string | null>(null);
+  const previousSelectedIdsRef = useRef<string[]>(selectedObjectMetadataIds);
+
+  // Track when items are deselected
+  useEffect(() => {
+    const previous = previousSelectedIdsRef.current;
+    const current = selectedObjectMetadataIds;
+
+    // If an item was removed (deselected), track it
+    if (previous.length > current.length) {
+      const deselectedId = previous.find((id) => !current.includes(id));
+      if (deselectedId) {
+        lastDeselectedIdRef.current = deselectedId;
+      }
+    } else {
+      // If selection changed but no item was removed, clear the tracking
+      lastDeselectedIdRef.current = null;
+    }
+
+    previousSelectedIdsRef.current = selectedObjectMetadataIds;
+  }, [selectedObjectMetadataIds]);
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
@@ -159,13 +187,37 @@ export const SettingsMorphRelationMultiSelect = ({
 
   const handleToggleSelection = useCallback(
     (objectMetadataId: string) => {
-      const newSelectedObjectMetadataIds = addOrRemoveFromArray(
-        selectedObjectMetadataIds,
-        objectMetadataId,
-      );
-      onChange?.(newSelectedObjectMetadataIds);
+      const isCurrentlySelected =
+        selectedObjectMetadataIds.includes(objectMetadataId);
+
+      if (isCurrentlySelected) {
+        // Remove the item
+        const newSelectedObjectMetadataIds = selectedObjectMetadataIds.filter(
+          (id) => id !== objectMetadataId,
+        );
+        onChange?.(newSelectedObjectMetadataIds);
+      } else {
+        // Add the item
+        // If we recently deselected an item and it's back in the selection
+        // (likely reverted by form validation), replace the entire selection
+        // with just the new item to prevent the old item from being included
+        if (
+          lastDeselectedIdRef.current &&
+          selectedObjectMetadataIds.includes(lastDeselectedIdRef.current)
+        ) {
+          // The form reverted to include the deselected item, so replace it entirely
+          onChange?.([objectMetadataId]);
+          lastDeselectedIdRef.current = null;
+        } else {
+          // Normal case: add the item
+          const newSelectedObjectMetadataIds = Array.from(
+            new Set([...selectedObjectMetadataIds, objectMetadataId]),
+          );
+          onChange?.(newSelectedObjectMetadataIds);
+        }
+      }
     },
-    [selectedObjectMetadataIds, addOrRemoveFromArray, onChange],
+    [selectedObjectMetadataIds, onChange],
   );
 
   return (
