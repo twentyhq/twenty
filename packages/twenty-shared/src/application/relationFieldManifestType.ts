@@ -5,14 +5,9 @@ import { type RelationType } from '@/types/RelationType';
 
 export type RelationFieldManifest =
   FieldManifest<FieldMetadataType.RELATION> & {
-    name: string;
-    label: string;
-    description?: string;
-    icon?: string;
     relationType: RelationType;
     targetObjectUniversalIdentifier: string;
     targetFieldLabel: string;
     targetFieldIcon?: string;
     onDelete?: RelationOnDeleteAction;
-    type: FieldMetadataType;
   };
