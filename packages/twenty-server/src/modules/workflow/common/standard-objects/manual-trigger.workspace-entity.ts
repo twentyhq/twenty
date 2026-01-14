@@ -2,7 +2,6 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 
 import { type WorkflowVersionWorkspaceEntity } from './workflow-version.workspace-entity';
-import { type WorkflowWorkspaceEntity } from './workflow.workspace-entity';
 
 export enum ManualTriggerAvailabilityType {
   GLOBAL = 'GLOBAL',
@@ -13,7 +12,6 @@ export enum ManualTriggerAvailabilityType {
 export class ManualTriggerWorkspaceEntity extends BaseWorkspaceEntity {
   workflowVersion: EntityRelation<WorkflowVersionWorkspaceEntity>;
   workflowVersionId: string;
-  workflow: EntityRelation<WorkflowWorkspaceEntity>;
   workflowId: string;
   workflowName: string;
   label: string;

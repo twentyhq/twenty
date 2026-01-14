@@ -33,7 +33,7 @@ export const buildManualTriggerStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'workflowIdIndex',
-      relatedFieldNames: ['workflow'],
+      relatedFieldNames: ['workflowId'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

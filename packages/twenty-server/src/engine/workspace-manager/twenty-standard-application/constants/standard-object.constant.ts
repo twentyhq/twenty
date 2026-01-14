@@ -1677,9 +1677,6 @@ export const STANDARD_OBJECTS = {
       automatedTriggers: {
         universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.automatedTriggers,
       },
-      manualTriggers: {
-        universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.manualTriggers,
-      },
       favorites: { universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.favorites },
       timelineActivities: {
         universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.timelineActivities,
@@ -1775,8 +1772,8 @@ export const STANDARD_OBJECTS = {
       workflowVersion: {
         universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflowVersion,
       },
-      workflow: {
-        universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflow,
+      workflowId: {
+        universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflowId,
       },
       workflowName: {
         universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflowName,
