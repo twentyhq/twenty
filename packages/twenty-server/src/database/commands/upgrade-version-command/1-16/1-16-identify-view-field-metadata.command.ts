@@ -10,6 +10,7 @@ import {
   RunOnWorkspaceArgs,
   WorkspacesMigrationCommandRunner,
 } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { computeFormattedViewName } from 'src/database/commands/upgrade-version-command/1-16/utils/compute-formatted-view-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -31,23 +32,31 @@ type StandardViewFieldMetadata = {
   universalIdentifier: string;
 };
 
-type AllWarnings = 'unknown_object' | 'unknown_view';
+type AllWarnings =
+  | 'standard_object_has_no_standard_views'
+  | 'unknown_view'
+  | 'unknown_standard_view_field';
 
 type ViewFieldMetadataWarning = {
   viewFieldEntity: ViewFieldEntity;
   warning: AllWarnings;
+  objectNameSingular?: string;
+  viewName?: string;
+  fieldName?: string;
 };
 
 type AllExceptions =
   | 'existing_universal_id_mismatch'
   | 'view_not_found'
   | 'object_not_found'
-  | 'field_not_found'
-  | 'unknown_standard_view_field';
+  | 'field_not_found';
 
 type ViewFieldMetadataException = {
   viewFieldEntity: ViewFieldEntity;
   exception: AllExceptions;
+  objectNameSingular?: string;
+  viewName?: string;
+  fieldName?: string;
 };
 
 @Command({
@@ -143,6 +152,7 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
         exceptions.push({
           viewFieldEntity,
           exception: 'object_not_found',
+          viewName: flatView.name,
         });
         continue;
       }
@@ -154,6 +164,18 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
         exceptions.push({
           viewFieldEntity,
           exception: 'field_not_found',
+          objectNameSingular: flatObjectMetadata.nameSingular,
+          viewName: flatView.name,
+        });
+        continue;
+      }
+
+      if (
+        flatObjectMetadata.applicationId !== twentyStandardFlatApplication.id
+      ) {
+        customViewFieldMetadataEntities.push({
+          viewFieldEntity,
+          fromStandard: true,
         });
         continue;
       }
@@ -164,13 +186,11 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
         ];
 
       if (!isDefined(objectConfig)) {
-        warnings.push({
+        exceptions.push({
           viewFieldEntity,
-          warning: 'unknown_object',
-        });
-        customViewFieldMetadataEntities.push({
-          viewFieldEntity,
-          fromStandard: true,
+          exception: 'object_not_found',
+          objectNameSingular: flatObjectMetadata.nameSingular,
+          viewName: flatView.name,
         });
         continue;
       }
@@ -193,7 +213,9 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
       if (!isDefined(objectViews)) {
         warnings.push({
           viewFieldEntity,
-          warning: 'unknown_object',
+          warning: 'standard_object_has_no_standard_views',
+          objectNameSingular: flatObjectMetadata.nameSingular,
+          viewName: flatView.name,
         });
         customViewFieldMetadataEntities.push({
           viewFieldEntity,
@@ -202,12 +224,18 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
         continue;
       }
 
-      const viewConfig = objectViews[flatView.name];
+      const formattedViewName = computeFormattedViewName({
+        flatObjectMetadata,
+        viewName: flatView.name,
+      });
+      const viewConfig = objectViews[formattedViewName];
 
       if (!isDefined(viewConfig) || !isDefined(viewConfig.viewFields)) {
         warnings.push({
           viewFieldEntity,
           warning: 'unknown_view',
+          objectNameSingular: flatObjectMetadata.nameSingular,
+          viewName: flatView.name,
         });
         customViewFieldMetadataEntities.push({
           viewFieldEntity,
@@ -220,10 +248,18 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
       const universalIdentifier = viewFieldConfig?.universalIdentifier;
 
       if (!isDefined(universalIdentifier)) {
-        exceptions.push({
+        warnings.push({
           viewFieldEntity,
-          exception: 'unknown_standard_view_field',
+          warning: 'unknown_standard_view_field',
+          objectNameSingular: flatObjectMetadata.nameSingular,
+          viewName: flatView.name,
+          fieldName: flatFieldMetadata.name,
         });
+        customViewFieldMetadataEntities.push({
+          viewFieldEntity,
+          fromStandard: true,
+        });
+
         continue;
       }
 
@@ -234,6 +270,8 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
         exceptions.push({
           viewFieldEntity,
           exception: 'existing_universal_id_mismatch',
+          objectNameSingular: flatObjectMetadata.nameSingular,
+          viewName: flatView.name,
         });
         continue;
       }
@@ -254,9 +292,15 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
         `Found ${warnings.length} warning(s) while processing view field metadata for workspace ${workspaceId}. These view fields will become custom.`,
       );
 
-      for (const { viewFieldEntity, warning } of warnings) {
+      for (const {
+        viewFieldEntity,
+        warning,
+        objectNameSingular,
+        viewName,
+        fieldName,
+      } of warnings) {
         this.logger.warn(
-          `Warning for view field (id=${viewFieldEntity.id}): ${warning}`,
+          `Warning for view field on object "${objectNameSingular ?? 'unknown'}" in view "${viewName ?? 'unknown'}" for field ${fieldName ?? 'unknown'} (id=${viewFieldEntity.id}): ${warning}`,
         );
       }
     }
@@ -266,9 +310,15 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
         `Found ${exceptions.length} exception(s) while processing view field metadata for workspace ${workspaceId}. No updates will be applied.`,
       );
 
-      for (const { viewFieldEntity, exception } of exceptions) {
+      for (const {
+        viewFieldEntity,
+        exception,
+        objectNameSingular,
+        viewName,
+        fieldName,
+      } of exceptions) {
         this.logger.error(
-          `Exception for view field (id=${viewFieldEntity.id}): ${exception}`,
+          `Exception for view field on object "${objectNameSingular ?? 'unknown'}" in view "${viewName ?? 'unknown'}" for field ${fieldName ?? 'unknown'} (id=${viewFieldEntity.id}): ${exception}`,
         );
       }
 
@@ -304,17 +354,17 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
       ]);
 
       const relatedMetadataNames = getMetadataRelatedMetadataNames('viewField');
-      const cacheKeysToInvalidate = relatedMetadataNames.map(
+      const relatedCacheKeysToInvalidate = relatedMetadataNames.map(
         getMetadataFlatEntityMapsKey,
       );
 
       this.logger.log(
-        `Invalidating caches: ${cacheKeysToInvalidate.join(' ')}`,
+        `Invalidating caches: ${relatedCacheKeysToInvalidate.join(' ')}`,
       );
-      await this.workspaceCacheService.invalidateAndRecompute(
-        workspaceId,
-        cacheKeysToInvalidate,
-      );
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatViewFieldMaps',
+        ...relatedCacheKeysToInvalidate,
+      ]);
 
       this.logger.log(
         `Applied ${totalUpdates} view field metadata update(s) for workspace ${workspaceId}`,
