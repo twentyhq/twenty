@@ -159,11 +159,11 @@ export default defineConfig(({ command, mode }) => {
     ],
 
     optimizeDeps: {
-      exclude: [
-        '../../node_modules/.vite',
-        '../../node_modules/.cache',
-        '../../node_modules/twenty-ui',
-      ],
+      esbuildOptions: {
+        // WSL-specific fixes to prevent esbuild crashes
+        keepNames: true,
+        logLevel: 'error',
+      },
     },
 
     build: {

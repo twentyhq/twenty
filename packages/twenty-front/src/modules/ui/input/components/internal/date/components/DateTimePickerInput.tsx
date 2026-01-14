@@ -78,7 +78,7 @@ export const DateTimePickerInput = ({
     return date;
   };
 
-  const pattern = getDateTimeMask(dateFormat, timeFormat);
+  const pattern = getDateTimeMask({ dateFormat, timeFormat });
 
   const blocks = { ...DATE_BLOCKS, ...getTimeBlocks(timeFormat) };
 

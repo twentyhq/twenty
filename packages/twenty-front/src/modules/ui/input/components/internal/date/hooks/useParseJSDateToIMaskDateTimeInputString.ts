@@ -10,10 +10,7 @@ export const useParseJSDateToIMaskDateTimeInputString = () => {
       return '';
     }
 
-    const parsingFormat = getDateTimeFormatStringFoDatePickerInputMask(
-      dateFormat,
-      timeFormat,
-    );
+    const parsingFormat = getDateTimeFormatStringFoDatePickerInputMask({ dateFormat, timeFormat });
 
     return format(date, parsingFormat);
   };
