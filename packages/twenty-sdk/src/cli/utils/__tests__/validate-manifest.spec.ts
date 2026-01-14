@@ -9,6 +9,7 @@ describe('validateManifest - objectExtensions', () => {
   const validApplication: Application = {
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
     displayName: 'Test App',
+    functionRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
   };
 
   const validObjectExtension: ObjectExtensionManifest = {
