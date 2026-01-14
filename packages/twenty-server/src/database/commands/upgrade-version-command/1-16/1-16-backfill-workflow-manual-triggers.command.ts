@@ -9,7 +9,10 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type ManualTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/manual-trigger.workspace-entity';
+import {
+  ManualTriggerAvailabilityType,
+  type ManualTriggerWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/manual-trigger.workspace-entity';
 import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
@@ -152,6 +155,19 @@ export class BackfillWorkflowManualTriggersCommand extends ActiveOrSuspendedWork
             }
 
             const settings = workflowVersion.trigger.settings;
+            const availability = settings.availability;
+            const availabilityType = availability?.type as
+              | ManualTriggerAvailabilityType
+              | undefined;
+
+            const availabilityObjectNameSingular =
+              availability &&
+              (availability.type ===
+                ManualTriggerAvailabilityType.SINGLE_RECORD ||
+                availability.type ===
+                  ManualTriggerAvailabilityType.BULK_RECORDS)
+                ? availability.objectNameSingular
+                : null;
 
             return {
               workflowId: workflowVersion.workflowId,
@@ -160,7 +176,8 @@ export class BackfillWorkflowManualTriggersCommand extends ActiveOrSuspendedWork
               label: workflowName,
               icon: settings.icon,
               isPinned: settings.isPinned,
-              availability: settings.availability,
+              availabilityType,
+              availabilityObjectNameSingular,
             };
           },
         );

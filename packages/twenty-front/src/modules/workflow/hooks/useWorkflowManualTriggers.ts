@@ -1,34 +1,33 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { type ManualTriggerEntity } from '@/workflow/types/Workflow';
+import {
+  ManualTriggerAvailabilityTypeEnum,
+  type ManualTriggerEntity,
+} from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 
 const isGlobalTrigger = (manualTrigger: ManualTriggerEntity): boolean => {
-  const availability = manualTrigger.availability;
-
-  if (!isDefined(availability)) {
-    return false;
-  }
-
-  return availability.type === 'GLOBAL';
+  return (
+    manualTrigger.availabilityType === ManualTriggerAvailabilityTypeEnum.GLOBAL
+  );
 };
 
 const isObjectSpecificTrigger = (
   manualTrigger: ManualTriggerEntity,
   objectNameSingular: string,
 ): boolean => {
-  const availability = manualTrigger.availability;
+  const { availabilityType, availabilityObjectNameSingular } = manualTrigger;
 
-  if (!isDefined(availability)) {
+  if (!isDefined(availabilityType)) {
     return false;
   }
 
   if (
-    availability.type === 'SINGLE_RECORD' ||
-    availability.type === 'BULK_RECORDS'
+    availabilityType === ManualTriggerAvailabilityTypeEnum.SINGLE_RECORD ||
+    availabilityType === ManualTriggerAvailabilityTypeEnum.BULK_RECORDS
   ) {
-    return availability.objectNameSingular === objectNameSingular;
+    return availabilityObjectNameSingular === objectNameSingular;
   }
 
   return false;
@@ -48,7 +47,8 @@ export const useWorkflowManualTriggers = ({
       label: true,
       icon: true,
       isPinned: true,
-      availability: true,
+      availabilityType: true,
+      availabilityObjectNameSingular: true,
       workflowVersionId: true,
       workflowId: true,
       workflowName: true,

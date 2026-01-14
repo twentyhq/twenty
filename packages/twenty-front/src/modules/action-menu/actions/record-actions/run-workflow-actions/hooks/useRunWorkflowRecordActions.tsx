@@ -8,7 +8,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useWorkflowManualTriggers } from '@/workflow/hooks/useWorkflowManualTriggers';
-import { type ManualTriggerEntity } from '@/workflow/types/Workflow';
+import {
+  ManualTriggerAvailabilityTypeEnum,
+  type ManualTriggerEntity,
+} from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
@@ -17,8 +20,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 const isBulkTrigger = (manualTrigger: ManualTriggerEntity): boolean => {
-  const availability = manualTrigger.availability;
-  return isDefined(availability) && availability.type === 'BULK_RECORDS';
+  return (
+    manualTrigger.availabilityType ===
+    ManualTriggerAvailabilityTypeEnum.BULK_RECORDS
+  );
 };
 
 export const useRunWorkflowRecordActions = ({

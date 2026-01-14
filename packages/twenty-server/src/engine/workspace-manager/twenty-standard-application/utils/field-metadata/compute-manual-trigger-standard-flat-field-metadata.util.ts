@@ -217,15 +217,48 @@ export const buildManualTriggerStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  availability: createStandardFieldFlatMetadata({
+  availabilityType: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      fieldName: 'availability',
-      type: FieldMetadataType.RAW_JSON,
-      label: 'Availability',
-      description: 'The availability settings for the manual trigger',
+      fieldName: 'availabilityType',
+      type: FieldMetadataType.SELECT,
+      label: 'Availability Type',
+      description: 'The type of availability for this manual trigger',
       icon: 'IconWorld',
+      isNullable: true,
+      isUIReadOnly: true,
+      options: [
+        { value: 'GLOBAL', label: 'Global', position: 0, color: 'green' },
+        {
+          value: 'SINGLE_RECORD',
+          label: 'Single Record',
+          position: 1,
+          color: 'blue',
+        },
+        {
+          value: 'BULK_RECORDS',
+          label: 'Bulk Records',
+          position: 2,
+          color: 'purple',
+        },
+      ],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  availabilityObjectNameSingular: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'availabilityObjectNameSingular',
+      type: FieldMetadataType.TEXT,
+      label: 'Availability Object',
+      description:
+        'The object name for SINGLE_RECORD or BULK_RECORDS availability',
+      icon: 'IconBox',
       isNullable: true,
       isUIReadOnly: true,
     },

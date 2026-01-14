@@ -156,12 +156,19 @@ export type WorkflowWithCurrentVersion = Workflow & {
   currentVersion: WorkflowVersion;
 };
 
+export enum ManualTriggerAvailabilityTypeEnum {
+  GLOBAL = 'GLOBAL',
+  SINGLE_RECORD = 'SINGLE_RECORD',
+  BULK_RECORDS = 'BULK_RECORDS',
+}
+
 export type ManualTriggerEntity = {
   id: string;
   label: string;
   icon: string | null;
   isPinned: boolean | null;
-  availability: WorkflowManualTriggerAvailabilityV2 | null;
+  availabilityType: ManualTriggerAvailabilityTypeEnum | null;
+  availabilityObjectNameSingular: string | null;
   workflowVersionId: string;
   workflowId: string;
   workflowName: string;

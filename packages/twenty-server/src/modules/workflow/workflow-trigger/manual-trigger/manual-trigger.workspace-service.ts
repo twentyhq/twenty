@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type ManualTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/manual-trigger.workspace-entity';
+import {
+  ManualTriggerAvailabilityType,
+  type ManualTriggerWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/manual-trigger.workspace-entity';
 import { type ManualTriggerSettings } from 'src/modules/workflow/workflow-trigger/manual-trigger/constants/manual-trigger-settings';
 
 @Injectable()
@@ -35,6 +38,18 @@ export class ManualTriggerWorkspaceService {
             'manualTrigger',
           );
 
+        const availability = settings.availability;
+        const availabilityType = availability?.type as
+          | ManualTriggerAvailabilityType
+          | undefined;
+
+        const availabilityObjectNameSingular =
+          availability &&
+          (availability.type === ManualTriggerAvailabilityType.SINGLE_RECORD ||
+            availability.type === ManualTriggerAvailabilityType.BULK_RECORDS)
+            ? availability.objectNameSingular
+            : null;
+
         await manualTriggerRepository.insert({
           workflowId,
           workflowVersionId,
@@ -42,7 +57,8 @@ export class ManualTriggerWorkspaceService {
           label: workflowName,
           icon: settings.icon,
           isPinned: settings.isPinned,
-          availability: settings.availability,
+          availabilityType,
+          availabilityObjectNameSingular,
         });
       },
     );

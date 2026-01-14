@@ -4,19 +4,11 @@ import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migr
 import { type WorkflowVersionWorkspaceEntity } from './workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from './workflow.workspace-entity';
 
-export type ManualTriggerAvailability =
-  | {
-      type: 'GLOBAL';
-      locations?: string[];
-    }
-  | {
-      type: 'SINGLE_RECORD';
-      objectNameSingular: string;
-    }
-  | {
-      type: 'BULK_RECORDS';
-      objectNameSingular: string;
-    };
+export enum ManualTriggerAvailabilityType {
+  GLOBAL = 'GLOBAL',
+  SINGLE_RECORD = 'SINGLE_RECORD',
+  BULK_RECORDS = 'BULK_RECORDS',
+}
 
 export class ManualTriggerWorkspaceEntity extends BaseWorkspaceEntity {
   workflowVersion: EntityRelation<WorkflowVersionWorkspaceEntity>;
@@ -27,5 +19,6 @@ export class ManualTriggerWorkspaceEntity extends BaseWorkspaceEntity {
   label: string;
   icon: string | null;
   isPinned: boolean | null;
-  availability: ManualTriggerAvailability | null;
+  availabilityType: ManualTriggerAvailabilityType | null;
+  availabilityObjectNameSingular: string | null;
 }

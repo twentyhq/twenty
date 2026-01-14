@@ -1790,8 +1790,12 @@ export const STANDARD_OBJECTS = {
       isPinned: {
         universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.isPinned,
       },
-      availability: {
-        universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.availability,
+      availabilityType: {
+        universalIdentifier: MANUAL_TRIGGER_STANDARD_FIELD_IDS.availabilityType,
+      },
+      availabilityObjectNameSingular: {
+        universalIdentifier:
+          MANUAL_TRIGGER_STANDARD_FIELD_IDS.availabilityObjectNameSingular,
       },
     },
     indexes: {
