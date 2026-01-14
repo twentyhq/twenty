@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { plural } from '@lingui/core/macro';
-import { useMemo, useRef, useState, type MouseEvent } from 'react';
+import { useMemo, useRef, useState, useEffect, type MouseEvent } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -87,6 +87,12 @@ export const SettingsMorphRelationMultiSelect = ({
   hasRightElement,
 }: SettingsMorphRelationMultiSelectProps) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
+  const selectedObjectMetadataIdsRef = useRef<string[]>(selectedObjectMetadataIds);
+  
+  // Keep ref in sync with prop to avoid stale closures
+  useEffect(() => {
+    selectedObjectMetadataIdsRef.current = selectedObjectMetadataIds;
+  }, [selectedObjectMetadataIds]);
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
@@ -231,7 +237,7 @@ export const SettingsMorphRelationMultiSelect = ({
                         onEnter={() => {
                           const newSelectedObjectMetadataIds =
                             addOrRemoveFromArray(
-                              selectedObjectMetadataIds,
+                              selectedObjectMetadataIdsRef.current,
                               option.objectMetadataId,
                             );
                           onChange?.(newSelectedObjectMetadataIds);
@@ -252,7 +258,7 @@ export const SettingsMorphRelationMultiSelect = ({
                           onSelectChange={() => {
                             let newSelectedObjectMetadataIds =
                               addOrRemoveFromArray(
-                                selectedObjectMetadataIds,
+                                selectedObjectMetadataIdsRef.current,
                                 option.objectMetadataId,
                               );
 
