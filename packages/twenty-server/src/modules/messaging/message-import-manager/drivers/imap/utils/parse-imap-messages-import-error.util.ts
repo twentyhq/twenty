@@ -10,18 +10,18 @@ export const parseImapMessagesImportError = (
   messageExternalId: string,
   options?: { cause?: Error },
 ): MessageImportDriverException => {
-  if (isImapNetworkError(error)) {
-    return new MessageImportDriverException(
-      `IMAP network error: ${error.message}`,
-      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-      { cause: options?.cause },
-    );
-  }
-
   if (!error) {
     return new MessageImportDriverException(
       `Unknown IMAP message import error for message ${messageExternalId}: No error provided`,
       MessageImportDriverExceptionCode.UNKNOWN,
+      { cause: options?.cause },
+    );
+  }
+
+  if (isImapNetworkError(error)) {
+    return new MessageImportDriverException(
+      `IMAP network error: ${error.message}`,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       { cause: options?.cause },
     );
   }
