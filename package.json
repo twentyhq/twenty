@@ -222,5 +222,10 @@
       "packages/create-twenty-app",
       "tools/eslint-rules"
     ]
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "endOfLine": "lf"
   }
 }
