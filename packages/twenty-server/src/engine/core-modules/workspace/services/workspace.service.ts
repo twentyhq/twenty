@@ -322,10 +322,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       return workspace;
     }
 
-    await this.userWorkspaceService.deleteUserWorkspace({
-      userWorkspaceId: workspace.id,
-    });
-
     // Note: not relying on workspace id FK cascade deletion here to avoid query read timeout later on workspace deletion
     await this.objectMetadataService.deleteWorkspaceAllObjectMetadata({
       workspaceId: workspace.id,
