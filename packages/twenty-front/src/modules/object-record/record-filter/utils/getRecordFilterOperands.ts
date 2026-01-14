@@ -195,15 +195,10 @@ export const getRecordFilterOperands = ({
     case 'SELECT':
       return FILTER_OPERANDS_MAP.SELECT;
     case 'ACTOR': {
-      if (isFilterOnActorSourceSubField(subFieldName)) {
-        return [
-          RecordFilterOperand.IS,
-          RecordFilterOperand.IS_NOT,
-          ...emptyOperands,
-        ];
-      }
-
-      if (isFilterOnActorWorkspaceMemberSubField(subFieldName)) {
+      if (
+        isFilterOnActorSourceSubField(subFieldName) ||
+        isFilterOnActorWorkspaceMemberSubField(subFieldName)
+      ) {
         return [
           RecordFilterOperand.IS,
           RecordFilterOperand.IS_NOT,

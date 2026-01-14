@@ -326,7 +326,7 @@ export const isRecordMatchingFilter = ({
       case FieldMetadataType.ACTOR: {
         const actorFilter = filterValue as ActorFilter;
 
-        if (actorFilter.workspaceMemberId !== undefined) {
+        if (isDefined(actorFilter.workspaceMemberId)) {
           return isMatchingUUIDFilter({
             uuidFilter: actorFilter.workspaceMemberId,
             value: record[filterKey].workspaceMemberId,
