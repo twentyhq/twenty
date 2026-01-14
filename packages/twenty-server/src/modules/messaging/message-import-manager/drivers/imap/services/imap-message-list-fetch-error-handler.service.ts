@@ -6,7 +6,7 @@ import { parseImapMessageListFetchError } from 'src/modules/messaging/message-im
 export class ImapMessageListFetchErrorHandler {
   private readonly logger = new Logger(ImapMessageListFetchErrorHandler.name);
 
-  public handleError(error: Error): void {
+  public handleError(error: Error): never {
     this.logger.error(
       `IMAP: Error fetching message list: ${JSON.stringify(error)}`,
     );

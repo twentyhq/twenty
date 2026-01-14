@@ -48,12 +48,6 @@ export class ImapGetMessageListService {
       }
 
       return results;
-    } catch (error) {
-      this.logger.error(
-        `Connected account ${connectedAccount.id}: Error fetching message list: ${error.message}`,
-      );
-      this.errorHandler.handleError(error);
-      throw error;
     } finally {
       await this.imapClientProvider.closeClient(client);
     }
@@ -88,7 +82,12 @@ export class ImapGetMessageListService {
 
     const previousCursor = parseSyncCursor(folder.syncCursor);
 
-    const lock = await client.getMailboxLock(folderPath);
+    const lock = await client.getMailboxLock(folderPath).catch((error) => {
+      this.logger.error(
+        `Error acquiring mailbox lock for folder ${folder.name}: ${error.message}`,
+      );
+      this.errorHandler.handleError(error);
+    });
 
     try {
       const mailbox = client.mailbox;
@@ -126,12 +125,6 @@ export class ImapGetMessageListService {
         previousSyncCursor: folder.syncCursor,
         folderId: folder.id,
       };
-    } catch (error) {
-      this.logger.error(
-        `Error syncing folder ${folder.name}: ${error.message}`,
-      );
-      this.errorHandler.handleError(error);
-      throw error;
     } finally {
       lock.release();
     }
