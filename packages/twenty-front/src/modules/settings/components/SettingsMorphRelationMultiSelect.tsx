@@ -144,21 +144,18 @@ export const SettingsMorphRelationMultiSelect = ({
     }
   };
 
-  const addOrRemoveFromArray = useCallback(
-    (array: string[], item: string) => {
-      let newArray = new Set(array);
-      if (newArray.has(item)) {
-        if (newArray.size <= 1) {
-          return array;
-        }
-        newArray.delete(item);
-      } else {
-        newArray.add(item);
+  const addOrRemoveFromArray = useCallback((array: string[], item: string) => {
+    let newArray = new Set(array);
+    if (newArray.has(item)) {
+      if (newArray.size <= 1) {
+        return array;
       }
-      return Array.from(newArray);
-    },
-    [],
-  );
+      newArray.delete(item);
+    } else {
+      newArray.add(item);
+    }
+    return Array.from(newArray);
+  }, []);
 
   const handleToggleSelection = useCallback(
     (objectMetadataId: string) => {
