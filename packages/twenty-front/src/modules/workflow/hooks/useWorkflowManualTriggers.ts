@@ -28,10 +28,7 @@ const isObjectSpecificTrigger = (
     availability.type === 'SINGLE_RECORD' ||
     availability.type === 'BULK_RECORDS'
   ) {
-    return (
-      'objectNameSingular' in availability &&
-      availability.objectNameSingular === objectNameSingular
-    );
+    return availability.objectNameSingular === objectNameSingular;
   }
 
   return false;
