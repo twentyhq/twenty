@@ -54,17 +54,12 @@ export class HardDeleteSoftDeletedSuspendedWorkspacesCommand extends MigrationCo
     return true;
   }
 
-  async fetchSuspendedSoftDeletedWorkspaces({
-    workspaceIds,
-  }: {
-    workspaceIds?: string[];
-  }): Promise<WorkspaceEntity[]> {
+  async fetchSuspendedSoftDeletedWorkspaces(): Promise<WorkspaceEntity[]> {
     return await this.workspaceRepository.find({
-      select: ['id'],
       where: {
         activationStatus: In([WorkspaceActivationStatus.SUSPENDED]),
         deletedAt: Not(IsNull()),
-        ...(isDefined(workspaceIds) ? { id: In(workspaceIds) } : {}),
+        ...(this.workspaceIds.length > 0 ? { id: In(this.workspaceIds) } : {}),
       },
       withDeleted: true,
     });
@@ -77,9 +72,7 @@ export class HardDeleteSoftDeletedSuspendedWorkspacesCommand extends MigrationCo
     const { dryRun, force } = options;
 
     const softDeletedSuspendedWorkspaces =
-      await this.fetchSuspendedSoftDeletedWorkspaces({
-        workspaceIds: this.workspaceIds,
-      });
+      await this.fetchSuspendedSoftDeletedWorkspaces();
     let deletedWorkspaceCounter = 0;
 
     this.logger.log(
@@ -100,7 +93,7 @@ export class HardDeleteSoftDeletedSuspendedWorkspacesCommand extends MigrationCo
     }
 
     this.logger.log(
-      `Destroyed ${deletedWorkspaceCounter}/${softDeletedSuspendedWorkspaces}`,
+      `Destroyed ${deletedWorkspaceCounter}/${softDeletedSuspendedWorkspaces.length}`,
     );
   }
 }
