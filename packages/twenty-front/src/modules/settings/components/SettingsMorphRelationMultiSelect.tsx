@@ -1,11 +1,6 @@
 import styled from '@emotion/styled';
 import { plural } from '@lingui/core/macro';
-import {
-  useMemo,
-  useState,
-  useCallback,
-  type MouseEvent,
-} from 'react';
+import { useMemo, useState, useCallback, type MouseEvent } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -172,7 +167,7 @@ export const SettingsMorphRelationMultiSelect = ({
         // (likely reverted by form validation), replace the entire selection
         // with just the new item to prevent the old item from being included
         if (
-          lastDeselectedId &&
+          isDefined(lastDeselectedId) &&
           selectedObjectMetadataIds.includes(lastDeselectedId)
         ) {
           // The form reverted to include the deselected item, so replace it entirely
@@ -193,7 +188,7 @@ export const SettingsMorphRelationMultiSelect = ({
 
   const handleContainerRef = useCallback(
     (element: HTMLDivElement | null) => {
-      if (element && dropdownWidthAuto) {
+      if (isDefined(element) && dropdownWidthAuto) {
         setContainerWidth(element.clientWidth);
       }
     },
@@ -209,7 +204,7 @@ export const SettingsMorphRelationMultiSelect = ({
       if (
         !currentTarget.contains(relatedTarget) &&
         selectedObjectMetadataIds.length === 0 &&
-        lastDeselectedId
+        isDefined(lastDeselectedId)
       ) {
         // Dropdown closed with 0 selections, re-add the last deselected item
         onChange?.([lastDeselectedId]);
