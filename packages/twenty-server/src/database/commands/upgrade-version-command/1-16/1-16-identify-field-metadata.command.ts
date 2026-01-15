@@ -216,17 +216,17 @@ export class IdentifyFieldMetadataCommand extends WorkspacesMigrationCommandRunn
 
       const relatedMetadataNames =
         getMetadataRelatedMetadataNames('fieldMetadata');
-      const cacheKeysToInvalidate = relatedMetadataNames.map(
+      const relatedCacheKeysToInvalidate = relatedMetadataNames.map(
         getMetadataFlatEntityMapsKey,
       );
 
       this.logger.log(
-        `Invalidating caches: ${cacheKeysToInvalidate.join(' ')}`,
+        `Invalidating caches: flatFieldMetadataMaps ${relatedCacheKeysToInvalidate.join(' ')}`,
       );
-      await this.workspaceCacheService.invalidateAndRecompute(
-        workspaceId,
-        cacheKeysToInvalidate,
-      );
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+        ...relatedCacheKeysToInvalidate,
+      ]);
 
       this.logger.log(
         `Applied ${totalUpdates} field metadata update(s) for workspace ${workspaceId}`,
