@@ -215,6 +215,30 @@
         }
       }
     },
+    "storybook:test:no-coverage": {
+      "configurations": {
+        "docs": {
+          "env": {
+            "STORYBOOK_SCOPE": "ui-docs"
+          }
+        },
+        "modules": {
+          "env": {
+            "STORYBOOK_SCOPE": "modules"
+          }
+        },
+        "pages": {
+          "env": {
+            "STORYBOOK_SCOPE": "pages"
+          }
+        },
+        "performance": {
+          "env": {
+            "STORYBOOK_SCOPE": "performance"
+          }
+        }
+      }
+    },
     "graphql:generate": {
       "executor": "nx:run-commands",
       "defaultConfiguration": "data",
