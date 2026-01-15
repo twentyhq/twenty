@@ -5,9 +5,14 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
 } from 'typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity('file')
@@ -17,18 +22,28 @@ export class FileEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false })
-  name: string;
+  @Column({ nullable: false, type: 'uuid' })
+  applicationId: string;
+
+  @ManyToOne('ApplicationEntity', {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
+  @JoinColumn({ name: 'applicationId' })
+  application: Relation<ApplicationEntity>;
 
   @Column({ nullable: false })
-  fullPath: string;
+  path: string;
 
   @Column({ nullable: false, type: 'bigint' })
   size: number;
 
-  @Column({ nullable: false })
-  type: string;
-
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
+
+  @Column({ nullable: false, default: false })
+  isStaticAsset: boolean;
 }

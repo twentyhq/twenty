@@ -45,10 +45,8 @@ export class FileMetadataService {
     }
 
     const createdFile = this.fileRepository.create({
-      name: filename,
-      fullPath: files[0].path,
+      path: files[0].path,
       size: file.length,
-      type: mimeType,
       workspaceId,
     });
 
@@ -69,12 +67,10 @@ export class FileMetadataService {
       return null;
     }
 
-    const { folderPath, filename } = extractFolderPathAndFilename(
-      file.fullPath,
-    );
+    const { folderPath, filename } = extractFolderPathAndFilename(file.path);
 
     try {
-      if (file.fullPath) {
+      if (file.path) {
         await this.fileService.deleteFile({
           folderPath,
           filename,
