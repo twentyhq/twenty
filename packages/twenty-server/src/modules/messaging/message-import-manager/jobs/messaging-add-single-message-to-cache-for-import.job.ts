@@ -23,8 +23,12 @@ export class MessagingAddSingleMessageToCacheForImportJob {
   async handle(
     data: MessagingAddSingleMessageToCacheForImportJobData,
   ): Promise<void> {
-    const { messageExternalId, messageChannelId, workspaceId, messageFolderId } =
-      data;
+    const {
+      messageExternalId,
+      messageChannelId,
+      workspaceId,
+      messageFolderId,
+    } = data;
 
     await this.cacheStorage.hSet(
       `messages-to-import:${workspaceId}:${messageChannelId}`,

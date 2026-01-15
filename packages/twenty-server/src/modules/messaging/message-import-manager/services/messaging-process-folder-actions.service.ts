@@ -12,6 +12,7 @@ import {
   MessageFolderWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingDeleteFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-folder-messages.service';
+import { MessagingImportFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-import-folder-messages.service';
 
 @Injectable()
 export class MessagingProcessFolderActionsService {
@@ -22,6 +23,7 @@ export class MessagingProcessFolderActionsService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messagingDeleteFolderMessagesService: MessagingDeleteFolderMessagesService,
+    private readonly messagingImportFolderMessagesService: MessagingImportFolderMessagesService,
   ) {}
 
   async processFolderActions(
@@ -53,21 +55,37 @@ export class MessagingProcessFolderActionsService {
           `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Processing folder action: ${folder.pendingSyncAction}`,
         );
 
-        if (
-          folder.pendingSyncAction ===
-          MessageFolderPendingSyncAction.FOLDER_DELETION
-        ) {
-          await this.messagingDeleteFolderMessagesService.deleteFolderMessages(
-            workspaceId,
-            messageChannel,
-            folder,
-          );
+        switch (folder.pendingSyncAction) {
+          case MessageFolderPendingSyncAction.FOLDER_DELETION:
+            await this.messagingDeleteFolderMessagesService.deleteFolderMessages(
+              workspaceId,
+              messageChannel,
+              folder,
+            );
 
-          folderIdsToDelete.push(folder.id);
+            folderIdsToDelete.push(folder.id);
 
-          this.logger.log(
-            `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Completed FOLDER_DELETION action`,
-          );
+            this.logger.log(
+              `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Completed FOLDER_DELETION action`,
+            );
+            break;
+
+          case MessageFolderPendingSyncAction.FOLDER_IMPORT:
+            await this.messagingImportFolderMessagesService.importFolderMessages(
+              workspaceId,
+              messageChannel,
+              folder,
+            );
+
+            this.logger.log(
+              `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Completed FOLDER_IMPORT action`,
+            );
+            break;
+
+          default:
+            this.logger.warn(
+              `WorkspaceId: ${workspaceId}, FolderId: ${folder.id} - Unknown pending action: ${folder.pendingSyncAction}`,
+            );
         }
 
         processedFolderIds.push(folder.id);

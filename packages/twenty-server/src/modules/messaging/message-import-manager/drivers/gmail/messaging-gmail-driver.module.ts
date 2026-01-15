@@ -12,6 +12,7 @@ import { EmailAliasManagerModule } from 'src/modules/connected-account/email-ali
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-fetch-by-batch.service';
+import { GmailGetFolderMessagesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-folder-messages.service';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
 import { GmailGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-messages.service';
@@ -39,12 +40,14 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     GmailFetchByBatchService,
     GmailGetMessagesService,
     GmailGetMessageListService,
+    GmailGetFolderMessagesService,
     GmailMessageListFetchErrorHandler,
     GmailMessagesImportErrorHandler,
   ],
   exports: [
     GmailGetMessagesService,
     GmailGetMessageListService,
+    GmailGetFolderMessagesService,
     GmailMessageListFetchErrorHandler,
     GmailMessagesImportErrorHandler,
   ],
