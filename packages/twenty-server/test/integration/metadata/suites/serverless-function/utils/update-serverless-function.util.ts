@@ -32,8 +32,7 @@ export const updateServerlessFunction = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage:
-        'Serverless Function update should have failed but did not',
+      errorMessage: 'Serverless Function update should have failed but did not',
     });
   }
 
@@ -46,4 +45,3 @@ export const updateServerlessFunction = async ({
 
   return { data: response.body.data, errors: response.body.errors };
 };
-

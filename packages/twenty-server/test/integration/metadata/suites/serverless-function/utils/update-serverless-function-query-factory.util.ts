@@ -1,5 +1,4 @@
 import gql from 'graphql-tag';
-
 import { type Sources } from 'twenty-shared/types';
 
 export type UpdateServerlessFunctionFactoryInput = {
@@ -36,4 +35,3 @@ export const updateServerlessFunctionQueryFactory = ({
     input,
   },
 });
-
