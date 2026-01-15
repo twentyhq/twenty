@@ -6,7 +6,7 @@ import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils
 import { renderHook } from '@testing-library/react';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
-jest.mock('@/object-record/utils/dispatchObjectRecordOperationEvent');
+jest.mock('@/object-record/utils/dispatchObjectRecordOperationBrowserEvent');
 jest.mock('@/object-record/hooks/useUpdateManyRecords', () => ({
   useUpdateManyRecords: jest.fn(),
 }));
@@ -18,7 +18,7 @@ jest.mock('@/object-record/hooks/useRefetchAggregateQueries', () => ({
 jest.mock('@/object-record/hooks/useIncrementalFetchAndMutateRecords');
 
 const mockUseObjectMetadataItem = jest.mocked(useObjectMetadataItem);
-const mockDispatchObjectRecordOperationEvent = jest.mocked(
+const mockDispatchObjectRecordOperationBrowserEvent = jest.mocked(
   dispatchObjectRecordOperationBrowserEvent,
 );
 const mockUseUpdateManyRecords = jest.mocked(useUpdateManyRecords);
@@ -40,7 +40,7 @@ describe('useIncrementalUpdateManyRecords', () => {
       } as any,
     });
 
-    mockDispatchObjectRecordOperationEvent.mockImplementation(jest.fn());
+    mockDispatchObjectRecordOperationBrowserEvent.mockImplementation(jest.fn());
 
     mockUseUpdateManyRecords.mockReturnValue({
       updateManyRecords: mockUpdateManyRecords,
@@ -84,7 +84,7 @@ describe('useIncrementalUpdateManyRecords', () => {
       abortSignal: expect.any(AbortSignal),
     });
     expect(mockUpdateProgress).toHaveBeenCalledWith(2, 2);
-    expect(mockDispatchObjectRecordOperationEvent).toHaveBeenCalledWith({
+    expect(mockDispatchObjectRecordOperationBrowserEvent).toHaveBeenCalledWith({
       objectMetadataItem: expect.anything(),
       operation: {
         type: 'update-many',
@@ -145,7 +145,7 @@ describe('useIncrementalUpdateManyRecords', () => {
       result.current.incrementalUpdateManyRecords({ name: 'New Name' }),
     ).rejects.toThrow('Process failed');
 
-    expect(mockDispatchObjectRecordOperationEvent).toHaveBeenCalledWith({
+    expect(mockDispatchObjectRecordOperationBrowserEvent).toHaveBeenCalledWith({
       objectMetadataItem: expect.anything(),
       operation: {
         type: 'update-many',
