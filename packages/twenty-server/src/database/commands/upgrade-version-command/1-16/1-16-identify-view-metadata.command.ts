@@ -163,6 +163,10 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       });
 
       for (const flatView of relatedFlatViews) {
+        if (isDefined(flatView.applicationId)) {
+          continue;
+        }
+
         // INDEX views -> forward to standard (if object has views config)
         if (
           flatView.key === ViewKey.INDEX &&

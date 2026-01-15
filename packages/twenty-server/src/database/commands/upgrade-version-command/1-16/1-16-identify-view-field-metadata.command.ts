@@ -249,7 +249,10 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
             (viewField) => viewField.fieldMetadataId === flatFieldMetadata.id,
           );
 
-          if (!isDefined(matchingFlatViewField)) {
+          if (
+            !isDefined(matchingFlatViewField) ||
+            isDefined(matchingFlatViewField.applicationId)
+          ) {
             continue;
           }
 
