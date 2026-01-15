@@ -32,6 +32,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   ORMEntityMetadatas: 'orm:entity-metadatas',
   flatAgentMaps: 'flat-maps:agent',
   flatSkillMaps: 'flat-maps:skill',
+  flatCommandMenuItemMaps: 'flat-maps:command-menu-item',
   flatRoleTargetByAgentIdMaps: 'flat-maps:flatRoleTargetByAgentId',
   flatPageLayoutMaps: 'flat-maps:page-layout',
   flatPageLayoutWidgetMaps: 'flat-maps:page-layout-widget',
