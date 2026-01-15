@@ -109,10 +109,12 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
     this.logger.log(
       `Invalidating caches: ${relatedCacheKeysToInvalidate.join(' ')}`,
     );
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatViewMaps',
-      ...relatedCacheKeysToInvalidate,
-    ]);
+    if (!options.dryRun) {
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatViewMaps',
+        ...relatedCacheKeysToInvalidate,
+      ]);
+    }
   }
 
   private async identifyStandardViewsOrThrow({

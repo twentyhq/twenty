@@ -127,10 +127,12 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
     this.logger.log(
       `Invalidating caches: ${relatedCacheKeysToInvalidate.join(' ')}`,
     );
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatViewFieldMaps',
-      ...relatedCacheKeysToInvalidate,
-    ]);
+    if (!options.dryRun) {
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatViewFieldMaps',
+        ...relatedCacheKeysToInvalidate,
+      ]);
+    }
   }
 
   private async identifyStandardViewFieldsOrThrow({
