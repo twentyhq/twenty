@@ -210,6 +210,7 @@ export const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS = {
   messageExternalId: '20202020-37d6-438f-b6fd-6503596c8f34',
   messageThread: '20202020-fac8-42a8-94dd-44dbc920ae16',
   messageThreadExternalId: '20202020-35fb-421e-afa0-0b8e8f7f9018',
+  messageFolder: '20202020-a1b2-c3d4-e5f6-789012345678',
 } as const;
 
 export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
@@ -243,6 +244,7 @@ export const MESSAGE_FOLDER_STANDARD_FIELD_IDS = {
   isSynced: '20202020-764f-4e09-8f95-cd46b6bfe3c4',
   externalId: '20202020-f3a8-4d2b-9c7e-1b5f9a8e4c6d',
   pendingSyncAction: '20202020-4f97-4c79-9517-16387fe237f7',
+  messageChannelMessageAssociations: '20202020-b2c3-d4e5-f6a7-890123456789',
 } as const;
 
 export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {
