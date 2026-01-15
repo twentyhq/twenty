@@ -2,7 +2,6 @@ import { join } from 'path';
 
 import { build } from 'esbuild';
 
-// Uses IIFE format (not ESM) because isolated-vm doesn't support ES modules
 export const buildServerlessFunctionForIsolate = async ({
   sourceTemporaryDir,
   handlerPath,
@@ -16,13 +15,12 @@ export const buildServerlessFunctionForIsolate = async ({
   await build({
     entryPoints: [entryFilePath],
     outfile: builtBundleFilePath,
-    platform: 'browser', // Use browser platform to avoid Node.js built-in imports
+    platform: 'node',
     format: 'iife',
     globalName: '__serverlessExports',
     target: 'es2020',
     bundle: true,
     sourcemap: false,
-    // Don't mark packages as external - bundle them for isolated-vm
     minify: false,
   });
 

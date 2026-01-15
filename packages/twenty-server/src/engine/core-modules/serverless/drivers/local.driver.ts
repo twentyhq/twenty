@@ -18,7 +18,6 @@ import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/se
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
-// Hardcoded security limits - not configurable by design
 const MEMORY_LIMIT_MB = 128;
 const EXECUTION_TIMEOUT_MS = 30_000;
 
@@ -94,7 +93,6 @@ export class LocalDriver implements ServerlessDriver {
         to: { folderPath: sourceTemporaryDir },
       });
 
-      // Create symlink to node_modules BEFORE building so esbuild can resolve packages
       try {
         await fs.symlink(
           join(
@@ -121,10 +119,8 @@ export class LocalDriver implements ServerlessDriver {
         return formatBuildError(error, startTime);
       }
 
-      // Read the compiled code
       const compiledCode = await fs.readFile(builtBundleFilePath, 'utf-8');
 
-      // Execute in isolated-vm
       const result = await this.executeInIsolate({
         code: compiledCode,
         handlerName: serverlessFunction.handlerName,
@@ -178,21 +174,14 @@ export class LocalDriver implements ServerlessDriver {
     stackTrace?: string[];
   }> {
     const logs: string[] = [];
-
-    // Create a new isolate with memory limit
     const isolate = new ivm.Isolate({ memoryLimit: MEMORY_LIMIT_MB });
 
     try {
-      // Create a new context within the isolate
       const context = await isolate.createContext();
-
-      // Get a reference to the global object within the context
       const jail = context.global;
 
-      // Set up a minimal, safe global environment
       await jail.set('global', jail.derefInto());
 
-      // Create a safe console.log that captures output
       const logCallback = (level: string) => {
         return (...args: unknown[]) => {
           const formattedArgs = args.map((arg) => {
@@ -213,13 +202,11 @@ export class LocalDriver implements ServerlessDriver {
         };
       };
 
-      // Set up console object with safe callbacks
       await jail.set('_logInfo', new ivm.Callback(logCallback('info')), {});
       await jail.set('_logWarn', new ivm.Callback(logCallback('warn')), {});
       await jail.set('_logError', new ivm.Callback(logCallback('error')), {});
       await jail.set('_logDebug', new ivm.Callback(logCallback('debug')), {});
 
-      // Set up console shim
       await context.eval(`
         const console = {
           log: (...args) => _logInfo(...args),
@@ -231,7 +218,6 @@ export class LocalDriver implements ServerlessDriver {
         Object.freeze(console);
       `);
 
-      // Inject environment variables as a frozen object
       await jail.set('_env', new ivm.ExternalCopy(env).copyInto());
       await context.eval(`
         const process = { env: Object.freeze(_env) };
@@ -239,26 +225,19 @@ export class LocalDriver implements ServerlessDriver {
         delete _env;
       `);
 
-      // Inject payload and handler name as variables (not interpolated into code)
       await jail.set('_payload', new ivm.ExternalCopy(payload).copyInto());
       await jail.set(
         '_handlerName',
         new ivm.ExternalCopy(handlerName).copyInto(),
       );
 
-      // Compile and run the user code
-      // The code is built as IIFE with globalName '__serverlessExports'
-      // Handler name is passed as a variable to avoid code injection
       const script = await isolate.compileScript(`
         ${code}
 
-        // The bundled IIFE code sets up __serverlessExports
-        // Use bracket notation with the sanitized handler name variable
         if (typeof __serverlessExports === 'undefined' || typeof __serverlessExports[_handlerName] !== 'function') {
           throw new Error('Handler function "' + _handlerName + '" not found in module exports');
         }
 
-        // Execute the handler and store the result
         (async () => {
           try {
             const result = await __serverlessExports[_handlerName](_payload);
@@ -274,7 +253,6 @@ export class LocalDriver implements ServerlessDriver {
         })();
       `);
 
-      // Run with timeout
       const resultJson = await script.run(context, {
         timeout: EXECUTION_TIMEOUT_MS,
         promise: true,
@@ -291,7 +269,6 @@ export class LocalDriver implements ServerlessDriver {
         stackTrace: result.stackTrace,
       };
     } catch (error) {
-      // Handle isolate-level errors (timeout, memory, etc.)
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       const isTimeout = errorMessage.includes('Script execution timed out');
@@ -317,7 +294,6 @@ export class LocalDriver implements ServerlessDriver {
           error instanceof Error && error.stack ? error.stack.split('\n') : [],
       };
     } finally {
-      // Always dispose the isolate to free resources
       if (!isolate.isDisposed) {
         isolate.dispose();
       }
