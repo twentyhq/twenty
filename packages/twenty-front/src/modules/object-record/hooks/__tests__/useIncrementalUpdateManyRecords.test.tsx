@@ -1,12 +1,12 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIncrementalFetchAndMutateRecords';
 import { useIncrementalUpdateManyRecords } from '@/object-record/hooks/useIncrementalUpdateManyRecords';
-import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
 import { renderHook } from '@testing-library/react';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
-jest.mock('@/object-record/hooks/useRegisterObjectOperation');
+jest.mock('@/object-record/utils/dispatchObjectRecordOperationEvent');
 jest.mock('@/object-record/hooks/useUpdateManyRecords', () => ({
   useUpdateManyRecords: jest.fn(),
 }));
@@ -18,7 +18,9 @@ jest.mock('@/object-record/hooks/useRefetchAggregateQueries', () => ({
 jest.mock('@/object-record/hooks/useIncrementalFetchAndMutateRecords');
 
 const mockUseObjectMetadataItem = jest.mocked(useObjectMetadataItem);
-const mockUseRegisterObjectOperation = jest.mocked(useRegisterObjectOperation);
+const mockDispatchObjectRecordOperationEvent = jest.mocked(
+  dispatchObjectRecordOperationBrowserEvent,
+);
 const mockUseUpdateManyRecords = jest.mocked(useUpdateManyRecords);
 const mockUseIncrementalFetchAndMutateRecords = jest.mocked(
   useIncrementalFetchAndMutateRecords,
@@ -26,7 +28,6 @@ const mockUseIncrementalFetchAndMutateRecords = jest.mocked(
 
 describe('useIncrementalUpdateManyRecords', () => {
   const mockUpdateManyRecords = jest.fn();
-  const mockRegisterObjectOperation = jest.fn();
   const mockIncrementalFetchAndMutate = jest.fn();
   const mockUpdateProgress = jest.fn();
 
@@ -39,9 +40,7 @@ describe('useIncrementalUpdateManyRecords', () => {
       } as any,
     });
 
-    mockUseRegisterObjectOperation.mockReturnValue({
-      registerObjectOperation: mockRegisterObjectOperation,
-    });
+    mockDispatchObjectRecordOperationEvent.mockImplementation(jest.fn());
 
     mockUseUpdateManyRecords.mockReturnValue({
       updateManyRecords: mockUpdateManyRecords,
@@ -85,18 +84,24 @@ describe('useIncrementalUpdateManyRecords', () => {
       abortSignal: expect.any(AbortSignal),
     });
     expect(mockUpdateProgress).toHaveBeenCalledWith(2, 2);
-    expect(mockRegisterObjectOperation).toHaveBeenCalledWith(
-      expect.anything(),
-      {
+    expect(mockDispatchObjectRecordOperationEvent).toHaveBeenCalledWith({
+      objectMetadataItem: expect.anything(),
+      operation: {
         type: 'update-many',
         result: {
           updateInputs: [
-            { id: '1', name: 'New Name' },
-            { id: '2', name: 'New Name' },
+            {
+              recordId: '1',
+              updatedFields: [{ name: 'New Name' }],
+            },
+            {
+              recordId: '2',
+              updatedFields: [{ name: 'New Name' }],
+            },
           ],
         },
       },
-    );
+    });
   });
 
   it('should pass abortSignal to updateManyRecords', async () => {
@@ -140,14 +145,14 @@ describe('useIncrementalUpdateManyRecords', () => {
       result.current.incrementalUpdateManyRecords({ name: 'New Name' }),
     ).rejects.toThrow('Process failed');
 
-    expect(mockRegisterObjectOperation).toHaveBeenCalledWith(
-      expect.anything(),
-      {
+    expect(mockDispatchObjectRecordOperationEvent).toHaveBeenCalledWith({
+      objectMetadataItem: expect.anything(),
+      operation: {
         type: 'update-many',
         result: {
           updateInputs: [],
         },
       },
-    );
+    });
   });
 });
