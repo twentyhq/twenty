@@ -284,6 +284,7 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
         workspaceId,
         applicationId: IsNull(),
       },
+      withDeleted: true,
     });
 
     const customUpdates = remainingCustomViews.map((viewEntity) => ({
