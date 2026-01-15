@@ -41,17 +41,31 @@ export class MessagingImportFolderMessagesService {
 
     const connectedAccount = messageChannel.connectedAccount;
 
-    // Microsoft and IMAP already store sync cursors at the folder level,
-    // so they work correctly without additional logic.
-    // We only need special handling for Gmail.
-    if (connectedAccount.provider !== ConnectedAccountProvider.GOOGLE) {
-      this.logger.log(
-        `WorkspaceId: ${workspaceId}, FolderId: ${messageFolder.id} - Provider ${connectedAccount.provider} does not require folder import, skipping`,
-      );
+    switch (connectedAccount.provider) {
+      case ConnectedAccountProvider.GOOGLE: {
+        return this.importGmailFolderMessages(
+          workspaceId,
+          messageChannel,
+          messageFolder,
+        );
+      }
+      case ConnectedAccountProvider.MICROSOFT:
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV: {
+        this.logger.log(
+          `WorkspaceId: ${workspaceId}, FolderId: ${messageFolder.id} - Provider ${connectedAccount.provider} does not require folder import, skipping`,
+        );
 
-      return 0;
+        return 0;
+      }
     }
+  }
 
+  private async importGmailFolderMessages(
+    workspaceId: string,
+    messageChannel: MessageChannelWorkspaceEntity,
+    messageFolder: MessageFolderWorkspaceEntity,
+  ): Promise<number> {
+    const connectedAccount = messageChannel.connectedAccount;
     const authContext = buildSystemAuthContext(workspaceId);
 
     let totalQueuedCount = 0;
