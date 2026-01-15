@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AddKanbanViewIntegrityConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-add-kanban-view-integrity-constraint-migration.command';
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
+import { FixKanbanViewIntegrityCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-fix-kanban-view-integrity.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
 import { IdentifyViewFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-field-metadata.command';
@@ -56,6 +58,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    FixKanbanViewIntegrityCommand,
+    AddKanbanViewIntegrityConstraintMigrationCommand,
   ],
   exports: [
     UpdateTaskOnDeleteActionCommand,
@@ -69,6 +73,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    FixKanbanViewIntegrityCommand,
+    AddKanbanViewIntegrityConstraintMigrationCommand,
   ],
 })
 export class V1_16_UpgradeVersionCommandModule {}

@@ -40,6 +40,10 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   'CHK_VIEW_CALENDAR_INTEGRITY',
   `("type" != 'CALENDAR' OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL))`,
 )
+@Check(
+  'CHK_VIEW_KANBAN_INTEGRITY',
+  `("type" != 'KANBAN' OR "kanbanAggregateOperationFieldMetadataId" IS NOT NULL)`,
+)
 export class ViewEntity
   extends SyncableEntityRequired
   implements Required<ViewEntity>

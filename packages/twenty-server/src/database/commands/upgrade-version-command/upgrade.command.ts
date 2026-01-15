@@ -22,8 +22,10 @@ import { AddWorkspaceForeignKeysMigrationCommand } from 'src/database/commands/u
 import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-backfill-updated-by-field.command';
 import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-fix-nan-position-values-in-notes.command';
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
+import { AddKanbanViewIntegrityConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-add-kanban-view-integrity-constraint-migration.command';
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
+import { FixKanbanViewIntegrityCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-fix-kanban-view-integrity.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
 import { IdentifyViewFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-field-metadata.command';
@@ -83,6 +85,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly makeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    protected readonly fixKanbanViewIntegrityCommand: FixKanbanViewIntegrityCommand,
+    protected readonly addKanbanViewIntegrityConstraintMigrationCommand: AddKanbanViewIntegrityConstraintMigrationCommand,
   ) {
     super(
       workspaceRepository,
@@ -120,6 +124,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.updateTaskOnDeleteActionCommand,
       this.backfillOpportunityOwnerFieldCommand,
       this.backfillStandardPageLayoutsCommand,
+      this.fixKanbanViewIntegrityCommand,
+      this.addKanbanViewIntegrityConstraintMigrationCommand,
       this.identifyFieldMetadataCommand,
       this.identifyObjectMetadataCommand,
       this.identifyViewMetadataCommand,
