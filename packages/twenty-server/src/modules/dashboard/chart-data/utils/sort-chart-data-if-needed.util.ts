@@ -1,7 +1,9 @@
+import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { type RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
+import { compareDimensionValues } from 'src/modules/dashboard/chart-data/utils/compare-dimension-values.util';
 import { sortByManualOrder } from 'src/modules/dashboard/chart-data/utils/sort-by-manual-order.util';
 import { sortBySelectOptionPosition } from 'src/modules/dashboard/chart-data/utils/sort-by-select-option-position.util';
 
@@ -18,6 +20,8 @@ type SortChartDataParams<T> = {
   getFieldValue: (item: T) => string;
   getNumericValue: (item: T) => number;
   selectFieldOptions?: FieldMetadataOption[] | null;
+  fieldType?: FieldMetadataType;
+  subFieldName?: string;
 };
 
 export const sortChartDataIfNeeded = <T>({
@@ -28,6 +32,8 @@ export const sortChartDataIfNeeded = <T>({
   getFieldValue,
   getNumericValue,
   selectFieldOptions,
+  fieldType,
+  subFieldName,
 }: SortChartDataParams<T>): T[] => {
   if (!isDefined(orderBy)) {
     return data;
@@ -56,7 +62,20 @@ export const sortChartDataIfNeeded = <T>({
       return [...data].sort((a, b) => getNumericValue(b) - getNumericValue(a));
     case GraphOrderBy.FIELD_ASC:
     case GraphOrderBy.FIELD_DESC:
-      return data;
+      return [...data].sort((a, b) => {
+        const formattedValueA = getFieldValue(a);
+        const formattedValueB = getFieldValue(b);
+
+        return compareDimensionValues({
+          rawValueA: formattedToRawLookup.get(formattedValueA),
+          rawValueB: formattedToRawLookup.get(formattedValueB),
+          formattedValueA,
+          formattedValueB,
+          direction: orderBy === GraphOrderBy.FIELD_ASC ? 'ASC' : 'DESC',
+          fieldType,
+          subFieldName,
+        });
+      });
     case GraphOrderBy.FIELD_POSITION_ASC:
       if (!isDefined(selectFieldOptions) || selectFieldOptions.length === 0) {
         return data;

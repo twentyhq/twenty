@@ -16,7 +16,8 @@ import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enu
 import {
   EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
   LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
-  LINE_CHART_MAXIMUM_NUMBER_OF_SERIES,
+  LINE_CHART_MAXIMUM_NUMBER_OF_NON_STACKED_SERIES,
+  LINE_CHART_MAXIMUM_NUMBER_OF_STACKED_SERIES,
 } from 'src/modules/dashboard/chart-data/constants/line-chart.constants';
 import { LineChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/line-chart-data-output.dto';
 import { LineChartDataPointDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/line-chart-data-point.dto';
@@ -41,6 +42,7 @@ import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-sel
 import { processOneDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-one-dimensional-results.util';
 import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-two-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
+import { sortSecondaryAxisData } from 'src/modules/dashboard/chart-data/utils/sort-secondary-axis-data.util';
 
 type GetLineChartDataParams = {
   workspaceId: string;
@@ -118,9 +120,12 @@ export class LineChartDataService {
     const isStackedTwoDimensional =
       isTwoDimensional && configuration.isStacked === true;
 
-    const limit = isStackedTwoDimensional
-      ? LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS *
-          LINE_CHART_MAXIMUM_NUMBER_OF_SERIES +
+    const maxSeriesForQuery = isStackedTwoDimensional
+      ? LINE_CHART_MAXIMUM_NUMBER_OF_STACKED_SERIES
+      : LINE_CHART_MAXIMUM_NUMBER_OF_NON_STACKED_SERIES;
+
+    const limit = isTwoDimensional
+      ? LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS * maxSeriesForQuery +
         EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS
       : LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS +
         EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
@@ -267,6 +272,8 @@ export class LineChartDataService {
       getFieldValue: (item) => item.x,
       getNumericValue: (item) => item.y ?? 0,
       selectFieldOptions: selectOptions,
+      fieldType: primaryAxisGroupByField.type,
+      subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
     });
 
     const limitedSortedData = sortedData.slice(
@@ -426,6 +433,8 @@ export class LineChartDataService {
       getFieldValue: (x) => x,
       getNumericValue: (_x) => 0,
       selectFieldOptions: primarySelectOptions,
+      fieldType: primaryAxisGroupByField.type,
+      subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
     });
 
     const limitedXValues = sortedXValues.slice(
@@ -441,12 +450,15 @@ export class LineChartDataService {
       configuration,
       secondaryFormattedToRawLookup,
       secondarySelectOptions,
+      secondaryAxisGroupByField,
     });
 
-    const limitedSeriesIds = sortedSeriesIds.slice(
-      0,
-      LINE_CHART_MAXIMUM_NUMBER_OF_SERIES,
-    );
+    const isStacked = configuration.isStacked ?? true;
+    const maxSeries = isStacked
+      ? LINE_CHART_MAXIMUM_NUMBER_OF_STACKED_SERIES
+      : LINE_CHART_MAXIMUM_NUMBER_OF_NON_STACKED_SERIES;
+
+    const limitedSeriesIds = sortedSeriesIds.slice(0, maxSeries);
 
     const series: LineChartSeriesDTO[] = limitedSeriesIds.map((seriesId) => {
       const xToYMap = seriesMap.get(seriesId) ?? new Map();
@@ -486,10 +498,11 @@ export class LineChartDataService {
       ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
       : undefined;
 
+    const hasTooManySeries = seriesIds.length > maxSeries;
+    const hasTooManyDataPoints =
+      allXValues.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS;
     const hasTooManyGroups =
-      allXValues.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS ||
-      seriesIds.length > LINE_CHART_MAXIMUM_NUMBER_OF_SERIES ||
-      dateRangeWasTruncated;
+      hasTooManySeries || hasTooManyDataPoints || dateRangeWasTruncated;
 
     return {
       series,
@@ -508,12 +521,14 @@ export class LineChartDataService {
     configuration,
     secondaryFormattedToRawLookup,
     secondarySelectOptions,
+    secondaryAxisGroupByField,
   }: {
     seriesIds: string[];
     seriesMap: Map<string, Map<string, number>>;
     configuration: LineChartConfigurationDTO;
     secondaryFormattedToRawLookup: Map<string, RawDimensionValue>;
     secondarySelectOptions: FieldMetadataOption[] | null;
+    secondaryAxisGroupByField: FlatFieldMetadata;
   }): string[] {
     const orderBy = configuration.secondaryAxisOrderBy;
 
@@ -521,12 +536,12 @@ export class LineChartDataService {
       return seriesIds;
     }
 
-    return sortChartDataIfNeeded({
-      data: seriesIds,
+    return sortSecondaryAxisData({
+      items: seriesIds,
       orderBy,
       manualSortOrder: configuration.secondaryAxisManualSortOrder,
       formattedToRawLookup: secondaryFormattedToRawLookup,
-      getFieldValue: (id) => id,
+      getFormattedValue: (id) => id,
       getNumericValue: (id) => {
         const xToYMap = seriesMap.get(id);
 
@@ -543,6 +558,8 @@ export class LineChartDataService {
         return sum;
       },
       selectFieldOptions: secondarySelectOptions,
+      fieldType: secondaryAxisGroupByField.type,
+      subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
     });
   }
 

@@ -42,6 +42,7 @@ import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-sel
 import { processOneDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-one-dimensional-results.util';
 import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-two-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
+import { sortSecondaryAxisData } from 'src/modules/dashboard/chart-data/utils/sort-secondary-axis-data.util';
 
 type GetBarChartDataParams = {
   workspaceId: string;
@@ -271,6 +272,8 @@ export class BarChartDataService {
       getFieldValue: (item) => item.formattedValue,
       getNumericValue: (item) => item.aggregateValue,
       selectFieldOptions: selectOptions,
+      fieldType: primaryAxisGroupByField.type,
+      subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
     });
 
     const limitedSortedData = sortedData.slice(
@@ -452,6 +455,8 @@ export class BarChartDataService {
         return sum;
       },
       selectFieldOptions: primarySelectOptions,
+      fieldType: primaryAxisGroupByField.type,
+      subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
     });
 
     const limitedData = sortedData.slice(0, BAR_CHART_MAXIMUM_NUMBER_OF_BARS);
@@ -464,22 +469,45 @@ export class BarChartDataService {
       configuration,
       secondaryFormattedToRawLookup,
       secondarySelectOptions,
+      secondaryAxisGroupByField,
     });
 
-    const isStacked = configuration.groupMode === BarChartGroupMode.STACKED;
-    const maxKeys = isStacked
-      ? BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR
-      : BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR;
-    const limitedKeys = sortedKeys.slice(0, maxKeys);
+    const effectiveGroupMode =
+      configuration.groupMode ?? BarChartGroupMode.STACKED;
+    const isStacked = effectiveGroupMode === BarChartGroupMode.STACKED;
+
+    const hasTooManyBars = sortedData.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS;
+    const hasTooManyGroupsPerBar =
+      keys.length > BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR;
+
+    let finalLimitedData = limitedData;
+    const limitedKeys = sortedKeys.slice(
+      0,
+      BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR,
+    );
+
+    if (!isStacked) {
+      const totalSegments = finalLimitedData.length * limitedKeys.length;
+      const hasTooManySegments =
+        totalSegments > BAR_CHART_MAXIMUM_NUMBER_OF_BARS;
+
+      if (hasTooManySegments) {
+        const maxXValues = Math.floor(
+          BAR_CHART_MAXIMUM_NUMBER_OF_BARS / limitedKeys.length,
+        );
+
+        finalLimitedData = finalLimitedData.slice(0, Math.max(1, maxXValues));
+      }
+    }
 
     const finalData = configuration.isCumulative
       ? this.applyCumulativeTwoDimensional(
-          limitedData,
+          finalLimitedData,
           limitedKeys,
           configuration.rangeMin,
           configuration.rangeMax,
         )
-      : limitedData;
+      : finalLimitedData;
 
     const series: BarChartSeriesDTO[] = limitedKeys.map((key) => {
       return {
@@ -507,10 +535,17 @@ export class BarChartDataService {
       ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
       : undefined;
 
-    const hasTooManyGroups =
-      sortedData.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS ||
-      keys.length > maxKeys ||
-      dateRangeWasTruncated;
+    let hasTooManyGroups = hasTooManyBars || hasTooManyGroupsPerBar;
+
+    if (!isStacked) {
+      const totalSegments = limitedData.length * limitedKeys.length;
+      const hasTooManySegments =
+        totalSegments > BAR_CHART_MAXIMUM_NUMBER_OF_BARS;
+
+      hasTooManyGroups = hasTooManyGroups || hasTooManySegments;
+    }
+
+    hasTooManyGroups = hasTooManyGroups || dateRangeWasTruncated;
 
     return {
       data: finalData,
@@ -534,12 +569,14 @@ export class BarChartDataService {
     configuration,
     secondaryFormattedToRawLookup,
     secondarySelectOptions,
+    secondaryAxisGroupByField,
   }: {
     keys: string[];
     data: Record<string, string | number>[];
     configuration: BarChartConfigurationDTO;
     secondaryFormattedToRawLookup: Map<string, RawDimensionValue>;
     secondarySelectOptions: FieldMetadataOption[] | null;
+    secondaryAxisGroupByField: FlatFieldMetadata;
   }): string[] {
     const orderBy = configuration.secondaryAxisOrderBy;
 
@@ -547,12 +584,12 @@ export class BarChartDataService {
       return keys;
     }
 
-    return sortChartDataIfNeeded({
-      data: keys,
+    return sortSecondaryAxisData({
+      items: keys,
       orderBy,
       manualSortOrder: configuration.secondaryAxisManualSortOrder,
       formattedToRawLookup: secondaryFormattedToRawLookup,
-      getFieldValue: (key) => key,
+      getFormattedValue: (key) => key,
       getNumericValue: (key) => {
         let sum = 0;
 
@@ -567,6 +604,8 @@ export class BarChartDataService {
         return sum;
       },
       selectFieldOptions: secondarySelectOptions,
+      fieldType: secondaryAxisGroupByField.type,
+      subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
     });
   }
 
