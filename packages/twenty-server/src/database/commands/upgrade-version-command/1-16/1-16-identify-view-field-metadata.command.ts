@@ -10,53 +10,40 @@ import {
   RunOnWorkspaceArgs,
   WorkspacesMigrationCommandRunner,
 } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { computeFormattedViewName } from 'src/database/commands/upgrade-version-command/1-16/utils/compute-formatted-view-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 
-type CustomViewFieldMetadata = {
-  viewFieldEntity: ViewFieldEntity;
-  fromStandard: boolean;
-};
-
-type StandardViewFieldMetadata = {
-  viewFieldEntity: ViewFieldEntity;
+type StandardViewFieldUpdate = {
+  flatViewField: FlatViewField;
   universalIdentifier: string;
+  objectNameSingular: string;
+  viewName: string;
+  fieldName: string;
 };
 
-type AllWarnings =
-  | 'standard_object_has_no_standard_views'
-  | 'unknown_view'
-  | 'unknown_standard_view_field';
-
-type ViewFieldMetadataWarning = {
-  viewFieldEntity: ViewFieldEntity;
-  warning: AllWarnings;
-  objectNameSingular?: string;
-  viewName?: string;
-  fieldName?: string;
-};
-
-type AllExceptions =
-  | 'existing_universal_id_mismatch'
-  | 'view_not_found'
-  | 'object_not_found'
-  | 'field_not_found';
+type AllExceptions = 'unknown_standard_view_field';
 
 type ViewFieldMetadataException = {
-  viewFieldEntity: ViewFieldEntity;
+  flatViewField: FlatViewField;
   exception: AllExceptions;
-  objectNameSingular?: string;
-  viewName?: string;
-  fieldName?: string;
+  objectNameSingular: string;
+  viewName: string;
+  fieldName: string;
 };
 
 @Command({
@@ -95,21 +82,12 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
         { workspaceId },
       );
 
-    const allViewFieldEntities = await this.viewFieldRepository.find({
-      select: {
-        id: true,
-        universalIdentifier: true,
-        applicationId: true,
-        viewId: true,
-        fieldMetadataId: true,
-      },
-      where: {
-        workspaceId,
-        applicationId: IsNull(),
-      },
-    });
-
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatViewMaps } =
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatViewMaps,
+      flatViewFieldMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -117,84 +95,67 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
             'flatObjectMetadataMaps',
             'flatFieldMetadataMaps',
             'flatViewMaps',
+            'flatViewFieldMaps',
           ],
         },
       );
 
-    const customViewFieldMetadataEntities: CustomViewFieldMetadata[] = [];
-    const standardViewFieldMetadataEntities: StandardViewFieldMetadata[] = [];
-    const warnings: ViewFieldMetadataWarning[] = [];
+    await this.identifyStandardViewFieldsOrThrow({
+      workspaceId,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatViewMaps,
+      flatViewFieldMaps,
+      twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      dryRun: options.dryRun ?? false,
+    });
+
+    await this.identifyCustomViewFields({
+      workspaceId,
+      flatObjectMetadataMaps,
+      flatViewMaps,
+      flatFieldMetadataMaps,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      dryRun: options.dryRun ?? false,
+    });
+
+    const relatedMetadataNames = getMetadataRelatedMetadataNames('viewField');
+    const relatedCacheKeysToInvalidate = relatedMetadataNames.map(
+      getMetadataFlatEntityMapsKey,
+    );
+
+    this.logger.log(
+      `Invalidating caches: ${relatedCacheKeysToInvalidate.join(' ')}`,
+    );
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatViewFieldMaps',
+      ...relatedCacheKeysToInvalidate,
+    ]);
+  }
+
+  private async identifyStandardViewFieldsOrThrow({
+    workspaceId,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    flatViewMaps,
+    flatViewFieldMaps,
+    twentyStandardApplicationId,
+    dryRun,
+  }: {
+    workspaceId: string;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatViewMaps: FlatEntityMaps<FlatView>;
+    flatViewFieldMaps: FlatEntityMaps<FlatViewField>;
+    twentyStandardApplicationId: string;
+    dryRun: boolean;
+  }): Promise<void> {
+    const standardViewFieldUpdates: StandardViewFieldUpdate[] = [];
     const exceptions: ViewFieldMetadataException[] = [];
 
-    for (const viewFieldEntity of allViewFieldEntities) {
-      const flatView = flatViewMaps.byId[viewFieldEntity.viewId];
-
-      if (!isDefined(flatView)) {
-        exceptions.push({
-          viewFieldEntity,
-          exception: 'view_not_found',
-        });
-        continue;
-      }
-
-      if (flatView.isCustom) {
-        customViewFieldMetadataEntities.push({
-          viewFieldEntity,
-          fromStandard: false,
-        });
-        continue;
-      }
-
-      const flatObjectMetadata =
-        flatObjectMetadataMaps.byId[flatView.objectMetadataId];
-
-      if (!isDefined(flatObjectMetadata)) {
-        exceptions.push({
-          viewFieldEntity,
-          exception: 'object_not_found',
-          viewName: flatView.name,
-        });
-        continue;
-      }
-
-      const flatFieldMetadata =
-        flatFieldMetadataMaps.byId[viewFieldEntity.fieldMetadataId];
-
-      if (!isDefined(flatFieldMetadata)) {
-        exceptions.push({
-          viewFieldEntity,
-          exception: 'field_not_found',
-          objectNameSingular: flatObjectMetadata.nameSingular,
-          viewName: flatView.name,
-        });
-        continue;
-      }
-
-      if (
-        flatObjectMetadata.applicationId !== twentyStandardFlatApplication.id
-      ) {
-        customViewFieldMetadataEntities.push({
-          viewFieldEntity,
-          fromStandard: true,
-        });
-        continue;
-      }
-
-      const objectConfig =
-        STANDARD_OBJECTS[
-          flatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECTS
-        ];
-
-      if (!isDefined(objectConfig)) {
-        exceptions.push({
-          viewFieldEntity,
-          exception: 'object_not_found',
-          objectNameSingular: flatObjectMetadata.nameSingular,
-          viewName: flatView.name,
-        });
-        continue;
-      }
-
+    for (const [objectNameSingular, objectConfig] of Object.entries(
+      STANDARD_OBJECTS,
+    )) {
       const objectViews =
         'views' in objectConfig
           ? (objectConfig.views as Record<
@@ -211,97 +172,97 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
           : null;
 
       if (!isDefined(objectViews)) {
-        warnings.push({
-          viewFieldEntity,
-          warning: 'standard_object_has_no_standard_views',
-          objectNameSingular: flatObjectMetadata.nameSingular,
-          viewName: flatView.name,
-        });
-        customViewFieldMetadataEntities.push({
-          viewFieldEntity,
-          fromStandard: true,
-        });
         continue;
       }
 
-      const formattedViewName = computeFormattedViewName({
-        flatObjectMetadata,
-        viewName: flatView.name,
+      const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier: objectConfig.universalIdentifier,
       });
-      const viewConfig = objectViews[formattedViewName];
 
-      if (!isDefined(viewConfig) || !isDefined(viewConfig.viewFields)) {
-        warnings.push({
-          viewFieldEntity,
-          warning: 'unknown_view',
-          objectNameSingular: flatObjectMetadata.nameSingular,
-          viewName: flatView.name,
-        });
-        customViewFieldMetadataEntities.push({
-          viewFieldEntity,
-          fromStandard: true,
-        });
-        continue;
-      }
-
-      const viewFieldConfig = viewConfig.viewFields[flatFieldMetadata.name];
-      const universalIdentifier = viewFieldConfig?.universalIdentifier;
-
-      if (!isDefined(universalIdentifier)) {
-        warnings.push({
-          viewFieldEntity,
-          warning: 'unknown_standard_view_field',
-          objectNameSingular: flatObjectMetadata.nameSingular,
-          viewName: flatView.name,
-          fieldName: flatFieldMetadata.name,
-        });
-        customViewFieldMetadataEntities.push({
-          viewFieldEntity,
-          fromStandard: true,
-        });
-
-        continue;
-      }
-
-      if (
-        isDefined(viewFieldEntity.universalIdentifier) &&
-        viewFieldEntity.universalIdentifier !== universalIdentifier
-      ) {
-        exceptions.push({
-          viewFieldEntity,
-          exception: 'existing_universal_id_mismatch',
-          objectNameSingular: flatObjectMetadata.nameSingular,
-          viewName: flatView.name,
-        });
-        continue;
-      }
-
-      standardViewFieldMetadataEntities.push({
-        viewFieldEntity,
-        universalIdentifier:
-          viewFieldEntity.universalIdentifier ?? universalIdentifier,
-      });
-    }
-
-    const totalUpdates =
-      customViewFieldMetadataEntities.length +
-      standardViewFieldMetadataEntities.length;
-
-    if (warnings.length > 0) {
-      this.logger.warn(
-        `Found ${warnings.length} warning(s) while processing view field metadata for workspace ${workspaceId}. These view fields will become custom.`,
-      );
-
-      for (const {
-        viewFieldEntity,
-        warning,
-        objectNameSingular,
-        viewName,
-        fieldName,
-      } of warnings) {
-        this.logger.warn(
-          `Warning for view field on object "${objectNameSingular ?? 'unknown'}" in view "${viewName ?? 'unknown'}" for field ${fieldName ?? 'unknown'} (id=${viewFieldEntity.id}): ${warning}`,
+      if (!isDefined(flatObjectMetadata)) {
+        this.logger.error(
+          `Standard object "${objectNameSingular}" not found in workspace, this needs investigation, skipping`,
         );
+        continue;
+      }
+
+      // Iterate over view configs and find views by their universalIdentifier
+      // (views have already been identified by the view identification command)
+      for (const [viewName, viewConfig] of Object.entries(objectViews)) {
+        if (!isDefined(viewConfig) || !isDefined(viewConfig.viewFields)) {
+          continue;
+        }
+
+        const flatView = findFlatEntityByUniversalIdentifier({
+          flatEntityMaps: flatViewMaps,
+          universalIdentifier: viewConfig.universalIdentifier,
+        });
+
+        if (!isDefined(flatView)) {
+          this.logger.warn(
+            `Standard view "${viewName}" not found for object "${flatObjectMetadata.nameSingular}", skipping view fields`,
+          );
+          continue;
+        }
+
+        const relatedFlatViewFields =
+          findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityIds: flatView.viewFieldIds,
+            flatEntityMaps: flatViewFieldMaps,
+          });
+
+        // Iterate over expected view fields from config
+        for (const [fieldName, viewFieldConfig] of Object.entries(
+          viewConfig.viewFields,
+        )) {
+          if (!isDefined(viewFieldConfig)) {
+            continue;
+          }
+
+          const fieldUniversalIdentifier =
+            objectConfig.fields[fieldName as keyof typeof objectConfig.fields]
+              ?.universalIdentifier;
+
+          if (!isDefined(fieldUniversalIdentifier)) {
+            this.logger.warn(
+              `Field "${fieldName}" config not found for object "${flatObjectMetadata.nameSingular}", skipping view field`,
+            );
+            continue;
+          }
+
+          // Find the field metadata by universal identifier
+          const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+            flatEntityMaps: flatFieldMetadataMaps,
+            universalIdentifier: fieldUniversalIdentifier,
+          });
+
+          if (!isDefined(flatFieldMetadata)) {
+            this.logger.warn(
+              `Field "${fieldName}" not found in workspace for object "${flatObjectMetadata.nameSingular}", skipping view field`,
+            );
+            continue;
+          }
+
+          // Find the existing view field that matches this field
+          const matchingFlatViewField = relatedFlatViewFields.find(
+            (viewField) => viewField.fieldMetadataId === flatFieldMetadata.id,
+          );
+
+          if (!isDefined(matchingFlatViewField)) {
+            continue;
+          }
+
+          standardViewFieldUpdates.push({
+            flatViewField: matchingFlatViewField,
+            universalIdentifier:
+              matchingFlatViewField.universalIdentifier ??
+              viewFieldConfig.universalIdentifier,
+            objectNameSingular: flatObjectMetadata.nameSingular,
+            viewName: flatView.name,
+            fieldName,
+          });
+        }
       }
     }
 
@@ -311,14 +272,14 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
       );
 
       for (const {
-        viewFieldEntity,
+        flatViewField,
         exception,
         objectNameSingular,
         viewName,
         fieldName,
       } of exceptions) {
         this.logger.error(
-          `Exception for view field on object "${objectNameSingular ?? 'unknown'}" in view "${viewName ?? 'unknown'}" for field ${fieldName ?? 'unknown'} (id=${viewFieldEntity.id}): ${exception}`,
+          `Exception for view field "${fieldName}" on view "${viewName}" of object "${objectNameSingular}" (id=${flatViewField.id}): ${exception}`,
         );
       }
 
@@ -327,52 +288,89 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
       );
     }
 
-    this.logger.log(
-      `Successfully validated ${totalUpdates}/${allViewFieldEntities.length} view field metadata update(s) for workspace ${workspaceId} (${customViewFieldMetadataEntities.length} custom, ${standardViewFieldMetadataEntities.length} standard)`,
+    const standardUpdates = standardViewFieldUpdates.map(
+      ({ flatViewField, universalIdentifier }) => ({
+        id: flatViewField.id,
+        universalIdentifier,
+        applicationId: twentyStandardApplicationId,
+      }),
     );
 
-    if (!options.dryRun) {
-      const customUpdates = customViewFieldMetadataEntities.map(
-        ({ viewFieldEntity }) => ({
-          id: viewFieldEntity.id,
-          universalIdentifier: viewFieldEntity.universalIdentifier ?? v4(),
-          applicationId: workspaceCustomFlatApplication.id,
-        }),
-      );
+    this.logger.log(
+      `Found ${standardUpdates.length} standard view field(s) to update for workspace ${workspaceId}`,
+    );
 
-      const standardUpdates = standardViewFieldMetadataEntities.map(
-        ({ viewFieldEntity, universalIdentifier }) => ({
-          id: viewFieldEntity.id,
-          universalIdentifier,
-          applicationId: twentyStandardFlatApplication.id,
-        }),
+    for (const {
+      flatViewField,
+      universalIdentifier,
+      objectNameSingular,
+      viewName,
+      fieldName,
+    } of standardViewFieldUpdates) {
+      this.logger.log(
+        `  - Standard view field "${fieldName}" on view "${viewName}" of object "${objectNameSingular}" (id=${flatViewField.id}) -> universalIdentifier=${universalIdentifier}`,
       );
+    }
 
-      await this.viewFieldRepository.save([
-        ...customUpdates,
-        ...standardUpdates,
-      ]);
+    if (!dryRun) {
+      await this.viewFieldRepository.save(standardUpdates);
+    }
+  }
 
-      const relatedMetadataNames = getMetadataRelatedMetadataNames('viewField');
-      const relatedCacheKeysToInvalidate = relatedMetadataNames.map(
-        getMetadataFlatEntityMapsKey,
-      );
+  private async identifyCustomViewFields({
+    workspaceId,
+    flatObjectMetadataMaps,
+    flatViewMaps,
+    flatFieldMetadataMaps,
+    workspaceCustomApplicationId,
+    dryRun,
+  }: {
+    workspaceId: string;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatViewMaps: FlatEntityMaps<FlatView>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    workspaceCustomApplicationId: string;
+    dryRun: boolean;
+  }): Promise<void> {
+    const remainingCustomViewFields = await this.viewFieldRepository.find({
+      select: {
+        id: true,
+        universalIdentifier: true,
+        applicationId: true,
+        viewId: true,
+        fieldMetadataId: true,
+      },
+      where: {
+        workspaceId,
+        applicationId: IsNull(),
+      },
+    });
+
+    const customUpdates = remainingCustomViewFields.map((viewFieldEntity) => ({
+      id: viewFieldEntity.id,
+      universalIdentifier: viewFieldEntity.universalIdentifier ?? v4(),
+      applicationId: workspaceCustomApplicationId,
+    }));
+
+    this.logger.log(
+      `Found ${customUpdates.length} custom view field(s) to update for workspace ${workspaceId}`,
+    );
+
+    for (const viewFieldEntity of remainingCustomViewFields) {
+      const flatView = flatViewMaps.byId[viewFieldEntity.viewId];
+      const flatObjectMetadata = isDefined(flatView)
+        ? flatObjectMetadataMaps.byId[flatView.objectMetadataId]
+        : undefined;
+      const flatFieldMetadata =
+        flatFieldMetadataMaps.byId[viewFieldEntity.fieldMetadataId];
 
       this.logger.log(
-        `Invalidating caches: ${relatedCacheKeysToInvalidate.join(' ')}`,
+        `  - Custom view field for field "${flatFieldMetadata?.name ?? 'unknown'}" on view "${flatView?.name ?? 'unknown'}" of object "${flatObjectMetadata?.nameSingular ?? 'unknown'}" (id=${viewFieldEntity.id})`,
       );
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'flatViewFieldMaps',
-        ...relatedCacheKeysToInvalidate,
-      ]);
+    }
 
-      this.logger.log(
-        `Applied ${totalUpdates} view field metadata update(s) for workspace ${workspaceId}`,
-      );
-    } else {
-      this.logger.log(
-        `Dry run: would apply ${totalUpdates} view field metadata update(s) for workspace ${workspaceId}`,
-      );
+    if (!dryRun) {
+      await this.viewFieldRepository.save(customUpdates);
     }
   }
 }
