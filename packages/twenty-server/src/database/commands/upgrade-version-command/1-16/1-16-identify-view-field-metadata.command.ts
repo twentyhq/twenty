@@ -233,6 +233,16 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
             continue;
           }
 
+          const viewFieldUniversalIdentifier =
+            viewConfig.viewFields[fieldName]?.universalIdentifier;
+
+          if (!isDefined(viewFieldUniversalIdentifier)) {
+            this.logger.warn(
+              `View field for field "${fieldName}" config not found for object "${flatObjectMetadata.nameSingular}", skipping view field`,
+            );
+            continue;
+          }
+
           // Find the field metadata by universal identifier
           const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
             flatEntityMaps: flatFieldMetadataMaps,
@@ -260,7 +270,7 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
 
           standardViewFieldUpdates.push({
             flatViewField: matchingFlatViewField,
-            universalIdentifier: viewFieldConfig.universalIdentifier,
+            universalIdentifier: viewFieldUniversalIdentifier,
             objectNameSingular: flatObjectMetadata.nameSingular,
             viewName: flatView.name,
             fieldName,
