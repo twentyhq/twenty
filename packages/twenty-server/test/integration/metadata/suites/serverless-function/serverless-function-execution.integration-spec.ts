@@ -6,18 +6,20 @@ import { updateServerlessFunction } from 'test/integration/metadata/suites/serve
 
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 
-// Test function using lodash (external package)
-const LODASH_FUNCTION_CODE = {
-  'src/index.ts': `import _ from 'lodash';
+// Test function using external packages from default layer (uuid + lodash.groupby)
+const EXTERNAL_PACKAGES_FUNCTION_CODE = {
+  'src/index.ts': `import { v4 as uuidv4 } from 'uuid';
+import groupBy from 'lodash.groupby';
 
-export const main = async (params: { items: string[] }): Promise<object> => {
-  const uniqueItems = _.uniq(params.items);
-  const sortedItems = _.sortBy(uniqueItems);
-  console.log('Processed items:', sortedItems);
+export const main = async (params: { items: Array<{ category: string; name: string }> }): Promise<object> => {
+  const requestId = uuidv4();
+  const grouped = groupBy(params.items, 'category');
+  console.log('Request ID:', requestId);
+  console.log('Grouped items:', JSON.stringify(grouped));
   return {
-    original: params.items,
-    processed: sortedItems,
-    count: sortedItems.length
+    requestId,
+    grouped,
+    categories: Object.keys(grouped)
   };
 };`,
 };
@@ -90,11 +92,11 @@ describe('Serverless Function Execution', () => {
     expect(result?.duration).toBeGreaterThan(0);
   });
 
-  it('should execute a function with external packages (lodash)', async () => {
+  it('should execute a function with external packages (uuid + lodash.groupby)', async () => {
     // Create the function (uses default template initially)
     const { data: createData } = await createOneServerlessFunction({
       input: {
-        name: 'Lodash Array Processor',
+        name: 'External Packages Test',
       },
       expectToFail: false,
     });
@@ -104,13 +106,13 @@ describe('Serverless Function Execution', () => {
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
 
-    // Update with custom lodash code
+    // Update with custom code using external packages
     await updateServerlessFunction({
       input: {
         id: functionId,
         update: {
-          name: 'Lodash Array Processor',
-          code: LODASH_FUNCTION_CODE,
+          name: 'External Packages Test',
+          code: EXTERNAL_PACKAGES_FUNCTION_CODE,
         },
       },
       expectToFail: false,
@@ -122,11 +124,17 @@ describe('Serverless Function Execution', () => {
       expectToFail: false,
     });
 
-    // Execute the function with duplicate items
+    // Execute the function with items to group
     const { data: executeData } = await executeServerlessFunction({
       input: {
         id: functionId,
-        payload: { items: ['banana', 'apple', 'banana', 'cherry', 'apple'] },
+        payload: {
+          items: [
+            { category: 'fruit', name: 'apple' },
+            { category: 'vegetable', name: 'carrot' },
+            { category: 'fruit', name: 'banana' },
+          ],
+        },
       },
       expectToFail: false,
     });
@@ -134,12 +142,27 @@ describe('Serverless Function Execution', () => {
     const result = executeData?.executeOneServerlessFunction;
 
     expect(result?.status).toBe(ServerlessFunctionExecutionStatus.SUCCESS);
-    expect(result?.data).toMatchObject({
-      original: ['banana', 'apple', 'banana', 'cherry', 'apple'],
-      processed: ['apple', 'banana', 'cherry'], // unique and sorted
-      count: 3,
+
+    const data = result?.data as unknown as {
+      requestId: string;
+      grouped: Record<string, Array<{ category: string; name: string }>>;
+      categories: string[];
+    };
+
+    expect(data?.requestId).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    );
+    expect(data?.grouped).toMatchObject({
+      fruit: [
+        { category: 'fruit', name: 'apple' },
+        { category: 'fruit', name: 'banana' },
+      ],
+      vegetable: [{ category: 'vegetable', name: 'carrot' }],
     });
-    expect(result?.logs).toContain('Processed items:');
+    expect(data?.categories).toEqual(
+      expect.arrayContaining(['fruit', 'vegetable']),
+    );
+    expect(result?.logs).toContain('Request ID:');
   });
 
   it('should handle errors thrown by serverless functions', async () => {
