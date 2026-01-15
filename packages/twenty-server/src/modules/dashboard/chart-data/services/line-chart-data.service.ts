@@ -12,6 +12,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
+import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import {
   EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
   LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
@@ -32,6 +33,7 @@ import {
 } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/field-metadata-option.type';
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
+import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { filterByRange } from 'src/modules/dashboard/chart-data/utils/filter-by-range.util';
 import { formatDimensionValue } from 'src/modules/dashboard/chart-data/utils/format-dimension-value.util';
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
@@ -217,6 +219,19 @@ export class LineChartDataService {
           )
         : filteredResults;
 
+    const isDescOrder =
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
+
+    const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
+      applyGapFilling({
+        data: rangeFilteredResults,
+        primaryAxisGroupByField,
+        dateGranularity: configuration.primaryAxisDateGranularity,
+        omitNullValues: configuration.omitNullValues ?? false,
+        isDescOrder,
+        isTwoDimensional: false,
+      });
+
     const formattedToRawLookup = new Map<string, RawDimensionValue>();
     const selectOptions = getSelectOptions(primaryAxisGroupByField);
 
@@ -226,7 +241,7 @@ export class LineChartDataService {
         FirstDayOfTheWeek.SUNDAY,
       );
 
-    const processedDataPoints = rangeFilteredResults.map((result) => {
+    const processedDataPoints = gapFilledResults.map((result) => {
       const rawValue = result.groupByDimensionValues?.[0] as RawDimensionValue;
       const formattedValue = formatDimensionValue({
         value: rawValue,
@@ -306,7 +321,8 @@ export class LineChartDataService {
       showLegend: configuration.displayLegend ?? true,
       showDataLabels: configuration.displayDataLabel ?? false,
       hasTooManyGroups:
-        filteredResults.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
+        filteredResults.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS ||
+        dateRangeWasTruncated,
       formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
     };
   }
@@ -334,6 +350,19 @@ export class LineChartDataService {
         )
       : rawResults;
 
+    const isDescOrder =
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
+
+    const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
+      applyGapFilling({
+        data: filteredResults,
+        primaryAxisGroupByField,
+        dateGranularity: configuration.primaryAxisDateGranularity,
+        omitNullValues: configuration.omitNullValues ?? false,
+        isDescOrder,
+        isTwoDimensional: true,
+      });
+
     const formattedToRawLookup = new Map<string, RawDimensionValue>();
     const secondaryFormattedToRawLookup = new Map<string, RawDimensionValue>();
 
@@ -359,7 +388,7 @@ export class LineChartDataService {
     const xValueSet = new Set<string>();
     const allSeriesIds = new Set<string>();
 
-    for (const result of filteredResults) {
+    for (const result of gapFilledResults) {
       const dimensionValues = result.groupByDimensionValues;
 
       if (!isDefined(dimensionValues) || dimensionValues.length < 2) {
@@ -492,7 +521,8 @@ export class LineChartDataService {
 
     const hasTooManyGroups =
       allXValues.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS ||
-      seriesIds.length > LINE_CHART_MAXIMUM_NUMBER_OF_SERIES;
+      seriesIds.length > LINE_CHART_MAXIMUM_NUMBER_OF_SERIES ||
+      dateRangeWasTruncated;
 
     return {
       series,

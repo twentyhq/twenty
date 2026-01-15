@@ -14,6 +14,7 @@ import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layou
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
+import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import {
   BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
   BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR,
@@ -33,6 +34,7 @@ import {
 } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/field-metadata-option.type';
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
+import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { filterByRange } from 'src/modules/dashboard/chart-data/utils/filter-by-range.util';
 import { formatDimensionValue } from 'src/modules/dashboard/chart-data/utils/format-dimension-value.util';
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
@@ -220,6 +222,19 @@ export class BarChartDataService {
           )
         : filteredResults;
 
+    const isDescOrder =
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
+
+    const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
+      applyGapFilling({
+        data: rangeFilteredResults,
+        primaryAxisGroupByField,
+        dateGranularity: configuration.primaryAxisDateGranularity,
+        omitNullValues: configuration.omitNullValues ?? false,
+        isDescOrder,
+        isTwoDimensional: false,
+      });
+
     const formattedToRawLookup = new Map<string, RawDimensionValue>();
     const selectOptions = getSelectOptions(primaryAxisGroupByField);
 
@@ -244,7 +259,7 @@ export class BarChartDataService {
       rawValue: RawDimensionValue;
     };
 
-    const processedDataPoints: InternalBarDatum[] = rangeFilteredResults.map(
+    const processedDataPoints: InternalBarDatum[] = gapFilledResults.map(
       (result) => {
         const rawValue = result
           .groupByDimensionValues?.[0] as RawDimensionValue;
@@ -341,7 +356,8 @@ export class BarChartDataService {
       layout,
       groupMode: configuration.groupMode ?? BarChartGroupMode.GROUPED,
       hasTooManyGroups:
-        filteredResults.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
+        filteredResults.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS ||
+        dateRangeWasTruncated,
       formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
     };
   }
@@ -372,6 +388,19 @@ export class BarChartDataService {
         )
       : rawResults;
 
+    const isDescOrder =
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
+
+    const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
+      applyGapFilling({
+        data: filteredResults,
+        primaryAxisGroupByField,
+        dateGranularity: configuration.primaryAxisDateGranularity,
+        omitNullValues: configuration.omitNullValues ?? false,
+        isDescOrder,
+        isTwoDimensional: true,
+      });
+
     const formattedToRawLookup = new Map<string, RawDimensionValue>();
     const secondaryFormattedToRawLookup = new Map<string, RawDimensionValue>();
 
@@ -393,7 +422,7 @@ export class BarChartDataService {
     const processedDataPoints: ProcessedTwoDimDataPoint[] = [];
     const allSecondaryValues = new Set<string>();
 
-    for (const result of filteredResults) {
+    for (const result of gapFilledResults) {
       const dimensionValues = result.groupByDimensionValues;
 
       if (!isDefined(dimensionValues) || dimensionValues.length < 2) {
@@ -537,7 +566,8 @@ export class BarChartDataService {
 
     const hasTooManyGroups =
       sortedData.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS ||
-      keys.length > maxKeys;
+      keys.length > maxKeys ||
+      dateRangeWasTruncated;
 
     return {
       data: finalData,

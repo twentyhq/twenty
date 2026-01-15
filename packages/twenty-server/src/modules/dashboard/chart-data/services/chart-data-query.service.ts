@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { CalendarStartDay } from 'twenty-shared/constants';
 import {
+  FieldMetadataType,
   ObjectRecordGroupByDateGranularity,
   OrderByWithGroupBy,
 } from 'twenty-shared/types';
@@ -31,6 +32,7 @@ import {
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getGroupByOrderBy } from 'src/modules/dashboard/chart-data/utils/get-group-by-order-by.util';
 import { isRelationNestedFieldDateKind } from 'src/modules/dashboard/chart-data/utils/is-relation-nested-field-date-kind.util';
+import { transformAggregateValue } from 'src/modules/dashboard/chart-data/utils/transform-aggregate-value.util';
 
 export type GroupByRawResult = {
   groupByDimensionValues: unknown[];
@@ -182,7 +184,11 @@ export class ChartDataQueryService {
 
     return results.map((result) => ({
       groupByDimensionValues: result.groupByDimensionValues ?? [],
-      aggregateValue: Number(result[aggregateFieldKey] ?? 0),
+      aggregateValue: transformAggregateValue({
+        rawValue: result[aggregateFieldKey],
+        aggregateFieldType: aggregateField.type as FieldMetadataType,
+        aggregateOperation,
+      }),
     }));
   }
 
@@ -344,7 +350,11 @@ export class ChartDataQueryService {
 
     return results.map((result) => ({
       groupByDimensionValues: result.groupByDimensionValues ?? [],
-      aggregateValue: Number(result[aggregateFieldKey] ?? 0),
+      aggregateValue: transformAggregateValue({
+        rawValue: result[aggregateFieldKey],
+        aggregateFieldType: aggregateField.type as FieldMetadataType,
+        aggregateOperation,
+      }),
     }));
   }
 }
