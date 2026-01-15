@@ -1,6 +1,6 @@
-import { isObject } from '@sniptt/guards';
+/* @license Enterprise */
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isObject } from '@sniptt/guards';
 import {
   FieldMetadataType,
   type ActorFilter,
@@ -46,6 +46,11 @@ import {
   isMatchingUUIDFilter,
 } from 'twenty-shared/utils';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is LeafObjectRecordFilter => {
@@ -67,14 +72,17 @@ const isNotFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
 
-export const isRecordMatchingFilter = ({
+export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
   record,
   filter,
-  objectMetadataItem,
+  flatObjectMetadata,
+  flatFieldMetadataMaps,
 }: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   record: any;
   filter: RecordGqlOperationFilter;
-  objectMetadataItem: ObjectMetadataItem;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): boolean => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
@@ -82,10 +90,11 @@ export const isRecordMatchingFilter = ({
 
   if (isImplicitAndFilter(filter)) {
     return Object.entries(filter).every(([filterKey, value]) =>
-      isRecordMatchingFilter({
+      isRecordMatchingRLSRowLevelPermissionPredicate({
         record,
         filter: { [filterKey]: value },
-        objectMetadataItem,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       }),
     );
   }
@@ -102,10 +111,11 @@ export const isRecordMatchingFilter = ({
     return (
       filterValue.length === 0 ||
       filterValue.every((andFilter) =>
-        isRecordMatchingFilter({
+        isRecordMatchingRLSRowLevelPermissionPredicate({
           record,
           filter: andFilter,
-          objectMetadataItem,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
         }),
       )
     );
@@ -118,10 +128,11 @@ export const isRecordMatchingFilter = ({
       return (
         filterValue.length === 0 ||
         filterValue.some((orFilter) =>
-          isRecordMatchingFilter({
+          isRecordMatchingRLSRowLevelPermissionPredicate({
             record,
             filter: orFilter,
-            objectMetadataItem,
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
           }),
         )
       );
@@ -129,10 +140,11 @@ export const isRecordMatchingFilter = ({
 
     if (isObject(filterValue)) {
       // The API considers "or" with an object as an "and"
-      return isRecordMatchingFilter({
+      return isRecordMatchingRLSRowLevelPermissionPredicate({
         record,
         filter: filterValue,
-        objectMetadataItem,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       });
     }
 
@@ -148,10 +160,11 @@ export const isRecordMatchingFilter = ({
 
     return (
       isEmptyObject(filterValue) ||
-      !isRecordMatchingFilter({
+      !isRecordMatchingRLSRowLevelPermissionPredicate({
         record,
         filter: filterValue,
-        objectMetadataItem,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       })
     );
   }
@@ -161,6 +174,11 @@ export const isRecordMatchingFilter = ({
       return false;
     }
   }
+
+  const objectFields = getFlatFieldsFromFlatObjectMetadata(
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  );
 
   return Object.entries(filter).every(([filterKey, filterValue]) => {
     if (!isDefined(filterValue)) {
@@ -172,11 +190,12 @@ export const isRecordMatchingFilter = ({
     if (isEmptyObject(filterValue)) return true;
 
     const objectMetadataField =
-      objectMetadataItem.fields.find((field) => field.name === filterKey) ??
-      objectMetadataItem.fields.find(
+      objectFields.find((field) => field.name === filterKey) ??
+      objectFields.find(
         (field) =>
           field.type === FieldMetadataType.RELATION &&
-          field.settings?.joinColumnName === filterKey,
+          (field.settings as { joinColumnName?: string } | undefined)
+            ?.joinColumnName === filterKey,
       );
 
     if (!isDefined(objectMetadataField)) {
@@ -184,7 +203,7 @@ export const isRecordMatchingFilter = ({
         'Field metadata item "' +
           filterKey +
           '" not found for object metadata item ' +
-          objectMetadataItem.nameSingular,
+          flatObjectMetadata.nameSingular,
       );
     }
 
@@ -267,6 +286,7 @@ export const isRecordMatchingFilter = ({
 
         return keys.some((key) => {
           const value = addressFilter[key];
+
           if (value === undefined) {
             return false;
           }
@@ -284,6 +304,7 @@ export const isRecordMatchingFilter = ({
 
         return keys.some((key) => {
           const value = linksFilter[key];
+
           if (value === undefined) {
             return false;
           }
@@ -356,6 +377,7 @@ export const isRecordMatchingFilter = ({
 
         return keys.some((key) => {
           const value = phonesFilter[key];
+
           if (value === undefined) {
             return false;
           }
@@ -368,7 +390,11 @@ export const isRecordMatchingFilter = ({
       }
       case FieldMetadataType.RELATION: {
         const isJoinColumn =
-          objectMetadataField.settings?.joinColumnName === filterKey;
+          (
+            objectMetadataField.settings as
+              | { joinColumnName?: string }
+              | undefined
+          )?.joinColumnName === filterKey;
 
         if (isJoinColumn) {
           return isMatchingUUIDFilter({

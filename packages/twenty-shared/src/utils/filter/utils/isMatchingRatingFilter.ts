@@ -1,4 +1,4 @@
-import { type RatingFilter } from 'twenty-shared/types';
+import { type RatingFilter } from '@/types';
 
 export const isMatchingRatingFilter = ({
   ratingFilter,

@@ -122,6 +122,8 @@ const meta: Meta<typeof RecordCalendarMonth> = {
                         canSoftDeleteObjectRecords: true,
                         canDestroyObjectRecords: true,
                         restrictedFields: {},
+                        rowLevelPermissionPredicates: [],
+                        rowLevelPermissionPredicateGroups: [],
                       },
                     }}
                   >

@@ -1,4 +1,4 @@
-import { type ArrayFilter } from 'twenty-shared/types';
+import { type ArrayFilter } from '@/types';
 
 export const isMatchingArrayFilter = ({
   arrayFilter,

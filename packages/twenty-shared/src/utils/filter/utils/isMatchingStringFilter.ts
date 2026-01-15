@@ -1,5 +1,5 @@
+import { type StringFilter } from '@/types';
 import escapeRegExp from 'lodash.escaperegexp';
-import { type StringFilter } from 'twenty-shared/types';
 
 export const isMatchingStringFilter = ({
   stringFilter,

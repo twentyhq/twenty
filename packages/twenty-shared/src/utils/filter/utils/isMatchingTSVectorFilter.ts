@@ -1,4 +1,4 @@
-import { type TSVectorFilter } from 'twenty-shared/types';
+import { type TSVectorFilter } from '@/types';
 
 export const isMatchingTSVectorFilter = ({
   tsVectorFilter,

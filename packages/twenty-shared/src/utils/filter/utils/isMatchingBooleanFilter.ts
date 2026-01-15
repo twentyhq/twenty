@@ -1,4 +1,4 @@
-import { type BooleanFilter } from 'twenty-shared/types';
+import { type BooleanFilter } from '@/types';
 
 export const isMatchingBooleanFilter = ({
   booleanFilter,

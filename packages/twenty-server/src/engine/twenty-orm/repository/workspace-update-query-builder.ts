@@ -37,6 +37,7 @@ import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 export class WorkspaceUpdateQueryBuilder<
@@ -185,6 +186,8 @@ export class WorkspaceUpdateQueryBuilder<
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
       );
+
+      this.validateRLSPredicatesForUpdate(formattedAfter, objectMetadata);
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
         formatTwentyOrmEventToDatabaseBatchEvent({
@@ -519,6 +522,21 @@ export class WorkspaceUpdateQueryBuilder<
       internalContext: this.internalContext,
       authContext: this.authContext,
       featureFlagMap: this.featureFlagMap,
+    });
+  }
+
+  private validateRLSPredicatesForUpdate(
+    updatedRecords: T[],
+    objectMetadata: ReturnType<typeof getObjectMetadataFromEntityTarget>,
+  ): void {
+    validateRLSPredicatesForRecords({
+      records: updatedRecords,
+      objectMetadata,
+      internalContext: this.internalContext,
+      authContext: this.authContext,
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      errorMessage:
+        'Updated record does not satisfy row-level security constraints of your current role',
     });
   }
 }
