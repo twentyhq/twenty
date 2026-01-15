@@ -1,5 +1,5 @@
+import { type RichTextV2Filter } from '@/types';
 import escapeRegExp from 'lodash.escaperegexp';
-import { type RichTextV2Filter } from 'twenty-shared/types';
 
 export const isMatchingRichTextV2Filter = ({
   richTextV2Filter,

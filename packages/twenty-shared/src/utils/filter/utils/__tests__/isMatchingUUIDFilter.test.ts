@@ -1,4 +1,4 @@
-import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
+import { isMatchingUUIDFilter } from '@/utils/filter/utils/isMatchingUUIDFilter';
 
 describe('isMatchingUUIDFilter', () => {
   const testUUID = '123e4567-e89b-12d3-a456-426655440000';

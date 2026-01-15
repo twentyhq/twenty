@@ -1,4 +1,4 @@
-import { isMatchingBooleanFilter } from '@/object-record/record-filter/utils/isMatchingBooleanFilter';
+import { isMatchingBooleanFilter } from '@/utils/filter/utils/isMatchingBooleanFilter';
 
 describe('isMatchingBooleanFilter', () => {
   describe('eq', () => {

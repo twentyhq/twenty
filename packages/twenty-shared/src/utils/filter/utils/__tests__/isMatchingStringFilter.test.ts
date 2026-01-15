@@ -1,4 +1,4 @@
-import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
+import { isMatchingStringFilter } from '@/utils/filter/utils/isMatchingStringFilter';
 
 describe('isMatchingStringFilter', () => {
   describe('eq', () => {

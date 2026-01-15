@@ -1,4 +1,4 @@
-import { isMatchingTSVectorFilter } from '@/object-record/record-filter/utils/isMatchingTSVectorFilter';
+import { isMatchingTSVectorFilter } from '@/utils/filter/utils/isMatchingTSVectorFilter';
 
 describe('isMatchingTSVectorFilter', () => {
   describe('search', () => {

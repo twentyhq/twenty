@@ -1,4 +1,4 @@
-import { isMatchingFloatFilter } from '@/object-record/record-filter/utils/isMatchingFloatFilter';
+import { isMatchingFloatFilter } from '@/utils/filter/utils/isMatchingFloatFilter';
 
 describe('isMatchingFloatFilter', () => {
   describe('eq', () => {

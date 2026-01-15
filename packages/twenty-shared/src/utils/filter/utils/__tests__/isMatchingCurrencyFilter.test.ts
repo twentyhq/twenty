@@ -1,5 +1,5 @@
-import { isMatchingCurrencyFilter } from '@/object-record/record-filter/utils/isMatchingCurrencyFilter';
-import { type CurrencyFilter } from 'twenty-shared/types';
+import { type CurrencyFilter } from '@/types';
+import { isMatchingCurrencyFilter } from '@/utils/filter/utils/isMatchingCurrencyFilter';
 
 describe('isMatchingCurrencyFilter', () => {
   describe('amountMicros', () => {

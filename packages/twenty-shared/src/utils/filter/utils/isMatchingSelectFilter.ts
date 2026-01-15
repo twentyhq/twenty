@@ -1,4 +1,4 @@
-import { type SelectFilter } from 'twenty-shared/types';
+import { type SelectFilter } from '@/types';
 
 export const isMatchingSelectFilter = ({
   selectFilter,

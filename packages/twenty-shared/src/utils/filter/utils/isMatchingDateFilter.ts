@@ -1,5 +1,5 @@
+import { type DateFilter } from '@/types';
 import { isAfter, isBefore, isEqual, parseISO } from 'date-fns';
-import { type DateFilter } from 'twenty-shared/types';
 
 export const isMatchingDateFilter = ({
   dateFilter,

@@ -1,6 +1,6 @@
+import { type CurrencyFilter } from '@/types';
+import { isDefined } from '@/utils';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type CurrencyFilter } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 const isMatchingCurrencyCodeFilter = (
   currencyCodeFilter: CurrencyFilter['currencyCode'],

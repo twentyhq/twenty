@@ -103,6 +103,19 @@ export { generateILikeFiltersForCompositeFields } from './filter/utils/generateI
 export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordGqlOperationFilter';
 export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
 export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
+export { isMatchingArrayFilter } from './filter/utils/isMatchingArrayFilter';
+export { isMatchingBooleanFilter } from './filter/utils/isMatchingBooleanFilter';
+export { isMatchingCurrencyFilter } from './filter/utils/isMatchingCurrencyFilter';
+export { isMatchingDateFilter } from './filter/utils/isMatchingDateFilter';
+export { isMatchingFloatFilter } from './filter/utils/isMatchingFloatFilter';
+export { isMatchingMultiSelectFilter } from './filter/utils/isMatchingMultiSelectFilter';
+export { isMatchingRatingFilter } from './filter/utils/isMatchingRatingFilter';
+export { isMatchingRawJsonFilter } from './filter/utils/isMatchingRawJsonFilter';
+export { isMatchingRichTextV2Filter } from './filter/utils/isMatchingRichTextV2Filter';
+export { isMatchingSelectFilter } from './filter/utils/isMatchingSelectFilter';
+export { isMatchingStringFilter } from './filter/utils/isMatchingStringFilter';
+export { isMatchingTSVectorFilter } from './filter/utils/isMatchingTSVectorFilter';
+export { isMatchingUUIDFilter } from './filter/utils/isMatchingUUIDFilter';
 export { arrayOfStringsOrVariablesSchema } from './filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 export { arrayOfUuidOrVariableSchema } from './filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 export {

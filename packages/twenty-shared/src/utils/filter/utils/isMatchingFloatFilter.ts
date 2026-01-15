@@ -1,4 +1,4 @@
-import { type FloatFilter } from 'twenty-shared/types';
+import { type FloatFilter } from '@/types';
 
 export const isMatchingFloatFilter = ({
   floatFilter,

@@ -1,4 +1,4 @@
-import { isMatchingDateFilter } from '@/object-record/record-filter/utils/isMatchingDateFilter';
+import { isMatchingDateFilter } from '@/utils/filter/utils/isMatchingDateFilter';
 
 describe('isMatchingDateFilter', () => {
   const testDate = '2023-12-19T12:15:29.810Z';
