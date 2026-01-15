@@ -114,25 +114,27 @@ export class PieChartDataService {
       }
     }
 
-    const rawResults = await this.chartDataQueryService.executeGroupByQuery({
-      workspaceId,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular,
-      authContext,
-      groupByFieldMetadataId: configuration.groupByFieldMetadataId,
-      groupBySubFieldName: configuration.groupBySubFieldName,
-      aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
-      aggregateOperation: configuration.aggregateOperation,
-      filter: configuration.filter,
-      dateGranularity: configuration.dateGranularity,
-      userTimezone: configuration.timezone ?? 'UTC',
-      firstDayOfTheWeek:
-        (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
-        CalendarStartDay.MONDAY,
-      limit,
-    });
+    const rawResults =
+      await this.chartDataQueryService.executeGroupByQueryWithOrderBy({
+        workspaceId,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
+        authContext,
+        groupByFieldMetadataId: configuration.groupByFieldMetadataId,
+        groupBySubFieldName: configuration.groupBySubFieldName,
+        aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
+        aggregateOperation: configuration.aggregateOperation,
+        filter: configuration.filter,
+        dateGranularity: configuration.dateGranularity,
+        userTimezone: configuration.timezone ?? 'UTC',
+        firstDayOfTheWeek:
+          (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
+          CalendarStartDay.MONDAY,
+        limit,
+        primaryAxisOrderBy: configuration.orderBy,
+      });
 
     return this.transformToPieChartData({
       rawResults,

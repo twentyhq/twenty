@@ -137,29 +137,32 @@ export class LineChartDataService {
       }
     }
 
-    const rawResults = await this.chartDataQueryService.executeGroupByQuery({
-      workspaceId,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular,
-      authContext,
-      groupByFieldMetadataId: configuration.primaryAxisGroupByFieldMetadataId,
-      groupBySubFieldName: configuration.primaryAxisGroupBySubFieldName,
-      aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
-      aggregateOperation: configuration.aggregateOperation,
-      filter: configuration.filter,
-      dateGranularity: configuration.primaryAxisDateGranularity,
-      userTimezone,
-      firstDayOfTheWeek,
-      limit,
-      secondaryGroupByFieldMetadataId:
-        configuration.secondaryAxisGroupByFieldMetadataId,
-      secondaryGroupBySubFieldName:
-        configuration.secondaryAxisGroupBySubFieldName,
-      secondaryDateGranularity:
-        configuration.secondaryAxisGroupByDateGranularity,
-    });
+    const rawResults =
+      await this.chartDataQueryService.executeGroupByQueryWithOrderBy({
+        workspaceId,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
+        authContext,
+        groupByFieldMetadataId: configuration.primaryAxisGroupByFieldMetadataId,
+        groupBySubFieldName: configuration.primaryAxisGroupBySubFieldName,
+        aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
+        aggregateOperation: configuration.aggregateOperation,
+        filter: configuration.filter,
+        dateGranularity: configuration.primaryAxisDateGranularity,
+        userTimezone,
+        firstDayOfTheWeek,
+        limit,
+        primaryAxisOrderBy: configuration.primaryAxisOrderBy,
+        secondaryGroupByFieldMetadataId:
+          configuration.secondaryAxisGroupByFieldMetadataId,
+        secondaryGroupBySubFieldName:
+          configuration.secondaryAxisGroupBySubFieldName,
+        secondaryDateGranularity:
+          configuration.secondaryAxisGroupByDateGranularity,
+        secondaryAxisOrderBy: configuration.secondaryAxisOrderBy,
+      });
 
     if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
       return this.transformToTwoDimensionalLineChartData({
