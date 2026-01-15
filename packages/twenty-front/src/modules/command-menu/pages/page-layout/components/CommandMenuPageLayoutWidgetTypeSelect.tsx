@@ -10,7 +10,7 @@ import { useCompanyDefaultChartConfig } from '@/page-layout/hooks/useCompanyDefa
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
 import { useCreatePageLayoutStandaloneRichTextWidget } from '@/page-layout/hooks/useCreatePageLayoutStandaloneRichTextWidget';
-import { useReplacePageLayoutWidget } from '@/page-layout/hooks/useReplacePageLayoutWidget';
+import { useRemovePageLayoutWidgetAndPreservePosition } from '@/page-layout/hooks/useRemovePageLayoutWidgetAndPreservePosition';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -43,7 +43,8 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const { createPageLayoutStandaloneRichTextWidget } =
     useCreatePageLayoutStandaloneRichTextWidget(pageLayoutId);
 
-  const { prepareWidgetReplacement } = useReplacePageLayoutWidget(pageLayoutId);
+  const { removePageLayoutWidgetAndPreservePosition } =
+    useRemovePageLayoutWidgetAndPreservePosition(pageLayoutId);
 
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useRecoilComponentState(
@@ -70,7 +71,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
       )
     ) {
       if (isDefined(pageLayoutEditingWidgetId)) {
-        prepareWidgetReplacement(pageLayoutEditingWidgetId);
+        removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
       }
 
       const fieldSelection = buildBarChartFieldSelection();
@@ -92,7 +93,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
       )
     ) {
       if (isDefined(pageLayoutEditingWidgetId)) {
-        prepareWidgetReplacement(pageLayoutEditingWidgetId);
+        removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
       }
 
       const newWidget = createPageLayoutIframeWidget(t`Untitled iFrame`, null);
@@ -113,7 +114,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
       )
     ) {
       if (isDefined(pageLayoutEditingWidgetId)) {
-        prepareWidgetReplacement(pageLayoutEditingWidgetId);
+        removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
       }
 
       const newWidget = createPageLayoutStandaloneRichTextWidget({

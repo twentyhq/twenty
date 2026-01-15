@@ -10,7 +10,9 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useReplacePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
+export const useRemovePageLayoutWidgetAndPreservePosition = (
+  pageLayoutIdFromProps?: string,
+) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -36,7 +38,7 @@ export const useReplacePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
-  const prepareWidgetReplacement = useRecoilCallback(
+  const removePageLayoutWidgetAndPreservePosition = useRecoilCallback(
     ({ snapshot, set }) =>
       (widgetId: string) => {
         const pageLayoutDraft = snapshot
@@ -93,5 +95,5 @@ export const useReplacePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     ],
   );
 
-  return { prepareWidgetReplacement };
+  return { removePageLayoutWidgetAndPreservePosition };
 };
