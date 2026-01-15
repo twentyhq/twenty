@@ -29,6 +29,8 @@ export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED:
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CREATE_FAILED:
         throw error;
+      case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_DISABLED:
+        throw new ForbiddenError(error);
       default: {
         return assertUnreachable(error.code);
       }

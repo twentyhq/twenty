@@ -22,10 +22,10 @@ export const main = async (params: { items: string[] }): Promise<object> => {
   const uniqueItems = _.uniq(params.items);
   const sortedItems = _.sortBy(uniqueItems);
   console.log('Processed items:', sortedItems);
-  return { 
+  return {
     original: params.items,
     processed: sortedItems,
-    count: sortedItems.length 
+    count: sortedItems.length
   };
 };`,
 };

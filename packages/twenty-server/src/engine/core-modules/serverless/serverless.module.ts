@@ -27,8 +27,13 @@ export class ServerlessModule {
             return new LocalDriver(config.options);
           case ServerlessDriverType.LAMBDA:
             return new LambdaDriver(config.options);
-          default:
-            throw new Error(`Unknown serverless driver type: ${config?.type}`);
+          default: {
+            const unknownConfig = config as { type?: string };
+
+            throw new Error(
+              `Unknown serverless driver type: ${unknownConfig?.type}`,
+            );
+          }
         }
       },
       inject: options.inject || [],

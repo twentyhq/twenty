@@ -20,4 +20,3 @@ export class DisabledDriver implements ServerlessDriver {
     );
   }
 }
-
