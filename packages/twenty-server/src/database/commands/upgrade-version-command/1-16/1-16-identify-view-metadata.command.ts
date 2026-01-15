@@ -36,8 +36,6 @@ type StandardViewUpdate = {
 
 type AllExceptions =
   | 'unknown_standard_view'
-  | 'existing_universal_id_mismatch_1'
-  | 'existing_universal_id_mismatch_2';
 
 type ViewMetadataException = {
   flatView: FlatView;
