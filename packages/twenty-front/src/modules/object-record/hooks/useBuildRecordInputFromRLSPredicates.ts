@@ -5,6 +5,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -18,6 +19,11 @@ export const useBuildRecordInputFromRLSPredicates = ({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const { record: currentWorkspaceMemberRecord } = useFindOneRecord({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    objectRecordId: currentWorkspaceMember?.id,
+  });
 
   const { objectMetadataItem: workspaceMemberObjectMetadataItem } =
     useObjectMetadataItem({
@@ -79,9 +85,7 @@ export const useBuildRecordInputFromRLSPredicates = ({
             : fieldMetadataItem.name;
 
         const currentWorkspaceMemberFieldValue =
-          currentWorkspaceMember?.[
-            workspaceMemberFieldMetadataItem.name as keyof typeof currentWorkspaceMember
-          ];
+          currentWorkspaceMemberRecord?.[workspaceMemberFieldMetadataItem.name];
 
         if (isUndefined(currentWorkspaceMemberFieldValue)) {
           throw new Error(
@@ -93,8 +97,14 @@ export const useBuildRecordInputFromRLSPredicates = ({
       }
     });
 
+    // Only process filters without rlsDynamicValue in buildRecordInputFromFilter
+    // Filters with rlsDynamicValue are already handled above
+    const staticFilters = rlsPredicatesAsRecordFilters.filter(
+      (filter) => !isDefined(filter.rlsDynamicValue),
+    );
+
     const recordInputFromFilters = buildRecordInputFromFilter({
-      currentRecordFilters: rlsPredicatesAsRecordFilters,
+      currentRecordFilters: staticFilters,
       objectMetadataItem,
       currentWorkspaceMember: currentWorkspaceMember ?? undefined,
     });
