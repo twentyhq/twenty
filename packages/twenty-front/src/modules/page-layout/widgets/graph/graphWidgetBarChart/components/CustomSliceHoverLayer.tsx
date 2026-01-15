@@ -3,14 +3,11 @@ import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { computeSliceHighlightPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeSliceHighlightPosition';
 import { computeSlicesFromBars } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeSlicesFromBars';
 import { findSliceAtPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findSliceAtPosition';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
-import { animated, useSpring } from '@react-spring/web';
-import { useMemo, type MouseEvent } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useCallback, useMemo, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
 
@@ -44,13 +41,8 @@ export const CustomSliceHoverLayer = ({
   onSliceLeave,
 }: CustomSliceHoverLayerProps) => {
   const theme = useTheme();
-  const hoveredSliceIndex = useRecoilComponentValue(
-    graphWidgetHoveredSliceIndexComponentState,
-  );
-  const hoveredSliceIndexState = useRecoilComponentCallbackState(
-    graphWidgetHoveredSliceIndexComponentState,
-  );
-  const setHoveredSliceIndex = useSetRecoilComponentState(
+
+  const hoveredSliceIndexValue = useRecoilComponentValue(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
@@ -61,43 +53,36 @@ export const CustomSliceHoverLayer = ({
     [bars, isVerticalLayout],
   );
 
-  const handleMouseMove = useRecoilCallback(
-    ({ snapshot }) =>
-      (event: MouseEvent<SVGRectElement>) => {
-        const sliceData = findSliceAtPosition({
-          event,
-          slices,
-          marginLeft,
-          marginTop,
-          isVerticalLayout,
-        });
-        const currentHoveredSliceIndex = snapshot
-          .getLoadable(hoveredSliceIndexState)
-          .getValue();
+  const handleMouseMove = useCallback(
+    (event: MouseEvent<SVGRectElement>) => {
+      const sliceData = findSliceAtPosition({
+        event,
+        slices,
+        marginLeft,
+        marginTop,
+        isVerticalLayout,
+      });
 
-        if (!isDefined(sliceData)) {
-          if (isDefined(currentHoveredSliceIndex)) {
-            setHoveredSliceIndex(null);
-            onSliceHover(null);
-          }
-          return;
+      if (!isDefined(sliceData)) {
+        if (isDefined(hoveredSliceIndexValue)) {
+          onSliceHover(null);
         }
+        return;
+      }
 
-        if (sliceData.slice.indexValue === currentHoveredSliceIndex) {
-          return;
-        }
+      if (sliceData.slice.indexValue === hoveredSliceIndexValue) {
+        return;
+      }
 
-        setHoveredSliceIndex(sliceData.slice.indexValue);
-        onSliceHover(sliceData);
-      },
+      onSliceHover(sliceData);
+    },
     [
-      hoveredSliceIndexState,
-      setHoveredSliceIndex,
       onSliceHover,
       slices,
       marginLeft,
       marginTop,
       isVerticalLayout,
+      hoveredSliceIndexValue,
     ],
   );
 
@@ -126,11 +111,11 @@ export const CustomSliceHoverLayer = ({
   };
 
   const hoveredSlice = useMemo(() => {
-    if (!isDefined(hoveredSliceIndex)) {
+    if (!isDefined(hoveredSliceIndexValue)) {
       return null;
     }
-    return slices.find((slice) => slice.indexValue === hoveredSliceIndex);
-  }, [slices, hoveredSliceIndex]);
+    return slices.find((slice) => slice.indexValue === hoveredSliceIndexValue);
+  }, [slices, hoveredSliceIndexValue]);
 
   const highlightPosition = computeSliceHighlightPosition({
     sliceCenter: hoveredSlice?.sliceCenter ?? null,
@@ -139,31 +124,34 @@ export const CustomSliceHoverLayer = ({
     innerHeight,
   });
 
-  const { opacity } = useSpring({
-    opacity: isDefined(hoveredSlice) ? 1 : 0,
-    config: {
-      tension: 300,
-      friction: 30,
-    },
-  });
-
   if (bars.length === 0) {
     return null;
   }
 
   return (
     <g>
-      <animated.g
-        transform={`translate(${highlightPosition.x}, ${highlightPosition.y})`}
-        opacity={opacity}
-      >
-        <rect
-          width={highlightPosition.width}
-          height={highlightPosition.height}
-          fill={theme.background.transparent.medium}
-          style={{ pointerEvents: 'none' }}
-        />
-      </animated.g>
+      <AnimatePresence>
+        {isDefined(hoveredSlice) && (
+          <motion.g
+            key="highlight"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: theme.animation.duration.fast,
+              ease: 'easeInOut',
+            }}
+            transform={`translate(${highlightPosition.x}, ${highlightPosition.y})`}
+          >
+            <rect
+              width={highlightPosition.width}
+              height={highlightPosition.height}
+              fill={theme.background.transparent.medium}
+              style={{ pointerEvents: 'none' }}
+            />
+          </motion.g>
+        )}
+      </AnimatePresence>
 
       <rect
         x={0}
