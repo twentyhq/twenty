@@ -117,10 +117,12 @@ export class ViewService {
     updateViewInput,
     workspaceId,
     userWorkspaceId,
+    isSystemBuild = false,
   }: {
     updateViewInput: UpdateViewInput;
     workspaceId: string;
     userWorkspaceId?: string;
+    isSystemBuild?: boolean;
   }): Promise<ViewDTO> {
     const {
       flatViewMaps: existingFlatViewMaps,
@@ -162,7 +164,7 @@ export class ViewService {
             },
           },
           workspaceId,
-          isSystemBuild: false,
+          isSystemBuild,
         },
       );
 

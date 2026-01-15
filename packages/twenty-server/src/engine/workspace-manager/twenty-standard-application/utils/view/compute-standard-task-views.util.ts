@@ -5,7 +5,6 @@ import {
   createStandardViewFlatMetadata,
   type CreateStandardViewArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/create-standard-view-flat-metadata.util';
-import { AggregateOperations } from 'src/modules/dashboard/tools/schemas/widget.schema';
 
 export const computeStandardTaskViews = (
   args: Omit<CreateStandardViewArgs<'task'>, 'context'>,
@@ -34,7 +33,6 @@ export const computeStandardTaskViews = (
         position: 1,
         icon: 'IconLayoutKanban',
         mainGroupByFieldName: 'status',
-        kanbanAggregateOperation: AggregateOperations.SUM,
         kanbanAggregateOperationFieldName: 'status',
       },
     }),
