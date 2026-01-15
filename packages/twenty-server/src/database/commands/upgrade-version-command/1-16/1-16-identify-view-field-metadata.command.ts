@@ -2,14 +2,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import {
-  RunOnWorkspaceArgs,
-  WorkspacesMigrationCommandRunner,
-} from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -50,7 +47,7 @@ type ViewFieldMetadataException = {
   name: 'upgrade:1-16:identify-view-field-metadata',
   description: 'Identify standard view field metadata',
 })
-export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommandRunner {
+export class IdentifyViewFieldMetadataCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -62,11 +59,7 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
     protected readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, dataSourceService, [
-      WorkspaceActivationStatus.ACTIVE,
-      WorkspaceActivationStatus.SUSPENDED,
-      WorkspaceActivationStatus.ONGOING_CREATION,
-    ]);
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
   override async runOnWorkspace({

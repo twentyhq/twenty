@@ -2,13 +2,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { capitalize, isDefined, uncapitalize } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
-  RunOnWorkspaceArgs,
-  WorkspacesMigrationCommandRunner,
+  RunOnWorkspaceArgs
 } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { ALL_ENTITY_VIEW_NAME } from 'src/database/commands/upgrade-version-command/1-16/utils/compute-formatted-view-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -34,19 +33,21 @@ type StandardViewUpdate = {
   objectNameSingular: string;
 };
 
-type AllExceptions = 'unknown_standard_view';
+type AllExceptions = 'unknown_standard_view' | 'duplicate_standard_view';
 
 type ViewMetadataException = {
   flatView: FlatView;
   exception: AllExceptions;
   objectNameSingular?: string;
+  duplicateOfViewId?: string;
+  universalIdentifier?: string;
 };
 
 @Command({
   name: 'upgrade:1-16:identify-view-metadata',
   description: 'Identify standard view metadata',
 })
-export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunner {
+export class IdentifyViewMetadataCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -58,11 +59,7 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
     protected readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, dataSourceService, [
-      WorkspaceActivationStatus.ACTIVE,
-      WorkspaceActivationStatus.SUSPENDED,
-      WorkspaceActivationStatus.ONGOING_CREATION,
-    ]);
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
   override async runOnWorkspace({
@@ -221,15 +218,51 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       }
     }
 
+    // Detect duplicate universalIdentifiers
+    const seenUniversalIdentifiers = new Map<string, StandardViewUpdate>();
+    const deduplicatedStandardViewUpdates: StandardViewUpdate[] = [];
+
+    for (const update of standardViewUpdates) {
+      const existingUpdate = seenUniversalIdentifiers.get(
+        update.universalIdentifier,
+      );
+
+      if (isDefined(existingUpdate)) {
+        exceptions.push({
+          flatView: update.flatView,
+          exception: 'duplicate_standard_view',
+          objectNameSingular: update.objectNameSingular,
+          duplicateOfViewId: existingUpdate.flatView.id,
+          universalIdentifier: update.universalIdentifier,
+        });
+        continue;
+      }
+
+      seenUniversalIdentifiers.set(update.universalIdentifier, update);
+      deduplicatedStandardViewUpdates.push(update);
+    }
+
     if (exceptions.length > 0) {
       this.logger.error(
         `Found ${exceptions.length} exception(s) while processing view metadata for workspace ${workspaceId}. No updates will be applied.`,
       );
 
-      for (const { flatView, exception, objectNameSingular } of exceptions) {
-        this.logger.error(
-          `Exception for view "${flatView.name}" on object "${objectNameSingular ?? 'unknown'}" (id=${flatView.id}): ${exception}`,
-        );
+      for (const {
+        flatView,
+        exception,
+        objectNameSingular,
+        duplicateOfViewId,
+        universalIdentifier,
+      } of exceptions) {
+        if (exception === 'duplicate_standard_view') {
+          this.logger.error(
+            `  - Duplicate view "${flatView.name}" on object "${objectNameSingular ?? 'unknown'}" (id=${flatView.id}, universalIdentifier=${universalIdentifier}) is a duplicate of view id=${duplicateOfViewId}`,
+          );
+        } else {
+          this.logger.error(
+            `  - Exception for view "${flatView.name}" on object "${objectNameSingular ?? 'unknown'}" (id=${flatView.id}): ${exception}`,
+          );
+        }
       }
 
       throw new Error(
@@ -237,7 +270,7 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       );
     }
 
-    const standardUpdates = standardViewUpdates.map(
+    const standardUpdates = deduplicatedStandardViewUpdates.map(
       ({ flatView, universalIdentifier }) => ({
         id: flatView.id,
         universalIdentifier,
@@ -253,7 +286,7 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       flatView,
       universalIdentifier,
       objectNameSingular,
-    } of standardViewUpdates) {
+    } of deduplicatedStandardViewUpdates) {
       this.logger.log(
         `  - Standard view "${flatView.name}" on object "${objectNameSingular}" (id=${flatView.id}) -> universalIdentifier=${universalIdentifier}`,
       );
