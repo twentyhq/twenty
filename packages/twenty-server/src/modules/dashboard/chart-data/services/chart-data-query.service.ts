@@ -23,17 +23,12 @@ import {
   GRAPH_DEFAULT_DATE_GRANULARITY,
   GRAPH_DEFAULT_ORDER_BY,
 } from 'src/modules/dashboard/chart-data/constants/graph-defaults.constants';
-import {
-  ChartDataException,
-  ChartDataExceptionCode,
-  ChartDataExceptionMessageKey,
-  generateChartDataExceptionMessage,
-} from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { buildAggregateFieldKey } from 'src/modules/dashboard/chart-data/utils/build-aggregate-field-key.util';
 import {
   buildGroupByFieldObject,
   type GroupByFieldObject,
 } from 'src/modules/dashboard/chart-data/utils/build-group-by-field-object.util';
+import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getGroupByOrderBy } from 'src/modules/dashboard/chart-data/utils/get-group-by-order-by.util';
 import { isRelationNestedFieldDateKind } from 'src/modules/dashboard/chart-data/utils/is-relation-nested-field-date-kind.util';
 
@@ -88,12 +83,12 @@ export class ChartDataQueryService {
     secondaryGroupBySubFieldName,
     secondaryDateGranularity,
   }: ExecuteGroupByQueryParams): Promise<GroupByRawResult[]> {
-    const primaryGroupByField = this.getFieldMetadata(
+    const primaryGroupByField = getFieldMetadata(
       groupByFieldMetadataId,
       flatFieldMetadataMaps.byId,
     );
 
-    const aggregateField = this.getFieldMetadata(
+    const aggregateField = getFieldMetadata(
       aggregateFieldMetadataId,
       flatFieldMetadataMaps.byId,
     );
@@ -127,7 +122,7 @@ export class ChartDataQueryService {
     );
 
     if (isDefined(secondaryGroupByFieldMetadataId)) {
-      const secondaryGroupByField = this.getFieldMetadata(
+      const secondaryGroupByField = getFieldMetadata(
         secondaryGroupByFieldMetadataId,
         flatFieldMetadataMaps.byId,
       );
@@ -215,12 +210,12 @@ export class ChartDataQueryService {
     primaryAxisOrderBy?: GraphOrderBy;
     secondaryAxisOrderBy?: GraphOrderBy;
   }): Promise<GroupByRawResult[]> {
-    const primaryGroupByField = this.getFieldMetadata(
+    const primaryGroupByField = getFieldMetadata(
       groupByFieldMetadataId,
       flatFieldMetadataMaps.byId,
     );
 
-    const aggregateField = this.getFieldMetadata(
+    const aggregateField = getFieldMetadata(
       aggregateFieldMetadataId,
       flatFieldMetadataMaps.byId,
     );
@@ -270,7 +265,7 @@ export class ChartDataQueryService {
     }
 
     if (isDefined(secondaryGroupByFieldMetadataId)) {
-      const secondaryGroupByField = this.getFieldMetadata(
+      const secondaryGroupByField = getFieldMetadata(
         secondaryGroupByFieldMetadataId,
         flatFieldMetadataMaps.byId,
       );
@@ -349,24 +344,5 @@ export class ChartDataQueryService {
       groupByDimensionValues: result.groupByDimensionValues ?? [],
       aggregateValue: Number(result[aggregateFieldKey] ?? 0),
     }));
-  }
-
-  private getFieldMetadata(
-    fieldMetadataId: string,
-    fieldMetadataById: Partial<Record<string, FlatFieldMetadata>>,
-  ): FlatFieldMetadata {
-    const fieldMetadata = fieldMetadataById[fieldMetadataId];
-
-    if (!isDefined(fieldMetadata)) {
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
-          ChartDataExceptionMessageKey.FIELD_METADATA_NOT_FOUND,
-          fieldMetadataId,
-        ),
-        ChartDataExceptionCode.FIELD_METADATA_NOT_FOUND,
-      );
-    }
-
-    return fieldMetadata;
   }
 }

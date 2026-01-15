@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -23,6 +22,9 @@ import {
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
+import { formatDimensionValue } from 'src/modules/dashboard/chart-data/utils/format-dimension-value.util';
+import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
+import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data.util';
 
 type GetPieChartDataParams = {
@@ -30,13 +32,6 @@ type GetPieChartDataParams = {
   objectMetadataId: string;
   configuration: PieChartConfigurationDTO;
   authContext: AuthContext;
-};
-
-type FieldMetadataOption = {
-  value: string;
-  label: string;
-  color?: string;
-  position: number;
 };
 
 @Injectable()
@@ -92,12 +87,12 @@ export class PieChartDataService {
       );
     }
 
-    const groupByField = this.getFieldMetadata(
+    const groupByField = getFieldMetadata(
       configuration.groupByFieldMetadataId,
       flatFieldMetadataMaps.byId,
     );
 
-    const aggregateField = this.getFieldMetadata(
+    const aggregateField = getFieldMetadata(
       configuration.aggregateFieldMetadataId,
       flatFieldMetadataMaps.byId,
     );
@@ -147,25 +142,6 @@ export class PieChartDataService {
     });
   }
 
-  private getFieldMetadata(
-    fieldMetadataId: string,
-    fieldMetadataById: Partial<Record<string, FlatFieldMetadata>>,
-  ): FlatFieldMetadata {
-    const fieldMetadata = fieldMetadataById[fieldMetadataId];
-
-    if (!isDefined(fieldMetadata)) {
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
-          ChartDataExceptionMessageKey.FIELD_METADATA_NOT_FOUND,
-          fieldMetadataId,
-        ),
-        ChartDataExceptionCode.FIELD_METADATA_NOT_FOUND,
-      );
-    }
-
-    return fieldMetadata;
-  }
-
   private transformToPieChartData({
     rawResults,
     groupByField,
@@ -191,14 +167,14 @@ export class PieChartDataService {
       : rawResults;
 
     const formattedToRawLookup = new Map<string, RawDimensionValue>();
-    const selectOptions = this.getSelectOptions(groupByField);
+    const selectOptions = getSelectOptions(groupByField);
 
     const processedDataPoints = filteredResults
       .slice(0, PIE_CHART_MAXIMUM_NUMBER_OF_SLICES)
       .map((result) => {
         const rawValue = result
           .groupByDimensionValues?.[0] as RawDimensionValue;
-        const formattedValue = this.formatDimensionValue(
+        const formattedValue = formatDimensionValue(
           rawValue,
           groupByField,
           selectOptions,
@@ -240,44 +216,5 @@ export class PieChartDataService {
         filteredResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
       formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
     };
-  }
-
-  private getSelectOptions(
-    fieldMetadata: FlatFieldMetadata,
-  ): FieldMetadataOption[] | null {
-    if (!isFieldMetadataSelectKind(fieldMetadata.type)) {
-      return null;
-    }
-
-    const options = fieldMetadata.options as FieldMetadataOption[] | undefined;
-
-    return options ?? null;
-  }
-
-  private formatDimensionValue(
-    value: RawDimensionValue,
-    fieldMetadata: FlatFieldMetadata,
-    selectOptions: FieldMetadataOption[] | null,
-  ): string {
-    if (!isDefined(value)) {
-      return 'Not Set';
-    }
-
-    if (
-      fieldMetadata.type === FieldMetadataType.SELECT &&
-      isDefined(selectOptions)
-    ) {
-      const selectedOption = selectOptions.find(
-        (option) => option.value === value,
-      );
-
-      return selectedOption?.label ?? String(value);
-    }
-
-    if (fieldMetadata.type === FieldMetadataType.BOOLEAN) {
-      return value === true ? 'Yes' : 'No';
-    }
-
-    return String(value);
   }
 }

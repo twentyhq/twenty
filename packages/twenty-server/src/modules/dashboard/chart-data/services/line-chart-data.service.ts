@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -28,7 +26,13 @@ import {
   ChartDataQueryService,
   type GroupByRawResult,
 } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/field-metadata-option.type';
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
+import { filterByRange } from 'src/modules/dashboard/chart-data/utils/filter-by-range.util';
+import { formatDimensionValue } from 'src/modules/dashboard/chart-data/utils/format-dimension-value.util';
+import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
+import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
+import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data.util';
 
 type GetLineChartDataParams = {
@@ -36,13 +40,6 @@ type GetLineChartDataParams = {
   objectMetadataId: string;
   configuration: LineChartConfigurationDTO;
   authContext: AuthContext;
-};
-
-type FieldMetadataOption = {
-  value: string;
-  label: string;
-  color?: string;
-  position: number;
 };
 
 @Injectable()
@@ -88,12 +85,12 @@ export class LineChartDataService {
       );
     }
 
-    const primaryAxisGroupByField = this.getFieldMetadata(
+    const primaryAxisGroupByField = getFieldMetadata(
       configuration.primaryAxisGroupByFieldMetadataId,
       flatFieldMetadataMaps.byId,
     );
 
-    const aggregateField = this.getFieldMetadata(
+    const aggregateField = getFieldMetadata(
       configuration.aggregateFieldMetadataId,
       flatFieldMetadataMaps.byId,
     );
@@ -105,7 +102,7 @@ export class LineChartDataService {
     let secondaryAxisGroupByField: FlatFieldMetadata | undefined;
 
     if (isTwoDimensional) {
-      secondaryAxisGroupByField = this.getFieldMetadata(
+      secondaryAxisGroupByField = getFieldMetadata(
         configuration.secondaryAxisGroupByFieldMetadataId!,
         flatFieldMetadataMaps.byId,
       );
@@ -182,25 +179,6 @@ export class LineChartDataService {
     });
   }
 
-  private getFieldMetadata(
-    fieldMetadataId: string,
-    fieldMetadataById: Partial<Record<string, FlatFieldMetadata>>,
-  ): FlatFieldMetadata {
-    const fieldMetadata = fieldMetadataById[fieldMetadataId];
-
-    if (!isDefined(fieldMetadata)) {
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
-          ChartDataExceptionMessageKey.FIELD_METADATA_NOT_FOUND,
-          fieldMetadataId,
-        ),
-        ChartDataExceptionCode.FIELD_METADATA_NOT_FOUND,
-      );
-    }
-
-    return fieldMetadata;
-  }
-
   private transformToLineChartData({
     rawResults,
     primaryAxisGroupByField,
@@ -225,7 +203,7 @@ export class LineChartDataService {
     const rangeFilteredResults =
       !configuration.isCumulative &&
       (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
-        ? this.filterByRange(
+        ? filterByRange(
             filteredResults,
             configuration.rangeMin,
             configuration.rangeMax,
@@ -233,11 +211,11 @@ export class LineChartDataService {
         : filteredResults;
 
     const formattedToRawLookup = new Map<string, RawDimensionValue>();
-    const selectOptions = this.getSelectOptions(primaryAxisGroupByField);
+    const selectOptions = getSelectOptions(primaryAxisGroupByField);
 
     const processedDataPoints = rangeFilteredResults.map((result) => {
       const rawValue = result.groupByDimensionValues?.[0] as RawDimensionValue;
-      const formattedValue = this.formatDimensionValue(
+      const formattedValue = formatDimensionValue(
         rawValue,
         primaryAxisGroupByField,
         selectOptions,
@@ -302,7 +280,7 @@ export class LineChartDataService {
 
     const xAxisLabel = showXAxis ? primaryAxisGroupByField.label : undefined;
     const yAxisLabel = showYAxis
-      ? `${this.getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
+      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
       : undefined;
 
     return {
@@ -343,10 +321,8 @@ export class LineChartDataService {
     const formattedToRawLookup = new Map<string, RawDimensionValue>();
     const secondaryFormattedToRawLookup = new Map<string, RawDimensionValue>();
 
-    const primarySelectOptions = this.getSelectOptions(primaryAxisGroupByField);
-    const secondarySelectOptions = this.getSelectOptions(
-      secondaryAxisGroupByField,
-    );
+    const primarySelectOptions = getSelectOptions(primaryAxisGroupByField);
+    const secondarySelectOptions = getSelectOptions(secondaryAxisGroupByField);
 
     type ProcessedTwoDimDataPoint = {
       xFormatted: string;
@@ -371,12 +347,12 @@ export class LineChartDataService {
       const rawXValue = dimensionValues[0] as RawDimensionValue;
       const rawYValue = dimensionValues[1] as RawDimensionValue;
 
-      const xFormatted = this.formatDimensionValue(
+      const xFormatted = formatDimensionValue(
         rawXValue,
         primaryAxisGroupByField,
         primarySelectOptions,
       );
-      const ySeriesId = this.formatDimensionValue(
+      const ySeriesId = formatDimensionValue(
         rawYValue,
         secondaryAxisGroupByField,
         secondarySelectOptions,
@@ -483,7 +459,7 @@ export class LineChartDataService {
 
     const xAxisLabel = showXAxis ? primaryAxisGroupByField.label : undefined;
     const yAxisLabel = showYAxis
-      ? `${this.getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
+      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
       : undefined;
 
     const hasTooManyGroups =
@@ -545,26 +521,6 @@ export class LineChartDataService {
     });
   }
 
-  private filterByRange(
-    results: GroupByRawResult[],
-    rangeMin?: number | null,
-    rangeMax?: number | null,
-  ): GroupByRawResult[] {
-    return results.filter((result) => {
-      const value = result.aggregateValue;
-
-      if (isDefined(rangeMin) && value < rangeMin) {
-        return false;
-      }
-
-      if (isDefined(rangeMax) && value > rangeMax) {
-        return false;
-      }
-
-      return true;
-    });
-  }
-
   private applyCumulativeTransform<T extends { y: number | null }>(
     data: T[],
     rangeMin?: number | null,
@@ -590,75 +546,5 @@ export class LineChartDataService {
     }
 
     return result;
-  }
-
-  private getSelectOptions(
-    fieldMetadata: FlatFieldMetadata,
-  ): FieldMetadataOption[] | null {
-    if (!isFieldMetadataSelectKind(fieldMetadata.type)) {
-      return null;
-    }
-
-    const options = fieldMetadata.options as FieldMetadataOption[] | undefined;
-
-    return options ?? null;
-  }
-
-  private formatDimensionValue(
-    value: RawDimensionValue,
-    fieldMetadata: FlatFieldMetadata,
-    selectOptions: FieldMetadataOption[] | null,
-  ): string {
-    if (!isDefined(value)) {
-      return 'Not Set';
-    }
-
-    if (
-      fieldMetadata.type === FieldMetadataType.SELECT &&
-      isDefined(selectOptions)
-    ) {
-      const selectedOption = selectOptions.find(
-        (option) => option.value === value,
-      );
-
-      return selectedOption?.label ?? String(value);
-    }
-
-    if (fieldMetadata.type === FieldMetadataType.BOOLEAN) {
-      return value === true ? 'Yes' : 'No';
-    }
-
-    return String(value);
-  }
-
-  private getAggregateOperationLabel(operation: AggregateOperations): string {
-    switch (operation) {
-      case AggregateOperations.MIN:
-        return 'Min';
-      case AggregateOperations.MAX:
-        return 'Max';
-      case AggregateOperations.AVG:
-        return 'Average';
-      case AggregateOperations.SUM:
-        return 'Sum';
-      case AggregateOperations.COUNT:
-        return 'Count all';
-      case AggregateOperations.COUNT_EMPTY:
-        return 'Count empty';
-      case AggregateOperations.COUNT_NOT_EMPTY:
-        return 'Count not empty';
-      case AggregateOperations.COUNT_UNIQUE_VALUES:
-        return 'Count unique values';
-      case AggregateOperations.PERCENTAGE_EMPTY:
-        return 'Percent empty';
-      case AggregateOperations.PERCENTAGE_NOT_EMPTY:
-        return 'Percent not empty';
-      case AggregateOperations.COUNT_TRUE:
-        return 'Count true';
-      case AggregateOperations.COUNT_FALSE:
-        return 'Count false';
-      default:
-        return 'Count';
-    }
   }
 }
