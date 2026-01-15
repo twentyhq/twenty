@@ -176,6 +176,21 @@ export class WorkspaceUpdateQueryBuilder<
 
       this.applyRowLevelPermissionPredicates();
 
+      const valuesSet = this.expressionMap.valuesSet ?? {};
+      const updatedRecords: T[] = formattedBefore.map(
+        (record, index) =>
+          ({
+            ...record,
+            ...(Array.isArray(valuesSet)
+              ? (valuesSet[index] ?? valuesSet[0] ?? {})
+              : valuesSet),
+          }) as T,
+      );
+
+      this.validateRLSPredicatesForUpdate({
+        updatedRecords,
+      });
+
       const result = await super.execute();
 
       const after = await eventSelectQueryBuilder.getMany();
@@ -186,8 +201,6 @@ export class WorkspaceUpdateQueryBuilder<
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
       );
-
-      this.validateRLSPredicatesForUpdate(formattedAfter, objectMetadata);
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
         formatTwentyOrmEventToDatabaseBatchEvent({
@@ -326,11 +339,33 @@ export class WorkspaceUpdateQueryBuilder<
         }));
       }
 
+      const beforeRecordById = new Map<string, T>();
+
+      for (const beforeRecord of formattedBefore) {
+        if (isDefined(beforeRecord.id)) {
+          beforeRecordById.set(beforeRecord.id, beforeRecord);
+        }
+      }
+
       for (const input of this.manyInputs) {
         this.expressionMap.valuesSet = input.partialEntity;
         this.where({ id: input.criteria });
 
         this.applyRowLevelPermissionPredicates();
+
+        const beforeRecord = beforeRecordById.get(input.criteria);
+        const updatedRecords = beforeRecord
+          ? [
+              {
+                ...beforeRecord,
+                ...input.partialEntity,
+              } as T,
+            ]
+          : [];
+
+        this.validateRLSPredicatesForUpdate({
+          updatedRecords,
+        });
 
         const result = await super.execute();
 
@@ -525,10 +560,17 @@ export class WorkspaceUpdateQueryBuilder<
     });
   }
 
-  private validateRLSPredicatesForUpdate(
-    updatedRecords: T[],
-    objectMetadata: ReturnType<typeof getObjectMetadataFromEntityTarget>,
-  ): void {
+  private validateRLSPredicatesForUpdate({
+    updatedRecords,
+  }: {
+    updatedRecords: T[];
+  }): void {
+    const mainAliasTarget = this.getMainAliasTarget();
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
     validateRLSPredicatesForRecords({
       records: updatedRecords,
       objectMetadata,

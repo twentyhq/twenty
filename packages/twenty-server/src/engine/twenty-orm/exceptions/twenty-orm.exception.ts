@@ -26,6 +26,7 @@ export enum TwentyORMExceptionCode {
   INVALID_INPUT = 'INVALID_INPUT',
   ORM_EVENT_DATA_CORRUPTED = 'ORM_EVENT_DATA_CORRUPTED',
   RLS_VALIDATION_FAILED = 'RLS_VALIDATION_FAILED',
+  NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'NO_ROLE_FOUND_FOR_USER_WORKSPACE',
 }
 
 const getTwentyORMExceptionUserFriendlyMessage = (
@@ -71,6 +72,8 @@ const getTwentyORMExceptionUserFriendlyMessage = (
     case TwentyORMExceptionCode.ENUM_TYPE_NAME_NOT_FOUND:
     case TwentyORMExceptionCode.ORM_EVENT_DATA_CORRUPTED:
       return STANDARD_ERROR_MESSAGE;
+    case TwentyORMExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE:
+      return msg`No role found for user.`;
     default:
       assertUnreachable(code);
   }

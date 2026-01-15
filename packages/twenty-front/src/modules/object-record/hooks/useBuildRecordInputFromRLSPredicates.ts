@@ -11,6 +11,7 @@ import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/b
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isUndefined } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
+import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useBuildRecordInputFromRLSPredicates = ({
@@ -80,7 +81,8 @@ export const useBuildRecordInputFromRLSPredicates = ({
         }
 
         const recordInputField =
-          fieldMetadataItem.type === 'RELATION'
+          fieldMetadataItem.type === 'RELATION' &&
+          fieldMetadataItem.settings?.relationType === RelationType.MANY_TO_ONE
             ? `${fieldMetadataItem.name}Id`
             : fieldMetadataItem.name;
 
