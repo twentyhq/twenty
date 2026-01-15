@@ -214,7 +214,9 @@ export class FrontComponentService {
       );
     }
 
-    return fromFlatFrontComponentToFrontComponentDto(flatFrontComponentToDelete);
+    return fromFlatFrontComponentToFrontComponentDto(
+      flatFrontComponentToDelete,
+    );
   }
 
   async findByIdOrThrow(

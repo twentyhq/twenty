@@ -1,6 +1,5 @@
-import { v4 } from 'uuid';
-
 import { deleteFrontComponent } from 'test/integration/metadata/suites/front-component/utils/delete-front-component.util';
+import { v4 } from 'uuid';
 
 describe('Front component deletion should fail', () => {
   it('should fail when deleting a non-existent front component', async () => {

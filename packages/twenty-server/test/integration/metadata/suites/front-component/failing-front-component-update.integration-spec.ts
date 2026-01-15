@@ -1,6 +1,5 @@
-import { v4 } from 'uuid';
-
 import { updateFrontComponent } from 'test/integration/metadata/suites/front-component/utils/update-front-component.util';
+import { v4 } from 'uuid';
 
 describe('Front component update should fail', () => {
   it('should fail when updating a non-existent front component', async () => {

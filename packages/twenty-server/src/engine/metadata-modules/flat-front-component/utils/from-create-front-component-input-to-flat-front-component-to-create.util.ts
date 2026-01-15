@@ -15,11 +15,10 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
 }): FlatFrontComponent => {
   const now = new Date().toISOString();
 
-  const { name } =
-    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
-      createFrontComponentInput,
-      ['name'],
-    );
+  const { name } = trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+    createFrontComponentInput,
+    ['name'],
+  );
 
   const id = v4();
 
