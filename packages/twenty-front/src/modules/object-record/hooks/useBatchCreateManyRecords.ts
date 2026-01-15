@@ -6,8 +6,8 @@ import {
   type useCreateManyRecordsProps,
 } from '@/object-record/hooks/useCreateManyRecords';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
-import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
@@ -27,8 +27,6 @@ export const useBatchCreateManyRecords = <
   setBatchedRecordsCount?: (count: number) => void;
   abortController?: AbortController;
 }) => {
-  const { registerObjectOperation } = useRegisterObjectOperation();
-
   const { createManyRecords } = useCreateManyRecords({
     objectNameSingular,
     recordGqlFields,
@@ -100,7 +98,10 @@ export const useBatchCreateManyRecords = <
 
     await refetchAggregateQueries();
 
-    registerObjectOperation(objectMetadataItem, { type: 'create-many' });
+    dispatchObjectRecordOperationBrowserEvent({
+      objectMetadataItem,
+      operation: { type: 'create-many' },
+    });
 
     return allCreatedRecords;
   };
