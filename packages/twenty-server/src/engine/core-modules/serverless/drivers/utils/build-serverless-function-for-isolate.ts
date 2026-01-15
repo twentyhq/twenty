@@ -16,13 +16,13 @@ export const buildServerlessFunctionForIsolate = async ({
   await build({
     entryPoints: [entryFilePath],
     outfile: builtBundleFilePath,
-    platform: 'node',
+    platform: 'browser', // Use browser platform to avoid Node.js built-in imports
     format: 'iife',
     globalName: '__serverlessExports',
     target: 'es2020',
     bundle: true,
     sourcemap: false,
-    packages: 'external',
+    // Don't mark packages as external - bundle them for isolated-vm
     minify: false,
   });
 

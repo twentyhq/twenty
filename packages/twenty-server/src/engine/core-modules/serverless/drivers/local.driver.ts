@@ -94,6 +94,22 @@ export class LocalDriver implements ServerlessDriver {
         to: { folderPath: sourceTemporaryDir },
       });
 
+      // Create symlink to node_modules BEFORE building so esbuild can resolve packages
+      try {
+        await fs.symlink(
+          join(
+            this.getInMemoryLayerFolderPath(serverlessFunction),
+            'node_modules',
+          ),
+          join(sourceTemporaryDir, 'node_modules'),
+          'dir',
+        );
+      } catch (err) {
+        if ((err as NodeJS.ErrnoException).code !== 'EEXIST') {
+          throw err;
+        }
+      }
+
       let builtBundleFilePath = '';
 
       try {
