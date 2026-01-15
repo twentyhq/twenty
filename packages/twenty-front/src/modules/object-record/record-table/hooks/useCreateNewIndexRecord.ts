@@ -19,10 +19,12 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilCallback } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type UseCreateNewIndexRecordProps = {
@@ -34,6 +36,10 @@ export const useCreateNewIndexRecord = ({
 }: UseCreateNewIndexRecordProps) => {
   const recordGroupDefinitions = useRecoilComponentValue(
     recordGroupDefinitionsComponentSelector,
+  );
+
+  const isRLSEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
   );
 
   const recordIndexRecordIdsByGroupCallbackState =
@@ -83,7 +89,7 @@ export const useCreateNewIndexRecord = ({
 
         const createdRecord = await createOneRecord({
           id: recordId,
-          ...recordInputFromRLSPredicates,
+          ...(isRLSEnabled ? recordInputFromRLSPredicates : {}),
           ...recordInputFromFilters,
           ...recordInput,
         });
@@ -184,6 +190,7 @@ export const useCreateNewIndexRecord = ({
       recordIndexRecordIdsByGroupCallbackState,
       upsertRecordsInStore,
       closeCommandMenu,
+      isRLSEnabled,
     ],
   );
 

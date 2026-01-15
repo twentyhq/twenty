@@ -163,6 +163,17 @@ export const useGetObjectPermissionDerivedStates = ({
       ((isThereAnyFieldPermissionThatRevokeRead && canRestrictFieldRead) ||
         (isThereAnyFieldPermissionThatRevokeUpdate && canRestrictFieldUpdate));
 
+    const objectHasRowLevelPermissionPredicates =
+      settingsDraftRole.rowLevelPermissionPredicates?.some(
+        (rowLevelPermissionPredicateToCheck) =>
+          rowLevelPermissionPredicateToCheck.objectMetadataId ===
+          objectMetadataItemId,
+      );
+
+    const objectHasNoOverrideButRowLevelPermissionPredicatesShouldBeTakenIntoAccount =
+      objectHasNoOverrideOnObjectPermission &&
+      objectHasRowLevelPermissionPredicates;
+
     const objectHasOverrideOnObjectPermissions =
       !objectHasNoOverrideOnObjectPermission;
 
@@ -184,6 +195,7 @@ export const useGetObjectPermissionDerivedStates = ({
       objectHasNoOverrideButFieldPermissionsShouldBeTakenIntoAccount,
       objectPermissionHasOnlyNullPermissions,
       objectHasOverrideOnObjectPermissions,
+      objectHasNoOverrideButRowLevelPermissionPredicatesShouldBeTakenIntoAccount,
     };
   };
 
