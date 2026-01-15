@@ -34,8 +34,7 @@ type StandardViewUpdate = {
   objectNameSingular: string;
 };
 
-type AllExceptions =
-  | 'unknown_standard_view'
+type AllExceptions = 'unknown_standard_view';
 
 type ViewMetadataException = {
   flatView: FlatView;
@@ -289,7 +288,6 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
 
     const customUpdates = remainingCustomViews.map((viewEntity) => ({
       id: viewEntity.id,
-      name: viewEntity.name,
       universalIdentifier: viewEntity.universalIdentifier ?? v4(),
       applicationId: workspaceCustomApplicationId,
     }));
@@ -307,16 +305,9 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       );
     }
 
-    const customUpdatesToSave = customUpdates.map(
-      ({ id, universalIdentifier, applicationId }) => ({
-        id,
-        universalIdentifier,
-        applicationId,
-      }),
-    );
 
     if (!dryRun) {
-      await this.viewRepository.save(customUpdatesToSave);
+      await this.viewRepository.save(customUpdates);
     }
   }
 }
