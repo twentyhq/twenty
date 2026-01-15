@@ -40,7 +40,7 @@ You can manually reference any rule using the `@ruleName` syntax:
 - `@nx-rules` - Include Nx-specific guidance
 - `@react-general-guidelines` - Load React best practices
 - `@testing-guidelines` - Get testing recommendations
-- `@creating-new-entity-v2` - Guide for creating new syncable entities in workspace migration v2
+- `@creating-syncable-entity` - Guide for creating new syncable entities
 
 ### Rule Types Used
 - **Always Applied** - Loaded in every context (architecture.mdc, README.mdc)
