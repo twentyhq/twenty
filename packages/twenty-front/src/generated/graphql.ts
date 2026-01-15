@@ -3079,6 +3079,8 @@ export type ObjectPermission = {
   canUpdateObjectRecords?: Maybe<Scalars['Boolean']>;
   objectMetadataId: Scalars['UUID'];
   restrictedFields?: Maybe<Scalars['JSON']>;
+  rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
+  rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
 };
 
 export type ObjectPermissionInput = {

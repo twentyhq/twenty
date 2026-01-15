@@ -54,5 +54,7 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     objectPermissionIds: [],
     permissionFlagIds: [],
     fieldPermissionIds: [],
+    rowLevelPermissionPredicateIds: [],
+    rowLevelPermissionPredicateGroupIds: [],
   };
 };

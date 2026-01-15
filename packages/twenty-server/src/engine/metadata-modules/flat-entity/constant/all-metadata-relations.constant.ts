@@ -284,6 +284,12 @@ export const ALL_METADATA_RELATIONS = {
       objectPermissions: null,
       permissionFlags: null,
       fieldPermissions: null,
+      rowLevelPermissionPredicates: {
+        metadataName: 'rowLevelPermissionPredicate',
+      },
+      rowLevelPermissionPredicateGroups: {
+        metadataName: 'rowLevelPermissionPredicateGroup',
+      },
     },
   },
   roleTarget: {
