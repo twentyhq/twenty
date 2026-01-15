@@ -25,10 +25,9 @@ import {
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
-import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
-import { formatDimensionValue } from 'src/modules/dashboard/chart-data/utils/format-dimension-value.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
+import { processOneDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-one-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
 
 type GetPieChartDataParams = {
@@ -172,7 +171,6 @@ export class PieChartDataService {
         )
       : rawResults;
 
-    const formattedToRawLookup = new Map<string, RawDimensionValue>();
     const selectOptions = getSelectOptions(groupByField);
 
     const convertedFirstDayOfTheWeek =
@@ -181,33 +179,34 @@ export class PieChartDataService {
         FirstDayOfTheWeek.SUNDAY,
       );
 
-    const processedDataPoints = filteredResults
-      .slice(0, PIE_CHART_MAXIMUM_NUMBER_OF_SLICES)
-      .map((result) => {
-        const rawValue = result
-          .groupByDimensionValues?.[0] as RawDimensionValue;
+    const limitedResults = filteredResults.slice(
+      0,
+      PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
+    );
 
-        const formattedValue = formatDimensionValue({
-          value: rawValue,
-          fieldMetadata: groupByField,
-          dateGranularity: configuration.dateGranularity,
-          subFieldName: configuration.groupBySubFieldName,
-          userTimezone: userTimezone,
-          firstDayOfTheWeek: convertedFirstDayOfTheWeek,
-        });
+    const {
+      processedDataPoints: rawProcessedDataPoints,
+      formattedToRawLookup,
+    } = processOneDimensionalResults({
+      rawResults: limitedResults,
+      primaryAxisGroupByField: groupByField,
+      dateGranularity: configuration.dateGranularity,
+      subFieldName: configuration.groupBySubFieldName,
+      userTimezone,
+      firstDayOfTheWeek: convertedFirstDayOfTheWeek,
+    });
 
-        if (isDefined(rawValue)) {
-          formattedToRawLookup.set(formattedValue, rawValue);
-        }
+    const processedDataPoints = rawProcessedDataPoints.map((point) => {
+      const rawValueString = isDefined(point.rawValue)
+        ? String(point.rawValue)
+        : null;
 
-        const rawValueString = isDefined(rawValue) ? String(rawValue) : null;
-
-        return {
-          id: formattedValue,
-          value: result.aggregateValue,
-          rawValue: rawValueString,
-        };
-      });
+      return {
+        id: point.formattedValue,
+        value: point.aggregateValue,
+        rawValue: rawValueString,
+      };
+    });
 
     const sortedData = sortChartDataIfNeeded({
       data: processedDataPoints,

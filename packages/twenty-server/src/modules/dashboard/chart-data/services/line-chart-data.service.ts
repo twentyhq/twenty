@@ -35,10 +35,11 @@ import { FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/fiel
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { filterByRange } from 'src/modules/dashboard/chart-data/utils/filter-by-range.util';
-import { formatDimensionValue } from 'src/modules/dashboard/chart-data/utils/format-dimension-value.util';
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
+import { processOneDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-one-dimensional-results.util';
+import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-two-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
 
 type GetLineChartDataParams = {
@@ -232,7 +233,6 @@ export class LineChartDataService {
         isTwoDimensional: false,
       });
 
-    const formattedToRawLookup = new Map<string, RawDimensionValue>();
     const selectOptions = getSelectOptions(primaryAxisGroupByField);
 
     const convertedFirstDayOfTheWeek =
@@ -241,27 +241,23 @@ export class LineChartDataService {
         FirstDayOfTheWeek.SUNDAY,
       );
 
-    const processedDataPoints = gapFilledResults.map((result) => {
-      const rawValue = result.groupByDimensionValues?.[0] as RawDimensionValue;
-      const formattedValue = formatDimensionValue({
-        value: rawValue,
-        fieldMetadata: primaryAxisGroupByField,
-        dateGranularity: configuration.primaryAxisDateGranularity,
-        subFieldName: configuration.primaryAxisGroupBySubFieldName,
-        userTimezone: userTimezone,
-        firstDayOfTheWeek: convertedFirstDayOfTheWeek,
-      });
-
-      if (isDefined(rawValue)) {
-        formattedToRawLookup.set(formattedValue, rawValue);
-      }
-
-      return {
-        x: formattedValue,
-        y: result.aggregateValue,
-        rawValue,
-      };
+    const {
+      processedDataPoints: rawProcessedDataPoints,
+      formattedToRawLookup,
+    } = processOneDimensionalResults({
+      rawResults: gapFilledResults,
+      primaryAxisGroupByField,
+      dateGranularity: configuration.primaryAxisDateGranularity,
+      subFieldName: configuration.primaryAxisGroupBySubFieldName,
+      userTimezone,
+      firstDayOfTheWeek: convertedFirstDayOfTheWeek,
     });
+
+    const processedDataPoints = rawProcessedDataPoints.map((point) => ({
+      x: point.formattedValue,
+      y: point.aggregateValue,
+      rawValue: point.rawValue,
+    }));
 
     const sortedData = sortChartDataIfNeeded({
       data: processedDataPoints,
@@ -363,9 +359,6 @@ export class LineChartDataService {
         isTwoDimensional: true,
       });
 
-    const formattedToRawLookup = new Map<string, RawDimensionValue>();
-    const secondaryFormattedToRawLookup = new Map<string, RawDimensionValue>();
-
     const primarySelectOptions = getSelectOptions(primaryAxisGroupByField);
     const secondarySelectOptions = getSelectOptions(secondaryAxisGroupByField);
 
@@ -375,69 +368,43 @@ export class LineChartDataService {
         FirstDayOfTheWeek.SUNDAY,
       );
 
-    type ProcessedTwoDimDataPoint = {
-      xFormatted: string;
-      ySeriesId: string;
-      rawXValue: RawDimensionValue;
-      rawYValue: RawDimensionValue;
-      aggregateValue: number;
-    };
+    const {
+      processedDataPoints: rawProcessedDataPoints,
+      formattedToRawLookup,
+      secondaryFormattedToRawLookup,
+    } = processTwoDimensionalResults({
+      rawResults: gapFilledResults,
+      primaryAxisGroupByField,
+      secondaryAxisGroupByField,
+      primaryDateGranularity: configuration.primaryAxisDateGranularity,
+      primarySubFieldName: configuration.primaryAxisGroupBySubFieldName,
+      secondaryDateGranularity:
+        configuration.secondaryAxisGroupByDateGranularity,
+      secondarySubFieldName: configuration.secondaryAxisGroupBySubFieldName,
+      userTimezone,
+      firstDayOfTheWeek: convertedFirstDayOfTheWeek,
+    });
 
-    const processedDataPoints: ProcessedTwoDimDataPoint[] = [];
     const allXValues: string[] = [];
     const xValueSet = new Set<string>();
     const allSeriesIds = new Set<string>();
 
-    for (const result of gapFilledResults) {
-      const dimensionValues = result.groupByDimensionValues;
-
-      if (!isDefined(dimensionValues) || dimensionValues.length < 2) {
-        continue;
+    const processedDataPoints = rawProcessedDataPoints.map((point) => {
+      if (!xValueSet.has(point.xFormatted)) {
+        xValueSet.add(point.xFormatted);
+        allXValues.push(point.xFormatted);
       }
 
-      const rawXValue = dimensionValues[0] as RawDimensionValue;
-      const rawYValue = dimensionValues[1] as RawDimensionValue;
+      allSeriesIds.add(point.yFormatted);
 
-      const xFormatted = formatDimensionValue({
-        value: rawXValue,
-        fieldMetadata: primaryAxisGroupByField,
-        dateGranularity: configuration.primaryAxisDateGranularity,
-        subFieldName: configuration.primaryAxisGroupBySubFieldName,
-        userTimezone: userTimezone,
-        firstDayOfTheWeek: convertedFirstDayOfTheWeek,
-      });
-      const ySeriesId = formatDimensionValue({
-        value: rawYValue,
-        fieldMetadata: secondaryAxisGroupByField,
-        dateGranularity: configuration.secondaryAxisGroupByDateGranularity,
-        subFieldName: configuration.secondaryAxisGroupBySubFieldName,
-        userTimezone: userTimezone,
-        firstDayOfTheWeek: convertedFirstDayOfTheWeek,
-      });
-
-      if (isDefined(rawXValue)) {
-        formattedToRawLookup.set(xFormatted, rawXValue);
-      }
-
-      if (isDefined(rawYValue)) {
-        secondaryFormattedToRawLookup.set(ySeriesId, rawYValue);
-      }
-
-      if (!xValueSet.has(xFormatted)) {
-        xValueSet.add(xFormatted);
-        allXValues.push(xFormatted);
-      }
-
-      allSeriesIds.add(ySeriesId);
-
-      processedDataPoints.push({
-        xFormatted,
-        ySeriesId,
-        rawXValue,
-        rawYValue,
-        aggregateValue: result.aggregateValue,
-      });
-    }
+      return {
+        xFormatted: point.xFormatted,
+        ySeriesId: point.yFormatted,
+        rawXValue: point.rawXValue,
+        rawYValue: point.rawYValue,
+        aggregateValue: point.aggregateValue,
+      };
+    });
 
     const seriesMap = new Map<string, Map<string, number>>();
 
