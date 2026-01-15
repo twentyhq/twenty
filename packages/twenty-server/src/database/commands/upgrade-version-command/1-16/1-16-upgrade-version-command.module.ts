@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddKanbanViewIntegrityConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-add-kanban-view-integrity-constraint-migration.command';
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
-import { FixKanbanViewAggregateFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-fix-kanban-view-aggregate-field.command';
+import { FixTaskByStatusViewAggregateFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-fix-task-by-status-view-aggregate-field.command';
 import { FixKanbanViewIntegrityCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-fix-kanban-view-integrity.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
@@ -62,7 +62,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     FixKanbanViewIntegrityCommand,
-    FixKanbanViewAggregateFieldCommand,
+    FixTaskByStatusViewAggregateFieldCommand,
     AddKanbanViewIntegrityConstraintMigrationCommand,
   ],
   exports: [
@@ -78,7 +78,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     FixKanbanViewIntegrityCommand,
-    FixKanbanViewAggregateFieldCommand,
+    FixTaskByStatusViewAggregateFieldCommand,
     AddKanbanViewIntegrityConstraintMigrationCommand,
   ],
 })

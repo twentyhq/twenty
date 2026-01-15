@@ -19,11 +19,11 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 
 @Command({
-  name: 'upgrade:1-16:fix-kanban-view-aggregate-field',
+  name: 'upgrade:1-16:fix-task-by-status-view-aggregate-field',
   description:
     'Fix standard task By Status kanban view with null kanbanAggregateOperationFieldMetadataId',
 })
-export class FixKanbanViewAggregateFieldCommand extends WorkspacesMigrationCommandRunner {
+export class FixTaskByStatusViewAggregateFieldCommand extends WorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
