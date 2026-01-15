@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { FirstDayOfTheWeek } from 'twenty-shared/types';
+import {
+  convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -184,8 +188,8 @@ export class BarChartDataService {
     primaryAxisGroupByField,
     aggregateField,
     configuration,
-    userTimezone: _userTimezone,
-    firstDayOfTheWeek: _firstDayOfTheWeek,
+    userTimezone,
+    firstDayOfTheWeek,
   }: {
     rawResults: GroupByRawResult[];
     primaryAxisGroupByField: FlatFieldMetadata;
@@ -216,6 +220,12 @@ export class BarChartDataService {
     const formattedToRawLookup = new Map<string, RawDimensionValue>();
     const selectOptions = getSelectOptions(primaryAxisGroupByField);
 
+    const convertedFirstDayOfTheWeek =
+      convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
+        firstDayOfTheWeek,
+        FirstDayOfTheWeek.SUNDAY,
+      );
+
     const indexByKey = configuration.primaryAxisGroupBySubFieldName
       ? `${primaryAxisGroupByField.name}${this.capitalizeFirst(configuration.primaryAxisGroupBySubFieldName)}`
       : primaryAxisGroupByField.name;
@@ -235,11 +245,14 @@ export class BarChartDataService {
       (result) => {
         const rawValue = result
           .groupByDimensionValues?.[0] as RawDimensionValue;
-        const formattedValue = formatDimensionValue(
-          rawValue,
-          primaryAxisGroupByField,
-          selectOptions,
-        );
+        const formattedValue = formatDimensionValue({
+          value: rawValue,
+          fieldMetadata: primaryAxisGroupByField,
+          dateGranularity: configuration.primaryAxisDateGranularity,
+          subFieldName: configuration.primaryAxisGroupBySubFieldName,
+          userTimezone: userTimezone,
+          firstDayOfTheWeek: convertedFirstDayOfTheWeek,
+        });
 
         if (isDefined(rawValue)) {
           formattedToRawLookup.set(formattedValue, rawValue);
@@ -336,8 +349,8 @@ export class BarChartDataService {
     secondaryAxisGroupByField,
     aggregateField,
     configuration,
-    userTimezone: _userTimezone,
-    firstDayOfTheWeek: _firstDayOfTheWeek,
+    userTimezone,
+    firstDayOfTheWeek,
   }: {
     rawResults: GroupByRawResult[];
     primaryAxisGroupByField: FlatFieldMetadata;
@@ -387,16 +400,28 @@ export class BarChartDataService {
       const rawXValue = dimensionValues[0] as RawDimensionValue;
       const rawYValue = dimensionValues[1] as RawDimensionValue;
 
-      const xFormatted = formatDimensionValue(
-        rawXValue,
-        primaryAxisGroupByField,
-        primarySelectOptions,
-      );
-      const yFormatted = formatDimensionValue(
-        rawYValue,
-        secondaryAxisGroupByField,
-        secondarySelectOptions,
-      );
+      const convertedFirstDayOfTheWeek =
+        convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
+          firstDayOfTheWeek,
+          FirstDayOfTheWeek.SUNDAY,
+        );
+
+      const xFormatted = formatDimensionValue({
+        value: rawXValue,
+        fieldMetadata: primaryAxisGroupByField,
+        dateGranularity: configuration.primaryAxisDateGranularity,
+        subFieldName: configuration.primaryAxisGroupBySubFieldName,
+        userTimezone: userTimezone,
+        firstDayOfTheWeek: convertedFirstDayOfTheWeek,
+      });
+      const yFormatted = formatDimensionValue({
+        value: rawYValue,
+        fieldMetadata: secondaryAxisGroupByField,
+        dateGranularity: configuration.secondaryAxisGroupByDateGranularity,
+        subFieldName: configuration.secondaryAxisGroupBySubFieldName,
+        userTimezone: userTimezone,
+        firstDayOfTheWeek: convertedFirstDayOfTheWeek,
+      });
 
       if (isDefined(rawXValue)) {
         formattedToRawLookup.set(xFormatted, rawXValue);

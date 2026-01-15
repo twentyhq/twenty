@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { FirstDayOfTheWeek } from 'twenty-shared/types';
+import {
+  convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -147,8 +151,8 @@ export class PieChartDataService {
     groupByField,
     aggregateField: _aggregateField,
     configuration,
-    userTimezone: _userTimezone,
-    firstDayOfTheWeek: _firstDayOfTheWeek,
+    userTimezone,
+    firstDayOfTheWeek,
   }: {
     rawResults: Array<{
       groupByDimensionValues: unknown[];
@@ -169,16 +173,26 @@ export class PieChartDataService {
     const formattedToRawLookup = new Map<string, RawDimensionValue>();
     const selectOptions = getSelectOptions(groupByField);
 
+    const convertedFirstDayOfTheWeek =
+      convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
+        firstDayOfTheWeek,
+        FirstDayOfTheWeek.SUNDAY,
+      );
+
     const processedDataPoints = filteredResults
       .slice(0, PIE_CHART_MAXIMUM_NUMBER_OF_SLICES)
       .map((result) => {
         const rawValue = result
           .groupByDimensionValues?.[0] as RawDimensionValue;
-        const formattedValue = formatDimensionValue(
-          rawValue,
-          groupByField,
-          selectOptions,
-        );
+
+        const formattedValue = formatDimensionValue({
+          value: rawValue,
+          fieldMetadata: groupByField,
+          dateGranularity: configuration.dateGranularity,
+          subFieldName: configuration.groupBySubFieldName,
+          userTimezone: userTimezone,
+          firstDayOfTheWeek: convertedFirstDayOfTheWeek,
+        });
 
         if (isDefined(rawValue)) {
           formattedToRawLookup.set(formattedValue, rawValue);

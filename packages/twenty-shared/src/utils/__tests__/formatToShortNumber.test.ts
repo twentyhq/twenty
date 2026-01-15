@@ -1,4 +1,4 @@
-import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
+import { formatToShortNumber } from '../format/formatToShortNumber';
 
 describe('formatToShortNumber', () => {
   it('formats numbers less than 1000 correctly', () => {

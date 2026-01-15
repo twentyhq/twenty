@@ -8,8 +8,11 @@ import {
   type FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
-import { isDefined, parseToPlainDateOrThrow } from 'twenty-shared/utils';
-import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
+import {
+  formatToShortNumber,
+  isDefined,
+  parseToPlainDateOrThrow,
+} from 'twenty-shared/utils';
 
 type FormatDimensionValueParams = {
   value: unknown;
