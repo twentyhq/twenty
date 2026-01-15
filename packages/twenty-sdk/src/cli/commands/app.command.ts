@@ -1,4 +1,3 @@
-import { inspect } from 'util';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import {
@@ -12,8 +11,6 @@ import { AppSyncCommand } from '@/cli/commands/app-sync.command';
 import { formatPath } from '@/cli/utils/format-path';
 import { AppGenerateCommand } from '@/cli/commands/app-generate.command';
 import { AppLogsCommand } from '@/cli/commands/app-logs.command';
-
-inspect.defaultOptions.depth = 10;
 
 export class AppCommand {
   private devCommand = new AppDevCommand();

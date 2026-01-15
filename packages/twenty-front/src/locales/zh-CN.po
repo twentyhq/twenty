@@ -1374,10 +1374,10 @@ msgstr ""
 msgid "Amber"
 msgstr "琥珀色"
 
-#. js-lingui-id: hehnjM
+#. js-lingui-id: s46CyD
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
-msgid "Amount"
-msgstr "金额"
+msgid "Amount Micros"
+msgstr ""
 
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -2875,7 +2875,6 @@ msgstr "上下文大小"
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue"
 msgstr "继续"
@@ -4650,6 +4649,11 @@ msgstr "输入一个值存储在数据库中"
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Enter agent name*"
 msgstr "输入代理名称*"
+
+#. js-lingui-id: lU5cVU
+#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
+msgid "Enter amount x 1 000 000 (e.g. $3.21 → 3210000)"
+msgstr ""
 
 #. js-lingui-id: wgNkIh
 #: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
@@ -6845,6 +6849,12 @@ msgstr "语言"
 #. js-lingui-id: 59o/ag
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Large section heading"
+msgstr ""
+
+#. Short label (keep brief) indicating the most recently used login method
+#. js-lingui-id: RtKKbA
+#: src/modules/auth/sign-in-up/components/internal/LastUsedPill.tsx
+msgid "Last"
 msgstr ""
 
 #. js-lingui-id: DU27lO
@@ -10543,11 +10553,6 @@ msgstr "服务提供商详情"
 msgid "Set {placeholderForEmptyCell}"
 msgstr "设置{placeholderForEmptyCell}"
 
-#. js-lingui-id: EIFxcV
-#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
-msgid "Set 3.21 for $3.21"
-msgstr "对于 $3.21，设置为 3.21"
-
 #. js-lingui-id: YZwx1e
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
@@ -10723,11 +10728,6 @@ msgstr "侧边栏"
 msgid "Sign in"
 msgstr "登录"
 
-#. js-lingui-id: n1ekoW
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
-msgid "Sign In"
-msgstr "登录"
-
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
 msgid "Sign in or Create an account"
@@ -10736,11 +10736,6 @@ msgstr "登录或创建账户"
 #. js-lingui-id: e+RpCP
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign up"
-msgstr "注册"
-
-#. js-lingui-id: mErq7F
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
-msgid "Sign Up"
 msgstr "注册"
 
 #. js-lingui-id: 5v3IHX
@@ -12747,10 +12742,20 @@ msgstr "周"
 msgid "weeks"
 msgstr ""
 
-#. js-lingui-id: ke0EDP
+#. js-lingui-id: nTuObL
 #: src/pages/auth/SignInUp.tsx
-msgid "Welcome to {workspaceName}"
-msgstr "欢迎来到 {workspaceName}"
+msgid "Welcome to Twenty"
+msgstr ""
+
+#. js-lingui-id: t8ZvkC
+#: src/pages/auth/SignInUp.tsx
+msgid "Welcome to your workspace"
+msgstr ""
+
+#. js-lingui-id: Vin3Dv
+#: src/pages/auth/SignInUp.tsx
+msgid "Welcome, {workspaceName}."
+msgstr ""
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -13114,11 +13119,6 @@ msgstr "您的试用期将结束，并且"
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "Your trial period will end, and you will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
 msgstr "您的试用期将结束，并且您将按每位用户每年 ${yearlyPrice} 收取费用，按年计费。将与当前订阅进行漂移应用。"
-
-#. js-lingui-id: YQK8fJ
-#: src/pages/auth/SignInUp.tsx
-msgid "Your Workspace"
-msgstr "您的工作区"
 
 #. js-lingui-id: oC6WBs
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx

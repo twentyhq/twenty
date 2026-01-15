@@ -1369,10 +1369,10 @@ msgstr "alphabetical"
 msgid "Amber"
 msgstr "Amber"
 
-#. js-lingui-id: hehnjM
+#. js-lingui-id: s46CyD
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
-msgid "Amount"
-msgstr "Amount"
+msgid "Amount Micros"
+msgstr "Amount Micros"
 
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -2870,7 +2870,6 @@ msgstr "Context size"
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue"
 msgstr "Continue"
@@ -4645,6 +4644,11 @@ msgstr "Enter a value to store in database"
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Enter agent name*"
 msgstr "Enter agent name*"
+
+#. js-lingui-id: lU5cVU
+#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
+msgid "Enter amount x 1 000 000 (e.g. $3.21 → 3210000)"
+msgstr "Enter amount x 1 000 000 (e.g. $3.21 → 3210000)"
 
 #. js-lingui-id: wgNkIh
 #: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
@@ -6841,6 +6845,12 @@ msgstr "Language"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Large section heading"
 msgstr "Large section heading"
+
+#. Short label (keep brief) indicating the most recently used login method
+#. js-lingui-id: RtKKbA
+#: src/modules/auth/sign-in-up/components/internal/LastUsedPill.tsx
+msgid "Last"
+msgstr "Last"
 
 #. js-lingui-id: DU27lO
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
@@ -10538,11 +10548,6 @@ msgstr "Service Provider Details"
 msgid "Set {placeholderForEmptyCell}"
 msgstr "Set {placeholderForEmptyCell}"
 
-#. js-lingui-id: EIFxcV
-#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
-msgid "Set 3.21 for $3.21"
-msgstr "Set 3.21 for $3.21"
-
 #. js-lingui-id: YZwx1e
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
@@ -10718,11 +10723,6 @@ msgstr "Side Panel"
 msgid "Sign in"
 msgstr "Sign in"
 
-#. js-lingui-id: n1ekoW
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
-msgid "Sign In"
-msgstr "Sign In"
-
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
 msgid "Sign in or Create an account"
@@ -10732,11 +10732,6 @@ msgstr "Sign in or Create an account"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign up"
 msgstr "Sign up"
-
-#. js-lingui-id: mErq7F
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
-msgid "Sign Up"
-msgstr "Sign Up"
 
 #. js-lingui-id: 5v3IHX
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithSSO.tsx
@@ -12744,10 +12739,20 @@ msgstr "Week"
 msgid "weeks"
 msgstr "weeks"
 
-#. js-lingui-id: ke0EDP
+#. js-lingui-id: nTuObL
 #: src/pages/auth/SignInUp.tsx
-msgid "Welcome to {workspaceName}"
-msgstr "Welcome to {workspaceName}"
+msgid "Welcome to Twenty"
+msgstr "Welcome to Twenty"
+
+#. js-lingui-id: t8ZvkC
+#: src/pages/auth/SignInUp.tsx
+msgid "Welcome to your workspace"
+msgstr "Welcome to your workspace"
+
+#. js-lingui-id: Vin3Dv
+#: src/pages/auth/SignInUp.tsx
+msgid "Welcome, {workspaceName}."
+msgstr "Welcome, {workspaceName}."
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -13111,11 +13116,6 @@ msgstr "Your trial period will end, and "
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "Your trial period will end, and you will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
 msgstr "Your trial period will end, and you will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
-
-#. js-lingui-id: YQK8fJ
-#: src/pages/auth/SignInUp.tsx
-msgid "Your Workspace"
-msgstr "Your Workspace"
 
 #. js-lingui-id: oC6WBs
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx

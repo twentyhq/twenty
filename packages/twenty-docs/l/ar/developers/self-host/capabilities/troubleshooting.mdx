@@ -37,7 +37,7 @@ git config --global core.autocrlf false
 
 ثم قم بحذف المستودع واستنساخه مرة أخرى.
 
-#### Missing metadata schema
+#### مخطط البيانات الوصفية مفقود
 
 أثناء تثبيت Twenty، تحتاج إلى توفير قاعدة بيانات بوستجريس الخاصة بك بالمخططات والإضافات والمستخدمين الصحيحة.
 إذا نجح تشغيل هذا التخصيص، يجب أن تحتوي قاعدة البيانات لديك على المخططات `default` و`metadata`.
@@ -47,7 +47,7 @@ git config --global core.autocrlf false
 
 عليك بناء حزمة `twenty-emails` قبل تشغيل تهيئة قاعدة البيانات باستخدام `npx nx run twenty-emails:build`.
 
-#### Missing twenty-x package
+#### حزمة twenty-x مفقودة
 
 تأكد من تشغيل yarn في الدليل الجذر ثم تشغيل `npx nx server:dev twenty-server`. إذا لم يعمل ذلك، حاول بناء الحزمة المفقودة يدوياً.
 
@@ -67,11 +67,11 @@ git config --global core.autocrlf false
 
 في `packages/twenty-front/.env` قم بإزالة تعليق على `VITE_DISABLE_TYPESCRIPT_CHECKER=true` و`VITE_DISABLE_ESLINT_CHECKER=true` لتعطيل فحوصات الخلفية مما يقلل من كمية الذاكرة المطلوبة.
 
-**If it does not work:**
-Run only the services you need, instead of `npx nx start`. على سبيل المثال، إذا كنت تعمل على الخادم، قم بتشغيل `npx nx worker twenty-server` فقط
+**إذا لم يعمل ذلك:**
+قم بتشغيل الخدمات التي تحتاجها فقط، بدلاً من `npx nx start`. على سبيل المثال، إذا كنت تعمل على الخادم، قم بتشغيل `npx nx worker twenty-server` فقط
 
-**If it does not work:**
-If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:
+**إذا لم يعمل ذلك:**
+إذا حاولت تشغيل `npx nx run twenty-server:start` فقط على WSL وفشل مع خطأ الذاكرة أدناه:
 
 `FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
 
@@ -82,11 +82,11 @@ If you tried to run only `npx nx run twenty-server:start` on WSL and it's failin
 علامة --max-old-space-size=8192 تحدد حداً أقصى للذاكرة الخاصة بـ Node.js بحد أقصى 8GB؛ الاستخدام يتزايد بطلبات التطبيق.
 المرجع: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
-**If it does not work:**
-Investigate which processes are taking you most of your machine RAM. في Twenty، لاحظنا أن بعض إضافات VScode كانت تستهلك الكثير من الذاكرة لذا قمنا بتعطيلها مؤقتًا.
+**إذا لم يعمل ذلك:**
+تحقق من العمليات التي تستهلك معظم ذاكرة جهازك. في Twenty، لاحظنا أن بعض إضافات VScode كانت تستهلك الكثير من الذاكرة لذا قمنا بتعطيلها مؤقتًا.
 
-**If it does not work:**
-Restart your machine helps to clean up ghost processes.
+**إذا لم يعمل ذلك:**
+إعادة تشغيل جهازك تساعد في تنظيف العمليات الشبحية.
 
 #### أثناء تشغيل `npx nx start` تظهر سجلات غريبة [0] و [1]
 
@@ -124,7 +124,7 @@ npx nx worker twenty-server
 
 * افتح تطبيق Twenty الخاص بك، انتقل إلى `/settings`، وفعل التبديل المتقدم في الجزء السفلي الأيسر من الشاشة.
 * إنشاء ويب هوك جديد.
-* Paste **Your Unique Webhook URL** in the **Endpoint Url** field in Twenty. Set the **Filters** to `Companies` and `Created`.
+* الصق **عنوان URL الفريد لخطّاف الويب الخاص بك** في الحقل **عنوان URL لنقطة النهاية** في Twenty. اضبط **عوامل التصفية** على `Companies` و`Created`.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="إعدادات الويب هوك" />

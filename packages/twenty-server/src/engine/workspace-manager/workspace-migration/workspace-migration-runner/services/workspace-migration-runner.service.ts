@@ -180,24 +180,31 @@ export class WorkspaceMigrationRunnerService {
         `Cache invalidation ${flatEntitiesCacheToInvalidate.join()}`,
       );
 
-      const invalidationResults = await Promise.allSettled([
-        this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-          workspaceId,
-          flatMapsKeys: flatEntitiesCacheToInvalidate,
-        }),
-        ...this.getLegacyCacheInvalidationPromises({
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: flatEntitiesCacheToInvalidate,
+      });
+
+      const invalidationResults = await Promise.allSettled(
+        this.getLegacyCacheInvalidationPromises({
           workspaceMigration: {
             actions,
             workspaceId,
           },
         }),
-      ]);
+      );
 
       const invalidationFailures = invalidationResults.filter(
         (result) => result.status === 'rejected',
       );
 
       if (invalidationFailures.length > 0) {
+        invalidationFailures.forEach((err) =>
+          this.logger.error(
+            `Failed to invalidate a legacy cache ${err.reason}`,
+            'Runner',
+          ),
+        );
         throw new Error(
           `Failed to invalidate ${invalidationFailures.length} cache operations`,
         );

@@ -65,9 +65,9 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
       `${dryRun ? 'DRY RUN - ' : ''}Cleaning ${suspendedWorkspaceIds.length} suspended workspaces`,
     );
 
-    await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
-      suspendedWorkspaceIds,
+    await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces({
+      workspaceIds: suspendedWorkspaceIds,
       dryRun,
-    );
+    });
   }
 }

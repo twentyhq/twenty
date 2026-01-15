@@ -1,9 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { WorkspaceEventEmitterService } from 'src/engine/workspace-event-emitter/workspace-event-emitter.service';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceEventEmitterResolver } from 'src/engine/workspace-event-emitter/workspace-event-emitter.resolver';
+import { WorkspaceEventEmitterService } from 'src/engine/workspace-event-emitter/workspace-event-emitter.service';
 
 @Global()
 @Module({

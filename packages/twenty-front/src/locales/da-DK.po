@@ -1374,10 +1374,10 @@ msgstr ""
 msgid "Amber"
 msgstr "Rav"
 
-#. js-lingui-id: hehnjM
+#. js-lingui-id: s46CyD
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
-msgid "Amount"
-msgstr "Beløb"
+msgid "Amount Micros"
+msgstr ""
 
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -2875,7 +2875,6 @@ msgstr "Kontekststørrelse"
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue"
 msgstr "Fortsæt"
@@ -4650,6 +4649,11 @@ msgstr "Indtast en værdi for at gemme i databasen"
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Enter agent name*"
 msgstr "Indtast agentnavn*"
+
+#. js-lingui-id: lU5cVU
+#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
+msgid "Enter amount x 1 000 000 (e.g. $3.21 → 3210000)"
+msgstr ""
 
 #. js-lingui-id: wgNkIh
 #: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
@@ -6845,6 +6849,12 @@ msgstr "Sprog"
 #. js-lingui-id: 59o/ag
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Large section heading"
+msgstr ""
+
+#. Short label (keep brief) indicating the most recently used login method
+#. js-lingui-id: RtKKbA
+#: src/modules/auth/sign-in-up/components/internal/LastUsedPill.tsx
+msgid "Last"
 msgstr ""
 
 #. js-lingui-id: DU27lO
@@ -10543,11 +10553,6 @@ msgstr "Tjenesteudbyderoplysninger"
 msgid "Set {placeholderForEmptyCell}"
 msgstr "Angiv {placeholderForEmptyCell}"
 
-#. js-lingui-id: EIFxcV
-#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
-msgid "Set 3.21 for $3.21"
-msgstr "Angiv 3.21 for $3.21"
-
 #. js-lingui-id: YZwx1e
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
@@ -10723,11 +10728,6 @@ msgstr "Sidepanel"
 msgid "Sign in"
 msgstr "Log ind"
 
-#. js-lingui-id: n1ekoW
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
-msgid "Sign In"
-msgstr "Log ind"
-
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
 msgid "Sign in or Create an account"
@@ -10736,11 +10736,6 @@ msgstr "Log ind eller Opret en konto"
 #. js-lingui-id: e+RpCP
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign up"
-msgstr "Tilmeld dig"
-
-#. js-lingui-id: mErq7F
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
-msgid "Sign Up"
 msgstr "Tilmeld dig"
 
 #. js-lingui-id: 5v3IHX
@@ -12749,10 +12744,20 @@ msgstr "Uge"
 msgid "weeks"
 msgstr ""
 
-#. js-lingui-id: ke0EDP
+#. js-lingui-id: nTuObL
 #: src/pages/auth/SignInUp.tsx
-msgid "Welcome to {workspaceName}"
-msgstr "Velkommen til {workspaceName}"
+msgid "Welcome to Twenty"
+msgstr ""
+
+#. js-lingui-id: t8ZvkC
+#: src/pages/auth/SignInUp.tsx
+msgid "Welcome to your workspace"
+msgstr ""
+
+#. js-lingui-id: Vin3Dv
+#: src/pages/auth/SignInUp.tsx
+msgid "Welcome, {workspaceName}."
+msgstr ""
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -13116,11 +13121,6 @@ msgstr "Din prøveperiode vil ende, og "
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "Your trial period will end, and you will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
 msgstr "Din prøveperiode vil ende, og du vil blive opkrævet ${yearlyPrice} pr. bruger pr. år faktureret årligt. Et prorata med dit nuværende abonnement vil blive anvendt."
-
-#. js-lingui-id: YQK8fJ
-#: src/pages/auth/SignInUp.tsx
-msgid "Your Workspace"
-msgstr "Dit arbejdsområde"
 
 #. js-lingui-id: oC6WBs
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx

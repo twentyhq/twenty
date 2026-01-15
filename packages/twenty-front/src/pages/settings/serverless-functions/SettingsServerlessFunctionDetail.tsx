@@ -37,7 +37,7 @@ export const SettingsServerlessFunctionDetail = () => {
   const navigate = useNavigate();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const { data } = useFindOneApplicationQuery({
+  const { data, loading: applicationLoading } = useFindOneApplicationQuery({
     variables: { id: applicationId },
     skip: !applicationId,
   });
@@ -187,7 +187,8 @@ export const SettingsServerlessFunctionDetail = () => {
         ];
 
   return (
-    !loading && (
+    !loading &&
+    !applicationLoading && (
       <SubMenuTopBarContainer
         title={
           <SettingsServerlessFunctionLabelContainer

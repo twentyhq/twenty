@@ -1374,10 +1374,10 @@ msgstr ""
 msgid "Amber"
 msgstr "앰버"
 
-#. js-lingui-id: hehnjM
+#. js-lingui-id: s46CyD
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
-msgid "Amount"
-msgstr "금액"
+msgid "Amount Micros"
+msgstr ""
 
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -2875,7 +2875,6 @@ msgstr "컨텍스트 크기"
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue"
 msgstr "계속"
@@ -4650,6 +4649,11 @@ msgstr "데이터베이스에 저장할 값을 입력하세요."
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Enter agent name*"
 msgstr "에이전트 이름 입력*"
+
+#. js-lingui-id: lU5cVU
+#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
+msgid "Enter amount x 1 000 000 (e.g. $3.21 → 3210000)"
+msgstr ""
 
 #. js-lingui-id: wgNkIh
 #: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
@@ -6845,6 +6849,12 @@ msgstr "언어"
 #. js-lingui-id: 59o/ag
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Large section heading"
+msgstr ""
+
+#. Short label (keep brief) indicating the most recently used login method
+#. js-lingui-id: RtKKbA
+#: src/modules/auth/sign-in-up/components/internal/LastUsedPill.tsx
+msgid "Last"
 msgstr ""
 
 #. js-lingui-id: DU27lO
@@ -10543,11 +10553,6 @@ msgstr "서비스 공급자 세부 정보"
 msgid "Set {placeholderForEmptyCell}"
 msgstr "{placeholderForEmptyCell} 설정"
 
-#. js-lingui-id: EIFxcV
-#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
-msgid "Set 3.21 for $3.21"
-msgstr "$3.21은 3.21로 설정"
-
 #. js-lingui-id: YZwx1e
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
@@ -10723,11 +10728,6 @@ msgstr "사이드 패널"
 msgid "Sign in"
 msgstr "로그인"
 
-#. js-lingui-id: n1ekoW
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
-msgid "Sign In"
-msgstr "로그인"
-
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
 msgid "Sign in or Create an account"
@@ -10736,11 +10736,6 @@ msgstr "로그인 또는 계정 생성"
 #. js-lingui-id: e+RpCP
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign up"
-msgstr "가입하기"
-
-#. js-lingui-id: mErq7F
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
-msgid "Sign Up"
 msgstr "가입하기"
 
 #. js-lingui-id: 5v3IHX
@@ -12747,10 +12742,20 @@ msgstr "주"
 msgid "weeks"
 msgstr ""
 
-#. js-lingui-id: ke0EDP
+#. js-lingui-id: nTuObL
 #: src/pages/auth/SignInUp.tsx
-msgid "Welcome to {workspaceName}"
-msgstr "{workspaceName}에 오신 것을 환영합니다"
+msgid "Welcome to Twenty"
+msgstr ""
+
+#. js-lingui-id: t8ZvkC
+#: src/pages/auth/SignInUp.tsx
+msgid "Welcome to your workspace"
+msgstr ""
+
+#. js-lingui-id: Vin3Dv
+#: src/pages/auth/SignInUp.tsx
+msgid "Welcome, {workspaceName}."
+msgstr ""
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -13114,11 +13119,6 @@ msgstr "무료 체험 기간이 끝나고, "
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "Your trial period will end, and you will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
 msgstr "무료 체험 기간이 종료되고, 사용자별 연간 ${yearlyPrice} 청구됩니다. 청구는 연간입니다. 현재 구독과 비례 배분이 적용됩니다."
-
-#. js-lingui-id: YQK8fJ
-#: src/pages/auth/SignInUp.tsx
-msgid "Your Workspace"
-msgstr "귀하의 워크스페이스"
 
 #. js-lingui-id: oC6WBs
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
