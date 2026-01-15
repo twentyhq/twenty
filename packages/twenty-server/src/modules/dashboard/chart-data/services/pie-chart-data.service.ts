@@ -29,7 +29,7 @@ import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-di
 import { formatDimensionValue } from 'src/modules/dashboard/chart-data/utils/format-dimension-value.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
-import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data.util';
+import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
 
 type GetPieChartDataParams = {
   workspaceId: string;

@@ -38,7 +38,7 @@ import { formatDimensionValue } from 'src/modules/dashboard/chart-data/utils/for
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
-import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data.util';
+import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
 
 type GetBarChartDataParams = {
   workspaceId: string;

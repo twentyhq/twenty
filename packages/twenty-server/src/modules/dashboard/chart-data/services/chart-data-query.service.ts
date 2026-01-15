@@ -255,6 +255,7 @@ export class ChartDataQueryService {
       groupByFieldMetadata: primaryGroupByField,
       groupBySubFieldName,
       aggregateOperation,
+      aggregateFieldMetadata: aggregateField,
       dateGranularity: shouldApplyPrimaryDateGranularity
         ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
         : undefined,
@@ -302,6 +303,7 @@ export class ChartDataQueryService {
           groupByFieldMetadata: secondaryGroupByField,
           groupBySubFieldName: secondaryGroupBySubFieldName,
           aggregateOperation,
+          aggregateFieldMetadata: aggregateField,
           dateGranularity: shouldApplySecondaryDateGranularity
             ? (secondaryDateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
             : undefined,
