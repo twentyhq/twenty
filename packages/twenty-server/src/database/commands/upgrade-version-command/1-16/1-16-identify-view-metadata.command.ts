@@ -33,14 +33,19 @@ type StandardViewUpdate = {
   objectNameSingular: string;
 };
 
-type AllExceptions = 'unknown_standard_view' | 'duplicate_standard_view';
+type AllExceptions = 'unknown_standard_view';
 
 type ViewMetadataException = {
   flatView: FlatView;
   exception: AllExceptions;
   objectNameSingular?: string;
-  duplicateOfViewId?: string;
-  universalIdentifier?: string;
+};
+
+type DuplicateStandardView = {
+  skippedFlatView: FlatView;
+  keptFlatView: FlatView;
+  objectNameSingular: string;
+  universalIdentifier: string;
 };
 
 @Command({
@@ -218,9 +223,25 @@ export class IdentifyViewMetadataCommand extends ActiveOrSuspendedWorkspacesMigr
       }
     }
 
-    // Detect duplicate universalIdentifiers
+    if (exceptions.length > 0) {
+      this.logger.error(
+        `Found ${exceptions.length} exception(s) while processing view metadata for workspace ${workspaceId}. No updates will be applied.`,
+      );
+
+      for (const { flatView, exception, objectNameSingular } of exceptions) {
+        this.logger.error(
+          `  - Exception for view "${flatView.name}" on object "${objectNameSingular ?? 'unknown'}" (id=${flatView.id}): ${exception}`,
+        );
+      }
+
+      throw new Error(
+        `Aborting migration for workspace ${workspaceId} due to ${exceptions.length} exception(s). See logs above for details.`,
+      );
+    }
+
+    // Detect duplicate universalIdentifiers and keep the oldest view (created during workspace setup)
     const seenUniversalIdentifiers = new Map<string, StandardViewUpdate>();
-    const deduplicatedStandardViewUpdates: StandardViewUpdate[] = [];
+    const duplicates: DuplicateStandardView[] = [];
 
     for (const update of standardViewUpdates) {
       const existingUpdate = seenUniversalIdentifiers.get(
@@ -228,47 +249,56 @@ export class IdentifyViewMetadataCommand extends ActiveOrSuspendedWorkspacesMigr
       );
 
       if (isDefined(existingUpdate)) {
-        exceptions.push({
-          flatView: update.flatView,
-          exception: 'duplicate_standard_view',
-          objectNameSingular: update.objectNameSingular,
-          duplicateOfViewId: existingUpdate.flatView.id,
-          universalIdentifier: update.universalIdentifier,
-        });
+        const currentCreatedAt = new Date(update.flatView.createdAt).getTime();
+        const existingCreatedAt = new Date(
+          existingUpdate.flatView.createdAt,
+        ).getTime();
+
+        // Keep the oldest view, skip the newer one
+        if (currentCreatedAt < existingCreatedAt) {
+          // Current is older, replace existing
+          duplicates.push({
+            skippedFlatView: existingUpdate.flatView,
+            keptFlatView: update.flatView,
+            objectNameSingular: update.objectNameSingular,
+            universalIdentifier: update.universalIdentifier,
+          });
+          seenUniversalIdentifiers.set(update.universalIdentifier, update);
+        } else {
+          // Existing is older, skip current
+          duplicates.push({
+            skippedFlatView: update.flatView,
+            keptFlatView: existingUpdate.flatView,
+            objectNameSingular: update.objectNameSingular,
+            universalIdentifier: update.universalIdentifier,
+          });
+        }
         continue;
       }
 
       seenUniversalIdentifiers.set(update.universalIdentifier, update);
-      deduplicatedStandardViewUpdates.push(update);
     }
 
-    if (exceptions.length > 0) {
-      this.logger.error(
-        `Found ${exceptions.length} exception(s) while processing view metadata for workspace ${workspaceId}. No updates will be applied.`,
+    if (duplicates.length > 0) {
+      this.logger.warn(
+        `Found ${duplicates.length} duplicate standard view(s) for workspace ${workspaceId}. Keeping oldest, newer duplicates will be treated as custom views.`,
       );
 
       for (const {
-        flatView,
-        exception,
+        skippedFlatView,
+        keptFlatView,
         objectNameSingular,
-        duplicateOfViewId,
         universalIdentifier,
-      } of exceptions) {
-        if (exception === 'duplicate_standard_view') {
-          this.logger.error(
-            `  - Duplicate view "${flatView.name}" on object "${objectNameSingular ?? 'unknown'}" (id=${flatView.id}, universalIdentifier=${universalIdentifier}) is a duplicate of view id=${duplicateOfViewId}`,
-          );
-        } else {
-          this.logger.error(
-            `  - Exception for view "${flatView.name}" on object "${objectNameSingular ?? 'unknown'}" (id=${flatView.id}): ${exception}`,
-          );
-        }
+      } of duplicates) {
+        this.logger.warn(
+          `  - Duplicate view "${skippedFlatView.name}" on object "${objectNameSingular}" (id=${skippedFlatView.id}, createdAt=${skippedFlatView.createdAt}) skipped in favor of older view (id=${keptFlatView.id}, createdAt=${keptFlatView.createdAt}) for universalIdentifier=${universalIdentifier}`,
+        );
       }
-
-      throw new Error(
-        `Aborting migration for workspace ${workspaceId} due to ${exceptions.length} exception(s). See logs above for details.`,
-      );
     }
+
+    const deduplicatedStandardViewUpdates = Array.from(
+      seenUniversalIdentifiers.values(),
+    );
 
     const standardUpdates = deduplicatedStandardViewUpdates.map(
       ({ flatView, universalIdentifier }) => ({
