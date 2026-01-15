@@ -620,7 +620,7 @@ export type CommandMenuItem = {
   isPinned: Scalars['Boolean'];
   label: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-  workflowId: Scalars['UUID'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export enum CommandMenuItemAvailabilityType {
@@ -862,7 +862,7 @@ export type CreateCommandMenuItemInput = {
   icon?: InputMaybe<Scalars['String']>;
   isPinned?: InputMaybe<Scalars['Boolean']>;
   label: Scalars['String'];
-  workflowId: Scalars['UUID'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type CreateCronTriggerInput = {
