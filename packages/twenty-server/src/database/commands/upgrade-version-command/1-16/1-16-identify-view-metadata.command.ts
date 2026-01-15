@@ -10,40 +10,34 @@ import {
   RunOnWorkspaceArgs,
   WorkspacesMigrationCommandRunner,
 } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { computeFormattedViewName } from 'src/database/commands/upgrade-version-command/1-16/utils/compute-formatted-view-name.util';
+import {
+  ALL_ENTITY_VIEW_NAME,
+  computeFormattedViewName,
+} from 'src/database/commands/upgrade-version-command/1-16/utils/compute-formatted-view-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 
-type CustomViewMetadata = {
+type CustomViewUpdate = {
   viewEntity: ViewEntity;
-  fromStandard: boolean;
 };
 
-type StandardViewMetadata = {
+type StandardViewUpdate = {
   viewEntity: ViewEntity;
   universalIdentifier: string;
 };
 
-type AllWarnings = 'unknown_object';
-
-type ViewMetadataWarning = {
-  viewEntity: ViewEntity;
-  warning: AllWarnings;
-  objectNameSingular?: string;
-};
-
-type AllExceptions =
-  | 'existing_universal_id_mismatch'
-  | 'not_found_object'
-  | 'unknown_standard_view_name';
+type AllExceptions = 'existing_universal_id_mismatch' | 'duplicate_index_view';
 
 type ViewMetadataException = {
   viewEntity: ViewEntity;
@@ -87,7 +81,150 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
         { workspaceId },
       );
 
-    const allViewEntities = await this.viewRepository.find({
+    const { flatObjectMetadataMaps, flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatViewMaps'],
+        },
+      );
+
+    const customViewUpdates: CustomViewUpdate[] = [];
+    const standardViewUpdates: StandardViewUpdate[] = [];
+    const exceptions: ViewMetadataException[] = [];
+
+    // Track used universalIdentifiers to detect duplicates
+    const usedUniversalIdentifiers = new Set<string>();
+
+    // Process views for each known standard object
+    for (const [objectNameSingular, objectConfig] of Object.entries(
+      STANDARD_OBJECTS,
+    )) {
+      const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier: objectConfig.universalIdentifier,
+      });
+
+      if (!isDefined(flatObjectMetadata)) {
+        this.logger.warn(
+          `Standard object "${objectNameSingular}" not found in workspace, skipping`,
+        );
+        continue;
+      }
+
+      const viewsForObject = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityIds: flatObjectMetadata.viewIds,
+        flatEntityMaps: flatViewMaps,
+      });
+      const objectViews =
+        'views' in objectConfig
+          ? (objectConfig.views as Record<
+              string,
+              { universalIdentifier: string } | undefined
+            >)
+          : null;
+
+      for (const viewEntity of viewsForObject) {
+        // Custom views -> forward to custom
+        if (viewEntity.isCustom) {
+          customViewUpdates.push({ viewEntity });
+          continue;
+        }
+
+        // INDEX views -> forward to standard (if object has views config)
+        if (viewEntity.key === ViewKey.INDEX && isDefined(objectViews)) {
+          const formattedViewName = computeFormattedViewName({
+            viewName: viewEntity.name,
+            flatObjectMetadata,
+          });
+
+          const viewConfig = objectViews[formattedViewName];
+          const universalIdentifier = viewConfig?.universalIdentifier;
+
+          if (isDefined(universalIdentifier)) {
+            if (usedUniversalIdentifiers.has(universalIdentifier)) {
+              exceptions.push({
+                viewEntity,
+                exception: 'duplicate_index_view',
+                objectNameSingular,
+              });
+              continue;
+            }
+
+            if (
+              isDefined(viewEntity.universalIdentifier) &&
+              viewEntity.universalIdentifier !== universalIdentifier
+            ) {
+              exceptions.push({
+                viewEntity,
+                exception: 'existing_universal_id_mismatch',
+                objectNameSingular,
+              });
+              continue;
+            }
+
+            usedUniversalIdentifiers.add(universalIdentifier);
+            standardViewUpdates.push({
+              viewEntity,
+              universalIdentifier:
+                viewEntity.universalIdentifier ?? universalIdentifier,
+            });
+            continue;
+          }
+        }
+
+        // Views with "All" name pattern but not INDEX -> forward to custom
+        if (viewEntity.name === ALL_ENTITY_VIEW_NAME) {
+          customViewUpdates.push({ viewEntity });
+          continue;
+        }
+
+        // Remaining views (like assignedToMe, byStatus, etc.) -> use computeFormattedViewName
+        if (isDefined(objectViews)) {
+          const formattedViewName = computeFormattedViewName({
+            viewName: viewEntity.name,
+            flatObjectMetadata,
+          });
+
+          const viewConfig = objectViews[formattedViewName];
+          const universalIdentifier = viewConfig?.universalIdentifier;
+
+          if (isDefined(universalIdentifier)) {
+            if (usedUniversalIdentifiers.has(universalIdentifier)) {
+              // Duplicate -> forward to custom
+              customViewUpdates.push({ viewEntity });
+              continue;
+            }
+
+            if (
+              isDefined(viewEntity.universalIdentifier) &&
+              viewEntity.universalIdentifier !== universalIdentifier
+            ) {
+              exceptions.push({
+                viewEntity,
+                exception: 'existing_universal_id_mismatch',
+                objectNameSingular,
+              });
+              continue;
+            }
+
+            usedUniversalIdentifiers.add(universalIdentifier);
+            standardViewUpdates.push({
+              viewEntity,
+              universalIdentifier:
+                viewEntity.universalIdentifier ?? universalIdentifier,
+            });
+            continue;
+          }
+        }
+
+        // No matching standard view config -> forward to custom
+        customViewUpdates.push({ viewEntity });
+      }
+    }
+
+    // Fetch all remaining views without applicationId (custom objects, etc.)
+    const remainingViews = await this.viewRepository.find({
       select: {
         id: true,
         universalIdentifier: true,
@@ -102,130 +239,19 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       },
     });
 
-    const { flatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
+    const processedViewIds = new Set([
+      ...customViewUpdates.map(({ viewEntity }) => viewEntity.id),
+      ...standardViewUpdates.map(({ viewEntity }) => viewEntity.id),
+      ...exceptions.map(({ viewEntity }) => viewEntity.id),
+    ]);
 
-    const customViewMetadataEntities: CustomViewMetadata[] = [];
-    const standardViewMetadataEntities: StandardViewMetadata[] = [];
-    const warnings: ViewMetadataWarning[] = [];
-    const exceptions: ViewMetadataException[] = [];
-
-    for (const viewEntity of allViewEntities) {
-      // TODO double check that index view are not custom clearly not sure sure about that
-      if (viewEntity.isCustom) {
-        customViewMetadataEntities.push({
-          viewEntity,
-          fromStandard: false,
-        });
-
-        continue;
-      }
-
-      const flatObjectMetadata =
-        flatObjectMetadataMaps.byId[viewEntity.objectMetadataId];
-
-      if (!isDefined(flatObjectMetadata)) {
-        exceptions.push({
-          viewEntity,
-          exception: 'not_found_object',
-        });
-        continue;
-      }
-
-      const objectConfig =
-        STANDARD_OBJECTS[
-          flatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECTS
-        ];
-
-      if (!isDefined(objectConfig)) {
-        warnings.push({
-          viewEntity,
-          warning: 'unknown_object',
-          objectNameSingular: flatObjectMetadata.nameSingular,
-        });
-        customViewMetadataEntities.push({
-          viewEntity,
-          fromStandard: true,
-        });
-        continue;
-      }
-
-      const objectViews =
-        'views' in objectConfig
-          ? (objectConfig.views as Record<
-              string,
-              { universalIdentifier: string } | undefined
-            >)
-          : null;
-
-      if (!isDefined(objectViews)) {
-        warnings.push({
-          viewEntity,
-          warning: 'unknown_object',
-          objectNameSingular: flatObjectMetadata.nameSingular,
-        });
-        customViewMetadataEntities.push({
-          viewEntity,
-          fromStandard: true,
-        });
-        continue;
-      }
-
-      const formattedViewName = computeFormattedViewName({
-        viewName: viewEntity.name,
-        flatObjectMetadata,
-      });
-
-      this.logger.log(formattedViewName);
-      const viewConfig = objectViews[formattedViewName];
-      const universalIdentifier = viewConfig?.universalIdentifier;
-
-      if (!isDefined(universalIdentifier)) {
-        exceptions.push({
-          viewEntity,
-          exception: 'unknown_standard_view_name',
-          objectNameSingular: flatObjectMetadata.nameSingular,
-        });
-        continue;
-      }
-
-      if (
-        isDefined(viewEntity.universalIdentifier) &&
-        viewEntity.universalIdentifier !== universalIdentifier
-      ) {
-        exceptions.push({
-          viewEntity,
-          exception: 'existing_universal_id_mismatch',
-        });
-        continue;
-      }
-
-      standardViewMetadataEntities.push({
-        viewEntity,
-        universalIdentifier:
-          viewEntity.universalIdentifier ?? universalIdentifier,
-      });
-    }
-
-    const totalUpdates =
-      customViewMetadataEntities.length + standardViewMetadataEntities.length;
-
-    if (warnings.length > 0) {
-      this.logger.warn(
-        `Found ${warnings.length} warning(s) while processing view metadata for workspace ${workspaceId}. These views will become custom.`,
-      );
-
-      for (const { viewEntity, warning, objectNameSingular } of warnings) {
-        this.logger.warn(
-          `Warning for view "${viewEntity.name}" on object "${objectNameSingular ?? 'unknown'}" (id=${viewEntity.id}): ${warning}`,
-        );
+    for (const viewEntity of remainingViews) {
+      if (!processedViewIds.has(viewEntity.id)) {
+        customViewUpdates.push({ viewEntity });
       }
     }
+
+    const totalUpdates = customViewUpdates.length + standardViewUpdates.length;
 
     if (exceptions.length > 0) {
       this.logger.error(
@@ -244,19 +270,17 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
     }
 
     this.logger.log(
-      `Successfully validated ${totalUpdates}/${allViewEntities.length} view metadata update(s) for workspace ${workspaceId} (${customViewMetadataEntities.length} custom, ${standardViewMetadataEntities.length} standard)`,
+      `Successfully validated ${totalUpdates} view metadata update(s) for workspace ${workspaceId} (${customViewUpdates.length} custom, ${standardViewUpdates.length} standard)`,
     );
 
     if (!options.dryRun) {
-      const customUpdates = customViewMetadataEntities.map(
-        ({ viewEntity }) => ({
-          id: viewEntity.id,
-          universalIdentifier: viewEntity.universalIdentifier ?? v4(),
-          applicationId: workspaceCustomFlatApplication.id,
-        }),
-      );
+      const customUpdates = customViewUpdates.map(({ viewEntity }) => ({
+        id: viewEntity.id,
+        universalIdentifier: viewEntity.universalIdentifier ?? v4(),
+        applicationId: workspaceCustomFlatApplication.id,
+      }));
 
-      const standardUpdates = standardViewMetadataEntities.map(
+      const standardUpdates = standardViewUpdates.map(
         ({ viewEntity, universalIdentifier }) => ({
           id: viewEntity.id,
           universalIdentifier,
