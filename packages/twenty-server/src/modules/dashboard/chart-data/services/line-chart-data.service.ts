@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType, FirstDayOfTheWeek } from 'twenty-shared/types';
+import { CalendarStartDay } from 'twenty-shared/constants';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
@@ -24,7 +26,7 @@ import {
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import {
   ChartDataQueryService,
-  GroupByRawResult,
+  type GroupByRawResult,
 } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data.util';
@@ -33,6 +35,7 @@ type GetLineChartDataParams = {
   workspaceId: string;
   objectMetadataId: string;
   configuration: LineChartConfigurationDTO;
+  authContext: AuthContext;
 };
 
 type FieldMetadataOption = {
@@ -53,6 +56,7 @@ export class LineChartDataService {
     workspaceId,
     objectMetadataId,
     configuration,
+    authContext,
   }: GetLineChartDataParams): Promise<LineChartDataOutputDTO> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -118,14 +122,27 @@ export class LineChartDataService {
         EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
 
     const userTimezone = configuration.timezone ?? 'UTC';
-    const firstDayOfTheWeek: FirstDayOfTheWeek =
-      (configuration.firstDayOfTheWeek as FirstDayOfTheWeek | undefined) ??
-      FirstDayOfTheWeek.MONDAY;
+    const firstDayOfTheWeek: CalendarStartDay =
+      (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
+      CalendarStartDay.MONDAY;
+
+    const objectIdByNameSingular: Record<string, string> = {};
+
+    for (const objectId in flatObjectMetadataMaps.byId) {
+      const objMetadata = flatObjectMetadataMaps.byId[objectId];
+
+      if (isDefined(objMetadata)) {
+        objectIdByNameSingular[objMetadata.nameSingular] = objectId;
+      }
+    }
 
     const rawResults = await this.chartDataQueryService.executeGroupByQuery({
       workspaceId,
       flatObjectMetadata,
+      flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      objectIdByNameSingular,
+      authContext,
       groupByFieldMetadataId: configuration.primaryAxisGroupByFieldMetadataId,
       groupBySubFieldName: configuration.primaryAxisGroupBySubFieldName,
       aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
@@ -197,7 +214,7 @@ export class LineChartDataService {
     aggregateField: FlatFieldMetadata;
     configuration: LineChartConfigurationDTO;
     userTimezone: string;
-    firstDayOfTheWeek: FirstDayOfTheWeek;
+    firstDayOfTheWeek: CalendarStartDay;
   }): LineChartDataOutputDTO {
     const filteredResults = configuration.omitNullValues
       ? rawResults.filter((result) =>
@@ -315,7 +332,7 @@ export class LineChartDataService {
     aggregateField: FlatFieldMetadata;
     configuration: LineChartConfigurationDTO;
     userTimezone: string;
-    firstDayOfTheWeek: FirstDayOfTheWeek;
+    firstDayOfTheWeek: CalendarStartDay;
   }): LineChartDataOutputDTO {
     const filteredResults = configuration.omitNullValues
       ? rawResults.filter((result) =>

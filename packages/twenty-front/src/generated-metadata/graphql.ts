@@ -387,7 +387,6 @@ export type BarChartDataInput = {
 
 export type BarChartDataOutput = {
   __typename?: 'BarChartDataOutput';
-  colorMode: GraphColorMode;
   data: Array<Scalars['JSON']>;
   formattedToRawLookup?: Maybe<Scalars['JSON']>;
   groupMode?: Maybe<BarChartGroupMode>;
@@ -416,7 +415,6 @@ export enum BarChartLayout {
 
 export type BarChartSeries = {
   __typename?: 'BarChartSeries';
-  color?: Maybe<GraphColor>;
   key: Scalars['String'];
   label?: Maybe<Scalars['String']>;
 };
@@ -1608,42 +1606,6 @@ export type GetWebhookInput = {
   id: Scalars['UUID'];
 };
 
-/** Available colors for graph elements */
-export enum GraphColor {
-  AMBER = 'AMBER',
-  BLUE = 'BLUE',
-  BRONZE = 'BRONZE',
-  BROWN = 'BROWN',
-  CRIMSON = 'CRIMSON',
-  CYAN = 'CYAN',
-  GOLD = 'GOLD',
-  GRASS = 'GRASS',
-  GRAY = 'GRAY',
-  GREEN = 'GREEN',
-  IRIS = 'IRIS',
-  JADE = 'JADE',
-  LIME = 'LIME',
-  MINT = 'MINT',
-  ORANGE = 'ORANGE',
-  PINK = 'PINK',
-  PLUM = 'PLUM',
-  PURPLE = 'PURPLE',
-  RED = 'RED',
-  RUBY = 'RUBY',
-  SKY = 'SKY',
-  TOMATO = 'TOMATO',
-  TURQUOISE = 'TURQUOISE',
-  VIOLET = 'VIOLET',
-  YELLOW = 'YELLOW'
-}
-
-/** Mode for determining chart element colors */
-export enum GraphColorMode {
-  AUTOMATIC_PALETTE = 'AUTOMATIC_PALETTE',
-  EXPLICIT_SINGLE_COLOR = 'EXPLICIT_SINGLE_COLOR',
-  SELECT_FIELD_OPTION_COLORS = 'SELECT_FIELD_OPTION_COLORS'
-}
-
 /** Order by options for graph widgets */
 export enum GraphOrderBy {
   FIELD_ASC = 'FIELD_ASC',
@@ -1878,7 +1840,6 @@ export type LineChartDataInput = {
 
 export type LineChartDataOutput = {
   __typename?: 'LineChartDataOutput';
-  colorMode: GraphColorMode;
   formattedToRawLookup?: Maybe<Scalars['JSON']>;
   hasTooManyGroups: Scalars['Boolean'];
   series: Array<LineChartSeries>;
@@ -1896,7 +1857,6 @@ export type LineChartDataPoint = {
 
 export type LineChartSeries = {
   __typename?: 'LineChartSeries';
-  color?: Maybe<GraphColor>;
   data: Array<LineChartDataPoint>;
   id: Scalars['String'];
   label?: Maybe<Scalars['String']>;
@@ -3395,14 +3355,12 @@ export type PieChartDataInput = {
 
 export type PieChartDataItem = {
   __typename?: 'PieChartDataItem';
-  color?: Maybe<GraphColor>;
   id: Scalars['String'];
   value: Scalars['Float'];
 };
 
 export type PieChartDataOutput = {
   __typename?: 'PieChartDataOutput';
-  colorMode: GraphColorMode;
   data: Array<PieChartDataItem>;
   formattedToRawLookup?: Maybe<Scalars['JSON']>;
   hasTooManyGroups: Scalars['Boolean'];

@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
@@ -17,6 +18,9 @@ describe('BarChartDataService', () => {
   let mockGetOrRecomputeManyOrAllFlatEntityMaps: jest.Mock;
 
   const workspaceId = 'test-workspace-id';
+  const mockAuthContext: AuthContext = {
+    workspace: { id: workspaceId } as any,
+  };
   const objectMetadataId = 'test-object-id';
 
   const mockGroupByField = {
@@ -106,6 +110,7 @@ describe('BarChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: baseConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data).toHaveLength(2);
@@ -136,6 +141,7 @@ describe('BarChartDataService', () => {
           ...baseConfiguration,
           isCumulative: true,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data).toHaveLength(3);
@@ -159,6 +165,7 @@ describe('BarChartDataService', () => {
           isCumulative: true,
           rangeMin: 15,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data.map((d) => d.amount)).toEqual([20, 30]);
@@ -179,6 +186,7 @@ describe('BarChartDataService', () => {
           isCumulative: true,
           rangeMax: 25,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data.map((d) => d.amount)).toEqual([10]);
@@ -197,6 +205,7 @@ describe('BarChartDataService', () => {
           ...baseConfiguration,
           omitNullValues: true,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data).toHaveLength(1);
@@ -216,6 +225,7 @@ describe('BarChartDataService', () => {
           ...baseConfiguration,
           omitNullValues: false,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data).toHaveLength(2);
@@ -237,6 +247,7 @@ describe('BarChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: baseConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.hasTooManyGroups).toBe(true);
@@ -284,6 +295,7 @@ describe('BarChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: twoDimConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data).toHaveLength(2);
@@ -309,6 +321,7 @@ describe('BarChartDataService', () => {
           ...twoDimConfiguration,
           isCumulative: true,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data).toHaveLength(3);
@@ -338,6 +351,7 @@ describe('BarChartDataService', () => {
           isCumulative: true,
           rangeMin: 50,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data.length).toBeLessThan(3);
@@ -355,6 +369,7 @@ describe('BarChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: twoDimConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.keys).toContain('Open');
@@ -380,6 +395,7 @@ describe('BarChartDataService', () => {
             aggregateFieldMetadataId: mockAggregateField.id,
             aggregateOperation: AggregateOperations.COUNT,
           } as any,
+          authContext: mockAuthContext,
         }),
       ).rejects.toThrow();
     });
@@ -402,6 +418,7 @@ describe('BarChartDataService', () => {
             aggregateFieldMetadataId: mockAggregateField.id,
             aggregateOperation: AggregateOperations.COUNT,
           } as any,
+          authContext: mockAuthContext,
         }),
       ).rejects.toThrow();
     });

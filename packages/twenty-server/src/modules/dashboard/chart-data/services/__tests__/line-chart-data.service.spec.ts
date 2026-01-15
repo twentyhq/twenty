@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from 'src/modules/dashboard/chart-data/constants/line-chart.constants';
@@ -14,6 +15,9 @@ describe('LineChartDataService', () => {
   let mockExecuteGroupByQuery: jest.Mock;
 
   const workspaceId = 'test-workspace-id';
+  const mockAuthContext: AuthContext = {
+    workspace: { id: workspaceId } as any,
+  };
   const objectMetadataId = 'test-object-id';
 
   const mockGroupByFieldX = {
@@ -97,6 +101,7 @@ describe('LineChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: baseConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.series).toHaveLength(1);
@@ -122,6 +127,7 @@ describe('LineChartDataService', () => {
           ...baseConfiguration,
           isCumulative: true,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.series[0].data).toEqual([
@@ -146,6 +152,7 @@ describe('LineChartDataService', () => {
           isCumulative: true,
           rangeMin: 15,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.series[0].data.map((d) => d.y)).toEqual([20, 30]);
@@ -166,6 +173,7 @@ describe('LineChartDataService', () => {
           isCumulative: true,
           rangeMax: 25,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.series[0].data.map((d) => d.y)).toEqual([10]);
@@ -185,6 +193,7 @@ describe('LineChartDataService', () => {
           ...baseConfiguration,
           isCumulative: true,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.series[0].data).toEqual([
@@ -201,6 +210,7 @@ describe('LineChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: baseConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.series).toHaveLength(1);
@@ -223,6 +233,7 @@ describe('LineChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: baseConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.hasTooManyGroups).toBe(true);
@@ -262,6 +273,7 @@ describe('LineChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: twoDimConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.series).toHaveLength(2);
@@ -293,6 +305,7 @@ describe('LineChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: twoDimConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       const stageA = result.series.find((s) => s.id === 'Stage A');
@@ -325,6 +338,7 @@ describe('LineChartDataService', () => {
           ...twoDimConfiguration,
           isCumulative: true,
         } as any,
+        authContext: mockAuthContext,
       });
 
       const seriesA = result.series.find((s) => s.id === 'A');
@@ -343,6 +357,7 @@ describe('LineChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: twoDimConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.series).toEqual([]);
@@ -362,6 +377,7 @@ describe('LineChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: twoDimConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.series).toHaveLength(1);

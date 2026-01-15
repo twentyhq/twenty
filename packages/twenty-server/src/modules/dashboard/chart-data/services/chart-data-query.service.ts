@@ -1,353 +1,372 @@
 import { Injectable } from '@nestjs/common';
 
+import { CalendarStartDay } from 'twenty-shared/constants';
 import {
-  FieldMetadataType,
-  FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
+  OrderByWithGroupBy,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
-import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import {
+  ObjectRecordFilter,
+  ObjectRecordGroupBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
+import {
+  GRAPH_DEFAULT_DATE_GRANULARITY,
+  GRAPH_DEFAULT_ORDER_BY,
+} from 'src/modules/dashboard/chart-data/constants/graph-defaults.constants';
 import {
   ChartDataException,
   ChartDataExceptionCode,
   ChartDataExceptionMessageKey,
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
+import { buildAggregateFieldKey } from 'src/modules/dashboard/chart-data/utils/build-aggregate-field-key.util';
+import {
+  buildGroupByFieldObject,
+  type GroupByFieldObject,
+} from 'src/modules/dashboard/chart-data/utils/build-group-by-field-object.util';
+import { getGroupByOrderBy } from 'src/modules/dashboard/chart-data/utils/get-group-by-order-by.util';
+import { isRelationNestedFieldDateKind } from 'src/modules/dashboard/chart-data/utils/is-relation-nested-field-date-kind.util';
 
 export type GroupByRawResult = {
   groupByDimensionValues: unknown[];
   aggregateValue: number;
 };
 
-type ExecuteGroupByQueryParams = {
+export type ExecuteGroupByQueryParams = {
   workspaceId: string;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  objectIdByNameSingular: Record<string, string>;
+  authContext: AuthContext;
   groupByFieldMetadataId: string;
   groupBySubFieldName?: string | null;
   aggregateFieldMetadataId: string;
   aggregateOperation: AggregateOperations;
-  filter?: ObjectRecordFilter | null;
-  dateGranularity?: ObjectRecordGroupByDateGranularity | null;
+  filter?: ObjectRecordFilter;
+  dateGranularity?: ObjectRecordGroupByDateGranularity;
   userTimezone: string;
-  firstDayOfTheWeek: FirstDayOfTheWeek;
-  limit?: number;
-  secondaryGroupByFieldMetadataId?: string | null;
+  firstDayOfTheWeek: CalendarStartDay;
+  limit: number;
+  secondaryGroupByFieldMetadataId?: string;
   secondaryGroupBySubFieldName?: string | null;
-  secondaryDateGranularity?: ObjectRecordGroupByDateGranularity | null;
+  secondaryDateGranularity?: ObjectRecordGroupByDateGranularity;
 };
-
-const COUNT_OPERATIONS = [
-  AggregateOperations.COUNT,
-  AggregateOperations.COUNT_EMPTY,
-  AggregateOperations.COUNT_NOT_EMPTY,
-  AggregateOperations.COUNT_UNIQUE_VALUES,
-  AggregateOperations.COUNT_TRUE,
-  AggregateOperations.COUNT_FALSE,
-];
-
-const PERCENT_OPERATIONS = [
-  AggregateOperations.PERCENTAGE_EMPTY,
-  AggregateOperations.PERCENTAGE_NOT_EMPTY,
-];
 
 @Injectable()
 export class ChartDataQueryService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly commonGroupByQueryRunnerService: CommonGroupByQueryRunnerService,
   ) {}
 
-  async executeGroupByQuery(
-    params: ExecuteGroupByQueryParams,
-  ): Promise<GroupByRawResult[]> {
-    const {
-      workspaceId,
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
+  async executeGroupByQuery({
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
+    objectIdByNameSingular,
+    authContext,
+    groupByFieldMetadataId,
+    groupBySubFieldName,
+    aggregateFieldMetadataId,
+    aggregateOperation,
+    filter,
+    dateGranularity,
+    userTimezone,
+    firstDayOfTheWeek,
+    limit,
+    secondaryGroupByFieldMetadataId,
+    secondaryGroupBySubFieldName,
+    secondaryDateGranularity,
+  }: ExecuteGroupByQueryParams): Promise<GroupByRawResult[]> {
+    const primaryGroupByField = this.getFieldMetadata(
       groupByFieldMetadataId,
-      groupBySubFieldName,
+      flatFieldMetadataMaps.byId,
+    );
+
+    const aggregateField = this.getFieldMetadata(
       aggregateFieldMetadataId,
+      flatFieldMetadataMaps.byId,
+    );
+
+    const isPrimaryFieldDate = isFieldMetadataDateKind(
+      primaryGroupByField.type,
+    );
+    const isPrimaryNestedDate = isRelationNestedFieldDateKind({
+      relationFieldMetadata: primaryGroupByField,
+      relationNestedFieldName: groupBySubFieldName ?? undefined,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
+
+    const shouldApplyPrimaryDateGranularity =
+      isPrimaryFieldDate || isPrimaryNestedDate;
+
+    const groupBy: GroupByFieldObject[] = [];
+
+    groupBy.push(
+      buildGroupByFieldObject({
+        fieldMetadata: primaryGroupByField,
+        subFieldName: groupBySubFieldName,
+        dateGranularity: shouldApplyPrimaryDateGranularity
+          ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
+          : undefined,
+        firstDayOfTheWeek,
+        isNestedDateField: isPrimaryNestedDate,
+        timeZone: userTimezone,
+      }),
+    );
+
+    if (isDefined(secondaryGroupByFieldMetadataId)) {
+      const secondaryGroupByField = this.getFieldMetadata(
+        secondaryGroupByFieldMetadataId,
+        flatFieldMetadataMaps.byId,
+      );
+
+      const isSecondaryFieldDate = isFieldMetadataDateKind(
+        secondaryGroupByField.type,
+      );
+      const isSecondaryNestedDate = isRelationNestedFieldDateKind({
+        relationFieldMetadata: secondaryGroupByField,
+        relationNestedFieldName: secondaryGroupBySubFieldName ?? undefined,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
+
+      const shouldApplySecondaryDateGranularity =
+        isSecondaryFieldDate || isSecondaryNestedDate;
+
+      groupBy.push(
+        buildGroupByFieldObject({
+          fieldMetadata: secondaryGroupByField,
+          subFieldName: secondaryGroupBySubFieldName,
+          dateGranularity: shouldApplySecondaryDateGranularity
+            ? (secondaryDateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
+            : undefined,
+          firstDayOfTheWeek,
+          isNestedDateField: isSecondaryNestedDate,
+          timeZone: userTimezone,
+        }),
+      );
+    }
+
+    const aggregateFieldKey = buildAggregateFieldKey({
       aggregateOperation,
-      filter,
-      limit = 100,
-      secondaryGroupByFieldMetadataId,
-      secondaryGroupBySubFieldName,
-    } = params;
+      aggregateFieldMetadata: aggregateField,
+    });
 
-    const groupByField = flatFieldMetadataMaps.byId[groupByFieldMetadataId];
-    const aggregateField = flatFieldMetadataMaps.byId[aggregateFieldMetadataId];
-
-    if (!isDefined(groupByField)) {
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
-          ChartDataExceptionMessageKey.FIELD_METADATA_NOT_FOUND,
-          groupByFieldMetadataId,
-        ),
-        ChartDataExceptionCode.FIELD_METADATA_NOT_FOUND,
-      );
-    }
-
-    if (!isDefined(aggregateField)) {
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
-          ChartDataExceptionMessageKey.FIELD_METADATA_NOT_FOUND,
-          aggregateFieldMetadataId,
-        ),
-        ChartDataExceptionCode.FIELD_METADATA_NOT_FOUND,
-      );
-    }
-
-    const isTwoDimensional = isDefined(secondaryGroupByFieldMetadataId);
-    let secondaryGroupByField: FlatFieldMetadata | undefined;
-
-    if (isTwoDimensional) {
-      secondaryGroupByField =
-        flatFieldMetadataMaps.byId[secondaryGroupByFieldMetadataId];
-
-      if (!isDefined(secondaryGroupByField)) {
-        throw new ChartDataException(
-          generateChartDataExceptionMessage(
-            ChartDataExceptionMessageKey.FIELD_METADATA_NOT_FOUND,
-            secondaryGroupByFieldMetadataId,
-          ),
-          ChartDataExceptionCode.FIELD_METADATA_NOT_FOUND,
-        );
-      }
-    }
-
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    try {
-      return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
-        async () => {
-          const repository = await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            flatObjectMetadata.nameSingular,
-            { shouldBypassPermissionChecks: true },
-          );
-
-          const tableName = flatObjectMetadata.nameSingular;
-          const queryBuilder = repository.createQueryBuilder(tableName);
-
-          if (isDefined(filter) && Object.keys(filter).length > 0) {
-            const filterParser = new GraphqlQueryFilterConditionParser(
-              flatObjectMetadata,
-              flatFieldMetadataMaps,
-            );
-
-            filterParser.parse(queryBuilder, tableName, filter);
-
-            if (this.hasDeletedAtFilter(filter)) {
-              queryBuilder.withDeleted();
-            }
-          }
-
-          if (!this.hasDeletedAtFilter(filter)) {
-            queryBuilder.andWhere(`"${tableName}"."deletedAt" IS NULL`);
-          }
-
-          const groupByColumnName = isDefined(groupBySubFieldName)
-            ? `${groupByField.name}${this.capitalizeFirst(groupBySubFieldName)}`
-            : groupByField.name;
-
-          queryBuilder.select(
-            `"${tableName}"."${groupByColumnName}"`,
-            'groupByValue',
-          );
-
-          let secondaryGroupByColumnName: string | undefined;
-
-          if (isTwoDimensional && isDefined(secondaryGroupByField)) {
-            secondaryGroupByColumnName = isDefined(secondaryGroupBySubFieldName)
-              ? `${secondaryGroupByField.name}${this.capitalizeFirst(secondaryGroupBySubFieldName)}`
-              : secondaryGroupByField.name;
-
-            queryBuilder.addSelect(
-              `"${tableName}"."${secondaryGroupByColumnName}"`,
-              'secondaryGroupByValue',
-            );
-          }
-
-          const aggregateColumnName = this.getAggregateColumnName(
-            aggregateField,
-            aggregateOperation,
-          );
-          const aggregateAlias = `${aggregateField.name}_${aggregateOperation}`;
-
-          const aggregateExpression = this.getAggregateExpression(
-            aggregateOperation,
-            tableName,
-            aggregateColumnName,
-          );
-
-          queryBuilder.addSelect(aggregateExpression, aggregateAlias);
-
-          queryBuilder.groupBy(`"${tableName}"."${groupByColumnName}"`);
-
-          if (isTwoDimensional && isDefined(secondaryGroupByColumnName)) {
-            queryBuilder.addGroupBy(
-              `"${tableName}"."${secondaryGroupByColumnName}"`,
-            );
-          }
-
-          queryBuilder.limit(limit);
-
-          const rawResults = await queryBuilder.getRawMany();
-
-          return rawResults.map((row) => ({
-            groupByDimensionValues: isTwoDimensional
-              ? [row.groupByValue, row.secondaryGroupByValue]
-              : [row.groupByValue],
-            aggregateValue: this.processAggregateValue(
-              row[aggregateAlias],
-              aggregateOperation,
-              aggregateField,
-            ),
-          }));
-        },
-      );
-    } catch (error) {
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
-          ChartDataExceptionMessageKey.QUERY_EXECUTION_FAILED,
-          error.message,
-        ),
-        ChartDataExceptionCode.QUERY_EXECUTION_FAILED,
-      );
-    }
-  }
-
-  private getAggregateExpression(
-    operation: AggregateOperations,
-    tableName: string,
-    columnName: string,
-  ): string {
-    const columnExpression = `"${tableName}"."${columnName}"`;
-
-    switch (operation) {
-      case AggregateOperations.COUNT:
-        return 'COUNT(*)';
-      case AggregateOperations.COUNT_EMPTY:
-        return `COUNT(*) - COUNT(${columnExpression})`;
-      case AggregateOperations.COUNT_NOT_EMPTY:
-        return `COUNT(${columnExpression})`;
-      case AggregateOperations.COUNT_UNIQUE_VALUES:
-        return `COUNT(DISTINCT ${columnExpression})`;
-      case AggregateOperations.COUNT_TRUE:
-        return `COUNT(CASE WHEN ${columnExpression} = true THEN 1 END)`;
-      case AggregateOperations.COUNT_FALSE:
-        return `COUNT(CASE WHEN ${columnExpression} = false THEN 1 END)`;
-      case AggregateOperations.PERCENTAGE_EMPTY:
-        return `CASE WHEN COUNT(*) = 0 THEN 0 ELSE (COUNT(*) - COUNT(${columnExpression}))::float / COUNT(*) END`;
-      case AggregateOperations.PERCENTAGE_NOT_EMPTY:
-        return `CASE WHEN COUNT(*) = 0 THEN 0 ELSE COUNT(${columnExpression})::float / COUNT(*) END`;
-      case AggregateOperations.SUM:
-        return `SUM(${columnExpression})`;
-      case AggregateOperations.AVG:
-        return `AVG(${columnExpression})`;
-      case AggregateOperations.MIN:
-        return `MIN(${columnExpression})`;
-      case AggregateOperations.MAX:
-        return `MAX(${columnExpression})`;
-      default:
-        return 'COUNT(*)';
-    }
-  }
-
-  private processAggregateValue(
-    rawValue: unknown,
-    operation: AggregateOperations,
-    fieldMetadata: FlatFieldMetadata,
-  ): number {
-    if (!isDefined(rawValue)) {
-      return 0;
-    }
-
-    const numericValue = Number(rawValue);
-
-    if (isNaN(numericValue)) {
-      return 0;
-    }
-
-    if (PERCENT_OPERATIONS.includes(operation)) {
-      return numericValue * 100;
-    }
-
-    if (
-      fieldMetadata.type === FieldMetadataType.CURRENCY &&
-      !COUNT_OPERATIONS.includes(operation) &&
-      !PERCENT_OPERATIONS.includes(operation)
-    ) {
-      return numericValue / 1_000_000;
-    }
-
-    return numericValue;
-  }
-
-  private capitalizeFirst(str: string): string {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
-  private hasDeletedAtFilter(filter?: ObjectRecordFilter | null): boolean {
-    if (!isDefined(filter)) {
-      return false;
-    }
-
-    const checkFilter = (
-      filterToCheck: ObjectRecordFilter | ObjectRecordFilter[],
-    ): boolean => {
-      if (Array.isArray(filterToCheck)) {
-        return filterToCheck.some((subFilter) => checkFilter(subFilter));
-      }
-
-      for (const [key, value] of Object.entries(filterToCheck)) {
-        if (key === 'deletedAt') {
-          return true;
-        }
-
-        if (
-          typeof value === 'object' &&
-          value !== null &&
-          checkFilter(value as ObjectRecordFilter)
-        ) {
-          return true;
-        }
-      }
-
-      return false;
+    const selectedFields = {
+      [aggregateFieldKey]: true,
+      groupByDimensionValues: true,
     };
 
-    return checkFilter(filter);
+    const results = await this.commonGroupByQueryRunnerService.execute(
+      {
+        filter: filter ?? {},
+        groupBy: groupBy as ObjectRecordGroupBy,
+        selectedFields,
+        limit,
+      },
+      {
+        authContext,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
+      },
+    );
+
+    return results.map((result) => ({
+      groupByDimensionValues: result.groupByDimensionValues ?? [],
+      aggregateValue: Number(result[aggregateFieldKey] ?? 0),
+    }));
   }
 
-  private getAggregateColumnName(
-    fieldMetadata: FlatFieldMetadata,
-    operation: AggregateOperations,
-  ): string {
-    const isNumericOperation = [
-      AggregateOperations.SUM,
-      AggregateOperations.AVG,
-      AggregateOperations.MIN,
-      AggregateOperations.MAX,
-    ].includes(operation);
+  async executeGroupByQueryWithOrderBy({
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
+    objectIdByNameSingular,
+    authContext,
+    groupByFieldMetadataId,
+    groupBySubFieldName,
+    aggregateFieldMetadataId,
+    aggregateOperation,
+    filter,
+    dateGranularity,
+    userTimezone,
+    firstDayOfTheWeek,
+    limit,
+    primaryAxisOrderBy,
+    secondaryGroupByFieldMetadataId,
+    secondaryGroupBySubFieldName,
+    secondaryDateGranularity,
+    secondaryAxisOrderBy,
+  }: ExecuteGroupByQueryParams & {
+    primaryAxisOrderBy?: GraphOrderBy;
+    secondaryAxisOrderBy?: GraphOrderBy;
+  }): Promise<GroupByRawResult[]> {
+    const primaryGroupByField = this.getFieldMetadata(
+      groupByFieldMetadataId,
+      flatFieldMetadataMaps.byId,
+    );
 
-    if (
-      fieldMetadata.type === FieldMetadataType.CURRENCY &&
-      isNumericOperation
-    ) {
-      return `${fieldMetadata.name}AmountMicros`;
+    const aggregateField = this.getFieldMetadata(
+      aggregateFieldMetadataId,
+      flatFieldMetadataMaps.byId,
+    );
+
+    const isPrimaryFieldDate = isFieldMetadataDateKind(
+      primaryGroupByField.type,
+    );
+    const isPrimaryNestedDate = isRelationNestedFieldDateKind({
+      relationFieldMetadata: primaryGroupByField,
+      relationNestedFieldName: groupBySubFieldName ?? undefined,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
+
+    const shouldApplyPrimaryDateGranularity =
+      isPrimaryFieldDate || isPrimaryNestedDate;
+
+    const groupBy: GroupByFieldObject[] = [];
+
+    groupBy.push(
+      buildGroupByFieldObject({
+        fieldMetadata: primaryGroupByField,
+        subFieldName: groupBySubFieldName,
+        dateGranularity: shouldApplyPrimaryDateGranularity
+          ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
+          : undefined,
+        firstDayOfTheWeek,
+        isNestedDateField: isPrimaryNestedDate,
+        timeZone: userTimezone,
+      }),
+    );
+
+    const orderBy: OrderByWithGroupBy = [];
+
+    const primaryOrderBy = getGroupByOrderBy({
+      graphOrderBy: primaryAxisOrderBy ?? GRAPH_DEFAULT_ORDER_BY,
+      groupByFieldMetadata: primaryGroupByField,
+      groupBySubFieldName,
+      aggregateOperation,
+      dateGranularity: shouldApplyPrimaryDateGranularity
+        ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
+        : undefined,
+    });
+
+    if (isDefined(primaryOrderBy)) {
+      orderBy.push(primaryOrderBy);
     }
 
-    return fieldMetadata.name;
+    if (isDefined(secondaryGroupByFieldMetadataId)) {
+      const secondaryGroupByField = this.getFieldMetadata(
+        secondaryGroupByFieldMetadataId,
+        flatFieldMetadataMaps.byId,
+      );
+
+      const isSecondaryFieldDate = isFieldMetadataDateKind(
+        secondaryGroupByField.type,
+      );
+      const isSecondaryNestedDate = isRelationNestedFieldDateKind({
+        relationFieldMetadata: secondaryGroupByField,
+        relationNestedFieldName: secondaryGroupBySubFieldName ?? undefined,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
+
+      const shouldApplySecondaryDateGranularity =
+        isSecondaryFieldDate || isSecondaryNestedDate;
+
+      groupBy.push(
+        buildGroupByFieldObject({
+          fieldMetadata: secondaryGroupByField,
+          subFieldName: secondaryGroupBySubFieldName,
+          dateGranularity: shouldApplySecondaryDateGranularity
+            ? (secondaryDateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
+            : undefined,
+          firstDayOfTheWeek,
+          isNestedDateField: isSecondaryNestedDate,
+          timeZone: userTimezone,
+        }),
+      );
+
+      if (isDefined(secondaryAxisOrderBy)) {
+        const secondaryOrderByItem = getGroupByOrderBy({
+          graphOrderBy: secondaryAxisOrderBy,
+          groupByFieldMetadata: secondaryGroupByField,
+          groupBySubFieldName: secondaryGroupBySubFieldName,
+          aggregateOperation,
+          dateGranularity: shouldApplySecondaryDateGranularity
+            ? (secondaryDateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
+            : undefined,
+        });
+
+        if (isDefined(secondaryOrderByItem)) {
+          orderBy.push(secondaryOrderByItem);
+        }
+      }
+    }
+
+    const aggregateFieldKey = buildAggregateFieldKey({
+      aggregateOperation,
+      aggregateFieldMetadata: aggregateField,
+    });
+
+    const selectedFields = {
+      [aggregateFieldKey]: true,
+      groupByDimensionValues: true,
+    };
+
+    const results = await this.commonGroupByQueryRunnerService.execute(
+      {
+        filter: filter ?? {},
+        orderBy: orderBy.length > 0 ? orderBy : undefined,
+        groupBy: groupBy as ObjectRecordGroupBy,
+        selectedFields,
+        limit,
+      },
+      {
+        authContext,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
+      },
+    );
+
+    return results.map((result) => ({
+      groupByDimensionValues: result.groupByDimensionValues ?? [],
+      aggregateValue: Number(result[aggregateFieldKey] ?? 0),
+    }));
+  }
+
+  private getFieldMetadata(
+    fieldMetadataId: string,
+    fieldMetadataById: Partial<Record<string, FlatFieldMetadata>>,
+  ): FlatFieldMetadata {
+    const fieldMetadata = fieldMetadataById[fieldMetadataId];
+
+    if (!isDefined(fieldMetadata)) {
+      throw new ChartDataException(
+        generateChartDataExceptionMessage(
+          ChartDataExceptionMessageKey.FIELD_METADATA_NOT_FOUND,
+          fieldMetadataId,
+        ),
+        ChartDataExceptionCode.FIELD_METADATA_NOT_FOUND,
+      );
+    }
+
+    return fieldMetadata;
   }
 }

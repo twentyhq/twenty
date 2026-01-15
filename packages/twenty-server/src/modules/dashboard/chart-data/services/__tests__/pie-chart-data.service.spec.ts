@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from 'src/modules/dashboard/chart-data/constants/pie-chart.constants';
@@ -15,6 +16,9 @@ describe('PieChartDataService', () => {
   let mockGetOrRecomputeManyOrAllFlatEntityMaps: jest.Mock;
 
   const workspaceId = 'test-workspace-id';
+  const mockAuthContext: AuthContext = {
+    workspace: { id: workspaceId } as any,
+  };
   const objectMetadataId = 'test-object-id';
 
   const mockGroupByField = {
@@ -104,6 +108,7 @@ describe('PieChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: baseConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data).toHaveLength(2);
@@ -129,6 +134,7 @@ describe('PieChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: baseConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data).toEqual([
@@ -152,6 +158,7 @@ describe('PieChartDataService', () => {
           ...baseConfiguration,
           hideEmptyCategory: true,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data).toHaveLength(1);
@@ -173,6 +180,7 @@ describe('PieChartDataService', () => {
         workspaceId,
         objectMetadataId,
         configuration: baseConfiguration as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.hasTooManyGroups).toBe(true);
@@ -191,6 +199,7 @@ describe('PieChartDataService', () => {
           ...baseConfiguration,
           displayLegend: false,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.showLegend).toBe(false);
@@ -208,6 +217,7 @@ describe('PieChartDataService', () => {
           ...baseConfiguration,
           displayDataLabel: true,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.showDataLabels).toBe(true);
@@ -225,6 +235,7 @@ describe('PieChartDataService', () => {
           ...baseConfiguration,
           showCenterMetric: false,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.showCenterMetric).toBe(false);
@@ -255,6 +266,7 @@ describe('PieChartDataService', () => {
           ...baseConfiguration,
           groupByFieldMetadataId: mockSelectField.id,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data[0].id).toBe('Open');
@@ -274,6 +286,7 @@ describe('PieChartDataService', () => {
             aggregateFieldMetadataId: mockAggregateField.id,
             aggregateOperation: AggregateOperations.COUNT,
           } as any,
+          authContext: mockAuthContext,
         }),
       ).rejects.toThrow();
     });
@@ -294,6 +307,7 @@ describe('PieChartDataService', () => {
             aggregateFieldMetadataId: mockAggregateField.id,
             aggregateOperation: AggregateOperations.COUNT,
           } as any,
+          authContext: mockAuthContext,
         }),
       ).rejects.toThrow();
     });
@@ -316,6 +330,7 @@ describe('PieChartDataService', () => {
             aggregateFieldMetadataId: mockAggregateField.id,
             aggregateOperation: AggregateOperations.COUNT,
           } as any,
+          authContext: mockAuthContext,
         }),
       ).rejects.toThrow();
     });
@@ -358,6 +373,7 @@ describe('PieChartDataService', () => {
           aggregateFieldMetadataId: mockAggregateField.id,
           aggregateOperation: AggregateOperations.COUNT,
         } as any,
+        authContext: mockAuthContext,
       });
 
       expect(result.data[0].id).toBe('Yes');
