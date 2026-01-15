@@ -66,6 +66,7 @@ generated
 
 # production
 /build
+/.twenty
 
 # misc
 .DS_Store

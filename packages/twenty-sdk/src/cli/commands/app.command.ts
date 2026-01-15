@@ -8,6 +8,9 @@ import {
 import { AppUninstallCommand } from '@/cli/commands/app-uninstall.command';
 import { AppDevCommand } from '@/cli/commands/app-dev.command';
 import { AppSyncCommand } from '@/cli/commands/app-sync.command';
+import { AppBuildCommand } from '@/cli/commands/app-build.command';
+import { AppPackCommand } from '@/cli/commands/app-pack.command';
+import { AppInstallCommand } from '@/cli/commands/app-install.command';
 import { formatPath } from '@/cli/utils/format-path';
 import { AppGenerateCommand } from '@/cli/commands/app-generate.command';
 import { AppLogsCommand } from '@/cli/commands/app-logs.command';
@@ -19,6 +22,9 @@ export class AppCommand {
   private addCommand = new AppAddCommand();
   private generateCommand = new AppGenerateCommand();
   private logsCommand = new AppLogsCommand();
+  private buildCommand = new AppBuildCommand();
+  private packCommand = new AppPackCommand();
+  private installCommand = new AppInstallCommand();
 
   getCommand(): Command {
     const appCommand = new Command('app');
@@ -137,6 +143,62 @@ export class AppCommand {
           });
         },
       );
+
+    appCommand
+      .command('build [appPath]')
+      .description('Build application for distribution')
+      .option('-o, --output <dir>', 'Output directory (default: .twenty/output)')
+      .option('-p, --pack', 'Also create a tarball after building')
+      .action(async (appPath?: string, options?: { output?: string; pack?: boolean }) => {
+        try {
+          const result = await this.buildCommand.execute({
+            appPath: formatPath(appPath),
+            output: options?.output,
+            pack: options?.pack,
+          });
+          if (!result.success) {
+            process.exit(1);
+          }
+        } catch {
+          process.exit(1);
+        }
+      });
+
+    appCommand
+      .command('pack [appPath]')
+      .description('Create a tarball from a built application')
+      .option('-o, --output <file>', 'Output tarball path')
+      .action(async (appPath?: string, options?: { output?: string }) => {
+        try {
+          const result = await this.packCommand.execute({
+            appPath: formatPath(appPath),
+            output: options?.output,
+          });
+          if (!result.success) {
+            process.exit(1);
+          }
+        } catch {
+          process.exit(1);
+        }
+      });
+
+    appCommand
+      .command('install <source>')
+      .description('Install application from URL or local tarball')
+      .option('-f, --force', 'Force reinstall if already exists')
+      .action(async (source: string, options?: { force?: boolean }) => {
+        try {
+          const result = await this.installCommand.execute({
+            source,
+            force: options?.force,
+          });
+          if (!result.success) {
+            process.exit(1);
+          }
+        } catch {
+          process.exit(1);
+        }
+      });
 
     return appCommand;
   }

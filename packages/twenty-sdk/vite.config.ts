@@ -92,8 +92,10 @@ export default defineConfig(() => {
           'url',
           'crypto',
           'stream',
+          'stream/promises',
           'util',
           'os',
+          'zlib',
         ],
         output: [
           {

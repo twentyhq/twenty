@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-sync.service';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
+import { TarballInstallerService } from 'src/engine/core-modules/application/services/tarball-installer.service';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
 import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -44,6 +45,7 @@ import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-commo
   providers: [
     ApplicationResolver,
     ApplicationSyncService,
+    TarballInstallerService,
     WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
   ],
   exports: [ApplicationSyncService],

@@ -9,7 +9,9 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
+import { InstallApplicationFromUrlInput } from 'src/engine/core-modules/application/dtos/install-application-from-url.input';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/dtos/uninstallApplicationInput';
+import { TarballInstallerService } from 'src/engine/core-modules/application/services/tarball-installer.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -29,6 +31,7 @@ export class ApplicationResolver {
   constructor(
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationService: ApplicationService,
+    private readonly tarballInstallerService: TarballInstallerService,
   ) {}
 
   @Query(() => [ApplicationDTO])
@@ -71,6 +74,29 @@ export class ApplicationResolver {
     await this.applicationSyncService.uninstallApplication({
       applicationUniversalIdentifier: universalIdentifier,
       workspaceId,
+    });
+
+    return true;
+  }
+
+  @Mutation(() => Boolean, {
+    description: 'Install an application from a tarball URL',
+  })
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  async installApplicationFromUrl(
+    @Args() { url }: InstallApplicationFromUrlInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    // Download and extract the tarball
+    const { manifest, packageJson, yarnLock } =
+      await this.tarballInstallerService.installFromUrl(url);
+
+    // Sync the application
+    await this.applicationSyncService.synchronizeFromManifest({
+      workspaceId,
+      manifest,
+      yarnLock,
+      packageJson,
     });
 
     return true;

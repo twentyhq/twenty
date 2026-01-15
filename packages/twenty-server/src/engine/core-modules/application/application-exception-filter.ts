@@ -20,9 +20,15 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.ENTITY_NOT_FOUND:
       case ApplicationExceptionCode.APPLICATION_NOT_FOUND:
       case ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND:
+      case ApplicationExceptionCode.FILE_NOT_FOUND:
         throw new NotFoundError(exception);
       case ApplicationExceptionCode.FORBIDDEN:
       case ApplicationExceptionCode.INVALID_INPUT:
+      case ApplicationExceptionCode.INVALID_URL:
+      case ApplicationExceptionCode.DOWNLOAD_FAILED:
+      case ApplicationExceptionCode.TARBALL_TOO_LARGE:
+      case ApplicationExceptionCode.INVALID_TARBALL_STRUCTURE:
+      case ApplicationExceptionCode.INVALID_MANIFEST:
         throw new UserInputError(exception);
       default: {
         assertUnreachable(exception.code);

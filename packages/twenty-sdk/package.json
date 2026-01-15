@@ -37,6 +37,7 @@
     "chokidar": "^4.0.0",
     "commander": "^12.0.0",
     "dotenv": "^16.4.0",
+    "esbuild": "^0.24.0",
     "fast-glob": "^3.3.0",
     "fs-extra": "^11.2.0",
     "graphql": "^16.8.1",
@@ -48,6 +49,7 @@
     "lodash.capitalize": "^4.2.1",
     "lodash.kebabcase": "^4.1.1",
     "lodash.startcase": "^4.4.0",
+    "tar-fs": "^3.0.0",
     "typescript": "^5.9.2",
     "uuid": "^13.0.0"
   },
@@ -60,6 +62,7 @@
     "@types/lodash.kebabcase": "^4.1.7",
     "@types/lodash.startcase": "^4",
     "@types/node": "^24.0.0",
+    "@types/tar-fs": "^2.0.0",
     "jest": "^29.5.0",
     "tsx": "^4.7.0",
     "vite": "^7.0.0",
