@@ -79,8 +79,9 @@ export const useCreateNewIndexRecord = ({
     ({ snapshot, set }) =>
       async (recordInput?: Partial<ObjectRecord>) => {
         const recordId = v4();
-        const recordInputFromRLSPredicates =
-          buildRecordInputFromRLSPredicates();
+        const recordInputFromRLSPredicates = isRLSEnabled
+          ? buildRecordInputFromRLSPredicates()
+          : {};
         const recordInputFromFilters = buildRecordInputFromFilters();
 
         const recordIndexOpenRecordIn = snapshot
@@ -89,7 +90,7 @@ export const useCreateNewIndexRecord = ({
 
         const createdRecord = await createOneRecord({
           id: recordId,
-          ...(isRLSEnabled ? recordInputFromRLSPredicates : {}),
+          ...recordInputFromRLSPredicates,
           ...recordInputFromFilters,
           ...recordInput,
         });
