@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined, uncapitalize } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -10,7 +10,7 @@ import {
   RunOnWorkspaceArgs,
   WorkspacesMigrationCommandRunner,
 } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { computeFormattedViewName } from 'src/database/commands/upgrade-version-command/1-16/utils/compute-formatted-view-name.util';
+import { ALL_ENTITY_VIEW_NAME } from 'src/database/commands/upgrade-version-command/1-16/utils/compute-formatted-view-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -31,9 +31,13 @@ import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-a
 type StandardViewUpdate = {
   flatView: FlatView;
   universalIdentifier: string;
+  objectNameSingular: string;
 };
 
-type AllExceptions = 'unknown_standard_view' | 'existing_universal_id_mismatch';
+type AllExceptions =
+  | 'unknown_standard_view'
+  | 'existing_universal_id_mismatch_1'
+  | 'existing_universal_id_mismatch_2';
 
 type ViewMetadataException = {
   flatView: FlatView;
@@ -95,6 +99,7 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
 
     await this.identifyCustomViews({
       workspaceId,
+      flatObjectMetadataMaps,
       workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       dryRun: options.dryRun ?? false,
     });
@@ -161,17 +166,12 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       });
 
       for (const flatView of relatedFlatViews) {
-        if (flatView.isCustom) {
-          this.logger.warn(`TODO`);
-          continue;
-        }
-
         // INDEX views -> forward to standard (if object has views config)
-        if (flatView.key === ViewKey.INDEX) {
-          const formattedViewName = computeFormattedViewName({
-            viewName: flatView.name,
-            flatObjectMetadata,
-          });
+        if (
+          flatView.key === ViewKey.INDEX &&
+          flatView.name === ALL_ENTITY_VIEW_NAME
+        ) {
+          const formattedViewName = `all${capitalize(flatObjectMetadata.namePlural)}`;
 
           const viewConfig = objectViews[formattedViewName];
           const universalIdentifier = viewConfig?.universalIdentifier;
@@ -185,22 +185,11 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
             continue;
           }
 
-          if (
-            isDefined(flatView.universalIdentifier) &&
-            flatView.universalIdentifier !== universalIdentifier
-          ) {
-            exceptions.push({
-              flatView,
-              exception: 'existing_universal_id_mismatch',
-              objectNameSingular,
-            });
-            continue;
-          }
-
           standardViewUpdates.push({
             flatView,
             universalIdentifier:
               flatView.universalIdentifier ?? universalIdentifier,
+            objectNameSingular: flatObjectMetadata.nameSingular,
           });
           continue;
         }
@@ -210,11 +199,10 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
           continue;
         }
 
-        // Remaining views (like assignedToMe, byStatus, etc.) -> use computeFormattedViewName
-        const formattedViewName = computeFormattedViewName({
-          viewName: flatView.name,
-          flatObjectMetadata,
-        });
+        // Remaining views (like assignedToMe, byStatus, etc.)
+        const formattedViewName = uncapitalize(
+          flatView.name.split(' ').map(capitalize).join(''),
+        );
 
         const viewConfig = objectViews[formattedViewName];
         const universalIdentifier = viewConfig?.universalIdentifier;
@@ -223,22 +211,11 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
           continue;
         }
 
-        if (
-          isDefined(flatView.universalIdentifier) &&
-          flatView.universalIdentifier !== universalIdentifier
-        ) {
-          exceptions.push({
-            flatView,
-            exception: 'existing_universal_id_mismatch',
-            objectNameSingular,
-          });
-          continue;
-        }
-
         standardViewUpdates.push({
           flatView,
           universalIdentifier:
             flatView.universalIdentifier ?? universalIdentifier,
+          objectNameSingular: flatObjectMetadata.nameSingular,
         });
       }
     }
@@ -267,6 +244,20 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       }),
     );
 
+    this.logger.log(
+      `Found ${standardUpdates.length} standard view(s) to update for workspace ${workspaceId}`,
+    );
+
+    for (const {
+      flatView,
+      universalIdentifier,
+      objectNameSingular,
+    } of standardViewUpdates) {
+      this.logger.log(
+        `  - Standard view "${flatView.name}" on object "${objectNameSingular}" (id=${flatView.id}) -> universalIdentifier=${universalIdentifier}`,
+      );
+    }
+
     if (!dryRun) {
       await this.viewRepository.save(standardUpdates);
     }
@@ -274,10 +265,12 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
 
   private async identifyCustomViews({
     workspaceId,
+    flatObjectMetadataMaps,
     workspaceCustomApplicationId,
     dryRun,
   }: {
     workspaceId: string;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     workspaceCustomApplicationId: string;
     dryRun: boolean;
   }): Promise<void> {
@@ -298,12 +291,34 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
 
     const customUpdates = remainingCustomViews.map((viewEntity) => ({
       id: viewEntity.id,
+      name: viewEntity.name,
       universalIdentifier: viewEntity.universalIdentifier ?? v4(),
       applicationId: workspaceCustomApplicationId,
     }));
 
+    this.logger.log(
+      `Found ${customUpdates.length} custom view(s) to update for workspace ${workspaceId}`,
+    );
+
+    for (const viewEntity of remainingCustomViews) {
+      const flatObjectMetadata =
+        flatObjectMetadataMaps.byId[viewEntity.objectMetadataId];
+
+      this.logger.log(
+        `  - Custom view "${viewEntity.name}" on object "${flatObjectMetadata?.nameSingular ?? 'unknown'}" (id=${viewEntity.id})`,
+      );
+    }
+
+    const customUpdatesToSave = customUpdates.map(
+      ({ id, universalIdentifier, applicationId }) => ({
+        id,
+        universalIdentifier,
+        applicationId,
+      }),
+    );
+
     if (!dryRun) {
-      await this.viewRepository.save(customUpdates);
+      await this.viewRepository.save(customUpdatesToSave);
     }
   }
 }
