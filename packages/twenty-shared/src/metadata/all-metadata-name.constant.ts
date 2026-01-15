@@ -20,4 +20,5 @@ export const ALL_METADATA_NAME = {
   pageLayout: 'pageLayout',
   pageLayoutWidget: 'pageLayoutWidget',
   pageLayoutTab: 'pageLayoutTab',
+  commandMenuItem: 'commandMenuItem',
 } as const;
