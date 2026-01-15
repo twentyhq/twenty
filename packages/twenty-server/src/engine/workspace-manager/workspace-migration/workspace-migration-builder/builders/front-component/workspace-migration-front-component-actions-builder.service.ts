@@ -80,7 +80,9 @@ export class WorkspaceMigrationFrontComponentActionsBuilderService extends Works
   }
 
   protected validateFlatEntityUpdate(
-    args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.frontComponent>,
+    args: FlatEntityUpdateValidationArgs<
+      typeof ALL_METADATA_NAME.frontComponent
+    >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.frontComponent,
     'update'
