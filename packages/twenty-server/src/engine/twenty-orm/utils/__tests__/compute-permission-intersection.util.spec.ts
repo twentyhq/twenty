@@ -69,6 +69,8 @@ describe('computePermissionIntersection', () => {
         canSoftDeleteObjectRecords: true,
         canDestroyObjectRecords: true,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       });
     });
 
@@ -108,6 +110,8 @@ describe('computePermissionIntersection', () => {
         canSoftDeleteObjectRecords: false,
         canDestroyObjectRecords: true,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       });
     });
 
@@ -137,6 +141,8 @@ describe('computePermissionIntersection', () => {
         canSoftDeleteObjectRecords: false,
         canDestroyObjectRecords: false,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       });
     });
   });
@@ -196,6 +202,8 @@ describe('computePermissionIntersection', () => {
         canSoftDeleteObjectRecords: false,
         canDestroyObjectRecords: false,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       });
 
       expect(result[objectMetadataId2]).toEqual({
@@ -204,6 +212,8 @@ describe('computePermissionIntersection', () => {
         canSoftDeleteObjectRecords: false,
         canDestroyObjectRecords: false,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       });
     });
   });
