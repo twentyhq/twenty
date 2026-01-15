@@ -260,9 +260,7 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
 
           standardViewFieldUpdates.push({
             flatViewField: matchingFlatViewField,
-            universalIdentifier:
-              matchingFlatViewField.universalIdentifier ??
-              viewFieldConfig.universalIdentifier,
+            universalIdentifier: viewFieldConfig.universalIdentifier,
             objectNameSingular: flatObjectMetadata.nameSingular,
             viewName: flatView.name,
             fieldName,

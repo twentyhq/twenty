@@ -216,8 +216,7 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
 
         standardViewUpdates.push({
           flatView,
-          universalIdentifier:
-            flatView.universalIdentifier ?? universalIdentifier,
+          universalIdentifier: flatView.universalIdentifier,
           objectNameSingular: flatObjectMetadata.nameSingular,
         });
       }
