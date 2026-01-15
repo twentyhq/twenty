@@ -305,7 +305,6 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       );
     }
 
-
     if (!dryRun) {
       await this.viewRepository.save(customUpdates);
     }
