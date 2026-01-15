@@ -25,7 +25,6 @@ export class WorkspaceFlatFrontComponentMapCacheService extends WorkspaceCachePr
   async computeForCache(workspaceId: string): Promise<FlatFrontComponentMaps> {
     const frontComponents = await this.frontComponentRepository.find({
       where: { workspaceId },
-      withDeleted: true,
     });
 
     const flatFrontComponentMaps = createEmptyFlatEntityMaps();

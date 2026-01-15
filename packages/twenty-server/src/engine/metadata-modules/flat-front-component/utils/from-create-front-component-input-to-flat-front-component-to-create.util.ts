@@ -28,7 +28,6 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
     workspaceId,
     createdAt: now,
     updatedAt: now,
-    deletedAt: null,
     universalIdentifier: id,
     applicationId,
   };

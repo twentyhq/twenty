@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -28,7 +29,7 @@ export class FlatFrontComponentValidatorService {
       type: 'create',
     });
 
-    if (!isDefined(flatFrontComponent.name) || flatFrontComponent.name === '') {
+    if (!isNonEmptyString(flatFrontComponent.name)) {
       validationResult.errors.push({
         code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
         message: t`Front component name is required`,

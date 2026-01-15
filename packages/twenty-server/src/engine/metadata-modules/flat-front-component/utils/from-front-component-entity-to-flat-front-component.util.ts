@@ -12,6 +12,5 @@ export const fromFrontComponentEntityToFlatFrontComponent = (
     applicationId: frontComponentEntity.applicationId,
     createdAt: frontComponentEntity.createdAt.toISOString(),
     updatedAt: frontComponentEntity.updatedAt.toISOString(),
-    deletedAt: frontComponentEntity.deletedAt?.toISOString() ?? null,
   };
 };

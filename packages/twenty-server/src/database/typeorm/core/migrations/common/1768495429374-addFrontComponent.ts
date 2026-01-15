@@ -5,7 +5,7 @@ export class AddFrontComponent1768495429374 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "core"."frontComponent" ("workspaceId" uuid NOT NULL, "universalIdentifier" uuid NOT NULL, "applicationId" uuid NOT NULL, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_843479d93ef40e58dc4587339aa" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "core"."frontComponent" ("workspaceId" uuid NOT NULL, "universalIdentifier" uuid NOT NULL, "applicationId" uuid NOT NULL, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_843479d93ef40e58dc4587339aa" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_a1413f7f0e71cb5825ac40c4fa" ON "core"."frontComponent" ("workspaceId", "universalIdentifier") `,

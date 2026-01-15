@@ -1,7 +1,6 @@
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -25,7 +24,4 @@ export class FrontComponentEntity
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @DeleteDateColumn({ type: 'timestamptz', nullable: true })
-  deletedAt: Date | null;
 }
