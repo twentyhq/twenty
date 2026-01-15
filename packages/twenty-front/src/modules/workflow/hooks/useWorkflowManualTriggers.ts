@@ -75,6 +75,8 @@ const transformWorkflowVersionToManualTrigger = (
   };
 };
 
+// TODO: Remove WorkflowVersion fallback after 1.17 migration has run on all workspaces
+// Once ManualTrigger object exists everywhere, we can simplify to only query ManualTrigger
 export const useWorkflowManualTriggers = ({
   objectMetadataItem,
   skip,
