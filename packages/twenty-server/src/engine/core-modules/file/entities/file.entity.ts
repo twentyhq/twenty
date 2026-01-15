@@ -27,7 +27,7 @@ export class FileEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false, type: 'uuid' })
+  @Column({ nullable: true, type: 'uuid' })
   applicationId: string;
 
   @ManyToOne('ApplicationEntity', {

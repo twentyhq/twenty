@@ -1,14 +1,16 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class UpdateFileTable1768493874050 implements MigrationInterface {
-  name = 'UpdateFileTable1768493874050';
+export class AddFileUniqueConstraint1768497650628
+  implements MigrationInterface
+{
+  name = 'AddFileUniqueConstraint1768497650628';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`ALTER TABLE "core"."file" DROP COLUMN "name"`);
     await queryRunner.query(`ALTER TABLE "core"."file" DROP COLUMN "fullPath"`);
     await queryRunner.query(`ALTER TABLE "core"."file" DROP COLUMN "type"`);
     await queryRunner.query(
-      `ALTER TABLE "core"."file" ADD "applicationId" uuid NOT NULL`,
+      `ALTER TABLE "core"."file" ADD "applicationId" uuid`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."file" ADD "path" character varying NOT NULL`,
