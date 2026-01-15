@@ -223,24 +223,29 @@ export class LocalDriver implements ServerlessDriver {
         delete _env;
       `);
 
-      // Inject payload
+      // Inject payload and handler name as variables (not interpolated into code)
       await jail.set('_payload', new ivm.ExternalCopy(payload).copyInto());
+      await jail.set(
+        '_handlerName',
+        new ivm.ExternalCopy(handlerName).copyInto(),
+      );
 
       // Compile and run the user code
       // The code is built as IIFE with globalName '__serverlessExports'
-      // so exports are available at __serverlessExports.handlerName
+      // Handler name is passed as a variable to avoid code injection
       const script = await isolate.compileScript(`
         ${code}
 
         // The bundled IIFE code sets up __serverlessExports
-        if (typeof __serverlessExports === 'undefined' || typeof __serverlessExports.${handlerName} !== 'function') {
-          throw new Error('Handler function "${handlerName}" not found in module exports');
+        // Use bracket notation with the sanitized handler name variable
+        if (typeof __serverlessExports === 'undefined' || typeof __serverlessExports[_handlerName] !== 'function') {
+          throw new Error('Handler function "' + _handlerName + '" not found in module exports');
         }
 
         // Execute the handler and store the result
         (async () => {
           try {
-            const result = await __serverlessExports.${handlerName}(_payload);
+            const result = await __serverlessExports[_handlerName](_payload);
             return JSON.stringify({ success: true, data: result });
           } catch (err) {
             return JSON.stringify({
