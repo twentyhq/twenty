@@ -39,10 +39,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
     : undefined;
 
   if (!roleId) {
-    throw new TwentyORMException(
-      'No role found for user',
-      TwentyORMExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-    );
+    return;
   }
 
   const recordFilter = buildRowLevelPermissionRecordFilter({
