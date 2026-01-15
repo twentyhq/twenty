@@ -21,7 +21,10 @@ export const ChartSkeletonLoader = () => {
         highlightColor={theme.background.transparent.lighter}
         borderRadius={4}
       >
-        <Skeleton width={120} height={SKELETON_LOADER_HEIGHT_SIZES.standard.m} />
+        <Skeleton
+          width={120}
+          height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+        />
       </SkeletonTheme>
     </StyledContainer>
   );
