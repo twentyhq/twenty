@@ -36,6 +36,7 @@ import { FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/fiel
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { filterByRange } from 'src/modules/dashboard/chart-data/utils/filter-by-range.util';
+import { filterTwoDimensionalDataByRange } from 'src/modules/dashboard/chart-data/utils/filter-two-dimensional-data-by-range.util';
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
@@ -370,12 +371,27 @@ export class BarChartDataService {
         )
       : rawResults;
 
+    const effectiveGroupMode =
+      configuration.groupMode ?? BarChartGroupMode.STACKED;
+    const isStacked = effectiveGroupMode === BarChartGroupMode.STACKED;
+
+    const rangeFilteredResults =
+      !configuration.isCumulative &&
+      !isStacked &&
+      (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
+        ? filterByRange(
+            filteredResults,
+            configuration.rangeMin,
+            configuration.rangeMax,
+          )
+        : filteredResults;
+
     const isDescOrder =
       configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
 
     const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
       applyGapFilling({
-        data: filteredResults,
+        data: rangeFilteredResults,
         primaryAxisGroupByField,
         dateGranularity: configuration.primaryAxisDateGranularity,
         omitNullValues: configuration.omitNullValues ?? false,
@@ -472,10 +488,6 @@ export class BarChartDataService {
       secondaryAxisGroupByField,
     });
 
-    const effectiveGroupMode =
-      configuration.groupMode ?? BarChartGroupMode.STACKED;
-    const isStacked = effectiveGroupMode === BarChartGroupMode.STACKED;
-
     const hasTooManyBars = sortedData.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS;
     const hasTooManyGroupsPerBar =
       keys.length > BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR;
@@ -498,6 +510,19 @@ export class BarChartDataService {
 
         finalLimitedData = finalLimitedData.slice(0, Math.max(1, maxXValues));
       }
+    }
+
+    if (
+      !configuration.isCumulative &&
+      isStacked &&
+      (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
+    ) {
+      finalLimitedData = filterTwoDimensionalDataByRange(
+        finalLimitedData,
+        limitedKeys,
+        configuration.rangeMin,
+        configuration.rangeMax,
+      );
     }
 
     const finalData = configuration.isCumulative

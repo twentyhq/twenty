@@ -36,6 +36,7 @@ import { FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/fiel
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { filterByRange } from 'src/modules/dashboard/chart-data/utils/filter-by-range.util';
+import { filterLineChartXValuesByRange } from 'src/modules/dashboard/chart-data/utils/filter-line-chart-x-values-by-range.util';
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
@@ -353,12 +354,25 @@ export class LineChartDataService {
         )
       : rawResults;
 
+    const isStacked = configuration.isStacked ?? true;
+
+    const rangeFilteredResults =
+      !configuration.isCumulative &&
+      !isStacked &&
+      (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
+        ? filterByRange(
+            filteredResults,
+            configuration.rangeMin,
+            configuration.rangeMax,
+          )
+        : filteredResults;
+
     const isDescOrder =
       configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
 
     const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
       applyGapFilling({
-        data: filteredResults,
+        data: rangeFilteredResults,
         primaryAxisGroupByField,
         dateGranularity: configuration.primaryAxisDateGranularity,
         omitNullValues: configuration.omitNullValues ?? false,
@@ -453,17 +467,29 @@ export class LineChartDataService {
       secondaryAxisGroupByField,
     });
 
-    const isStacked = configuration.isStacked ?? true;
     const maxSeries = isStacked
       ? LINE_CHART_MAXIMUM_NUMBER_OF_STACKED_SERIES
       : LINE_CHART_MAXIMUM_NUMBER_OF_NON_STACKED_SERIES;
 
     const limitedSeriesIds = sortedSeriesIds.slice(0, maxSeries);
 
+    const filteredXValues =
+      !configuration.isCumulative &&
+      isStacked &&
+      (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
+        ? filterLineChartXValuesByRange(
+            limitedXValues,
+            seriesMap,
+            limitedSeriesIds,
+            configuration.rangeMin,
+            configuration.rangeMax,
+          )
+        : limitedXValues;
+
     const series: LineChartSeriesDTO[] = limitedSeriesIds.map((seriesId) => {
       const xToYMap = seriesMap.get(seriesId) ?? new Map();
 
-      let dataPoints: LineChartDataPointDTO[] = limitedXValues.map(
+      let dataPoints: LineChartDataPointDTO[] = filteredXValues.map(
         (xValue) => ({
           x: xValue,
           y: xToYMap.get(xValue) ?? 0,
