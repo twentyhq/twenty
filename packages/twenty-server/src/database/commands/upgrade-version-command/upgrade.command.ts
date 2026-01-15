@@ -33,6 +33,7 @@ import { MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrati
 import { MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-field-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-universal-identifier-and-application-id-not-nullable-migration.command';
 import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
+import { BackfillWorkflowManualTriggersCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-backfill-workflow-manual-triggers.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -83,6 +84,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly makeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+
+    // 1.17 Commands
+    protected readonly backfillWorkflowManualTriggersCommand: BackfillWorkflowManualTriggersCommand,
   ) {
     super(
       workspaceRepository,
@@ -134,12 +138,17 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         .makeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     ];
 
+    const commands_1170: VersionCommands = [
+      this.backfillWorkflowManualTriggersCommand,
+    ];
+
     this.allCommands = {
       '1.12.0': commands_1120,
       '1.13.0': commands_1130,
       '1.14.0': commands_1140,
       '1.15.0': commands_1150,
       '1.16.0': commands_1160,
+      '1.17.0': commands_1170,
     };
   }
 
