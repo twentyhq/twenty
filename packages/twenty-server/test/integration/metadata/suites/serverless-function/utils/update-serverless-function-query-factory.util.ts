@@ -4,7 +4,7 @@ import { type Sources } from 'twenty-shared/types';
 export type UpdateServerlessFunctionFactoryInput = {
   id: string;
   update: {
-    name?: string;
+    name: string;
     description?: string;
     code: Sources;
   };

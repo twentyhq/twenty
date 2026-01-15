@@ -109,6 +109,7 @@ describe('Serverless Function Execution', () => {
       input: {
         id: functionId,
         update: {
+          name: 'Lodash Array Processor',
           code: LODASH_FUNCTION_CODE,
         },
       },
@@ -160,6 +161,7 @@ describe('Serverless Function Execution', () => {
       input: {
         id: functionId,
         update: {
+          name: 'Error Test Function',
           code: ERROR_FUNCTION_CODE,
         },
       },
