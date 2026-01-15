@@ -56,7 +56,7 @@ export class MessagingMessagesImportService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
-    let messageIdsToFetch: string[] = [];
+    let messagesToFetch: { field: string; value: string }[] = [];
 
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -103,12 +103,12 @@ export class MessagingMessagesImportService {
             workspaceId,
           );
 
-          messageIdsToFetch = await this.cacheStorage.setPop(
+          messagesToFetch = await this.cacheStorage.hPop(
             `messages-to-import:${workspaceId}:${messageChannel.id}`,
             MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
           );
 
-          if (!messageIdsToFetch?.length) {
+          if (!messagesToFetch?.length) {
             await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
               [messageChannel.id],
               workspaceId,
@@ -120,11 +120,31 @@ export class MessagingMessagesImportService {
             );
           }
 
+          const messageExternalIdsToFetch = messagesToFetch.map(
+            (cachedMessage) => cachedMessage.field,
+          );
+          const messageExternalIdToFolderIdMap = new Map(
+            messagesToFetch.map((cachedMessage) => [
+              cachedMessage.field,
+              cachedMessage.value,
+            ]),
+          );
+
           const allMessages =
             await this.messagingGetMessagesService.getMessages(
-              messageIdsToFetch,
+              messageExternalIdsToFetch,
               connectedAccountWithFreshTokens,
             );
+
+          for (const message of allMessages) {
+            const messageFolderId = messageExternalIdToFolderIdMap.get(
+              message.externalId,
+            );
+
+            if (messageFolderId) {
+              message.messageFolderId = messageFolderId;
+            }
+          }
 
           const blocklist =
             await this.blocklistRepository.getByWorkspaceMemberId(
@@ -166,7 +186,7 @@ export class MessagingMessagesImportService {
           }
 
           if (
-            messageIdsToFetch.length <
+            messagesToFetch.length <
             MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE
           ) {
             await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
@@ -204,10 +224,21 @@ export class MessagingMessagesImportService {
           this.logger.error(
             `Error (${error.code}) importing messages for workspace ${workspaceId.slice(0, 8)} and account ${connectedAccount.id.slice(0, 8)}: ${error.message} - ${error.body}`,
           );
-          await this.cacheStorage.setAdd(
-            `messages-to-import:${workspaceId}:${messageChannel.id}`,
-            messageIdsToFetch,
-          );
+
+          if (messagesToFetch.length > 0) {
+            const messageExternalIdToFolderIdMapping: Record<string, string> =
+              {};
+
+            for (const cachedMessage of messagesToFetch) {
+              messageExternalIdToFolderIdMapping[cachedMessage.field] =
+                cachedMessage.value;
+            }
+
+            await this.cacheStorage.hSet(
+              `messages-to-import:${workspaceId}:${messageChannel.id}`,
+              messageExternalIdToFolderIdMapping,
+            );
+          }
 
           await this.messageImportErrorHandlerService.handleDriverException(
             error,

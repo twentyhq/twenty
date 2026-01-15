@@ -179,6 +179,17 @@ export class MessagingMessageListFetchService {
               'messageChannelMessageAssociation',
             );
 
+          const messageExternalIdToFolderIdMap = new Map<string, string>();
+
+          for (const messageList of messageLists) {
+            for (const messageExternalId of messageList.messageExternalIds) {
+              messageExternalIdToFolderIdMap.set(
+                messageExternalId,
+                messageList.folderId ?? '',
+              );
+            }
+          }
+
           const messageExternalIdsChunks = chunk(messageExternalIds, 200);
 
           for (const [
@@ -213,9 +224,16 @@ export class MessagingMessageListFetchService {
 
               totalMessagesToImportCount += messageExternalIdsToImport.length;
 
-              await this.cacheStorage.setAdd(
+              const messageToFolderMapping: Record<string, string> = {};
+
+              for (const messageExternalId of messageExternalIdsToImport) {
+                messageToFolderMapping[messageExternalId] =
+                  messageExternalIdToFolderIdMap.get(messageExternalId) ?? '';
+              }
+
+              await this.cacheStorage.hSet(
                 `messages-to-import:${workspaceId}:${messageChannelWithFreshTokens.id}`,
-                messageExternalIdsToImport,
+                messageToFolderMapping,
                 ONE_WEEK_IN_MILLISECONDS,
               );
             }

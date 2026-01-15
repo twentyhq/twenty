@@ -245,6 +245,146 @@ export class CacheStorageService {
     return newValue;
   }
 
+  async hSet(
+    key: string,
+    fieldValuePairs: Record<string, string>,
+    ttl?: Milliseconds,
+  ): Promise<void> {
+    const entries = Object.entries(fieldValuePairs);
+
+    if (entries.length === 0) {
+      return;
+    }
+
+    if (this.isRedisCache()) {
+      const redisClient = (this.cache as RedisCache).store.client;
+
+      await redisClient.hSet(this.getKey(key), fieldValuePairs);
+
+      if (ttl) {
+        await redisClient.expire(this.getKey(key), ttl / 1000);
+      }
+
+      return;
+    }
+
+    const existing = (await this.get<Record<string, string>>(key)) ?? {};
+    const merged = { ...existing, ...fieldValuePairs };
+
+    await this.set(key, merged, ttl);
+  }
+
+  async hMGet(
+    key: string,
+    fields: string[],
+  ): Promise<(string | undefined)[]> {
+    if (fields.length === 0) {
+      return [];
+    }
+
+    if (this.isRedisCache()) {
+      const values = await (this.cache as RedisCache).store.client.hmGet(
+        this.getKey(key),
+        fields,
+      );
+
+      return values.map((v) => (v === null ? undefined : v));
+    }
+
+    const hash = await this.get<Record<string, string>>(key);
+
+    if (!hash) {
+      return fields.map(() => undefined);
+    }
+
+    return fields.map((field) => hash[field]);
+  }
+
+  async hRandField(key: string, count: number): Promise<string[]> {
+    if (count <= 0) {
+      return [];
+    }
+
+    if (this.isRedisCache()) {
+      const fields = await (
+        this.cache as RedisCache
+      ).store.client.hRandFieldCount(this.getKey(key), count);
+
+      if (!fields) {
+        return [];
+      }
+
+      return fields;
+    }
+
+    const hash = await this.get<Record<string, string>>(key);
+
+    if (!hash) {
+      return [];
+    }
+
+    const allFields = Object.keys(hash);
+    const shuffled = allFields.sort(() => Math.random() - 0.5);
+
+    return shuffled.slice(0, count);
+  }
+
+  async hDel(key: string, fields: string[]): Promise<number> {
+    if (fields.length === 0) {
+      return 0;
+    }
+
+    if (this.isRedisCache()) {
+      return (this.cache as RedisCache).store.client.hDel(
+        this.getKey(key),
+        fields,
+      );
+    }
+
+    const hash = await this.get<Record<string, string>>(key);
+
+    if (!hash) {
+      return 0;
+    }
+
+    let deletedCount = 0;
+
+    for (const field of fields) {
+      if (field in hash) {
+        delete hash[field];
+        deletedCount++;
+      }
+    }
+
+    await this.set(key, hash);
+
+    return deletedCount;
+  }
+
+  async hPop(
+    key: string,
+    count: number,
+  ): Promise<{ field: string; value: string }[]> {
+    if (count <= 0) {
+      return [];
+    }
+
+    const fields = await this.hRandField(key, count);
+
+    if (fields.length === 0) {
+      return [];
+    }
+
+    const values = await this.hMGet(key, fields);
+
+    await this.hDel(key, fields);
+
+    return fields.map((field, index) => ({
+      field,
+      value: values[index] ?? '',
+    }));
+  }
+
   private isRedisCache() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (this.cache.store as any)?.name === 'redis';
