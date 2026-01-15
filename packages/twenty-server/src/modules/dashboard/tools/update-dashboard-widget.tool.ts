@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
@@ -24,7 +24,7 @@ const updateDashboardWidgetSchema = z.object({
     .uuid()
     .optional()
     .describe('New object metadata ID'),
-  configuration: widgetConfigurationSchema,
+  configuration: widgetConfigurationSchema.optional(),
 });
 
 export const createUpdateDashboardWidgetTool = (
@@ -54,7 +54,16 @@ Only provide fields you want to change - others remain unchanged.`,
     try {
       const { widgetId, ...updates } = parameters;
       const updateData = Object.fromEntries(
-        Object.entries(updates).filter(([, value]) => isDefined(value)),
+        Object.entries(updates).filter(([key, value]) => {
+          if (!isDefined(value)) {
+            return false;
+          }
+          if (key === 'configuration' && isEmptyObject(value)) {
+            return false;
+          }
+
+          return true;
+        }),
       );
 
       const widget = await deps.pageLayoutWidgetService.update({
