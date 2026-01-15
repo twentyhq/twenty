@@ -79,6 +79,13 @@ export const ALL_METADATA_RELATIONS = {
     },
     oneToMany: {},
   },
+  commandMenuItem: {
+    manyToOne: {
+      workspace: null,
+      application: null,
+    },
+    oneToMany: {},
+  },
   fieldMetadata: {
     manyToOne: {
       object: {

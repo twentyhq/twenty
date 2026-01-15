@@ -1,10 +1,12 @@
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { type CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { type CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -45,6 +47,11 @@ import {
   type DeleteAgentAction,
   type UpdateAgentAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
+import {
+  type CreateCommandMenuItemAction,
+  type DeleteCommandMenuItemAction,
+  type UpdateCommandMenuItemAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
 import {
   type CreateCronTriggerAction,
   type DeleteCronTriggerAction,
@@ -308,6 +315,15 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatSkill;
     entity: SkillEntity;
+  };
+  commandMenuItem: {
+    actions: {
+      create: CreateCommandMenuItemAction;
+      update: UpdateCommandMenuItemAction;
+      delete: DeleteCommandMenuItemAction;
+    };
+    flatEntity: FlatCommandMenuItem;
+    entity: CommandMenuItemEntity;
   };
   pageLayout: {
     actions: {
