@@ -243,11 +243,12 @@ export class LocalDriver implements ServerlessDriver {
             const result = await __serverlessExports[_handlerName](_payload);
             return JSON.stringify({ success: true, data: result });
           } catch (err) {
+            const errorObj = err != null ? err : {};
             return JSON.stringify({
               success: false,
-              errorType: err.name || 'Error',
-              errorMessage: err.message || String(err),
-              stackTrace: err.stack ? err.stack.split('\\n') : []
+              errorType: errorObj.name || 'Error',
+              errorMessage: errorObj.message || String(err),
+              stackTrace: errorObj.stack ? errorObj.stack.split('\\n') : []
             });
           }
         })();
