@@ -15,6 +15,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-orchestrator-actions-report.util';
 import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
+import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/workspace-migration-command-menu-item-actions-builder.service';
 import { WorkspaceMigrationCronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/cron-trigger/workspace-migration-cron-trigger-action-builder.service';
 import { WorkspaceMigrationDatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/database-event-trigger/workspace-migration-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-field-actions-builder.service';
@@ -55,6 +56,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationRoleActionsBuilderService: WorkspaceMigrationRoleActionsBuilderService,
     private readonly workspaceMigrationAgentActionsBuilderService: WorkspaceMigrationAgentActionsBuilderService,
     private readonly workspaceMigrationSkillActionsBuilderService: WorkspaceMigrationSkillActionsBuilderService,
+    private readonly workspaceMigrationCommandMenuItemActionsBuilderService: WorkspaceMigrationCommandMenuItemActionsBuilderService,
     private readonly workspaceMigrationPageLayoutActionsBuilderService: WorkspaceMigrationPageLayoutActionsBuilderService,
     private readonly workspaceMigrationPageLayoutWidgetActionsBuilderService: WorkspaceMigrationPageLayoutWidgetActionsBuilderService,
     private readonly workspaceMigrationPageLayoutTabActionsBuilderService: WorkspaceMigrationPageLayoutTabActionsBuilderService,
@@ -156,6 +158,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatRoleTargetMaps,
       flatAgentMaps,
       flatSkillMaps,
+      flatCommandMenuItemMaps,
       flatPageLayoutMaps,
       flatPageLayoutWidgetMaps,
       flatPageLayoutTabMaps,
@@ -814,6 +817,42 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatCommandMenuItemMaps)) {
+      const {
+        from: fromFlatCommandMenuItemMaps,
+        to: toFlatCommandMenuItemMaps,
+      } = flatCommandMenuItemMaps;
+
+      const commandMenuItemResult =
+        await this.workspaceMigrationCommandMenuItemActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatCommandMenuItemMaps,
+            to: toFlatCommandMenuItemMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: undefined,
+            workspaceId,
+          },
+        );
+
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            commandMenuItemResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
+
+      if (commandMenuItemResult.status === 'fail') {
+        orchestratorFailureReport.commandMenuItem.push(
+          ...commandMenuItemResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.commandMenuItem =
+          commandMenuItemResult.actions;
+      }
+    }
+
     if (isDefined(flatPageLayoutMaps)) {
       const { from: fromFlatPageLayoutMaps, to: toFlatPageLayoutMaps } =
         flatPageLayoutMaps;
@@ -1032,6 +1071,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.skill.delete,
           ...aggregatedOrchestratorActionsReport.skill.create,
           ...aggregatedOrchestratorActionsReport.skill.update,
+          ///
+
+          // Command Menu Items
+          ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
+          ...aggregatedOrchestratorActionsReport.commandMenuItem.create,
+          ...aggregatedOrchestratorActionsReport.commandMenuItem.update,
           ///
 
           // Page layouts

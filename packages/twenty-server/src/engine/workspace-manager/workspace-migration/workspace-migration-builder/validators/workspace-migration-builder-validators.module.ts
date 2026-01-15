@@ -18,6 +18,7 @@ import { FlatRouteTriggerValidatorService } from 'src/engine/workspace-manager/w
 import { FlatRowLevelPermissionPredicateGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service';
 import { FlatRowLevelPermissionPredicateValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service';
 import { FlatServerlessFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service';
+import { FlatCommandMenuItemValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service';
 import { FlatSkillValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service';
 import { FlatViewFilterGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service';
@@ -46,6 +47,7 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatRoleTargetValidatorService,
     FlatAgentValidatorService,
     FlatSkillValidatorService,
+    FlatCommandMenuItemValidatorService,
     FlatPageLayoutValidatorService,
     FlatPageLayoutWidgetValidatorService,
     FlatPageLayoutTabValidatorService,
@@ -70,6 +72,7 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatRoleTargetValidatorService,
     FlatAgentValidatorService,
     FlatSkillValidatorService,
+    FlatCommandMenuItemValidatorService,
     FlatPageLayoutValidatorService,
     FlatPageLayoutWidgetValidatorService,
     FlatPageLayoutTabValidatorService,
