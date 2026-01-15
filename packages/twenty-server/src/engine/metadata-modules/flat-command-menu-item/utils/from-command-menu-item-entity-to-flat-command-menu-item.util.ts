@@ -1,0 +1,22 @@
+import { type CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+
+export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
+  commandMenuItemEntity: CommandMenuItemEntity,
+): FlatCommandMenuItem => {
+  return {
+    id: commandMenuItemEntity.id,
+    workflowId: commandMenuItemEntity.workflowId,
+    label: commandMenuItemEntity.label,
+    icon: commandMenuItemEntity.icon,
+    isPinned: commandMenuItemEntity.isPinned,
+    availabilityType: commandMenuItemEntity.availabilityType,
+    availabilityObjectNameSingular:
+      commandMenuItemEntity.availabilityObjectNameSingular,
+    workspaceId: commandMenuItemEntity.workspaceId,
+    universalIdentifier: commandMenuItemEntity.id,
+    applicationId: commandMenuItemEntity.applicationId,
+    createdAt: commandMenuItemEntity.createdAt.toISOString(),
+    updatedAt: commandMenuItemEntity.updatedAt.toISOString(),
+  };
+};
