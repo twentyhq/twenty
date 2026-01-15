@@ -5,7 +5,7 @@ import { DataSource, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { addKanbanViewIntegrityConstraintQueries } from 'src/database/typeorm/core/migrations/utils/1-16-add-kanban-view-integrity-constraint.util';
+import { addKanbanViewIntegrityConstraintQueries } from 'src/database/typeorm/core/migrations/utils/1768487716249-addKanbanViewIntegrityConstraint.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -46,10 +46,9 @@ export class AddKanbanViewIntegrityConstraintMigrationCommand extends ActiveOrSu
 
     const queryRunner = this.coreDataSource.createQueryRunner();
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
     try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
       await addKanbanViewIntegrityConstraintQueries(queryRunner);
 
       await queryRunner.commitTransaction();
