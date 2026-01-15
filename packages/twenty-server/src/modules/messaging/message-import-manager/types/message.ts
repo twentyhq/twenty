@@ -19,6 +19,7 @@ export type Message = Omit<
   externalId: string;
   messageThreadExternalId: string;
   direction: MessageDirection;
+  messageFolderId?: string;
 };
 
 export type MessageAttachment = {

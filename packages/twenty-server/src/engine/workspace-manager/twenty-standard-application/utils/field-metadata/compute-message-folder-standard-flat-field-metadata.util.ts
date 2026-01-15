@@ -255,4 +255,27 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  messageChannelMessageAssociations: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'messageChannelMessageAssociations',
+      label: 'Message Associations',
+      description: 'Message Associations',
+      icon: 'IconMessage',
+      isNullable: true,
+      isUIReadOnly: true,
+      targetObjectName: 'messageChannelMessageAssociation',
+      targetFieldName: 'messageFolder',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

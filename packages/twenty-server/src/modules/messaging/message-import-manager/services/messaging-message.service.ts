@@ -33,6 +33,7 @@ type MessageAccumulator = {
     | 'messageExternalId'
     | 'messageThreadExternalId'
     | 'direction'
+    | 'messageFolderId'
   >;
 };
 @Injectable()
@@ -182,6 +183,7 @@ export class MessagingMessageService {
               messageExternalId: message.externalId,
               messageThreadExternalId: message.messageThreadExternalId,
               direction: message.direction,
+              messageFolderId: message.messageFolderId ?? null,
             };
 
             messageAccumulatorMap.set(message.externalId, messageAccumulator);
