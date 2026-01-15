@@ -2,10 +2,11 @@ import styled from '@emotion/styled';
 import { useIMask } from 'react-imask';
 
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { DATE_TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/DateTimeBlocks';
+import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { getDateTimeMask } from '@/ui/input/components/internal/date/utils/getDateTimeMask';
+import { getTimeBlocks } from '@/ui/input/components/internal/date/utils/getTimeBlocks';
 
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { useGetShiftedDateToCustomTimeZone } from '@/ui/input/components/internal/date/hooks/useGetShiftedDateToCustomTimeZone';
@@ -36,7 +37,7 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
   padding-left: ${({ theme }) => theme.spacing(2)};
   font-weight: 500;
   font-size: ${({ theme }) => theme.font.size.md};
-  width: 105px;
+  width: 140px;
 `;
 
 type DateTimePickerInputProps = {
@@ -58,7 +59,7 @@ export const DateTimePickerInput = ({
 
   const { userTimezone } = useUserTimezone();
 
-  const { dateFormat } = useDateTimeFormat();
+  const { dateFormat, timeFormat } = useDateTimeFormat();
 
   const { getShiftedDateToSystemTimeZone } =
     useGetShiftedDateToSystemTimeZone();
@@ -77,9 +78,9 @@ export const DateTimePickerInput = ({
     return date;
   };
 
-  const pattern = getDateTimeMask(dateFormat);
+  const pattern = getDateTimeMask({ dateFormat, timeFormat });
 
-  const blocks = DATE_TIME_BLOCKS;
+  const blocks = { ...DATE_BLOCKS, ...getTimeBlocks(timeFormat) };
 
   const defaultValueForIMask = isDefined(internalDate)
     ? new Date(internalDate?.toInstant().toString())
