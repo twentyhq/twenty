@@ -2,8 +2,13 @@ import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import {
+  FeatureFlagGuard,
+  RequireFeatureFlag,
+} from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
@@ -13,7 +18,7 @@ import { UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-
 import { CommandMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/command-menu-item/interceptors/command-menu-item-graphql-api-exception.interceptor';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
 @UseInterceptors(
   WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
   CommandMenuItemGraphqlApiExceptionInterceptor,
@@ -26,6 +31,7 @@ export class CommandMenuItemResolver {
 
   @Query(() => [CommandMenuItemDTO])
   @UseGuards(NoPermissionGuard)
+  @RequireFeatureFlag(FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED)
   async commandMenuItems(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<CommandMenuItemDTO[]> {
@@ -34,6 +40,7 @@ export class CommandMenuItemResolver {
 
   @Query(() => CommandMenuItemDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
+  @RequireFeatureFlag(FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED)
   async commandMenuItem(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -43,6 +50,7 @@ export class CommandMenuItemResolver {
 
   @Mutation(() => CommandMenuItemDTO)
   @UseGuards(NoPermissionGuard)
+  @RequireFeatureFlag(FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED)
   async createCommandMenuItem(
     @Args('input') input: CreateCommandMenuItemInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -52,6 +60,7 @@ export class CommandMenuItemResolver {
 
   @Mutation(() => CommandMenuItemDTO)
   @UseGuards(NoPermissionGuard)
+  @RequireFeatureFlag(FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED)
   async updateCommandMenuItem(
     @Args('input') input: UpdateCommandMenuItemInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -61,6 +70,7 @@ export class CommandMenuItemResolver {
 
   @Mutation(() => CommandMenuItemDTO)
   @UseGuards(NoPermissionGuard)
+  @RequireFeatureFlag(FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED)
   async deleteCommandMenuItem(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

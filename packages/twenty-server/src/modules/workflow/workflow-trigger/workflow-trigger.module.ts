@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
@@ -16,6 +17,7 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
     WorkflowRunnerModule,
     AutomatedTriggerModule,
     CommandMenuItemModule,
+    FeatureFlagModule,
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
   ],
   providers: [WorkflowTriggerWorkspaceService, WorkflowTriggerJob],

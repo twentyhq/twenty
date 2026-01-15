@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -43,6 +45,7 @@ export class WorkflowTriggerWorkspaceService {
     private readonly automatedTriggerWorkspaceService: AutomatedTriggerWorkspaceService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly commandMenuItemService: CommandMenuItemService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async runWorkflowVersion({
@@ -320,6 +323,16 @@ export class WorkflowTriggerWorkspaceService {
 
     switch (workflowVersion.trigger.type) {
       case WorkflowTriggerType.MANUAL: {
+        const isCommandMenuItemEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+            workspaceId,
+          );
+
+        if (!isCommandMenuItemEnabled) {
+          return;
+        }
+
         const trigger = workflowVersion.trigger as WorkflowManualTrigger;
 
         const availability = trigger.settings.availability;
@@ -405,6 +418,16 @@ export class WorkflowTriggerWorkspaceService {
 
         return;
       case WorkflowTriggerType.MANUAL: {
+        const isCommandMenuItemEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+            workspaceId,
+          );
+
+        if (!isCommandMenuItemEnabled) {
+          return;
+        }
+
         const existingCommandMenuItem =
           await this.commandMenuItemService.findByWorkflowId(
             workflowVersion.workflowId,
