@@ -58,7 +58,7 @@ export const useRemovePageLayoutWidgetAndPreservePosition = (
         }
 
         const tabLayouts = allTabLayouts[tabId];
-        const widgetLayout = tabLayouts?.desktop.find(
+        const widgetLayout = tabLayouts?.desktop?.find(
           (layout) => layout.i === widgetId,
         );
 
