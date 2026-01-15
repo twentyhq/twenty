@@ -121,7 +121,7 @@ export const useRunWorkflowRecordActions = ({
       shortLabel: manualTrigger.label,
       position: index,
       Icon,
-      isPinned: manualTrigger.isPinned,
+      isPinned: manualTrigger.isPinned ?? undefined,
       shouldBeRegistered: () => true,
       component: (
         <Action
