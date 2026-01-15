@@ -76,8 +76,8 @@ export const CloseOnEscape: Story = {
     confirmButtonText: 'Confirm',
     onClose: closeMock,
   },
-  play: async () => {
-    const body = within(document.body);
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Escape Key Test');
 
@@ -99,8 +99,8 @@ export const CloseOnClickOutside: Story = {
     confirmButtonText: 'Confirm',
     onClose: closeMock,
   },
-  play: async () => {
-    const body = within(document.body);
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Click Outside Test');
 
@@ -125,8 +125,8 @@ export const ConfirmWithEnterKey: Story = {
     confirmButtonText: 'Confirm',
     onConfirmClick: confirmMock,
   },
-  play: async () => {
-    const body = within(document.body);
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Enter Key Test');
 
@@ -146,8 +146,8 @@ export const CancelButtonClick: Story = {
     confirmButtonText: 'Confirm',
     onClose: closeMock,
   },
-  play: async () => {
-    const body = within(document.body);
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Cancel Button Test');
 
@@ -170,8 +170,8 @@ export const ConfirmButtonClick: Story = {
     confirmButtonText: 'Confirm',
     onConfirmClick: confirmMock,
   },
-  play: async () => {
-    const body = within(document.body);
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Confirm Button Test');
 

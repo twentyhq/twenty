@@ -38,8 +38,8 @@ export const Default: Story = {
 
 // TEMP_DISABLED_TEST: Temporarily commented out due to test failure
 // export const DateTimeSettingsTimeFormat: Story = {
-//   play: async () => {
-//     const canvas = within(getCanvasElementForDropdownTesting());
+//   play: async ({ canvasElement }) => {
+//     const canvas = within(canvasElement.ownerDocument.body);
 
 //     await canvas.findByText('Formats');
 
@@ -57,8 +57,8 @@ export const Default: Story = {
 
 // TEMP_DISABLED_TEST: Temporarily commented out due to test failure
 // export const DateTimeSettingsTimezone: Story = {
-//   play: async () => {
-//     const canvas = within(getCanvasElementForDropdownTesting());
+//   play: async ({ canvasElement }) => {
+//     const canvas = within(canvasElement.ownerDocument.body);
 
 //     await canvas.findByText('Formats');
 
@@ -80,8 +80,8 @@ export const Default: Story = {
 
 // TEMP_DISABLED_TEST: Temporarily commented out due to test failure
 // export const DateTimeSettingsDateFormat: Story = {
-//   play: async () => {
-//     const canvas = within(getCanvasElementForDropdownTesting());
+//   play: async ({ canvasElement }) => {
+//     const canvas = within(canvasElement.ownerDocument.body);
 
 //     await canvas.findByText('Formats');
 

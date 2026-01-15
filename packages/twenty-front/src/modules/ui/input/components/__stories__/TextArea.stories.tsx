@@ -41,8 +41,8 @@ export const Disabled: Story = {
 
 export const WithLabel: Story = {
   args: { label: 'My Textarea' },
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const label = await canvas.findByText('My Textarea');
 

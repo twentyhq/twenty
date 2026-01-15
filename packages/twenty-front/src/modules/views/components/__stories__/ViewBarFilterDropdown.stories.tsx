@@ -19,11 +19,8 @@ import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { useSetRecoilState } from 'recoil';
-import { within } from 'storybook/test';
-import {
-  ComponentDecorator,
-  getCanvasElementForDropdownTesting,
-} from 'twenty-ui/testing';
+import { userEvent, within } from 'storybook/test';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
@@ -133,51 +130,51 @@ export default meta;
 type Story = StoryObj<typeof TaskGroups>;
 
 export const Default: Story = {
-  play: async () => {
-    const canvas = within(getCanvasElementForDropdownTesting());
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const filterButton = await canvas.findByText('Filter');
 
-    filterButton.click();
+    await userEvent.click(filterButton);
 
     const textFilter = await canvas.findByText('Tagline');
 
-    textFilter.click();
+    await userEvent.click(textFilter);
 
     const operatorDropdown = await canvas.findByText('Contains');
 
-    operatorDropdown.click();
+    await userEvent.click(operatorDropdown);
 
     const containsOption = await canvas.findByText("Doesn't contain");
 
-    containsOption.click();
+    await userEvent.click(containsOption);
   },
 };
 
 export const Date: Story = {
-  play: async () => {
-    const canvas = within(getCanvasElementForDropdownTesting());
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const filterButton = await canvas.findByText('Filter');
 
-    filterButton.click();
+    await userEvent.click(filterButton);
 
     const dateFilter = await canvas.findByText('Last update');
 
-    dateFilter.click();
+    await userEvent.click(dateFilter);
   },
 };
 
 export const Number: Story = {
-  play: async () => {
-    const canvas = within(getCanvasElementForDropdownTesting());
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const filterButton = await canvas.findByText('Filter');
 
-    filterButton.click();
+    await userEvent.click(filterButton);
 
     const dateFilter = await canvas.findByText('Employees');
 
-    dateFilter.click();
+    await userEvent.click(dateFilter);
   },
 };

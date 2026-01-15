@@ -194,7 +194,7 @@ export const ReadonlyMode: Story = {
 
 //       await waitFor(() => {
 //         expect(
-//           within(getCanvasElementForDropdownTesting()).getByText('Louis Duss'),
+//           within(document.body).getByText('Louis Duss'),
 //         ).toBeVisible();
 //       });
 

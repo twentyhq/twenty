@@ -3,12 +3,17 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 
 const meta: Meta<typeof SettingsMorphRelationMultiSelect> = {
   title: 'Modules/Settings/SettingsMorphRelationMultiSelect',
   component: SettingsMorphRelationMultiSelect,
-  decorators: [ComponentDecorator, ObjectMetadataItemsDecorator],
+  decorators: [
+    ComponentDecorator,
+    I18nFrontDecorator,
+    ObjectMetadataItemsDecorator,
+  ],
 };
 export default meta;
 type Story = StoryObj<typeof SettingsMorphRelationMultiSelect>;
