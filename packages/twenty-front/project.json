@@ -192,9 +192,6 @@
       }
     },
     "storybook:test": {
-      "options": {
-        "port": 6006
-      },
       "configurations": {
         "docs": {
           "env": {
@@ -215,25 +212,6 @@
           "env": {
             "STORYBOOK_SCOPE": "performance"
           }
-        }
-      }
-    },
-    "storybook:serve-and-test:static": {
-      "options": {
-        "port": 6006
-      },
-      "configurations": {
-        "docs": {
-          "scope": "ui-docs"
-        },
-        "modules": {
-          "scope": "modules"
-        },
-        "pages": {
-          "scope": "pages"
-        },
-        "performance": {
-          "scope": "performance"
         }
       }
     },
