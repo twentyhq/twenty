@@ -265,13 +265,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "user-guide/dashboards/capabilities/dashboards",
-                      "user-guide/dashboards/capabilities/widgets"
+                      "user-guide/dashboards/capabilities/widgets",
+                      "user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "user-guide/dashboards/how-tos/dashboards-faq"
+                      "user-guide/dashboards/how-tos/dashboards-faq",
+                      "user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -707,13 +709,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/fr/user-guide/dashboards/capabilities/dashboards",
-                      "l/fr/user-guide/dashboards/capabilities/widgets"
+                      "l/fr/user-guide/dashboards/capabilities/widgets",
+                      "l/fr/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/fr/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/fr/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/fr/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -1149,13 +1153,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/ar/user-guide/dashboards/capabilities/dashboards",
-                      "l/ar/user-guide/dashboards/capabilities/widgets"
+                      "l/ar/user-guide/dashboards/capabilities/widgets",
+                      "l/ar/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/ar/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/ar/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/ar/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -1591,13 +1597,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/cs/user-guide/dashboards/capabilities/dashboards",
-                      "l/cs/user-guide/dashboards/capabilities/widgets"
+                      "l/cs/user-guide/dashboards/capabilities/widgets",
+                      "l/cs/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/cs/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/cs/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/cs/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -2033,13 +2041,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/de/user-guide/dashboards/capabilities/dashboards",
-                      "l/de/user-guide/dashboards/capabilities/widgets"
+                      "l/de/user-guide/dashboards/capabilities/widgets",
+                      "l/de/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/de/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/de/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/de/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -2475,13 +2485,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/es/user-guide/dashboards/capabilities/dashboards",
-                      "l/es/user-guide/dashboards/capabilities/widgets"
+                      "l/es/user-guide/dashboards/capabilities/widgets",
+                      "l/es/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/es/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/es/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/es/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -2917,13 +2929,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/it/user-guide/dashboards/capabilities/dashboards",
-                      "l/it/user-guide/dashboards/capabilities/widgets"
+                      "l/it/user-guide/dashboards/capabilities/widgets",
+                      "l/it/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/it/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/it/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/it/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -3359,13 +3373,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/ja/user-guide/dashboards/capabilities/dashboards",
-                      "l/ja/user-guide/dashboards/capabilities/widgets"
+                      "l/ja/user-guide/dashboards/capabilities/widgets",
+                      "l/ja/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/ja/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/ja/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/ja/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -3801,13 +3817,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/ko/user-guide/dashboards/capabilities/dashboards",
-                      "l/ko/user-guide/dashboards/capabilities/widgets"
+                      "l/ko/user-guide/dashboards/capabilities/widgets",
+                      "l/ko/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/ko/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/ko/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/ko/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -4243,13 +4261,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/pt/user-guide/dashboards/capabilities/dashboards",
-                      "l/pt/user-guide/dashboards/capabilities/widgets"
+                      "l/pt/user-guide/dashboards/capabilities/widgets",
+                      "l/pt/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/pt/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/pt/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/pt/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -4685,13 +4705,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/ro/user-guide/dashboards/capabilities/dashboards",
-                      "l/ro/user-guide/dashboards/capabilities/widgets"
+                      "l/ro/user-guide/dashboards/capabilities/widgets",
+                      "l/ro/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/ro/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/ro/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/ro/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -5127,13 +5149,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/ru/user-guide/dashboards/capabilities/dashboards",
-                      "l/ru/user-guide/dashboards/capabilities/widgets"
+                      "l/ru/user-guide/dashboards/capabilities/widgets",
+                      "l/ru/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/ru/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/ru/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/ru/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -5569,13 +5593,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/tr/user-guide/dashboards/capabilities/dashboards",
-                      "l/tr/user-guide/dashboards/capabilities/widgets"
+                      "l/tr/user-guide/dashboards/capabilities/widgets",
+                      "l/tr/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/tr/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/tr/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/tr/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -6011,13 +6037,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/zh/user-guide/dashboards/capabilities/dashboards",
-                      "l/zh/user-guide/dashboards/capabilities/widgets"
+                      "l/zh/user-guide/dashboards/capabilities/widgets",
+                      "l/zh/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/zh/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/zh/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/zh/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
