@@ -85,7 +85,7 @@ export const GraphWidgetLineChart = ({
   id,
   rangeMin,
   rangeMax,
-  omitNullValues: _omitNullValues = false,
+  omitNullValues = false,
   displayType,
   groupMode,
   colorMode,
@@ -200,7 +200,7 @@ export const GraphWidgetLineChart = ({
         formatValue={(value) => formatGraphValue(value, formatOptions)}
         offset={theme.spacingMultiplicator * 2}
         groupMode={groupMode}
-        omitNullValues={_omitNullValues}
+        omitNullValues={omitNullValues}
         enablePointLabel={enablePointLabel}
       />
     );
