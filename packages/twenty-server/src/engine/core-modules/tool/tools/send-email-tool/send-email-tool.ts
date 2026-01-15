@@ -155,7 +155,7 @@ export class SendEmailTool implements Tool {
       const fileEntity = fileEntityMap.get(fileMetadata.id)!;
 
       const { folderPath, filename } = extractFolderPathAndFilename(
-        fileEntity.fullPath,
+        fileEntity.path,
       );
 
       const stream = await this.fileService.getFileStream(

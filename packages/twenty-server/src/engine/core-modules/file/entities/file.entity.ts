@@ -18,6 +18,11 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
 @Entity('file')
 @ObjectType('File')
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
+@Index(
+  'IDX_FILE_WORKSPACE_APPLICATION_PATH',
+  ['workspaceId', 'applicationId', 'path'],
+  { unique: true },
+)
 export class FileEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -26,8 +31,7 @@ export class FileEntity extends WorkspaceRelatedEntity {
   applicationId: string;
 
   @ManyToOne('ApplicationEntity', {
-    onDelete: 'CASCADE',
-    nullable: false,
+    onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'applicationId' })
   application: Relation<ApplicationEntity>;
