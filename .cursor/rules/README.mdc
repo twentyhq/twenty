@@ -13,7 +13,7 @@ This directory contains Twenty's development guidelines and best practices in th
 - **architecture.mdc** - Project overview, technology stack, and infrastructure setup (Always Applied)
 - **nx-rules.mdc** - Nx workspace guidelines and best practices (Auto-attached to Nx files)
 - **server-migrations.mdc** - Backend migration and TypeORM guidelines for `twenty-server` (Auto-attached to server entities and migration files)
-- **creating-new-entity-v2.mdc** - Comprehensive guide for creating new v2 entities with flat entity system (Agent-requested for metadata-modules and workspace-migration files)
+- **creating-syncable-entity.mdc** - Comprehensive guide for creating new syncable entities (with universalIdentifier and applicationId) in the workspace migration system (Agent-requested for metadata-modules and workspace-migration files)
 
 ### Code Quality
 - **typescript-guidelines.mdc** - TypeScript best practices and conventions (Auto-attached to .ts/.tsx files)
@@ -40,7 +40,7 @@ You can manually reference any rule using the `@ruleName` syntax:
 - `@nx-rules` - Include Nx-specific guidance
 - `@react-general-guidelines` - Load React best practices
 - `@testing-guidelines` - Get testing recommendations
-- `@creating-new-entity-v2` - Guide for creating new v2 entities
+- `@creating-new-entity-v2` - Guide for creating new syncable entities in workspace migration v2
 
 ### Rule Types Used
 - **Always Applied** - Loaded in every context (architecture.mdc, README.mdc)
