@@ -6,7 +6,7 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
 ): FlatCommandMenuItem => {
   return {
     id: commandMenuItemEntity.id,
-    workflowId: commandMenuItemEntity.workflowId,
+    workflowVersionId: commandMenuItemEntity.workflowVersionId,
     label: commandMenuItemEntity.label,
     icon: commandMenuItemEntity.icon,
     isPinned: commandMenuItemEntity.isPinned,

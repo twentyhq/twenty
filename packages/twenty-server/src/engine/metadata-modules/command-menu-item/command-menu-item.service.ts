@@ -252,8 +252,8 @@ export class CommandMenuItemService {
       .sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  async findByWorkflowId(
-    workflowId: string,
+  async findByWorkflowVersionId(
+    workflowVersionId: string,
     workspaceId: string,
   ): Promise<CommandMenuItemDTO | null> {
     const { flatCommandMenuItemMaps } =
@@ -266,7 +266,9 @@ export class CommandMenuItemService {
 
     const flatCommandMenuItem = Object.values(
       flatCommandMenuItemMaps.byId,
-    ).find((item) => isDefined(item) && item.workflowId === workflowId);
+    ).find(
+      (item) => isDefined(item) && item.workflowVersionId === workflowVersionId,
+    );
 
     if (!isDefined(flatCommandMenuItem)) {
       return null;

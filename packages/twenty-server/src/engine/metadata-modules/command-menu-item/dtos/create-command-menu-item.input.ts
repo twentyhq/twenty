@@ -17,7 +17,7 @@ export class CreateCommandMenuItemInput {
   @IsUUID()
   @IsNotEmpty()
   @Field(() => UUIDScalarType)
-  workflowId: string;
+  workflowVersionId: string;
 
   @IsString()
   @IsNotEmpty()

@@ -358,7 +358,7 @@ export class WorkflowTriggerWorkspaceService {
 
         await this.commandMenuItemService.create(
           {
-            workflowId: workflow.id,
+            workflowVersionId: workflowVersion.id,
             label: workflow.name ?? 'Manual Trigger',
             icon: trigger.settings.icon,
             availabilityType,
@@ -429,8 +429,8 @@ export class WorkflowTriggerWorkspaceService {
         }
 
         const existingCommandMenuItem =
-          await this.commandMenuItemService.findByWorkflowId(
-            workflowVersion.workflowId,
+          await this.commandMenuItemService.findByWorkflowVersionId(
+            workflowVersion.id,
             workspaceId,
           );
 

@@ -16,8 +16,8 @@ export enum CommandMenuItemAvailabilityType {
 }
 
 @Entity('commandMenuItem')
-@Index('IDX_COMMAND_MENU_ITEM_WORKFLOW_ID_WORKSPACE_ID', [
-  'workflowId',
+@Index('IDX_COMMAND_MENU_ITEM_WORKFLOW_VERSION_ID_WORKSPACE_ID', [
+  'workflowVersionId',
   'workspaceId',
 ])
 export class CommandMenuItemEntity
@@ -28,7 +28,7 @@ export class CommandMenuItemEntity
   id: string;
 
   @Column({ nullable: false, type: 'uuid' })
-  workflowId: string;
+  workflowVersionId: string;
 
   @Column({ nullable: false })
   label: string;

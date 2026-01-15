@@ -32,7 +32,7 @@ export class CommandMenuItemDTO {
   @IsUUID()
   @IsNotEmpty()
   @Field(() => UUIDScalarType)
-  workflowId: string;
+  workflowVersionId: string;
 
   @IsString()
   @IsNotEmpty()

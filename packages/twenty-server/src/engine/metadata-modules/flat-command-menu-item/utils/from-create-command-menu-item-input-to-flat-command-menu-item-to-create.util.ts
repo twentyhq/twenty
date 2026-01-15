@@ -19,7 +19,7 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   return {
     id,
     universalIdentifier: id,
-    workflowId: createCommandMenuItemInput.workflowId,
+    workflowVersionId: createCommandMenuItemInput.workflowVersionId,
     label: createCommandMenuItemInput.label,
     icon: createCommandMenuItemInput.icon ?? null,
     isPinned: createCommandMenuItemInput.isPinned ?? false,
