@@ -33,9 +33,7 @@ const ONGOING_SYNC_STAGES = [
 export class MessageFolderUpdateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
-  private readonly logger = new Logger(
-    MessageFolderUpdateOnePreQueryHook.name,
-  );
+  private readonly logger = new Logger(MessageFolderUpdateOnePreQueryHook.name);
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,

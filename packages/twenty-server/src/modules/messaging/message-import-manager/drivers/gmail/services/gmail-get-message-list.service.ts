@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import {
   MessageImportDriverException,
@@ -40,6 +41,7 @@ export class GmailGetMessageListService {
       MessageFolderWorkspaceEntity,
       'name' | 'externalId' | 'isSynced'
     >[],
+    messageFolderImportPolicy: MessageFolderImportPolicy,
   ): Promise<GetMessageListsResponse> {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
@@ -56,7 +58,9 @@ export class GmailGetMessageListService {
     const messageExternalIds: string[] = [];
 
     const excludedSearchFilter =
-      computeGmailExcludeSearchFilter(messageFolders);
+      messageFolderImportPolicy === MessageFolderImportPolicy.SELECTED_FOLDERS
+        ? computeGmailExcludeSearchFilter(messageFolders)
+        : '';
 
     while (hasMoreMessages) {
       const messageList = await gmailClient.users.messages
@@ -144,6 +148,7 @@ export class GmailGetMessageListService {
     messageChannel,
     connectedAccount,
     messageFolders,
+    messageFolderImportPolicy,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
@@ -155,7 +160,11 @@ export class GmailGetMessageListService {
     });
 
     if (!isNonEmptyString(messageChannel.syncCursor)) {
-      return this.getMessageListWithoutCursor(connectedAccount, messageFolders);
+      return this.getMessageListWithoutCursor(
+        connectedAccount,
+        messageFolders,
+        messageFolderImportPolicy,
+      );
     }
 
     const { history, historyId: nextSyncCursor } =
@@ -171,6 +180,7 @@ export class GmailGetMessageListService {
       connectedAccount,
       messageChannel.syncCursor,
       messageFolders,
+      messageFolderImportPolicy,
     );
 
     const messagesAddedFiltered = messagesAdded.filter(
@@ -205,7 +215,12 @@ export class GmailGetMessageListService {
       MessageFolderWorkspaceEntity,
       'name' | 'externalId' | 'isSynced'
     >[],
+    messageFolderImportPolicy: MessageFolderImportPolicy,
   ): Promise<string[]> {
+    if (messageFolderImportPolicy === MessageFolderImportPolicy.ALL_FOLDERS) {
+      return [];
+    }
+
     const toBeExcludedFolders = messageFolders.filter(
       (folder) => !folder.isSynced && isDefined(folder.externalId),
     );

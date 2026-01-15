@@ -5,6 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
 import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
@@ -93,6 +94,7 @@ describe('GmailGetMessageListService', () => {
         messageChannel: { syncCursor: '', id: 'my-id' },
         connectedAccount: mockConnectedAccount,
         messageFolders: [],
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result[0].messageExternalIds).toHaveLength(0);
@@ -146,6 +148,7 @@ describe('GmailGetMessageListService', () => {
         messageChannel: { syncCursor: '', id: 'my-id' },
         connectedAccount: mockConnectedAccount,
         messageFolders: [],
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result[0].messageExternalIds).toHaveLength(5);
@@ -199,6 +202,7 @@ describe('GmailGetMessageListService', () => {
         messageChannel: { syncCursor: '', id: 'my-id' },
         connectedAccount: mockConnectedAccount,
         messageFolders: [],
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result[0].messageExternalIds).toHaveLength(3);
@@ -233,6 +237,7 @@ describe('GmailGetMessageListService', () => {
         messageChannel: { syncCursor: '', id: 'my-id' },
         connectedAccount: mockConnectedAccount,
         messageFolders: [],
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result[0].messageExternalIds).toHaveLength(0);
