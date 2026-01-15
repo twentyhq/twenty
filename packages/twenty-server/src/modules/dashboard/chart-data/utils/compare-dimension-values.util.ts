@@ -10,7 +10,6 @@ import { type RawDimensionValue } from 'src/modules/dashboard/chart-data/types/r
 
 const parseDate = (
   rawValue: RawDimensionValue | undefined,
-  fieldType?: FieldMetadataType,
 ): Temporal.PlainDate | null => {
   if (!isDefined(rawValue)) {
     return null;
@@ -18,11 +17,7 @@ const parseDate = (
 
   const stringValue = String(rawValue);
 
-  return fieldType === FieldMetadataType.DATE
-    ? Temporal.PlainDate.from(stringValue)
-    : Temporal.Instant.from(stringValue)
-        .toZonedDateTimeISO('UTC')
-        .toPlainDate();
+  return Temporal.PlainDate.from(stringValue);
 };
 
 type CompareDimensionValuesParams = {
@@ -49,8 +44,8 @@ export const compareDimensionValues = ({
 
   if (isDefined(fieldType)) {
     if (isFieldMetadataDateKind(fieldType)) {
-      const dateA = parseDate(rawValueA, fieldType);
-      const dateB = parseDate(rawValueB, fieldType);
+      const dateA = parseDate(rawValueA);
+      const dateB = parseDate(rawValueB);
 
       if (isDefined(dateA) && isDefined(dateB)) {
         return applyDirection(Temporal.PlainDate.compare(dateA, dateB));
