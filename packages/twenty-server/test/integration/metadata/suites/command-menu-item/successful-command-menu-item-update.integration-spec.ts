@@ -1,12 +1,22 @@
 import { faker } from '@faker-js/faker';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
 import { updateCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/update-command-menu-item.util';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 
 describe('CommandMenuItem update should succeed', () => {
   let createdCommandMenuItemId: string;
+
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+  });
 
   beforeEach(async () => {
     const workflowVersionId = faker.string.uuid();
