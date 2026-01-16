@@ -830,7 +830,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
             from: fromFlatCommandMenuItemMaps,
             to: toFlatCommandMenuItemMaps,
             buildOptions,
-            dependencyOptimisticFlatEntityMaps: undefined,
+            dependencyOptimisticFlatEntityMaps: {
+              flatObjectMetadataMaps:
+                optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+            },
             workspaceId,
           },
         );
