@@ -3,22 +3,14 @@ import {
   type AllMetadataName,
 } from 'twenty-shared/metadata';
 
-import { ALL_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
-
-const countOneToManyRelations = (metadataName: AllMetadataName): number => {
-  const relations = ALL_METADATA_RELATIONS[metadataName];
-
-  return Object.values(relations.oneToMany).filter(
-    (relation) => relation !== null,
-  ).length;
-};
+import { getMetadataOneToManyRelatedNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-one-to-many-related-names.util';
 
 export const sortMetadataNamesChildrenFirst = (): AllMetadataName[] => {
   const metadataNames = Object.keys(ALL_METADATA_NAME) as AllMetadataName[];
 
   return metadataNames.sort((metadataNameA, metadataNameB) => {
-    const oneToManyCountA = countOneToManyRelations(metadataNameA);
-    const oneToManyCountB = countOneToManyRelations(metadataNameB);
+    const oneToManyCountA = getMetadataOneToManyRelatedNames(metadataNameA).length;
+    const oneToManyCountB = getMetadataOneToManyRelatedNames(metadataNameB).length;
 
     if (oneToManyCountA !== oneToManyCountB) {
       return oneToManyCountA - oneToManyCountB;
