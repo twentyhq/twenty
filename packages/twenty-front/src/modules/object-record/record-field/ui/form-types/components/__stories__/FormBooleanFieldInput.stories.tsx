@@ -117,7 +117,9 @@ export const ChangesValueToTrue: Story = {
 
     await userEvent.click(select);
 
-    const trueOption = await within(canvasElement.ownerDocument.body).findByText('True');
+    const trueOption = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('True');
 
     await userEvent.click(trueOption);
 
@@ -140,7 +142,9 @@ export const ChangesValueToFalse: Story = {
 
     await userEvent.click(select);
 
-    const falseOption = await within(canvasElement.ownerDocument.body).findByText('False');
+    const falseOption = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('False');
 
     await userEvent.click(falseOption);
 

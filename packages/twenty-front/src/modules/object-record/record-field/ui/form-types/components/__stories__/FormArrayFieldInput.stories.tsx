@@ -43,7 +43,9 @@ export const AddTwoItems: Story = {
       expect(emptyInput).not.toBeVisible();
     });
 
-    const addItemButton = await within(canvasElement.ownerDocument.body).findByText('Add item');
+    const addItemButton = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('Add item');
 
     await userEvent.click(addItemButton);
 
@@ -51,7 +53,9 @@ export const AddTwoItems: Story = {
       expect(addItemButton).not.toBeVisible();
     });
 
-    const newItemInput = await within(canvasElement.ownerDocument.body).findByRole('textbox');
+    const newItemInput = await within(
+      canvasElement.ownerDocument.body,
+    ).findByRole('textbox');
 
     await userEvent.type(newItemInput, 'Second item{enter}');
 
@@ -64,7 +68,9 @@ export const AddTwoItems: Story = {
     });
 
     const secondItemMenuItem = await waitFor(() => {
-      const allSecondItems = within(canvasElement.ownerDocument.body).getAllByText('Second item');
+      const allSecondItems = within(
+        canvasElement.ownerDocument.body,
+      ).getAllByText('Second item');
 
       expect(allSecondItems).toHaveLength(2);
 
@@ -102,13 +108,15 @@ export const EditExistingItem: Story = {
 
     await userEvent.click(openSecondItemMenuButton);
 
-    const editSecondItemButton = await within(canvasElement.ownerDocument.body).findByText('Edit');
+    const editSecondItemButton = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('Edit');
 
     await userEvent.click(editSecondItemButton);
 
-    const editSecondItemInput = await within(canvasElement.ownerDocument.body).findByRole(
-      'textbox',
-    );
+    const editSecondItemInput = await within(
+      canvasElement.ownerDocument.body,
+    ).findByRole('textbox');
 
     expect(editSecondItemInput).toHaveValue('Second item');
 
@@ -157,9 +165,9 @@ export const DeleteExistingItem: Story = {
 
     await userEvent.click(openSecondItemMenuButton);
 
-    const deleteSecondItemButton = await within(canvasElement.ownerDocument.body).findByText(
-      'Delete',
-    );
+    const deleteSecondItemButton = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('Delete');
 
     await userEvent.click(deleteSecondItemButton);
 

@@ -169,13 +169,15 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     });
     await userEvent.click(openDropdownButtons[0]);
 
-    const editOption = await within(canvasElement.ownerDocument.body).findByText('Edit');
+    const editOption = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('Edit');
 
     expect(editOption).toBeVisible();
 
-    const setPrimaryOption = within(canvasElement.ownerDocument.body).queryByText(
-      'Set as Primary',
-    );
+    const setPrimaryOption = within(
+      canvasElement.ownerDocument.body,
+    ).queryByText('Set as Primary');
 
     expect(setPrimaryOption).not.toBeInTheDocument();
   },

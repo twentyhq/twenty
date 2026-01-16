@@ -295,7 +295,9 @@ export const DeletePrimaryLink: Story = {
     });
     await userEvent.click(openDropdownButton);
 
-    const deleteOption = await within(canvasElement.ownerDocument.body).findByText('Delete');
+    const deleteOption = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('Delete');
     await userEvent.click(deleteOption);
 
     const input = await canvas.findByPlaceholderText('URL');
@@ -332,7 +334,9 @@ export const DeletePrimaryLinkAndUseSecondaryLinkAsTheNewPrimaryLink: Story = {
     });
     await userEvent.click(openDropdownButtons[0]);
 
-    const deleteOption = await within(canvasElement.ownerDocument.body).findByText('Delete');
+    const deleteOption = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('Delete');
     await userEvent.click(deleteOption);
 
     const newPrimaryLink = await canvas.findByText('Documentation');
@@ -372,7 +376,9 @@ export const DeleteSecondaryLink: Story = {
     });
     await userEvent.click(openDropdownButtons[1]);
 
-    const deleteOption = await within(canvasElement.ownerDocument.body).findByText('Delete');
+    const deleteOption = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('Delete');
     await userEvent.click(deleteOption);
 
     const primaryLink = await canvas.findByText('Twenty Website');
@@ -478,9 +484,9 @@ export const MakeSecondaryLinkPrimary: Story = {
     });
     await userEvent.click(openDropdownButtons[1]); // Click the secondary link's dropdown
 
-    const setPrimaryOption = await within(canvasElement.ownerDocument.body).findByText(
-      'Set as Primary',
-    );
+    const setPrimaryOption = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('Set as Primary');
     await userEvent.click(setPrimaryOption);
   },
 };
@@ -507,9 +513,9 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     await userEvent.click(openDropdownButton);
 
     // Should not see "Set as Primary" option for primary link
-    const setPrimaryOption = within(canvasElement.ownerDocument.body).queryByText(
-      'Set as Primary',
-    );
+    const setPrimaryOption = within(
+      canvasElement.ownerDocument.body,
+    ).queryByText('Set as Primary');
     expect(setPrimaryOption).not.toBeInTheDocument();
   },
 };
