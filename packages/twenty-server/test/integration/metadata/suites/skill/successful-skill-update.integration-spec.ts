@@ -5,13 +5,9 @@ import { deleteSkill } from 'test/integration/metadata/suites/skill/utils/delete
 import { updateSkill } from 'test/integration/metadata/suites/skill/utils/update-skill.util';
 
 describe('Skill update should succeed', () => {
-  let testSkillId: string | undefined;
+  let testSkillId: string;
 
   beforeEach(async () => {
-    await deleteSkill({
-      expectToFail: false,
-      input: { id: testSkillId ?? '' },
-    });
     const { data } = await createSkill({
       expectToFail: false,
       input: {
@@ -29,7 +25,7 @@ describe('Skill update should succeed', () => {
   afterEach(async () => {
     await deleteSkill({
       expectToFail: false,
-      input: { id: testSkillId ?? '' },
+      input: { id: testSkillId },
     });
   });
 
@@ -37,7 +33,7 @@ describe('Skill update should succeed', () => {
     const { data } = await updateSkill({
       expectToFail: false,
       input: {
-        id: testSkillId ?? '',
+        id: testSkillId,
         label: 'Updated Skill Label',
       },
     });
@@ -55,13 +51,13 @@ describe('Skill update should succeed', () => {
     const { data } = await updateSkill({
       expectToFail: false,
       input: {
-        id: testSkillId ?? '',
+        id: testSkillId,
         description: 'Updated description',
       },
     });
 
     expect(data.updateSkill).toMatchObject({
-      id: testSkillId ?? '',
+      id: testSkillId,
       label: 'Test Skill To Update',
       description: 'Updated description',
     });
@@ -71,7 +67,7 @@ describe('Skill update should succeed', () => {
     const { data } = await updateSkill({
       expectToFail: false,
       input: {
-        id: testSkillId ?? '',
+        id: testSkillId,
         icon: 'IconRobot',
       },
     });
@@ -88,13 +84,13 @@ describe('Skill update should succeed', () => {
     const { data } = await updateSkill({
       expectToFail: false,
       input: {
-        id: testSkillId ?? '',
+        id: testSkillId,
         content: newContent,
       },
     });
 
     expect(data.updateSkill).toMatchObject({
-      id: testSkillId ?? '',
+      id: testSkillId,
       content: newContent,
     });
   });
@@ -103,7 +99,7 @@ describe('Skill update should succeed', () => {
     const { data } = await updateSkill({
       expectToFail: false,
       input: {
-        id: testSkillId ?? '',
+        id: testSkillId,
         label: 'Completely Updated Skill',
         description: 'Completely updated description',
         icon: 'IconBrain',
@@ -112,7 +108,7 @@ describe('Skill update should succeed', () => {
     });
 
     expect(data.updateSkill).toMatchObject({
-      id: testSkillId ?? '',
+      id: testSkillId,
       label: 'Completely Updated Skill',
       description: 'Completely updated description',
       icon: 'IconBrain',
