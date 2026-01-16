@@ -49,6 +49,8 @@ const makeObjectPermissions = (
     canSoftDeleteObjectRecords: true,
     canDestroyObjectRecords: true,
     restrictedFields: {},
+    rowLevelPermissionPredicates: [],
+    rowLevelPermissionPredicateGroups: [],
     ...overrides,
   };
 };

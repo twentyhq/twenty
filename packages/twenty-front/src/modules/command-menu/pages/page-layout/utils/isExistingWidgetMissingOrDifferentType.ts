@@ -1,0 +1,8 @@
+import { type WidgetType } from '~/generated/graphql';
+
+export const isExistingWidgetMissingOrDifferentType = (
+  existingWidgetType: WidgetType | undefined,
+  targetType: WidgetType,
+): boolean => {
+  return existingWidgetType === undefined || existingWidgetType !== targetType;
+};
