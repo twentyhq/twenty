@@ -3,12 +3,15 @@ import { afterEach } from 'node:test';
 import { createSkill } from 'test/integration/metadata/suites/skill/utils/create-skill.util';
 import { deleteSkill } from 'test/integration/metadata/suites/skill/utils/delete-skill.util';
 import { updateSkill } from 'test/integration/metadata/suites/skill/utils/update-skill.util';
-import { isDefined } from 'twenty-shared/utils';
 
 describe('Skill update should succeed', () => {
   let testSkillId: string | undefined;
 
   beforeEach(async () => {
+    await deleteSkill({
+      expectToFail: false,
+      input: { id: testSkillId ?? '' },
+    });
     const { data } = await createSkill({
       expectToFail: false,
       input: {
@@ -24,63 +27,51 @@ describe('Skill update should succeed', () => {
   });
 
   afterEach(async () => {
-    if (isDefined(testSkillId)) {
-      await deleteSkill({
-        expectToFail: false,
-        input: { id: testSkillId },
-      });
-    }
+    await deleteSkill({
+      expectToFail: false,
+      input: { id: testSkillId ?? '' },
+    });
   });
 
   it('should update skill label', async () => {
-    if (isDefined(testSkillId)) {
-      const { data } = await updateSkill({
-        expectToFail: false,
-        input: {
-          id: testSkillId,
-          label: 'Updated Skill Label',
-        },
-      });
-
-      expect(data.updateSkill).toMatchObject({
-        id: testSkillId,
-        label: 'Updated Skill Label',
-        description: 'Original description',
-        icon: 'IconSparkles',
-        content: 'Original content',
-      });
-    }
-  });
-
-  it('should update skill description', async () => {
-    if (!isDefined(testSkillId)) {
-      return;
-    }
-
     const { data } = await updateSkill({
       expectToFail: false,
       input: {
-        id: testSkillId,
-        description: 'Updated description',
+        id: testSkillId ?? '',
+        label: 'Updated Skill Label',
       },
     });
 
     expect(data.updateSkill).toMatchObject({
       id: testSkillId,
+      label: 'Updated Skill Label',
+      description: 'Original description',
+      icon: 'IconSparkles',
+      content: 'Original content',
+    });
+  });
+
+  it('should update skill description', async () => {
+    const { data } = await updateSkill({
+      expectToFail: false,
+      input: {
+        id: testSkillId ?? '',
+        description: 'Updated description',
+      },
+    });
+
+    expect(data.updateSkill).toMatchObject({
+      id: testSkillId ?? '',
       label: 'Test Skill To Update',
       description: 'Updated description',
     });
   });
 
   it('should update skill icon', async () => {
-    if (!isDefined(testSkillId)) {
-      return;
-    }
-
     const { data } = await updateSkill({
       expectToFail: false,
       input: {
-        id: testSkillId,
+        id: testSkillId ?? '',
         icon: 'IconRobot',
       },
     });
@@ -94,33 +85,25 @@ describe('Skill update should succeed', () => {
   it('should update skill content', async () => {
     const newContent = 'Updated content with new instructions';
 
-    if (!isDefined(testSkillId)) {
-      return;
-    }
-
     const { data } = await updateSkill({
       expectToFail: false,
       input: {
-        id: testSkillId,
+        id: testSkillId ?? '',
         content: newContent,
       },
     });
 
     expect(data.updateSkill).toMatchObject({
-      id: testSkillId,
+      id: testSkillId ?? '',
       content: newContent,
     });
   });
 
   it('should update multiple fields at once', async () => {
-    if (!isDefined(testSkillId)) {
-      return;
-    }
-
     const { data } = await updateSkill({
       expectToFail: false,
       input: {
-        id: testSkillId,
+        id: testSkillId ?? '',
         label: 'Completely Updated Skill',
         description: 'Completely updated description',
         icon: 'IconBrain',
@@ -129,7 +112,7 @@ describe('Skill update should succeed', () => {
     });
 
     expect(data.updateSkill).toMatchObject({
-      id: testSkillId,
+      id: testSkillId ?? '',
       label: 'Completely Updated Skill',
       description: 'Completely updated description',
       icon: 'IconBrain',
@@ -138,14 +121,10 @@ describe('Skill update should succeed', () => {
   });
 
   it('should update label to a unique value', async () => {
-    if (!isDefined(testSkillId)) {
-      return;
-    }
-
     const { data } = await updateSkill({
       expectToFail: false,
       input: {
-        id: testSkillId,
+        id: testSkillId ?? '',
         label: 'Unique Updated Label',
       },
     });
