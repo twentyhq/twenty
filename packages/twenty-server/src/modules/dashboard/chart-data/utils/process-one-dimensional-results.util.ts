@@ -38,7 +38,13 @@ export const processOneDimensionalResults = ({
   const processedDataPoints: ProcessedOneDimensionalDataPoint[] = [];
 
   for (const result of rawResults) {
-    const rawValue = result.groupByDimensionValues?.[0] as RawDimensionValue;
+    const dimensionValues = result.groupByDimensionValues;
+
+    if (!isDefined(dimensionValues) || dimensionValues.length < 1) {
+      continue;
+    }
+
+    const rawValue = dimensionValues[0] as RawDimensionValue;
 
     const formattedValue = formatDimensionValue({
       value: rawValue,
