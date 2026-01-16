@@ -530,6 +530,11 @@ export class LineChartDataService {
     const hasTooManyGroups =
       hasTooManySeries || hasTooManyDataPoints || dateRangeWasTruncated;
 
+    const mergedLookup = new Map([
+      ...formattedToRawLookup,
+      ...secondaryFormattedToRawLookup,
+    ]);
+
     return {
       series,
       xAxisLabel,
@@ -537,7 +542,7 @@ export class LineChartDataService {
       showLegend: configuration.displayLegend ?? true,
       showDataLabels: configuration.displayDataLabel ?? false,
       hasTooManyGroups,
-      formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
+      formattedToRawLookup: Object.fromEntries(mergedLookup),
     };
   }
 

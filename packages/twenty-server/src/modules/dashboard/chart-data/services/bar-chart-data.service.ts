@@ -572,6 +572,11 @@ export class BarChartDataService {
 
     hasTooManyGroups = hasTooManyGroups || dateRangeWasTruncated;
 
+    const mergedLookup = new Map([
+      ...formattedToRawLookup,
+      ...secondaryFormattedToRawLookup,
+    ]);
+
     return {
       data: finalData,
       indexBy: indexByKey,
@@ -584,7 +589,7 @@ export class BarChartDataService {
       layout,
       groupMode: configuration.groupMode ?? BarChartGroupMode.GROUPED,
       hasTooManyGroups,
-      formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
+      formattedToRawLookup: Object.fromEntries(mergedLookup),
     };
   }
 
