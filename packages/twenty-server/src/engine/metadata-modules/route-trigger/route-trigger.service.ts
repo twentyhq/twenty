@@ -14,6 +14,7 @@ import {
   RouteTriggerExceptionCode,
 } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
 import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
+import { buildServerlessFunctionEvent } from 'src/engine/metadata-modules/route-trigger/utils/build-serverless-function-event.util';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 
 @Injectable()
@@ -128,21 +129,18 @@ export class RouteTriggerService {
       });
     }
 
-    const queryParams = request.query;
-
-    const bodyParams = request.body;
-
-    const executionParams = {
-      ...queryParams,
-      ...bodyParams,
-      ...routeTriggerWithPathParams.pathParams,
-    };
+    const event = buildServerlessFunctionEvent({
+      request,
+      pathParameters: routeTriggerWithPathParams.pathParams,
+      forwardedRequestHeaders:
+        routeTriggerWithPathParams.routeTrigger.forwardedRequestHeaders ?? [],
+    });
 
     const result =
       await this.serverlessFunctionService.executeOneServerlessFunction({
         id: routeTriggerWithPathParams.routeTrigger.serverlessFunction.id,
         workspaceId: routeTriggerWithPathParams.routeTrigger.workspaceId,
-        payload: executionParams,
+        payload: event,
         version: 'draft',
       });
 
