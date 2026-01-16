@@ -22,6 +22,51 @@ export type GroupByFieldObject = Record<
   boolean | Record<string, boolean | string | Record<string, boolean | string>>
 >;
 
+type BuildDateGroupByObjectParams = {
+  dateGranularity?: ObjectRecordGroupByDateGranularity;
+  firstDayOfTheWeek?: CalendarStartDay | null;
+  timeZone?: string;
+};
+
+const buildDateGroupByObject = ({
+  dateGranularity,
+  firstDayOfTheWeek,
+  timeZone,
+}: BuildDateGroupByObjectParams): Record<string, string> => {
+  const usedDateGranularity = dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY;
+
+  const shouldHaveTimeZone =
+    GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE.includes(
+      usedDateGranularity,
+    );
+
+  const result: Record<string, string> = {
+    granularity: usedDateGranularity,
+  };
+
+  if (shouldHaveTimeZone) {
+    if (!isDefined(timeZone)) {
+      throw new Error(`Date group by should have a time zone.`);
+    }
+    result.timeZone = timeZone;
+  }
+
+  if (
+    usedDateGranularity === ObjectRecordGroupByDateGranularity.WEEK &&
+    isDefined(firstDayOfTheWeek) &&
+    firstDayOfTheWeek !== CalendarStartDay.SYSTEM
+  ) {
+    const weekStartDay = convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
+      firstDayOfTheWeek,
+      FirstDayOfTheWeek.MONDAY,
+    );
+
+    result.weekStartDay = weekStartDay;
+  }
+
+  return result;
+};
+
 export type BuildGroupByFieldObjectParams = {
   fieldMetadata: FlatFieldMetadata;
   subFieldName?: string | null;
@@ -53,36 +98,15 @@ export const buildGroupByFieldObject = ({
     const nestedSubFieldName = parts[1];
 
     if (isNestedDateField === true) {
-      const usedDateGranularity =
-        dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY;
-
-      const shouldHaveTimeZone =
-        GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE.includes(
-          usedDateGranularity,
-        );
-
-      const timeZoneIsNotProvided = !isDefined(timeZone);
-
-      if (shouldHaveTimeZone) {
-        if (timeZoneIsNotProvided) {
-          throw new Error(`Date group by should have a time zone.`);
-        } else {
-          return {
-            [fieldMetadata.name]: {
-              [nestedFieldName]: {
-                granularity: usedDateGranularity,
-                timeZone,
-              },
-            },
-          };
-        }
-      }
+      const dateGroupByObject = buildDateGroupByObject({
+        dateGranularity,
+        firstDayOfTheWeek,
+        timeZone,
+      });
 
       return {
         [fieldMetadata.name]: {
-          [nestedFieldName]: {
-            granularity: usedDateGranularity,
-          },
+          [nestedFieldName]: dateGroupByObject,
         },
       };
     }
@@ -119,41 +143,13 @@ export const buildGroupByFieldObject = ({
   }
 
   if (isDateField) {
-    const usedDateGranularity =
-      dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY;
+    const dateGroupByObject = buildDateGroupByObject({
+      dateGranularity,
+      firstDayOfTheWeek,
+      timeZone,
+    });
 
-    const shouldHaveTimeZone =
-      GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE.includes(
-        usedDateGranularity,
-      );
-
-    const timeZoneIsNotProvided = !isDefined(timeZone);
-
-    const result: Record<string, string> = { granularity: usedDateGranularity };
-
-    if (shouldHaveTimeZone) {
-      if (timeZoneIsNotProvided) {
-        throw new Error(`Date group by should have a time zone.`);
-      } else {
-        result.timeZone = timeZone;
-      }
-    }
-
-    if (
-      usedDateGranularity === ObjectRecordGroupByDateGranularity.WEEK &&
-      isDefined(firstDayOfTheWeek) &&
-      firstDayOfTheWeek !== CalendarStartDay.SYSTEM
-    ) {
-      const weekStartDay =
-        convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
-          firstDayOfTheWeek,
-          FirstDayOfTheWeek.MONDAY,
-        );
-
-      result.weekStartDay = weekStartDay;
-    }
-
-    return { [fieldMetadata.name]: result };
+    return { [fieldMetadata.name]: dateGroupByObject };
   }
 
   return { [fieldMetadata.name]: true };

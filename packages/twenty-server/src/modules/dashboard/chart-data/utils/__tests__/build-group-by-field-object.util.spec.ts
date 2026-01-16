@@ -7,15 +7,14 @@ import {
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildGroupByFieldObject } from 'src/modules/dashboard/chart-data/utils/build-group-by-field-object.util';
 
-const createMockFieldMetadata = (
-  overrides: Partial<FlatFieldMetadata>,
-): FlatFieldMetadata => ({
-  id: 'test-id',
-  name: 'testField',
-  type: FieldMetadataType.TEXT,
-  universalIdentifier: 'test-universal-id',
-  ...overrides,
-});
+const createMockFieldMetadata = (overrides: Partial<FlatFieldMetadata>) =>
+  ({
+    id: 'test-id',
+    name: 'testField',
+    type: FieldMetadataType.TEXT,
+    universalIdentifier: 'test-universal-id',
+    ...overrides,
+  }) as FlatFieldMetadata;
 
 const userTimezone = 'Europe/Paris';
 
@@ -104,7 +103,113 @@ describe('buildGroupByFieldObject', () => {
           dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
           isNestedDateField: true,
         }),
-      ).toThrow('Date order by should have a time zone.');
+      ).toThrow('Date group by should have a time zone.');
+    });
+
+    it('should include weekStartDay for nested date field with WEEK granularity and MONDAY', () => {
+      const fieldMetadata = createMockFieldMetadata({
+        name: 'company',
+        type: FieldMetadataType.RELATION,
+        relationTargetObjectMetadataId: 'target-object-id',
+      });
+
+      const result = buildGroupByFieldObject({
+        fieldMetadata,
+        subFieldName: 'createdAt',
+        dateGranularity: ObjectRecordGroupByDateGranularity.WEEK,
+        firstDayOfTheWeek: CalendarStartDay.MONDAY,
+        isNestedDateField: true,
+        timeZone: userTimezone,
+      });
+
+      expect(result).toEqual({
+        company: {
+          createdAt: {
+            granularity: ObjectRecordGroupByDateGranularity.WEEK,
+            weekStartDay: 'MONDAY',
+            timeZone: userTimezone,
+          },
+        },
+      });
+    });
+
+    it('should include weekStartDay for nested date field with WEEK granularity and SUNDAY', () => {
+      const fieldMetadata = createMockFieldMetadata({
+        name: 'company',
+        type: FieldMetadataType.RELATION,
+        relationTargetObjectMetadataId: 'target-object-id',
+      });
+
+      const result = buildGroupByFieldObject({
+        fieldMetadata,
+        subFieldName: 'createdAt',
+        dateGranularity: ObjectRecordGroupByDateGranularity.WEEK,
+        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
+        isNestedDateField: true,
+        timeZone: userTimezone,
+      });
+
+      expect(result).toEqual({
+        company: {
+          createdAt: {
+            granularity: ObjectRecordGroupByDateGranularity.WEEK,
+            weekStartDay: 'SUNDAY',
+            timeZone: userTimezone,
+          },
+        },
+      });
+    });
+
+    it('should not include weekStartDay for nested date field with WEEK granularity and SYSTEM', () => {
+      const fieldMetadata = createMockFieldMetadata({
+        name: 'company',
+        type: FieldMetadataType.RELATION,
+        relationTargetObjectMetadataId: 'target-object-id',
+      });
+
+      const result = buildGroupByFieldObject({
+        fieldMetadata,
+        subFieldName: 'createdAt',
+        dateGranularity: ObjectRecordGroupByDateGranularity.WEEK,
+        firstDayOfTheWeek: CalendarStartDay.SYSTEM,
+        isNestedDateField: true,
+        timeZone: userTimezone,
+      });
+
+      expect(result).toEqual({
+        company: {
+          createdAt: {
+            granularity: ObjectRecordGroupByDateGranularity.WEEK,
+            timeZone: userTimezone,
+          },
+        },
+      });
+    });
+
+    it('should not include weekStartDay for nested date field with non-WEEK granularity', () => {
+      const fieldMetadata = createMockFieldMetadata({
+        name: 'company',
+        type: FieldMetadataType.RELATION,
+        relationTargetObjectMetadataId: 'target-object-id',
+      });
+
+      const result = buildGroupByFieldObject({
+        fieldMetadata,
+        subFieldName: 'createdAt',
+        dateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
+        firstDayOfTheWeek: CalendarStartDay.MONDAY,
+        isNestedDateField: true,
+        timeZone: userTimezone,
+      });
+
+      expect(result).toEqual({
+        company: {
+          createdAt: {
+            granularity: ObjectRecordGroupByDateGranularity.MONTH,
+            timeZone: userTimezone,
+          },
+        },
+      });
     });
   });
 
@@ -227,7 +332,7 @@ describe('buildGroupByFieldObject', () => {
           fieldMetadata,
           dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
         }),
-      ).toThrow('Date order by should have a time zone.');
+      ).toThrow('Date group by should have a time zone.');
     });
 
     it('should include weekStartDay for WEEK granularity with MONDAY', () => {
