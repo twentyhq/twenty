@@ -74,7 +74,7 @@ export const useRunWorkflowVersion = () => {
     workflowVersionId,
     payload,
   }: {
-    workflowId: string;
+    workflowId?: string;
     workflowVersionId: string;
     payload?: Record<string, any>;
   }) => {
@@ -84,7 +84,7 @@ export const useRunWorkflowVersion = () => {
       name: '#0',
       status: 'NOT_STARTED',
       workflowVersionId,
-      workflowId,
+      ...(isDefined(workflowId) && { workflowId }),
       createdAt: new Date().toISOString(),
     };
 

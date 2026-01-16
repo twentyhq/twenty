@@ -5812,6 +5812,13 @@ export type ListPlansQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ListPlansQuery = { __typename?: 'Query', listPlans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, licensedProducts: Array<{ __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }>, meteredProducts: Array<{ __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceMetered', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTier', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }> }> };
 
+export type CommandMenuItemFieldsFragment = { __typename?: 'CommandMenuItem', id: string, workflowVersionId: string, label: string, icon?: string | null, isPinned: boolean, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectNameSingular?: string | null, createdAt: string, updatedAt: string };
+
+export type FindManyCommandMenuItemsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindManyCommandMenuItemsQuery = { __typename?: 'Query', commandMenuItems: Array<{ __typename?: 'CommandMenuItem', id: string, workflowVersionId: string, label: string, icon?: string | null, isPinned: boolean, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectNameSingular?: string | null, createdAt: string, updatedAt: string }> };
+
 export type CreateFileMutationVariables = Exact<{
   file: Scalars['Upload'];
 }>;
@@ -7130,6 +7137,19 @@ export const BillingPriceMeteredFragmentFragmentDoc = gql`
     unitAmount
     upTo
   }
+}
+    `;
+export const CommandMenuItemFieldsFragmentDoc = gql`
+    fragment CommandMenuItemFields on CommandMenuItem {
+  id
+  workflowVersionId
+  label
+  icon
+  isPinned
+  availabilityType
+  availabilityObjectNameSingular
+  createdAt
+  updatedAt
 }
     `;
 export const ApiKeyFragmentFragmentDoc = gql`
@@ -9976,6 +9996,40 @@ export function useListPlansLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type ListPlansQueryHookResult = ReturnType<typeof useListPlansQuery>;
 export type ListPlansLazyQueryHookResult = ReturnType<typeof useListPlansLazyQuery>;
 export type ListPlansQueryResult = Apollo.QueryResult<ListPlansQuery, ListPlansQueryVariables>;
+export const FindManyCommandMenuItemsDocument = gql`
+    query FindManyCommandMenuItems {
+  commandMenuItems {
+    ...CommandMenuItemFields
+  }
+}
+    ${CommandMenuItemFieldsFragmentDoc}`;
+
+/**
+ * __useFindManyCommandMenuItemsQuery__
+ *
+ * To run a query within a React component, call `useFindManyCommandMenuItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindManyCommandMenuItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindManyCommandMenuItemsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFindManyCommandMenuItemsQuery(baseOptions?: Apollo.QueryHookOptions<FindManyCommandMenuItemsQuery, FindManyCommandMenuItemsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindManyCommandMenuItemsQuery, FindManyCommandMenuItemsQueryVariables>(FindManyCommandMenuItemsDocument, options);
+      }
+export function useFindManyCommandMenuItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyCommandMenuItemsQuery, FindManyCommandMenuItemsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindManyCommandMenuItemsQuery, FindManyCommandMenuItemsQueryVariables>(FindManyCommandMenuItemsDocument, options);
+        }
+export type FindManyCommandMenuItemsQueryHookResult = ReturnType<typeof useFindManyCommandMenuItemsQuery>;
+export type FindManyCommandMenuItemsLazyQueryHookResult = ReturnType<typeof useFindManyCommandMenuItemsLazyQuery>;
+export type FindManyCommandMenuItemsQueryResult = Apollo.QueryResult<FindManyCommandMenuItemsQuery, FindManyCommandMenuItemsQueryVariables>;
 export const CreateFileDocument = gql`
     mutation CreateFile($file: Upload!) {
   createFile(file: $file) {
