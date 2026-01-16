@@ -128,12 +128,12 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.updateTaskOnDeleteActionCommand,
       this.backfillOpportunityOwnerFieldCommand,
       this.backfillStandardPageLayoutsCommand,
-      this.identifyAgentMetadataCommand,
       this.identifyFieldMetadataCommand,
       this.identifyObjectMetadataCommand,
       this.identifyViewMetadataCommand,
       this.identifyViewFieldMetadataCommand,
       this.identifyViewFilterMetadataCommand,
+      this.identifyAgentMetadataCommand,
       this
         .makeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this
