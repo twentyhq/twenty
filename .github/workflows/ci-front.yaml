@@ -86,7 +86,7 @@ jobs:
       - name: Build twenty-shared
         run: npx nx build twenty-shared
       - name: Install Playwright
-        run: cd packages/twenty-front && npx playwright install chromium --with-deps
+        run: npx playwright install chromium --with-deps
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
