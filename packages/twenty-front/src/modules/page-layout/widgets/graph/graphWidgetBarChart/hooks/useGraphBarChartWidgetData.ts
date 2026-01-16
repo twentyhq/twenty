@@ -128,10 +128,10 @@ export const useGraphBarChartWidgetData = ({
 
   const colorMode = useMemo((): GraphColorMode => {
     return determineGraphColorMode({
-      configurationColor: configuration.color,
+      configurationColor,
       selectFieldOptions,
     });
-  }, [configuration.color, selectFieldOptions]);
+  }, [configurationColor, selectFieldOptions]);
 
   const series = useMemo((): BarChartSeries[] => {
     if (!queryData?.barChartData?.series) {

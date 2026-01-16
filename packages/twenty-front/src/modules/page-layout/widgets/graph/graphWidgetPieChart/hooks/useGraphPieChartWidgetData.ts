@@ -101,10 +101,10 @@ export const useGraphPieChartWidgetData = ({
 
   const colorMode = useMemo((): GraphColorMode => {
     return determineGraphColorMode({
-      configurationColor: configuration.color,
+      configurationColor,
       selectFieldOptions,
     });
-  }, [configuration.color, selectFieldOptions]);
+  }, [configurationColor, selectFieldOptions]);
 
   const chartData = useMemo((): PieChartDataItem[] => {
     if (!queryData?.pieChartData?.data) {

@@ -111,10 +111,10 @@ export const useGraphLineChartWidgetData = ({
 
   const colorMode = useMemo((): GraphColorMode => {
     return determineGraphColorMode({
-      configurationColor: configuration.color,
+      configurationColor,
       selectFieldOptions,
     });
-  }, [configuration.color, selectFieldOptions]);
+  }, [configurationColor, selectFieldOptions]);
 
   const series = useMemo((): LineChartSeries[] => {
     if (!queryData?.lineChartData?.series) {
