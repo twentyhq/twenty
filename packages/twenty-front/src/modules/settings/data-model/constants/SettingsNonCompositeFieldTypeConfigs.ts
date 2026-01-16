@@ -145,5 +145,24 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
       label: 'Files',
       Icon: IllustrationIconFile,
       category: 'Advanced',
+      exampleValues: [
+        [
+          {
+            fileId: 'file-1',
+            label: 'Document.pdf',
+            fileType: 'application/pdf',
+          },
+          { fileId: 'file-2', label: 'Image.png', fileType: 'image/png' },
+        ],
+        [
+          {
+            fileId: 'file-3',
+            label: 'Report.xlsx',
+            fileType:
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          },
+        ],
+        [],
+      ],
     } as const satisfies SettingsFieldTypeConfig<FieldFilesValue>,
   };

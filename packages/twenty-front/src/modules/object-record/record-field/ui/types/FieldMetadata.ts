@@ -189,6 +189,10 @@ export type FieldTsVectorMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
+export type FieldFilesMetadata = BaseFieldMetadata & {
+  settings?: FieldMetadataMultiItemSettings | null;
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
@@ -196,6 +200,7 @@ export type FieldMetadata =
   | FieldDateMetadata
   | FieldEmailMetadata
   | FieldEmailsMetadata
+  | FieldFilesMetadata
   | FieldFullNameMetadata
   | FieldLinkMetadata
   | FieldLinksMetadata
