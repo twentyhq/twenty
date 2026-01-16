@@ -105,6 +105,8 @@ export class LoginPage {
   }
 
   async typeEmail(email: string) {
+    // Wait for the email field to be visible before trying to interact
+    await this.emailField.waitFor({ state: 'visible' });
     await expect(this.emailField).toBeVisible();
 
     await this.emailField.fill(email);
