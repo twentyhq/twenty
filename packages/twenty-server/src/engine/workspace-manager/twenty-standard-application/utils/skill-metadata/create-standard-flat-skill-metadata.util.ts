@@ -164,9 +164,9 @@ Users describe charts using UI terminology. Here's how to translate:
 **Y axis section (what's being measured + optional secondary grouping):**
 - "Y axis" / "data on display" / "measure" / "metric": aggregateFieldMetadataId + aggregateOperation
 - "Group by" / "stacking" / "colors" / "breakdown": secondaryAxisGroupByFieldMetadataId
-- "Date granularity" (on Group by): secondaryAxisDateGranularity
+- "Date granularity" (on Group by): secondaryAxisGroupByDateGranularity
 - "Sort by" (on Group by): secondaryAxisOrderBy
-- "Cumulative" / "running total": cumulative
+- "Cumulative" / "running total": isCumulative
 - "Min range" / "Max range": rangeMin, rangeMax
 
 **Style section:**
@@ -220,7 +220,7 @@ Required:
 - configuration.aggregateFieldMetadataId: field to aggregate
 - configuration.aggregateOperation: aggregation type
 - configuration.primaryAxisGroupByFieldMetadataId: X axis (usually date)
-Optional: secondaryAxisGroupByFieldMetadataId (for multiple lines), cumulative, displayDataLabel, filter
+Optional: secondaryAxisGroupByFieldMetadataId (for multiple lines), isCumulative, displayDataLabel, filter
 
 ### PIE_CHART
 Shows data distribution as slices.

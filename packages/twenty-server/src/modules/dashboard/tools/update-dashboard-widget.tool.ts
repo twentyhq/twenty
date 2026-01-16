@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import {
   gridPositionSchema,
-  widgetConfigurationSchema,
+  widgetConfigurationSchemaWithoutDefaults,
   widgetTypeSchema,
 } from 'src/modules/dashboard/tools/schemas/widget.schema';
 import {
@@ -24,7 +24,7 @@ const updateDashboardWidgetSchema = z.object({
     .uuid()
     .optional()
     .describe('New object metadata ID'),
-  configuration: widgetConfigurationSchema.optional(),
+  configuration: widgetConfigurationSchemaWithoutDefaults,
 });
 
 export const createUpdateDashboardWidgetTool = (
