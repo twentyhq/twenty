@@ -121,60 +121,60 @@ Erstellen Sie ein `Products`-Objekt und verknüpfen Sie es mit Datensätzen. Die
 
 ### 5. Halten Sie es zunächst einfach
 
-Beginnen Sie mit Feldern. Move to new objects only when you feel the limits:
+Beginnen Sie mit Feldern. Erstellen Sie neue Objekte nur, wenn Sie an Grenzen stoßen:
 
-* Too many fields on one object
-* Repeated records that should be separate
-* Relationships that don't fit neatly
+* Zu viele Felder in einem Objekt
+* Wiederholte Datensätze, die getrennt sein sollten
+* Beziehungen, die sich nicht sauber abbilden lassen
 
-## Special Note on People, Companies, and Opportunities
+## Besondere Hinweise zu Personen, Unternehmen und Gelegenheiten
 
 <Warning>
-  **Email and calendar sync only works with People, Companies, and Opportunities.**
+  **E-Mail- und Kalender-Synchronisierung funktioniert nur mit Personen, Unternehmen und Gelegenheiten.**
 
-  These are the only objects where you can access synchronized emails and meetings from your mailbox/calendar. We recommend using them as much as possible.
+  Dies sind die einzigen Objekte, in denen Sie auf synchronisierte E-Mails und Besprechungen aus Ihrem Postfach/Kalender zugreifen können. Wir empfehlen, sie so häufig wie möglich zu nutzen.
 </Warning>
 
-**Best practices:**
+**Beste Praktiken:**
 
-* If you need categories of People, use fields (not new objects)
-* Example: Use a `Person Type` field with values "Prospect" and "Partner" instead of creating separate objects
-* Create different **views** to filter: one showing partners, another showing prospects
+* Wenn Sie Kategorien von Personen benötigen, verwenden Sie Felder (keine neuen Objekte)
+* Beispiel: Verwenden Sie ein `Person Type`-Feld mit den Werten "Prospect" und "Partner" anstatt separate Objekte zu erstellen
+* Erstellen Sie unterschiedliche **Ansichten** zum Filtern: eine zeigt Partner, eine andere Interessenten
 
-**It's okay to have fields that don't apply to every record.** For example, a `Referral Link` field on People that only applies when `Person Type = Partner`. Hide this field from views where it's not relevant.
+**Es ist in Ordnung, Felder zu haben, die nicht für jeden Datensatz gelten.** Zum Beispiel ein `Referral Link`-Feld bei Personen, das nur gilt, wenn `Person Type = Partner`. Blenden Sie dieses Feld in Ansichten aus, in denen es nicht relevant ist.
 
-## Questions to Guide Your Choice
+## Fragen zur Auswahlhilfe
 
 Fragen Sie sich:
 
-<Check>Is this just a property of something I already have, or does it need its own properties?</Check>
-<Check>Will I ever need to track multiple of these per record, without knowing how many?</Check>
-<Check>Does this concept connect to several different objects, not just one?</Check>
-<Check>Will it have its own lifecycle (stages, start/end dates)?</Check>
+<Check>Ist dies nur eine Eigenschaft von etwas, das ich bereits habe, oder benötigt es eigene Eigenschaften?</Check>
+<Check>Werde ich jemals mehrere davon pro Datensatz nachverfolgen müssen, ohne zu wissen, wie viele?</Check>
+<Check>Verbindet dieses Konzept mehrere unterschiedliche Objekte, nicht nur eines?</Check>
+<Check>Wird es einen eigenen Lebenszyklus haben (Phasen, Start-/Enddaten)?</Check>
 
-If the answer is "yes" to one or more, it's probably time for a new object.
+Wenn die Antwort auf eine oder mehrere dieser Fragen "ja" lautet, ist es wahrscheinlich Zeit für ein neues Objekt.
 
-## Accessing Your Data Model
+## Zugriff auf Ihr Datenmodell
 
-1. Go to **Settings** in the left sidebar
-2. Click **Data Model**
-3. View all your objects (standard and custom)
-4. Click any object to see and edit its fields
+1. Gehen Sie zu **Einstellungen** in der linken Seitenleiste
+2. Klicken Sie auf **Datenmodell**
+3. Zeigen Sie alle Ihre Objekte (Standard und benutzerdefiniert) an
+4. Klicken Sie auf ein beliebiges Objekt, um seine Felder anzuzeigen und zu bearbeiten
 
 <Note>
-  **Don't see Data Model in Settings?**
+  **Sie sehen das Datenmodell nicht in den Einstellungen?**
 
-  Access to the data model is usually restricted to administrators. Contact your workspace admin if you need access.
+  Der Zugriff auf das Datenmodell ist in der Regel auf Administratoren beschränkt. Kontaktieren Sie Ihren Workspace-Admin, wenn Sie Zugriff benötigen.
 </Note>
 
 ## Nächste Schritte
 
-Once you've planned your data model:
+Sobald Sie Ihr Datenmodell geplant haben:
 
-* [How to Create Custom Objects](/l/de/user-guide/data-model/how-tos/create-custom-objects)
-* [How to Create Custom Fields](/l/de/user-guide/data-model/how-tos/create-custom-fields)
-* [How to Create Relation Fields](/l/de/user-guide/data-model/how-tos/create-relation-fields)
+* [Benutzerdefinierte Objekte erstellen](/l/de/user-guide/data-model/how-tos/create-custom-objects)
+* [Benutzerdefinierte Felder erstellen](/l/de/user-guide/data-model/how-tos/create-custom-fields)
+* [Beziehungsfelder erstellen](/l/de/user-guide/data-model/how-tos/create-relation-fields)
 
-## Need Help?
+## Brauchen Sie Hilfe?
 
-Our team can help you design and create the data model you need. Discover our [Implementation Services](/l/de/user-guide/getting-started/capabilities/implementation-services).
+Unser Team kann Sie beim Entwerfen und Erstellen des Datenmodells, das Sie benötigen, unterstützen. Entdecken Sie unsere [Implementierungsdienstleistungen](/l/de/user-guide/getting-started/capabilities/implementation-services).
