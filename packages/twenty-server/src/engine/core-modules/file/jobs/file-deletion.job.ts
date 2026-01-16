@@ -1,5 +1,5 @@
 import { UnrecoverableError } from 'bullmq';
-import { extractFolderPathFilenameAndType } from 'twenty-shared/utils';
+import { extractFolderPathFilenameAndTypeOrThrow } from 'twenty-shared/utils';
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -19,7 +19,8 @@ export class FileDeletionJob {
   async handle(data: FileDeletionJobData): Promise<void> {
     const { workspaceId, fullPath } = data;
 
-    const { folderPath, filename } = extractFolderPathFilenameAndType(fullPath);
+    const { folderPath, filename } =
+      extractFolderPathFilenameAndTypeOrThrow(fullPath);
 
     if (!filename) {
       throw new UnrecoverableError(

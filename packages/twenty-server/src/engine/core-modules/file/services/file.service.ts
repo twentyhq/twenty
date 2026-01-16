@@ -6,7 +6,7 @@ import { type Readable } from 'stream';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   buildSignedPath,
-  extractFolderPathFilenameAndType,
+  extractFolderPathFilenameAndTypeOrThrow,
 } from 'twenty-shared/utils';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -47,7 +47,7 @@ export class FileService {
     return buildSignedPath({
       path: url,
       token: this.encodeFileToken({
-        filename: extractFolderPathFilenameAndType(url).filename,
+        filename: extractFolderPathFilenameAndTypeOrThrow(url).filename,
         workspaceId,
       }),
     });

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { extractFolderPathFilenameAndType } from 'twenty-shared/utils';
+import { extractFolderPathFilenameAndTypeOrThrow } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -67,7 +67,7 @@ export class FileMetadataService {
       return null;
     }
 
-    const { folderPath, filename } = extractFolderPathFilenameAndType(
+    const { folderPath, filename } = extractFolderPathFilenameAndTypeOrThrow(
       file.path,
     );
 

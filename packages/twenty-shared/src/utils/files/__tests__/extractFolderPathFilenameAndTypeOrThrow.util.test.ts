@@ -1,8 +1,8 @@
-import { extractFolderPathFilenameAndType } from '../extractFolderPathFilenameAndType.util';
+import { extractFolderPathFilenameAndTypeOrThrow } from '@/utils/files/extractFolderPathFilenameAndTypeOrThrow.util';
 
 describe('extractFolderPathFilenameAndType', () => {
   it('should extract folder path, filename, and type from a basic path', () => {
-    const result = extractFolderPathFilenameAndType(
+    const result = extractFolderPathFilenameAndTypeOrThrow(
       'folder/subfolder/file.txt',
     );
 
@@ -14,7 +14,9 @@ describe('extractFolderPathFilenameAndType', () => {
   });
 
   it('should handle multiple dots in filename', () => {
-    const result = extractFolderPathFilenameAndType('path/to/file.config.json');
+    const result = extractFolderPathFilenameAndTypeOrThrow(
+      'path/to/file.config.json',
+    );
 
     expect(result).toEqual({
       folderPath: 'path/to',
@@ -24,7 +26,7 @@ describe('extractFolderPathFilenameAndType', () => {
   });
 
   it('should handle filename without extension', () => {
-    const result = extractFolderPathFilenameAndType('folder/Makefile');
+    const result = extractFolderPathFilenameAndTypeOrThrow('folder/Makefile');
 
     expect(result).toEqual({
       folderPath: 'folder',
@@ -34,7 +36,7 @@ describe('extractFolderPathFilenameAndType', () => {
   });
 
   it('should handle file at root level', () => {
-    const result = extractFolderPathFilenameAndType('document.pdf');
+    const result = extractFolderPathFilenameAndTypeOrThrow('document.pdf');
 
     expect(result).toEqual({
       folderPath: '',
@@ -44,7 +46,9 @@ describe('extractFolderPathFilenameAndType', () => {
   });
 
   it('should handle deeply nested paths', () => {
-    const result = extractFolderPathFilenameAndType('a/b/c/d/e/image.png');
+    const result = extractFolderPathFilenameAndTypeOrThrow(
+      'a/b/c/d/e/image.png',
+    );
 
     expect(result).toEqual({
       folderPath: 'a/b/c/d/e',
@@ -54,7 +58,7 @@ describe('extractFolderPathFilenameAndType', () => {
   });
 
   it('should handle hidden files', () => {
-    const result = extractFolderPathFilenameAndType('folder/.gitignore');
+    const result = extractFolderPathFilenameAndTypeOrThrow('folder/.gitignore');
 
     expect(result).toEqual({
       folderPath: 'folder',
@@ -64,20 +68,20 @@ describe('extractFolderPathFilenameAndType', () => {
   });
 
   it('should throw error for empty string', () => {
-    expect(() => extractFolderPathFilenameAndType('')).toThrow(
+    expect(() => extractFolderPathFilenameAndTypeOrThrow('')).toThrow(
       'Invalid fullPath provided',
     );
   });
 
   it('should throw error for null value', () => {
     expect(() =>
-      extractFolderPathFilenameAndType(null as unknown as string),
+      extractFolderPathFilenameAndTypeOrThrow(null as unknown as string),
     ).toThrow('Invalid fullPath provided');
   });
 
   it('should throw error for undefined value', () => {
     expect(() =>
-      extractFolderPathFilenameAndType(undefined as unknown as string),
+      extractFolderPathFilenameAndTypeOrThrow(undefined as unknown as string),
     ).toThrow('Invalid fullPath provided');
   });
 });

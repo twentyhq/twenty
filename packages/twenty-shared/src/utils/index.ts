@@ -42,7 +42,7 @@ export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind
 export { isFieldMetadataNumericKind } from './fieldMetadata/isFieldMetadataNumericKind';
 export { isFieldMetadataSelectKind } from './fieldMetadata/isFieldMetadataSelectKind';
 export { isFieldMetadataTextKind } from './fieldMetadata/isFieldMetadataTextKind';
-export { extractFolderPathFilenameAndType } from './files/extractFolderPathFilenameAndType.util';
+export { extractFolderPathFilenameAndTypeOrThrow } from './files/extractFolderPathFilenameAndTypeOrThrow.util';
 export { checkIfShouldComputeEmptinessFilter } from './filter/checkIfShouldComputeEmptinessFilter';
 export { checkIfShouldSkipFiltering } from './filter/checkIfShouldSkipFiltering';
 export { computeGqlOperationFilterForEmails } from './filter/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForEmails';

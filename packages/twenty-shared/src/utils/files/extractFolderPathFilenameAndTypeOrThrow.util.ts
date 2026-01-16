@@ -1,11 +1,13 @@
-export const extractFolderPathFilenameAndType = (
+import { isNonEmptyString } from '@sniptt/guards';
+
+export const extractFolderPathFilenameAndTypeOrThrow = (
   fullPath: string,
 ): {
   folderPath: string;
   filename: string;
   type: string;
 } => {
-  if (!fullPath || typeof fullPath !== 'string') {
+  if (!isNonEmptyString(fullPath)) {
     throw new Error('Invalid fullPath provided');
   }
   const parts = fullPath.split('/');
