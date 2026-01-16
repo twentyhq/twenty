@@ -8,12 +8,14 @@ import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-vers
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
 import { IdentifyViewFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-field-metadata.command';
 import { IdentifyViewFilterMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-filter-metadata.command';
+import { IdentifyViewGroupMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-group-metadata.command';
 import { IdentifyViewMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-metadata.command';
 import { MakeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-agent-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-object-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-field-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-filter-universal-identifier-and-application-id-not-nullable-migration.command';
+import { MakeViewGroupUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-group-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-universal-identifier-and-application-id-not-nullable-migration.command';
 import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -26,6 +28,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
+import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -42,6 +45,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
       ViewEntity,
       ViewFieldEntity,
       ViewFilterEntity,
+      ViewGroupEntity,
     ]),
     DataSourceModule,
     WorkspaceCacheModule,
@@ -63,11 +67,13 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     IdentifyViewFieldMetadataCommand,
     IdentifyViewFilterMetadataCommand,
     MakeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    IdentifyViewGroupMetadataCommand,
     MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    MakeViewGroupUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
   exports: [
     UpdateTaskOnDeleteActionCommand,
@@ -80,11 +86,13 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     IdentifyViewFieldMetadataCommand,
     IdentifyViewFilterMetadataCommand,
     MakeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    IdentifyViewGroupMetadataCommand,
     MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    MakeViewGroupUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
 })
 export class V1_16_UpgradeVersionCommandModule {}
