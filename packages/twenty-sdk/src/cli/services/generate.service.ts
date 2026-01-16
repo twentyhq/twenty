@@ -67,6 +67,15 @@ export class GenerateService {
 
     console.log(chalk.green('✓ Client generated successfully!'));
     console.log(chalk.gray(`Generated files at: ${outputPath}`));
+    console.log('');
+    console.log(chalk.cyan('Usage:'));
+    console.log(chalk.gray(`  import Twenty from 'generated';`));
+    console.log(chalk.gray(`  const twenty = new Twenty();`));
+    console.log(
+      chalk.gray(
+        `  const { companies } = await twenty.query({ companies: { edges: { node: { id: true, name: true } } }, });`,
+      ),
+    );
   }
 
   private async injectTwentyClient(output: string) {

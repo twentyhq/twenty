@@ -21,6 +21,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "generated/*": ["./generated/*"],
+      "src/*": ["./src/*"]
+    }
   },
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }
