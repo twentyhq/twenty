@@ -3,6 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -18,11 +19,6 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
 @Entity('file')
 @ObjectType('File')
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
-@Index(
-  'IDX_FILE_WORKSPACE_APPLICATION_PATH',
-  ['workspaceId', 'applicationId', 'path'],
-  { unique: true },
-)
 export class FileEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -31,7 +27,7 @@ export class FileEntity extends WorkspaceRelatedEntity {
   applicationId: string;
 
   @ManyToOne('ApplicationEntity', {
-    onDelete: 'SET NULL',
+    onDelete: 'RESTRICT',
   })
   @JoinColumn({ name: 'applicationId' })
   application: Relation<ApplicationEntity>;
@@ -47,6 +43,9 @@ export class FileEntity extends WorkspaceRelatedEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt: Date | null;
 
   @Column({ nullable: false, default: false })
   isStaticAsset: boolean;

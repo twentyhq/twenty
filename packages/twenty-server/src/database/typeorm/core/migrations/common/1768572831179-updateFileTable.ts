@@ -1,9 +1,7 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddFileUniqueConstraint1768497650628
-  implements MigrationInterface
-{
-  name = 'AddFileUniqueConstraint1768497650628';
+export class UpdateFileTable1768572831179 implements MigrationInterface {
+  name = 'UpdateFileTable1768572831179';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`ALTER TABLE "core"."file" DROP COLUMN "name"`);
@@ -19,13 +17,13 @@ export class AddFileUniqueConstraint1768497650628
       `ALTER TABLE "core"."file" ADD "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()`,
     );
     await queryRunner.query(
+      `ALTER TABLE "core"."file" ADD "deletedAt" TIMESTAMP WITH TIME ZONE`,
+    );
+    await queryRunner.query(
       `ALTER TABLE "core"."file" ADD "isStaticAsset" boolean NOT NULL DEFAULT false`,
     );
     await queryRunner.query(
-      `CREATE UNIQUE INDEX "IDX_FILE_WORKSPACE_APPLICATION_PATH" ON "core"."file" ("workspaceId", "applicationId", "path") `,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."file" ADD CONSTRAINT "FK_413aaaf293284c3c0266d0bab3a" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."file" ADD CONSTRAINT "FK_413aaaf293284c3c0266d0bab3a" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE RESTRICT ON UPDATE NO ACTION`,
     );
   }
 
@@ -34,10 +32,10 @@ export class AddFileUniqueConstraint1768497650628
       `ALTER TABLE "core"."file" DROP CONSTRAINT "FK_413aaaf293284c3c0266d0bab3a"`,
     );
     await queryRunner.query(
-      `DROP INDEX "core"."IDX_FILE_WORKSPACE_APPLICATION_PATH"`,
+      `ALTER TABLE "core"."file" DROP COLUMN "isStaticAsset"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."file" DROP COLUMN "isStaticAsset"`,
+      `ALTER TABLE "core"."file" DROP COLUMN "deletedAt"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."file" DROP COLUMN "updatedAt"`,
