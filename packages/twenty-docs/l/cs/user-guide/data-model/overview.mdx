@@ -123,58 +123,58 @@ Vytvořte objekt `Products` a propojte ho se záznamy. Tímto způsobem podpoř�
 
 Začněte s poli. Přejděte na nové objekty teprve, když narazíte na limity:
 
-* Too many fields on one object
-* Repeated records that should be separate
-* Relationships that don't fit neatly
+* Příliš mnoho polí na jednom objektu
+* Opakované záznamy, které by měly být samostatné
+* Vztahy, které do sebe dobře nezapadají
 
-## Special Note on People, Companies, and Opportunities
+## Zvláštní poznámka k Lidem, Společnostem a Příležitostem
 
 <Warning>
-  **Email and calendar sync only works with People, Companies, and Opportunities.**
+  **Synchronizace e-mailů a kalendáře funguje pouze s Lidmi, Společnostmi a Příležitostmi.**
 
-  These are the only objects where you can access synchronized emails and meetings from your mailbox/calendar. We recommend using them as much as possible.
+  Jsou to jediné objekty, ve kterých můžete přistupovat k synchronizovaným e-mailům a schůzkám ze své poštovní schránky/kalendáře. Doporučujeme je používat co nejvíce.
 </Warning>
 
-**Best practices:**
+**Osvědčené postupy:**
 
-* If you need categories of People, use fields (not new objects)
-* Example: Use a `Person Type` field with values "Prospect" and "Partner" instead of creating separate objects
-* Create different **views** to filter: one showing partners, another showing prospects
+* Pokud potřebujete kategorie Lidí, použijte pole (nikoli nové objekty)
+* Příklad: Použijte pole `Person Type` s hodnotami "Potenciální zákazník" a "Partner" místo vytváření samostatných objektů
+* Vytvořte různé **pohledy** pro filtrování: jeden zobrazující partnery, druhý zobrazující potenciální zákazníky
 
-**It's okay to have fields that don't apply to every record.** For example, a `Referral Link` field on People that only applies when `Person Type = Partner`. Hide this field from views where it's not relevant.
+**Je v pořádku mít pole, která se nevztahují na každý záznam.** Například pole `Referral Link` u objektu Lidé, které platí pouze když `Person Type = Partner`. Skryjte toto pole v pohledech, kde není relevantní.
 
-## Questions to Guide Your Choice
+## Otázky, které vám pomohou při rozhodování
 
 Zeptejte se sami sebe:
 
-<Check>Is this just a property of something I already have, or does it need its own properties?</Check>
-<Check>Will I ever need to track multiple of these per record, without knowing how many?</Check>
-<Check>Does this concept connect to several different objects, not just one?</Check>
-<Check>Will it have its own lifecycle (stages, start/end dates)?</Check>
+<Check>Je to jen vlastnost něčeho, co už mám, nebo to potřebuje vlastní vlastnosti?</Check>
+<Check>Budu někdy potřebovat sledovat více takových položek na jeden záznam, aniž bych věděl, kolik?</Check>
+<Check>Souvisí tento koncept s několika různými objekty, nejen s jedním?</Check>
+<Check>Bude mít vlastní životní cyklus (fáze, data začátku/konce)?</Check>
 
-If the answer is "yes" to one or more, it's probably time for a new object.
+Pokud je odpověď na jednu nebo více z nich "ano", je pravděpodobně čas na nový objekt.
 
-## Accessing Your Data Model
+## Přístup k vašemu datovému modelu
 
-1. Go to **Settings** in the left sidebar
-2. Click **Data Model**
-3. View all your objects (standard and custom)
-4. Click any object to see and edit its fields
+1. Přejděte do **Nastavení** v levém postranním panelu
+2. Klikněte na **Datový model**
+3. Zobrazte si všechny své objekty (standardní i vlastní)
+4. Klikněte na libovolný objekt a zobrazte si a upravte jeho pole
 
 <Note>
-  **Don't see Data Model in Settings?**
+  **Nevidíte Datový model v Nastavení?**
 
-  Access to the data model is usually restricted to administrators. Contact your workspace admin if you need access.
+  Přístup k datovému modelu je obvykle omezen na správce. Pokud potřebujete přístup, kontaktujte správce pracovního prostoru.
 </Note>
 
 ## Další kroky
 
-Once you've planned your data model:
+Jakmile naplánujete svůj datový model:
 
-* [How to Create Custom Objects](/l/cs/user-guide/data-model/how-tos/create-custom-objects)
-* [How to Create Custom Fields](/l/cs/user-guide/data-model/how-tos/create-custom-fields)
-* [How to Create Relation Fields](/l/cs/user-guide/data-model/how-tos/create-relation-fields)
+* [Jak vytvořit vlastní objekty](/l/cs/user-guide/data-model/how-tos/create-custom-objects)
+* [Jak vytvořit vlastní pole](/l/cs/user-guide/data-model/how-tos/create-custom-fields)
+* [Jak vytvořit relační pole](/l/cs/user-guide/data-model/how-tos/create-relation-fields)
 
 ## Potřebujete pomoc?
 
-Our team can help you design and create the data model you need. Discover our [Implementation Services](/l/cs/user-guide/getting-started/capabilities/implementation-services).
+Náš tým vám může pomoci navrhnout a vytvořit datový model, který potřebujete. Objevte naše [implementační služby](/l/cs/user-guide/getting-started/capabilities/implementation-services).

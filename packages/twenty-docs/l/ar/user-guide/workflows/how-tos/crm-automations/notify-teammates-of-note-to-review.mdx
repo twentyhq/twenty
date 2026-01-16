@@ -1,92 +1,92 @@
 ---
-title: Notify Teammates of a Note to Review
-description: Send automatic email notifications when assigning a colleague to review a note.
+title: إشعار الزملاء بملاحظة للمراجعة
+description: أرسل إشعارات بريد إلكتروني تلقائية عند إسناد زميل لمراجعة ملاحظة.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <Note>
-  **Tagging teammates directly in notes is not yet supported.** This feature is planned for the second half of 2026. In the meantime, this workflow provides a practical workaround.
+  **الإشارة إلى الزملاء مباشرةً داخل الملاحظات غير مدعومة بعد.** من المخطط طرح هذه الميزة في النصف الثاني من عام 2026. في هذه الأثناء، يوفّر سير العمل هذا حلاً عمليًا بديلاً.
 </Note>
 
-## The Challenge
+## التحدّي
 
-You want to tag a colleague in a note so they receive a notification to review it. Today, Twenty doesn't support @mentions in notes or tasks.
+تريد الإشارة إلى زميل في ملاحظة ليصله إشعار لمراجعتها. حاليًا، Twenty لا يدعم @mentions في الملاحظات أو المهام.
 
-## The Workaround
+## الحل البديل
 
-Instead of tagging in the note text, you can:
+بدلًا من الإشارة في نص الملاحظة، يمكنك:
 
-1. Create a **Reviewer** relation field on the Notes object
-2. Assign the reviewer when creating or editing the note
-3. A workflow automatically sends an email to the reviewer with a link to the note
+1. أنشئ حقل علاقة **Reviewer** على كائن Notes
+2. عيّن المراجع عند إنشاء الملاحظة أو تحريرها
+3. سير عمل يرسل تلقائيًا بريدًا إلكترونيًا إلى المراجع يتضمّن رابطًا إلى الملاحظة
 
 <Warning>
-  **Limitation**: This approach allows assigning one reviewer per field. If you need to notify multiple people, create additional relation fields (e.g., Reviewer 1, Reviewer 2). This won't scale well if you need to tag many collaborators at once.
+  **قيد**: يتيح هذا الأسلوب تعيين مراجع واحد لكل حقل. إذا كنت بحاجة إلى إشعار عدة أشخاص، فأنشئ حقول علاقة إضافية (مثلًا: Reviewer 1، Reviewer 2). لن يكون ذلك قابلًا للتوسّع بشكلٍ جيد إذا احتجت إلى الإشارة إلى العديد من المتعاونين دفعةً واحدة.
 </Warning>
 
 ## إعداد خطوة بخطوة
 
-### Step 1: Create the Reviewer Field
+### الخطوة 1: إنشاء حقل المراجع
 
 <img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
 
-1. Go to **Settings → Data Model → Notes**
-2. Click **Add Field**
-3. Configure:
+1. انتقل إلى **الإعدادات → نموذج البيانات → Notes**
+2. انقر **إضافة حقل**
+3. التكوين:
 
-| الإعداد            | القيمة                            |
-| ------------------ | --------------------------------- |
-| **Name**           | Reviewer                          |
-| **النوع**          | علاقة                             |
-| **Related Object** | عضو في مساحة العمل                |
-| **Relation Type**  | Many Notes → One Workspace Member |
+| الإعداد            | القيمة                                        |
+| ------------------ | --------------------------------------------- |
+| **Name**           | Reviewer                                      |
+| **النوع**          | علاقة                                         |
+| **الكائن المرتبط** | عضو في مساحة العمل                            |
+| **نوع العلاقة**    | العديد من الملاحظات → عضو واحد في مساحة العمل |
 
-4. Save the field
+4. احفظ الحقل
 
 ### الخطوة 2: إنشاء سير العمل
 
 <VimeoEmbed videoId="1151897168" title="عرض توضيحي بالفيديو" />
 
-#### Create the Workflow Trigger
+#### إنشاء مشغّل سير العمل
 
-1. Go to the main view and create a new workflow
-2. Select **Record Updated** as the trigger
-3. Choose **Note** as the object and specify the Reviewer field.
-4. This will trigger whenever the reviewer of a note is updated.
+1. انتقل إلى العرض الرئيسي وأنشئ سير عمل جديدًا
+2. اختر **Record Updated** كمشغِّل
+3. اختر **Note** كالكائن وحدِّد حقل Reviewer.
+4. سيؤدي ذلك إلى التشغيل كلما تم تحديث مُراجع الملاحظة.
 
-#### Add a Filter to Check Reviewer Was Just Assigned
+#### أضِف عامل تصفية للتحقق من أنه تم تعيين المراجع للتو
 
-Add a **Filter** action to ensure the workflow only continues when a reviewer is assigned:
+أضِف إجراء **Filter** للتأكد من أن سير العمل يستمر فقط عند تعيين مراجع:
 
-| Condition    | القيمة   |
+| الشرط        | القيمة   |
 | ------------ | -------- |
 | **Reviewer** | غير فارغ |
 
-#### Search for the Workspace Member
+#### ابحث عن عضو مساحة العمل
 
-1. Add a **Search Records** action
-2. Select **Workspace Member** (under Advanced Objects)
-3. Add a filter:
+1. أضف إجراء **Search Records**
+2. حدِّد **Workspace Member** (ضمن الكائنات المتقدمة)
+3. أضف عامل تصفية:
 
-| Condition | القيمة                       |
-| --------- | ---------------------------- |
-| **ID**    | equals `{{note.reviewerId}}` |
+| الشرط  | القيمة                      |
+| ------ | --------------------------- |
+| **ID** | يساوي `{{note.reviewerId}}` |
 
-This retrieves the full workspace member record, including their email address and name.
+هذا يجلب سجل عضو مساحة العمل الكامل، بما في ذلك عنوان بريده الإلكتروني واسمه.
 
-#### Send the Notification Email
+#### إرسال بريد الإشعار الإلكتروني
 
-1. Add a **Send Email** action
-2. Configure:
+1. أضف إجراء **Send Email**
+2. التكوين:
 
 | الحقل       | القيمة                                              |
 | ----------- | --------------------------------------------------- |
 | **إلى**     | Search Record → First Workspace Member → User Email |
-| **الموضوع** | A note needs your review                            |
-| **المحتوى** | See example below                                   |
+| **الموضوع** | هناك ملاحظة تحتاج إلى مراجعتك                       |
+| **المحتوى** | انظر المثال أدناه                                   |
 
-**Email body example:**
+**مثال على محتوى البريد الإلكتروني:**
 
 ```text
 Hi {{searchRecord.firstWorkspaceMember.name.firstName}},
@@ -101,27 +101,27 @@ Twenty
 ```
 
 <Note>
-  Replace `yourSubDomain` with your actual Twenty workspace subdomain.
+  استبدل `yourSubDomain` بنطاقك الفرعي الفعلي لمساحة عمل Twenty.
 </Note>
 
-#### Test and Activate
+#### الاختبار والتفعيل
 
-1. Click **Test** to run the workflow manually
-2. Create or edit a note and assign a reviewer
-3. Check the reviewer's inbox for the notification email
-4. Activate the workflow
+1. انقر **Test** لتشغيل سير العمل يدويًا
+2. أنشئ ملاحظة (أو حرّر ملاحظة موجودة) وعيّن مراجعًا
+3. تحقّق من بريد المراجع الوارد بحثًا عن رسالة الإشعار
+4. فعّل سير العمل
 
 ## استخدام
 
-Once set up, your team can use this workflow by:
+بعد الإعداد، يمكن لفريقك استخدام سير العمل هذا عبر:
 
-1. Creating a new note (or editing an existing one)
-2. Selecting a colleague in the **Reviewer** field
-3. The colleague automatically receives an email with a direct link to the note
+1. إنشاء ملاحظة جديدة (أو تحرير ملاحظة موجودة)
+2. اختيار زميل في حقل **Reviewer**
+3. سيتلقى الزميل تلقائيًا بريدًا إلكترونيًا يحتوي على رابط مباشر إلى الملاحظة
 
 ## ذات صلة
 
 * [مشغلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
-* [Send Emails from Workflows](/l/ar/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Create Custom Fields](/l/ar/user-guide/data-model/how-tos/create-custom-fields)
-* [Create Relation Fields](/l/ar/user-guide/data-model/how-tos/create-relation-fields)
+* [إرسال رسائل البريد الإلكتروني من سير العمل](/l/ar/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [إنشاء حقول مخصصة](/l/ar/user-guide/data-model/how-tos/create-custom-fields)
+* [إنشاء حقول العلاقات](/l/ar/user-guide/data-model/how-tos/create-relation-fields)

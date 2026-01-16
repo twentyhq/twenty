@@ -1,37 +1,37 @@
 ---
-title: Formula Fields
-description: Create formula fields using workflows until native support is available.
+title: Campi formula
+description: Crea campi formula usando i flussi di lavoro finché il supporto nativo non sarà disponibile.
 ---
 
-Twenty doesn't yet support native formula fields yet (coming in 2026), but you can achieve the same result using workflows. This workaround lets you automatically calculate and populate field values—from simple concatenations to complex business logic.
+Twenty non supporta ancora i campi formula nativi (in arrivo nel 2026), ma puoi ottenere lo stesso risultato utilizzando i flussi di lavoro. Questa soluzione alternativa consente di calcolare e compilare automaticamente i valori dei campi — dalle semplici concatenazioni alla logica aziendale più complessa.
 
 ## Casi d'Uso Comuni
 
-| Use Case            | Formula Example                   |
-| ------------------- | --------------------------------- |
-| **Full name**       | First Name + " " + Last Name      |
-| **Expected amount** | Amount × Probability              |
-| **Days until due**  | Due Date - Today                  |
-| **Days in stage**   | Today - Stage Entry Date          |
-| **Lead score**      | Points based on multiple criteria |
+| Caso d'uso               | Esempio di formula                 |
+| ------------------------ | ---------------------------------- |
+| **Nome completo**        | Nome + " " + Cognome               |
+| **Importo previsto**     | Importo × Probabilità              |
+| **Giorni alla scadenza** | Data di scadenza - Oggi            |
+| **Giorni nella fase**    | Oggi - Data di ingresso nella fase |
+| **Punteggio lead**       | Punti in base a criteri multipli   |
 
 <Tip>
-  For a complete example of tracking time in pipeline stages, see [Track How Long Opportunities Stay in Each Stage](/l/it/user-guide/views-pipelines/how-tos/track-time-in-stage).
+  Per un esempio completo del monitoraggio del tempo nelle fasi della pipeline, vedi [Traccia quanto tempo le opportunità restano in ogni fase](/l/it/user-guide/views-pipelines/how-tos/track-time-in-stage).
 </Tip>
 
-## Basic Formula: Concatenation
+## Formula di base: concatenazione
 
-### Example: Auto-Fill Full Name
+### Esempio: compilazione automatica del nome completo
 
-**Goal**: Automatically combine first and last name into a full name field.
+**Obiettivo**: combinare automaticamente nome e cognome in un campo nome completo.
 
-### Setup
+### Impostazione
 
-1. **Trigger**: Record is Updated or Created (People)
+1. **Trigger**: il record viene aggiornato o creato (Persone)
 
-2. **Filter**: Check that first name or last name changed
+2. **Filtro**: verifica che il nome o il cognome siano cambiati
 
-3. **Code action**:
+3. **Azione di codice**:
 
 ```javascript
 export const main = async (params) => {
@@ -45,21 +45,21 @@ export const main = async (params) => {
 };
 ```
 
-4. **Update Record**: Set Full Name to `{{code.fullName}}`
+4. **Aggiorna record**: imposta Nome completo su `{{code.fullName}}`
 
-## Numeric Formula: Expected Amount
+## Formula numerica: importo previsto
 
-### Example: Calculate Expected Revenue
+### Esempio: calcolare il ricavo previsto
 
-**Goal**: Multiply opportunity amount by probability to get expected amount.
+**Obiettivo**: moltiplicare l'importo dell'opportunità per la probabilità per ottenere l'importo previsto.
 
-See [How to Show Expected Amount in Pipeline](/l/it/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) for the complete workflow.
+Vedi [Come mostrare l'importo previsto nella pipeline](/l/it/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) per il flusso di lavoro completo.
 
-### Quick Setup
+### Configurazione rapida
 
-1. **Trigger**: Record is Updated (Opportunities, Amount OR Probability field)
+1. **Trigger**: il record viene aggiornato (Opportunità, campo Importo oppure Probabilità)
 
-2. **Code action**:
+2. **Azione di codice**:
 
 ```javascript
 export const main = async (params) => {
@@ -71,19 +71,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Expected Amount to `{{code.expectedAmount}}`
+3. **Aggiorna record**: imposta Importo previsto su `{{code.expectedAmount}}`
 
-## Date Formula: Days Calculation
+## Formula sulle date: calcolo dei giorni
 
-### Example: Days Until Task Due
+### Esempio: giorni alla scadenza dell'attività
 
-**Goal**: Calculate how many days remain until a task's due date.
+**Obiettivo**: calcolare quanti giorni mancano alla data di scadenza di un'attività.
 
-### Setup
+### Impostazione
 
-1. **Trigger**: Record is Updated or Created (Tasks, Due Date field)
+1. **Trigger**: il record viene aggiornato o creato (Attività, campo Data di scadenza)
 
-2. **Code action**:
+2. **Azione di codice**:
 
 ```javascript
 export const main = async (params) => {
@@ -102,23 +102,23 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Days Until Due to `{{code.daysUntilDue}}`
+3. **Aggiorna record**: imposta Giorni alla scadenza su `{{code.daysUntilDue}}`
 
 <Note>
-  Negative values indicate overdue tasks. You can use this field to filter or sort tasks by urgency.
+  I valori negativi indicano attività scadute. Puoi usare questo campo per filtrare o ordinare le attività per urgenza.
 </Note>
 
-## Conditional Formula: Lead Score
+## Formula condizionale: punteggio lead
 
-### Example: Calculate Lead Score Based on Criteria
+### Esempio: calcolare il punteggio lead in base a criteri
 
-**Goal**: Score leads based on company size, industry, and engagement.
+**Obiettivo**: assegnare un punteggio ai lead in base alla dimensione aziendale, al settore e al coinvolgimento.
 
-### Setup
+### Impostazione
 
-1. **Trigger**: Record is Updated (People or Companies)
+1. **Trigger**: il record viene aggiornato (Persone o Aziende)
 
-2. **Code action**:
+2. **Azione di codice**:
 
 ```javascript
 export const main = async (params) => {
@@ -147,19 +147,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Lead Score to `{{code.leadScore}}`
+3. **Aggiorna record**: imposta Punteggio lead su `{{code.leadScore}}`
 
-## Text Formula: Domain Extraction
+## Formula di testo: estrazione del dominio
 
-### Example: Extract Domain from Email
+### Esempio: estrarre il dominio dall'email
 
-**Goal**: Automatically extract and store the email domain.
+**Obiettivo**: estrarre e archiviare automaticamente il dominio dell'email.
 
-### Setup
+### Impostazione
 
-1. **Trigger**: Record is Updated (People, Email field)
+1. **Trigger**: il record viene aggiornato (Persone, campo Email)
 
-2. **Code action**:
+2. **Azione di codice**:
 
 ```javascript
 export const main = async (params) => {
@@ -173,30 +173,30 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Domain field to `{{code.domain}}`
+3. **Aggiorna record**: imposta il campo Dominio su `{{code.domain}}`
 
 ## Migliori Pratiche
 
-### Performance
+### Prestazioni
 
-* Only trigger on relevant field changes
-* Use filters to skip records that don't need calculation
-* Avoid complex calculations in high-volume workflows
+* Attiva solo in caso di modifiche ai campi rilevanti
+* Usa filtri per ignorare i record che non richiedono calcolo
+* Evita calcoli complessi in flussi di lavoro ad alto volume
 
-### Error Handling
+### Gestione degli errori
 
-* Check for null/undefined values before calculations
-* Use default values when data is missing
-* Return clear error messages when calculations fail
+* Verifica i valori null/undefined prima dei calcoli
+* Usa valori predefiniti quando i dati mancano
+* Restituisci messaggi di errore chiari quando i calcoli falliscono
 
 ### Testing
 
-* Test with edge cases (empty fields, zero values)
-* Verify calculations manually before activating
-* Monitor workflow runs for unexpected results
+* Esegui test con casi limite (campi vuoti, valori zero)
+* Verifica manualmente i calcoli prima dell'attivazione
+* Monitora le esecuzioni dei flussi di lavoro per risultati imprevisti
 
-## Related
+## Correlati
 
-* [How to Show Expected Amount in Pipeline](/l/it/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
-* [How to Track Time in Stage](/l/it/user-guide/views-pipelines/how-tos/track-time-in-stage)
-* [Workflow Actions](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Come mostrare l'importo previsto nella pipeline](/l/it/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+* [Come tracciare il tempo in fase](/l/it/user-guide/views-pipelines/how-tos/track-time-in-stage)
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
