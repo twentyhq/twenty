@@ -8,7 +8,7 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type CreateSkillInput } from 'src/engine/metadata-modules/skill/dtos/create-skill.input';
+import { type SkillDTO } from 'src/engine/metadata-modules/skill/dtos/skill.dto';
 
 export const createSkill = async ({
   input,
@@ -16,7 +16,7 @@ export const createSkill = async ({
   expectToFail = false,
   token,
 }: PerformMetadataQueryParams<CreateSkillFactoryInput>): CommonResponseBody<{
-  createSkill: CreateSkillInput;
+  createSkill: SkillDTO;
 }> => {
   const graphqlOperation = createSkillQueryFactory({
     input,
