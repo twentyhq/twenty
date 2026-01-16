@@ -1,28 +1,32 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
-import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity';
 import {
-  CalendarStartDay,
   GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE,
+  CalendarStartDay,
 } from 'twenty-shared/constants';
 import {
-  type FirstDayOfTheWeek,
+  FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import {
+  convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek,
+  isDefined,
+  isFieldMetadataDateKind,
+} from 'twenty-shared/utils';
+
+const GRAPH_DEFAULT_DATE_GRANULARITY = ObjectRecordGroupByDateGranularity.DAY;
 
 export type GroupByFieldObject = Record<
   string,
   boolean | Record<string, boolean | string | Record<string, boolean | string>>
 >;
 
-export type GroupByFieldObjectParams = {
+type BuildGroupByFieldObjectParams = {
   field: FieldMetadataItem;
   subFieldName?: string | null;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
-  firstDayOfTheWeek?: number | null;
+  firstDayOfTheWeek?: CalendarStartDay | null;
   isNestedDateField?: boolean;
   timeZone?: string;
 };
@@ -34,8 +38,8 @@ export const buildGroupByFieldObject = ({
   firstDayOfTheWeek,
   isNestedDateField,
   timeZone,
-}: GroupByFieldObjectParams): GroupByFieldObject => {
-  const isRelation = isFieldRelation(field) || isFieldMorphRelation(field);
+}: BuildGroupByFieldObjectParams): GroupByFieldObject => {
+  const isRelation = isFieldRelation(field);
   const isComposite = isCompositeFieldType(field.type);
   const isDateField = isFieldMetadataDateKind(field.type);
 
@@ -57,10 +61,10 @@ export const buildGroupByFieldObject = ({
           usedDateGranularity,
         );
 
-      const timeZoneIsNotProvied = !isDefined(timeZone);
+      const timeZoneIsNotProvided = !isDefined(timeZone);
 
       if (shouldHaveTimeZone) {
-        if (timeZoneIsNotProvied) {
+        if (timeZoneIsNotProvided) {
           throw new Error(`Date order by should have a time zone.`);
         } else {
           return {
@@ -106,6 +110,7 @@ export const buildGroupByFieldObject = ({
         `Composite field ${field.name} requires a subfield to be specified`,
       );
     }
+
     return {
       [field.name]: {
         [subFieldName]: true,
@@ -122,12 +127,12 @@ export const buildGroupByFieldObject = ({
         usedDateGranularity,
       );
 
-    const timeZoneIsNotProvied = !isDefined(timeZone);
+    const timeZoneIsNotProvided = !isDefined(timeZone);
 
     const result: Record<string, string> = { granularity: usedDateGranularity };
 
     if (shouldHaveTimeZone) {
-      if (timeZoneIsNotProvied) {
+      if (timeZoneIsNotProvided) {
         throw new Error(`Date order by should have a time zone.`);
       } else {
         result.timeZone = timeZone;
@@ -139,9 +144,11 @@ export const buildGroupByFieldObject = ({
       isDefined(firstDayOfTheWeek) &&
       firstDayOfTheWeek !== CalendarStartDay.SYSTEM
     ) {
-      const weekStartDay = CalendarStartDay[
-        firstDayOfTheWeek
-      ] as FirstDayOfTheWeek;
+      const weekStartDay =
+        convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
+          firstDayOfTheWeek,
+          FirstDayOfTheWeek.MONDAY,
+        );
 
       result.weekStartDay = weekStartDay;
     }
