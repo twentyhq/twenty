@@ -1,4 +1,6 @@
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
+import { type FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { type CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
@@ -145,6 +147,11 @@ import {
   type DeleteViewAction,
   type UpdateViewAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
+import {
+  type CreateFrontComponentAction,
+  type DeleteFrontComponentAction,
+  type UpdateFrontComponentAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
 
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {
@@ -335,5 +342,14 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatPageLayoutTab;
     entity: PageLayoutTabEntity;
+  };
+  frontComponent: {
+    actions: {
+      create: CreateFrontComponentAction;
+      update: UpdateFrontComponentAction;
+      delete: DeleteFrontComponentAction;
+    };
+    flatEntity: FlatFrontComponent;
+    entity: FrontComponentEntity;
   };
 };

@@ -48,6 +48,9 @@ import { DeleteServerlessFunctionActionHandlerService } from 'src/engine/workspa
 import { UpdateServerlessFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/serverless-function/services/update-serverless-function-action-handler.service';
 import { CreateSkillActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/skill/services/create-skill-action-handler.service';
 import { DeleteSkillActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/skill/services/delete-skill-action-handler.service';
+import { CreateFrontComponentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/front-component/services/create-front-component-action-handler.service';
+import { UpdateFrontComponentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/front-component/services/update-front-component-action-handler.service';
+import { DeleteFrontComponentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/front-component/services/delete-front-component-action-handler.service';
 import { UpdateSkillActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/skill/services/update-skill-action-handler.service';
 import { CreateViewFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/create-view-field-action-handler.service';
 import { DeleteViewFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/delete-view-field-action-handler.service';
@@ -151,6 +154,10 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     CreateRowLevelPermissionPredicateGroupActionHandlerService,
     UpdateRowLevelPermissionPredicateGroupActionHandlerService,
     DeleteRowLevelPermissionPredicateGroupActionHandlerService,
+
+    CreateFrontComponentActionHandlerService,
+    UpdateFrontComponentActionHandlerService,
+    DeleteFrontComponentActionHandlerService,
   ],
 })
 export class WorkspaceSchemaMigrationRunnerActionHandlersModule {}
