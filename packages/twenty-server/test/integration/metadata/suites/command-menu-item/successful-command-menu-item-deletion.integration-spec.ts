@@ -14,6 +14,15 @@ describe('CommandMenuItem deletion should succeed', () => {
       expectToFail: false,
     });
   });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+  });
+
   it('should delete an existing command menu item', async () => {
     const workflowVersionId = faker.string.uuid();
 

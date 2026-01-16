@@ -17,6 +17,14 @@ describe('CommandMenuItem creation should succeed', () => {
     });
   });
 
+  afterAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+  });
+
   afterEach(async () => {
     if (createdCommandMenuItemId) {
       await deleteCommandMenuItem({

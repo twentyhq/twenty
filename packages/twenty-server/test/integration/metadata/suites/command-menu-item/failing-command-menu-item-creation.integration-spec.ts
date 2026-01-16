@@ -70,6 +70,14 @@ describe('CommandMenuItem creation should fail', () => {
     });
   });
 
+  afterAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+  });
+
   it.each(eachTestingContextFilter(failingCommandMenuItemCreationTestCases))(
     '$title',
     async ({ context }) => {
