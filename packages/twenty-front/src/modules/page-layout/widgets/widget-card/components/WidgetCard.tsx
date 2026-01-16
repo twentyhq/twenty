@@ -80,7 +80,9 @@ const StyledWidgetCard = styled.div<{
 
     if (variant === 'side-column' && !isEditable) {
       return css`
+        gap: ${theme.spacing(2)};
         padding: ${theme.spacing(3)};
+
         ${isLastWidget !== true &&
         css`
           border-bottom: 1px solid ${theme.border.color.light};
