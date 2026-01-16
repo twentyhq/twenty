@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 export const gridPositionSchema = z.object({
@@ -28,7 +28,7 @@ export const widgetTypeSchema = z.enum([
 
 // Graph configuration schema for AGGREGATE type (KPI numbers)
 const aggregateChartConfigSchema = z.object({
-  graphType: z.literal(GraphType.AGGREGATE_CHART),
+  configurationType: z.literal(WidgetConfigurationType.AGGREGATE_CHART),
   aggregateFieldMetadataId: z
     .string()
     .uuid()
@@ -48,7 +48,7 @@ const aggregateChartConfigSchema = z.object({
 // Graph configuration schema for BAR charts
 const barChartConfigSchema = z
   .object({
-    graphType: z.literal(GraphType.BAR_CHART),
+    configurationType: z.literal(WidgetConfigurationType.BAR_CHART),
     aggregateFieldMetadataId: z
       .string()
       .uuid()
@@ -87,8 +87,6 @@ const barChartConfigSchema = z
     displayLegend: z.boolean().optional().default(true),
     layout: z
       .enum(['VERTICAL', 'HORIZONTAL'])
-      .optional()
-      .default('VERTICAL')
       .describe('Layout orientation for bar charts'),
     filter: z.record(z.string(), z.unknown()).optional(),
   })
@@ -118,7 +116,7 @@ const barChartConfigSchema = z
 // Graph configuration schema for LINE charts
 const lineChartConfigSchema = z
   .object({
-    graphType: z.literal(GraphType.LINE_CHART),
+    configurationType: z.literal(WidgetConfigurationType.LINE_CHART),
     aggregateFieldMetadataId: z.string().uuid(),
     aggregateOperation: z.nativeEnum(AggregateOperations),
     primaryAxisGroupByFieldMetadataId: z.string().uuid(),
@@ -176,7 +174,7 @@ const lineChartConfigSchema = z
 // Graph configuration schema for PIE charts
 const pieChartConfigSchema = z
   .object({
-    graphType: z.literal(GraphType.PIE_CHART),
+    configurationType: z.literal(WidgetConfigurationType.PIE_CHART),
     aggregateFieldMetadataId: z.string().uuid(),
     aggregateOperation: z.nativeEnum(AggregateOperations),
     groupByFieldMetadataId: z
@@ -211,25 +209,37 @@ const pieChartConfigSchema = z
 
 // Iframe configuration
 const iframeConfigSchema = z.object({
-  url: z.string().url().describe('URL to embed'),
+  configurationType: z.literal(WidgetConfigurationType.IFRAME),
+  url: z.string().url().optional().describe('URL to embed'),
 });
 
 // Rich text configuration
 const richTextConfigSchema = z.object({
-  body: z.string().optional().describe('Rich text content'),
+  configurationType: z.literal(WidgetConfigurationType.STANDALONE_RICH_TEXT),
+  body: z.unknown().optional().describe('Rich text content (RichTextV2Body)'),
 });
 
-export const graphConfigurationSchema = z.discriminatedUnion('graphType', [
-  aggregateChartConfigSchema,
-  barChartConfigSchema,
-  lineChartConfigSchema,
-  pieChartConfigSchema,
-]);
+export const graphConfigurationSchema = z.discriminatedUnion(
+  'configurationType',
+  [
+    aggregateChartConfigSchema,
+    barChartConfigSchema,
+    lineChartConfigSchema,
+    pieChartConfigSchema,
+  ],
+);
 
 export const widgetConfigurationSchema = z
-  .union([graphConfigurationSchema, iframeConfigSchema, richTextConfigSchema])
+  .discriminatedUnion('configurationType', [
+    aggregateChartConfigSchema,
+    barChartConfigSchema,
+    lineChartConfigSchema,
+    pieChartConfigSchema,
+    iframeConfigSchema,
+    richTextConfigSchema,
+  ])
   .optional()
   .describe('Widget configuration - structure depends on widget type');
 
 // Export enums for documentation
-export { AggregateOperations, GraphType as GraphType };
+export { AggregateOperations, WidgetConfigurationType };
