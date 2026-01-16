@@ -16,6 +16,11 @@ import {
 import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersistField';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import {
+  FieldWidgetShowMoreButton,
+  INITIAL_VISIBLE_ITEMS,
+  LOAD_MORE_INCREMENT,
+} from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -36,6 +41,8 @@ export const FieldWidgetMorphRelationCard = ({
   const widget = useCurrentWidget();
 
   const [expandedItem, setExpandedItem] = useState('');
+  const [visibleItemsCount, setVisibleItemsCount] =
+    useState(INITIAL_VISIBLE_ITEMS);
   const targetRecord = useTargetRecord();
 
   const instanceId = generateFieldWidgetInstanceId({
@@ -47,6 +54,10 @@ export const FieldWidgetMorphRelationCard = ({
 
   const handleItemClick = (id: string) =>
     setExpandedItem(id === expandedItem ? '' : id);
+
+  const handleShowMore = () => {
+    setVisibleItemsCount((prevCount) => prevCount + LOAD_MORE_INCREMENT);
+  };
 
   const fieldMetadata = fieldDefinition.metadata;
 
@@ -110,6 +121,10 @@ export const FieldWidgetMorphRelationCard = ({
     return null;
   }
 
+  const visibleRecords = validRecords.slice(0, visibleItemsCount);
+  const remainingCount = validRecords.length - visibleItemsCount;
+  const hasMoreRecords = remainingCount > 0;
+
   return (
     <RightDrawerProvider value={{ isInRightDrawer }}>
       <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
@@ -124,7 +139,7 @@ export const FieldWidgetMorphRelationCard = ({
         >
           <FieldInputEventContext.Provider value={{ onSubmit: handleSubmit }}>
             <RecordDetailRecordsListContainer>
-              {validRecords.map((item) => (
+              {visibleRecords.map((item) => (
                 <Fragment key={`${item.value.id}-${item.fieldMetadataId}`}>
                   <RecordDetailRelationRecordsListItemEffect
                     relationRecordId={item.value.id}
@@ -139,6 +154,12 @@ export const FieldWidgetMorphRelationCard = ({
                   />
                 </Fragment>
               ))}
+              {hasMoreRecords && (
+                <FieldWidgetShowMoreButton
+                  remainingCount={remainingCount}
+                  onClick={handleShowMore}
+                />
+              )}
             </RecordDetailRecordsListContainer>
           </FieldInputEventContext.Provider>
         </FieldContext.Provider>
