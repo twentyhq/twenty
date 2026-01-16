@@ -50,6 +50,7 @@ export type RebuildDecision = {
   shouldRebuild: boolean;
   affectedFunctions: string[];
   rebuildGenerated: boolean;
+  assetsChanged: boolean;
   changedFiles: string[];
 };
 

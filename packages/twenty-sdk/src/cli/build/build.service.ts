@@ -1,8 +1,12 @@
 import path from 'path';
 import * as fs from 'fs-extra';
 import chalk from 'chalk';
+import { glob } from 'fast-glob';
 import { type ApiResponse } from '@/cli/types/api-response.types';
-import { loadManifest, type LoadManifestResult } from '@/cli/utils/load-manifest';
+import {
+  loadManifest,
+  type LoadManifestResult,
+} from '@/cli/utils/load-manifest';
 import { ViteBuildRunner } from './vite-build-runner';
 import { BuildManifestWriter } from './build-manifest-writer';
 import { TarballService } from './tarball.service';
@@ -34,6 +38,27 @@ export class BuildService {
   private readonly OUTPUT_DIR = '.twenty/output';
   private readonly FUNCTIONS_DIR = 'functions';
   private readonly GENERATED_DIR = 'generated';
+  private readonly ASSETS_DIR = 'assets';
+
+  /**
+   * Patterns to identify asset files that should be copied.
+   * Assets are static files needed at runtime but not TypeScript code.
+   */
+  private readonly ASSET_PATTERNS = ['src/assets/**/*'];
+
+  /**
+   * Files/patterns to exclude from asset copying.
+   */
+  private readonly ASSET_IGNORE = [
+    '**/node_modules/**',
+    '**/*.ts',
+    '**/*.tsx',
+    '**/.DS_Store',
+    '**/tsconfig.json',
+    '**/package.json',
+    '**/yarn.lock',
+    '**/.git/**',
+  ];
 
   /**
    * Perform a one-time build of the application.
@@ -84,7 +109,13 @@ export class BuildService {
         await this.buildGeneratedFolder(appPath, outputDir);
       }
 
-      // Step 5: Write output manifest
+      // Step 5: Copy assets
+      const assetsCopied = await this.copyAssets(appPath, outputDir);
+      if (assetsCopied > 0) {
+        console.log(chalk.gray(`  Copied ${assetsCopied} asset(s)`));
+      }
+
+      // Step 6: Write output manifest
       console.log(chalk.gray('  Writing manifest...'));
       await this.manifestWriter.write({
         manifest: manifestResult.manifest,
@@ -92,7 +123,7 @@ export class BuildService {
         outputDir,
       });
 
-      // Step 6: Create tarball if requested
+      // Step 7: Create tarball if requested
       let tarballPath: string | undefined;
       if (tarball) {
         console.log(chalk.gray('  Creating tarball...'));
@@ -146,7 +177,9 @@ export class BuildService {
     // Perform initial build
     const initialResult = await this.build({ ...options, tarball: false });
     if (!initialResult.success) {
-      console.error(chalk.red('Initial build failed, starting watcher anyway...'));
+      console.error(
+        chalk.red('Initial build failed, starting watcher anyway...'),
+      );
     }
 
     // Start the watcher
@@ -178,7 +211,9 @@ export class BuildService {
       }
     });
 
-    console.log(chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'));
+    console.log(
+      chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
+    );
 
     return {
       stop: () => watcher.stop(),
@@ -212,7 +247,9 @@ export class BuildService {
 
     // Ensure all subdirectories exist
     const uniqueDirs = new Set(
-      functionOutputPaths.map((p) => path.dirname(p.relativePath)).filter(Boolean),
+      functionOutputPaths
+        .map((p) => path.dirname(p.relativePath))
+        .filter(Boolean),
     );
     for (const dir of uniqueDirs) {
       await fs.ensureDir(path.join(functionsOutputDir, dir));
@@ -220,7 +257,8 @@ export class BuildService {
 
     const buildConfigs: ViteBuildConfig[] = manifest.serverlessFunctions.map(
       (fn, index) => {
-        const { relativePath, outputDir: fnOutputDir } = functionOutputPaths[index];
+        const { relativePath, outputDir: fnOutputDir } =
+          functionOutputPaths[index];
         const outputFileName = path.basename(relativePath);
 
         // Compute the relative path from the function to the generated folder
@@ -240,9 +278,8 @@ export class BuildService {
       },
     );
 
-    const results = await this.viteBuildRunner.buildFunctionsParallel(
-      buildConfigs,
-    );
+    const results =
+      await this.viteBuildRunner.buildFunctionsParallel(buildConfigs);
 
     const builtFunctions: BuiltFunctionInfo[] = [];
 
@@ -347,5 +384,60 @@ export class BuildService {
         result.error?.message || 'Unknown error',
       );
     }
+  }
+
+  /**
+   * Copy static assets from the app to the output directory.
+   *
+   * Looks for assets in:
+   * - src/assets/
+   * - assets/
+   *
+   * @returns The number of files copied
+   */
+  private async copyAssets(
+    appPath: string,
+    outputDir: string,
+  ): Promise<number> {
+    const assetsOutputDir = path.join(outputDir, this.ASSETS_DIR);
+
+    // Find all asset files
+    const assetFiles = await glob(this.ASSET_PATTERNS, {
+      cwd: appPath,
+      ignore: this.ASSET_IGNORE,
+      absolute: false,
+      onlyFiles: true,
+    });
+
+    if (assetFiles.length === 0) {
+      return 0;
+    }
+
+    // Ensure the assets output directory exists
+    await fs.ensureDir(assetsOutputDir);
+
+    // Copy each asset file, preserving directory structure
+    for (const assetFile of assetFiles) {
+      const sourcePath = path.join(appPath, assetFile);
+
+      // Compute the relative path within assets/
+      // Remove src/assets/ or assets/ prefix
+      let relativePath = assetFile;
+      if (relativePath.startsWith('src/assets/')) {
+        relativePath = relativePath.slice('src/assets/'.length);
+      } else if (relativePath.startsWith('assets/')) {
+        relativePath = relativePath.slice('assets/'.length);
+      }
+
+      const destPath = path.join(assetsOutputDir, relativePath);
+
+      // Ensure the destination directory exists
+      await fs.ensureDir(path.dirname(destPath));
+
+      // Copy the file
+      await fs.copy(sourcePath, destPath);
+    }
+
+    return assetFiles.length;
   }
 }

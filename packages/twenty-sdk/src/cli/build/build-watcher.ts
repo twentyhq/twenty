@@ -110,6 +110,7 @@ export class BuildWatcher {
   private isWatchedFile(filepath: string): boolean {
     const ext = path.extname(filepath);
     const basename = path.basename(filepath);
+    const relativePath = path.relative(this.appPath, filepath);
 
     // Watch TypeScript files
     if (ext === '.ts' || ext === '.tsx') {
@@ -125,6 +126,11 @@ export class BuildWatcher {
       return true;
     }
 
+    // Watch asset files in src/assets/
+    if (relativePath.startsWith('src/assets/') || relativePath.startsWith('src\\assets\\')) {
+      return true;
+    }
+
     return false;
   }
 
@@ -134,29 +140,39 @@ export class BuildWatcher {
   private analyzeChanges(changedFiles: string[]): RebuildDecision {
     const affectedFunctions: string[] = [];
     let rebuildGenerated = false;
+    let assetsChanged = false;
 
     for (const filepath of changedFiles) {
       const relativePath = path.relative(this.appPath, filepath);
+      // Normalize path separators for cross-platform compatibility
+      const normalizedPath = relativePath.replace(/\\/g, '/');
+
+      // Check if it's an asset file
+      if (normalizedPath.startsWith('src/assets/')) {
+        assetsChanged = true;
+        continue;
+      }
 
       // Check if it's a function file
       if (
-        relativePath.includes('src/app/') &&
-        relativePath.endsWith('.function.ts')
+        normalizedPath.includes('src/app/') &&
+        normalizedPath.endsWith('.function.ts')
       ) {
-        const functionName = path.basename(relativePath, '.function.ts');
+        const functionName = path.basename(normalizedPath, '.function.ts');
         affectedFunctions.push(functionName);
       }
 
       // Check if it's in the generated folder
-      if (relativePath.startsWith('generated/')) {
+      if (normalizedPath.startsWith('generated/')) {
         rebuildGenerated = true;
       }
 
       // Check if it's a shared file that affects all functions
       if (
-        relativePath.includes('src/') &&
-        !relativePath.includes('.function.ts') &&
-        !relativePath.startsWith('generated/')
+        normalizedPath.includes('src/') &&
+        !normalizedPath.includes('.function.ts') &&
+        !normalizedPath.startsWith('generated/') &&
+        !normalizedPath.startsWith('src/assets/')
       ) {
         // Shared utility file - rebuild all functions
         // For simplicity, we just mark that a rebuild is needed
@@ -168,6 +184,7 @@ export class BuildWatcher {
       shouldRebuild: true,
       affectedFunctions,
       rebuildGenerated,
+      assetsChanged,
       changedFiles,
     };
   }
