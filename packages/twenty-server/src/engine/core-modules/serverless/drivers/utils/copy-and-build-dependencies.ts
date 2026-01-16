@@ -28,9 +28,18 @@ export const copyAndBuildDependencies = async (
 
   await fs.writeFile(join(buildDirectory, 'yarn.lock'), yarnLock, 'utf8');
 
-  await fs.cp(getLayerDependenciesDirName('engine'), buildDirectory, {
-    recursive: true,
-  });
+  const engineDependenciesDir = getLayerDependenciesDirName('engine');
+
+  try {
+    await fs.access(engineDependenciesDir);
+    await fs.cp(engineDependenciesDir, buildDirectory, {
+      recursive: true,
+    });
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+      throw error;
+    }
+  }
 
   try {
     await execPromise('yarn', { cwd: buildDirectory });
