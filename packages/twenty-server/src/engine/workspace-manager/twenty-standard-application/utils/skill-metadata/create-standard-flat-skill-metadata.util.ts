@@ -154,20 +154,22 @@ Users describe charts using UI terminology. Here's how to translate:
 
 **Data section:**
 - "Source" / "change the object": objectMetadataId
-- "Filter" / "filter the data": configuration.filter
 
 **X axis section (primary grouping - the bars/categories):**
 - "X axis" / "data on display" / "categories": primaryAxisGroupByFieldMetadataId
+- "X axis subfield" / "Address.city": primaryAxisGroupBySubFieldName
 - "Date granularity" (on X axis): primaryAxisDateGranularity
 - "Sort by" (on X axis): primaryAxisOrderBy
 
 **Y axis section (what's being measured + optional secondary grouping):**
 - "Y axis" / "data on display" / "measure" / "metric": aggregateFieldMetadataId + aggregateOperation
 - "Group by" / "stacking" / "colors" / "breakdown": secondaryAxisGroupByFieldMetadataId
-- "Date granularity" (on Group by): secondaryAxisDateGranularity
+- "Group by subfield" / "Address.city": secondaryAxisGroupBySubFieldName
+- "Date granularity" (on Group by): secondaryAxisGroupByDateGranularity
 - "Sort by" (on Group by): secondaryAxisOrderBy
-- "Cumulative" / "running total": cumulative
+- "Cumulative" / "running total": isCumulative
 - "Min range" / "Max range": rangeMin, rangeMax
+- "Hide empty values" / "omit nulls": omitNullValues
 
 **Style section:**
 - "Stacked" / "stacked bars": layout stays same, it's about secondaryAxisGroupByFieldMetadataId
@@ -183,12 +185,14 @@ When users say this for bar/line charts, they mean remove the SECONDARY grouping
 
 ### Pie Chart Settings
 - "Each slice represents" / "slices": groupByFieldMetadataId
+- "Slice subfield" / "Address.city": groupBySubFieldName
 - "Hide empty category": hideEmptyCategory
 - "Show value in center": showValueInCenter
 
 ### Aggregate Chart Settings (KPI numbers)
 - "Prefix" (e.g., "$"): prefix
 - "Suffix" (e.g., "%"): suffix
+- "Ratio by option" / "percent of a value": ratioAggregateConfig
 
 ## Widget Configuration Types
 
@@ -199,7 +203,7 @@ Required:
 - configuration.configurationType: "AGGREGATE_CHART"
 - configuration.aggregateFieldMetadataId: UUID of field to aggregate
 - configuration.aggregateOperation: "COUNT", "SUM", "AVG", "MIN", "MAX"
-Optional: prefix, suffix, displayDataLabel, filter
+Optional: prefix, suffix, displayDataLabel, ratioAggregateConfig
 
 ### BAR_CHART
 Shows data grouped by categories with optional secondary grouping.
@@ -210,7 +214,7 @@ Required:
 - configuration.aggregateOperation: aggregation type
 - configuration.primaryAxisGroupByFieldMetadataId: X axis categories
 - configuration.layout: "VERTICAL" or "HORIZONTAL"
-Optional: secondaryAxisGroupByFieldMetadataId (for stacking/colors), displayDataLabel, displayLegend, filter
+Optional: secondaryAxisGroupByFieldMetadataId (for stacking/colors), primaryAxisGroupBySubFieldName, secondaryAxisGroupBySubFieldName, omitNullValues, displayDataLabel, displayLegend
 
 ### LINE_CHART
 Shows trends over a dimension.
@@ -220,7 +224,7 @@ Required:
 - configuration.aggregateFieldMetadataId: field to aggregate
 - configuration.aggregateOperation: aggregation type
 - configuration.primaryAxisGroupByFieldMetadataId: X axis (usually date)
-Optional: secondaryAxisGroupByFieldMetadataId (for multiple lines), cumulative, displayDataLabel, filter
+Optional: secondaryAxisGroupByFieldMetadataId (for multiple lines), primaryAxisGroupBySubFieldName, secondaryAxisGroupBySubFieldName, omitNullValues, isCumulative, displayDataLabel
 
 ### PIE_CHART
 Shows data distribution as slices.
@@ -230,7 +234,7 @@ Required:
 - configuration.aggregateFieldMetadataId: field to aggregate
 - configuration.aggregateOperation: aggregation type
 - configuration.groupByFieldMetadataId: field to slice by (NOTE: different field name than bar/line!)
-Optional: displayDataLabel, hideEmptyCategory, showValueInCenter, filter
+Optional: groupBySubFieldName, displayDataLabel, hideEmptyCategory, showValueInCenter
 
 ### IFRAME
 Embeds external content:
