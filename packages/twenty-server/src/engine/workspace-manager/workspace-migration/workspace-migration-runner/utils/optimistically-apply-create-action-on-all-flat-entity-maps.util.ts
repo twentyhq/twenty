@@ -68,6 +68,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
     case 'skill':
     case 'pageLayout':
     case 'pageLayoutWidget':
+    case 'frontComponent':
     case 'pageLayoutTab': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
         flatEntity: action.flatEntity,

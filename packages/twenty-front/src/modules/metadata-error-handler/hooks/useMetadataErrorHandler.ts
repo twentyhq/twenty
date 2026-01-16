@@ -42,6 +42,7 @@ export const useMetadataErrorHandler = () => {
     rowLevelPermissionPredicate: t`row level permission predicate`,
     rowLevelPermissionPredicateGroup: t`row level permission predicate group`,
     viewFilterGroup: t`view filter group`,
+    frontComponent: t`front component`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (

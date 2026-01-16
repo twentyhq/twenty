@@ -1,12 +1,12 @@
-import { statSync, promises as fs } from 'fs';
-import { promisify } from 'util';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
+import { promises as fs, statSync } from 'fs';
 import { join } from 'path';
+import { promisify } from 'util';
 
 import { getLayerDependenciesDirName } from 'src/engine/core-modules/serverless/drivers/utils/get-layer-dependencies-dir-name';
 import type { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
-const execPromise = promisify(exec);
+const execFilePromise = promisify(execFile);
 
 export const copyAndBuildDependencies = async (
   buildDirectory: string,
@@ -32,23 +32,35 @@ export const copyAndBuildDependencies = async (
     recursive: true,
   });
 
+  const localYarnPath = join(buildDirectory, '.yarn/releases/yarn-4.9.2.cjs');
+
+  // Strip NODE_OPTIONS to prevent tsx loader from interfering with yarn
+  const { NODE_OPTIONS: _nodeOptions, ...cleanEnv } = process.env;
+
   try {
-    await execPromise('yarn', { cwd: buildDirectory });
+    await execFilePromise(process.execPath, [localYarnPath], {
+      cwd: buildDirectory,
+      env: cleanEnv,
+    });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    throw new Error(error.stdout);
+    const errorMessage =
+      [error?.stdout, error?.stderr].filter(Boolean).join('\n') ||
+      'Failed to install serverless dependencies';
+
+    throw new Error(errorMessage);
   }
   const objects = await fs.readdir(buildDirectory);
 
-  objects.forEach((object) => {
-    const fullPath = join(buildDirectory, object);
+  await Promise.all(
+    objects
+      .filter((object) => object !== 'node_modules')
+      .map((object) => {
+        const fullPath = join(buildDirectory, object);
 
-    if (object === 'node_modules') return;
-
-    if (statSync(fullPath).isDirectory()) {
-      fs.rm(fullPath, { recursive: true, force: true });
-    } else {
-      fs.rm(fullPath);
-    }
-  });
+        return statSync(fullPath).isDirectory()
+          ? fs.rm(fullPath, { recursive: true, force: true })
+          : fs.rm(fullPath);
+      }),
+  );
 };

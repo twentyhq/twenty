@@ -4,13 +4,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { render, toPlainText } from '@react-email/render';
 import DOMPurify from 'dompurify';
 import { reactMarkupFromJSON } from 'twenty-emails';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import {
+  extractFolderPathFilenameAndTypeOrThrow,
+  isDefined,
+  isValidUuid,
+} from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 import {
   SendEmailToolException,
   SendEmailToolExceptionCode,
@@ -154,8 +157,8 @@ export class SendEmailTool implements Tool {
     for (const fileMetadata of files) {
       const fileEntity = fileEntityMap.get(fileMetadata.id)!;
 
-      const { folderPath, filename } = extractFolderPathAndFilename(
-        fileEntity.fullPath,
+      const { folderPath, filename } = extractFolderPathFilenameAndTypeOrThrow(
+        fileEntity.path,
       );
 
       const stream = await this.fileService.getFileStream(

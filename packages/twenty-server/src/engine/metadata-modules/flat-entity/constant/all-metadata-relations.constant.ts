@@ -436,6 +436,13 @@ export const ALL_METADATA_RELATIONS = {
       },
     },
   },
+  frontComponent: {
+    manyToOne: {
+      workspace: null,
+      application: null,
+    },
+    oneToMany: {},
+  },
 } as const satisfies MetadataRelationsProperties;
 
 // Note: satisfies with complex mapped types involving nested generics doesn't always catch missing required keys
