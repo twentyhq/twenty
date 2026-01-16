@@ -8,10 +8,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
-import {
-  ObjectRecordFilter,
-  ObjectRecordGroupBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
@@ -20,6 +17,7 @@ import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/fl
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
+import { ChartFilter } from 'src/engine/metadata-modules/page-layout-widget/types/chart-filter.type';
 import {
   GRAPH_DEFAULT_DATE_GRANULARITY,
   GRAPH_DEFAULT_ORDER_BY,
@@ -29,6 +27,7 @@ import {
   buildGroupByFieldObject,
   type GroupByFieldObject,
 } from 'src/modules/dashboard/chart-data/utils/build-group-by-field-object.util';
+import { convertChartFilterToGqlOperationFilter } from 'src/modules/dashboard/chart-data/utils/convert-chart-filter-to-gql-operation-filter.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getGroupByOrderBy } from 'src/modules/dashboard/chart-data/utils/get-group-by-order-by.util';
 import { isRelationNestedFieldDateKind } from 'src/modules/dashboard/chart-data/utils/is-relation-nested-field-date-kind.util';
@@ -50,7 +49,7 @@ export type ExecuteGroupByQueryParams = {
   groupBySubFieldName?: string | null;
   aggregateFieldMetadataId: string;
   aggregateOperation: AggregateOperations;
-  filter?: ObjectRecordFilter;
+  filter?: ChartFilter;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;
@@ -90,6 +89,13 @@ export class ChartDataQueryService {
     primaryAxisOrderBy?: GraphOrderBy;
     secondaryAxisOrderBy?: GraphOrderBy;
   }): Promise<GroupByRawResult[]> {
+    const gqlOperationFilter = convertChartFilterToGqlOperationFilter({
+      filter,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      userTimezone,
+    });
+
     const primaryGroupByField = getFieldMetadata(
       groupByFieldMetadataId,
       flatFieldMetadataMaps.byId,
@@ -103,6 +109,7 @@ export class ChartDataQueryService {
     const isPrimaryFieldDate = isFieldMetadataDateKind(
       primaryGroupByField.type,
     );
+
     const isPrimaryNestedDate = isRelationNestedFieldDateKind({
       relationFieldMetadata: primaryGroupByField,
       relationNestedFieldName: groupBySubFieldName ?? undefined,
@@ -207,7 +214,7 @@ export class ChartDataQueryService {
 
     const results = await this.commonGroupByQueryRunnerService.execute(
       {
-        filter: filter ?? {},
+        filter: gqlOperationFilter,
         orderBy: orderBy.length > 0 ? orderBy : undefined,
         groupBy: groupBy as ObjectRecordGroupBy,
         selectedFields,
