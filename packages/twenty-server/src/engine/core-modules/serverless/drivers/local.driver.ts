@@ -74,18 +74,16 @@ export class LocalDriver implements ServerlessDriver {
     version: string;
     env?: Record<string, string>;
   }): Promise<ServerlessExecuteResult> {
-    await this.build(serverlessFunction);
-
     const startTime = Date.now();
-
-    const folderPath = getServerlessFolder({
-      serverlessFunction,
-      version,
-    });
-
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
     try {
+      await this.build(serverlessFunction);
+
+      const folderPath = getServerlessFolder({
+        serverlessFunction,
+        version,
+      });
       const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
       await this.fileStorageService.download({
