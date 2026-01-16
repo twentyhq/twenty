@@ -105,6 +105,11 @@ type RangeMinMaxFields = {
   rangeMax?: number;
 };
 
+const ratioAggregateConfigSchema = z.object({
+  fieldMetadataId: z.uuid(),
+  optionValue: z.string(),
+});
+
 const withPrimarySecondaryManualSortRefinements = <
   T extends z.ZodType<PrimarySecondaryManualSortFields>,
 >(
@@ -197,11 +202,11 @@ const aggregateChartConfigSchemaBase = z.object({
   aggregateOperation: z
     .enum(AGGREGATE_OPERATION_OPTIONS)
     .describe('Aggregation operation: COUNT, SUM, AVG, MIN, MAX, etc.'),
-  displayDataLabel: displayDataLabelSchema,
   label: z.string().optional(),
+  displayDataLabel: displayDataLabelSchema,
   prefix: z.string().optional(),
   suffix: z.string().optional(),
-  filter: z.record(z.string(), z.unknown()).optional(),
+  ratioAggregateConfig: ratioAggregateConfigSchema.optional(),
 });
 
 const aggregateChartConfigSchema = aggregateChartConfigSchemaBase.extend({
@@ -219,11 +224,14 @@ const barChartConfigSchemaCore = z.object({
   primaryAxisGroupByFieldMetadataId: z
     .uuid()
     .describe('Field UUID to group by on primary axis'),
+  primaryAxisGroupBySubFieldName: z.string().optional(),
   secondaryAxisGroupByFieldMetadataId: z.uuid().optional(),
+  secondaryAxisGroupBySubFieldName: z.string().optional(),
   primaryAxisOrderBy: z.enum(GRAPH_ORDER_BY_OPTIONS).optional(),
   primaryAxisManualSortOrder: z.array(z.string()).optional(),
   secondaryAxisOrderBy: z.enum(GRAPH_ORDER_BY_OPTIONS).optional(),
   secondaryAxisManualSortOrder: z.array(z.string()).optional(),
+  omitNullValues: z.boolean().optional(),
   primaryAxisDateGranularity: z
     .enum(DATE_GRANULARITY_OPTIONS)
     .optional()
@@ -249,7 +257,6 @@ const barChartConfigSchemaCore = z.object({
   layout: z
     .enum(BAR_CHART_LAYOUT_OPTIONS)
     .describe('Layout orientation for bar charts'),
-  filter: z.record(z.string(), z.unknown()).optional(),
 });
 
 const barChartConfigSchemaWithoutDefaults = withRangeMinMaxRefinement(
@@ -271,11 +278,14 @@ const lineChartConfigSchemaCore = z.object({
   aggregateFieldMetadataId: z.uuid(),
   aggregateOperation: z.enum(AGGREGATE_OPERATION_OPTIONS),
   primaryAxisGroupByFieldMetadataId: z.uuid(),
+  primaryAxisGroupBySubFieldName: z.string().optional(),
   secondaryAxisGroupByFieldMetadataId: z.uuid().optional(),
+  secondaryAxisGroupBySubFieldName: z.string().optional(),
   primaryAxisOrderBy: z.enum(GRAPH_ORDER_BY_OPTIONS).optional(),
   primaryAxisManualSortOrder: z.array(z.string()).optional(),
   secondaryAxisOrderBy: z.enum(GRAPH_ORDER_BY_OPTIONS).optional(),
   secondaryAxisManualSortOrder: z.array(z.string()).optional(),
+  omitNullValues: z.boolean().optional(),
   primaryAxisDateGranularity: z
     .enum(DATE_GRANULARITY_OPTIONS)
     .optional()
@@ -295,7 +305,6 @@ const lineChartConfigSchemaCore = z.object({
   isCumulative: z.boolean().optional().describe('Show running totals'),
   rangeMin: z.number().optional().describe('Y axis minimum value'),
   rangeMax: z.number().optional().describe('Y axis maximum value'),
-  filter: z.record(z.string(), z.unknown()).optional(),
 });
 
 const lineChartConfigSchemaWithoutDefaults = withRangeMinMaxRefinement(
@@ -317,6 +326,7 @@ const pieChartConfigSchemaCore = z.object({
   aggregateFieldMetadataId: z.uuid(),
   aggregateOperation: z.enum(AGGREGATE_OPERATION_OPTIONS),
   groupByFieldMetadataId: z.uuid().describe('Field UUID to slice by'),
+  groupBySubFieldName: z.string().optional(),
   orderBy: z.enum(GRAPH_ORDER_BY_OPTIONS).optional(),
   manualSortOrder: z.array(z.string()).optional(),
   dateGranularity: z
@@ -328,7 +338,6 @@ const pieChartConfigSchemaCore = z.object({
   displayLegend: displayLegendSchema,
   showCenterMetric: showCenterMetricSchema,
   hideEmptyCategory: hideEmptyCategorySchema,
-  filter: z.record(z.string(), z.unknown()).optional(),
 });
 
 const pieChartConfigSchemaWithoutDefaults = withManualSortRefinement(
