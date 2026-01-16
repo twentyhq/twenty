@@ -1,4 +1,9 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import {
+  ForbiddenException,
+  UseFilters,
+  UseGuards,
+  UsePipes,
+} from '@nestjs/common';
 import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -131,8 +136,25 @@ export class WorkspaceEventEmitterResolver {
   async addQueryToEventStream(
     @Args('input') input: AddQuerySubscriptionInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
+
+    const isAuthorized = await this.eventStreamService.isAuthorized({
+      workspaceId: workspace.id,
+      eventStreamChannelId,
+      authContext: {
+        userWorkspaceId,
+        apiKeyId: apiKey?.id,
+      },
+    });
+
+    if (!isAuthorized) {
+      throw new ForbiddenException(
+        'You are not authorized to modify this event stream',
+      );
+    }
 
     await this.eventStreamService.addQuery({
       workspaceId: workspace.id,
@@ -148,8 +170,25 @@ export class WorkspaceEventEmitterResolver {
   async removeQueryFromEventStream(
     @Args('input') input: RemoveQueryFromEventStreamInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
+
+    const isAuthorized = await this.eventStreamService.isAuthorized({
+      workspaceId: workspace.id,
+      eventStreamChannelId,
+      authContext: {
+        userWorkspaceId,
+        apiKeyId: apiKey?.id,
+      },
+    });
+
+    if (!isAuthorized) {
+      throw new ForbiddenException(
+        'You are not authorized to modify this event stream',
+      );
+    }
 
     await this.eventStreamService.removeQuery({
       workspaceId: workspace.id,
