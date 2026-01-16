@@ -353,7 +353,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     return workspace;
   }
 
-  private async deleteWorkspaceSyncableMetadataEntities(workspace: WorkspaceEntity): Promise<void> {
+  private async deleteWorkspaceSyncableMetadataEntities(
+    workspace: WorkspaceEntity,
+  ): Promise<void> {
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
