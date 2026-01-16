@@ -40,6 +40,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
     'flat-maps:row-level-permission-predicate',
   flatRowLevelPermissionPredicateGroupMaps:
     'flat-maps:row-level-permission-predicate-group',
+  flatFrontComponentMaps: 'flat-maps:front-component',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
 export type AdditionalCacheDataMaps = {
