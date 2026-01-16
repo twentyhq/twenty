@@ -24,7 +24,6 @@ import {
   type PageLayoutWidget,
   WidgetConfigurationType,
 } from '~/generated/graphql';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -271,7 +270,7 @@ const meta: Meta<typeof PageLayoutRenderer> = {
   title: 'Modules/PageLayout/PageLayoutRenderer',
   component: PageLayoutRenderer,
   decorators: [
-    I18nFrontDecorator,
+    ,
     (Story) => (
       <MemoryRouter>
         <JestMetadataAndApolloMocksWrapper>

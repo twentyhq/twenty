@@ -45,7 +45,6 @@ import {
   WidgetConfigurationType,
 } from '~/generated/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
@@ -232,7 +231,7 @@ const meta: Meta<typeof WidgetRenderer> = {
   title: 'Modules/PageLayout/Widgets/WidgetRenderer',
   component: WidgetRenderer,
   decorators: [
-    I18nFrontDecorator,
+    ,
     ChipGeneratorsDecorator,
     (Story) => (
       <MemoryRouter>

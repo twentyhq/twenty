@@ -9,7 +9,6 @@ import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/con
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { RecoilRoot } from 'recoil';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
@@ -37,7 +36,7 @@ const meta: Meta<typeof UploadStep> = {
       </RecoilRoot>
     ),
     SnackBarDecorator,
-    I18nFrontDecorator,
+    ,
   ],
 };
 

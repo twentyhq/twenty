@@ -5,7 +5,6 @@ import {
   ComponentWithRouterDecorator,
 } from 'twenty-ui/testing';
 import { SettingsGraphQLPlayground } from '~/pages/settings/developers/playground/SettingsGraphQLPlayground';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<any> = {
@@ -13,7 +12,7 @@ const meta: Meta<any> = {
   component: SettingsGraphQLPlayground,
   decorators: [
     ComponentDecorator,
-    I18nFrontDecorator,
+    ,
     ComponentWithRouterDecorator,
   ],
   parameters: {

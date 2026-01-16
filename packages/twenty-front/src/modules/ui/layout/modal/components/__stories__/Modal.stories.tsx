@@ -7,7 +7,6 @@ import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { type SetRecoilState } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { sleep } from '~/utils/sleep';
 
@@ -37,7 +36,7 @@ const initializeState = ({ set }: { set: SetRecoilState }) => {
 const meta: Meta<typeof Modal> = {
   title: 'UI/Layout/Modal/Modal',
   component: Modal,
-  decorators: [I18nFrontDecorator, RootDecorator, ComponentDecorator],
+  decorators: [RootDecorator, ComponentDecorator],
   parameters: {
     initializeState,
     disableHotkeyInitialization: true,

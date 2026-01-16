@@ -9,7 +9,6 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
@@ -34,7 +33,7 @@ const meta: Meta<typeof SettingsDataModelFieldSettingsFormCard> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     FormProviderDecorator,
-    I18nFrontDecorator,
+    ,
   ],
   args: {
     existingFieldMetadataId: fieldMetadataItem.id,

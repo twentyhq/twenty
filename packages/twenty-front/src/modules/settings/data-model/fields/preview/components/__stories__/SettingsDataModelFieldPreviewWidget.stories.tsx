@@ -5,7 +5,6 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -26,11 +25,11 @@ const meta: Meta<typeof SettingsDataModelFieldPreviewWidget> = {
     'Modules/Settings/DataModel/Fields/Preview/SettingsDataModelFieldPreviewWidget',
   component: SettingsDataModelFieldPreviewWidget,
   decorators: [
-    I18nFrontDecorator,
+    ,
     MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    I18nFrontDecorator,
+    ,
     SnackBarDecorator,
   ],
   args: {

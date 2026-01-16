@@ -22,7 +22,6 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -119,7 +118,7 @@ const meta: Meta = {
   decorators: [
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
-    I18nFrontDecorator,
+    ,
   ],
   parameters: {
     clearMocks: true,

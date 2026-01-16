@@ -6,7 +6,6 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
@@ -27,7 +26,7 @@ const meta: Meta<typeof SettingsDataModelObjectAboutForm> = {
         <Story />
       </StyledContainer>
     ),
-    I18nFrontDecorator,
+    ,
     FormProviderDecorator,
     IconsProviderDecorator,
     ComponentDecorator,

@@ -7,7 +7,6 @@ import {
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MessageChannelVisibility } from '~/generated/graphql';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
@@ -17,7 +16,7 @@ const meta: Meta<typeof SettingsAccountsMessageChannelDetails> = {
   component: SettingsAccountsMessageChannelDetails,
   decorators: [
     ComponentDecorator,
-    I18nFrontDecorator,
+    ,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
   ],

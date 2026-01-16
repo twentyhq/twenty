@@ -4,7 +4,6 @@ import { RecordTableContextProvider } from '@/object-record/record-table/compone
 import { RecordTableEmptyStateNoGroupNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoGroupNoRecordAtAll';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator';
@@ -32,7 +31,7 @@ const meta: Meta = {
     ContextStoreDecorator,
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
-    I18nFrontDecorator,
+    ,
     ScrollWrapperDecorator,
   ],
   parameters: {

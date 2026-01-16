@@ -15,7 +15,6 @@ import {
   getCanvasElementForDropdownTesting,
 } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 const deleteMock = test.fn();
 const addToFavoritesMock = test.fn();
 const exportMock = test.fn();
@@ -24,7 +23,7 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
   title: 'Modules/ActionMenu/CommandMenuActionMenuDropdown',
   component: CommandMenuActionMenuDropdown,
   decorators: [
-    I18nFrontDecorator,
+    ,
     (Story) => (
       <RecoilRoot
         initializeState={({ set }) => {

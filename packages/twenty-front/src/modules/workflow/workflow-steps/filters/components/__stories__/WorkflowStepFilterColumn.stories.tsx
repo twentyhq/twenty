@@ -8,7 +8,6 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
@@ -45,7 +44,7 @@ const meta: Meta<typeof WorkflowStepFilterColumn> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     WorkspaceDecorator,
-    I18nFrontDecorator,
+    ,
     WorkflowStepFilterDecorator,
   ],
 };
