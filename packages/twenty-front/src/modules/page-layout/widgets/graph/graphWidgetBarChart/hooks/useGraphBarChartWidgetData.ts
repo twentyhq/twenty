@@ -7,6 +7,7 @@ import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColo
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
 import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
+import { extractBarChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractBarChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useQuery } from '@apollo/client';
 import { type BarDatum } from '@nivo/bar';
@@ -53,6 +54,11 @@ export const useGraphBarChartWidgetData = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
+  const dataConfiguration = useMemo(
+    () => extractBarChartDataConfiguration(configuration),
+    [configuration],
+  );
+
   const {
     data: queryData,
     loading,
@@ -62,7 +68,7 @@ export const useGraphBarChartWidgetData = ({
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,
-        configuration,
+        configuration: dataConfiguration,
       },
     },
   });
@@ -164,7 +170,7 @@ export const useGraphBarChartWidgetData = ({
     xAxisLabel: queryData?.barChartData?.xAxisLabel,
     yAxisLabel: queryData?.barChartData?.yAxisLabel,
     showDataLabels: configuration.displayDataLabel ?? false,
-    showLegend: queryData?.barChartData?.showLegend ?? true,
+    showLegend: configuration.displayLegend ?? true,
     layout: queryData?.barChartData?.layout,
     hasTooManyGroups: queryData?.barChartData?.hasTooManyGroups ?? false,
     colorMode,

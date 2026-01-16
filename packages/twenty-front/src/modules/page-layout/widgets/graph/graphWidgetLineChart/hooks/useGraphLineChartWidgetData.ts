@@ -8,6 +8,7 @@ import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColo
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
 import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
+import { extractLineChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractLineChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
@@ -46,6 +47,11 @@ export const useGraphLineChartWidgetData = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
+  const dataConfiguration = useMemo(
+    () => extractLineChartDataConfiguration(configuration),
+    [configuration],
+  );
+
   const {
     data: queryData,
     loading,
@@ -55,7 +61,7 @@ export const useGraphLineChartWidgetData = ({
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,
-        configuration,
+        configuration: dataConfiguration,
       },
     },
   });
@@ -154,7 +160,7 @@ export const useGraphLineChartWidgetData = ({
     xAxisLabel: queryData?.lineChartData?.xAxisLabel,
     yAxisLabel: queryData?.lineChartData?.yAxisLabel,
     showDataLabels: configuration.displayDataLabel ?? false,
-    showLegend: queryData?.lineChartData?.showLegend ?? true,
+    showLegend: configuration.displayLegend ?? true,
     hasTooManyGroups: queryData?.lineChartData?.hasTooManyGroups ?? false,
     colorMode,
     formattedToRawLookup,

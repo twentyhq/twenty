@@ -8,6 +8,7 @@ import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColo
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
 import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
+import { extractPieChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractPieChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
@@ -43,6 +44,11 @@ export const useGraphPieChartWidgetData = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
+  const dataConfiguration = useMemo(
+    () => extractPieChartDataConfiguration(configuration),
+    [configuration],
+  );
+
   const {
     data: queryData,
     loading,
@@ -52,7 +58,7 @@ export const useGraphPieChartWidgetData = ({
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,
-        configuration,
+        configuration: dataConfiguration,
       },
     },
   });
@@ -131,7 +137,7 @@ export const useGraphPieChartWidgetData = ({
 
   return {
     data: chartData,
-    showLegend: queryData?.pieChartData?.showLegend ?? true,
+    showLegend: configuration.displayLegend ?? true,
     showDataLabels: configuration.displayDataLabel ?? false,
     showCenterMetric: configuration.showCenterMetric ?? true,
     hasTooManyGroups: queryData?.pieChartData?.hasTooManyGroups ?? false,
