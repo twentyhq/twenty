@@ -47,6 +47,12 @@ describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
         value: false,
         workspaceId: 'workspaceId',
       },
+      {
+        key: BillingEntitlementKey.RLS,
+        stripeCustomerId: 'cus_123',
+        value: false,
+        workspaceId: 'workspaceId',
+      },
     ]);
   });
 
@@ -86,7 +92,13 @@ describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
         stripeCustomerId: 'cus_123',
       },
       {
-        key: 'CUSTOM_DOMAIN',
+        key: BillingEntitlementKey.CUSTOM_DOMAIN,
+        stripeCustomerId: 'cus_123',
+        value: false,
+        workspaceId: 'workspaceId',
+      },
+      {
+        key: BillingEntitlementKey.RLS,
         stripeCustomerId: 'cus_123',
         value: false,
         workspaceId: 'workspaceId',
