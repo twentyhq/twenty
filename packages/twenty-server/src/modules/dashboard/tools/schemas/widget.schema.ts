@@ -358,9 +358,6 @@ const richTextConfigSchema = z.object({
       blocknote: z.string().nullable().optional(),
       markdown: z.string().nullable().optional(),
     })
-    .refine((value) => value.blocknote != null || value.markdown != null, {
-      message: 'body must include blocknote or markdown',
-    })
     .describe('Rich text content (RichTextV2Body)'),
 });
 

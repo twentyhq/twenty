@@ -24,7 +24,7 @@ const updateDashboardWidgetSchema = z.object({
     .uuid()
     .optional()
     .describe('New object metadata ID'),
-  configuration: widgetConfigurationSchemaWithoutDefaults,
+  configuration: widgetConfigurationSchemaWithoutDefaults.optional(),
 });
 
 export const createUpdateDashboardWidgetTool = (
