@@ -225,7 +225,8 @@
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "vitest run --coverage"
+        "command": "vitest run --coverage --shard={args.shard}",
+        "shard": "1/1"
       }
     },
     "storybook:test:no-coverage": {
@@ -236,7 +237,7 @@
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "vitest run"
+        "command": "vitest run --shard={args.shard}"
       }
     },
     "storybook:coverage": {
