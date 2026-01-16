@@ -32,11 +32,34 @@ export const copyAndBuildDependencies = async (
     recursive: true,
   });
 
+  const yarnrcPath = join(buildDirectory, '.yarnrc.yml');
+  let yarnCommand = 'yarn';
+
   try {
-    await execPromise('yarn', { cwd: buildDirectory });
+    const yarnrc = await fs.readFile(yarnrcPath, 'utf8');
+    const match = yarnrc.match(/yarnPath:\s*(.+)/);
+
+    if (match) {
+      const yarnPath = match[1].trim();
+      yarnCommand = `${process.execPath} ${join(buildDirectory, yarnPath)}`;
+    }
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+      throw error;
+    }
+  }
+
+  try {
+    await execPromise(yarnCommand, { cwd: buildDirectory });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    throw new Error(error.stdout);
+    const standardOutput = error?.stdout ? String(error.stdout) : '';
+    const standardError = error?.stderr ? String(error.stderr) : '';
+    const combinedErrorMessage =
+      [standardOutput, standardError].filter(Boolean).join('\n') ||
+      'Failed to install serverless dependencies';
+
+    throw new Error(combinedErrorMessage);
   }
   const objects = await fs.readdir(buildDirectory);
 

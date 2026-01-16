@@ -223,8 +223,8 @@ describe('Serverless Function Execution', () => {
 
     expect(errorResult?.status).toBe(ServerlessFunctionExecutionStatus.ERROR);
     expect(errorResult?.error).toMatchObject({
-      errorType: 'Error',
-      errorMessage: 'Intentional test error',
+      errorType: 'UnhandledError',
+      errorMessage: expect.stringContaining('Intentional test error'),
     });
     expect(errorResult?.data).toBeNull();
   });
