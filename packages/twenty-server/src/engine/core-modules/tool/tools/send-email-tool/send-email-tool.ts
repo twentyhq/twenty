@@ -5,7 +5,7 @@ import { render, toPlainText } from '@react-email/render';
 import DOMPurify from 'dompurify';
 import { reactMarkupFromJSON } from 'twenty-emails';
 import {
-  extractFolderPathFilenameAndType,
+  extractFolderPathFilenameAndTypeOrThrow,
   isDefined,
   isValidUuid,
 } from 'twenty-shared/utils';
@@ -157,7 +157,7 @@ export class SendEmailTool implements Tool {
     for (const fileMetadata of files) {
       const fileEntity = fileEntityMap.get(fileMetadata.id)!;
 
-      const { folderPath, filename } = extractFolderPathFilenameAndType(
+      const { folderPath, filename } = extractFolderPathFilenameAndTypeOrThrow(
         fileEntity.path,
       );
 
