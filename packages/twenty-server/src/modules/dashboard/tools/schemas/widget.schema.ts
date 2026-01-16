@@ -1,3 +1,4 @@
+import { isNumber } from '@sniptt/guards';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { z } from 'zod';
 
@@ -153,8 +154,8 @@ const withRangeMinMaxRefinement = <T extends z.ZodType<RangeMinMaxFields>>(
   schema.refine(
     (data) =>
       !(
-        typeof data.rangeMin === 'number' &&
-        typeof data.rangeMax === 'number' &&
+        isNumber(data.rangeMin) &&
+        isNumber(data.rangeMax) &&
         data.rangeMin > data.rangeMax
       ),
     {
