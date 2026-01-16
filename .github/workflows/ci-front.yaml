@@ -83,8 +83,10 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Build twenty-shared
-        run: npx nx build twenty-shared
+      - name: Build dependencies
+        run: |
+          npx nx build twenty-shared
+          npx nx build twenty-ui
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
       - name: Front / Write .env
