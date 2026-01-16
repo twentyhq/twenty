@@ -283,8 +283,15 @@ export class WorkspaceInsertQueryBuilder<
       ? this.expressionMap.valuesSet
       : [this.expressionMap.valuesSet];
 
+    const valuesToInsertFormatted = formatResult<T[]>(
+      valuesToInsert,
+      objectMetadata,
+      this.internalContext.flatObjectMetadataMaps,
+      this.internalContext.flatFieldMetadataMaps,
+    );
+
     validateRLSPredicatesForRecords({
-      records: valuesToInsert,
+      records: valuesToInsertFormatted,
       objectMetadata,
       internalContext: this.internalContext,
       authContext: this.authContext,
