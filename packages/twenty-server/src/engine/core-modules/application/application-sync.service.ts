@@ -369,12 +369,16 @@ export class ApplicationSyncService {
   private isRelationFieldManifest(
     field: FieldManifest | RelationFieldManifest,
   ): field is RelationFieldManifest {
-    return field.type === FieldMetadataType.RELATION;
+    return this.isFieldTypeRelation(field.type);
+  }
+
+  private isFieldTypeRelation(type: FieldMetadataType): boolean {
+    return type === FieldMetadataType.RELATION;
   }
 
   private async syncFieldsWithoutRelations({
     objectId,
-    fieldsToSync,
+    fieldsToSync: allFieldsToSync,
     workspaceId,
     applicationId,
   }: {
@@ -383,33 +387,14 @@ export class ApplicationSyncService {
     applicationId: string;
     fieldsToSync?: (FieldManifest | RelationFieldManifest)[];
   }) {
-    if (!isDefined(fieldsToSync)) {
+    if (!isDefined(allFieldsToSync)) {
       return;
     }
 
-    const regularFields = fieldsToSync.filter(
+    const fieldsToSync = allFieldsToSync.filter(
       (field): field is FieldManifest => !this.isRelationFieldManifest(field),
     );
 
-    await this.syncRegularFields({
-      objectId,
-      fieldsToSync: regularFields,
-      workspaceId,
-      applicationId,
-    });
-  }
-
-  private async syncRegularFields({
-    objectId,
-    fieldsToSync,
-    workspaceId,
-    applicationId,
-  }: {
-    objectId: string;
-    workspaceId: string;
-    applicationId: string;
-    fieldsToSync: FieldManifest[];
-  }) {
     if (fieldsToSync.length === 0) {
       return;
     }
@@ -425,7 +410,10 @@ export class ApplicationSyncService {
     const existingFields = Object.values(
       existingFlatFieldMetadataMaps.byId,
     ).filter(
-      (field) => isDefined(field) && field.objectMetadataId === objectId,
+      (field) =>
+        isDefined(field) &&
+        field.objectMetadataId === objectId &&
+        !this.isFieldTypeRelation(field.type),
     ) as FlatFieldMetadata[];
 
     const fieldsToSyncUniversalIds = fieldsToSync.map(
