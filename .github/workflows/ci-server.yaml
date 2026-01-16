@@ -215,6 +215,10 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
+      - name: Enable corepack for integration tests
+        run: |
+          corepack enable
+          corepack prepare yarn@4.9.2 --activate
       - name: Update .env.test for integrations tests
         run: |
           echo "" >> .env.test
