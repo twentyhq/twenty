@@ -1,6 +1,5 @@
-import { EntityTarget, ObjectLiteral } from 'typeorm';
-
-import { AllMetadataName } from 'twenty-shared/metadata';
+import { type EntityTarget, type ObjectLiteral } from 'typeorm';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';

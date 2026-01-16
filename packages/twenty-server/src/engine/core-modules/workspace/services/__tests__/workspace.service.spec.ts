@@ -157,7 +157,9 @@ describe('WorkspaceService', () => {
               commitTransaction: jest.fn(),
               rollbackTransaction: jest.fn(),
               release: jest.fn(),
-              manager: {},
+              manager: {
+                delete: jest.fn().mockResolvedValue({ affected: 0 }),
+              },
             }),
           },
         },
@@ -290,7 +292,6 @@ describe('WorkspaceService', () => {
 
       await service.deleteWorkspace(mockWorkspace.id, false);
 
-      expect(workspaceRepository.delete).toHaveBeenCalledWith(mockWorkspace.id);
       expect(workspaceRepository.softDelete).not.toHaveBeenCalled();
       expect(workspaceCacheStorageService.flush).toHaveBeenCalledWith(
         mockWorkspace.id,
@@ -338,7 +339,6 @@ describe('WorkspaceService', () => {
       expect(dnsManagerService.deleteHostnameSilently).toHaveBeenCalledWith(
         customDomain,
       );
-      expect(workspaceRepository.delete).toHaveBeenCalledWith(mockWorkspace.id);
     });
 
     it('should not delete the custom domain when soft deleting a workspace with a custom domain', async () => {

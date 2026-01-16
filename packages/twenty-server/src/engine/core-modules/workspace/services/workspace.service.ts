@@ -36,8 +36,9 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
+import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -103,7 +104,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly customDomainManagerService: CustomDomainManagerService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -322,10 +322,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       return workspace;
     }
 
-    // Note: not relying on workspace id FK cascade deletion here to avoid query read timeout later on workspace deletion
-    await this.objectMetadataService.deleteWorkspaceAllObjectMetadata({
-      workspaceId: workspace.id,
-    });
+    await this.deleteWorkspaceSyncableMetadataEntities(workspace);
 
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspace.id);
 
@@ -354,6 +351,40 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     this.logger.log(`workspace ${id} hard deleted`);
 
     return workspace;
+  }
+
+  private async deleteWorkspaceSyncableMetadataEntities(workspace: WorkspaceEntity): Promise<void> {
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+
+    try {
+      await queryRunner.startTransaction();
+
+      for (const metadataName of ALL_METADATA_NAMES_SORTED_ATOMICALLY) {
+        const entity = ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName];
+
+        const result = await queryRunner.manager.delete(entity, {
+          workspaceId: workspace.id,
+        });
+
+        if (result.affected && result.affected > 0) {
+          this.logger.log(
+            `workspace ${workspace.id}: deleted ${result.affected} ${metadataName} record(s)`,
+          );
+        }
+      }
+
+      await queryRunner.manager.delete(WorkspaceEntity, { id: workspace.id });
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async handleRemoveWorkspaceMember(
