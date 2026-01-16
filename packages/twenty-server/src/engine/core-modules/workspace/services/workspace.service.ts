@@ -8,7 +8,7 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, QueryRunner, Repository } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -36,6 +36,7 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -364,6 +365,21 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       await queryRunner.startTransaction();
 
       for (const metadataName of ALL_METADATA_NAMES_SORTED_ATOMICALLY) {
+        if (metadataName === 'fieldMetadata') {
+          const deletedCount = await this.deleteFieldMetadataInChunks(
+            queryRunner,
+            workspace.id,
+          );
+
+          if (deletedCount > 0) {
+            this.logger.log(
+              `workspace ${workspace.id}: deleted ${deletedCount} ${metadataName} record(s)`,
+            );
+          }
+
+          continue;
+        }
+
         const entity = ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName];
 
         const result = await queryRunner.manager.delete(entity, {
@@ -377,8 +393,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         }
       }
 
-      await queryRunner.manager.delete(WorkspaceEntity, { id: workspace.id });
-
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -387,6 +401,81 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  // FieldMetadataEntity has a self-referencing FK (relationTargetFieldMetadataId)
+  // Related fields must be deleted together to avoid constraint violations
+  private async deleteFieldMetadataInChunks(
+    queryRunner: QueryRunner,
+    workspaceId: string,
+  ): Promise<number> {
+    const CHUNK_SIZE = 50;
+    let totalDeleted = 0;
+
+    const { flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps'],
+        },
+      );
+
+    const fields = Object.values(flatFieldMetadataMaps.byId).filter(isDefined);
+
+    if (fields.length === 0) {
+      return 0;
+    }
+
+    const processedIds = new Set<string>();
+    const fieldsMap = new Map(fields.map((field) => [field.id, field]));
+    const chunks: string[][] = [];
+    let currentChunk: string[] = [];
+
+    for (const field of fields) {
+      if (processedIds.has(field.id)) {
+        continue;
+      }
+
+      currentChunk.push(field.id);
+      processedIds.add(field.id);
+
+      if (field.relationTargetFieldMetadataId) {
+        const relatedField = fieldsMap.get(field.relationTargetFieldMetadataId);
+
+        if (relatedField && !processedIds.has(relatedField.id)) {
+          currentChunk.push(relatedField.id);
+          processedIds.add(relatedField.id);
+        }
+      }
+
+      if (currentChunk.length >= CHUNK_SIZE) {
+        chunks.push([...currentChunk]);
+        currentChunk = [];
+      }
+    }
+
+    if (currentChunk.length > 0) {
+      chunks.push(currentChunk);
+    }
+
+    for (const [index, chunk] of chunks.entries()) {
+      const result = await queryRunner.manager
+        .createQueryBuilder()
+        .delete()
+        .from(FieldMetadataEntity)
+        .whereInIds(chunk)
+        .execute();
+
+      const deletedInChunk = result.affected || 0;
+
+      totalDeleted += deletedInChunk;
+
+      this.logger.log(
+        `workspace ${workspaceId}: fieldMetadata chunk ${index + 1}/${chunks.length} - deleted ${deletedInChunk} record(s)`,
+      );
+    }
+
+    return totalDeleted;
   }
 
   async handleRemoveWorkspaceMember(
