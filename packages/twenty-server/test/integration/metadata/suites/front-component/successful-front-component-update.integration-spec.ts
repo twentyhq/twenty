@@ -1,9 +1,7 @@
 import { createFrontComponent } from 'test/integration/metadata/suites/front-component/utils/create-front-component.util';
-import { type DeleteFrontComponentFactoryInput } from 'test/integration/metadata/suites/front-component/utils/delete-front-component-query-factory.util';
 import { deleteFrontComponent } from 'test/integration/metadata/suites/front-component/utils/delete-front-component.util';
 import { updateFrontComponent } from 'test/integration/metadata/suites/front-component/utils/update-front-component.util';
-
-import { type UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
+import { isDefined } from 'twenty-shared/utils';
 
 describe('Front component update should succeed', () => {
   let testFrontComponentId: string | undefined;
@@ -20,14 +18,20 @@ describe('Front component update should succeed', () => {
   });
 
   afterEach(async () => {
-    await deleteFrontComponent({
-      expectToFail: false,
-      input: { id: testFrontComponentId } as DeleteFrontComponentFactoryInput,
-    });
-    testFrontComponentId = undefined;
+    if (isDefined(testFrontComponentId)) {
+      await deleteFrontComponent({
+        expectToFail: false,
+        input: { id: testFrontComponentId },
+      });
+      testFrontComponentId = undefined;
+    }
   });
 
   it('should update front component name', async () => {
+    if (!isDefined(testFrontComponentId)) {
+      throw new Error('testFrontComponentId should be defined');
+    }
+
     const { data } = await updateFrontComponent({
       expectToFail: false,
       input: {
@@ -35,7 +39,7 @@ describe('Front component update should succeed', () => {
         update: {
           name: 'updatedFrontComponentName',
         },
-      } as UpdateFrontComponentInput,
+      },
     });
 
     expect(data.updateFrontComponent).toMatchObject({

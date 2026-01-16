@@ -8,7 +8,7 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
+import { type FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 
 export const createFrontComponent = async ({
   input,
@@ -16,7 +16,7 @@ export const createFrontComponent = async ({
   expectToFail = false,
   token,
 }: PerformMetadataQueryParams<CreateFrontComponentFactoryInput>): CommonResponseBody<{
-  createFrontComponent: CreateFrontComponentInput;
+  createFrontComponent: FrontComponentDTO;
 }> => {
   const graphqlOperation = createFrontComponentQueryFactory({
     input,

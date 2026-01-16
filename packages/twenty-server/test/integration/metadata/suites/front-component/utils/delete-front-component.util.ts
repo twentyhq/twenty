@@ -8,13 +8,15 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
+import { type FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
+
 export const deleteFrontComponent = async ({
   input,
   gqlFields,
   expectToFail = false,
   token,
 }: PerformMetadataQueryParams<DeleteFrontComponentFactoryInput>): CommonResponseBody<{
-  deleteFrontComponent: DeleteFrontComponentFactoryInput;
+  deleteFrontComponent: FrontComponentDTO;
 }> => {
   const graphqlOperation = deleteFrontComponentQueryFactory({
     input,
