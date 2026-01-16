@@ -83,6 +83,11 @@ export const ALL_METADATA_RELATIONS = {
     manyToOne: {
       workspace: null,
       application: null,
+      availabilityObjectMetadata: {
+        metadataName: 'objectMetadata',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'availabilityObjectMetadataId',
+      },
     },
     oneToMany: {},
   },
