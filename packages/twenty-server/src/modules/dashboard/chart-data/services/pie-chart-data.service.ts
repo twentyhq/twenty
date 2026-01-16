@@ -214,6 +214,8 @@ export class PieChartDataService {
       getFieldValue: (item) => item.id,
       getNumericValue: (item) => item.value,
       selectFieldOptions: selectOptions,
+      fieldType: groupByField.type,
+      dateGranularity: configuration.dateGranularity,
     });
 
     const data: PieChartDataItemDTO[] = sortedData.map(

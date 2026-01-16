@@ -273,6 +273,7 @@ export class LineChartDataService {
       selectFieldOptions: selectOptions,
       fieldType: primaryAxisGroupByField.type,
       subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
+      dateGranularity: configuration.primaryAxisDateGranularity,
     });
 
     const limitedSortedData = sortedData.slice(
@@ -447,6 +448,7 @@ export class LineChartDataService {
       selectFieldOptions: primarySelectOptions,
       fieldType: primaryAxisGroupByField.type,
       subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
+      dateGranularity: configuration.primaryAxisDateGranularity,
     });
 
     const limitedXValues = sortedXValues.slice(
@@ -589,6 +591,7 @@ export class LineChartDataService {
       selectFieldOptions: secondarySelectOptions,
       fieldType: secondaryAxisGroupByField.type,
       subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
+      dateGranularity: configuration.secondaryAxisGroupByDateGranularity,
     });
   }
 

@@ -1,5 +1,8 @@
 import { Temporal } from 'temporal-polyfill';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 import {
   isDefined,
   isFieldMetadataDateKind,
@@ -7,6 +10,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
+import { isCyclicalDateGranularity } from 'src/modules/dashboard/chart-data/utils/is-cyclical-date-granularity.util';
 
 const parseDate = (
   rawValue: RawDimensionValue | undefined,
@@ -28,6 +32,7 @@ type CompareDimensionValuesParams = {
   direction: 'ASC' | 'DESC';
   fieldType?: FieldMetadataType;
   subFieldName?: string;
+  dateGranularity?: ObjectRecordGroupByDateGranularity | null;
 };
 
 export const compareDimensionValues = ({
@@ -38,12 +43,16 @@ export const compareDimensionValues = ({
   direction,
   fieldType,
   subFieldName,
+  dateGranularity,
 }: CompareDimensionValuesParams): number => {
   const applyDirection = (comparison: number) =>
     direction === 'ASC' ? comparison : -comparison;
 
   if (isDefined(fieldType)) {
-    if (isFieldMetadataDateKind(fieldType)) {
+    if (
+      isFieldMetadataDateKind(fieldType) &&
+      !isCyclicalDateGranularity(dateGranularity)
+    ) {
       const dateA = parseDate(rawValueA);
       const dateB = parseDate(rawValueB);
 

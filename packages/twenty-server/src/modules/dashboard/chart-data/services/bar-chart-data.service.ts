@@ -273,6 +273,7 @@ export class BarChartDataService {
       selectFieldOptions: selectOptions,
       fieldType: primaryAxisGroupByField.type,
       subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
+      dateGranularity: configuration.primaryAxisDateGranularity,
     });
 
     const limitedSortedData = sortedData.slice(
@@ -471,6 +472,7 @@ export class BarChartDataService {
       selectFieldOptions: primarySelectOptions,
       fieldType: primaryAxisGroupByField.type,
       subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
+      dateGranularity: configuration.primaryAxisDateGranularity,
     });
 
     const limitedData = sortedData.slice(0, BAR_CHART_MAXIMUM_NUMBER_OF_BARS);
@@ -634,6 +636,7 @@ export class BarChartDataService {
       selectFieldOptions: secondarySelectOptions,
       fieldType: secondaryAxisGroupByField.type,
       subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
+      dateGranularity: configuration.secondaryAxisGroupByDateGranularity,
     });
   }
 

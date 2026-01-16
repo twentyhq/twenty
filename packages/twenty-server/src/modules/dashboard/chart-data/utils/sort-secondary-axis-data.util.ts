@@ -1,4 +1,7 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
+import {
+  type FieldMetadataType,
+  type ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
@@ -18,6 +21,7 @@ type SortSecondaryAxisDataParams<T> = {
   getNumericValue: (item: T) => number;
   fieldType?: FieldMetadataType;
   subFieldName?: string;
+  dateGranularity?: ObjectRecordGroupByDateGranularity | null;
 };
 
 export const sortSecondaryAxisData = <T>({
@@ -30,6 +34,7 @@ export const sortSecondaryAxisData = <T>({
   getNumericValue,
   fieldType,
   subFieldName,
+  dateGranularity,
 }: SortSecondaryAxisDataParams<T>): T[] => {
   if (!isDefined(orderBy)) {
     return items;
@@ -50,6 +55,7 @@ export const sortSecondaryAxisData = <T>({
           direction: orderBy === GraphOrderBy.FIELD_ASC ? 'ASC' : 'DESC',
           fieldType,
           subFieldName,
+          dateGranularity,
         });
       });
 

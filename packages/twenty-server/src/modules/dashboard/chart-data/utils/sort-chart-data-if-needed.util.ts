@@ -1,4 +1,7 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
+import {
+  type FieldMetadataType,
+  type ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
@@ -22,6 +25,7 @@ type SortChartDataParams<T> = {
   selectFieldOptions?: FieldMetadataOption[] | null;
   fieldType?: FieldMetadataType;
   subFieldName?: string;
+  dateGranularity?: ObjectRecordGroupByDateGranularity | null;
 };
 
 export const sortChartDataIfNeeded = <T>({
@@ -34,6 +38,7 @@ export const sortChartDataIfNeeded = <T>({
   selectFieldOptions,
   fieldType,
   subFieldName,
+  dateGranularity,
 }: SortChartDataParams<T>): T[] => {
   if (!isDefined(orderBy)) {
     return data;
@@ -74,6 +79,7 @@ export const sortChartDataIfNeeded = <T>({
           direction: orderBy === GraphOrderBy.FIELD_ASC ? 'ASC' : 'DESC',
           fieldType,
           subFieldName,
+          dateGranularity,
         });
       });
     case GraphOrderBy.FIELD_POSITION_ASC:
