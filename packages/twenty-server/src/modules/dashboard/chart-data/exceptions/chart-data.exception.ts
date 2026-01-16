@@ -13,15 +13,6 @@ export enum ChartDataExceptionCode {
   TRANSFORMATION_FAILED = 'TRANSFORMATION_FAILED',
 }
 
-export enum ChartDataExceptionMessageKey {
-  WIDGET_NOT_FOUND = 'WIDGET_NOT_FOUND',
-  INVALID_WIDGET_CONFIGURATION = 'INVALID_WIDGET_CONFIGURATION',
-  OBJECT_METADATA_NOT_FOUND = 'OBJECT_METADATA_NOT_FOUND',
-  FIELD_METADATA_NOT_FOUND = 'FIELD_METADATA_NOT_FOUND',
-  QUERY_EXECUTION_FAILED = 'QUERY_EXECUTION_FAILED',
-  TRANSFORMATION_FAILED = 'TRANSFORMATION_FAILED',
-}
-
 const getChartDataExceptionUserFriendlyMessage = (
   code: ChartDataExceptionCode,
 ): MessageDescriptor => {
@@ -57,17 +48,17 @@ export class ChartDataException extends CustomException<ChartDataExceptionCode> 
 }
 
 export const generateChartDataExceptionMessage = (
-  messageKey: ChartDataExceptionMessageKey,
+  code: ChartDataExceptionCode,
   context?: string,
 ): string => {
-  const messages: Record<ChartDataExceptionMessageKey, string> = {
-    [ChartDataExceptionMessageKey.WIDGET_NOT_FOUND]: `Widget not found${context ? `: ${context}` : ''}`,
-    [ChartDataExceptionMessageKey.INVALID_WIDGET_CONFIGURATION]: `Invalid widget configuration${context ? `: ${context}` : ''}`,
-    [ChartDataExceptionMessageKey.OBJECT_METADATA_NOT_FOUND]: `Object metadata not found${context ? `: ${context}` : ''}`,
-    [ChartDataExceptionMessageKey.FIELD_METADATA_NOT_FOUND]: `Field metadata not found${context ? `: ${context}` : ''}`,
-    [ChartDataExceptionMessageKey.QUERY_EXECUTION_FAILED]: `Query execution failed${context ? `: ${context}` : ''}`,
-    [ChartDataExceptionMessageKey.TRANSFORMATION_FAILED]: `Transformation failed${context ? `: ${context}` : ''}`,
+  const messages: Record<ChartDataExceptionCode, string> = {
+    [ChartDataExceptionCode.WIDGET_NOT_FOUND]: `Widget not found${context ? `: ${context}` : ''}`,
+    [ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION]: `Invalid widget configuration${context ? `: ${context}` : ''}`,
+    [ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND]: `Object metadata not found${context ? `: ${context}` : ''}`,
+    [ChartDataExceptionCode.FIELD_METADATA_NOT_FOUND]: `Field metadata not found${context ? `: ${context}` : ''}`,
+    [ChartDataExceptionCode.QUERY_EXECUTION_FAILED]: `Query execution failed${context ? `: ${context}` : ''}`,
+    [ChartDataExceptionCode.TRANSFORMATION_FAILED]: `Transformation failed${context ? `: ${context}` : ''}`,
   };
 
-  return messages[messageKey];
+  return messages[code];
 };

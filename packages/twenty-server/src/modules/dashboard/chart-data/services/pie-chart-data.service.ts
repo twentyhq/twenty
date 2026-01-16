@@ -21,7 +21,6 @@ import { PieChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/out
 import {
   ChartDataException,
   ChartDataExceptionCode,
-  ChartDataExceptionMessageKey,
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
@@ -53,7 +52,7 @@ export class PieChartDataService {
     if (configuration.configurationType !== WidgetConfigurationType.PIE_CHART) {
       throw new ChartDataException(
         generateChartDataExceptionMessage(
-          ChartDataExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
+          ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
           `Expected PIE_CHART, got ${configuration.configurationType}`,
         ),
         ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
@@ -71,7 +70,7 @@ export class PieChartDataService {
     if (!isDefined(objectMetadataId)) {
       throw new ChartDataException(
         generateChartDataExceptionMessage(
-          ChartDataExceptionMessageKey.OBJECT_METADATA_NOT_FOUND,
+          ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
           'Widget has no objectMetadataId',
         ),
         ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
@@ -83,7 +82,7 @@ export class PieChartDataService {
     if (!isDefined(flatObjectMetadata)) {
       throw new ChartDataException(
         generateChartDataExceptionMessage(
-          ChartDataExceptionMessageKey.OBJECT_METADATA_NOT_FOUND,
+          ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
           objectMetadataId,
         ),
         ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,

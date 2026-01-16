@@ -25,7 +25,6 @@ import { BarChartSeriesDTO } from 'src/modules/dashboard/chart-data/dtos/outputs
 import {
   ChartDataException,
   ChartDataExceptionCode,
-  ChartDataExceptionMessageKey,
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import {
@@ -76,7 +75,7 @@ export class BarChartDataService {
     if (!isDefined(objectMetadataId)) {
       throw new ChartDataException(
         generateChartDataExceptionMessage(
-          ChartDataExceptionMessageKey.OBJECT_METADATA_NOT_FOUND,
+          ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
           'Widget has no objectMetadataId',
         ),
         ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
@@ -88,7 +87,7 @@ export class BarChartDataService {
     if (!isDefined(flatObjectMetadata)) {
       throw new ChartDataException(
         generateChartDataExceptionMessage(
-          ChartDataExceptionMessageKey.OBJECT_METADATA_NOT_FOUND,
+          ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
           objectMetadataId,
         ),
         ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
