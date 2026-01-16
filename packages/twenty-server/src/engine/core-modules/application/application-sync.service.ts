@@ -685,12 +685,6 @@ export class ApplicationSyncService {
         workspaceId,
         applicationId,
       });
-
-      await this.syncRelations({
-        objectsToSync: [objectToSync],
-        workspaceId,
-        applicationId,
-      });
     }
 
     const dataSourceMetadata =
