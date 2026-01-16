@@ -1,5 +1,3 @@
-import { afterEach } from 'node:test';
-
 import { createSkill } from 'test/integration/metadata/suites/skill/utils/create-skill.util';
 import { deleteSkill } from 'test/integration/metadata/suites/skill/utils/delete-skill.util';
 import { updateSkill } from 'test/integration/metadata/suites/skill/utils/update-skill.util';
@@ -120,7 +118,7 @@ describe('Skill update should succeed', () => {
     const { data } = await updateSkill({
       expectToFail: false,
       input: {
-        id: testSkillId ?? '',
+        id: testSkillId,
         label: 'Unique Updated Label',
       },
     });
