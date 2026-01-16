@@ -204,10 +204,7 @@ export class BuildService {
           buildInstance.onResolve({ filter: regex }, async (args) => {
             const match = args.path.match(regex);
             if (match && alias.paths[0]) {
-              const resolvedPath = alias.paths[0].replace(
-                '*',
-                match[1] || '',
-              );
+              const resolvedPath = alias.paths[0].replace('*', match[1] || '');
 
               // Use esbuild's resolver to continue resolution
               // This handles file extensions (.ts, .js) and index files
@@ -295,12 +292,6 @@ export class BuildService {
 
     if (await fs.pathExists(assetsDir)) {
       await fs.copy(assetsDir, outputAssetsDir);
-    }
-
-    // Also copy any assets from src/assets if they exist
-    const srcAssetsDir = path.join(appPath, 'src', 'assets');
-    if (await fs.pathExists(srcAssetsDir)) {
-      await fs.copy(srcAssetsDir, outputAssetsDir);
     }
   }
 }
