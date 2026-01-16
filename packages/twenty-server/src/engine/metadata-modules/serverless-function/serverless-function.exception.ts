@@ -14,6 +14,7 @@ export enum ServerlessFunctionExceptionCode {
   SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED = 'SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED',
   SERVERLESS_FUNCTION_CREATE_FAILED = 'SERVERLESS_FUNCTION_CREATE_FAILED',
   SERVERLESS_FUNCTION_EXECUTION_TIMEOUT = 'SERVERLESS_FUNCTION_EXECUTION_TIMEOUT',
+  SERVERLESS_FUNCTION_DISABLED = 'SERVERLESS_FUNCTION_DISABLED',
 }
 
 const getServerlessFunctionExceptionUserFriendlyMessage = (
@@ -38,6 +39,8 @@ const getServerlessFunctionExceptionUserFriendlyMessage = (
       return msg`Failed to create function.`;
     case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_TIMEOUT:
       return msg`Function execution timed out.`;
+    case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_DISABLED:
+      return msg`Serverless function execution is disabled.`;
     default:
       assertUnreachable(code);
   }

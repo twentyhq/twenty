@@ -212,6 +212,7 @@ describe('Successful user and workspace creation', () => {
         isAuthRequired: true,
         httpMethod: HTTPMethod.GET,
         serverlessFunctionId: serverlessFunction.id,
+        forwardedRequestHeaders: [],
       },
       token: newWorkspaceAccessToken,
       expectToFail: false,
