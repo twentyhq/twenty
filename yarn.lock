@@ -8712,21 +8712,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lingui/core@npm:^5.1.2, @lingui/core@npm:^5.5.1":
-  version: 5.5.1
-  resolution: "@lingui/core@npm:5.5.1"
+"@lingui/core@npm:5.1.2":
+  version: 5.1.2
+  resolution: "@lingui/core@npm:5.1.2"
   dependencies:
     "@babel/runtime": "npm:^7.20.13"
-    "@lingui/message-utils": "npm:5.5.1"
+    "@lingui/message-utils": "npm:^5.1.2"
+    unraw: "npm:^3.0.0"
   peerDependencies:
-    "@lingui/babel-plugin-lingui-macro": 5.5.1
+    "@lingui/babel-plugin-lingui-macro": 5.1.2
     babel-plugin-macros: 2 || 3
   peerDependenciesMeta:
     "@lingui/babel-plugin-lingui-macro":
       optional: true
     babel-plugin-macros:
       optional: true
-  checksum: 10c0/8d416fbefb63beec51e6e293f7143089db3a9910095482502099afd82ce873d20cefd69ecc489617da6f85e94ac1583c53825a906be8146db041c6b430b37b37
+  checksum: 10c0/94092bc8630395af5093c0661c1d8f8d6525f09d55be5e68f948e5b9c79e47ef627b12c6102dbe764113695e477a6bb46caae335869b4ef818e452ef202520ac
   languageName: node
   linkType: hard
 
@@ -8749,7 +8750,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lingui/message-utils@npm:5.5.1, @lingui/message-utils@npm:^5.1.2":
+"@lingui/message-utils@npm:^5.1.2":
   version: 5.5.1
   resolution: "@lingui/message-utils@npm:5.5.1"
   dependencies:
@@ -22017,10 +22018,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/qs@npm:*, @types/qs@npm:^6.9.18":
-  version: 6.14.0
-  resolution: "@types/qs@npm:6.14.0"
-  checksum: 10c0/5b3036df6e507483869cdb3858201b2e0b64b4793dc4974f188caa5b5732f2333ab9db45c08157975054d3b070788b35088b4bc60257ae263885016ee2131310
+"@types/qs@npm:6.9.16":
+  version: 6.9.16
+  resolution: "@types/qs@npm:6.9.16"
+  checksum: 10c0/a4e871b80fff623755e356fd1f225aea45ff7a29da30f99fddee1a05f4f5f33485b314ab5758145144ed45708f97e44595aa9a8368e9bbc083932f931b12dbb6
   languageName: node
   linkType: hard
 
@@ -53186,7 +53187,7 @@ __metadata:
   resolution: "twenty-shared@workspace:packages/twenty-shared"
   dependencies:
     "@babel/preset-env": "npm:^7.26.9"
-    "@lingui/core": "npm:^5.5.1"
+    "@lingui/core": "npm:^5.1.2"
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
     "@types/babel__preset-env": "npm:^7"
@@ -54416,6 +54417,13 @@ __metadata:
     picomatch: "npm:^4.0.3"
     webpack-virtual-modules: "npm:^0.6.2"
   checksum: 10c0/273c1eab0eca4470c7317428689295c31dbe8ab0b306504de9f03cd20c156debb4131bef24b27ac615862958c5dd950a3951d26c0723ea774652ab3624149cff
+  languageName: node
+  linkType: hard
+
+"unraw@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "unraw@npm:3.0.0"
+  checksum: 10c0/cd1e7a961c8dc075bdf07300bc046da6bc8c4f1b88c68191c392520f0c64914fa783d48f2431c668f79b1afbd4bab16e864c7aca3cc06ddc94567c1fec114b43
   languageName: node
   linkType: hard
 
