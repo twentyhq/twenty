@@ -6,6 +6,7 @@
 "project_id": 2
 "preserve_hierarchy": true
 "base_url": "https://twenty.api.crowdin.com"
+"base_path": ".."
 
 files: [
   {
