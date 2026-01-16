@@ -25,13 +25,13 @@ export class AddCommandMenuItemEntity1768503887441
       `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "FK_ad42dd64b117491a38120466d65" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "FK_command_menu_item_availability_object_metadata" FOREIGN KEY ("availabilityObjectMetadataId") REFERENCES "core"."objectMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "FK_6e050fb56a8385718123a4f8bc6" FOREIGN KEY ("availabilityObjectMetadataId") REFERENCES "core"."objectMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT "FK_command_menu_item_availability_object_metadata"`,
+      `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT "FK_6e050fb56a8385718123a4f8bc6"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT "FK_ad42dd64b117491a38120466d65"`,
