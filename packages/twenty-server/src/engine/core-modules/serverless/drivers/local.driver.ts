@@ -1,7 +1,6 @@
 import { promises as fs } from 'fs';
+import { spawn } from 'node:child_process';
 import { join } from 'path';
-
-import ivm from 'isolated-vm';
 
 import {
   type ServerlessDriver,
@@ -10,16 +9,14 @@ import {
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
-import { buildServerlessFunctionForIsolate } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-for-isolate';
+import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
+import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-
-const MEMORY_LIMIT_MB = 128;
-const EXECUTION_TIMEOUT_MS = 30_000;
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -74,22 +71,35 @@ export class LocalDriver implements ServerlessDriver {
     version: string;
     env?: Record<string, string>;
   }): Promise<ServerlessExecuteResult> {
+    await this.build(serverlessFunction);
+
     const startTime = Date.now();
+
+    const folderPath = getServerlessFolder({
+      serverlessFunction,
+      version,
+    });
+
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
     try {
-      await this.build(serverlessFunction);
-
-      const folderPath = getServerlessFolder({
-        serverlessFunction,
-        version,
-      });
       const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
       await this.fileStorageService.download({
         from: { folderPath },
         to: { folderPath: sourceTemporaryDir },
       });
+
+      let builtBundleFilePath = '';
+
+      try {
+        builtBundleFilePath = await buildServerlessFunctionInMemory({
+          sourceTemporaryDir,
+          handlerPath: serverlessFunction.handlerPath,
+        });
+      } catch (error) {
+        return formatBuildError(error, startTime);
+      }
 
       try {
         await fs.symlink(
@@ -101,218 +111,248 @@ export class LocalDriver implements ServerlessDriver {
           'dir',
         );
       } catch (err) {
-        if ((err as NodeJS.ErrnoException).code !== 'EEXIST') {
+        if (err.code !== 'EEXIST') {
           throw err;
         }
       }
 
-      let builtBundleFilePath = '';
+      let logs = '';
 
-      try {
-        builtBundleFilePath = await buildServerlessFunctionForIsolate({
-          sourceTemporaryDir,
-          handlerPath: serverlessFunction.handlerPath,
+      const consoleListener = new ConsoleListener();
+
+      consoleListener.intercept((type, args) => {
+        const formattedArgs = args.map((arg) => {
+          if (typeof arg === 'object' && arg !== null) {
+            const seen = new WeakSet();
+
+            return JSON.stringify(
+              arg,
+              (_key, value) => {
+                if (typeof value === 'object' && value !== null) {
+                  if (seen.has(value)) {
+                    return '[Circular]'; // Handle circular references
+                  }
+                  seen.add(value);
+                }
+
+                return value;
+              },
+              2,
+            );
+          }
+
+          return arg;
         });
-      } catch (error) {
-        return formatBuildError(error, startTime);
-      }
 
-      const compiledCode = await fs.readFile(builtBundleFilePath, 'utf-8');
+        const formattedType = type === 'log' ? 'info' : type;
 
-      const result = await this.executeInIsolate({
-        code: compiledCode,
-        handlerName: serverlessFunction.handlerName,
-        payload,
-        env: env ?? {},
+        logs += `${new Date().toISOString()} ${formattedType.toUpperCase()} ${formattedArgs.join(' ')}\n`;
       });
 
-      const duration = Date.now() - startTime;
+      try {
+        const runnerPath = await this.writeBootstrapRunner({
+          dir: sourceTemporaryDir,
+          builtFileAbsPath: builtBundleFilePath,
+          handlerName: serverlessFunction.handlerName,
+        });
 
-      if (result.success) {
+        const { ok, result, error, stack, stdout, stderr } =
+          await this.runChildWithEnv({
+            runnerPath,
+            env: env ?? {},
+            payload,
+            timeoutMs: 900_000, // timeout is handled by the serverless function service
+          });
+
+        if (stdout)
+          logs +=
+            stdout
+              .split('\n')
+              .filter(Boolean)
+              .map((l) => `${new Date().toISOString()} INFO ${l}`)
+              .join('\n') + '\n';
+        if (stderr)
+          logs +=
+            stderr
+              .split('\n')
+              .filter(Boolean)
+              .map((l) => `${new Date().toISOString()} ERROR ${l}`)
+              .join('\n') + '\n';
+
+        const duration = Date.now() - startTime;
+
+        if (ok) {
+          return {
+            data: (result ?? null) as object | null,
+            logs,
+            duration,
+            status: ServerlessFunctionExecutionStatus.SUCCESS,
+          };
+        }
+
         return {
-          data: result.data,
-          logs: result.logs,
+          data: null,
+          logs,
           duration,
-          status: ServerlessFunctionExecutionStatus.SUCCESS,
+          error: {
+            errorType: 'UnhandledError',
+            errorMessage: error || 'Unknown error',
+            stackTrace: stack ? String(stack).split('\n') : [],
+          },
+          status: ServerlessFunctionExecutionStatus.ERROR,
         };
+      } finally {
+        consoleListener.release();
       }
-
-      return {
-        data: null,
-        logs: result.logs,
-        duration,
-        error: {
-          errorType: result.errorType || 'UnhandledError',
-          errorMessage: result.errorMessage || 'Unknown error',
-          stackTrace: result.stackTrace || [],
-        },
-        status: ServerlessFunctionExecutionStatus.ERROR,
-      };
-    } catch (error) {
-      const duration = Date.now() - startTime;
-      const err = error instanceof Error ? error : new Error(String(error));
-
-      return {
-        data: null,
-        logs: '',
-        duration,
-        error: {
-          errorType: err.name || 'ExecutionError',
-          errorMessage: err.message || 'Unknown error during execution',
-          stackTrace: err.stack ? err.stack.split('\n') : [],
-        },
-        status: ServerlessFunctionExecutionStatus.ERROR,
-      };
     } finally {
       await lambdaBuildDirectoryManager.clean();
     }
   }
 
-  private async executeInIsolate({
-    code,
+  async writeBootstrapRunner({
+    dir,
+    builtFileAbsPath,
     handlerName,
-    payload,
-    env,
   }: {
-    code: string;
+    dir: string;
+    builtFileAbsPath: string;
     handlerName: string;
-    payload: object;
-    env: Record<string, string>;
-  }): Promise<{
-    success: boolean;
-    data: object | null;
-    logs: string;
-    errorType?: string;
-    errorMessage?: string;
-    stackTrace?: string[];
-  }> {
-    const logs: string[] = [];
-    const isolate = new ivm.Isolate({ memoryLimit: MEMORY_LIMIT_MB });
+  }) {
+    const runnerPath = join(dir, '__runner.cjs');
+    const code = `
+      // Auto-generated. Do not edit.
+      const { pathToFileURL } = require('node:url');
 
-    try {
-      const context = await isolate.createContext();
-      const jail = context.global;
-
-      await jail.set('global', jail.derefInto());
-
-      const logCallback = (level: string) => {
-        return (...args: unknown[]) => {
-          const formattedArgs = args.map((arg) => {
-            if (typeof arg === 'object' && arg !== null) {
-              try {
-                return JSON.stringify(arg);
-              } catch {
-                return String(arg);
-              }
-            }
-
-            return String(arg);
-          });
-
-          logs.push(
-            `${new Date().toISOString()} ${level.toUpperCase()} ${formattedArgs.join(' ')}`,
-          );
-        };
-      };
-
-      await jail.set('_logInfo', new ivm.Callback(logCallback('info')), {});
-      await jail.set('_logWarn', new ivm.Callback(logCallback('warn')), {});
-      await jail.set('_logError', new ivm.Callback(logCallback('error')), {});
-      await jail.set('_logDebug', new ivm.Callback(logCallback('debug')), {});
-
-      await context.eval(`
-        const console = {
-          log: (...args) => _logInfo(...args),
-          info: (...args) => _logInfo(...args),
-          warn: (...args) => _logWarn(...args),
-          error: (...args) => _logError(...args),
-          debug: (...args) => _logDebug(...args),
-        };
-        Object.freeze(console);
-      `);
-
-      await jail.set('_env', new ivm.ExternalCopy(env).copyInto());
-      await context.eval(`
-        const process = { env: Object.freeze(_env) };
-        Object.freeze(process);
-        delete _env;
-      `);
-
-      await jail.set('_payload', new ivm.ExternalCopy(payload).copyInto());
-      await jail.set(
-        '_handlerName',
-        new ivm.ExternalCopy(handlerName).copyInto(),
-      );
-
-      const codeScript = await isolate.compileScript(code);
-
-      await codeScript.run(context, { timeout: EXECUTION_TIMEOUT_MS });
-
-      const invocationScript = await isolate.compileScript(`
-        if (typeof __serverlessExports === 'undefined' || typeof __serverlessExports[_handlerName] !== 'function') {
-          throw new Error('Handler function "' + _handlerName + '" not found in module exports');
-        }
-
-        (async () => {
-          try {
-            const result = await __serverlessExports[_handlerName](_payload);
-            return JSON.stringify({ success: true, data: result });
-          } catch (err) {
-            const errorObj = err != null ? err : {};
-            return JSON.stringify({
-              success: false,
-              errorType: errorObj.name || 'Error',
-              errorMessage: errorObj.message || String(err),
-              stackTrace: errorObj.stack ? errorObj.stack.split('\\n') : []
-            });
+      (async () => {
+        try {
+          const builtUrl = pathToFileURL(${JSON.stringify(builtFileAbsPath)});
+          const mod = await import(builtUrl.href);
+          if (typeof mod.${handlerName} !== 'function') {
+            throw new Error('Export "${handlerName}" not found in serverless bundle');
           }
-        })();
-      `);
 
-      const resultJson = await invocationScript.run(context, {
-        timeout: EXECUTION_TIMEOUT_MS,
-        promise: true,
+          let payload = undefined;
+          if (process.send) {
+            process.on('message', async (msg) => {
+              if (!msg || msg.type !== 'run') return;
+              try {
+                const out = await mod.${handlerName}(msg.payload);
+                process.send && process.send({ ok: true, result: out });
+                process.exit(0);
+              } catch (err) {
+                process.send && process.send({ ok: false, error: String(err), stack: err?.stack });
+                process.exit(1);
+              }
+            });
+          } else {
+            // Fallback: read payload from argv[2] (JSON) and print to stdout
+            const json = process.argv[2];
+            payload = json ? JSON.parse(json) : undefined;
+            const out = await mod.${handlerName}(payload);
+            console.log(JSON.stringify({ ok: true, result: out }));
+            process.exit(0);
+          }
+        } catch (err) {
+          const msg = String(err);
+          if (process.send) {
+            process.send({ ok: false, error: msg, stack: err?.stack });
+          } else {
+            console.error(msg);
+          }
+          process.exit(1);
+        }
+      })();
+    `;
+
+    await fs.writeFile(runnerPath, code, 'utf8');
+
+    return runnerPath;
+  }
+
+  runChildWithEnv(options: {
+    runnerPath: string;
+    env: Record<string, string>;
+    payload: unknown;
+    timeoutMs: number;
+  }) {
+    const { runnerPath, env, payload, timeoutMs } = options;
+
+    return new Promise<{
+      ok: boolean;
+      result?: unknown;
+      error?: string;
+      stack?: string;
+      stdout: string;
+      stderr: string;
+    }>((resolve, _) => {
+      const child = spawn(process.execPath, [runnerPath], {
+        env: { ...process.env, ...env },
+        stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
       });
 
-      const result = JSON.parse(resultJson as string);
+      let stdout = '';
+      let stderr = '';
+      let settled = false;
 
-      return {
-        success: result.success,
-        data: result.data ?? null,
-        logs: logs.join('\n') + (logs.length > 0 ? '\n' : ''),
-        errorType: result.errorType,
-        errorMessage: result.errorMessage,
-        stackTrace: result.stackTrace,
-      };
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      const isTimeout = errorMessage.includes('Script execution timed out');
-      const isMemory =
-        errorMessage.includes('Isolate was disposed') ||
-        errorMessage.includes('memory');
+      child.stdout?.on('data', (d) => (stdout += String(d)));
+      child.stderr?.on('data', (d) => (stderr += String(d)));
 
-      return {
-        success: false,
-        data: null,
-        logs: logs.join('\n') + (logs.length > 0 ? '\n' : ''),
-        errorType: isTimeout
-          ? 'TimeoutError'
-          : isMemory
-            ? 'MemoryError'
-            : 'IsolateError',
-        errorMessage: isTimeout
-          ? `Execution timed out after ${EXECUTION_TIMEOUT_MS}ms`
-          : isMemory
-            ? `Memory limit exceeded (${MEMORY_LIMIT_MB}MB)`
-            : errorMessage,
-        stackTrace:
-          error instanceof Error && error.stack ? error.stack.split('\n') : [],
-      };
-    } finally {
-      if (!isolate.isDisposed) {
-        isolate.dispose();
-      }
-    }
+      child.on(
+        'message',
+        (
+          msg:
+            | {
+                ok: true;
+                result?: unknown;
+                stdout?: string;
+                stderr?: string;
+              }
+            | {
+                ok: false;
+                error: string;
+                stack?: string;
+                stdout?: string;
+                stderr?: string;
+              },
+        ) => {
+          if (settled) return;
+          settled = true;
+          resolve({ ...msg, stdout, stderr });
+        },
+      );
+
+      child.on('exit', (code) => {
+        if (settled) return;
+        settled = true;
+        if (code === 0) {
+          // Fallback path if no IPC (shouldn’t happen with our stdio)
+          resolve({ ok: true, stdout, stderr });
+        } else {
+          resolve({
+            ok: false,
+            error: `Exited with code ${code}`,
+            stdout,
+            stderr,
+          });
+        }
+      });
+
+      const t = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        child.kill('SIGKILL');
+        resolve({
+          ok: false,
+          error: `Timed out after ${timeoutMs}ms`,
+          stdout,
+          stderr,
+        });
+      }, timeoutMs);
+
+      // Kick it off
+      child.send?.({ type: 'run', payload });
+
+      child.on('close', () => clearTimeout(t));
+    });
   }
 }

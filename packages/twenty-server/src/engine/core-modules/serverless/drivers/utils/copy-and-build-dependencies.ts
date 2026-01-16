@@ -41,31 +41,25 @@ export const copyAndBuildDependencies = async (
     }
   }
 
-  try {
-    await execPromise('yarn', { cwd: buildDirectory });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    const standardOutput = error?.stdout ? String(error.stdout) : '';
-    const standardError = error?.stderr ? String(error.stderr) : '';
-    const combinedErrorMessage =
-      [standardOutput, standardError].filter(Boolean).join('\n') ||
-      'Failed to install serverless dependencies';
-
-    if (process.env.NODE_ENV !== 'test') {
-      throw new Error(combinedErrorMessage);
-    }
-
+  if (process.env.NODE_ENV === 'test') {
     const repositoryNodeModulesPath = join(process.cwd(), 'node_modules');
     const buildNodeModulesPath = join(buildDirectory, 'node_modules');
 
+    await fs.access(repositoryNodeModulesPath);
+    await fs.rm(buildNodeModulesPath, { recursive: true, force: true });
+    await fs.symlink(repositoryNodeModulesPath, buildNodeModulesPath, 'dir');
+  } else {
     try {
-      await fs.access(repositoryNodeModulesPath);
-      await fs.rm(buildNodeModulesPath, { recursive: true, force: true });
-      await fs.symlink(repositoryNodeModulesPath, buildNodeModulesPath, 'dir');
-    } catch (linkError) {
-      const linkErrorMessage =
-        linkError instanceof Error ? linkError.message : String(linkError);
-      throw new Error(`${combinedErrorMessage}\n${linkErrorMessage}`);
+      await execPromise('yarn', { cwd: buildDirectory });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const standardOutput = error?.stdout ? String(error.stdout) : '';
+      const standardError = error?.stderr ? String(error.stderr) : '';
+      const combinedErrorMessage =
+        [standardOutput, standardError].filter(Boolean).join('\n') ||
+        'Failed to install serverless dependencies';
+
+      throw new Error(combinedErrorMessage);
     }
   }
   const objects = await fs.readdir(buildDirectory);

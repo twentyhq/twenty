@@ -294,7 +294,7 @@ yarn command:prod cron:workflow:automated-cron-trigger
 Twenty supports serverless functions for workflows and custom logic. The execution environment is configured via the `SERVERLESS_TYPE` environment variable.
 
 <Warning>
-**Security Notice:** The local serverless driver (`SERVERLESS_TYPE=LOCAL`) uses JavaScript-level isolation via V8 isolates ([isolated-vm](https://github.com/laverdet/isolated-vm)). While this prevents most attacks by sandboxing code execution with memory limits (128MB) and timeouts (30s), it is **not** equivalent to the hardware-level isolation provided by AWS Lambda. For production deployments handling untrusted code, we highly recommend using `SERVERLESS_TYPE=LAMBDA` or `SERVERLESS_TYPE=DISABLED`.
+**Security Notice:** The local serverless driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. It should only be used for trusted code in development. For production deployments handling untrusted code, we highly recommend using `SERVERLESS_TYPE=LAMBDA` or `SERVERLESS_TYPE=DISABLED`.
 </Warning>
 
 ### Available Drivers
@@ -302,7 +302,7 @@ Twenty supports serverless functions for workflows and custom logic. The executi
 | Driver | Environment Variable | Use Case | Security Level |
 |--------|---------------------|----------|----------------|
 | Disabled | `SERVERLESS_TYPE=DISABLED` | Disable serverless functions entirely | N/A |
-| Local | `SERVERLESS_TYPE=LOCAL` | Development and trusted environments | Medium (V8 isolate sandboxing) |
+| Local | `SERVERLESS_TYPE=LOCAL` | Development and trusted environments | Low (no sandboxing) |
 | Lambda | `SERVERLESS_TYPE=LAMBDA` | Production with untrusted code | High (hardware-level isolation) |
 
 ### Recommended Configuration

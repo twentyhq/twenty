@@ -6,17 +6,16 @@ import { updateServerlessFunction } from 'test/integration/metadata/suites/serve
 
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 
-// Test function using external packages from default layer (lodash.merge + lodash.compact)
+// Test function using external packages from default layer (lodash.groupby)
 const EXTERNAL_PACKAGES_FUNCTION_CODE = {
-  'src/index.ts': `import compact from 'lodash.compact';
-import merge from 'lodash.merge';
+  'src/index.ts': `import groupBy from 'lodash.groupby';
 
-export const main = async (params: { items: Array<string | null | undefined> }): Promise<object> => {
-  const cleanedItems = compact(params.items);
-  return merge(
-    { count: cleanedItems.length },
-    { items: cleanedItems }
-  );
+export const main = async (params: { items: Array<{ category: string; name: string }> }): Promise<object> => {
+  const grouped = groupBy(params.items, 'category');
+  return {
+    grouped,
+    categories: Object.keys(grouped),
+  };
 };`,
 };
 
@@ -91,7 +90,7 @@ describe('Serverless Function Execution', () => {
     expect(result?.duration).toBeGreaterThan(0);
   });
 
-  it('should execute a function with external packages (lodash.merge + lodash.compact)', async () => {
+  it('should execute a function with external packages (lodash.groupby)', async () => {
     // Create the function (uses default template initially)
     const { data: createData } = await createOneServerlessFunction({
       input: {
@@ -123,12 +122,16 @@ describe('Serverless Function Execution', () => {
       expectToFail: false,
     });
 
-    // Execute the function with items to compact
+    // Execute the function with items to group
     const { data: executeData } = await executeServerlessFunction({
       input: {
         id: functionId,
         payload: {
-          items: ['apple', null, 'banana', undefined, 'cherry'],
+          items: [
+            { category: 'fruit', name: 'apple' },
+            { category: 'vegetable', name: 'carrot' },
+            { category: 'fruit', name: 'banana' },
+          ],
         },
       },
       expectToFail: false,
@@ -143,12 +146,20 @@ describe('Serverless Function Execution', () => {
     expect(result?.status).toBe(ServerlessFunctionExecutionStatus.SUCCESS);
 
     const data = result?.data as unknown as {
-      count: number;
-      items: string[];
+      grouped: Record<string, Array<{ category: string; name: string }>>;
+      categories: string[];
     };
 
-    expect(data?.count).toBe(3);
-    expect(data?.items).toEqual(['apple', 'banana', 'cherry']);
+    expect(data?.grouped).toMatchObject({
+      fruit: [
+        { category: 'fruit', name: 'apple' },
+        { category: 'fruit', name: 'banana' },
+      ],
+      vegetable: [{ category: 'vegetable', name: 'carrot' }],
+    });
+    expect(data?.categories).toEqual(
+      expect.arrayContaining(['fruit', 'vegetable']),
+    );
   });
 
   it('should handle errors thrown by serverless functions', async () => {
