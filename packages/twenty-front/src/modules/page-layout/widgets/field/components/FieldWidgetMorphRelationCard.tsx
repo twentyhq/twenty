@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { Fragment, useState } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -27,6 +28,10 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { isDefined } from 'twenty-shared/utils';
 
+const StyledShowMoreButtonContainer = styled.div`
+  padding-top: ${({ theme }) => theme.spacing(2)};
+`;
+
 type FieldWidgetMorphRelationCardProps = {
   fieldDefinition: FieldDefinition<FieldMorphRelationMetadata>;
   recordId: string;
@@ -41,8 +46,9 @@ export const FieldWidgetMorphRelationCard = ({
   const widget = useCurrentWidget();
 
   const [expandedItem, setExpandedItem] = useState('');
-  const [visibleItemsCount, setVisibleItemsCount] =
-    useState(INITIAL_VISIBLE_ITEMS);
+  const [visibleItemsCount, setVisibleItemsCount] = useState(
+    INITIAL_VISIBLE_ITEMS,
+  );
   const targetRecord = useTargetRecord();
 
   const instanceId = generateFieldWidgetInstanceId({
@@ -155,10 +161,12 @@ export const FieldWidgetMorphRelationCard = ({
                 </Fragment>
               ))}
               {hasMoreRecords && (
-                <FieldWidgetShowMoreButton
-                  remainingCount={remainingCount}
-                  onClick={handleShowMore}
-                />
+                <StyledShowMoreButtonContainer>
+                  <FieldWidgetShowMoreButton
+                    remainingCount={remainingCount}
+                    onClick={handleShowMore}
+                  />
+                </StyledShowMoreButtonContainer>
               )}
             </RecordDetailRecordsListContainer>
           </FieldInputEventContext.Provider>

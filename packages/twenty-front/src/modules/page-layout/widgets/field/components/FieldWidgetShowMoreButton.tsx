@@ -12,12 +12,12 @@ const StyledShowMoreButton = styled.div`
   cursor: pointer;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(10)};
-  padding-left: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  height: 24px;
+  box-sizing: border-box;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${({ theme }) => theme.background.transparent.lighter};
   }
 `;
 

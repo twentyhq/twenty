@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { Fragment, useState } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -25,6 +26,10 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { isDefined } from 'twenty-shared/utils';
 
+const StyledShowMoreButtonContainer = styled.div`
+  padding-top: ${({ theme }) => theme.spacing(2)};
+`;
+
 type FieldWidgetRelationCardProps = {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
   relationValue: any;
@@ -39,8 +44,9 @@ export const FieldWidgetRelationCard = ({
   const widget = useCurrentWidget();
 
   const [expandedItem, setExpandedItem] = useState('');
-  const [visibleItemsCount, setVisibleItemsCount] =
-    useState(INITIAL_VISIBLE_ITEMS);
+  const [visibleItemsCount, setVisibleItemsCount] = useState(
+    INITIAL_VISIBLE_ITEMS,
+  );
   const targetRecord = useTargetRecord();
 
   const instanceId = generateFieldWidgetInstanceId({
@@ -54,9 +60,7 @@ export const FieldWidgetRelationCard = ({
     setExpandedItem(recordId === expandedItem ? '' : recordId);
 
   const handleShowMore = () => {
-    setVisibleItemsCount(
-      (prevCount) => prevCount + LOAD_MORE_INCREMENT,
-    );
+    setVisibleItemsCount((prevCount) => prevCount + LOAD_MORE_INCREMENT);
   };
 
   const fieldMetadata = fieldDefinition.metadata;
@@ -157,10 +161,12 @@ export const FieldWidgetRelationCard = ({
               </Fragment>
             ))}
             {hasMoreRecords && (
-              <FieldWidgetShowMoreButton
-                remainingCount={remainingCount}
-                onClick={handleShowMore}
-              />
+              <StyledShowMoreButtonContainer>
+                <FieldWidgetShowMoreButton
+                  remainingCount={remainingCount}
+                  onClick={handleShowMore}
+                />
+              </StyledShowMoreButtonContainer>
             )}
           </FieldInputEventContext.Provider>
         </FieldContext.Provider>
