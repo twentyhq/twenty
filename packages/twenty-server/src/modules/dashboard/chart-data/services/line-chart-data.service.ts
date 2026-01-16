@@ -146,7 +146,7 @@ export class LineChartDataService {
     }
 
     const rawResults =
-      await this.chartDataQueryService.executeGroupByQueryWithOrderBy({
+      await this.chartDataQueryService.executeGroupByQuery({
         workspaceId,
         flatObjectMetadata,
         flatObjectMetadataMaps,

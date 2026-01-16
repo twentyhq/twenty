@@ -65,7 +65,7 @@ export const buildGroupByFieldObject = ({
 
       if (shouldHaveTimeZone) {
         if (timeZoneIsNotProvided) {
-          throw new Error(`Date order by should have a time zone.`);
+          throw new Error(`Date group by should have a time zone.`);
         } else {
           return {
             [fieldMetadata.name]: {
@@ -133,7 +133,7 @@ export const buildGroupByFieldObject = ({
 
     if (shouldHaveTimeZone) {
       if (timeZoneIsNotProvided) {
-        throw new Error(`Date order by should have a time zone.`);
+        throw new Error(`Date group by should have a time zone.`);
       } else {
         result.timeZone = timeZone;
       }
