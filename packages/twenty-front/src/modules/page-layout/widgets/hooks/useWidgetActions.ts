@@ -71,7 +71,7 @@ export const useWidgetActions = ({
   if (isOneToManyRelation) {
     actions.push({
       id: 'see-all',
-      position: 1,
+      position: 0,
     });
   }
 
@@ -90,7 +90,7 @@ export const useWidgetActions = ({
   if (!isFieldReadOnly) {
     actions.push({
       id: 'edit',
-      position: 0,
+      position: 1,
     });
   }
 
