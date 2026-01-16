@@ -1,24 +1,24 @@
 import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  type Relation,
-  UpdateDateColumn,
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    Index,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    type Relation,
+    UpdateDateColumn,
 } from 'typeorm';
 
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
 
 @Entity({ name: 'viewGroup', schema: 'core' })
 @Index('IDX_VIEW_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_GROUP_VIEW_ID', ['viewId'])
 export class ViewGroupEntity
-  extends SyncableEntity
+  extends SyncableEntityRequired
   implements Required<ViewGroupEntity>
 {
   @PrimaryGeneratedColumn('uuid')
