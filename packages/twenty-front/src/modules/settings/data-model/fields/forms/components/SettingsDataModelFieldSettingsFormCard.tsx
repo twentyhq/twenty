@@ -117,6 +117,10 @@ const arrayFieldFormSchema = z
   .merge(mergeSettingsSchemas(settingsDataModelFieldMaxValuesSchema))
   .extend(isUniqueFieldFormSchema.shape);
 
+const filesFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.FILES) })
+  .merge(mergeSettingsSchemas(settingsDataModelFieldMaxValuesSchema));
+
 const otherFieldsFormSchema = z
   .object({
     type: z.enum(
@@ -136,6 +140,7 @@ const otherFieldsFormSchema = z
           FieldMetadataType.EMAILS,
           FieldMetadataType.LINKS,
           FieldMetadataType.ARRAY,
+          FieldMetadataType.FILES,
         ]),
       ) as [FieldMetadataType, ...FieldMetadataType[]],
     ),
@@ -159,6 +164,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     emailsFieldFormSchema,
     linksFieldFormSchema,
     arrayFieldFormSchema,
+    filesFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );
@@ -178,6 +184,7 @@ const previewableTypes = [
   FieldMetadataType.DATE,
   FieldMetadataType.DATE_TIME,
   FieldMetadataType.EMAILS,
+  FieldMetadataType.FILES,
   FieldMetadataType.FULL_NAME,
   FieldMetadataType.LINKS,
   FieldMetadataType.MULTI_SELECT,
@@ -325,6 +332,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
             FieldMetadataType.EMAILS,
             FieldMetadataType.LINKS,
             FieldMetadataType.ARRAY,
+            FieldMetadataType.FILES,
           ].includes(fieldType) && (
             <>
               <SettingsDataModelFieldMaxValuesForm
