@@ -3,6 +3,7 @@ import {
   type FieldBooleanValue,
   type FieldDateTimeValue,
   type FieldDateValue,
+  type FieldFilesValue,
   type FieldJsonValue,
   type FieldMultiSelectValue,
   type FieldNumberValue,
@@ -19,6 +20,7 @@ import {
   IllustrationIconArray,
   IllustrationIconCalendarEvent,
   IllustrationIconCalendarTime,
+  IllustrationIconFile,
   IllustrationIconJson,
   IllustrationIconNumbers,
   IllustrationIconOneToMany,
@@ -139,4 +141,9 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
       category: 'Advanced',
       exampleValues: [['value1', 'value2'], ['value3'], []],
     } as const satisfies SettingsFieldTypeConfig<FieldArrayValue>,
+    [FieldMetadataType.FILES]: {
+      label: 'Files',
+      Icon: IllustrationIconFile,
+      category: 'Advanced',
+    } as const satisfies SettingsFieldTypeConfig<FieldFilesValue>,
   };

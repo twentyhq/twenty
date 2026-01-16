@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  GraphQLEnumType,
-  GraphQLInputFieldConfigMap,
-  GraphQLInputObjectType,
-  GraphQLScalarType,
-  isEnumType,
-  isInputObjectType,
-  isObjectType,
+    GraphQLEnumType,
+    GraphQLInputFieldConfigMap,
+    GraphQLInputObjectType,
+    GraphQLScalarType,
+    isEnumType,
+    isInputObjectType,
+    isObjectType,
 } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 

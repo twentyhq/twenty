@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  GraphQLInputFieldConfigMap,
-  GraphQLInputObjectType,
-  isObjectType,
+    GraphQLInputFieldConfigMap,
+    GraphQLInputObjectType,
+    isObjectType,
 } from 'graphql';
-import { isDefined } from 'twenty-shared/utils';
 import { CompositeType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';

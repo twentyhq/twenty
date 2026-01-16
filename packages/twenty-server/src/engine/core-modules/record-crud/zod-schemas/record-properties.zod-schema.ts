@@ -243,6 +243,15 @@ export const generateRecordPropertiesZodSchema = (
         });
         break;
 
+      case FieldMetadataType.FILES:
+        fieldSchema = z.array(
+          z.object({
+            fileId: z.string().uuidv4(),
+            label: z.string(),
+          }),
+        );
+        break;
+
       default:
         fieldSchema = getFieldZodType(field);
         break;
