@@ -112,9 +112,9 @@ export default class Twenty {
     fileBuffer: Buffer,
     filename: string,
     contentType: string = 'application/octet-stream',
+    fileFolder: string = 'Attachment',
   ): Promise<{ path: string; token: string }> {
     const form = new FormData();
-    const fileFolder = "Attachment";
 
     form.append('operations', JSON.stringify({
       query: \`mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
