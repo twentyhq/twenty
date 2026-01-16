@@ -205,16 +205,28 @@ export class BuildService {
     const { manifest } = manifestResult;
     const functionsOutputDir = path.join(outputDir, this.FUNCTIONS_DIR);
 
+    // Compute output paths preserving directory structure
+    const functionOutputPaths = manifest.serverlessFunctions.map((fn) =>
+      this.computeFunctionOutputPath(fn.handlerPath),
+    );
+
+    // Ensure all subdirectories exist
+    const uniqueDirs = new Set(
+      functionOutputPaths.map((p) => path.dirname(p.relativePath)).filter(Boolean),
+    );
+    for (const dir of uniqueDirs) {
+      await fs.ensureDir(path.join(functionsOutputDir, dir));
+    }
+
     const buildConfigs: ViteBuildConfig[] = manifest.serverlessFunctions.map(
-      (fn) => {
-        // Extract the function name from the handler path
-        const baseName = path.basename(fn.handlerPath, '.ts');
-        const outputFileName = `${baseName}.js`;
+      (fn, index) => {
+        const { relativePath, outputDir: fnOutputDir } = functionOutputPaths[index];
+        const outputFileName = path.basename(relativePath);
 
         return {
           appPath,
           entryPath: fn.handlerPath,
-          outputDir: functionsOutputDir,
+          outputDir: path.join(functionsOutputDir, fnOutputDir),
           outputFileName,
         };
       },
@@ -228,8 +240,8 @@ export class BuildService {
 
     for (let i = 0; i < manifest.serverlessFunctions.length; i++) {
       const fn = manifest.serverlessFunctions[i];
-      const baseName = path.basename(fn.handlerPath, '.ts');
-      const outputFileName = `${baseName}.js`;
+      const { relativePath } = functionOutputPaths[i];
+      const outputFileName = path.basename(relativePath);
       const result = results.get(outputFileName);
 
       if (result?.success) {
@@ -238,9 +250,9 @@ export class BuildService {
           name: fn.name || fn.universalIdentifier,
           universalIdentifier: fn.universalIdentifier,
           originalHandlerPath: fn.handlerPath,
-          builtHandlerPath: `${this.FUNCTIONS_DIR}/${outputFileName}`,
+          builtHandlerPath: `${this.FUNCTIONS_DIR}/${relativePath}`,
           sourceMapPath: result.sourceMapPath
-            ? `${this.FUNCTIONS_DIR}/${outputFileName}.map`
+            ? `${this.FUNCTIONS_DIR}/${relativePath}.map`
             : undefined,
         });
       } else {
@@ -258,6 +270,41 @@ export class BuildService {
     }
 
     return builtFunctions;
+  }
+
+  /**
+   * Compute the output path for a function, preserving directory structure.
+   *
+   * Examples:
+   * - src/app/lqq.function.ts → { relativePath: 'lqq.function.js', outputDir: '' }
+   * - src/app/toto/lqq.function.ts → { relativePath: 'toto/lqq.function.js', outputDir: 'toto' }
+   */
+  private computeFunctionOutputPath(handlerPath: string): {
+    relativePath: string;
+    outputDir: string;
+  } {
+    // Normalize path separators
+    const normalizedPath = handlerPath.replace(/\\/g, '/');
+
+    // Remove src/app/ prefix if present
+    let relativePath = normalizedPath;
+    if (relativePath.startsWith('src/app/')) {
+      relativePath = relativePath.slice('src/app/'.length);
+    } else if (relativePath.startsWith('src/')) {
+      relativePath = relativePath.slice('src/'.length);
+    }
+
+    // Change extension from .ts to .js
+    relativePath = relativePath.replace(/\.ts$/, '.js');
+
+    // Get the directory part (empty string if no subdirectory)
+    const outputDir = path.dirname(relativePath);
+    const normalizedOutputDir = outputDir === '.' ? '' : outputDir;
+
+    return {
+      relativePath,
+      outputDir: normalizedOutputDir,
+    };
   }
 
   /**
