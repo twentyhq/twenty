@@ -14,7 +14,7 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
     availabilityObjectNameSingular:
       commandMenuItemEntity.availabilityObjectNameSingular,
     workspaceId: commandMenuItemEntity.workspaceId,
-    universalIdentifier: commandMenuItemEntity.id,
+    universalIdentifier: commandMenuItemEntity.universalIdentifier,
     applicationId: commandMenuItemEntity.applicationId,
     createdAt: commandMenuItemEntity.createdAt.toISOString(),
     updatedAt: commandMenuItemEntity.updatedAt.toISOString(),
