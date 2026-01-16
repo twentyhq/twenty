@@ -18,7 +18,7 @@ Un elemento visivo che puoi utilizzare come contenitore cliccabile o non cliccab
       return (
         <Chip
           size="large"
-          label="Clickable Chip"
+          label="Chip cliccabile"
           clickable={true}
           variant="highlighted"
           accent="text-primary"
@@ -39,8 +39,8 @@ Un elemento visivo che puoi utilizzare come contenitore cliccabile o non cliccab
     | collegaAEntità | string                           | Il link all'entità                                                                              |
     | entityId       | stringa                          | L'identificatore unico per l'entità                                                             |
     | nome           | stringa                          | Il nome dell'entità                                                                             |
-    | pictureUrl     | stringa                          | s picture",                                                                                     |
-    | avatarType     | Tipo di Avatar                   | Il tipo di avatar che vuoi visualizzare. Has two options: `rounded` and `squared`               |
+    | pictureUrl     | stringa                          | immagine",                                                                                      |
+    | avatarType     | Tipo di Avatar                   | Il tipo di avatar che vuoi visualizzare. Ha due opzioni: `rounded` e `squared`                  |
     | variante       | `EntityChipVariant` enumerazione | Variante del chip dell'entità che vuoi visualizzare. Ha due opzioni: `regolare` e `trasparente` |
     | IconaSinistra  | IconaComponente                  | Un componente React che rappresenta un'icona. Visualizzato sul lato sinistro del chip           |
   </Tab>
@@ -57,7 +57,7 @@ export const MyComponent = () => {
   return (
       <Chip 
       size="large"
-      label="Transparent Disabled Chip"
+      label="Chip trasparente disabilitato"
       clickable={false}
       variant="rounded"
       accent="text-secondary"
@@ -82,7 +82,7 @@ export const MyComponent = () => {
   return (
       <Chip 
       size="large"
-      label="Disabled chip that triggers a tooltip when overflowing."
+      label="Chip disabilitato che attiva un tooltip quando va in overflow."
       clickable={false}
       variant="regular"
       accent="text-primary"
@@ -112,7 +112,7 @@ Un elemento simile a un chip per visualizzare informazioni su un'entità.
           <Chip
             linkToEntity="/entity-link"
             entityId="entityTest"
-            name="Entity name"
+            name="Nome dell'entità"
             pictureUrl=""
             avatarType="rounded"
             variant="regular"
@@ -130,8 +130,8 @@ Un elemento simile a un chip per visualizzare informazioni su un'entità.
     | collegaAEntità | stringa                          | Il link all'entità                                                                             |
     | entityId       | string                           | L'identificatore unico per l'entità                                                            |
     | nome           | stringa                          | Il nome dell'entità                                                                            |
-    | pictureUrl     | stringa                          | s picture",                                                                                    |
-    | avatarType     | Tipo di Avatar                   | Il tipo di avatar che vuoi visualizzare. Has two options: `rounded` and `squared`              |
+    | pictureUrl     | stringa                          | immagine",                                                                                     |
+    | avatarType     | Tipo di Avatar                   | Il tipo di avatar che vuoi visualizzare. Ha due opzioni: `rounded` e `squared`                 |
     | variante       | `EntityChipVariant` enumerazione | Variante del chip dell'entità che vuoi visualizzare. Ha due opzioni: `regular` e `transparent` |
     | IconaSinistra  | IconaComponente                  | Un componente React che rappresenta un'icona. Visualizzato sul lato sinistro del chip          |
   </Tab>

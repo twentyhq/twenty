@@ -116,6 +116,29 @@ Ekip
    * Konu: Görüşmemize ilişkin takip
    * Gövde: Tetikleyiciden toplantı ayrıntılarına referans verin
 
+## Email Attachments
+
+You can attach files to emails sent from workflows. The attachment is a static file that you upload when configuring the workflow.
+
+### How to Add an Attachment
+
+1. In the **Send Email** action, click on the **Attachments** button
+2. Click to upload a file from your computer
+3. The file will be attached to all emails sent by this action
+
+### Ortak Kullanım Durumları
+
+| Kullanım alanı           | Example File                  |
+| ------------------------ | ----------------------------- |
+| **Welcome emails**       | Company brochure (PDF)        |
+| **Onboarding sequences** | Getting started guide         |
+| **Sales follow-ups**     | Product catalog or price list |
+| **Event confirmations**  | Event details or agenda       |
+
+<Note>
+  Attachments are static—the same file is sent to all recipients. For dynamic documents (like personalized quotes), generate and attach files using a [Serverless Function](/l/tr/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
+</Note>
+
 ## En İyi Uygulamalar
 
 ### E-posta İçeriği
@@ -138,10 +161,6 @@ Ekip
 * Alıcının e-posta adresinin geçerli olduğunu kontrol edin
 * Hata mesajları için iş akışı çalıştırmalarını gözden geçirin
 * Önce kendi e-posta adresinizle test edin
-
-<Note>
-  **Yakında**: E-posta ekleri 2026'nın 1. çeyreğinde kullanılabilir olacak.
-</Note>
 
 ## İlgili
 
