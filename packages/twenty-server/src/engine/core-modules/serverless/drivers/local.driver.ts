@@ -285,8 +285,11 @@ export class LocalDriver implements ServerlessDriver {
       stdout: string;
       stderr: string;
     }>((resolve, _) => {
+      // Strip NODE_OPTIONS to prevent tsx loader from being inherited
+      const { NODE_OPTIONS: _, ...cleanEnv } = process.env;
+
       const child = spawn(process.execPath, [runnerPath], {
-        env: { ...process.env, ...env },
+        env: { ...cleanEnv, ...env },
         stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
       });
 
