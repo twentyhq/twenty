@@ -59,10 +59,11 @@ export const getImageBufferFromUrl = async (
 
     return Buffer.from(response.data, 'binary');
   } catch (error) {
-    if ((error as AxiosError).response) {
-      const axiosError = error as AxiosError;
+    const axiosError = error as AxiosError;
+    const axiosResponse = axiosError.response;
+    if (axiosResponse) {
       throw new Error(
-        `Failed to fetch image: HTTP ${axiosError.response.status} from ${url}`,
+        `Failed to fetch image: HTTP ${axiosResponse.status} from ${url}`,
       );
     }
     
