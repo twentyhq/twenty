@@ -19,6 +19,7 @@ import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engi
 import { WorkspaceMigrationCronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/cron-trigger/workspace-migration-cron-trigger-action-builder.service';
 import { WorkspaceMigrationDatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/database-event-trigger/workspace-migration-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-field-actions-builder.service';
+import { WorkspaceMigrationFrontComponentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/workspace-migration-front-component-actions-builder.service';
 import { WorkspaceMigrationIndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/workspace-migration-index-actions-builder.service';
 import { WorkspaceMigrationObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/workspace-migration-object-actions-builder.service';
 import { WorkspaceMigrationPageLayoutTabActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/workspace-migration-page-layout-tab-actions-builder.service';
@@ -62,6 +63,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationPageLayoutTabActionsBuilderService: WorkspaceMigrationPageLayoutTabActionsBuilderService,
     private readonly workspaceMigrationRowLevelPermissionPredicateActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
     private readonly workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
+    private readonly workspaceMigrationFrontComponentActionsBuilderService: WorkspaceMigrationFrontComponentActionsBuilderService,
   ) {}
 
   private setupOptimisticCache({
@@ -162,6 +164,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatPageLayoutMaps,
       flatPageLayoutWidgetMaps,
       flatPageLayoutTabMaps,
+      flatFrontComponentMaps,
     } = fromToAllFlatEntityMaps;
 
     if (isDefined(flatObjectMetadataMaps)) {
@@ -970,6 +973,39 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatFrontComponentMaps)) {
+      const { from: fromFlatFrontComponentMaps, to: toFlatFrontComponentMaps } =
+        flatFrontComponentMaps;
+
+      const frontComponentResult =
+        await this.workspaceMigrationFrontComponentActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatFrontComponentMaps,
+            to: toFlatFrontComponentMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: undefined,
+            workspaceId,
+          },
+        );
+
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            frontComponentResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
+
+      if (frontComponentResult.status === 'fail') {
+        orchestratorFailureReport.frontComponent.push(
+          ...frontComponentResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.frontComponent = frontComponentResult.actions;
+      }
+    }
+
     const allErrors = Object.values(orchestratorFailureReport);
 
     if (allErrors.some((report) => report.length > 0)) {
@@ -1116,6 +1152,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
             .create,
           ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
             .update,
+          ///
+
+          // Front components
+          ...aggregatedOrchestratorActionsReport.frontComponent.delete,
+          ...aggregatedOrchestratorActionsReport.frontComponent.create,
+          ...aggregatedOrchestratorActionsReport.frontComponent.update,
           ///
         ],
         workspaceId,

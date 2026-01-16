@@ -8,6 +8,7 @@ import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-meta
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -21,6 +22,7 @@ import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { type FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
@@ -67,6 +69,11 @@ import {
   type DeleteFieldAction,
   type UpdateFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import {
+  type CreateFrontComponentAction,
+  type DeleteFrontComponentAction,
+  type UpdateFrontComponentAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
 import {
   type CreateIndexAction,
   type DeleteIndexAction,
@@ -351,5 +358,14 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatPageLayoutTab;
     entity: PageLayoutTabEntity;
+  };
+  frontComponent: {
+    actions: {
+      create: CreateFrontComponentAction;
+      update: UpdateFrontComponentAction;
+      delete: DeleteFrontComponentAction;
+    };
+    flatEntity: FlatFrontComponent;
+    entity: FrontComponentEntity;
   };
 };

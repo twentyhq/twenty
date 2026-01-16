@@ -73,7 +73,8 @@
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "env": {
-        "NODE_ENV": "test"
+        "NODE_ENV": "test",
+        "NODE_OPTIONS": "--max-old-space-size=12288 --import tsx/esm"
       }
     },
     {

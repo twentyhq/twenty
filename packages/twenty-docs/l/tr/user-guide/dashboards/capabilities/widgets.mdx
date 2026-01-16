@@ -3,13 +3,19 @@ title: Widget'lar
 description: Twenty'deki widget türlerini ve görselleştirme seçeneklerini keşfedin.
 ---
 
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
 ## Kullanılabilir widget'lar
 
 Twenty, Müşteri İlişkileri Yönetimi (CRM) verilerinizi görselleştirmek için çeşitli widget türleri sunar.
 
-### Çubuk grafikler
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Bar Charts</span>
 
 Verileri yatay veya dikey çubuklar olarak görüntüleyin.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Bar chart" />
+</Frame>
 
 **En uygun:**
 
@@ -24,12 +30,16 @@ Verileri yatay veya dikey çubuklar olarak görüntüleyin.
 * Ay başına eklenen kişi sayısı
 
 <Note>
-  **Görüntüleme sınırları**: Çubuk grafikler en fazla 100 çubuk (yatay) veya 50 çubuk (dikey) gösterebilir. "Undisplayed data: max X bars per chart" uyarısını görürseniz, verilerinizi daraltmak için filtreler ekleyin veya gruplamayı değiştirin (ör. güne yerine haftaya göre gruplayın).
+  **Display limits**: Bar charts can show a maximum of 100 bars, and 50 groups per bar when using Group By. "Undisplayed data: max X bars per chart" uyarısını görürseniz, verilerinizi daraltmak için filtreler ekleyin veya gruplamayı değiştirin (ör. güne yerine haftaya göre gruplayın).
 </Note>
 
-### Pasta grafikler
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Pie Charts</span>
 
 Bir bütünün oranlarını gösterin.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Pie chart" />
+</Frame>
 
 **En uygun:**
 
@@ -43,9 +53,13 @@ Bir bütünün oranlarını gösterin.
 * Sektöre göre kişi dağılımı
 * Sahip bazında satış boru hattı bileşimi
 
-### Çizgi grafikler
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Line Charts</span>
 
 Zaman içindeki eğilimleri gösterin.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Line chart" />
+</Frame>
 
 **En uygun:**
 
@@ -59,9 +73,13 @@ Zaman içindeki eğilimleri gösterin.
 * Çeyrekler bazında gelir artışı
 * Zaman içindeki etkinlik düzeyleri
 
-### Sayısal metrikler
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Aggregate Charts</span>
 
 Tekil kilit değerleri belirgin şekilde görüntüleyin.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Aggregate chart" />
+</Frame>
 
 **En uygun:**
 
@@ -80,9 +98,13 @@ Tekil kilit değerleri belirgin şekilde görüntüleyin.
 * **Oran**: Select alanları için değerler arasındaki oranları hesaplayın. **Görüntüdeki veriler**'e gidin → alanınızı seçin → **Oran** seçeneğini etkinleştirin.
 * **Ön Ek ve Son Ek**: Daha iyi okunabilirlik için sayının önüne veya sonuna özel metin ekleyin (ör. "$" öneki veya "%" soneki).
 
-### iFrame'ler
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
 
 Harici araçları ve içerikleri doğrudan panonuza gömün.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iÇerik" />
+</Frame>
 
 **En uygun:**
 
@@ -96,33 +118,29 @@ Harici araçları ve içerikleri doğrudan panonuza gömün.
 * Arama aracınızdan metrikler
 * Satış sekans aracınızdan canlı içerik
 
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Rich Text</span>
+
+Add formatted text and content directly to your dashboard.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Rich text" />
+</Frame>
+
+**En uygun:**
+
+* Adding context or instructions
+* Dashboard descriptions
+* Notes and annotations
+
+**Features:**
+
+* Rich text formatting (bold, italic, lists, etc.)
+* Image and file uploads
+* Markdown-style editing
+
 <Note>
   **Yakında**: Gösterge grafikleri ve tablolar henüz mevcut değil, ancak yol haritamızda yer alıyor.
 </Note>
-
-## Widget'ları yapılandırma
-
-### Veri kaynağı
-
-1. Görselleştirilecek nesneyi seçin (Fırsatlar, Kişiler, vb.)
-2. Görüntülenecek metriği seçin (adet, toplam, ortalama)
-3. Belirli verilere odaklanmak için filtreler uygulayın
-
-### Gruplama
-
-Verileri şu şekilde gruplayın:
-
-* Alanlar (aşama, sahip, sektör)
-* Zaman dönemleri (gün, hafta, ay, çeyrek)
-* Özel segmentler
-
-### Şekil Verme
-
-Grafiklerinizi şunlarla özelleştirin:
-
-* Renkler ve temalar
-* Etiketler ve lejantlar
-* Boyut ve konumlandırma
 
 ### Widget'ları çoğaltma
 

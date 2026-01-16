@@ -11,6 +11,9 @@ export type LayoutRenderingContextType = {
   layoutType: PageLayoutType;
 
   isInRightDrawer: boolean;
+
+  /** TODO: Remove once the traditional record show page is removed. */
+  isLegacyRecordShowPage?: boolean;
 };
 
 export const [LayoutRenderingProvider, useLayoutRenderingContext] =

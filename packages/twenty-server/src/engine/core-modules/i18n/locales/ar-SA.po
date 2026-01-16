@@ -54,6 +54,11 @@ msgstr "تم اكتشاف إدخال مكرر."
 msgid "A field with this name already exists."
 msgstr "يوجد حقل بهذا الاسم بالفعل."
 
+#. js-lingui-id: D0Kuk1
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "A front component with this name already exists."
+msgstr ""
+
 #. js-lingui-id: +aAI33
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "A function with this name already exists."
@@ -1319,6 +1324,25 @@ msgstr "يجب أن تحتوي عملية النموذج على حقل واحد 
 msgid "Friday"
 msgstr "الجمعة"
 
+#. js-lingui-id: BzEbyv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
+msgid "Front component name is required"
+msgstr ""
+
+#. js-lingui-id: VZiHPV
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
+msgid "Front component not found"
+msgstr ""
+
+#. js-lingui-id: J+VVwG
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Front component not found."
+msgstr ""
+
 #. js-lingui-id: pouguB
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function code is unchanged."
@@ -1611,6 +1635,11 @@ msgstr "معامل الفلتر غير صالح."
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Invalid filter value: \"{value}\""
+msgstr ""
+
+#. js-lingui-id: rFH0az
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Invalid front component input."
 msgstr ""
 
 #. js-lingui-id: lPC0WB
@@ -2343,6 +2372,11 @@ msgstr "لم تتأثر أي سجلات."
 msgid "No role found for this user in the workspace."
 msgstr "لا يوجد دور لهذا المستخدم في مساحة العمل."
 
+#. js-lingui-id: ISCcTE
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "No role found for user."
+msgstr ""
+
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No schedule provided in cron trigger"
@@ -2814,6 +2848,11 @@ msgstr "تم بلوغ حد المعدل. يُرجى المحاولة لاحقا�
 msgid "Raw SQL queries are not allowed."
 msgstr "لا يُسمح باستعلامات SQL الخام."
 
+#. js-lingui-id: EESfI5
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Record does not satisfy security constraints."
+msgstr ""
+
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Record not found."
@@ -3110,6 +3149,11 @@ msgstr "وظيفة بلا خادم موجودة بالفعل"
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Serverless function execution failed."
 msgstr "فشل تنفيذ الوظيفة بلا خادم."
+
+#. js-lingui-id: y8i9sW
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Serverless function execution is disabled."
+msgstr ""
 
 #. js-lingui-id: MSgd2w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts

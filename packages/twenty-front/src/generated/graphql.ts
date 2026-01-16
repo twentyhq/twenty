@@ -962,6 +962,8 @@ export type CreateRoleInput = {
 };
 
 export type CreateRouteTriggerInput = {
+  /** List of HTTP header names to forward to the serverless function event */
+  forwardedRequestHeaders?: Array<Scalars['String']>;
   httpMethod?: HttpMethod;
   isAuthRequired?: Scalars['Boolean'];
   path: Scalars['String'];
@@ -1508,11 +1510,9 @@ export type FieldsConfiguration = {
 export type File = {
   __typename?: 'File';
   createdAt: Scalars['DateTime'];
-  fullPath: Scalars['String'];
   id: Scalars['UUID'];
-  name: Scalars['String'];
+  path: Scalars['String'];
   size: Scalars['Float'];
-  type: Scalars['String'];
 };
 
 export enum FileFolder {
@@ -1544,6 +1544,15 @@ export type FindAvailableSsoidpOutput = {
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
   workspace: WorkspaceNameAndId;
+};
+
+export type FrontComponent = {
+  __typename?: 'FrontComponent';
+  applicationId: Scalars['UUID'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type FullName = {
@@ -3071,6 +3080,8 @@ export type ObjectPermission = {
   canUpdateObjectRecords?: Maybe<Scalars['Boolean']>;
   objectMetadataId: Scalars['UUID'];
   restrictedFields?: Maybe<Scalars['JSON']>;
+  rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
+  rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
 };
 
 export type ObjectPermissionInput = {
@@ -3840,6 +3851,8 @@ export type Role = {
 export type RouteTrigger = {
   __typename?: 'RouteTrigger';
   createdAt: Scalars['DateTime'];
+  /** List of HTTP header names to forward to the serverless function event */
+  forwardedRequestHeaders: Array<Scalars['String']>;
   httpMethod: HttpMethod;
   id: Scalars['ID'];
   isAuthRequired: Scalars['Boolean'];
@@ -4532,6 +4545,8 @@ export type UpdateRouteTriggerInput = {
 };
 
 export type UpdateRouteTriggerInputUpdates = {
+  /** List of HTTP header names to forward to the serverless function event */
+  forwardedRequestHeaders?: Array<Scalars['String']>;
   httpMethod: HttpMethod;
   isAuthRequired: Scalars['Boolean'];
   path: Scalars['String'];

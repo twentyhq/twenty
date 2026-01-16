@@ -68,7 +68,8 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
     case 'pageLayout':
     case 'pageLayoutWidget':
     case 'pageLayoutTab':
-    case 'commandMenuItem': {
+    case 'commandMenuItem':
+    case 'frontComponent': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         action.metadataName,
       );
