@@ -2,7 +2,7 @@ import { createFrontComponent } from 'test/integration/metadata/suites/front-com
 import { deleteFrontComponent } from 'test/integration/metadata/suites/front-component/utils/delete-front-component.util';
 
 describe('Front component creation should succeed', () => {
-  let createdFrontComponentId: string;
+  let createdFrontComponentId: string | undefined;
 
   afterEach(async () => {
     if (createdFrontComponentId) {
@@ -10,7 +10,7 @@ describe('Front component creation should succeed', () => {
         expectToFail: false,
         input: { id: createdFrontComponentId },
       });
-      createdFrontComponentId = '';
+      createdFrontComponentId = undefined;
     }
   });
 

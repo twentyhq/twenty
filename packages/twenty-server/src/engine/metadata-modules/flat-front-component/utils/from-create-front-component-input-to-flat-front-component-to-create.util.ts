@@ -20,7 +20,7 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
     ['name'],
   );
 
-  const id = v4();
+  const id = createFrontComponentInput.id ?? v4();
 
   return {
     id,
