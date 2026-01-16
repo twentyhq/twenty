@@ -3,10 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
 
 export enum CommandMenuItemAvailabilityType {
@@ -15,7 +19,7 @@ export enum CommandMenuItemAvailabilityType {
   BULK_RECORDS = 'BULK_RECORDS',
 }
 
-@Entity('commandMenuItem')
+@Entity({ name: 'commandMenuItem', schema: 'core' })
 @Index('IDX_COMMAND_MENU_ITEM_WORKFLOW_VERSION_ID_WORKSPACE_ID', [
   'workflowVersionId',
   'workspaceId',
@@ -47,8 +51,15 @@ export class CommandMenuItemEntity
   })
   availabilityType: CommandMenuItemAvailabilityType;
 
-  @Column({ nullable: true, type: 'varchar' })
-  availabilityObjectNameSingular: string | null;
+  @Column({ nullable: true, type: 'uuid' })
+  availabilityObjectMetadataId: string | null;
+
+  @ManyToOne(() => ObjectMetadataEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'availabilityObjectMetadataId' })
+  availabilityObjectMetadata: Relation<ObjectMetadataEntity> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

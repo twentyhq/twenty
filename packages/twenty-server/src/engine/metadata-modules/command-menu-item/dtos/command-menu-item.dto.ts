@@ -52,10 +52,10 @@ export class CommandMenuItemDTO {
   @Field(() => CommandMenuItemAvailabilityType)
   availabilityType: CommandMenuItemAvailabilityType;
 
-  @IsString()
+  @IsUUID()
   @IsOptional()
-  @Field({ nullable: true })
-  availabilityObjectNameSingular?: string;
+  @Field(() => UUIDScalarType, { nullable: true })
+  availabilityObjectMetadataId?: string;
 
   @HideField()
   workspaceId: string;

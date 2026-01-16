@@ -338,7 +338,7 @@ export class WorkflowTriggerWorkspaceService {
         const availability = trigger.settings.availability;
 
         let availabilityType = CommandMenuItemAvailabilityType.GLOBAL;
-        let availabilityObjectNameSingular: string | undefined;
+        let availabilityObjectMetadataId: string | undefined;
 
         if (availability) {
           switch (availability.type) {
@@ -346,13 +346,30 @@ export class WorkflowTriggerWorkspaceService {
               availabilityType = CommandMenuItemAvailabilityType.GLOBAL;
               break;
             case 'SINGLE_RECORD':
-              availabilityType = CommandMenuItemAvailabilityType.SINGLE_RECORD;
-              availabilityObjectNameSingular = availability.objectNameSingular;
+            case 'BULK_RECORDS': {
+              availabilityType =
+                availability.type === 'SINGLE_RECORD'
+                  ? CommandMenuItemAvailabilityType.SINGLE_RECORD
+                  : CommandMenuItemAvailabilityType.BULK_RECORDS;
+
+              const { objectIdByNameSingular } =
+                await this.workflowCommonWorkspaceService.getFlatEntityMaps(
+                  workspaceId,
+                );
+
+              const objectId =
+                objectIdByNameSingular[availability.objectNameSingular];
+
+              if (!objectId) {
+                throw new WorkflowTriggerException(
+                  `Object metadata not found for object: ${availability.objectNameSingular}`,
+                  WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+                );
+              }
+
+              availabilityObjectMetadataId = objectId;
               break;
-            case 'BULK_RECORDS':
-              availabilityType = CommandMenuItemAvailabilityType.BULK_RECORDS;
-              availabilityObjectNameSingular = availability.objectNameSingular;
-              break;
+            }
           }
         }
 
@@ -362,7 +379,7 @@ export class WorkflowTriggerWorkspaceService {
             label: workflow.name ?? 'Manual Trigger',
             icon: trigger.settings.icon,
             availabilityType,
-            availabilityObjectNameSingular,
+            availabilityObjectMetadataId,
           },
           workspaceId,
         );

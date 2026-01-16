@@ -11,8 +11,8 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
     icon: commandMenuItemEntity.icon,
     isPinned: commandMenuItemEntity.isPinned,
     availabilityType: commandMenuItemEntity.availabilityType,
-    availabilityObjectNameSingular:
-      commandMenuItemEntity.availabilityObjectNameSingular,
+    availabilityObjectMetadataId:
+      commandMenuItemEntity.availabilityObjectMetadataId,
     workspaceId: commandMenuItemEntity.workspaceId,
     universalIdentifier: commandMenuItemEntity.universalIdentifier,
     applicationId: commandMenuItemEntity.applicationId,

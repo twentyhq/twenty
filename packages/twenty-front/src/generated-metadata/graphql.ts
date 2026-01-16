@@ -612,7 +612,7 @@ export type ClientAiModelConfig = {
 export type CommandMenuItem = {
   __typename?: 'CommandMenuItem';
   applicationId?: Maybe<Scalars['UUID']>;
-  availabilityObjectNameSingular?: Maybe<Scalars['String']>;
+  availabilityObjectMetadataId?: Maybe<Scalars['UUID']>;
   availabilityType: CommandMenuItemAvailabilityType;
   createdAt: Scalars['DateTime'];
   icon?: Maybe<Scalars['String']>;
@@ -857,7 +857,7 @@ export type CreateApprovedAccessDomainInput = {
 };
 
 export type CreateCommandMenuItemInput = {
-  availabilityObjectNameSingular?: InputMaybe<Scalars['String']>;
+  availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   icon?: InputMaybe<Scalars['String']>;
   isPinned?: InputMaybe<Scalars['Boolean']>;
@@ -4506,7 +4506,7 @@ export type UpdateApiKeyInput = {
 };
 
 export type UpdateCommandMenuItemInput = {
-  availabilityObjectNameSingular?: InputMaybe<Scalars['String']>;
+  availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];

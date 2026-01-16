@@ -26,8 +26,8 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     availabilityType:
       createCommandMenuItemInput.availabilityType ??
       CommandMenuItemAvailabilityType.GLOBAL,
-    availabilityObjectNameSingular:
-      createCommandMenuItemInput.availabilityObjectNameSingular ?? null,
+    availabilityObjectMetadataId:
+      createCommandMenuItemInput.availabilityObjectMetadataId ?? null,
     workspaceId,
     applicationId,
     createdAt: now,

@@ -1,14 +1,18 @@
 import { faker } from '@faker-js/faker';
 import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/update-command-menu-item.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 
 describe('CommandMenuItem update should succeed', () => {
   let createdCommandMenuItemId: string;
+  let companyObjectMetadataId: string;
+  let personObjectMetadataId: string;
 
   beforeAll(async () => {
     await updateFeatureFlag({
@@ -16,6 +20,33 @@ describe('CommandMenuItem update should succeed', () => {
       value: true,
       expectToFail: false,
     });
+
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: {
+        filter: {},
+        paging: { first: 1000 },
+      },
+      gqlFields: `
+        id
+        nameSingular
+      `,
+    });
+
+    jestExpectToBeDefined(objects);
+
+    const companyObjectMetadata = objects.find(
+      (object: { nameSingular: string }) => object.nameSingular === 'company',
+    );
+    const personObjectMetadata = objects.find(
+      (object: { nameSingular: string }) => object.nameSingular === 'person',
+    );
+
+    jestExpectToBeDefined(companyObjectMetadata);
+    jestExpectToBeDefined(personObjectMetadata);
+
+    companyObjectMetadataId = companyObjectMetadata.id;
+    personObjectMetadataId = personObjectMetadata.id;
   });
 
   afterAll(async () => {
@@ -98,20 +129,20 @@ describe('CommandMenuItem update should succeed', () => {
     });
   });
 
-  it('should update availabilityType and availabilityObjectNameSingular', async () => {
+  it('should update availabilityType and availabilityObjectMetadataId', async () => {
     const { data } = await updateCommandMenuItem({
       expectToFail: false,
       input: {
         id: createdCommandMenuItemId,
         availabilityType: CommandMenuItemAvailabilityType.SINGLE_RECORD,
-        availabilityObjectNameSingular: 'company',
+        availabilityObjectMetadataId: companyObjectMetadataId,
       },
     });
 
     expect(data.updateCommandMenuItem).toMatchObject({
       id: createdCommandMenuItemId,
       availabilityType: CommandMenuItemAvailabilityType.SINGLE_RECORD,
-      availabilityObjectNameSingular: 'company',
+      availabilityObjectMetadataId: companyObjectMetadataId,
     });
   });
 
@@ -124,7 +155,7 @@ describe('CommandMenuItem update should succeed', () => {
         icon: 'IconNew',
         isPinned: true,
         availabilityType: CommandMenuItemAvailabilityType.BULK_RECORDS,
-        availabilityObjectNameSingular: 'person',
+        availabilityObjectMetadataId: personObjectMetadataId,
       },
     });
 
@@ -134,7 +165,7 @@ describe('CommandMenuItem update should succeed', () => {
       icon: 'IconNew',
       isPinned: true,
       availabilityType: CommandMenuItemAvailabilityType.BULK_RECORDS,
-      availabilityObjectNameSingular: 'person',
+      availabilityObjectMetadataId: personObjectMetadataId,
     });
   });
 });

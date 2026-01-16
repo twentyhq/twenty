@@ -39,8 +39,8 @@ export class UpdateCommandMenuItemInput {
   @Field(() => CommandMenuItemAvailabilityType, { nullable: true })
   availabilityType?: CommandMenuItemAvailabilityType;
 
-  @IsString()
+  @IsUUID()
   @IsOptional()
-  @Field({ nullable: true })
-  availabilityObjectNameSingular?: string;
+  @Field(() => UUIDScalarType, { nullable: true })
+  availabilityObjectMetadataId?: string;
 }

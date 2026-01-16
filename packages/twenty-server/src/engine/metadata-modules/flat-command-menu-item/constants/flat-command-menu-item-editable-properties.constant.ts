@@ -5,5 +5,5 @@ export const FLAT_COMMAND_MENU_ITEM_EDITABLE_PROPERTIES = [
   'icon',
   'isPinned',
   'availabilityType',
-  'availabilityObjectNameSingular',
+  'availabilityObjectMetadataId',
 ] as const satisfies (keyof FlatCommandMenuItem)[];
