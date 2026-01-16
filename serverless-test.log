@@ -1,0 +1,16 @@
+
+> nx run twenty-server:jest --config ./jest-integration.config.ts --testPathPatterns=serverless-function-execution.integration-spec.ts
+
+> jest --config ./jest-integration.config.ts --testPathPatterns=serverless-function-execution.integration-spec.ts
+
+
+
+
+ NX   Running target jest for project twenty-server failed
+
+Failed tasks:
+
+- twenty-server:jest
+
+Hint: run the command with --verbose for more details.
+

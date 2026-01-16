@@ -244,9 +244,11 @@ export class LocalDriver implements ServerlessDriver {
         new ivm.ExternalCopy(handlerName).copyInto(),
       );
 
-      const script = await isolate.compileScript(`
-        ${code}
+      const codeScript = await isolate.compileScript(code);
 
+      await codeScript.run(context, { timeout: EXECUTION_TIMEOUT_MS });
+
+      const invocationScript = await isolate.compileScript(`
         if (typeof __serverlessExports === 'undefined' || typeof __serverlessExports[_handlerName] !== 'function') {
           throw new Error('Handler function "' + _handlerName + '" not found in module exports');
         }
@@ -267,7 +269,7 @@ export class LocalDriver implements ServerlessDriver {
         })();
       `);
 
-      const resultJson = await script.run(context, {
+      const resultJson = await invocationScript.run(context, {
         timeout: EXECUTION_TIMEOUT_MS,
         promise: true,
       });
