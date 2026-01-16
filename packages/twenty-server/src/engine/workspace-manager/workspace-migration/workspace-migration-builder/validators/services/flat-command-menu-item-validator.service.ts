@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CommandMenuItemExceptionCode } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
@@ -74,6 +75,7 @@ export class FlatCommandMenuItemValidatorService {
 
   public validateFlatCommandMenuItemUpdate({
     flatEntityId,
+    flatEntityUpdates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
     },
@@ -99,6 +101,21 @@ export class FlatCommandMenuItemValidatorService {
         code: CommandMenuItemExceptionCode.COMMAND_MENU_ITEM_NOT_FOUND,
         message: t`Command menu item not found`,
         userFriendlyMessage: msg`Command menu item not found`,
+      });
+
+      return validationResult;
+    }
+
+    const labelUpdate = findFlatEntityPropertyUpdate({
+      flatEntityUpdates,
+      property: 'label',
+    });
+
+    if (isDefined(labelUpdate) && !isNonEmptyString(labelUpdate.to)) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`Label is required`,
+        userFriendlyMessage: msg`Label is required`,
       });
     }
 
