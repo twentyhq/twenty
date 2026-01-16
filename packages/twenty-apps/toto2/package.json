@@ -1,0 +1,32 @@
+{
+  "name": "toto2",
+  "version": "0.1.0",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "scripts": {
+    "create-entity": "twenty app add",
+    "dev": "twenty app dev",
+    "generate": "twenty app generate",
+    "sync": "twenty app sync",
+    "logs": "twenty app logs",
+    "uninstall": "twenty app uninstall",
+    "help": "twenty help",
+    "auth": "twenty auth login",
+    "lint": "eslint",
+    "lint-fix": "eslint --fix"
+  },
+  "dependencies": {
+    "twenty-sdk": "0.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.50.0"
+  }
+}

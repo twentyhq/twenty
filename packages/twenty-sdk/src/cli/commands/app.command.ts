@@ -11,6 +11,7 @@ import { AppSyncCommand } from '@/cli/commands/app-sync.command';
 import { formatPath } from '@/cli/utils/format-path';
 import { AppGenerateCommand } from '@/cli/commands/app-generate.command';
 import { AppLogsCommand } from '@/cli/commands/app-logs.command';
+import { AppBuildCommand } from '@/cli/commands/app-build.command';
 
 export class AppCommand {
   private devCommand = new AppDevCommand();
@@ -19,6 +20,7 @@ export class AppCommand {
   private addCommand = new AppAddCommand();
   private generateCommand = new AppGenerateCommand();
   private logsCommand = new AppLogsCommand();
+  private buildCommand = new AppBuildCommand();
 
   getCommand(): Command {
     const appCommand = new Command('app');
@@ -33,6 +35,25 @@ export class AppCommand {
           ...options,
           appPath: formatPath(appPath),
         });
+      });
+
+    appCommand
+      .command('build [appPath]')
+      .description('Build application for deployment')
+      .option('-w, --watch', 'Watch for changes and rebuild')
+      .option('-t, --tarball', 'Create a tarball after build')
+      .action(async (appPath, options) => {
+        try {
+          const result = await this.buildCommand.execute({
+            ...options,
+            appPath: formatPath(appPath),
+          });
+          if (!result.success) {
+            process.exit(1);
+          }
+        } catch {
+          process.exit(1);
+        }
       });
 
     appCommand
