@@ -14,12 +14,12 @@ import {
   type GraphQLType,
 } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
-import { isDefined } from 'twenty-shared/utils';
 import {
-  FieldMetadataType,
   type FieldMetadataSettings,
+  FieldMetadataType,
   NumberDataType,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
@@ -90,6 +90,7 @@ export class TypeMapperService {
       ],
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
       [FieldMetadataType.POSITION, PositionScalarType],
+      [FieldMetadataType.FILES, GraphQLJSON],
       [FieldMetadataType.RAW_JSON, GraphQLJSON],
       [
         FieldMetadataType.ARRAY,
@@ -133,6 +134,7 @@ export class TypeMapperService {
       ],
       [FieldMetadataType.NUMERIC, BigFloatFilterType],
       [FieldMetadataType.POSITION, FloatFilterType],
+      [FieldMetadataType.FILES, RawJsonFilterType],
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
       [FieldMetadataType.RICH_TEXT, StringFilterType],
       [FieldMetadataType.RICH_TEXT_V2, RichTextV2FilterType],
@@ -162,6 +164,7 @@ export class TypeMapperService {
       [FieldMetadataType.SELECT, OrderByDirectionType],
       [FieldMetadataType.MULTI_SELECT, OrderByDirectionType],
       [FieldMetadataType.POSITION, OrderByDirectionType],
+      [FieldMetadataType.FILES, OrderByDirectionType],
       [FieldMetadataType.RAW_JSON, OrderByDirectionType],
       [FieldMetadataType.RICH_TEXT, OrderByDirectionType],
       [FieldMetadataType.ARRAY, OrderByDirectionType],

@@ -172,6 +172,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.NUMERIC:
     case FieldMetadataType.LINKS:
     case FieldMetadataType.CURRENCY:
+    case FieldMetadataType.FILES:
     case FieldMetadataType.FULL_NAME:
     case FieldMetadataType.POSITION:
     case FieldMetadataType.ADDRESS:

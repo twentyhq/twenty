@@ -101,6 +101,7 @@ export type {
   FieldMetadataDateTimeSettings,
   FieldMetadataRelationSettings,
   FieldMetadataAddressSettings,
+  FieldMetadataFilesSettings,
   FieldMetadataTsVectorSettings,
   AllFieldMetadataSettings,
   FieldMetadataSettings,

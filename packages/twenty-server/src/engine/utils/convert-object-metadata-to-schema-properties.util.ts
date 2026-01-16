@@ -1,7 +1,7 @@
 import {
   FieldMetadataType,
-  type FieldMetadataSettings,
   NumberDataType,
+  type FieldMetadataSettings,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -326,6 +326,32 @@ export const convertObjectMetadataToSchemaProperties = ({
             },
             markdown: {
               type: 'string',
+            },
+          },
+        };
+        break;
+      case FieldMetadataType.FILES:
+        itemProperty = {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              fileId: {
+                type: 'string',
+                format: 'uuid',
+              },
+              label: {
+                type: 'string',
+              },
+              ...(forResponse
+                ? {
+                    fileType: {
+                      type: 'string',
+                      //TODODO : to set the enum from the file type
+                      enum: ['image', 'video', 'audio', 'document', 'other'],
+                    },
+                  }
+                : {}),
             },
           },
         };

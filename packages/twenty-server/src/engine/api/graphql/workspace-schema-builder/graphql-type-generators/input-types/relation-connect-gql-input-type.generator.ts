@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  GraphQLBoolean,
-  type GraphQLInputFieldConfig,
-  GraphQLInputObjectType,
-  type GraphQLInputType,
-  GraphQLString,
+    GraphQLBoolean,
+    type GraphQLInputFieldConfig,
+    GraphQLInputObjectType,
+    type GraphQLInputType,
+    GraphQLString,
 } from 'graphql';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { compositeTypeDefinitions } from 'twenty-shared/types';

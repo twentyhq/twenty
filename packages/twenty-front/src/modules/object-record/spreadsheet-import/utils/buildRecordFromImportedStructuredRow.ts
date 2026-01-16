@@ -354,6 +354,7 @@ export const buildRecordFromImportedStructuredRow = ({
           recordToBuild[field.name] = importedFieldValue;
         }
         break;
+      case FieldMetadataType.FILES:
       case FieldMetadataType.MORPH_RELATION:
       case FieldMetadataType.POSITION:
       case FieldMetadataType.RICH_TEXT:

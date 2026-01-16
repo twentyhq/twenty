@@ -319,3 +319,11 @@ export type FieldPhonesValue = {
   primaryPhoneCallingCode?: string;
   additionalPhones?: PhoneRecord[] | null;
 };
+
+export type FieldFileValue = {
+  fileId: string;
+  label: string;
+  fileType: string;
+};
+
+export type FieldFilesValue = FieldFileValue[];
