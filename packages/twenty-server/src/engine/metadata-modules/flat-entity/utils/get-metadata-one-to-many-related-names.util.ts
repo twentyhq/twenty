@@ -10,5 +10,7 @@ export const getMetadataOneToManyRelatedNames = <T extends AllMetadataName>(
 
   return Object.values(relations.oneToMany)
     .filter((relation) => relation !== null)
-    .map((relation) => relation.metadataName) as MetadataOneToManyRelatedMetadataNames<T>[];
+    .map(
+      (relation) => relation.metadataName,
+    ) as MetadataOneToManyRelatedMetadataNames<T>[];
 };

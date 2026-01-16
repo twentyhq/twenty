@@ -1,12 +1,10 @@
-import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
-import { type CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+
 import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
-import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -22,28 +20,10 @@ import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { type FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
-import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
-import { type PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
-import { type PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
-import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { type RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
-import { type RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
-import { type RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
-import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { type SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
-import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
-import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
-import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
-import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import {
   type CreateAgentAction,
   type DeleteAgentAction,
@@ -168,7 +148,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteFieldAction;
     };
     flatEntity: FlatFieldMetadata;
-    entity: FieldMetadataEntity;
+    entity: MetadataEntity<'fieldMetadata'>;
   };
   objectMetadata: {
     actions: {
@@ -177,7 +157,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteObjectAction;
     };
     flatEntity: FlatObjectMetadata;
-    entity: ObjectMetadataEntity;
+    entity: MetadataEntity<'objectMetadata'>;
   };
   view: {
     actions: {
@@ -186,7 +166,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteViewAction;
     };
     flatEntity: FlatView;
-    entity: ViewEntity;
+    entity: MetadataEntity<'view'>;
   };
   viewField: {
     actions: {
@@ -195,7 +175,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteViewFieldAction;
     };
     flatEntity: FlatViewField;
-    entity: ViewFieldEntity;
+    entity: MetadataEntity<'viewField'>;
   };
   viewGroup: {
     actions: {
@@ -204,7 +184,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteViewGroupAction;
     };
     flatEntity: FlatViewGroup;
-    entity: ViewGroupEntity;
+    entity: MetadataEntity<'viewGroup'>;
   };
   rowLevelPermissionPredicate: {
     actions: {
@@ -213,7 +193,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteRowLevelPermissionPredicateAction;
     };
     flatEntity: FlatRowLevelPermissionPredicate;
-    entity: RowLevelPermissionPredicateEntity;
+    entity: MetadataEntity<'rowLevelPermissionPredicate'>;
   };
   rowLevelPermissionPredicateGroup: {
     actions: {
@@ -222,7 +202,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteRowLevelPermissionPredicateGroupAction;
     };
     flatEntity: FlatRowLevelPermissionPredicateGroup;
-    entity: RowLevelPermissionPredicateGroupEntity;
+    entity: MetadataEntity<'rowLevelPermissionPredicateGroup'>;
   };
   viewFilterGroup: {
     actions: {
@@ -231,7 +211,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteViewFilterGroupAction;
     };
     flatEntity: FlatViewFilterGroup;
-    entity: ViewFilterGroupEntity;
+    entity: MetadataEntity<'viewFilterGroup'>;
   };
   index: {
     actions: {
@@ -240,7 +220,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteIndexAction;
     };
     flatEntity: FlatIndexMetadata;
-    entity: IndexMetadataEntity;
+    entity: MetadataEntity<'index'>;
   };
   serverlessFunction: {
     actions: {
@@ -249,7 +229,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteServerlessFunctionAction;
     };
     flatEntity: FlatServerlessFunction;
-    entity: ServerlessFunctionEntity;
+    entity: MetadataEntity<'serverlessFunction'>;
   };
   cronTrigger: {
     actions: {
@@ -258,7 +238,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteCronTriggerAction;
     };
     flatEntity: FlatCronTrigger;
-    entity: CronTriggerEntity;
+    entity: MetadataEntity<'cronTrigger'>;
   };
   databaseEventTrigger: {
     actions: {
@@ -267,7 +247,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteDatabaseEventTriggerAction;
     };
     flatEntity: FlatDatabaseEventTrigger;
-    entity: DatabaseEventTriggerEntity;
+    entity: MetadataEntity<'databaseEventTrigger'>;
   };
   routeTrigger: {
     actions: {
@@ -276,7 +256,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteRouteTriggerAction;
     };
     flatEntity: FlatRouteTrigger;
-    entity: RouteTriggerEntity;
+    entity: MetadataEntity<'routeTrigger'>;
   };
   viewFilter: {
     actions: {
@@ -285,7 +265,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteViewFilterAction;
     };
     flatEntity: FlatViewFilter;
-    entity: ViewFilterEntity;
+    entity: MetadataEntity<'viewFilter'>;
   };
   role: {
     actions: {
@@ -294,7 +274,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteRoleAction;
     };
     flatEntity: FlatRole;
-    entity: RoleEntity;
+    entity: MetadataEntity<'role'>;
   };
   roleTarget: {
     actions: {
@@ -303,7 +283,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteRoleTargetAction;
     };
     flatEntity: FlatRoleTarget;
-    entity: RoleTargetEntity;
+    entity: MetadataEntity<'roleTarget'>;
   };
   agent: {
     actions: {
@@ -312,7 +292,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteAgentAction;
     };
     flatEntity: FlatAgent;
-    entity: AgentEntity;
+    entity: MetadataEntity<'agent'>;
   };
   skill: {
     actions: {
@@ -321,7 +301,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteSkillAction;
     };
     flatEntity: FlatSkill;
-    entity: SkillEntity;
+    entity: MetadataEntity<'skill'>;
   };
   commandMenuItem: {
     actions: {
@@ -339,7 +319,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeletePageLayoutAction;
     };
     flatEntity: FlatPageLayout;
-    entity: PageLayoutEntity;
+    entity: MetadataEntity<'pageLayout'>;
   };
   pageLayoutWidget: {
     actions: {
@@ -348,7 +328,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeletePageLayoutWidgetAction;
     };
     flatEntity: FlatPageLayoutWidget;
-    entity: PageLayoutWidgetEntity;
+    entity: MetadataEntity<'pageLayoutWidget'>;
   };
   pageLayoutTab: {
     actions: {
@@ -357,7 +337,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeletePageLayoutTabAction;
     };
     flatEntity: FlatPageLayoutTab;
-    entity: PageLayoutTabEntity;
+    entity: MetadataEntity<'pageLayoutTab'>;
   };
   frontComponent: {
     actions: {
@@ -366,6 +346,6 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteFrontComponentAction;
     };
     flatEntity: FlatFrontComponent;
-    entity: FrontComponentEntity;
+    entity: MetadataEntity<'frontComponent'>;
   };
 };

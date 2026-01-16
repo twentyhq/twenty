@@ -9,8 +9,10 @@ export const sortMetadataNamesChildrenFirst = (): AllMetadataName[] => {
   const metadataNames = Object.keys(ALL_METADATA_NAME) as AllMetadataName[];
 
   return metadataNames.sort((metadataNameA, metadataNameB) => {
-    const oneToManyCountA = getMetadataOneToManyRelatedNames(metadataNameA).length;
-    const oneToManyCountB = getMetadataOneToManyRelatedNames(metadataNameB).length;
+    const oneToManyCountA =
+      getMetadataOneToManyRelatedNames(metadataNameA).length;
+    const oneToManyCountB =
+      getMetadataOneToManyRelatedNames(metadataNameB).length;
 
     if (oneToManyCountA !== oneToManyCountB) {
       return oneToManyCountA - oneToManyCountB;
