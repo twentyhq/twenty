@@ -28,6 +28,8 @@ export type ViteBuildConfig = {
   outputFileName: string;
   treeshake?: boolean;
   external?: (string | RegExp)[];
+  /** Relative path from the output file to the generated folder */
+  generatedRelativePath?: string;
 };
 
 export type ViteBuildResult = {

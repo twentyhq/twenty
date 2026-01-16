@@ -40,13 +40,23 @@ export class ViteBuildRunner {
     /^twenty-shared/,
     // Internal SDK path aliases (for development apps using SDK internals)
     /^@\//,
+    // Generated folder - built separately as a module
+    // Matches: ../generated, ../../generated, ./generated, etc.
+    /(?:^|\/)generated(?:\/|$)/,
   ];
 
   /**
    * Build a single serverless function entry point.
    */
   async buildFunction(config: ViteBuildConfig): Promise<ViteBuildResult> {
-    const { appPath, entryPath, outputDir, outputFileName, external } = config;
+    const {
+      appPath,
+      entryPath,
+      outputDir,
+      outputFileName,
+      external,
+      generatedRelativePath,
+    } = config;
 
     const absoluteEntryPath = path.resolve(appPath, entryPath);
     const outputFilePath = path.join(outputDir, outputFileName);
@@ -67,6 +77,7 @@ export class ViteBuildRunner {
       outputFileName,
       treeshake: true,
       external: external ?? this.defaultExternal,
+      generatedRelativePath,
     });
 
     try {
@@ -108,13 +119,21 @@ export class ViteBuildRunner {
       };
     }
 
+    // When building generated, don't externalize generated imports
+    const generatedExternal =
+      external ??
+      this.defaultExternal.filter(
+        (ext) =>
+          !(ext instanceof RegExp && ext.source.includes('generated')),
+      );
+
     const viteConfig = this.createViteConfig({
       appPath,
       entryPath: absoluteEntryPath,
       outputDir,
       outputFileName,
       treeshake: false, // Preserve all exports for dynamic imports
-      external: external ?? this.defaultExternal,
+      external: generatedExternal,
     });
 
     try {
@@ -169,9 +188,17 @@ export class ViteBuildRunner {
     outputFileName: string;
     treeshake: boolean;
     external: (string | RegExp)[];
+    generatedRelativePath?: string;
   }): InlineConfig {
-    const { appPath, entryPath, outputDir, outputFileName, treeshake, external } =
-      options;
+    const {
+      appPath,
+      entryPath,
+      outputDir,
+      outputFileName,
+      treeshake,
+      external,
+      generatedRelativePath,
+    } = options;
 
     return {
       root: appPath,
@@ -195,6 +222,16 @@ export class ViteBuildRunner {
             // Preserve named exports
             preserveModules: false,
             exports: 'named',
+            // Rewrite external import paths
+            paths: generatedRelativePath
+              ? (id: string) => {
+                  // Rewrite generated imports to point to the correct location
+                  if (/(?:^|\/)generated(?:\/|$)/.test(id)) {
+                    return generatedRelativePath;
+                  }
+                  return id;
+                }
+              : undefined,
           },
         },
         minify: false,

@@ -223,11 +223,19 @@ export class BuildService {
         const { relativePath, outputDir: fnOutputDir } = functionOutputPaths[index];
         const outputFileName = path.basename(relativePath);
 
+        // Compute the relative path from the function to the generated folder
+        // functions/lqq.function.js → ../generated/index.js
+        // functions/toto/lqq.function.js → ../../generated/index.js
+        const depth = fnOutputDir ? fnOutputDir.split('/').length + 1 : 1;
+        const generatedRelativePath =
+          '../'.repeat(depth) + this.GENERATED_DIR + '/index.js';
+
         return {
           appPath,
           entryPath: fn.handlerPath,
           outputDir: path.join(functionsOutputDir, fnOutputDir),
           outputFileName,
+          generatedRelativePath,
         };
       },
     );
