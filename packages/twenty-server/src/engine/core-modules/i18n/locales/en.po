@@ -2338,6 +2338,11 @@ msgstr "No records were affected."
 msgid "No role found for this user in the workspace."
 msgstr "No role found for this user in the workspace."
 
+#. js-lingui-id: ISCcTE
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "No role found for user."
+msgstr "No role found for user."
+
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No schedule provided in cron trigger"
@@ -2809,6 +2814,11 @@ msgstr "Rate limit reached. Please try again later."
 msgid "Raw SQL queries are not allowed."
 msgstr "Raw SQL queries are not allowed."
 
+#. js-lingui-id: EESfI5
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Record does not satisfy security constraints."
+msgstr "Record does not satisfy security constraints."
+
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Record not found."
@@ -3105,6 +3115,11 @@ msgstr "Serverless function already exists"
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Serverless function execution failed."
 msgstr "Serverless function execution failed."
+
+#. js-lingui-id: y8i9sW
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Serverless function execution is disabled."
+msgstr "Serverless function execution is disabled."
 
 #. js-lingui-id: MSgd2w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
