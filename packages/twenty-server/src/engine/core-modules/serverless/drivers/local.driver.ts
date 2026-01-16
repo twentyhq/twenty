@@ -150,6 +150,21 @@ export class LocalDriver implements ServerlessDriver {
         },
         status: ServerlessFunctionExecutionStatus.ERROR,
       };
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      const err = error instanceof Error ? error : new Error(String(error));
+
+      return {
+        data: null,
+        logs: '',
+        duration,
+        error: {
+          errorType: err.name || 'ExecutionError',
+          errorMessage: err.message || 'Unknown error during execution',
+          stackTrace: err.stack ? err.stack.split('\n') : [],
+        },
+        status: ServerlessFunctionExecutionStatus.ERROR,
+      };
     } finally {
       await lambdaBuildDirectoryManager.clean();
     }
