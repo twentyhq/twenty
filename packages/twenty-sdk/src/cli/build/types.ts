@@ -48,7 +48,14 @@ export type BuildWatcherState =
 
 export type RebuildDecision = {
   shouldRebuild: boolean;
+  /** Specific function files that changed (only these need rebuilding) */
   affectedFunctions: string[];
+  /** Shared utility files changed (requires rebuilding ALL functions) */
+  sharedFilesChanged: boolean;
+  /** Build config files changed (requires full rebuild): package.json, tsconfig.json, .env */
+  configChanged: boolean;
+  /** Manifest config changed (requires manifest regeneration only): application.config.ts */
+  manifestChanged: boolean;
   rebuildGenerated: boolean;
   assetsChanged: boolean;
   changedFiles: string[];

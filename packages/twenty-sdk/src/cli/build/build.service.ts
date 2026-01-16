@@ -17,6 +17,7 @@ import {
   type BuiltFunctionInfo,
   type ViteBuildConfig,
   type BuildWatchHandle,
+  type RebuildDecision,
 } from './types';
 
 /**
@@ -34,6 +35,13 @@ export class BuildService {
   private viteBuildRunner = new ViteBuildRunner();
   private manifestWriter = new BuildManifestWriter();
   private tarballService = new TarballService();
+
+  /** Cached state from the last successful build (used for incremental rebuilds) */
+  private lastBuildState: {
+    manifestResult: LoadManifestResult;
+    builtFunctions: BuiltFunctionInfo[];
+    outputDir: string;
+  } | null = null;
 
   private readonly OUTPUT_DIR = '.twenty/output';
   private readonly FUNCTIONS_DIR = 'functions';
@@ -144,6 +152,13 @@ export class BuildService {
         tarballPath,
       };
 
+      // Cache the build state for incremental rebuilds
+      this.lastBuildState = {
+        manifestResult,
+        builtFunctions,
+        outputDir,
+      };
+
       console.log('');
       console.log(chalk.green('✅ Build completed successfully'));
       console.log(chalk.gray(`   Output: ${outputDir}`));
@@ -190,19 +205,8 @@ export class BuildService {
         return;
       }
 
-      console.log(chalk.blue('🔄 Changes detected, rebuilding...'));
-
-      if (decision.affectedFunctions.length > 0) {
-        console.log(
-          chalk.gray(
-            `   Affected functions: ${decision.affectedFunctions.join(', ')}`,
-          ),
-        );
-      }
-
-      // For simplicity, we do a full rebuild on any change
-      // A more sophisticated implementation would only rebuild affected functions
-      const result = await this.build({ ...options, tarball: false });
+      // Use incremental rebuild based on what changed
+      const result = await this.incrementalRebuild(appPath, decision);
 
       if (result.success) {
         console.log(
@@ -218,6 +222,222 @@ export class BuildService {
     return {
       stop: () => watcher.stop(),
     };
+  }
+
+  /**
+   * Perform an incremental rebuild based on what files changed.
+   *
+   * This is more efficient than a full rebuild because it only rebuilds
+   * the parts of the application that were affected by the changes.
+   */
+  private async incrementalRebuild(
+    appPath: string,
+    decision: RebuildDecision,
+  ): Promise<ApiResponse<void>> {
+    try {
+      // If config changed or we don't have cached state, do a full rebuild
+      if (decision.configChanged || !this.lastBuildState) {
+        console.log(chalk.blue('🔄 Config changed, performing full rebuild...'));
+        const result = await this.build({ appPath, tarball: false });
+        if (result.success) {
+          return { success: true, data: undefined };
+        }
+        return { success: false, error: result.error };
+      }
+
+      let { manifestResult, outputDir } = this.lastBuildState;
+      let { builtFunctions } = this.lastBuildState;
+      let rebuildCount = 0;
+
+      // If manifest config changed, reload it
+      if (decision.manifestChanged) {
+        console.log(chalk.blue('🔄 Manifest changed, regenerating...'));
+        manifestResult = await loadManifest(appPath);
+        rebuildCount++;
+      }
+
+      // Determine which functions need rebuilding
+      const functionsToRebuild: string[] = [];
+
+      if (decision.sharedFilesChanged) {
+        // Shared files changed - rebuild ALL functions
+        console.log(
+          chalk.blue('🔄 Shared files changed, rebuilding all functions...'),
+        );
+        functionsToRebuild.push(
+          ...manifestResult.manifest.serverlessFunctions.map(
+            (fn) => fn.handlerPath,
+          ),
+        );
+      } else if (decision.affectedFunctions.length > 0) {
+        // Only specific functions changed
+        console.log(
+          chalk.blue(
+            `🔄 Rebuilding ${decision.affectedFunctions.length} function(s)...`,
+          ),
+        );
+        functionsToRebuild.push(...decision.affectedFunctions);
+      }
+
+      // Rebuild affected functions
+      if (functionsToRebuild.length > 0) {
+        const rebuiltFunctions = await this.rebuildSpecificFunctions(
+          appPath,
+          outputDir,
+          manifestResult,
+          functionsToRebuild,
+        );
+
+        // Merge rebuilt functions into the existing list
+        builtFunctions = this.mergeBuiltFunctions(
+          builtFunctions,
+          rebuiltFunctions,
+        );
+        rebuildCount += rebuiltFunctions.length;
+      }
+
+      // Rebuild generated folder if needed
+      if (decision.rebuildGenerated) {
+        console.log(chalk.gray('  Rebuilding generated client...'));
+        await this.buildGeneratedFolder(appPath, outputDir);
+        rebuildCount++;
+      }
+
+      // Copy assets if needed
+      if (decision.assetsChanged) {
+        const assetsCopied = await this.copyAssets(appPath, outputDir);
+        if (assetsCopied > 0) {
+          console.log(chalk.gray(`  Copied ${assetsCopied} asset(s)`));
+          rebuildCount++;
+        }
+      }
+
+      // Update manifest after any rebuild
+      if (rebuildCount > 0) {
+        await this.manifestWriter.write({
+          manifest: manifestResult.manifest,
+          builtFunctions,
+          outputDir,
+        });
+
+        // Update cached state
+        this.lastBuildState = {
+          manifestResult,
+          builtFunctions,
+          outputDir,
+        };
+
+        console.log(chalk.green('✅ Incremental rebuild completed'));
+      }
+
+      return { success: true, data: undefined };
+    } catch (error) {
+      console.error(
+        chalk.red('❌ Incremental rebuild failed:'),
+        error instanceof Error ? error.message : error,
+      );
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  /**
+   * Rebuild only specific functions that changed.
+   */
+  private async rebuildSpecificFunctions(
+    appPath: string,
+    outputDir: string,
+    manifestResult: LoadManifestResult,
+    handlerPaths: string[],
+  ): Promise<BuiltFunctionInfo[]> {
+    const { manifest } = manifestResult;
+    const functionsOutputDir = path.join(outputDir, this.FUNCTIONS_DIR);
+
+    // Normalize paths for comparison
+    const normalizedPaths = new Set(
+      handlerPaths.map((p) => p.replace(/\\/g, '/')),
+    );
+
+    // Find the functions to rebuild
+    const functionsToRebuild = manifest.serverlessFunctions.filter((fn) => {
+      const normalizedHandler = fn.handlerPath.replace(/\\/g, '/');
+      return normalizedPaths.has(normalizedHandler);
+    });
+
+    if (functionsToRebuild.length === 0) {
+      return [];
+    }
+
+    // Build configs for the affected functions
+    const buildConfigs: ViteBuildConfig[] = functionsToRebuild.map((fn) => {
+      const { relativePath, outputDir: fnOutputDir } =
+        this.computeFunctionOutputPath(fn.handlerPath);
+      const outputFileName = path.basename(relativePath);
+      const depth = fnOutputDir ? fnOutputDir.split('/').length + 1 : 1;
+      const generatedRelativePath =
+        '../'.repeat(depth) + this.GENERATED_DIR + '/index.js';
+
+      return {
+        appPath,
+        entryPath: fn.handlerPath,
+        outputDir: path.join(functionsOutputDir, fnOutputDir),
+        outputFileName,
+        generatedRelativePath,
+      };
+    });
+
+    const results =
+      await this.viteBuildRunner.buildFunctionsParallel(buildConfigs);
+
+    const builtFunctions: BuiltFunctionInfo[] = [];
+
+    for (const fn of functionsToRebuild) {
+      const { relativePath } = this.computeFunctionOutputPath(fn.handlerPath);
+      const outputFileName = path.basename(relativePath);
+      const result = results.get(outputFileName);
+
+      if (result?.success) {
+        console.log(chalk.gray(`    ✓ ${fn.name || fn.universalIdentifier}`));
+        builtFunctions.push({
+          name: fn.name || fn.universalIdentifier,
+          universalIdentifier: fn.universalIdentifier,
+          originalHandlerPath: fn.handlerPath,
+          builtHandlerPath: `${this.FUNCTIONS_DIR}/${relativePath}`,
+          sourceMapPath: result.sourceMapPath
+            ? `${this.FUNCTIONS_DIR}/${relativePath}.map`
+            : undefined,
+        });
+      } else {
+        console.error(
+          chalk.red(`    ✗ ${fn.name || fn.universalIdentifier}`),
+          result?.error?.message || 'Unknown error',
+        );
+        builtFunctions.push({
+          name: fn.name || fn.universalIdentifier,
+          universalIdentifier: fn.universalIdentifier,
+          originalHandlerPath: fn.handlerPath,
+          builtHandlerPath: '', // Empty indicates failure
+        });
+      }
+    }
+
+    return builtFunctions;
+  }
+
+  /**
+   * Merge newly rebuilt functions into the existing list.
+   */
+  private mergeBuiltFunctions(
+    existing: BuiltFunctionInfo[],
+    rebuilt: BuiltFunctionInfo[],
+  ): BuiltFunctionInfo[] {
+    const rebuiltMap = new Map(
+      rebuilt.map((fn) => [fn.universalIdentifier, fn]),
+    );
+
+    return existing.map((fn) => rebuiltMap.get(fn.universalIdentifier) || fn);
   }
 
   /**

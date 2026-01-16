@@ -136,16 +136,37 @@ export class BuildWatcher {
 
   /**
    * Analyze changed files to determine what needs to be rebuilt.
+   *
+   * Manifest is composed from:
+   * - src/app/application.config.ts
+   * - src/app/**\/*.object.ts
+   * - src/app/**\/*.object-extension.ts
+   * - src/app/**\/*.role.ts
+   * - src/app/**\/*.function.ts (also requires function rebuild)
    */
   private analyzeChanges(changedFiles: string[]): RebuildDecision {
     const affectedFunctions: string[] = [];
     let rebuildGenerated = false;
     let assetsChanged = false;
+    let sharedFilesChanged = false;
+    let configChanged = false;
+    let manifestChanged = false;
 
     for (const filepath of changedFiles) {
       const relativePath = path.relative(this.appPath, filepath);
       // Normalize path separators for cross-platform compatibility
       const normalizedPath = relativePath.replace(/\\/g, '/');
+      const basename = path.basename(normalizedPath);
+
+      // Check if it's a build config file (requires full rebuild)
+      if (
+        basename === 'package.json' ||
+        basename === 'tsconfig.json' ||
+        basename === '.env'
+      ) {
+        configChanged = true;
+        continue;
+      }
 
       // Check if it's an asset file
       if (normalizedPath.startsWith('src/assets/')) {
@@ -153,36 +174,55 @@ export class BuildWatcher {
         continue;
       }
 
-      // Check if it's a function file
-      if (
-        normalizedPath.includes('src/app/') &&
-        normalizedPath.endsWith('.function.ts')
-      ) {
-        const functionName = path.basename(normalizedPath, '.function.ts');
-        affectedFunctions.push(functionName);
-      }
-
       // Check if it's in the generated folder
       if (normalizedPath.startsWith('generated/')) {
         rebuildGenerated = true;
+        continue;
+      }
+
+      // Check if it's a manifest-related file in src/app/
+      if (normalizedPath.startsWith('src/app/')) {
+        // Function files: rebuild function AND regenerate manifest
+        if (normalizedPath.endsWith('.function.ts')) {
+          affectedFunctions.push(normalizedPath);
+          manifestChanged = true;
+          continue;
+        }
+
+        // Other manifest files: only regenerate manifest (no function rebuild)
+        // - application.config.ts
+        // - *.object.ts
+        // - *.object-extension.ts
+        // - *.role.ts
+        if (
+          basename === 'application.config.ts' ||
+          normalizedPath.endsWith('.object.ts') ||
+          normalizedPath.endsWith('.object-extension.ts') ||
+          normalizedPath.endsWith('.role.ts')
+        ) {
+          manifestChanged = true;
+          continue;
+        }
       }
 
       // Check if it's a shared file that affects all functions
       if (
-        normalizedPath.includes('src/') &&
-        !normalizedPath.includes('.function.ts') &&
-        !normalizedPath.startsWith('generated/') &&
-        !normalizedPath.startsWith('src/assets/')
+        normalizedPath.startsWith('src/') &&
+        !normalizedPath.startsWith('src/assets/') &&
+        !normalizedPath.startsWith('src/app/') &&
+        (normalizedPath.endsWith('.ts') || normalizedPath.endsWith('.tsx'))
       ) {
-        // Shared utility file - rebuild all functions
-        // For simplicity, we just mark that a rebuild is needed
-        // The build service will handle the full rebuild
+        // Shared utility file outside src/app/ - rebuild all functions
+        sharedFilesChanged = true;
       }
     }
 
     return {
       shouldRebuild: true,
       affectedFunctions,
+      sharedFilesChanged,
+      configChanged,
+      manifestChanged,
       rebuildGenerated,
       assetsChanged,
       changedFiles,
