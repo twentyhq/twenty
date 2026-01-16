@@ -51,6 +51,7 @@ export const getImageBufferFromUrl = async (
     }
 
     const contentType = response.headers['content-type'];
+
     if (contentType && !contentType.startsWith('image/')) {
       throw new Error(
         `Invalid content type: expected image/*, got ${contentType}`,
@@ -61,18 +62,21 @@ export const getImageBufferFromUrl = async (
   } catch (error) {
     const axiosError = error as AxiosError;
     const axiosResponse = axiosError.response;
+
     if (axiosResponse) {
       throw new Error(
         `Failed to fetch image: HTTP ${axiosResponse.status} from ${url}`,
       );
     }
-    
+
     if (error instanceof Error) {
       if (
         axiosError.code === 'ECONNABORTED' ||
         error.message.includes('timeout')
       ) {
-        throw new Error(`Request timeout while fetching image from URL: ${url}`);
+        throw new Error(
+          `Request timeout while fetching image from URL: ${url}`,
+        );
       }
       if (
         axiosError.code === 'ENOTFOUND' ||
