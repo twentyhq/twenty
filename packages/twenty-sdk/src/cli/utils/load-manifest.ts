@@ -70,7 +70,7 @@ const loadObjects = async (appPath: string): Promise<ObjectManifest[]> => {
 
   for (const filepath of objectFiles) {
     try {
-      const manifest = await loadConfig<ObjectManifest>(filepath);
+      const manifest = await loadConfig<ObjectManifest>(filepath, appPath);
 
       objects.push(manifest);
     } catch (error) {
@@ -99,7 +99,10 @@ const loadObjectExtensions = async (
 
   for (const filepath of extensionFiles) {
     try {
-      const manifest = await loadConfig<ObjectExtensionManifest>(filepath);
+      const manifest = await loadConfig<ObjectExtensionManifest>(
+        filepath,
+        appPath,
+      );
 
       extensions.push(manifest);
     } catch (error) {
@@ -163,7 +166,7 @@ const loadRoles = async (appPath: string): Promise<RoleManifest[]> => {
 
   for (const filepath of roleFiles) {
     try {
-      const config = await loadConfig<RoleConfig>(filepath);
+      const config = await loadConfig<RoleConfig>(filepath, appPath);
       roles.push(config);
     } catch (error) {
       const relPath = toPosixRelative(filepath, appPath);
@@ -303,7 +306,10 @@ export const loadManifest = async (
     'app',
     'application.config.ts',
   );
-  const application = await loadConfig<Application>(applicationConfigPath);
+  const application = await loadConfig<Application>(
+    applicationConfigPath,
+    appPath,
+  );
 
   // Load all entities in parallel
   const [

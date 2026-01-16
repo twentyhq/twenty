@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import chalk from 'chalk';
-import { build } from 'esbuild';
+import { build, type PluginBuild } from 'esbuild';
 import { loadManifest, type LoadManifestResult } from '../utils/load-manifest';
 import { resolveTsconfigPaths } from './tsconfig-resolver.service';
 
@@ -195,28 +195,35 @@ export class BuildService {
   ) {
     return {
       name: 'tsconfig-paths',
-      setup: (buildInstance: { onResolve: Function }) => {
+      setup: (buildInstance: PluginBuild) => {
         for (const alias of aliases) {
           // Convert tsconfig pattern to regex (e.g., "@/*" -> /^@\/(.*)$/)
           const pattern = alias.pattern.replace('*', '(.*)');
           const regex = new RegExp(`^${pattern.replace('/', '\\/')}$`);
 
-          buildInstance.onResolve(
-            { filter: regex },
-            (args: { path: string; resolveDir: string }) => {
-              const match = args.path.match(regex);
-              if (match && alias.paths[0]) {
-                const resolvedPath = alias.paths[0].replace(
-                  '*',
-                  match[1] || '',
-                );
-                // Make it absolute relative to appPath
-                const absolutePath = path.resolve(appPath, resolvedPath);
-                return { path: absolutePath };
+          buildInstance.onResolve({ filter: regex }, async (args) => {
+            const match = args.path.match(regex);
+            if (match && alias.paths[0]) {
+              const resolvedPath = alias.paths[0].replace(
+                '*',
+                match[1] || '',
+              );
+
+              // Use esbuild's resolver to continue resolution
+              // This handles file extensions (.ts, .js) and index files
+              const result = await buildInstance.resolve(resolvedPath, {
+                kind: args.kind,
+                resolveDir: appPath,
+              });
+
+              if (result.errors && result.errors.length > 0) {
+                return null;
               }
-              return null;
-            },
-          );
+
+              return result;
+            }
+            return null;
+          });
         }
       },
     };
