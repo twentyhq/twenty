@@ -82,7 +82,7 @@ describe('getGroupByOrderBy', () => {
       const result = getGroupByOrderBy({
         graphOrderBy: GraphOrderBy.VALUE_ASC,
         groupByFieldMetadata,
-        aggregateOperation: AggregateOperations.sum,
+        aggregateOperation: AggregateOperations.SUM,
         aggregateFieldMetadata,
       });
 
@@ -110,7 +110,7 @@ describe('getGroupByOrderBy', () => {
         getGroupByOrderBy({
           graphOrderBy: GraphOrderBy.VALUE_ASC,
           groupByFieldMetadata,
-          aggregateOperation: AggregateOperations.sum,
+          aggregateOperation: AggregateOperations.SUM,
         }),
       ).toThrow(
         'Aggregate operation or field metadata not found (field: status)',
@@ -123,7 +123,7 @@ describe('getGroupByOrderBy', () => {
       const result = getGroupByOrderBy({
         graphOrderBy: GraphOrderBy.VALUE_DESC,
         groupByFieldMetadata,
-        aggregateOperation: AggregateOperations.count,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadata,
       });
 
@@ -138,7 +138,7 @@ describe('getGroupByOrderBy', () => {
       const result = getGroupByOrderBy({
         graphOrderBy: GraphOrderBy.VALUE_DESC,
         groupByFieldMetadata,
-        aggregateOperation: AggregateOperations.avg,
+        aggregateOperation: AggregateOperations.AVG,
         aggregateFieldMetadata,
       });
 

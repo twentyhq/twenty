@@ -13,6 +13,7 @@ const createMockFieldMetadata = (overrides: Partial<FlatFieldMetadata>) =>
     name: 'testField',
     type: FieldMetadataType.TEXT,
     universalIdentifier: 'test-universal-id',
+    description: null,
     ...overrides,
   }) as FlatFieldMetadata;
 
