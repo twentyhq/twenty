@@ -27,10 +27,12 @@ import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrad
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
 import { IdentifyViewFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-field-metadata.command';
+import { IdentifyViewFilterMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-filter-metadata.command';
 import { IdentifyViewMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-metadata.command';
 import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-object-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-field-universal-identifier-and-application-id-not-nullable-migration.command';
+import { MakeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-filter-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-universal-identifier-and-application-id-not-nullable-migration.command';
 import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -79,10 +81,12 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly identifyObjectMetadataCommand: IdentifyObjectMetadataCommand,
     protected readonly identifyViewMetadataCommand: IdentifyViewMetadataCommand,
     protected readonly identifyViewFieldMetadataCommand: IdentifyViewFieldMetadataCommand,
+    protected readonly identifyViewFilterMetadataCommand: IdentifyViewFilterMetadataCommand,
     protected readonly makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    protected readonly makeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ) {
     super(
       workspaceRepository,
@@ -124,6 +128,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.identifyObjectMetadataCommand,
       this.identifyViewMetadataCommand,
       this.identifyViewFieldMetadataCommand,
+      this.identifyViewFilterMetadataCommand,
       this
         .makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this
@@ -132,6 +137,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         .makeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this
         .makeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+      this
+        .makeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     ];
 
     this.allCommands = {
