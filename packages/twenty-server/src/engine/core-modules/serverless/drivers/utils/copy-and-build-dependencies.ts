@@ -34,9 +34,13 @@ export const copyAndBuildDependencies = async (
 
   const localYarnPath = join(buildDirectory, '.yarn/releases/yarn-4.9.2.cjs');
 
+  // Strip NODE_OPTIONS to prevent tsx loader from interfering with yarn
+  const { NODE_OPTIONS: _nodeOptions, ...cleanEnv } = process.env;
+
   try {
     await execFilePromise(process.execPath, [localYarnPath], {
       cwd: buildDirectory,
+      env: cleanEnv,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -48,15 +52,15 @@ export const copyAndBuildDependencies = async (
   }
   const objects = await fs.readdir(buildDirectory);
 
-  objects.forEach((object) => {
-    const fullPath = join(buildDirectory, object);
+  await Promise.all(
+    objects
+      .filter((object) => object !== 'node_modules')
+      .map((object) => {
+        const fullPath = join(buildDirectory, object);
 
-    if (object === 'node_modules') return;
-
-    if (statSync(fullPath).isDirectory()) {
-      fs.rm(fullPath, { recursive: true, force: true });
-    } else {
-      fs.rm(fullPath);
-    }
-  });
+        return statSync(fullPath).isDirectory()
+          ? fs.rm(fullPath, { recursive: true, force: true })
+          : fs.rm(fullPath);
+      }),
+  );
 };
