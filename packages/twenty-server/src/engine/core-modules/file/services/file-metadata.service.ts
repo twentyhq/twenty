@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { extractFolderPathFilenameAndType } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -8,7 +9,6 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 
 import { FileService } from './file.service';
 
@@ -67,7 +67,9 @@ export class FileMetadataService {
       return null;
     }
 
-    const { folderPath, filename } = extractFolderPathAndFilename(file.path);
+    const { folderPath, filename } = extractFolderPathFilenameAndType(
+      file.path,
+    );
 
     try {
       if (file.path) {

@@ -3,7 +3,10 @@ import { formatFileSize } from '@/file/utils/formatFileSize';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  extractFolderPathFilenameAndType,
+  isDefined,
+} from 'twenty-shared/utils';
 import { useCreateFileMutation } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
@@ -43,11 +46,13 @@ export const useUploadWorkflowFile = () => {
         throw new Error('File upload failed');
       }
 
+      const { type } = extractFolderPathFilenameAndType(uploadedFile.path);
+
       const workflowFile: WorkflowFile = {
         id: uploadedFile.id,
-        name: uploadedFile.name,
+        name: file.name,
         size: uploadedFile.size,
-        type: uploadedFile.type,
+        type: type,
         createdAt: uploadedFile.createdAt,
       };
 
