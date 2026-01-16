@@ -38,7 +38,15 @@ export const getImageBufferFromUrl = async (
       timeout: 30000,
     });
 
-    if (!response.data || response.data.byteLength === 0) {
+    if (!response.data) {
+      throw new Error('Received empty response from image URL');
+    }
+
+    const bufferLength = Buffer.isBuffer(response.data)
+      ? response.data.length
+      : response.data.byteLength;
+
+    if (bufferLength === 0) {
       throw new Error('Received empty response from image URL');
     }
 
