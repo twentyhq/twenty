@@ -41,6 +41,7 @@ describe('GmailGetMessageListService', () => {
     id: 'connected-account-id',
     provider: ConnectedAccountProvider.GOOGLE,
     accessToken: 'access-token',
+    refreshToken: 'refresh-token',
     handle: 'test@gmail.com',
     connectionParameters: {},
   };
