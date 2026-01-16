@@ -30,7 +30,7 @@ export class FrontComponentResolver {
   async frontComponents(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<FrontComponentDTO[]> {
-    return this.frontComponentService.findAll(workspace.id);
+    return await this.frontComponentService.findAll(workspace.id);
   }
 
   @Query(() => FrontComponentDTO, { nullable: true })
@@ -39,7 +39,7 @@ export class FrontComponentResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<FrontComponentDTO | null> {
-    return this.frontComponentService.findById(id, workspace.id);
+    return await this.frontComponentService.findById(id, workspace.id);
   }
 
   @Mutation(() => FrontComponentDTO)
@@ -48,7 +48,7 @@ export class FrontComponentResolver {
     @Args('input') input: CreateFrontComponentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<FrontComponentDTO> {
-    return this.frontComponentService.create(input, workspace.id);
+    return await this.frontComponentService.create(input, workspace.id);
   }
 
   @Mutation(() => FrontComponentDTO)
@@ -57,7 +57,7 @@ export class FrontComponentResolver {
     @Args('input') input: UpdateFrontComponentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<FrontComponentDTO> {
-    return this.frontComponentService.update(input, workspace.id);
+    return await this.frontComponentService.update(input, workspace.id);
   }
 
   @Mutation(() => FrontComponentDTO)
@@ -66,6 +66,6 @@ export class FrontComponentResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<FrontComponentDTO> {
-    return this.frontComponentService.delete(id, workspace.id);
+    return await this.frontComponentService.delete(id, workspace.id);
   }
 }

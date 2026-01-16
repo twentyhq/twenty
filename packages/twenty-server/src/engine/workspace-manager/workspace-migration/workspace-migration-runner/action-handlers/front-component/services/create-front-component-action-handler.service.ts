@@ -26,7 +26,7 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
         FrontComponentEntity,
       );
 
-    await frontComponentRepository.save({
+    await frontComponentRepository.insert({
       ...flatEntity,
       workspaceId,
     });

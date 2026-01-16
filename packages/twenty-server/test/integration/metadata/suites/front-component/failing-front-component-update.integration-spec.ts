@@ -9,7 +9,9 @@ describe('Front component update should fail', () => {
       expectToFail: true,
       input: {
         id: nonExistentId,
-        name: 'updatedName',
+        update: {
+          name: 'updatedName',
+        },
       },
     });
 

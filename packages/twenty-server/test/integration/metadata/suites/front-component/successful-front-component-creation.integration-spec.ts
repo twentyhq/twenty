@@ -10,6 +10,7 @@ describe('Front component creation should succeed', () => {
         expectToFail: false,
         input: { id: createdFrontComponentId },
       });
+      createdFrontComponentId = '';
     }
   });
 

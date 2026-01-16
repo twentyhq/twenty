@@ -31,13 +31,11 @@ export const fromUpdateFrontComponentInputToFlatFrontComponentToUpdateOrThrow =
       );
     }
 
-    const { id: _id, ...updates } = updateFrontComponentInput;
-
     return {
       ...mergeUpdateInExistingRecord({
         existing: existingFlatFrontComponent,
         properties: [...FLAT_FRONT_COMPONENT_EDITABLE_PROPERTIES],
-        update: updates,
+        update: updateFrontComponentInput.update,
       }),
       updatedAt: new Date().toISOString(),
     };
