@@ -124,7 +124,7 @@ export const SettingsObjectRelationItemTableRow = ({
     fieldName: fieldMetadataItem.name,
   });
 
-  // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
+  // eslint-disable-next-line twenty/no-navigate-prefer-link
   const navigateToFieldEdit = () =>
     navigate(SettingsPath.ObjectFieldEdit, {
       objectNamePlural: objectMetadataItem.namePlural,
@@ -157,7 +157,7 @@ export const SettingsObjectRelationItemTableRow = ({
       : fieldMetadataItem.label;
 
   return (
-    // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
+    // eslint-disable-next-line twenty/no-navigate-prefer-link
     <StyledObjectRelationTableRow onClick={navigateToFieldEdit}>
       <StyledNameTableCell>
         {!!Icon && (
