@@ -10,10 +10,8 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import {
-  CommandMenuItemAvailabilityType,
-  FeatureFlagKey,
-} from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
+import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 export const useRunWorkflowRecordAgnosticActions = () => {
   const { getIcon } = useIcons();

@@ -19,11 +19,11 @@ import { useRecoilCallback } from 'recoil';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated/graphql';
 import {
   type CommandMenuItem,
   CommandMenuItemAvailabilityType,
-  FeatureFlagKey,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useRunWorkflowRecordActions = ({
   objectMetadataItem,
