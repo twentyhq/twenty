@@ -1,12 +1,12 @@
-import { statSync, promises as fs } from 'fs';
-import { promisify } from 'util';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
+import { promises as fs, statSync } from 'fs';
 import { join } from 'path';
+import { promisify } from 'util';
 
 import { getLayerDependenciesDirName } from 'src/engine/core-modules/serverless/drivers/utils/get-layer-dependencies-dir-name';
 import type { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
-const execPromise = promisify(exec);
+const execFilePromise = promisify(execFile);
 
 export const copyAndBuildDependencies = async (
   buildDirectory: string,
@@ -35,7 +35,7 @@ export const copyAndBuildDependencies = async (
   const localYarnPath = join(buildDirectory, '.yarn/releases/yarn-4.9.2.cjs');
 
   try {
-    await execPromise(`${process.execPath} ${localYarnPath}`, {
+    await execFilePromise(process.execPath, [localYarnPath], {
       cwd: buildDirectory,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
