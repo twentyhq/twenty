@@ -119,7 +119,9 @@ describe('generateDateGroupsInRange', () => {
   describe('truncation', () => {
     it('should truncate when exceeding maximum number of bars', () => {
       const startDate = Temporal.PlainDate.from('2020-01-01');
-      const endDate = startDate.add({ days: BAR_CHART_MAXIMUM_NUMBER_OF_BARS + 50 });
+      const endDate = startDate.add({
+        days: BAR_CHART_MAXIMUM_NUMBER_OF_BARS + 50,
+      });
 
       const result = generateDateGroupsInRange({
         startDate,
@@ -133,7 +135,9 @@ describe('generateDateGroupsInRange', () => {
 
     it('should not truncate when exactly at maximum', () => {
       const startDate = Temporal.PlainDate.from('2020-01-01');
-      const endDate = startDate.add({ days: BAR_CHART_MAXIMUM_NUMBER_OF_BARS - 1 });
+      const endDate = startDate.add({
+        days: BAR_CHART_MAXIMUM_NUMBER_OF_BARS - 1,
+      });
 
       const result = generateDateGroupsInRange({
         startDate,

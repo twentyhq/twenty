@@ -178,7 +178,11 @@ describe('filterTwoDimensionalDataByRange', () => {
 
     it('should ignore non-numeric values when summing', () => {
       const data = [
-        { category: 'A', seriesA: 100, seriesB: 'invalid' as unknown as number },
+        {
+          category: 'A',
+          seriesA: 100,
+          seriesB: 'invalid' as unknown as number,
+        },
         { category: 'B', seriesA: 300, seriesB: 200 },
       ];
       const keys = ['seriesA', 'seriesB'];
