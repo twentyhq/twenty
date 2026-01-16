@@ -118,10 +118,6 @@ export class FileUploadService {
       this.httpService.axiosRef,
     );
 
-    if (buffer.length === 0) {
-      throw new Error('Received empty image buffer from URL');
-    }
-
     const type = await FileType.fromBuffer(buffer);
 
     if (!type || !type.ext || !type.mime) {

@@ -51,23 +51,26 @@ export const getImageBufferFromUrl = async (
 
     return Buffer.from(response.data, 'binary');
   } catch (error) {
-    const axiosError = error as AxiosError;
-    
-    if (axiosError.response) {
+    if ((error as AxiosError).response) {
+      const axiosError = error as AxiosError;
       throw new Error(
         `Failed to fetch image: HTTP ${axiosError.response.status} from ${url}`,
       );
     }
     
     if (error instanceof Error) {
-      if (error.message.includes('timeout') || axiosError.code === 'ECONNABORTED') {
+      const axiosError = error as AxiosError;
+      if (
+        axiosError.code === 'ECONNABORTED' ||
+        (error instanceof Error && error.message.includes('timeout'))
+      ) {
         throw new Error(`Request timeout while fetching image from URL: ${url}`);
       }
       if (
-        error.message.includes('ENOTFOUND') ||
-        error.message.includes('ECONNREFUSED') ||
         axiosError.code === 'ENOTFOUND' ||
-        axiosError.code === 'ECONNREFUSED'
+        axiosError.code === 'ECONNREFUSED' ||
+        (error instanceof Error && error.message.includes('ENOTFOUND')) ||
+        (error instanceof Error && error.message.includes('ECONNREFUSED'))
       ) {
         throw new Error(`Failed to connect to image URL: ${url}`);
       }
