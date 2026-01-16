@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
 import {
   type CountryCallingCode,
+  getCountryCallingCode,
   parsePhoneNumberWithError,
 } from 'libphonenumber-js';
 import isEmpty from 'lodash.isempty';
@@ -138,10 +139,14 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
     );
   }
 
-  const finalPrimaryPhoneCallingCode =
-    callingCode ??
-    (`+${phone.countryCallingCode}` as undefined | CountryCallingCode);
-  const finalPrimaryPhoneCountryCode = countryCode ?? phone.country;
+
+
+  const finalPrimaryPhoneCallingCode = isNonEmptyString(callingCode)
+    ? callingCode
+    : (`+${phone.countryCallingCode}` as undefined | CountryCallingCode);
+  const finalPrimaryPhoneCountryCode = isNonEmptyString(countryCode)
+    ? countryCode
+    : phone.country;
 
   return {
     countryCode: finalPrimaryPhoneCountryCode,
@@ -160,9 +165,11 @@ const validateAndInferPhoneInput = ({
     countryCode,
   });
 
-  if (isDefined(number) && isNonEmptyString(number)) {
+  const numberAsString = isDefined(number) ? String(number) : undefined;
+
+  if (isNonEmptyString(numberAsString)) {
     return validateAndInferMetadataFromPrimaryPhoneNumber({
-      number,
+      number: numberAsString,
       callingCode,
       countryCode,
     });

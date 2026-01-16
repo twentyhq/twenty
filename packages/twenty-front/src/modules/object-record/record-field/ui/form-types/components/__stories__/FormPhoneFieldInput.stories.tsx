@@ -80,7 +80,7 @@ export const WithVariablesAsDefaultValues: Story = {
 
     const variablePickers = await canvas.findAllByText('VariablePicker');
 
-    expect(variablePickers).toHaveLength(1);
+    expect(variablePickers).toHaveLength(2);
 
     for (const variablePicker of variablePickers) {
       expect(variablePicker).toBeVisible();

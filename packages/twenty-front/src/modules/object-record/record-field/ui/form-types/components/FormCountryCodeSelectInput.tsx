@@ -8,7 +8,7 @@ import type { CountryCode } from 'libphonenumber-js';
 import { IconCircleOff, type IconComponentProps } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 
-export type FormCountryCodeSelectInputUpdatedValue = CountryCode | '';
+export type FormCountryCodeSelectInputUpdatedValue = CountryCode | '' | string;
 
 export const FormCountryCodeSelectInput = ({
   selectedCountryCode,

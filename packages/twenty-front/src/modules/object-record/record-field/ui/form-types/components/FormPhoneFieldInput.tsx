@@ -9,6 +9,7 @@ import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { getCountryCallingCode } from 'libphonenumber-js';
 
 type FormPhoneFieldInputProps = {
@@ -29,8 +30,14 @@ export const FormPhoneFieldInput = ({
   const handleCountryChange = (
     newCountry: FormCountryCodeSelectInputUpdatedValue,
   ) => {
-    let newCallingCode;
+    let newCallingCode: string;
+
     if (newCountry === '') {
+      newCallingCode = '';
+    } else if (isStandaloneVariableString(newCountry)) {
+      // When a variable is selected, leave calling code empty.
+      // The backend skips validation for empty calling codes,
+      // and the country code variable will be resolved at runtime.
       newCallingCode = '';
     } else {
       newCallingCode = getCountryCallingCode(newCountry);
@@ -60,6 +67,7 @@ export const FormPhoneFieldInput = ({
           selectedCountryCode={defaultValue?.primaryPhoneCountryCode ?? ''}
           onChange={handleCountryChange}
           readonly={readonly}
+          VariablePicker={VariablePicker}
         />
         <FormNumberFieldInput
           label={t`Phone Number`}
