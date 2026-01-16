@@ -1,0 +1,116 @@
+import { faker } from '@faker-js/faker';
+import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
+import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
+
+import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+
+describe('CommandMenuItem creation should succeed', () => {
+  let createdCommandMenuItemId: string;
+
+  afterEach(async () => {
+    if (createdCommandMenuItemId) {
+      await deleteCommandMenuItem({
+        expectToFail: false,
+        input: { id: createdCommandMenuItemId },
+      });
+      createdCommandMenuItemId = undefined as unknown as string;
+    }
+  });
+
+  it('should create a basic command menu item with minimal input', async () => {
+    const workflowVersionId = faker.string.uuid();
+
+    const { data } = await createCommandMenuItem({
+      expectToFail: false,
+      input: {
+        workflowVersionId,
+        label: 'Test Command Menu Item',
+      },
+    });
+
+    createdCommandMenuItemId = data?.createCommandMenuItem?.id;
+
+    expect(data.createCommandMenuItem).toMatchObject({
+      id: expect.any(String),
+      workflowVersionId,
+      label: 'Test Command Menu Item',
+      icon: null,
+      isPinned: false,
+      availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+      availabilityObjectNameSingular: null,
+    });
+  });
+
+  it('should create command menu item with all optional fields', async () => {
+    const workflowVersionId = faker.string.uuid();
+
+    const { data } = await createCommandMenuItem({
+      expectToFail: false,
+      input: {
+        workflowVersionId,
+        label: 'Full Command Menu Item',
+        icon: 'IconSparkles',
+        isPinned: true,
+        availabilityType: CommandMenuItemAvailabilityType.SINGLE_RECORD,
+        availabilityObjectNameSingular: 'company',
+      },
+    });
+
+    createdCommandMenuItemId = data?.createCommandMenuItem?.id;
+
+    expect(data.createCommandMenuItem).toMatchObject({
+      id: expect.any(String),
+      workflowVersionId,
+      label: 'Full Command Menu Item',
+      icon: 'IconSparkles',
+      isPinned: true,
+      availabilityType: CommandMenuItemAvailabilityType.SINGLE_RECORD,
+      availabilityObjectNameSingular: 'company',
+    });
+  });
+
+  it('should create command menu item with BULK_RECORDS availability', async () => {
+    const workflowVersionId = faker.string.uuid();
+
+    const { data } = await createCommandMenuItem({
+      expectToFail: false,
+      input: {
+        workflowVersionId,
+        label: 'Bulk Records Command',
+        availabilityType: CommandMenuItemAvailabilityType.BULK_RECORDS,
+        availabilityObjectNameSingular: 'person',
+      },
+    });
+
+    createdCommandMenuItemId = data?.createCommandMenuItem?.id;
+
+    expect(data.createCommandMenuItem).toMatchObject({
+      id: expect.any(String),
+      workflowVersionId,
+      label: 'Bulk Records Command',
+      availabilityType: CommandMenuItemAvailabilityType.BULK_RECORDS,
+      availabilityObjectNameSingular: 'person',
+    });
+  });
+
+  it('should create command menu item with GLOBAL availability (default)', async () => {
+    const workflowVersionId = faker.string.uuid();
+
+    const { data } = await createCommandMenuItem({
+      expectToFail: false,
+      input: {
+        workflowVersionId,
+        label: 'Global Command',
+      },
+    });
+
+    createdCommandMenuItemId = data?.createCommandMenuItem?.id;
+
+    expect(data.createCommandMenuItem).toMatchObject({
+      id: expect.any(String),
+      workflowVersionId,
+      label: 'Global Command',
+      availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    });
+  });
+});
