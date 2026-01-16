@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-properties-to-compare.constant';
@@ -301,6 +303,19 @@ export class FlatFieldMetadataValidatorService {
       metadataName: 'fieldMetadata',
       type: 'create',
     });
+
+    if (
+      flatFieldMetadataToValidate.type === FieldMetadataType.FILES &&
+      !additionalCacheDataMaps.featureFlagsMap[
+        FeatureFlagKey.IS_FILES_FIELD_ENABLED
+      ]
+    ) {
+      validationResult.errors.push({
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: 'Files field type is not supported',
+        userFriendlyMessage: msg`Files field type is not supported`,
+      });
+    }
 
     const parentFlatObjectMetadata =
       flatObjectMetadataMaps.byId[flatFieldMetadataToValidate.objectMetadataId];
