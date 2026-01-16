@@ -352,7 +352,7 @@ export class LineChartDataService {
         )
       : rawResults;
 
-    const isStacked = configuration.isStacked ?? true;
+    const isStacked = configuration.isStacked ?? false;
 
     const rangeFilteredResults =
       !configuration.isCumulative &&
