@@ -4,6 +4,9 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
 import { CreateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/create-agent-action-handler.service';
 import { DeleteAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/delete-agent-action-handler.service';
 import { UpdateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/update-agent-action-handler.service';
+import { CreateCommandMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/command-menu-item/services/create-command-menu-item-action-handler.service';
+import { DeleteCommandMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/command-menu-item/services/delete-command-menu-item-action-handler.service';
+import { UpdateCommandMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/command-menu-item/services/update-command-menu-item-action-handler.service';
 import { CreateCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/cron-trigger/services/create-cron-trigger-action-handler.service';
 import { DeleteCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/cron-trigger/services/delete-cron-trigger-action-handler.service';
 import { UpdateCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/cron-trigger/services/update-cron-trigger-action-handler.service';
@@ -134,6 +137,10 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     CreateSkillActionHandlerService,
     UpdateSkillActionHandlerService,
     DeleteSkillActionHandlerService,
+
+    CreateCommandMenuItemActionHandlerService,
+    UpdateCommandMenuItemActionHandlerService,
+    DeleteCommandMenuItemActionHandlerService,
 
     CreatePageLayoutActionHandlerService,
     UpdatePageLayoutActionHandlerService,

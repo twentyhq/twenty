@@ -45,8 +45,9 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = <
     case 'skill':
     case 'pageLayout':
     case 'pageLayoutWidget':
-    case 'frontComponent':
-    case 'pageLayoutTab': {
+    case 'pageLayoutTab':
+    case 'commandMenuItem':
+    case 'frontComponent': {
       const flatEntityToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow<
         MetadataFlatEntity<typeof action.metadataName>
       >({
