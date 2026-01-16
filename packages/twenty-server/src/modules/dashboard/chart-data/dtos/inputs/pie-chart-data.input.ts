@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsObject, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsUUID, ValidateNested } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -14,7 +15,8 @@ export class PieChartDataInput {
   objectMetadataId: string;
 
   @Field(() => GraphQLJSON)
-  @IsObject()
+  @ValidateNested()
+  @Type(() => PieChartConfigurationDTO)
   @IsNotEmpty()
   configuration: PieChartConfigurationDTO;
 }

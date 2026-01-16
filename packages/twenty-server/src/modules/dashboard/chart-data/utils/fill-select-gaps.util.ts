@@ -74,9 +74,8 @@ export const fillSelectGapsTwoDimensional = ({
       const key = `${String(primaryValue)}_${String(secondaryValue)}`;
 
       existingGroupsMap.set(key, item);
+      uniqueSecondDimensionValues.add(secondaryValue);
     }
-
-    uniqueSecondDimensionValues.add(secondaryValue);
   }
 
   const filledData: GroupByRawResult[] = selectOptions.flatMap((option) =>
