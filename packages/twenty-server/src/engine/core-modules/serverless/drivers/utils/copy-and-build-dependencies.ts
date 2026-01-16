@@ -1,7 +1,7 @@
-import { exec } from 'child_process';
-import { promises as fs, statSync } from 'fs';
-import { join } from 'path';
+import { statSync, promises as fs } from 'fs';
 import { promisify } from 'util';
+import { exec } from 'child_process';
+import { join } from 'path';
 
 import { getLayerDependenciesDirName } from 'src/engine/core-modules/serverless/drivers/utils/get-layer-dependencies-dir-name';
 import type { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -28,39 +28,15 @@ export const copyAndBuildDependencies = async (
 
   await fs.writeFile(join(buildDirectory, 'yarn.lock'), yarnLock, 'utf8');
 
-  const engineDependenciesDir = getLayerDependenciesDirName('engine');
+  await fs.cp(getLayerDependenciesDirName('engine'), buildDirectory, {
+    recursive: true,
+  });
 
   try {
-    await fs.access(engineDependenciesDir);
-    await fs.cp(engineDependenciesDir, buildDirectory, {
-      recursive: true,
-    });
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-      throw error;
-    }
-  }
-
-  if (process.env.NODE_ENV === 'test') {
-    const repositoryNodeModulesPath = join(process.cwd(), 'node_modules');
-    const buildNodeModulesPath = join(buildDirectory, 'node_modules');
-
-    await fs.access(repositoryNodeModulesPath);
-    await fs.rm(buildNodeModulesPath, { recursive: true, force: true });
-    await fs.symlink(repositoryNodeModulesPath, buildNodeModulesPath, 'dir');
-  } else {
-    try {
-      await execPromise('yarn', { cwd: buildDirectory });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      const standardOutput = error?.stdout ? String(error.stdout) : '';
-      const standardError = error?.stderr ? String(error.stderr) : '';
-      const combinedErrorMessage =
-        [standardOutput, standardError].filter(Boolean).join('\n') ||
-        'Failed to install serverless dependencies';
-
-      throw new Error(combinedErrorMessage);
-    }
+    await execPromise('yarn', { cwd: buildDirectory });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    throw new Error(error.stdout);
   }
   const objects = await fs.readdir(buildDirectory);
 
