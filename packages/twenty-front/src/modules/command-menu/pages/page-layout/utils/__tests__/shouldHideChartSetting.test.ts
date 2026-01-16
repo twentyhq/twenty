@@ -1,11 +1,11 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
+import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { IconChartBar } from 'twenty-ui/display';
-import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
 
 describe('shouldHideChartSetting', () => {
   const mockItemWithoutDependencies: ChartSettingsItem = {
