@@ -5727,6 +5727,11 @@ msgstr "French"
 msgid "from {startDay} to {endDay}"
 msgstr "from {startDay} to {endDay}"
 
+#. js-lingui-id: zaEHSY
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "front component"
+msgstr "front component"
+
 #. js-lingui-id: scmRyR
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
