@@ -13,6 +13,11 @@ const dirname =
 
 export default defineConfig({
   test: {
+    coverage: {
+      provider: 'istanbul',
+      reporter: ['json', 'text'],
+      reportsDirectory: './coverage/storybook',
+    },
     projects: [
       {
         extends: './vite.config.ts',

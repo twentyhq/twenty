@@ -137,6 +137,7 @@
     "@typescript-eslint/utils": "^8.39.0",
     "@vitejs/plugin-react-swc": "3.11.0",
     "@vitest/browser-playwright": "^4.0.17",
+    "@vitest/coverage-istanbul": "^4.0.17",
     "@vitest/coverage-v8": "^4.0.17",
     "@yarnpkg/types": "^4.0.0",
     "chromatic": "^6.18.0",

@@ -94,7 +94,14 @@ jobs:
       - name: Run storybook tests
         run: npx nx storybook:test twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
       - name: Rename coverage file
-        run: mv packages/twenty-front/coverage/storybook/coverage-storybook.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
+        run: |
+          if [ -f "packages/twenty-front/coverage/storybook/coverage-final.json" ]; then
+            mv packages/twenty-front/coverage/storybook/coverage-final.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
+          else
+            echo "Error: coverage-final.json not found"
+            ls -la packages/twenty-front/coverage/storybook/ || echo "Coverage directory does not exist"
+            exit 1
+          fi
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:

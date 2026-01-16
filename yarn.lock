@@ -9791,7 +9791,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/gen-mapping@npm:^0.3.2":
+"@jridgewell/gen-mapping@npm:^0.3.13, @jridgewell/gen-mapping@npm:^0.3.2":
   version: 0.3.13
   resolution: "@jridgewell/gen-mapping@npm:0.3.13"
   dependencies:
@@ -9842,6 +9842,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jridgewell/trace-mapping@npm:0.3.31, @jridgewell/trace-mapping@npm:^0.3.31":
+  version: 0.3.31
+  resolution: "@jridgewell/trace-mapping@npm:0.3.31"
+  dependencies:
+    "@jridgewell/resolve-uri": "npm:^3.1.0"
+    "@jridgewell/sourcemap-codec": "npm:^1.4.14"
+  checksum: 10c0/4b30ec8cd56c5fd9a661f088230af01e0c1a3888d11ffb6b47639700f71225be21d1f7e168048d6d4f9449207b978a235c07c8f15c07705685d16dc06280e9d9
+  languageName: node
+  linkType: hard
+
 "@jridgewell/trace-mapping@npm:0.3.9":
   version: 0.3.9
   resolution: "@jridgewell/trace-mapping@npm:0.3.9"
@@ -9859,16 +9869,6 @@ __metadata:
     "@jridgewell/resolve-uri": "npm:^3.1.0"
     "@jridgewell/sourcemap-codec": "npm:^1.4.14"
   checksum: 10c0/fb547ba31658c4d74eb17e7389f4908bf7c44cef47acb4c5baa57289daf68e6fe53c639f41f751b3923aca67010501264f70e7b49978ad1f040294b22c37b333
-  languageName: node
-  linkType: hard
-
-"@jridgewell/trace-mapping@npm:^0.3.31":
-  version: 0.3.31
-  resolution: "@jridgewell/trace-mapping@npm:0.3.31"
-  dependencies:
-    "@jridgewell/resolve-uri": "npm:^3.1.0"
-    "@jridgewell/sourcemap-codec": "npm:^1.4.14"
-  checksum: 10c0/4b30ec8cd56c5fd9a661f088230af01e0c1a3888d11ffb6b47639700f71225be21d1f7e168048d6d4f9449207b978a235c07c8f15c07705685d16dc06280e9d9
   languageName: node
   linkType: hard
 
@@ -25451,6 +25451,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vitest/coverage-istanbul@npm:^4.0.17":
+  version: 4.0.17
+  resolution: "@vitest/coverage-istanbul@npm:4.0.17"
+  dependencies:
+    "@istanbuljs/schema": "npm:^0.1.3"
+    "@jridgewell/gen-mapping": "npm:^0.3.13"
+    "@jridgewell/trace-mapping": "npm:0.3.31"
+    istanbul-lib-coverage: "npm:^3.2.2"
+    istanbul-lib-instrument: "npm:^6.0.3"
+    istanbul-lib-report: "npm:^3.0.1"
+    istanbul-reports: "npm:^3.2.0"
+    magicast: "npm:^0.5.1"
+    obug: "npm:^2.1.1"
+    tinyrainbow: "npm:^3.0.3"
+  peerDependencies:
+    vitest: 4.0.17
+  checksum: 10c0/9422fce545b291f6f1e9c0d0e662687096625d9f3363513b971c6779e944ff26eaa12cbe774a3e66ef23ef922f83cbb17bf9c44583dfa939eba5f4f7a9b8ca40
+  languageName: node
+  linkType: hard
+
 "@vitest/coverage-v8@npm:^4.0.17":
   version: 4.0.17
   resolution: "@vitest/coverage-v8@npm:4.0.17"
@@ -40233,7 +40253,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"istanbul-lib-instrument@npm:^6.0.0, istanbul-lib-instrument@npm:^6.0.1, istanbul-lib-instrument@npm:^6.0.2":
+"istanbul-lib-instrument@npm:^6.0.0, istanbul-lib-instrument@npm:^6.0.1, istanbul-lib-instrument@npm:^6.0.2, istanbul-lib-instrument@npm:^6.0.3":
   version: 6.0.3
   resolution: "istanbul-lib-instrument@npm:6.0.3"
   dependencies:
@@ -57435,6 +57455,7 @@ __metadata:
     "@typescript-eslint/utils": "npm:^8.39.0"
     "@vitejs/plugin-react-swc": "npm:3.11.0"
     "@vitest/browser-playwright": "npm:^4.0.17"
+    "@vitest/coverage-istanbul": "npm:^4.0.17"
     "@vitest/coverage-v8": "npm:^4.0.17"
     "@wyw-in-js/vite": "npm:^0.7.0"
     "@yarnpkg/types": "npm:^4.0.0"
