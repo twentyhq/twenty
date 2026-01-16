@@ -118,12 +118,28 @@ export class FileUploadService {
       this.httpService.axiosRef,
     );
 
+    if (buffer.length === 0) {
+      throw new Error('Received empty image buffer from URL');
+    }
+
     const type = await FileType.fromBuffer(buffer);
+
+    if (!type || !type.ext || !type.mime) {
+      throw new Error(
+        'Unable to detect image type from buffer. The file may not be a valid image format.',
+      );
+    }
+
+    if (!type.mime.startsWith('image/')) {
+      throw new Error(
+        `Detected file type is not an image: ${type.mime}. Please provide a valid image URL.`,
+      );
+    }
 
     return await this.uploadImage({
       file: buffer,
-      filename: `${v4()}.${type?.ext}`,
-      mimeType: type?.mime,
+      filename: `${v4()}.${type.ext}`,
+      mimeType: type.mime,
       fileFolder,
       workspaceId,
     });
