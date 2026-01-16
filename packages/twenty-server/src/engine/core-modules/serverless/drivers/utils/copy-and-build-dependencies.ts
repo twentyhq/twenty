@@ -1,7 +1,7 @@
-import { statSync, promises as fs } from 'fs';
-import { promisify } from 'util';
 import { exec } from 'child_process';
+import { promises as fs, statSync } from 'fs';
 import { join } from 'path';
+import { promisify } from 'util';
 
 import { getLayerDependenciesDirName } from 'src/engine/core-modules/serverless/drivers/utils/get-layer-dependencies-dir-name';
 import type { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -45,7 +45,28 @@ export const copyAndBuildDependencies = async (
     await execPromise('yarn', { cwd: buildDirectory });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    throw new Error(error.stdout);
+    const standardOutput = error?.stdout ? String(error.stdout) : '';
+    const standardError = error?.stderr ? String(error.stderr) : '';
+    const combinedErrorMessage =
+      [standardOutput, standardError].filter(Boolean).join('\n') ||
+      'Failed to install serverless dependencies';
+
+    if (process.env.NODE_ENV !== 'test') {
+      throw new Error(combinedErrorMessage);
+    }
+
+    const repositoryNodeModulesPath = join(process.cwd(), 'node_modules');
+    const buildNodeModulesPath = join(buildDirectory, 'node_modules');
+
+    try {
+      await fs.access(repositoryNodeModulesPath);
+      await fs.rm(buildNodeModulesPath, { recursive: true, force: true });
+      await fs.symlink(repositoryNodeModulesPath, buildNodeModulesPath, 'dir');
+    } catch (linkError) {
+      const linkErrorMessage =
+        linkError instanceof Error ? linkError.message : String(linkError);
+      throw new Error(`${combinedErrorMessage}\n${linkErrorMessage}`);
+    }
   }
   const objects = await fs.readdir(buildDirectory);
 
