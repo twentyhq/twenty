@@ -6,21 +6,17 @@ import { updateServerlessFunction } from 'test/integration/metadata/suites/serve
 
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 
-// Test function using external packages from default layer (uuid + lodash.groupby)
+// Test function using external packages from default layer (lodash.merge + lodash.compact)
 const EXTERNAL_PACKAGES_FUNCTION_CODE = {
-  'src/index.ts': `import { v4 as uuidv4 } from 'uuid';
-import groupBy from 'lodash.groupby';
+  'src/index.ts': `import compact from 'lodash.compact';
+import merge from 'lodash.merge';
 
-export const main = async (params: { items: Array<{ category: string; name: string }> }): Promise<object> => {
-  const requestId = uuidv4();
-  const grouped = groupBy(params.items, 'category');
-  console.log('Request ID:', requestId);
-  console.log('Grouped items:', JSON.stringify(grouped));
-  return {
-    requestId,
-    grouped,
-    categories: Object.keys(grouped)
-  };
+export const main = async (params: { items: Array<string | null | undefined> }): Promise<object> => {
+  const cleanedItems = compact(params.items);
+  return merge(
+    { count: cleanedItems.length },
+    { items: cleanedItems }
+  );
 };`,
 };
 
@@ -84,6 +80,10 @@ describe('Serverless Function Execution', () => {
 
     const result = executeData?.executeOneServerlessFunction;
 
+    if (result?.status !== ServerlessFunctionExecutionStatus.SUCCESS) {
+      throw new Error(JSON.stringify(result?.error, null, 2));
+    }
+
     expect(result?.status).toBe(ServerlessFunctionExecutionStatus.SUCCESS);
     expect(result?.data).toMatchObject({
       message: 'Hello, input: hello and 42',
@@ -91,7 +91,7 @@ describe('Serverless Function Execution', () => {
     expect(result?.duration).toBeGreaterThan(0);
   });
 
-  it('should execute a function with external packages (uuid + lodash.groupby)', async () => {
+  it('should execute a function with external packages (lodash.merge + lodash.compact)', async () => {
     // Create the function (uses default template initially)
     const { data: createData } = await createOneServerlessFunction({
       input: {
@@ -123,16 +123,12 @@ describe('Serverless Function Execution', () => {
       expectToFail: false,
     });
 
-    // Execute the function with items to group
+    // Execute the function with items to compact
     const { data: executeData } = await executeServerlessFunction({
       input: {
         id: functionId,
         payload: {
-          items: [
-            { category: 'fruit', name: 'apple' },
-            { category: 'vegetable', name: 'carrot' },
-            { category: 'fruit', name: 'banana' },
-          ],
+          items: ['apple', null, 'banana', undefined, 'cherry'],
         },
       },
       expectToFail: false,
@@ -140,28 +136,19 @@ describe('Serverless Function Execution', () => {
 
     const result = executeData?.executeOneServerlessFunction;
 
+    if (result?.status !== ServerlessFunctionExecutionStatus.SUCCESS) {
+      throw new Error(JSON.stringify(result?.error, null, 2));
+    }
+
     expect(result?.status).toBe(ServerlessFunctionExecutionStatus.SUCCESS);
 
     const data = result?.data as unknown as {
-      requestId: string;
-      grouped: Record<string, Array<{ category: string; name: string }>>;
-      categories: string[];
+      count: number;
+      items: string[];
     };
 
-    expect(data?.requestId).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-    );
-    expect(data?.grouped).toMatchObject({
-      fruit: [
-        { category: 'fruit', name: 'apple' },
-        { category: 'fruit', name: 'banana' },
-      ],
-      vegetable: [{ category: 'vegetable', name: 'carrot' }],
-    });
-    expect(data?.categories).toEqual(
-      expect.arrayContaining(['fruit', 'vegetable']),
-    );
-    expect(result?.logs).toContain('Request ID:');
+    expect(data?.count).toBe(3);
+    expect(data?.items).toEqual(['apple', 'banana', 'cherry']);
   });
 
   it('should handle errors thrown by serverless functions', async () => {
