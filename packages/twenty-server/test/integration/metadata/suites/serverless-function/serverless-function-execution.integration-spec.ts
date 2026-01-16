@@ -84,8 +84,11 @@ describe('Serverless Function Execution', () => {
 
     const result = executeData?.executeOneServerlessFunction;
 
+    if (result?.status === ServerlessFunctionExecutionStatus.ERROR) {
+      console.error('Test 1 Error:', JSON.stringify(result?.error, null, 2));
+    }
+
     expect(result?.status).toBe(ServerlessFunctionExecutionStatus.SUCCESS);
-    // Default template returns: { message: `Hello, input: ${a} and ${b}` }
     expect(result?.data).toMatchObject({
       message: 'Hello, input: hello and 42',
     });
@@ -140,6 +143,10 @@ describe('Serverless Function Execution', () => {
     });
 
     const result = executeData?.executeOneServerlessFunction;
+
+    if (result?.status === ServerlessFunctionExecutionStatus.ERROR) {
+      console.error('Test 2 Error:', JSON.stringify(result?.error, null, 2));
+    }
 
     expect(result?.status).toBe(ServerlessFunctionExecutionStatus.SUCCESS);
 
