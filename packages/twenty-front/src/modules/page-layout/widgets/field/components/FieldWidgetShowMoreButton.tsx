@@ -1,10 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 
 import { IconChevronDown } from 'twenty-ui/display';
-
-const INITIAL_VISIBLE_ITEMS = 5;
-const LOAD_MORE_INCREMENT = 5;
 
 const StyledShowMoreButton = styled.div`
   align-items: center;
@@ -47,9 +45,7 @@ export const FieldWidgetShowMoreButton = ({
         stroke={theme.icon.stroke.sm}
         color={theme.font.color.tertiary}
       />
-      <StyledShowMoreText>More ({remainingCount})</StyledShowMoreText>
+      <StyledShowMoreText>{t`More (${remainingCount})`}</StyledShowMoreText>
     </StyledShowMoreButton>
   );
 };
-
-export { INITIAL_VISIBLE_ITEMS, LOAD_MORE_INCREMENT };

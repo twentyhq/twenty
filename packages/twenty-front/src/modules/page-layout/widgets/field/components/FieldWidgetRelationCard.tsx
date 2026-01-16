@@ -15,11 +15,9 @@ import {
 import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersistField';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import {
-  FieldWidgetShowMoreButton,
-  INITIAL_VISIBLE_ITEMS,
-  LOAD_MORE_INCREMENT,
-} from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
+import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
+import { FIELD_WIDGET_RELATION_CARD_INITIAL_VISIBLE_ITEMS } from '@/page-layout/widgets/field/constants/FieldWidgetRelationCardInitialVisibleItems';
+import { FIELD_WIDGET_RELATION_CARD_LOAD_MORE_INCREMENT } from '@/page-layout/widgets/field/constants/FieldWidgetRelationCardLoadMoreIncrement';
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -45,7 +43,7 @@ export const FieldWidgetRelationCard = ({
 
   const [expandedItem, setExpandedItem] = useState('');
   const [visibleItemsCount, setVisibleItemsCount] = useState(
-    INITIAL_VISIBLE_ITEMS,
+    FIELD_WIDGET_RELATION_CARD_INITIAL_VISIBLE_ITEMS,
   );
   const targetRecord = useTargetRecord();
 
@@ -60,7 +58,9 @@ export const FieldWidgetRelationCard = ({
     setExpandedItem(recordId === expandedItem ? '' : recordId);
 
   const handleShowMore = () => {
-    setVisibleItemsCount((prevCount) => prevCount + LOAD_MORE_INCREMENT);
+    setVisibleItemsCount(
+      (prevCount) => prevCount + FIELD_WIDGET_RELATION_CARD_LOAD_MORE_INCREMENT,
+    );
   };
 
   const fieldMetadata = fieldDefinition.metadata;
