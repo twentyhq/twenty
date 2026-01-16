@@ -1,5 +1,4 @@
 name: Yarn Install
-description: Install dependencies with Yarn and cache node_modules
 inputs:
   node-version:
     required: false

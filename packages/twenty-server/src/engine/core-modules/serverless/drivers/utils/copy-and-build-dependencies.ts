@@ -32,11 +32,19 @@ export const copyAndBuildDependencies = async (
     recursive: true,
   });
 
+  const localYarnPath = join(buildDirectory, '.yarn/releases/yarn-4.9.2.cjs');
+
   try {
-    await execPromise('yarn', { cwd: buildDirectory });
+    await execPromise(`${process.execPath} ${localYarnPath}`, {
+      cwd: buildDirectory,
+    });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    throw new Error(error.stdout);
+    const errorMessage =
+      [error?.stdout, error?.stderr].filter(Boolean).join('\n') ||
+      'Failed to install serverless dependencies';
+
+    throw new Error(errorMessage);
   }
   const objects = await fs.readdir(buildDirectory);
 
