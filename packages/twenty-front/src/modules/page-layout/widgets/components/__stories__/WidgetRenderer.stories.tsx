@@ -7,6 +7,7 @@ import { type MockedResponse } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot } from 'recoil';
+import { expect, within } from 'storybook/test';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -1312,7 +1313,6 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
     );
   },
   play: async ({ canvasElement }) => {
-    const { expect, within } = await import('storybook/test');
     const canvas = within(canvasElement);
 
     // Find the "See all" link button by its test id
