@@ -8,12 +8,11 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsNewObject',
   component: SettingsNewObject,
-  decorators: [PageDecorator, I18nFrontDecorator],
+  decorators: [PageDecorator],
   args: {
     routePath: '/settings/objects/new',
   },

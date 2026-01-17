@@ -41,6 +41,9 @@ export class RouteTriggerEntity
   })
   httpMethod: HTTPMethod;
 
+  @Column({ nullable: false, type: 'jsonb', default: [] })
+  forwardedRequestHeaders: string[];
+
   @ManyToOne(
     () => ServerlessFunctionEntity,
     (serverlessFunction) => serverlessFunction.routeTriggers,

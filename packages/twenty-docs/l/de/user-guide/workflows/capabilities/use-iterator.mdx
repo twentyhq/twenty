@@ -1,176 +1,176 @@
 ---
-title: Use Iterator
-description: Loop through arrays of records to perform actions on each item.
+title: Iterator verwenden
+description: Durchlaufen Sie Arrays von Datensätzen, um Aktionen für jedes Element auszuführen.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Iterator lets you loop through an array of records and perform actions on each one. It's essential for workflows that need to process multiple records returned by Search Records or received via webhooks.
+Mit Iterator können Sie ein Array von Datensätzen durchlaufen und für jeden Datensatz Aktionen ausführen. Es ist unverzichtbar für Workflows, die mehrere Datensätze verarbeiten müssen, die von der Aktion „Datensätze suchen“ zurückgegeben oder über Webhooks empfangen werden.
 
-## When to Use Iterator
+## Wann Sie Iterator verwenden sollten
 
-| Scenario                   | Beispiel                                       |
-| -------------------------- | ---------------------------------------------- |
-| **Process search results** | Send email to each person found                |
-| **Handle webhook arrays**  | Create records for each item in order          |
-| **Bulk updates**           | Update multiple records with calculated values |
-| **Notifications**          | Alert multiple people about an event           |
+| Szenario                       | Beispiel                                                |
+| ------------------------------ | ------------------------------------------------------- |
+| **Suchergebnisse verarbeiten** | E-Mail an jede gefundene Person senden                  |
+| **Webhook-Arrays verarbeiten** | Der Reihe nach für jedes Element Datensätze erstellen   |
+| **Massenaktualisierungen**     | Mehrere Datensätze mit berechneten Werten aktualisieren |
+| **Benachrichtigungen**         | Mehrere Personen über ein Ereignis benachrichtigen      |
 
-## Understanding Iterator
+## Iterator verstehen
 
-Iterator expects an **array** as input. It then:
+Iterator erwartet ein **Array** als Eingabe. Dann:
 
-1. Takes the first item from the array
-2. Runs all actions inside the iterator with that item
-3. Moves to the next item
-4. Repeats until all items are processed
+1. Nimmt das erste Element aus dem Array
+2. Führt alle Aktionen innerhalb des Iterators mit diesem Element aus
+3. Wechselt zum nächsten Element
+4. Wiederholt sich, bis alle Elemente verarbeitet sind
 
-## Basic Setup
+## Grundlegende Einrichtung
 
-### Example: Email Everyone in Search Results
+### Beispiel: E-Mail an alle in den Suchergebnissen
 
-**Goal**: Find all contacts in a specific company and send each one a personalized email.
+**Ziel**: Alle Kontakte in einem bestimmten Unternehmen finden und jedem eine personalisierte E-Mail senden.
 
-### Step 1: Search for Records
+### Schritt 1: Nach Datensätzen suchen
 
-1. Add **Search Records** action
-2. Object: **People**
-3. Filter: Company equals "Acme Inc"
-4. This returns an array of people
+1. Fügen Sie die Aktion **Datensätze suchen** hinzu
+2. Objekt: **Personen**
+3. Filter: Unternehmen ist gleich "Acme Inc"
+4. Dadurch wird ein Array von Personen zurückgegeben
 
-### Step 2: Check Results Exist
+### Schritt 2: Prüfen, ob Ergebnisse vorhanden sind
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. This prevents Iterator errors on empty results
+1. Fügen Sie eine **Filter**-Aktion hinzu
+2. Bedingung: `{{searchRecords.length}}` ist größer als 0
+3. Dies verhindert Iterator-Fehler bei leeren Ergebnissen
 
-### Step 3: Add Iterator
+### Schritt 3: Iterator hinzufügen
 
-1. Add **Iterator** action
-2. Array input: Select `{{searchRecords}}`
-3. This creates a loop
+1. Fügen Sie eine **Iterator**-Aktion hinzu
+2. Array-Eingabe: Wählen Sie `{{searchRecords}}` aus
+3. Dadurch wird eine Schleife erstellt
 
-### Step 4: Add Actions Inside Iterator
+### Schritt 4: Aktionen im Iterator hinzufügen
 
-Actions placed after Iterator run for each item:
+Aktionen, die nach dem Iterator platziert werden, werden für jedes Element ausgeführt:
 
-1. Add **Send Email** action (inside iterator)
-2. To: `{{iterator.currentItem.email}}`
-3. Subject: Hello `{{iterator.currentItem.firstName}}`!
-4. Body: Personalized message using current item fields
+1. Fügen Sie eine **E-Mail senden**-Aktion hinzu (im Iterator)
+2. An: `{{iterator.currentItem.email}}`
+3. Betreff: Hallo `{{iterator.currentItem.firstName}}`!
+4. Text: Personalisierte Nachricht unter Verwendung der Felder des aktuellen Elements
 
 ### Ergebnis
 
-If Search Records returns 5 people, the Iterator:
+Wenn Datensätze suchen 5 Personen zurückgibt, führt der Iterator Folgendes aus:
 
-* Sends email to person 1
-* Sends email to person 2
-* ... continues for all 5
+* Sendet E-Mail an Person 1
+* Sendet E-Mail an Person 2
+* ... setzt dies für alle 5 fort
 
-## Accessing Current Item Data
+## Zugriff auf Daten des aktuellen Elements
 
-Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
+Im Iterator verwenden Sie `{{iterator.currentItem}}`, um auf den aktuellen Datensatz zuzugreifen:
 
-| Variable                                | Beschreibung                        |
-| --------------------------------------- | ----------------------------------- |
-| `{{iterator.currentItem}}`              | The entire current record object    |
-| `{{iterator.currentItem.id}}`           | Record ID                           |
-| `{{iterator.currentItem.email}}`        | Email field                         |
-| `{{iterator.currentItem.company.name}}` | Related company name                |
-| `{{iterator.index}}`                    | Current position in array (0-based) |
+| Variable                                | Beschreibung                                      |
+| --------------------------------------- | ------------------------------------------------- |
+| `{{iterator.currentItem}}`              | Das vollständige Objekt des aktuellen Datensatzes |
+| `{{iterator.currentItem.id}}`           | Datensatz-ID                                      |
+| `{{iterator.currentItem.email}}`        | E-Mail-Feld                                       |
+| `{{iterator.currentItem.company.name}}` | Name des zugehörigen Unternehmens                 |
+| `{{iterator.index}}`                    | Aktuelle Position im Array (0-basiert)            |
 
-## Common Patterns
+## Häufige Muster
 
-### Update Multiple Records
+### Mehrere Datensätze aktualisieren
 
-**Goal**: Mark all overdue tasks as "Late"
+**Ziel**: Alle überfälligen Aufgaben als "Late" markieren
 
 ```
-1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
+1. Datensätze suchen (Aufgaben, Fälligkeitsdatum < Heute, Status ≠ Abgeschlossen)
 2. Filter (length > 0)
 3. Iterator (searchRecords)
-   └── Update Record
-       - Object: Tasks
-       - Record: {{iterator.currentItem.id}}
+   └── Datensatz aktualisieren
+       - Objekt: Aufgaben
+       - Datensatz: {{iterator.currentItem.id}}
        - Status: Late
 ```
 
-### Create Records from Array
+### Datensätze aus Array erstellen
 
-**Goal**: Webhook receives order with multiple items, create a record for each
+**Ziel**: Ein Webhook erhält eine Bestellung mit mehreren Positionen; für jede Position einen Datensatz erstellen
 
 ```
-1. Webhook Trigger (receives items array)
+1. Webhook-Trigger (empfängt ein Array von Positionen)
 2. Filter (items.length > 0)
 3. Iterator (trigger.body.items)
-   └── Create Record
-       - Object: Order Items
+   └── Datensatz erstellen
+       - Objekt: Bestellpositionen
        - Name: {{iterator.currentItem.name}}
-       - Quantity: {{iterator.currentItem.qty}}
-       - Related Order: {{trigger.body.orderId}}
+       - Menge: {{iterator.currentItem.qty}}
+       - Zugehörige Bestellung: {{trigger.body.orderId}}
 ```
 
-### Conditional Processing Inside Loop
+### Bedingte Verarbeitung innerhalb der Schleife
 
-**Goal**: Only send email to contacts with valid emails
+**Ziel**: Nur E-Mails an Kontakte mit gültigen E-Mail-Adressen senden
 
 ```
-1. Search Records (People)
+1. Datensätze suchen (Personen)
 2. Iterator (searchRecords)
-   └── Filter (currentItem.email is not empty)
-       └── Send Email
-           - To: {{iterator.currentItem.email}}
+   └── Filter (currentItem.email ist nicht leer)
+       └── E-Mail senden
+           - An: {{iterator.currentItem.email}}
 ```
 
 ## Fehlerbehebung
 
-### "Iterator expects an array"
+### "Iterator erwartet ein Array"
 
-**Cause**: You passed a single record instead of an array.
+**Ursache**: Sie haben einen einzelnen Datensatz statt eines Arrays übergeben.
 
-**Fix**: Make sure you're passing the result of Search Records or an array field, not a single record.
+**Lösung**: Stellen Sie sicher, dass Sie das Ergebnis von Datensätze suchen oder ein Array-Feld übergeben, nicht einen einzelnen Datensatz.
 
 ```
-✅ Correct: {{searchRecords}}
-❌ Wrong: {{searchRecords[0]}}
+✅ Richtig: {{searchRecords}}
+❌ Falsch: {{searchRecords[0]}}
 ```
 
-### Iterator Doesn't Run
+### Iterator wird nicht ausgeführt
 
-**Cause**: The array is empty.
+**Ursache**: Das Array ist leer.
 
-**Fix**: Add a Filter before Iterator to check array length:
+**Lösung**: Fügen Sie vor dem Iterator einen Filter hinzu, um die Array-Länge zu prüfen:
 
 ```
 Filter: {{searchRecords.length}} > 0
 ```
 
-### Actions Run Too Many Times
+### Aktionen werden zu oft ausgeführt
 
-**Cause**: Search Records returned more records than expected.
+**Ursache**: Datensätze suchen hat mehr Datensätze zurückgegeben als erwartet.
 
-**Fix**:
+**Lösung**:
 
-* Add more specific filters to Search Records
-* Set a limit on Search Records (max 200)
-* Add Filter inside Iterator for additional conditions
+* Fügen Sie der Aktion „Datensätze suchen“ spezifischere Filter hinzu
+* Legen Sie für die Aktion „Datensätze suchen“ ein Limit fest (max. 200)
+* Fügen Sie innerhalb des Iterators einen Filter für zusätzliche Bedingungen hinzu
 
-## Performance Considerations
+## Leistungsaspekte
 
-* **Credit usage**: Each iteration consumes credits for its actions
-* **Time**: Large arrays take longer to process
-* **Limits**: Consider batching very large operations
-* **Rate limits**: External API calls may hit rate limits with many iterations
+* **Credit-Verbrauch**: Jede Iteration verbraucht Credits für ihre Aktionen
+* **Zeit**: Große Arrays benötigen länger für die Verarbeitung
+* **Grenzwerte**: Ziehen Sie für sehr große Vorgänge eine Stapelverarbeitung in Betracht
+* **Ratenlimits**: Externe API-Aufrufe können bei vielen Iterationen auf Ratenlimits stoßen
 
 ## Beste Praktiken
 
-1. **Always check array length** before Iterator to avoid errors
-2. **Add filters inside loops** when not all items need processing
-3. **Rename your Iterator step** to describe what it's looping through
-4. **Test with small arrays** before processing large datasets
-5. **Monitor workflow runs** to ensure iterations complete as expected
+1. **Prüfen Sie stets die Array-Länge** vor dem Iterator, um Fehler zu vermeiden
+2. **Fügen Sie Filter innerhalb von Schleifen hinzu**, wenn nicht alle Elemente verarbeitet werden müssen
+3. **Benennen Sie Ihren Iterator-Schritt um**, um zu beschreiben, was durchlaufen wird
+4. **Testen Sie mit kleinen Arrays**, bevor Sie große Datenmengen verarbeiten
+5. **Überwachen Sie Workflow-Ausführungen**, um sicherzustellen, dass Iterationen wie erwartet abgeschlossen werden
 
-## Related
+## Verwandt
 
-* [Workflow Actions](/l/de/user-guide/workflows/capabilities/workflow-actions)
-* [How to Use Branches](/l/de/user-guide/workflows/capabilities/use-branches-in-workflows)
-* [Workflows FAQ](/l/de/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [So verwenden Sie Verzweigungen](/l/de/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [Workflows-FAQ](/l/de/user-guide/workflows/how-tos/need-more-help/workflows-faq)

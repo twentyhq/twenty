@@ -35,7 +35,6 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { IconDotsVertical } from 'twenty-ui/display';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 
 const openTimeout = 50;
@@ -72,7 +71,6 @@ const meta: Meta<typeof CommandMenu> = {
   title: 'Modules/CommandMenu/CommandMenu',
   component: CommandMenuRouter,
   decorators: [
-    I18nFrontDecorator,
     (Story) => {
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
       const setCurrentUserWorkspace = useSetRecoilState(

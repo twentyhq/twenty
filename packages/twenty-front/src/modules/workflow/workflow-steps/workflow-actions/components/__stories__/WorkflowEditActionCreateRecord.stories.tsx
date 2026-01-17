@@ -2,7 +2,6 @@ import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workfl
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -48,7 +47,6 @@ const meta: Meta<typeof WorkflowEditActionCreateRecord> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     WorkspaceDecorator,
-    I18nFrontDecorator,
   ],
 };
 

@@ -22,7 +22,6 @@ import { useSetRecoilState } from 'recoil';
 import { userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -122,7 +121,6 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
     SnackBarDecorator,
     ComponentDecorator,
     IconsProviderDecorator,
-    I18nFrontDecorator,
   ],
 };
 

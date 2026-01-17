@@ -18,7 +18,6 @@ import {
 } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 type RenderProps = {
   values: FieldMultiSelectValue;
@@ -128,7 +127,7 @@ const Render = ({
 const meta: Meta<typeof MultiSelectInput> = {
   title: 'UI/Field/Input/MultiSelectInput',
   component: MultiSelectInput,
-  decorators: [ComponentDecorator, I18nFrontDecorator],
+  decorators: [ComponentDecorator],
   args: {
     values: [],
     options: sampleOptions,

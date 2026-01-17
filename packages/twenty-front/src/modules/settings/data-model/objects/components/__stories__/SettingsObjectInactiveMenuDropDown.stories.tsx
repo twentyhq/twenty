@@ -7,7 +7,6 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const handleActivateMockFunction = fn();
 const handleDeleteMockFunction = fn();
@@ -28,7 +27,7 @@ const meta: Meta<typeof SettingsObjectInactiveMenuDropDown> = {
     onActivate: handleActivateMockFunction,
     onDelete: handleDeleteMockFunction,
   },
-  decorators: [I18nFrontDecorator, ComponentDecorator, ClearMocksDecorator],
+  decorators: [ComponentDecorator, ClearMocksDecorator],
   parameters: {
     clearMocks: true,
   },

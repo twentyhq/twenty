@@ -14,7 +14,6 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
@@ -101,7 +100,6 @@ const meta: Meta = {
   decorators: [
     clearMocksDecorator,
     SnackBarDecorator,
-    I18nFrontDecorator,
     ObjectMetadataItemsDecorator,
   ],
   parameters: {
