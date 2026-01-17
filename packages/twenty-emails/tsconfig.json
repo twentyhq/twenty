@@ -8,7 +8,8 @@
     "strict": true,
     "types": ["vite/client"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "src/*": ["./src/*"]
     }
   },
   "files": [],
