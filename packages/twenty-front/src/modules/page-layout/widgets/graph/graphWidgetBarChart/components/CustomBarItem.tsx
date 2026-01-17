@@ -1,7 +1,8 @@
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
-import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetHoveredSliceIndexComponentState';
+import { graphWidgetIsSliceHoveredComponentFamilySelector } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetIsSliceHoveredComponentFamilySelector';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { animated, to } from '@react-spring/web';
@@ -62,17 +63,14 @@ export const CustomBarItem = <D extends BarDatum>({
     graphWidgetHighlightedLegendIdComponentState,
   );
 
-  const hoveredSliceIndex = useRecoilComponentValue(
-    graphWidgetHoveredSliceIndexComponentState,
+  const isSliceHovered = useRecoilComponentFamilyValue(
+    graphWidgetIsSliceHoveredComponentFamilySelector,
+    String(barData.indexValue),
   );
 
   const isDimmed =
     isDefined(highlightedLegendId) &&
     String(highlightedLegendId) !== String(barData.id);
-
-  const isSliceHovered =
-    isDefined(hoveredSliceIndex) &&
-    String(barData.indexValue) === hoveredSliceIndex;
 
   const isNegativeValue = useMemo(
     () => isNumber(barData.value) && barData.value < 0,

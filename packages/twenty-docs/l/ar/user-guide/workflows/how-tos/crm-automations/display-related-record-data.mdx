@@ -1,130 +1,130 @@
 ---
-title: Display Related Record Data
-description: Show data from related records (e.g., Company info on Opportunities) using workflows.
+title: عرض بيانات السجل المرتبط
+description: اعرض بيانات من سجلات مرتبطة (مثل معلومات الشركة على الفرص) باستخدام سير العمل.
 ---
 
-Display data from related records directly on your records — for example, show the employee count from a Company on its Opportunities. This workflow workaround is useful until nested fields are natively available.
+اعرض بيانات من سجلات مرتبطة مباشرةً على سجلاتك — على سبيل المثال، اعرض عدد الموظفين من شركة على فرصها. هذا الحل عبر سير العمل مفيد حتى تصبح الحقول المتداخلة مدعومة أصلاً.
 
 ## الاستخدامات الشائعة
 
-| المصدر | Destination | Fields to Copy                  |
-| ------ | ----------- | ------------------------------- |
-| الشركة | الفرصة      | Industry, Company Size, ARR     |
-| شخص    | الفرصة      | Email, Phone, Title             |
-| الفرصة | الشركة      | Last Deal Amount, Last Won Date |
+| المصدر | الوجهة | الحقول المطلوب نسخها                              |
+| ------ | ------ | ------------------------------------------------- |
+| الشركة | الفرصة | الصناعة، حجم الشركة، الإيراد السنوي المتكرر (ARR) |
+| شخص    | الفرصة | البريد الإلكتروني، الهاتف، المسمّى الوظيفي        |
+| الفرصة | الشركة | قيمة آخر صفقة، تاريخ آخر صفقة رابحة               |
 
-## Basic Field Copy
+## نسخ أساسي للحقل
 
-### Example: Copy Contact Email to Opportunity
+### مثال: نسخ البريد الإلكتروني لجهة الاتصال إلى الفرصة
 
-**Goal**: When setting a Point of Contact on an opportunity, copy their email to the opportunity for easy access.
+**الهدف**: عند تعيين نقطة اتصال على فرصة، انسخ البريد الإلكتروني لجهة الاتصال إلى الفرصة لسهولة الوصول.
 
-### Prerequisite
+### المتطلبات الأساسية
 
-Create the destination fields in **Settings → Data Model → Opportunities** before building the workflow:
+أنشئ حقول الوجهة في **الإعدادات → نموذج البيانات → الفرص** قبل إنشاء سير العمل:
 
-* Contact Email (type: Email)
-* Contact Phone (type: Phone)
-
-### إعداد
-
-1. **Trigger**: Record is Updated (Opportunities, Point of Contact field)
-
-2. **Filter**: Check that Point of Contact is not empty
-
-3. **Search Records**: Find the linked person
-   * Object: People
-   * Filter: ID equals `{{trigger.object.pointOfContact.id}}`
-
-4. **Update Record**:
-   * Object: Opportunities
-   * Record: `{{trigger.object.id}}`
-   * Contact Email: `{{searchRecords[0].email}}`
-   * Contact Phone: `{{searchRecords[0].phone}}`
-
-## Copy Multiple Fields
-
-### Example: Sync Company Info to All Related Opportunities
-
-**Goal**: When company details change, update all related opportunities.
+* البريد الإلكتروني لجهة الاتصال (النوع: Email)
+* هاتف جهة الاتصال (النوع: Phone)
 
 ### إعداد
 
-1. **Trigger**: Record is Updated (Companies)
-   * Fields: Industry, Company Size, Annual Revenue
+1. **المحفّز**: يتم تحديث السجل (الفرص، حقل نقطة الاتصال)
 
-2. **Search Records**: Find all opportunities for this company
-   * Object: Opportunities
-   * Filter: Company ID equals `{{trigger.object.id}}`
+2. **الفلتر**: تحقّق من أن نقطة الاتصال غير فارغة
 
-3. **Iterator**: Loop through each opportunity
+3. **البحث في السجلات**: اعثر على الشخص المرتبط
+   * الكائن: الأشخاص
+   * الفلتر: المعرّف يساوي `{{trigger.object.pointOfContact.id}}`
 
-4. **Update Record** (inside iterator):
-   * Object: Opportunities
-   * Record: `{{iterator.currentItem.id}}`
-   * Company Industry: `{{trigger.object.industry}}`
-   * Company Size: `{{trigger.object.companySize}}`
-   * Company ARR: `{{trigger.object.annualRevenue}}`
+4. **تحديث السجل**:
+   * الكائن: الفرص
+   * السجل: `{{trigger.object.id}}`
+   * البريد الإلكتروني لجهة الاتصال: `{{searchRecords[0].email}}`
+   * هاتف جهة الاتصال: `{{searchRecords[0].phone}}`
 
-## Copy on Record Creation
+## نسخ عدة حقول
 
-### Example: Pre-fill Opportunity with Company Data
+### مثال: مزامنة معلومات الشركة مع جميع الفرص المرتبطة
 
-**Goal**: When creating an opportunity linked to a company, automatically copy key company info.
-
-### Prerequisite
-
-Create the destination fields in **Settings → Data Model → Opportunities**:
-
-* Company Industry (type: Text)
-* Company Size (type: Number)
+**الهدف**: عند تغيّر تفاصيل الشركة، حدّث جميع الفرص المرتبطة.
 
 ### إعداد
 
-1. **Trigger**: Record is Created (Opportunities)
-   * Filter: Company is not empty
+1. **المحفّز**: يتم تحديث السجل (الشركات)
+   * الحقول: الصناعة، حجم الشركة، الإيراد السنوي
 
-2. **Search Records**: Get the linked company's details
-   * Object: Companies
-   * Filter: ID equals `{{trigger.object.company.id}}`
+2. **البحث في السجلات**: اعثر على جميع الفرص الخاصة بهذه الشركة
+   * الكائن: الفرص
+   * الفلتر: معرّف الشركة يساوي `{{trigger.object.id}}`
 
-3. **Update Record**:
-   * Object: Opportunities
-   * Record: `{{trigger.object.id}}`
-   * Company Industry: `{{searchRecords[0].industry}}`
-   * Company Size: `{{searchRecords[0].employees}}`
+3. **Iterator**: التكرار عبر كل فرصة
+
+4. **تحديث السجل** (داخل الـ Iterator):
+   * الكائن: الفرص
+   * السجل: `{{iterator.currentItem.id}}`
+   * صناعة الشركة: `{{trigger.object.industry}}`
+   * حجم الشركة: `{{trigger.object.companySize}}`
+   * الإيراد السنوي المتكرر للشركة: `{{trigger.object.annualRevenue}}`
+
+## النسخ عند إنشاء السجل
+
+### مثال: تعبئة الفرصة مسبقًا ببيانات الشركة
+
+**الهدف**: عند إنشاء فرصة مرتبطة بشركة، انسخ تلقائيًا معلومات الشركة الأساسية.
+
+### المتطلبات الأساسية
+
+أنشئ حقول الوجهة في **الإعدادات → نموذج البيانات → الفرص**:
+
+* صناعة الشركة (النوع: Text)
+* حجم الشركة (النوع: Number)
+
+### إعداد
+
+1. **المحفّز**: يتم إنشاء السجل (الفرص)
+   * الفلتر: الشركة ليست فارغة
+
+2. **البحث في السجلات**: احصل على تفاصيل الشركة المرتبطة
+   * الكائن: الشركات
+   * الفلتر: المعرّف يساوي `{{trigger.object.company.id}}`
+
+3. **تحديث السجل**:
+   * الكائن: الفرص
+   * السجل: `{{trigger.object.id}}`
+   * صناعة الشركة: `{{searchRecords[0].industry}}`
+   * حجم الشركة: `{{searchRecords[0].employees}}`
 
 <Note>
-  **Tasks and Notes limitation**: Relations on Tasks and Notes are hardcoded as many-to-many and are not yet available in workflow triggers or actions. To access these relations, use the [API](/l/ar/developers/extend/capabilities/apis) instead.
+  **قيود المهام والملاحظات**: العلاقات في المهام والملاحظات مُحدّدة في الشفرة كعلاقات متعدّدة-لمتعدّدة وليست متاحة بعد في محفّزات أو إجراءات سير العمل. للوصول إلى هذه العلاقات، استخدم بدلًا من ذلك [API](/l/ar/developers/extend/capabilities/apis).
 </Note>
 
-## Bidirectional Sync
+## مزامنة ثنائية الاتجاه
 
-### Example: Keep Primary Contact in Sync
+### مثال: الحفاظ على تزامن جهة الاتصال الأساسية
 
-**Goal**: When a company's primary contact changes, update the contact. When a person becomes primary, update the company.
+**الهدف**: عند تغيّر جهة الاتصال الأساسية للشركة، حدّث جهة الاتصال. وعندما يصبح شخص ما جهة الاتصال الأساسية، حدّث الشركة.
 
-### Workflow 1: Company → Person
+### سير العمل 1: الشركة → الشخص
 
-1. **Trigger**: Record is Updated (Companies, Primary Contact field)
-2. **Update Record**: Set person's "Is Primary Contact" to true
-3. **Search Records**: Find previous primary contact
-4. **Update Record**: Set previous contact's "Is Primary Contact" to false
+1. **المحفّز**: يتم تحديث السجل (الشركات، حقل جهة الاتصال الأساسية)
+2. **تحديث السجل**: عيّن قيمة "Is Primary Contact" للشخص إلى true
+3. **البحث في السجلات**: اعثر على جهة الاتصال الأساسية السابقة
+4. **تحديث السجل**: عيّن قيمة "Is Primary Contact" لجهة الاتصال السابقة إلى false
 
-### Workflow 2: Person → Company
+### سير العمل 2: الشخص → الشركة
 
-1. **Trigger**: Record is Updated (People, Is Primary Contact = true)
-2. **Update Record**: Set company's Primary Contact to this person
+1. **المحفّز**: يتم تحديث السجل (الأشخاص، Is Primary Contact = true)
+2. **تحديث السجل**: عيّن جهة الاتصال الأساسية للشركة إلى هذا الشخص
 
 <Note>
-  Be careful with bidirectional syncs to avoid infinite loops. Use filters to check if the value actually changed before updating.
+  كن حذرًا مع المزامنات ثنائية الاتجاه لتجنّب الحلقات اللانهائية. استخدم عوامل تصفية للتحقّق مما إذا كانت القيمة قد تغيّرت فعلاً قبل التحديث.
 </Note>
 
-## Using Code for Complex Mapping
+## استخدام الشيفرة للتعيين المعقّد
 
-### Example: Transform Data During Copy
+### مثال: تحويل البيانات أثناء النسخ
 
-**Goal**: Copy and format phone number from person to opportunity.
+**الهدف**: نسخ رقم الهاتف من الشخص إلى الفرصة وتنسيقه.
 
 ```javascript
 export const main = async (params) => {
@@ -146,25 +146,25 @@ export const main = async (params) => {
 
 ## أفضل الممارسات
 
-### Avoid Loops
+### تجنّب الحلقات
 
-* Don't create workflows that trigger each other endlessly
-* Use specific field conditions
-* Add checks to see if value actually changed
+* لا تنشئ سير عمل تُحفّز بعضها بعضًا بلا نهاية
+* استخدم شروطًا خاصة بالحقول
+* أضف تحقّقات لمعرفة ما إذا كانت القيمة قد تغيّرت فعلاً
 
-### Handle Missing Data
+### التعامل مع البيانات المفقودة
 
-* Always check if source record exists before copying
-* Provide default values for optional fields
-* Use filters to skip when source field is empty
+* تحقّق دائمًا من وجود سجل المصدر قبل النسخ
+* وفّر قيمًا افتراضية للحقول الاختيارية
+* استخدم عوامل تصفية للتخطّي عندما يكون حقل المصدر فارغًا
 
-### Performance
+### الأداء
 
-* Batch updates when copying to many records
-* Use scheduled workflows for bulk sync operations
-* Consider using Iterator for multiple record updates
+* نفّذ تحديثات دفعية عند النسخ إلى العديد من السجلات
+* استخدم سير عمل مجدولة لعمليات المزامنة بالجملة
+* فكّر في استخدام Iterator لتحديثات متعددة للسجلات
 
-## Related
+## ذات صلة
 
-* [Workflow Actions](/l/ar/user-guide/workflows/capabilities/workflow-actions)
-* [Workflow Triggers](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
+* [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+* [محفّزات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers)

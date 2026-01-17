@@ -6,13 +6,12 @@ import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram
 import '@xyflow/react/dist/style.css';
 import { RecoilRoot } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 
 const meta: Meta<typeof WorkflowDiagramEmptyTriggerEditable> = {
   title: 'Modules/Workflow/WorkflowDiagramEmptyTriggerEditable',
   component: WorkflowDiagramEmptyTriggerEditable,
-  decorators: [I18nFrontDecorator],
+  decorators: [],
 };
 
 export default meta;

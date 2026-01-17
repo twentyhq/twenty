@@ -1,125 +1,125 @@
 ---
-title: SSO Configuration
-description: Configure Single Sign-On for secure enterprise authentication.
+title: تكوين SSO
+description: قم بتكوين تسجيل الدخول الأحادي لضمان مصادقة مؤسسية آمنة.
 ---
 
-## About SSO
+## نبذة عن SSO
 
-Single Sign-On (SSO) allows your team members to log into Twenty using your organization's identity provider. This provides:
+يتيح تسجيل الدخول الأحادي (SSO) لأعضاء فريقك تسجيل الدخول إلى Twenty باستخدام موفّر الهوية الخاص بمؤسستك. يوفّر هذا ما يلي:
 
-* **Centralized access control**: Manage access from one place
-* **Enhanced security**: Leverage your existing security policies
-* **Better user experience**: One set of credentials for all tools
+* **التحكم المركزي في الوصول**: إدارة الوصول من مكان واحد
+* **أمان معزَّز**: الاستفادة من سياسات الأمان الحالية لديك
+* **تجربة مستخدم أفضل**: مجموعة بيانات اعتماد واحدة لجميع الأدوات
 
-## Supported Providers
+## الموفّرون المدعومون
 
-Twenty supports SSO with:
+تدعم Twenty SSO مع:
 
-* **SAML 2.0**: Works with most enterprise identity providers
-* **Google Workspace**: For organizations using Google
-* **Microsoft Entra ID**: (formerly Azure AD) For Microsoft environments
+* **SAML 2.0**: يعمل مع معظم موفّري الهوية للمؤسسات
+* **Google Workspace**: للمؤسسات التي تستخدم Google
+* **Microsoft Entra ID**: (سابقًا Azure AD) لبيئات Microsoft
 
-## Setting Up SSO
+## إعداد SSO
 
-### Prerequisites
+### المتطلبات الأساسية
 
-* Organization plan (cloud and self-hosted workspaces)
-* Admin access to your identity provider
-* Admin access to Twenty workspace
+* خطة المؤسسة (مساحات العمل السحابية والمستضافة ذاتيًا)
+* وصول المسؤول إلى موفّر الهوية لديك
+* وصول المسؤول إلى مساحة عمل Twenty
 
 <Note>
-  **For self-hosting users willing to set up SSO**, reach out to contact@twenty.com
+  **للمستخدمين الذين يستضيفون ذاتيًا والراغبين في إعداد SSO**، تواصلوا عبر contact@twenty.com
 </Note>
 
-### Configuration Steps
+### خطوات التكوين
 
-#### 1. Access SSO Settings
+#### 1. الوصول إلى إعدادات SSO
 
-1. Go to **Settings → Security**
-2. Find the **SSO Configuration** section
-3. Click **Configure SSO**
+1. اذهب إلى **الإعدادات → الأمان**
+2. ابحث عن قسم **تكوين SSO**
+3. انقر **Configure SSO**
 
-#### 2) Choose Your Provider
+#### 2) اختر موفّر الخدمة
 
-Select your identity provider from the list or choose "Custom SAML" for other providers.
+حدّد موفّر الهوية من القائمة أو اختر "Custom SAML" للموفّرين الآخرين.
 
-#### ٣. Configure Your Identity Provider
+#### ٣. قم بتكوين موفّر الهوية الخاص بك
 
-You'll need to configure your identity provider with:
+ستحتاج إلى تكوين موفّر الهوية لديك بما يلي:
 
-* **Entity ID**: Provided by Twenty
-* **ACS URL**: The callback URL for authentication
-* **Certificate**: For secure communication
+* **Entity ID**: يوفّره Twenty
+* **ACS URL**: عنوان URL لمعاودة الاتصال للمصادقة
+* **Certificate**: للتواصل الآمن
 
-#### 4. Enter Provider Details in Twenty
+#### 4. أدخل تفاصيل الموفّر في Twenty
 
-* **SSO URL**: Login URL from your provider
-* **Entity ID**: Your provider's identifier
-* **Certificate**: X.509 certificate from your provider
+* **SSO URL**: عنوان URL لتسجيل الدخول من موفّرك
+* **Entity ID**: معرّف موفّرك
+* **Certificate**: شهادة X.509 من موفّرك
 
-#### 5. Test and Enable
+#### 5. اختبر وفعّل
 
-1. Click **Test Configuration** to verify setup
-2. Enable SSO when testing is successful
-3. Configure user provisioning preferences
+1. انقر **Test Configuration** للتحقق من الإعداد
+2. فعّل SSO عند نجاح الاختبار
+3. قم بتكوين تفضيلات تزويد المستخدمين
 
-## User Provisioning
+## تزويد المستخدمين
 
-### Just-in-Time (JIT) Provisioning
+### التزويد الفوري (JIT)
 
-* Users are created automatically on first login
-* Assigned default role automatically
-* No manual user creation needed
+* يتم إنشاء المستخدمين تلقائيًا عند أول تسجيل دخول
+* تعيين الدور الافتراضي لهم تلقائيًا
+* لا حاجة لإنشاء المستخدمين يدويًا
 
-### Manual Provisioning
+### التزويد اليدوي
 
-* Invite users before they can log in
-* Pre-assign specific roles
-* More control over who can access
+* ادعُ المستخدمين قبل أن يتمكنوا من تسجيل الدخول
+* تعيين أدوار محددة مسبقًا
+* مزيد من التحكم بمن يمكنه الوصول
 
-## Managing SSO Users
+## إدارة مستخدمي SSO
 
-### Role Assignment
+### تعيين الأدوار
 
-SSO users can be assigned roles like regular users:
+يمكن تعيين أدوار لمستخدمي SSO مثل المستخدمين العاديين:
 
 1. انتقل إلى **الإعدادات → الأعضاء**
-2. Find the user
-3. Change their role as needed
+2. اعثر على المستخدم
+3. غيّر دورهم حسب الحاجة
 
-### Access Revocation
+### سحب الوصول
 
-To remove access for SSO users:
+لإزالة الوصول لمستخدمي SSO:
 
-* Remove them from your identity provider, or
-* Remove them from the Twenty workspace
+* أزِلهم من موفّر الهوية لديك، أو
+* أزِلهم من مساحة عمل Twenty
 
 ## أفضل الممارسات
 
-### Security
+### الأمان
 
-* **Require SSO**: Disable password login for SSO users
-* **Regular audits**: Review access periodically
-* **Strong IdP policies**: Enforce MFA at the identity provider
+* **فرض استخدام SSO**: تعطيل تسجيل الدخول بكلمة المرور لمستخدمي SSO
+* **عمليات تدقيق منتظمة**: مراجعة الوصول دوريًا
+* **سياسات IdP قوية**: فرض المصادقة متعددة العوامل لدى موفّر الهوية
 
-### User Management
+### إدارة المستخدمين
 
-* **Clear naming**: Use consistent naming from your directory
-* **Group mapping**: Map IdP groups to Twenty roles (if available)
-* **Offboarding process**: Include Twenty in your deprovisioning workflow
+* **تسمية واضحة**: استخدم تسمية متسقة من الدليل لديك
+* **مطابقة المجموعات**: طابق مجموعات IdP مع أدوار Twenty (إن وُجدت)
+* **عملية إنهاء الخدمة**: ضمّن Twenty في سير عمل إلغاء التزويد
 
 ## استكشاف الأخطاء وإصلاحها
 
-### Common Issues
+### المشكلات الشائعة
 
-* **Certificate errors**: Ensure certificate hasn't expired
-* **URL mismatches**: Verify ACS URL matches exactly
-* **User not found**: Check JIT provisioning settings
+* **أخطاء الشهادة**: تأكد من أن الشهادة لم تنتهِ صلاحيتها
+* **عدم تطابق عناوين URL**: تحقّق من تطابق ACS URL تمامًا
+* **المستخدم غير موجود**: تحقّق من إعدادات التزويد الفوري (JIT)
 
 ### الحصول على المساعدة
 
-If you encounter issues, contact support with:
+إذا واجهت مشكلات، تواصل مع الدعم وقدّم ما يلي:
 
-* Error messages received
-* Identity provider being used
-* Configuration details (without sensitive data)
+* رسائل الخطأ المستلمة
+* موفّر الهوية المستخدم
+* تفاصيل التكوين (من دون بيانات حساسة)

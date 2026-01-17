@@ -128,7 +128,7 @@ export const SettingsObjectFieldItemTableRow = ({
     fieldName: fieldMetadataItem.name,
   });
 
-  // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
+  // eslint-disable-next-line twenty/no-navigate-prefer-link
   const navigateToFieldEdit = () =>
     navigate(SettingsPath.ObjectFieldEdit, {
       objectNamePlural: objectMetadataItem.namePlural,

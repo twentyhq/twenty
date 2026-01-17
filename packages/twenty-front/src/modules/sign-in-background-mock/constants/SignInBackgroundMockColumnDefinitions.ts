@@ -1,4 +1,4 @@
-/* eslint-disable @nx/workspace-max-consts-per-file */
+/* eslint-disable twenty/max-consts-per-file */
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';

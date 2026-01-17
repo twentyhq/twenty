@@ -85,6 +85,8 @@ export const computePermissionIntersection = (
       canSoftDeleteObjectRecords,
       canDestroyObjectRecords,
       restrictedFields,
+      rowLevelPermissionPredicates: [],
+      rowLevelPermissionPredicateGroups: [],
     };
   }
 

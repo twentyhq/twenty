@@ -22,6 +22,7 @@ const jestConfig = {
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./setupTests.ts'],
   testEnvironment: 'jsdom',
+  testEnvironmentOptions: {},
 
   transformIgnorePatterns: [
     '/node_modules/(?!(twenty-ui)/.*)',

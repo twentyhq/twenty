@@ -3,9 +3,11 @@
 import {
   FieldMetadataType,
   RecordFilterGroupLogicalOperator,
+  RowLevelPermissionPredicateGroupLogicalOperator,
   type CompositeFieldSubFieldName,
   type PartialFieldMetadataItemOption,
   type RecordGqlOperationFilter,
+  type RowLevelPermissionPredicateValue,
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
@@ -25,10 +27,8 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RowLevelPermissionPredicateGroupLogicalOperator } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-group-logical-operator.enum';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
-import { type RowLevelPermissionPredicateValue } from 'src/engine/metadata-modules/row-level-permission-predicate/types/row-level-permission-predicate-value.type';
 import { validateEnumValueCompatibility } from 'src/engine/twenty-orm/utils/validate-enum-value-compatibility.util';
 
 type BuildRowLevelPermissionRecordFilterArgs = {

@@ -4,10 +4,8 @@ export const DELETE_FILE = gql`
   mutation DeleteFile($fileId: UUID!) {
     deleteFile(fileId: $fileId) {
       id
-      name
-      fullPath
+      path
       size
-      type
       createdAt
     }
   }

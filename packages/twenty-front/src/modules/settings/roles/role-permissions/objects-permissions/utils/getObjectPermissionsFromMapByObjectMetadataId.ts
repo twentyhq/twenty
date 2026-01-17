@@ -19,6 +19,8 @@ export const getObjectPermissionsFromMapByObjectMetadataId = ({
       canCreateObjectRecords: true,
       canDeleteObjectRecords: true,
       restrictedFields: {},
+      rowLevelPermissionPredicates: [],
+      rowLevelPermissionPredicateGroups: [],
     }
   );
 };

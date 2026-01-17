@@ -1,76 +1,76 @@
 ---
-title: Error Handling & Validation
-description: Review and fix import errors directly in the UI before confirming.
+title: التعامل مع الأخطاء والتحقّق
+description: راجع وأصلِح أخطاء الاستيراد مباشرةً في واجهة المستخدم قبل التأكيد.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Pre-Import Validation
+## التحقّق قبل الاستيراد
 
-After uploading your file and mapping fields, Twenty validates your data **before** importing. This allows you to catch and fix errors without affecting your existing data.
+بعد رفع ملفك وتعيين الحقول، تتحقّق Twenty من بياناتك **قبل** الاستيراد. يتيح لك ذلك اكتشاف الأخطاء وإصلاحها من دون التأثير في بياناتك الحالية.
 
 ## كيف يعمل
 
-1. **Upload** your CSV file
-2. **Map** your columns to Twenty fields
-3. **Review** the potential errors highlighted in yellow
-4. **Fix errors** directly in the UI
-5. **Confirm** the import
+1. **ارفع** ملف CSV الخاص بك
+2. **طابِق** أعمدتك مع حقول Twenty
+3. **راجِع** الأخطاء المحتملة المميّزة باللون الأصفر
+4. **أصلِح الأخطاء** مباشرةً في واجهة المستخدم
+5. **أكِّد** عملية الاستيراد
 
-<VimeoEmbed videoId="1145273857" title="Video demonstration" />
+<VimeoEmbed videoId="1145273857" title="عرض توضيحي بالفيديو" />
 
-## Error Display
+## عرض الأخطاء
 
-Rows with issues are highlighted in **yellow**. You can:
+يتم تمييز الصفوف التي تحتوي على مشكلات باللون **الأصفر**. يمكنك:
 
-* **Edit the cell directly** to fix the error
-* **Remove the row** to skip it entirely
+* **حرِّر الخلية مباشرةً** لإصلاح الخطأ
+* **أزل الصف** لتجاوزه بالكامل
 
-This inline editing saves time—no need to go back to your spreadsheet, fix errors, and re-upload.
+يوفّر هذا التحرير المضمَّن الوقت—لا حاجة للعودة إلى جدول البيانات، وإصلاح الأخطاء، وإعادة الرفع.
 
-## Common Error Types
+## أنواع الأخطاء الشائعة
 
-### Duplicate Values
+### قيم مكرّرة
 
-**Cause**: A unique field (email, domain) already exists in Twenty or appears twice in your file.
+**السبب**: حقل فريد (البريد الإلكتروني، النطاق) موجود مسبقًا في Twenty أو يظهر مرتين في ملفك.
 
-**Fix**:
+**الإصلاح**:
 
-* Edit the duplicate value in the import UI
-* Remove one of the duplicate rows
+* حرِّر القيمة المكرّرة في واجهة مستخدم الاستيراد
+* أزل أحد الصفوف المكرّرة
 
-See [Uniqueness Constraints](/l/ar/user-guide/data-migration/capabilities/uniqueness-constraints) for more details on how uniqueness is enforced.
+راجع [قيود التفرّد](/l/ar/user-guide/data-migration/capabilities/uniqueness-constraints) لمزيد من التفاصيل حول كيفية فرض التفرّد.
 
-### Invalid Format
+### تنسيق غير صالح
 
-**Cause**: Data doesn't match the expected format (e.g., invalid email, wrong date format).
+**السبب**: لا تتطابق البيانات مع التنسيق المتوقع (مثل: بريد إلكتروني غير صالح، تنسيق تاريخ غير صحيح).
 
-**Fix**: Edit the cell to use the correct format.
+**الإصلاح**: حرِّر الخلية لاستخدام التنسيق الصحيح.
 
-See [Field Mapping](/l/ar/user-guide/data-migration/capabilities/field-mapping) for the expected format of each field type.
+راجع [تعيين الحقول](/l/ar/user-guide/data-migration/capabilities/field-mapping) لمعرفة التنسيق المتوقع لكل نوع من الحقول.
 
-### Missing Required Fields
+### حقول مطلوبة مفقودة
 
-**Cause**: A required field is empty.
+**السبب**: حقل مطلوب فارغ.
 
-**Fix**: Enter a value in the required field or remove the row.
+**الإصلاح**: أدخِل قيمة في الحقل المطلوب أو أزل الصف.
 
-### Relation Not Found
+### العلاقة غير موجودة
 
-**Cause**: The referenced record doesn't exist (e.g., a Company domain that wasn't imported).
+**السبب**: السجل المشار إليه غير موجود (مثل: نطاق شركة لم يتم استيراده).
 
-**Fix**:
+**الإصلاح**:
 
-* Import the parent records first
-* Or correct the reference value
+* استورِد سجلات الأصل أولًا
+* أو صحِّح قيمة المرجع
 
-See [Import Relations](/l/ar/user-guide/data-migration/capabilities/import-relations) for the correct import order and how to link records.
+راجع [استيراد العلاقات](/l/ar/user-guide/data-migration/capabilities/import-relations) لمعرفة ترتيب الاستيراد الصحيح وكيفية ربط السجلات.
 
-## Tips for Fewer Errors
+## نصائح لتقليل الأخطاء
 
-1. **Download the template** to see expected format prior to importing your file
-2. **Clean your data** in the spreadsheet first
-3. **Import files in correct order** to import relations (Companies → People → Opportunities)
-4. **Test with small batches** before full import
-5. **Check for duplicates** before uploading
-6. **Limit the size of your file to 10,000 records** per file
+1. **نزّل القالب** للاطلاع على التنسيق المتوقع قبل استيراد ملفك
+2. **نظِّف بياناتك** في جدول البيانات أولًا
+3. **استورِد الملفات بالترتيب الصحيح** لاستيراد العلاقات (الشركات → الأشخاص → الفرص)
+4. **اختبر بدُفعات صغيرة** قبل الاستيراد الكامل
+5. **تحقّق من التكرارات** قبل الرفع
+6. **حدِّد حجم ملفك إلى 10,000 سجل** لكل ملف

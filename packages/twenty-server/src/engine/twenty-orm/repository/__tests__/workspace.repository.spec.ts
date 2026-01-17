@@ -145,6 +145,8 @@ describe('WorkspaceRepository', () => {
         canSoftDeleteObjectRecords: false,
         canDestroyObjectRecords: false,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       },
     };
     mockQueryRunner = {} as QueryRunner;

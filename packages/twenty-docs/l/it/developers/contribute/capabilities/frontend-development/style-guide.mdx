@@ -67,10 +67,10 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
- *      component's props
- *    - This method doesn't automatically include the children prop. If
- *      you want to include it, you have to specify it in OwnProps.
+/* ✅ - Bene, un tipo separato (OwnProps) è definito esplicitamente per le
+ *      props del componente
+ *    - Questo metodo non include automaticamente la proprietà children. Se
+ *      si vuole includerla, occorre specificarla in OwnProps.
  */
 type EmailFieldProps = {
   value: string;
@@ -78,7 +78,7 @@ type EmailFieldProps = {
 
 const EmailField = ({ value }: EmailFieldProps) => (
   <TextInput value={value} disabled fullWidth />
-);
+);},{
 ```
 
 #### Nessuna espansione singola delle variabili delle props negli elementi JSX
@@ -94,8 +94,8 @@ const MyComponent = (props: OwnProps) => {
 ```
 
 ```tsx
-/* ✅ - Good, Explicitly lists all props
- *    - Enhances readability and maintainability
+/* ✅ - Bene, elenca esplicitamente tutte le props
+ *    - Migliora la leggibilità e la manutenibilità
  */
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
@@ -123,10 +123,10 @@ const value = process.env.MY_VALUE ?? 'default';
 ### Usa il collegamento delle opzioni `?.`
 
 ```tsx
-// ❌ Bad
+// ❌ Male
 onClick && onClick();
 
-// ✅ Good
+// ✅ Bene
 onClick?.();
 ```
 
@@ -279,12 +279,12 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **Leggibilità**: Le importazioni senza tipo migliorano la leggibilità del codice rendendo chiaro quando si stanno importando valori o tipi. Questo riduce l'ambiguità e rende più semplice comprendere lo scopo dei simboli importati.
 
-* **Maintainability**: It enhances codebase maintainability because developers can identify and locate type-only imports when reviewing or modifying code.
+* **Manutenibilità**: Migliora la manutenibilità della codebase perché gli sviluppatori possono identificare e individuare gli import solo di tipo durante la revisione o la modifica del codice.
 
 ### Regola ESLint
 
-An ESLint rule, `@typescript-eslint/consistent-type-imports`, enforces the no-type import standard. This rule will generate errors or warnings for any type import violations.
+Una regola di ESLint, `@typescript-eslint/consistent-type-imports`, impone lo standard di coerenza per gli import di tipo. Questa regola genererà errori o avvisi per qualsiasi violazione relativa agli import di tipo.
 
-Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript stesso scoraggia questa pratica, come menzionato nelle [note di rilascio di TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Nella maggior parte delle situazioni, non si dovrebbe aver bisogno di usare importazioni di solo tipo.
+Tieni presente che questa regola affronta specificamente rari casi limite in cui si verificano import di tipo involontari. TypeScript stesso scoraggia questa pratica, come menzionato nelle [note di rilascio di TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Nella maggior parte delle situazioni, non si dovrebbe aver bisogno di usare importazioni di solo tipo.
 
 Per assicurarti che il tuo codice sia conforme a questa regola, assicurati di eseguire ESLint come parte del tuo flusso di lavoro di sviluppo.

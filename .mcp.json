@@ -2,11 +2,9 @@
   "mcpServers": {
     "postgres": {
       "type": "stdio",
-      "command": "uv",
-      "args": ["run", "postgres-mcp", "--access-mode=unrestricted"],
-      "env": {
-        "DATABASE_URI": "${PG_DATABASE_URL}"
-      }
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "${PG_DATABASE_URL}"],
+      "env": {}
     },
     "playwright": {
       "type": "stdio",

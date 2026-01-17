@@ -18,12 +18,12 @@ Eine kurze Nachricht, die zusätzliche Informationen anzeigt, wenn ein Benutzer 
       return (
         <>
           <p id="hoverText" style={{ display: "inline-block" }}>
-            Customer Insights
+            Kundeneinblicke
           </p>
           <AppTooltip
             className
             anchorSelect="#hoverText"
-            content="Explore customer behavior and preferences"
+            content="Erkunden Sie das Kundenverhalten und die Präferenzen"
             delayHide={0}
             offset={6}
             noArrow={false}
@@ -63,7 +63,7 @@ Behandelt überlaufenden Text und zeigt einen Tooltip an, wenn der Text überlä
 
     export const MyComponent = () => {
       const crmTaskDescription =
-        'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+        'Fassen Sie beim Kunden aufgrund seiner jüngsten Produktanfrage nach. Besprechen Sie Preisoptionen, gehen Sie auf eventuelle Bedenken ein und stellen Sie zusätzliche Produktinformationen bereit. Protokollieren Sie die Details des Gesprächs im CRM zur späteren Referenz.';
 
       return <OverflowingTextWithTooltip text={crmTaskDescription} />;
     };

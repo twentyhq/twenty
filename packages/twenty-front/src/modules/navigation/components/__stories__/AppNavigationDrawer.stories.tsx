@@ -15,7 +15,6 @@ import {
 } from '@/navigation/components/AppNavigationDrawer';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { AppPath } from 'twenty-shared/types';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const MobileNavigationDrawerStateSetterEffect = ({
   mobileNavigationDrawer = 'main',
@@ -55,7 +54,6 @@ const meta: Meta<StoryArgs> = {
   decorators: [
     IconsProviderDecorator,
     ObjectMetadataItemsDecorator,
-    I18nFrontDecorator,
     (Story, { args }) => (
       <MemoryRouter initialEntries={[args.routePath]}>
         <Story />

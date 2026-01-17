@@ -5,7 +5,6 @@ import { type RecordTableEmptyStateNoGroupNoRecordAtAll } from '@/object-record/
 import { fireEvent, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator';
@@ -24,7 +23,6 @@ const meta: Meta = {
     ContextStoreDecorator,
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
-    I18nFrontDecorator,
   ],
   args: {
     recordTableId: `companies-${mockedViewsData[0].id}`,

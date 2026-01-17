@@ -24,7 +24,7 @@ export const fromCreateSkillInputToFlatSkillToCreate = ({
   // Content is markdown - only trim, don't collapse whitespace (preserve newlines)
   const content = createSkillInput.content.trim();
 
-  const id = v4();
+  const id = createSkillInput.id ?? v4();
 
   return {
     id,

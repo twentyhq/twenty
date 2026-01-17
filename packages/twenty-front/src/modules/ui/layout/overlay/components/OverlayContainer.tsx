@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-// eslint-disable-next-line @nx/workspace-styled-components-prefixed-with-styled
+// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const OverlayContainer = styled.div<{
   borderRadius?: 'sm' | 'md';
   hasDangerBorder?: boolean;

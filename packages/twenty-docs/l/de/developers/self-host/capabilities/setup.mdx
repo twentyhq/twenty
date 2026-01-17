@@ -10,7 +10,7 @@ title: Einrichtung
 
 Twenty bietet **zwei Konfigurationsmodi**, um unterschiedlichen Implementierungsbedürfnissen gerecht zu werden:
 
-**Admin panel access:** Only users with admin privileges (`canAccessFullAdminPanel: true`) can access the configuration interface.
+**Zugriff auf das Admin-Panel:** Nur Benutzer mit Admin-Berechtigungen (`canAccessFullAdminPanel: true`) können auf die Konfigurationsoberfläche zugreifen.
 
 ## 1. Admin-Panel-Konfiguration (Standard)
 
@@ -38,7 +38,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # Standard
 * **Arbeitsablauf & Ratenbegrenzung** - Ausführungslimits, API-Drosselung
 * **Und vieles mehr...**
 
-![Admin Panel Configuration Variables](/images/user-guide/setup/admin-panel-config-variables.png)
+![Konfigurationsvariablen des Admin-Panels](/images/user-guide/setup/admin-panel-config-variables.png)
 
 <Warning>
   Jede Variable ist mit Beschreibungen in Ihrem Admin-Panel dokumentiert unter **Einstellungen → Admin-Panel → Konfigurationsvariablen**.
@@ -60,61 +60,61 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 3. Starten Sie Container neu, damit Änderungen wirksam werden
 4. Im Admin-Panel werden aktuelle Werte angezeigt, können jedoch nicht geändert werden
 
-## Multi-Workspace Mode
+## Multi-Workspace-Modus
 
-By default, Twenty runs in **single-workspace mode** — ideal for most self-hosted deployments where you need one CRM instance for your organization.
+Standardmäßig läuft Twenty im **Single-Workspace-Modus** — ideal für die meisten selbstgehosteten Bereitstellungen, bei denen Sie eine CRM-Instanz für Ihre Organisation benötigen.
 
-### Single-Workspace Mode (Default)
+### Single-Workspace-Modus (Standard)
 
 ```bash
 IS_MULTIWORKSPACE_ENABLED=false  # default
 ```
 
-* One workspace per Twenty instance
-* First user automatically becomes admin with full privileges (`canImpersonate` and `canAccessFullAdminPanel`)
-* New signups are disabled after the first workspace is created
-* Simple URL structure: `https://your-domain.com`
+* Ein Workspace pro Twenty-Instanz
+* Der erste Benutzer wird automatisch zum Admin mit vollen Berechtigungen (`canImpersonate` und `canAccessFullAdminPanel`).
+* Neue Registrierungen werden deaktiviert, nachdem der erste Workspace erstellt wurde.
+* Einfache URL-Struktur: `https://your-domain.com`
 
-### Enabling Multi-Workspace Mode
+### Multi-Workspace-Modus aktivieren
 
 ```bash
 IS_MULTIWORKSPACE_ENABLED=true
 DEFAULT_SUBDOMAIN=app  # default value
 ```
 
-Enable multi-workspace mode for SaaS-like deployments where multiple independent teams need their own workspaces on the same Twenty instance.
+Aktivieren Sie den Multi-Workspace-Modus für SaaS-ähnliche Bereitstellungen, bei denen mehrere unabhängige Teams eigene Workspaces auf derselben Twenty-Instanz benötigen.
 
-**Key differences from single-workspace mode:**
+**Wesentliche Unterschiede zum Single-Workspace-Modus:**
 
-* Multiple workspaces can be created on the same instance
-* Each workspace gets its own subdomain (e.g., `sales.your-domain.com`, `marketing.your-domain.com`)
-* Users sign up and log in at `{DEFAULT_SUBDOMAIN}.your-domain.com` (e.g., `app.your-domain.com`)
-* No automatic admin privileges — first user in each workspace is a regular user
-* Workspace-specific settings like subdomain and custom domain become available in workspace settings
+* Auf derselben Instanz können mehrere Workspaces erstellt werden.
+* Jeder Workspace erhält seine eigene Subdomain (z. B. `sales.your-domain.com`, `marketing.your-domain.com`).
+* Benutzer registrieren sich und melden sich unter `{DEFAULT_SUBDOMAIN}.your-domain.com` an (z. B. `app.your-domain.com`).
+* Keine automatischen Admin-Berechtigungen — der erste Benutzer in jedem Workspace ist ein normaler Benutzer.
+* Workspacespezifische Einstellungen wie Subdomain und benutzerdefinierte Domain werden in den Workspace-Einstellungen verfügbar.
 
 <Warning>
-  **Environment-only setting:** `IS_MULTIWORKSPACE_ENABLED` can only be configured via `.env` file and requires a restart. It cannot be changed through the admin panel.
+  **Nur-Umgebungs-Einstellung:** `IS_MULTIWORKSPACE_ENABLED` kann nur über die `.env`-Datei konfiguriert werden und erfordert einen Neustart. Dies kann nicht über das Admin-Panel geändert werden.
 </Warning>
 
-### DNS Configuration for Multi-Workspace
+### DNS-Konfiguration für Multi-Workspace
 
-When using multi-workspace mode, configure your DNS with a wildcard record to allow dynamic subdomain creation:
+Wenn Sie den Multi-Workspace-Modus verwenden, konfigurieren Sie Ihr DNS mit einem Wildcard-Eintrag, um die dynamische Erstellung von Subdomains zu ermöglichen:
 
 ```
 *.your-domain.com -> your-server-ip
 ```
 
-This enables automatic subdomain routing for new workspaces without manual DNS configuration.
+Dadurch wird das automatische Subdomain-Routing für neue Workspaces ohne manuelle DNS-Konfiguration ermöglicht.
 
-### Restricting Workspace Creation
+### Einschränkung der Workspace-Erstellung
 
-In multi-workspace mode, you may want to limit who can create new workspaces:
+Im Multi-Workspace-Modus möchten Sie möglicherweise einschränken, wer neue Workspaces erstellen darf:
 
 ```bash
 IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 ```
 
-When enabled, only users with `canAccessFullAdminPanel` can create additional workspaces. Users can still create their first workspace during initial signup.
+Wenn aktiviert, können nur Benutzer mit `canAccessFullAdminPanel` zusätzliche Workspaces erstellen. Benutzer können bei der Erstregistrierung weiterhin ihren ersten Workspace erstellen.
 
 ## Gmail- & Google Kalender-Integration
 
@@ -133,8 +133,8 @@ When enabled, only users with `canAccessFullAdminPanel` can create additional wo
 1. Gehen Sie zu [Anmeldedaten](https://console.cloud.google.com/apis/credentials)
 2. Erstellen Sie eine OAuth 2.0-Client-ID
 3. Fügen Sie diese Weiterleitungs-URIs hinzu:
-   * `https://{your-domain}/auth/google/redirect` (for SSO)
-   * `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+   * `https://{your-domain}/auth/google/redirect` (für SSO)
+   * `https://{your-domain}/auth/google-apis/get-access-token` (für Integrationen)
 
 ### In Twenty konfigurieren
 
@@ -194,7 +194,7 @@ Hinweis: "Mail.ReadWrite" und "Mail.Send" sind nur erforderlich, wenn Sie E-Mail
 
 Sie müssen die folgenden Weiterleitungs-URIs zu Ihrem Projekt hinzufügen:
 
-* `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+* `https://{your-domain}/auth/microsoft/redirect`, falls Sie das Microsoft-SSO verwenden möchten
 * `https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 ### In Twenty konfigurieren
@@ -291,3 +291,47 @@ yarn command:prod cron:workflow:automated-cron-trigger
 <Warning>
   **Nur-Umgebungsmodus:** Wenn Sie `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` setzen, fügen Sie diese Variablen stattdessen Ihrer `.env`-Datei hinzu.
 </Warning>
+
+## Serverless Functions
+
+Twenty supports serverless functions for workflows and custom logic. The execution environment is configured via the `SERVERLESS_TYPE` environment variable.
+
+<Warning>
+  **Security Notice:** The local serverless driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. It should only be used for trusted code in development. For production deployments handling untrusted code, we highly recommend using `SERVERLESS_TYPE=LAMBDA` or `SERVERLESS_TYPE=DISABLED`.
+</Warning>
+
+### Available Drivers
+
+| Driver   | Environment Variable       | Anwendungsfall                        | Security Level                  |
+| -------- | -------------------------- | ------------------------------------- | ------------------------------- |
+| Disabled | `SERVERLESS_TYPE=DISABLED` | Disable serverless functions entirely | N/A                             |
+| Local    | `SERVERLESS_TYPE=LOCAL`    | Development and trusted environments  | Low (no sandboxing)             |
+| Lambda   | `SERVERLESS_TYPE=LAMBDA`   | Production with untrusted code        | High (hardware-level isolation) |
+
+### Recommended Configuration
+
+**For development:**
+
+```bash
+SERVERLESS_TYPE=LOCAL  # default
+```
+
+**For production (AWS):**
+
+```bash
+SERVERLESS_TYPE=LAMBDA
+SERVERLESS_LAMBDA_REGION=us-east-1
+SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
+SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+```
+
+**To disable serverless functions:**
+
+```bash
+SERVERLESS_TYPE=DISABLED
+```
+
+<Note>
+  When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a serverless function will return an error. This is useful if you want to run Twenty without serverless function capabilities.
+</Note>

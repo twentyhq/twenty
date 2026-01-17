@@ -2589,6 +2589,11 @@ msgstr "Ikona poleceń"
 msgid "Command Menu"
 msgstr "Menu poleceń"
 
+#. js-lingui-id: Ngoldv
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "command menu item"
+msgstr ""
+
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Commands copied to clipboard"
@@ -5731,6 +5736,11 @@ msgstr "Francuski"
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "from {startDay} to {endDay}"
 msgstr "od {startDay} do {endDay}"
+
+#. js-lingui-id: zaEHSY
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "front component"
+msgstr ""
 
 #. js-lingui-id: scmRyR
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx

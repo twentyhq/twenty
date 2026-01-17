@@ -88,7 +88,8 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       standardId: createObjectInput.standardId ?? null,
       standardOverrides: null,
       applicationId: workspaceCustomApplicationId,
-      universalIdentifier: objectMetadataId,
+      universalIdentifier:
+        createObjectInput.universalIdentifier ?? objectMetadataId,
       targetTableName: 'DEPRECATED',
       workspaceId,
     };

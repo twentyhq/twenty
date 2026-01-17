@@ -1,7 +1,7 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useStopWorkflowRunMutation } from '~/generated-metadata/graphql';
 
 export const useStopWorkflowRun = () => {
@@ -9,7 +9,6 @@ export const useStopWorkflowRun = () => {
   const [mutate] = useStopWorkflowRunMutation({
     client: apolloCoreClient,
   });
-  const { registerObjectOperation } = useRegisterObjectOperation();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.WorkflowRun,
@@ -22,10 +21,16 @@ export const useStopWorkflowRun = () => {
       },
     });
 
-    registerObjectOperation(objectMetadataItem, {
-      type: 'update-one',
-      result: {
-        updateInput: { id: workflowRunId },
+    dispatchObjectRecordOperationBrowserEvent({
+      objectMetadataItem,
+      operation: {
+        type: 'update-one',
+        result: {
+          updateInput: {
+            recordId: workflowRunId,
+            updatedFields: [],
+          },
+        },
       },
     });
   };

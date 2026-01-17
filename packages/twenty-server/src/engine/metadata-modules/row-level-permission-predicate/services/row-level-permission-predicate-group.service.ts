@@ -18,19 +18,16 @@ import { type DestroyRowLevelPermissionPredicateGroupInput } from 'src/engine/me
 import { type UpdateRowLevelPermissionPredicateGroupInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/update-row-level-permission-predicate-group.input';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-
-const RLP_CACHE_KEYS = [
-  'flatRowLevelPermissionPredicateMaps',
-  'flatRowLevelPermissionPredicateGroupMaps',
-] as const;
 
 @Injectable()
 export class RowLevelPermissionPredicateGroupService {
   constructor(
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async createOne({
@@ -290,9 +287,9 @@ export class RowLevelPermissionPredicateGroupService {
       );
     }
 
-    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-      workspaceId,
-      flatMapsKeys: [...RLP_CACHE_KEYS],
-    });
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'rolesPermissions',
+      'flatRowLevelPermissionPredicateMaps',
+    ]);
   }
 }

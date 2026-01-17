@@ -448,18 +448,18 @@ export default defineRole({
 ```typescript
 // src/app/createPostCard.function.ts
 import { defineFunction } from 'twenty-sdk';
-import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload } from 'twenty-sdk';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
 import Twenty, { type Person } from '../../generated';
 
 const handler = async (
   params:
-    | { name?: string }
+    | RoutePayload
     | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
     | CronPayload,
 ) => {
   const client = new Twenty(); // generated typed client
-  const name = 'name' in params
-    ? params.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
     : 'Hello world';
 
   const result = await client.mutation({
@@ -517,6 +517,98 @@ export default defineFunction({
 
 * المصفوفة `triggers` اختيارية. يمكن استخدام الوظائف بدون مشغلات كوظائف مساعدة تُستدعى بواسطة وظائف أخرى.
 * يمكنك مزج أنواع متعددة من المشغلات في وظيفة واحدة.
+
+### Route trigger payload
+
+<Warning>
+  **Breaking change (v1.16, January 2026):** The route trigger payload format has changed. Prior to v1.16, query parameters, path parameters, and body were sent directly as the payload. Starting with v1.16, they are nested inside a structured `RoutePayload` object.
+
+  **Before v1.16:**
+
+  ```typescript
+  const handler = async (params) => {
+    const { param1, param2 } = params; // Direct access
+  };
+  ```
+
+  **After v1.16:**
+
+  ```typescript
+  const handler = async (event: RoutePayload) => {
+    const { param1, param2 } = event.body; // Access via .body
+    const { queryParam } = event.queryStringParameters;
+    const { id } = event.pathParameters;
+  };
+  ```
+
+  **To migrate existing functions:** Update your handler to destructure from `event.body`, `event.queryStringParameters`, or `event.pathParameters` instead of directly from the params object.
+</Warning>
+
+When a route trigger invokes your function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Import the type from `twenty-sdk`:
+
+```typescript
+import { defineFunction, type RoutePayload } from 'twenty-sdk';
+
+const handler = async (event: RoutePayload) => {
+  // Access request data
+  const { headers, queryStringParameters, pathParameters, body } = event;
+
+  // HTTP method and path are available in requestContext
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+The `RoutePayload` type has the following structure:
+
+| Property                     | النوع                                 | الوصف                                                                                   |
+| ---------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`)                           |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)                            |
+| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern (e.g., `/users/:id` → `{ id: '123' }`) |
+| `المحتوى`                    | `object \| null`                      | Parsed request body (JSON)                                                              |
+| `isBase64Encoded`            | `قيمة منطقية`                         | Whether the body is base64 encoded                                                      |
+| `requestContext.http.method` | `string`                              | HTTP method (GET, POST, PUT, PATCH, DELETE)                                             |
+| `requestContext.http.path`   | `string`                              | Raw request path                                                                        |
+
+### Forwarding HTTP headers
+
+By default, HTTP headers from incoming requests are **not** passed to your serverless function for security reasons. To access specific headers, explicitly list them in the `forwardedRequestHeaders` array:
+
+```typescript
+export default defineFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  triggers: [
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/webhook',
+      httpMethod: 'POST',
+      isAuthRequired: false,
+      forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+    },
+  ],
+});
+```
+
+In your handler, you can then access these headers:
+
+```typescript
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+  Header names are normalized to lowercase. Access them using lowercase keys (for example, `event.headers['content-type']`).
+</Note>
 
 يمكنك إنشاء وظائف جديدة بطريقتين:
 

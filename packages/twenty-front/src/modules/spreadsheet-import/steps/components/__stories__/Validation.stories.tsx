@@ -11,7 +11,6 @@ import { ValidationStep } from '@/spreadsheet-import/steps/components/Validation
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { RecoilRoot } from 'recoil';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof ValidationStep> = {
   title: 'Modules/SpreadsheetImport/ValidationStep',
@@ -34,7 +33,6 @@ const meta: Meta<typeof ValidationStep> = {
         <Story />
       </RecoilRoot>
     ),
-    I18nFrontDecorator,
   ],
 };
 

@@ -2,18 +2,20 @@ import { WidgetActionRenderer } from '@/page-layout/widgets/components/WidgetAct
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useTheme } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { IconTrash, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
+import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
 import { AnimatePresence, motion } from 'framer-motion';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export type WidgetCardHeaderProps = {
+  variant: WidgetCardVariant;
   widgetId: string;
   isInEditMode: boolean;
   isEmpty?: boolean;
@@ -32,14 +34,24 @@ const StyledWidgetCardHeader = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledTitleContainer = styled.div`
+const StyledTitleContainer = styled.div<{ variant: WidgetCardVariant }>`
   color: ${({ theme }) => theme.font.color.primary};
   flex: 1;
   font-size: ${({ theme }) => theme.font.size.md};
-  padding-inline: ${({ theme }) => theme.spacing(1)};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   user-select: none;
   overflow: hidden;
+
+  ${({ theme, variant }) => {
+    switch (variant) {
+      case 'side-column':
+        return undefined;
+      default:
+        return css`
+          padding-inline: ${theme.spacing(1)};
+        `;
+    }
+  }}
 `;
 
 const StyledRightContainer = styled.div`
@@ -62,6 +74,7 @@ const StyledIconButtonContainer = styled(motion.div)`
 
 export const WidgetCardHeader = ({
   widgetId,
+  variant,
   isEmpty = false,
   isInEditMode = false,
   isResizing = false,
@@ -88,7 +101,7 @@ export const WidgetCardHeader = ({
           />
         )}
       </AnimatePresence>
-      <StyledTitleContainer>
+      <StyledTitleContainer variant={variant}>
         <OverflowingTextWithTooltip text={isEmpty ? t`Add Widget` : title} />
       </StyledTitleContainer>
       <StyledRightContainer>

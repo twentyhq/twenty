@@ -288,3 +288,44 @@ yarn command:prod cron:workflow:automated-cron-trigger
 <Warning>
 **Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
 </Warning>
+
+## Serverless Functions
+
+Twenty supports serverless functions for workflows and custom logic. The execution environment is configured via the `SERVERLESS_TYPE` environment variable.
+
+<Warning>
+**Security Notice:** The local serverless driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. It should only be used for trusted code in development. For production deployments handling untrusted code, we highly recommend using `SERVERLESS_TYPE=LAMBDA` or `SERVERLESS_TYPE=DISABLED`.
+</Warning>
+
+### Available Drivers
+
+| Driver | Environment Variable | Use Case | Security Level |
+|--------|---------------------|----------|----------------|
+| Disabled | `SERVERLESS_TYPE=DISABLED` | Disable serverless functions entirely | N/A |
+| Local | `SERVERLESS_TYPE=LOCAL` | Development and trusted environments | Low (no sandboxing) |
+| Lambda | `SERVERLESS_TYPE=LAMBDA` | Production with untrusted code | High (hardware-level isolation) |
+
+### Recommended Configuration
+
+**For development:**
+```bash
+SERVERLESS_TYPE=LOCAL  # default
+```
+
+**For production (AWS):**
+```bash
+SERVERLESS_TYPE=LAMBDA
+SERVERLESS_LAMBDA_REGION=us-east-1
+SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
+SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+```
+
+**To disable serverless functions:**
+```bash
+SERVERLESS_TYPE=DISABLED
+```
+
+<Note>
+When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a serverless function will return an error. This is useful if you want to run Twenty without serverless function capabilities.
+</Note>

@@ -41,6 +41,7 @@ export type {
   ObjectRecordRestoreEvent,
   ObjectRecordUpsertEvent,
 } from './functions/triggers/database-event-payload-type';
+export type { RoutePayload } from './functions/triggers/route-payload-type';
 export { defineObject } from './objects/define-object';
 export { extendObject } from './objects/extend-object';
 export { Object } from './objects/object.decorator';

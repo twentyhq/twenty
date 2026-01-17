@@ -1,0 +1,31 @@
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
+
+import { IsDateString, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
+@ObjectType('FrontComponent')
+export class FrontComponentDTO {
+  @IsUUID()
+  @IsNotEmpty()
+  @Field(() => UUIDScalarType)
+  id: string;
+
+  @IsString()
+  @Field()
+  name: string;
+
+  @HideField()
+  workspaceId: string;
+
+  @Field(() => UUIDScalarType)
+  applicationId: string;
+
+  @IsDateString()
+  @Field()
+  createdAt: Date;
+
+  @IsDateString()
+  @Field()
+  updatedAt: Date;
+}

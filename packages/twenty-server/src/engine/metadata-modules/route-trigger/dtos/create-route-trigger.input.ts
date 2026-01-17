@@ -1,9 +1,11 @@
 import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
@@ -30,6 +32,16 @@ export class CreateRouteTriggerInput {
   @IsNotEmpty()
   @Field()
   serverlessFunctionId: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  @Field(() => [String], {
+    defaultValue: [],
+    description:
+      'List of HTTP header names to forward to the serverless function event',
+  })
+  forwardedRequestHeaders: string[];
 
   @HideField()
   universalIdentifier?: string;

@@ -77,8 +77,8 @@ If you feel like you need to add a `useEffect` in your root component, you shoul
 يمكنك تطبيق نفس الشيء على منطق جلب البيانات، مع الخُطافات Apollo.
 
 ```tsx
-// ❌ Bad, will cause re-renders even if data is not changing,
-//    because useEffect needs to be re-evaluated
+// ❌ سيّئ، سيتسبب في إعادة التصيير حتى إذا لم تتغير البيانات،
+//    لأن useEffect يحتاج إلى إعادة التقييم
 export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
   const [someDependency] = useRecoilState(someDependencyState);
@@ -100,8 +100,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Good, will not cause re-renders if data is not changing,
-//   because useEffect is re-evaluated in another sibling component
+// ✅ جيّد، لن يتسبب في إعادة التصيير إذا لم تتغير البيانات،
+//   لأن useEffect يُعاد تقييمه في مكوّن شقيق آخر
 export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
 
@@ -168,13 +168,13 @@ export const App = () => (
 الأسماء العامة في البرمجة ليست مثالية لأنها تفتقر إلى التحديد، مما يؤدي إلى الغموض وتقليل قابلية قراءة التعليمات البرمجية. مثل هذه الأسماء تفشل في التعبير عن الغرض من المتغير أو الوظيفة، مما يجعل من الصعب على المطورين فهم نية التعليمات البرمجية دون تحقيق أعمق. يمكن أن يؤدي ذلك إلى زيادة وقت إزالة الأخطاء، وزيادة قابلية التعرض للأخطاء، وصعوبات في الصيانة والتعاون. في الوقت نفسه، تجعل التسمية الوصفية التعليمات البرمجية تفسيرية بذاتها وأسهل في التنقل، مما يعزز جودة التعليمات البرمجية وإنتاجية المطور.
 
 ```tsx
-// ❌ Bad, uses a generic name that doesn't communicate its
-//    purpose or content clearly
+// ❌ سيّئ، يستخدم اسمًا عامًا لا يوضح
+//    الغرض أو المحتوى بوضوح
 const [value, setValue] = useState('');
 ```
 
 ```tsx
-// ✅ Good, uses a descriptive name
+// ✅ جيّد، يستخدم اسمًا وصفيًا
 const [email, setEmail] = useState('');
 ```
 
@@ -187,14 +187,14 @@ const [email, setEmail] = useState('');
 يجب أن تبدأ أسماء معالجات الأحداث بكلمة `handle`، بينما يعتبر `on` بادئة تستخدم لتسمية الأحداث في خصائص المكونات.
 
 ```tsx
-// ❌ Bad
+// ❌ سيّئ
 const onEmailChange = (val: string) => {
   // ...
 };
 ```
 
 ```tsx
-// ✅ Good
+// ✅ جيّد
 const handleEmailChange = (val: string) => {
   // ...
 };
@@ -222,12 +222,12 @@ const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
 **الاستخدام**
 
 ```tsx
-// ❌ Bad, passing in the same value as the default value adds no value
+// ❌ سيّئ، تمرير نفس القيمة كقيمة افتراضية لا يضيف أي فائدة
 const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
-// ✅ Good, assumes the default value
+// ✅ جيّد، يفترض القيمة الافتراضية
 const Form = () => <EmailField value="username@email.com" />;
 ```
 
@@ -240,7 +240,7 @@ const Form = () => <EmailField value="username@email.com" />;
 ```tsx
 const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
-// In MyComponent
+// داخل MyComponent
 const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
   const theme = useTheme();
 
@@ -285,7 +285,7 @@ const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
 **الاستخدام**
 
 ```tsx
-// ❌ Bad, specifies the entire relative path
+// ❌ سيّئ، يحدد المسار النسبي بالكامل
 import {
   CatalogDecorator
 } from '../../../../../testing/decorators/CatalogDecorator';
@@ -295,7 +295,7 @@ import {
 ```
 
 ```tsx
-// ✅ Good, utilises the designated aliases
+// ✅ جيّد، يستخدم الأسماء المستعارة المحددة
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from 'twenty-ui/testing';
 ```
@@ -310,10 +310,10 @@ const validationSchema = z
     exist: z.boolean(),
     email: z
       .string()
-      .email('Email must be a valid email'),
+      .email('يجب أن يكون البريد الإلكتروني صالحًا'),
     password: z
       .string()
-      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+      .regex(PASSWORD_REGEX, 'يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل'),
   })
   .required();
 

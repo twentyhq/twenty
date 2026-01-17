@@ -20,7 +20,6 @@ import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const {
   FieldInputEventContextProviderWithJestMocks,
@@ -147,7 +146,7 @@ const meta: Meta = {
     onTab: { control: false },
     onShiftTab: { control: false },
   },
-  decorators: [clearMocksDecorator, SnackBarDecorator, I18nFrontDecorator],
+  decorators: [clearMocksDecorator, SnackBarDecorator],
   parameters: {
     clearMocks: true,
   },

@@ -1,5 +1,5 @@
 ---
-title: Buttons
+title: Schaltflächen
 image: /images/user-guide/views/filter.png
 ---
 
@@ -7,9 +7,9 @@ image: /images/user-guide/views/filter.png
   <img src="/images/user-guide/views/filter.png" alt="Kopfzeile" />
 </Frame>
 
-A list of buttons and button groups used throughout the app.
+Eine Liste von Schaltflächen und Schaltflächengruppen, die in der gesamten App verwendet werden.
 
-## Button
+## Schaltfläche
 
 <Tabs>
   <Tab title="Verwendung">
@@ -44,18 +44,18 @@ A list of buttons and button groups used throughout the app.
     | Symbol        | `React.ComponentType` | Eine optionale Symbolkomponente, die innerhalb der Schaltfläche angezeigt wird                                       |
     | titel         | Zeichenkette          | Der Textinhalt der Schaltfläche                                                                                      |
     | volle Breite  | boolesch              | Definiert, ob die Schaltfläche die gesamte Breite ihres Containers einnehmen soll                                    |
-    | Variante      | Zeichenkette          | The visual style variant of the button. Optionen umfassen `primär`, `sekundär` und `tertiär`                         |
+    | Variante      | Zeichenkette          | Die visuelle Stilvariante der Schaltfläche. Optionen umfassen `primär`, `sekundär` und `tertiär`                     |
     | größe         | Zeichenkette          | Die Größe der Schaltfläche. Hat zwei Optionen: `klein` und `mittel`                                                  |
     | position      | Zeichenkette          | Die Position des Knopfes in Bezug auf seine Geschwister. Optionen umfassen: `einzeln`, `links`, `rechts` und `mitte` |
     | Akzent        | Zeichenkette          | Die Akzentfarbe der Schaltfläche. Optionen umfassen: `Standard`, `blau` und `Gefahr`                                 |
     | bald          | boolesch              | Gibt an, ob die Schaltfläche als "bald" markiert ist (z.B. für kommende Features)                                    |
-    | deaktiviert   | boolesch              | Specifies whether the button is disabled or not                                                                      |
-    | Fokus         | boolesch              | Determines if the button has focus                                                                                   |
+    | deaktiviert   | boolesch              | Gibt an, ob die Schaltfläche deaktiviert ist.                                                                        |
+    | Fokus         | boolesch              | Bestimmt, ob die Schaltfläche den Fokus hat.                                                                         |
     | beiKlick      | Funktion              | Eine Rückruffunktion, die ausgelöst wird, wenn der Benutzer auf die Schaltfläche klickt                              |
   </Tab>
 </Tabs>
 
-## Button Group
+## Schaltflächengruppe
 
 <Tabs>
   <Tab title="Verwendung">
@@ -116,17 +116,17 @@ A list of buttons and button groups used throughout the app.
   </Tab>
 
   <Tab title="Eigenschaften">
-    | Eigenschaften | Typ          | Beschreibung                                                                                                   |
-    | ------------- | ------------ | -------------------------------------------------------------------------------------------------------------- |
-    | Variante      | Zeichenkette | The visual style variant of the buttons within the group. Optionen umfassen `primär`, `sekundär` und `tertiär` |
-    | größe         | Zeichenkette | The size of the buttons within the group. Hat zwei Optionen: `mittel` und `klein`                              |
-    | Akzent        | Zeichenkette | The accent color of the buttons within the group. Optionen umfassen: `Standard`, `blau` und `Gefahr`           |
-    | Klassenname   | Zeichenkette | Optionaler Klassenname für zusätzliche Stilierung                                                              |
-    | Kinder        | ReactNode    | An array of React elements representing the individual buttons within the group                                |
+    | Eigenschaften | Typ          | Beschreibung                                                                                                           |
+    | ------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------- |
+    | Variante      | Zeichenkette | Die visuelle Stilvariante der Schaltflächen innerhalb der Gruppe. Optionen umfassen `primär`, `sekundär` und `tertiär` |
+    | größe         | Zeichenkette | Die Größe der Schaltflächen innerhalb der Gruppe. Hat zwei Optionen: `mittel` und `klein`                              |
+    | Akzent        | Zeichenkette | Die Akzentfarbe der Schaltflächen innerhalb der Gruppe. Optionen umfassen: `Standard`, `blau` und `Gefahr`             |
+    | Klassenname   | Zeichenkette | Optionaler Klassenname für zusätzliche Stilierung                                                                      |
+    | Kinder        | ReactNode    | Ein Array von React-Elementen, die die einzelnen Schaltflächen innerhalb der Gruppe darstellen                         |
   </Tab>
 </Tabs>
 
-## Floating Button
+## Schwebende Schaltfläche
 
 <Tabs>
   <Tab title="Verwendung">
@@ -160,14 +160,14 @@ A list of buttons and button groups used throughout the app.
     | titel            | Zeichenfolge          | Der Textinhalt der Schaltfläche                                                                                   |
     | größe            | Zeichenfolge          | Die Größe der Schaltfläche. Hat zwei Optionen: `klein` und `mittel`                                               |
     | position         | Zeichenkette          | Die Position des Knopfes in Bezug auf seine Geschwister. Optionen umfassen: `einzeln`, `links`, `mitte`, `rechts` |
-    | SchattenAnwenden | boolesch              | Determines whether to apply shadow to a button                                                                    |
-    | applyBlur        | boolesch              | Determines whether to apply a blur effect to the button                                                           |
+    | SchattenAnwenden | boolesch              | Bestimmt, ob auf die Schaltfläche ein Schatten angewendet wird                                                    |
+    | applyBlur        | boolesch              | Bestimmt, ob ein Unschärfeeffekt auf die Schaltfläche angewendet wird                                             |
     | deaktiviert      | boolesch              | Bestimmt, ob die Schaltfläche deaktiviert ist                                                                     |
     | Fokus            | boolesch              | Gibt an, ob die Schaltfläche den Fokus hat                                                                        |
   </Tab>
 </Tabs>
 
-## Floating Button Group
+## Schwebende Schaltflächengruppe
 
 <Tabs>
   <Tab title="Verwendung">
@@ -207,14 +207,14 @@ A list of buttons and button groups used throughout the app.
   </Tab>
 
   <Tab title="Eigenschaften">
-    | Eigenschaften | Typ       | Beschreibung                                                                    | Standard |
-    | ------------- | --------- | ------------------------------------------------------------------------------- | -------- |
-    | größe         | string    | Die Größe der Schaltfläche. Hat zwei Optionen: `klein` und `mittel`             | klein    |
-    | Kinder        | ReactNode | An array of React elements representing the individual buttons within the group |          |
+    | Eigenschaften | Typ       | Beschreibung                                                                                   | Standard |
+    | ------------- | --------- | ---------------------------------------------------------------------------------------------- | -------- |
+    | größe         | string    | Die Größe der Schaltfläche. Hat zwei Optionen: `klein` und `mittel`                            | klein    |
+    | Kinder        | ReactNode | Ein Array von React-Elementen, die die einzelnen Schaltflächen innerhalb der Gruppe darstellen |          |
   </Tab>
 </Tabs>
 
-## Floating Icon Button
+## Schwebende Symbolschaltfläche
 
 <Tabs>
   <Tab title="Verwendung">
@@ -248,8 +248,8 @@ A list of buttons and button groups used throughout the app.
     | Symbol           | `React.ComponentType` | Eine optionale Symbolkomponente, die innerhalb des Knopfes angezeigt wird.                                           |
     | größe            | string                | Die Größe des Knopfes. Hat zwei Optionen: `klein` und `mittel`                                                       |
     | position         | Zeichenfolge          | Die Position des Knopfes in Bezug auf seine Geschwister. Optionen umfassen: `einzeln`, `links`, `rechts` und `mitte` |
-    | SchattenAnwenden | boolesch              | Determines whether to apply shadow to a button                                                                       |
-    | applyBlur        | boolesch              | Determines whether to apply a blur effect to the button                                                              |
+    | SchattenAnwenden | boolesch              | Bestimmt, ob auf die Schaltfläche ein Schatten angewendet wird                                                       |
+    | applyBlur        | boolesch              | Bestimmt, ob ein Unschärfeeffekt auf die Schaltfläche angewendet wird                                                |
     | deaktiviert      | boolesch              | Bestimmt, ob der Knopf deaktiviert ist                                                                               |
     | Fokus            | boolesch              | Gibt an, ob der Knopf im Fokus steht                                                                                 |
     | onClick          | Funktion              | Eine Callback-Funktion, die ausgelöst wird, wenn der Benutzer auf den Knopf klickt.                                  |
@@ -257,7 +257,7 @@ A list of buttons and button groups used throughout the app.
   </Tab>
 </Tabs>
 
-## Floating Icon Button Group
+## Schwebende Symbolschaltflächengruppe
 
 <Tabs>
   <Tab title="Verwendung">
@@ -335,7 +335,7 @@ A list of buttons and button groups used throughout the app.
   </Tab>
 </Tabs>
 
-## Light Icon Button
+## Leichte Symbolschaltfläche
 
 <Tabs>
   <Tab title="Verwendung">
@@ -378,7 +378,7 @@ A list of buttons and button groups used throughout the app.
   </Tab>
 </Tabs>
 
-## Main Button
+## Hauptschaltfläche
 
 <Tabs>
   <Tab title="Verwendung">
@@ -401,14 +401,14 @@ A list of buttons and button groups used throughout the app.
   </Tab>
 
   <Tab title="Eigenschaften">
-    | Eigenschaften        | Typ                              | Beschreibung                                                                        |
-    | -------------------- | -------------------------------- | ----------------------------------------------------------------------------------- |
-    | titel                | Zeichenkette                     | Der Textinhalt der Schaltfläche                                                     |
-    | volle Breite         | boolesch                         | Definiert, ob die Schaltfläche die gesamte Breite ihres Containers einnehmen soll   |
-    | Variante             | Zeichenkette                     | The visual style variant of the button. Optionen beinhalten `primär` und `sekundär` |
-    | bald                 | boolesch                         | Gibt an, ob die Schaltfläche als "bald" markiert ist (z.B. für kommende Features)   |
-    | Symbol               | `React.ComponentType`            | Eine optionale Symbolkomponente, die innerhalb der Schaltfläche angezeigt wird      |
-    | React `button` props | `React.ComponentProps<'button'>` | Alle Standard-HTML-Schaltflächeneigenschaften werden unterstützt                    |
+    | Eigenschaften        | Typ                              | Beschreibung                                                                            |
+    | -------------------- | -------------------------------- | --------------------------------------------------------------------------------------- |
+    | titel                | Zeichenkette                     | Der Textinhalt der Schaltfläche                                                         |
+    | volle Breite         | boolesch                         | Definiert, ob die Schaltfläche die gesamte Breite ihres Containers einnehmen soll       |
+    | Variante             | Zeichenkette                     | Die visuelle Stilvariante der Schaltfläche. Optionen beinhalten `primär` und `sekundär` |
+    | bald                 | boolesch                         | Gibt an, ob die Schaltfläche als "bald" markiert ist (z.B. für kommende Features)       |
+    | Symbol               | `React.ComponentType`            | Eine optionale Symbolkomponente, die innerhalb der Schaltfläche angezeigt wird          |
+    | React-`button`-Props | `React.ComponentProps<'button'>` | Alle Standard-HTML-Schaltflächeneigenschaften werden unterstützt                        |
   </Tab>
 </Tabs>
 
@@ -434,6 +434,6 @@ A list of buttons and button groups used throughout the app.
     | Eigenschaften        | Typ                                             | Beschreibung |
     | -------------------- | ----------------------------------------------- | ------------ |
     | Symbol               | `React.ComponentType`                           |              |
-    | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |              |
+    | React-`button`-Props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |              |
   </Tab>
 </Tabs>

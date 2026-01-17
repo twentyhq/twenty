@@ -5,7 +5,6 @@ import { FieldFocusContext } from '@/object-record/record-field/ui/contexts/Fiel
 import { FieldFocusContextProvider } from '@/object-record/record-field/ui/contexts/FieldFocusContextProvider';
 import { LinksFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
@@ -24,7 +23,6 @@ const FieldFocusEffect = () => {
 const meta: Meta = {
   title: 'UI/Data/Field/Display/LinksFieldDisplay',
   decorators: [
-    I18nFrontDecorator,
     MemoryRouterDecorator,
     getFieldDecorator('company', 'domainName', {
       primaryLinkUrl: 'https://www.google.com',

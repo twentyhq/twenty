@@ -32,7 +32,6 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
@@ -306,7 +305,6 @@ const meta: Meta<typeof FieldWidget> = {
   component: FieldWidget,
   decorators: [
     ComponentDecorator,
-    I18nFrontDecorator,
     ChipGeneratorsDecorator,
     (Story) => (
       <MemoryRouter>

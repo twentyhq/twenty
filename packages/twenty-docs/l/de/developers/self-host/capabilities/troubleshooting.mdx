@@ -67,11 +67,11 @@ Normalerweise sollte dies sofort mit der installierten eslint-Erweiterung funkti
 
 Kommentieren Sie in `packages/twenty-front/.env` `VITE_DISABLE_TYPESCRIPT_CHECKER=true` und `VITE_DISABLE_ESLINT_CHECKER=true` aus, um Hintergrundprüfungen zu deaktivieren und den RAM-Bedarf zu reduzieren.
 
-**If it does not work:**
-Run only the services you need, instead of `npx nx start`. Wenn Sie zum Beispiel am Server arbeiten, führen Sie nur `npx nx worker twenty-server` aus.
+**Wenn es nicht funktioniert:**
+Führen Sie nur die Services aus, die Sie benötigen, anstatt `npx nx start`. Wenn Sie zum Beispiel am Server arbeiten, führen Sie nur `npx nx worker twenty-server` aus.
 
-**If it does not work:**
-If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:
+**Wenn es nicht funktioniert:**
+Wenn Sie versucht haben, nur `npx nx run twenty-server:start` auf WSL zu starten und es mit dem untenstehenden Speicherfehler fehlschlägt:
 
 `FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
 
@@ -82,11 +82,11 @@ Eine Möglichkeit ist, den Befehl unten im Terminal auszuführen oder ihn im .ba
 Das Flag --max-old-space-size=8192 setzt ein oberes Limit von 8GB für den Node.js-Heap; der Verbrauch steigt mit dem Bedarf der Anwendung.
 Referenz: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
-**If it does not work:**
-Investigate which processes are taking you most of your machine RAM. Bei Twenty haben wir festgestellt, dass einige vscode-Erweiterungen viel RAM verwenden, daher deaktivieren wir sie vorübergehend.
+**Wenn es nicht funktioniert:**
+Untersuchen Sie, welche Prozesse den größten Teil Ihres RAMs beanspruchen. Bei Twenty haben wir festgestellt, dass einige vscode-Erweiterungen viel RAM verwenden, daher deaktivieren wir sie vorübergehend.
 
-**If it does not work:**
-Restart your machine helps to clean up ghost processes.
+**Wenn es nicht funktioniert:**
+Ein Neustart Ihres Computers hilft dabei, Geisterprozesse zu bereinigen.
 
 #### Beim Ausführen von `npx nx start` gibt es seltsame [0] und [1] in den Logs
 

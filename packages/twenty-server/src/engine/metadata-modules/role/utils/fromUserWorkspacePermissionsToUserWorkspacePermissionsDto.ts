@@ -15,6 +15,9 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
       canSoftDeleteObjectRecords: permissions.canSoftDeleteObjectRecords,
       canDestroyObjectRecords: permissions.canDestroyObjectRecords,
       restrictedFields: permissions.restrictedFields,
+      rowLevelPermissionPredicates: permissions.rowLevelPermissionPredicates,
+      rowLevelPermissionPredicateGroups:
+        permissions.rowLevelPermissionPredicateGroups,
     }),
   );
 

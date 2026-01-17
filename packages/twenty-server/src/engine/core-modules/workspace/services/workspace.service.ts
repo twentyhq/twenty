@@ -57,7 +57,7 @@ import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-mi
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
+// eslint-disable-next-line twenty/inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   protected readonly logger = new Logger(WorkspaceService.name);
 

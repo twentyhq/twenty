@@ -3,13 +3,19 @@ title: Widgets
 description: Erkunden Sie die Widget-Typen und Visualisierungsoptionen in Twenty.
 ---
 
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
 ## Verfügbare Widgets
 
 Twenty bietet verschiedene Widget-Typen, um Ihre CRM-Daten zu visualisieren.
 
-### Balkendiagramme
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Bar Charts</span>
 
 Stellen Sie Daten als horizontale oder vertikale Balken dar.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Bar chart" />
+</Frame>
 
 **Am besten geeignet für:**
 
@@ -24,12 +30,16 @@ Stellen Sie Daten als horizontale oder vertikale Balken dar.
 * Hinzugefügte Kontakte pro Monat
 
 <Note>
-  **Anzeigegrenzen**: Balkendiagramme können maximal 100 Balken (horizontal) oder 50 Balken (vertikal) anzeigen. Wenn Sie die Warnung "Nicht angezeigte Daten: max. X Balken pro Diagramm" sehen, fügen Sie Filter hinzu, um Ihre Daten einzugrenzen, oder ändern Sie die Gruppierung (z. B. nach Woche statt nach Tagen).
+  **Display limits**: Bar charts can show a maximum of 100 bars, and 50 groups per bar when using Group By. Wenn Sie die Warnung "Nicht angezeigte Daten: max. X Balken pro Diagramm" sehen, fügen Sie Filter hinzu, um Ihre Daten einzugrenzen, oder ändern Sie die Gruppierung (z. B. nach Woche statt nach Tagen).
 </Note>
 
-### Tortendiagramme
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Pie Charts</span>
 
 Zeigen Sie Anteile eines Ganzen.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Pie chart" />
+</Frame>
 
 **Am besten geeignet für:**
 
@@ -43,9 +53,13 @@ Zeigen Sie Anteile eines Ganzen.
 * Kontaktaufschlüsselung nach Branche
 * Pipeline-Zusammensetzung nach Eigentümer
 
-### Liniendiagramme
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Line Charts</span>
 
 Stellen Sie Trends im Zeitverlauf dar.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Line chart" />
+</Frame>
 
 **Am besten geeignet für:**
 
@@ -59,9 +73,13 @@ Stellen Sie Trends im Zeitverlauf dar.
 * Umsatzwachstum über Quartale
 * Aktivitätsniveau im Zeitverlauf
 
-### Kennzahlen
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Aggregate Charts</span>
 
 Zeigen Sie einzelne Kennzahlen prominent an.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Aggregate chart" />
+</Frame>
 
 **Am besten geeignet für:**
 
@@ -80,9 +98,13 @@ Zeigen Sie einzelne Kennzahlen prominent an.
 * **Verhältnis**: Berechnen Sie für Select-Felder Verhältnisse zwischen Werten. Gehen Sie zu **Angezeigte Daten** → wählen Sie Ihr Feld → aktivieren Sie die Option **Verhältnis**.
 * **Präfix & Suffix**: Fügen Sie benutzerdefinierten Text vor oder nach der Zahl hinzu (z. B. "$"-Präfix oder "%"-Suffix) für eine bessere Lesbarkeit.
 
-### iFrames
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
 
 Betten Sie externe Tools und Inhalte direkt in Ihr Dashboard ein.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
 
 **Am besten geeignet für:**
 
@@ -96,33 +118,29 @@ Betten Sie externe Tools und Inhalte direkt in Ihr Dashboard ein.
 * Kennzahlen aus Ihrem Dialer
 * Live-Inhalte aus Ihrem Tool für Sales-Sequenzen
 
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Rich Text</span>
+
+Add formatted text and content directly to your dashboard.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Rich text" />
+</Frame>
+
+**Am besten geeignet für:**
+
+* Adding context or instructions
+* Dashboard descriptions
+* Notes and annotations
+
+**Features:**
+
+* Rich text formatting (bold, italic, lists, etc.)
+* Image and file uploads
+* Markdown-style editing
+
 <Note>
   **Bald verfügbar**: Tachometerdiagramme und Tabellen sind noch nicht verfügbar, stehen aber auf unserer Roadmap.
 </Note>
-
-## Widgets konfigurieren
-
-### Datenquelle
-
-1. Wählen Sie das zu visualisierende Objekt aus (Chancen, Personen usw.)
-2. Wählen Sie die anzuzeigende Kennzahl (Anzahl, Summe, Durchschnitt)
-3. Wenden Sie Filter an, um sich auf bestimmte Daten zu konzentrieren
-
-### Gruppierung
-
-Gruppieren nach:
-
-* Felder (Phase, Eigentümer, Branche)
-* Zeiträume (Tag, Woche, Monat, Quartal)
-* Benutzerdefinierte Segmente
-
-### Styling
-
-Passen Sie Ihre Diagramme mit Folgendem an:
-
-* Farben und Designs
-* Beschriftungen und Legenden
-* Größe und Positionierung
 
 ### Widgets duplizieren
 

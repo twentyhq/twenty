@@ -77,8 +77,8 @@ Se senti di dover aggiungere un `useEffect` nel tuo componente radice, dovresti 
 Puoi applicare lo stesso per la logica di recupero dati, con i hook di Apollo.
 
 ```tsx
-// ❌ Bad, will cause re-renders even if data is not changing,
-//    because useEffect needs to be re-evaluated
+// ❌ Sconsigliato, causerà re-render anche se i dati non cambiano,
+//    perché useEffect deve essere ri-eseguito
 export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
   const [someDependency] = useRecoilState(someDependencyState);
@@ -100,8 +100,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Good, will not cause re-renders if data is not changing,
-//   because useEffect is re-evaluated in another sibling component
+// ✅ Consigliato, non causerà re-render se i dati non cambiano,
+//   perché useEffect viene ri-eseguito in un altro componente fratello
 export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
 
@@ -143,9 +143,9 @@ Evita di usare `React.memo()` perché non risolve la causa del re-render, ma int
 
 Spesso non sono necessari e renderanno il codice più difficile da leggere e mantenere per un guadagno di prestazioni che è impercettibile.
 
-## Console.logs
+## Console.log
 
-Le dichiarazioni `console.log` sono preziose durante lo sviluppo, offrendo informazioni in tempo reale sui valori delle variabili e sul flusso del codice. But, leaving them in production code can lead to several issues:
+Le dichiarazioni `console.log` sono preziose durante lo sviluppo, offrendo informazioni in tempo reale sui valori delle variabili e sul flusso del codice. Tuttavia, lasciarli nel codice di produzione può causare diversi problemi:
 
 1. **Prestazioni**: Un logging eccessivo può influire sulle prestazioni di runtime, soprattutto nelle applicazioni lato client.
 
@@ -168,13 +168,13 @@ I nomi delle variabili dovrebbero descrivere precisamente lo scopo o la funzione
 I nomi generici nella programmazione non sono ideali perché mancano di specificità, portando all'ambiguità e riducendo la leggibilità del codice. Tali nomi non riescono a trasmettere lo scopo della variabile o della funzione, rendendo difficile per gli sviluppatori comprendere l'intento del codice senza un'indagine più approfondita. Questo può risultare in tempi di debug più lunghi, maggiore suscettibilità agli errori e difficoltà nella manutenzione e nella collaborazione. Nel frattempo, una denominazione descrittiva rende il codice autoesplicativo e più facile da navigare, migliorando la qualità del codice e la produttività dello sviluppatore.
 
 ```tsx
-// ❌ Bad, uses a generic name that doesn't communicate its
-//    purpose or content clearly
+// ❌ Sconsigliato, usa un nome generico che non comunica chiaramente
+//    scopo o contenuto
 const [value, setValue] = useState('');
 ```
 
 ```tsx
-// ✅ Good, uses a descriptive name
+// ✅ Consigliato, usa un nome descrittivo
 const [email, setEmail] = useState('');
 ```
 
@@ -187,14 +187,14 @@ const [email, setEmail] = useState('');
 I nomi dei gestori degli eventi dovrebbero iniziare con `handle`, mentre `on` è un prefisso usato per nominare gli eventi nelle props dei componenti.
 
 ```tsx
-// ❌ Bad
+// ❌ Sconsigliato
 const onEmailChange = (val: string) => {
   // ...
 };
 ```
 
 ```tsx
-// ✅ Good
+// ✅ Consigliato
 const handleEmailChange = (val: string) => {
   // ...
 };
@@ -222,12 +222,12 @@ const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
 **Utilizzo**
 
 ```tsx
-// ❌ Bad, passing in the same value as the default value adds no value
+// ❌ Sconsigliato, passare lo stesso valore del valore predefinito non apporta alcun beneficio
 const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
-// ✅ Good, assumes the default value
+// ✅ Consigliato, presume il valore predefinito
 const Form = () => <EmailField value="username@email.com" />;
 ```
 
@@ -240,7 +240,7 @@ L'esempio più comune per questo sono i componenti icona:
 ```tsx
 const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
-// In MyComponent
+// Nel componente MyComponent
 const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
   const theme = useTheme();
 
@@ -270,7 +270,7 @@ Se ritieni di utilizzare eccessivo prop drilling, vedi [migliori pratiche di ges
 
 Quando importi, opta per gli alias designati anziché specificare percorsi completi o relativi.
 
-**The Aliases**
+**Gli alias**
 
 ```js
 {
@@ -285,7 +285,7 @@ Quando importi, opta per gli alias designati anziché specificare percorsi compl
 **Utilizzo**
 
 ```tsx
-// ❌ Bad, specifies the entire relative path
+// ❌ Sconsigliato, specifica l'intero percorso relativo
 import {
   CatalogDecorator
 } from '../../../../../testing/decorators/CatalogDecorator';
@@ -295,7 +295,7 @@ import {
 ```
 
 ```tsx
-// ✅ Good, utilises the designated aliases
+// ✅ Consigliato, utilizza gli alias designati
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from 'twenty-ui/testing';
 ```
@@ -310,10 +310,10 @@ const validationSchema = z
     exist: z.boolean(),
     email: z
       .string()
-      .email('Email must be a valid email'),
+      .email('L\'indirizzo email deve essere valido'),
     password: z
       .string()
-      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+      .regex(PASSWORD_REGEX, 'La password deve contenere almeno 8 caratteri'),
   })
   .required();
 

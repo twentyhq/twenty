@@ -15,6 +15,11 @@ export const serverlessModuleFactory = async (
   const options = { fileStorageService };
 
   switch (driverType) {
+    case ServerlessDriverType.DISABLED: {
+      return {
+        type: ServerlessDriverType.DISABLED,
+      };
+    }
     case ServerlessDriverType.LOCAL: {
       return {
         type: ServerlessDriverType.LOCAL,

@@ -15,6 +15,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const twentyRules = await nxPlugin.loadWorkspaceRules('packages/twenty-eslint-rules');
+
 export default [
   // Base JavaScript configuration
   js.configs.recommended,
@@ -43,6 +45,7 @@ export default [
       'import': importPlugin,
       'unused-imports': unusedImportsPlugin,
       'unicorn': unicornPlugin,
+      'twenty': { rules: twentyRules },
     },
     rules: {
       // General rules
@@ -202,7 +205,7 @@ export default [
           },
         },
       ],
-      '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
+      'twenty/max-consts-per-file': ['error', { max: 1 }],
     },
   },
 

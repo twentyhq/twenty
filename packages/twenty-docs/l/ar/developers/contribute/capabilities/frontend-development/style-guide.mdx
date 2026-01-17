@@ -4,7 +4,7 @@ title: دليل الأسلوب
 
 تشمل هذه الوثيقة القواعد التي يجب اتباعها عند كتابة التعليمات البرمجية.
 
-The goal here is to have a consistent codebase, which is easy to read and easy to maintain.
+الهدف هنا هو وجود قاعدة شيفرة متسقة يسهل قراءتها وصيانتها.
 
 لهذا، من الأفضل أن تكون تفصيلًا أكثر قليلاً بدلاً من أن تكون موجزًا للغاية.
 
@@ -67,10 +67,10 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
- *      component's props
- *    - This method doesn't automatically include the children prop. If
- *      you want to include it, you have to specify it in OwnProps.
+/* ✅ - جيد، نوع منفصل (OwnProps) يُعرَّف صراحةً لخصائص
+ *      المكون
+ *    - هذه الطريقة لا تتضمن تلقائيًا خاصية الأطفال. إذا
+ *      كنت تريد تضمينها، يجب أن تحددها في OwnProps.
  */
 type EmailFieldProps = {
   value: string;
@@ -81,7 +81,7 @@ const EmailField = ({ value }: EmailFieldProps) => (
 );
 ```
 
-#### No Single Variable Prop Spreading in JSX Elements
+#### لا تستخدم انتشار متغير فردي للخصائص في عناصر JSX
 
 تجنب استخدام انتشار متغير فردي للخصائص في عناصر JSX، مثل `{...props}`. غالبًا ما تؤدي هذه الممارسة إلى شكل تعليمي أقل قابلية للقراءة وأصعب في الصيانة لأنه من غير الواضح أي الخصائص يتلقاها المكون.
 
@@ -94,8 +94,8 @@ const MyComponent = (props: OwnProps) => {
 ```
 
 ```tsx
-/* ✅ - Good, Explicitly lists all props
- *    - Enhances readability and maintainability
+/* ✅ - جيد، يسرد جميع الخصائص بوضوح
+ *    - يعزز من قابلية القراءة والصيانة
  */
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
@@ -110,7 +110,7 @@ const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
 
 ## JavaScript
 
-### Use nullish-coalescing operator `??`
+### استخدم معامل دمج القيم الفارغة `??`
 
 ```tsx
 // ❌ سيء، قد يعيد 'default' حتى إذا كانت القيمة 0 أو ''
@@ -120,13 +120,13 @@ const value = process.env.MY_VALUE || 'default';
 const value = process.env.MY_VALUE ?? 'default';
 ```
 
-### Use optional chaining `?.`
+### استخدم معامل الربط الاختياري `?.`
 
 ```tsx
-// ❌ Bad
+// ❌ سيء
 onClick && onClick();
 
-// ✅ Good
+// ✅ جيد
 onClick?.();
 ```
 
@@ -148,7 +148,7 @@ type MyType = {
 };
 ```
 
-### Use string literals instead of enums
+### استخدم السلاسل النصية بدلاً من التعدادات
 
 [الحروف المشفوعة](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) هي الطريقة المفضلة للتعامل مع القيم الشبيهة بالأعداد المخصصة في TypeScript. من السهل توسيعها باستخدام Pick و Omit، وتقدم تجربة مطور أفضل، خاصة مع إكمال التعليمات البرمجية.
 
@@ -190,7 +190,7 @@ setHotkeyScopeAndMemorizePreviousScope(
 );
 ```
 
-## Styling
+## التنسيق
 
 ### استخدام مكونات منسقة
 
@@ -224,7 +224,7 @@ const StyledTitle = styled.div`
 `;
 ```
 
-### Theming
+### السمات
 
 استخدام السمة لتنسيق معظم المكونات هو النهج المفضل.
 

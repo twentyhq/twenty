@@ -4,9 +4,9 @@ title: Průvodce upgradem
 
 ## Obecné pokyny
 
-**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+**Před zahájením procesu upgradu se vždy ujistěte, že jste zálohovali svou databázi** spuštěním `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
 
-To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+Pro obnovení zálohy spusťte `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
 
 Pokud jste použili Docker Compose, postupujte takto:
 
@@ -32,7 +32,7 @@ Ahoj Twenty v1.0! 🎉
 
 Všechny interakce s metadatovým API byly optimalizovány pro lepší výkon, zejména pro manipulaci s metadaty objektů a operace vytváření pracovních prostorů.
 
-We've refactored our caching strategy to prioritize cache hits over database queries when possible, significantly improving the performance of metadata API operations.
+Refaktorovali jsme naši strategii mezipaměti tak, aby upřednostňovala, pokud je to možné, zásahy do mezipaměti před databázovými dotazy, což výrazně zlepšilo výkon operací rozhraní API metadat.
 
 Pokud po upgradu narazíte na problémy s výkonem, může být nutné vyprázdnit cache, aby bylo zajištěno její sladění s nejnovějšími změnami. Spusťte tento příkaz v kontejneru twenty-server:
 
@@ -316,8 +316,8 @@ Příkaz `yarn command:prod upgrade-0.31` se postará o datovou migraci všech p
 
 Upgradujte svou instanci Twenty pro použití v0.30.0 image
 
-**Breaking change**:
-To enhance performances, Twenty now requires redis cache to be configured. Aktualizovali jsme náš [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml), aby to odrážel.
+**Změna, která způsobí nekompatibilitu**:
+Pro zvýšení výkonu nyní vyžaduje Twenty konfiguraci cache Redis. Aktualizovali jsme náš [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml), aby to odrážel.
 Ujistěte se, že jste aktualizovali svou konfiguraci a své proměnné prostředí odpovídajícím způsobem:
 
 ```

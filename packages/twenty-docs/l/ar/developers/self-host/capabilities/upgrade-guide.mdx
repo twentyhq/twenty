@@ -4,9 +4,9 @@ title: دليل الترقية
 
 ## إرشادات عامة
 
-**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+**تأكد دائماً من عمل نسخة احتياطية لقاعدة بياناتك قبل بدء عملية الترقية** عن طريق تشغيل `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
 
-To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+لاستعادة النسخة الاحتياطية، قم بتشغيل `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
 
 إذا كنت تستخدم Docker Compose، اتبع الخطوات التالية:
 
@@ -46,7 +46,7 @@ yarn command:prod cache:flush
 
 لم تعد بحاجة إلى تشغيل أي أمر، الصورة الجديدة ستعتني بتشغيل جميع الترحيلات المطلوبة تلقائيًا.
 
-### `User does not have permission` error
+### خطأ: `User does not have permission`
 
 إذا واجهت أخطاء في الأذونات في معظم الطلبات بعد الترقية، فقد تحتاج إلى مسح التخزين المؤقت لإعادة حساب أحدث الأذونات.
 
@@ -316,8 +316,8 @@ yarn command:prod upgrade-0.31
 
 قم بترقية مثيل Twenty الخاص بك لاستخدام صورة v0.30.0
 
-**Breaking change**:
-To enhance performances, Twenty now requires redis cache to be configured. قمنا بتحديث [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) لتعكس ذلك.
+**تغيير كبير**:
+لتحسين الأداء، يتطلب Twenty الآن تكوين Redis للتخزين المؤقت. قمنا بتحديث [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) لتعكس ذلك.
 تأكد من تحديث إعدادات التكوين الخاصة بك وتحديث المتغيرات البيئية الخاصة بك وفقًا لذلك:
 
 ```

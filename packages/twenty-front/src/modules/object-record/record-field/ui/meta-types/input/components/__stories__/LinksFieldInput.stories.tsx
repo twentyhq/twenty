@@ -13,7 +13,6 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const updateRecord = fn();
 
@@ -122,7 +121,7 @@ const getPrimaryLinkBookmarkIcon = (canvasElement: HTMLElement) =>
 const meta: Meta = {
   title: 'UI/Data/Field/Input/LinksFieldInput',
   component: LinksInputWithContext,
-  decorators: [I18nFrontDecorator],
+  decorators: [],
   args: {
     value: {
       primaryLinkUrl: null,

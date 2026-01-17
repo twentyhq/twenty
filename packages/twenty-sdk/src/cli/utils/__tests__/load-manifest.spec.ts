@@ -96,6 +96,7 @@ describe('loadManifest with test-app', () => {
     );
     expect(routeTrigger?.path).toBe('/post-card/create');
     expect(routeTrigger?.httpMethod).toBe('GET');
+    expect(routeTrigger?.forwardedRequestHeaders).toEqual(['signature']);
 
     const cronTrigger = testFunction.triggers.find((t) => t.type === 'cron');
     expect(cronTrigger).toBeDefined();

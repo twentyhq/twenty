@@ -1,6 +1,7 @@
 import { type DynamicModule, Global } from '@nestjs/common';
 
 import { AddPackagesCommand } from 'src/engine/core-modules/serverless/commands/add-packages.command';
+import { DisabledDriver } from 'src/engine/core-modules/serverless/drivers/disabled.driver';
 import { LambdaDriver } from 'src/engine/core-modules/serverless/drivers/lambda.driver';
 import { LocalDriver } from 'src/engine/core-modules/serverless/drivers/local.driver';
 import { SERVERLESS_DRIVER } from 'src/engine/core-modules/serverless/serverless.constants';
@@ -19,9 +20,21 @@ export class ServerlessModule {
       useFactory: async (...args: any[]) => {
         const config = await options.useFactory(...args);
 
-        return config?.type === ServerlessDriverType.LOCAL
-          ? new LocalDriver(config.options)
-          : new LambdaDriver(config.options);
+        switch (config?.type) {
+          case ServerlessDriverType.DISABLED:
+            return new DisabledDriver();
+          case ServerlessDriverType.LOCAL:
+            return new LocalDriver(config.options);
+          case ServerlessDriverType.LAMBDA:
+            return new LambdaDriver(config.options);
+          default: {
+            const unknownConfig = config as { type?: string };
+
+            throw new Error(
+              `Unknown serverless driver type: ${unknownConfig?.type}`,
+            );
+          }
+        }
       },
       inject: options.inject || [],
     };

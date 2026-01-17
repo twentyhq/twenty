@@ -123,58 +123,58 @@ image: /images/user-guide/fields/custom_data_model.png
 
 ابدأ بالحقول. انتقل إلى كائنات جديدة فقط عندما تشعر بالقيود:
 
-* Too many fields on one object
-* Repeated records that should be separate
-* Relationships that don't fit neatly
+* عدد كبير جدًا من الحقول في كائن واحد
+* سجلات مكررة يجب أن تكون منفصلة
+* علاقات لا تتلاءم بسلاسة
 
-## Special Note on People, Companies, and Opportunities
+## ملاحظة خاصة على الأشخاص، والشركات، والفرص
 
 <Warning>
-  **Email and calendar sync only works with People, Companies, and Opportunities.**
+  **تعمل مزامنة البريد الإلكتروني والتقويم فقط مع الأشخاص والشركات والفرص.**
 
-  These are the only objects where you can access synchronized emails and meetings from your mailbox/calendar. We recommend using them as much as possible.
+  هذه هي الكائنات الوحيدة التي يمكنك من خلالها الوصول إلى رسائل البريد الإلكتروني والاجتماعات المتزامنة من علبة البريد/التقويم لديك. نوصي باستخدامها قدر الإمكان.
 </Warning>
 
-**Best practices:**
+**أفضل الممارسات:**
 
-* If you need categories of People, use fields (not new objects)
-* Example: Use a `Person Type` field with values "Prospect" and "Partner" instead of creating separate objects
-* Create different **views** to filter: one showing partners, another showing prospects
+* إذا كنت بحاجة إلى تصنيفات للأشخاص، فاستخدم الحقول (وليس كائنات جديدة)
+* مثال: استخدم حقل `Person Type` بقيم "عميل محتمل" و"شريك" بدلاً من إنشاء كائنات منفصلة
+* أنشئ **عروضًا** مختلفة من أجل التصفية: أحدها يعرض الشركاء، وآخر يعرض العملاء المحتملين
 
-**It's okay to have fields that don't apply to every record.** For example, a `Referral Link` field on People that only applies when `Person Type = Partner`. Hide this field from views where it's not relevant.
+**لا بأس بوجود حقول لا تنطبق على كل سجل.** على سبيل المثال، حقل `Referral Link` على الأشخاص ينطبق فقط عندما يكون `Person Type = Partner`. أخفِ هذا الحقل من العروض التي لا تكون ذات صلة.
 
-## Questions to Guide Your Choice
+## أسئلة لتوجيه اختيارك
 
 اسأل نفسك:
 
-<Check>Is this just a property of something I already have, or does it need its own properties?</Check>
-<Check>Will I ever need to track multiple of these per record, without knowing how many?</Check>
-<Check>Does this concept connect to several different objects, not just one?</Check>
-<Check>Will it have its own lifecycle (stages, start/end dates)?</Check>
+<Check>هل هذه مجرد خاصية لشيء لدي بالفعل، أم أنها تحتاج إلى خصائص خاصة بها؟</Check>
+<Check>هل سأحتاج يومًا إلى تتبّع عدة منها لكل سجل، دون معرفة عددها؟</Check>
+<Check>هل يرتبط هذا المفهوم بعدة كائنات مختلفة، وليس بواحد فقط؟</Check>
+<Check>هل ستكون له دورة حياة خاصة به (مراحل، تواريخ بدء/انتهاء)؟</Check>
 
-If the answer is "yes" to one or more, it's probably time for a new object.
+إذا كانت الإجابة "نعم" على واحد أو أكثر، فربما حان الوقت لإنشاء كائن جديد.
 
-## Accessing Your Data Model
+## الوصول إلى نموذج البيانات الخاص بك
 
-1. Go to **Settings** in the left sidebar
-2. Click **Data Model**
-3. View all your objects (standard and custom)
-4. Click any object to see and edit its fields
+1. انتقل إلى **الإعدادات** في الشريط الجانبي الأيسر
+2. انقر على **نموذج البيانات**
+3. اعرض جميع كائناتك (القياسية والمخصصة)
+4. انقر على أي كائن لعرض حقوله وتحريرها
 
 <Note>
-  **Don't see Data Model in Settings?**
+  **لا ترى نموذج البيانات ضمن الإعدادات؟**
 
-  Access to the data model is usually restricted to administrators. Contact your workspace admin if you need access.
+  يكون الوصول إلى نموذج البيانات عادةً مقصورًا على المسؤولين. تواصل مع مشرف مساحة العمل إذا كنت بحاجة إلى الوصول.
 </Note>
 
 ## الخطوات التالية
 
-Once you've planned your data model:
+بعد أن تخطّط لنموذج البيانات الخاص بك:
 
-* [How to Create Custom Objects](/l/ar/user-guide/data-model/how-tos/create-custom-objects)
-* [How to Create Custom Fields](/l/ar/user-guide/data-model/how-tos/create-custom-fields)
-* [How to Create Relation Fields](/l/ar/user-guide/data-model/how-tos/create-relation-fields)
+* [كيفية إنشاء كائنات مخصصة](/l/ar/user-guide/data-model/how-tos/create-custom-objects)
+* [كيفية إنشاء حقول مخصصة](/l/ar/user-guide/data-model/how-tos/create-custom-fields)
+* [كيفية إنشاء حقول العلاقات](/l/ar/user-guide/data-model/how-tos/create-relation-fields)
 
 ## هل تحتاج إلى مساعدة؟
 
-Our team can help you design and create the data model you need. Discover our [Implementation Services](/l/ar/user-guide/getting-started/capabilities/implementation-services).
+يمكن لفريقنا مساعدتك في تصميم وإنشاء نموذج البيانات الذي تحتاجه. اكتشف [خدمات التنفيذ الخاصة بنا](/l/ar/user-guide/getting-started/capabilities/implementation-services).

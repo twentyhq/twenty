@@ -4,7 +4,6 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AIChatMessage } from '@/ai/components/AIChatMessage';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
@@ -176,12 +175,7 @@ print(df.head())`,
 const meta: Meta<typeof AIChatMessage> = {
   title: 'Modules/AI/AIChatMessage',
   component: AIChatMessage,
-  decorators: [
-    ComponentDecorator,
-    RootDecorator,
-    I18nFrontDecorator,
-    SnackBarDecorator,
-  ],
+  decorators: [ComponentDecorator, RootDecorator, SnackBarDecorator],
   parameters: {
     container: { width: 700 },
   },

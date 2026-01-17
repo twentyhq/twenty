@@ -3,7 +3,6 @@ import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const samplePythonCode = `import pandas as pd
@@ -31,7 +30,7 @@ plt.savefig('revenue_chart.png')`;
 const meta: Meta<typeof CodeExecutionDisplay> = {
   title: 'Modules/AI/CodeExecutionDisplay',
   component: CodeExecutionDisplay,
-  decorators: [I18nFrontDecorator, SnackBarDecorator, ComponentDecorator],
+  decorators: [SnackBarDecorator, ComponentDecorator],
   parameters: {
     container: { width: 600 },
   },

@@ -4,12 +4,12 @@ title: Řešení potíží
 
 ## Řešení potíží
 
-If you encounter any problem while setting up environment for development, upgrading your instance or self-hosting,
-here are some solutions for common problems.
+Pokud narazíte na jakýkoli problém při nastavování prostředí pro vývoj, při aktualizaci své instance nebo při samostatném hostování,
+zde jsou některá řešení běžných problémů.
 
 ### Vlastní hosting
 
-#### First install results in `password authentication failed for user "postgres"`
+#### První instalace skončí chybou `password authentication failed for user "postgres"`
 
 🚨 **DŮLEŽITÉ: Toto řešení je POUZE pro nové instalace** 🚨
 Pokud máte existující instanci Twenty s produkčními daty, **NEPROVÁDĚJTE** tyto kroky, protože trvale smažou vaši databázi!
@@ -28,9 +28,9 @@ docker compose down --volumes
 docker compose up -d
 ```
 
-#### CR line breaks found [Windows]
+#### Nalezeny konce řádků CR [Windows]
 
-This is due to the line break characters of Windows and the git configuration. Zkuste spustit:
+Je to způsobeno znaky konce řádku ve Windows a konfigurací gitu. Zkuste spustit:
 
 ```
 git config --global core.autocrlf false
@@ -44,7 +44,7 @@ Během instalace Twenty musíte nastavit svou postgres databázi s správnými s
 Pokud se vám podaří spustit toto nastavování, měli byste mít ve své databázi schémata `default` a `metadata`.
 Pokud ne, ujistěte se, že na vašem počítači neběží více než jedna instance postgres.
 
-#### Cannot find module 'twenty-emails' or its corresponding type declarations.
+#### Nelze najít modul 'twenty-emails' ani jeho odpovídající deklarace typů.
 
 Před spuštěním inicializace databáze musíte sestavit balíček `twenty-emails` s `npx nx run twenty-emails:build`
 
@@ -54,7 +54,7 @@ Ujistěte se, že v kořenovém adresáři spouštíte `yarn` a poté spusťte `
 
 #### Lint při ukládání nefunguje
 
-Toto by mělo fungovat přímo s nainstalovaným rozšířením eslint. If this doesn't work try adding this to your vscode setting (on the dev container scope):
+Toto by mělo fungovat přímo s nainstalovaným rozšířením eslint. Pokud to nefunguje, zkuste přidat toto do svého nastavení vscode (v rozsahu dev containeru):
 
 ```
 "editor.codeActionsOnSave": {
@@ -68,11 +68,11 @@ Toto by mělo fungovat přímo s nainstalovaným rozšířením eslint. If this 
 
 In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` and `VITE_DISABLE_ESLINT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
 
-**If it does not work:**
-Run only the services you need, instead of `npx nx start`. Například pokud pracujete na serveru, spusťte pouze `npx nx worker twenty-server`
+**Pokud to nefunguje:**
+Spusťte pouze služby, které potřebujete, místo `npx nx start`. Například pokud pracujete na serveru, spusťte pouze `npx nx worker twenty-server`
 
-**If it does not work:**
-If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:
+**Pokud to nefunguje:**
+Pokud jste se pokusili spustit pouze `npx nx run twenty-server:start` na WSL a selhává to s následující chybou paměti:
 
 `FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
 
@@ -83,11 +83,11 @@ Pro obejití proveďte níže uvedený příkaz v terminálu nebo jej přidejte 
 Příznak --max-old-space-size=8192 nastavuje horní limit 8 GB pro hromadu v Node.js; využití se škáluje s požadavkem aplikace.
 Odkaz: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
-**If it does not work:**
-Investigate which processes are taking you most of your machine RAM. V Twenty jsme si všimli, že některá rozšíření VScode zabírala hodně paměti RAM, takže jsme je dočasně deaktivovali.
+**Pokud to nefunguje:**
+Analyzujte, které procesy vám zabírají většinu paměti na stroji. V Twenty jsme si všimli, že některá rozšíření VScode zabírala hodně paměti RAM, takže jsme je dočasně deaktivovali.
 
-**If it does not work:**
-Restart your machine helps to clean up ghost processes.
+**Pokud to nefunguje:**
+Restartování počítače pomůže vyčistit zombie procesy.
 
 #### Při běhu `npx nx start` se v protokolech objevují podivné [0] a [1]
 
@@ -142,7 +142,7 @@ To je očekávané, protože uživatel je neautorizovaný, když je odhlášen, 
 
 #### Front-end se nedaří spustit a vrací chybu TS5042: Možnost 'project' nelze kombinovat se zdrojovými soubory na příkazovém řádku
 
-Comment out checker plugin in `packages/twenty-ui/vite-config.ts` like in example below
+Zakomentujte plugin checker v `packages/twenty-ui/vite-config.ts` jako v příkladu níže
 
 ```
 plugins: [
@@ -170,7 +170,7 @@ plugins: [
 
 Spusťte `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` v databázovém kontejneru pro získání přístupu k administračnímu panelu.
 
-### 1-click Docker compose
+### Docker Compose jedním kliknutím
 
 #### Nelze se přihlásit
 
@@ -206,9 +206,9 @@ Pokud provozujete Twenty za reverzní proxy a máte problémy s připojením:
 
    Po provedení změn restartujte jak reverzní proxy, tak kontejnery Twenty.
 
-#### Error when uploading an image - permission denied
+#### Chyba při nahrávání obrázku - přístup odepřen
 
-Switching the data folder ownership on the host from root to another user and group resolves this problem.
+Změna vlastnictví datové složky na hostiteli z uživatele root na jiného uživatele a skupinu tento problém vyřeší.
 
 ## Získání pomoci
 
@@ -216,7 +216,7 @@ Pokud se setkáte s problémy, které tento průvodce nepokrývá:
 
 * Zkontrolujte protokoly:
 
-  View container logs for error messages:
+  Zobrazte protokoly kontejneru kvůli chybovým zprávám:
 
   ```bash
   docker compose logs

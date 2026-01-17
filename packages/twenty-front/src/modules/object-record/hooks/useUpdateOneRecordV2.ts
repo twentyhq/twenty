@@ -12,10 +12,12 @@ import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
+import { getUpdatedFieldsFromRecordInput } from '@/object-record/utils/getUpdatedFieldsFromRecordInput';
+
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isNull } from '@sniptt/guards';
@@ -33,7 +35,6 @@ type UpdateOneRecordArgs<UpdatedObjectRecord> = {
 export const useUpdateOneRecordV2 = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { registerObjectOperation } = useRegisterObjectOperation();
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
@@ -238,9 +239,18 @@ export const useUpdateOneRecordV2 = () => {
         throw error;
       });
 
-    registerObjectOperation(objectMetadataItem, {
-      type: 'update-one',
-      result: { updateInput: updateOneRecordInput },
+    dispatchObjectRecordOperationBrowserEvent({
+      objectMetadataItem,
+      operation: {
+        type: 'update-one',
+        result: {
+          updateInput: {
+            recordId: idToUpdate,
+            updatedFields:
+              getUpdatedFieldsFromRecordInput(updateOneRecordInput),
+          },
+        },
+      },
     });
 
     return updatedRecord?.data?.[mutationResponseField] ?? null;

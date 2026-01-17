@@ -1,37 +1,37 @@
 ---
-title: Formula Fields
-description: Create formula fields using workflows until native support is available.
+title: حقول الصيغ
+description: أنشئ حقول الصيغ باستخدام سير العمل إلى حين توفّر الدعم الأصلي.
 ---
 
-Twenty doesn't yet support native formula fields yet (coming in 2026), but you can achieve the same result using workflows. This workaround lets you automatically calculate and populate field values—from simple concatenations to complex business logic.
+لا يدعم Twenty حقول الصيغ الأصلية بعد (قادمة في 2026)، لكن يمكنك تحقيق النتيجة نفسها باستخدام سير العمل. يتيح لك هذا الحل البديل حساب قيم الحقول وملؤها تلقائيًا — من عمليات الربط البسيطة إلى منطق الأعمال المعقّد.
 
 ## الاستخدامات الشائعة
 
-| Use Case            | Formula Example                   |
-| ------------------- | --------------------------------- |
-| **Full name**       | First Name + " " + Last Name      |
-| **Expected amount** | Amount × Probability              |
-| **Days until due**  | Due Date - Today                  |
-| **Days in stage**   | Today - Stage Entry Date          |
-| **Lead score**      | Points based on multiple criteria |
+| حالة الاستخدام           | مثال على الصيغة                 |
+| ------------------------ | ------------------------------- |
+| **الاسم الكامل**         | الاسم الأول + " " + اسم العائلة |
+| **المبلغ المتوقع**       | المبلغ × الاحتمال               |
+| **الأيام حتى الاستحقاق** | تاريخ الاستحقاق - اليوم         |
+| **الأيام في المرحلة**    | اليوم - تاريخ دخول المرحلة      |
+| **درجة العميل المحتمل**  | نقاط استنادًا إلى معايير متعددة |
 
 <Tip>
-  For a complete example of tracking time in pipeline stages, see [Track How Long Opportunities Stay in Each Stage](/l/ar/user-guide/views-pipelines/how-tos/track-time-in-stage).
+  للاطلاع على مثال كامل لتتبّع الوقت في مراحل خط الأنابيب، راجع [تتبّع مدة بقاء الفرص في كل مرحلة](/l/ar/user-guide/views-pipelines/how-tos/track-time-in-stage).
 </Tip>
 
-## Basic Formula: Concatenation
+## صيغة أساسية: الربط
 
-### Example: Auto-Fill Full Name
+### مثال: تعبئة الاسم الكامل تلقائيًا
 
-**Goal**: Automatically combine first and last name into a full name field.
+**الهدف**: دمج الاسم الأول واسم العائلة تلقائيًا في حقل الاسم الكامل.
 
 ### إعداد
 
-1. **Trigger**: Record is Updated or Created (People)
+1. **المشغّل**: يتم تحديث السجل أو إنشاؤه (الأشخاص)
 
-2. **Filter**: Check that first name or last name changed
+2. **التصفية**: التحقق من تغيّر الاسم الأول أو اسم العائلة
 
-3. **Code action**:
+3. **إجراء الكود**:
 
 ```javascript
 export const main = async (params) => {
@@ -45,21 +45,21 @@ export const main = async (params) => {
 };
 ```
 
-4. **Update Record**: Set Full Name to `{{code.fullName}}`
+4. **تحديث السجل**: عيّن الاسم الكامل إلى `{{code.fullName}}`
 
-## Numeric Formula: Expected Amount
+## صيغة رقمية: المبلغ المتوقع
 
-### Example: Calculate Expected Revenue
+### مثال: حساب الإيراد المتوقع
 
-**Goal**: Multiply opportunity amount by probability to get expected amount.
+**الهدف**: ضرب مبلغ الفرصة في الاحتمال للحصول على المبلغ المتوقع.
 
-See [How to Show Expected Amount in Pipeline](/l/ar/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) for the complete workflow.
+اطلع على [كيفية إظهار المبلغ المتوقع في خط الأنابيب](/l/ar/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) للاطلاع على سير العمل الكامل.
 
-### Quick Setup
+### الإعداد السريع
 
-1. **Trigger**: Record is Updated (Opportunities, Amount OR Probability field)
+1. **المشغّل**: يتم تحديث السجل (الفرص، حقل المبلغ أو الاحتمال)
 
-2. **Code action**:
+2. **إجراء الكود**:
 
 ```javascript
 export const main = async (params) => {
@@ -71,19 +71,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Expected Amount to `{{code.expectedAmount}}`
+3. **تحديث السجل**: عيّن المبلغ المتوقع إلى `{{code.expectedAmount}}`
 
-## Date Formula: Days Calculation
+## صيغة التاريخ: حساب الأيام
 
-### Example: Days Until Task Due
+### مثال: الأيام المتبقية حتى استحقاق المهمة
 
-**Goal**: Calculate how many days remain until a task's due date.
+**الهدف**: حساب عدد الأيام المتبقية حتى تاريخ استحقاق المهمة.
 
 ### إعداد
 
-1. **Trigger**: Record is Updated or Created (Tasks, Due Date field)
+1. **المشغّل**: يتم تحديث السجل أو إنشاؤه (المهام، حقل تاريخ الاستحقاق)
 
-2. **Code action**:
+2. **إجراء الكود**:
 
 ```javascript
 export const main = async (params) => {
@@ -102,23 +102,23 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Days Until Due to `{{code.daysUntilDue}}`
+3. **تحديث السجل**: عيّن الأيام حتى الاستحقاق إلى `{{code.daysUntilDue}}`
 
 <Note>
-  Negative values indicate overdue tasks. You can use this field to filter or sort tasks by urgency.
+  تشير القيم السالبة إلى مهام متأخرة عن موعدها. يمكنك استخدام هذا الحقل لتصفية المهام أو فرزها حسب الإلحاح.
 </Note>
 
-## Conditional Formula: Lead Score
+## صيغة شرطية: درجة العميل المحتمل
 
-### Example: Calculate Lead Score Based on Criteria
+### مثال: حساب درجة العميل المحتمل بناءً على معايير
 
-**Goal**: Score leads based on company size, industry, and engagement.
+**الهدف**: منح نقاط للعملاء المحتملين استنادًا إلى حجم الشركة والصناعة والتفاعل.
 
 ### إعداد
 
-1. **Trigger**: Record is Updated (People or Companies)
+1. **المشغّل**: يتم تحديث السجل (الأشخاص أو الشركات)
 
-2. **Code action**:
+2. **إجراء الكود**:
 
 ```javascript
 export const main = async (params) => {
@@ -147,19 +147,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Lead Score to `{{code.leadScore}}`
+3. **تحديث السجل**: عيّن درجة العميل المحتمل إلى `{{code.leadScore}}`
 
-## Text Formula: Domain Extraction
+## صيغة نصية: استخراج النطاق
 
-### Example: Extract Domain from Email
+### مثال: استخراج النطاق من البريد الإلكتروني
 
-**Goal**: Automatically extract and store the email domain.
+**الهدف**: استخراج نطاق البريد الإلكتروني وتخزينه تلقائيًا.
 
 ### إعداد
 
-1. **Trigger**: Record is Updated (People, Email field)
+1. **المشغّل**: يتم تحديث السجل (الأشخاص، حقل البريد الإلكتروني)
 
-2. **Code action**:
+2. **إجراء الكود**:
 
 ```javascript
 export const main = async (params) => {
@@ -173,30 +173,30 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Domain field to `{{code.domain}}`
+3. **تحديث السجل**: عيّن حقل النطاق إلى `{{code.domain}}`
 
 ## أفضل الممارسات
 
-### Performance
+### الأداء
 
-* Only trigger on relevant field changes
-* Use filters to skip records that don't need calculation
-* Avoid complex calculations in high-volume workflows
+* فعّل المشغّل فقط عند تغيّر الحقول ذات الصلة
+* استخدم عوامل التصفية لتجاوز السجلات التي لا تحتاج إلى حساب
+* تجنّب الحسابات المعقّدة في عمليات سير عمل ذات حجم كبير
 
-### Error Handling
+### التعامل مع الأخطاء
 
-* Check for null/undefined values before calculations
-* Use default values when data is missing
-* Return clear error messages when calculations fail
+* تحقق من القيم null/undefined قبل إجراء الحسابات
+* استخدم قيمًا افتراضية عند فقدان البيانات
+* أعد رسائل خطأ واضحة عند فشل الحسابات
 
 ### "الاختبار"
 
-* Test with edge cases (empty fields, zero values)
-* Verify calculations manually before activating
-* Monitor workflow runs for unexpected results
+* اختبر بحالات الحافة (حقول فارغة، قيم صفرية)
+* تحقّق من الحسابات يدويًا قبل التفعيل
+* راقب تشغيلات سير العمل لرصد النتائج غير المتوقعة
 
-## Related
+## ذات صلة
 
-* [How to Show Expected Amount in Pipeline](/l/ar/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
-* [How to Track Time in Stage](/l/ar/user-guide/views-pipelines/how-tos/track-time-in-stage)
-* [Workflow Actions](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+* [كيفية إظهار المبلغ المتوقع في خط الأنابيب](/l/ar/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+* [كيفية تتبّع الوقت في المرحلة](/l/ar/user-guide/views-pipelines/how-tos/track-time-in-stage)
+* [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)

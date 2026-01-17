@@ -222,6 +222,7 @@ describe('WorkspaceEntityManager', () => {
         IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED: false,
         IS_IF_ELSE_ENABLED: false,
         IS_SSE_DB_EVENTS_ENABLED: false,
+        IS_COMMAND_MENU_ITEM_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
@@ -257,6 +258,8 @@ describe('WorkspaceEntityManager', () => {
           canSoftDeleteObjectRecords: false,
           canDestroyObjectRecords: false,
           restrictedFields: {},
+          rowLevelPermissionPredicates: [],
+          rowLevelPermissionPredicateGroups: [],
         },
       },
     };

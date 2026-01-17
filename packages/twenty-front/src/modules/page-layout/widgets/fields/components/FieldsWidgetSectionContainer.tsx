@@ -4,24 +4,12 @@ import { useState } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Section } from 'twenty-ui/layout';
 
-const StyledFieldsWidgetSectionContainer = styled(Section)`
-  padding-top: ${({ theme }) => theme.spacing(3)};
-  padding-bottom: 0;
-  width: auto;
-
-  &:not(:first-of-type) {
-    padding-top: 0;
-  }
-`;
-
 const StyledHeader = styled.header`
   align-items: center;
   cursor: pointer;
   display: flex;
   height: 24px;
   justify-content: space-between;
-  padding-left: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTitleLabel = styled.div`
@@ -53,7 +41,7 @@ export const FieldsWidgetSectionContainer = ({
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);
 
   return (
-    <StyledFieldsWidgetSectionContainer>
+    <Section>
       <StyledHeader onClick={handleToggleSection}>
         <StyledTitleLabel>{title}</StyledTitleLabel>
         <StyledChevronIcon
@@ -69,6 +57,6 @@ export const FieldsWidgetSectionContainer = ({
       >
         {children}
       </AnimatedExpandableContainer>
-    </StyledFieldsWidgetSectionContainer>
+    </Section>
   );
 };

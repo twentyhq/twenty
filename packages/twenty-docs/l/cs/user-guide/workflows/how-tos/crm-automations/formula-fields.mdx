@@ -1,37 +1,37 @@
 ---
-title: Formula Fields
-description: Create formula fields using workflows until native support is available.
+title: Vzorcová pole
+description: Vytvářejte vzorcová pole pomocí pracovních postupů, dokud nebude k dispozici nativní podpora.
 ---
 
-Twenty doesn't yet support native formula fields yet (coming in 2026), but you can achieve the same result using workflows. This workaround lets you automatically calculate and populate field values—from simple concatenations to complex business logic.
+Twenty zatím nepodporuje nativní vzorcová pole (dostupná v roce 2026), ale stejného výsledku můžete dosáhnout pomocí pracovních postupů. Toto dočasné řešení vám umožní automaticky počítat a vyplňovat hodnoty polí — od jednoduchých zřetězení až po složitou obchodní logiku.
 
 ## Běžné scénáře použití
 
-| Use Case            | Formula Example                   |
-| ------------------- | --------------------------------- |
-| **Full name**       | First Name + " " + Last Name      |
-| **Expected amount** | Amount × Probability              |
-| **Days until due**  | Due Date - Today                  |
-| **Days in stage**   | Today - Stage Entry Date          |
-| **Lead score**      | Points based on multiple criteria |
+| Případ použití           | Příklad vzorce                 |
+| ------------------------ | ------------------------------ |
+| **Celé jméno**           | Křestní jméno + " " + Příjmení |
+| **Očekávaná částka**     | Částka × Pravděpodobnost       |
+| **Počet dní do termínu** | Termín splnění - Dnes          |
+| **Počet dní ve fázi**    | Dnes - Datum vstupu do fáze    |
+| **Skóre leadu**          | Body podle více kritérií       |
 
 <Tip>
-  For a complete example of tracking time in pipeline stages, see [Track How Long Opportunities Stay in Each Stage](/l/cs/user-guide/views-pipelines/how-tos/track-time-in-stage).
+  Kompletní příklad sledování času ve fázích kanálu najdete v článku [Jak dlouho zůstávají příležitosti v jednotlivých fázích](/l/cs/user-guide/views-pipelines/how-tos/track-time-in-stage).
 </Tip>
 
-## Basic Formula: Concatenation
+## Základní vzorec: Zřetězení
 
-### Example: Auto-Fill Full Name
+### Příklad: Automatické vyplnění celého jména
 
-**Goal**: Automatically combine first and last name into a full name field.
+**Cíl**: Automaticky spojit křestní jméno a příjmení do pole pro celé jméno.
 
 ### Nastavení
 
-1. **Trigger**: Record is Updated or Created (People)
+1. **Spouštěč**: Záznam je aktualizován nebo vytvořen (Lidé)
 
-2. **Filter**: Check that first name or last name changed
+2. **Filtr**: Ověřte, že se změnilo křestní jméno nebo příjmení
 
-3. **Code action**:
+3. **Akce kódu**:
 
 ```javascript
 export const main = async (params) => {
@@ -45,21 +45,21 @@ export const main = async (params) => {
 };
 ```
 
-4. **Update Record**: Set Full Name to `{{code.fullName}}`
+4. **Aktualizovat záznam**: Nastavte Celé jméno na `{{code.fullName}}`
 
-## Numeric Formula: Expected Amount
+## Číselný vzorec: Očekávaná částka
 
-### Example: Calculate Expected Revenue
+### Příklad: Výpočet očekávaných tržeb
 
-**Goal**: Multiply opportunity amount by probability to get expected amount.
+**Cíl**: Vynásobit částku příležitosti pravděpodobností a získat očekávanou částku.
 
-See [How to Show Expected Amount in Pipeline](/l/cs/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) for the complete workflow.
+Viz [Jak zobrazit očekávanou částku v kanálu](/l/cs/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) pro kompletní pracovní postup.
 
-### Quick Setup
+### Rychlé nastavení
 
-1. **Trigger**: Record is Updated (Opportunities, Amount OR Probability field)
+1. **Spouštěč**: Záznam je aktualizován (Příležitosti, pole Částka NEBO Pravděpodobnost)
 
-2. **Code action**:
+2. **Akce kódu**:
 
 ```javascript
 export const main = async (params) => {
@@ -71,19 +71,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Expected Amount to `{{code.expectedAmount}}`
+3. **Aktualizovat záznam**: Nastavte Očekávanou částku na `{{code.expectedAmount}}`
 
-## Date Formula: Days Calculation
+## Datumový vzorec: Výpočet počtu dní
 
-### Example: Days Until Task Due
+### Příklad: Počet dní do termínu úkolu
 
-**Goal**: Calculate how many days remain until a task's due date.
+**Cíl**: Spočítat, kolik dní zbývá do termínu úkolu.
 
 ### Nastavení
 
-1. **Trigger**: Record is Updated or Created (Tasks, Due Date field)
+1. **Spouštěč**: Záznam je aktualizován nebo vytvořen (Úkoly, pole Termín)
 
-2. **Code action**:
+2. **Akce kódu**:
 
 ```javascript
 export const main = async (params) => {
@@ -102,23 +102,23 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Days Until Due to `{{code.daysUntilDue}}`
+3. **Aktualizovat záznam**: Nastavte Počet dní do termínu na `{{code.daysUntilDue}}`
 
 <Note>
-  Negative values indicate overdue tasks. You can use this field to filter or sort tasks by urgency.
+  Záporné hodnoty označují úkoly po termínu. Toto pole můžete použít k filtrování nebo řazení úkolů podle naléhavosti.
 </Note>
 
-## Conditional Formula: Lead Score
+## Podmíněný vzorec: Skóre leadu
 
-### Example: Calculate Lead Score Based on Criteria
+### Příklad: Výpočet skóre leadu na základě kritérií
 
-**Goal**: Score leads based on company size, industry, and engagement.
+**Cíl**: Ohodnotit leady podle velikosti společnosti, odvětví a zapojení.
 
 ### Nastavení
 
-1. **Trigger**: Record is Updated (People or Companies)
+1. **Spouštěč**: Záznam je aktualizován (Lidé nebo Společnosti)
 
-2. **Code action**:
+2. **Akce kódu**:
 
 ```javascript
 export const main = async (params) => {
@@ -147,19 +147,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Lead Score to `{{code.leadScore}}`
+3. **Aktualizovat záznam**: Nastavte Skóre leadu na `{{code.leadScore}}`
 
-## Text Formula: Domain Extraction
+## Textový vzorec: Extrakce domény
 
-### Example: Extract Domain from Email
+### Příklad: Získání domény z e-mailu
 
-**Goal**: Automatically extract and store the email domain.
+**Cíl**: Automaticky získat a uložit doménu e-mailu.
 
 ### Nastavení
 
-1. **Trigger**: Record is Updated (People, Email field)
+1. **Spouštěč**: Záznam je aktualizován (Lidé, pole E-mail)
 
-2. **Code action**:
+2. **Akce kódu**:
 
 ```javascript
 export const main = async (params) => {
@@ -173,30 +173,30 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Domain field to `{{code.domain}}`
+3. **Aktualizovat záznam**: Nastavte pole Doména na `{{code.domain}}`
 
 ## Osvědčené postupy
 
-### Performance
+### Výkon
 
-* Only trigger on relevant field changes
-* Use filters to skip records that don't need calculation
-* Avoid complex calculations in high-volume workflows
+* Spouštějte pouze při relevantních změnách polí
+* Pomocí filtrů přeskočte záznamy, které nevyžadují výpočet
+* Vyhněte se složitým výpočtům v pracovních postupech s vysokým objemem
 
-### Error Handling
+### Zpracování chyb
 
-* Check for null/undefined values before calculations
-* Use default values when data is missing
-* Return clear error messages when calculations fail
+* Před výpočty kontrolujte hodnoty null/undefined
+* Používejte výchozí hodnoty, když data chybí
+* Vracejte jasné chybové zprávy, když výpočty selžou
 
 ### Testování
 
-* Test with edge cases (empty fields, zero values)
-* Verify calculations manually before activating
-* Monitor workflow runs for unexpected results
+* Testujte okrajové případy (prázdná pole, nulové hodnoty)
+* Před aktivací ručně ověřte výpočty
+* Sledujte běhy pracovních postupů kvůli neočekávaným výsledkům
 
-## Related
+## Související
 
-* [How to Show Expected Amount in Pipeline](/l/cs/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
-* [How to Track Time in Stage](/l/cs/user-guide/views-pipelines/how-tos/track-time-in-stage)
-* [Workflow Actions](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Jak zobrazit očekávanou částku v kanálu](/l/cs/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+* [Jak sledovat čas ve fázi](/l/cs/user-guide/views-pipelines/how-tos/track-time-in-stage)
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)

@@ -114,7 +114,7 @@ Dovresti eseguire tutti i comandi nei passaggi successivi dalla radice del proge
     **Opzione 2:** Se hai Docker installato:
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
@@ -173,7 +173,7 @@ Dovresti eseguire tutti i comandi nei passaggi successivi dalla radice del proge
     **Opzione 2:** Se hai Docker installato:
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
@@ -194,7 +194,7 @@ Dovresti eseguire tutti i comandi nei passaggi successivi dalla radice del proge
     Usa questa opzione solo se ti senti a tuo agio con i passaggi extra coinvolti, incluso l'attivazione di [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 </Tabs>
@@ -213,7 +213,7 @@ Twenty richiede una cache Redis per offrire le migliori prestazioni
     **Opzione 2:** Se hai Docker installato:
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
@@ -230,7 +230,7 @@ Twenty richiede una cache Redis per offrire le migliori prestazioni
     **Opzione 2:** Se hai Docker installato:
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
@@ -241,7 +241,7 @@ Twenty richiede una cache Redis per offrire le migliori prestazioni
     **Opzione 2:** Se hai Docker installato:
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 </Tabs>
@@ -260,7 +260,7 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/it/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+  **Modalità multi-workspace:** Per impostazione predefinita, Twenty viene eseguito in modalità a singolo workspace in cui può essere creato un solo workspace. Per abilitare il supporto multi-workspace (utile per testare le funzionalità basate sui sottodomini), imposta `IS_MULTIWORKSPACE_ENABLED=true` nel file `.env` del server. Vedi [Modalità multi-workspace](/l/it/developers/self-host/capabilities/setup#multi-workspace-mode) per i dettagli.
 </Info>
 
 ## Passaggio 6: Installazione delle dipendenze

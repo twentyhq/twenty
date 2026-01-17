@@ -21,7 +21,7 @@ server
   └───utils
 ```
 
-## Ability
+## Oprávnění
 
 Definuje oprávnění a zahrnuje zpracovníky pro každou entitu.
 
@@ -29,7 +29,7 @@ Definuje oprávnění a zahrnuje zpracovníky pro každou entitu.
 
 Definuje vlastní dekorátory v NestJS pro přídavnou funkčnost.
 
-See [custom decorators](https://docs.nestjs.com/custom-decorators) for more details.
+Více podrobností naleznete ve [vlastních dekorátorech](https://docs.nestjs.com/custom-decorators).
 
 ## Filtry
 
@@ -37,9 +37,9 @@ Zahrnuje filtry výjimek k zpracování výjimek, které mohou nastat v koncový
 
 ## Guards
 
-See [guards](https://docs.nestjs.com/guards) for more details.
+Více podrobností naleznete ve [strážích](https://docs.nestjs.com/guards).
 
-## Health
+## Zdraví
 
 Zahrnuje veřejně dostupné REST API (healthz), které vrací JSON k potvrzení, zda databáze funguje, jak se očekává.
 
@@ -49,7 +49,7 @@ Definuje vlastní objekty a poskytuje GraphQL API (graphql/metadata).
 
 ## Pracovní prostor
 
-Generates and serves custom GraphQL schema based on the metadata.
+Generuje a poskytuje vlastní schéma GraphQL na základě metadat.
 
 ### Struktura adresáře pracovního prostoru
 
@@ -87,7 +87,7 @@ Kořen adresáře pracovního prostoru zahrnuje `workspace.factory.ts`, soubor o
 
 Tato strategie neslouží pouze k organizaci, ale pomáhá i v optimalizaci, jako je ukládání vytvořených typových definic do mezipaměti pro zvýšení výkonu a škálovatelnosti.
 
-### Workspace Schema builder
+### Builder schématu pracovního prostoru
 
 Generuje schéma GraphQL a zahrnuje:
 
@@ -114,7 +114,7 @@ Obsahuje službu, která spojuje FieldMetadataType s odpovídajícími GraphQL s
 
 Zahrnuje třídu `TypeDefinitionsStorage`, která obsahuje opakovaně použitelné definice typů, zabraňující duplikaci typů GraphQL.
 
-### Workspace Resolver Builder
+### Builder resolveru pracovního prostoru
 
 Vytváří funkce pro řešení dotazů a mutací v GraphQL schématu.
 

@@ -13,7 +13,6 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type MutableSnapshot } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated/graphql';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const mockPageLayout: PageLayout = {
@@ -64,7 +63,6 @@ const meta: Meta<typeof DashboardWidgetPlaceholder> = {
       );
     },
     ComponentDecorator,
-    I18nFrontDecorator,
   ],
   parameters: {
     layout: 'centered',

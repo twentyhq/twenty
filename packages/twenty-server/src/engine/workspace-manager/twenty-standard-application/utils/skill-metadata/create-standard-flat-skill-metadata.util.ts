@@ -146,41 +146,105 @@ Before creating any GRAPH widget, you MUST:
 
 GRAPH widgets require real UUIDs from the workspace metadata, NOT made-up values.
 
-## Widget Configuration
+## Understanding User Language
 
-### GRAPH - AGGREGATE (KPI numbers)
-Shows a single aggregated value (count, sum, average).
-Required:
-- objectMetadataId: UUID of the object (e.g., opportunity)
-- configuration.graphType: "AGGREGATE"
-- configuration.aggregateFieldMetadataId: UUID of field to aggregate
-- configuration.aggregateOperation: "COUNT", "SUM", "AVG", "MIN", "MAX"
+Users describe charts using UI terminology. Here's how to translate:
 
-### GRAPH - BAR/LINE Charts
-Shows data grouped by a dimension.
+### Bar/Line Chart Settings
+
+**Data section:**
+- "Source" / "change the object": objectMetadataId
+
+**X axis section (primary grouping - the bars/categories):**
+- "X axis" / "data on display" / "categories": primaryAxisGroupByFieldMetadataId
+- "X axis subfield" / "Address.city": primaryAxisGroupBySubFieldName
+- "Date granularity" (on X axis): primaryAxisDateGranularity
+- "Sort by" (on X axis): primaryAxisOrderBy
+
+**Y axis section (what's being measured + optional secondary grouping):**
+- "Y axis" / "data on display" / "measure" / "metric": aggregateFieldMetadataId + aggregateOperation
+- "Group by" / "stacking" / "colors" / "breakdown": secondaryAxisGroupByFieldMetadataId
+- "Group by subfield" / "Address.city": secondaryAxisGroupBySubFieldName
+- "Date granularity" (on Group by): secondaryAxisGroupByDateGranularity
+- "Sort by" (on Group by): secondaryAxisOrderBy
+- "Cumulative" / "running total": isCumulative
+- "Min range" / "Max range": rangeMin, rangeMax
+- "Hide empty values" / "omit nulls": omitNullValues
+
+**Style section:**
+- "Stacked" / "stacked bars": layout stays same, it's about secondaryAxisGroupByFieldMetadataId
+- "Data labels" / "show values": displayDataLabel
+- "Legend" / "show legend": displayLegend
+
+### CRITICAL: "Remove groupby" / "remove stacking" / "unstacked"
+When users say this for bar/line charts, they mean remove the SECONDARY grouping (the colors/stacking).
+- Set secondaryAxisGroupByFieldMetadataId to null
+- Keep the chart type (BAR_CHART/LINE_CHART)
+- Keep primaryAxisGroupByFieldMetadataId (the X axis categories)
+- DO NOT convert to AGGREGATE_CHART unless user explicitly asks for "just a number" or "KPI"
+
+### Pie Chart Settings
+- "Each slice represents" / "slices": groupByFieldMetadataId
+- "Slice subfield" / "Address.city": groupBySubFieldName
+- "Hide empty category": hideEmptyCategory
+- "Show value in center": showValueInCenter
+
+### Aggregate Chart Settings (KPI numbers)
+- "Prefix" (e.g., "$"): prefix
+- "Suffix" (e.g., "%"): suffix
+- "Ratio by option" / "percent of a value": ratioAggregateConfig
+
+## Widget Configuration Types
+
+### AGGREGATE_CHART (KPI number widget)
+Shows a single aggregated value.
 Required:
 - objectMetadataId: UUID of the object
-- configuration.graphType: "VERTICAL_BAR", "HORIZONTAL_BAR", or "LINE"
+- configuration.configurationType: "AGGREGATE_CHART"
+- configuration.aggregateFieldMetadataId: UUID of field to aggregate
+- configuration.aggregateOperation: "COUNT", "SUM", "AVG", "MIN", "MAX"
+Optional: prefix, suffix, displayDataLabel, ratioAggregateConfig
+
+### BAR_CHART
+Shows data grouped by categories with optional secondary grouping.
+Required:
+- objectMetadataId: UUID of the object
+- configuration.configurationType: "BAR_CHART"
 - configuration.aggregateFieldMetadataId: field to aggregate
 - configuration.aggregateOperation: aggregation type
-- configuration.primaryAxisGroupByFieldMetadataId: field to group by (x-axis)
+- configuration.primaryAxisGroupByFieldMetadataId: X axis categories
+- configuration.layout: "VERTICAL" or "HORIZONTAL"
+Optional: secondaryAxisGroupByFieldMetadataId (for stacking/colors), primaryAxisGroupBySubFieldName, secondaryAxisGroupBySubFieldName, omitNullValues, displayDataLabel, displayLegend
 
-### GRAPH - PIE Charts
+### LINE_CHART
+Shows trends over a dimension.
+Required:
+- objectMetadataId: UUID of the object
+- configuration.configurationType: "LINE_CHART"
+- configuration.aggregateFieldMetadataId: field to aggregate
+- configuration.aggregateOperation: aggregation type
+- configuration.primaryAxisGroupByFieldMetadataId: X axis (usually date)
+Optional: secondaryAxisGroupByFieldMetadataId (for multiple lines), primaryAxisGroupBySubFieldName, secondaryAxisGroupBySubFieldName, omitNullValues, isCumulative, displayDataLabel
+
+### PIE_CHART
 Shows data distribution as slices.
 Required:
 - objectMetadataId: UUID of the object
-- configuration.graphType: "PIE"
+- configuration.configurationType: "PIE_CHART"
 - configuration.aggregateFieldMetadataId: field to aggregate
 - configuration.aggregateOperation: aggregation type
-- configuration.groupByFieldMetadataId: field to slice by
+- configuration.groupByFieldMetadataId: field to slice by (NOTE: different field name than bar/line!)
+Optional: groupBySubFieldName, displayDataLabel, hideEmptyCategory, showValueInCenter
 
 ### IFRAME
 Embeds external content:
+- configuration.configurationType: "IFRAME"
 - configuration.url: "https://..."
 
 ### STANDALONE_RICH_TEXT
 Text content widget:
-- configuration.body: "Your text here"
+- configuration.configurationType: "STANDALONE_RICH_TEXT"
+- configuration.body: rich text content
 
 ## Grid System
 
@@ -197,14 +261,16 @@ Text content widget:
 1. Ask user what data they want to visualize
 2. Load list_object_metadata_items to discover available objects and fields
 3. Create dashboard with appropriate widgets using real field IDs
-4. Use get_dashboard to verify creation
+4. Use get_dashboard to verify creation and see current configuration
+5. When modifying, first understand current config before making changes
 
 ## Best Practices
 
 - Place KPIs at the top (row 0)
 - Group related charts together
 - Use consistent heights within rows
-- Start simple, add complexity as needed`,
+- Start simple, add complexity as needed
+- When user asks to modify a chart, clarify if they want to change settings OR change chart type`,
         isCustom: false,
       },
     }),

@@ -23,6 +23,7 @@ import { createCreateWorkflowVersionStepTool } from 'src/modules/workflow/workfl
 import { createDeactivateWorkflowVersionTool } from 'src/modules/workflow/workflow-tools/tools/deactivate-workflow-version.tool';
 import { createDeleteWorkflowVersionEdgeTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow-version-edge.tool';
 import { createDeleteWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow-version-step.tool';
+import { createGetWorkflowCurrentVersionTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-current-version.tool';
 import { createUpdateWorkflowVersionPositionsTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-positions.tool';
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
 import { type WorkflowToolDependencies } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
@@ -106,6 +107,10 @@ export class WorkflowToolWorkspaceService {
       this.deps,
       context,
     );
+    const getWorkflowCurrentVersion = createGetWorkflowCurrentVersionTool(
+      this.deps,
+      context,
+    );
 
     return {
       [createCompleteWorkflow.name]: createCompleteWorkflow,
@@ -119,6 +124,7 @@ export class WorkflowToolWorkspaceService {
       [activateWorkflowVersion.name]: activateWorkflowVersion,
       [deactivateWorkflowVersion.name]: deactivateWorkflowVersion,
       [computeStepOutputSchema.name]: computeStepOutputSchema,
+      [getWorkflowCurrentVersion.name]: getWorkflowCurrentVersion,
     };
   }
 

@@ -38,6 +38,8 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
           canDestroyObjectRecords: true,
           objectMetadataId: personObjectMetadataItem.id,
           restrictedFields: {},
+          rowLevelPermissionPredicates: [],
+          rowLevelPermissionPredicateGroups: [],
         },
       },
     });
@@ -54,7 +56,7 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
         primaryEmail
         additionalEmails
     }
-    phone 
+    phone
     {
       primaryPhoneNumber
       primaryPhoneCountryCode
@@ -142,6 +144,8 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
           canDestroyObjectRecords: true,
           objectMetadataId: personObjectMetadataItem.id,
           restrictedFields: {},
+          rowLevelPermissionPredicates: [],
+          rowLevelPermissionPredicateGroups: [],
         },
       },
     });

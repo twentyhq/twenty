@@ -1,54 +1,54 @@
 ---
-title: Generate a PDF from Twenty
-description: Create a workflow to generate and attach a PDF (such as a quote) to a record.
+title: Ein PDF aus Twenty generieren
+description: Erstellen Sie einen Workflow, um ein PDF (z. B. ein Angebot) zu generieren und an einen Datensatz anzuhängen.
 ---
 
-Automatically generate or fetch a PDF and attach it to a record in Twenty. This is commonly used to create quotes, invoices, or reports that are linked to Companies, Opportunities, or other objects.
+Automatisch ein PDF generieren oder abrufen und an einen Datensatz in Twenty anhängen. Dies wird häufig verwendet, um Angebote, Rechnungen oder Berichte zu erstellen, die mit Companies, Opportunities oder anderen Objekten verknüpft sind.
 
 ## Übersicht
 
-This workflow uses a **Manual Trigger** so users can generate a PDF on demand for any selected record. A **Serverless Function** handles:
+Dieser Workflow verwendet einen **Manuellen Auslöser**, damit Benutzer bei Bedarf für jeden ausgewählten Datensatz ein PDF generieren können. Eine **Serverlose Funktion** übernimmt:
 
-1. Downloading the PDF from a URL (from a PDF generation service)
-2. Uploading the file to Twenty
-3. Creating an Attachment linked to the record
+1. Das Herunterladen des PDFs von einer URL (von einem PDF-Generierungsdienst)
+2. Das Hochladen der Datei in Twenty
+3. Das Erstellen eines Anhangs, der mit dem Datensatz verknüpft ist
 
 ## Voraussetzungen
 
-Before setting up the workflow:
+Bevor Sie den Workflow einrichten:
 
-1. **Create an API Key**: Go to **Settings → APIs** and create a new API key. You'll need this token for the serverless function.
-2. **Set up a PDF generation service** (optional): If you want to dynamically generate PDFs (e.g., quotes), use a service like Carbone, PDFMonkey, or DocuSeal to create the PDF and get a download URL.
+1. **API-Schlüssel erstellen**: Gehen Sie zu **Einstellungen → APIs** und erstellen Sie einen neuen API-Schlüssel. Sie benötigen dieses Token für die serverlose Funktion.
+2. **Richten Sie einen PDF-Generierungsdienst ein** (optional): Wenn Sie PDFs dynamisch generieren möchten (z. B. Angebote), verwenden Sie einen Dienst wie Carbone, PDFMonkey oder DocuSeal, um das PDF zu erstellen und eine Download-URL zu erhalten.
 
 ## Schritt-für-Schritt-Einrichtung
 
 ### Schritt 1: Trigger konfigurieren
 
-1. Go to **Workflows** and create a new workflow
-2. Select **Manual Trigger**
-3. Choose the object you want to attach PDFs to (e.g., **Company** or **Opportunity**)
+1. Gehen Sie zu **Workflows** und erstellen Sie einen neuen Workflow
+2. Wählen Sie **Manueller Auslöser**
+3. Wählen Sie das Objekt aus, dem Sie PDFs anhängen möchten (z. B. **Company** oder **Opportunity**)
 
 <Tip>
-  With a Manual Trigger, users can run this workflow using a button that appears on the top right once a record is selected, to generate and attach a PDF.
+  Mit einem manuellen Auslöser können Benutzer diesen Workflow über eine Schaltfläche ausführen, die oben rechts erscheint, sobald ein Datensatz ausgewählt ist, um ein PDF zu generieren und anzuhängen.
 </Tip>
 
-### Step 2: Add a Serverless Function
+### Schritt 2: Serverlose Funktion hinzufügen
 
-1. Add a **Serverless Function** action
-2. Create a new function with the code below
-3. Configure the input parameters
+1. Fügen Sie eine **Serverlose Funktion**-Aktion hinzu
+2. Erstellen Sie eine neue Funktion mit dem folgenden Code
+3. Konfigurieren Sie die Eingabeparameter
 
-#### Input Parameters
+#### Eingabeparameter
 
 | Parameter   | Wert                    |
 | ----------- | ----------------------- |
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the serverless function.
+  Wenn Sie an ein anderes Objekt anhängen (Person, Opportunity usw.), benennen Sie den Parameter entsprechend um (z. B. `personId`, `opportunityId`) und aktualisieren Sie die serverlose Funktion.
 </Note>
 
-#### Serverless Function Code
+#### Code der serverlosen Funktion
 
 ```typescript
 export const main = async (
@@ -152,11 +152,11 @@ export const main = async (
 };
 ```
 
-### Step 3: Customize for Your Use Case
+### Schritt 3: An Ihren Anwendungsfall anpassen
 
-#### To attach to a different object
+#### An ein anderes Objekt anhängen
 
-Replace `companyId` with the appropriate field:
+Ersetzen Sie `companyId` durch das entsprechende Feld:
 
 | Objekt                     | Feldname             |
 | -------------------------- | -------------------- |
@@ -165,14 +165,14 @@ Replace `companyId` with the appropriate field:
 | Opportunity                | `opportunityId`      |
 | Benutzerdefiniertes Objekt | `yourCustomObjectId` |
 
-Update both the function parameter and the `variables.data` object in the attachment mutation.
+Aktualisieren Sie sowohl den Funktionsparameter als auch das Objekt `variables.data` in der Attachment-Mutation.
 
-#### To use a dynamic PDF URL
+#### So verwenden Sie eine dynamische PDF-URL
 
-If using a PDF generation service, you can:
+Wenn Sie einen PDF-Generierungsdienst verwenden, können Sie:
 
-1. First make an HTTP Request action to generate the PDF
-2. Pass the returned PDF URL to the serverless function as a parameter
+1. Führen Sie zuerst eine HTTP-Request-Aktion aus, um das PDF zu generieren
+2. Übergeben Sie die zurückgegebene PDF-URL als Parameter an die serverlose Funktion
 
 ```typescript
 export const main = async (
@@ -185,44 +185,44 @@ export const main = async (
 
 ### Schritt 4: Testen und aktivieren
 
-1. Save the workflow
-2. Navigate to a Company record
-3. Click the **⋮** menu and select your workflow
-4. Check the **Attachments** section on the record to verify the PDF was attached
+1. Speichern Sie den Workflow
+2. Navigieren Sie zu einem Company-Datensatz
+3. Klicken Sie auf das **⋮**-Menü und wählen Sie Ihren Workflow aus
+4. Überprüfen Sie im Datensatz den Bereich **Attachments**, um zu verifizieren, dass das PDF angehängt wurde
 5. Aktivieren Sie den Workflow
 
-## Combining with PDF Generation Services
+## Kombination mit PDF-Generierungsdiensten
 
-For creating dynamic quotes or invoices:
+Zum Erstellen dynamischer Angebote oder Rechnungen:
 
-### Example: Generate Quote → Attach PDF
+### Beispiel: Angebot generieren → PDF anhängen
 
-| Schritt | Aktion                   | Zweck                                    |
-| ------- | ------------------------ | ---------------------------------------- |
-| 1       | Manual Trigger (Company) | User initiates on a record               |
-| 2       | Datensatz suchen         | Get Opportunity or line item details     |
-| 3       | HTTP-Anfrage             | Call PDF generation API with record data |
-| 4       | Serverless Function      | Download and attach the generated PDF    |
+| Schritt | Aktion                       | Zweck                                            |
+| ------- | ---------------------------- | ------------------------------------------------ |
+| 1       | Manueller Auslöser (Company) | Benutzer initiiert am Datensatz                  |
+| 2       | Datensatz suchen             | Opportunity- oder Positionsdetails abrufen       |
+| 3       | HTTP-Anfrage                 | PDF-Generierungs-API mit Datensatzdaten aufrufen |
+| 4       | Serverlose Funktion          | Das generierte PDF herunterladen und anhängen    |
 
-### Popular PDF Generation Services
+### Beliebte PDF-Generierungsdienste
 
-* **Carbone** - Template-based document generation
-* **PDFMonkey** - Dynamic PDF creation from templates
-* **DocuSeal** - Document automation platform
-* **Documint** - API-first document generation
+* **Carbone** – Vorlagenbasierte Dokumentenerstellung
+* **PDFMonkey** – Dynamische PDF-Erstellung aus Vorlagen
+* **DocuSeal** – Plattform für Dokumentenautomatisierung
+* **Documint** – API-first-Dokumentenerstellung
 
-Each service provides an API that returns a PDF URL, which you can then pass to the serverless function.
+Jeder Dienst stellt eine API bereit, die eine PDF-URL zurückgibt, die Sie anschließend an die serverlose Funktion übergeben können.
 
 ## Fehlerbehebung
 
-| Problem                      | Lösung                                                     |
-| ---------------------------- | ---------------------------------------------------------- |
-| "Failed to download PDF"     | Check the PDF URL is accessible and returns a valid PDF    |
-| "Upload failed"              | Verify your API key is valid and has write permissions     |
-| "Attachment creation failed" | Ensure the object ID field name matches your target object |
+| Problem                                   | Lösung                                                                                 |
+| ----------------------------------------- | -------------------------------------------------------------------------------------- |
+| "PDF konnte nicht heruntergeladen werden" | Prüfen Sie, ob die PDF-URL erreichbar ist und ein gültiges PDF zurückgibt              |
+| "Upload fehlgeschlagen"                   | Stellen Sie sicher, dass Ihr API-Schlüssel gültig ist und Schreibberechtigungen hat    |
+| "Anhangserstellung fehlgeschlagen"        | Stellen Sie sicher, dass der Feldname der Objekt-ID mit Ihrem Zielobjekt übereinstimmt |
 
 ## Verwandt
 
 * [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
-* [Serverless Functions](/l/de/user-guide/workflows/capabilities/workflow-actions#serverless-function)
-* [Generate a Quote or Invoice from Twenty](/l/de/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
+* [Serverlose Funktionen](/l/de/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Ein Angebot oder eine Rechnung aus Twenty generieren](/l/de/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

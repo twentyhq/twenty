@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Front component deletion should fail when front component does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "FRONT_COMPONENT_NOT_FOUND",
+    "userFriendlyMessage": "Front component not found.",
+  },
+  "message": "Front component not found",
+  "name": "NotFoundError",
+}
+`;

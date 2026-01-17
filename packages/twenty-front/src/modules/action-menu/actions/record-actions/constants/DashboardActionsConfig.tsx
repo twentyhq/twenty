@@ -31,11 +31,12 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconPencil,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ selectedRecord }) =>
+      shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
-        isDefined(selectedRecord?.pageLayoutId),
+        isDefined(selectedRecord?.pageLayoutId) &&
+        objectPermissions.canUpdateObjectRecords,
       availableOn: [ActionViewType.SHOW_PAGE],
       component: <EditDashboardSingleRecordAction />,
     },
@@ -49,11 +50,12 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconDeviceFloppy,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ selectedRecord }) =>
+      shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
-        isDefined(selectedRecord?.pageLayoutId),
+        isDefined(selectedRecord?.pageLayoutId) &&
+        objectPermissions.canUpdateObjectRecords,
       availableOn: [ActionViewType.PAGE_EDIT_MODE],
       component: <SaveDashboardSingleRecordAction />,
     },
@@ -66,11 +68,12 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconCancel,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ selectedRecord }) =>
+      shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
-        isDefined(selectedRecord?.pageLayoutId),
+        isDefined(selectedRecord?.pageLayoutId) &&
+        objectPermissions.canUpdateObjectRecords,
       availableOn: [ActionViewType.PAGE_EDIT_MODE],
       component: <CancelDashboardSingleRecordAction />,
     },
@@ -83,11 +86,12 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconCopyPlus,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ selectedRecord }) =>
+      shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
-        isDefined(selectedRecord?.pageLayoutId),
+        isDefined(selectedRecord?.pageLayoutId) &&
+        objectPermissions.canUpdateObjectRecords,
       availableOn: [
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
         ActionViewType.SHOW_PAGE,

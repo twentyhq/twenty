@@ -53,6 +53,7 @@ export const DashboardWidgetPlaceholder = () => {
       className="widget"
     >
       <WidgetCardHeader
+        variant="dashboard"
         widgetId="widget-placeholder"
         isInEditMode={isPageLayoutInEditMode}
         isResizing={false}

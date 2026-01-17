@@ -11,7 +11,6 @@ import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/Spre
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { RecoilRoot } from 'recoil';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof SelectHeaderStep> = {
   title: 'Modules/SpreadsheetImport/SelectHeaderStep',
@@ -34,7 +33,6 @@ const meta: Meta<typeof SelectHeaderStep> = {
         <Story />
       </RecoilRoot>
     ),
-    I18nFrontDecorator,
   ],
 };
 

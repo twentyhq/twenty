@@ -67,7 +67,8 @@ const StyledWidgetCard = styled.div<{
 
         ${isDragging &&
         css`
-          background: linear-gradient(
+          background:
+            linear-gradient(
               0deg,
               ${theme.background.transparent.lighter} 0%,
               ${theme.background.transparent.lighter} 100%
@@ -80,7 +81,9 @@ const StyledWidgetCard = styled.div<{
 
     if (variant === 'side-column' && !isEditable) {
       return css`
-        padding: ${theme.spacing(2)};
+        gap: ${theme.spacing(2)};
+        padding: ${theme.spacing(3)};
+
         ${isLastWidget !== true &&
         css`
           border-bottom: 1px solid ${theme.border.color.light};
@@ -117,7 +120,8 @@ const StyledWidgetCard = styled.div<{
 
         ${isDragging &&
         css`
-          background: linear-gradient(
+          background:
+            linear-gradient(
               0deg,
               ${theme.background.transparent.lighter} 0%,
               ${theme.background.transparent.lighter} 100%

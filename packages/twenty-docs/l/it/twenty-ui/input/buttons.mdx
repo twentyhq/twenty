@@ -21,7 +21,7 @@ Un elenco di pulsanti e gruppi di pulsanti utilizzati nell'app.
         <Button
           className
           Icon={null}
-          title="Title"
+          title="Titolo"
           fullWidth={false}
           variant="primary"
           size="medium"
@@ -69,7 +69,7 @@ Un elenco di pulsanti e gruppi di pulsanti utilizzati nell'app.
           <Button
             className
             Icon={null}
-            title="Button 1"
+            title="Pulsante 1"
             fullWidth={false}
             variant="primary"
             size="medium"
@@ -83,7 +83,7 @@ Un elenco di pulsanti e gruppi di pulsanti utilizzati nell'app.
           <Button
             className
             Icon={null}
-            title="Button 2"
+            title="Pulsante 2"
             fullWidth={false}
             variant="secondary"
             size="medium"
@@ -97,7 +97,7 @@ Un elenco di pulsanti e gruppi di pulsanti utilizzati nell'app.
           <Button
             className
             Icon={null}
-            title="Button 3"
+            title="Pulsante 3"
             fullWidth={false}
             variant="tertiary"
             size="medium"
@@ -111,7 +111,6 @@ Un elenco di pulsanti e gruppi di pulsanti utilizzati nell'app.
         </ButtonGroup>
       );
     };
-
     ```
   </Tab>
 
@@ -139,7 +138,7 @@ Un elenco di pulsanti e gruppi di pulsanti utilizzati nell'app.
         <FloatingButton
           className
           Icon={IconSearch}
-          title="Title"
+          title="Titolo"
           size="medium"
           position="standalone"
           applyShadow={true}
@@ -269,12 +268,12 @@ Un elenco di pulsanti e gruppi di pulsanti utilizzati nell'app.
       const iconButtons = [
         {
           Icon: IconClipboardText,
-          onClick: () => console.log("Button 1 clicked"),
+          onClick: () => console.log("Pulsante 1 cliccato"),
           isActive: true,
         },
         {
           Icon: IconCheckbox,
-          onClick: () => console.log("Button 2 clicked"),
+          onClick: () => console.log("Pulsante 2 cliccato"),
           isActive: true,
         },
       ];
@@ -310,7 +309,7 @@ Un elenco di pulsanti e gruppi di pulsanti utilizzati nell'app.
       return <LightButton
       className
       icon={null}
-      title="Title"
+      title="Titolo"
       accent="secondary"
       active={false}
       disabled={false}
@@ -349,7 +348,7 @@ Un elenco di pulsanti e gruppi di pulsanti utilizzati nell'app.
           className
           testId="test1"
           Icon={IconSearch}
-          title="Title"
+          title="Titolo"
           size="small"
           accent="secondary"
           active={true}
@@ -389,7 +388,7 @@ Un elenco di pulsanti e gruppi di pulsanti utilizzati nell'app.
     export const MyComponent = () => {
       return (
         <MainButton
-          title="Checkbox"
+          title="Casella di controllo"
           fullWidth={false}
           variant="primary"
           soon={false}
@@ -401,14 +400,14 @@ Un elenco di pulsanti e gruppi di pulsanti utilizzati nell'app.
   </Tab>
 
   <Tab title="Proprietà">
-    | Proprietà            | Tipo                             | Descrizione                                                                                  |
-    | -------------------- | -------------------------------- | -------------------------------------------------------------------------------------------- |
-    | titolo               | string                           | Il contenuto di testo del pulsante                                                           |
-    | larghezzaCompleta    | booleano                         | Definisce se il pulsante dovrebbe estendersi per tutta la larghezza del suo contenitore      |
-    | variante             | string                           | La variante dello stile visivo del pulsante. Options include `primary` and `secondary`       |
-    | presto               | booleano                         | Indica se il pulsante è contrassegnato come "presto" (ad esempio per funzionalità in arrivo) |
-    | Icona                | `React.ComponentType`            | Un componente icona opzionale visualizzato all'interno del pulsante                          |
-    | React `button` props | `React.ComponentProps<'button'>` | Sono supportate tutte le proprietà standard del pulsante HTML                                |
+    | Proprietà                       | Tipo                             | Descrizione                                                                                  |
+    | ------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------- |
+    | titolo                          | string                           | Il contenuto di testo del pulsante                                                           |
+    | larghezzaCompleta               | booleano                         | Definisce se il pulsante dovrebbe estendersi per tutta la larghezza del suo contenitore      |
+    | variante                        | string                           | La variante dello stile visivo del pulsante. Le opzioni includono `primary` e `secondary`    |
+    | presto                          | booleano                         | Indica se il pulsante è contrassegnato come "presto" (ad esempio per funzionalità in arrivo) |
+    | Icona                           | `React.ComponentType`            | Un componente icona opzionale visualizzato all'interno del pulsante                          |
+    | Proprietà del `button` di React | `React.ComponentProps<'button'>` | Sono supportate tutte le proprietà standard del pulsante HTML                                |
   </Tab>
 </Tabs>
 
@@ -431,9 +430,9 @@ Un elenco di pulsanti e gruppi di pulsanti utilizzati nell'app.
   </Tab>
 
   <Tab title="Props">
-    | Props                | Tipo                                            | Descrizione |
-    | -------------------- | ----------------------------------------------- | ----------- |
-    | Icona                | `React.ComponentType`                           |             |
-    | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |             |
+    | Props                           | Tipo                                            | Descrizione |
+    | ------------------------------- | ----------------------------------------------- | ----------- |
+    | Icona                           | `React.ComponentType`                           |             |
+    | Proprietà del `button` di React | `React.ButtonHTMLAttributes<HTMLButtonElement>` |             |
   </Tab>
 </Tabs>

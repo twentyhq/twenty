@@ -11,11 +11,13 @@ import {
   ValidateNested,
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
+import {
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+  RowLevelPermissionPredicateValue,
+} from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { RowLevelPermissionPredicateGroupLogicalOperator } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-group-logical-operator.enum';
-import { RowLevelPermissionPredicateOperand } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-operand';
-import { RowLevelPermissionPredicateValue } from 'src/engine/metadata-modules/row-level-permission-predicate/types/row-level-permission-predicate-value.type';
 
 @InputType()
 export class RowLevelPermissionPredicateInput {

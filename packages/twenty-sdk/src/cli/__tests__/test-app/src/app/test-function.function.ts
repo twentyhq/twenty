@@ -16,6 +16,7 @@ export default defineFunction({
       path: '/post-card/create',
       httpMethod: 'GET',
       isAuthRequired: false,
+      forwardedRequestHeaders: ['signature'],
     },
     {
       universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',

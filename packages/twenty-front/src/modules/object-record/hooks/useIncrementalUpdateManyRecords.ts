@@ -3,9 +3,10 @@ import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryP
 import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIncrementalFetchAndMutateRecords';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
-import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
+import { getUpdatedFieldsFromRecordInput } from '@/object-record/utils/getUpdatedFieldsFromRecordInput';
 
 const DEFAULT_DELAY_BETWEEN_MUTATIONS_MS = 50;
 
@@ -28,8 +29,6 @@ export const useIncrementalUpdateManyRecords = <
   pageSize = DEFAULT_QUERY_PAGE_SIZE,
   delayInMsBetweenMutations = DEFAULT_DELAY_BETWEEN_MUTATIONS_MS,
 }: UseIncrementalUpdateManyRecordsParams<T>) => {
-  const { registerObjectOperation } = useRegisterObjectOperation();
-
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -83,13 +82,16 @@ export const useIncrementalUpdateManyRecords = <
     } finally {
       await refetchAggregateQueries();
 
-      registerObjectOperation(objectMetadataItem, {
-        type: 'update-many',
-        result: {
-          updateInputs: allUpdatedRecordIds.map((id) => ({
-            id,
-            ...fieldsToUpdate,
-          })),
+      dispatchObjectRecordOperationBrowserEvent({
+        objectMetadataItem,
+        operation: {
+          type: 'update-many',
+          result: {
+            updateInputs: allUpdatedRecordIds.map((recordId) => ({
+              recordId,
+              updatedFields: getUpdatedFieldsFromRecordInput(fieldsToUpdate),
+            })),
+          },
         },
       });
     }

@@ -36,7 +36,8 @@ const StyledNodeContainer = styled.div<{
         : colors.unselected.borderColor};
 
       &:hover {
-        background: linear-gradient(
+        background:
+          linear-gradient(
             0deg,
             ${theme.background.transparent.lighter} 0%,
             ${theme.background.transparent.lighter} 100%

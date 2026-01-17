@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   type ObjectsPermissions,
@@ -9,7 +10,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -42,7 +42,13 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       where: {
         workspaceId,
       },
-      relations: ['objectPermissions', 'permissionFlags', 'fieldPermissions'],
+      relations: [
+        'objectPermissions',
+        'permissionFlags',
+        'fieldPermissions',
+        'rowLevelPermissionPredicates',
+        'rowLevelPermissionPredicateGroups',
+      ],
     });
 
     const workspaceObjectMetadataCollection =
@@ -132,6 +138,18 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           canSoftDeleteObjectRecords: canSoftDelete,
           canDestroyObjectRecords: canDestroy,
           restrictedFields,
+          rowLevelPermissionPredicates:
+            role.rowLevelPermissionPredicates.filter(
+              (rowLevelPermissionPredicate) =>
+                rowLevelPermissionPredicate.objectMetadataId ===
+                objectMetadataId,
+            ),
+          rowLevelPermissionPredicateGroups:
+            role.rowLevelPermissionPredicateGroups.filter(
+              (rowLevelPermissionPredicateGroup) =>
+                rowLevelPermissionPredicateGroup.objectMetadataId ===
+                objectMetadataId,
+            ),
         };
       }
 

@@ -1,6 +1,6 @@
 ---
 title: Objekty
-description: Learn about standard and custom objects in Twenty.
+description: Zjistěte více o standardních a vlastních objektech v Twenty.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
@@ -17,7 +17,7 @@ Objekt `People` ukládá vaše kontakty. Obsahuje kontaktní údaje a historii i
 
 ### Společnost
 
-The `Companies` object stores your business accounts. It includes details like industry, size and location. Společnosti jsou propojené s objekty `People` a `Opportunities`.
+Objekt `Companies` ukládá vaše firemní účty. Obsahuje podrobnosti jako odvětví, velikost a lokalitu. Společnosti jsou propojené s objekty `People` a `Opportunities`.
 
 ### Příležitosti
 
@@ -25,67 +25,67 @@ Objekt `Opportunities` ukládá údaje související s nabídkami. Sleduje průb
 
 ### Poznámky
 
-The `Notes` object stores free-form notes that can be attached to People, Companies, Opportunities, and other records. Use notes to capture meeting summaries, important details, or any contextual information.
+Objekt `Notes` ukládá volně psané poznámky, které lze připojit k People, Companies, Opportunities a dalším záznamům. Poznámky použijte k zachycení souhrnů schůzek, důležitých detailů nebo jakýchkoli kontextových informací.
 
 ### Úkoly
 
-The `Tasks` object stores to-dos and action items. Tasks can be linked to People, Companies, Opportunities, and other records. Track due dates, assignees, and completion status to stay on top of your follow-ups.
+Objekt `Tasks` ukládá úkoly a akční položky. Úkoly lze propojit s People, Companies, Opportunities a dalšími záznamy. Sledujte termíny, přiřazené osoby a stav dokončení, abyste měli své následné kroky pod kontrolou.
 
 ## Vlastní objekty
 
-Vlastní objekty vám umožňují ukládat informace, které jsou jedinečné pro vaši organizaci a které standardní objekty nezvládnou. For example, if you're SpaceX, you may want to create a custom object for Rockets and Launches.
+Vlastní objekty vám umožňují ukládat informace, které jsou jedinečné pro vaši organizaci a které standardní objekty nezvládnou. Například pokud jste SpaceX, můžete chtít vytvořit vlastní objekt pro rakety a starty.
 
 <img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
 
-### Creating a New Custom Object
+### Vytváření nového vlastního objektu
 
 Chcete-li vytvořit nový vlastní objekt:
 
 1. Přejděte do Nastavení na postranním panelu vlevo.
 2. Pod pracovní prostorem přejděte na Datový model. Tady budete moci vidět přehled všech vašich stávajících Standardních a Vlastních objektů (jak aktivních, tak neaktivních).
 
-<VimeoEmbed videoId="926288174" title="Video demonstration" />
+<VimeoEmbed videoId="926288174" title="Ukázka videa" />
 
-3. Klikněte na `+ Nový objekt` v horní části. Enter the name (both singular and plural), choose an icon, and add a description for your custom object and hit Save (at the top right). Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property."
+3. Klikněte na `+ Nový objekt` v horní části. Zadejte název (v jednotném i množném čísle), vyberte ikonu a přidejte popis pro svůj vlastní objekt a klikněte na Uložit (vpravo nahoře). Jako příklad vlastního objektu použijte Listing: jednotné číslo by bylo "listing" a množné by bylo "listings" spolu s popisem jako "Inzeráty, které hostitelé vytvořili, aby prezentovali svou nemovitost."
 
-4. Your custom object is now created and will appear in your sidebar. You can start adding records to it right away.
+4. Váš vlastní objekt je nyní vytvořen a zobrazí se v postranním panelu. Můžete do něj hned začít přidávat záznamy.
 
-## Managing Objects
+## Správa objektů
 
-### Deactivating Objects
+### Deaktivace objektů
 
-If you don't need a standard or custom object:
+Pokud nepotřebujete standardní nebo vlastní objekt:
 
-1. Go to Settings → Data Model
-2. Find the object you want to deactivate
-3. Click the toggle to deactivate it
-4. The object will be hidden from your workspace but data is preserved
+1. Přejděte do Nastavení → Datový model
+2. Najděte objekt, který chcete deaktivovat
+3. Kliknutím na přepínač jej deaktivujte
+4. Objekt bude skrytý ve vašem pracovním prostoru, ale data budou zachována
 
-### Reactivating Objects
+### Reaktivace objektů
 
-To bring back a deactivated object:
+Chcete-li obnovit deaktivovaný objekt:
 
-1. Go to Settings → Data Model
-2. Look for deactivated objects (they'll be grayed out)
-3. Click the toggle to reactivate it
-4. The object and all its data will be restored
+1. Přejděte do Nastavení → Datový model
+2. Vyhledejte deaktivované objekty (budou zašedlé)
+3. Kliknutím na přepínač jej znovu aktivujte
+4. Objekt a všechna jeho data budou obnovena
 
 ## Osvědčené postupy
 
-### When to Create Custom Objects
+### Kdy vytvářet vlastní objekty
 
-* **Unique business entities**: Things specific to your industry or process
-* **Complex relationships**: When you need to track connections between multiple entities
-* **Scalable data**: When you might have many instances of something
+* **Jedinečné obchodní entity**: Věci specifické pro vaše odvětví nebo proces
+* **Složité vztahy**: Když potřebujete sledovat propojení mezi více entitami
+* **Škálovatelná data**: Když můžete mít mnoho instancí něčeho
 
-### When to Use Fields Instead
+### Kdy raději použít pole
 
-* **Simple attributes**: Properties that describe existing objects
-* **Categories or labels**: Ways to classify existing records
-* **Single values**: Information that doesn't need its own lifecycle
+* **Jednoduché atributy**: Vlastnosti, které popisují existující objekty
+* **Kategorie nebo štítky**: Způsoby, jak klasifikovat existující záznamy
+* **Jednotlivé hodnoty**: Informace, které nepotřebují vlastní životní cyklus
 
-### Object Naming
+### Pojmenování objektů
 
-* **Use clear, descriptive names**: Make it obvious what the object represents
-* **Follow conventions**: Use singular for the object name, plural for the collection
-* **Consider your team**: Choose names everyone will understand
+* **Používejte jasné, popisné názvy**: Ať je zřejmé, co objekt představuje
+* **Dodržujte konvence**: Pro název objektu používejte jednotné číslo, pro kolekci číslo množné
+* **Myslete na svůj tým**: Zvolte názvy, kterým všichni porozumí
