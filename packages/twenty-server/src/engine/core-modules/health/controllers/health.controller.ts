@@ -8,6 +8,7 @@ import {
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
+import { AILayerHealthIndicator } from 'src/engine/core-modules/health/indicators/ai-layer.health';
 import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
 import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicators/connected-account.health';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
@@ -25,6 +26,7 @@ export class HealthController {
     private readonly workerHealth: WorkerHealthIndicator,
     private readonly connectedAccountHealth: ConnectedAccountHealth,
     private readonly appHealth: AppHealthIndicator,
+    private readonly aiLayerHealth: AILayerHealthIndicator,
   ) {}
 
   @Get()
@@ -45,6 +47,7 @@ export class HealthController {
       [HealthIndicatorId.connectedAccount]: () =>
         this.connectedAccountHealth.isHealthy(),
       [HealthIndicatorId.app]: () => this.appHealth.isHealthy(),
+      [HealthIndicatorId.aiLayer]: () => this.aiLayerHealth.isHealthy(),
     };
 
     if (!(indicatorId in checks)) {

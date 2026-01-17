@@ -1485,6 +1485,98 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   PG_DATABASE_REPLICA_TIMEOUT_MS: number = 10000;
+
+  // AI Layer Configuration
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AI_LAYER_CONFIG,
+    description: 'URL for the Context MCP server',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsUrl({ require_tld: false, require_protocol: true })
+  CTX_MCP_URL = 'http://ctx-mcp:3100';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AI_LAYER_CONFIG,
+    description: 'URL for the Knowledge Base MCP server',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsUrl({ require_tld: false, require_protocol: true })
+  KB_MCP_URL = 'http://kb-mcp:3110';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AI_LAYER_CONFIG,
+    description: 'URL for the n8n workflow automation server',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsUrl({ require_tld: false, require_protocol: true })
+  N8N_API_URL = 'http://n8n:5678';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AI_LAYER_CONFIG,
+    description: 'Redis URL for AI Layer shared cache',
+    type: ConfigVariableType.STRING,
+    isSensitive: true,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsUrl({
+    protocols: ['redis', 'rediss'],
+    require_tld: false,
+    allow_underscores: true,
+  })
+  REDIS_AI_URL = 'redis://redis:6379';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AI_LAYER_CONFIG,
+    description: 'Enable or disable error reporting to AI Layer',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  AI_LAYER_ERROR_REPORTING_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AI_LAYER_CONFIG,
+    description: 'Endpoint URL for AI Layer error reporting',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsUrl({ require_tld: false, require_protocol: true })
+  AI_LAYER_ERROR_ENDPOINT = 'http://ctx-mcp:3100/api/errors/report';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AI_LAYER_CONFIG,
+    description: 'Log format for AI Layer (json or text)',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  AI_LAYER_LOG_FORMAT = 'json';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AI_LAYER_CONFIG,
+    description: 'Log level for AI Layer logging',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  AI_LAYER_LOG_LEVEL = 'info';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AI_LAYER_CONFIG,
+    description: 'Default workspace ID for AI Layer operations',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  AI_LAYER_DEFAULT_WORKSPACE_ID: string;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

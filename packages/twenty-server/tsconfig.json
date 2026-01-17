@@ -26,7 +26,9 @@
     "types": ["jest", "node"],
     "paths": {
       "src/*": ["./src/*"],
-      "test/*": ["./test/*"]
+      "test/*": ["./test/*"],
+      "twenty-shared": ["../twenty-shared/dist/index.d.ts"],
+      "twenty-shared/*": ["../twenty-shared/dist/*/index.d.ts"]
     }
   },
   "ts-node": {

@@ -8,6 +8,7 @@ import { type WorkflowHttpRequestActionSettings } from 'src/modules/workflow/wor
 import { type WorkflowIfElseActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/types/workflow-if-else-action-settings.type';
 import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import { type WorkflowSendEmailActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-settings.type';
+import { type WorkflowN8nActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/n8n/types/workflow-n8n-action-settings.type';
 import {
   type WorkflowCreateRecordActionSettings,
   type WorkflowDeleteRecordActionSettings,
@@ -42,4 +43,5 @@ export type WorkflowActionSettings =
   | WorkflowHttpRequestActionSettings
   | WorkflowAiAgentActionSettings
   | WorkflowDelayActionSettings
-  | WorkflowIteratorActionSettings;
+  | WorkflowIteratorActionSettings
+  | WorkflowN8nActionSettings;

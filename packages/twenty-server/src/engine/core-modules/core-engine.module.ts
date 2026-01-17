@@ -69,6 +69,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 
+import { AILayerModule } from './ai-layer/ai-layer.module';
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
@@ -156,6 +157,7 @@ import { FileModule } from './file/file.module';
     TrashCleanupModule,
     DashboardModule,
     RowLevelPermissionModule,
+    AILayerModule,
   ],
   exports: [
     AuditModule,
@@ -168,6 +170,7 @@ import { FileModule } from './file/file.module';
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
     ImapSmtpCaldavModule,
+    AILayerModule,
   ],
 })
 export class CoreEngineModule {}

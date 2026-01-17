@@ -449,9 +449,11 @@ ${tools
   private getNativeWebSearchTool(provider: ModelProvider): ToolSet {
     switch (provider) {
       case ModelProvider.ANTHROPIC:
-        return { web_search: anthropic.tools.webSearch_20250305() };
+        // Native provider tools have specific types that don't match generic ToolSet
+        // but work correctly at runtime
+        return { web_search: anthropic.tools.webSearch_20250305() } as ToolSet;
       case ModelProvider.OPENAI:
-        return { web_search: openai.tools.webSearch() };
+        return { web_search: openai.tools.webSearch() } as ToolSet;
       default:
         // Other providers don't have native web search
         return {};

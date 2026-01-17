@@ -136,4 +136,10 @@ export const CONFIG_VARIABLES_GROUP_METADATA: Record<
     description: 'Configure AWS SES settings for emailing domains',
     isHiddenOnLoad: true,
   },
+  [ConfigVariablesGroup.AI_LAYER_CONFIG]: {
+    position: 2200,
+    description:
+      'Configure AI Layer integration for workforce management features. Connect to external AI Layer services for context, knowledge, and workflow automation.',
+    isHiddenOnLoad: true,
+  },
 };

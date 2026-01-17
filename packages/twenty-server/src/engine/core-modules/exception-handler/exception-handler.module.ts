@@ -1,5 +1,6 @@
 import { type DynamicModule, Global, Module } from '@nestjs/common';
 
+import { AILayerModule } from 'src/engine/core-modules/ai-layer';
 import { ExceptionHandlerConsoleDriver } from 'src/engine/core-modules/exception-handler/drivers/console.driver';
 import { ExceptionHandlerSentryDriver } from 'src/engine/core-modules/exception-handler/drivers/sentry.driver';
 import { EXCEPTION_HANDLER_DRIVER } from 'src/engine/core-modules/exception-handler/exception-handler.constants';
@@ -14,6 +15,7 @@ import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handle
 
 @Global()
 @Module({
+  imports: [AILayerModule],
   providers: [ExceptionHandlerService, HttpExceptionHandlerService],
   exports: [ExceptionHandlerService, HttpExceptionHandlerService],
 })

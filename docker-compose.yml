@@ -36,20 +36,18 @@ services:
       # AUTH_MICROSOFT_CALLBACK_URL: ${AUTH_MICROSOFT_CALLBACK_URL}
       # AUTH_MICROSOFT_APIS_CALLBACK_URL: ${AUTH_MICROSOFT_APIS_CALLBACK_URL}
 
-      # EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS:-contact@yourdomain.com}
-      # EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-"John from YourDomain"}
-      # EMAIL_SYSTEM_ADDRESS: ${EMAIL_SYSTEM_ADDRESS:-system@yourdomain.com}
-      # EMAIL_DRIVER: ${EMAIL_DRIVER:-smtp}
-      # EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST:-smtp.gmail.com}
-      # EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT:-465}
-      # EMAIL_SMTP_USER: ${EMAIL_SMTP_USER:-}
-      # EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
+      # Email via Mailpit (local dev email testing)
+      EMAIL_FROM_ADDRESS: noreply@smartout.local
+      EMAIL_FROM_NAME: "SmartOut CRM"
+      EMAIL_SYSTEM_ADDRESS: system@smartout.local
+      EMAIL_DRIVER: smtp
+      EMAIL_SMTP_HOST: mailpit
+      EMAIL_SMTP_PORT: 1025
+      EMAIL_SMTP_USER: ""
+      EMAIL_SMTP_PASSWORD: ""
+      EMAIL_SMTP_ENCRYPTION: ""
 
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+    # depends_on removed - using dev stack's db/redis
     healthcheck:
       test: curl --fail http://localhost:3000/healthz
       interval: 5s
@@ -90,49 +88,79 @@ services:
       # AUTH_MICROSOFT_CALLBACK_URL: ${AUTH_MICROSOFT_CALLBACK_URL}
       # AUTH_MICROSOFT_APIS_CALLBACK_URL: ${AUTH_MICROSOFT_APIS_CALLBACK_URL}
 
-      # EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS:-contact@yourdomain.com}
-      # EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-"John from YourDomain"}
-      # EMAIL_SYSTEM_ADDRESS: ${EMAIL_SYSTEM_ADDRESS:-system@yourdomain.com}
-      # EMAIL_DRIVER: ${EMAIL_DRIVER:-smtp}
-      # EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST:-smtp.gmail.com}
-      # EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT:-465}
-      # EMAIL_SMTP_USER: ${EMAIL_SMTP_USER:-}
-      # EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
+      # Email via Mailpit (local dev email testing)
+      EMAIL_FROM_ADDRESS: noreply@smartout.local
+      EMAIL_FROM_NAME: "SmartOut CRM"
+      EMAIL_SYSTEM_ADDRESS: system@smartout.local
+      EMAIL_DRIVER: smtp
+      EMAIL_SMTP_HOST: mailpit
+      EMAIL_SMTP_PORT: 1025
+      EMAIL_SMTP_USER: ""
+      EMAIL_SMTP_PASSWORD: ""
+      EMAIL_SMTP_ENCRYPTION: ""
 
     depends_on:
-      db:
-        condition: service_healthy
       server:
         condition: service_healthy
     restart: always
 
-  db:
-    image: postgres:16
-    ports:
-      - "5432:5432"
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: ${PG_DATABASE_NAME:-default}
-      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
-      POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
-    healthcheck:
-      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    restart: always
+  # db and redis are provided by docker-compose.dev.yml (twenty-dev stack)
+  # Start dev stack first: docker compose -f docker-compose.dev.yml up -d
 
-  redis:
-    image: redis
-    restart: always
-    command: ["--maxmemory-policy", "noeviction"]
+  # db: (commented out - using dev stack)
+  #   image: postgres:16
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_DB: ${PG_DATABASE_NAME:-default}
+  #     POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
+  #     POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
+  #   healthcheck:
+  #     test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 10
+  #   restart: always
+
+  # redis: (commented out - using dev stack)
+  #   image: redis
+  #   restart: always
+  #   command: ["--maxmemory-policy", "noeviction"]
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 10
+
+  # Local email testing - view emails at http://localhost:8025
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    command: server /data --console-address ":9001"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "mc", "ready", "local"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 5
+    restart: always
 
 volumes:
   db-data:
   server-local-data:
+  minio-data:

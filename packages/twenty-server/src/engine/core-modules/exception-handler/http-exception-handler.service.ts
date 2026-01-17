@@ -14,6 +14,10 @@ import { QueryFailedError } from 'typeorm';
 import { type ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 import { type ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
 
+import {
+  AILayerService,
+  type AILayerCriticality,
+} from 'src/engine/core-modules/ai-layer';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
@@ -62,9 +66,34 @@ const getErrorNameFromStatusCode = (statusCode: number) => {
 export class HttpExceptionHandlerService {
   constructor(
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly aiLayerService: AILayerService,
     @Inject(REQUEST)
     private readonly request: RequestAndParams | null,
   ) {}
+
+  private async reportToAILayer(
+    exception: Error,
+    statusCode: number,
+    workspace?: ExceptionHandlerWorkspace,
+    user?: ExceptionHandlerUser,
+  ): Promise<void> {
+    const criticality: AILayerCriticality = statusCode >= 500 ? 'error' : 'warning';
+
+    await this.aiLayerService.reportError({
+      workspace_id: workspace?.id ?? 'ws_unknown',
+      profile_id: user?.id ?? 'prf_unknown',
+      error_type: exception.name || 'UnknownError',
+      error_message: exception.message,
+      criticality,
+      workflow_id: 'twenty-server',
+      workflow_name: 'HTTP Exception Handler',
+      stack_trace: exception.stack,
+      additional_context: {
+        source: 'twenty-server',
+        statusCode,
+      },
+    });
+  }
 
   handleError = (
     exception: Error | HttpException,
@@ -115,6 +144,11 @@ export class HttpExceptionHandlerService {
       user,
       workspace,
       statusCode,
+    });
+
+    // Report to AI Layer (fire-and-forget, don't block response)
+    this.reportToAILayer(exception, statusCode, workspace, user).catch(() => {
+      // Silently fail - AI Layer reporting should never block error responses
     });
 
     return response.status(statusCode).send({

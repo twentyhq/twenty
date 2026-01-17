@@ -13,6 +13,7 @@ import {
   type OPTIONS_TYPE,
 } from 'src/engine/core-modules/logger/logger.module-definition';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { AILayerLogFormatter } from 'src/engine/core-modules/logger/ai-layer-log-formatter';
 
 @Global()
 @Module({
@@ -49,9 +50,15 @@ export class LoggerModule extends ConfigurableModuleClass {
 
         const logLevels = config.logLevels ?? [];
 
+        // Use AILayerLogFormatter when AI_LAYER_LOG_FORMAT is set
+        const useAILayerFormat =
+          process.env.AI_LAYER_LOG_FORMAT?.toLowerCase() === 'json';
+
         const logger =
           config?.type === LoggerDriverType.CONSOLE
-            ? new ConsoleLogger()
+            ? useAILayerFormat
+              ? new AILayerLogFormatter(undefined, { logLevels })
+              : new ConsoleLogger()
             : undefined;
 
         logger?.setLogLevels(logLevels);

@@ -17,6 +17,7 @@ import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/ap
 import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicators/connected-account.health';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
+import { AILayerHealthIndicator } from 'src/engine/core-modules/health/indicators/ai-layer.health';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
 import { type WorkerQueueHealth } from 'src/engine/core-modules/health/types/worker-queue-health.type';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -32,6 +33,7 @@ export class AdminPanelHealthService {
     private readonly workerHealth: WorkerHealthIndicator,
     private readonly connectedAccountHealth: ConnectedAccountHealth,
     private readonly appHealth: AppHealthIndicator,
+    private readonly aiLayerHealth: AILayerHealthIndicator,
     private readonly redisClient: RedisClientService,
   ) {}
 
@@ -41,6 +43,7 @@ export class AdminPanelHealthService {
     [HealthIndicatorId.worker]: this.workerHealth,
     [HealthIndicatorId.connectedAccount]: this.connectedAccountHealth,
     [HealthIndicatorId.app]: this.appHealth,
+    [HealthIndicatorId.aiLayer]: this.aiLayerHealth,
   };
 
   private transformStatus(status: HealthIndicatorStatus) {
@@ -152,12 +155,14 @@ export class AdminPanelHealthService {
       workerResult,
       accountSyncResult,
       appResult,
+      aiLayerResult,
     ] = await Promise.allSettled([
       this.databaseHealth.isHealthy(),
       this.redisHealth.isHealthy(),
       this.workerHealth.isHealthy(),
       this.connectedAccountHealth.isHealthy(),
       this.appHealth.isHealthy(),
+      this.aiLayerHealth.isHealthy(),
     ]);
 
     return {
@@ -189,6 +194,11 @@ export class AdminPanelHealthService {
         {
           ...HEALTH_INDICATORS[HealthIndicatorId.app],
           status: this.getServiceStatus(appResult, HealthIndicatorId.app)
+            .status,
+        },
+        {
+          ...HEALTH_INDICATORS[HealthIndicatorId.aiLayer],
+          status: this.getServiceStatus(aiLayerResult, HealthIndicatorId.aiLayer)
             .status,
         },
       ],

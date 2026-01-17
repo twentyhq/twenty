@@ -33,4 +33,9 @@ export const HEALTH_INDICATORS: Record<HealthIndicatorId, HealthIndicatorInfo> =
       label: 'App',
       description: 'Workspace metadata migration status check',
     },
+    [HealthIndicatorId.aiLayer]: {
+      id: HealthIndicatorId.aiLayer,
+      label: 'AI Layer',
+      description: 'AI Layer services connectivity (ctx-mcp, kb-mcp, n8n)',
+    },
   };

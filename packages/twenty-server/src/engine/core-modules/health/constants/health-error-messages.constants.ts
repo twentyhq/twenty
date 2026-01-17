@@ -13,4 +13,8 @@ export const HEALTH_ERROR_MESSAGES = {
   CALENDAR_SYNC_CHECK_FAILED: 'Calendar sync check failed',
   CALENDAR_SYNC_HIGH_FAILURE_RATE: 'High failure rate in calendar sync jobs',
   APP_HEALTH_CHECK_FAILED: 'App health check failed',
+  AI_LAYER_TIMEOUT: 'AI Layer health check timeout',
+  AI_LAYER_CONNECTION_FAILED: 'AI Layer connection failed',
+  AI_LAYER_PARTIAL: 'AI Layer services partially unavailable',
+  AI_LAYER_ALL_SERVICES_DOWN: 'All AI Layer services are down',
 } as const;
