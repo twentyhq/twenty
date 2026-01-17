@@ -47,16 +47,22 @@ export const transformRichTextV2Value = async (
           JSON.parse(parsedValue.blocknote),
         )
       : null;
+
+    // Normalize redundant escapes: strips all slashes before newlines and collapses multi-escapes to a single slash (e.g., \\\" -> \")
+    convertedMarkdown = (convertedMarkdown as string)?.replace(
+      /\\+([ntr"'\n])|\\+/g,
+      (_: string, char: string) => (char ? (char === '\n' ? char : '\\' + char) : ''),
+    )
   } catch {
     convertedMarkdown = parsedValue.blocknote || null;
   }
 
   const afterMarkdownConversionTime = performance.now();
 
-  const convertedBlocknote = parsedValue.markdown
+  const convertedBlocknote = convertedMarkdown
     ? JSON.stringify(
         await serverBlockNoteEditor.tryParseMarkdownToBlocks(
-          parsedValue.markdown,
+          convertedMarkdown,
         ),
       )
     : null;
@@ -68,7 +74,7 @@ export const transformRichTextV2Value = async (
   );
 
   return {
-    markdown: parsedValue.markdown || convertedMarkdown,
-    blocknote: parsedValue.blocknote || convertedBlocknote,
+    markdown: convertedMarkdown || parsedValue.markdown,
+    blocknote: convertedBlocknote || parsedValue.blocknote
   };
 };
