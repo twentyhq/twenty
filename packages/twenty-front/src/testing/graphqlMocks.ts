@@ -48,7 +48,10 @@ const getRootFieldNamesFromQuery = (query: string) => {
       (definition) => definition.kind === 'OperationDefinition',
     );
 
-    if (!operationDefinition || operationDefinition.kind !== 'OperationDefinition') {
+    if (
+      !operationDefinition ||
+      operationDefinition.kind !== 'OperationDefinition'
+    ) {
       return [];
     }
 
