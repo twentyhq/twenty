@@ -175,11 +175,7 @@ print(df.head())`,
 const meta: Meta<typeof AIChatMessage> = {
   title: 'Modules/AI/AIChatMessage',
   component: AIChatMessage,
-  decorators: [
-    ComponentDecorator,
-    RootDecorator,
-    SnackBarDecorator,
-  ],
+  decorators: [ComponentDecorator, RootDecorator, SnackBarDecorator],
   parameters: {
     container: { width: 700 },
   },

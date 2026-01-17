@@ -115,10 +115,7 @@ const meta: Meta = {
   title: 'UI/Data/Field/Input/RelationOneToManyFieldInput',
   component: RelationOneToManyFieldInputWithContext,
   args: {},
-  decorators: [
-    ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
-  ],
+  decorators: [ObjectMetadataItemsDecorator, SnackBarDecorator],
   parameters: {
     clearMocks: true,
     msw: graphqlMocks,

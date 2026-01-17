@@ -10,10 +10,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 const meta: Meta<typeof SettingsRestPlayground> = {
   title: 'Pages/Settings/Playground/RestPlayground',
   component: SettingsRestPlayground,
-  decorators: [
-    ComponentDecorator,
-    ComponentWithRouterDecorator,
-  ],
+  decorators: [ComponentDecorator, ComponentWithRouterDecorator],
   parameters: {
     docs: {
       description: {

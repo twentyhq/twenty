@@ -9,10 +9,7 @@ import {
 const meta: Meta<typeof FullScreenContainer> = {
   title: 'UI/Layout/FullScreenContainer',
   component: FullScreenContainer,
-  decorators: [
-    ComponentDecorator,
-    ComponentWithRouterDecorator,
-  ],
+  decorators: [ComponentDecorator, ComponentWithRouterDecorator],
 };
 export default meta;
 
