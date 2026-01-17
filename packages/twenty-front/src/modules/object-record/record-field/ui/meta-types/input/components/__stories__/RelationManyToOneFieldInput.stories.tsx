@@ -158,7 +158,7 @@ export const Default: Story = {};
 
 export const Submit: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
 
     expect(handleSubmitMocked).toHaveBeenCalledTimes(0);
 
@@ -176,7 +176,7 @@ export const Submit: Story = {
 
 export const Cancel: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
 
     expect(handleCancelMocked).toHaveBeenCalledTimes(0);
     await canvas.findByText('Linkedin', undefined, { timeout: 3000 });

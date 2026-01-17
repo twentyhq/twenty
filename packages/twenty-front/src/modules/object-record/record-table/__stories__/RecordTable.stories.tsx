@@ -40,7 +40,7 @@ type Story = StoryObj<typeof RecordTableEmptyStateNoGroupNoRecordAtAll>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
 
     await canvas.findByText('Linkedin', {}, { timeout: 3000 });
   },
@@ -48,14 +48,15 @@ export const Default: Story = {
 
 export const HeaderMenuOpen: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
     await canvas.findAllByText('Linkedin', {}, { timeout: 3000 });
 
     const headerMenuButton = await canvas.findByText('Domain Name');
 
     await userEvent.click(headerMenuButton);
 
-    await canvas.findByText('Move right');
+    await body.findByText('Move right');
   },
 };
 
@@ -66,7 +67,7 @@ export const ScrolledLeft: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
     await canvas.findAllByText('Linkedin', {}, { timeout: 3000 });
 
     const scrollWrapper = canvasElement.ownerDocument.body.querySelector(
@@ -96,7 +97,7 @@ export const ScrolledBottom: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
     await canvas.findAllByText('Linkedin', {}, { timeout: 3000 });
 
     const scrollWrapper = canvasElement.ownerDocument.body.querySelector(

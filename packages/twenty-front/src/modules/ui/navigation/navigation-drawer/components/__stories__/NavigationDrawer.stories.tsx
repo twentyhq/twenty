@@ -122,7 +122,7 @@ export const Default: Story = {
     ),
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Workspace')).toBeInTheDocument();
   },
@@ -201,7 +201,7 @@ export const Settings: Story = {
     ),
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
 
     expect(await canvas.findByText('User')).toBeInTheDocument();
   },

@@ -29,7 +29,7 @@ type Story = StoryObj<typeof KeyboardShortcutMenu>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Keyboard shortcuts')).toBeInTheDocument();
   },

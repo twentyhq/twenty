@@ -35,7 +35,8 @@ export const Default: Story = {};
 
 export const WithOpenMonthSelect: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
 
     const monthSelect = await canvas.findByText('January');
 
@@ -54,10 +55,10 @@ export const WithOpenMonthSelect: Story = {
       'November',
       'December',
     ]) {
-      expect(await canvas.findByText(monthLabel)).toBeInTheDocument();
+      expect(await body.findByText(monthLabel)).toBeInTheDocument();
     }
 
-    await userEvent.click(await canvas.findByText('February'));
+    await userEvent.click(await body.findByText('February'));
 
     expect(await canvas.findByText('February')).toBeInTheDocument();
   },
@@ -65,17 +66,18 @@ export const WithOpenMonthSelect: Story = {
 
 export const WithOpenYearSelect: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
 
     const yearSelect = await canvas.findByText('2023');
 
     await userEvent.click(yearSelect);
 
     for (const yearLabel of ['2024', '2025', '2026']) {
-      expect(await canvas.findByText(yearLabel)).toBeInTheDocument();
+      expect(await body.findByText(yearLabel)).toBeInTheDocument();
     }
 
-    await userEvent.click(await canvas.findByText('2024'));
+    await userEvent.click(await body.findByText('2024'));
 
     expect(await canvas.findByText('2024')).toBeInTheDocument();
   },

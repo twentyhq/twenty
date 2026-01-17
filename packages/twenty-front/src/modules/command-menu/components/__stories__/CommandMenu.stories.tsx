@@ -117,7 +117,7 @@ type Story = StoryObj<typeof CommandMenu>;
 
 export const DefaultWithoutSearch: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Go to People')).toBeVisible();
     expect(await canvas.findByText('Go to Opportunities')).toBeVisible();
@@ -129,7 +129,7 @@ export const DefaultWithoutSearch: Story = {
 
 export const LimitedPermissions: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
     expect(await canvas.findByText('Go to People')).toBeVisible();
     expect(canvas.queryByText('Go to Opportunities')).not.toBeInTheDocument();
     expect(canvas.queryByText('Go to Tasks')).not.toBeInTheDocument();
@@ -152,7 +152,7 @@ export const LimitedPermissions: Story = {
 
 export const MatchingNavigate: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
     const searchInput = await canvas.findByTestId(
       COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
     );
@@ -164,7 +164,7 @@ export const MatchingNavigate: Story = {
 
 export const MatchingNavigateShortcuts: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
     const searchInput = await canvas.findByTestId(
       COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
     );
@@ -191,7 +191,7 @@ export const MatchingNavigateShortcuts: Story = {
 
 export const NoResultsSearchFallback: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
     const searchInput = await canvas.findByTestId(
       COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
     );

@@ -41,7 +41,7 @@ export const CustomObject: Story = {
 
 export const ObjectTabs: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
 
     const fieldsTab = await canvas.findByTestId('tab-fields');
     const settingsTab = await canvas.findByTestId('tab-settings');
