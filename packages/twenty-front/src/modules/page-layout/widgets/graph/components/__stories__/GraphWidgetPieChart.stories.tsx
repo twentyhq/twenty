@@ -33,7 +33,6 @@ const meta: Meta<typeof GraphWidgetPieChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetPieChart',
   component: GraphWidgetPieChart,
   decorators: [
-    ,
     ObjectMetadataItemsDecorator,
     (Story) => (
       <GraphWidgetTestWrapper>
@@ -384,7 +383,6 @@ export const Storage: Story = {
 
 export const Catalog: Story = {
   decorators: [
-    ,
     ObjectMetadataItemsDecorator,
     (Story) => (
       <GraphWidgetTestWrapper>

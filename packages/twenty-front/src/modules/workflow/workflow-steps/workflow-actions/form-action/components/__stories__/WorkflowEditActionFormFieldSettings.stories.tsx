@@ -13,7 +13,6 @@ const meta: Meta<typeof WorkflowEditActionFormFieldSettings> = {
   decorators: [
     WorkflowStepActionDrawerDecorator,
     ComponentDecorator,
-    ,
     ObjectMetadataItemsDecorator,
   ],
 };

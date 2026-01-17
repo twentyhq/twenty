@@ -23,7 +23,6 @@ const meta: Meta = {
     ContextStoreDecorator,
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
-    ,
   ],
   args: {
     recordTableId: `companies-${mockedViewsData[0].id}`,

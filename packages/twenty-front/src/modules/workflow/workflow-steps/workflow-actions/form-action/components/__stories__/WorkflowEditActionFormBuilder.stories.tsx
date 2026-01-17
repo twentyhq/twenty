@@ -60,7 +60,6 @@ const meta: Meta<typeof WorkflowEditActionFormBuilder> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     RouterDecorator,
-    ,
     ObjectMetadataItemsDecorator,
   ],
 };

@@ -33,7 +33,6 @@ const meta: Meta<typeof SettingsDataModelFieldSettingsFormCard> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     FormProviderDecorator,
-    ,
   ],
   args: {
     existingFieldMetadataId: fieldMetadataItem.id,

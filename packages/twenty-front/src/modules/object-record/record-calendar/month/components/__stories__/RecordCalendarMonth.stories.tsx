@@ -140,7 +140,6 @@ const meta: Meta<typeof RecordCalendarMonth> = {
     SnackBarDecorator,
     ComponentDecorator,
     IconsProviderDecorator,
-    ,
     RouterDecorator,
   ],
 };

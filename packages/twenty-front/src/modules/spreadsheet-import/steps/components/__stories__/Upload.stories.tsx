@@ -36,7 +36,6 @@ const meta: Meta<typeof UploadStep> = {
       </RecoilRoot>
     ),
     SnackBarDecorator,
-    ,
   ],
 };
 

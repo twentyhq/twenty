@@ -33,7 +33,6 @@ const meta: Meta<typeof SelectHeaderStep> = {
         <Story />
       </RecoilRoot>
     ),
-    ,
   ],
 };
 

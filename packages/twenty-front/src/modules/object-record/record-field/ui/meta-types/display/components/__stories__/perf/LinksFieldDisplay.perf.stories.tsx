@@ -23,7 +23,6 @@ const FieldFocusEffect = () => {
 const meta: Meta = {
   title: 'UI/Data/Field/Display/LinksFieldDisplay',
   decorators: [
-    ,
     MemoryRouterDecorator,
     getFieldDecorator('company', 'domainName', {
       primaryLinkUrl: 'https://www.google.com',

@@ -63,7 +63,6 @@ const meta: Meta<typeof DashboardWidgetPlaceholder> = {
       );
     },
     ComponentDecorator,
-    ,
   ],
   parameters: {
     layout: 'centered',

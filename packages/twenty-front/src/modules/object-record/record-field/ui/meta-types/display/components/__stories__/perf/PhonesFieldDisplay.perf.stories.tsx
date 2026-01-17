@@ -13,7 +13,6 @@ const meta: Meta = {
     MemoryRouterDecorator,
     getFieldDecorator('person', 'phones'),
     ComponentDecorator,
-    ,
     SnackBarDecorator,
   ],
   component: PhonesFieldDisplay,

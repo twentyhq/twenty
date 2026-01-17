@@ -13,7 +13,6 @@ const meta: Meta<typeof SettingsAccountsCalendarChannelsGeneral> = {
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
-    ,
   ],
 };
 

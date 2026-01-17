@@ -20,7 +20,6 @@ const meta: Meta<typeof WorkflowEditActionFormFiller> = {
   decorators: [
     WorkflowStepActionDrawerDecorator,
     ComponentDecorator,
-    ,
     WorkflowStepDecorator,
     RouterDecorator,
     ObjectMetadataItemsDecorator,

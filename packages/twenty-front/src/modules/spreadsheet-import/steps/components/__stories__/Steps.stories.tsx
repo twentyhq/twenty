@@ -12,7 +12,6 @@ const meta: Meta<typeof SpreadsheetImportStepperContainer> = {
   component: SpreadsheetImportStepperContainer,
   decorators: [
     SnackBarDecorator,
-    ,
     ObjectMetadataItemsDecorator,
     ContextStoreDecorator,
   ],

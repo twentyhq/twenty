@@ -37,7 +37,6 @@ const meta: Meta<typeof SingleRecordPicker> = {
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
-    ,
   ],
   args: {
     objectNameSingulars: [CoreObjectNameSingular.WorkspaceMember],

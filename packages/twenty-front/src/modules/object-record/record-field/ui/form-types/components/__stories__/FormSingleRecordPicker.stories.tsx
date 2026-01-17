@@ -19,7 +19,6 @@ const meta: Meta<typeof FormSingleRecordPicker> = {
   args: {},
   argTypes: {},
   decorators: [
-    ,
     ObjectMetadataItemsDecorator,
     ComponentDecorator,
     WorkspaceDecorator,

@@ -124,7 +124,6 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
     SnackBarDecorator,
     ComponentDecorator,
     IconsProviderDecorator,
-    ,
   ],
 };
 

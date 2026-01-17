@@ -16,7 +16,6 @@ const meta: Meta<typeof TaskList> = {
   decorators: [
     ComponentDecorator,
     ContextStoreDecorator,
-    ,
     MemoryRouterDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

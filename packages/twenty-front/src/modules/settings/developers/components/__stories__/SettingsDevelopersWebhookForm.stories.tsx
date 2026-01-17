@@ -14,7 +14,6 @@ const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
   component: SettingsDevelopersWebhookForm,
   decorators: [
     ComponentDecorator,
-    ,
     RouterDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

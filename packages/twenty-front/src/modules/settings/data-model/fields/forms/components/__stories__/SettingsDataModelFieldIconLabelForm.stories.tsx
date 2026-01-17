@@ -24,7 +24,6 @@ const meta: Meta<typeof SettingsDataModelFieldIconLabelForm> = {
     FormProviderDecorator,
     IconsProviderDecorator,
     ComponentDecorator,
-    ,
   ],
 };
 

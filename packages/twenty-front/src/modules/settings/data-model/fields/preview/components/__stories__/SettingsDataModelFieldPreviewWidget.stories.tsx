@@ -25,11 +25,9 @@ const meta: Meta<typeof SettingsDataModelFieldPreviewWidget> = {
     'Modules/Settings/DataModel/Fields/Preview/SettingsDataModelFieldPreviewWidget',
   component: SettingsDataModelFieldPreviewWidget,
   decorators: [
-    ,
     MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    ,
     SnackBarDecorator,
   ],
   args: {

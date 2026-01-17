@@ -133,7 +133,6 @@ const meta: Meta<typeof WorkflowEditActionServerlessFunction> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
-    ,
   ],
 };
 

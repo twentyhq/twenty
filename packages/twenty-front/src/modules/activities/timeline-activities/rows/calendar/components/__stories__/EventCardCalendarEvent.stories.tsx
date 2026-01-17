@@ -10,7 +10,6 @@ const meta: Meta<typeof EventCardCalendarEvent> = {
   title: 'Modules/TimelineActivities/Rows/CalendarEvent/EventCardCalendarEvent',
   component: EventCardCalendarEvent,
   decorators: [
-    ,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

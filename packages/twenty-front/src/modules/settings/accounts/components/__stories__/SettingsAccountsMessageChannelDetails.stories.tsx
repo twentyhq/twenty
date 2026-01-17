@@ -16,7 +16,6 @@ const meta: Meta<typeof SettingsAccountsMessageChannelDetails> = {
   component: SettingsAccountsMessageChannelDetails,
   decorators: [
     ComponentDecorator,
-    ,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
   ],

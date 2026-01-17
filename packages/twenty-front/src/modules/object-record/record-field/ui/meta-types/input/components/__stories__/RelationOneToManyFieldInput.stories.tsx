@@ -118,7 +118,6 @@ const meta: Meta = {
   decorators: [
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
-    ,
   ],
   parameters: {
     clearMocks: true,

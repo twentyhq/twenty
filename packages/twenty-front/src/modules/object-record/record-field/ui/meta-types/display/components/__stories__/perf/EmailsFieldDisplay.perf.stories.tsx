@@ -10,7 +10,6 @@ import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 const meta: Meta = {
   title: 'UI/Data/Field/Display/EmailsFieldDisplay',
   decorators: [
-    ,
     MemoryRouterDecorator,
     getFieldDecorator('person', 'emails', {
       primaryEmail: 'test@test.com',

@@ -12,7 +12,6 @@ const meta: Meta<typeof SettingsRestPlayground> = {
   component: SettingsRestPlayground,
   decorators: [
     ComponentDecorator,
-    ,
     ComponentWithRouterDecorator,
   ],
   parameters: {

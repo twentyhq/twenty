@@ -17,7 +17,6 @@ const meta: Meta<typeof CalendarEventsCard> = {
   title: 'Modules/Activities/Calendar/CalendarEventsCard',
   component: CalendarEventsCard,
   decorators: [
-    ,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

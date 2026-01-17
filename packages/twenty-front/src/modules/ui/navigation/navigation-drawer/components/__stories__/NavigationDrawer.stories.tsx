@@ -51,7 +51,6 @@ const meta: Meta<typeof NavigationDrawer> = {
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
     PrefetchLoadedDecorator,
-    ,
     (Story) => {
       const setCurrentWorkspaceMember = useSetRecoilState(
         currentWorkspaceMemberState,

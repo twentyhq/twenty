@@ -11,7 +11,6 @@ const meta: Meta<typeof FullScreenContainer> = {
   component: FullScreenContainer,
   decorators: [
     ComponentDecorator,
-    ,
     ComponentWithRouterDecorator,
   ],
 };

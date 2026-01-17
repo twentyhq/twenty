@@ -20,7 +20,6 @@ const meta: Meta<typeof WorkflowStepFilterAddRootStepFilterButton> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     WorkspaceDecorator,
-    ,
     WorkflowStepFilterDecorator,
   ],
 };

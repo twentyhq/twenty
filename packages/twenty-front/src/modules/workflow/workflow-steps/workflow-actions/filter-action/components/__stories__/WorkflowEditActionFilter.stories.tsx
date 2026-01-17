@@ -86,7 +86,6 @@ const meta: Meta<typeof WorkflowEditActionFilter> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     WorkspaceDecorator,
-    ,
   ],
 };
 

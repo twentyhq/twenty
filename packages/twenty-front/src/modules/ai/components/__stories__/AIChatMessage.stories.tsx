@@ -178,7 +178,6 @@ const meta: Meta<typeof AIChatMessage> = {
   decorators: [
     ComponentDecorator,
     RootDecorator,
-    ,
     SnackBarDecorator,
   ],
   parameters: {

@@ -26,7 +26,6 @@ const meta: Meta<typeof SettingsDataModelObjectAboutForm> = {
         <Story />
       </StyledContainer>
     ),
-    ,
     FormProviderDecorator,
     IconsProviderDecorator,
     ComponentDecorator,

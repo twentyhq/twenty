@@ -44,7 +44,6 @@ const meta: Meta<typeof EventRowMainObjectUpdated> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     RouterDecorator,
-    ,
   ],
 };
 

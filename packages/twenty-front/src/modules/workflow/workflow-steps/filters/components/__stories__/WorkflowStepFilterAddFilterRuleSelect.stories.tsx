@@ -30,7 +30,6 @@ const meta: Meta<typeof WorkflowStepFilterAddFilterRuleSelect> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     WorkspaceDecorator,
-    ,
     WorkflowStepFilterDecorator,
   ],
 };

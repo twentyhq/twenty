@@ -43,7 +43,6 @@ const meta: Meta<typeof WorkflowStepFilterValueInput> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     WorkspaceDecorator,
-    ,
     WorkflowStepFilterDecorator,
   ],
 };

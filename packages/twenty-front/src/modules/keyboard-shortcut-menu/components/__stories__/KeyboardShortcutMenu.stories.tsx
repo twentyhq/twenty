@@ -12,7 +12,6 @@ const meta: Meta<typeof KeyboardShortcutMenu> = {
   title: 'Modules/KeyboardShortcutMenu/KeyboardShortcutMenu',
   component: KeyboardShortcutMenu,
   decorators: [
-    ,
     (Story) => {
       const { openKeyboardShortcutMenu } = useKeyboardShortcutMenu();
       useEffect(() => {

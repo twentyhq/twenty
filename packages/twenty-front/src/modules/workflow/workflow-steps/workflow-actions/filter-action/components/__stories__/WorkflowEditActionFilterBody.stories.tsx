@@ -50,7 +50,6 @@ const meta: Meta<typeof WorkflowEditActionFilterBody> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     WorkspaceDecorator,
-    ,
     WorkflowStepFilterDecorator,
   ],
 };

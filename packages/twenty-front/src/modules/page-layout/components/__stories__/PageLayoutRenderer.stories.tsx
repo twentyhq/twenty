@@ -270,7 +270,6 @@ const meta: Meta<typeof PageLayoutRenderer> = {
   title: 'Modules/PageLayout/PageLayoutRenderer',
   component: PageLayoutRenderer,
   decorators: [
-    ,
     (Story) => (
       <MemoryRouter>
         <JestMetadataAndApolloMocksWrapper>

@@ -24,7 +24,6 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
   title: 'Modules/ActionMenu/RecordIndexActionMenuDropdown',
   component: RecordIndexActionMenuDropdown,
   decorators: [
-    ,
     (Story) => (
       <RecoilRoot
         initializeState={({ set }) => {

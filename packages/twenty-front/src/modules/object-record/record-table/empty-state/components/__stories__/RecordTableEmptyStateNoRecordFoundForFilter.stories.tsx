@@ -31,7 +31,6 @@ const meta: Meta = {
     ContextStoreDecorator,
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
-    ,
     ScrollWrapperDecorator,
   ],
   parameters: {

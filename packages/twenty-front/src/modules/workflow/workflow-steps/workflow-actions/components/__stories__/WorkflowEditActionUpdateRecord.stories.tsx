@@ -64,7 +64,6 @@ const meta: Meta<typeof WorkflowEditActionUpdateRecord> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
-    ,
   ],
 };
 

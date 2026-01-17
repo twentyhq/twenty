@@ -46,7 +46,6 @@ const meta: Meta<typeof WorkflowEditActionCreateRecord> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     WorkspaceDecorator,
-    ,
   ],
 };
 

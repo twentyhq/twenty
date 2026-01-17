@@ -13,7 +13,6 @@ const meta: Meta<typeof EventCardMessage> = {
   title: 'Modules/TimelineActivities/Rows/Message/EventCardMessage',
   component: EventCardMessage,
   decorators: [
-    ,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

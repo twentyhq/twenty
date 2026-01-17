@@ -9,7 +9,6 @@ const meta: Meta<typeof GraphWidgetLineChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetLineChart',
   component: GraphWidgetLineChart,
   decorators: [
-    ,
     (Story) => (
       <GraphWidgetTestWrapper>
         <Story />

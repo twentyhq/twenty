@@ -68,7 +68,6 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
-    ,
     RootDecorator,
   ],
   args: {

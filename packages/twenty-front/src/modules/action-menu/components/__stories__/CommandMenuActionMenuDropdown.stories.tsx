@@ -23,7 +23,6 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
   title: 'Modules/ActionMenu/CommandMenuActionMenuDropdown',
   component: CommandMenuActionMenuDropdown,
   decorators: [
-    ,
     (Story) => (
       <RecoilRoot
         initializeState={({ set }) => {

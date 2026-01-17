@@ -94,7 +94,6 @@ const meta: Meta<typeof WorkflowEditActionSendEmail> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
-    ,
   ],
 };
 

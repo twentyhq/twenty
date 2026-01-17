@@ -77,7 +77,6 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     MemoryRouterDecorator,
-    ,
   ],
   parameters: {
     msw: graphqlMocks,

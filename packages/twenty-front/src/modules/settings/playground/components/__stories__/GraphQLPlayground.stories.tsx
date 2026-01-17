@@ -25,7 +25,6 @@ const meta: Meta<typeof GraphQLPlayground> = {
   component: GraphQLPlayground,
   decorators: [
     ComponentDecorator,
-    ,
     ComponentWithRouterDecorator,
   ],
   parameters: {

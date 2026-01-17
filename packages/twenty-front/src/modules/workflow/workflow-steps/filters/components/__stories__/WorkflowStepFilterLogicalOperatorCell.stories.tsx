@@ -37,7 +37,6 @@ const meta: Meta<typeof WorkflowStepFilterLogicalOperatorCell> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     WorkspaceDecorator,
-    ,
     WorkflowStepFilterDecorator,
   ],
 };

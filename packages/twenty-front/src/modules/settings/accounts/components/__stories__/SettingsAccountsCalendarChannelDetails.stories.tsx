@@ -12,7 +12,6 @@ const meta: Meta<typeof SettingsAccountsCalendarChannelDetails> = {
   component: SettingsAccountsCalendarChannelDetails,
   decorators: [
     ComponentDecorator,
-    ,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
   ],

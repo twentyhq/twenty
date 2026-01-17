@@ -30,7 +30,6 @@ const meta: Meta<typeof SelectSheetStep> = {
         <Story />
       </RecoilRoot>
     ),
-    ,
   ],
 };
 

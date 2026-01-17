@@ -83,7 +83,6 @@ const meta: Meta<typeof WorkflowEditActionHttpRequest> = {
     ComponentWithRouterDecorator,
     SnackBarDecorator,
     WorkspaceDecorator,
-    ,
     ObjectMetadataItemsDecorator,
   ],
 };

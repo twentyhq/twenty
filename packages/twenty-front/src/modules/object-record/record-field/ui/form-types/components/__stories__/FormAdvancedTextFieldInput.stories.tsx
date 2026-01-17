@@ -100,7 +100,6 @@ const meta: Meta<typeof FormAdvancedTextFieldInput> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
-    ,
   ],
 };
 

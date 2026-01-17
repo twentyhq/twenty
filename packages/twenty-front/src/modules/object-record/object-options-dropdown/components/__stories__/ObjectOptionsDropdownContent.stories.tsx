@@ -30,7 +30,6 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
     'Modules/ObjectRecord/ObjectOptionsDropdown/ObjectOptionsDropdownContent',
   component: ObjectOptionsDropdownContent,
   decorators: [
-    ,
     (Story) => {
       const setObjectMetadataItems = useSetRecoilState(
         objectMetadataItemsState,

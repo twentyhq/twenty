@@ -74,7 +74,6 @@ const meta: Meta<typeof EditorWrapper> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
-    ,
   ],
 };
 

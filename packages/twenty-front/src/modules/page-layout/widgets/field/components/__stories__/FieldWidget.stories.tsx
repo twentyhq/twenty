@@ -305,7 +305,6 @@ const meta: Meta<typeof FieldWidget> = {
   component: FieldWidget,
   decorators: [
     ComponentDecorator,
-    ,
     ChipGeneratorsDecorator,
     (Story) => (
       <MemoryRouter>

@@ -231,7 +231,6 @@ const meta: Meta<typeof WidgetRenderer> = {
   title: 'Modules/PageLayout/Widgets/WidgetRenderer',
   component: WidgetRenderer,
   decorators: [
-    ,
     ChipGeneratorsDecorator,
     (Story) => (
       <MemoryRouter>

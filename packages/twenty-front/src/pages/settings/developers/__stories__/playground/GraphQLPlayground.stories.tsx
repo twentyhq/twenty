@@ -12,7 +12,6 @@ const meta: Meta<any> = {
   component: SettingsGraphQLPlayground,
   decorators: [
     ComponentDecorator,
-    ,
     ComponentWithRouterDecorator,
   ],
   parameters: {

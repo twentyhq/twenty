@@ -28,7 +28,6 @@ const meta: Meta<typeof TaskGroups> = {
     ComponentWithRouterDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
-    ,
   ],
 };
 

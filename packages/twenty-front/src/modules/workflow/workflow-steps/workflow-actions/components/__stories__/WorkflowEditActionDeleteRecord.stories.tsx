@@ -51,7 +51,6 @@ const meta: Meta<typeof WorkflowEditActionDeleteRecord> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
-    ,
   ],
 };
 

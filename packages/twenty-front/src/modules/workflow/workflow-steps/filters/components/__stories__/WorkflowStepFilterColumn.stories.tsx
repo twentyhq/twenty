@@ -44,7 +44,6 @@ const meta: Meta<typeof WorkflowStepFilterColumn> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     WorkspaceDecorator,
-    ,
     WorkflowStepFilterDecorator,
   ],
 };
