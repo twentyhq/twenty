@@ -56,7 +56,7 @@ export const transformRichTextV2Value = async (
           if (char === '\n') return '\n';
           if (!char) return '';
 
-          const slashCount = match.length;
+          const slashCount = match.length - 1;
 
           // Known escapes: reduce to exactly one slash
           if (/[ntr"']/.test(char)) return '\\' + char;
