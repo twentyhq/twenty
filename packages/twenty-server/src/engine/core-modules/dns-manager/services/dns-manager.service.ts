@@ -30,30 +30,14 @@ export class DnsManagerService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainServerConfigService: DomainServerConfigService,
   ) {
-    if (this.isCloudflareConfigured()) {
+    if (this.twentyConfigService.get('CLOUDFLARE_API_KEY')) {
       this.cloudflareClient = new Cloudflare({
         apiToken: this.twentyConfigService.get('CLOUDFLARE_API_KEY'),
       });
     }
   }
 
-  private isCloudflareConfigured(): boolean {
-    return (
-      !!this.twentyConfigService.get('CLOUDFLARE_API_KEY') &&
-      (!!this.twentyConfigService.get('CLOUDFLARE_ZONE_ID') ||
-        !!this.twentyConfigService.get('CLOUDFLARE_PUBLIC_DOMAIN_ZONE_ID'))
-    );
-  }
-
   async registerHostname(customDomain: string, options?: DnsManagerOptions) {
-    if (!this.isCloudflareConfigured()) {
-      // Return manual DNS configuration when Cloudflare is not configured
-      return {
-        id: 'manual-dns',
-        hostname: customDomain,
-      };
-    }
-
     dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     if (isDefined(await this.getHostnameId(customDomain, options))) {
@@ -86,32 +70,6 @@ export class DnsManagerService {
           userFriendlyMessage: msg`Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable`,
         },
       );
-    }
-
-    // Return manual DNS instructions when Cloudflare is not configured
-    if (!this.isCloudflareConfigured()) {
-      return {
-        id: 'manual-dns',
-        domain: domain,
-        records: [
-          {
-            validationType: 'redirection' as const,
-            type: 'cname',
-            status: 'pending',
-            key: domain,
-            value: options?.isPublicDomain
-              ? this.domainServerConfigService.getPublicDomainUrl().hostname
-              : this.domainServerConfigService.getBaseUrl().hostname,
-          },
-          {
-            validationType: 'ssl' as const,
-            type: 'cname',
-            status: 'pending',
-            key: `_acme-challenge.${domain}`,
-            value: `Please configure your SSL certificate manually.`,
-          },
-        ],
-      };
     }
 
     const customHostname = await this.getHostnameDetails(domain, options);
@@ -158,10 +116,6 @@ export class DnsManagerService {
     toHostname: string,
     options?: DnsManagerOptions,
   ) {
-    if (!this.isCloudflareConfigured()) {
-      return this.registerHostname(toHostname, options);
-    }
-
     dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     const fromCustomHostnameId = await this.getHostnameId(
@@ -177,10 +131,6 @@ export class DnsManagerService {
   }
 
   async refreshHostname(hostname: string, options?: DnsManagerOptions) {
-    if (!this.isCloudflareConfigured()) {
-      return this.getHostnameWithRecords(hostname, options);
-    }
-
     dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     const publicDomainWithRecords = await this.getHostnameWithRecords(
@@ -202,10 +152,6 @@ export class DnsManagerService {
   }
 
   async deleteHostnameSilently(hostname: string, options?: DnsManagerOptions) {
-    if (!this.isCloudflareConfigured()) {
-      return; // No-op when Cloudflare is not configured
-    }
-
     dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     try {
@@ -220,11 +166,6 @@ export class DnsManagerService {
   }
 
   async isHostnameWorking(hostname: string, options?: DnsManagerOptions) {
-    if (!this.isCloudflareConfigured()) {
-      // In manual mode, assume working (user is responsible for DNS)
-      return true;
-    }
-
     const hostnameDetails = await this.getHostnameDetails(hostname, options);
 
     if (!isDefined(hostnameDetails)) {

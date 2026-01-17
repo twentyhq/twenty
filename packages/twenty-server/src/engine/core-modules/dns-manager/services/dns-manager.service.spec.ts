@@ -70,11 +70,7 @@ describe('DnsManagerService', () => {
   it('should initialize cloudflareClient when CLOUDFLARE_API_KEY is defined', () => {
     const mockApiKey = 'test-api-key';
 
-    jest.spyOn(twentyConfigService, 'get').mockImplementation((key: string) => {
-      if (key === 'CLOUDFLARE_API_KEY') return mockApiKey;
-      if (key === 'CLOUDFLARE_ZONE_ID') return 'test-zone-id';
-      return undefined;
-    });
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue(mockApiKey);
 
     const instance = new DnsManagerService(twentyConfigService, {} as any);
 
@@ -83,20 +79,9 @@ describe('DnsManagerService', () => {
     expect(instance.cloudflareClient).toBeDefined();
   });
 
-  it('should not initialize cloudflareClient when CLOUDFLARE_API_KEY is not defined', () => {
-    jest.spyOn(twentyConfigService, 'get').mockReturnValue(undefined);
-
-    const instance = new DnsManagerService(twentyConfigService, {} as any);
-
-    expect(Cloudflare).not.toHaveBeenCalled();
-    expect(instance.cloudflareClient).toBeUndefined();
-  });
-
   describe('registerHostname', () => {
     it('should throw an error when the hostname is already registered', async () => {
       const customDomain = 'example.com';
-
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
 
       jest
         .spyOn(dnsManagerService, 'getHostnameId')
@@ -136,59 +121,9 @@ describe('DnsManagerService', () => {
         ssl: expect.any(Object),
       });
     });
-
-    it('should return manual DNS config when Cloudflare is not configured', async () => {
-      const customDomain = 'example.com';
-
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue(undefined);
-      (dnsManagerService as any).cloudflareClient = undefined;
-
-      const result = await dnsManagerService.registerHostname(customDomain);
-
-      expect(result).toEqual({
-        id: 'manual-dns',
-        hostname: customDomain,
-      });
-    });
   });
 
   describe('getHostnameWithRecords', () => {
-    it('should return manual DNS records when Cloudflare is not configured', async () => {
-      const customDomain = 'example.com';
-
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue(undefined);
-      jest
-        .spyOn(domainServerConfigService, 'getBaseUrl')
-        .mockReturnValue(new URL('https://base.domain'));
-      (dnsManagerService as any).cloudflareClient = undefined;
-
-      const result = await dnsManagerService.getHostnameWithRecords(
-        customDomain,
-        { isPublicDomain: false },
-      );
-
-      expect(result).toEqual({
-        id: 'manual-dns',
-        domain: customDomain,
-        records: [
-          {
-            validationType: 'redirection',
-            type: 'cname',
-            status: 'pending',
-            key: customDomain,
-            value: 'base.domain',
-          },
-          {
-            validationType: 'ssl',
-            type: 'cname',
-            status: 'pending',
-            key: `_acme-challenge.${customDomain}`,
-            value: 'Please configure your SSL certificate manually.',
-          },
-        ],
-      });
-    });
-
     it('should return undefined if no custom domain details are found', async () => {
       const customDomain = 'example.com';
       const cloudflareMock = {
