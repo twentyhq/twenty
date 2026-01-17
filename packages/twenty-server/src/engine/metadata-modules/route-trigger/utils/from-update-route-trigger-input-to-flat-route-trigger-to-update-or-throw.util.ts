@@ -29,5 +29,8 @@ export const fromUpdateRouteTriggerInputToFlatRouteTriggerToUpdateOrThrow = ({
     path: updateRouteTriggerInput.update.path,
     isAuthRequired: updateRouteTriggerInput.update.isAuthRequired,
     httpMethod: updateRouteTriggerInput.update.httpMethod,
+    forwardedRequestHeaders:
+      updateRouteTriggerInput.update.forwardedRequestHeaders ??
+      existingFlatRouteTrigger.forwardedRequestHeaders,
   };
 };

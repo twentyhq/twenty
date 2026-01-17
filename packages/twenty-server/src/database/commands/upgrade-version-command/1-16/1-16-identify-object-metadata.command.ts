@@ -208,17 +208,17 @@ export class IdentifyObjectMetadataCommand extends WorkspacesMigrationCommandRun
 
       const relatedMetadataNames =
         getMetadataRelatedMetadataNames('objectMetadata');
-      const cacheKeysToInvalidate = relatedMetadataNames.map(
+      const relatedCacheKeysToInvalidate = relatedMetadataNames.map(
         getMetadataFlatEntityMapsKey,
       );
 
       this.logger.log(
-        `Invalidating caches: ${cacheKeysToInvalidate.join(' ')}`,
+        `Invalidating caches: flatObjectMetadataMaps ${relatedCacheKeysToInvalidate.join(' ')}`,
       );
-      await this.workspaceCacheService.invalidateAndRecompute(
-        workspaceId,
-        cacheKeysToInvalidate,
-      );
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        ...relatedCacheKeysToInvalidate,
+      ]);
 
       this.logger.log(
         `Applied ${totalUpdates} object metadata update(s) for workspace ${workspaceId}`,

@@ -47,6 +47,8 @@ export const PageLayoutDispatcher = ({
           },
           layoutType: PageLayoutType.RECORD_PAGE,
           isInRightDrawer,
+          // TODO: Remove once the traditional record show page is removed.
+          isLegacyRecordShowPage: true,
         }}
       >
         <RecordShowContainer

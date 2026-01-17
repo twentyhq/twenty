@@ -1,0 +1,228 @@
+---
+title: Vygenerovat PDF z Twenty
+description: Vytvořte pracovní postup pro generování a připojení PDF (například nabídky) k záznamu.
+---
+
+Automaticky vygenerujte nebo získejte PDF a připojte ho k záznamu v Twenty. To se běžně používá k vytváření nabídek, faktur nebo reportů, které jsou propojené se společnostmi, příležitostmi nebo jinými objekty.
+
+## Přehled
+
+Tento pracovní postup používá **Ruční spouštěč**, takže uživatelé mohou na požádání vygenerovat PDF pro libovolný vybraný záznam. O zpracování se stará **Serverless funkce**:
+
+1. Stažení PDF z adresy URL (ze služby pro generování PDF)
+2. Nahrání souboru do Twenty
+3. Vytvoření přílohy propojené se záznamem
+
+## Předpoklady
+
+Než nastavíte pracovní postup:
+
+1. **Vytvořte klíč API**: Přejděte do **Nastavení → API** a vytvořte nový klíč API. Tento token budete potřebovat pro serverless funkci.
+2. **Nastavte službu pro generování PDF** (volitelné): Pokud chcete dynamicky generovat PDF (např. nabídky), použijte službu jako Carbone, PDFMonkey nebo DocuSeal k vytvoření PDF a získání adresy URL pro stažení.
+
+## Nastavení krok za krokem
+
+### Krok 1: Nakonfigurujte spouštěč
+
+1. Přejděte na **Pracovní postupy** a vytvořte nový pracovní postup
+2. Vyberte **Ruční spouštěč**
+3. Zvolte objekt, ke kterému chcete připojovat PDF (např. **Společnost** nebo **Příležitost**)
+
+<Tip>
+  S **Ručním spouštěčem** mohou uživatelé spustit tento pracovní postup pomocí tlačítka, které se zobrazí vpravo nahoře po výběru záznamu, aby vygenerovali a připojili PDF.
+</Tip>
+
+### Krok 2: Přidejte serverless funkci
+
+1. Přidejte akci **Serverless funkce**
+2. Vytvořte novou funkci pomocí kódu níže
+3. Nakonfigurujte vstupní parametry
+
+#### Vstupní parametry
+
+| Parametr    | Hodnota                 |
+| ----------- | ----------------------- |
+| `companyId` | `{{trigger.object.id}}` |
+
+<Note>
+  Pokud připojujete k jinému objektu (Osoba, Příležitost apod.), přejmenujte parametr podle toho (např. `personId`, `opportunityId`) a aktualizujte serverless funkci.
+</Note>
+
+#### Kód serverless funkce
+
+```typescript
+export const main = async (
+  params: { companyId: string },
+) => {
+  const { companyId } = params;
+
+  // Replace with your Twenty GraphQL endpoint
+  // Cloud: https://api.twenty.com/graphql
+  // Self-hosted: https://your-domain.com/graphql
+  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  // Replace with your API key from Settings → APIs
+  const authToken = 'YOUR_API_KEY';
+
+  // Replace with your PDF URL
+  // This could be from a PDF generation service or a static URL
+  const pdfUrl = 'https://your-pdf-service.com/generated-quote.pdf';
+  const filename = 'quote.pdf';
+
+  // Step 1: Download the PDF file
+  const pdfResponse = await fetch(pdfUrl);
+
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBlob = await pdfResponse.blob();
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Step 2: Upload the file via GraphQL multipart upload
+  const uploadMutation = `
+    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+      uploadFile(file: $file, fileFolder: $fileFolder) {
+        path
+      }
+    }
+  `;
+
+  const uploadForm = new FormData();
+  uploadForm.append('operations', JSON.stringify({
+    query: uploadMutation,
+    variables: { file: null, fileFolder: 'Attachment' },
+  }));
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
+
+  const uploadResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${authToken}` },
+    body: uploadForm,
+  });
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  }
+
+  const filePath = uploadResult.data?.uploadFile?.path;
+
+  if (!filePath) {
+    throw new Error('No file path returned from upload');
+  }
+
+  // Step 3: Create the attachment linked to the company
+  const attachmentMutation = `
+    mutation CreateAttachment($data: AttachmentCreateInput!) {
+      createAttachment(data: $data) {
+        id
+        name
+      }
+    }
+  `;
+
+  const attachmentResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: attachmentMutation,
+      variables: {
+        data: {
+          name: filename,
+          fullPath: filePath,
+          companyId,
+        },
+      },
+    }),
+  });
+
+  const attachmentResult = await attachmentResponse.json();
+
+  if (attachmentResult.errors?.length) {
+    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+  }
+
+  return attachmentResult.data?.createAttachment;
+};
+```
+
+### Krok 3: Přizpůsobte pro svůj případ použití
+
+#### Chcete-li připojit k jinému objektu
+
+Nahraďte `companyId` příslušným polem:
+
+| Objekt         | Název pole           |
+| -------------- | -------------------- |
+| Společnost     | `companyId`          |
+| Osoba          | `personId`           |
+| Příležitost    | `opportunityId`      |
+| Vlastní objekt | `yourCustomObjectId` |
+
+Aktualizujte jak parametr funkce, tak objekt `variables.data` v mutaci přílohy.
+
+#### Chcete-li použít dynamickou adresu URL PDF
+
+Pokud používáte službu pro generování PDF, můžete:
+
+1. Nejprve proveďte akci HTTP Request pro vygenerování PDF
+2. Předejte vrácenou adresu URL PDF serverless funkci jako parametr
+
+```typescript
+export const main = async (
+  params: { companyId: string; pdfUrl: string; filename: string },
+) => {
+  const { companyId, pdfUrl, filename } = params;
+  // ... rest of the function
+};
+```
+
+### Krok 4: Otestujte a aktivujte
+
+1. Uložte pracovní postup
+2. Přejděte na záznam společnosti
+3. Klikněte na nabídku **⋮** a vyberte svůj pracovní postup
+4. Zkontrolujte v části **Přílohy** u záznamu, že bylo PDF připojeno
+5. Aktivujte pracovní postup
+
+## Kombinace se službami pro generování PDF
+
+Pro vytváření dynamických nabídek nebo faktur:
+
+### Příklad: Vygenerovat nabídku → Připojit PDF
+
+| Krok | Akce                        | Účel                                                   |
+| ---- | --------------------------- | ------------------------------------------------------ |
+| 1    | Ruční spouštěč (Společnost) | Uživatel spustí na záznamu                             |
+| 2    | Vyhledat záznam             | Získat podrobnosti o příležitosti nebo řádkové položce |
+| 3    | HTTP požadavek              | Zavolat API pro generování PDF s daty záznamu          |
+| 4    | Serverless funkce           | Stáhnout a připojit vygenerované PDF                   |
+
+### Oblíbené služby pro generování PDF
+
+* **Carbone** - Generování dokumentů založené na šablonách
+* **PDFMonkey** - Dynamické vytváření PDF ze šablon
+* **DocuSeal** - Platforma pro automatizaci dokumentů
+* **Documint** - Generování dokumentů primárně přes API
+
+Každá služba poskytuje API, které vrací adresu URL PDF, kterou pak můžete předat serverless funkci.
+
+## Řešení potíží
+
+| Problém                          | Řešení                                                          |
+| -------------------------------- | --------------------------------------------------------------- |
+| "Nepodařilo se stáhnout PDF"     | Zkontrolujte, že adresa URL PDF je dostupná a vrací platné PDF  |
+| "Nepodařilo se nahrát"           | Ověřte, že váš klíč API je platný a má oprávnění k zápisu       |
+| "Vytvoření přílohy se nezdařilo" | Ujistěte se, že název pole ID objektu odpovídá cílovému objektu |
+
+## Související
+
+* [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
+* [Serverless funkce](/l/cs/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Vygenerujte nabídku nebo fakturu z Twenty](/l/cs/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

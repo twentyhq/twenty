@@ -14,7 +14,6 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const { FieldInputEventContextProviderWithJestMocks } =
   getFieldInputEventContextProviderWithJestMocks();
@@ -99,7 +98,7 @@ const PhoneInputWithContext = ({
 const meta: Meta<typeof PhoneInputWithContext> = {
   title: 'UI/Input/PhonesFieldInput',
   component: PhoneInputWithContext,
-  decorators: [I18nFrontDecorator],
+  decorators: [],
 };
 
 export default meta;

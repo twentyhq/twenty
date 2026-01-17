@@ -72,14 +72,14 @@
     "@graphql-codegen/typescript": "^3.0.4",
     "@graphql-codegen/typescript-operations": "^3.0.4",
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
-    "@nx/eslint": "22.0.3",
-    "@nx/eslint-plugin": "22.0.3",
-    "@nx/jest": "22.0.3",
-    "@nx/js": "22.0.3",
-    "@nx/react": "22.0.3",
-    "@nx/storybook": "22.0.3",
-    "@nx/vite": "22.0.3",
-    "@nx/web": "22.0.3",
+    "@nx/eslint": "22.3.3",
+    "@nx/eslint-plugin": "22.3.3",
+    "@nx/jest": "22.3.3",
+    "@nx/js": "22.3.3",
+    "@nx/react": "22.3.3",
+    "@nx/storybook": "22.3.3",
+    "@nx/vite": "22.3.3",
+    "@nx/web": "22.3.3",
     "@sentry/types": "^8",
     "@storybook-community/storybook-addon-cookie": "^5.0.0",
     "@storybook/addon-coverage": "^3.0.0",
@@ -165,7 +165,7 @@
     "jsdom": "~22.1.0",
     "msw": "^2.0.11",
     "msw-storybook-addon": "^2.0.5",
-    "nx": "22.0.3",
+    "nx": "22.3.3",
     "prettier": "^3.1.1",
     "raw-loader": "^4.0.2",
     "rimraf": "^5.0.5",
@@ -195,7 +195,9 @@
     "typescript": "5.9.2",
     "graphql-redis-subscriptions/ioredis": "^5.6.0",
     "prosemirror-view": "1.40.0",
-    "prosemirror-transform": "1.10.4"
+    "prosemirror-transform": "1.10.4",
+    "@lingui/core": "5.1.2",
+    "@types/qs": "6.9.16"
   },
   "version": "0.2.1",
   "nx": {},
@@ -220,7 +222,12 @@
       "packages/twenty-apps",
       "packages/twenty-cli",
       "packages/create-twenty-app",
-      "tools/eslint-rules"
+      "packages/twenty-eslint-rules"
     ]
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "endOfLine": "lf"
   }
 }

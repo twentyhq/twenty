@@ -7,7 +7,6 @@ import { AppPath } from 'twenty-shared/types';
 import { OnboardingStatus } from '~/generated/graphql';
 import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -18,7 +17,7 @@ import { mockedOnboardingUserData } from '~/testing/mock-data/users';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Onboarding/SyncEmails',
   component: SyncEmails,
-  decorators: [I18nFrontDecorator, PageDecorator],
+  decorators: [PageDecorator],
   args: { routePath: AppPath.SyncEmails },
   parameters: {
     msw: {

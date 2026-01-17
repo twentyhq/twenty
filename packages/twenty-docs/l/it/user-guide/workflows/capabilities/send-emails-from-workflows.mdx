@@ -116,6 +116,29 @@ Il Team
    * Oggetto: Seguito alla nostra conversazione
    * Corpo: Richiama i dettagli della riunione dal trigger
 
+## Email Attachments
+
+You can attach files to emails sent from workflows. The attachment is a static file that you upload when configuring the workflow.
+
+### How to Add an Attachment
+
+1. In the **Send Email** action, click on the **Attachments** button
+2. Click to upload a file from your computer
+3. The file will be attached to all emails sent by this action
+
+### Casi d'Uso Comuni
+
+| Caso d'uso               | Example File                  |
+| ------------------------ | ----------------------------- |
+| **Welcome emails**       | Company brochure (PDF)        |
+| **Onboarding sequences** | Getting started guide         |
+| **Sales follow-ups**     | Product catalog or price list |
+| **Event confirmations**  | Event details or agenda       |
+
+<Note>
+  Attachments are static—the same file is sent to all recipients. For dynamic documents (like personalized quotes), generate and attach files using a [Serverless Function](/l/it/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
+</Note>
+
 ## Migliori Pratiche
 
 ### Contenuto dell'email
@@ -138,10 +161,6 @@ Il Team
 * Controlla che l'indirizzo email del destinatario sia valido
 * Esamina le esecuzioni dei flussi di lavoro per eventuali messaggi di errore
 * Prova prima con il tuo indirizzo email
-
-<Note>
-  **In arrivo**: Gli allegati email saranno disponibili nel Q1 2026.
-</Note>
 
 ## Correlati
 

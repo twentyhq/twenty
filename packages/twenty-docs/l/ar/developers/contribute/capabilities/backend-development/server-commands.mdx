@@ -5,7 +5,7 @@ title: الأوامر الخلفية
 ## الأوامر المفيدة
 
 يجب تنفيذ هذه الأوامر من مجلد packages/twenty-server.
-From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+من أي مجلد آخر يمكنك تشغيل `npx nx {command} twenty-server` (أو `npx nx run twenty-server:{command}`).
 
 ### إعداد المرة الأولى
 
@@ -22,7 +22,7 @@ npx nx run twenty-server:start
 ### Lint
 
 ```
-npx nx run twenty-server:lint # pass --fix to fix lint errors
+npx nx run twenty-server:lint # مرر --fix لإصلاح أخطاء التدقيق
 ```
 
 ### تجربة
@@ -36,13 +36,13 @@ npx nx run twenty-server:test:integration # تشغيل اختبارات التك
 
 ### إعادة تعيين قاعدة البيانات
 
-If you want to reset and seed the database, you can run the following command:
+إذا أردت إعادة تعيين قاعدة البيانات وزرع بعض البيانات فيها، يمكنك تشغيل الأمر التالي:
 
 ```bash
 npx nx run twenty-server:database:reset
 ```
 
-### Migrations
+### عمليات الترحيل
 
 #### للكائنات داخل مخططات Core/Metadata (TypeORM)
 
@@ -67,13 +67,13 @@ npx nx run twenty-server:command workspace:sync-metadata -f
 
 ## "التقنية المستخدمة"
 
-Twenty primarily uses NestJS for the backend.
+تستخدم Twenty بشكل أساسي NestJS للواجهة الخلفية.
 
 Prisma كان أول ORM استخدمناه. ولكن للسماح للمستخدمين بإنشاء الحقول والعناصر المخصصة، كان من المنطقي استخدام مستوى أقل حيث نحتاج إلى تحكم دقيق. الآن يستخدم المشروع TypeORM.
 
 إليك شكل العناصر التقنية الآن.
 
-**Core**
+**النواة**
 
 * [NestJS](https://nestjs.com/)
 * [TypeORM](https://typeorm.io/)

@@ -1,0 +1,228 @@
+---
+title: Ein PDF aus Twenty generieren
+description: Erstellen Sie einen Workflow, um ein PDF (z. B. ein Angebot) zu generieren und an einen Datensatz anzuhängen.
+---
+
+Automatisch ein PDF generieren oder abrufen und an einen Datensatz in Twenty anhängen. Dies wird häufig verwendet, um Angebote, Rechnungen oder Berichte zu erstellen, die mit Companies, Opportunities oder anderen Objekten verknüpft sind.
+
+## Übersicht
+
+Dieser Workflow verwendet einen **Manuellen Auslöser**, damit Benutzer bei Bedarf für jeden ausgewählten Datensatz ein PDF generieren können. Eine **Serverlose Funktion** übernimmt:
+
+1. Das Herunterladen des PDFs von einer URL (von einem PDF-Generierungsdienst)
+2. Das Hochladen der Datei in Twenty
+3. Das Erstellen eines Anhangs, der mit dem Datensatz verknüpft ist
+
+## Voraussetzungen
+
+Bevor Sie den Workflow einrichten:
+
+1. **API-Schlüssel erstellen**: Gehen Sie zu **Einstellungen → APIs** und erstellen Sie einen neuen API-Schlüssel. Sie benötigen dieses Token für die serverlose Funktion.
+2. **Richten Sie einen PDF-Generierungsdienst ein** (optional): Wenn Sie PDFs dynamisch generieren möchten (z. B. Angebote), verwenden Sie einen Dienst wie Carbone, PDFMonkey oder DocuSeal, um das PDF zu erstellen und eine Download-URL zu erhalten.
+
+## Schritt-für-Schritt-Einrichtung
+
+### Schritt 1: Trigger konfigurieren
+
+1. Gehen Sie zu **Workflows** und erstellen Sie einen neuen Workflow
+2. Wählen Sie **Manueller Auslöser**
+3. Wählen Sie das Objekt aus, dem Sie PDFs anhängen möchten (z. B. **Company** oder **Opportunity**)
+
+<Tip>
+  Mit einem manuellen Auslöser können Benutzer diesen Workflow über eine Schaltfläche ausführen, die oben rechts erscheint, sobald ein Datensatz ausgewählt ist, um ein PDF zu generieren und anzuhängen.
+</Tip>
+
+### Schritt 2: Serverlose Funktion hinzufügen
+
+1. Fügen Sie eine **Serverlose Funktion**-Aktion hinzu
+2. Erstellen Sie eine neue Funktion mit dem folgenden Code
+3. Konfigurieren Sie die Eingabeparameter
+
+#### Eingabeparameter
+
+| Parameter   | Wert                    |
+| ----------- | ----------------------- |
+| `companyId` | `{{trigger.object.id}}` |
+
+<Note>
+  Wenn Sie an ein anderes Objekt anhängen (Person, Opportunity usw.), benennen Sie den Parameter entsprechend um (z. B. `personId`, `opportunityId`) und aktualisieren Sie die serverlose Funktion.
+</Note>
+
+#### Code der serverlosen Funktion
+
+```typescript
+export const main = async (
+  params: { companyId: string },
+) => {
+  const { companyId } = params;
+
+  // Replace with your Twenty GraphQL endpoint
+  // Cloud: https://api.twenty.com/graphql
+  // Self-hosted: https://your-domain.com/graphql
+  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  // Replace with your API key from Settings → APIs
+  const authToken = 'YOUR_API_KEY';
+
+  // Replace with your PDF URL
+  // This could be from a PDF generation service or a static URL
+  const pdfUrl = 'https://your-pdf-service.com/generated-quote.pdf';
+  const filename = 'quote.pdf';
+
+  // Step 1: Download the PDF file
+  const pdfResponse = await fetch(pdfUrl);
+
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBlob = await pdfResponse.blob();
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Step 2: Upload the file via GraphQL multipart upload
+  const uploadMutation = `
+    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+      uploadFile(file: $file, fileFolder: $fileFolder) {
+        path
+      }
+    }
+  `;
+
+  const uploadForm = new FormData();
+  uploadForm.append('operations', JSON.stringify({
+    query: uploadMutation,
+    variables: { file: null, fileFolder: 'Attachment' },
+  }));
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
+
+  const uploadResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${authToken}` },
+    body: uploadForm,
+  });
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  }
+
+  const filePath = uploadResult.data?.uploadFile?.path;
+
+  if (!filePath) {
+    throw new Error('No file path returned from upload');
+  }
+
+  // Step 3: Create the attachment linked to the company
+  const attachmentMutation = `
+    mutation CreateAttachment($data: AttachmentCreateInput!) {
+      createAttachment(data: $data) {
+        id
+        name
+      }
+    }
+  `;
+
+  const attachmentResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: attachmentMutation,
+      variables: {
+        data: {
+          name: filename,
+          fullPath: filePath,
+          companyId,
+        },
+      },
+    }),
+  });
+
+  const attachmentResult = await attachmentResponse.json();
+
+  if (attachmentResult.errors?.length) {
+    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+  }
+
+  return attachmentResult.data?.createAttachment;
+};
+```
+
+### Schritt 3: An Ihren Anwendungsfall anpassen
+
+#### An ein anderes Objekt anhängen
+
+Ersetzen Sie `companyId` durch das entsprechende Feld:
+
+| Objekt                     | Feldname             |
+| -------------------------- | -------------------- |
+| Unternehmen                | `companyId`          |
+| Person                     | `personId`           |
+| Opportunity                | `opportunityId`      |
+| Benutzerdefiniertes Objekt | `yourCustomObjectId` |
+
+Aktualisieren Sie sowohl den Funktionsparameter als auch das Objekt `variables.data` in der Attachment-Mutation.
+
+#### So verwenden Sie eine dynamische PDF-URL
+
+Wenn Sie einen PDF-Generierungsdienst verwenden, können Sie:
+
+1. Führen Sie zuerst eine HTTP-Request-Aktion aus, um das PDF zu generieren
+2. Übergeben Sie die zurückgegebene PDF-URL als Parameter an die serverlose Funktion
+
+```typescript
+export const main = async (
+  params: { companyId: string; pdfUrl: string; filename: string },
+) => {
+  const { companyId, pdfUrl, filename } = params;
+  // ... rest of the function
+};
+```
+
+### Schritt 4: Testen und aktivieren
+
+1. Speichern Sie den Workflow
+2. Navigieren Sie zu einem Company-Datensatz
+3. Klicken Sie auf das **⋮**-Menü und wählen Sie Ihren Workflow aus
+4. Überprüfen Sie im Datensatz den Bereich **Attachments**, um zu verifizieren, dass das PDF angehängt wurde
+5. Aktivieren Sie den Workflow
+
+## Kombination mit PDF-Generierungsdiensten
+
+Zum Erstellen dynamischer Angebote oder Rechnungen:
+
+### Beispiel: Angebot generieren → PDF anhängen
+
+| Schritt | Aktion                       | Zweck                                            |
+| ------- | ---------------------------- | ------------------------------------------------ |
+| 1       | Manueller Auslöser (Company) | Benutzer initiiert am Datensatz                  |
+| 2       | Datensatz suchen             | Opportunity- oder Positionsdetails abrufen       |
+| 3       | HTTP-Anfrage                 | PDF-Generierungs-API mit Datensatzdaten aufrufen |
+| 4       | Serverlose Funktion          | Das generierte PDF herunterladen und anhängen    |
+
+### Beliebte PDF-Generierungsdienste
+
+* **Carbone** – Vorlagenbasierte Dokumentenerstellung
+* **PDFMonkey** – Dynamische PDF-Erstellung aus Vorlagen
+* **DocuSeal** – Plattform für Dokumentenautomatisierung
+* **Documint** – API-first-Dokumentenerstellung
+
+Jeder Dienst stellt eine API bereit, die eine PDF-URL zurückgibt, die Sie anschließend an die serverlose Funktion übergeben können.
+
+## Fehlerbehebung
+
+| Problem                                   | Lösung                                                                                 |
+| ----------------------------------------- | -------------------------------------------------------------------------------------- |
+| "PDF konnte nicht heruntergeladen werden" | Prüfen Sie, ob die PDF-URL erreichbar ist und ein gültiges PDF zurückgibt              |
+| "Upload fehlgeschlagen"                   | Stellen Sie sicher, dass Ihr API-Schlüssel gültig ist und Schreibberechtigungen hat    |
+| "Anhangserstellung fehlgeschlagen"        | Stellen Sie sicher, dass der Feldname der Objekt-ID mit Ihrem Zielobjekt übereinstimmt |
+
+## Verwandt
+
+* [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
+* [Serverlose Funktionen](/l/de/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Ein Angebot oder eine Rechnung aus Twenty generieren](/l/de/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

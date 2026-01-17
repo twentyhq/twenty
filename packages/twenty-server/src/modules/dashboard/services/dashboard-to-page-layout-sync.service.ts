@@ -69,17 +69,14 @@ export class DashboardToPageLayoutSyncService {
           withDeleted: true,
         });
 
-        for (const dashboard of dashboards) {
-          if (!isDefined(dashboard.pageLayoutId)) {
-            continue;
-          }
+        const pageLayoutIds = dashboards
+          .map((dashboard) => dashboard.pageLayoutId)
+          .filter(isDefined);
 
-          await this.pageLayoutService.destroy({
-            id: dashboard.pageLayoutId,
-            workspaceId,
-            isLinkedDashboardAlreadyDestroyed: true,
-          });
-        }
+        await this.pageLayoutService.destroyMany({
+          ids: pageLayoutIds,
+          workspaceId,
+        });
       },
     );
   }

@@ -20,7 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
-  // eslint-disable-next-line @nx/workspace-no-state-useref
+  // eslint-disable-next-line twenty/no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
 
   const navigate = useNavigate();

@@ -5,6 +5,7 @@ import { parse } from 'path';
 import {
   ApplicationManifest,
   FieldManifest,
+  ObjectExtensionManifest,
   ObjectManifest,
   RelationFieldManifest,
   RoleManifest,
@@ -95,6 +96,14 @@ export class ApplicationSyncService {
       workspaceId,
       applicationId: application.id,
     });
+
+    if (manifest.objectExtensions && manifest.objectExtensions.length > 0) {
+      await this.syncObjectExtensionsOrThrow({
+        objectExtensionsToSync: manifest.objectExtensions,
+        workspaceId,
+        applicationId: application.id,
+      });
+    }
 
     if (manifest.serverlessFunctions.length > 0) {
       if (!isDefined(application.serverlessFunctionLayerId)) {
@@ -772,6 +781,87 @@ export class ApplicationSyncService {
     }
   }
 
+  private async syncObjectExtensionsOrThrow({
+    objectExtensionsToSync,
+    workspaceId,
+    applicationId,
+  }: {
+    objectExtensionsToSync: ObjectExtensionManifest[];
+    workspaceId: string;
+    applicationId: string;
+  }) {
+    const { flatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    const { idByNameSingular: objectIdByNameSingular } =
+      buildObjectIdByNameMaps(flatObjectMetadataMaps);
+
+    for (const objectExtension of objectExtensionsToSync) {
+      const { targetObject, fields } = objectExtension;
+
+      let targetObjectId: string | undefined;
+
+      if (isDefined(targetObject.nameSingular)) {
+        targetObjectId = objectIdByNameSingular[targetObject.nameSingular];
+
+        if (!isDefined(targetObjectId)) {
+          throw new ApplicationException(
+            `Failed to find target object with nameSingular "${targetObject.nameSingular}" for object extension`,
+            ApplicationExceptionCode.OBJECT_NOT_FOUND,
+          );
+        }
+      } else if (isDefined(targetObject.universalIdentifier)) {
+        targetObjectId =
+          flatObjectMetadataMaps.idByUniversalIdentifier[
+            targetObject.universalIdentifier
+          ];
+
+        if (!isDefined(targetObjectId)) {
+          throw new ApplicationException(
+            `Failed to find target object with universalIdentifier "${targetObject.universalIdentifier}" for object extension`,
+            ApplicationExceptionCode.OBJECT_NOT_FOUND,
+          );
+        }
+      }
+
+      if (!isDefined(targetObjectId)) {
+        throw new ApplicationException(
+          'Object extension must specify either nameSingular or universalIdentifier in targetObject',
+          ApplicationExceptionCode.INVALID_INPUT,
+        );
+      }
+
+      // Sync regular fields for this extension
+      await this.syncFields({
+        objectId: targetObjectId,
+        fieldsToSync: fields,
+        workspaceId,
+        applicationId,
+      });
+
+      // Sync relation fields for this extension
+      const relationFields = fields.filter(
+        (field): field is RelationFieldManifest =>
+          this.isRelationFieldManifest(field),
+      );
+
+      if (relationFields.length > 0) {
+        await this.syncRelationFields({
+          objectId: targetObjectId,
+          relationsToSync: relationFields,
+          workspaceId,
+          applicationId,
+          flatObjectMetadataMaps,
+        });
+      }
+    }
+  }
+
   private async syncServerlessFunctions({
     serverlessFunctionsToSync,
     code,
@@ -1271,6 +1361,7 @@ export class ApplicationSyncService {
           path: triggerToSync.path,
           httpMethod: triggerToSync.httpMethod as HTTPMethod,
           isAuthRequired: triggerToSync.isAuthRequired,
+          forwardedRequestHeaders: triggerToSync.forwardedRequestHeaders ?? [],
         },
       };
 
@@ -1289,6 +1380,7 @@ export class ApplicationSyncService {
         path: triggerToCreate.path,
         httpMethod: triggerToCreate.httpMethod as HTTPMethod,
         isAuthRequired: triggerToCreate.isAuthRequired,
+        forwardedRequestHeaders: triggerToCreate.forwardedRequestHeaders ?? [],
         serverlessFunctionId,
       };
 

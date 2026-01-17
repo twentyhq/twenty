@@ -1,9 +1,9 @@
 ---
 title: الإعداد المحلي
-description: The guide for contributors (or curious developers) who want to run Twenty locally.
+description: الدليل للمساهمين (أو المطورين الفضوليين) الذين يرغبون في تشغيل Twenty محلياً.
 ---
 
-## Prerequisites
+## المتطلبات الأساسية
 
 <Tabs>
   <Tab title="Linux و MacOS">
@@ -15,7 +15,7 @@ description: The guide for contributors (or curious developers) who want to run 
     * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
     <Warning>
-      لن يعمل `npm` ، يجب عليك استخدام `yarn` بدلًا من ذلك. Yarn is now shipped with Node.js, so you don't need to install it separately.
+      لن يعمل `npm` ، يجب عليك استخدام `yarn` بدلًا من ذلك. يأتي Yarn الآن مع Node.js، لذا لست بحاجة إلى تثبيته بشكل منفصل.
       عليك فقط تشغيل `corepack enable` لتفعيل Yarn إذا لم تقم بذلك بعد.
     </Warning>
   </Tab>
@@ -30,7 +30,7 @@ description: The guide for contributors (or curious developers) who want to run 
 
     يجب أن ترى الآن مطالبة لإعادة تشغيل جهاز الكمبيوتر الخاص بك. إذا لم يكن كذلك، فأعد تشغيله يدويًا.
 
-    Upon restart, a powershell window will open and install Ubuntu. قد يستغرق هذا وقتًا طويلاً.
+    عند إعادة التشغيل، ستُفتح نافذة PowerShell وسيتم تثبيت Ubuntu. قد يستغرق هذا وقتًا طويلاً.
     سترى مطالبة لإنشاء اسم المستخدم وكلمة المرور لتثبيت Ubuntu الخاص بك.
 
     2. تثبيت وإعداد git
@@ -114,7 +114,7 @@ cd twenty
     **الخيار 2:** إذا كنت قد قمت بتثبيت docker:
 
     ```bash
-    make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
@@ -173,7 +173,7 @@ cd twenty
     **الخيار 2:** إذا كنت قد قمت بتثبيت docker:
 
     ```bash
-    make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
@@ -194,7 +194,7 @@ cd twenty
     استخدم هذا الخيار فقط إذا كنت مرتاحًا مع الخطوات الإضافية المتضمنة، بما في ذلك تشغيل [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
 
     ```bash
-    make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 </Tabs>
@@ -213,7 +213,7 @@ cd twenty
     **الخيار 2:** إذا كنت قد قمت بتثبيت docker:
 
     ```bash
-    make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
@@ -230,7 +230,7 @@ cd twenty
     **الخيار 2:** إذا كنت قد قمت بتثبيت docker:
 
     ```bash
-    make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
@@ -241,7 +241,7 @@ cd twenty
     **الخيار 2:** إذا كنت قد قمت بتثبيت docker:
 
     ```bash
-    make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 </Tabs>
@@ -260,7 +260,7 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/ar/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+  **وضع تعدد مساحات العمل:** بشكل افتراضي، يعمل Twenty في وضع مساحة عمل واحدة حيث يمكن إنشاء مساحة عمل واحدة فقط. لتمكين دعم تعدد مساحات العمل (مفيد لاختبار الميزات المعتمدة على النطاقات الفرعية)، عيّن `IS_MULTIWORKSPACE_ENABLED=true` في ملف الخادم `.env`. راجع [وضع تعدد مساحات العمل](/l/ar/developers/self-host/capabilities/setup#multi-workspace-mode) للحصول على التفاصيل.
 </Info>
 
 ## الخطوة 6: تثبيت التبعيات

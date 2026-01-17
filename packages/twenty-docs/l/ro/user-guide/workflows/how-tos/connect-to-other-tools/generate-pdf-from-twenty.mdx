@@ -1,0 +1,228 @@
+---
+title: Generați un PDF din Twenty
+description: Creați un flux de lucru pentru a genera și atașa un PDF (de exemplu, o ofertă) la o înregistrare.
+---
+
+Generați sau preluați automat un PDF și atașați-l la o înregistrare în Twenty. Aceasta este utilizată frecvent pentru a crea oferte, facturi sau rapoarte care sunt asociate cu Companii, Oportunități sau alte obiecte.
+
+## Prezentare generală
+
+Acest flux de lucru folosește un **Manual Trigger** pentru ca utilizatorii să poată genera un PDF la cerere pentru orice înregistrare selectată. O **Serverless Function** se ocupă de:
+
+1. Descărcarea PDF-ului dintr-un URL (de la un serviciu de generare PDF)
+2. Încărcarea fișierului în Twenty
+3. Crearea unui atașament asociat înregistrării
+
+## Cerințe
+
+Înainte de a configura fluxul de lucru:
+
+1. **Creați o cheie API**: Accesați **Settings → APIs** și creați o nouă cheie API. Veți avea nevoie de acest token pentru funcția serverless.
+2. **Configurați un serviciu de generare PDF** (opțional): Dacă doriți să generați dinamic fișiere PDF (de ex., oferte), utilizați un serviciu precum Carbone, PDFMonkey sau DocuSeal pentru a crea PDF-ul și a obține un URL de descărcare.
+
+## Configurare pas cu pas
+
+### Pasul 1: Configurați declanșatorul
+
+1. Accesați **Workflows** și creați un nou flux de lucru
+2. Selectați **Manual Trigger**
+3. Alegeți obiectul la care doriți să atașați fișiere PDF (de ex., **Companie** sau **Oportunitate**)
+
+<Tip>
+  Cu un Manual Trigger, utilizatorii pot rula acest flux de lucru folosind un buton care apare în dreapta sus după selectarea unei înregistrări, pentru a genera și atașa un PDF.
+</Tip>
+
+### Pasul 2: Adăugați o Serverless Function
+
+1. Adăugați o acțiune **Serverless Function**
+2. Creați o funcție nouă cu codul de mai jos
+3. Configurați parametrii de intrare
+
+#### Parametri de intrare
+
+| Parametru   | Valoare                 |
+| ----------- | ----------------------- |
+| `companyId` | `{{trigger.object.id}}` |
+
+<Note>
+  Dacă atașați la un alt obiect (Persoană, Oportunitate etc.), redenumiți parametrul în mod corespunzător (de ex., `personId`, `opportunityId`) și actualizați funcția serverless.
+</Note>
+
+#### Cod pentru Serverless Function
+
+```typescript
+export const main = async (
+  params: { companyId: string },
+) => {
+  const { companyId } = params;
+
+  // Replace with your Twenty GraphQL endpoint
+  // Cloud: https://api.twenty.com/graphql
+  // Self-hosted: https://your-domain.com/graphql
+  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  // Replace with your API key from Settings → APIs
+  const authToken = 'YOUR_API_KEY';
+
+  // Replace with your PDF URL
+  // This could be from a PDF generation service or a static URL
+  const pdfUrl = 'https://your-pdf-service.com/generated-quote.pdf';
+  const filename = 'quote.pdf';
+
+  // Step 1: Download the PDF file
+  const pdfResponse = await fetch(pdfUrl);
+
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBlob = await pdfResponse.blob();
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Step 2: Upload the file via GraphQL multipart upload
+  const uploadMutation = `
+    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+      uploadFile(file: $file, fileFolder: $fileFolder) {
+        path
+      }
+    }
+  `;
+
+  const uploadForm = new FormData();
+  uploadForm.append('operations', JSON.stringify({
+    query: uploadMutation,
+    variables: { file: null, fileFolder: 'Attachment' },
+  }));
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
+
+  const uploadResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${authToken}` },
+    body: uploadForm,
+  });
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  }
+
+  const filePath = uploadResult.data?.uploadFile?.path;
+
+  if (!filePath) {
+    throw new Error('No file path returned from upload');
+  }
+
+  // Step 3: Create the attachment linked to the company
+  const attachmentMutation = `
+    mutation CreateAttachment($data: AttachmentCreateInput!) {
+      createAttachment(data: $data) {
+        id
+        name
+      }
+    }
+  `;
+
+  const attachmentResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: attachmentMutation,
+      variables: {
+        data: {
+          name: filename,
+          fullPath: filePath,
+          companyId,
+        },
+      },
+    }),
+  });
+
+  const attachmentResult = await attachmentResponse.json();
+
+  if (attachmentResult.errors?.length) {
+    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+  }
+
+  return attachmentResult.data?.createAttachment;
+};
+```
+
+### Pasul 3: Personalizați pentru cazul dvs. de utilizare
+
+#### Pentru a atașa la un alt obiect
+
+Înlocuiți `companyId` cu câmpul corespunzător:
+
+| Obiect              | Nume câmp            |
+| ------------------- | -------------------- |
+| Companie            | `companyId`          |
+| Persoană            | `personId`           |
+| Oportunitate        | `opportunityId`      |
+| Obiect personalizat | `yourCustomObjectId` |
+
+Actualizați atât parametrul funcției, cât și obiectul `variables.data` în mutația de atașare.
+
+#### Pentru a utiliza un URL PDF dinamic
+
+Dacă utilizați un serviciu de generare PDF, puteți:
+
+1. Mai întâi creați o acțiune HTTP Request pentru a genera PDF-ul
+2. Transmiteți URL-ul PDF returnat către funcția serverless ca parametru
+
+```typescript
+export const main = async (
+  params: { companyId: string; pdfUrl: string; filename: string },
+) => {
+  const { companyId, pdfUrl, filename } = params;
+  // ... rest of the function
+};
+```
+
+### Pasul 4: Testați și activați
+
+1. Salvați fluxul de lucru
+2. Navigați la o înregistrare de tip Company
+3. Faceți clic pe meniul **⋮** și selectați fluxul dvs. de lucru
+4. Verificați secțiunea **Attachments** din înregistrare pentru a confirma că PDF-ul a fost atașat
+5. Activați fluxul de lucru
+
+## Combinare cu servicii de generare PDF
+
+Pentru crearea de oferte sau facturi dinamice:
+
+### Exemplu: Generați ofertă → Atașați PDF
+
+| Pas | Acțiune                  | Scop                                                   |
+| --- | ------------------------ | ------------------------------------------------------ |
+| 1   | Manual Trigger (Company) | Utilizatorul inițiază dintr-o înregistrare             |
+| 2   | Căutare înregistrare     | Obțineți detalii despre Opportunity sau despre poziții |
+| 3   | Solicitare HTTP          | Apelați API-ul de generare PDF cu datele înregistrării |
+| 4   | Funcție serverless       | Descărcați și atașați PDF-ul generat                   |
+
+### Servicii populare de generare PDF
+
+* **Carbone** - Generare de documente pe bază de șabloane
+* **PDFMonkey** - Creare dinamică de PDF-uri din șabloane
+* **DocuSeal** - Platformă de automatizare a documentelor
+* **Documint** - Generare de documente orientată pe API
+
+Fiecare serviciu oferă un API care returnează un URL către PDF, pe care îl puteți apoi transmite funcției serverless.
+
+## Depanare
+
+| Problemă                              | Soluție                                                                      |
+| ------------------------------------- | ---------------------------------------------------------------------------- |
+| "Nu s-a reușit descărcarea PDF-ului"  | Verificați că URL-ul PDF este accesibil și returnează un PDF valid           |
+| "Nu s-a reușit încărcarea"            | Verificați că cheia API este validă și are permisiuni de scriere             |
+| "Nu s-a reușit crearea atașamentului" | Asigurați-vă că numele câmpului ID al obiectului corespunde obiectului țintă |
+
+## Conexe
+
+* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+* [Funcții serverless](/l/ro/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Generați o ofertă sau o factură din Twenty](/l/ro/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

@@ -609,6 +609,26 @@ export type ClientAiModelConfig = {
   provider: ModelProvider;
 };
 
+export type CommandMenuItem = {
+  __typename?: 'CommandMenuItem';
+  applicationId?: Maybe<Scalars['UUID']>;
+  availabilityObjectMetadataId?: Maybe<Scalars['UUID']>;
+  availabilityType: CommandMenuItemAvailabilityType;
+  createdAt: Scalars['DateTime'];
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isPinned: Scalars['Boolean'];
+  label: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  workflowVersionId: Scalars['UUID'];
+};
+
+export enum CommandMenuItemAvailabilityType {
+  BULK_RECORDS = 'BULK_RECORDS',
+  GLOBAL = 'GLOBAL',
+  SINGLE_RECORD = 'SINGLE_RECORD'
+}
+
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON'];
@@ -832,6 +852,15 @@ export type CreateApprovedAccessDomainInput = {
   email: Scalars['String'];
 };
 
+export type CreateCommandMenuItemInput = {
+  availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
+  availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
+  icon?: InputMaybe<Scalars['String']>;
+  isPinned?: InputMaybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
+};
+
 export type CreateCronTriggerInput = {
   serverlessFunctionId: Scalars['String'];
   settings: Scalars['JSON'];
@@ -934,6 +963,8 @@ export type CreateRoleInput = {
 };
 
 export type CreateRouteTriggerInput = {
+  /** List of HTTP header names to forward to the serverless function event */
+  forwardedRequestHeaders?: Array<Scalars['String']>;
   httpMethod?: HttpMethod;
   isAuthRequired?: Scalars['Boolean'];
   path: Scalars['String'];
@@ -1349,6 +1380,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
+  IS_COMMAND_MENU_ITEM_ENABLED = 'IS_COMMAND_MENU_ITEM_ENABLED',
   IS_DASHBOARD_V2_ENABLED = 'IS_DASHBOARD_V2_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
   IS_IF_ELSE_ENABLED = 'IS_IF_ELSE_ENABLED',
@@ -1358,6 +1390,7 @@ export enum FeatureFlagKey {
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
   IS_RECORD_PAGE_LAYOUT_ENABLED = 'IS_RECORD_PAGE_LAYOUT_ENABLED',
   IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED = 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED',
+  IS_SSE_DB_EVENTS_ENABLED = 'IS_SSE_DB_EVENTS_ENABLED',
   IS_TIMELINE_ACTIVITY_MIGRATED = 'IS_TIMELINE_ACTIVITY_MIGRATED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED'
 }
@@ -1480,11 +1513,9 @@ export type FieldsConfiguration = {
 export type File = {
   __typename?: 'File';
   createdAt: Scalars['DateTime'];
-  fullPath: Scalars['String'];
   id: Scalars['UUID'];
-  name: Scalars['String'];
+  path: Scalars['String'];
   size: Scalars['Float'];
-  type: Scalars['String'];
 };
 
 export enum FileFolder {
@@ -1516,6 +1547,15 @@ export type FindAvailableSsoidpOutput = {
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
   workspace: WorkspaceNameAndId;
+};
+
+export type FrontComponent = {
+  __typename?: 'FrontComponent';
+  applicationId: Scalars['UUID'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type FullName = {
@@ -1846,6 +1886,7 @@ export type Mutation = {
   computeStepOutputSchema: Scalars['JSON'];
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createCommandMenuItem: CommandMenuItem;
   createCoreView: CoreView;
   createCoreViewField: CoreViewField;
   createCoreViewFilter: CoreViewFilter;
@@ -1882,6 +1923,7 @@ export type Mutation = {
   createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
+  deleteCommandMenuItem: CommandMenuItem;
   deleteCoreView: Scalars['Boolean'];
   deleteCoreViewField: CoreViewField;
   deleteCoreViewFilter: CoreViewFilter;
@@ -1968,6 +2010,7 @@ export type Mutation = {
   trackAnalytics: Analytics;
   uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
+  updateCommandMenuItem: CommandMenuItem;
   updateCoreView: CoreView;
   updateCoreViewField: CoreViewField;
   updateCoreViewFilter: CoreViewFilter;
@@ -2076,6 +2119,11 @@ export type MutationCreateApiKeyArgs = {
 
 export type MutationCreateApprovedAccessDomainArgs = {
   input: CreateApprovedAccessDomainInput;
+};
+
+
+export type MutationCreateCommandMenuItemArgs = {
+  input: CreateCommandMenuItemInput;
 };
 
 
@@ -2257,6 +2305,11 @@ export type MutationDeactivateWorkflowVersionArgs = {
 
 export type MutationDeleteApprovedAccessDomainArgs = {
   input: DeleteApprovedAccessDomainInput;
+};
+
+
+export type MutationDeleteCommandMenuItemArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -2669,6 +2722,11 @@ export type MutationUpdateApiKeyArgs = {
 };
 
 
+export type MutationUpdateCommandMenuItemArgs = {
+  input: UpdateCommandMenuItemInput;
+};
+
+
 export type MutationUpdateCoreViewArgs = {
   id: Scalars['String'];
   input: UpdateViewInput;
@@ -3025,6 +3083,8 @@ export type ObjectPermission = {
   canUpdateObjectRecords?: Maybe<Scalars['Boolean']>;
   objectMetadataId: Scalars['UUID'];
   restrictedFields?: Maybe<Scalars['JSON']>;
+  rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
+  rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
 };
 
 export type ObjectPermissionInput = {
@@ -3288,6 +3348,8 @@ export type Query = {
   billingPortalSession: BillingSessionOutput;
   checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
+  commandMenuItem?: Maybe<CommandMenuItem>;
+  commandMenuItems: Array<CommandMenuItem>;
   currentUser: User;
   currentWorkspace: Workspace;
   field: Field;
@@ -3384,6 +3446,11 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type QueryCommandMenuItemArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -3787,6 +3854,8 @@ export type Role = {
 export type RouteTrigger = {
   __typename?: 'RouteTrigger';
   createdAt: Scalars['DateTime'];
+  /** List of HTTP header names to forward to the serverless function event */
+  forwardedRequestHeaders: Array<Scalars['String']>;
   httpMethod: HttpMethod;
   id: Scalars['ID'];
   isAuthRequired: Scalars['Boolean'];
@@ -4097,7 +4166,6 @@ export type Subscription = {
   __typename?: 'Subscription';
   onDbEvent: OnDbEvent;
   onEventSubscription?: Maybe<EventSubscription>;
-  onSubscriptionMatch?: Maybe<SubscriptionMatches>;
   serverlessFunctionLogs: ServerlessFunctionLogs;
 };
 
@@ -4112,36 +4180,14 @@ export type SubscriptionOnEventSubscriptionArgs = {
 };
 
 
-export type SubscriptionOnSubscriptionMatchArgs = {
-  subscriptions: Array<SubscriptionInput>;
-};
-
-
 export type SubscriptionServerlessFunctionLogsArgs = {
   input: ServerlessFunctionLogsInput;
-};
-
-export type SubscriptionInput = {
-  id: Scalars['String'];
-  query: Scalars['String'];
-  selectedEventActions?: InputMaybe<Array<DatabaseEventAction>>;
 };
 
 export enum SubscriptionInterval {
   Month = 'Month',
   Year = 'Year'
 }
-
-export type SubscriptionMatch = {
-  __typename?: 'SubscriptionMatch';
-  event: OnDbEvent;
-  subscriptionIds: Array<Scalars['String']>;
-};
-
-export type SubscriptionMatches = {
-  __typename?: 'SubscriptionMatches';
-  matches: Array<SubscriptionMatch>;
-};
 
 export enum SubscriptionStatus {
   Active = 'Active',
@@ -4350,6 +4396,15 @@ export type UpdateApiKeyInput = {
   revokedAt?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateCommandMenuItemInput = {
+  availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
+  availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
+  icon?: InputMaybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isPinned?: InputMaybe<Scalars['Boolean']>;
+  label?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateCronTriggerInput = {
   /** The id of the cron trigger to update */
   id: Scalars['String'];
@@ -4494,6 +4549,8 @@ export type UpdateRouteTriggerInput = {
 };
 
 export type UpdateRouteTriggerInputUpdates = {
+  /** List of HTTP header names to forward to the serverless function event */
+  forwardedRequestHeaders?: Array<Scalars['String']>;
   httpMethod: HttpMethod;
   isAuthRequired: Scalars['Boolean'];
   path: Scalars['String'];

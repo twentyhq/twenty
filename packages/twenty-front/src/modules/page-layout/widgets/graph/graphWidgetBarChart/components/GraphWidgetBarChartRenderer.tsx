@@ -7,6 +7,7 @@ import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBa
 import { assertBarChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertBarChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { isFilteredViewRedirectionSupported } from '@/page-layout/widgets/graph/utils/isFilteredViewRedirectionSupported';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -79,6 +80,12 @@ export const GraphWidgetBarChartRenderer = () => {
     }),
   );
 
+  const primaryGroupByField = objectMetadataItem.fields.find(
+    (field) => field.id === configuration.primaryAxisGroupByFieldMetadataId,
+  );
+  const canRedirectToFilteredView =
+    isFilteredViewRedirectionSupported(primaryGroupByField);
+
   const handleSliceClick = (slice: BarChartSlice) => {
     const displayValue = slice.indexValue;
     const rawValue = formattedToRawLookup.get(displayValue) ?? null;
@@ -130,7 +137,11 @@ export const GraphWidgetBarChartRenderer = () => {
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
-        onSliceClick={isPageLayoutInEditMode ? undefined : handleSliceClick}
+        onSliceClick={
+          isPageLayoutInEditMode || !canRedirectToFilteredView
+            ? undefined
+            : handleSliceClick
+        }
       />
     </Suspense>
   );

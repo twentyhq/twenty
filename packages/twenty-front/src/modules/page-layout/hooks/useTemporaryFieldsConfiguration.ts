@@ -38,7 +38,7 @@ export const useTemporaryFieldsConfiguration = (
     let otherPosition = 0;
 
     fieldsToDisplay.forEach((field) => {
-      if (field.type === FieldMetadataType.LINKS) {
+      if (field.isCustom === true) {
         otherFields.push({
           fieldMetadataId: field.id,
           position: otherPosition++,
