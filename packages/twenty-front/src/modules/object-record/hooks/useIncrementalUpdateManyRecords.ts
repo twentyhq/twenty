@@ -3,6 +3,7 @@ import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryP
 import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIncrementalFetchAndMutateRecords';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useRefetchFindManyRecords } from '@/object-record/hooks/useRefetchFindManyRecords';
 import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
@@ -41,6 +42,10 @@ export const useIncrementalUpdateManyRecords = <
     objectMetadataNamePlural: objectMetadataItem.namePlural,
   });
 
+  const { refetchFindManyRecords } = useRefetchFindManyRecords({
+    objectMetadataNamePlural: objectMetadataItem.namePlural,
+  });
+
   const {
     incrementalFetchAndMutate,
     progress,
@@ -70,6 +75,7 @@ export const useIncrementalUpdateManyRecords = <
             delayInMsBetweenRequests: delayInMsBetweenMutations,
             skipRegisterObjectOperation: true,
             skipRefetchAggregateQueries: true,
+            skipOptimisticEffect: true,
             abortSignal,
           });
 
@@ -80,6 +86,7 @@ export const useIncrementalUpdateManyRecords = <
         },
       );
     } finally {
+      await refetchFindManyRecords();
       await refetchAggregateQueries();
 
       dispatchObjectRecordOperationBrowserEvent({
