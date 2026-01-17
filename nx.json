@@ -112,11 +112,14 @@
       "cache": true,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsc -b tsconfig.json --incremental"
+        "command": "tsgo -p tsconfig.json"
       },
       "configurations": {
+        "tsc": {
+          "command": "tsc -b tsconfig.json --incremental"
+        },
         "watch": {
-          "watch": true
+          "command": "tsc -b tsconfig.json --incremental --watch"
         }
       },
       "dependsOn": [

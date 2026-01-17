@@ -134,6 +134,7 @@
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.39.0",
     "@typescript-eslint/utils": "^8.39.0",
+    "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "@vitejs/plugin-react-swc": "3.11.0",
     "@yarnpkg/types": "^4.0.0",
     "chromatic": "^6.18.0",
