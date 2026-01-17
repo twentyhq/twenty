@@ -9,6 +9,7 @@ export type MessagingAddSingleMessageToCacheForImportJobData = {
   messageExternalId: string;
   messageChannelId: string;
   workspaceId: string;
+  messageFolderId?: string;
 };
 
 @Processor(MessageQueue.messagingQueue)
@@ -22,11 +23,12 @@ export class MessagingAddSingleMessageToCacheForImportJob {
   async handle(
     data: MessagingAddSingleMessageToCacheForImportJobData,
   ): Promise<void> {
-    const { messageExternalId, messageChannelId, workspaceId } = data;
+    const { messageExternalId, messageChannelId, workspaceId, messageFolderId } =
+      data;
 
-    await this.cacheStorage.setAdd(
+    await this.cacheStorage.hSet(
       `messages-to-import:${workspaceId}:${messageChannelId}`,
-      [messageExternalId],
+      { [messageExternalId]: messageFolderId ?? '' },
     );
   }
 }

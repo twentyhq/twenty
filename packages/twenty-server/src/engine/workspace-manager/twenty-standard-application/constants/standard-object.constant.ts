@@ -728,6 +728,10 @@ export const STANDARD_OBJECTS = {
       direction: {
         universalIdentifier: '75c9b0f7-9e76-44d4-a2f9-47051e61eec7',
       },
+      messageFolder: {
+        universalIdentifier:
+          MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageFolder,
+      },
     },
     indexes: {
       messageChannelIdIndex: {
@@ -861,6 +865,10 @@ export const STANDARD_OBJECTS = {
       pendingSyncAction: {
         universalIdentifier:
           MESSAGE_FOLDER_STANDARD_FIELD_IDS.pendingSyncAction,
+      },
+      messageChannelMessageAssociations: {
+        universalIdentifier:
+          MESSAGE_FOLDER_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
       },
     },
     indexes: {
