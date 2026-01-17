@@ -1,13 +1,15 @@
 import { useRecoilValue } from 'recoil';
 
+import { lastFieldMetadataItemUpdateState } from '@/object-metadata/states/lastFieldMetadataItemUpdateState';
+import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-
-import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizationBecauseDataChanged';
 import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
 import { isInitializingVirtualTableDataLoadingComponentState } from '@/object-record/record-table/virtualization/states/isInitializingVirtualTableDataLoadingComponentState';
 import { lastContextStoreVirtualizedViewIdComponentState } from '@/object-record/record-table/virtualization/states/lastContextStoreVirtualizedViewIdComponentState';
 import { lastContextStoreVirtualizedVisibleRecordFieldsComponentState } from '@/object-record/record-table/virtualization/states/lastContextStoreVirtualizedVisibleRecordFieldsComponentState';
+import { lastProcessedFieldMetadataUpdateComponentState } from '@/object-record/record-table/virtualization/states/lastProcessedFieldMetadataUpdateComponentState';
 import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
@@ -38,6 +40,9 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
 
   const { triggerInitialRecordTableDataLoad } =
     useTriggerInitialRecordTableDataLoad();
+
+  const { resetVirtualizationBecauseDataChanged } =
+    useResetVirtualizationBecauseDataChanged(objectNameSingular);
 
   const [
     lastContextStoreVirtualizedViewId,
@@ -101,6 +106,46 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
     lastContextStoreVisibleRecordFields,
     setLastContextStoreVisibleRecordFields,
     visibleRecordFields,
+  ]);
+
+  const lastFieldMetadataItemUpdate = useRecoilValue(
+    lastFieldMetadataItemUpdateState,
+  );
+
+  const [
+    lastProcessedFieldMetadataUpdate,
+    setLastProcessedFieldMetadataUpdate,
+  ] = useRecoilComponentState(lastProcessedFieldMetadataUpdateComponentState);
+
+  useEffect(() => {
+    if (!lastFieldMetadataItemUpdate) {
+      return;
+    }
+
+    if (
+      lastFieldMetadataItemUpdate.timestamp === lastProcessedFieldMetadataUpdate
+    ) {
+      return;
+    }
+
+    const isFieldInCurrentView = visibleRecordFields.some(
+      (field) =>
+        field.fieldMetadataItemId ===
+        lastFieldMetadataItemUpdate.fieldMetadataItemId,
+    );
+
+    if (isFieldInCurrentView) {
+      setLastProcessedFieldMetadataUpdate(
+        lastFieldMetadataItemUpdate.timestamp,
+      );
+      resetVirtualizationBecauseDataChanged();
+    }
+  }, [
+    lastFieldMetadataItemUpdate,
+    lastProcessedFieldMetadataUpdate,
+    setLastProcessedFieldMetadataUpdate,
+    visibleRecordFields,
+    resetVirtualizationBecauseDataChanged,
   ]);
 
   return <></>;
