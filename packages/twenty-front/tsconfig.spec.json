@@ -2,9 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "types": ["jest", "node"],
+    "baseUrl": "../..",
     "paths": {
-      "@/*": ["./src/modules/*"],
-      "~/*": ["./src/*"]
+      "@/*": ["./packages/twenty-front/src/modules/*"],
+      "~/*": ["./packages/twenty-front/src/*"]
     }
   },
   "include": [
