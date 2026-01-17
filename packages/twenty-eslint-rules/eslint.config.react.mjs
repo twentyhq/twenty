@@ -13,6 +13,8 @@ import unicornPlugin from 'eslint-plugin-unicorn';
 import unusedImportsPlugin from 'eslint-plugin-unused-imports';
 import jsoncParser from 'jsonc-eslint-parser';
 
+const twentyRules = await nxPlugin.loadWorkspaceRules('packages/twenty-eslint-rules');
+
 export default [
   // Base JavaScript configuration
   js.configs.recommended,
@@ -34,6 +36,7 @@ export default [
       'import': importPlugin,
       'unused-imports': unusedImportsPlugin,
       'unicorn': unicornPlugin,
+      'twenty': { rules: twentyRules },
     },
     settings: {
       react: {
@@ -567,17 +570,17 @@ export default [
       '@typescript-eslint/no-unused-vars': 'off',
 
       // Custom workspace rules
-      '@nx/workspace-effect-components': 'error',
-      '@nx/workspace-no-hardcoded-colors': 'error',
-      '@nx/workspace-matching-state-variable': 'error',
-      '@nx/workspace-sort-css-properties-alphabetically': 'error',
-      '@nx/workspace-styled-components-prefixed-with-styled': 'error',
-      '@nx/workspace-no-state-useref': 'error',
-      '@nx/workspace-component-props-naming': 'error',
-      '@nx/workspace-explicit-boolean-predicates-in-if': 'error',
-      '@nx/workspace-use-getLoadable-and-getValue-to-get-atoms': 'error',
-      '@nx/workspace-useRecoilCallback-has-dependency-array': 'error',
-      '@nx/workspace-no-navigate-prefer-link': 'error',
+      'twenty/effect-components': 'error',
+      'twenty/no-hardcoded-colors': 'error',
+      'twenty/matching-state-variable': 'error',
+      'twenty/sort-css-properties-alphabetically': 'error',
+      'twenty/styled-components-prefixed-with-styled': 'error',
+      'twenty/no-state-useref': 'error',
+      'twenty/component-props-naming': 'error',
+      'twenty/explicit-boolean-predicates-in-if': 'error',
+      'twenty/use-getLoadable-and-getValue-to-get-atoms': 'error',
+      'twenty/useRecoilCallback-has-dependency-array': 'error',
+      'twenty/no-navigate-prefer-link': 'error',
     },
   },
 
@@ -721,7 +724,7 @@ export default [
           },
         },
       ],
-      '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
+      'twenty/max-consts-per-file': ['error', { max: 1 }],
     },
   },
 
@@ -778,7 +781,7 @@ export default [
           },
         },
       ],
-      '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
+      'twenty/max-consts-per-file': ['error', { max: 1 }],
     },
   },
 

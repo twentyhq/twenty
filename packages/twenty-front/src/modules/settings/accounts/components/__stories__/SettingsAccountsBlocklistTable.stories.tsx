@@ -8,7 +8,6 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mockedBlocklist';
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const handleBlockedEmailRemoveJestFn = fn();
@@ -23,7 +22,7 @@ const ClearMocksDecorator: Decorator = (Story, context) => {
 const meta: Meta<typeof SettingsAccountsBlocklistTable> = {
   title: 'Modules/Settings/Accounts/Blocklist/SettingsAccountsBlocklistTable',
   component: SettingsAccountsBlocklistTable,
-  decorators: [ComponentDecorator, ClearMocksDecorator, I18nFrontDecorator],
+  decorators: [ComponentDecorator, ClearMocksDecorator],
   args: {
     blocklist: mockedBlocklist,
     handleBlockedEmailRemove: handleBlockedEmailRemoveJestFn,

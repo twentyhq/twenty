@@ -15,7 +15,6 @@ import { RecordDetailRelationSection } from '@/object-record/record-field-list/r
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated/graphql';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RightDrawerDecorator } from '~/testing/decorators/RightDrawerDecorator';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -78,7 +77,6 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     MemoryRouterDecorator,
-    I18nFrontDecorator,
   ],
   parameters: {
     msw: graphqlMocks,
