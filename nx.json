@@ -190,7 +190,8 @@
       "inputs": ["^default", "excludeTests"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "vitest run --shard={args.shard}"
+        "command": "vitest run --shard={args.shard}",
+        "shard": "1/1"
       }
     },
     "storybook:coverage": {

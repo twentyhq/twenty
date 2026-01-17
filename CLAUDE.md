@@ -28,7 +28,7 @@ npx nx run twenty-server:test:integration:with-db-reset  # Integration tests wit
 
 # Storybook
 npx nx storybook:build twenty-front         # Build Storybook
-npx nx storybook:serve-and-test:static twenty-front     # Run Storybook tests
+npx nx storybook:test twenty-front     # Run Storybook tests
 
 
 When testing the UI end to end, click on "Continue with Email" and use the prefilled credentials.

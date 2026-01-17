@@ -55,7 +55,7 @@ You can manually reference any rule using the `@ruleName` syntax:
 # Testing
 npx nx test twenty-front                    # Run unit tests
 npx nx storybook:build twenty-front         # Build Storybook
-npx nx storybook:serve-and-test:static     # Run Storybook tests
+npx nx storybook:test                       # Run Storybook tests
 
 # Development
 npx nx lint:diff-with-main twenty-front            # Lint files changed vs main (fastest)
