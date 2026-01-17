@@ -8,10 +8,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 const meta: Meta<typeof SettingsMorphRelationMultiSelect> = {
   title: 'Modules/Settings/SettingsMorphRelationMultiSelect',
   component: SettingsMorphRelationMultiSelect,
-  decorators: [
-    ComponentDecorator,
-    ObjectMetadataItemsDecorator,
-  ],
+  decorators: [ComponentDecorator, ObjectMetadataItemsDecorator],
 };
 export default meta;
 type Story = StoryObj<typeof SettingsMorphRelationMultiSelect>;
