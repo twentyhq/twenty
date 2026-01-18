@@ -103,6 +103,7 @@ export type LinksFilter = {
 export type ActorFilter = {
   name?: StringFilter;
   source?: SelectFilter;
+  workspaceMemberId?: UUIDFilter;
 };
 
 export type EmailsFilter = {
