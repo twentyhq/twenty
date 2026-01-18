@@ -69,8 +69,7 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
 
   @Option({
     flags: '--only-soft-delete',
-    description:
-      'Only soft delete workspaces, skip hard delete and warning',
+    description: 'Only soft delete workspaces, skip hard delete and warning',
     required: false,
   })
   parseOnlySoftDelete(): boolean {
