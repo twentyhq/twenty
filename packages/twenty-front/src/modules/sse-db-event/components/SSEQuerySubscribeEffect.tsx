@@ -6,6 +6,7 @@ import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQuery
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useMutation } from '@apollo/client';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import {
@@ -103,7 +104,7 @@ export const SSEQuerySubscribeEffect = () => {
   );
 
   useEffect(() => {
-    if (!sseEventStreamId) {
+    if (!isNonEmptyString(sseEventStreamId)) {
       return;
     }
 
