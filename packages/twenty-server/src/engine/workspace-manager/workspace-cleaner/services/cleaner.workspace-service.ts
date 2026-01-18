@@ -400,6 +400,9 @@ export class CleanerWorkspaceService {
 
           if (isDefined(result)) {
             deletedWorkspacesCount++;
+            this.logger.log(
+              `Destroyed ${deletedWorkspacesCount} workspaces on ${this.maxNumberOfWorkspacesDeletedPerExecution} limit durings this execution`,
+            );
           }
           continue;
         }
