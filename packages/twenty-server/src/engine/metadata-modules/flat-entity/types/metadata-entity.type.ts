@@ -1,6 +1,7 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
+import { type ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 
-export type MetadataEntity<T extends AllMetadataName> =
-  AllFlatEntityTypesByMetadataName[T]['entity'];
+export type MetadataEntity<K extends AllMetadataName> = InstanceType<
+  (typeof ALL_METADATA_ENTITY_BY_METADATA_NAME)[K]
+>;
