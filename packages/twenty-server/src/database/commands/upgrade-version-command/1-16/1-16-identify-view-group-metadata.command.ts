@@ -24,8 +24,6 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 
-// Mapping from viewGroupName to fieldValue for each standard view group
-// This corresponds to the mappings defined in compute-standard-*-view-groups.util.ts files
 const VIEW_GROUP_TO_FIELD_VALUE_MAPPING: Record<
   string,
   Record<string, Record<string, string>>
@@ -187,12 +185,9 @@ export class IdentifyViewGroupMetadataCommand extends ActiveOrSuspendedWorkspace
         continue;
       }
 
-      // Get the view group to field value mapping for this object
       const objectViewGroupMapping =
         VIEW_GROUP_TO_FIELD_VALUE_MAPPING[objectNameSingular];
 
-      // Iterate over view configs and find views by their universalIdentifier
-      // (views have already been identified by the view identification command)
       for (const [viewName, viewConfig] of Object.entries(objectViews)) {
         if (!isDefined(viewConfig) || !isDefined(viewConfig.viewGroups)) {
           continue;
@@ -216,10 +211,8 @@ export class IdentifyViewGroupMetadataCommand extends ActiveOrSuspendedWorkspace
             flatEntityMaps: flatViewGroupMaps,
           });
 
-        // Get the view group to field value mapping for this view
         const viewGroupMapping = objectViewGroupMapping?.[viewName];
 
-        // Iterate over expected view groups from config
         for (const [viewGroupName, viewGroupConfig] of Object.entries(
           viewConfig.viewGroups,
         )) {
@@ -227,7 +220,6 @@ export class IdentifyViewGroupMetadataCommand extends ActiveOrSuspendedWorkspace
             continue;
           }
 
-          // Get the field value from the mapping
           const fieldValue = viewGroupMapping?.[viewGroupName];
 
           if (!isDefined(fieldValue) && fieldValue !== '') {
@@ -237,7 +229,6 @@ export class IdentifyViewGroupMetadataCommand extends ActiveOrSuspendedWorkspace
             continue;
           }
 
-          // Find the existing view group that matches this field value
           const matchingFlatViewGroup = relatedFlatViewGroups.find(
             (viewGroup) => viewGroup.fieldValue === fieldValue,
           );
