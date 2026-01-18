@@ -94,7 +94,7 @@ export const EditExistingItem: Story = {
     await userEvent.click(firstItemChip);
 
     const openSecondItemMenuButton = await waitFor(() => {
-      const button = document.body.querySelector(
+      const button = canvasElement.ownerDocument.body.querySelector(
         '[aria-controls$="-1-options"] > button',
       );
 

@@ -125,7 +125,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof TaskGroups>;
+type Story = StoryObj<typeof ViewBarFilterDropdown>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {

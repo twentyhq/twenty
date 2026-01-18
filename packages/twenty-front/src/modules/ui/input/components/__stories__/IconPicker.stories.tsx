@@ -34,7 +34,7 @@ const meta: Meta<typeof IconPicker> = {
   decorators: [IconsProviderDecorator, ComponentDecorator],
   render: (args: IconPickerProps) => (
     // eslint-disable-next-line react/jsx-props-no-spreading
-    <IconPickerStory {...args} />
+    <IconPickerStory key={args.selectedIconKey ?? 'no-selection'} {...args} />
   ),
 };
 
