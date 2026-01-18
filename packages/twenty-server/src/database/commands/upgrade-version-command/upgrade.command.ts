@@ -24,11 +24,13 @@ import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrad
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
+import { IdentifyAgentMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-agent-metadata.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
 import { IdentifyViewFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-field-metadata.command';
 import { IdentifyViewFilterMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-filter-metadata.command';
 import { IdentifyViewMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-metadata.command';
+import { MakeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-agent-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-object-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-field-universal-identifier-and-application-id-not-nullable-migration.command';
@@ -77,11 +79,13 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly updateTaskOnDeleteActionCommand: UpdateTaskOnDeleteActionCommand,
     protected readonly backfillOpportunityOwnerFieldCommand: BackfillOpportunityOwnerFieldCommand,
     protected readonly backfillStandardPageLayoutsCommand: BackfillStandardPageLayoutsCommand,
+    protected readonly identifyAgentMetadataCommand: IdentifyAgentMetadataCommand,
     protected readonly identifyFieldMetadataCommand: IdentifyFieldMetadataCommand,
     protected readonly identifyObjectMetadataCommand: IdentifyObjectMetadataCommand,
     protected readonly identifyViewMetadataCommand: IdentifyViewMetadataCommand,
     protected readonly identifyViewFieldMetadataCommand: IdentifyViewFieldMetadataCommand,
     protected readonly identifyViewFilterMetadataCommand: IdentifyViewFilterMetadataCommand,
+    protected readonly makeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
@@ -124,11 +128,14 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.updateTaskOnDeleteActionCommand,
       this.backfillOpportunityOwnerFieldCommand,
       this.backfillStandardPageLayoutsCommand,
+      this.identifyAgentMetadataCommand,
       this.identifyFieldMetadataCommand,
       this.identifyObjectMetadataCommand,
       this.identifyViewMetadataCommand,
       this.identifyViewFieldMetadataCommand,
       this.identifyViewFilterMetadataCommand,
+      this
+        .makeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this
         .makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this

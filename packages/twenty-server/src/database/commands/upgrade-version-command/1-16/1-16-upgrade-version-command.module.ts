@@ -3,11 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
+import { IdentifyAgentMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-agent-metadata.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
 import { IdentifyViewFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-field-metadata.command';
 import { IdentifyViewFilterMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-filter-metadata.command';
 import { IdentifyViewMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-metadata.command';
+import { MakeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-agent-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-object-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-field-universal-identifier-and-application-id-not-nullable-migration.command';
@@ -16,6 +18,7 @@ import { MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand 
 import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
@@ -33,6 +36,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   imports: [
     TypeOrmModule.forFeature([
       WorkspaceEntity,
+      AgentEntity,
       FieldMetadataEntity,
       ObjectMetadataEntity,
       ViewEntity,
@@ -52,11 +56,13 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     UpdateTaskOnDeleteActionCommand,
     BackfillOpportunityOwnerFieldCommand,
     BackfillStandardPageLayoutsCommand,
+    IdentifyAgentMetadataCommand,
     IdentifyFieldMetadataCommand,
     IdentifyObjectMetadataCommand,
     IdentifyViewMetadataCommand,
     IdentifyViewFieldMetadataCommand,
     IdentifyViewFilterMetadataCommand,
+    MakeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
@@ -67,11 +73,13 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     UpdateTaskOnDeleteActionCommand,
     BackfillOpportunityOwnerFieldCommand,
     BackfillStandardPageLayoutsCommand,
+    IdentifyAgentMetadataCommand,
     IdentifyFieldMetadataCommand,
     IdentifyObjectMetadataCommand,
     IdentifyViewMetadataCommand,
     IdentifyViewFieldMetadataCommand,
     IdentifyViewFilterMetadataCommand,
+    MakeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
