@@ -1,7 +1,8 @@
-import { type EntityTarget, type ObjectLiteral } from 'typeorm';
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { type EntityTarget, type ObjectLiteral } from 'typeorm';
 
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -47,4 +48,5 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   objectMetadata: ObjectMetadataEntity,
   role: RoleEntity,
   agent: AgentEntity,
+  commandMenuItem: CommandMenuItemEntity
 } as const satisfies Record<AllMetadataName, EntityTarget<ObjectLiteral>>;
