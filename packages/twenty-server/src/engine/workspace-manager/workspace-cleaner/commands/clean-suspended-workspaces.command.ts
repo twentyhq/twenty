@@ -9,7 +9,16 @@ import {
   MigrationCommandRunner,
 } from 'src/database/commands/command-runners/migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
+import {
+  CleanerWorkspaceService,
+  type CleanSuspendedWorkspacesOptions,
+} from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
+
+type CleanSuspendedWorkspacesCommandOptions = MigrationCommandOptions &
+  Pick<
+    CleanSuspendedWorkspacesOptions,
+    'ignoreDestroyGracePeriod' | 'onlyDestroy' | 'onlySoftDelete'
+  >;
 
 @Command({
   name: 'workspace:clean',
@@ -38,6 +47,36 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
     return this.workspaceIds;
   }
 
+  @Option({
+    flags: '--ignore-destroy-grace-period',
+    description:
+      'Ignore the grace period and hard delete soft-deleted workspaces immediately',
+    required: false,
+  })
+  parseIgnoreDestroyGracePeriod(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '--only-destroy',
+    description:
+      'Only hard delete soft-deleted workspaces, skip soft delete and warning',
+    required: false,
+  })
+  parseOnlyDestroy(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '--only-soft-delete',
+    description:
+      'Only soft delete workspaces, skip hard delete and warning',
+    required: false,
+  })
+  parseOnlySoftDelete(): boolean {
+    return true;
+  }
+
   async fetchSuspendedWorkspaceIds(): Promise<string[]> {
     const suspendedWorkspaces = await this.workspaceRepository.find({
       select: ['id'],
@@ -52,9 +91,10 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
 
   override async runMigrationCommand(
     _passedParams: string[],
-    options: MigrationCommandOptions,
+    options: CleanSuspendedWorkspacesCommandOptions,
   ): Promise<void> {
-    const { dryRun } = options;
+    const { dryRun, ignoreDestroyGracePeriod, onlyDestroy, onlySoftDelete } =
+      options;
 
     const suspendedWorkspaceIds =
       this.workspaceIds.length > 0
@@ -62,12 +102,15 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
         : await this.fetchSuspendedWorkspaceIds();
 
     this.logger.log(
-      `${dryRun ? 'DRY RUN - ' : ''}Cleaning ${suspendedWorkspaceIds.length} suspended workspaces`,
+      `${dryRun ? 'DRY RUN - ' : ''}${ignoreDestroyGracePeriod ? 'IGNORING GRACE PERIOD - ' : ''}${onlyDestroy ? 'ONLY DESTROY - ' : ''}${onlySoftDelete ? 'ONLY SOFT DELETE - ' : ''}Cleaning ${suspendedWorkspaceIds.length} suspended workspaces`,
     );
 
     await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces({
       workspaceIds: suspendedWorkspaceIds,
       dryRun,
+      ignoreDestroyGracePeriod,
+      onlyDestroy,
+      onlySoftDelete,
     });
   }
 }

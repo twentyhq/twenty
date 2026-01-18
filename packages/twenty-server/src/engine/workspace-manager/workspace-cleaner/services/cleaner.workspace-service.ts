@@ -27,6 +27,14 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
+export type CleanSuspendedWorkspacesOptions = {
+  workspaceIds: string[];
+  dryRun?: boolean;
+  ignoreDestroyGracePeriod?: boolean;
+  onlyDestroy?: boolean;
+  onlySoftDelete?: boolean;
+};
+
 @Injectable()
 export class CleanerWorkspaceService {
   private readonly logger = new Logger(CleanerWorkspaceService.name);
@@ -316,7 +324,7 @@ export class CleanerWorkspaceService {
     }
   }
 
-  async hardDeleteSoftDeletedWorkspace({
+  async destroySoftDeletedWorkspace({
     workspace,
     ignoreGracePeriod = false,
     dryRun = false,
@@ -362,10 +370,10 @@ export class CleanerWorkspaceService {
   async batchWarnOrCleanSuspendedWorkspaces({
     workspaceIds,
     dryRun = false,
-  }: {
-    workspaceIds: string[];
-    dryRun?: boolean;
-  }): Promise<void> {
+    ignoreDestroyGracePeriod = false,
+    onlyDestroy = false,
+    onlySoftDelete = false,
+  }: CleanSuspendedWorkspacesOptions): Promise<void> {
     this.logger.log(
       `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces running...`,
     );
@@ -391,11 +399,15 @@ export class CleanerWorkspaceService {
           deletedWorkspacesCount <
           this.maxNumberOfWorkspacesDeletedPerExecution;
 
-        if (isSoftDeletedWorkspace && isWithinDeletionLimit) {
-          const result = await this.hardDeleteSoftDeletedWorkspace({
+        if (
+          !onlySoftDelete &&
+          isSoftDeletedWorkspace &&
+          isWithinDeletionLimit
+        ) {
+          const result = await this.destroySoftDeletedWorkspace({
             workspace,
             dryRun,
-            ignoreGracePeriod: false,
+            ignoreGracePeriod: ignoreDestroyGracePeriod,
           });
 
           if (isDefined(result)) {
@@ -404,6 +416,10 @@ export class CleanerWorkspaceService {
               `Destroyed ${deletedWorkspacesCount} workspaces on ${this.maxNumberOfWorkspacesDeletedPerExecution} limit durings this execution`,
             );
           }
+          continue;
+        }
+
+        if (onlyDestroy) {
           continue;
         }
 
@@ -425,6 +441,7 @@ export class CleanerWorkspaceService {
         }
 
         if (
+          !onlySoftDelete &&
           workspaceInactivity > this.inactiveDaysBeforeWarn &&
           workspaceInactivity <= this.inactiveDaysBeforeSoftDelete
         ) {
