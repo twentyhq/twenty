@@ -108,18 +108,6 @@ export const SettingsObjectFieldEdit = () => {
   const getRelationMetadata = useGetRelationMetadata();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
 
-  const junctionTargetFieldId =
-    fieldMetadataItem?.settings &&
-    'junctionTargetFieldId' in fieldMetadataItem.settings
-      ? fieldMetadataItem.settings.junctionTargetFieldId
-      : undefined;
-
-  const junctionTargetMorphId =
-    fieldMetadataItem?.settings &&
-    'junctionTargetMorphId' in fieldMetadataItem.settings
-      ? fieldMetadataItem.settings.junctionTargetMorphId
-      : undefined;
-
   const { settings, defaultValue } =
     getFieldMetadataItemInitialValues(fieldMetadataItem);
 
@@ -134,8 +122,6 @@ export const SettingsObjectFieldEdit = () => {
       isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
       settings,
       defaultValue,
-      junctionTargetFieldId,
-      junctionTargetMorphId,
     },
   });
 
@@ -208,20 +194,9 @@ export const SettingsObjectFieldEdit = () => {
     const otherDirtyFields = omit(dirtyFields, 'relation');
 
     if (Object.keys(otherDirtyFields).length > 0) {
-      // relationType and junction settings are stored at form root level
-      // but get merged into settings by formatFieldMetadataItemInput
-      const dirtyFieldKeys = Object.keys(otherDirtyFields);
-      const hasRelationSettingsChange =
-        dirtyFieldKeys.includes('junctionTargetFieldId') ||
-        dirtyFieldKeys.includes('junctionTargetMorphId') ||
-        dirtyFieldKeys.includes('relationType');
-      const effectiveDirtyKeys = hasRelationSettingsChange
-        ? [...dirtyFieldKeys, 'settings']
-        : dirtyFieldKeys;
-
       const formattedInput = Object.fromEntries(
         Object.entries(formatFieldMetadataItemInput(formValues)).filter(
-          ([key]) => effectiveDirtyKeys.includes(key),
+          ([key]) => Object.keys(otherDirtyFields).includes(key),
         ),
       );
 
