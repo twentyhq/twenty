@@ -20,9 +20,7 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
 
 @Entity({ name: 'viewFilter', schema: 'core' })
 @Index('IDX_VIEW_FILTER_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-@Index('IDX_VIEW_FILTER_VIEW_ID', ['viewId'], {
-  where: '"deletedAt" IS NULL',
-})
+@Index('IDX_VIEW_FILTER_VIEW_ID', ['viewId'])
 @Index('IDX_VIEW_FILTER_FIELD_METADATA_ID', ['fieldMetadataId'])
 export class ViewFilterEntity
   extends SyncableEntityRequired
