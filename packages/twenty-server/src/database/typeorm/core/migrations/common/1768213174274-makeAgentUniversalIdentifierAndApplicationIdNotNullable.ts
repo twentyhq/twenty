@@ -5,8 +5,7 @@ import { makeAgentUniversalIdentifierAndApplicationIdNotNullableQueries } from '
 export class MakeAgentUniversalIdentifierAndApplicationIdNotNullable1768213174274
   implements MigrationInterface
 {
-  name =
-    'MakeAgentUniversalIdentifierAndApplicationIdNotNullable1768213174274';
+  name = 'MakeAgentUniversalIdentifierAndApplicationIdNotNullable1768213174274';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     const savepointName =
