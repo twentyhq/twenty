@@ -1867,3 +1867,202 @@ export const TimelineActivityRelationCardWidget: Story = {
     });
   },
 };
+
+// Helper function to generate mock person records for progressive loading tests
+const generateMockPersonRecords = (count: number) => {
+  const names = [
+    { firstName: 'Jane', lastName: 'Smith' },
+    { firstName: 'John', lastName: 'Williams' },
+    { firstName: 'Alice', lastName: 'Brown' },
+    { firstName: 'Bob', lastName: 'Davis' },
+    { firstName: 'Carol', lastName: 'Miller' },
+    { firstName: 'David', lastName: 'Wilson' },
+    { firstName: 'Emma', lastName: 'Moore' },
+    { firstName: 'Frank', lastName: 'Taylor' },
+    { firstName: 'Grace', lastName: 'Anderson' },
+    { firstName: 'Henry', lastName: 'Thomas' },
+    { firstName: 'Ivy', lastName: 'Jackson' },
+    { firstName: 'Jack', lastName: 'White' },
+  ];
+
+  return Array.from({ length: count }, (_, index) => {
+    const nameInfo = names[index % names.length];
+    const recordId = `person-${index + 1}`;
+    return {
+      id: recordId,
+      __typename: 'Person',
+      name: {
+        __typename: 'FullName',
+        firstName: nameInfo.firstName,
+        lastName: `${nameInfo.lastName} ${index + 1}`,
+      },
+      emails: {
+        __typename: 'Emails',
+        primaryEmail: `${nameInfo.firstName.toLowerCase()}.${nameInfo.lastName.toLowerCase()}${index + 1}@example.com`,
+        additionalEmails: [],
+      },
+      phones: {
+        __typename: 'Phones',
+        primaryPhoneNumber: `555000${(index + 1).toString().padStart(4, '0')}`,
+        primaryPhoneCountryCode: '+1',
+        primaryPhoneCallingCode: '+1',
+        additionalPhones: [],
+      },
+    };
+  });
+};
+
+export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
+  render: () => {
+    const mockPeople = generateMockPersonRecords(12);
+    const companyWithManyPeople = {
+      ...mockCompanyRecord,
+      people: mockPeople.map(({ id, __typename, name }) => ({
+        __typename,
+        id,
+        name,
+      })),
+    };
+
+    const widget: PageLayoutWidget = {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-one-to-many-relation-card-progressive',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
+      type: WidgetType.FIELD,
+      title: 'People',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 11,
+        column: 0,
+        rowSpan: 1,
+        columnSpan: 2,
+      },
+      configuration: {
+        __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
+        fieldMetadataId: companyPeopleField.id,
+        layout: 'CARD',
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        companyObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        recordStoreFamilyState(TEST_RECORD_ID),
+        companyWithManyPeople,
+      );
+      // Set each person record in the store
+      mockPeople.forEach((person) => {
+        snapshot.set(recordStoreFamilyState(person.id), person);
+      });
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Verify initial display - should show first 5 items
+    const firstPerson = await canvas.findByText('Jane Smith 1');
+    expect(firstPerson).toBeVisible();
+
+    const fifthPerson = await canvas.findByText('Carol Miller 5');
+    expect(fifthPerson).toBeVisible();
+
+    // Verify sixth person is NOT visible initially
+    expect(canvas.queryByText('David Wilson 6')).not.toBeInTheDocument();
+
+    // Verify "More (7)" button is visible (12 total - 5 shown = 7 remaining)
+    const moreButton = await canvas.findByTestId(
+      'field-widget-show-more-button',
+    );
+    expect(moreButton).toBeVisible();
+    expect(moreButton).toHaveTextContent('More (7)');
+
+    // Click "More" button to load 5 more items
+    await userEvent.click(moreButton);
+
+    // Verify more items are now visible
+    await waitFor(() => {
+      const sixthPerson = canvas.getByText('David Wilson 6');
+      expect(sixthPerson).toBeVisible();
+    });
+
+    const tenthPerson = await canvas.findByText('Henry Thomas 10');
+    expect(tenthPerson).toBeVisible();
+
+    // Verify "More (2)" button is visible (12 total - 10 shown = 2 remaining)
+    const updatedMoreButton = await canvas.findByTestId(
+      'field-widget-show-more-button',
+    );
+    expect(updatedMoreButton).toHaveTextContent('More (2)');
+
+    // Click "More" button again to load remaining items
+    await userEvent.click(updatedMoreButton);
+
+    // Verify all items are now visible
+    await waitFor(() => {
+      const twelfthPerson = canvas.getByText('Jack White 12');
+      expect(twelfthPerson).toBeVisible();
+    });
+
+    // Verify "More" button is no longer visible
+    expect(
+      canvas.queryByTestId('field-widget-show-more-button'),
+    ).not.toBeInTheDocument();
+  },
+};
