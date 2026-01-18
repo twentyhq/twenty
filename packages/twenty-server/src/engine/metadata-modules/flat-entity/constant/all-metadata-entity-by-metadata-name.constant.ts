@@ -48,5 +48,5 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   objectMetadata: ObjectMetadataEntity,
   role: RoleEntity,
   agent: AgentEntity,
-  commandMenuItem: CommandMenuItemEntity
+  commandMenuItem: CommandMenuItemEntity,
 } as const satisfies Record<AllMetadataName, EntityTarget<ObjectLiteral>>;
