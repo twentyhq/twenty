@@ -96,7 +96,7 @@ export const MultipleRecordPickerMenuItemContent = ({
         text={displayText}
         contextualText={
           showObjectName
-            ? capitalize(searchRecord.objectNameSingular)
+            ? capitalize(objectMetadataItem.labelSingular)
             : undefined
         }
       />
