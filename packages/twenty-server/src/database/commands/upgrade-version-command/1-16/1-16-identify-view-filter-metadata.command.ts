@@ -98,8 +98,6 @@ export class IdentifyViewFilterMetadataCommand extends ActiveOrSuspendedWorkspac
     }
   }
 
-  // Only one standard view filter exists: task.assignedToMe.assigneeIsMe
-  // which filters on the "assignee" field
   private async identifyStandardViewFilter({
     flatFieldMetadataMaps,
     flatViewMaps,
@@ -113,7 +111,6 @@ export class IdentifyViewFilterMetadataCommand extends ActiveOrSuspendedWorkspac
     twentyStandardApplicationId: string;
     dryRun: boolean;
   }): Promise<void> {
-    // Find the task.assignedToMe view
     const flatView = findFlatEntityByUniversalIdentifier({
       flatEntityMaps: flatViewMaps,
       universalIdentifier:
@@ -128,7 +125,6 @@ export class IdentifyViewFilterMetadataCommand extends ActiveOrSuspendedWorkspac
       return;
     }
 
-    // Find the task.assignee field
     const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
       flatEntityMaps: flatFieldMetadataMaps,
       universalIdentifier:
@@ -143,14 +139,12 @@ export class IdentifyViewFilterMetadataCommand extends ActiveOrSuspendedWorkspac
       return;
     }
 
-    // Get all view filters for this view
     const relatedFlatViewFilters =
       findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityIds: flatView.viewFilterIds,
         flatEntityMaps: flatViewFilterMaps,
       });
 
-    // Find the view filter that matches the assignee field
     const matchingFlatViewFilter = relatedFlatViewFilters.find(
       (viewFilter) => viewFilter.fieldMetadataId === flatFieldMetadata.id,
     );
