@@ -181,15 +181,8 @@
       "outputs": ["{projectRoot}/coverage/storybook"],
       "options": {
         "cwd": "{projectRoot}",
-        "commands": [
-          "test-storybook --url http://localhost:{args.port} --maxWorkers=3 --coverage --coverageDirectory={args.coverageDir} --shard={args.shard}",
-          "nx storybook:coverage {projectName} --coverageDir={args.coverageDir} --checkCoverage={args.checkCoverage}"
-        ],
-        "shard": "1/1",
-        "parallel": false,
-        "coverageDir": "coverage/storybook",
-        "port": 6006,
-        "checkCoverage": true
+        "command": "vitest run --coverage --shard={args.shard}",
+        "shard": "1/1"
       }
     },
     "storybook:test:no-coverage": {
@@ -197,10 +190,8 @@
       "inputs": ["^default", "excludeTests"],
       "options": {
         "cwd": "{projectRoot}",
-        "commands": [
-          "test-storybook --url http://localhost:{args.port} --maxWorkers=2"
-        ],
-        "port": 6006
+        "command": "vitest run --shard={args.shard}",
+        "shard": "1/1"
       }
     },
     "storybook:coverage": {
@@ -225,17 +216,6 @@
         "text": {
           "reporter": "text"
         }
-      }
-    },
-    "storybook:serve-and-test:static": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:serve:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --shard={args.shard} --checkCoverage={args.checkCoverage} --port={args.port} --configuration={args.scope}'"
-        ],
-        "shard": "1/1",
-        "checkCoverage": true,
-        "port": 6006
       }
     },
     "chromatic": {

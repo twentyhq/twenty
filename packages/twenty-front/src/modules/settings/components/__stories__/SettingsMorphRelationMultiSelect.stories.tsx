@@ -34,6 +34,4 @@ export const Default: Story = {
     hasRightElement: false,
     onChange: fn(),
   },
-
-  decorators: [ObjectMetadataItemsDecorator],
 };

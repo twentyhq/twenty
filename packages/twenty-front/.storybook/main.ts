@@ -31,8 +31,6 @@ const computeStoriesGlob = () => {
 const config: StorybookConfig = {
   stories: computeStoriesGlob(),
 
-  staticDirs: ['../public'],
-
   build: {
     test: {
       disabledAddons: [
@@ -48,8 +46,9 @@ const config: StorybookConfig = {
     '@storybook/addon-links',
     '@storybook/addon-coverage',
     'storybook-addon-pseudo-states',
-    'storybook-addon-mock-date',
     // 'storybook-dark-mode',
+    'storybook-addon-mock-date',
+    '@storybook/addon-vitest',
   ],
 
   framework: '@storybook/react-vite',
@@ -58,11 +57,6 @@ const config: StorybookConfig = {
     const { mergeConfig } = await import('vite');
 
     return mergeConfig(viteConfig, {
-      resolve: {
-        alias: {
-          'react-dom/client': 'react-dom/profiling',
-        },
-      },
       logLevel: 'warn',
     });
   },

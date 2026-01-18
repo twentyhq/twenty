@@ -10,10 +10,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import {
-  RouterDecorator,
-  getCanvasElementForDropdownTesting,
-} from 'twenty-ui/testing';
+import { RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 
 const deleteMock = test.fn();
@@ -81,8 +78,8 @@ export const WithInteractions: Story = {
   args: {
     actionMenuId: 'story',
   },
-  play: async () => {
-    const canvas = within(getCanvasElementForDropdownTesting());
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const deleteButton = await canvas.findByText('Delete');
     await userEvent.click(deleteButton);

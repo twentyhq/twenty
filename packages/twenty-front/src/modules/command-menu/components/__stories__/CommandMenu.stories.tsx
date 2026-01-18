@@ -116,8 +116,8 @@ export default meta;
 type Story = StoryObj<typeof CommandMenu>;
 
 export const DefaultWithoutSearch: Story = {
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Go to People')).toBeVisible();
     expect(await canvas.findByText('Go to Opportunities')).toBeVisible();
@@ -128,8 +128,8 @@ export const DefaultWithoutSearch: Story = {
 };
 
 export const LimitedPermissions: Story = {
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
     expect(await canvas.findByText('Go to People')).toBeVisible();
     expect(canvas.queryByText('Go to Opportunities')).not.toBeInTheDocument();
     expect(canvas.queryByText('Go to Tasks')).not.toBeInTheDocument();
@@ -151,8 +151,8 @@ export const LimitedPermissions: Story = {
 };
 
 export const MatchingNavigate: Story = {
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
     const searchInput = await canvas.findByTestId(
       COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
     );
@@ -163,8 +163,8 @@ export const MatchingNavigate: Story = {
 };
 
 export const MatchingNavigateShortcuts: Story = {
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
     const searchInput = await canvas.findByTestId(
       COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
     );
@@ -176,8 +176,8 @@ export const MatchingNavigateShortcuts: Story = {
 
 // TEMP_DISABLED_TEST: Temporarily commented out due to test failure
 // export const SearchRecordsAction: Story = {
-//   play: async () => {
-//     const canvas = within(document.body);
+//   play: async ({ canvasElement }) => {
+//     const canvas = within(canvasElement.ownerDocument.body);
 //     const searchRecordsButton = await canvas.findByText('Search records');
 //     await userEvent.click(searchRecordsButton);
 //     const searchInput = await canvas.findByPlaceholderText('Type anything...');
@@ -190,8 +190,8 @@ export const MatchingNavigateShortcuts: Story = {
 // };
 
 export const NoResultsSearchFallback: Story = {
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
     const searchInput = await canvas.findByTestId(
       COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
     );
@@ -225,8 +225,8 @@ export const NoResultsSearchFallback: Story = {
 
 // TEMP_DISABLED_TEST: Temporarily commented out due to test failure
 // export const ClickOnSearchRecordsAndGoBack: Story = {
-//   play: async () => {
-//     const canvas = within(document.body);
+//   play: async ({ canvasElement }) => {
+//     const canvas = within(canvasElement.ownerDocument.body);
 //     const searchRecordsButton = await canvas.findByText('Search records');
 //     await userEvent.click(searchRecordsButton);
 //     await sleep(openTimeout);

@@ -54,8 +54,8 @@ export type Story = StoryObj<typeof SettingsDevelopersApiKeyDetail>;
 
 // TEMP_DISABLED_TEST: Temporarily commented out due to test failure
 // export const RegenerateApiKey: Story = {
-//   play: async ({ step }) => {
-//     const canvas = within(document.body);
+//   play: async ({ canvasElement, step }) => {
+//     const canvas = within(canvasElement.ownerDocument.body);
 
 //     await canvas.findByText('Role', undefined, { timeout: 3000 });
 

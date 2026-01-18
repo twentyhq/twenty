@@ -67,8 +67,7 @@ const StyledWidgetCard = styled.div<{
 
         ${isDragging &&
         css`
-          background:
-            linear-gradient(
+          background: linear-gradient(
               0deg,
               ${theme.background.transparent.lighter} 0%,
               ${theme.background.transparent.lighter} 100%
@@ -120,8 +119,7 @@ const StyledWidgetCard = styled.div<{
 
         ${isDragging &&
         css`
-          background:
-            linear-gradient(
+          background: linear-gradient(
               0deg,
               ${theme.background.transparent.lighter} 0%,
               ${theme.background.transparent.lighter} 100%

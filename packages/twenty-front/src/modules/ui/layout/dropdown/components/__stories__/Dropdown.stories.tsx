@@ -91,8 +91,8 @@ export const Empty: Story = {
       </DropdownContent>
     ),
   },
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const buttons = await canvas.findAllByRole('button');
     await userEvent.click(buttons[0]);
@@ -222,8 +222,8 @@ const optionsMock = [
 //   );
 // };
 
-const playInteraction: PlayFunction<any, any> = async () => {
-  const canvas = within(document.body);
+const playInteraction: PlayFunction<any, any> = async ({ canvasElement }) => {
+  const canvas = within(canvasElement.ownerDocument.body);
 
   const buttons = await canvas.findAllByRole('button');
   await userEvent.click(buttons[0]);
@@ -279,8 +279,8 @@ export const SearchWithLoadingMenu: Story = {
       </DropdownContent>
     ),
   },
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const buttons = await canvas.findAllByRole('button');
 

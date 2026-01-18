@@ -25,7 +25,6 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
 import { RelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput';
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
@@ -158,8 +157,8 @@ type Story = StoryObj<typeof RelationManyToOneFieldInputWithContext>;
 export const Default: Story = {};
 
 export const Submit: Story = {
-  play: async () => {
-    const canvas = within(getCanvasElementForDropdownTesting());
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
     expect(handleSubmitMocked).toHaveBeenCalledTimes(0);
 
@@ -176,8 +175,8 @@ export const Submit: Story = {
 };
 
 export const Cancel: Story = {
-  play: async () => {
-    const canvas = within(getCanvasElementForDropdownTesting());
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
     expect(handleCancelMocked).toHaveBeenCalledTimes(0);
     await canvas.findByText('Linkedin', undefined, { timeout: 3000 });

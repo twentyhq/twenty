@@ -1,6 +1,14 @@
 import type { StorybookConfig } from '@storybook/react-vite';
-import path from 'path';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import checker from 'vite-plugin-checker';
+
+const dirname =
+  typeof __dirname !== 'undefined'
+    ? __dirname
+    : path.dirname(fileURLToPath(import.meta.url));
+
+const isVitest = Boolean(process.env.VITEST);
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
@@ -10,21 +18,29 @@ const config: StorybookConfig = {
     '@storybook/addon-links',
     '@storybook/addon-coverage',
     'storybook-addon-pseudo-states',
+    '@storybook/addon-vitest',
   ],
 
   framework: '@storybook/react-vite',
 
-  viteFinal: async (viteConfig) => ({
-    ...viteConfig,
-    plugins: [
-      ...(viteConfig.plugins ?? []),
-      checker({
-        typescript: {
-          tsconfigPath: path.resolve(__dirname, '../tsconfig.dev.json'),
-        },
-      }),
-    ],
-  }),
+  viteFinal: async (viteConfig) => {
+    const plugins = [...(viteConfig.plugins ?? [])];
+
+    if (!isVitest) {
+      plugins.push(
+        checker({
+          typescript: {
+            tsconfigPath: path.resolve(dirname, '../tsconfig.dev.json'),
+          },
+        }),
+      );
+    }
+
+    return {
+      ...viteConfig,
+      plugins,
+    };
+  },
 };
 
 export default config;
