@@ -10,7 +10,7 @@ import {
 } from 'src/database/commands/command-runners/migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-  CLEAN_OR_SUSPENDED_WORKSPACES_OPERATION,
+  CLEAN_SUSPENDED_WORKSPACES_OPERATIONS,
   CleanerWorkspaceService,
   CleanSuspendedWorkspacesOperation,
   type CleanSuspendedWorkspacesOptions,
@@ -59,11 +59,11 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
   }
 
   @Option({
-    flags: '--only-operation [operation]',
+    flags: '--only-operation <operation>',
     description:
       'Run only a specific operation: warn, destroy (hard delete), or soft-delete',
     required: false,
-    choices: [...CLEAN_OR_SUSPENDED_WORKSPACES_OPERATION],
+    choices: [...CLEAN_SUSPENDED_WORKSPACES_OPERATIONS],
   })
   parseOnlyOperation(val: string): CleanSuspendedWorkspacesOperation {
     return val as CleanSuspendedWorkspacesOperation;
@@ -77,6 +77,7 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
       },
       withDeleted: true,
     });
+
     return suspendedWorkspaces.map((workspace) => workspace.id);
   }
 

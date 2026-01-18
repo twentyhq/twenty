@@ -27,13 +27,13 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-export const CLEAN_OR_SUSPENDED_WORKSPACES_OPERATION = [
+export const CLEAN_SUSPENDED_WORKSPACES_OPERATIONS = [
   'warn',
   'destroy',
   'soft-delete',
 ] as const;
 export type CleanSuspendedWorkspacesOperation =
-  (typeof CLEAN_OR_SUSPENDED_WORKSPACES_OPERATION)[number];
+  (typeof CLEAN_SUSPENDED_WORKSPACES_OPERATIONS)[number];
 
 export type CleanSuspendedWorkspacesOptions = {
   workspaceIds: string[];
