@@ -48990,15 +48990,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.57.0":
-  version: 1.57.0
-  resolution: "playwright-core@npm:1.57.0"
-  bin:
-    playwright-core: cli.js
-  checksum: 10c0/798e35d83bf48419a8c73de20bb94d68be5dde68de23f95d80a0ebe401e3b83e29e3e84aea7894d67fa6c79d2d3d40cc5bcde3e166f657ce50987aaa2421b6a9
-  languageName: node
-  linkType: hard
-
 "playwright-core@npm:>=1.2.0":
   version: 1.51.0
   resolution: "playwright-core@npm:1.51.0"
@@ -49020,21 +49011,6 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: 10c0/8e9965aede86df0f4722063385748498977b219630a40a10d1b82b8bd8d4d4e9b6b65ecbfa024331a30800163161aca292fb6dd7446c531a1ad25f4155625ab4
-  languageName: node
-  linkType: hard
-
-"playwright@npm:^1.57.0":
-  version: 1.57.0
-  resolution: "playwright@npm:1.57.0"
-  dependencies:
-    fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.57.0"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    playwright: cli.js
-  checksum: 10c0/ab03c99a67b835bdea9059f516ad3b6e42c21025f9adaa161a4ef6bc7ca716dcba476d287140bb240d06126eb23f889a8933b8f5f1f1a56b80659d92d1358899
   languageName: node
   linkType: hard
 
@@ -57429,7 +57405,6 @@ __metadata:
     msw-storybook-addon: "npm:^2.0.6"
     nx: "npm:22.3.3"
     planer: "npm:^1.2.0"
-    playwright: "npm:^1.57.0"
     pluralize: "npm:^8.0.0"
     prettier: "npm:^3.1.1"
     raw-loader: "npm:^4.0.2"
