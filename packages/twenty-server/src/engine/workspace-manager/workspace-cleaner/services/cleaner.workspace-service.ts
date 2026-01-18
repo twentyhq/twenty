@@ -27,12 +27,19 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
+export const CLEAN_OR_SUSPENDED_WORKSPACES_OPERATION = [
+  'warn',
+  'destroy',
+  'soft-delete',
+] as const;
+export type CleanSuspendedWorkspacesOperation =
+  (typeof CLEAN_OR_SUSPENDED_WORKSPACES_OPERATION)[number];
+
 export type CleanSuspendedWorkspacesOptions = {
   workspaceIds: string[];
   dryRun?: boolean;
   ignoreDestroyGracePeriod?: boolean;
-  onlyDestroy?: boolean;
-  onlySoftDelete?: boolean;
+  onlyOperation?: CleanSuspendedWorkspacesOperation;
 };
 
 @Injectable()
@@ -371,8 +378,7 @@ export class CleanerWorkspaceService {
     workspaceIds,
     dryRun = false,
     ignoreDestroyGracePeriod = false,
-    onlyDestroy = false,
-    onlySoftDelete = false,
+    onlyOperation,
   }: CleanSuspendedWorkspacesOptions): Promise<void> {
     this.logger.log(
       `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces running...`,
@@ -400,7 +406,7 @@ export class CleanerWorkspaceService {
           this.maxNumberOfWorkspacesDeletedPerExecution;
 
         if (
-          !onlySoftDelete &&
+          (!isDefined(onlyOperation) || onlyOperation === 'destroy') &&
           isSoftDeletedWorkspace &&
           isWithinDeletionLimit
         ) {
@@ -419,10 +425,6 @@ export class CleanerWorkspaceService {
           continue;
         }
 
-        if (onlyDestroy) {
-          continue;
-        }
-
         const workspaceInactivity =
           await this.computeDaysSinceSubscriptionUnpaid(workspace);
 
@@ -430,7 +432,10 @@ export class CleanerWorkspaceService {
           continue;
         }
 
-        if (workspaceInactivity > this.inactiveDaysBeforeSoftDelete) {
+        if (
+          (!isDefined(onlyOperation) || onlyOperation === 'soft-delete') &&
+          workspaceInactivity > this.inactiveDaysBeforeSoftDelete
+        ) {
           await this.informWorkspaceMembersAndSoftDeleteWorkspace(
             workspace,
             workspaceInactivity,
@@ -441,7 +446,7 @@ export class CleanerWorkspaceService {
         }
 
         if (
-          !onlySoftDelete &&
+          (!isDefined(onlyOperation) || onlyOperation === 'warn') &&
           workspaceInactivity > this.inactiveDaysBeforeWarn &&
           workspaceInactivity <= this.inactiveDaysBeforeSoftDelete
         ) {

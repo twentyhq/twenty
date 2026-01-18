@@ -10,15 +10,16 @@ import {
 } from 'src/database/commands/command-runners/migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
+  CLEAN_OR_SUSPENDED_WORKSPACES_OPERATION,
   CleanerWorkspaceService,
+  CleanSuspendedWorkspacesOperation,
   type CleanSuspendedWorkspacesOptions,
 } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
 type CleanSuspendedWorkspacesCommandOptions = MigrationCommandOptions &
-  Pick<
-    CleanSuspendedWorkspacesOptions,
-    'ignoreDestroyGracePeriod' | 'onlyDestroy' | 'onlySoftDelete'
-  >;
+  Pick<CleanSuspendedWorkspacesOptions, 'ignoreDestroyGracePeriod'> & {
+    onlyOperation?: CleanSuspendedWorkspacesOperation;
+  };
 
 @Command({
   name: 'workspace:clean',
@@ -58,22 +59,14 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
   }
 
   @Option({
-    flags: '--only-destroy',
+    flags: '--only-operation [operation]',
     description:
-      'Only hard delete soft-deleted workspaces, skip soft delete and warning',
+      'Run only a specific operation: warn, destroy (hard delete), or soft-delete',
     required: false,
+    choices: [...CLEAN_OR_SUSPENDED_WORKSPACES_OPERATION],
   })
-  parseOnlyDestroy(): boolean {
-    return true;
-  }
-
-  @Option({
-    flags: '--only-soft-delete',
-    description: 'Only soft delete workspaces, skip hard delete and warning',
-    required: false,
-  })
-  parseOnlySoftDelete(): boolean {
-    return true;
+  parseOnlyOperation(val: string): CleanSuspendedWorkspacesOperation {
+    return val as CleanSuspendedWorkspacesOperation;
   }
 
   async fetchSuspendedWorkspaceIds(): Promise<string[]> {
@@ -92,24 +85,26 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
     _passedParams: string[],
     options: CleanSuspendedWorkspacesCommandOptions,
   ): Promise<void> {
-    const { dryRun, ignoreDestroyGracePeriod, onlyDestroy, onlySoftDelete } =
-      options;
+    const { dryRun, ignoreDestroyGracePeriod, onlyOperation } = options;
 
     const suspendedWorkspaceIds =
       this.workspaceIds.length > 0
         ? this.workspaceIds
         : await this.fetchSuspendedWorkspaceIds();
 
+    const operationLabel = onlyOperation
+      ? `ONLY ${onlyOperation.toUpperCase()} - `
+      : '';
+
     this.logger.log(
-      `${dryRun ? 'DRY RUN - ' : ''}${ignoreDestroyGracePeriod ? 'IGNORING GRACE PERIOD - ' : ''}${onlyDestroy ? 'ONLY DESTROY - ' : ''}${onlySoftDelete ? 'ONLY SOFT DELETE - ' : ''}Cleaning ${suspendedWorkspaceIds.length} suspended workspaces`,
+      `${dryRun ? 'DRY RUN - ' : ''}${ignoreDestroyGracePeriod ? 'IGNORING GRACE PERIOD - ' : ''}${operationLabel}Cleaning ${suspendedWorkspaceIds.length} suspended workspaces`,
     );
 
     await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces({
       workspaceIds: suspendedWorkspaceIds,
       dryRun,
       ignoreDestroyGracePeriod,
-      onlyDestroy,
-      onlySoftDelete,
+      onlyOperation,
     });
   }
 }
