@@ -121,8 +121,8 @@ export const Default: Story = {
       </>
     ),
   },
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Workspace')).toBeInTheDocument();
   },
@@ -200,8 +200,8 @@ export const Settings: Story = {
       </>
     ),
   },
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
     expect(await canvas.findByText('User')).toBeInTheDocument();
   },

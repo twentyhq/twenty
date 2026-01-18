@@ -6,6 +6,7 @@ import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/ob
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { RightDrawerDecorator } from '~/testing/decorators/RightDrawerDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedTasks } from '~/testing/mock-data/tasks';
@@ -27,6 +28,7 @@ const meta: Meta<typeof TaskGroups> = {
     ),
     ComponentWithRouterDecorator,
     ObjectMetadataItemsDecorator,
+    RightDrawerDecorator,
     SnackBarDecorator,
   ],
 };
