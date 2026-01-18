@@ -2393,6 +2393,11 @@ msgstr "Δεν βρέθηκαν δικαιώματα στην πηγή δεδο�
 msgid "No records were affected."
 msgstr "Δεν επηρεάστηκε καμία εγγραφή."
 
+#. js-lingui-id: iHQYLb
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "No role assigned to the application."
+msgstr ""
+
 #. js-lingui-id: 5ZMHXg
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
@@ -3389,6 +3394,11 @@ msgstr "Ο πράκτορας που αναζητάτε δεν βρέθηκε. �
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "Το κλειδί API δεν έχει ανατεθεί με έγκυρο ρόλο. Παρακαλώ ελέγξτε τη διαμόρφωση του κλειδιού API σας."
+
+#. js-lingui-id: IU78DA
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "The application does not have a valid role assigned. Please check your application configuration."
+msgstr ""
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
