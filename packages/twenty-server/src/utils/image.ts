@@ -1,4 +1,4 @@
-import { type Axios } from 'axios';
+import { type AxiosInstance } from 'axios';
 
 const cropRegex = /([w|h])([0-9]+)/;
 
@@ -24,7 +24,7 @@ export const getCropSize = (value: ShortCropSize): CropSize | null => {
 
 export const getImageBufferFromUrl = async (
   url: string,
-  axiosInstance: Axios,
+  axiosInstance: AxiosInstance,
 ): Promise<Buffer> => {
   const response = await axiosInstance.get(url, {
     responseType: 'arraybuffer',

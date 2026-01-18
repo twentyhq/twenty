@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import DOMPurify from 'dompurify';
+import createDOMPurify from 'dompurify';
 import { convert } from 'html-to-text';
 import { JSDOM } from 'jsdom';
 import * as planer from 'planer';
@@ -10,11 +10,11 @@ import { type Email as ParsedEmail } from 'postal-mime';
 @Injectable()
 export class ImapMessageTextExtractorService {
   private readonly jsdomInstance: JSDOM;
-  private readonly purify: DOMPurify.DOMPurify;
+  private readonly purify: ReturnType<typeof createDOMPurify>;
 
   constructor() {
     this.jsdomInstance = new JSDOM('');
-    this.purify = DOMPurify(this.jsdomInstance.window);
+    this.purify = createDOMPurify(this.jsdomInstance.window);
   }
 
   extractTextWithoutReplyQuotations(parsed: ParsedEmail): string {

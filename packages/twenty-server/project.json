@@ -41,7 +41,20 @@
         "updateBuildableProjectDepsInPackageJson": true
       }
     },
-    "typecheck": {},
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsc -b tsconfig.json --incremental"
+      },
+      "configurations": {
+        "tsgo": {
+          "command": "tsgo -p tsconfig.json"
+        }
+      },
+      "dependsOn": ["^build"]
+    },
     "start": {
       "executor": "nx:run-commands",
       "cache": false,
