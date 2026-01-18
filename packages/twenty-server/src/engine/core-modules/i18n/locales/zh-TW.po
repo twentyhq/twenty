@@ -2393,6 +2393,11 @@ msgstr "在資料來源中找不到任何權限。"
 msgid "No records were affected."
 msgstr "沒有任何記錄受到影響。"
 
+#. js-lingui-id: iHQYLb
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "No role assigned to the application."
+msgstr ""
+
 #. js-lingui-id: 5ZMHXg
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
@@ -3389,6 +3394,11 @@ msgstr "找不到您正在尋找的代理。它可能已被刪除，或者您可
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "API金鑰未分配有效角色。請檢查API金鑰配置。"
+
+#. js-lingui-id: IU78DA
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "The application does not have a valid role assigned. Please check your application configuration."
+msgstr ""
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
