@@ -99,10 +99,6 @@ export class ActorFromAuthContextService {
         },
       );
 
-    this.logger.log(
-      `Injecting ${fieldName} from auth context for object ${objectMetadataNameSingular} and workspace ${workspace.id}`,
-    );
-
     const { idByNameSingular } = buildObjectIdByNameMaps(
       flatObjectMetadataMaps,
     );

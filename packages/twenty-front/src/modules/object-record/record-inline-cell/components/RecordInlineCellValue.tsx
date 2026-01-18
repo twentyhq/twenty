@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
+import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellDisplayMode } from '@/object-record/record-inline-cell/components/RecordInlineCellDisplayMode';
 import { RecordInlineCellSkeletonLoader } from '@/object-record/record-inline-cell/components/RecordInlineCellSkeletonLoader';
@@ -29,7 +30,9 @@ const StyledClickableContainer = styled.div<{
 `;
 
 export const RecordInlineCellValue = () => {
-  const { readonly, loading, isCentered } = useRecordInlineCellContext();
+  const { readonly, loading, isCentered, onOpenEditMode } =
+    useRecordInlineCellContext();
+  const { isFocused } = useFieldFocus();
 
   if (loading === true) {
     return <RecordInlineCellSkeletonLoader />;
@@ -37,7 +40,10 @@ export const RecordInlineCellValue = () => {
 
   return (
     <StyledClickableContainer readonly={readonly} isCentered={isCentered}>
-      <RecordInlineCellDisplayMode isHovered={false}>
+      <RecordInlineCellDisplayMode
+        isHovered={isFocused}
+        onClick={onOpenEditMode}
+      >
         <FieldDisplay />
       </RecordInlineCellDisplayMode>
     </StyledClickableContainer>

@@ -46,6 +46,10 @@ import {
   getDashboardDataSeeds,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/dashboard-data-seeds.constant';
 import {
+  EMPLOYMENT_HISTORY_DATA_SEED_COLUMNS,
+  EMPLOYMENT_HISTORY_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/employment-history-data-seeds.constant';
+import {
   MESSAGE_CHANNEL_DATA_SEED_COLUMNS,
   MESSAGE_CHANNEL_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-data-seeds.constant';
@@ -81,6 +85,10 @@ import {
   PERSON_DATA_SEED_COLUMNS,
   PERSON_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
+import {
+  PET_CARE_AGREEMENT_DATA_SEED_COLUMNS,
+  PET_CARE_AGREEMENT_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/pet-care-agreement-data-seeds.constant';
 import {
   PET_DATA_SEED_COLUMNS,
   PET_DATA_SEEDS,
@@ -207,6 +215,17 @@ const getRecordSeedsBatches = (
       tableName: 'messageThread',
       pgColumns: MESSAGE_THREAD_DATA_SEED_COLUMNS,
       recordSeeds: MESSAGE_THREAD_DATA_SEEDS,
+    },
+    // Junction tables
+    {
+      tableName: '_employmentHistory',
+      pgColumns: EMPLOYMENT_HISTORY_DATA_SEED_COLUMNS,
+      recordSeeds: EMPLOYMENT_HISTORY_DATA_SEEDS,
+    },
+    {
+      tableName: '_petCareAgreement',
+      pgColumns: PET_CARE_AGREEMENT_DATA_SEED_COLUMNS,
+      recordSeeds: PET_CARE_AGREEMENT_DATA_SEEDS,
     },
   ];
 

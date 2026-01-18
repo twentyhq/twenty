@@ -1,1 +1,3 @@
-export type IsEmptyRecord<T extends {}> = keyof T extends never ? true : false;
+export type IsEmptyRecord<T extends object> = keyof T extends never
+  ? true
+  : false;

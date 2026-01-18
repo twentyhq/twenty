@@ -7,7 +7,12 @@ import { isDefined } from 'twenty-shared/utils';
 export type GenerateDepthRecordGqlFields = {
   objectMetadataItems: Pick<
     ObjectMetadataItem,
-    'id' | 'nameSingular' | 'fields' | 'labelIdentifierFieldMetadataId'
+    | 'id'
+    | 'nameSingular'
+    | 'namePlural'
+    | 'fields'
+    | 'labelIdentifierFieldMetadataId'
+    | 'imageIdentifierFieldMetadataId'
   >[];
   activityObjectNameSingular:
     | CoreObjectNameSingular.Note
