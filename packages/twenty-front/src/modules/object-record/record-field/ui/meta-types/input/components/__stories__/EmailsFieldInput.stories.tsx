@@ -1,7 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useEmailsField } from '@/object-record/record-field/ui/meta-types/hooks/useEmailsField';
@@ -170,13 +169,13 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     await userEvent.click(openDropdownButtons[0]);
 
     const editOption = await within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).findByText('Edit');
 
     expect(editOption).toBeVisible();
 
     const setPrimaryOption = within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).queryByText('Set as Primary');
 
     expect(setPrimaryOption).not.toBeInTheDocument();

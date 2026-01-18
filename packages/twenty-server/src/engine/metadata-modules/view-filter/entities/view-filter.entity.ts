@@ -16,7 +16,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
 
 @Entity({ name: 'viewFilter', schema: 'core' })
 @Index('IDX_VIEW_FILTER_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
@@ -25,7 +25,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 })
 @Index('IDX_VIEW_FILTER_FIELD_METADATA_ID', ['fieldMetadataId'])
 export class ViewFilterEntity
-  extends SyncableEntity
+  extends SyncableEntityRequired
   implements Required<ViewFilterEntity>
 {
   @PrimaryGeneratedColumn('uuid')
