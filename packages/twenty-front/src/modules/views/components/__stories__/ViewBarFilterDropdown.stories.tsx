@@ -1,6 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { type TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
