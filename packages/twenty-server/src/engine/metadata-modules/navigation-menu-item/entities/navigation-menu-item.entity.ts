@@ -1,13 +1,13 @@
 import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    Index,
-    JoinColumn,
-    ManyToOne,
-    PrimaryGeneratedColumn,
-    type Relation,
-    UpdateDateColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  type Relation,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
