@@ -75,6 +75,7 @@ export default defineConfig(() => {
           'path',
           'fs',
           'child_process',
+          'util',
         ],
         output: [
           {
