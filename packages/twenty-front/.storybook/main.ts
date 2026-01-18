@@ -31,8 +31,6 @@ const computeStoriesGlob = () => {
 const config: StorybookConfig = {
   stories: computeStoriesGlob(),
 
-  staticDirs: ['../public'],
-
   build: {
     test: {
       disabledAddons: [
