@@ -62,13 +62,8 @@ export const useUpdateMultipleRecordsActions = ({
     filter: graphqlFilter,
   });
 
-  const updateRecords = async (fieldsToUpdate: Record<string, any>) => {
-    const count = await incrementalUpdateManyRecords(fieldsToUpdate);
-    return count;
-  };
-
   return {
-    updateRecords,
+    updateRecords: incrementalUpdateManyRecords,
     isUpdating,
     progress,
     cancel,
