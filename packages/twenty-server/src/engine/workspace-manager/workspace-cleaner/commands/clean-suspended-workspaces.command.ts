@@ -71,13 +71,12 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
 
   async fetchSuspendedWorkspaceIds(): Promise<string[]> {
     const suspendedWorkspaces = await this.workspaceRepository.find({
-      select: ['id'],
       where: {
         activationStatus: In([WorkspaceActivationStatus.SUSPENDED]),
+        ...(this.workspaceIds.length > 0 ? { id: In(this.workspaceIds) } : {}),
       },
       withDeleted: true,
     });
-
     return suspendedWorkspaces.map((workspace) => workspace.id);
   }
 
@@ -87,10 +86,7 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
   ): Promise<void> {
     const { dryRun, ignoreDestroyGracePeriod, onlyOperation } = options;
 
-    const suspendedWorkspaceIds =
-      this.workspaceIds.length > 0
-        ? this.workspaceIds
-        : await this.fetchSuspendedWorkspaceIds();
+    const suspendedWorkspaceIds = await this.fetchSuspendedWorkspaceIds();
 
     const operationLabel = onlyOperation
       ? `ONLY ${onlyOperation.toUpperCase()} - `
