@@ -1,4 +1,3 @@
-import { type CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
@@ -309,7 +308,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteCommandMenuItemAction;
     };
     flatEntity: FlatCommandMenuItem;
-    entity: CommandMenuItemEntity;
+    entity: MetadataEntity<'commandMenuItem'>;
   };
   pageLayout: {
     actions: {
