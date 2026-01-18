@@ -3,6 +3,7 @@ import { CustomError } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated/graphql';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { WidgetActionFieldEdit } from './WidgetActionFieldEdit';
+import { WidgetActionFieldSeeAll } from './WidgetActionFieldSeeAll';
 
 type WidgetActionRendererProps = {
   action: WidgetAction;
@@ -13,6 +14,10 @@ export const WidgetActionRenderer = ({ action }: WidgetActionRendererProps) => {
 
   if (action.id === 'edit' && widget.type === WidgetType.FIELD) {
     return <WidgetActionFieldEdit />;
+  }
+
+  if (action.id === 'see-all' && widget.type === WidgetType.FIELD) {
+    return <WidgetActionFieldSeeAll />;
   }
 
   throw new CustomError(
