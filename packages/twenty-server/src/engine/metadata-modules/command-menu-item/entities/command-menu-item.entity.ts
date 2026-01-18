@@ -24,6 +24,9 @@ export enum CommandMenuItemAvailabilityType {
   'workflowVersionId',
   'workspaceId',
 ])
+@Index('IDX_COMMAND_MENU_ITEM_AVAILABILITY_OBJECT_METADATA_ID', [
+  'availabilityObjectMetadataId',
+])
 export class CommandMenuItemEntity
   extends SyncableEntityRequired
   implements Required<CommandMenuItemEntity>

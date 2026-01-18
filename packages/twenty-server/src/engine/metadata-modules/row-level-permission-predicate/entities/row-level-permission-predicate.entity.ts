@@ -32,6 +32,9 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 ])
 @Index('IDX_RLPP_FIELD_METADATA_ID', ['fieldMetadataId'])
 @Index('IDX_RLPP_GROUP_ID', ['rowLevelPermissionPredicateGroupId'])
+@Index('IDX_RLPP_WORKSPACE_MEMBER_FIELD_METADATA_ID', [
+  'workspaceMemberFieldMetadataId',
+])
 export class RowLevelPermissionPredicateEntity
   extends SyncableEntity
   implements

@@ -2393,6 +2393,11 @@ msgstr "Không tìm thấy quyền trong nguồn dữ liệu."
 msgid "No records were affected."
 msgstr "Không có bản ghi nào bị ảnh hưởng."
 
+#. js-lingui-id: iHQYLb
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "No role assigned to the application."
+msgstr ""
+
 #. js-lingui-id: 5ZMHXg
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
@@ -3389,6 +3394,11 @@ msgstr "Không thể tìm thấy tác nhân bạn đang tìm kiếm. Nó có th�
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "Khóa API không được chỉ định vai trò hợp lệ. Vui lòng kiểm tra cấu hình khóa API của bạn."
+
+#. js-lingui-id: IU78DA
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "The application does not have a valid role assigned. Please check your application configuration."
+msgstr ""
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
