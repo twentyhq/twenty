@@ -1,10 +1,9 @@
 #!/usr/bin/env node
-import { inspect } from 'util';
+import { registerCommands } from '@/cli/commands/app.command';
+import { ConfigService } from '@/cli/services/config.service';
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
-import { AppCommand } from '@/cli/commands/app.command';
-import { AuthCommand } from '@/cli/commands/auth.command';
-import { ConfigService } from '@/cli/services/config.service';
+import { inspect } from 'util';
 import packageJson from '../../package.json';
 
 inspect.defaultOptions.depth = 10;
@@ -33,8 +32,7 @@ program.hook('preAction', (thisCommand) => {
   );
 });
 
-program.addCommand(new AuthCommand().getCommand());
-program.addCommand(new AppCommand().getCommand());
+registerCommands(program);
 
 program.exitOverride();
 
