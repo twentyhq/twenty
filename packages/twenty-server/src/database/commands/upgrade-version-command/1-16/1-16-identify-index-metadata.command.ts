@@ -221,7 +221,10 @@ export class IdentifyIndexMetadataCommand extends ActiveOrSuspendedWorkspacesMig
               ),
             );
 
-            return this.setsEqual(indexFieldMetadataIds, expectedFieldMetadataIds);
+            return this.setsEqual(
+              indexFieldMetadataIds,
+              expectedFieldMetadataIds,
+            );
           },
         );
 
