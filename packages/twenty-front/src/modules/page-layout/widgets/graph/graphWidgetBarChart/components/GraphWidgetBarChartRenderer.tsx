@@ -65,11 +65,12 @@ export const GraphWidgetBarChartRenderer = () => {
   const axisNameDisplay = configuration.axisNameDisplay;
 
   const showXLabel =
-     axisNameDisplay === AxisNameDisplay.X ||
-      axisNameDisplay === AxisNameDisplay.BOTH;
+    axisNameDisplay === AxisNameDisplay.X ||
+    axisNameDisplay === AxisNameDisplay.BOTH;
 
-  const showYLabel = axisNameDisplay === AxisNameDisplay.Y ||
-      axisNameDisplay === AxisNameDisplay.BOTH;
+  const showYLabel =
+    axisNameDisplay === AxisNameDisplay.Y ||
+    axisNameDisplay === AxisNameDisplay.BOTH;
 
   const xAxisLabelToDisplay = showXLabel ? xAxisLabel : undefined;
   const yAxisLabelToDisplay = showYLabel ? yAxisLabel : undefined;

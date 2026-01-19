@@ -17,7 +17,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
-  type BarChartLayout
+  type BarChartLayout,
 } from '~/generated/graphql';
 
 type UseGraphBarChartWidgetDataProps = {
@@ -74,7 +74,6 @@ export const useGraphBarChartWidgetData = ({
       },
     },
   });
-
 
   const chartData = (queryData?.barChartData?.data as BarDatum[]) ?? [];
 
@@ -143,8 +142,10 @@ export const useGraphBarChartWidgetData = ({
     showDataLabels: configuration.displayDataLabel ?? false,
     showLegend: configuration.displayLegend ?? true,
     layout: queryData?.barChartData?.layout,
-    groupMode:
-     getEffectiveGroupMode(configuration.groupMode, configuration.secondaryAxisGroupByFieldMetadataId),
+    groupMode: getEffectiveGroupMode(
+      configuration.groupMode,
+      configuration.secondaryAxisGroupByFieldMetadataId,
+    ),
     hasTooManyGroups: queryData?.barChartData?.hasTooManyGroups ?? false,
     colorMode,
     formattedToRawLookup,

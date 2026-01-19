@@ -66,12 +66,12 @@ export const useGraphPieChartWidgetData = ({
     ? new Map(Object.entries(queryData.pieChartData.formattedToRawLookup))
     : new Map();
 
-
   const groupByField = objectMetadataItem?.fields?.find(
     (field) => field.id === configuration.groupByFieldMetadataId,
   );
 
-  const selectFieldOptions = isDefined(groupByField) &&
+  const selectFieldOptions =
+    isDefined(groupByField) &&
     (groupByField.type === FieldMetadataType.SELECT ||
       groupByField.type === FieldMetadataType.MULTI_SELECT)
       ? groupByField.options
@@ -85,21 +85,22 @@ export const useGraphPieChartWidgetData = ({
   });
 
   const chartData = queryData?.pieChartData?.data?.map(
-      (item: { id: string; value: number }): PieChartDataItem => {
-        const rawValue = formattedToRawLookup.get(item.id);
+    (item: { id: string; value: number }): PieChartDataItem => {
+      const rawValue = formattedToRawLookup.get(item.id);
 
-        const itemColor = determineChartItemColor({
-          configurationColor,
-          selectOptions: selectFieldOptions,
-          rawValue: typeof rawValue === 'string' ? rawValue : undefined,
-        });
+      const itemColor = determineChartItemColor({
+        configurationColor,
+        selectOptions: selectFieldOptions,
+        rawValue: typeof rawValue === 'string' ? rawValue : undefined,
+      });
 
-        return {
-          id: item.id,
-          value: item.value,
-          color: itemColor,
-    };
-  });
+      return {
+        id: item.id,
+        value: item.value,
+        color: itemColor,
+      };
+    },
+  );
 
   return {
     data: chartData,
