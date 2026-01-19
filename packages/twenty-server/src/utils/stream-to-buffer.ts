@@ -6,13 +6,13 @@ export const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
   return new Promise((resolve, reject) => {
     // Check if stream is already ended
     if (stream.readableEnded) {
-      resolve(Buffer.concat([]));
+      reject(new Error('Stream has already ended'));
       return;
     }
 
     // Check if stream is not readable (destroyed or closed)
     if (!stream.readable) {
-      resolve(Buffer.concat([]));
+      reject(new Error('Stream is not readable'));
       return;
     }
 
@@ -48,7 +48,7 @@ export const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
     };
 
     const onClose = () => {
-      if (!isResolved && !stream.readableEnded) {
+      if (!isResolved) {
         isResolved = true;
         cleanup();
         reject(new Error('Stream closed before end'));
