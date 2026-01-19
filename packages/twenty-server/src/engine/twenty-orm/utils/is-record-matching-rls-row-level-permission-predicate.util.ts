@@ -2,13 +2,13 @@
 
 import { isObject } from '@sniptt/guards';
 import {
-  compositeTypeDefinitions,
   FieldMetadataType,
   type ActorFilter,
   type AddressFilter,
   type AndObjectRecordFilter,
   type ArrayFilter,
   type BooleanFilter,
+  type CurrencyFilter,
   type DateFilter,
   type EmailsFilter,
   type FloatFilter,
@@ -17,7 +17,6 @@ import {
   type LinksFilter,
   type MultiSelectFilter,
   type NotObjectRecordFilter,
-  type ObjectRecord,
   type OrObjectRecordFilter,
   type PhonesFilter,
   type RatingFilter,
@@ -47,8 +46,6 @@ import {
   isMatchingUUIDFilter,
 } from 'twenty-shared/utils';
 
-import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -75,125 +72,15 @@ const isNotFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
 
-const getCompositeRecordSubFieldValue = ({
-  record,
-  filterKey,
-  subFieldName,
-}: {
-  record: Record<string, unknown>;
-  filterKey: string;
-  subFieldName: string;
-}): string | undefined => {
-  const compositeValue = record[filterKey];
-
-  if (isObject(compositeValue)) {
-    return (compositeValue as Record<string, unknown>)[subFieldName] as
-      | string
-      | undefined;
-  }
-
-  const flattenedKey = `${filterKey}${subFieldName.charAt(0).toUpperCase()}${subFieldName.slice(1)}`;
-
-  if (Object.prototype.hasOwnProperty.call(record, flattenedKey)) {
-    return record[flattenedKey] as string | undefined;
-  }
-
-  return undefined;
-};
-
-const isCompositeStringFilterMatching = ({
-  record,
-  filterKey,
-  subFieldName,
-  stringFilter,
-}: {
-  record: Record<string, unknown>;
-  filterKey: string;
-  subFieldName: string;
-  stringFilter: StringFilter;
-}) =>
-  isMatchingStringFilter({
-    stringFilter,
-    value: getCompositeRecordSubFieldValue({
-      record,
-      filterKey,
-      subFieldName,
-    }) as string,
-  });
-
-const getCompositeStringFilterKeys = ({
-  compositeFieldType,
-  filterValue,
-}: {
-  compositeFieldType: FieldMetadataType;
-  filterValue: Record<string, StringFilter | undefined>;
-}) => {
-  const compositeType = compositeTypeDefinitions.get(compositeFieldType);
-
-  if (!compositeType) {
-    return [];
-  }
-
-  return compositeType.properties
-    .filter((property) => property.type === FieldMetadataType.TEXT)
-    .map((property) => property.name)
-    .filter((propertyName) =>
-      Object.prototype.hasOwnProperty.call(filterValue, propertyName),
-    );
-};
-
-const matchCompositeStringFilters = ({
-  record,
-  filterKey,
-  filterValue,
-  compositeFieldType,
-  mode,
-  requireAtLeastOne,
-}: {
-  record: Record<string, unknown>;
-  filterKey: string;
-  filterValue: Record<string, StringFilter | undefined>;
-  compositeFieldType: FieldMetadataType;
-  mode: 'every' | 'some';
-  requireAtLeastOne: boolean;
-}) => {
-  const keys = getCompositeStringFilterKeys({
-    compositeFieldType,
-    filterValue,
-  });
-
-  if (keys.length === 0) {
-    return !requireAtLeastOne;
-  }
-
-  const matchPredicate = (subFieldName: string) => {
-    const subFieldFilter = filterValue[subFieldName];
-
-    if (subFieldFilter === undefined) {
-      return mode === 'every';
-    }
-
-    return isCompositeStringFilterMatching({
-      record,
-      filterKey,
-      subFieldName,
-      stringFilter: subFieldFilter,
-    });
-  };
-
-  return mode === 'every'
-    ? keys.every(matchPredicate)
-    : keys.some(matchPredicate);
-};
-
 export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
   record,
   filter,
   flatObjectMetadata,
   flatFieldMetadataMaps,
 }: {
-  record: ObjectRecord;
-  filter: ObjectRecordFilter;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  record: any;
+  filter: RecordGqlOperationFilter;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): boolean => {
@@ -335,6 +222,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       case FieldMetadataType.RICH_TEXT: {
         // TODO: Implement a better rich text filter once it becomes a composite field
         // See this issue for more context: https://github.com/twentyhq/twenty/issues/7613#issuecomment-2408944585
+        // This should be tackled in Q4'24
         return isMatchingStringFilter({
           stringFilter: filterValue as StringFilter,
           value: record[filterKey],
@@ -371,37 +259,60 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       case FieldMetadataType.FULL_NAME: {
         const fullNameFilter = filterValue as FullNameFilter;
 
-        return matchCompositeStringFilters({
-          record,
-          filterKey,
-          filterValue: fullNameFilter,
-          compositeFieldType: FieldMetadataType.FULL_NAME,
-          mode: 'every',
-          requireAtLeastOne: false,
-        });
+        return (
+          (fullNameFilter.firstName === undefined ||
+            isMatchingStringFilter({
+              stringFilter: fullNameFilter.firstName,
+              value: record[filterKey].firstName,
+            })) &&
+          (fullNameFilter.lastName === undefined ||
+            isMatchingStringFilter({
+              stringFilter: fullNameFilter.lastName,
+              value: record[filterKey].lastName,
+            }))
+        );
       }
       case FieldMetadataType.ADDRESS: {
         const addressFilter = filterValue as AddressFilter;
 
-        return matchCompositeStringFilters({
-          record,
-          filterKey,
-          filterValue: addressFilter,
-          compositeFieldType: FieldMetadataType.ADDRESS,
-          mode: 'some',
-          requireAtLeastOne: true,
+        const keys = [
+          'addressStreet1',
+          'addressStreet2',
+          'addressCity',
+          'addressState',
+          'addressCountry',
+          'addressPostcode',
+        ] as const;
+
+        return keys.some((key) => {
+          const value = addressFilter[key];
+
+          if (value === undefined) {
+            return false;
+          }
+
+          return isMatchingStringFilter({
+            stringFilter: value,
+            value: record[filterKey][key],
+          });
         });
       }
       case FieldMetadataType.LINKS: {
         const linksFilter = filterValue as LinksFilter;
 
-        return matchCompositeStringFilters({
-          record,
-          filterKey,
-          filterValue: linksFilter,
-          compositeFieldType: FieldMetadataType.LINKS,
-          mode: 'some',
-          requireAtLeastOne: true,
+        const keys = ['primaryLinkLabel', 'primaryLinkUrl'] as const;
+
+        return keys.some((key) => {
+          const value = linksFilter[key];
+
+          if (value === undefined) {
+            return false;
+          }
+
+          return isMatchingStringFilter({
+            stringFilter: value,
+            value: record[filterKey][key],
+          });
         });
       }
       case FieldMetadataType.DATE:
@@ -432,44 +343,49 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       }
       case FieldMetadataType.CURRENCY: {
         return isMatchingCurrencyFilter({
-          currencyFilter: filterValue,
+          currencyFilter: filterValue as CurrencyFilter,
           value: record[filterKey],
         });
       }
       case FieldMetadataType.ACTOR: {
         const actorFilter = filterValue as ActorFilter;
 
-        return matchCompositeStringFilters({
-          record,
-          filterKey,
-          filterValue: actorFilter,
-          compositeFieldType: FieldMetadataType.ACTOR,
-          mode: 'every',
-          requireAtLeastOne: false,
-        });
+        return (
+          actorFilter.name === undefined ||
+          isMatchingStringFilter({
+            stringFilter: actorFilter.name,
+            value: record[filterKey].name,
+          })
+        );
       }
       case FieldMetadataType.EMAILS: {
         const emailsFilter = filterValue as EmailsFilter;
 
-        return matchCompositeStringFilters({
-          record,
-          filterKey,
-          filterValue: emailsFilter,
-          compositeFieldType: FieldMetadataType.EMAILS,
-          mode: 'every',
-          requireAtLeastOne: true,
+        if (emailsFilter.primaryEmail === undefined) {
+          return false;
+        }
+
+        return isMatchingStringFilter({
+          stringFilter: emailsFilter.primaryEmail,
+          value: record[filterKey].primaryEmail,
         });
       }
       case FieldMetadataType.PHONES: {
         const phonesFilter = filterValue as PhonesFilter;
 
-        return matchCompositeStringFilters({
-          record,
-          filterKey,
-          filterValue: phonesFilter,
-          compositeFieldType: FieldMetadataType.PHONES,
-          mode: 'some',
-          requireAtLeastOne: true,
+        const keys: (keyof PhonesFilter)[] = ['primaryPhoneNumber'];
+
+        return keys.some((key) => {
+          const value = phonesFilter[key];
+
+          if (value === undefined) {
+            return false;
+          }
+
+          return isMatchingStringFilter({
+            stringFilter: value,
+            value: record[filterKey][key],
+          });
         });
       }
       case FieldMetadataType.RELATION: {
