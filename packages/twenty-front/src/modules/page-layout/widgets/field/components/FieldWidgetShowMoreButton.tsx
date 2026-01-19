@@ -39,7 +39,7 @@ export const FieldWidgetShowMoreButton = ({
   onClick,
 }: FieldWidgetShowMoreButtonProps) => {
   return (
-    <StyledButton onClick={onClick}>
+    <StyledButton data-testid="field-widget-show-more-button" onClick={onClick}>
       <StyledIcon />
       {t`More (${remainingCount})`}
     </StyledButton>
