@@ -1,4 +1,4 @@
-import { type TwentyConfig } from '@/cli/utilities/config';
+import { type TwentyConfig } from '@/cli/utilities/config/services/config.service';
 
 export const testConfig: TwentyConfig = {
   apiUrl: 'http://localhost:3000',

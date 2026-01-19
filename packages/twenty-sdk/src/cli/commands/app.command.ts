@@ -1,4 +1,4 @@
-import { formatPath } from '@/cli/utilities/file';
+import { formatPath } from '@/cli/utilities/file/utils/file-path';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import {

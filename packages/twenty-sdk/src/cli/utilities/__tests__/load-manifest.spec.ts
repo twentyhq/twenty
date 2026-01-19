@@ -1,8 +1,5 @@
 import { join } from 'path';
-import {
-  loadManifest,
-  type LoadManifestResult,
-} from '@/cli/utilities/manifest';
+import { loadManifest, type LoadManifestResult } from '@/cli/utilities/manifest/utils/manifest-load';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/test-app/src/app/default-function.role';
 import {
   POST_CARD_EXTENSION_PRIORITY_FIELD_ID,

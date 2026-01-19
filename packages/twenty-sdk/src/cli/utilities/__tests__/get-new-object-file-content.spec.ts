@@ -1,4 +1,4 @@
-import { getNewObjectFileContent } from '@/cli/utilities/entity';
+import { getNewObjectFileContent } from '@/cli/utilities/entity/utils/entity-object-template';
 
 describe('getNewObjectFileContent', () => {
   it('should return proper object file using defineObject', () => {

@@ -1,14 +1,15 @@
-import chalk from 'chalk';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config';
-import { ApiService, type ApiResponse } from '@/cli/utilities/api';
-import { GenerateService } from '@/cli/utilities/generate';
+import { ApiService } from '@/cli/utilities/api/services/api.service';
+import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { GenerateService } from '@/cli/utilities/generate/services/generate.service';
+import { ManifestValidationError } from '@/cli/utilities/manifest/types/manifest.types';
 import {
-  ManifestValidationError,
   displayEntitySummary,
-  loadManifest,
-  displayWarnings,
   displayErrors,
-} from '@/cli/utilities/manifest';
+  displayWarnings,
+} from '@/cli/utilities/manifest/utils/manifest-display';
+import { loadManifest } from '@/cli/utilities/manifest/utils/manifest-load';
+import chalk from 'chalk';
 
 export class AppSyncCommand {
   private apiService = new ApiService();

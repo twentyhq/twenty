@@ -2,14 +2,10 @@ import path from 'path';
 import * as fs from 'fs-extra';
 import chalk from 'chalk';
 import { glob } from 'fast-glob';
-import { type ApiResponse } from '@/cli/utilities/api';
-import { TarballService } from '@/cli/utilities/file';
-import {
-  loadManifest,
-  type LoadManifestResult,
-  BuildManifestWriter,
-  type BuiltFunctionInfo,
-} from '@/cli/utilities/manifest';
+import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
+import { TarballService } from '@/cli/utilities/file/utils/file-tarball';
+import { loadManifest, type LoadManifestResult } from '@/cli/utilities/manifest/utils/manifest-load';
+import { BuildManifestWriter, type BuiltFunctionInfo } from '@/cli/utilities/manifest/utils/manifest-writer';
 import { ViteBuildRunner } from './vite-build-runner';
 import { BuildWatcher } from './build-watcher';
 import {

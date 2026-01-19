@@ -1,4 +1,4 @@
-import { getRoleBaseFile } from '@/cli/utilities/entity';
+import { getRoleBaseFile } from '@/cli/utilities/entity/utils/entity-role-template';
 
 describe('getRoleBaseFile', () => {
   it('should render proper file using defineRole', () => {

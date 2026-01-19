@@ -1,5 +1,5 @@
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config';
-import { type ApiResponse } from '@/cli/utilities/api';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
 import { BuildService } from '@/cli/build/build.service';
 import { type BuildResult } from '@/cli/build/types';
 

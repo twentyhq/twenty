@@ -4,5 +4,5 @@ export { ViteBuildRunner } from './vite-build-runner';
 export { BuildWatcher } from './build-watcher';
 
 // Re-export from utilities for backward compatibility
-export { BuildManifestWriter, type BuiltFunctionInfo } from '@/cli/utilities/manifest';
-export { TarballService } from '@/cli/utilities/file';
+export { BuildManifestWriter, type BuiltFunctionInfo } from '@/cli/utilities/manifest/utils/manifest-writer';
+export { TarballService } from '@/cli/utilities/file/utils/file-tarball';
