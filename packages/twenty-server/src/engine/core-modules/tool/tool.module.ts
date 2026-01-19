@@ -9,13 +9,11 @@ import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-int
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
-import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 
 @Module({
   imports: [
     MessagingImportManagerModule,
-    RefreshTokensManagerModule,
     TypeOrmModule.forFeature([FileEntity]),
     FileModule,
     HttpModule,
