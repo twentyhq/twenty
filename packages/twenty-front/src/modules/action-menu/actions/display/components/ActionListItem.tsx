@@ -9,14 +9,20 @@ export const ActionListItem = ({
   action,
   onClick,
   to,
+  disabled = false,
 }: {
   action: ActionDisplayProps;
   onClick?: () => void;
   to?: string;
+  disabled?: boolean;
 }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
+    if (disabled) {
+      return;
+    }
+
     onClick?.();
     if (isDefined(to)) {
       navigate(to);
@@ -33,6 +39,7 @@ export const ActionListItem = ({
         to={to}
         onClick={onClick}
         hotKeys={action.hotKeys}
+        disabled={disabled}
       />
     </SelectableListItem>
   );

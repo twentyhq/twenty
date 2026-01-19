@@ -4,11 +4,22 @@ exports[`buildCompositeFieldWhereCondition multiple properties cases should matc
 {
   "or": [
     {
-      "address": {
-        "addressStreet1": {
-          "gt": "123 Main St",
+      "or": [
+        {
+          "address": {
+            "addressStreet1": {
+              "gt": "123 Main St",
+            },
+          },
         },
-      },
+        {
+          "address": {
+            "addressStreet1": {
+              "is": "NULL",
+            },
+          },
+        },
+      ],
     },
     {
       "and": [
@@ -20,11 +31,22 @@ exports[`buildCompositeFieldWhereCondition multiple properties cases should matc
           },
         },
         {
-          "address": {
-            "addressStreet2": {
-              "gt": "Apt 4B",
+          "or": [
+            {
+              "address": {
+                "addressStreet2": {
+                  "gt": "Apt 4B",
+                },
+              },
             },
-          },
+            {
+              "address": {
+                "addressStreet2": {
+                  "is": "NULL",
+                },
+              },
+            },
+          ],
         },
       ],
     },
@@ -45,11 +67,22 @@ exports[`buildCompositeFieldWhereCondition multiple properties cases should matc
           },
         },
         {
-          "address": {
-            "addressCity": {
-              "gt": "New York",
+          "or": [
+            {
+              "address": {
+                "addressCity": {
+                  "gt": "New York",
+                },
+              },
             },
-          },
+            {
+              "address": {
+                "addressCity": {
+                  "is": "NULL",
+                },
+              },
+            },
+          ],
         },
       ],
     },
@@ -77,11 +110,22 @@ exports[`buildCompositeFieldWhereCondition multiple properties cases should matc
           },
         },
         {
-          "address": {
-            "addressPostcode": {
-              "gt": "10001",
+          "or": [
+            {
+              "address": {
+                "addressPostcode": {
+                  "gt": "10001",
+                },
+              },
             },
-          },
+            {
+              "address": {
+                "addressPostcode": {
+                  "is": "NULL",
+                },
+              },
+            },
+          ],
         },
       ],
     },
@@ -116,11 +160,22 @@ exports[`buildCompositeFieldWhereCondition multiple properties cases should matc
           },
         },
         {
-          "address": {
-            "addressState": {
-              "gt": "NY",
+          "or": [
+            {
+              "address": {
+                "addressState": {
+                  "gt": "NY",
+                },
+              },
             },
-          },
+            {
+              "address": {
+                "addressState": {
+                  "is": "NULL",
+                },
+              },
+            },
+          ],
         },
       ],
     },
@@ -162,11 +217,22 @@ exports[`buildCompositeFieldWhereCondition multiple properties cases should matc
           },
         },
         {
-          "address": {
-            "addressCountry": {
-              "gt": "USA",
+          "or": [
+            {
+              "address": {
+                "addressCountry": {
+                  "gt": "USA",
+                },
+              },
             },
-          },
+            {
+              "address": {
+                "addressCountry": {
+                  "is": "NULL",
+                },
+              },
+            },
+          ],
         },
       ],
     },
@@ -210,11 +276,22 @@ exports[`buildCompositeFieldWhereCondition multiple properties cases should matc
 {
   "or": [
     {
-      "name": {
-        "firstName": {
-          "gt": "John",
+      "or": [
+        {
+          "name": {
+            "firstName": {
+              "gt": "John",
+            },
+          },
         },
-      },
+        {
+          "name": {
+            "firstName": {
+              "is": "NULL",
+            },
+          },
+        },
+      ],
     },
     {
       "and": [
@@ -226,11 +303,22 @@ exports[`buildCompositeFieldWhereCondition multiple properties cases should matc
           },
         },
         {
-          "name": {
-            "lastName": {
-              "gt": "Doe",
+          "or": [
+            {
+              "name": {
+                "lastName": {
+                  "gt": "Doe",
+                },
+              },
             },
-          },
+            {
+              "name": {
+                "lastName": {
+                  "is": "NULL",
+                },
+              },
+            },
+          ],
         },
       ],
     },
@@ -274,11 +362,22 @@ exports[`buildCompositeFieldWhereCondition multiple properties cases should matc
 {
   "or": [
     {
-      "name": {
-        "firstName": {
-          "gt": "John",
+      "or": [
+        {
+          "name": {
+            "firstName": {
+              "gt": "John",
+            },
+          },
         },
-      },
+        {
+          "name": {
+            "firstName": {
+              "is": "NULL",
+            },
+          },
+        },
+      ],
     },
     {
       "and": [
@@ -314,21 +413,43 @@ exports[`buildCompositeFieldWhereCondition single property cases should match sn
 
 exports[`buildCompositeFieldWhereCondition single property cases should match snapshot for ascending order with forward pagination: single property - ascending order with forward pagination 1`] = `
 {
-  "person": {
-    "firstName": {
-      "gt": "John",
+  "or": [
+    {
+      "person": {
+        "firstName": {
+          "gt": "John",
+        },
+      },
     },
-  },
+    {
+      "person": {
+        "firstName": {
+          "is": "NULL",
+        },
+      },
+    },
+  ],
 }
 `;
 
 exports[`buildCompositeFieldWhereCondition single property cases should match snapshot for descending order with backward pagination: single property - descending order with backward pagination 1`] = `
 {
-  "person": {
-    "firstName": {
-      "gt": "John",
+  "or": [
+    {
+      "person": {
+        "firstName": {
+          "gt": "John",
+        },
+      },
     },
-  },
+    {
+      "person": {
+        "firstName": {
+          "is": "NULL",
+        },
+      },
+    },
+  ],
 }
 `;
 
