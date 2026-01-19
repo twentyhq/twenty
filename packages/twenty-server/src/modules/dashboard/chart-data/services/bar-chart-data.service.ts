@@ -139,7 +139,6 @@ export class BarChartDataService {
     }
 
     const rawResults = await this.chartDataQueryService.executeGroupByQuery({
-      workspaceId,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

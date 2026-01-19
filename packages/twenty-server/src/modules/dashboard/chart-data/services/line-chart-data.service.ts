@@ -143,7 +143,6 @@ export class LineChartDataService {
     }
 
     const rawResults = await this.chartDataQueryService.executeGroupByQuery({
-      workspaceId,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

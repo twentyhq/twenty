@@ -37,7 +37,6 @@ export type GroupByRawResult = {
 };
 
 export type ExecuteGroupByQueryParams = {
-  workspaceId: string;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;

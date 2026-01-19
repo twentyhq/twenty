@@ -111,7 +111,6 @@ export class PieChartDataService {
     }
 
     const rawResults = await this.chartDataQueryService.executeGroupByQuery({
-      workspaceId,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
