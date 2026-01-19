@@ -1,15 +1,19 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { BAR_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/barChartData';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
-import { getBarChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartQueryLimit';
-import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformGroupByDataToBarChartData';
-import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
-import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
+import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
+import { extractBarChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractBarChartDataConfiguration';
+import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
+import { useQuery } from '@apollo/client';
 import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
   type BarChartLayout,
@@ -47,48 +51,130 @@ export const useGraphBarChartWidgetData = ({
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
-  const { objectMetadataItems } = useObjectMetadataItems();
 
-  const { userTimezone } = useUserTimezone();
-  const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
+  const apolloCoreClient = useApolloCoreClient();
 
-  const limit = getBarChartQueryLimit(configuration);
-
-  const {
-    data: groupByData,
-    loading,
-    error,
-    aggregateOperation,
-  } = useGraphWidgetGroupByQuery({
-    objectMetadataItemId,
-    configuration,
-    limit,
-  });
-
-  const transformedData = useMemo(
-    () =>
-      transformGroupByDataToBarChartData({
-        groupByData,
-        objectMetadataItem,
-        objectMetadataItems: objectMetadataItems ?? [],
-        configuration,
-        aggregateOperation,
-        userTimezone,
-        firstDayOfTheWeek: userFirstDayOfTheWeek,
-      }),
-    [
-      groupByData,
-      objectMetadataItem,
-      objectMetadataItems,
-      configuration,
-      aggregateOperation,
-      userTimezone,
-      userFirstDayOfTheWeek,
-    ],
+  const dataConfiguration = useMemo(
+    () => extractBarChartDataConfiguration(configuration),
+    [configuration],
   );
 
+  const {
+    data: queryData,
+    loading,
+    error,
+  } = useQuery(BAR_CHART_DATA, {
+    client: apolloCoreClient,
+    variables: {
+      input: {
+        objectMetadataId: objectMetadataItemId,
+        configuration: dataConfiguration,
+      },
+    },
+  });
+
+  const chartData = useMemo((): BarDatum[] => {
+    if (!queryData?.barChartData?.data) {
+      return [];
+    }
+
+    return queryData.barChartData.data as BarDatum[];
+  }, [queryData?.barChartData?.data]);
+
+  const formattedToRawLookup = useMemo((): Map<string, RawDimensionValue> => {
+    const lookup = queryData?.barChartData?.formattedToRawLookup;
+
+    if (!lookup || typeof lookup !== 'object') {
+      return new Map();
+    }
+
+    return new Map(Object.entries(lookup));
+  }, [queryData?.barChartData?.formattedToRawLookup]);
+
+  const colorDeterminingFieldId = useMemo(() => {
+    return isDefined(configuration.secondaryAxisGroupByFieldMetadataId)
+      ? configuration.secondaryAxisGroupByFieldMetadataId
+      : configuration.primaryAxisGroupByFieldMetadataId;
+  }, [
+    configuration.secondaryAxisGroupByFieldMetadataId,
+    configuration.primaryAxisGroupByFieldMetadataId,
+  ]);
+
+  const colorDeterminingField = useMemo(() => {
+    return objectMetadataItem?.fields?.find(
+      (field) => field.id === colorDeterminingFieldId,
+    );
+  }, [objectMetadataItem?.fields, colorDeterminingFieldId]);
+
+  const selectFieldOptions = useMemo((): FieldMetadataItemOption[] | null => {
+    if (!isDefined(colorDeterminingField)) {
+      return null;
+    }
+
+    const isSelectField =
+      colorDeterminingField.type === FieldMetadataType.SELECT ||
+      colorDeterminingField.type === FieldMetadataType.MULTI_SELECT;
+
+    if (!isSelectField || !isDefined(colorDeterminingField.options)) {
+      return null;
+    }
+
+    return colorDeterminingField.options;
+  }, [colorDeterminingField]);
+
+  const configurationColor = useMemo(() => {
+    return parseGraphColor(configuration.color);
+  }, [configuration.color]);
+
+  const colorMode = useMemo((): GraphColorMode => {
+    return determineGraphColorMode({
+      configurationColor,
+      selectFieldOptions,
+    });
+  }, [configurationColor, selectFieldOptions]);
+
+  const series = useMemo((): BarChartSeries[] => {
+    if (!queryData?.barChartData?.series) {
+      return [];
+    }
+
+    return queryData.barChartData.series.map(
+      (seriesItem: { key: string; label?: string }): BarChartSeries => {
+        const rawValue = formattedToRawLookup.get(seriesItem.key);
+
+        const itemColor = determineChartItemColor({
+          configurationColor,
+          selectOptions: selectFieldOptions,
+          rawValue: typeof rawValue === 'string' ? rawValue : undefined,
+        });
+
+        return {
+          key: seriesItem.key,
+          label: seriesItem.label,
+          color: itemColor,
+        };
+      },
+    );
+  }, [
+    queryData?.barChartData?.series,
+    configurationColor,
+    selectFieldOptions,
+    formattedToRawLookup,
+  ]);
+
   return {
-    ...transformedData,
+    data: chartData,
+    indexBy: queryData?.barChartData?.indexBy ?? 'id',
+    keys: queryData?.barChartData?.keys ?? [],
+    series,
+    xAxisLabel: queryData?.barChartData?.xAxisLabel,
+    yAxisLabel: queryData?.barChartData?.yAxisLabel,
+    showDataLabels: configuration.displayDataLabel ?? false,
+    showLegend: configuration.displayLegend ?? true,
+    layout: queryData?.barChartData?.layout,
+    hasTooManyGroups: queryData?.barChartData?.hasTooManyGroups ?? false,
+    colorMode,
+    formattedToRawLookup,
     objectMetadataItem,
     loading,
     error,

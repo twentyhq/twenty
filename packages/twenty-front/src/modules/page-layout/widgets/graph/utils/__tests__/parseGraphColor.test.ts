@@ -5,11 +5,23 @@ describe('parseGraphColor', () => {
     expect(parseGraphColor('auto')).toBe('auto');
   });
 
-  it('should return valid ThemeColor values', () => {
+  it('should return valid ThemeColor values for lowercase input', () => {
     expect(parseGraphColor('green')).toBe('green');
     expect(parseGraphColor('blue')).toBe('blue');
     expect(parseGraphColor('red')).toBe('red');
     expect(parseGraphColor('purple')).toBe('purple');
+  });
+
+  it('should normalize uppercase colors to lowercase', () => {
+    expect(parseGraphColor('GREEN')).toBe('green');
+    expect(parseGraphColor('BLUE')).toBe('blue');
+    expect(parseGraphColor('RED')).toBe('red');
+    expect(parseGraphColor('PURPLE')).toBe('purple');
+  });
+
+  it('should normalize mixed case colors to lowercase', () => {
+    expect(parseGraphColor('Green')).toBe('green');
+    expect(parseGraphColor('Blue')).toBe('blue');
   });
 
   it('should return undefined for null', () => {

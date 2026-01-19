@@ -1,94 +1,129 @@
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+
 import { sortOptionsForManualOrder } from '@/page-layout/widgets/graph/utils/sortOptionsForManualOrder';
 
+const createOption = (
+  value: string,
+  label?: string,
+): FieldMetadataItemOption => ({
+  id: `id-${value}`,
+  value,
+  label: label ?? value.toUpperCase(),
+  color: 'green',
+  position: 0,
+});
+
 describe('sortOptionsForManualOrder', () => {
-  describe('without manual sort order', () => {
-    it('should sort by position when no manual order provided', () => {
-      const options = [
-        { value: 'c', position: 2 },
-        { value: 'a', position: 0 },
-        { value: 'b', position: 1 },
-      ];
+  describe('when manualSortOrder is not provided', () => {
+    it('should return options unchanged for undefined order', () => {
+      const options = [createOption('a'), createOption('b'), createOption('c')];
 
       const result = sortOptionsForManualOrder(options, undefined);
 
-      expect(result.map((option) => option.value)).toEqual(['a', 'b', 'c']);
+      expect(result).toEqual(options);
     });
 
-    it('should sort by position when manual order is null', () => {
-      const options = [
-        { value: 'c', position: 2 },
-        { value: 'a', position: 0 },
-        { value: 'b', position: 1 },
-      ];
+    it('should return options unchanged for null order', () => {
+      const options = [createOption('a'), createOption('b'), createOption('c')];
 
       const result = sortOptionsForManualOrder(options, null);
 
-      expect(result.map((option) => option.value)).toEqual(['a', 'b', 'c']);
+      expect(result).toEqual(options);
     });
 
-    it('should sort by position when manual order is empty', () => {
-      const options = [
-        { value: 'c', position: 2 },
-        { value: 'a', position: 0 },
-        { value: 'b', position: 1 },
-      ];
+    it('should return options unchanged for empty order array', () => {
+      const options = [createOption('a'), createOption('b'), createOption('c')];
 
       const result = sortOptionsForManualOrder(options, []);
 
-      expect(result.map((option) => option.value)).toEqual(['a', 'b', 'c']);
-    });
-
-    it('should handle null positions as 0', () => {
-      const options = [
-        { value: 'b', position: 1 },
-        { value: 'a', position: null },
-      ];
-
-      const result = sortOptionsForManualOrder(options, undefined);
-
-      expect(result.map((option) => option.value)).toEqual(['a', 'b']);
+      expect(result).toEqual(options);
     });
   });
 
-  describe('with manual sort order', () => {
-    it('should sort according to manual order', () => {
-      const options = [
-        { value: 'a', position: 0 },
-        { value: 'b', position: 1 },
-        { value: 'c', position: 2 },
-      ];
-      const manualSortOrder = ['c', 'a', 'b'];
+  describe('when manualSortOrder is provided', () => {
+    it('should sort options according to manual order', () => {
+      const options = [createOption('a'), createOption('b'), createOption('c')];
+      const manualOrder = ['c', 'a', 'b'];
 
-      const result = sortOptionsForManualOrder(options, manualSortOrder);
+      const result = sortOptionsForManualOrder(options, manualOrder);
 
       expect(result.map((option) => option.value)).toEqual(['c', 'a', 'b']);
     });
 
-    it('should place options not in manual order at the end', () => {
+    it('should handle reverse order', () => {
+      const options = [createOption('a'), createOption('b'), createOption('c')];
+      const manualOrder = ['c', 'b', 'a'];
+
+      const result = sortOptionsForManualOrder(options, manualOrder);
+
+      expect(result.map((option) => option.value)).toEqual(['c', 'b', 'a']);
+    });
+
+    it('should place items not in manual order at the end', () => {
       const options = [
-        { value: 'a', position: 0 },
-        { value: 'b', position: 1 },
-        { value: 'c', position: 2 },
+        createOption('a'),
+        createOption('b'),
+        createOption('c'),
+        createOption('d'),
       ];
-      const manualSortOrder = ['b'];
+      const manualOrder = ['c', 'a'];
 
-      const result = sortOptionsForManualOrder(options, manualSortOrder);
+      const result = sortOptionsForManualOrder(options, manualOrder);
 
-      expect(result.map((option) => option.value)).toEqual(['b', 'a', 'c']);
+      expect(result.map((option) => option.value)).toEqual([
+        'c',
+        'a',
+        'b',
+        'd',
+      ]);
+    });
+
+    it('should handle partial manual order correctly', () => {
+      const options = [createOption('x'), createOption('y'), createOption('z')];
+      const manualOrder = ['z'];
+
+      const result = sortOptionsForManualOrder(options, manualOrder);
+
+      expect(result[0].value).toBe('z');
+    });
+
+    it('should not mutate the original options array', () => {
+      const options = [createOption('a'), createOption('b'), createOption('c')];
+      const originalOrder = options.map((option) => option.value);
+      const manualOrder = ['c', 'b', 'a'];
+
+      sortOptionsForManualOrder(options, manualOrder);
+
+      expect(options.map((option) => option.value)).toEqual(originalOrder);
     });
   });
 
-  describe('immutability', () => {
-    it('should not mutate the original array', () => {
-      const options = [
-        { value: 'c', position: 2 },
-        { value: 'a', position: 0 },
-      ];
-      const originalOptions = [...options];
+  describe('edge cases', () => {
+    it('should handle empty options array', () => {
+      const options: FieldMetadataItemOption[] = [];
+      const manualOrder = ['a', 'b'];
 
-      sortOptionsForManualOrder(options, ['a', 'c']);
+      const result = sortOptionsForManualOrder(options, manualOrder);
 
-      expect(options).toEqual(originalOptions);
+      expect(result).toEqual([]);
+    });
+
+    it('should handle single option', () => {
+      const options = [createOption('a')];
+      const manualOrder = ['a'];
+
+      const result = sortOptionsForManualOrder(options, manualOrder);
+
+      expect(result.map((option) => option.value)).toEqual(['a']);
+    });
+
+    it('should handle manual order with values not in options', () => {
+      const options = [createOption('a'), createOption('b')];
+      const manualOrder = ['x', 'a', 'y', 'b', 'z'];
+
+      const result = sortOptionsForManualOrder(options, manualOrder);
+
+      expect(result.map((option) => option.value)).toEqual(['a', 'b']);
     });
   });
 });

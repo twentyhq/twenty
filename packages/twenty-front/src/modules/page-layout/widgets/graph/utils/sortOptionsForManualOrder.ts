@@ -1,22 +1,34 @@
-import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
-type SelectFieldOption = {
-  value: string;
-  position?: number | null;
-};
-
-export const sortOptionsForManualOrder = <T extends SelectFieldOption>(
-  options: T[],
-  manualSortOrder?: string[] | null,
-): T[] => {
+export const sortOptionsForManualOrder = (
+  options: FieldMetadataItemOption[],
+  manualSortOrder: string[] | null | undefined,
+): FieldMetadataItemOption[] => {
   if (!isDefined(manualSortOrder) || manualSortOrder.length === 0) {
-    return options.toSorted((a, b) => (a.position ?? 0) - (b.position ?? 0));
+    return options;
   }
 
-  return sortByManualOrder({
-    items: options.toSorted((a, b) => (a.position ?? 0) - (b.position ?? 0)),
-    manualSortOrder,
-    getRawValue: (option) => option.value,
+  const orderMap = new Map(
+    manualSortOrder.map((value, index) => [value, index]),
+  );
+
+  return [...options].sort((a, b) => {
+    const indexA = orderMap.get(a.value);
+    const indexB = orderMap.get(b.value);
+
+    if (!isDefined(indexA) && !isDefined(indexB)) {
+      return 0;
+    }
+
+    if (!isDefined(indexA)) {
+      return 1;
+    }
+
+    if (!isDefined(indexB)) {
+      return -1;
+    }
+
+    return indexA - indexB;
   });
 };
