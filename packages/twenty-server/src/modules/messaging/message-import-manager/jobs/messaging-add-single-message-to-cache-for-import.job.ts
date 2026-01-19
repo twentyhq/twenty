@@ -1,9 +1,11 @@
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { Logger } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
+
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessagingImportCacheService } from 'src/modules/messaging/common/services/messaging-import-cache.service';
 
 export type MessagingAddSingleMessageToCacheForImportJobData = {
   messageExternalId: string;
@@ -14,21 +16,38 @@ export type MessagingAddSingleMessageToCacheForImportJobData = {
 
 @Processor(MessageQueue.messagingQueue)
 export class MessagingAddSingleMessageToCacheForImportJob {
+  private readonly logger = new Logger(
+    MessagingAddSingleMessageToCacheForImportJob.name,
+  );
+
   constructor(
-    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
-    private readonly cacheStorage: CacheStorageService,
+    private readonly messagingImportCacheService: MessagingImportCacheService,
   ) {}
 
   @Process(MessagingAddSingleMessageToCacheForImportJob.name)
   async handle(
     data: MessagingAddSingleMessageToCacheForImportJobData,
   ): Promise<void> {
-    const { messageExternalId, messageChannelId, workspaceId, messageFolderId } =
-      data;
+    const {
+      messageExternalId,
+      messageChannelId,
+      workspaceId,
+      messageFolderId,
+    } = data;
 
-    await this.cacheStorage.hSet(
-      `messages-to-import:${workspaceId}:${messageChannelId}`,
-      { [messageExternalId]: messageFolderId ?? '' },
+    if (!isDefined(messageFolderId)) {
+      this.logger.debug(
+        `Skipping message ${messageExternalId} - no messageFolderId provided`,
+      );
+
+      return;
+    }
+
+    await this.messagingImportCacheService.addMessage(
+      workspaceId,
+      messageChannelId,
+      messageExternalId,
+      messageFolderId,
     );
   }
 }

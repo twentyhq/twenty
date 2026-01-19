@@ -1,9 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
@@ -38,6 +40,12 @@ export class MessagingDeleteFolderMessagesService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       authContext,
       async () => {
+        const messageFolderAssociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
+            workspaceId,
+            'messageChannelMessageAssociationMessageFolder',
+          );
+
         const messageChannelMessageAssociationRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
             workspaceId,
@@ -47,16 +55,28 @@ export class MessagingDeleteFolderMessagesService {
         let hasMoreData = true;
 
         while (hasMoreData) {
-          const associations =
-            await messageChannelMessageAssociationRepository.find({
+          const folderAssociations =
+            await messageFolderAssociationRepository.find({
               where: {
                 messageFolderId: messageFolder.id,
-                messageChannelId: messageChannel.id,
               },
               take: BATCH_SIZE,
             });
 
-          if (associations.length > 0) {
+          if (folderAssociations.length > 0) {
+            const messageChannelMessageAssociationIds = folderAssociations.map(
+              (folderAssociation) =>
+                folderAssociation.messageChannelMessageAssociationId,
+            );
+
+            const associations =
+              await messageChannelMessageAssociationRepository.find({
+                where: {
+                  id: In(messageChannelMessageAssociationIds),
+                  messageChannelId: messageChannel.id,
+                },
+              });
+
             const messageExternalIds = associations
               .map((association) => association.messageExternalId)
               .filter(isDefined);

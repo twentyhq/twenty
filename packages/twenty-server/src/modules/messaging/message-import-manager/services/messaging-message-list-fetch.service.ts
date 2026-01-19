@@ -5,12 +5,10 @@ import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThanOrEqual } from 'typeorm';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
+import { MessagingImportCacheService } from 'src/modules/messaging/common/services/messaging-import-cache.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import {
   MessageChannelPendingGroupEmailsAction,
@@ -32,14 +30,11 @@ import { MessagingMessagesImportService } from 'src/modules/messaging/message-im
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 
-const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
-
 @Injectable()
 export class MessagingMessageListFetchService {
   private readonly logger = new Logger(MessagingMessageListFetchService.name);
   constructor(
-    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
-    private readonly cacheStorage: CacheStorageService,
+    private readonly messagingImportCacheService: MessagingImportCacheService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messagingGetMessageListService: MessagingGetMessageListService,
@@ -143,10 +138,12 @@ export class MessagingMessageListFetchService {
             await this.messagingGetMessageListService.getMessageLists(
               messageChannelWithFreshTokens,
               messageFoldersToSync,
+              messageChannelWithFreshTokens.messageFolderImportPolicy,
             );
 
-          await this.cacheStorage.del(
-            `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
+          await this.messagingImportCacheService.clearQueue(
+            workspaceId,
+            freshMessageChannel.id,
           );
 
           const messageExternalIds = messageLists.flatMap(
@@ -224,17 +221,25 @@ export class MessagingMessageListFetchService {
 
               totalMessagesToImportCount += messageExternalIdsToImport.length;
 
-              const messageToFolderMapping: Record<string, string> = {};
+              const messagesToCache = messageExternalIdsToImport.map(
+                (messageExternalId) => ({
+                  messageExternalId,
+                  folderId:
+                    messageExternalIdToFolderIdMap.get(messageExternalId) ?? '',
+                }),
+              );
 
-              for (const messageExternalId of messageExternalIdsToImport) {
-                messageToFolderMapping[messageExternalId] =
-                  messageExternalIdToFolderIdMap.get(messageExternalId) ?? '';
-              }
+              this.logger.log(
+                `[Gmail Debug] messageExternalIdsToImport: ${messageExternalIdsToImport.length}, messagesToCache: ${messagesToCache.length}`,
+              );
+              this.logger.log(
+                `[Gmail Debug] Sample messagesToCache: ${JSON.stringify(messagesToCache.slice(0, 3))}`,
+              );
 
-              await this.cacheStorage.hSet(
-                `messages-to-import:${workspaceId}:${messageChannelWithFreshTokens.id}`,
-                messageToFolderMapping,
-                ONE_WEEK_IN_MILLISECONDS,
+              await this.messagingImportCacheService.addMessages(
+                workspaceId,
+                messageChannelWithFreshTokens.id,
+                messagesToCache,
               );
             }
           }

@@ -2,9 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { Any, In } from 'typeorm';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -22,12 +19,12 @@ import {
   MessageFolderPendingSyncAction,
   MessageFolderWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessagingImportCacheService } from 'src/modules/messaging/common/services/messaging-import-cache.service';
 
 @Injectable()
 export class MessageChannelSyncStatusService {
   constructor(
-    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
-    private readonly cacheStorage: CacheStorageService,
+    private readonly messagingImportCacheService: MessagingImportCacheService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly accountsToReconnectService: AccountsToReconnectService,
     private readonly metricsService: MetricsService,
@@ -98,8 +95,9 @@ export class MessageChannelSyncStatusService {
     }
 
     for (const messageChannelId of messageChannelIds) {
-      await this.cacheStorage.del(
-        `messages-to-import:${workspaceId}:${messageChannelId}`,
+      await this.messagingImportCacheService.clearAll(
+        workspaceId,
+        messageChannelId,
       );
     }
 

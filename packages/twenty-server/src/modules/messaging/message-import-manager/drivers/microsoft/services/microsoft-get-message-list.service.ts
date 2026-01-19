@@ -10,6 +10,7 @@ import pLimit from 'p-limit';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import {
   MessageImportDriverException,
@@ -40,8 +41,14 @@ export class MicrosoftGetMessageListService {
     messageChannel,
     connectedAccount,
     messageFolders,
+    messageFolderImportPolicy,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
-    if (messageFolders.length === 0) {
+    const foldersToProcess =
+      messageFolderImportPolicy === MessageFolderImportPolicy.SELECTED_FOLDERS
+        ? messageFolders.filter((folder) => folder.isSynced)
+        : messageFolders;
+
+    if (foldersToProcess.length === 0) {
       throw new MessageImportDriverException(
         `Message channel ${messageChannel.id} has no message folders`,
         MessageImportDriverExceptionCode.NOT_FOUND,
@@ -51,7 +58,7 @@ export class MicrosoftGetMessageListService {
     const limit = pLimit(FOLDER_PROCESSING_CONCURRENCY);
 
     const results = await Promise.all(
-      messageFolders.map((folder) =>
+      foldersToProcess.map((folder) =>
         limit(async () => {
           const response = await this.getMessageList(connectedAccount, folder);
 
