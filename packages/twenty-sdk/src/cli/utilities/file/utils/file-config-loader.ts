@@ -50,44 +50,35 @@ const getTsconfigAliases = async (
 };
 
 /**
- * Transform JSX/TSX files using esbuild before loading.
- */
-const transformJsxFile = async (filepath: string): Promise<string> => {
-  // Use esbuild for fast JSX transformation
-  const esbuild = await import('esbuild');
-  const source = await fs.readFile(filepath, 'utf8');
-
-  const result = await esbuild.transform(source, {
-    loader: 'tsx',
-    jsx: 'automatic',
-    format: 'esm',
-  });
-
-  return result.code;
-};
-
-/**
  * Create a jiti instance for loading TypeScript config files.
  * When appPath is provided, jiti will use the app's tsconfig.json for path resolution.
  */
-const createConfigLoader = async (appPath?: string) => {
+const createConfigLoader = async (
+  appPath?: string,
+  options: { jsx?: boolean } = {},
+) => {
   const basePath = appPath ?? fileURLToPath(import.meta.url);
 
-  const options: JitiOptions = {
+  const jitiOptions: JitiOptions = {
     moduleCache: false, // Don't cache during dev for hot reload
     fsCache: false,
     interopDefault: true,
   };
 
+  // Enable JSX support using jiti's built-in babel transform
+  if (options.jsx) {
+    jitiOptions.jsx = { runtime: 'automatic' };
+  }
+
   // If appPath is provided, read tsconfig.json and set up aliases
   if (appPath) {
     const aliases = await getTsconfigAliases(appPath);
     if (Object.keys(aliases).length > 0) {
-      options.alias = aliases;
+      jitiOptions.alias = aliases;
     }
   }
 
-  return createJiti(basePath, options);
+  return createJiti(basePath, jitiOptions);
 };
 
 /**
@@ -349,19 +340,11 @@ export const loadFrontComponentModule = async (
   componentName: string;
   componentPath: string;
 }> => {
-  // Transform JSX file using esbuild first
-  const transformedCode = await transformJsxFile(filepath);
-
-  // Write to a temp file and load it
-  const tempDir = path.join(appPath, 'node_modules', '.cache', 'twenty-sdk');
-  await fs.ensureDir(tempDir);
-  const tempFile = path.join(tempDir, `${path.basename(filepath, '.tsx')}.mjs`);
-  await fs.writeFile(tempFile, transformedCode);
-
-  const jiti = await createConfigLoader(appPath);
+  // Use jiti's built-in JSX support
+  const jiti = await createConfigLoader(appPath, { jsx: true });
 
   try {
-    const mod = (await jiti.import(tempFile)) as Record<string, unknown>;
+    const mod = (await jiti.import(filepath)) as Record<string, unknown>;
 
     // Find config with a component property
     const hasComponent = (value: unknown): boolean => {
@@ -390,10 +373,10 @@ export const loadFrontComponentModule = async (
       );
     }
 
-    // Parse original source to find where the component is imported from
-    const originalSource = await fs.readFile(filepath, 'utf8');
+    // Parse source to find where the component is imported from
+    const source = await fs.readFile(filepath, 'utf8');
     const importPath = extractImportPath(
-      originalSource,
+      source,
       componentName,
       filepath,
       appPath,
