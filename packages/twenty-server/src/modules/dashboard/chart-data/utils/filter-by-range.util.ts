@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 
 export const filterByRange = (
   results: GroupByRawResult[],

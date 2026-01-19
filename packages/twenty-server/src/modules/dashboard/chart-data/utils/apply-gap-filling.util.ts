@@ -5,7 +5,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import {
   fillDateGaps,
   fillDateGapsTwoDimensional,

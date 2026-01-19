@@ -19,6 +19,7 @@ import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enu
 import { ChartFilter } from 'src/engine/metadata-modules/page-layout-widget/types/chart-filter.type';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from 'src/modules/dashboard/chart-data/constants/graph-default-date-granularity.constant';
 import { GRAPH_DEFAULT_ORDER_BY } from 'src/modules/dashboard/chart-data/constants/graph-default-order-by.constant';
+import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { buildAggregateFieldKey } from 'src/modules/dashboard/chart-data/utils/build-aggregate-field-key.util';
 import {
   buildGroupByFieldObject,
@@ -30,12 +31,7 @@ import { getGroupByOrderBy } from 'src/modules/dashboard/chart-data/utils/get-gr
 import { isRelationNestedFieldDateKind } from 'src/modules/dashboard/chart-data/utils/is-relation-nested-field-date-kind.util';
 import { transformAggregateValue } from 'src/modules/dashboard/chart-data/utils/transform-aggregate-value.util';
 
-export type GroupByRawResult = {
-  groupByDimensionValues: unknown[];
-  aggregateValue: number;
-};
-
-export type ExecuteGroupByQueryParams = {
+type ExecuteGroupByQueryParams = {
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -53,6 +49,8 @@ export type ExecuteGroupByQueryParams = {
   secondaryGroupByFieldMetadataId?: string;
   secondaryGroupBySubFieldName?: string | null;
   secondaryDateGranularity?: ObjectRecordGroupByDateGranularity;
+  primaryAxisOrderBy?: GraphOrderBy;
+  secondaryAxisOrderBy?: GraphOrderBy;
 };
 
 @Injectable()
@@ -81,10 +79,7 @@ export class ChartDataQueryService {
     secondaryGroupBySubFieldName,
     secondaryDateGranularity,
     secondaryAxisOrderBy,
-  }: ExecuteGroupByQueryParams & {
-    primaryAxisOrderBy?: GraphOrderBy;
-    secondaryAxisOrderBy?: GraphOrderBy;
-  }): Promise<GroupByRawResult[]> {
+  }: ExecuteGroupByQueryParams): Promise<GroupByRawResult[]> {
     const gqlOperationFilter = convertChartFilterToGqlOperationFilter({
       filter,
       flatObjectMetadata,

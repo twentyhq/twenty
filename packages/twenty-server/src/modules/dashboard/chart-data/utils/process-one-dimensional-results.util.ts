@@ -2,7 +2,7 @@ import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { type FirstDayOfTheWeek, isDefined } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { type RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
 import { formatDimensionValue } from 'src/modules/dashboard/chart-data/utils/format-dimension-value.util';
 

@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { type FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/field-metadata-option.type';
+import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 
 type FillSelectGapsParams = {
   data: GroupByRawResult[];
