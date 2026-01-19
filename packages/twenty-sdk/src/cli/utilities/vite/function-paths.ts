@@ -1,3 +1,6 @@
+import { FUNCTIONS_DIR } from '@/cli/constants/functions-dir';
+import { OUTPUT_DIR } from '@/cli/constants/output-dir';
+import * as fs from 'fs-extra';
 import path from 'path';
 
 /**
@@ -46,4 +49,58 @@ export const buildFunctionInput = (
   }
 
   return input;
+};
+
+/**
+ * Cleans up old function output files that are no longer in the current entry points.
+ */
+export const cleanupOldFunctions = async (
+  appPath: string,
+  currentEntryPoints: string[],
+): Promise<void> => {
+  const functionsDir = path.join(appPath, OUTPUT_DIR, FUNCTIONS_DIR);
+
+  if (!(await fs.pathExists(functionsDir))) {
+    return;
+  }
+
+  // Get expected output files from current entry points
+  const expectedFiles = new Set(
+    currentEntryPoints.map((entryPoint) => {
+      const { relativePath } = computeFunctionOutputPath(entryPoint);
+      return relativePath;
+    }),
+  );
+
+  // Also include sourcemap files
+  const expectedFilesWithMaps = new Set<string>();
+  for (const file of expectedFiles) {
+    expectedFilesWithMaps.add(file);
+    expectedFilesWithMaps.add(`${file}.map`);
+  }
+
+  // Walk the functions directory and remove files not in expected set
+  const removeOrphans = async (dir: string, relativeBase: string = ''): Promise<void> => {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      const relativePath = relativeBase ? `${relativeBase}/${entry.name}` : entry.name;
+
+      if (entry.isDirectory()) {
+        await removeOrphans(fullPath, relativePath);
+        // Remove empty directories
+        const remaining = await fs.readdir(fullPath);
+        if (remaining.length === 0) {
+          await fs.remove(fullPath);
+        }
+      } else if (entry.isFile()) {
+        if (!expectedFilesWithMaps.has(relativePath)) {
+          await fs.remove(fullPath);
+        }
+      }
+    }
+  };
+
+  await removeOrphans(functionsDir);
 };

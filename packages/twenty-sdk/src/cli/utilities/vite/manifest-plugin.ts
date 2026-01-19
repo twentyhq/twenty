@@ -30,19 +30,26 @@ export type ManifestPluginState = {
 
 /**
  * Creates a Vite plugin that rebuilds the manifest on file changes.
+ * Works with Vite build watch mode.
  */
 export const createManifestPlugin = (
   appPath: string,
   state: ManifestPluginState,
   callbacks: ManifestPluginCallbacks = {},
 ): Plugin => {
+  const isRelevantFile = (file: string): boolean => {
+    return ['.ts', '.json'].some((ext) => file.endsWith(ext));
+  };
+
   return {
     name: 'twenty-manifest',
-    handleHotUpdate: async ({ file }) => {
-      if (['.ts', '.json'].some((ext) => file.endsWith(ext))) {
+
+    // Called when a watched file changes (build watch mode)
+    watchChange: async (id, change) => {
+      if (isRelevantFile(id)) {
+        // Rebuild manifest when files change
         await runManifestBuild(appPath, state, callbacks);
       }
-      return undefined;
     },
   };
 };

@@ -1,22 +1,25 @@
 export {
-  createDevBuildConfig,
+  createDevServer,
+  createDevServerConfig,
   EXTERNAL_MODULES,
-  type DevBuildConfigOptions,
-} from './build-config';
+  type BuildWatcher,
+  type DevServerOptions
+} from './dev-server';
 
 export {
   extractFunctionEntryPoints,
-  haveFunctionEntryPointsChanged,
+  haveFunctionEntryPointsChanged
 } from './entry-points';
 
 export {
   buildFunctionInput,
-  computeFunctionOutputPath,
+  cleanupOldFunctions,
+  computeFunctionOutputPath
 } from './function-paths';
 
 export {
   createManifestPlugin,
   runManifestBuild,
   type ManifestPluginCallbacks,
-  type ManifestPluginState,
+  type ManifestPluginState
 } from './manifest-plugin';

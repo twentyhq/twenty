@@ -2,7 +2,7 @@ import { FUNCTIONS_DIR } from '@/cli/constants/functions-dir';
 import { GENERATED_DIR } from '@/cli/constants/generated-dir';
 import { OUTPUT_DIR } from '@/cli/constants/output-dir';
 import path from 'path';
-import { type InlineConfig, type Plugin } from 'vite';
+import { build, type InlineConfig, type Rollup } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 // Default externals for serverless functions
@@ -13,16 +13,18 @@ export const EXTERNAL_MODULES: (string | RegExp)[] = [
   /^twenty-sdk/, /^twenty-shared/, /^@\//, /(?:^|\/)generated(?:\/|$)/,
 ];
 
-export type DevBuildConfigOptions = {
+export type DevServerOptions = {
   appPath: string;
   functionInput: Record<string, string>;
-  plugins?: Plugin[];
+  plugins?: InlineConfig['plugins'];
 };
 
+export type BuildWatcher = Rollup.RollupWatcher;
+
 /**
- * Creates Vite build configuration for dev mode function building.
+ * Creates Vite build config for function building with watch mode.
  */
-export const createDevBuildConfig = (options: DevBuildConfigOptions): InlineConfig => {
+export const createDevServerConfig = (options: DevServerOptions): InlineConfig => {
   const { appPath, functionInput, plugins = [] } = options;
 
   const outputDir = path.join(appPath, OUTPUT_DIR);
@@ -43,7 +45,10 @@ export const createDevBuildConfig = (options: DevBuildConfigOptions): InlineConf
     build: {
       outDir: functionsOutputDir,
       emptyOutDir: false,
-      watch: {},
+      watch: {
+        include: ['src/**/*.ts', 'src/**/*.json'],
+        exclude: ['node_modules/**', '.twenty/**', 'dist/**'],
+      },
       lib: {
         entry,
         formats: ['es'],
@@ -66,7 +71,19 @@ export const createDevBuildConfig = (options: DevBuildConfigOptions): InlineConf
       minify: false,
       sourcemap: hasFunctions,
     },
-    logLevel: hasFunctions ? 'warn' : 'silent',
+    logLevel: 'silent',
     configFile: false,
   };
+};
+
+/**
+ * Creates a Vite build watcher for function building.
+ * Uses build with watch mode to actually write files to disk.
+ */
+export const createDevServer = async (
+  options: DevServerOptions,
+): Promise<BuildWatcher> => {
+  const config = createDevServerConfig(options);
+  const watcher = await build(config);
+  return watcher as BuildWatcher;
 };

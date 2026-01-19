@@ -2,23 +2,19 @@ import { FUNCTIONS_DIR } from '@/cli/constants/functions-dir';
 import { OUTPUT_DIR } from '@/cli/constants/output-dir';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import {
-  createDevBuildConfig,
+  cleanupOldFunctions,
+  createDevServer,
   createManifestPlugin,
   runManifestBuild,
+  type BuildWatcher,
   type ManifestPluginState,
 } from '@/cli/utilities/vite';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { build } from 'vite';
 
 export type AppDevOptions = {
   appPath?: string;
-};
-
-type BuildWatcher = {
-  close: () => Promise<void>;
-  on?: (event: string, callback: (event: unknown) => void) => void;
 };
 
 export class AppDevCommand {
@@ -47,11 +43,14 @@ export class AppDevCommand {
   }
 
   private async startWatcher(): Promise<void> {
-    // Initial manifest build
+    // Initial manifest build to get function entry points
     const functionInput = await runManifestBuild(
       this.appPath,
       this.manifestState,
     );
+
+    // Cleanup old function files that are no longer needed
+    await cleanupOldFunctions(this.appPath, this.manifestState.currentEntryPoints);
 
     const hasFunctions = Object.keys(functionInput).length > 0;
 
@@ -61,6 +60,7 @@ export class AppDevCommand {
       console.log(chalk.gray('  No functions to build'));
     }
 
+    // Create manifest plugin that will rebuild manifest on file changes
     const manifestPlugin = createManifestPlugin(
       this.appPath,
       this.manifestState,
@@ -69,30 +69,27 @@ export class AppDevCommand {
       },
     );
 
-    const config = createDevBuildConfig({
+    // Create and start build watcher with function entry points
+    this.watcher = await createDevServer({
       appPath: this.appPath,
       functionInput,
       plugins: [manifestPlugin],
     });
 
-    this.watcher = (await build(config)) as BuildWatcher;
-
-    if (this.watcher.on) {
-      this.watcher.on('event', (event: unknown) => {
-        const evt = event as { code: string; error?: { message: string } };
-        if (evt.code === 'END') {
-          if (hasFunctions) {
-            console.log(chalk.green('  ✓ Functions built'));
-          }
-          console.log('');
-          console.log(
-            chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
-          );
-        } else if (evt.code === 'ERROR') {
-          console.error(chalk.red('  ✗ Build error:'), evt.error?.message);
+    // Listen for build events
+    this.watcher.on('event', (event) => {
+      if (event.code === 'END') {
+        if (hasFunctions) {
+          console.log(chalk.green('  ✓ Functions built'));
         }
-      });
-    }
+        console.log('');
+        console.log(
+          chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
+        );
+      } else if (event.code === 'ERROR') {
+        console.error(chalk.red('  ✗ Build error:'), event.error?.message);
+      }
+    });
   }
 
   private scheduleRestart(): void {
@@ -114,7 +111,7 @@ export class AppDevCommand {
 
     try {
       console.log(
-        chalk.yellow('🔄 Function entry points changed, restarting...'),
+        chalk.yellow('🔄 Function entry points changed, restarting watcher...'),
       );
 
       if (this.watcher) {
@@ -123,7 +120,7 @@ export class AppDevCommand {
 
       await this.startWatcher();
 
-      console.log(chalk.green('✓ Restarted with new entry points'));
+      console.log(chalk.green('✓ Watcher restarted with new entry points'));
     } finally {
       this.isRestarting = false;
     }
