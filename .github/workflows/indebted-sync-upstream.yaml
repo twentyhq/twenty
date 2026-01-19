@@ -128,7 +128,11 @@ jobs:
           # Regenerate yarn.lock from package.json (applies our resolutions)
           # Disable hardened mode to allow lockfile creation
           rm -f yarn.lock
+          echo "=== .yarnrc.yml BEFORE sed ==="
+          cat .yarnrc.yml
           sed -i 's/enableHardenedMode: true/enableHardenedMode: false/' .yarnrc.yml
+          echo "=== .yarnrc.yml AFTER sed ==="
+          cat .yarnrc.yml
           yarn install
           sed -i 's/enableHardenedMode: false/enableHardenedMode: true/' .yarnrc.yml
           git add yarn.lock
