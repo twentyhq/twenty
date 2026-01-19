@@ -1,20 +1,59 @@
+import { formatPath } from '@/cli/utils/format-path';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import {
   AppAddCommand,
   isSyncableEntity,
   SyncableEntity,
-} from './app-add.command';
-import { AppUninstallCommand } from '@/cli/commands/app-uninstall.command';
-import { AppDevCommand } from '@/cli/commands/app-dev.command';
-import { AppSyncCommand } from '@/cli/commands/app-sync.command';
-import { formatPath } from '@/cli/utils/format-path';
-import { AppGenerateCommand } from '@/cli/commands/app-generate.command';
-import { AppLogsCommand } from '@/cli/commands/app-logs.command';
-import { AppBuildCommand } from '@/cli/commands/app-build.command';
+} from './app/app-add';
+import { AppBuildCommand } from './app/app-build';
+import { AppGenerateCommand } from './app/app-generate';
+import { AppLogsCommand } from './app/app-logs';
+import { AppSyncCommand } from './app/app-sync';
+import { AppUninstallCommand } from './app/app-uninstall';
+import { AppWatchCommand } from './app/app-watch';
+import { AuthLoginCommand } from './auth/auth-login';
+import { AuthLogoutCommand } from './auth/auth-logout';
+import { AuthStatusCommand } from './auth/auth-status';
+
+export class AuthCommand {
+  private loginCommand = new AuthLoginCommand();
+  private logoutCommand = new AuthLogoutCommand();
+  private statusCommand = new AuthStatusCommand();
+
+  getCommand(): Command {
+    const authCommand = new Command('auth');
+    authCommand.description('Authentication commands');
+
+    authCommand
+      .command('login')
+      .description('Authenticate with Twenty')
+      .option('--api-key <key>', 'API key for authentication')
+      .option('--api-url <url>', 'Twenty API URL')
+      .action(async (options) => {
+        await this.loginCommand.execute(options);
+      });
+
+    authCommand
+      .command('logout')
+      .description('Remove authentication credentials')
+      .action(async () => {
+        await this.logoutCommand.execute();
+      });
+
+    authCommand
+      .command('status')
+      .description('Check authentication status')
+      .action(async () => {
+        await this.statusCommand.execute();
+      });
+
+    return authCommand;
+  }
+}
 
 export class AppCommand {
-  private devCommand = new AppDevCommand();
+  private watchCommand = new AppWatchCommand();
   private syncCommand = new AppSyncCommand();
   private uninstallCommand = new AppUninstallCommand();
   private addCommand = new AppAddCommand();
@@ -31,7 +70,7 @@ export class AppCommand {
       .description('Watch and sync local application changes')
       .option('-d, --debounce <ms>', 'Debounce delay in milliseconds', '1000')
       .action(async (appPath, options) => {
-        await this.devCommand.execute({
+        await this.watchCommand.execute({
           ...options,
           appPath: formatPath(appPath),
         });
