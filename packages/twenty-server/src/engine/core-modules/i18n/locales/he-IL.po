@@ -1094,6 +1094,11 @@ msgstr "שכפול לוח הבקרה נכשל."
 msgid "Failed to load queue jobs. Please try again later."
 msgstr "נכשל הטעינה של משימות התור. אנא נסה שוב מאוחר יותר."
 
+#. js-lingui-id: ruD0s1
+#: src/engine/subscriptions/event-stream.exception.ts
+msgid "Failed to receive real time updates."
+msgstr ""
+
 #. js-lingui-id: /E7MoD
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Failed to record billing event."
@@ -4438,6 +4443,11 @@ msgstr "סיסמה שגויה."
 #. js-lingui-id: RksBK0
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password."
+msgstr ""
+
+#. js-lingui-id: chHKg8
+#: src/engine/subscriptions/event-stream.exception.ts
+msgid "You are not authorized to perform this action."
 msgstr ""
 
 #. js-lingui-id: 84/Dko

@@ -1089,6 +1089,11 @@ msgstr "Failed to duplicate dashboard."
 msgid "Failed to load queue jobs. Please try again later."
 msgstr "Failed to load queue jobs. Please try again later."
 
+#. js-lingui-id: ruD0s1
+#: src/engine/subscriptions/event-stream.exception.ts
+msgid "Failed to receive real time updates."
+msgstr "Failed to receive real time updates."
+
 #. js-lingui-id: /E7MoD
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Failed to record billing event."
@@ -4434,6 +4439,11 @@ msgstr "Wrong password"
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password."
 msgstr "Wrong password."
+
+#. js-lingui-id: chHKg8
+#: src/engine/subscriptions/event-stream.exception.ts
+msgid "You are not authorized to perform this action."
+msgstr "You are not authorized to perform this action."
 
 #. js-lingui-id: 84/Dko
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts

@@ -1094,6 +1094,11 @@ msgstr "대시보드 복제에 실패했습니다."
 msgid "Failed to load queue jobs. Please try again later."
 msgstr "대기열 작업 로드에 실패했습니다. 나중에 다시 시도해주세요."
 
+#. js-lingui-id: ruD0s1
+#: src/engine/subscriptions/event-stream.exception.ts
+msgid "Failed to receive real time updates."
+msgstr ""
+
 #. js-lingui-id: /E7MoD
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Failed to record billing event."
@@ -4438,6 +4443,11 @@ msgstr "잘못된 비밀번호입니다"
 #. js-lingui-id: RksBK0
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password."
+msgstr ""
+
+#. js-lingui-id: chHKg8
+#: src/engine/subscriptions/event-stream.exception.ts
+msgid "You are not authorized to perform this action."
 msgstr ""
 
 #. js-lingui-id: 84/Dko
