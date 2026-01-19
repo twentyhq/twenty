@@ -32,4 +32,8 @@ export const APP_LOCALES = {
   'vi-VN': 'vi-VN',
   'zh-CN': 'zh-CN',
   'zh-TW': 'zh-TW',
+  'fa-IR': 'fa-IR',
+  'hi-IN': 'hi-IN',
+  'th-TH': 'th-TH',
+  'id-ID': 'id-ID',
 } as const;
