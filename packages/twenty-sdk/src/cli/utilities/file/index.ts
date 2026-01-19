@@ -10,3 +10,4 @@ export {
 export { formatPath } from './utils/file-path';
 export { loadEnvVariables } from './utils/file-env';
 export { loadConfig, loadFunctionModule } from './utils/file-config-loader';
+export { TarballService } from './utils/file-tarball';

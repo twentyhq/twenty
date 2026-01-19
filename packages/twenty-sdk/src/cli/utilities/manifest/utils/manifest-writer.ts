@@ -1,7 +1,14 @@
 import * as fs from 'fs-extra';
 import path from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
-import { type BuiltFunctionInfo } from './types';
+
+export type BuiltFunctionInfo = {
+  name: string;
+  universalIdentifier: string;
+  originalHandlerPath: string;
+  builtHandlerPath: string;
+  sourceMapPath?: string;
+};
 
 /**
  * BuildManifestWriter creates the output manifest.json for a built application.

@@ -1,4 +1,5 @@
 import { type ApplicationManifest } from 'twenty-shared/application';
+import { type BuiltFunctionInfo } from '@/cli/utilities/manifest';
 
 export type BuildOptions = {
   appPath: string;
@@ -11,14 +12,6 @@ export type BuildResult = {
   manifest: ApplicationManifest;
   builtFunctions: BuiltFunctionInfo[];
   tarballPath?: string;
-};
-
-export type BuiltFunctionInfo = {
-  name: string;
-  universalIdentifier: string;
-  originalHandlerPath: string;
-  builtHandlerPath: string;
-  sourceMapPath?: string;
 };
 
 export type ViteBuildConfig = {

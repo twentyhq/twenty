@@ -6,6 +6,10 @@ export {
   displayWarnings,
 } from './utils/manifest-display';
 export {
+  BuildManifestWriter,
+  type BuiltFunctionInfo,
+} from './utils/manifest-writer';
+export {
   ManifestValidationError,
   type ValidationError,
   type ValidationWarning,

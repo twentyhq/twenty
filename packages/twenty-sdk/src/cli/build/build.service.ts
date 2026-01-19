@@ -3,18 +3,18 @@ import * as fs from 'fs-extra';
 import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type ApiResponse } from '@/cli/utilities/api';
+import { TarballService } from '@/cli/utilities/file';
 import {
   loadManifest,
   type LoadManifestResult,
+  BuildManifestWriter,
+  type BuiltFunctionInfo,
 } from '@/cli/utilities/manifest';
 import { ViteBuildRunner } from './vite-build-runner';
-import { BuildManifestWriter } from './build-manifest-writer';
-import { TarballService } from './tarball.service';
 import { BuildWatcher } from './build-watcher';
 import {
   type BuildOptions,
   type BuildResult,
-  type BuiltFunctionInfo,
   type ViteBuildConfig,
   type BuildWatchHandle,
   type RebuildDecision,

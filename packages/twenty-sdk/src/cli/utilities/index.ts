@@ -5,11 +5,13 @@ export {
   displayEntitySummary,
   displayErrors,
   displayWarnings,
+  BuildManifestWriter,
   ManifestValidationError,
   type LoadManifestResult,
   type ValidationError,
   type ValidationWarning,
   type ValidationResult,
+  type BuiltFunctionInfo,
 } from './manifest';
 
 // File utilities
@@ -24,6 +26,7 @@ export {
   loadEnvVariables,
   loadConfig,
   loadFunctionModule,
+  TarballService,
   type JsoncParseOptions,
 } from './file';
 
