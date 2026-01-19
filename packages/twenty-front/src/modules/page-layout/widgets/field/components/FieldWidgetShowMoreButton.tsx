@@ -22,7 +22,7 @@ const StyledButton = styled.button`
   font-family: ${({ theme }) => theme.font.family};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   cursor: pointer;
-  transition: color ${({ theme }) => theme.animation.duration.fast}s ease;
+  transition: color ${({ theme }) => theme.animation.duration.instant}s ease;
 
   &:hover {
     color: ${({ theme }) => theme.font.color.primary};
