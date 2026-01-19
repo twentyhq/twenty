@@ -17,9 +17,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @Injectable()
 export class GlobalWorkspaceMemberListener {
-  constructor(
-    private readonly workspaceCacheService: WorkspaceCacheService,
-  ) {}
+  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.CREATED)
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.UPDATED)
@@ -37,8 +35,9 @@ export class GlobalWorkspaceMemberListener {
       | ObjectRecordUpsertEvent<WorkspaceMemberWorkspaceEntity>
     >,
   ) {
-    await this.workspaceCacheService.invalidateAndRecompute(payload.workspaceId, [
-      'flatWorkspaceMemberMaps',
-    ]);
+    await this.workspaceCacheService.invalidateAndRecompute(
+      payload.workspaceId,
+      ['flatWorkspaceMemberMaps'],
+    );
   }
 }

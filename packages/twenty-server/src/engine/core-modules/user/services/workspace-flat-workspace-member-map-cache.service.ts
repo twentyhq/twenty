@@ -9,7 +9,7 @@ import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
-@WorkspaceCache('flatWorkspaceMemberMaps', { localDataOnly: false })
+@WorkspaceCache('flatWorkspaceMemberMaps', { localDataOnly: true })
 export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheProvider<FlatWorkspaceMemberMaps> {
   constructor(
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
@@ -33,11 +33,9 @@ export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheP
             byId: {},
             idByUserId: {},
           };
-          const workspaceMembers = await workspaceMemberRepository.find(
-            {
-              withDeleted: true,
-            },
-          );
+          const workspaceMembers = await workspaceMemberRepository.find({
+            withDeleted: true,
+          });
 
           for (const workspaceMember of workspaceMembers) {
             flatWorkspaceMemberMaps.byId[workspaceMember.id] = workspaceMember;
