@@ -43,13 +43,11 @@ export class AppDevCommand {
   }
 
   private async startWatcher(): Promise<void> {
-    // Initial manifest build to get function entry points
     const functionInput = await runManifestBuild(
       this.appPath,
       this.manifestState,
     );
 
-    // Cleanup old function files that are no longer needed
     await cleanupOldFunctions(this.appPath, this.manifestState.currentEntryPoints);
 
     const hasFunctions = Object.keys(functionInput).length > 0;
@@ -60,7 +58,6 @@ export class AppDevCommand {
       console.log(chalk.gray('  No functions to build'));
     }
 
-    // Create manifest plugin that will rebuild manifest on file changes
     const manifestPlugin = createManifestPlugin(
       this.appPath,
       this.manifestState,
@@ -69,14 +66,12 @@ export class AppDevCommand {
       },
     );
 
-    // Create and start build watcher with function entry points
     this.watcher = await createDevWatcher({
       appPath: this.appPath,
       functionInput,
       plugins: [manifestPlugin],
     });
 
-    // Listen for build events
     this.watcher.on('event', (event) => {
       if (event.code === 'END') {
         if (hasFunctions) {

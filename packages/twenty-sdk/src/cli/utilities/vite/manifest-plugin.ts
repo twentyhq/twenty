@@ -28,10 +28,6 @@ export type ManifestPluginState = {
   currentEntryPoints: string[];
 };
 
-/**
- * Creates a Vite plugin that rebuilds the manifest on file changes.
- * Works with Vite build watch mode.
- */
 export const createManifestPlugin = (
   appPath: string,
   state: ManifestPluginState,
@@ -43,21 +39,14 @@ export const createManifestPlugin = (
 
   return {
     name: 'twenty-manifest',
-
-    // Called when a watched file changes (build watch mode)
-    watchChange: async (id, change) => {
+    watchChange: async (id) => {
       if (isRelevantFile(id)) {
-        // Rebuild manifest when files change
         await runManifestBuild(appPath, state, callbacks);
       }
     },
   };
 };
 
-/**
- * Builds the manifest and returns function input for Vite.
- * Also handles entry point change detection.
- */
 export const runManifestBuild = async (
   appPath: string,
   state: ManifestPluginState,
@@ -82,7 +71,6 @@ export const runManifestBuild = async (
 
     await writeManifestToOutput(appPath, result);
 
-    // Check if entry points changed
     const newEntryPoints = extractFunctionEntryPoints(functions);
     const entryPointsChanged = haveFunctionEntryPointsChanged(
       state.currentEntryPoints,

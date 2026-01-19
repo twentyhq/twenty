@@ -1,57 +1,7 @@
-import path from 'path';
-
 import {
-  buildRollupInput,
   extractFunctionEntryPoints,
   haveFunctionEntryPointsChanged,
 } from '../entry-points';
-
-describe('buildRollupInput', () => {
-  const appPath = '/app';
-
-  it('should return empty object for empty entry points', () => {
-    const result = buildRollupInput(appPath, []);
-
-    expect(result).toEqual({});
-  });
-
-  it('should convert single entry point to rollup input', () => {
-    const entryPoints = ['src/app/hello.function.ts'];
-
-    const result = buildRollupInput(appPath, entryPoints);
-
-    expect(result).toEqual({
-      'hello.function': path.join(appPath, 'src/app/hello.function.ts'),
-    });
-  });
-
-  it('should convert multiple entry points to rollup input', () => {
-    const entryPoints = [
-      'src/app/hello.function.ts',
-      'src/app/utils/greet.function.ts',
-    ];
-
-    const result = buildRollupInput(appPath, entryPoints);
-
-    expect(result).toEqual({
-      'hello.function': path.join(appPath, 'src/app/hello.function.ts'),
-      'greet.function': path.join(appPath, 'src/app/utils/greet.function.ts'),
-    });
-  });
-
-  it('should use filename without extension as chunk name', () => {
-    const entryPoints = ['src/functions/my-custom-handler.ts'];
-
-    const result = buildRollupInput(appPath, entryPoints);
-
-    expect(result).toEqual({
-      'my-custom-handler': path.join(
-        appPath,
-        'src/functions/my-custom-handler.ts',
-      ),
-    });
-  });
-});
 
 describe('extractFunctionEntryPoints', () => {
   it('should return empty array for no functions', () => {

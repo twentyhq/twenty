@@ -5,7 +5,6 @@ import path from 'path';
 import { build, type InlineConfig, type Rollup } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-// Default externals for serverless functions
 export const EXTERNAL_MODULES: (string | RegExp)[] = [
   'path', 'fs', 'crypto', 'stream', 'util', 'os', 'url', 'http', 'https',
   'events', 'buffer', 'querystring', 'assert', 'zlib', 'net', 'tls',
@@ -21,9 +20,6 @@ export type DevWatcherOptions = {
 
 export type BuildWatcher = Rollup.RollupWatcher;
 
-/**
- * Creates Vite build config for function building with watch mode.
- */
 export const createDevWatcherConfig = (options: DevWatcherOptions): InlineConfig => {
   const { appPath, functionInput, plugins = [] } = options;
 
@@ -76,10 +72,6 @@ export const createDevWatcherConfig = (options: DevWatcherOptions): InlineConfig
   };
 };
 
-/**
- * Creates a Vite build watcher for function building.
- * Uses build with watch mode to actually write files to disk.
- */
 export const createDevWatcher = async (
   options: DevWatcherOptions,
 ): Promise<BuildWatcher> => {

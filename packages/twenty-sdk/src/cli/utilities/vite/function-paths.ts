@@ -3,13 +3,8 @@ import { OUTPUT_DIR } from '@/cli/constants/output-dir';
 import * as fs from 'fs-extra';
 import path from 'path';
 
-/**
- * Computes the output path for a function, preserving directory structure.
- *
- * Examples:
- * - src/app/hello.function.ts → { relativePath: 'hello.function.js', outputDir: '' }
- * - src/app/utils/greet.function.ts → { relativePath: 'utils/greet.function.js', outputDir: 'utils' }
- */
+// src/app/hello.function.ts → { relativePath: 'hello.function.js', outputDir: '' }
+// src/app/utils/greet.function.ts → { relativePath: 'utils/greet.function.js', outputDir: 'utils' }
 export const computeFunctionOutputPath = (
   handlerPath: string,
 ): { relativePath: string; outputDir: string } => {
@@ -33,9 +28,6 @@ export const computeFunctionOutputPath = (
   };
 };
 
-/**
- * Builds rollup input from function handler paths.
- */
 export const buildFunctionInput = (
   appPath: string,
   handlerPaths: Array<{ handlerPath: string }>,
@@ -51,9 +43,6 @@ export const buildFunctionInput = (
   return input;
 };
 
-/**
- * Cleans up old function output files that are no longer in the current entry points.
- */
 export const cleanupOldFunctions = async (
   appPath: string,
   currentEntryPoints: string[],
@@ -64,7 +53,6 @@ export const cleanupOldFunctions = async (
     return;
   }
 
-  // Get expected output files from current entry points
   const expectedFiles = new Set(
     currentEntryPoints.map((entryPoint) => {
       const { relativePath } = computeFunctionOutputPath(entryPoint);
@@ -72,14 +60,12 @@ export const cleanupOldFunctions = async (
     }),
   );
 
-  // Also include sourcemap files
   const expectedFilesWithMaps = new Set<string>();
   for (const file of expectedFiles) {
     expectedFilesWithMaps.add(file);
     expectedFilesWithMaps.add(`${file}.map`);
   }
 
-  // Walk the functions directory and remove files not in expected set
   const removeOrphans = async (dir: string, relativeBase: string = ''): Promise<void> => {
     const entries = await fs.readdir(dir, { withFileTypes: true });
 
@@ -89,7 +75,6 @@ export const cleanupOldFunctions = async (
 
       if (entry.isDirectory()) {
         await removeOrphans(fullPath, relativePath);
-        // Remove empty directories
         const remaining = await fs.readdir(fullPath);
         if (remaining.length === 0) {
           await fs.remove(fullPath);
