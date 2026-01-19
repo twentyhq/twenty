@@ -16,7 +16,6 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 const StyledTimelineItemContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
@@ -93,9 +92,7 @@ export const EventRow = ({
   mainObjectMetadataItem,
 }: EventRowProps) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const allowRequestsToTwentyIcons = useRecoilValue(
-    allowRequestsToTwentyIconsState,
-  );
+
   const { localeCatalog } = useRecoilValue(dateLocaleState);
 
   const { recordId } = useContext(TimelineActivityContext);
@@ -124,7 +121,6 @@ export const EventRow = ({
   const labelIdentifier = getObjectRecordIdentifier({
     objectMetadataItem: mainObjectMetadataItem,
     record: recordFromStore,
-    allowRequestsToTwentyIcons,
   });
 
   const authorFullName = getTimelineActivityAuthorFullName(
