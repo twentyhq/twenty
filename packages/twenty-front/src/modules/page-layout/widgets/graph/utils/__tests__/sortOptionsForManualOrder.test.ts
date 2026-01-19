@@ -5,38 +5,88 @@ import { sortOptionsForManualOrder } from '@/page-layout/widgets/graph/utils/sor
 const createOption = (
   value: string,
   label?: string,
+  position?: number,
 ): FieldMetadataItemOption => ({
   id: `id-${value}`,
   value,
   label: label ?? value.toUpperCase(),
   color: 'green',
-  position: 0,
+  position: position ?? 0,
 });
 
 describe('sortOptionsForManualOrder', () => {
   describe('when manualSortOrder is not provided', () => {
-    it('should return options unchanged for undefined order', () => {
-      const options = [createOption('a'), createOption('b'), createOption('c')];
+    it('should sort options by position for undefined order', () => {
+      const options = [
+        createOption('c', undefined, 3),
+        createOption('a', undefined, 1),
+        createOption('b', undefined, 2),
+      ];
 
       const result = sortOptionsForManualOrder(options, undefined);
 
-      expect(result).toEqual(options);
+      expect(result.map((option) => option.value)).toEqual(['a', 'b', 'c']);
     });
 
-    it('should return options unchanged for null order', () => {
-      const options = [createOption('a'), createOption('b'), createOption('c')];
+    it('should sort options by position for null order', () => {
+      const options = [
+        createOption('z', undefined, 3),
+        createOption('x', undefined, 1),
+        createOption('y', undefined, 2),
+      ];
 
       const result = sortOptionsForManualOrder(options, null);
 
-      expect(result).toEqual(options);
+      expect(result.map((option) => option.value)).toEqual(['x', 'y', 'z']);
     });
 
-    it('should return options unchanged for empty order array', () => {
-      const options = [createOption('a'), createOption('b'), createOption('c')];
+    it('should sort options by position for empty order array', () => {
+      const options = [
+        createOption('m', undefined, 3),
+        createOption('k', undefined, 1),
+        createOption('l', undefined, 2),
+      ];
 
       const result = sortOptionsForManualOrder(options, []);
 
-      expect(result).toEqual(options);
+      expect(result.map((option) => option.value)).toEqual(['k', 'l', 'm']);
+    });
+
+    it('should handle options with same position', () => {
+      const options = [
+        createOption('b', undefined, 1),
+        createOption('a', undefined, 1),
+        createOption('c', undefined, 2),
+      ];
+
+      const result = sortOptionsForManualOrder(options, undefined);
+
+      expect(result.map((option) => option.value)).toEqual(['b', 'a', 'c']);
+    });
+
+    it('should handle options with undefined position', () => {
+      const options = [
+        createOption('b', undefined, 2),
+        createOption('a', undefined, undefined),
+        createOption('c', undefined, 3),
+      ];
+
+      const result = sortOptionsForManualOrder(options, undefined);
+
+      expect(result.map((option) => option.value)).toEqual(['a', 'b', 'c']);
+    });
+
+    it('should not mutate the original options array', () => {
+      const options = [
+        createOption('c', undefined, 3),
+        createOption('a', undefined, 1),
+        createOption('b', undefined, 2),
+      ];
+      const originalOrder = options.map((option) => option.value);
+
+      sortOptionsForManualOrder(options, undefined);
+
+      expect(options.map((option) => option.value)).toEqual(originalOrder);
     });
   });
 

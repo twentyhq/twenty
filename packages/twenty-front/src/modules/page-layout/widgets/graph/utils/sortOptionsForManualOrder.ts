@@ -6,7 +6,7 @@ export const sortOptionsForManualOrder = (
   manualSortOrder: string[] | null | undefined,
 ): FieldMetadataItemOption[] => {
   if (!isDefined(manualSortOrder) || manualSortOrder.length === 0) {
-    return options;
+    return [...options].sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
   }
 
   const orderMap = new Map(
