@@ -29,6 +29,9 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'roleId',
   'objectMetadataId',
 ])
+@Index('IDX_RLPPG_PARENT_GROUP_ID', [
+  'parentRowLevelPermissionPredicateGroupId',
+])
 export class RowLevelPermissionPredicateGroupEntity
   extends SyncableEntity
   implements

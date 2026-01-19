@@ -16,9 +16,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 
 @Entity({ name: 'viewGroup', schema: 'core' })
 @Index('IDX_VIEW_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-@Index('IDX_VIEW_GROUP_VIEW_ID', ['viewId'], {
-  where: '"deletedAt" IS NULL',
-})
+@Index('IDX_VIEW_GROUP_VIEW_ID', ['viewId'])
 export class ViewGroupEntity
   extends SyncableEntity
   implements Required<ViewGroupEntity>
