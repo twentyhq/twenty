@@ -2981,6 +2981,19 @@ export type NativeModelCapabilities = {
   webSearch?: Maybe<Scalars['Boolean']>;
 };
 
+export type NavigationMenuItem = {
+  __typename?: 'NavigationMenuItem';
+  applicationId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  favoriteFolderId?: Maybe<Scalars['UUID']>;
+  forWorkspaceMemberId?: Maybe<Scalars['UUID']>;
+  id: Scalars['UUID'];
+  position: Scalars['Float'];
+  targetObjectMetadataId: Scalars['UUID'];
+  targetRecordId: Scalars['UUID'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type NotesConfiguration = {
   __typename?: 'NotesConfiguration';
   configurationType: WidgetConfigurationType;
