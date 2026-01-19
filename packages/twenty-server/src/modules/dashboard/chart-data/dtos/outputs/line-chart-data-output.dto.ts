@@ -9,11 +9,11 @@ export class LineChartDataOutputDTO {
   @Field(() => [LineChartSeriesDTO])
   series: LineChartSeriesDTO[];
 
-  @Field(() => String, { nullable: true })
-  xAxisLabel?: string;
+  @Field(() => String)
+  xAxisLabel: string;
 
-  @Field(() => String, { nullable: true })
-  yAxisLabel?: string;
+  @Field(() => String)
+  yAxisLabel: string;
 
   @Field(() => Boolean)
   showLegend: boolean;
@@ -24,6 +24,6 @@ export class LineChartDataOutputDTO {
   @Field(() => Boolean)
   hasTooManyGroups: boolean;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  formattedToRawLookup?: Record<string, unknown>;
+  @Field(() => GraphQLJSON)
+  formattedToRawLookup: Record<string, unknown>;
 }

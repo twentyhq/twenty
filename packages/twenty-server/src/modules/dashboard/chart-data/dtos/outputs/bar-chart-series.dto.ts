@@ -5,6 +5,6 @@ export class BarChartSeriesDTO {
   @Field(() => String)
   key: string;
 
-  @Field(() => String, { nullable: true })
-  label?: string;
+  @Field(() => String)
+  label: string;
 }

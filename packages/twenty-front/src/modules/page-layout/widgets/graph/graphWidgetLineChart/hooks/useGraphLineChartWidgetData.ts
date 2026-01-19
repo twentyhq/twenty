@@ -26,8 +26,8 @@ type UseGraphLineChartWidgetDataResult = {
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
   colorMode: GraphColorMode;
-  xAxisLabel?: string;
-  yAxisLabel?: string;
+  xAxisLabel: string;
+  yAxisLabel: string;
   loading: boolean;
   error?: Error;
   objectMetadataItem: ReturnType<
@@ -61,9 +61,7 @@ export const useGraphLineChartWidgetData = ({
     },
   });
 
-  const formattedToRawLookup = isDefined(
-    queryData?.lineChartData?.formattedToRawLookup,
-  )
+  const formattedToRawLookup = queryData?.lineChartData?.formattedToRawLookup
     ? new Map(Object.entries(queryData.lineChartData.formattedToRawLookup))
     : new Map();
 
@@ -88,8 +86,8 @@ export const useGraphLineChartWidgetData = ({
   const series = queryData?.lineChartData?.series?.map(
     (seriesItem: {
       id: string;
-      label?: string;
-      data: Array<{ x: string; y: number | null }>;
+      label: string;
+      data: Array<{ x: string; y: number }>;
     }): LineChartSeries => {
       const rawValue = formattedToRawLookup.get(seriesItem.id);
 
@@ -104,7 +102,7 @@ export const useGraphLineChartWidgetData = ({
         label: seriesItem.label,
         color: itemColor,
         data: seriesItem.data.map(
-          (point: { x: string; y: number | null }): LineChartDataPoint => ({
+          (point: { x: string; y: number }): LineChartDataPoint => ({
             x: point.x,
             y: point.y,
           }),
@@ -121,8 +119,8 @@ export const useGraphLineChartWidgetData = ({
     colorMode,
     formattedToRawLookup,
     objectMetadataItem,
-    xAxisLabel: queryData?.lineChartData?.xAxisLabel,
-    yAxisLabel: queryData?.lineChartData?.yAxisLabel,
+    xAxisLabel: queryData?.lineChartData?.xAxisLabel ?? '',
+    yAxisLabel: queryData?.lineChartData?.yAxisLabel ?? '',
     loading,
     error,
   };

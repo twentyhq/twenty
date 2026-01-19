@@ -175,6 +175,7 @@ describe('useLineChartData', () => {
       {
         id: 'series1',
         data: [{ x: 'Jan', y: 100 }],
+        label: 'series1',
       },
     ];
 

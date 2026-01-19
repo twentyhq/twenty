@@ -41,9 +41,8 @@ export const useLineChartData = ({
         .replace(/\s+/g, '_')
         .replace(/[^a-zA-Z0-9_-]/g, '');
       const areaFillId = `areaFill-${id}-${sanitizedSeriesId}-${index}`;
-      const label = series.label ?? series.id;
 
-      return { ...series, colorScheme, areaFillId, label };
+      return { ...series, colorScheme, areaFillId };
     });
   }, [data, colorRegistry, id, colorMode]);
 

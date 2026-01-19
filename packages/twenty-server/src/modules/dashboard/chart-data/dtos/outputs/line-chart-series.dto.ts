@@ -7,8 +7,8 @@ export class LineChartSeriesDTO {
   @Field(() => String)
   id: string;
 
-  @Field(() => String, { nullable: true })
-  label?: string;
+  @Field(() => String)
+  label: string;
 
   @Field(() => [LineChartDataPointDTO])
   data: LineChartDataPointDTO[];

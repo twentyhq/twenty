@@ -5,6 +5,6 @@ export class LineChartDataPointDTO {
   @Field(() => String)
   x: string;
 
-  @Field(() => Float, { nullable: true })
-  y: number | null;
+  @Field(() => Float)
+  y: number;
 }

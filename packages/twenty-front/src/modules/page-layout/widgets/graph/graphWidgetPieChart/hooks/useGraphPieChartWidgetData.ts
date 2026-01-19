@@ -1,6 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { PIE_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/pieChartData';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
@@ -63,8 +62,7 @@ export const useGraphPieChartWidgetData = ({
     },
   });
 
-  const formattedToRawLookup =
-  isDefined(queryData?.pieChartData?.formattedToRawLookup)
+  const formattedToRawLookup = queryData?.pieChartData?.formattedToRawLookup
     ? new Map(Object.entries(queryData.pieChartData.formattedToRawLookup))
     : new Map();
 

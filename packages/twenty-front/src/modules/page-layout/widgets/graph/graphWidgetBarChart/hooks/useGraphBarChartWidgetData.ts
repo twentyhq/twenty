@@ -3,6 +3,7 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { BAR_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/barChartData';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
@@ -16,7 +17,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
-  type BarChartLayout,
+  type BarChartLayout
 } from '~/generated/graphql';
 
 type UseGraphBarChartWidgetDataProps = {
@@ -29,11 +30,12 @@ type UseGraphBarChartWidgetDataResult = {
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
-  xAxisLabel?: string;
-  yAxisLabel?: string;
+  xAxisLabel: string;
+  yAxisLabel: string;
   showDataLabels: boolean;
   showLegend: boolean;
   layout?: BarChartLayout;
+  groupMode: 'grouped' | 'stacked' | undefined;
   loading: boolean;
   error?: Error;
   hasTooManyGroups: boolean;
@@ -76,9 +78,7 @@ export const useGraphBarChartWidgetData = ({
 
   const chartData = (queryData?.barChartData?.data as BarDatum[]) ?? [];
 
-  const formattedToRawLookup = isDefined(
-    queryData?.barChartData?.formattedToRawLookup,
-  )
+  const formattedToRawLookup = queryData?.barChartData?.formattedToRawLookup
     ? new Map(Object.entries(queryData.barChartData.formattedToRawLookup))
     : new Map();
 
@@ -116,7 +116,7 @@ export const useGraphBarChartWidgetData = ({
   });
 
   const series = queryData?.barChartData?.series?.map(
-    (seriesItem: { key: string; label?: string }): BarChartSeries => {
+    (seriesItem: { key: string; label: string }): BarChartSeries => {
       const rawValue = formattedToRawLookup.get(seriesItem.key);
 
       const itemColor = determineChartItemColor({
@@ -138,11 +138,13 @@ export const useGraphBarChartWidgetData = ({
     indexBy: queryData?.barChartData?.indexBy ?? 'id',
     keys: queryData?.barChartData?.keys ?? [],
     series,
-    xAxisLabel: queryData?.barChartData?.xAxisLabel,
-    yAxisLabel: queryData?.barChartData?.yAxisLabel,
+    xAxisLabel: queryData?.barChartData?.xAxisLabel ?? '',
+    yAxisLabel: queryData?.barChartData?.yAxisLabel ?? '',
     showDataLabels: configuration.displayDataLabel ?? false,
     showLegend: configuration.displayLegend ?? true,
     layout: queryData?.barChartData?.layout,
+    groupMode:
+     getEffectiveGroupMode(configuration.groupMode, configuration.secondaryAxisGroupByFieldMetadataId),
     hasTooManyGroups: queryData?.barChartData?.hasTooManyGroups ?? false,
     colorMode,
     formattedToRawLookup,

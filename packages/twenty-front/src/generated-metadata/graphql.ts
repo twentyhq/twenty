@@ -388,8 +388,8 @@ export type BarChartDataInput = {
 export type BarChartDataOutput = {
   __typename?: 'BarChartDataOutput';
   data: Array<Scalars['JSON']>;
-  formattedToRawLookup?: Maybe<Scalars['JSON']>;
-  groupMode?: Maybe<BarChartGroupMode>;
+  formattedToRawLookup: Scalars['JSON'];
+  groupMode: BarChartGroupMode;
   hasTooManyGroups: Scalars['Boolean'];
   indexBy: Scalars['String'];
   keys: Array<Scalars['String']>;
@@ -397,8 +397,8 @@ export type BarChartDataOutput = {
   series: Array<BarChartSeries>;
   showDataLabels: Scalars['Boolean'];
   showLegend: Scalars['Boolean'];
-  xAxisLabel?: Maybe<Scalars['String']>;
-  yAxisLabel?: Maybe<Scalars['String']>;
+  xAxisLabel: Scalars['String'];
+  yAxisLabel: Scalars['String'];
 };
 
 /** Display mode for bar charts with secondary grouping */
@@ -416,7 +416,7 @@ export enum BarChartLayout {
 export type BarChartSeries = {
   __typename?: 'BarChartSeries';
   key: Scalars['String'];
-  label?: Maybe<Scalars['String']>;
+  label: Scalars['String'];
 };
 
 export type Billing = {
@@ -1885,26 +1885,26 @@ export type LineChartDataInput = {
 
 export type LineChartDataOutput = {
   __typename?: 'LineChartDataOutput';
-  formattedToRawLookup?: Maybe<Scalars['JSON']>;
+  formattedToRawLookup: Scalars['JSON'];
   hasTooManyGroups: Scalars['Boolean'];
   series: Array<LineChartSeries>;
   showDataLabels: Scalars['Boolean'];
   showLegend: Scalars['Boolean'];
-  xAxisLabel?: Maybe<Scalars['String']>;
-  yAxisLabel?: Maybe<Scalars['String']>;
+  xAxisLabel: Scalars['String'];
+  yAxisLabel: Scalars['String'];
 };
 
 export type LineChartDataPoint = {
   __typename?: 'LineChartDataPoint';
   x: Scalars['String'];
-  y?: Maybe<Scalars['Float']>;
+  y: Scalars['Float'];
 };
 
 export type LineChartSeries = {
   __typename?: 'LineChartSeries';
   data: Array<LineChartDataPoint>;
   id: Scalars['String'];
-  label?: Maybe<Scalars['String']>;
+  label: Scalars['String'];
 };
 
 export type LinkMetadata = {
@@ -3445,7 +3445,7 @@ export type PieChartDataItem = {
 export type PieChartDataOutput = {
   __typename?: 'PieChartDataOutput';
   data: Array<PieChartDataItem>;
-  formattedToRawLookup?: Maybe<Scalars['JSON']>;
+  formattedToRawLookup: Scalars['JSON'];
   hasTooManyGroups: Scalars['Boolean'];
   showCenterMetric: Scalars['Boolean'];
   showDataLabels: Scalars['Boolean'];

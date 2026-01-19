@@ -388,8 +388,8 @@ export type BarChartDataInput = {
 export type BarChartDataOutput = {
   __typename?: 'BarChartDataOutput';
   data: Array<Scalars['JSON']>;
-  formattedToRawLookup?: Maybe<Scalars['JSON']>;
-  groupMode?: Maybe<BarChartGroupMode>;
+  formattedToRawLookup: Scalars['JSON'];
+  groupMode: BarChartGroupMode;
   hasTooManyGroups: Scalars['Boolean'];
   indexBy: Scalars['String'];
   keys: Array<Scalars['String']>;
@@ -397,8 +397,8 @@ export type BarChartDataOutput = {
   series: Array<BarChartSeries>;
   showDataLabels: Scalars['Boolean'];
   showLegend: Scalars['Boolean'];
-  xAxisLabel?: Maybe<Scalars['String']>;
-  yAxisLabel?: Maybe<Scalars['String']>;
+  xAxisLabel: Scalars['String'];
+  yAxisLabel: Scalars['String'];
 };
 
 /** Display mode for bar charts with secondary grouping */
@@ -416,7 +416,7 @@ export enum BarChartLayout {
 export type BarChartSeries = {
   __typename?: 'BarChartSeries';
   key: Scalars['String'];
-  label?: Maybe<Scalars['String']>;
+  label: Scalars['String'];
 };
 
 export type Billing = {
@@ -1862,26 +1862,26 @@ export type LineChartDataInput = {
 
 export type LineChartDataOutput = {
   __typename?: 'LineChartDataOutput';
-  formattedToRawLookup?: Maybe<Scalars['JSON']>;
+  formattedToRawLookup: Scalars['JSON'];
   hasTooManyGroups: Scalars['Boolean'];
   series: Array<LineChartSeries>;
   showDataLabels: Scalars['Boolean'];
   showLegend: Scalars['Boolean'];
-  xAxisLabel?: Maybe<Scalars['String']>;
-  yAxisLabel?: Maybe<Scalars['String']>;
+  xAxisLabel: Scalars['String'];
+  yAxisLabel: Scalars['String'];
 };
 
 export type LineChartDataPoint = {
   __typename?: 'LineChartDataPoint';
   x: Scalars['String'];
-  y?: Maybe<Scalars['Float']>;
+  y: Scalars['Float'];
 };
 
 export type LineChartSeries = {
   __typename?: 'LineChartSeries';
   data: Array<LineChartDataPoint>;
   id: Scalars['String'];
-  label?: Maybe<Scalars['String']>;
+  label: Scalars['String'];
 };
 
 export type LinkMetadata = {
@@ -3355,7 +3355,7 @@ export type PieChartDataItem = {
 export type PieChartDataOutput = {
   __typename?: 'PieChartDataOutput';
   data: Array<PieChartDataItem>;
-  formattedToRawLookup?: Maybe<Scalars['JSON']>;
+  formattedToRawLookup: Scalars['JSON'];
   hasTooManyGroups: Scalars['Boolean'];
   showCenterMetric: Scalars['Boolean'];
   showDataLabels: Scalars['Boolean'];
@@ -5344,21 +5344,21 @@ export type BarChartDataQueryVariables = Exact<{
 }>;
 
 
-export type BarChartDataQuery = { __typename?: 'Query', barChartData: { __typename?: 'BarChartDataOutput', data: Array<any>, indexBy: string, keys: Array<string>, xAxisLabel?: string | null, yAxisLabel?: string | null, showLegend: boolean, showDataLabels: boolean, layout: BarChartLayout, groupMode?: BarChartGroupMode | null, hasTooManyGroups: boolean, formattedToRawLookup?: any | null, series: Array<{ __typename?: 'BarChartSeries', key: string, label?: string | null }> } };
+export type BarChartDataQuery = { __typename?: 'Query', barChartData: { __typename?: 'BarChartDataOutput', data: Array<any>, indexBy: string, keys: Array<string>, xAxisLabel: string, yAxisLabel: string, showLegend: boolean, showDataLabels: boolean, layout: BarChartLayout, groupMode: BarChartGroupMode, hasTooManyGroups: boolean, formattedToRawLookup: any, series: Array<{ __typename?: 'BarChartSeries', key: string, label: string }> } };
 
 export type LineChartDataQueryVariables = Exact<{
   input: LineChartDataInput;
 }>;
 
 
-export type LineChartDataQuery = { __typename?: 'Query', lineChartData: { __typename?: 'LineChartDataOutput', xAxisLabel?: string | null, yAxisLabel?: string | null, showLegend: boolean, showDataLabels: boolean, hasTooManyGroups: boolean, formattedToRawLookup?: any | null, series: Array<{ __typename?: 'LineChartSeries', id: string, label?: string | null, data: Array<{ __typename?: 'LineChartDataPoint', x: string, y?: number | null }> }> } };
+export type LineChartDataQuery = { __typename?: 'Query', lineChartData: { __typename?: 'LineChartDataOutput', xAxisLabel: string, yAxisLabel: string, showLegend: boolean, showDataLabels: boolean, hasTooManyGroups: boolean, formattedToRawLookup: any, series: Array<{ __typename?: 'LineChartSeries', id: string, label: string, data: Array<{ __typename?: 'LineChartDataPoint', x: string, y: number }> }> } };
 
 export type PieChartDataQueryVariables = Exact<{
   input: PieChartDataInput;
 }>;
 
 
-export type PieChartDataQuery = { __typename?: 'Query', pieChartData: { __typename?: 'PieChartDataOutput', showLegend: boolean, showDataLabels: boolean, showCenterMetric: boolean, hasTooManyGroups: boolean, formattedToRawLookup?: any | null, data: Array<{ __typename?: 'PieChartDataItem', id: string, value: number }> } };
+export type PieChartDataQuery = { __typename?: 'Query', pieChartData: { __typename?: 'PieChartDataOutput', showLegend: boolean, showDataLabels: boolean, showCenterMetric: boolean, hasTooManyGroups: boolean, formattedToRawLookup: any, data: Array<{ __typename?: 'PieChartDataItem', id: string, value: number }> } };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 

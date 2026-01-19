@@ -21,6 +21,6 @@ export class PieChartDataOutputDTO {
   @Field(() => Boolean)
   hasTooManyGroups: boolean;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  formattedToRawLookup?: Record<string, unknown>;
+  @Field(() => GraphQLJSON)
+  formattedToRawLookup: Record<string, unknown>;
 }

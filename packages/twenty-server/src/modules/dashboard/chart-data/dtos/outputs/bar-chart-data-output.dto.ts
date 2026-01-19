@@ -20,11 +20,11 @@ export class BarChartDataOutputDTO {
   @Field(() => [BarChartSeriesDTO])
   series: BarChartSeriesDTO[];
 
-  @Field(() => String, { nullable: true })
-  xAxisLabel?: string;
+  @Field(() => String)
+  xAxisLabel: string;
 
-  @Field(() => String, { nullable: true })
-  yAxisLabel?: string;
+  @Field(() => String)
+  yAxisLabel: string;
 
   @Field(() => Boolean)
   showLegend: boolean;
@@ -35,12 +35,12 @@ export class BarChartDataOutputDTO {
   @Field(() => BarChartLayout)
   layout: BarChartLayout;
 
-  @Field(() => BarChartGroupMode, { nullable: true })
-  groupMode?: BarChartGroupMode;
+  @Field(() => BarChartGroupMode)
+  groupMode: BarChartGroupMode;
 
   @Field(() => Boolean)
   hasTooManyGroups: boolean;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  formattedToRawLookup?: Record<string, unknown>;
+  @Field(() => GraphQLJSON)
+  formattedToRawLookup: Record<string, unknown>;
 }
