@@ -1,10 +1,10 @@
-import { join } from 'path';
-import { buildManifest, type BuildManifestResult } from '@/cli/utilities/manifest/utils/manifest-build';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/test-app/src/app/default-function.role';
 import {
-  POST_CARD_EXTENSION_PRIORITY_FIELD_ID,
   POST_CARD_EXTENSION_CATEGORY_FIELD_ID,
+  POST_CARD_EXTENSION_PRIORITY_FIELD_ID,
 } from '@/cli/__tests__/test-app/src/app/postCard.object-extension';
+import { buildManifest, type BuildManifestResult } from '@/cli/utilities/manifest/utils/manifest-build';
+import { join } from 'path';
 
 const TEST_APP_PATH = join(__dirname, '../../__tests__/test-app');
 
@@ -26,17 +26,13 @@ describe('buildManifest with test-app', () => {
   }, 15_000);
 
   it('should load manifest from test-app directory', async () => {
-    // Check package.json loaded correctly
     expect(packageJson.name).toBe('test-app');
     expect(packageJson.version).toBe('0.0.1');
 
-    // Check yarn.lock exists (can be empty)
     expect(yarnLock).toBeDefined();
 
-    // Check no warnings
     expect(warnings).toEqual([]);
 
-    // Check application config
     expect(manifest.application).toBeDefined();
     expect(manifest.application.universalIdentifier).toBe(
       '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -57,7 +53,6 @@ describe('buildManifest with test-app', () => {
     expect(postCard.labelPlural).toBe('Post cards');
     expect(postCard.icon).toBe('IconMail');
 
-    // Check fields
     expect(postCard.fields).toHaveLength(5);
 
     const contentField = postCard.fields?.find(
@@ -87,7 +82,6 @@ describe('buildManifest with test-app', () => {
     expect(testFunction.handlerName).toBe('handler');
     expect(testFunction.handlerPath).toBe('src/app/test-function.function.ts');
 
-    // Check triggers
     expect(testFunction.triggers).toHaveLength(3);
 
     const routeTrigger = testFunction.triggers.find(
@@ -113,7 +107,6 @@ describe('buildManifest with test-app', () => {
     expect(dbEventTrigger).toBeDefined();
     expect(dbEventTrigger?.eventName).toBe('person.created');
 
-    // Second function
     const testFunction2 = manifest.serverlessFunctions[0];
     expect(testFunction2.universalIdentifier).toBe(
       'eb3ffc98-88ec-45d4-9b4a-56833b219ccb',
@@ -134,13 +127,11 @@ describe('buildManifest with test-app', () => {
     expect(role.canReadAllObjectRecords).toBe(false);
     expect(role.canUpdateAllObjectRecords).toBe(false);
 
-    // Check object permissions
     expect(role.objectPermissions).toHaveLength(1);
     expect(role.objectPermissions![0].objectNameSingular).toBe('postCard');
     expect(role.objectPermissions![0].canReadObjectRecords).toBe(true);
     expect(role.objectPermissions![0].canUpdateObjectRecords).toBe(true);
 
-    // Check field permissions
     expect(role.fieldPermissions).toHaveLength(1);
     expect(role.fieldPermissions![0].objectNameSingular).toBe('postCard');
     expect(role.fieldPermissions![0].fieldName).toBe('content');
@@ -149,7 +140,6 @@ describe('buildManifest with test-app', () => {
     expect(manifest.sources).toBeDefined();
     expect(manifest.sources['src']).toBeDefined();
 
-    // Check that the source files are loaded
     const srcSources = manifest.sources['src'] as Record<string, unknown>;
     const appSources = srcSources['app'] as Record<string, string>;
     expect(appSources['application.config.ts']).toBeDefined();
@@ -157,7 +147,6 @@ describe('buildManifest with test-app', () => {
     expect(appSources['test-function.function.ts']).toBeDefined();
     expect(appSources['default-function.role.ts']).toBeDefined();
 
-    // Verify source content contains expected code
     expect(appSources['application.config.ts']).toContain('defineApp');
     expect(appSources['postCard.object.ts']).toContain('defineObject');
     expect(appSources['test-function.function.ts']).toContain('defineFunction');
@@ -166,7 +155,6 @@ describe('buildManifest with test-app', () => {
       'extendObject',
     );
 
-    // Check object extensions
     expect(manifest.objectExtensions).toBeDefined();
     expect(manifest.objectExtensions).toHaveLength(1);
 
