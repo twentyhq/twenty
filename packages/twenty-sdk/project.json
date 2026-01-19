@@ -16,6 +16,17 @@
         "{projectRoot}/dist"
       ]
     },
+    "dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "generateBarrels",
+        "^build"
+      ],
+      "options": {
+        "cwd": "packages/twenty-sdk",
+        "command": "npx rimraf dist && npx vite build --watch"
+      }
+    },
     "start": {
       "executor": "nx:run-commands",
       "dependsOn": [

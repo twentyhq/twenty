@@ -10,7 +10,7 @@ import { loadManifest } from '@/cli/utilities/manifest/utils/manifest-load';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 
-export class AppWatchCommand {
+export class AppDevCommand {
   private apiService = new ApiService();
 
   async execute(options: {
