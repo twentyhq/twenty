@@ -47,90 +47,93 @@ export class PieChartDataService {
     configuration,
     authContext,
   }: GetPieChartDataParams): Promise<PieChartDataOutputDTO> {
-    if (configuration.configurationType !== WidgetConfigurationType.PIE_CHART) {
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
-          ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
-          `Expected PIE_CHART, got ${configuration.configurationType}`,
-        ),
-        ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
-      );
-    }
-
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-        },
-      );
-
-    if (!isDefined(objectMetadataId)) {
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
-          ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-          'Widget has no objectMetadataId',
-        ),
-        ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
-
-    const flatObjectMetadata = flatObjectMetadataMaps.byId[objectMetadataId];
-
-    if (!isDefined(flatObjectMetadata)) {
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
-          ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-          objectMetadataId,
-        ),
-        ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
-
-    const groupByField = getFieldMetadata(
-      configuration.groupByFieldMetadataId,
-      flatFieldMetadataMaps.byId,
-    );
-
-    const aggregateField = getFieldMetadata(
-      configuration.aggregateFieldMetadataId,
-      flatFieldMetadataMaps.byId,
-    );
-
-    const limit =
-      PIE_CHART_MAXIMUM_NUMBER_OF_SLICES + EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
-
-    const objectIdByNameSingular: Record<string, string> = {};
-
-    for (const objectId in flatObjectMetadataMaps.byId) {
-      const objMetadata = flatObjectMetadataMaps.byId[objectId];
-
-      if (isDefined(objMetadata)) {
-        objectIdByNameSingular[objMetadata.nameSingular] = objectId;
-      }
-    }
-
-    const rawResults = await this.chartDataQueryService.executeGroupByQuery({
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular,
-      authContext,
-      groupByFieldMetadataId: configuration.groupByFieldMetadataId,
-      groupBySubFieldName: configuration.groupBySubFieldName,
-      aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
-      aggregateOperation: configuration.aggregateOperation,
-      filter: configuration.filter,
-      dateGranularity: configuration.dateGranularity,
-      userTimezone: configuration.timezone ?? 'UTC',
-      firstDayOfTheWeek:
-        (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
-        CalendarStartDay.MONDAY,
-      limit,
-      primaryAxisOrderBy: configuration.orderBy,
-    });
-
     try {
+      if (
+        configuration.configurationType !== WidgetConfigurationType.PIE_CHART
+      ) {
+        throw new ChartDataException(
+          generateChartDataExceptionMessage(
+            ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
+            `Expected PIE_CHART, got ${configuration.configurationType}`,
+          ),
+          ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
+        );
+      }
+
+      const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+        await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+          },
+        );
+
+      if (!isDefined(objectMetadataId)) {
+        throw new ChartDataException(
+          generateChartDataExceptionMessage(
+            ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+            'Widget has no objectMetadataId',
+          ),
+          ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        );
+      }
+
+      const flatObjectMetadata = flatObjectMetadataMaps.byId[objectMetadataId];
+
+      if (!isDefined(flatObjectMetadata)) {
+        throw new ChartDataException(
+          generateChartDataExceptionMessage(
+            ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+            objectMetadataId,
+          ),
+          ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        );
+      }
+
+      const groupByField = getFieldMetadata(
+        configuration.groupByFieldMetadataId,
+        flatFieldMetadataMaps.byId,
+      );
+
+      const aggregateField = getFieldMetadata(
+        configuration.aggregateFieldMetadataId,
+        flatFieldMetadataMaps.byId,
+      );
+
+      const limit =
+        PIE_CHART_MAXIMUM_NUMBER_OF_SLICES +
+        EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
+
+      const objectIdByNameSingular: Record<string, string> = {};
+
+      for (const objectId in flatObjectMetadataMaps.byId) {
+        const objMetadata = flatObjectMetadataMaps.byId[objectId];
+
+        if (isDefined(objMetadata)) {
+          objectIdByNameSingular[objMetadata.nameSingular] = objectId;
+        }
+      }
+
+      const rawResults = await this.chartDataQueryService.executeGroupByQuery({
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
+        authContext,
+        groupByFieldMetadataId: configuration.groupByFieldMetadataId,
+        groupBySubFieldName: configuration.groupBySubFieldName,
+        aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
+        aggregateOperation: configuration.aggregateOperation,
+        filter: configuration.filter,
+        dateGranularity: configuration.dateGranularity,
+        userTimezone: configuration.timezone ?? 'UTC',
+        firstDayOfTheWeek:
+          (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
+          CalendarStartDay.MONDAY,
+        limit,
+        primaryAxisOrderBy: configuration.orderBy,
+      });
+
       return this.transformToPieChartData({
         rawResults,
         groupByField,
@@ -142,12 +145,16 @@ export class PieChartDataService {
           CalendarStartDay.MONDAY,
       });
     } catch (error) {
+      if (error instanceof ChartDataException) {
+        throw error;
+      }
+
       throw new ChartDataException(
         generateChartDataExceptionMessage(
-          ChartDataExceptionCode.TRANSFORMATION_FAILED,
-          `Failed to transform pie chart data: ${error.message}`,
+          ChartDataExceptionCode.QUERY_EXECUTION_FAILED,
+          `Pie chart data retrieval failed: ${error instanceof Error ? error.message : String(error)}`,
         ),
-        ChartDataExceptionCode.TRANSFORMATION_FAILED,
+        ChartDataExceptionCode.QUERY_EXECUTION_FAILED,
       );
     }
   }

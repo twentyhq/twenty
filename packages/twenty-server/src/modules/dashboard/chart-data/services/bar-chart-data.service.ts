@@ -61,109 +61,111 @@ export class BarChartDataService {
     configuration,
     authContext,
   }: GetBarChartDataParams): Promise<BarChartDataOutputDTO> {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-        },
-      );
+    try {
+      const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+        await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+          },
+        );
 
-    if (!isDefined(objectMetadataId)) {
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
+      if (!isDefined(objectMetadataId)) {
+        throw new ChartDataException(
+          generateChartDataExceptionMessage(
+            ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+            'Widget has no objectMetadataId',
+          ),
           ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-          'Widget has no objectMetadataId',
-        ),
-        ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
+        );
+      }
 
-    const flatObjectMetadata = flatObjectMetadataMaps.byId[objectMetadataId];
+      const flatObjectMetadata = flatObjectMetadataMaps.byId[objectMetadataId];
 
-    if (!isDefined(flatObjectMetadata)) {
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
+      if (!isDefined(flatObjectMetadata)) {
+        throw new ChartDataException(
+          generateChartDataExceptionMessage(
+            ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+            objectMetadataId,
+          ),
           ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-          objectMetadataId,
-        ),
-        ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
+        );
+      }
 
-    const primaryAxisGroupByField = getFieldMetadata(
-      configuration.primaryAxisGroupByFieldMetadataId,
-      flatFieldMetadataMaps.byId,
-    );
-
-    const aggregateField = getFieldMetadata(
-      configuration.aggregateFieldMetadataId,
-      flatFieldMetadataMaps.byId,
-    );
-
-    const isTwoDimensional = isDefined(
-      configuration.secondaryAxisGroupByFieldMetadataId,
-    );
-
-    let secondaryAxisGroupByField: FlatFieldMetadata | undefined;
-
-    if (isTwoDimensional) {
-      secondaryAxisGroupByField = getFieldMetadata(
-        configuration.secondaryAxisGroupByFieldMetadataId!,
+      const primaryAxisGroupByField = getFieldMetadata(
+        configuration.primaryAxisGroupByFieldMetadataId,
         flatFieldMetadataMaps.byId,
       );
-    }
 
-    const isStackedTwoDimensional =
-      isTwoDimensional && configuration.groupMode === BarChartGroupMode.STACKED;
+      const aggregateField = getFieldMetadata(
+        configuration.aggregateFieldMetadataId,
+        flatFieldMetadataMaps.byId,
+      );
 
-    const limit = isStackedTwoDimensional
-      ? BAR_CHART_MAXIMUM_NUMBER_OF_BARS *
-          BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR +
-        EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS
-      : BAR_CHART_MAXIMUM_NUMBER_OF_BARS + EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
-
-    const userTimezone = configuration.timezone ?? 'UTC';
-    const firstDayOfTheWeek: CalendarStartDay =
-      (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
-      CalendarStartDay.MONDAY;
-
-    const objectIdByNameSingular: Record<string, string> = {};
-
-    for (const objectId in flatObjectMetadataMaps.byId) {
-      const objMetadata = flatObjectMetadataMaps.byId[objectId];
-
-      if (isDefined(objMetadata)) {
-        objectIdByNameSingular[objMetadata.nameSingular] = objectId;
-      }
-    }
-
-    const rawResults = await this.chartDataQueryService.executeGroupByQuery({
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular,
-      authContext,
-      groupByFieldMetadataId: configuration.primaryAxisGroupByFieldMetadataId,
-      groupBySubFieldName: configuration.primaryAxisGroupBySubFieldName,
-      aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
-      aggregateOperation: configuration.aggregateOperation,
-      filter: configuration.filter,
-      dateGranularity: configuration.primaryAxisDateGranularity,
-      userTimezone,
-      firstDayOfTheWeek,
-      limit,
-      primaryAxisOrderBy: configuration.primaryAxisOrderBy,
-      secondaryGroupByFieldMetadataId:
+      const isTwoDimensional = isDefined(
         configuration.secondaryAxisGroupByFieldMetadataId,
-      secondaryGroupBySubFieldName:
-        configuration.secondaryAxisGroupBySubFieldName,
-      secondaryDateGranularity:
-        configuration.secondaryAxisGroupByDateGranularity,
-      secondaryAxisOrderBy: configuration.secondaryAxisOrderBy,
-    });
+      );
 
-    try {
+      let secondaryAxisGroupByField: FlatFieldMetadata | undefined;
+
+      if (isTwoDimensional) {
+        secondaryAxisGroupByField = getFieldMetadata(
+          configuration.secondaryAxisGroupByFieldMetadataId!,
+          flatFieldMetadataMaps.byId,
+        );
+      }
+
+      const isStackedTwoDimensional =
+        isTwoDimensional &&
+        configuration.groupMode === BarChartGroupMode.STACKED;
+
+      const limit = isStackedTwoDimensional
+        ? BAR_CHART_MAXIMUM_NUMBER_OF_BARS *
+            BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR +
+          EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS
+        : BAR_CHART_MAXIMUM_NUMBER_OF_BARS +
+          EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
+
+      const userTimezone = configuration.timezone ?? 'UTC';
+      const firstDayOfTheWeek: CalendarStartDay =
+        (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
+        CalendarStartDay.MONDAY;
+
+      const objectIdByNameSingular: Record<string, string> = {};
+
+      for (const objectId in flatObjectMetadataMaps.byId) {
+        const objMetadata = flatObjectMetadataMaps.byId[objectId];
+
+        if (isDefined(objMetadata)) {
+          objectIdByNameSingular[objMetadata.nameSingular] = objectId;
+        }
+      }
+
+      const rawResults = await this.chartDataQueryService.executeGroupByQuery({
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
+        authContext,
+        groupByFieldMetadataId: configuration.primaryAxisGroupByFieldMetadataId,
+        groupBySubFieldName: configuration.primaryAxisGroupBySubFieldName,
+        aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
+        aggregateOperation: configuration.aggregateOperation,
+        filter: configuration.filter,
+        dateGranularity: configuration.primaryAxisDateGranularity,
+        userTimezone,
+        firstDayOfTheWeek,
+        limit,
+        primaryAxisOrderBy: configuration.primaryAxisOrderBy,
+        secondaryGroupByFieldMetadataId:
+          configuration.secondaryAxisGroupByFieldMetadataId,
+        secondaryGroupBySubFieldName:
+          configuration.secondaryAxisGroupBySubFieldName,
+        secondaryDateGranularity:
+          configuration.secondaryAxisGroupByDateGranularity,
+        secondaryAxisOrderBy: configuration.secondaryAxisOrderBy,
+      });
+
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
         return this.transformToTwoDimensionalBarChartData({
           rawResults,
@@ -185,12 +187,16 @@ export class BarChartDataService {
         firstDayOfTheWeek,
       });
     } catch (error) {
+      if (error instanceof ChartDataException) {
+        throw error;
+      }
+
       throw new ChartDataException(
         generateChartDataExceptionMessage(
-          ChartDataExceptionCode.TRANSFORMATION_FAILED,
-          `Failed to transform bar chart data: ${error.message}`,
+          ChartDataExceptionCode.QUERY_EXECUTION_FAILED,
+          `Bar chart data retrieval failed: ${error instanceof Error ? error.message : String(error)}`,
         ),
-        ChartDataExceptionCode.TRANSFORMATION_FAILED,
+        ChartDataExceptionCode.QUERY_EXECUTION_FAILED,
       );
     }
   }
