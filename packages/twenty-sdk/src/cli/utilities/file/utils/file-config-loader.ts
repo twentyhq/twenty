@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra';
 import { createJiti } from 'jiti';
-import { JitiOptions } from 'jiti/lib/types';
+import { type JitiOptions } from 'jiti/lib/types';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { parseJsoncFile } from './file-jsonc';
