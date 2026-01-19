@@ -58,5 +58,9 @@ export const TEST_OBJECT_GQL_FIELDS = `
         blocknote
         markdown
     }
-    filesField
+    filesField {
+        fileId
+        label
+        fileCategory
+    }
 `;
