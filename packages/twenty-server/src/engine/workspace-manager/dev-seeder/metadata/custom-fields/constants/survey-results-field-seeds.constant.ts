@@ -58,4 +58,9 @@ export const SURVEY_RESULT_CUSTOM_FIELD_SEEDS: FieldMetadataSeed[] = [
       displayedMaxRows: 1,
     },
   } as FieldMetadataDTO<FieldMetadataType.TEXT>,
+  {
+    type: FieldMetadataType.FILES,
+    label: 'Files',
+    name: 'files',
+  } as FieldMetadataDTO<FieldMetadataType.FILES>,
 ];
