@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
 import { TarballService } from '@/cli/utilities/file/utils/file-tarball';
-import { loadManifest, type LoadManifestResult } from '@/cli/utilities/manifest/utils/manifest-load';
+import { buildManifest, type BuildManifestResult } from '@/cli/utilities/manifest/utils/manifest-build';
 import { BuildManifestWriter, type BuiltFunctionInfo } from '@/cli/utilities/manifest/utils/manifest-writer';
 import { ViteBuildRunner } from './vite-build-runner';
 import { BuildWatcher } from './build-watcher';
@@ -38,7 +38,7 @@ export class BuildService {
 
   /** Cached state from the last successful build (used for incremental rebuilds) */
   private lastBuildState: {
-    manifestResult: LoadManifestResult;
+    manifestResult: BuildManifestResult;
     builtFunctions: BuiltFunctionInfo[];
     outputDir: string;
   } | null = null;
@@ -78,7 +78,7 @@ export class BuildService {
 
       // Step 1: Load manifest
       console.log(chalk.gray('  Loading manifest...'));
-      const manifestResult = await loadManifest(appPath);
+      const manifestResult = await buildManifest(appPath);
 
       // Step 2: Prepare output directory
       const outputDir = path.join(appPath, OUTPUT_DIR);
@@ -348,7 +348,7 @@ export class BuildService {
   private async rebuildSpecificFunctions(
     appPath: string,
     outputDir: string,
-    manifestResult: LoadManifestResult,
+    manifestResult: BuildManifestResult,
     handlerPaths: string[],
   ): Promise<BuiltFunctionInfo[]> {
     const { manifest } = manifestResult;
@@ -454,7 +454,7 @@ export class BuildService {
   private async buildFunctions(
     appPath: string,
     outputDir: string,
-    manifestResult: LoadManifestResult,
+    manifestResult: BuildManifestResult,
   ): Promise<BuiltFunctionInfo[]> {
     const { manifest } = manifestResult;
     const functionsOutputDir = path.join(outputDir, FUNCTIONS_DIR);

@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { loadManifest, type LoadManifestResult } from '@/cli/utilities/manifest/utils/manifest-load';
+import { buildManifest, type BuildManifestResult } from '@/cli/utilities/manifest/utils/manifest-build';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/test-app/src/app/default-function.role';
 import {
   POST_CARD_EXTENSION_PRIORITY_FIELD_ID,
@@ -8,15 +8,15 @@ import {
 
 const TEST_APP_PATH = join(__dirname, '../../__tests__/test-app');
 
-describe('loadManifest with test-app', () => {
-  let manifest: LoadManifestResult['manifest'];
-  let packageJson: LoadManifestResult['packageJson'];
-  let yarnLock: LoadManifestResult['yarnLock'];
-  let warnings: LoadManifestResult['warnings'];
-  let shouldGenerate: LoadManifestResult['shouldGenerate'];
+describe('buildManifest with test-app', () => {
+  let manifest: BuildManifestResult['manifest'];
+  let packageJson: BuildManifestResult['packageJson'];
+  let yarnLock: BuildManifestResult['yarnLock'];
+  let warnings: BuildManifestResult['warnings'];
+  let shouldGenerate: BuildManifestResult['shouldGenerate'];
 
   beforeAll(async () => {
-    const result = await loadManifest(TEST_APP_PATH);
+    const result = await buildManifest(TEST_APP_PATH);
 
     manifest = result.manifest;
     packageJson = result.packageJson;

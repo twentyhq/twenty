@@ -3,7 +3,7 @@ import inquirer from 'inquirer';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import { ApiService } from '@/cli/utilities/api/services/api.service';
 import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
-import { loadManifest } from '@/cli/utilities/manifest/utils/manifest-load';
+import { buildManifest } from '@/cli/utilities/manifest/utils/manifest-build';
 
 export class AppUninstallCommand {
   private apiService = new ApiService();
@@ -25,7 +25,7 @@ export class AppUninstallCommand {
         process.exit(1);
       }
 
-      const { manifest } = await loadManifest(appPath);
+      const { manifest } = await buildManifest(appPath);
 
       const result = await this.apiService.uninstallApplication(
         manifest.application.universalIdentifier,

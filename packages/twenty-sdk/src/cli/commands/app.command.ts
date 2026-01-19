@@ -56,11 +56,9 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('app:dev [appPath]')
-    .description('Start development mode: sync local application changes')
-    .option('-d, --debounce <ms>', 'Debounce delay in milliseconds', '1000')
-    .action(async (appPath, options) => {
+    .description('Watch and sync local application changes')
+    .action(async (appPath) => {
       await devCommand.execute({
-        ...options,
         appPath: formatPath(appPath),
       });
     });

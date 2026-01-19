@@ -3,12 +3,12 @@ import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import { GenerateService } from '@/cli/utilities/generate/services/generate.service';
 import { ManifestValidationError } from '@/cli/utilities/manifest/types/manifest.types';
+import { buildManifest } from '@/cli/utilities/manifest/utils/manifest-build';
 import {
   displayEntitySummary,
   displayErrors,
   displayWarnings,
 } from '@/cli/utilities/manifest/utils/manifest-display';
-import { loadManifest } from '@/cli/utilities/manifest/utils/manifest-load';
 import chalk from 'chalk';
 
 export class AppSyncCommand {
@@ -36,7 +36,7 @@ export class AppSyncCommand {
   private async synchronize({ appPath }: { appPath: string }) {
     try {
       const { manifest, packageJson, yarnLock, shouldGenerate, warnings } =
-        await loadManifest(appPath);
+        await buildManifest(appPath);
 
       displayEntitySummary(manifest);
 
@@ -51,7 +51,7 @@ export class AppSyncCommand {
       if (shouldGenerate) {
         await this.generateService.generateClient(appPath);
 
-        const { manifest: manifestWithClient } = await loadManifest(appPath);
+        const { manifest: manifestWithClient } = await buildManifest(appPath);
 
         serverlessSyncResult = await this.apiService.syncApplication({
           manifest: manifestWithClient,
