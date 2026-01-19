@@ -8,13 +8,14 @@ import {
   displayWarnings,
 } from '@/cli/utilities/manifest/utils/manifest-display';
 import {
+  createDevServer,
   createManifestPlugin,
   type ManifestBuildError,
-} from '@/cli/utilities/vite-plugin/vite-manifest-plugin';
+} from '@/cli/utilities/vite';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { createServer, type ViteDevServer } from 'vite';
+import { type ViteDevServer } from 'vite';
 
 export type AppDevOptions = {
   appPath?: string;
@@ -23,15 +24,15 @@ export type AppDevOptions = {
 export class AppDevCommand {
   private server: ViteDevServer | null = null;
   private appPath: string = '';
+  private isRestarting: boolean = false;
+  private functionEntryPoints: string[] = [];
 
   async execute(options: AppDevOptions): Promise<void> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
     this.logStartupInfo(this.appPath);
 
-    this.server = await this.createViteDevServer(this.appPath);
-
-    await this.server.listen();
+    await this.startServer();
 
     this.setupGracefulShutdown();
 
@@ -40,15 +41,11 @@ export class AppDevCommand {
     );
   }
 
-  private logStartupInfo(appPath: string): void {
-    console.log(chalk.blue('🚀 Starting Twenty Application Development Mode'));
-    console.log(chalk.gray(`📁 App Path: ${appPath}`));
-    console.log('');
-  }
+  private async startServer(): Promise<void> {
+    const isInitialBuild = this.functionEntryPoints.length === 0;
 
-  private async createViteDevServer(appPath: string): Promise<ViteDevServer> {
     const manifestPlugin = createManifestPlugin({
-      appPath,
+      appPath: this.appPath,
       onBuildStart: () => {
         console.log(chalk.blue('🔄 Building manifest...'));
       },
@@ -58,30 +55,75 @@ export class AppDevCommand {
       onBuildError: (error: ManifestBuildError) => {
         this.handleBuildError(error);
       },
+      onFunctionEntryPointsChange: (entryPoints: string[]) => {
+        this.handleFunctionEntryPointsChange(entryPoints, isInitialBuild);
+      },
     });
 
-    return createServer({
-      root: appPath,
+    this.server = await createDevServer({
+      appPath: this.appPath,
+      functionEntryPoints: this.functionEntryPoints,
       plugins: [manifestPlugin],
-      server: {
-        watch: {
-          ignored: ['**/node_modules/**', '**/.twenty/**', '**/dist/**'],
-        },
-        port: 0,
-        open: false,
-        hmr: false,
-      },
-      optimizeDeps: {
-        noDiscovery: true,
-      },
-      logLevel: 'silent',
-      publicDir: false,
-      build: {
-        watch: {
-          include: [path.join(appPath, 'src/**')],
-        },
-      },
     });
+
+    await this.server.listen();
+  }
+
+  private async restartServer(): Promise<void> {
+    if (this.isRestarting) {
+      return;
+    }
+
+    this.isRestarting = true;
+
+    try {
+      console.log(
+        chalk.yellow('🔄 Function entry points changed, restarting server...'),
+      );
+
+      if (this.server) {
+        await this.server.close();
+      }
+
+      await this.startServer();
+
+      console.log(chalk.green('✓ Server restarted with new entry points'));
+      console.log(
+        chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
+      );
+    } finally {
+      this.isRestarting = false;
+    }
+  }
+
+  private logStartupInfo(appPath: string): void {
+    console.log(chalk.blue('🚀 Starting Twenty Application Development Mode'));
+    console.log(chalk.gray(`📁 App Path: ${appPath}`));
+    console.log('');
+  }
+
+  private handleFunctionEntryPointsChange(
+    entryPoints: string[],
+    isInitialBuild: boolean,
+  ): void {
+    this.functionEntryPoints = entryPoints;
+
+    if (entryPoints.length > 0) {
+      console.log(
+        chalk.gray(`  📍 Function entry points: ${entryPoints.length}`),
+      );
+    }
+
+    // Only restart if this is not the initial build
+    if (!isInitialBuild) {
+      setImmediate(() => {
+        this.restartServer();
+      });
+    }
+  }
+
+  getFunctionEntryPoints(): string[] {
+    return this.functionEntryPoints;
   }
 
   private handleBuildSuccess(result: BuildManifestResult): void {

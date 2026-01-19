@@ -5,6 +5,11 @@ import {
 } from '@/cli/utilities/manifest/utils/manifest-build';
 import { type Plugin } from 'vite';
 
+import {
+  extractFunctionEntryPoints,
+  haveFunctionEntryPointsChanged,
+} from './entry-points';
+
 const PLUGIN_NAME = 'twenty-manifest';
 
 export type ManifestBuildError = {
@@ -40,32 +45,21 @@ export const createManifestPlugin = (
   // Track current function entry points to detect changes
   let currentFunctionEntryPoints: string[] = [];
 
-  const extractFunctionEntryPoints = (result: BuildManifestResult): string[] => {
-    return result.manifest.serverlessFunctions.map(
-      (fn) => fn.handlerPath,
-    ).sort();
-  };
-
-  const haveFunctionEntryPointsChanged = (newEntryPoints: string[]): boolean => {
-    if (currentFunctionEntryPoints.length !== newEntryPoints.length) {
-      return true;
-    }
-
-    return newEntryPoints.some(
-      (entryPoint, index) => entryPoint !== currentFunctionEntryPoints[index],
-    );
-  };
-
   const runBuild = async (): Promise<void> => {
     onBuildStart?.();
 
     try {
       const result = await buildManifest(appPath);
 
-      const newEntryPoints = extractFunctionEntryPoints(result);
+      const newEntryPoints = extractFunctionEntryPoints(
+        result.manifest.serverlessFunctions,
+      );
 
       // Check if function entry points changed
-      const entryPointsChanged = haveFunctionEntryPointsChanged(newEntryPoints);
+      const entryPointsChanged = haveFunctionEntryPointsChanged(
+        currentFunctionEntryPoints,
+        newEntryPoints,
+      );
 
       // Update tracked entry points
       currentFunctionEntryPoints = newEntryPoints;
