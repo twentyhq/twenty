@@ -210,19 +210,18 @@ export class IdentifyIndexMetadataCommand extends ActiveOrSuspendedWorkspacesMig
           continue;
         }
 
-        const expectedFieldMetadataIds = expectedFlatFieldMetadatas.map(
-          (flatField) => flatField.id,
+        const expectedFieldMetadataIds = new Set(
+          expectedFlatFieldMetadatas.map((flatField) => flatField.id),
         );
         const matchingFlatIndexMetadata = objectFlatIndexMetadatas.find(
           (flatIndex) => {
-            const indexFieldMetadataIds = flatIndex.flatIndexFieldMetadatas
-              .sort((a, b) => a.order - b.order)
-              .map((indexField) => indexField.fieldMetadataId);
-
-            return this.arraysEqual(
-              indexFieldMetadataIds,
-              expectedFieldMetadataIds,
+            const indexFieldMetadataIds = new Set(
+              flatIndex.flatIndexFieldMetadatas.map(
+                (indexField) => indexField.fieldMetadataId,
+              ),
             );
+
+            return this.setsEqual(indexFieldMetadataIds, expectedFieldMetadataIds);
           },
         );
 
@@ -323,11 +322,17 @@ export class IdentifyIndexMetadataCommand extends ActiveOrSuspendedWorkspacesMig
     }
   }
 
-  private arraysEqual(a: string[], b: string[]): boolean {
-    if (a.length !== b.length) {
+  private setsEqual(a: Set<string>, b: Set<string>): boolean {
+    if (a.size !== b.size) {
       return false;
     }
 
-    return a.every((value, index) => value === b[index]);
+    for (const value of a) {
+      if (!b.has(value)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
