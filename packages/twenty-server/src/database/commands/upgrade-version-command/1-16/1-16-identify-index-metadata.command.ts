@@ -89,7 +89,6 @@ export class IdentifyIndexMetadataCommand extends ActiveOrSuspendedWorkspacesMig
     await this.identifyCustomIndexes({
       workspaceId,
       flatObjectMetadataMaps,
-      flatIndexMaps,
       workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       dryRun: options.dryRun ?? false,
     });
@@ -283,13 +282,11 @@ export class IdentifyIndexMetadataCommand extends ActiveOrSuspendedWorkspacesMig
   private async identifyCustomIndexes({
     workspaceId,
     flatObjectMetadataMaps,
-    flatIndexMaps,
     workspaceCustomApplicationId,
     dryRun,
   }: {
     workspaceId: string;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
     workspaceCustomApplicationId: string;
     dryRun: boolean;
   }): Promise<void> {
