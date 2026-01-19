@@ -22,42 +22,34 @@ export const filterAndOrderFieldsFromConfiguration = ({
   availableFieldMetadataItems,
   context,
 }: FilterAndOrderFieldsFromConfigurationParams): FieldsConfigurationSectionWithFields[] => {
-  const fieldMetadataItemsMap = new Map(
-    availableFieldMetadataItems.map((field) => [field.id, field]),
-  );
-
   const sortedSections = [...configuration.sections].sort(
     (a, b) => a.position - b.position,
   );
 
   const sectionsWithFields = sortedSections
     .map((section) => {
-      const sortedFields = [...section.fields].sort(
-        (a, b) => a.position - b.position,
+      const sectionFieldIds = new Set(
+        section.fields.map((f) => f.fieldMetadataId),
       );
 
-      const visibleFields = sortedFields
-        .map((fieldConfig) => {
-          const fieldMetadataItem = fieldMetadataItemsMap.get(
-            fieldConfig.fieldMetadataId,
+      // Filter fields that belong to this section, preserving alphabetical order
+      // from availableFieldMetadataItems (which is already sorted alphabetically)
+      const visibleFields = availableFieldMetadataItems
+        .filter((fieldMetadataItem) => sectionFieldIds.has(fieldMetadataItem.id))
+        .filter((fieldMetadataItem) => {
+          const fieldConfig = section.fields.find(
+            (f) => f.fieldMetadataId === fieldMetadataItem.id,
           );
 
-          if (!isDefined(fieldMetadataItem)) {
-            return null;
+          if (!isDefined(fieldConfig)) {
+            return false;
           }
 
-          const isVisible = evaluateWidgetVisibility({
+          return evaluateWidgetVisibility({
             conditionalDisplay: fieldConfig.conditionalDisplay,
             context,
           });
-
-          if (!isVisible) {
-            return null;
-          }
-
-          return fieldMetadataItem;
-        })
-        .filter(isDefined);
+        });
 
       if (visibleFields.length === 0) {
         return null;
