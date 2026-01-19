@@ -1,12 +1,14 @@
+import { ApiService } from '@/cli/utilities/api/services/api.service';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { ManifestValidationError } from '@/cli/utilities/manifest/types/manifest.types';
+import {
+  displayEntitySummary,
+  displayErrors,
+  displayWarnings,
+} from '@/cli/utilities/manifest/utils/manifest-display';
+import { loadManifest } from '@/cli/utilities/manifest/utils/manifest-load';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-directory';
-import { ApiService } from '@/cli/services/api.service';
-import { ManifestValidationError } from '@/cli/utils/validate-manifest';
-import { displayEntitySummary } from '@/cli/utils/display-entity-summary';
-import { loadManifest } from '@/cli/utils/load-manifest';
-import { displayWarnings } from '@/cli/utils/display-warnings';
-import { displayErrors } from '@/cli/utils/display-errors';
 
 export class AppWatchCommand {
   private apiService = new ApiService();
