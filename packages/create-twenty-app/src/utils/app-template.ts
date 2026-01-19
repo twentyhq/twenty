@@ -197,7 +197,7 @@ const createPackageJson = async ({
       'auth:status': 'twenty auth:status',
       'app:dev': 'twenty app:dev',
       'app:sync': 'twenty app:sync',
-      'app:add': 'twenty app:add',
+      'entity:add': 'twenty entity:add',
       'app:generate': 'twenty app:generate',
       'app:logs': 'twenty app:logs',
       'app:uninstall': 'twenty app:uninstall',
@@ -211,6 +211,8 @@ const createPackageJson = async ({
     devDependencies: {
       typescript: '^5.9.3',
       '@types/node': '^24.7.2',
+      '@types/react': '^19.0.2',
+      react: '^19.0.2',
       eslint: '^9.32.0',
       'typescript-eslint': '^8.50.0',
     },
