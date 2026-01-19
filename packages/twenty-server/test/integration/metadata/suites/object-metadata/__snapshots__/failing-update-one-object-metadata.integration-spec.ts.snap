@@ -1,19 +1,5 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Object metadata update should fail when labelIdentifier is a UUID field (reserved for system objects) 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_OBJECT_INPUT",
-      "userFriendlyMessage": "Invalid object input.",
-    },
-    "message": "Failed to compute search vector column expression for field id",
-    "name": "UserInputError",
-  },
-]
-`;
-
 exports[`Object metadata update should fail when labelIdentifier is not a TEXT or NAME field 1`] = `
 [
   {
