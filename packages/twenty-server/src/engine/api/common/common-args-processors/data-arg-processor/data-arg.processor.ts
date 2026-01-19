@@ -248,7 +248,9 @@ export class DataArgProcessor {
         return transformEmailsValue(validatedValue);
       }
       case FieldMetadataType.FILES: {
-        return validateFilesFieldOrThrow(value, key);
+        const validatedValue = validateFilesFieldOrThrow(value, key);
+
+        return transformRawJsonField(validatedValue);
       }
       case FieldMetadataType.FULL_NAME: {
         const validatedValue = validateFullNameFieldOrThrow(value, key);

@@ -163,6 +163,12 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
             test: 'test',
           },
           arrayField: ['test'],
+          filesField: [
+            {
+              fileId: '20202020-a21e-4ec2-873b-de4264d89025',
+              label: 'Document.pdf',
+            },
+          ],
         },
         {
           id: v4(),

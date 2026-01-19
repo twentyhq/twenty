@@ -1060,4 +1060,20 @@ export const successfulFilterInputByFieldMetadataType: {
     //   },
     // },
   ],
+  [FieldMetadataType.FILES]: [
+    {
+      gqlFilterInput: { filesField: { is: 'NULL' } },
+      restFilterInput: 'filesField[is]:NULL',
+      validateFilter: (record: Record<string, any>) => {
+        return record.filesField === null;
+      },
+    },
+    {
+      gqlFilterInput: { filesField: { is: 'NOT_NULL' } },
+      restFilterInput: 'filesField[is]:"NOT_NULL"',
+      validateFilter: (record: Record<string, any>) => {
+        return Array.isArray(record.filesField) && record.filesField.length > 0;
+      },
+    },
+  ],
 };

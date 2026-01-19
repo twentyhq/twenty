@@ -159,6 +159,12 @@ export const getFieldMetadataCreationInputs = (
       type: FieldMetadataType.ARRAY,
       objectMetadataId,
     },
+    [FieldMetadataType.FILES]: {
+      name: 'filesField',
+      label: 'filesField',
+      type: FieldMetadataType.FILES,
+      objectMetadataId,
+    },
     [FieldMetadataType.UUID]: {
       name: 'uuidField',
       label: 'uuidField',
