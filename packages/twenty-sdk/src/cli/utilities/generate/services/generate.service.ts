@@ -1,5 +1,5 @@
-import { ApiService } from '@/cli/services/api.service';
-import { ConfigService } from '@/cli/services/config.service';
+import { ApiService } from '@/cli/utilities/api/services/api.service';
+import { ConfigService } from '@/cli/utilities/config/services/config.service';
 import { generate } from '@genql/cli';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';

@@ -5,8 +5,8 @@ import {
   parseJsonConfigFileContent,
   readConfigFile,
   sys,
-  type Program,
   type Diagnostic,
+  type Program,
 } from 'typescript';
 
 const getProgramFromTsconfig = ({

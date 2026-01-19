@@ -1,4 +1,4 @@
-import { getFunctionBaseFile } from '@/cli/utils/get-function-base-file';
+import { getFunctionBaseFile } from '@/cli/utilities/entity/utils/entity-function-template';
 
 describe('getFunctionBaseFile', () => {
   it('should render proper file using defineFunction', () => {

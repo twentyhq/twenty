@@ -1,4 +1,4 @@
-import { convertToLabel } from '@/cli/utils/convert-to-label';
+import { convertToLabel } from '@/cli/utilities/entity/utils/entity-label';
 
 describe('convertToLabel', () => {
   it('should convert to label', () => {

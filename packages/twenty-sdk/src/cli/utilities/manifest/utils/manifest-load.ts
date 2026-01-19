@@ -13,14 +13,14 @@ import {
 import { type Sources } from 'twenty-shared/types';
 import { type FunctionConfig } from '@/application/functions/function-config';
 import { type RoleConfig } from '@/application/role-config';
-import { loadConfig, loadFunctionModule } from './config-loader';
-import { findPathFile } from './find-path-file';
-import { parseJsoncFile, parseTextFile } from './jsonc-parser';
+import { loadConfig, loadFunctionModule } from '@/cli/utilities/file/utils/file-config-loader';
+import { findPathFile } from '@/cli/utilities/file/utils/file-find';
+import { parseJsoncFile, parseTextFile } from '@/cli/utilities/file/utils/file-jsonc';
+import { validateManifest } from './manifest-validate';
 import {
-  validateManifest,
   ManifestValidationError,
   type ValidationWarning,
-} from './validate-manifest';
+} from '../types/manifest.types';
 
 /**
  * Validate that the required folder structure exists.
@@ -246,40 +246,6 @@ export type LoadManifestResult = {
 
 /**
  * Load an application manifest using the folder structure with jiti runtime evaluation.
- *
- * Files are detected by their suffix and can be placed anywhere within src/app/:
- * - *.object.ts - Custom object definitions
- * - *.object-extension.ts - Extensions to existing objects (adding fields)
- * - *.function.ts - Serverless function definitions
- * - *.role.ts - Role definitions
- *
- * Example structures:
- * ```
- * # Traditional (by type)
- * my-app/
- * ├── src/
- * │   └── app/
- * │       ├── application.config.ts
- * │       ├── objects/
- * │       │   └── postCard.object.ts
- * │       ├── object-extensions/
- * │       │   └── company.object-extension.ts
- * │       ├── functions/
- * │       │   └── createPostCard.function.ts
- * │       └── roles/
- * │           └── admin.role.ts
- *
- * # Feature-based
- * my-app/
- * ├── src/
- * │   └── app/
- * │       ├── application.config.ts
- * │       └── post-card/
- * │           ├── postCard.object.ts
- * │           ├── company.object-extension.ts
- * │           ├── createPostCard.function.ts
- * │           └── postCardAdmin.role.ts
- * ```
  */
 export const loadManifest = async (
   appPath: string,
