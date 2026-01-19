@@ -431,6 +431,7 @@ export const SettingsDataModelObjectAboutForm = ({
                         description={t`Useful for pivot/junction tables`}
                         checked={value ?? false}
                         advancedMode
+                        disabled={disableEdition}
                         onChange={(value) => {
                           onChange(value);
                           onNewDirtyField?.();
