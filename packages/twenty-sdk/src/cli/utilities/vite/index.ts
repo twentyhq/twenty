@@ -1,16 +1,22 @@
 export {
-  buildRollupInput,
+  createDevBuildConfig,
+  EXTERNAL_MODULES,
+  type DevBuildConfigOptions,
+} from './build-config';
+
+export {
   extractFunctionEntryPoints,
   haveFunctionEntryPointsChanged,
 } from './entry-points';
 
 export {
-  createDevServer,
-  createDevServerConfig,
-  type DevServerOptions,
-} from './dev-server';
+  buildFunctionInput,
+  computeFunctionOutputPath,
+} from './function-paths';
 
 export {
   createManifestPlugin,
-  type ManifestPluginOptions,
+  runManifestBuild,
+  type ManifestPluginCallbacks,
+  type ManifestPluginState,
 } from './manifest-plugin';

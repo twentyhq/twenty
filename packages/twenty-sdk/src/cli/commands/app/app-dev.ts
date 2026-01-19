@@ -1,52 +1,111 @@
+import { FUNCTIONS_DIR } from '@/cli/constants/functions-dir';
+import { OUTPUT_DIR } from '@/cli/constants/output-dir';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import { createDevServer, createManifestPlugin } from '@/cli/utilities/vite';
+import {
+  createDevBuildConfig,
+  createManifestPlugin,
+  runManifestBuild,
+  type ManifestPluginState,
+} from '@/cli/utilities/vite';
 import chalk from 'chalk';
-import { type ViteDevServer } from 'vite';
+import * as fs from 'fs-extra';
+import path from 'path';
+import { build } from 'vite';
 
 export type AppDevOptions = {
   appPath?: string;
 };
 
+type BuildWatcher = {
+  close: () => Promise<void>;
+  on?: (event: string, callback: (event: unknown) => void) => void;
+};
+
 export class AppDevCommand {
-  private server: ViteDevServer | null = null;
+  private watcher: BuildWatcher | null = null;
   private appPath: string = '';
   private isRestarting: boolean = false;
-  private functionEntryPoints: string[] = [];
+  private manifestState: ManifestPluginState = { currentEntryPoints: [] };
 
   async execute(options: AppDevOptions): Promise<void> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
-    this.logStartupInfo(this.appPath);
+    console.log(chalk.blue('🚀 Starting Twenty Application Development Mode'));
+    console.log(chalk.gray(`📁 App Path: ${this.appPath}`));
+    console.log('');
 
-    await this.startServer();
+    await this.ensureOutputDirs();
+    await this.startWatcher();
 
     this.setupGracefulShutdown();
-
-    console.log(
-      chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
-    );
   }
 
-  private async startServer(): Promise<void> {
-    const isInitialBuild = this.functionEntryPoints.length === 0;
+  private async ensureOutputDirs(): Promise<void> {
+    const outputDir = path.join(this.appPath, OUTPUT_DIR);
+    const functionsDir = path.join(outputDir, FUNCTIONS_DIR);
+    await fs.ensureDir(functionsDir);
+  }
 
-    const manifestPlugin = createManifestPlugin({
-      appPath: this.appPath,
-      onFunctionEntryPointsChange: (entryPoints: string[]) => {
-        this.handleFunctionEntryPointsChange(entryPoints, isInitialBuild);
+  private async startWatcher(): Promise<void> {
+    // Initial manifest build
+    const functionInput = await runManifestBuild(
+      this.appPath,
+      this.manifestState,
+    );
+
+    const hasFunctions = Object.keys(functionInput).length > 0;
+
+    if (hasFunctions) {
+      console.log(chalk.blue('  📦 Building functions...'));
+    } else {
+      console.log(chalk.gray('  No functions to build'));
+    }
+
+    const manifestPlugin = createManifestPlugin(
+      this.appPath,
+      this.manifestState,
+      {
+        onEntryPointsChange: () => this.scheduleRestart(),
       },
-    });
+    );
 
-    this.server = await createDevServer({
+    const config = createDevBuildConfig({
       appPath: this.appPath,
-      functionEntryPoints: this.functionEntryPoints,
+      functionInput,
       plugins: [manifestPlugin],
     });
 
-    await this.server.listen();
+    this.watcher = (await build(config)) as BuildWatcher;
+
+    if (this.watcher.on) {
+      this.watcher.on('event', (event: unknown) => {
+        const evt = event as { code: string; error?: { message: string } };
+        if (evt.code === 'END') {
+          if (hasFunctions) {
+            console.log(chalk.green('  ✓ Functions built'));
+          }
+          console.log('');
+          console.log(
+            chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
+          );
+        } else if (evt.code === 'ERROR') {
+          console.error(chalk.red('  ✗ Build error:'), evt.error?.message);
+        }
+      });
+    }
   }
 
-  private async restartServer(): Promise<void> {
+  private scheduleRestart(): void {
+    if (this.isRestarting) {
+      return;
+    }
+
+    setImmediate(() => {
+      this.restartWatcher();
+    });
+  }
+
+  private async restartWatcher(): Promise<void> {
     if (this.isRestarting) {
       return;
     }
@@ -55,47 +114,18 @@ export class AppDevCommand {
 
     try {
       console.log(
-        chalk.yellow('🔄 Function entry points changed, restarting server...'),
+        chalk.yellow('🔄 Function entry points changed, restarting...'),
       );
 
-      if (this.server) {
-        await this.server.close();
+      if (this.watcher) {
+        await this.watcher.close();
       }
 
-      await this.startServer();
+      await this.startWatcher();
 
-      console.log(chalk.green('✓ Server restarted with new entry points'));
-      console.log(
-        chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
-      );
+      console.log(chalk.green('✓ Restarted with new entry points'));
     } finally {
       this.isRestarting = false;
-    }
-  }
-
-  private logStartupInfo(appPath: string): void {
-    console.log(chalk.blue('🚀 Starting Twenty Application Development Mode'));
-    console.log(chalk.gray(`📁 App Path: ${appPath}`));
-    console.log('');
-  }
-
-  private handleFunctionEntryPointsChange(
-    entryPoints: string[],
-    isInitialBuild: boolean,
-  ): void {
-    this.functionEntryPoints = entryPoints;
-
-    if (entryPoints.length > 0) {
-      console.log(
-        chalk.gray(`  📍 Function entry points: ${entryPoints.length}`),
-      );
-    }
-
-    // Only restart if this is not the initial build
-    if (!isInitialBuild) {
-      setImmediate(() => {
-        this.restartServer();
-      });
     }
   }
 
@@ -103,8 +133,8 @@ export class AppDevCommand {
     process.on('SIGINT', async () => {
       console.log(chalk.yellow('\n🛑 Stopping development mode...'));
 
-      if (this.server) {
-        await this.server.close();
+      if (this.watcher) {
+        await this.watcher.close();
       }
 
       process.exit(0);

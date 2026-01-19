@@ -18,119 +18,107 @@ import {
   extractFunctionEntryPoints,
   haveFunctionEntryPointsChanged,
 } from './entry-points';
+import { buildFunctionInput } from './function-paths';
 
-const PLUGIN_NAME = 'twenty-manifest';
+export type ManifestPluginCallbacks = {
+  onEntryPointsChange?: (entryPoints: string[]) => void;
+};
 
-export type ManifestPluginOptions = {
-  appPath: string;
-  onFunctionEntryPointsChange?: (entryPoints: string[]) => void;
+export type ManifestPluginState = {
+  currentEntryPoints: string[];
 };
 
 /**
- * Creates a Vite plugin that builds the application manifest on startup
- * and rebuilds it when source files change.
- *
- * Handles:
- * - Building the manifest
- * - Displaying build status, entity summary, and warnings/errors
- * - Writing manifest to output directory
- * - Tracking serverless function entry points and notifying when they change
+ * Creates a Vite plugin that rebuilds the manifest on file changes.
  */
 export const createManifestPlugin = (
-  options: ManifestPluginOptions,
+  appPath: string,
+  state: ManifestPluginState,
+  callbacks: ManifestPluginCallbacks = {},
 ): Plugin => {
-  const { appPath, onFunctionEntryPointsChange } = options;
+  return {
+    name: 'twenty-manifest',
+    handleHotUpdate: async ({ file }) => {
+      if (['.ts', '.json'].some((ext) => file.endsWith(ext))) {
+        await runManifestBuild(appPath, state, callbacks);
+      }
+      return undefined;
+    },
+  };
+};
 
-  // Track current function entry points to detect changes
-  let currentFunctionEntryPoints: string[] = [];
+/**
+ * Builds the manifest and returns function input for Vite.
+ * Also handles entry point change detection.
+ */
+export const runManifestBuild = async (
+  appPath: string,
+  state: ManifestPluginState,
+  callbacks: ManifestPluginCallbacks = {},
+): Promise<Record<string, string>> => {
+  console.log(chalk.blue('🔄 Building manifest...'));
 
-  const handleBuildSuccess = async (result: BuildManifestResult): Promise<void> => {
+  try {
+    const result = await buildManifest(appPath);
+
     displayEntitySummary(result.manifest);
     displayWarnings(result.warnings);
-    await writeManifestToOutput(result);
-  };
 
-  const handleBuildError = (error: Error): void => {
+    const functions = result.manifest.serverlessFunctions;
+    if (functions.length > 0) {
+      console.log(chalk.gray(`  📍 Function entry points:`));
+      for (const fn of functions) {
+        const name = fn.name || fn.universalIdentifier;
+        console.log(chalk.gray(`     - ${name} (${fn.handlerPath})`));
+      }
+    }
+
+    await writeManifestToOutput(appPath, result);
+
+    // Check if entry points changed
+    const newEntryPoints = extractFunctionEntryPoints(functions);
+    const entryPointsChanged = haveFunctionEntryPointsChanged(
+      state.currentEntryPoints,
+      newEntryPoints,
+    );
+
+    const isInitialBuild = state.currentEntryPoints.length === 0;
+    state.currentEntryPoints = newEntryPoints;
+
+    if (entryPointsChanged && !isInitialBuild && callbacks.onEntryPointsChange) {
+      callbacks.onEntryPointsChange(newEntryPoints);
+    }
+
+    return buildFunctionInput(appPath, functions);
+  } catch (error) {
     if (error instanceof ManifestValidationError) {
       displayErrors(error);
     } else {
-      console.error(chalk.red('  ✗ Build failed:'), error.message);
-    }
-  };
-
-  const writeManifestToOutput = async (
-    result: BuildManifestResult,
-  ): Promise<void> => {
-    try {
-      const outputDir = path.join(appPath, OUTPUT_DIR);
-
-      await fs.ensureDir(outputDir);
-
-      const manifestPath = path.join(outputDir, 'manifest.json');
-
-      await fs.writeJSON(manifestPath, result.manifest, { spaces: 2 });
-
-      console.log(chalk.green(`  ✓ Manifest written to ${manifestPath}`));
-      console.log('');
-      console.log(
-        chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
-      );
-    } catch (error) {
       console.error(
-        chalk.red('  ✗ Failed to write manifest:'),
+        chalk.red('  ✗ Build failed:'),
         error instanceof Error ? error.message : error,
       );
     }
-  };
+    return {};
+  }
+};
 
-  const runBuild = async (): Promise<void> => {
-    console.log(chalk.blue('🔄 Building manifest...'));
+const writeManifestToOutput = async (
+  appPath: string,
+  result: BuildManifestResult,
+): Promise<void> => {
+  try {
+    const outputDir = path.join(appPath, OUTPUT_DIR);
+    await fs.ensureDir(outputDir);
 
-    try {
-      const result = await buildManifest(appPath);
+    const manifestPath = path.join(outputDir, 'manifest.json');
+    await fs.writeJSON(manifestPath, result.manifest, { spaces: 2 });
 
-      const newEntryPoints = extractFunctionEntryPoints(
-        result.manifest.serverlessFunctions,
-      );
-
-      // Check if function entry points changed
-      const entryPointsChanged = haveFunctionEntryPointsChanged(
-        currentFunctionEntryPoints,
-        newEntryPoints,
-      );
-
-      // Update tracked entry points
-      currentFunctionEntryPoints = newEntryPoints;
-
-      await handleBuildSuccess(result);
-
-      // Notify if entry points changed (after success handling)
-      if (entryPointsChanged && onFunctionEntryPointsChange) {
-        onFunctionEntryPointsChange(newEntryPoints);
-      }
-    } catch (error) {
-      handleBuildError(error instanceof Error ? error : new Error(String(error)));
-    }
-  };
-
-  return {
-    name: PLUGIN_NAME,
-
-    buildStart: async () => {
-      await runBuild();
-    },
-
-    handleHotUpdate: async ({ file }) => {
-      const relevantExtensions = ['.ts', '.json'];
-      const isRelevantFile = relevantExtensions.some((ext) =>
-        file.endsWith(ext),
-      );
-
-      if (isRelevantFile) {
-        await runBuild();
-      }
-
-      return [];
-    },
-  };
+    console.log(chalk.green(`  ✓ Manifest written to ${manifestPath}`));
+  } catch (error) {
+    console.error(
+      chalk.red('  ✗ Failed to write manifest:'),
+      error instanceof Error ? error.message : error,
+    );
+  }
 };
