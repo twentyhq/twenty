@@ -52,7 +52,7 @@ const VIEW_GROUP_TO_FIELD_VALUE_MAPPING: Record<
       done: 'DONE',
     },
   },
-};
+} as const;
 
 type StandardViewGroupUpdate = {
   flatViewGroup: FlatViewGroup;
@@ -216,10 +216,8 @@ export class IdentifyViewGroupMetadataCommand extends ActiveOrSuspendedWorkspace
             flatEntityMaps: flatViewGroupMaps,
           });
 
-        // Get the view group to field value mapping for this view
         const viewGroupMapping = objectViewGroupMapping?.[viewName];
 
-        // Iterate over expected view groups from config
         for (const [viewGroupName, viewGroupConfig] of Object.entries(
           viewConfig.viewGroups,
         )) {
@@ -227,17 +225,15 @@ export class IdentifyViewGroupMetadataCommand extends ActiveOrSuspendedWorkspace
             continue;
           }
 
-          // Get the field value from the mapping
           const fieldValue = viewGroupMapping?.[viewGroupName];
 
-          if (!isDefined(fieldValue) && fieldValue !== '') {
+          if (!isDefined(fieldValue)) {
             this.logger.warn(
               `Field value mapping for view group "${viewGroupName}" not found for view "${viewName}" of object "${flatObjectMetadata.nameSingular}", skipping view group`,
             );
             continue;
           }
 
-          // Find the existing view group that matches this field value
           const matchingFlatViewGroup = relatedFlatViewGroups.find(
             (viewGroup) => viewGroup.fieldValue === fieldValue,
           );
