@@ -1,67 +1,67 @@
 ---
-title: Widget FAQ
-description: Common questions and error messages explained.
+title: الأسئلة الشائعة حول الأداة
+description: شرح الأسئلة الشائعة ورسائل الخطأ.
 ---
 
 <AccordionGroup>
-  <Accordion title="How do I show percentages instead of counts?">
-    Three options:
+  <Accordion title="كيف أعرض النسب المئوية بدلًا من الأعداد؟">
+    ثلاثة خيارات:
 
-    * **Percent empty/not empty**: Under Data on display, select Percent empty or Percent not empty
-    * **Ratio**: For Select or Checkbox fields, enable Ratio to show a specific option as a percentage of all records
-    * **Suffix**: For aggregate charts, add `%` as a Suffix in Style settings
+    * **النسبة الفارغة/غير الفارغة**: ضمن بيانات العرض، اختر نسبة الفارغ أو نسبة غير الفارغ
+    * **النسبة**: لحقول الاختيار أو خانات الاختيار، فعّل خيار النسبة لعرض خيار معيّن كنسبة مئوية من جميع السجلات
+    * **اللاحقة**: بالنسبة للمخططات التجميعية، أضف `%` كلاحقة في إعدادات النمط
   </Accordion>
 
-  <Accordion title="What's the difference between grouped and stacked bars?">
-    When using **Group by**, you can display series two ways:
+  <Accordion title="ما الفرق بين الأعمدة المجموعة والمكدسة؟">
+    عند استخدام **التجميع حسب**، يمكنك عرض السلاسل بطريقتين:
 
-    * **Grouped**: Bars side by side—best for comparing exact values
-    * **Stacked**: Bars on top of each other—best for showing composition
+    * **مجموعة**: أعمدة جنبًا إلى جنب—الأفضل للمقارنة بين القيم الدقيقة
+    * **مكدسة**: أعمدة فوق بعضها—الأفضل لإظهار التركيب
 
-    Toggle **Stacked** in Style settings to switch.
+    بدّل **مكدسة** في إعدادات النمط للتبديل.
   </Accordion>
 
-  <Accordion title="Why can't I see Sum or Average options?">
-    Available operations depend on **field type**:
+  <Accordion title="لماذا لا أرى خيارات المجموع أو المتوسط؟">
+    تعتمد العمليات المتاحة على **نوع الحقل**:
 
-    * **Number fields**: Sum, Average, Min, Max
-    * **Date fields**: Earliest, Latest (aggregate charts only)
-    * **Checkbox fields**: Count true, Count false
+    * **حقول الأرقام**: المجموع، المتوسط، الحد الأدنى، الحد الأقصى
+    * **حقول التاريخ**: الأقدم، الأحدث (للمخططات التجميعية فقط)
+    * **حقول خانات الاختيار**: عدّ 'صحيح'، عدّ 'خطأ'
 
-    If you don't see an option, check that you've selected a compatible field type.
+    إذا لم ترَ خيارًا، فتحقق من أنك اخترت نوع حقل متوافقًا.
   </Accordion>
 
-  <Accordion title="Why are some settings grayed out or missing?">
-    Many settings only appear when prerequisites are met:
+  <Accordion title="لماذا تكون بعض الإعدادات باللون الرمادي أو مفقودة؟">
+    تظهر العديد من الإعدادات فقط عند استيفاء المتطلبات المسبقة:
 
-    * **Date granularity**: Select a date field first
-    * **Group by, Legend, Stacked**: Set Source first
-    * **Legend, Stacked toggles**: Set Group by first
+    * **دقة التاريخ**: حدد حقل تاريخ أولاً
+    * **التجميع حسب، وسيلة الإيضاح، مكدسة**: عيّن المصدر أولاً
+    * **أزرار تبديل وسيلة الإيضاح ومكدسة**: عيّن التجميع حسب أولاً
 
-    If a setting is missing, configure its prerequisite first.
+    إذا كان إعداد مفقودًا، فقم بإعداد المتطلب المسبق له أولاً.
   </Accordion>
 
-  <Accordion title="What does 'No data' mean?">
-    The chart found no records matching your configuration.
+  <Accordion title="ماذا يعني 'No data'؟">
+    لم يعثر المخطط على سجلات مطابقة لإعداداتك.
 
-    **To fix:** Remove or adjust filters, verify you selected the correct Source object, or check that records exist for your date range.
+    **للحل:** أزل أو اضبط عوامل التصفية، وتحقق من أنك اخترت كائن المصدر الصحيح، أو تحقق من وجود سجلات لنطاق التاريخ الخاص بك.
   </Accordion>
 
-  <Accordion title="What does 'Invalid configuration' mean?">
-    A required setting is missing or incompatible.
+  <Accordion title="ماذا يعني 'Invalid configuration'؟">
+    يوجد إعداد مطلوب مفقود أو غير متوافق.
 
-    **To fix:** Ensure Source is set, Data on display is configured, and any required grouping fields are selected.
+    **للحل:** تأكد من تعيين المصدر، وتكوين بيانات العرض، وتحديد أي حقول تجميع مطلوبة.
   </Accordion>
 
-  <Accordion title="What does 'Undisplayed data' mean?">
-    Your data exceeds display limits (100 bars, 100 data points, or 100 slices).
+  <Accordion title="ماذا يعني 'Undisplayed data'؟">
+    تتجاوز بياناتك حدود العرض (100 عمود، 100 نقطة بيانات، أو 100 شريحة).
 
-    **To fix:** Add filters to narrow your data, or change date granularity from Day to Week or Month.
+    **للحل:** أضف عوامل تصفية لتضييق نطاق بياناتك، أو غيّر دقة التاريخ من يوم إلى أسبوع أو شهر.
   </Accordion>
 
-  <Accordion title="Why is one axis showing no data?">
-    The selected field has no values for the records in your filter, or the field type doesn't match the expected data.
+  <Accordion title="لماذا لا يعرض أحد المحورين أي بيانات؟">
+    لا يحتوي الحقل المحدد على قيم للسجلات ضمن عامل التصفية لديك، أو أن نوع الحقل لا يطابق البيانات المتوقعة.
 
-    **To fix:** Try a different field, or check that records have values for the selected field.
+    **للحل:** جرّب حقلًا آخر، أو تحقق من أن السجلات تحتوي على قيم للحقل المحدد.
   </Accordion>
 </AccordionGroup>
