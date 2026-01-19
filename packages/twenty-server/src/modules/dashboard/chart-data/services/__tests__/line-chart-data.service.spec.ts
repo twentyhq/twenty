@@ -27,6 +27,13 @@ describe('LineChartDataService', () => {
     type: FieldMetadataType.DATE_TIME,
   };
 
+  const mockGroupByFieldXText = {
+    id: 'group-by-field-text-id',
+    name: 'stage',
+    label: 'Stage',
+    type: FieldMetadataType.TEXT,
+  };
+
   const mockGroupByFieldY = {
     id: 'secondary-field-id',
     name: 'stage',
@@ -63,6 +70,7 @@ describe('LineChartDataService', () => {
               flatFieldMetadataMaps: {
                 byId: {
                   [mockGroupByFieldX.id]: mockGroupByFieldX,
+                  [mockGroupByFieldXText.id]: mockGroupByFieldXText,
                   [mockGroupByFieldY.id]: mockGroupByFieldY,
                   [mockAggregateField.id]: mockAggregateField,
                 },
@@ -85,7 +93,7 @@ describe('LineChartDataService', () => {
   describe('getLineChartData - One dimensional', () => {
     const baseConfiguration = {
       configurationType: WidgetConfigurationType.LINE_CHART,
-      primaryAxisGroupByFieldMetadataId: mockGroupByFieldX.id,
+      primaryAxisGroupByFieldMetadataId: mockGroupByFieldXText.id,
       aggregateFieldMetadataId: mockAggregateField.id,
       aggregateOperation: AggregateOperations.SUM,
     };
@@ -325,10 +333,10 @@ describe('LineChartDataService', () => {
 
     it('should apply cumulative transform to each series independently', async () => {
       mockExecuteGroupByQuery.mockResolvedValue([
-        { groupByDimensionValues: ['Jan', 'A'], aggregateValue: 10 },
-        { groupByDimensionValues: ['Feb', 'A'], aggregateValue: 20 },
-        { groupByDimensionValues: ['Jan', 'B'], aggregateValue: 100 },
-        { groupByDimensionValues: ['Feb', 'B'], aggregateValue: 200 },
+        { groupByDimensionValues: ['2024-01-01', 'A'], aggregateValue: 10 },
+        { groupByDimensionValues: ['2024-02-01', 'A'], aggregateValue: 20 },
+        { groupByDimensionValues: ['2024-01-01', 'B'], aggregateValue: 100 },
+        { groupByDimensionValues: ['2024-02-01', 'B'], aggregateValue: 200 },
       ]);
 
       const result = await service.getLineChartData({
