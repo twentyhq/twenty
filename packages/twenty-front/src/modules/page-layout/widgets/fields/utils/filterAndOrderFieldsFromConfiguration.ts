@@ -32,8 +32,6 @@ export const filterAndOrderFieldsFromConfiguration = ({
         section.fields.map((f) => f.fieldMetadataId),
       );
 
-      // Filter fields that belong to this section, preserving alphabetical order
-      // from availableFieldMetadataItems (which is already sorted alphabetically)
       const visibleFields = availableFieldMetadataItems
         .filter((fieldMetadataItem) => sectionFieldIds.has(fieldMetadataItem.id))
         .filter((fieldMetadataItem) => {
