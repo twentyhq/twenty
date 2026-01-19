@@ -1,9 +1,4 @@
-import {
-  ForbiddenException,
-  UseFilters,
-  UseGuards,
-  UsePipes,
-} from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -29,6 +24,10 @@ import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
 import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input';
 import { RemoveQueryFromEventStreamInput } from 'src/engine/subscriptions/dtos/remove-query-subscription.input';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
+import {
+  EventStreamException,
+  EventStreamExceptionCode,
+} from 'src/engine/subscriptions/event-stream.exception';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { wrapAsyncIteratorWithCleanup } from 'src/engine/workspace-event-emitter/utils/wrap-async-iterator-with-cleanup';
@@ -151,8 +150,9 @@ export class WorkspaceEventEmitterResolver {
     });
 
     if (!isAuthorized) {
-      throw new ForbiddenException(
-        'You are not authorized to modify this event stream',
+      throw new EventStreamException(
+        'You are not authorized to add a query to this event stream',
+        EventStreamExceptionCode.NOT_AUTHORIZED,
       );
     }
 
@@ -185,8 +185,9 @@ export class WorkspaceEventEmitterResolver {
     });
 
     if (!isAuthorized) {
-      throw new ForbiddenException(
-        'You are not authorized to modify this event stream',
+      throw new EventStreamException(
+        'You are not authorized to remove a query from this event stream',
+        EventStreamExceptionCode.NOT_AUTHORIZED,
       );
     }
 
