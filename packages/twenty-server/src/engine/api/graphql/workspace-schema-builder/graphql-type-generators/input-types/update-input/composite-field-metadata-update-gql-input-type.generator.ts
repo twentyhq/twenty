@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-    GraphQLInputFieldConfigMap,
-    GraphQLInputObjectType,
-    isObjectType,
+  GraphQLInputFieldConfigMap,
+  GraphQLInputObjectType,
+  isObjectType,
 } from 'graphql';
 import { CompositeType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -73,7 +73,10 @@ export class CompositeFieldMetadataUpdateGqlInputTypeGenerator {
 
       const type = isEnumFieldMetadataType(property.type)
         ? this.gqlTypesStorage.getGqlTypeByKey(key)
-        : this.typeMapperService.mapToScalarType(property.type, typeOptions);
+        : this.typeMapperService.mapToPreBuiltGraphQLType({
+            fieldMetadataType: property.type,
+            typeOptions,
+          });
 
       if (!isDefined(type) || isObjectType(type)) {
         const message = `Could not find a GraphQL input type for ${compositeType.type} ${property.name}`;

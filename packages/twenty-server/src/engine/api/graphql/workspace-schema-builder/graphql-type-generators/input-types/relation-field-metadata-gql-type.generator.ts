@@ -1,17 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-    GraphQLInputFieldConfigMap,
-    isInputObjectType,
-    isObjectType,
+  GraphQLInputFieldConfigMap,
+  isInputObjectType,
+  isObjectType,
 } from 'graphql';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import {
-    TypeMapperService,
-    TypeOptions,
+  TypeMapperService,
+  TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
@@ -45,10 +45,10 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 
-    const type = this.typeMapperService.mapToScalarType(
-      fieldMetadata.type,
+    const type = this.typeMapperService.mapToPreBuiltGraphQLType({
+      fieldMetadataType: fieldMetadata.type,
       typeOptions,
-    );
+    });
 
     if (!isDefined(type)) {
       const message = `Could not find a GraphQL input type for ${type} field metadata`;

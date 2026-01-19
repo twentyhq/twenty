@@ -9,6 +9,7 @@ import {
   type GraphQLInputType,
   GraphQLList,
   GraphQLNonNull,
+  type GraphQLOutputType,
   type GraphQLScalarType,
   GraphQLString,
   type GraphQLType,
@@ -34,11 +35,13 @@ import {
   RawJsonFilterType,
   StringFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
+import { FilesInputType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/files.input-type';
 import { MultiSelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/multi-select-filter.input-type';
 import { RichTextV2FilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/rich-text.input-type';
 import { SelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/select-filter.input-type';
 import { TSVectorFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/ts-vector-filter.input-type';
 import { UUIDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/uuid-filter.input-type';
+import { FilesObjectType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/object/files.object-type';
 import {
   BigFloatScalarType,
   DateScalarType,
@@ -63,10 +66,27 @@ const StringArrayScalarType = new GraphQLList(GraphQLString);
 
 @Injectable()
 export class TypeMapperService {
-  mapToScalarType(
-    fieldMetadataType: FieldMetadataType,
-    typeOptions?: TypeOptions,
-  ): GraphQLScalarType | undefined {
+  mapToPreBuiltGraphQLType(params: {
+    fieldMetadataType: FieldMetadataType;
+    typeOptions?: TypeOptions;
+    isForOutputType: true;
+  }): GraphQLScalarType | GraphQLList<GraphQLOutputType> | undefined;
+
+  mapToPreBuiltGraphQLType(params: {
+    fieldMetadataType: FieldMetadataType;
+    typeOptions?: TypeOptions;
+    isForOutputType?: false;
+  }): GraphQLScalarType | GraphQLList<GraphQLInputType> | undefined;
+
+  mapToPreBuiltGraphQLType({
+    fieldMetadataType,
+    typeOptions,
+    isForOutputType = false,
+  }: {
+    fieldMetadataType: FieldMetadataType;
+    typeOptions?: TypeOptions;
+    isForOutputType?: boolean;
+  }): GraphQLScalarType | GraphQLList<GraphQLType> | undefined {
     if (
       typeOptions?.isIdField ||
       fieldMetadataType === FieldMetadataType.RELATION ||
@@ -74,7 +94,10 @@ export class TypeMapperService {
     ) {
       return GraphQLID;
     }
-    const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
+    const typeScalarMapping = new Map<
+      FieldMetadataType,
+      GraphQLScalarType | GraphQLList<GraphQLType>
+    >([
       [FieldMetadataType.UUID, UUIDScalarType],
       [FieldMetadataType.TEXT, GraphQLString],
       [FieldMetadataType.DATE_TIME, GraphQLISODateTime],
@@ -90,12 +113,12 @@ export class TypeMapperService {
       ],
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
       [FieldMetadataType.POSITION, PositionScalarType],
-      [FieldMetadataType.FILES, GraphQLJSON],
-      [FieldMetadataType.RAW_JSON, GraphQLJSON],
       [
-        FieldMetadataType.ARRAY,
-        StringArrayScalarType as unknown as GraphQLScalarType,
+        FieldMetadataType.FILES,
+        isForOutputType ? FilesObjectType : FilesInputType,
       ],
+      [FieldMetadataType.RAW_JSON, GraphQLJSON],
+      [FieldMetadataType.ARRAY, StringArrayScalarType],
       [FieldMetadataType.RICH_TEXT, GraphQLString],
       [FieldMetadataType.TS_VECTOR, TSVectorScalarType],
     ]);

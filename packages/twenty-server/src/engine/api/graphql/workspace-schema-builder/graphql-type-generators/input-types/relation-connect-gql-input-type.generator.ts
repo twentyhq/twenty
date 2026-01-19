@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-    GraphQLBoolean,
-    type GraphQLInputFieldConfig,
-    GraphQLInputObjectType,
-    type GraphQLInputType,
-    GraphQLString,
+  GraphQLBoolean,
+  type GraphQLInputFieldConfig,
+  GraphQLInputObjectType,
+  type GraphQLInputType,
+  GraphQLString,
 } from 'graphql';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
@@ -123,9 +123,10 @@ export class RelationConnectGqlInputTypeGenerator {
             > = {};
 
             uniqueProperties.forEach((property) => {
-              const scalarType = this.typeMapperService.mapToScalarType(
-                property.type,
-              );
+              const scalarType =
+                this.typeMapperService.mapToPreBuiltGraphQLType({
+                  fieldMetadataType: property.type,
+                });
 
               compositeFields[property.name] = {
                 type: scalarType || GraphQLString,
@@ -144,10 +145,14 @@ export class RelationConnectGqlInputTypeGenerator {
             };
           }
         } else {
-          const scalarType = this.typeMapperService.mapToScalarType(
-            field.type,
-            { settings: field.settings, isIdField: field.name === 'id' },
-          );
+          const scalarType = this.typeMapperService.mapToPreBuiltGraphQLType({
+            fieldMetadataType: field.type,
+            typeOptions: {
+              settings: field.settings,
+              isIdField: field.name === 'id',
+            },
+            isForOutputType: false,
+          });
 
           inputFields[field.name] = {
             type: scalarType || GraphQLString,

@@ -4,8 +4,8 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-    TypeMapperService,
-    TypeOptions,
+  TypeMapperService,
+  TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspace-schema-builder/utils/extract-graphql-relation-field-names.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -32,10 +32,11 @@ export class RelationFieldMetadataGqlObjectTypeGenerator {
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 
-    const type = this.typeMapperService.mapToScalarType(
-      fieldMetadata.type,
+    const type = this.typeMapperService.mapToPreBuiltGraphQLType({
+      fieldMetadataType: fieldMetadata.type,
       typeOptions,
-    );
+      isForOutputType: true,
+    });
 
     if (!isDefined(type)) {
       const message = `Could not find a GraphQL output type for ${type} field metadata`;

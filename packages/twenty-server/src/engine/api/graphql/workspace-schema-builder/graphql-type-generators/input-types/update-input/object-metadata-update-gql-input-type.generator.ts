@@ -1,13 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-    GraphQLEnumType,
-    GraphQLInputFieldConfigMap,
-    GraphQLInputObjectType,
-    GraphQLScalarType,
-    isEnumType,
-    isInputObjectType,
-    isObjectType,
+  GraphQLEnumType,
+  GraphQLInputFieldConfigMap,
+  GraphQLInputObjectType,
+  GraphQLList,
+  GraphQLScalarType,
+  isEnumType,
+  isInputObjectType,
+  isObjectType,
+  type GraphQLInputType,
 } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -97,6 +99,7 @@ export class ObjectMetadataUpdateGqlInputTypeGenerator {
           | GraphQLInputObjectType
           | GraphQLEnumType
           | GraphQLScalarType
+          | GraphQLList<GraphQLInputType>
           | undefined;
 
         if (isEnumFieldMetadataType(fieldMetadata.type)) {
@@ -138,10 +141,10 @@ export class ObjectMetadataUpdateGqlInputTypeGenerator {
 
           type = compositeType;
         } else {
-          type = this.typeMapperService.mapToScalarType(
-            fieldMetadata.type,
+          type = this.typeMapperService.mapToPreBuiltGraphQLType({
+            fieldMetadataType: fieldMetadata.type,
             typeOptions,
-          );
+          });
 
           if (!isDefined(type) || isObjectType(type)) {
             const message = `Could not find a GraphQL input type for ${fieldMetadata.type} field metadata`;
