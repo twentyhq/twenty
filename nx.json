@@ -100,9 +100,6 @@
         "command": "tsgo -p tsconfig.json"
       },
       "configurations": {
-        "tsc": {
-          "command": "tsc -b tsconfig.json --incremental"
-        },
         "watch": {
           "command": "tsgo -p tsconfig.json --watch"
         }
