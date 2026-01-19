@@ -28,7 +28,8 @@ export const createNavigationMenuItem = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage: 'NavigationMenuItem creation should have failed but did not',
+      errorMessage:
+        'NavigationMenuItem creation should have failed but did not',
     });
   }
 
