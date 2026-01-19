@@ -1,6 +1,5 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { isDefined } from 'twenty-shared/utils';
-import { BarChartLayout } from '~/generated/graphql';
 
 const BAR_CHART_MARGINS = {
   top: COMMON_CHART_CONSTANTS.MARGIN_TOP,
@@ -33,26 +32,20 @@ const BAR_CHART_MARGINS_WITH_Y_LABEL = {
 export const getBarChartMargins = ({
   xAxisLabel,
   yAxisLabel,
-  layout,
 }: {
   xAxisLabel?: string;
   yAxisLabel?: string;
-  layout: BarChartLayout;
 }) => {
   if (isDefined(xAxisLabel) && isDefined(yAxisLabel)) {
     return BAR_CHART_MARGINS_WITH_BOTH_LABELS;
   }
 
   if (isDefined(xAxisLabel)) {
-    return layout === BarChartLayout.HORIZONTAL
-      ? BAR_CHART_MARGINS_WITH_Y_LABEL
-      : BAR_CHART_MARGINS_WITH_X_LABEL;
+    return BAR_CHART_MARGINS_WITH_X_LABEL;
   }
 
   if (isDefined(yAxisLabel)) {
-    return layout === BarChartLayout.HORIZONTAL
-      ? BAR_CHART_MARGINS_WITH_X_LABEL
-      : BAR_CHART_MARGINS_WITH_Y_LABEL;
+    return BAR_CHART_MARGINS_WITH_Y_LABEL;
   }
 
   return BAR_CHART_MARGINS;

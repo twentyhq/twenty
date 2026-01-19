@@ -496,7 +496,8 @@ export default defineFunction({
     {
       universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
       type: 'databaseEvent',
-      eventName: 'person.created',
+      eventName: 'person.updated',
+      updatedFields: ['name'],
     },
   ],
 });
@@ -509,9 +510,9 @@ Tipi di trigger comuni:
 > es. `path: '/post-card/create',` -> chiamata su `<APP_URL>/s/post-card/create`
 
 * **cron**: Esegue la tua funzione secondo una pianificazione utilizzando un'espressione CRON.
-* **databaseEvent**: Viene eseguito sugli eventi del ciclo di vita degli oggetti dello spazio di lavoro
+* **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
 
-> es. `person.created`
+> e.g. `person.updated`
 
 Note:
 

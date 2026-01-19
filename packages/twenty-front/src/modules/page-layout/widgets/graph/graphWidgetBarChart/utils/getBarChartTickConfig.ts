@@ -51,7 +51,7 @@ export const getBarChartTickConfig = ({
     layout,
   });
 
-  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
+  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel });
 
   const availableWidth = width - (margins.left + margins.right);
   const availableHeight = height - (margins.top + margins.bottom);

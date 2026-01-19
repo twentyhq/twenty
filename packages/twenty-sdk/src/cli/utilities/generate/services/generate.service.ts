@@ -86,6 +86,8 @@ const defaultOptions: ClientOptions = {
 
 export default class Twenty {
   private client: Client;
+  private apiUrl: string;
+  private authorizationToken: string;
 
   constructor(options?: ClientOptions) {
     const merged: ClientOptions = {
@@ -98,6 +100,8 @@ export default class Twenty {
     };
 
     this.client = createClient(merged);
+    this.apiUrl = merged.url;
+    this.authorizationToken = merged.headers.Authorization;
   }
 
   query<R extends QueryGenqlSelection>(request: R & { __name?: string }) {
@@ -126,10 +130,10 @@ export default class Twenty {
     form.append('0', new Blob([fileBuffer], { type: contentType }), filename);
 
 
-    const response = await fetch(\`\${process.env.TWENTY_API_URL}/graphql\`, {
+    const response = await fetch(\`\${this.apiUrl}/graphql\`, {
       method: 'POST',
       headers: {
-        Authorization: \`Bearer \${process.env.TWENTY_API_KEY}\`,
+        Authorization: this.authorizationToken,
       },
       body: form,
     });
