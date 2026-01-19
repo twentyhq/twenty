@@ -4,7 +4,6 @@ import { within } from 'storybook/test';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { SettingsServerlessFunctionDetail } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -18,7 +17,7 @@ const SOURCE_CODE_FULL_PATH =
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/ServerlessFunctions/SettingsServerlessFunctionDetail',
   component: SettingsServerlessFunctionDetail,
-  decorators: [PageDecorator, I18nFrontDecorator],
+  decorators: [PageDecorator],
   args: {
     routePath: '/settings/function/',
     routeParams: {

@@ -29,6 +29,13 @@ export class ClientConfigService {
     private aiModelRegistryService: AiModelRegistryService,
   ) {}
 
+  private isCloudflareIntegrationEnabled(): boolean {
+    return (
+      !!this.twentyConfigService.get('CLOUDFLARE_API_KEY') &&
+      !!this.twentyConfigService.get('CLOUDFLARE_ZONE_ID')
+    );
+  }
+
   async getClientConfig(): Promise<ClientConfig> {
     const captchaProvider = this.twentyConfigService.get('CAPTCHA_DRIVER');
     const supportDriver = this.twentyConfigService.get('SUPPORT_DRIVER');
@@ -194,6 +201,7 @@ export class ClientConfigService {
       calendarBookingPageId: isNonEmptyString(calendarBookingPageId)
         ? calendarBookingPageId
         : undefined,
+      isCloudflareIntegrationEnabled: this.isCloudflareIntegrationEnabled(),
     };
 
     return clientConfig;

@@ -10,7 +10,7 @@ import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetHoveredSliceIndexComponentState';
-import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
@@ -49,7 +49,7 @@ type GraphWidgetBarChartProps = {
   data: BarDatum[];
   indexBy: string;
   keys: string[];
-  series?: BarChartSeries[];
+  series?: BarChartSeriesWithColor[];
   showLegend?: boolean;
   showGrid?: boolean;
   showValues?: boolean;
@@ -106,6 +106,15 @@ export const GraphWidgetBarChart = ({
   const [chartWidth, setChartWidth] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const debouncedSetChartDimensions = useDebouncedCallback(
+    (width: number, height: number) => {
+      setChartWidth(width);
+      setChartHeight(height);
+    },
+
+    300,
+  );
 
   const setActiveBarTooltip = useSetRecoilComponentState(
     graphWidgetBarTooltipComponentState,
@@ -193,6 +202,7 @@ export const GraphWidgetBarChart = ({
   ) => {
     if (isDefined(sliceData)) {
       debouncedHideTooltip.cancel();
+      setHoveredSliceIndex(sliceData.slice.indexValue);
       setActiveBarTooltip({
         slice: sliceData.slice,
         offsetLeft: sliceData.offsetLeft,
@@ -305,8 +315,7 @@ export const GraphWidgetBarChart = ({
         <NodeDimensionEffect
           elementRef={containerRef}
           onDimensionChange={({ width, height }) => {
-            setChartWidth(width);
-            setChartHeight(height);
+            debouncedSetChartDimensions(width, height);
           }}
         />
         <ResponsiveBar

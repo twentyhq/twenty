@@ -24,4 +24,3 @@ export { RecoilRootDecorator } from './decorators/RecoilRootDecorator';
 export { RouterDecorator } from './decorators/RouterDecorator';
 export { AVATAR_URL_MOCK } from './mocks/avatarUrlMock';
 export type { CatalogStory } from './types/CatalogStory';
-export { getCanvasElementForDropdownTesting } from './utils/getCanvasElementForDropdownTesting';

@@ -6,10 +6,9 @@ import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-tabl
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 
 import { FieldMetadataType, type Nullable } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { formatToShortNumber, isDefined } from 'twenty-shared/utils';
 import { type AggregateOperations } from '~/generated-metadata/graphql';
 import { formatNumber } from '~/utils/format/formatNumber';
-import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 import { formatDateString } from '~/utils/string/formatDateString';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 

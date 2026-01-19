@@ -15,7 +15,7 @@ import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineCha
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTheme';
 import { graphWidgetLineCrosshairXComponentState } from '@/page-layout/widgets/graph/graphWidgetLineChart/states/graphWidgetLineCrosshairXComponentState';
 import { graphWidgetLineTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetLineChart/states/graphWidgetLineTooltipComponentState';
-import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeriesWithColor';
 import { calculateValueRangeFromLineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/calculateValueRangeFromLineChartSeries';
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
@@ -49,7 +49,7 @@ type LinesLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type NoDataLayerWrapperProps = LineCustomSvgLayerProps<LineSeries>;
 
 type GraphWidgetLineChartProps = {
-  data: LineChartSeries[];
+  data: LineChartSeriesWithColor[];
   showLegend?: boolean;
   showGrid?: boolean;
   enablePointLabel?: boolean;
@@ -85,7 +85,7 @@ export const GraphWidgetLineChart = ({
   id,
   rangeMin,
   rangeMax,
-  omitNullValues: _omitNullValues = false,
+  omitNullValues = false,
   displayType,
   groupMode,
   colorMode,
@@ -100,6 +100,11 @@ export const GraphWidgetLineChart = ({
   const chartTheme = useLineChartTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(0);
+
+  const debouncedSetChartWidth = useDebouncedCallback(
+    (width: number) => setChartWidth(width),
+    300,
+  );
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -195,7 +200,7 @@ export const GraphWidgetLineChart = ({
         formatValue={(value) => formatGraphValue(value, formatOptions)}
         offset={theme.spacingMultiplicator * 2}
         groupMode={groupMode}
-        omitNullValues={_omitNullValues}
+        omitNullValues={omitNullValues}
         enablePointLabel={enablePointLabel}
       />
     );
@@ -293,9 +298,7 @@ export const GraphWidgetLineChart = ({
       >
         <NodeDimensionEffect
           elementRef={containerRef}
-          onDimensionChange={({ width }) => {
-            setChartWidth(width);
-          }}
+          onDimensionChange={({ width }) => debouncedSetChartWidth(width)}
         />
         <ResponsiveLine
           data={nivoData}

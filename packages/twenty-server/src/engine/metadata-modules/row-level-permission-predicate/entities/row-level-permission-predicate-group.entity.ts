@@ -1,6 +1,10 @@
 /* @license Enterprise */
 
 import {
+  RowLevelPermissionPredicateGroup,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+} from 'twenty-shared/types';
+import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -17,7 +21,6 @@ import {
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
-import { RowLevelPermissionPredicateGroupLogicalOperator } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-group-logical-operator.enum';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'rowLevelPermissionPredicateGroup', schema: 'core' })
@@ -26,9 +29,14 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'roleId',
   'objectMetadataId',
 ])
+@Index('IDX_RLPPG_PARENT_GROUP_ID', [
+  'parentRowLevelPermissionPredicateGroupId',
+])
 export class RowLevelPermissionPredicateGroupEntity
   extends SyncableEntity
-  implements Required<RowLevelPermissionPredicateGroupEntity>
+  implements
+    Required<RowLevelPermissionPredicateGroupEntity>,
+    RowLevelPermissionPredicateGroup
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;

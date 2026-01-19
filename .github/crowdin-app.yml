@@ -5,6 +5,7 @@
 #
 
 "preserve_hierarchy": true
+"base_path": ".."
 
 files: [
   {

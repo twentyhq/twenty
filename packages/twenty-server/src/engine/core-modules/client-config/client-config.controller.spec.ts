@@ -99,6 +99,7 @@ describe('ClientConfigController', () => {
         calendarBookingPageId: undefined,
         isTwoFactorAuthenticationEnabled: false,
         allowRequestsToTwentyIcons: true,
+        isCloudflareIntegrationEnabled: false,
       };
 
       jest

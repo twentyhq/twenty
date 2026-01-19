@@ -7,7 +7,6 @@ import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diag
 import '@xyflow/react/dist/style.css';
 import { RecoilRoot } from 'recoil';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
@@ -17,7 +16,7 @@ const meta: Meta<typeof WorkflowDiagramStepNodeEditableContent> = {
   parameters: {
     msw: graphqlMocks,
   },
-  decorators: [I18nFrontDecorator],
+  decorators: [],
 };
 
 export default meta;

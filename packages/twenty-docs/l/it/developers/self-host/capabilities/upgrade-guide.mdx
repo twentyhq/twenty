@@ -2,17 +2,17 @@
 title: Guida per l'aggiornamento
 ---
 
-## General guidelines
+## Linee guida generali
 
-**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+**Assicurati sempre di eseguire il backup del database prima di iniziare il processo di aggiornamento** eseguendo `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
 
-To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+Per ripristinare il backup, esegui `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
 
 Se hai utilizzato Docker Compose, segui questi passaggi:
 
 1. In un terminale, sull'host dove Twenty è in esecuzione, spegni Twenty: `docker compose down`
 
-2. Aggiorna la versione modificando il valore `TAG` nel file .env vicino al tuo docker-compose. ( We recommend consuming `major.minor` version such as `v0.53` )
+2. Aggiorna la versione modificando il valore `TAG` nel file .env vicino al tuo docker-compose. ( Si consiglia di utilizzare la versione `major.minor`, ad esempio `v0.53` )
 
 3. Riporta Twenty online con `docker compose up -d`
 
@@ -46,7 +46,7 @@ Aggiorna la tua istanza di Twenty per utilizzare l'immagine v0.55
 
 Non è più necessario eseguire alcun comando, la nuova immagine si occuperà automaticamente di eseguire tutte le migrazioni richieste.
 
-### `User does not have permission` error
+### Errore `User does not have permission`
 
 Se riscontri errori di autorizzazione nella maggior parte delle richieste dopo l'aggiornamento, potresti dover svuotare la cache per ricalcolare le autorizzazioni più recenti.
 
@@ -95,7 +95,7 @@ yarn command:prod upgrade
 #### Ho uno spazio di lavoro bloccato in una versione tra `0.52.0` e `0.52.6`.
 
 Purtroppo `0.52.0` e `0.52.6` sono stati completamente rimossi da dockerHub.
-You will have to manually update your workspace version to `0.51.0` in database and upgrade using twenty version `0.52.11` following its just above upgrade guide.
+Dovrai aggiornare manualmente nel database la versione del workspace a `0.51.0` ed effettuare l'aggiornamento utilizzando la versione `0.52.11` di Twenty seguendo la guida di aggiornamento appena sopra.
 
 ### v0.50 a v0.51
 
@@ -316,8 +316,8 @@ Il comando `yarn command:prod upgrade-0.31` si occupa della migrazione dei dati 
 
 Aggiorna la tua istanza di Twenty per utilizzare l'immagine v0.30.0.
 
-**Breaking change**:
-To enhance performances, Twenty now requires redis cache to be configured. Abbiamo aggiornato il nostro [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) per riflettere questa modifica.
+**Modifica importante**:
+Per migliorare le prestazioni, Twenty ora richiede che la cache Redis sia configurata. Abbiamo aggiornato il nostro [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) per riflettere questa modifica.
 Assicurati di aggiornare la tua configurazione e le tue variabili di ambiente di conseguenza:
 
 ```
@@ -361,7 +361,7 @@ yarn database:migrate:prod
 yarn command:prod upgrade-0.23
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the Database.
+Il comando `yarn database:migrate:prod` applicherà le migrazioni al database.
 Il comando `yarn command:prod upgrade-0.23` si occupa della migrazione dei dati, includendo il trasferimento delle attività a compiti/note.
 
 ### v0.21.0 a v0.22.0
@@ -376,6 +376,6 @@ yarn command:prod workspace:sync-metadata -f
 yarn command:prod upgrade-0.22
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the Database.
+Il comando `yarn database:migrate:prod` applicherà le migrazioni al database.
 Il comando `yarn command:prod workspace:sync-metadata -f` sincronizzerà la definizione degli oggetti standard nelle tabelle dei metadati e applicherà le migrazioni necessarie agli spazi di lavoro esistenti.
 Il comando `yarn command:prod upgrade-0.22` applicherà specifiche trasformazioni dei dati per adattarsi alle nuove opzioni di strumentazione richiesta predefinita dell'oggetto.

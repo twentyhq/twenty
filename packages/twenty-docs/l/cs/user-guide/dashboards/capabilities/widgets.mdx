@@ -3,13 +3,19 @@ title: Widgety
 description: Prozkoumejte typy widgetů a možnosti vizualizace v Twenty.
 ---
 
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
 ## Dostupné widgety
 
 Twenty nabízí různé typy widgetů pro vizualizaci vašich CRM dat.
 
-### Sloupcové grafy
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Bar Charts</span>
 
 Zobrazují data jako vodorovné nebo svislé sloupce.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Bar chart" />
+</Frame>
 
 **Vhodné pro:**
 
@@ -24,12 +30,16 @@ Zobrazují data jako vodorovné nebo svislé sloupce.
 * Počet kontaktů přidaných za měsíc
 
 <Note>
-  **Limity zobrazení**: Sloupcové grafy mohou zobrazit maximálně 100 sloupců (vodorovně) nebo 50 sloupců (svisle). Pokud uvidíte upozornění "Nezobrazená data: max X sloupců na graf", přidejte filtry, abyste zúžili svá data, nebo změňte seskupení (např. seskupujte podle týdnů místo dnů).
+  **Display limits**: Bar charts can show a maximum of 100 bars, and 50 groups per bar when using Group By. Pokud uvidíte upozornění "Nezobrazená data: max X sloupců na graf", přidejte filtry, abyste zúžili svá data, nebo změňte seskupení (např. seskupujte podle týdnů místo dnů).
 </Note>
 
-### Koláčové grafy
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Pie Charts</span>
 
 Zobrazují podíly z celku.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Pie chart" />
+</Frame>
 
 **Vhodné pro:**
 
@@ -43,9 +53,13 @@ Zobrazují podíly z celku.
 * Rozdělení kontaktů podle odvětví
 * Složení pipeline podle vlastníka
 
-### Liniové grafy
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Line Charts</span>
 
 Zobrazují trendy v čase.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Line chart" />
+</Frame>
 
 **Vhodné pro:**
 
@@ -59,9 +73,13 @@ Zobrazují trendy v čase.
 * Růst tržeb mezi čtvrtletími
 * Úroveň aktivity v čase
 
-### Číselné metriky
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Aggregate Charts</span>
 
 Výrazně zobrazují jednotlivé klíčové hodnoty.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Aggregate chart" />
+</Frame>
 
 **Vhodné pro:**
 
@@ -80,9 +98,13 @@ Výrazně zobrazují jednotlivé klíčové hodnoty.
 * **Poměr**: U polí typu Select lze vypočítat poměry mezi hodnotami. Přejděte do **Zobrazovaná data** → vyberte své pole → povolte možnost **Poměr**.
 * **Prefix a sufix**: Přidejte vlastní text před nebo za číslo (např. prefix "$" nebo sufix "%") pro lepší čitelnost.
 
-### iFramy
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
 
 Vkládejte externí nástroje a obsah přímo do svého řídicího panelu.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
 
 **Vhodné pro:**
 
@@ -96,33 +118,29 @@ Vkládejte externí nástroje a obsah přímo do svého řídicího panelu.
 * Metriky z vašeho dialeru
 * Živý obsah z vašeho nástroje pro prodejní sekvence
 
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Rich Text</span>
+
+Add formatted text and content directly to your dashboard.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Rich text" />
+</Frame>
+
+**Vhodné pro:**
+
+* Adding context or instructions
+* Dashboard descriptions
+* Notes and annotations
+
+**Features:**
+
+* Rich text formatting (bold, italic, lists, etc.)
+* Image and file uploads
+* Markdown-style editing
+
 <Note>
   **Již brzy**: Měřicí grafy (gauge) a tabulky zatím nejsou k dispozici, ale máme je v plánu.
 </Note>
-
-## Konfigurace widgetů
-
-### Zdroj dat
-
-1. Vyberte objekt, který chcete vizualizovat (Příležitosti, Lidé apod.)
-2. Zvolte metriku k zobrazení (počet, součet, průměr)
-3. Použijte filtry, abyste se zaměřili na konkrétní data
-
-### Seskupení
-
-Seskupte data podle:
-
-* Polí (fáze, vlastník, odvětví)
-* Časových období (den, týden, měsíc, čtvrtletí)
-* Vlastních segmentů
-
-### Styling
-
-Přizpůsobte si své grafy pomocí:
-
-* Barev a motivů
-* Popisků a legend
-* Velikosti a umístění
 
 ### Duplikování widgetů
 
