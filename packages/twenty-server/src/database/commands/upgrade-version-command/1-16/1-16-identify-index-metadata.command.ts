@@ -156,14 +156,12 @@ export class IdentifyIndexMetadataCommand extends ActiveOrSuspendedWorkspacesMig
         continue;
       }
 
-      // Get all indexes for this object
       const objectFlatIndexMetadatas =
         findManyFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityIds: flatObjectMetadata.indexMetadataIds,
           flatEntityMaps: flatIndexMaps,
         });
 
-      // Iterate over expected indexes from config
       for (const [indexName, indexConfig] of Object.entries(objectIndexes)) {
         if (!isDefined(indexConfig)) {
           continue;
@@ -178,7 +176,6 @@ export class IdentifyIndexMetadataCommand extends ActiveOrSuspendedWorkspacesMig
           continue;
         }
 
-        // Get the related field universal identifiers from the mapping
         const relatedFieldUniversalIdentifiers =
           STANDARD_INDEX_FIELD_UNIVERSAL_IDENTIFIERS[objectNameSingular]?.[
             indexName
@@ -194,7 +191,6 @@ export class IdentifyIndexMetadataCommand extends ActiveOrSuspendedWorkspacesMig
           continue;
         }
 
-        // Convert field universal identifiers to field metadata
         const expectedFlatFieldMetadatas = relatedFieldUniversalIdentifiers
           .map((fieldUniversalIdentifier) =>
             findFlatEntityByUniversalIdentifier({
@@ -214,7 +210,6 @@ export class IdentifyIndexMetadataCommand extends ActiveOrSuspendedWorkspacesMig
           continue;
         }
 
-        // Find matching index by comparing fieldMetadataIds
         const expectedFieldMetadataIds = expectedFlatFieldMetadatas.map(
           (flatField) => flatField.id,
         );
