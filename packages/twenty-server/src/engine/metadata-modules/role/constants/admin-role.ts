@@ -15,7 +15,6 @@ export const ADMIN_ROLE = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: true,
-  applicationId: null, // TODO: Replace with Twenty application ID
 } as const satisfies Pick<
   FlatRole,
   | 'standardId'
@@ -32,5 +31,4 @@ export const ADMIN_ROLE = {
   | 'canBeAssignedToUsers'
   | 'canBeAssignedToAgents'
   | 'canBeAssignedToApiKeys'
-  | 'applicationId'
 >;
