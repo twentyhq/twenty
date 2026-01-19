@@ -11,7 +11,6 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
-import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
@@ -307,24 +306,11 @@ export class BarChartDataService {
       },
     ];
 
-    const showCategoryLabel = isHorizontal
-      ? configuration.axisNameDisplay === AxisNameDisplay.Y ||
-        configuration.axisNameDisplay === AxisNameDisplay.BOTH
-      : configuration.axisNameDisplay === AxisNameDisplay.X ||
-        configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+    const categoryLabel = primaryAxisGroupByField.label;
+    const valueLabel = `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`;
 
-    const showValueLabel = isHorizontal
-      ? configuration.axisNameDisplay === AxisNameDisplay.X ||
-        configuration.axisNameDisplay === AxisNameDisplay.BOTH
-      : configuration.axisNameDisplay === AxisNameDisplay.Y ||
-        configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-    const xAxisLabel = showCategoryLabel
-      ? primaryAxisGroupByField.label
-      : undefined;
-    const yAxisLabel = showValueLabel
-      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
-      : undefined;
+    const xAxisLabel = isHorizontal ? valueLabel : categoryLabel;
+    const yAxisLabel = isHorizontal ? categoryLabel : valueLabel;
 
     return {
       data,
@@ -541,24 +527,11 @@ export class BarChartDataService {
       };
     });
 
-    const showCategoryLabel = isHorizontal
-      ? configuration.axisNameDisplay === AxisNameDisplay.Y ||
-        configuration.axisNameDisplay === AxisNameDisplay.BOTH
-      : configuration.axisNameDisplay === AxisNameDisplay.X ||
-        configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+    const categoryLabel = primaryAxisGroupByField.label;
+    const valueLabel = `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`;
 
-    const showValueLabel = isHorizontal
-      ? configuration.axisNameDisplay === AxisNameDisplay.X ||
-        configuration.axisNameDisplay === AxisNameDisplay.BOTH
-      : configuration.axisNameDisplay === AxisNameDisplay.Y ||
-        configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-    const xAxisLabel = showCategoryLabel
-      ? primaryAxisGroupByField.label
-      : undefined;
-    const yAxisLabel = showValueLabel
-      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
-      : undefined;
+    const xAxisLabel = isHorizontal ? valueLabel : categoryLabel;
+    const yAxisLabel = isHorizontal ? categoryLabel : valueLabel;
 
     let hasTooManyGroups = hasTooManyBars || hasTooManyGroupsPerBar;
 

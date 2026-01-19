@@ -73,38 +73,24 @@ export const useGraphBarChartWidgetData = ({
     },
   });
 
-  const chartData = useMemo((): BarDatum[] => {
-    if (!queryData?.barChartData?.data) {
-      return [];
-    }
 
-    return queryData.barChartData.data as BarDatum[];
-  }, [queryData?.barChartData?.data]);
+  const chartData = queryData?.barChartData?.data as BarDatum[];
 
-  const formattedToRawLookup = useMemo((): Map<string, RawDimensionValue> => {
-    const lookup = queryData?.barChartData?.formattedToRawLookup;
+  const formattedToRawLookup = isDefined(
+    queryData?.barChartData?.formattedToRawLookup,
+  )
+    ? new Map(Object.entries(queryData.barChartData.formattedToRawLookup))
+    : new Map();
 
-    if (!lookup || typeof lookup !== 'object') {
-      return new Map();
-    }
-
-    return new Map(Object.entries(lookup));
-  }, [queryData?.barChartData?.formattedToRawLookup]);
-
-  const colorDeterminingFieldId = useMemo(() => {
-    return isDefined(configuration.secondaryAxisGroupByFieldMetadataId)
-      ? configuration.secondaryAxisGroupByFieldMetadataId
-      : configuration.primaryAxisGroupByFieldMetadataId;
-  }, [
+  const colorDeterminingFieldId = isDefined(
     configuration.secondaryAxisGroupByFieldMetadataId,
-    configuration.primaryAxisGroupByFieldMetadataId,
-  ]);
+  )
+    ? configuration.secondaryAxisGroupByFieldMetadataId
+    : configuration.primaryAxisGroupByFieldMetadataId;
 
-  const colorDeterminingField = useMemo(() => {
-    return objectMetadataItem?.fields?.find(
-      (field) => field.id === colorDeterminingFieldId,
-    );
-  }, [objectMetadataItem?.fields, colorDeterminingFieldId]);
+  const colorDeterminingField = objectMetadataItem?.fields?.find(
+    (field) => field.id === colorDeterminingFieldId,
+  );
 
   const selectFieldOptions = useMemo((): FieldMetadataItemOption[] | null => {
     if (!isDefined(colorDeterminingField)) {
@@ -122,45 +108,30 @@ export const useGraphBarChartWidgetData = ({
     return colorDeterminingField.options;
   }, [colorDeterminingField]);
 
-  const configurationColor = useMemo(() => {
-    return parseGraphColor(configuration.color);
-  }, [configuration.color]);
+  const configurationColor = parseGraphColor(configuration.color);
 
-  const colorMode = useMemo((): GraphColorMode => {
-    return determineGraphColorMode({
-      configurationColor,
-      selectFieldOptions,
-    });
-  }, [configurationColor, selectFieldOptions]);
-
-  const series = useMemo((): BarChartSeries[] => {
-    if (!queryData?.barChartData?.series) {
-      return [];
-    }
-
-    return queryData.barChartData.series.map(
-      (seriesItem: { key: string; label?: string }): BarChartSeries => {
-        const rawValue = formattedToRawLookup.get(seriesItem.key);
-
-        const itemColor = determineChartItemColor({
-          configurationColor,
-          selectOptions: selectFieldOptions,
-          rawValue: typeof rawValue === 'string' ? rawValue : undefined,
-        });
-
-        return {
-          key: seriesItem.key,
-          label: seriesItem.label,
-          color: itemColor,
-        };
-      },
-    );
-  }, [
-    queryData?.barChartData?.series,
+  const colorMode = determineGraphColorMode({
     configurationColor,
     selectFieldOptions,
-    formattedToRawLookup,
-  ]);
+  });
+
+  const series = queryData?.barChartData?.series?.map(
+    (seriesItem: { key: string; label?: string }): BarChartSeries => {
+      const rawValue = formattedToRawLookup.get(seriesItem.key);
+
+      const itemColor = determineChartItemColor({
+        configurationColor,
+        selectOptions: selectFieldOptions,
+        rawValue: typeof rawValue === 'string' ? rawValue : undefined,
+      });
+
+      return {
+        key: seriesItem.key,
+        label: seriesItem.label,
+        color: itemColor,
+      };
+    },
+  );
 
   return {
     data: chartData,

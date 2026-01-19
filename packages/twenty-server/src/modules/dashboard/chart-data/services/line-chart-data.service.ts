@@ -11,7 +11,6 @@ import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-contex
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
-import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import {
   EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
@@ -304,18 +303,8 @@ export class LineChartDataService {
       },
     ];
 
-    const showXAxis =
-      configuration.axisNameDisplay === AxisNameDisplay.X ||
-      configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-    const showYAxis =
-      configuration.axisNameDisplay === AxisNameDisplay.Y ||
-      configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-    const xAxisLabel = showXAxis ? primaryAxisGroupByField.label : undefined;
-    const yAxisLabel = showYAxis
-      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
-      : undefined;
+    const xAxisLabel = primaryAxisGroupByField.label;
+    const yAxisLabel = `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`;
 
     return {
       series,
@@ -511,18 +500,8 @@ export class LineChartDataService {
       };
     });
 
-    const showXAxis =
-      configuration.axisNameDisplay === AxisNameDisplay.X ||
-      configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-    const showYAxis =
-      configuration.axisNameDisplay === AxisNameDisplay.Y ||
-      configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-    const xAxisLabel = showXAxis ? primaryAxisGroupByField.label : undefined;
-    const yAxisLabel = showYAxis
-      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
-      : undefined;
+    const xAxisLabel = primaryAxisGroupByField.label;
+    const yAxisLabel = `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`;
 
     const hasTooManySeries = seriesIds.length > maxSeries;
     const hasTooManyDataPoints =

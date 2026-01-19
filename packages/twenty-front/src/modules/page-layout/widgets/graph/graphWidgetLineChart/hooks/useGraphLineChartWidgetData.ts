@@ -1,6 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { LINE_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/lineChartData';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
@@ -11,7 +10,6 @@ import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/deter
 import { extractLineChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractLineChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useQuery } from '@apollo/client';
-import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type LineChartConfiguration } from '~/generated/graphql';
@@ -23,13 +21,13 @@ type UseGraphLineChartWidgetDataProps = {
 
 type UseGraphLineChartWidgetDataResult = {
   series: LineChartSeries[];
-  xAxisLabel?: string;
-  yAxisLabel?: string;
   showDataLabels: boolean;
   showLegend: boolean;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
   colorMode: GraphColorMode;
+  xAxisLabel?: string;
+  yAxisLabel?: string;
   loading: boolean;
   error?: Error;
   objectMetadataItem: ReturnType<
@@ -47,10 +45,7 @@ export const useGraphLineChartWidgetData = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const dataConfiguration = useMemo(
-    () => extractLineChartDataConfiguration(configuration),
-    [configuration],
-  );
+  const dataConfiguration = extractLineChartDataConfiguration(configuration);
 
   const {
     data: queryData,
@@ -66,105 +61,68 @@ export const useGraphLineChartWidgetData = ({
     },
   });
 
-  const formattedToRawLookup = useMemo((): Map<string, RawDimensionValue> => {
-    const lookup = queryData?.lineChartData?.formattedToRawLookup;
+  const formattedToRawLookup = isDefined(
+    queryData?.lineChartData?.formattedToRawLookup,
+  )
+    ? new Map(Object.entries(queryData.lineChartData.formattedToRawLookup))
+    : new Map();
 
-    if (!lookup || typeof lookup !== 'object') {
-      return new Map();
-    }
+  const secondaryAxisField = objectMetadataItem?.fields?.find(
+    (field) => field.id === configuration.secondaryAxisGroupByFieldMetadataId,
+  );
 
-    return new Map(Object.entries(lookup));
-  }, [queryData?.lineChartData?.formattedToRawLookup]);
+  const selectFieldOptions =
+    isDefined(secondaryAxisField) &&
+    (secondaryAxisField.type === FieldMetadataType.SELECT ||
+      secondaryAxisField.type === FieldMetadataType.MULTI_SELECT)
+      ? secondaryAxisField.options
+      : null;
 
-  const secondaryAxisField = useMemo(() => {
-    if (!isDefined(configuration.secondaryAxisGroupByFieldMetadataId)) {
-      return null;
-    }
+  const configurationColor = parseGraphColor(configuration.color);
 
-    return objectMetadataItem?.fields?.find(
-      (field) => field.id === configuration.secondaryAxisGroupByFieldMetadataId,
-    );
-  }, [
-    objectMetadataItem?.fields,
-    configuration.secondaryAxisGroupByFieldMetadataId,
-  ]);
-
-  const selectFieldOptions = useMemo((): FieldMetadataItemOption[] | null => {
-    if (!isDefined(secondaryAxisField)) {
-      return null;
-    }
-
-    const isSelectField =
-      secondaryAxisField.type === FieldMetadataType.SELECT ||
-      secondaryAxisField.type === FieldMetadataType.MULTI_SELECT;
-
-    if (!isSelectField || !isDefined(secondaryAxisField.options)) {
-      return null;
-    }
-
-    return secondaryAxisField.options;
-  }, [secondaryAxisField]);
-
-  const configurationColor = useMemo(() => {
-    return parseGraphColor(configuration.color);
-  }, [configuration.color]);
-
-  const colorMode = useMemo((): GraphColorMode => {
-    return determineGraphColorMode({
-      configurationColor,
-      selectFieldOptions,
-    });
-  }, [configurationColor, selectFieldOptions]);
-
-  const series = useMemo((): LineChartSeries[] => {
-    if (!queryData?.lineChartData?.series) {
-      return [];
-    }
-
-    return queryData.lineChartData.series.map(
-      (seriesItem: {
-        id: string;
-        label?: string;
-        data: Array<{ x: string; y: number | null }>;
-      }): LineChartSeries => {
-        const rawValue = formattedToRawLookup.get(seriesItem.id);
-
-        const itemColor = determineChartItemColor({
-          configurationColor,
-          selectOptions: selectFieldOptions,
-          rawValue: typeof rawValue === 'string' ? rawValue : undefined,
-        });
-
-        return {
-          id: seriesItem.id,
-          label: seriesItem.label,
-          color: itemColor,
-          data: seriesItem.data.map(
-            (point: { x: string; y: number | null }): LineChartDataPoint => ({
-              x: point.x,
-              y: point.y,
-            }),
-          ),
-        };
-      },
-    );
-  }, [
-    queryData?.lineChartData?.series,
+  const colorMode = determineGraphColorMode({
     configurationColor,
     selectFieldOptions,
-    formattedToRawLookup,
-  ]);
+  });
+
+  const series = queryData?.lineChartData?.series?.map(
+    (seriesItem: {
+      id: string;
+      label?: string;
+      data: Array<{ x: string; y: number | null }>;
+    }): LineChartSeries => {
+      const rawValue = formattedToRawLookup.get(seriesItem.id);
+
+      const itemColor = determineChartItemColor({
+        configurationColor,
+        selectOptions: selectFieldOptions,
+        rawValue: typeof rawValue === 'string' ? rawValue : undefined,
+      });
+
+      return {
+        id: seriesItem.id,
+        label: seriesItem.label,
+        color: itemColor,
+        data: seriesItem.data.map(
+          (point: { x: string; y: number | null }): LineChartDataPoint => ({
+            x: point.x,
+            y: point.y,
+          }),
+        ),
+      };
+    },
+  );
 
   return {
     series,
-    xAxisLabel: queryData?.lineChartData?.xAxisLabel,
-    yAxisLabel: queryData?.lineChartData?.yAxisLabel,
     showDataLabels: configuration.displayDataLabel ?? false,
     showLegend: configuration.displayLegend ?? true,
     hasTooManyGroups: queryData?.lineChartData?.hasTooManyGroups ?? false,
     colorMode,
     formattedToRawLookup,
     objectMetadataItem,
+    xAxisLabel: queryData?.lineChartData?.xAxisLabel,
+    yAxisLabel: queryData?.lineChartData?.yAxisLabel,
     loading,
     error,
   };

@@ -63,55 +63,30 @@ export const useGraphPieChartWidgetData = ({
     },
   });
 
-  const formattedToRawLookup = useMemo((): Map<string, RawDimensionValue> => {
-    const lookup = queryData?.pieChartData?.formattedToRawLookup;
+  const formattedToRawLookup =
+  isDefined(queryData?.pieChartData?.formattedToRawLookup)
+    ? new Map(Object.entries(queryData.pieChartData.formattedToRawLookup))
+    : new Map();
 
-    if (!lookup || typeof lookup !== 'object') {
-      return new Map();
-    }
 
-    return new Map(Object.entries(lookup));
-  }, [queryData?.pieChartData?.formattedToRawLookup]);
+  const groupByField = objectMetadataItem?.fields?.find(
+    (field) => field.id === configuration.groupByFieldMetadataId,
+  );
 
-  const groupByField = useMemo(() => {
-    return objectMetadataItem?.fields?.find(
-      (field) => field.id === configuration.groupByFieldMetadataId,
-    );
-  }, [objectMetadataItem?.fields, configuration.groupByFieldMetadataId]);
+  const selectFieldOptions = isDefined(groupByField) &&
+    (groupByField.type === FieldMetadataType.SELECT ||
+      groupByField.type === FieldMetadataType.MULTI_SELECT)
+      ? groupByField.options
+      : null;
 
-  const selectFieldOptions = useMemo((): FieldMetadataItemOption[] | null => {
-    if (!isDefined(groupByField)) {
-      return null;
-    }
+  const configurationColor = parseGraphColor(configuration.color);
 
-    const isSelectField =
-      groupByField.type === FieldMetadataType.SELECT ||
-      groupByField.type === FieldMetadataType.MULTI_SELECT;
+  const colorMode = determineGraphColorMode({
+    configurationColor,
+    selectFieldOptions,
+  });
 
-    if (!isSelectField || !isDefined(groupByField.options)) {
-      return null;
-    }
-
-    return groupByField.options;
-  }, [groupByField]);
-
-  const configurationColor = useMemo(() => {
-    return parseGraphColor(configuration.color);
-  }, [configuration.color]);
-
-  const colorMode = useMemo((): GraphColorMode => {
-    return determineGraphColorMode({
-      configurationColor,
-      selectFieldOptions,
-    });
-  }, [configurationColor, selectFieldOptions]);
-
-  const chartData = useMemo((): PieChartDataItem[] => {
-    if (!queryData?.pieChartData?.data) {
-      return [];
-    }
-
-    return queryData.pieChartData.data.map(
+  const chartData = queryData?.pieChartData?.data?.map(
       (item: { id: string; value: number }): PieChartDataItem => {
         const rawValue = formattedToRawLookup.get(item.id);
 
@@ -125,15 +100,8 @@ export const useGraphPieChartWidgetData = ({
           id: item.id,
           value: item.value,
           color: itemColor,
-        };
-      },
-    );
-  }, [
-    queryData?.pieChartData?.data,
-    configurationColor,
-    selectFieldOptions,
-    formattedToRawLookup,
-  ]);
+    };
+  });
 
   return {
     data: chartData,

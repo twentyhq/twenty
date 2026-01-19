@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { AxisNameDisplay } from '~/generated/graphql';
 
 const GraphWidgetLineChart = lazy(() =>
   import(
@@ -66,6 +67,19 @@ export const GraphWidgetLineChartRenderer = () => {
     (configuration.isStacked ?? LINE_CHART_CONSTANTS.IS_STACKED_DEFAULT)
       ? 'stacked'
       : undefined;
+
+  const axisNameDisplay = configuration.axisNameDisplay;
+
+  const showXAxis =
+    axisNameDisplay === AxisNameDisplay.X ||
+    axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const showYAxis =
+    axisNameDisplay === AxisNameDisplay.Y ||
+    axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const displayXAxisLabel = showXAxis ? xAxisLabel : undefined;
+  const displayYAxisLabel = showYAxis ? yAxisLabel : undefined;
 
   const chartFilterKey = generateChartAggregateFilterKey(
     configuration.rangeMin,
@@ -124,8 +138,8 @@ export const GraphWidgetLineChartRenderer = () => {
         key={chartFilterKey}
         id={widget.id}
         data={series}
-        xAxisLabel={xAxisLabel}
-        yAxisLabel={yAxisLabel}
+        xAxisLabel={displayXAxisLabel}
+        yAxisLabel={displayYAxisLabel}
         enablePointLabel={showDataLabels}
         showLegend={showLegend}
         rangeMin={configuration.rangeMin ?? undefined}

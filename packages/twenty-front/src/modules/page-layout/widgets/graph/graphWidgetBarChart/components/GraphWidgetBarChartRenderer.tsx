@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { AxisNameDisplay, BarChartLayout } from '~/generated/graphql';
 
 const GraphWidgetBarChart = lazy(() =>
   import(
@@ -68,6 +69,25 @@ export const GraphWidgetBarChartRenderer = () => {
     configuration.groupMode,
     hasGroupByOnSecondaryAxis,
   );
+
+  const isHorizontal = layout === BarChartLayout.HORIZONTAL;
+  const axisNameDisplay = configuration.axisNameDisplay;
+
+  const showXLabel = isHorizontal
+    ? axisNameDisplay === AxisNameDisplay.Y ||
+      axisNameDisplay === AxisNameDisplay.BOTH
+    : axisNameDisplay === AxisNameDisplay.X ||
+      axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const showYLabel = isHorizontal
+    ? axisNameDisplay === AxisNameDisplay.X ||
+      axisNameDisplay === AxisNameDisplay.BOTH
+    : axisNameDisplay === AxisNameDisplay.Y ||
+      axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const xAxisLabelToDisplay = showXLabel ? xAxisLabel : undefined;
+  const yAxisLabelToDisplay = showYLabel ? yAxisLabel : undefined;
+
   const chartFilterKey = generateChartAggregateFilterKey(
     configuration.rangeMin,
     configuration.rangeMax,
@@ -125,8 +145,8 @@ export const GraphWidgetBarChartRenderer = () => {
         series={series}
         indexBy={indexBy}
         keys={keys}
-        xAxisLabel={xAxisLabel}
-        yAxisLabel={yAxisLabel}
+        xAxisLabel={xAxisLabelToDisplay}
+        yAxisLabel={yAxisLabelToDisplay}
         showValues={showDataLabels}
         showLegend={showLegend}
         layout={layout}
