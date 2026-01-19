@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
+import { msg } from '@lingui/core/macro';
 
 import type Stripe from 'stripe';
 
@@ -18,12 +19,14 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
+import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -33,8 +36,6 @@ import {
   CleanWorkspaceDeletionWarningUserVarsJob,
   type CleanWorkspaceDeletionWarningUserVarsJobData,
 } from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
-import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
-import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
 
 @Injectable()
 // eslint-disable-next-line twenty/inject-workspace-repository
@@ -75,14 +76,26 @@ export class BillingWebhookSubscriptionService {
     });
 
     if (!workspace) {
-      return { noWorkspace: true };
+      throw new BillingException(
+        `Workspace not found for subscription event ${event.id} / workspaceId: ${workspaceId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
+        },
+      );
     }
 
     if (
       isDefined(workspace.deletedAt) &&
       type !== BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED
     ) {
-      return { noWorkspace: true };
+      throw new BillingException(
+        `Workspace not found for subscription event ${event.id} / workspaceId: ${workspaceId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
+        },
+      );
     }
 
     await this.billingCustomerRepository.upsert(
