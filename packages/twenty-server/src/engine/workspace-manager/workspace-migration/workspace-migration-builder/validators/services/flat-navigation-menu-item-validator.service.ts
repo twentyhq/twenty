@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
+import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
@@ -26,6 +27,17 @@ export class FlatNavigationMenuItemValidatorService {
       metadataName: 'navigationMenuItem',
       type: 'create',
     });
+
+    if (
+      isDefined(flatNavigationMenuItem.position) &&
+      flatNavigationMenuItem.position < 0
+    ) {
+      validationResult.errors.push({
+        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+        message: t`Position must be a non-negative integer`,
+        userFriendlyMessage: msg`Position must be a non-negative integer`,
+      });
+    }
 
     return validationResult;
   }
@@ -65,6 +77,7 @@ export class FlatNavigationMenuItemValidatorService {
 
   public validateFlatNavigationMenuItemUpdate({
     flatEntityId,
+    flatEntityUpdates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
     },
@@ -93,6 +106,19 @@ export class FlatNavigationMenuItemValidatorService {
       });
 
       return validationResult;
+    }
+
+    const positionUpdate = findFlatEntityPropertyUpdate({
+      flatEntityUpdates,
+      property: 'position',
+    });
+
+    if (isDefined(positionUpdate) && positionUpdate.to < 0) {
+      validationResult.errors.push({
+        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+        message: t`Position must be a non-negative integer`,
+        userFriendlyMessage: msg`Position must be a non-negative integer`,
+      });
     }
 
     return validationResult;
