@@ -15,6 +15,10 @@ import {
   type BuildWatchHandle,
   type RebuildDecision,
 } from './types';
+import { ASSETS_DIR } from '@/cli/constants/assets-dir';
+import { FUNCTIONS_DIR } from '@/cli/constants/functions-dir';
+import { GENERATED_DIR } from '@/cli/constants/generated-dir';
+import { OUTPUT_DIR } from '@/cli/constants/output-dir';
 
 /**
  * BuildService orchestrates the build process for Twenty applications.
@@ -39,16 +43,13 @@ export class BuildService {
     outputDir: string;
   } | null = null;
 
-  private readonly OUTPUT_DIR = '.twenty/output';
-  private readonly FUNCTIONS_DIR = 'functions';
-  private readonly GENERATED_DIR = 'generated';
-  private readonly ASSETS_DIR = 'assets';
-
   /**
-   * Patterns to identify asset files that should be copied.
+   * Get patterns to identify asset files that should be copied.
    * Assets are static files needed at runtime but not TypeScript code.
    */
-  private readonly ASSET_PATTERNS = ['src/assets/**/*'];
+  private get ASSET_PATTERNS(): string[] {
+    return [`${ASSETS_DIR}/**/*`];
+  }
 
   /**
    * Files/patterns to exclude from asset copying.
@@ -80,7 +81,7 @@ export class BuildService {
       const manifestResult = await loadManifest(appPath);
 
       // Step 2: Prepare output directory
-      const outputDir = path.join(appPath, this.OUTPUT_DIR);
+      const outputDir = path.join(appPath, OUTPUT_DIR);
       await this.prepareOutputDirectory(outputDir);
 
       // Step 3: Build all functions
@@ -233,7 +234,9 @@ export class BuildService {
     try {
       // If config changed or we don't have cached state, do a full rebuild
       if (decision.configChanged || !this.lastBuildState) {
-        console.log(chalk.blue('🔄 Config changed, performing full rebuild...'));
+        console.log(
+          chalk.blue('🔄 Config changed, performing full rebuild...'),
+        );
         const result = await this.build({ appPath, tarball: false });
         if (result.success) {
           return { success: true, data: undefined };
@@ -349,7 +352,7 @@ export class BuildService {
     handlerPaths: string[],
   ): Promise<BuiltFunctionInfo[]> {
     const { manifest } = manifestResult;
-    const functionsOutputDir = path.join(outputDir, this.FUNCTIONS_DIR);
+    const functionsOutputDir = path.join(outputDir, FUNCTIONS_DIR);
 
     // Normalize paths for comparison
     const normalizedPaths = new Set(
@@ -373,7 +376,7 @@ export class BuildService {
       const outputFileName = path.basename(relativePath);
       const depth = fnOutputDir ? fnOutputDir.split('/').length + 1 : 1;
       const generatedRelativePath =
-        '../'.repeat(depth) + this.GENERATED_DIR + '/index.js';
+        '../'.repeat(depth) + GENERATED_DIR + '/index.js';
 
       return {
         appPath,
@@ -400,9 +403,9 @@ export class BuildService {
           name: fn.name || fn.universalIdentifier,
           universalIdentifier: fn.universalIdentifier,
           originalHandlerPath: fn.handlerPath,
-          builtHandlerPath: `${this.FUNCTIONS_DIR}/${relativePath}`,
+          builtHandlerPath: `${FUNCTIONS_DIR}/${relativePath}`,
           sourceMapPath: result.sourceMapPath
-            ? `${this.FUNCTIONS_DIR}/${relativePath}.map`
+            ? `${FUNCTIONS_DIR}/${relativePath}.map`
             : undefined,
         });
       } else {
@@ -442,7 +445,7 @@ export class BuildService {
   private async prepareOutputDirectory(outputDir: string): Promise<void> {
     await fs.remove(outputDir);
     await fs.ensureDir(outputDir);
-    await fs.ensureDir(path.join(outputDir, this.FUNCTIONS_DIR));
+    await fs.ensureDir(path.join(outputDir, FUNCTIONS_DIR));
   }
 
   /**
@@ -454,7 +457,7 @@ export class BuildService {
     manifestResult: LoadManifestResult,
   ): Promise<BuiltFunctionInfo[]> {
     const { manifest } = manifestResult;
-    const functionsOutputDir = path.join(outputDir, this.FUNCTIONS_DIR);
+    const functionsOutputDir = path.join(outputDir, FUNCTIONS_DIR);
 
     // Compute output paths preserving directory structure
     const functionOutputPaths = manifest.serverlessFunctions.map((fn) =>
@@ -482,7 +485,7 @@ export class BuildService {
         // functions/toto/lqq.function.js → ../../generated/index.js
         const depth = fnOutputDir ? fnOutputDir.split('/').length + 1 : 1;
         const generatedRelativePath =
-          '../'.repeat(depth) + this.GENERATED_DIR + '/index.js';
+          '../'.repeat(depth) + GENERATED_DIR + '/index.js';
 
         return {
           appPath,
@@ -511,9 +514,9 @@ export class BuildService {
           name: fn.name || fn.universalIdentifier,
           universalIdentifier: fn.universalIdentifier,
           originalHandlerPath: fn.handlerPath,
-          builtHandlerPath: `${this.FUNCTIONS_DIR}/${relativePath}`,
+          builtHandlerPath: `${FUNCTIONS_DIR}/${relativePath}`,
           sourceMapPath: result.sourceMapPath
-            ? `${this.FUNCTIONS_DIR}/${relativePath}.map`
+            ? `${FUNCTIONS_DIR}/${relativePath}.map`
             : undefined,
         });
       } else {
@@ -576,7 +579,7 @@ export class BuildService {
     outputDir: string,
   ): Promise<void> {
     const generatedIndexPath = path.join(appPath, 'generated', 'index.ts');
-    const generatedOutputDir = path.join(outputDir, this.GENERATED_DIR);
+    const generatedOutputDir = path.join(outputDir, GENERATED_DIR);
 
     if (!(await fs.pathExists(generatedIndexPath))) {
       // No index.ts in generated folder, skip
@@ -604,10 +607,10 @@ export class BuildService {
 
   /**
    * Copy static assets from the app to the output directory.
+   * Also removes files from the output that no longer exist in the source.
    *
    * Looks for assets in:
-   * - src/assets/
-   * - assets/
+   * - assets/ (at the root of the application)
    *
    * @returns The number of files copied
    */
@@ -615,9 +618,9 @@ export class BuildService {
     appPath: string,
     outputDir: string,
   ): Promise<number> {
-    const assetsOutputDir = path.join(outputDir, this.ASSETS_DIR);
+    const assetsOutputDir = path.join(outputDir, ASSETS_DIR);
 
-    // Find all asset files
+    // Find all asset files in source
     const assetFiles = await glob(this.ASSET_PATTERNS, {
       cwd: appPath,
       ignore: this.ASSET_IGNORE,
@@ -625,7 +628,43 @@ export class BuildService {
       onlyFiles: true,
     });
 
+    // Compute the set of expected relative paths in output
+    const assetsDirPrefix = `${ASSETS_DIR}/`;
+    const expectedOutputFiles = new Set(
+      assetFiles.map((file) => {
+        let relativePath = file;
+        if (relativePath.startsWith(assetsDirPrefix)) {
+          relativePath = relativePath.slice(assetsDirPrefix.length);
+        }
+        return relativePath.replace(/\\/g, '/');
+      }),
+    );
+
+    // Clean up: remove files from output that no longer exist in source
+    if (await fs.pathExists(assetsOutputDir)) {
+      const existingOutputFiles = await glob('**/*', {
+        cwd: assetsOutputDir,
+        absolute: false,
+        onlyFiles: true,
+      });
+
+      for (const existingFile of existingOutputFiles) {
+        const normalizedPath = existingFile.replace(/\\/g, '/');
+        if (!expectedOutputFiles.has(normalizedPath)) {
+          const fileToRemove = path.join(assetsOutputDir, existingFile);
+          await fs.remove(fileToRemove);
+        }
+      }
+
+      // Clean up empty directories
+      await this.removeEmptyDirectories(assetsOutputDir);
+    }
+
     if (assetFiles.length === 0) {
+      // Remove the assets directory entirely if no source assets exist
+      if (await fs.pathExists(assetsOutputDir)) {
+        await fs.remove(assetsOutputDir);
+      }
       return 0;
     }
 
@@ -637,12 +676,10 @@ export class BuildService {
       const sourcePath = path.join(appPath, assetFile);
 
       // Compute the relative path within assets/
-      // Remove src/assets/ or assets/ prefix
+      // Remove assets dir prefix
       let relativePath = assetFile;
-      if (relativePath.startsWith('src/assets/')) {
-        relativePath = relativePath.slice('src/assets/'.length);
-      } else if (relativePath.startsWith('assets/')) {
-        relativePath = relativePath.slice('assets/'.length);
+      if (relativePath.startsWith(assetsDirPrefix)) {
+        relativePath = relativePath.slice(assetsDirPrefix.length);
       }
 
       const destPath = path.join(assetsOutputDir, relativePath);
@@ -655,5 +692,29 @@ export class BuildService {
     }
 
     return assetFiles.length;
+  }
+
+  /**
+   * Recursively remove empty directories starting from the given path.
+   */
+  private async removeEmptyDirectories(dirPath: string): Promise<void> {
+    if (!(await fs.pathExists(dirPath))) {
+      return;
+    }
+
+    const entries = await fs.readdir(dirPath, { withFileTypes: true });
+
+    // First, recursively clean subdirectories
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        await this.removeEmptyDirectories(path.join(dirPath, entry.name));
+      }
+    }
+
+    // Re-read directory after cleaning subdirectories
+    const remainingEntries = await fs.readdir(dirPath);
+    if (remainingEntries.length === 0) {
+      await fs.rmdir(dirPath);
+    }
   }
 }

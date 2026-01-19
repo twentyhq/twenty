@@ -1,6 +1,7 @@
 import * as chokidar from 'chokidar';
 import path from 'path';
 import { type BuildWatcherState, type RebuildDecision } from './types';
+import { ASSETS_DIR } from '@/cli/constants/assets-dir';
 
 /**
  * BuildWatcher monitors file changes and triggers rebuilds.
@@ -126,8 +127,13 @@ export class BuildWatcher {
       return true;
     }
 
-    // Watch asset files in src/assets/
-    if (relativePath.startsWith('src/assets/') || relativePath.startsWith('src\\assets\\')) {
+    // Watch asset files in assets/ (at the root of the application)
+    const assetsDirPrefix = `${ASSETS_DIR}/`;
+    const assetsDirPrefixWin = `${ASSETS_DIR}\\`;
+    if (
+      relativePath.startsWith(assetsDirPrefix) ||
+      relativePath.startsWith(assetsDirPrefixWin)
+    ) {
       return true;
     }
 
@@ -152,6 +158,8 @@ export class BuildWatcher {
     let configChanged = false;
     let manifestChanged = false;
 
+    const assetsDirPrefix = `${ASSETS_DIR}/`;
+
     for (const filepath of changedFiles) {
       const relativePath = path.relative(this.appPath, filepath);
       // Normalize path separators for cross-platform compatibility
@@ -168,8 +176,8 @@ export class BuildWatcher {
         continue;
       }
 
-      // Check if it's an asset file
-      if (normalizedPath.startsWith('src/assets/')) {
+      // Check if it's an asset file (in root assets/ folder)
+      if (normalizedPath.startsWith(assetsDirPrefix)) {
         assetsChanged = true;
         continue;
       }
@@ -208,7 +216,6 @@ export class BuildWatcher {
       // Check if it's a shared file that affects all functions
       if (
         normalizedPath.startsWith('src/') &&
-        !normalizedPath.startsWith('src/assets/') &&
         !normalizedPath.startsWith('src/app/') &&
         (normalizedPath.endsWith('.ts') || normalizedPath.endsWith('.tsx'))
       ) {
