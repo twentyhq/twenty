@@ -8,7 +8,7 @@ import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/Fil
 import { isStepFilterGroupChildAStepFilterGroup } from '@/workflow/workflow-steps/filters/utils/isStepFilterGroupChildAStepFilterGroup';
 import styled from '@emotion/styled';
 import { i18n, type MessageDescriptor } from '@lingui/core';
-import { type StepFilterGroup } from 'twenty-shared/types';
+import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
 
@@ -58,9 +58,14 @@ export const WorkflowIfElseBranchEditor = ({
 
   const isIfBranch = branchIndex === 0;
 
-  const isLastFilterInIfBranch = (stepFilter: {
-    stepFilterGroupId: string;
-  }): boolean => {
+  const isLastFilterInIfBranch = (
+    stepFilterOrGroup: StepFilter | StepFilterGroup,
+  ): boolean => {
+    if (isStepFilterGroupChildAStepFilterGroup(stepFilterOrGroup)) {
+      return false;
+    }
+
+    const stepFilter = stepFilterOrGroup as StepFilter;
     const childStepFilters = childStepFiltersAndChildStepFilterGroups.filter(
       (child) => !isStepFilterGroupChildAStepFilterGroup(child),
     );
@@ -83,41 +88,43 @@ export const WorkflowIfElseBranchEditor = ({
       <StyledFiltersContainer>
         {isDefined(branchFilterGroup) &&
           childStepFiltersAndChildStepFilterGroups.map(
-            (stepFilterGroupChild, stepFilterGroupChildIndex) => (
-              <WorkflowStepFilterContext.Provider
-                key={stepFilterGroupChild.id}
-                value={{
-                  stepId: action.id,
-                  readonly: isStepFilterGroupChildAStepFilterGroup(
-                    stepFilterGroupChild,
-                  )
-                    ? readonly
-                    : readonly || isLastFilterInIfBranch(stepFilterGroupChild),
-                  onFilterSettingsUpdate,
-                }}
-              >
-                {isStepFilterGroupChildAStepFilterGroup(
-                  stepFilterGroupChild,
-                ) ? (
-                  <WorkflowStepFilterGroupColumn
-                    key={stepFilterGroupChild.id}
-                    parentStepFilterGroup={branchFilterGroup}
-                    stepFilterGroup={stepFilterGroupChild}
-                    stepFilterGroupIndex={stepFilterGroupChildIndex}
-                  />
-                ) : (
-                  <WorkflowStepFilterColumn
-                    key={stepFilterGroupChild.id}
-                    stepFilterGroup={branchFilterGroup}
-                    stepFilter={stepFilterGroupChild}
-                    stepFilterIndex={stepFilterGroupChildIndex}
-                    firstFilterLabel={capitalize(
-                      i18n._(branchLabel).toLowerCase(),
-                    )}
-                  />
-                )}
-              </WorkflowStepFilterContext.Provider>
-            ),
+            (stepFilterGroupChild, stepFilterGroupChildIndex) => {
+              const isFilterGroup =
+                isStepFilterGroupChildAStepFilterGroup(stepFilterGroupChild);
+              const preventDeletion =
+                !isFilterGroup && isLastFilterInIfBranch(stepFilterGroupChild);
+
+              return (
+                <WorkflowStepFilterContext.Provider
+                  key={stepFilterGroupChild.id}
+                  value={{
+                    stepId: action.id,
+                    readonly: readonly,
+                    preventDeletion: preventDeletion,
+                    onFilterSettingsUpdate,
+                  }}
+                >
+                  {isFilterGroup ? (
+                    <WorkflowStepFilterGroupColumn
+                      key={stepFilterGroupChild.id}
+                      parentStepFilterGroup={branchFilterGroup}
+                      stepFilterGroup={stepFilterGroupChild}
+                      stepFilterGroupIndex={stepFilterGroupChildIndex}
+                    />
+                  ) : (
+                    <WorkflowStepFilterColumn
+                      key={stepFilterGroupChild.id}
+                      stepFilterGroup={branchFilterGroup}
+                      stepFilter={stepFilterGroupChild}
+                      stepFilterIndex={stepFilterGroupChildIndex}
+                      firstFilterLabel={capitalize(
+                        i18n._(branchLabel).toLowerCase(),
+                      )}
+                    />
+                  )}
+                </WorkflowStepFilterContext.Provider>
+              );
+            },
           )}
       </StyledFiltersContainer>
 

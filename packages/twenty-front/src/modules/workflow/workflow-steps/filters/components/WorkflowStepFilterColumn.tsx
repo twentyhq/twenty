@@ -29,9 +29,9 @@ export const WorkflowStepFilterColumn = ({
   stepFilterIndex,
   firstFilterLabel,
 }: WorkflowStepFilterColumnProps) => {
-  const { readonly } = useContext(WorkflowStepFilterContext);
+  const { readonly, preventDeletion } = useContext(WorkflowStepFilterContext);
 
-  const shouldShowDropdown = !readonly;
+  const shouldShowDropdown = !readonly && !preventDeletion;
 
   return (
     <AdvancedFilterCommandMenuColumn>

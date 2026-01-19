@@ -7,6 +7,7 @@ type WorkflowStepFilterContextType = {
     filterSettings: FilterSettings,
   ) => void | Promise<void>;
   readonly?: boolean;
+  preventDeletion?: boolean;
 };
 
 export const WorkflowStepFilterContext =
