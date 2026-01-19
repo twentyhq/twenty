@@ -33,7 +33,9 @@ export const filterAndOrderFieldsFromConfiguration = ({
       );
 
       const visibleFields = availableFieldMetadataItems
-        .filter((fieldMetadataItem) => sectionFieldIds.has(fieldMetadataItem.id))
+        .filter((fieldMetadataItem) =>
+          sectionFieldIds.has(fieldMetadataItem.id),
+        )
         .filter((fieldMetadataItem) => {
           const fieldConfig = section.fields.find(
             (f) => f.fieldMetadataId === fieldMetadataItem.id,
