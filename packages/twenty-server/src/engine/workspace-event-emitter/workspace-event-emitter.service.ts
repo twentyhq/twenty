@@ -8,7 +8,9 @@ import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
+import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 
 @Injectable()
 export class WorkspaceEventEmitterService {
@@ -98,7 +100,10 @@ export class WorkspaceEventEmitterService {
     const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
 
     for (const event of workspaceEventBatch.events) {
-      const eventWithObjectName = {
+      const { action } = parseEventNameOrThrow(workspaceEventBatch.name);
+
+      const eventWithObjectName: ObjectRecordSubscriptionEvent = {
+        action,
         objectNameSingular,
         ...event,
       };

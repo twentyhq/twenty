@@ -12,6 +12,7 @@
     "lingui.config.ts",
     "jest.config.mjs",
     "vite.config.ts",
+    "vitest.config.ts",
     "setupTests.ts"
   ],
   "exclude": [

@@ -18,6 +18,12 @@ export class RouteTriggerDTO {
   @Field(() => HTTPMethod)
   httpMethod: HTTPMethod;
 
+  @Field(() => [String], {
+    description:
+      'List of HTTP header names to forward to the serverless function event',
+  })
+  forwardedRequestHeaders: string[];
+
   @Field()
   createdAt: Date;
 

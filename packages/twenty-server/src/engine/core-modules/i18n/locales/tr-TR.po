@@ -54,6 +54,11 @@ msgstr "Yinelenen bir kayıt tespit edildi."
 msgid "A field with this name already exists."
 msgstr "Bu isimde bir alan zaten mevcut."
 
+#. js-lingui-id: D0Kuk1
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "A front component with this name already exists."
+msgstr ""
+
 #. js-lingui-id: +aAI33
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "A function with this name already exists."
@@ -658,6 +663,19 @@ msgstr ""
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Code step execution failed."
 msgstr "Kod adımı yürütmesi başarısız oldu."
+
+#. js-lingui-id: xBSqqt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Command menu item not found"
+msgstr ""
+
+#. js-lingui-id: GQ9t8D
+#: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
+msgid "Command menu item not found."
+msgstr ""
 
 #. js-lingui-id: L1uQuF
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -1319,6 +1337,25 @@ msgstr "Form eylem en az bir alan içermelidir"
 msgid "Friday"
 msgstr "Cuma"
 
+#. js-lingui-id: BzEbyv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
+msgid "Front component name is required"
+msgstr ""
+
+#. js-lingui-id: VZiHPV
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
+msgid "Front component not found"
+msgstr ""
+
+#. js-lingui-id: J+VVwG
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Front component not found."
+msgstr ""
+
 #. js-lingui-id: pouguB
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function code is unchanged."
@@ -1514,6 +1551,11 @@ msgstr "Geçersiz Captcha, lütfen başka bir cihaz deneyin"
 msgid "Invalid captcha. Please try again."
 msgstr "Geçersiz CAPTCHA. Lütfen tekrar deneyin."
 
+#. js-lingui-id: lyfeGa
+#: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
+msgid "Invalid command menu item input."
+msgstr ""
+
 #. js-lingui-id: C25VTR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Invalid configuration for widget \"{widgetTitle}\": Chart type {chartType} requires IS_DASHBOARD_V2_ENABLED feature flag"
@@ -1611,6 +1653,11 @@ msgstr "Geçersiz filtre parametresi."
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Invalid filter value: \"{value}\""
+msgstr ""
+
+#. js-lingui-id: rFH0az
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Invalid front component input."
 msgstr ""
 
 #. js-lingui-id: lPC0WB
@@ -2101,6 +2148,14 @@ msgstr "Etiket tanımlayıcı görünüm alanı en alttaki pozisyonda olmalı"
 msgid "Label identifier view field has to be visible"
 msgstr "Etiket tanımlayıcı görünüm alanı görünür olmalı"
 
+#. js-lingui-id: w8Rv8T
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Label is required"
+msgstr ""
+
 #. js-lingui-id: 6bWuI/
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Label is required."
@@ -2338,10 +2393,20 @@ msgstr "Veri kaynağında izin bulunamadı."
 msgid "No records were affected."
 msgstr "Hiçbir kayıt etkilenmedi."
 
+#. js-lingui-id: iHQYLb
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "No role assigned to the application."
+msgstr ""
+
 #. js-lingui-id: 5ZMHXg
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "Bu kullanıcı için çalışma alanında rol bulunamadı."
+
+#. js-lingui-id: ISCcTE
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "No role found for user."
+msgstr ""
 
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2814,6 +2879,11 @@ msgstr "İstek sınırına ulaşıldı. Lütfen daha sonra tekrar deneyin."
 msgid "Raw SQL queries are not allowed."
 msgstr "Ham SQL sorgularına izin verilmez."
 
+#. js-lingui-id: EESfI5
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Record does not satisfy security constraints."
+msgstr ""
+
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Record not found."
@@ -3111,6 +3181,11 @@ msgstr "Sunucusuz işlev zaten mevcut"
 msgid "Serverless function execution failed."
 msgstr "Sunucusuz işlev yürütmesi başarısız oldu."
 
+#. js-lingui-id: y8i9sW
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Serverless function execution is disabled."
+msgstr ""
+
 #. js-lingui-id: MSgd2w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
@@ -3319,6 +3394,11 @@ msgstr "Aradığınız ajan bulunamadı. Silinmiş olabilir ya da erişiminiz ol
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "API anahtarı için geçerli bir rol atanmadı. Lütfen API anahtarı yapılandırmanızı kontrol edin."
+
+#. js-lingui-id: IU78DA
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "The application does not have a valid role assigned. Please check your application configuration."
+msgstr ""
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts

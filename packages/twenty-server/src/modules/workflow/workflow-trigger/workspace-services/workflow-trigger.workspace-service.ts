@@ -3,6 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
+import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -24,7 +28,10 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import {
+  type WorkflowManualTrigger,
+  WorkflowTriggerType,
+} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 import { assertNever } from 'src/utils/assert';
@@ -37,6 +44,8 @@ export class WorkflowTriggerWorkspaceService {
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly automatedTriggerWorkspaceService: AutomatedTriggerWorkspaceService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly commandMenuItemService: CommandMenuItemService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async runWorkflowVersion({
@@ -191,7 +200,7 @@ export class WorkflowTriggerWorkspaceService {
       workspaceId,
     );
 
-    await this.enableTrigger(workflowVersion, workspaceId);
+    await this.enableTrigger(workflow, workflowVersion, workspaceId);
   }
 
   private async performDeactivationSteps(
@@ -306,13 +315,77 @@ export class WorkflowTriggerWorkspaceService {
   }
 
   private async enableTrigger(
+    workflow: WorkflowWorkspaceEntity,
     workflowVersion: WorkflowVersionWorkspaceEntity,
     workspaceId: string,
   ) {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
 
     switch (workflowVersion.trigger.type) {
-      case WorkflowTriggerType.MANUAL:
+      case WorkflowTriggerType.MANUAL: {
+        const isCommandMenuItemEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+            workspaceId,
+          );
+
+        if (!isCommandMenuItemEnabled) {
+          return;
+        }
+
+        const trigger = workflowVersion.trigger as WorkflowManualTrigger;
+
+        const availability = trigger.settings.availability;
+
+        let availabilityType = CommandMenuItemAvailabilityType.GLOBAL;
+        let availabilityObjectMetadataId: string | undefined;
+
+        if (availability) {
+          switch (availability.type) {
+            case 'GLOBAL':
+              availabilityType = CommandMenuItemAvailabilityType.GLOBAL;
+              break;
+            case 'SINGLE_RECORD':
+            case 'BULK_RECORDS': {
+              availabilityType =
+                availability.type === 'SINGLE_RECORD'
+                  ? CommandMenuItemAvailabilityType.SINGLE_RECORD
+                  : CommandMenuItemAvailabilityType.BULK_RECORDS;
+
+              const { objectIdByNameSingular } =
+                await this.workflowCommonWorkspaceService.getFlatEntityMaps(
+                  workspaceId,
+                );
+
+              const objectId =
+                objectIdByNameSingular[availability.objectNameSingular];
+
+              if (!objectId) {
+                throw new WorkflowTriggerException(
+                  `Object metadata not found for object: ${availability.objectNameSingular}`,
+                  WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+                );
+              }
+
+              availabilityObjectMetadataId = objectId;
+              break;
+            }
+          }
+        }
+
+        await this.commandMenuItemService.create(
+          {
+            workflowVersionId: workflowVersion.id,
+            label: workflow.name ?? 'Manual Trigger',
+            icon: trigger.settings.icon,
+            availabilityType,
+            availabilityObjectMetadataId,
+          },
+          workspaceId,
+        );
+
+        return;
+      }
       case WorkflowTriggerType.WEBHOOK:
         return;
       case WorkflowTriggerType.DATABASE_EVENT: {
@@ -361,7 +434,32 @@ export class WorkflowTriggerWorkspaceService {
         });
 
         return;
-      case WorkflowTriggerType.MANUAL:
+      case WorkflowTriggerType.MANUAL: {
+        const isCommandMenuItemEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+            workspaceId,
+          );
+
+        if (!isCommandMenuItemEnabled) {
+          return;
+        }
+
+        const existingCommandMenuItem =
+          await this.commandMenuItemService.findByWorkflowVersionId(
+            workflowVersion.id,
+            workspaceId,
+          );
+
+        if (existingCommandMenuItem) {
+          await this.commandMenuItemService.delete(
+            existingCommandMenuItem.id,
+            workspaceId,
+          );
+        }
+
+        return;
+      }
       case WorkflowTriggerType.WEBHOOK:
         return;
       default:

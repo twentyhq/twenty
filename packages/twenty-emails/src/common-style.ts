@@ -1,4 +1,4 @@
-/* eslint-disable @nx/workspace-no-hardcoded-colors */
+/* eslint-disable twenty/no-hardcoded-colors */
 
 const grayScale = {
   gray100: '#000000',

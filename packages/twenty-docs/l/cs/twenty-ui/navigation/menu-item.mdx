@@ -1,5 +1,5 @@
 ---
-title: Menu Item
+title: Položka menu
 image: /images/user-guide/kanban-views/kanban.png
 ---
 
@@ -42,20 +42,20 @@ Univerzální položka menu navržená k použití v menu nebo navigačním sezn
   </Tab>
 
   <Tab title="Vlastnosti">
-    | Vlastnosti       | Typ                | Popis                                                                                      |
-    | ---------------- | ------------------ | ------------------------------------------------------------------------------------------ |
-    | Levá ikona       | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu                                  |
-    | akcent           | řetězec            | Určuje barvu akcentu položky menu. Options include: `default`, `danger`, and `placeholder` |
-    | text             | textový řetězec    | Textový obsah položky menu                                                                 |
-    | ikonová tlačítka | pole               | Seznam objektů představujících další ikony tlačítek spojené s položkou menu                |
-    | isTooltipOpen    | booleovská hodnota | Řídí viditelnost tooltipu spojeného s položkou menu                                        |
-    | testId           | řetězec            | Atribut data-testid pro testovací účely                                                    |
-    | onClick          | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu                               |
-    | className        | řetězec            | Volitelný název pro dodatečné stylování                                                    |
+    | Vlastnosti       | Typ                | Popis                                                                                     |
+    | ---------------- | ------------------ | ----------------------------------------------------------------------------------------- |
+    | Levá ikona       | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu                                 |
+    | akcent           | řetězec            | Určuje barvu akcentu položky menu. Možnosti zahrnují: `default`, `danger` a `placeholder` |
+    | text             | textový řetězec    | Textový obsah položky menu                                                                |
+    | ikonová tlačítka | pole               | Seznam objektů představujících další ikony tlačítek spojené s položkou menu               |
+    | isTooltipOpen    | booleovská hodnota | Řídí viditelnost tooltipu spojeného s položkou menu                                       |
+    | testId           | řetězec            | Atribut data-testid pro testovací účely                                                   |
+    | onClick          | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu                              |
+    | className        | řetězec            | Volitelný název pro dodatečné stylování                                                   |
   </Tab>
 </Tabs>
 
-## Variants
+## Varianty
 
 Různé varianty komponenty položky menu zahrnují následující:
 
@@ -102,9 +102,9 @@ Položka menu ve stylu příkazu v menu pro označení klávesových zkratek.
   </Tab>
 </Tabs>
 
-### Draggable
+### Přetahovatelný
 
-A draggable menu item component designed to be used in a menu or list where items can be dragged, and additional actions can be performed through icon buttons.
+Komponenta položky menu s možností přetahování, určená k použití v nabídce nebo seznamu, kde je možné položky přetahovat, a prostřednictvím tlačítek s ikonami lze provádět další akce.
 
 <Tabs>
   <Tab title="Použití">
@@ -148,9 +148,9 @@ A draggable menu item component designed to be used in a menu or list where item
   </Tab>
 </Tabs>
 
-### Multi Select
+### Vícenásobný výběr
 
-Provides a way to implement multi-select functionality with an associated checkbox.
+Poskytuje způsob, jak implementovat funkci vícenásobného výběru s přidruženým zaškrtávacím políčkem.
 
 <Tabs>
   <Tab title="Použití">
@@ -183,9 +183,9 @@ Provides a way to implement multi-select functionality with an associated checkb
   </Tab>
 </Tabs>
 
-### Multi Select Avatar
+### Vícenásobný výběr s avatarem
 
-A multi-select menu item with an avatar, a checkbox for selection, and textual content.
+Položka menu pro vícenásobný výběr s avatarem, zaškrtávacím políčkem pro výběr a textovým obsahem.
 
 <Tabs>
   <Tab title="Použití">
@@ -377,15 +377,15 @@ Volitelná položka menu s ukázkou barvy pro situace, kdy chcete, aby uživatel
   </Tab>
 
   <Tab title="Vlastnosti">
-    | Vlastnosti | Typ                | Popis                                                                                                                                                                      |
-    | ---------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | barva      | řetězec            | The theme color to be displayed as a sample in the menu item. Možnosti zahrnují: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow` a `gray` |
-    | vybráno    | booleovská hodnota | Označuje, zda je položka menu vybrána (zaškrtnuta)                                                                                                                         |
-    | neaktivní  | booleovská hodnota | Označuje, zda je položka menu deaktivována                                                                                                                                 |
-    | zvýrazněno | booleovská hodnota | Označuje, zda je položka menu aktuálně zvýrazněna                                                                                                                          |
-    | varianta   | řetězec            | Varianta ukázky barvy. Může být buďto `default` nebo `pipeline`                                                                                                            |
-    | onClick    | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu                                                                                                               |
-    | className  | řetězec            | Volitelný název pro dodatečné stylování                                                                                                                                    |
+    | Vlastnosti | Typ                | Popis                                                                                                                                                                   |
+    | ---------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | barva      | řetězec            | Barva motivu, která se zobrazí jako ukázka v položce menu. Možnosti zahrnují: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow` a `gray` |
+    | vybráno    | booleovská hodnota | Označuje, zda je položka menu vybrána (zaškrtnuta)                                                                                                                      |
+    | neaktivní  | booleovská hodnota | Označuje, zda je položka menu deaktivována                                                                                                                              |
+    | zvýrazněno | booleovská hodnota | Označuje, zda je položka menu aktuálně zvýrazněna                                                                                                                       |
+    | varianta   | řetězec            | Varianta ukázky barvy. Může být buďto `default` nebo `pipeline`                                                                                                         |
+    | onClick    | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu                                                                                                            |
+    | className  | řetězec            | Volitelný název pro dodatečné stylování                                                                                                                                 |
   </Tab>
 </Tabs>
 

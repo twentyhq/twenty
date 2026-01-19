@@ -1,8 +1,10 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
@@ -10,6 +12,7 @@ import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { isDefined } from 'twenty-shared/utils';
+import { RelationType } from '~/generated-metadata/graphql';
 
 type UseWidgetActionsParams = {
   widget: PageLayoutWidget;
@@ -53,6 +56,25 @@ export const useWidgetActions = ({
     return actions;
   }
 
+  const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
+    field: fieldMetadataItem,
+    position: 0,
+    objectMetadataItem,
+    showLabel: true,
+    labelWidth: 90,
+  });
+
+  const isOneToManyRelation =
+    isFieldRelation(fieldDefinition) &&
+    fieldDefinition.metadata.relationType === RelationType.ONE_TO_MANY;
+
+  if (isOneToManyRelation) {
+    actions.push({
+      id: 'see-all',
+      position: 0,
+    });
+  }
+
   const isFieldReadOnly = isRecordFieldReadOnly({
     isRecordReadOnly,
     objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
@@ -68,7 +90,7 @@ export const useWidgetActions = ({
   if (!isFieldReadOnly) {
     actions.push({
       id: 'edit',
-      position: 0,
+      position: 1,
     });
   }
 
