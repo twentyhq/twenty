@@ -1,9 +1,8 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-directory';
-import { ApiService } from '@/cli/services/api.service';
-import { type ApiResponse } from '@/cli/types/api-response.types';
-import { loadManifest } from '@/cli/utils/load-manifest';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config';
+import { ApiService, type ApiResponse } from '@/cli/utilities/api';
+import { loadManifest } from '@/cli/utilities/manifest';
 
 export class AppUninstallCommand {
   private apiService = new ApiService();

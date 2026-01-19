@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { ConfigService } from '@/cli/services/config.service';
+import { ConfigService } from '@/cli/utilities/config';
 
 export class AuthLogoutCommand {
   private configService = new ConfigService();

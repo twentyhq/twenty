@@ -4,11 +4,13 @@ import inquirer from 'inquirer';
 import { join } from 'path';
 import camelcase from 'lodash.camelcase';
 import kebabcase from 'lodash.kebabcase';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-directory';
-import { getNewObjectFileContent } from '@/cli/utils/get-new-object-file-content';
-import { getFunctionBaseFile } from '@/cli/utils/get-function-base-file';
-import { getRoleBaseFile } from '@/cli/utils/get-role-base-file';
-import { convertToLabel } from '@/cli/utils/convert-to-label';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config';
+import {
+  getNewObjectFileContent,
+  getFunctionBaseFile,
+  getRoleBaseFile,
+  convertToLabel,
+} from '@/cli/utilities/entity';
 
 const APP_FOLDER = 'src/app';
 

@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra';
 import dotenv from 'dotenv';
-import { findPathFile } from '@/cli/utils/find-path-file';
+import { findPathFile } from './file-find';
 
 export const loadEnvVariables = async (appPath: string) => {
   let envFile = '';

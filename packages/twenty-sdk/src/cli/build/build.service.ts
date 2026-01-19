@@ -2,11 +2,11 @@ import path from 'path';
 import * as fs from 'fs-extra';
 import chalk from 'chalk';
 import { glob } from 'fast-glob';
-import { type ApiResponse } from '@/cli/types/api-response.types';
+import { type ApiResponse } from '@/cli/utilities/api';
 import {
   loadManifest,
   type LoadManifestResult,
-} from '@/cli/utils/load-manifest';
+} from '@/cli/utilities/manifest';
 import { ViteBuildRunner } from './vite-build-runner';
 import { BuildManifestWriter } from './build-manifest-writer';
 import { TarballService } from './tarball.service';

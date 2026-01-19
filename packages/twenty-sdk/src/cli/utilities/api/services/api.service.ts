@@ -6,8 +6,8 @@ import {
   printSchema,
 } from 'graphql/index';
 import { createClient } from 'graphql-sse';
-import { type ApiResponse } from '@/cli/types/api-response.types';
-import { ConfigService } from '@/cli/services/config.service';
+import { type ApiResponse } from '../types/api-response.types';
+import { ConfigService } from '@/cli/utilities/config/services/config.service';
 import {
   type PackageJson,
   type ApplicationManifest,
@@ -39,7 +39,7 @@ export class ApiService {
         if (error.response?.status === 401) {
           console.error(
             chalk.red(
-              'Authentication failed. Please run `twenty auth login` first.',
+              'Authentication failed. Please run `twenty auth:login` first.',
             ),
           );
         } else if (error.response?.status === 403) {

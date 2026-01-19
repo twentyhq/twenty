@@ -1,4 +1,4 @@
-import { ConfigService } from '@/cli/services/config.service';
+import { ConfigService } from '@/cli/utilities/config';
 import { testConfig } from '@/cli/__tests__/e2e/constants/testConfig';
 
 beforeAll(() => {

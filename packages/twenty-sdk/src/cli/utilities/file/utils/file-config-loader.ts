@@ -2,7 +2,7 @@ import { createJiti } from 'jiti';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { parseJsoncFile } from './jsonc-parser';
+import { parseJsoncFile } from './file-jsonc';
 
 /**
  * Read tsconfig.json paths and convert them to jiti aliases.

@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import { ApiService } from '@/cli/services/api.service';
-import { ConfigService } from '@/cli/services/config.service';
+import { ApiService } from '@/cli/utilities/api';
+import { ConfigService } from '@/cli/utilities/config';
 
 export class AuthStatusCommand {
   private configService = new ConfigService();

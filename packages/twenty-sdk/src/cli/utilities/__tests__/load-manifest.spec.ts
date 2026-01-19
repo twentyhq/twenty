@@ -2,7 +2,7 @@ import { join } from 'path';
 import {
   loadManifest,
   type LoadManifestResult,
-} from '@/cli/utils/load-manifest';
+} from '@/cli/utilities/manifest';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/test-app/src/app/default-function.role';
 import {
   POST_CARD_EXTENSION_PRIORITY_FIELD_ID,
@@ -63,7 +63,9 @@ describe('loadManifest with test-app', () => {
     // Check fields
     expect(postCard.fields).toHaveLength(5);
 
-    const contentField = postCard.fields?.find((f) => f.name === 'content');
+    const contentField = postCard.fields?.find(
+      (field: { name: string }) => field.name === 'content',
+    );
     expect(contentField).toBeDefined();
     expect(contentField?.universalIdentifier).toBe(
       '58a0a314-d7ea-4865-9850-7fb84e72f30b',
@@ -71,7 +73,9 @@ describe('loadManifest with test-app', () => {
     expect(contentField?.type).toBe('TEXT');
     expect(contentField?.label).toBe('Content');
 
-    const statusField = postCard.fields?.find((f) => f.name === 'status');
+    const statusField = postCard.fields?.find(
+      (field: { name: string }) => field.name === 'status',
+    );
     expect(statusField).toBeDefined();
     expect(statusField?.type).toBe('SELECT');
 
@@ -89,7 +93,9 @@ describe('loadManifest with test-app', () => {
     // Check triggers
     expect(testFunction.triggers).toHaveLength(3);
 
-    const routeTrigger = testFunction.triggers.find((t) => t.type === 'route');
+    const routeTrigger = testFunction.triggers.find(
+      (trigger: { type: string }) => trigger.type === 'route',
+    ) as any;
     expect(routeTrigger).toBeDefined();
     expect(routeTrigger?.universalIdentifier).toBe(
       'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
@@ -98,13 +104,15 @@ describe('loadManifest with test-app', () => {
     expect(routeTrigger?.httpMethod).toBe('GET');
     expect(routeTrigger?.forwardedRequestHeaders).toEqual(['signature']);
 
-    const cronTrigger = testFunction.triggers.find((t) => t.type === 'cron');
+    const cronTrigger = testFunction.triggers.find(
+      (trigger: { type: string }) => trigger.type === 'cron',
+    ) as any;
     expect(cronTrigger).toBeDefined();
     expect(cronTrigger?.pattern).toBe('0 0 1 1 *');
 
     const dbEventTrigger = testFunction.triggers.find(
-      (t) => t.type === 'databaseEvent',
-    );
+      (trigger: { type: string }) => trigger.type === 'databaseEvent',
+    ) as any;
     expect(dbEventTrigger).toBeDefined();
     expect(dbEventTrigger?.eventName).toBe('person.created');
 
@@ -170,7 +178,7 @@ describe('loadManifest with test-app', () => {
     expect(postCardExtension.fields).toHaveLength(2);
 
     const priorityField = postCardExtension.fields.find(
-      (f) => f.name === 'priority',
+      (field: { name: string }) => field.name === 'priority',
     );
     expect(priorityField).toBeDefined();
     expect(priorityField?.universalIdentifier).toBe(
@@ -183,7 +191,7 @@ describe('loadManifest with test-app', () => {
     );
 
     const categoryField = postCardExtension.fields.find(
-      (f) => f.name === 'category',
+      (field: { name: string }) => field.name === 'category',
     );
     expect(categoryField).toBeDefined();
     expect(categoryField?.universalIdentifier).toBe(
@@ -202,7 +210,8 @@ describe('loadManifest with test-app', () => {
     );
 
     const linkedRole = manifest.roles?.find(
-      (r) => r.universalIdentifier === expectedRoleId,
+      (r: { universalIdentifier: string }) =>
+        r.universalIdentifier === expectedRoleId,
     );
     expect(linkedRole).toBeDefined();
 
