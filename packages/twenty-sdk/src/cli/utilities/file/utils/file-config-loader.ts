@@ -1,3 +1,4 @@
+import type { FrontComponentConfig, FunctionConfig } from '@/application';
 import * as fs from 'fs-extra';
 import { createJiti } from 'jiti';
 import { type JitiOptions } from 'jiti/lib/types';
@@ -5,10 +6,30 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { parseJsoncFile } from './file-jsonc';
 
-/**
- * Read tsconfig.json paths and convert them to jiti aliases.
- * Handles patterns like "generated/*": ["./generated/*"]
- */
+export type ExtractedFunctionConfig = {
+  universalIdentifier: string;
+  name?: string;
+  description?: string;
+  timeoutSeconds?: number;
+  triggers?: Array<{ type: string; [key: string]: unknown }>;
+  handlerName: string;
+  handlerPath: string;
+};
+
+export type ExtractedFrontComponentConfig = {
+  universalIdentifier: string;
+  name?: string;
+  description?: string;
+  componentName: string;
+  componentPath: string;
+};
+
+type ExtractOptions = {
+  propertyName: string;
+  entityType: string;
+  jsx?: boolean;
+};
+
 const getTsconfigAliases = async (
   appPath: string,
 ): Promise<Record<string, string>> => {
@@ -34,11 +55,8 @@ const getTsconfigAliases = async (
     for (const [pattern, targets] of Object.entries(paths)) {
       if (targets.length === 0) continue;
 
-      // Remove trailing /* from pattern and target
       const aliasKey = pattern.replace(/\/\*$/, '');
       const targetPath = targets[0].replace(/\/\*$/, '');
-
-      // Resolve the target path relative to baseUrl and appPath
       const resolvedTarget = path.resolve(appPath, baseUrl, targetPath);
       aliases[aliasKey] = resolvedTarget;
     }
@@ -49,10 +67,6 @@ const getTsconfigAliases = async (
   }
 };
 
-/**
- * Create a jiti instance for loading TypeScript config files.
- * When appPath is provided, jiti will use the app's tsconfig.json for path resolution.
- */
 const createConfigLoader = async (
   appPath?: string,
   options: { jsx?: boolean } = {},
@@ -60,17 +74,15 @@ const createConfigLoader = async (
   const basePath = appPath ?? fileURLToPath(import.meta.url);
 
   const jitiOptions: JitiOptions = {
-    moduleCache: false, // Don't cache during dev for hot reload
+    moduleCache: false,
     fsCache: false,
     interopDefault: true,
   };
 
-  // Enable JSX support using jiti's built-in babel transform
   if (options.jsx) {
     jitiOptions.jsx = { runtime: 'automatic' };
   }
 
-  // If appPath is provided, read tsconfig.json and set up aliases
   if (appPath) {
     const aliases = await getTsconfigAliases(appPath);
     if (Object.keys(aliases).length > 0) {
@@ -81,32 +93,20 @@ const createConfigLoader = async (
   return createJiti(basePath, jitiOptions);
 };
 
-/**
- * Find the first valid config export from a module.
- * Priority:
- * 1. default export
- * 2. first named export that is a plain object (not a function, class, or primitive)
- */
 const findConfigExport = <T>(
   mod: Record<string, unknown>,
   validator?: (value: unknown) => boolean,
 ): T | undefined => {
-  // Priority 1: default export
   if (mod.default !== undefined) {
     if (!validator || validator(mod.default)) {
       return mod.default as T;
     }
   }
 
-  // Priority 2: first named export that passes validation (or is a plain object)
   for (const [key, value] of Object.entries(mod)) {
     if (key === 'default') continue;
     if (value === undefined || value === null) continue;
-
-    // Skip functions, classes, and primitives - we want config objects
     if (typeof value !== 'object') continue;
-
-    // Skip arrays
     if (Array.isArray(value)) continue;
 
     if (!validator || validator(value)) {
@@ -117,22 +117,6 @@ const findConfigExport = <T>(
   return undefined;
 };
 
-/**
- * Load a TypeScript config file using jiti runtime evaluation.
- * This allows importing constants and other modules in config files.
- *
- * Supports multiple export patterns:
- * - `export default { ... }`
- * - `export const anyName = { ... }` (any named export that is a plain object)
- *
- * @param filepath - Absolute path to the config file
- * @param appPath - Optional app path for tsconfig.json path resolution
- *
- * @example
- * ```typescript
- * const config = await loadConfig<AppDefinition>('/path/to/src/app/application.config.ts', '/path/to/app');
- * ```
- */
 export const loadConfig = async <T>(
   filepath: string,
   appPath?: string,
@@ -141,7 +125,6 @@ export const loadConfig = async <T>(
 
   try {
     const mod = (await jiti.import(filepath)) as Record<string, unknown>;
-
     const config = findConfigExport<T>(mod);
 
     if (!config) {
@@ -161,39 +144,25 @@ export const loadConfig = async <T>(
   }
 };
 
-/**
- * Escape special regex characters in a string.
- */
 const escapeRegExp = (string: string): string => {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
-/**
- * Extract the import path for a given identifier from source code.
- * Returns null if the identifier is not imported (i.e., defined locally).
- */
 const extractImportPath = (
   source: string,
   identifier: string,
   filepath: string,
   appPath: string,
 ): string | null => {
-  // Escape special regex characters in the identifier (e.g., $ in function names like $handler)
   const escapedIdentifier = escapeRegExp(identifier);
 
-  // Match: import { identifier } from 'path'
-  // Match: import { original as identifier } from 'path'
-  // Match: import identifier from 'path' (default import)
   const patterns = [
-    // Named import: import { foo } from 'path' or import { foo, bar } from 'path'
     new RegExp(
       `import\\s*\\{[^}]*\\b${escapedIdentifier}\\b[^}]*\\}\\s*from\\s*['"]([^'"]+)['"]`,
     ),
-    // Aliased import: import { original as foo } from 'path'
     new RegExp(
       `import\\s*\\{[^}]*\\w+\\s+as\\s+${escapedIdentifier}[^}]*\\}\\s*from\\s*['"]([^'"]+)['"]`,
     ),
-    // Default import: import foo from 'path'
     new RegExp(`import\\s+${escapedIdentifier}\\s+from\\s*['"]([^'"]+)['"]`),
   ];
 
@@ -202,12 +171,10 @@ const extractImportPath = (
 
     if (match) {
       const importPath = match[1];
-      // Resolve relative to the function file, then make relative to appPath
       const fileDir = path.dirname(filepath);
       const absolutePath = path.resolve(fileDir, importPath);
       const relativePath = path.relative(appPath, absolutePath);
 
-      // Add .ts extension if not present
       const resultPath = relativePath.endsWith('.ts')
         ? relativePath
         : `${relativePath}.ts`;
@@ -216,183 +183,99 @@ const extractImportPath = (
     }
   }
 
-  // Handler is defined locally, not imported
   return null;
 };
 
-/**
- * Load a function module and extract handler info from config.handler property.
- *
- * The handler can be either:
- * 1. Imported from another file:
- *    ```typescript
- *    import { myHandler } from '../src/handlers/my-handler';
- *    export const config = { handler: myHandler, ... };
- *    ```
- *
- * 2. Defined locally in the same file:
- *    ```typescript
- *    export const myHandler = async () => { ... };
- *    export const config = { handler: myHandler, ... };
- *    ```
- *
- * @example
- * ```typescript
- * const { config, handlerName, handlerPath } = await loadFunctionModule(
- *   '/path/to/src/app/functions/my-function.function.ts',
- *   '/path/to/app'
- * );
- * ```
- */
-export const loadFunctionModule = async (
+const extractConfigFromFile = async <T extends Record<string, unknown>>(
   filepath: string,
   appPath: string,
-): Promise<{
-  config: unknown;
-  handlerName: string;
-  handlerPath: string;
-}> => {
-  const jiti = await createConfigLoader(appPath);
+  options: ExtractOptions,
+): Promise<{ config: T; entryName: string; entryPath: string }> => {
+  const { propertyName, entityType, jsx } = options;
+  const jiti = await createConfigLoader(appPath, { jsx });
 
   try {
     const mod = (await jiti.import(filepath)) as Record<string, unknown>;
 
-    // Find config with a handler property
-    const hasHandler = (value: unknown): boolean => {
+    const hasProperty = (value: unknown): boolean => {
       return (
         typeof value === 'object' &&
         value !== null &&
-        'handler' in value &&
-        typeof (value as { handler: unknown }).handler === 'function'
+        propertyName in value &&
+        typeof (value as Record<string, unknown>)[propertyName] === 'function'
       );
     };
 
-    const config = findConfigExport<{ handler: Function }>(mod, hasHandler);
+    const config = findConfigExport<T & Record<string, Function>>(
+      mod,
+      hasProperty,
+    );
 
     if (!config) {
       throw new Error(
-        `Function file ${filepath} must export a config object with a "handler" property`,
+        `${entityType} file ${filepath} must export a config object with a "${propertyName}" property`,
       );
     }
 
-    // Get handler name from the function's name property
-    const handlerName = config.handler.name;
+    const entryName = config[propertyName].name;
 
-    if (!handlerName) {
+    if (!entryName) {
       throw new Error(
-        `Handler function in ${filepath} must be a named function`,
+        `${propertyName} function in ${filepath} must be a named function`,
       );
     }
 
-    // Parse source to find where the handler is imported from
     const source = await fs.readFile(filepath, 'utf8');
-    const importPath = extractImportPath(
-      source,
-      handlerName,
-      filepath,
-      appPath,
-    );
-
-    // If handler is imported, use the import path; otherwise use the function file itself
-    const handlerPath =
+    const importPath = extractImportPath(source, entryName, filepath, appPath);
+    const entryPath =
       importPath ?? path.relative(appPath, filepath).replace(/\\/g, '/');
 
-    return { config, handlerName, handlerPath };
+    return { config, entryName, entryPath };
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(
-        `Failed to load function module from ${filepath}: ${error.message}`,
+        `Failed to load ${entityType.toLowerCase()} module from ${filepath}: ${error.message}`,
       );
     }
     throw error;
   }
 };
 
-/**
- * Load a front component module and extract component info from config.component property.
- *
- * The component can be either:
- * 1. Imported from another file:
- *    ```typescript
- *    import { MyComponent } from '../src/components/my-component';
- *    export default defineFrontComponent({ component: MyComponent, ... });
- *    ```
- *
- * 2. Defined locally in the same file:
- *    ```typescript
- *    export const MyComponent = () => { ... };
- *    export default defineFrontComponent({ component: MyComponent, ... });
- *    ```
- *
- * @example
- * ```typescript
- * const { config, componentName, componentPath } = await loadFrontComponentModule(
- *   '/path/to/src/app/components/my-component.front-component.tsx',
- *   '/path/to/app'
- * );
- * ```
- */
-export const loadFrontComponentModule = async (
+export const extractFunctionConfig = async (
   filepath: string,
   appPath: string,
-): Promise<{
-  config: unknown;
-  componentName: string;
-  componentPath: string;
-}> => {
-  // Use jiti's built-in JSX support
-  const jiti = await createConfigLoader(appPath, { jsx: true });
+): Promise<ExtractedFunctionConfig> => {
+  const { config, entryName, entryPath } = await extractConfigFromFile<FunctionConfig>(filepath, appPath, {
+    propertyName: 'handler',
+    entityType: 'Function',
+  });
 
-  try {
-    const mod = (await jiti.import(filepath)) as Record<string, unknown>;
+  return {
+    universalIdentifier: config.universalIdentifier,
+    name: config.name,
+    description: config.description,
+    timeoutSeconds: config.timeoutSeconds,
+    triggers: config.triggers,
+    handlerName: entryName,
+    handlerPath: entryPath,
+  };
+};
 
-    // Find config with a component property
-    const hasComponent = (value: unknown): boolean => {
-      return (
-        typeof value === 'object' &&
-        value !== null &&
-        'component' in value &&
-        typeof (value as { component: unknown }).component === 'function'
-      );
-    };
+export const extractFrontComponentConfig = async (
+  filepath: string,
+  appPath: string,
+): Promise<ExtractedFrontComponentConfig> => {
+  const { config, entryName, entryPath } = await extractConfigFromFile<FrontComponentConfig>(filepath, appPath, {
+    propertyName: 'component',
+    entityType: 'Front component',
+    jsx: true,
+  });
 
-    const config = findConfigExport<{ component: Function }>(mod, hasComponent);
-
-    if (!config) {
-      throw new Error(
-        `Front component file ${filepath} must export a config object with a "component" property`,
-      );
-    }
-
-    // Get component name from the function's name property
-    const componentName = config.component.name;
-
-    if (!componentName) {
-      throw new Error(
-        `Component function in ${filepath} must be a named function`,
-      );
-    }
-
-    // Parse source to find where the component is imported from
-    const source = await fs.readFile(filepath, 'utf8');
-    const importPath = extractImportPath(
-      source,
-      componentName,
-      filepath,
-      appPath,
-    );
-
-    // If component is imported, use the import path; otherwise use the original component file
-    const componentPath =
-      importPath ?? path.relative(appPath, filepath).replace(/\\/g, '/');
-
-    return { config, componentName, componentPath };
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(
-        `Failed to load front component module from ${filepath}: ${error.message}`,
-      );
-    }
-    throw error;
-  }
+  return {
+    universalIdentifier: config.universalIdentifier,
+    name: config.name,
+    description: config.description,
+    componentName: entryName,
+    componentPath: entryPath,
+  };
 };

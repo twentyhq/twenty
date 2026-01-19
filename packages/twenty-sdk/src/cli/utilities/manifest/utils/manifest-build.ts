@@ -1,10 +1,8 @@
-import { type FrontComponentConfig } from '@/application/front-components/front-component-config';
-import { type FunctionConfig } from '@/application/functions/function-config';
 import { type RoleConfig } from '@/application/role-config';
 import {
+  extractFrontComponentConfig,
+  extractFunctionConfig,
   loadConfig,
-  loadFrontComponentModule,
-  loadFunctionModule,
 } from '@/cli/utilities/file/utils/file-config-loader';
 import { findPathFile } from '@/cli/utilities/file/utils/file-find';
 import { parseJsoncFile, parseTextFile } from '@/cli/utilities/file/utils/file-jsonc';
@@ -119,9 +117,6 @@ const loadObjectExtensions = async (
   return extensions;
 };
 
-/**
- * Load all function definitions from src/app/ (any *.function.ts file).
- */
 const loadFunctions = async (
   appPath: string,
 ): Promise<ServerlessFunctionManifest[]> => {
@@ -131,23 +126,17 @@ const loadFunctions = async (
 
   for (const filepath of functionFiles) {
     try {
-      const { config, handlerName, handlerPath } = await loadFunctionModule(
-        filepath,
-        appPath,
-      );
-      const fnConfig = config as FunctionConfig;
+      const config = await extractFunctionConfig(filepath, appPath);
 
-      const manifest: ServerlessFunctionManifest = {
-        universalIdentifier: fnConfig.universalIdentifier,
-        name: fnConfig.name,
-        description: fnConfig.description,
-        timeoutSeconds: fnConfig.timeoutSeconds,
-        triggers: fnConfig.triggers ?? [],
-        handlerPath,
-        handlerName,
-      };
-
-      functions.push(manifest);
+      functions.push({
+        universalIdentifier: config.universalIdentifier,
+        name: config.name,
+        description: config.description,
+        timeoutSeconds: config.timeoutSeconds,
+        triggers: config.triggers ?? [],
+        handlerPath: config.handlerPath,
+        handlerName: config.handlerName,
+      });
     } catch (error) {
       const relPath = toPosixRelative(filepath, appPath);
       throw new Error(
@@ -182,9 +171,6 @@ const loadRoles = async (appPath: string): Promise<RoleManifest[]> => {
   return roles;
 };
 
-/**
- * Load all front component definitions from src/app/ (any *.front-component.tsx file).
- */
 const loadFrontComponents = async (
   appPath: string,
 ): Promise<FrontComponentManifest[]> => {
@@ -197,19 +183,15 @@ const loadFrontComponents = async (
 
   for (const filepath of componentFiles) {
     try {
-      const { config, componentName, componentPath } =
-        await loadFrontComponentModule(filepath, appPath);
-      const componentConfig = config as FrontComponentConfig;
+      const config = await extractFrontComponentConfig(filepath, appPath);
 
-      const manifest: FrontComponentManifest = {
-        universalIdentifier: componentConfig.universalIdentifier,
-        name: componentConfig.name,
-        description: componentConfig.description,
-        componentPath,
-        componentName,
-      };
-
-      components.push(manifest);
+      components.push({
+        universalIdentifier: config.universalIdentifier,
+        name: config.name,
+        description: config.description,
+        componentPath: config.componentPath,
+        componentName: config.componentName,
+      });
     } catch (error) {
       const relPath = toPosixRelative(filepath, appPath);
       throw new Error(
