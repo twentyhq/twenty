@@ -51,7 +51,7 @@ exports[`NavigationMenuItem deletion should fail when deleting with missing id 1
     },
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Field "id" of required type "UUID!" was not provided.",
+  "message": "Variable "$id" of required type "UUID!" was not provided.",
   "name": "GraphQLError",
 }
 `;
