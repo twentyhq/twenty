@@ -1126,6 +1126,7 @@ export class ApplicationSyncService {
         update: {
           settings: {
             eventName: triggerToSync.eventName,
+            updatedFields: triggerToSync.updatedFields,
           },
         },
       };
@@ -1144,6 +1145,7 @@ export class ApplicationSyncService {
       const createDatabaseEventTriggerInput = {
         settings: {
           eventName: triggerToCreate.eventName,
+          updatedFields: triggerToCreate.updatedFields,
         },
         universalIdentifier: triggerToCreate.universalIdentifier,
         serverlessFunctionId,

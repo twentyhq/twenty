@@ -15,6 +15,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 
 export type DatabaseEventTriggerSettings = {
   eventName: string;
+  updatedFields?: string[];
 };
 
 @Entity('databaseEventTrigger')
