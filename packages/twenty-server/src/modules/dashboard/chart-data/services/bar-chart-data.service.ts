@@ -178,7 +178,7 @@ export class BarChartDataService {
         });
       }
 
-      return this.transformToBarChartData({
+      return this.transformToOneDimensionalBarChartData({
         rawResults,
         primaryAxisGroupByField,
         aggregateField,
@@ -201,7 +201,7 @@ export class BarChartDataService {
     }
   }
 
-  private transformToBarChartData({
+  private transformToOneDimensionalBarChartData({
     rawResults,
     primaryAxisGroupByField,
     aggregateField,

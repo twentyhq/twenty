@@ -178,7 +178,7 @@ export class LineChartDataService {
         });
       }
 
-      return this.transformToLineChartData({
+      return this.transformToOneDimensionalLineChartData({
         rawResults,
         primaryAxisGroupByField,
         aggregateField,
@@ -201,7 +201,7 @@ export class LineChartDataService {
     }
   }
 
-  private transformToLineChartData({
+  private transformToOneDimensionalLineChartData({
     rawResults,
     primaryAxisGroupByField,
     aggregateField,
