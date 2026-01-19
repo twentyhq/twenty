@@ -57,7 +57,6 @@ export const CommandMenuRecordInfo = ({
       allowRequestsToTwentyIcons,
     }),
   );
-  console.log(recordIdentifier);
 
   const { localeCatalog } = useRecoilValue(dateLocaleState);
   const beautifiedCreatedAt = isNonEmptyString(recordCreatedAt)
