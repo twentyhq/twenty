@@ -1,6 +1,6 @@
 import {
-    type DeleteNavigationMenuItemFactoryInput,
-    deleteNavigationMenuItemQueryFactory,
+  type DeleteNavigationMenuItemFactoryInput,
+  deleteNavigationMenuItemQueryFactory,
 } from 'test/integration/metadata/suites/navigation-menu-item/utils/delete-navigation-menu-item-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
