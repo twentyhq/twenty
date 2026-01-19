@@ -1,0 +1,20 @@
+import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
+import { type NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
+
+export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = (
+  navigationMenuItemEntity: NavigationMenuItemEntity,
+): FlatNavigationMenuItem => {
+  return {
+    id: navigationMenuItemEntity.id,
+    forWorkspaceMemberId: navigationMenuItemEntity.forWorkspaceMemberId,
+    targetRecordId: navigationMenuItemEntity.targetRecordId,
+    targetObjectMetadataId: navigationMenuItemEntity.targetObjectMetadataId,
+    favoriteFolderId: navigationMenuItemEntity.favoriteFolderId,
+    position: navigationMenuItemEntity.position,
+    workspaceId: navigationMenuItemEntity.workspaceId,
+    universalIdentifier: navigationMenuItemEntity.universalIdentifier,
+    applicationId: navigationMenuItemEntity.applicationId,
+    createdAt: navigationMenuItemEntity.createdAt.toISOString(),
+    updatedAt: navigationMenuItemEntity.updatedAt.toISOString(),
+  };
+};
