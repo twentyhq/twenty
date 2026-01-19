@@ -2393,6 +2393,11 @@ msgstr "Ingen tillatelser funnet i datakilden."
 msgid "No records were affected."
 msgstr "Ingen oppføringer ble berørt."
 
+#. js-lingui-id: iHQYLb
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "No role assigned to the application."
+msgstr ""
+
 #. js-lingui-id: 5ZMHXg
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
@@ -3389,6 +3394,11 @@ msgstr "Agenten du leter etter, ble ikke funnet. Den kan ha blitt slettet eller 
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "API-nøkkelen har ikke en gyldig rolle registrert. Vennligst sjekk API-nøkkelkonfigurasjonen din."
+
+#. js-lingui-id: IU78DA
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "The application does not have a valid role assigned. Please check your application configuration."
+msgstr ""
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts

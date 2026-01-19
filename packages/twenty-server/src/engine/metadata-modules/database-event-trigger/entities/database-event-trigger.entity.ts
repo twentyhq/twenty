@@ -19,6 +19,9 @@ export type DatabaseEventTriggerSettings = {
 
 @Entity('databaseEventTrigger')
 @Index('IDX_DATABASE_EVENT_TRIGGER_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_DATABASE_EVENT_TRIGGER_SERVERLESS_FUNCTION_ID', [
+  'serverlessFunctionId',
+])
 export class DatabaseEventTriggerEntity
   extends SyncableEntity
   implements Required<DatabaseEventTriggerEntity>
