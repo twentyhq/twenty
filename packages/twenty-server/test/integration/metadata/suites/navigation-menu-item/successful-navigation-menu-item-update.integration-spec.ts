@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { deleteNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/delete-navigation-menu-item.util';
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/update-navigation-menu-item.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('NavigationMenuItem update should succeed', () => {
@@ -91,8 +91,8 @@ describe('NavigationMenuItem update should succeed', () => {
   });
 
   it('should update favoriteFolderId to null', async () => {
-    // First set a folder
     const favoriteFolderId = faker.string.uuid();
+
     await updateNavigationMenuItem({
       expectToFail: false,
       input: {
@@ -101,7 +101,6 @@ describe('NavigationMenuItem update should succeed', () => {
       },
     });
 
-    // Then remove it
     const { data } = await updateNavigationMenuItem({
       expectToFail: false,
       input: {
