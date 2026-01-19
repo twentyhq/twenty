@@ -168,6 +168,7 @@ export class LineChartDataService {
       secondaryAxisOrderBy: configuration.secondaryAxisOrderBy,
     });
 
+    try {
     if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
       return this.transformToTwoDimensionalLineChartData({
         rawResults,
@@ -188,6 +189,15 @@ export class LineChartDataService {
       userTimezone,
       firstDayOfTheWeek,
     });
+  } catch (error) {
+    throw new ChartDataException(
+      generateChartDataExceptionMessage(
+        ChartDataExceptionCode.TRANSFORMATION_FAILED,
+        `Failed to transform line chart data: ${error.message}`,
+      ),
+      ChartDataExceptionCode.TRANSFORMATION_FAILED,
+    );
+  }
   }
 
   private transformToLineChartData({

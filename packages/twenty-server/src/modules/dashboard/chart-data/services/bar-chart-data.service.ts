@@ -164,7 +164,8 @@ export class BarChartDataService {
       secondaryAxisOrderBy: configuration.secondaryAxisOrderBy,
     });
 
-    if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
+    try {
+      if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
       return this.transformToTwoDimensionalBarChartData({
         rawResults,
         primaryAxisGroupByField,
@@ -184,6 +185,15 @@ export class BarChartDataService {
       userTimezone,
       firstDayOfTheWeek,
     });
+  } catch (error) {
+    throw new ChartDataException(
+      generateChartDataExceptionMessage(
+        ChartDataExceptionCode.TRANSFORMATION_FAILED,
+      `Failed to transform bar chart data: ${error.message}`,
+      ),
+      ChartDataExceptionCode.TRANSFORMATION_FAILED,
+    );
+  }
   }
 
   private transformToBarChartData({

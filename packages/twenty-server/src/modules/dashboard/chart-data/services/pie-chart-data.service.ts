@@ -131,6 +131,7 @@ export class PieChartDataService {
       primaryAxisOrderBy: configuration.orderBy,
     });
 
+    try {
     return this.transformToPieChartData({
       rawResults,
       groupByField,
@@ -141,6 +142,15 @@ export class PieChartDataService {
         (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
         CalendarStartDay.MONDAY,
     });
+  } catch (error) {
+    throw new ChartDataException(
+      generateChartDataExceptionMessage(
+        ChartDataExceptionCode.TRANSFORMATION_FAILED,
+        `Failed to transform pie chart data: ${error.message}`,
+      ),
+      ChartDataExceptionCode.TRANSFORMATION_FAILED,
+    );
+  }
   }
 
   private transformToPieChartData({
