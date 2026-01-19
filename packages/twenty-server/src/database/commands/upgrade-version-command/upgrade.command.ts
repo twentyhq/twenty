@@ -26,6 +26,7 @@ import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgr
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
 import { IdentifyAgentMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-agent-metadata.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
+import { IdentifyIndexMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-index-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
 import { IdentifyRoleMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-role-metadata.command';
 import { IdentifyViewFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-field-metadata.command';
@@ -85,6 +86,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillStandardPageLayoutsCommand: BackfillStandardPageLayoutsCommand,
     protected readonly identifyAgentMetadataCommand: IdentifyAgentMetadataCommand,
     protected readonly identifyFieldMetadataCommand: IdentifyFieldMetadataCommand,
+    protected readonly identifyIndexMetadataCommand: IdentifyIndexMetadataCommand,
     protected readonly identifyObjectMetadataCommand: IdentifyObjectMetadataCommand,
     protected readonly identifyRoleMetadataCommand: IdentifyRoleMetadataCommand,
     protected readonly identifyViewMetadataCommand: IdentifyViewMetadataCommand,
@@ -138,6 +140,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillStandardPageLayoutsCommand,
       this.identifyAgentMetadataCommand,
       this.identifyFieldMetadataCommand,
+      this.identifyIndexMetadataCommand,
       this.identifyObjectMetadataCommand,
       this.identifyRoleMetadataCommand,
       this.identifyViewMetadataCommand,

@@ -5,6 +5,7 @@ import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgr
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
 import { IdentifyAgentMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-agent-metadata.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
+import { IdentifyIndexMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-index-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
 import { IdentifyRoleMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-role-metadata.command';
 import { IdentifyViewFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-field-metadata.command';
@@ -27,6 +28,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -44,6 +46,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
       WorkspaceEntity,
       AgentEntity,
       FieldMetadataEntity,
+      IndexMetadataEntity,
       ObjectMetadataEntity,
       RoleEntity,
       ViewEntity,
@@ -66,6 +69,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillStandardPageLayoutsCommand,
     IdentifyAgentMetadataCommand,
     IdentifyFieldMetadataCommand,
+    IdentifyIndexMetadataCommand,
     IdentifyObjectMetadataCommand,
     IdentifyRoleMetadataCommand,
     IdentifyViewMetadataCommand,
@@ -87,6 +91,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillStandardPageLayoutsCommand,
     IdentifyAgentMetadataCommand,
     IdentifyFieldMetadataCommand,
+    IdentifyIndexMetadataCommand,
     IdentifyObjectMetadataCommand,
     IdentifyRoleMetadataCommand,
     IdentifyViewMetadataCommand,
