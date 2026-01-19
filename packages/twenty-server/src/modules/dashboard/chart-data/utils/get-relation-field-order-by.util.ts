@@ -7,7 +7,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { GRAPH_DEFAULT_DATE_GRANULARITY } from 'src/modules/dashboard/chart-data/constants/graph-defaults.constants';
+import { GRAPH_DEFAULT_DATE_GRANULARITY } from 'src/modules/dashboard/chart-data/constants/graph-default-date-granularity.constant';
 
 export const getRelationFieldOrderBy = (
   groupByFieldMetadata: FlatFieldMetadata,

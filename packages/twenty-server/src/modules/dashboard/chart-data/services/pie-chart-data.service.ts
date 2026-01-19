@@ -12,10 +12,8 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import {
-  EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
-  PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
-} from 'src/modules/dashboard/chart-data/constants/pie-chart.constants';
+import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
+import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from 'src/modules/dashboard/chart-data/constants/pie-chart-maximum-number-of-slices.constant';
 import { PieChartDataItemDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/pie-chart-data-item.dto';
 import { PieChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/pie-chart-data-output.dto';
 import {

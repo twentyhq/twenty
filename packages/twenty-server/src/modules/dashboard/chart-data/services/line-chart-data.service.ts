@@ -12,12 +12,10 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
-import {
-  EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
-  LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
-  LINE_CHART_MAXIMUM_NUMBER_OF_NON_STACKED_SERIES,
-  LINE_CHART_MAXIMUM_NUMBER_OF_STACKED_SERIES,
-} from 'src/modules/dashboard/chart-data/constants/line-chart.constants';
+import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
+import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from 'src/modules/dashboard/chart-data/constants/line-chart-maximum-number-of-data-points.constant';
+import { LINE_CHART_MAXIMUM_NUMBER_OF_NON_STACKED_SERIES } from 'src/modules/dashboard/chart-data/constants/line-chart-maximum-number-of-non-stacked-series.constant';
+import { LINE_CHART_MAXIMUM_NUMBER_OF_STACKED_SERIES } from 'src/modules/dashboard/chart-data/constants/line-chart-maximum-number-of-stacked-series.constant';
 import { LineChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/line-chart-data-output.dto';
 import { LineChartDataPointDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/line-chart-data-point.dto';
 import { LineChartSeriesDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/line-chart-series.dto';

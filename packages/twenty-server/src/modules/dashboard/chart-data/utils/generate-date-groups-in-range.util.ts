@@ -5,8 +5,8 @@ import {
   isPlainDateBeforeOrEqual,
 } from 'twenty-shared/utils';
 
-import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from 'src/modules/dashboard/chart-data/constants/bar-chart.constants';
-import { type SupportedDateGranularityForGapFilling } from 'src/modules/dashboard/chart-data/constants/date-gap-filling.constants';
+import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-bars.constant';
+import { type SupportedDateGranularityForGapFilling } from 'src/modules/dashboard/chart-data/constants/supported-date-granularity-for-gap-filling.type';
 
 type GenerateDateGroupsInRangeParams = {
   startDate: Temporal.PlainDate;

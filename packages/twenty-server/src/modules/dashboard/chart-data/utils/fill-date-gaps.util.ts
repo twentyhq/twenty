@@ -2,10 +2,8 @@ import { Temporal } from 'temporal-polyfill';
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined, sortPlainDate } from 'twenty-shared/utils';
 
-import {
-  DATE_GRANULARITIES_WITHOUT_GAP_FILLING,
-  type SupportedDateGranularityForGapFilling,
-} from 'src/modules/dashboard/chart-data/constants/date-gap-filling.constants';
+import { DATE_GRANULARITIES_WITHOUT_GAP_FILLING } from 'src/modules/dashboard/chart-data/constants/date-granularities-without-gap-filling.constant';
+import { type SupportedDateGranularityForGapFilling } from 'src/modules/dashboard/chart-data/constants/supported-date-granularity-for-gap-filling.type';
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { generateDateGroupsInRange } from 'src/modules/dashboard/chart-data/utils/generate-date-groups-in-range.util';
 

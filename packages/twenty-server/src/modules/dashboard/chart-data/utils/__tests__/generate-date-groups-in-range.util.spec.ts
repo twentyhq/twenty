@@ -1,7 +1,7 @@
 import { Temporal } from 'temporal-polyfill';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 
-import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from 'src/modules/dashboard/chart-data/constants/bar-chart.constants';
+import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-bars.constant';
 import { generateDateGroupsInRange } from 'src/modules/dashboard/chart-data/utils/generate-date-groups-in-range.util';
 
 describe('generateDateGroupsInRange', () => {

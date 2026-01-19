@@ -14,11 +14,9 @@ import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layou
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
-import {
-  BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
-  BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR,
-  EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
-} from 'src/modules/dashboard/chart-data/constants/bar-chart.constants';
+import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-bars.constant';
+import { BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-groups-per-bar.constant';
+import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
 import { BarChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/bar-chart-data-output.dto';
 import { BarChartSeriesDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/bar-chart-series.dto';
 import {

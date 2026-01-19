@@ -6,10 +6,3 @@ export const DATE_GRANULARITIES_WITHOUT_GAP_FILLING = new Set([
   ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR,
   ObjectRecordGroupByDateGranularity.NONE,
 ]);
-
-export type SupportedDateGranularityForGapFilling =
-  | ObjectRecordGroupByDateGranularity.DAY
-  | ObjectRecordGroupByDateGranularity.MONTH
-  | ObjectRecordGroupByDateGranularity.QUARTER
-  | ObjectRecordGroupByDateGranularity.YEAR
-  | ObjectRecordGroupByDateGranularity.WEEK;

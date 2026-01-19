@@ -18,10 +18,8 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { ChartFilter } from 'src/engine/metadata-modules/page-layout-widget/types/chart-filter.type';
-import {
-  GRAPH_DEFAULT_DATE_GRANULARITY,
-  GRAPH_DEFAULT_ORDER_BY,
-} from 'src/modules/dashboard/chart-data/constants/graph-defaults.constants';
+import { GRAPH_DEFAULT_DATE_GRANULARITY } from 'src/modules/dashboard/chart-data/constants/graph-default-date-granularity.constant';
+import { GRAPH_DEFAULT_ORDER_BY } from 'src/modules/dashboard/chart-data/constants/graph-default-order-by.constant';
 import { buildAggregateFieldKey } from 'src/modules/dashboard/chart-data/utils/build-aggregate-field-key.util';
 import {
   buildGroupByFieldObject,
