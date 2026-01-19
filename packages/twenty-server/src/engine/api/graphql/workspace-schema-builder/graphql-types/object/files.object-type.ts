@@ -21,7 +21,9 @@ const FileObjectType = new GraphQLObjectType({
   fields: {
     fileId: { type: new GraphQLNonNull(UUIDScalarType) },
     label: { type: new GraphQLNonNull(GraphQLString) },
-    fileCategory: { type: new GraphQLNonNull(FileCategoryEnumType) },
+    fileCategory: { type: FileCategoryEnumType },
+    //TODO: Will be made non-nullable in a future PR
+    // fileCategory: { type: new GraphQLNonNull(FileCategoryEnumType) },
   },
 });
 
