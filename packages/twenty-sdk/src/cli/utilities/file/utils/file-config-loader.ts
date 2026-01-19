@@ -3,26 +3,12 @@ import * as fs from 'fs-extra';
 import { createJiti } from 'jiti';
 import { type JitiOptions } from 'jiti/lib/types';
 import path from 'path';
+import {
+  type FrontComponentManifest,
+  type ServerlessFunctionManifest,
+} from 'twenty-shared/application';
 import { fileURLToPath } from 'url';
 import { parseJsoncFile } from './file-jsonc';
-
-export type ExtractedFunctionConfig = {
-  universalIdentifier: string;
-  name?: string;
-  description?: string;
-  timeoutSeconds?: number;
-  triggers?: Array<{ type: string; [key: string]: unknown }>;
-  handlerName: string;
-  handlerPath: string;
-};
-
-export type ExtractedFrontComponentConfig = {
-  universalIdentifier: string;
-  name?: string;
-  description?: string;
-  componentName: string;
-  componentPath: string;
-};
 
 type ExtractOptions = {
   propertyName: string;
@@ -244,18 +230,19 @@ const extractConfigFromFile = async <T extends Record<string, unknown>>(
 export const extractFunctionConfig = async (
   filepath: string,
   appPath: string,
-): Promise<ExtractedFunctionConfig> => {
-  const { config, entryName, entryPath } = await extractConfigFromFile<FunctionConfig>(filepath, appPath, {
-    propertyName: 'handler',
-    entityType: 'Function',
-  });
+): Promise<ServerlessFunctionManifest> => {
+  const { config, entryName, entryPath } =
+    await extractConfigFromFile<FunctionConfig>(filepath, appPath, {
+      propertyName: 'handler',
+      entityType: 'Function',
+    });
 
   return {
     universalIdentifier: config.universalIdentifier,
     name: config.name,
     description: config.description,
     timeoutSeconds: config.timeoutSeconds,
-    triggers: config.triggers,
+    triggers: config.triggers ?? [],
     handlerName: entryName,
     handlerPath: entryPath,
   };
@@ -264,12 +251,13 @@ export const extractFunctionConfig = async (
 export const extractFrontComponentConfig = async (
   filepath: string,
   appPath: string,
-): Promise<ExtractedFrontComponentConfig> => {
-  const { config, entryName, entryPath } = await extractConfigFromFile<FrontComponentConfig>(filepath, appPath, {
-    propertyName: 'component',
-    entityType: 'Front component',
-    jsx: true,
-  });
+): Promise<FrontComponentManifest> => {
+  const { config, entryName, entryPath } =
+    await extractConfigFromFile<FrontComponentConfig>(filepath, appPath, {
+      propertyName: 'component',
+      entityType: 'Front component',
+      jsx: true,
+    });
 
   return {
     universalIdentifier: config.universalIdentifier,

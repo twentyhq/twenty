@@ -126,17 +126,7 @@ const loadFunctions = async (
 
   for (const filepath of functionFiles) {
     try {
-      const config = await extractFunctionConfig(filepath, appPath);
-
-      functions.push({
-        universalIdentifier: config.universalIdentifier,
-        name: config.name,
-        description: config.description,
-        timeoutSeconds: config.timeoutSeconds,
-        triggers: config.triggers ?? [],
-        handlerPath: config.handlerPath,
-        handlerName: config.handlerName,
-      });
+      functions.push(await extractFunctionConfig(filepath, appPath));
     } catch (error) {
       const relPath = toPosixRelative(filepath, appPath);
       throw new Error(
@@ -183,15 +173,7 @@ const loadFrontComponents = async (
 
   for (const filepath of componentFiles) {
     try {
-      const config = await extractFrontComponentConfig(filepath, appPath);
-
-      components.push({
-        universalIdentifier: config.universalIdentifier,
-        name: config.name,
-        description: config.description,
-        componentPath: config.componentPath,
-        componentName: config.componentName,
-      });
+      components.push(await extractFrontComponentConfig(filepath, appPath));
     } catch (error) {
       const relPath = toPosixRelative(filepath, appPath);
       throw new Error(
