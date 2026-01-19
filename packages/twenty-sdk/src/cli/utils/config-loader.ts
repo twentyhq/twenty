@@ -2,14 +2,79 @@ import { createJiti } from 'jiti';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { parseJsoncFile } from './jsonc-parser';
 
-// Create a jiti instance for loading TypeScript config files
-const createConfigLoader = () => {
-  return createJiti(fileURLToPath(import.meta.url), {
+/**
+ * Read tsconfig.json paths and convert them to jiti aliases.
+ * Handles patterns like "generated/*": ["./generated/*"]
+ */
+const getTsconfigAliases = async (
+  appPath: string,
+): Promise<Record<string, string>> => {
+  const tsconfigPath = path.join(appPath, 'tsconfig.json');
+
+  if (!(await fs.pathExists(tsconfigPath))) {
+    return {};
+  }
+
+  try {
+    const tsconfig = await parseJsoncFile(tsconfigPath);
+    const paths = tsconfig?.compilerOptions?.paths as
+      | Record<string, string[]>
+      | undefined;
+    const baseUrl = (tsconfig?.compilerOptions?.baseUrl as string) || '.';
+
+    if (!paths) {
+      return {};
+    }
+
+    const aliases: Record<string, string> = {};
+
+    for (const [pattern, targets] of Object.entries(paths)) {
+      if (targets.length === 0) continue;
+
+      // Remove trailing /* from pattern and target
+      const aliasKey = pattern.replace(/\/\*$/, '');
+      const targetPath = targets[0].replace(/\/\*$/, '');
+
+      // Resolve the target path relative to baseUrl and appPath
+      const resolvedTarget = path.resolve(appPath, baseUrl, targetPath);
+      aliases[aliasKey] = resolvedTarget;
+    }
+
+    return aliases;
+  } catch {
+    return {};
+  }
+};
+
+/**
+ * Create a jiti instance for loading TypeScript config files.
+ * When appPath is provided, jiti will use the app's tsconfig.json for path resolution.
+ */
+const createConfigLoader = async (appPath?: string) => {
+  const basePath = appPath ?? fileURLToPath(import.meta.url);
+
+  const options: {
+    moduleCache?: boolean;
+    fsCache?: boolean;
+    interopDefault?: boolean;
+    alias?: Record<string, string>;
+  } = {
     moduleCache: false, // Don't cache during dev for hot reload
     fsCache: false,
     interopDefault: true,
-  });
+  };
+
+  // If appPath is provided, read tsconfig.json and set up aliases
+  if (appPath) {
+    const aliases = await getTsconfigAliases(appPath);
+    if (Object.keys(aliases).length > 0) {
+      options.alias = aliases;
+    }
+  }
+
+  return createJiti(basePath, options);
 };
 
 /**
@@ -56,13 +121,19 @@ const findConfigExport = <T>(
  * - `export default { ... }`
  * - `export const anyName = { ... }` (any named export that is a plain object)
  *
+ * @param filepath - Absolute path to the config file
+ * @param appPath - Optional app path for tsconfig.json path resolution
+ *
  * @example
  * ```typescript
- * const config = await loadConfig<AppDefinition>('/path/to/src/app/application.config.ts');
+ * const config = await loadConfig<AppDefinition>('/path/to/src/app/application.config.ts', '/path/to/app');
  * ```
  */
-export const loadConfig = async <T>(filepath: string): Promise<T> => {
-  const jiti = createConfigLoader();
+export const loadConfig = async <T>(
+  filepath: string,
+  appPath?: string,
+): Promise<T> => {
+  const jiti = await createConfigLoader(appPath);
 
   try {
     const mod = (await jiti.import(filepath)) as Record<string, unknown>;
@@ -177,7 +248,7 @@ export const loadFunctionModule = async (
   handlerName: string;
   handlerPath: string;
 }> => {
-  const jiti = createConfigLoader();
+  const jiti = await createConfigLoader(appPath);
 
   try {
     const mod = (await jiti.import(filepath)) as Record<string, unknown>;
