@@ -6,7 +6,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
-
 import { msg } from '@lingui/core/macro';
 
 import type Stripe from 'stripe';
