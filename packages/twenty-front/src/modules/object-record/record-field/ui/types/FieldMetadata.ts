@@ -6,6 +6,7 @@ import {
   ConnectedAccountProvider,
   type AllowedAddressSubField,
   type FieldMetadataMultiItemSettings,
+  type FileCategory,
 } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
@@ -328,7 +329,7 @@ export type FieldPhonesValue = {
 export type FieldFileValue = {
   fileId: string;
   label: string;
-  fileType: string;
+  fileCategory: FileCategory;
 };
 
 export type FieldFilesValue = FieldFileValue[];

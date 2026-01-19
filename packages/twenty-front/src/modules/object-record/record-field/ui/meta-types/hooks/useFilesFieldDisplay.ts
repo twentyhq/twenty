@@ -1,8 +1,8 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
-    type FieldFilesMetadata,
-    type FieldFilesValue,
+  type FieldFilesMetadata,
+  type FieldFilesValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 

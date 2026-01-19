@@ -1,5 +1,6 @@
 import {
   FieldMetadataType,
+  FILE_CATEGORIES,
   NumberDataType,
   type FieldMetadataSettings,
 } from 'twenty-shared/types';
@@ -345,10 +346,9 @@ export const convertObjectMetadataToSchemaProperties = ({
               },
               ...(forResponse
                 ? {
-                    fileType: {
+                    fileCategory: {
                       type: 'string',
-                      //TODODO : to set the enum from the file type
-                      enum: ['image', 'video', 'audio', 'document', 'other'],
+                      enum: Object.values(FILE_CATEGORIES),
                     },
                   }
                 : {}),

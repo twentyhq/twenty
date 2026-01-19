@@ -124,7 +124,7 @@ export const generateEmptyFieldValue = ({
       return null;
     }
     case FieldMetadataType.FILES: {
-      return [{ fileId: '', label: '', fileType: '' }];
+      return null;
     }
     default: {
       return assertUnreachable(

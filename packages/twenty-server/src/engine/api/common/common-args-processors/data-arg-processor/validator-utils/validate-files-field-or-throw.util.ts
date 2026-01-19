@@ -9,14 +9,14 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
-const fileItemSchema = z
+export const fileItemSchema = z
   .object({
     fileId: z.string().uuidv4(),
     label: z.string(),
   })
   .strict();
 
-const filesFieldSchema = z.array(fileItemSchema);
+export const filesFieldSchema = z.array(fileItemSchema);
 
 export type FileItem = z.infer<typeof fileItemSchema>;
 

@@ -7,6 +7,7 @@ type FilesDisplayProps = {
   value: FieldFilesValue;
 };
 
+//TODO: Draft version, UI to be improved
 export const FilesDisplay = ({ value }: FilesDisplayProps) => {
   return (
     <ExpandableList>
