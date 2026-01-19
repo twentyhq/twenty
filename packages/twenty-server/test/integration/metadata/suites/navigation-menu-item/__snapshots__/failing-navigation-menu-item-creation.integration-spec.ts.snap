@@ -1,0 +1,133 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`NavigationMenuItem creation should fail when creating with empty targetObjectMetadataId 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`NavigationMenuItem creation should fail when creating with empty targetRecordId 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`NavigationMenuItem creation should fail when creating with invalid favoriteFolderId (not a UUID) 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "not-a-valid-uuid",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`NavigationMenuItem creation should fail when creating with invalid forWorkspaceMemberId (not a UUID) 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "not-a-valid-uuid",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`NavigationMenuItem creation should fail when creating with invalid targetObjectMetadataId (not a UUID) 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "not-a-valid-uuid",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`NavigationMenuItem creation should fail when creating with invalid targetRecordId (not a UUID) 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "not-a-valid-uuid",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`NavigationMenuItem creation should fail when creating with missing targetObjectMetadataId 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "targetObjectMetadataId" of required type "UUID!" was not provided.",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`NavigationMenuItem creation should fail when creating with missing targetRecordId 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "targetRecordId" of required type "UUID!" was not provided.",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`NavigationMenuItem creation should fail when creating with negative position 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "position must not be less than 0",
+  "name": "BadRequestException",
+}
+`;
