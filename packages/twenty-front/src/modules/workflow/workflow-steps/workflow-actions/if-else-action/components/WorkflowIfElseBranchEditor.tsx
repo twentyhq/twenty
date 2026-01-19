@@ -58,14 +58,7 @@ export const WorkflowIfElseBranchEditor = ({
 
   const isIfBranch = branchIndex === 0;
 
-  const isLastFilterInIfBranch = (
-    stepFilterOrGroup: StepFilter | StepFilterGroup,
-  ): boolean => {
-    if (isStepFilterGroupChildAStepFilterGroup(stepFilterOrGroup)) {
-      return false;
-    }
-
-    const stepFilter = stepFilterOrGroup as StepFilter;
+  const isLastFilterInIfBranch = (stepFilter: StepFilter): boolean => {
     const childStepFilters = childStepFiltersAndChildStepFilterGroups.filter(
       (child) => !isStepFilterGroupChildAStepFilterGroup(child),
     );
