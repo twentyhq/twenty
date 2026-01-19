@@ -62,7 +62,10 @@ export class AppDevCommand {
       this.appPath,
       this.manifestState,
       {
-        onEntryPointsChange: () => this.scheduleRestart(),
+        onEntryPointsChange: (newEntryPoints) => {
+          console.log(chalk.yellow(`🔄 Entry points changed: ${JSON.stringify(newEntryPoints)}`));
+          this.scheduleRestart();
+        },
       },
     );
 
