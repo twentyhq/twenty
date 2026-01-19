@@ -6,4 +6,5 @@ export const EMPLOYMENT_HISTORY_CUSTOM_OBJECT_SEED: ObjectMetadataSeed = {
   namePlural: 'employmentHistories',
   nameSingular: 'employmentHistory',
   icon: 'IconBriefcase',
+  skipNameField: true,
 };
