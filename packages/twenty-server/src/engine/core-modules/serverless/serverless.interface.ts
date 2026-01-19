@@ -4,8 +4,13 @@ import { type LambdaDriverOptions } from 'src/engine/core-modules/serverless/dri
 import { type LocalDriverOptions } from 'src/engine/core-modules/serverless/drivers/local.driver';
 
 export enum ServerlessDriverType {
+  DISABLED = 'DISABLED',
   LAMBDA = 'LAMBDA',
   LOCAL = 'LOCAL',
+}
+
+export interface DisabledDriverFactoryOptions {
+  type: ServerlessDriverType.DISABLED;
 }
 
 export interface LocalDriverFactoryOptions {
@@ -19,6 +24,7 @@ export interface LambdaDriverFactoryOptions {
 }
 
 export type ServerlessModuleOptions =
+  | DisabledDriverFactoryOptions
   | LocalDriverFactoryOptions
   | LambdaDriverFactoryOptions;
 

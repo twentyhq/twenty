@@ -37,7 +37,7 @@ import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billi
 import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
+// eslint-disable-next-line twenty/inject-workspace-repository
 export class BillingWebhookSubscriptionService {
   protected readonly logger = new Logger(
     BillingWebhookSubscriptionService.name,

@@ -1,29 +1,29 @@
 ---
 title: الأسئلة المتكررة حول نموذج البيانات
-description: Frequently asked questions about Twenty's data model.
+description: الأسئلة الشائعة حول نموذج بيانات Twenty.
 ---
 
 ## إدارة الكائنات
 
 <AccordionGroup>
-  <Accordion title="Can I delete a custom object?">
-    Yes, custom objects can be deleted. You can also deactivate them first, which hides the object and its data from the interface while preserving the data.
+  <Accordion title="هل يمكنني حذف كائن مخصص؟">
+    نعم، يمكن حذف الكائنات المخصصة. يمكنك أيضًا إلغاء تنشيطها أولًا، مما يخفي الكائن وبياناته من الواجهة مع الاحتفاظ بالبيانات.
   </Accordion>
 
   <Accordion title="هل يمكنني حذف الكائنات القياسية (الأشخاص، الشركات، إلخ)؟">
-    No, standard objects cannot be deleted. You can only deactivate them, which hides them from the interface but preserves the data.
+    لا، لا يمكن حذف الكائنات القياسية. يمكنك فقط إلغاء تنشيطها، مما يخفيها من الواجهة مع الاحتفاظ بالبيانات.
   </Accordion>
 
-  <Accordion title="How many custom objects can I create?">
-    You can create as many custom objects and fields as you need — the price doesn't change.
+  <Accordion title="كم عدد الكائنات المخصصة التي يمكنني إنشاؤها؟">
+    يمكنك إنشاء ما تشاء من الكائنات والحقول المخصصة — لن يتغير السعر.
   </Accordion>
 
-  <Accordion title="Can I rename a standard object?">
-    You can rename the label of standard objects (People, Companies, Opportunities), but not their API names. The API names are fixed for consistency across all Twenty workspaces.
+  <Accordion title="هل يمكنني إعادة تسمية كائن قياسي؟">
+    يمكنك تغيير تسمية الكائنات القياسية (People وCompanies وOpportunities)، لكن لا يمكنك تغيير أسماء API الخاصة بها. أسماء API ثابتة لضمان الاتساق عبر جميع مساحات عمل Twenty.
   </Accordion>
 
-  <Accordion title="Can I change an object's icon?">
-    Yes, you can change the icon for both standard and custom objects in **Settings → Data Model**.
+  <Accordion title="هل يمكنني تغيير أيقونة الكائن؟">
+    نعم، يمكنك تغيير الأيقونة لكلٍ من الكائنات القياسية والمخصصة ضمن **الإعدادات → نموذج البيانات**.
   </Accordion>
 
   <Accordion title="هل يمكنني إعادة ترتيب الكائنات في شريط التنقل الأيسر؟">
@@ -38,8 +38,8 @@ description: Frequently asked questions about Twenty's data model.
 ## قدرات الحقول
 
 <AccordionGroup>
-  <Accordion title="Can I change a field type after creation?">
-    No, field types cannot be changed after creation. If you need a different type, create a new field with the correct type, migrate your data, then deactivate the old field.
+  <Accordion title="هل يمكنني تغيير نوع الحقل بعد إنشائه؟">
+    لا، لا يمكن تغيير أنواع الحقول بعد إنشائها. إذا كنت بحاجة إلى نوع مختلف، فأنشئ حقلًا جديدًا بالنوع الصحيح، وانقل بياناتك، ثم عطّل الحقل القديم.
   </Accordion>
 
   <Accordion title="لماذا أحتاج إلى أسماء مفردة وجمع مختلفة؟">
@@ -55,21 +55,21 @@ description: Frequently asked questions about Twenty's data model.
     بعض أسماء الحقول مثل `Type` أو `Application` محجوزة لاستخدام النظام. اختر أسماء بديلة مثل `Category` أو `Classification` بدلاً من ذلك.
   </Accordion>
 
-  <Accordion title="What happens when I deactivate a field?">
-    * The field is hidden from the interface
-    * Existing data is preserved
-    * You can still access the field via API
-    * Existing relations remain but you can't create new ones
-    * You can reactivate the field later
+  <Accordion title="ماذا يحدث عند إلغاء تنشيط حقل؟">
+    * يتم إخفاء الحقل من الواجهة
+    * تظل البيانات محفوظة
+    * لا يزال بإمكانك الوصول إلى الحقل عبر API
+    * تظل العلاقات الحالية موجودة، ولكن لا يمكنك إنشاء علاقات جديدة
+    * يمكنك إعادة تنشيط الحقل لاحقًا
   </Accordion>
 
-  <Accordion title="Can I make a field required?">
-    Currently, you cannot make custom fields required. All fields accept empty values. You can use workflows to enforce required fields by sending alerts or blocking actions when fields are empty.
+  <Accordion title="هل يمكنني جعل الحقل إلزاميًا؟">
+    حاليًا، لا يمكنك جعل الحقول المخصصة إلزامية. جميع الحقول تقبل القيم الفارغة. يمكنك استخدام سير العمل لفرض الحقول الإلزامية عبر إرسال التنبيهات أو حظر الإجراءات عندما تكون الحقول فارغة.
   </Accordion>
 
-  <Accordion title="What's the difference between unique and required?">
-    * **Unique**: No two records can have the same value in this field
-    * **Required**: The field must have a value (not currently supported for custom fields)
+  <Accordion title="ما الفرق بين الفريد والإلزامي؟">
+    * **فريد**: يجب ألّا تتكرر القيمة نفسها في هذا الحقل عبر السجلات
+    * **إلزامي**: يجب أن يحتوي الحقل على قيمة (غير مدعوم حاليًا للحقول المخصصة)
   </Accordion>
 
   <Accordion title="هل يمكنني إنشاء حقول صيغة؟">
@@ -81,44 +81,44 @@ description: Frequently asked questions about Twenty's data model.
   </Accordion>
 
   <Accordion title="هل يمكنني إعادة ترتيب الحقول داخل الكائنات؟">
-    سيكون إعادة ترتيب الحقول متاحًا مع التخطيطات المخصصة في **الربع الرابع من عام 2025**. Currently, fields appear in alphabetical order.
+    سيكون إعادة ترتيب الحقول متاحًا مع التخطيطات المخصصة في **الربع الرابع من عام 2025**. حاليًا، تظهر الحقول بترتيب أبجدي.
   </Accordion>
 </AccordionGroup>
 
 ## العلاقات
 
 <AccordionGroup>
-  <Accordion title="Can I have a relation pointing to the same object?">
-    نعم! Self-referencing relations are supported and recommended for use cases like account hierarchies. For example, create a relation from Companies to Companies to track parent/child accounts.
+  <Accordion title="هل يمكنني إنشاء علاقة تشير إلى الكائن نفسه؟">
+    نعم! العلاقات ذاتية الإشارة مدعومة ومُوصى بها لحالات الاستخدام مثل التسلسلات الهرمية للحسابات. على سبيل المثال، أنشئ علاقة من Companies إلى Companies لتتبع حسابات الأصل/الفرع.
   </Accordion>
 
   <Accordion title="هل يمكنني إنشاء علاقات عديدة-إلى-عدة؟">
-    Many-to-many relationships are coming in **H1 2026**. Currently, create an intermediate object with two one-to-many relationships as a workaround.
+    العلاقات عديدة-إلى-عديدة قادمة في **النصف الأول من عام 2026**. حاليًا، أنشئ كائنًا وسيطًا مع علاقتين واحد-إلى-عديد كحل بديل.
 
-    For example, to link People and Projects (many-to-many), create a "Project Assignments" object with:
+    على سبيل المثال، لربط People وProjects (عديد-إلى-عديد)، أنشئ كائنًا باسم "Project Assignments" يحتوي على:
 
-    * A relation to People (many assignments → one person)
-    * A relation to Projects (many assignments → one project)
+    * علاقة إلى People (عديد من التعيينات → شخص واحد)
+    * علاقة إلى Projects (عديد من التعيينات → مشروع واحد)
   </Accordion>
 
-  <Accordion title="What are relations to multiple object types (Morph relationships)?">
-    These allow one object to relate to multiple different object types through a single field. For example, Notes can be attached to People AND Companies AND Opportunities simultaneously.
+  <Accordion title="ما هي العلاقات إلى أنواع كائنات متعددة (علاقات Morph)؟">
+    تتيح هذه أن يرتبط كائن واحد بأنواع كائنات متعددة مختلفة عبر حقل واحد. على سبيل المثال، يمكن إرفاق Notes بـ People وCompanies وOpportunities في الوقت نفسه.
 
-    Each Note links to one Person, one Company, and one Opportunity at the same time.
+    يرتبط كل Note بشخص واحد وشركة واحدة وفرصة واحدة في الوقت نفسه.
 
-    Learn more in [Relation Fields](/l/ar/user-guide/data-model/capabilities/relation-fields).
+    اعرف المزيد في [حقول العلاقات](/l/ar/user-guide/data-model/capabilities/relation-fields).
   </Accordion>
 
-  <Accordion title="Can I have multiple relations between the same objects?">
-    Yes, you can create multiple relations between the same two objects. For example, a Company could have both a "Primary Contact" and "Billing Contact" relation to People.
+  <Accordion title="هل يمكنني إنشاء علاقات متعددة بين الكائنات نفسها؟">
+    نعم، يمكنك إنشاء علاقات متعددة بين الكائنين نفسيهما. على سبيل المثال، يمكن أن يكون لدى Company علاقتا "Primary Contact" و"Billing Contact" مع People.
   </Accordion>
 
-  <Accordion title="What happens to relations when I delete a record?">
-    When you delete a record, the relation link is removed from the related records. The related records themselves are not deleted.
+  <Accordion title="ماذا يحدث للعلاقات عند حذف سجل؟">
+    عند حذف سجل، تتم إزالة رابط العلاقة من السجلات المرتبطة. السجلات المرتبطة نفسها لا تُحذف.
   </Accordion>
 
-  <Accordion title="Can I create circular relations?">
-    While technically possible, circular relations (A → B → C → A) should be avoided as they can cause confusion and potential performance issues.
+  <Accordion title="هل يمكنني إنشاء علاقات دائرية؟">
+    على الرغم من أنها ممكنة تقنيًا، يجب تجنّب العلاقات الدائرية (A → B → C → A) لأنها قد تسبب التباسًا ومشكلات محتملة في الأداء.
   </Accordion>
 </AccordionGroup>
 
@@ -126,7 +126,7 @@ description: Frequently asked questions about Twenty's data model.
 
 <AccordionGroup>
   <Accordion title="أين يمكنني رؤية وتعديل نموذج البيانات الخاص بي؟">
-    Go to **Settings → Data Model** to view and edit all your objects and fields.
+    انتقل إلى **الإعدادات → نموذج البيانات** لعرض جميع الكائنات والحقول الخاصة بك وتحريرها.
   </Accordion>
 
   <Accordion title="لماذا لا أستطيع رؤية نموذج البيانات تحت الإعدادات؟">
@@ -134,22 +134,22 @@ description: Frequently asked questions about Twenty's data model.
   </Accordion>
 </AccordionGroup>
 
-## Data Management
+## إدارة البيانات
 
 <AccordionGroup>
-  <Accordion title="Is there a limit to how many records I can have?">
-    There's no hard limit on record counts. However, very large datasets may impact performance in some views. Use filters and views to manage large datasets effectively.
+  <Accordion title="هل هناك حد لعدد السجلات التي يمكنني امتلاكها؟">
+    لا يوجد حد صارم لعدد السجلات. ومع ذلك، قد تؤثر مجموعات البيانات الكبيرة جدًا في الأداء في بعض طرق العرض. استخدم عوامل التصفية وطرق العرض لإدارة مجموعات البيانات الكبيرة بفعالية.
   </Accordion>
 
-  <Accordion title="Can I import data into custom objects?">
-    Yes, you can import CSV data into any object, including custom objects. The import process supports field mapping for custom fields. See [How to Prepare Your CSV Files](/l/ar/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  <Accordion title="هل يمكنني استيراد بيانات إلى الكائنات المخصصة؟">
+    نعم، يمكنك استيراد بيانات CSV إلى أي كائن، بما في ذلك الكائنات المخصصة. تدعم عملية الاستيراد تعيين الحقول للحقول المخصصة. اطّلع على [كيفية إعداد ملفات CSV الخاصة بك](/l/ar/user-guide/data-migration/how-tos/prepare-your-csv-files).
   </Accordion>
 
-  <Accordion title="Can I export my data model configuration?">
-    Currently, there's no built-in export for data model configuration. Contact support if you need to migrate your data model between workspaces.
+  <Accordion title="هل يمكنني تصدير تكوين نموذج البيانات الخاص بي؟">
+    حاليًا، لا يوجد تصدير مدمج لتكوين نموذج البيانات. تواصل مع الدعم إذا كنت بحاجة إلى نقل نموذج البيانات بين مساحات العمل.
   </Accordion>
 </AccordionGroup>
 
 ## هل تحتاج إلى المزيد من المساعدة؟
 
-Check our [Implementation Services](/l/ar/user-guide/getting-started/capabilities/implementation-services) for help with complex data model design.
+اطّلع على [خدمات التنفيذ](/l/ar/user-guide/getting-started/capabilities/implementation-services) للحصول على مساعدة في تصميم نموذج بيانات معقّد.

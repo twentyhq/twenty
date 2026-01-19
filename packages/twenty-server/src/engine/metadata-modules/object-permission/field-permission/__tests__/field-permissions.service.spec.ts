@@ -61,6 +61,8 @@ describe('FieldPermissionService', () => {
         canSoftDeleteObjectRecords: false,
         canDestroyObjectRecords: false,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       },
       [fieldRelationMock.objectMetadataId]: {
         canReadObjectRecords: true,
@@ -68,6 +70,8 @@ describe('FieldPermissionService', () => {
         canSoftDeleteObjectRecords: false,
         canDestroyObjectRecords: false,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       },
     },
   };
