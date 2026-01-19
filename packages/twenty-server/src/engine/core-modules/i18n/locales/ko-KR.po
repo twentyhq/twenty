@@ -4338,6 +4338,12 @@ msgstr "워크플로우 버전에 트리거가 포함되어 있지 않습니다"
 msgid "Workflow version is not in draft status"
 msgstr "워크플로우 버전이 임시 상태가 아닙니다"
 
+#. js-lingui-id: bK8AyJ
+#: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
+#: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
+msgid "Workspace {workspaceId} is not found."
+msgstr ""
+
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"

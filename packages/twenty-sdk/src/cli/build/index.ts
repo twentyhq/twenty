@@ -1,6 +1,7 @@
-export * from './types';
 export { BuildService } from './build.service';
+export * from './types';
 export { ViteBuildRunner } from './vite-build-runner';
-export { BuildManifestWriter } from './build-manifest-writer';
-export { BuildWatcher } from './build-watcher';
-export { TarballService } from './tarball.service';
+
+export { TarballService } from '@/cli/utilities/file/utils/file-tarball';
+export { BuildManifestWriter, type BuiltFunctionInfo } from '@/cli/utilities/manifest/utils/manifest-writer';
+

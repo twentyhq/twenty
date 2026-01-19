@@ -44,8 +44,6 @@ export class BillingRestApiExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND:
       case BillingExceptionCode.BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND:
-      case BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND:
-      case BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND:
       case BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND:
       case BillingExceptionCode.BILLING_PLAN_NOT_FOUND:
       case BillingExceptionCode.BILLING_METER_NOT_FOUND:
@@ -72,6 +70,7 @@ export class BillingRestApiExceptionFilter implements ExceptionFilter {
           response,
           402,
         );
+      case BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND:
       default:
         return this.httpExceptionHandlerService.handleError(
           exception,
