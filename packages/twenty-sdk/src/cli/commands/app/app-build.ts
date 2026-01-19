@@ -9,17 +9,6 @@ export type BuildCommandOptions = {
   tarball?: boolean;
 };
 
-/**
- * AppBuildCommand handles the `twenty app build` CLI command.
- *
- * This command transpiles TypeScript applications into distributable
- * JavaScript bundles using Vite.
- *
- * Usage:
- * - `npx twenty app build [appPath]`           - One-time build
- * - `npx twenty app build --watch [appPath]`   - Watch mode with incremental rebuilds
- * - `npx twenty app build --tarball [appPath]` - Build + create .tar.gz
- */
 export class AppBuildCommand {
   private buildService = new BuildService();
 
