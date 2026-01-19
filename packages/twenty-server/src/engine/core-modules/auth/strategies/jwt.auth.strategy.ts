@@ -202,8 +202,11 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         'flatWorkspaceMemberMaps',
       ]);
 
-    const workspaceMember = isDefined(payload.workspaceMemberId) ?
-      flatWorkspaceMemberMaps.byId[payload.workspaceMemberId] : undefined;
+    const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[user.id];
+
+    const workspaceMember = isDefined(workspaceMemberId)
+      ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
+      : undefined;
 
     assertIsDefinedOrThrow(
       workspaceMember,

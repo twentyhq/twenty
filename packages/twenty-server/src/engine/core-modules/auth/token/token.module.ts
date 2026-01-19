@@ -34,7 +34,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     TypeORMModule,
     DataSourceModule,
     PermissionsModule,
-    WorkspaceCacheModule
+    WorkspaceCacheModule,
   ],
   providers: [
     RenewTokenService,

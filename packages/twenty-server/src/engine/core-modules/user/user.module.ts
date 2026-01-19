@@ -15,6 +15,7 @@ import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-v
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { WorkspaceFlatWorkspaceMemberMapCacheService } from 'src/engine/core-modules/user/services/workspace-flat-workspace-member-map-cache.service';
 import { WorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -27,7 +28,8 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 
 import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
-import { WorkspaceFlatWorkspaceMemberMapCacheService } from 'src/engine/core-modules/user/services/workspace-flat-workspace-member-map-cache.service';
+import { GlobalWorkspaceMemberListener } from 'src/engine/core-modules/user/services/global-workspace-member.listener';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { UserService } from './services/user.service';
 
 @Module({
@@ -54,8 +56,15 @@ import { UserService } from './services/user.service';
     PermissionsModule,
     EmailVerificationModule,
     WorkspaceDomainsModule,
+    WorkspaceCacheModule,
   ],
   exports: [UserService, WorkspaceMemberTranspiler],
-  providers: [UserService, UserResolver, WorkspaceMemberTranspiler, WorkspaceFlatWorkspaceMemberMapCacheService],
+  providers: [
+    UserService,
+    UserResolver,
+    WorkspaceMemberTranspiler,
+    WorkspaceFlatWorkspaceMemberMapCacheService,
+    GlobalWorkspaceMemberListener,
+  ],
 })
 export class UserModule {}

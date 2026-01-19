@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
-
 
 import { FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -11,7 +9,7 @@ import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
-@WorkspaceCache('flatWorkspaceMemberMaps', { localDataOnly: true })
+@WorkspaceCache('flatWorkspaceMemberMaps', { localDataOnly: false })
 export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheProvider<FlatWorkspaceMemberMaps> {
   constructor(
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
@@ -35,17 +33,22 @@ export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheP
             byId: {},
             idByUserId: {},
           };
-          const workspaceMembers = await workspaceMemberRepository.find();
+          const workspaceMembers = await workspaceMemberRepository.find(
+            {
+              withDeleted: true,
+            },
+          );
 
           for (const workspaceMember of workspaceMembers) {
             flatWorkspaceMemberMaps.byId[workspaceMember.id] = workspaceMember;
-            flatWorkspaceMemberMaps.idByUserId[workspaceMember.userId] = workspaceMember.id;
+            flatWorkspaceMemberMaps.idByUserId[workspaceMember.userId] =
+              workspaceMember.id;
           }
 
           return flatWorkspaceMemberMaps;
         },
       );
 
-      return flatWorkspaceMemberMaps;
+    return flatWorkspaceMemberMaps;
   }
 }

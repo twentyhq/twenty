@@ -2,6 +2,7 @@ import { registerEnumType } from '@nestjs/graphql';
 
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { FieldMetadataType, type FullNameMetadata } from 'twenty-shared/types';
+import { type Relation } from 'typeorm';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
@@ -15,7 +16,6 @@ import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/co
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { Relation } from 'typeorm';
 
 export enum WorkspaceMemberDateFormatEnum {
   SYSTEM = 'SYSTEM',
