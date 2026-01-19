@@ -1,24 +1,22 @@
-import path from 'path';
-import * as fs from 'fs-extra';
-import chalk from 'chalk';
-import { glob } from 'fast-glob';
-import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
-import { TarballService } from '@/cli/utilities/file/utils/file-tarball';
-import { loadManifest, type LoadManifestResult } from '@/cli/utilities/manifest/utils/manifest-load';
-import { BuildManifestWriter, type BuiltFunctionInfo } from '@/cli/utilities/manifest/utils/manifest-writer';
-import { ViteBuildRunner } from './vite-build-runner';
-import { BuildWatcher } from './build-watcher';
-import {
-  type BuildOptions,
-  type BuildResult,
-  type ViteBuildConfig,
-  type BuildWatchHandle,
-  type RebuildDecision,
-} from './types';
 import { ASSETS_DIR } from '@/cli/constants/assets-dir';
 import { FUNCTIONS_DIR } from '@/cli/constants/functions-dir';
 import { GENERATED_DIR } from '@/cli/constants/generated-dir';
 import { OUTPUT_DIR } from '@/cli/constants/output-dir';
+import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
+import { TarballService } from '@/cli/utilities/file/utils/file-tarball';
+import { buildManifest, type BuildManifestResult } from '@/cli/utilities/manifest/utils/manifest-build';
+import { BuildManifestWriter, type BuiltFunctionInfo } from '@/cli/utilities/manifest/utils/manifest-writer';
+import chalk from 'chalk';
+import { glob } from 'fast-glob';
+import * as fs from 'fs-extra';
+import path from 'path';
+import {
+  type BuildOptions,
+  type BuildResult,
+  type RebuildDecision,
+  type ViteBuildConfig
+} from './types';
+import { ViteBuildRunner } from './vite-build-runner';
 
 /**
  * BuildService orchestrates the build process for Twenty applications.
@@ -38,7 +36,7 @@ export class BuildService {
 
   /** Cached state from the last successful build (used for incremental rebuilds) */
   private lastBuildState: {
-    manifestResult: LoadManifestResult;
+    manifestResult: BuildManifestResult;
     builtFunctions: BuiltFunctionInfo[];
     outputDir: string;
   } | null = null;
@@ -78,7 +76,7 @@ export class BuildService {
 
       // Step 1: Load manifest
       console.log(chalk.gray('  Loading manifest...'));
-      const manifestResult = await loadManifest(appPath);
+      const manifestResult = await buildManifest(appPath);
 
       // Step 2: Prepare output directory
       const outputDir = path.join(appPath, OUTPUT_DIR);
@@ -176,50 +174,7 @@ export class BuildService {
     }
   }
 
-  /**
-   * Start watch mode for incremental rebuilds.
-   */
-  async watch(options: BuildOptions): Promise<BuildWatchHandle> {
-    const { appPath } = options;
 
-    console.log(chalk.blue('📦 Starting build watch mode'));
-    console.log(chalk.gray(`📁 App Path: ${appPath}`));
-    console.log('');
-
-    // Perform initial build
-    const initialResult = await this.build({ ...options, tarball: false });
-    if (!initialResult.success) {
-      console.error(
-        chalk.red('Initial build failed, starting watcher anyway...'),
-      );
-    }
-
-    // Start the watcher
-    const watcher = new BuildWatcher(appPath);
-
-    await watcher.start(async (decision) => {
-      if (!decision.shouldRebuild) {
-        return;
-      }
-
-      // Use incremental rebuild based on what changed
-      const result = await this.incrementalRebuild(appPath, decision);
-
-      if (result.success) {
-        console.log(
-          chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
-        );
-      }
-    });
-
-    console.log(
-      chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
-    );
-
-    return {
-      stop: () => watcher.stop(),
-    };
-  }
 
   /**
    * Perform an incremental rebuild based on what files changed.
@@ -251,7 +206,7 @@ export class BuildService {
       // If manifest config changed, reload it
       if (decision.manifestChanged) {
         console.log(chalk.blue('🔄 Manifest changed, regenerating...'));
-        manifestResult = await loadManifest(appPath);
+        manifestResult = await buildManifest(appPath);
         rebuildCount++;
       }
 
@@ -348,7 +303,7 @@ export class BuildService {
   private async rebuildSpecificFunctions(
     appPath: string,
     outputDir: string,
-    manifestResult: LoadManifestResult,
+    manifestResult: BuildManifestResult,
     handlerPaths: string[],
   ): Promise<BuiltFunctionInfo[]> {
     const { manifest } = manifestResult;
@@ -454,7 +409,7 @@ export class BuildService {
   private async buildFunctions(
     appPath: string,
     outputDir: string,
-    manifestResult: LoadManifestResult,
+    manifestResult: BuildManifestResult,
   ): Promise<BuiltFunctionInfo[]> {
     const { manifest } = manifestResult;
     const functionsOutputDir = path.join(outputDir, FUNCTIONS_DIR);
