@@ -9,7 +9,6 @@ import { recordFieldListHoverPositionComponentState } from '@/object-record/reco
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
@@ -40,6 +39,16 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+`;
+
+const StyledPropertyBox = styled.div`
+  align-self: stretch;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(3)};
+  padding-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
 type FieldsWidgetProps = {
@@ -117,7 +126,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
               key={section.id}
               title={section.title}
             >
-              <PropertyBox>
+              <StyledPropertyBox>
                 {isPrefetchLoading ? (
                   <PropertyBoxSkeletonLoader />
                 ) : (
@@ -182,7 +191,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                     )}
                   </>
                 )}
-              </PropertyBox>
+              </StyledPropertyBox>
             </FieldsWidgetSectionContainer>
           ))}
 

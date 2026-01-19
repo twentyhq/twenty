@@ -9,7 +9,6 @@ import {
   within,
 } from 'storybook/test';
 import { getUserDevice } from 'twenty-ui/utilities';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 
@@ -18,7 +17,7 @@ const meta: Meta<typeof FormRichTextV2FieldInput> = {
   component: FormRichTextV2FieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;

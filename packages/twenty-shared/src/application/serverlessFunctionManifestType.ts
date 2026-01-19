@@ -45,6 +45,7 @@ export type RouteTrigger = {
   path: string;
   httpMethod: `${HTTPMethod}`;
   isAuthRequired: boolean;
+  forwardedRequestHeaders?: string[];
 };
 
 export type ServerlessFunctionTriggerManifest = SyncableEntityOptions &

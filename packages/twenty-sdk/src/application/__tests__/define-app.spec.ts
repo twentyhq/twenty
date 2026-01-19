@@ -7,6 +7,7 @@ describe('defineApp', () => {
       displayName: 'My App',
       description: 'My app description',
       icon: 'IconWorld',
+      functionRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     };
 
     const result = defineApp(config);

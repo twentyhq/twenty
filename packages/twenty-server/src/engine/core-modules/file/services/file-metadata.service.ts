@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { extractFolderPathFilenameAndTypeOrThrow } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -8,7 +9,6 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 
 import { FileService } from './file.service';
 
@@ -45,10 +45,8 @@ export class FileMetadataService {
     }
 
     const createdFile = this.fileRepository.create({
-      name: filename,
-      fullPath: files[0].path,
+      path: files[0].path,
       size: file.length,
-      type: mimeType,
       workspaceId,
     });
 
@@ -69,12 +67,12 @@ export class FileMetadataService {
       return null;
     }
 
-    const { folderPath, filename } = extractFolderPathAndFilename(
-      file.fullPath,
+    const { folderPath, filename } = extractFolderPathFilenameAndTypeOrThrow(
+      file.path,
     );
 
     try {
-      if (file.fullPath) {
+      if (file.path) {
         await this.fileService.deleteFile({
           folderPath,
           filename,

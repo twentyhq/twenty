@@ -9,10 +9,10 @@ import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNo
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useRestoreManyRecordsMutation } from '@/object-record/hooks/useRestoreManyRecordsMutation';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getRestoreManyRecordsMutationResponseField } from '@/object-record/utils/getRestoreManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -32,7 +32,6 @@ type RestoreManyRecordsProps = {
 export const useRestoreManyRecords = ({
   objectNameSingular,
 }: useRestoreManyRecordProps) => {
-  const { registerObjectOperation } = useRegisterObjectOperation();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const apiConfig = useRecoilValue(apiConfigState);
@@ -200,8 +199,11 @@ export const useRestoreManyRecords = ({
 
       restoredRecords.push(...restoredRecordsForThisBatch);
 
-      registerObjectOperation(objectMetadataItem, {
-        type: 'restore-many',
+      dispatchObjectRecordOperationBrowserEvent({
+        objectMetadataItem,
+        operation: {
+          type: 'restore-many',
+        },
       });
 
       if (isDefined(delayInMsBetweenRequests)) {

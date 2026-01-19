@@ -1,12 +1,12 @@
-import { generate } from '@genql/cli';
-import chalk from 'chalk';
-import { join, resolve } from 'path';
 import { ApiService } from '@/cli/services/api.service';
 import { ConfigService } from '@/cli/services/config.service';
+import { generate } from '@genql/cli';
+import chalk from 'chalk';
 import * as fs from 'fs-extra';
+import { join, resolve } from 'path';
 import {
-  DEFAULT_API_URL_NAME,
   DEFAULT_API_KEY_NAME,
+  DEFAULT_API_URL_NAME,
 } from 'twenty-shared/application';
 
 export const GENERATED_FOLDER_NAME = 'generated';
@@ -106,6 +106,41 @@ export default class Twenty {
 
   mutation<R extends MutationGenqlSelection>(request: R & { __name?: string }) {
     return this.client.mutation(request);
+  }
+
+  async uploadFile(
+    fileBuffer: Buffer,
+    filename: string,
+    contentType: string = 'application/octet-stream',
+    fileFolder: string = 'Attachment',
+  ): Promise<{ path: string; token: string }> {
+    const form = new FormData();
+
+    form.append('operations', JSON.stringify({
+      query: \`mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+        uploadFile(file: $file, fileFolder: $fileFolder) { path token }
+      }\`,
+      variables: { file: null, fileFolder },
+    }));
+    form.append('map', JSON.stringify({ '0': ['variables.file'] }));
+    form.append('0', new Blob([fileBuffer], { type: contentType }), filename);
+
+
+    const response = await fetch(\`\${process.env.TWENTY_API_URL}/graphql\`, {
+      method: 'POST',
+      headers: {
+        Authorization: \`Bearer \${process.env.TWENTY_API_KEY}\`,
+      },
+      body: form,
+    });
+
+    const result = await response.json();
+
+    if (result.errors) {
+      throw new GenqlError(result.errors, result.data);
+    }
+
+    return result.data.uploadFile;
   }
 }
 

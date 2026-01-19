@@ -203,50 +203,50 @@ Raccomandiamo fortemente di configurare Twenty dietro un proxy inverso con termi
 
   Se si distribuisce in un ambiente senza stato (ad esempio, alcuni servizi di cloud), configura l'archiviazione esterna per mantenere i dati.
 
-## Backup and Restore
+## Backup e ripristino
 
-Regular backups protect your CRM data from loss.
+I backup regolari proteggono i dati del tuo CRM dalla perdita.
 
-### Create a Database Backup
+### Crea un backup del database
 
 ```bash
 docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
 ```
 
-### Automate Daily Backups
+### Automatizza i backup giornalieri
 
-Add to your crontab (`crontab -e`):
+Aggiungi al tuo crontab (`crontab -e`):
 
 ```bash
 0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
 ```
 
-### Restore from Backup
+### Ripristina dal backup
 
-1. Stop the application:
+1. Arresta l'applicazione:
 
 ```bash
 docker compose stop twenty-server twenty-front
 ```
 
-2. Restore the database:
+2. Ripristina il database:
 
 ```bash
 docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
 ```
 
-3. Restart services:
+3. Riavvia i servizi:
 
 ```bash
 docker compose up -d
 ```
 
-### Backup Best Practices
+### Pratiche migliori per i backup
 
-* **Test restores regularly** — verify backups actually work
-* **Store backups off-site** — use cloud storage (S3, GCS, etc.)
-* **Encrypt sensitive data** — protect backups with encryption
-* **Retain multiple copies** — keep daily, weekly, and monthly backups
+* **Esegui regolarmente test di ripristino** — verifica che i backup funzionino davvero
+* **Conserva i backup off-site** — usa l'archiviazione cloud (S3, GCS, ecc.)
+* **Crittografa i dati sensibili** — proteggi i backup con la crittografia
+* **Mantieni più copie** — conserva backup giornalieri, settimanali e mensili
 
 ## Risoluzione dei problemi
 
