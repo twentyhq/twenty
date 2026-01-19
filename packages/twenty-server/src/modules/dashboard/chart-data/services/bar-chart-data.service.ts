@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNumber } from '@sniptt/guards';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
@@ -18,7 +19,6 @@ import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from 'src/modules/dashboard/chart-da
 import { BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-groups-per-bar.constant';
 import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
 import { BarChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/bar-chart-data-output.dto';
-import { BarChartSeriesDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/bar-chart-series.dto';
 import {
   ChartDataException,
   ChartDataExceptionCode,
@@ -303,18 +303,12 @@ export class BarChartDataService {
         )
       : limitedSortedData;
 
-    const data: Record<string, string | number>[] = transformedData.map(
-      (item) => {
-        const datum: Record<string, string | number> = {
-          [indexByKey]: item.formattedValue,
-          [aggregateValueKey]: item.aggregateValue,
-        };
+    const data = transformedData.map((item) => ({
+      [indexByKey]: item.formattedValue,
+      [aggregateValueKey]: item.aggregateValue,
+    }));
 
-        return datum;
-      },
-    );
-
-    const series: BarChartSeriesDTO[] = [
+    const series = [
       {
         key: aggregateValueKey,
         label: aggregateField.label,
@@ -465,7 +459,7 @@ export class BarChartDataService {
         for (const key of allSecondaryValues) {
           const value = item[key];
 
-          if (typeof value === 'number') {
+          if (isNumber(value)) {
             sum += value;
           }
         }
@@ -537,12 +531,10 @@ export class BarChartDataService {
         )
       : finalLimitedData;
 
-    const series: BarChartSeriesDTO[] = limitedKeys.map((key) => {
-      return {
-        key,
-        label: key,
-      };
-    });
+    const series = limitedKeys.map((key) => ({
+      key,
+      label: key,
+    }));
 
     const categoryLabel = primaryAxisGroupByField.label;
     const valueLabel = `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`;
@@ -616,7 +608,7 @@ export class BarChartDataService {
         for (const datum of data) {
           const value = datum[key];
 
-          if (typeof value === 'number') {
+          if (isNumber(value)) {
             sum += value;
           }
         }
@@ -650,7 +642,7 @@ export class BarChartDataService {
       for (const key of keys) {
         const value = datum[key];
 
-        if (typeof value === 'number') {
+        if (isNumber(value)) {
           runningTotals[key] += value;
         }
 
@@ -660,7 +652,7 @@ export class BarChartDataService {
       const totalValue = keys.reduce((sum, key) => {
         const value = newDatum[key];
 
-        return sum + (typeof value === 'number' ? value : 0);
+        return sum + (isNumber(value) ? value : 0);
       }, 0);
 
       const isOutOfRange =

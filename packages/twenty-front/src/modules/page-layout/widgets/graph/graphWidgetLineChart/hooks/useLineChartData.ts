@@ -1,6 +1,6 @@
 import { type GraphWidgetLegendItem } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
-import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeriesWithColor';
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
@@ -10,7 +10,7 @@ import { type LineSeries } from '@nivo/line';
 import { useMemo } from 'react';
 
 type UseLineChartDataProps = {
-  data: LineChartSeries[];
+  data: LineChartSeriesWithColor[];
   colorRegistry: GraphColorRegistry;
   id: string;
   colorMode: GraphColorMode;

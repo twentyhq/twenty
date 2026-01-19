@@ -2,7 +2,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { PIE_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/pieChartData';
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
@@ -10,6 +10,7 @@ import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/deter
 import { extractPieChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractPieChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useQuery } from '@apollo/client';
+import { isString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,7 +22,7 @@ type UseGraphPieChartWidgetDataProps = {
 };
 
 type UseGraphPieChartWidgetDataResult = {
-  data: PieChartDataItem[];
+  data: PieChartDataItemWithColor[];
   showLegend: boolean;
   loading: boolean;
   error?: Error;
@@ -85,13 +86,13 @@ export const useGraphPieChartWidgetData = ({
   });
 
   const chartData = queryData?.pieChartData?.data?.map(
-    (item: { id: string; value: number }): PieChartDataItem => {
+    (item: PieChartDataItemWithColor): PieChartDataItemWithColor => {
       const rawValue = formattedToRawLookup.get(item.id);
 
       const itemColor = determineChartItemColor({
         configurationColor,
         selectOptions: selectFieldOptions,
-        rawValue: typeof rawValue === 'string' ? rawValue : undefined,
+        rawValue: isString(rawValue) ? rawValue : undefined,
       });
 
       return {

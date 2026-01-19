@@ -1,3 +1,4 @@
+import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 export const filterTwoDimensionalDataByRange = <
@@ -16,7 +17,7 @@ export const filterTwoDimensionalDataByRange = <
     const totalValue = keys.reduce((sum, key) => {
       const value = datum[key];
 
-      return sum + (typeof value === 'number' ? value : 0);
+      return sum + (isNumber(value) ? value : 0);
     }, 0);
 
     if (isDefined(rangeMin) && totalValue < rangeMin) {

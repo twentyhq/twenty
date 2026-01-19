@@ -1,10 +1,11 @@
-import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeriesWithColor';
 import { calculateValueRangeFromLineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/calculateValueRangeFromLineChartSeries';
+import { type LineChartSeries } from '~/generated/graphql';
 
 describe('calculateValueRangeFromLineChartSeries', () => {
   describe('with valid data', () => {
     it('should calculate minimum and maximum from single series', () => {
-      const data: LineChartSeries[] = [
+      const data: LineChartSeriesWithColor[] = [
         {
           id: 'series1',
           data: [
@@ -13,7 +14,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
             { x: 'Mar', y: 30 },
           ],
         },
-      ] as unknown as LineChartSeries[];
+      ] as unknown as LineChartSeriesWithColor[];
 
       const result = calculateValueRangeFromLineChartSeries(data);
 
@@ -22,7 +23,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
     });
 
     it('should calculate minimum and maximum from multiple series', () => {
-      const data: LineChartSeries[] = [
+      const data: LineChartSeriesWithColor[] = [
         {
           id: 'series1',
           data: [
@@ -46,7 +47,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
     });
 
     it('should handle negative values', () => {
-      const data: LineChartSeries[] = [
+      const data: LineChartSeriesWithColor[] = [
         {
           id: 'series1',
           data: [
@@ -55,7 +56,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
             { x: 'Mar', y: -10 },
           ],
         },
-      ] as unknown as LineChartSeries[];
+      ] as unknown as LineChartSeriesWithColor[];
 
       const result = calculateValueRangeFromLineChartSeries(data);
 
@@ -64,7 +65,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
     });
 
     it('should handle all same values', () => {
-      const data: LineChartSeries[] = [
+      const data: LineChartSeriesWithColor[] = [
         {
           id: 'series1',
           data: [
@@ -73,7 +74,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
             { x: 'Mar', y: 42 },
           ],
         },
-      ] as unknown as LineChartSeries[];
+      ] as unknown as LineChartSeriesWithColor[];
 
       const result = calculateValueRangeFromLineChartSeries(data);
 
@@ -84,7 +85,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
 
   describe('with null/undefined values', () => {
     it('should treat null y values as 0', () => {
-      const data: LineChartSeries[] = [
+      const data: LineChartSeriesWithColor[] = [
         {
           id: 'series1',
           data: [
@@ -92,7 +93,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
             { x: 'Feb', y: 50 },
           ],
         },
-      ] as unknown as LineChartSeries[];
+      ] as unknown as LineChartSeriesWithColor[];
 
       const result = calculateValueRangeFromLineChartSeries(data);
 
@@ -101,7 +102,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
     });
 
     it('should treat undefined y values as 0', () => {
-      const data: LineChartSeries[] = [
+      const data: LineChartSeriesWithColor[] = [
         {
           id: 'series1',
           data: [
@@ -109,7 +110,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
             { x: 'Feb', y: 30 },
           ],
         },
-      ] as unknown as LineChartSeries[];
+      ] as unknown as LineChartSeriesWithColor[];
 
       const result = calculateValueRangeFromLineChartSeries(data);
 
@@ -120,7 +121,7 @@ describe('calculateValueRangeFromLineChartSeries', () => {
 
   describe('empty data', () => {
     it('should handle empty series array', () => {
-      const data: LineChartSeries[] = [];
+      const data: LineChartSeriesWithColor[] = [];
 
       const result = calculateValueRangeFromLineChartSeries(data);
 
@@ -129,12 +130,12 @@ describe('calculateValueRangeFromLineChartSeries', () => {
     });
 
     it('should handle series with empty data array', () => {
-      const data: LineChartSeries[] = [
+      const data: LineChartSeriesWithColor[] = [
         {
           id: 'series1',
           data: [],
         },
-      ] as unknown as LineChartSeries[];
+      ] as unknown as LineChartSeriesWithColor[];
 
       const result = calculateValueRangeFromLineChartSeries(data);
 

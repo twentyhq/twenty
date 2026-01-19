@@ -1,3 +1,4 @@
+import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 export const filterLineChartXValuesByRange = (
@@ -16,7 +17,7 @@ export const filterLineChartXValuesByRange = (
       const xToYMap = seriesMap.get(seriesId) ?? new Map();
       const yValue = xToYMap.get(xValue) ?? 0;
 
-      return sum + (typeof yValue === 'number' ? yValue : 0);
+      return sum + (isNumber(yValue) ? yValue : 0);
     }, 0);
 
     if (isDefined(rangeMin) && totalValue < rangeMin) {

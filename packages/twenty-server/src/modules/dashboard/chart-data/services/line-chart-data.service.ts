@@ -17,8 +17,6 @@ import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from 'src/modules/dashboard/
 import { LINE_CHART_MAXIMUM_NUMBER_OF_NON_STACKED_SERIES } from 'src/modules/dashboard/chart-data/constants/line-chart-maximum-number-of-non-stacked-series.constant';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_STACKED_SERIES } from 'src/modules/dashboard/chart-data/constants/line-chart-maximum-number-of-stacked-series.constant';
 import { LineChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/line-chart-data-output.dto';
-import { LineChartDataPointDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/line-chart-data-point.dto';
-import { LineChartSeriesDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/line-chart-series.dto';
 import {
   ChartDataException,
   ChartDataExceptionCode,
@@ -301,14 +299,12 @@ export class LineChartDataService {
         )
       : limitedSortedData;
 
-    const dataPoints: LineChartDataPointDTO[] = transformedData.map(
-      ({ x, y }) => ({
-        x,
-        y,
-      }),
-    );
+    const dataPoints = transformedData.map(({ x, y }) => ({
+      x,
+      y,
+    }));
 
-    const series: LineChartSeriesDTO[] = [
+    const series = [
       {
         id: aggregateField.name,
         label: aggregateField.label,
@@ -502,15 +498,13 @@ export class LineChartDataService {
           )
         : limitedXValues;
 
-    const series: LineChartSeriesDTO[] = limitedSeriesIds.map((seriesId) => {
+    const series = limitedSeriesIds.map((seriesId) => {
       const xToYMap = seriesMap.get(seriesId) ?? new Map();
 
-      let dataPoints: LineChartDataPointDTO[] = filteredXValues.map(
-        (xValue) => ({
-          x: xValue,
-          y: xToYMap.get(xValue) ?? 0,
-        }),
-      );
+      let dataPoints = filteredXValues.map((xValue) => ({
+        x: xValue,
+        y: xToYMap.get(xValue) ?? 0,
+      }));
 
       if (configuration.isCumulative) {
         dataPoints = this.applyCumulativeTransform(
@@ -610,7 +604,7 @@ export class LineChartDataService {
     let runningTotal = 0;
 
     for (const point of data) {
-      if (point.y !== null) {
+      if (isDefined(point.y)) {
         runningTotal += point.y;
       }
 

@@ -14,7 +14,6 @@ import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layou
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from 'src/modules/dashboard/chart-data/constants/pie-chart-maximum-number-of-slices.constant';
-import { PieChartDataItemDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/pie-chart-data-item.dto';
 import { PieChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/pie-chart-data-output.dto';
 import {
   ChartDataException,
@@ -95,11 +94,6 @@ export class PieChartDataService {
         flatFieldMetadataMaps.byId,
       );
 
-      const aggregateField = getFieldMetadata(
-        configuration.aggregateFieldMetadataId,
-        flatFieldMetadataMaps.byId,
-      );
-
       const limit =
         PIE_CHART_MAXIMUM_NUMBER_OF_SLICES +
         EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
@@ -137,7 +131,6 @@ export class PieChartDataService {
       return this.transformToPieChartData({
         rawResults,
         groupByField,
-        aggregateField,
         configuration,
         userTimezone: configuration.timezone ?? 'UTC',
         firstDayOfTheWeek:
@@ -162,7 +155,6 @@ export class PieChartDataService {
   private transformToPieChartData({
     rawResults,
     groupByField,
-    aggregateField: _aggregateField,
     configuration,
     userTimezone,
     firstDayOfTheWeek,
@@ -172,7 +164,6 @@ export class PieChartDataService {
       aggregateValue: number;
     }>;
     groupByField: FlatFieldMetadata;
-    aggregateField: FlatFieldMetadata;
     configuration: PieChartConfigurationDTO;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
@@ -234,9 +225,7 @@ export class PieChartDataService {
       dateGranularity: configuration.dateGranularity,
     });
 
-    const data: PieChartDataItemDTO[] = sortedData.map(
-      ({ rawValue: _rawValue, ...item }) => item,
-    );
+    const data = sortedData.map(({ rawValue: _rawValue, ...item }) => item);
 
     return {
       data,

@@ -1,4 +1,4 @@
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartEnrichedData';
 import { getPieChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/getPieChartTooltipData';
 import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphColorScheme';
@@ -45,11 +45,13 @@ describe('getPieChartTooltipData', () => {
     },
   ];
 
-  const createMockDatum = (id: string): ComputedDatum<PieChartDataItem> =>
+  const createMockDatum = (
+    id: string,
+  ): ComputedDatum<PieChartDataItemWithColor> =>
     ({
       id,
       value: 0,
-    }) as unknown as ComputedDatum<PieChartDataItem>;
+    }) as unknown as ComputedDatum<PieChartDataItemWithColor>;
 
   const defaultFormatOptions = {
     displayType: 'number' as const,

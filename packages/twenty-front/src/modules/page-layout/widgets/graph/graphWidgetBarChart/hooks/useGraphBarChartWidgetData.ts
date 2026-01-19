@@ -2,7 +2,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { BAR_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/barChartData';
-import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
@@ -12,12 +12,14 @@ import { extractBarChartDataConfiguration } from '@/page-layout/widgets/graph/ut
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useQuery } from '@apollo/client';
 import { type BarDatum } from '@nivo/bar';
+import { isString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
   type BarChartLayout,
+  type BarChartSeries,
 } from '~/generated/graphql';
 
 type UseGraphBarChartWidgetDataProps = {
@@ -29,7 +31,7 @@ type UseGraphBarChartWidgetDataResult = {
   data: BarDatum[];
   indexBy: string;
   keys: string[];
-  series: BarChartSeries[];
+  series: BarChartSeriesWithColor[];
   xAxisLabel: string;
   yAxisLabel: string;
   showDataLabels: boolean;
@@ -115,13 +117,13 @@ export const useGraphBarChartWidgetData = ({
   });
 
   const series = queryData?.barChartData?.series?.map(
-    (seriesItem: { key: string; label: string }): BarChartSeries => {
+    (seriesItem: BarChartSeries): BarChartSeriesWithColor => {
       const rawValue = formattedToRawLookup.get(seriesItem.key);
 
       const itemColor = determineChartItemColor({
         configurationColor,
         selectOptions: selectFieldOptions,
-        rawValue: typeof rawValue === 'string' ? rawValue : undefined,
+        rawValue: isString(rawValue) ? rawValue : undefined,
       });
 
       return {

@@ -1,8 +1,8 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { LINE_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/lineChartData';
-import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
-import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeriesWithColor';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
@@ -10,9 +10,14 @@ import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/deter
 import { extractLineChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractLineChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useQuery } from '@apollo/client';
+import { isString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type LineChartConfiguration } from '~/generated/graphql';
+import {
+  type LineChartConfiguration,
+  type LineChartDataPoint,
+  type LineChartSeries,
+} from '~/generated/graphql';
 
 type UseGraphLineChartWidgetDataProps = {
   objectMetadataItemId: string;
@@ -30,9 +35,7 @@ type UseGraphLineChartWidgetDataResult = {
   yAxisLabel: string;
   loading: boolean;
   error?: Error;
-  objectMetadataItem: ReturnType<
-    typeof useObjectMetadataItemById
-  >['objectMetadataItem'];
+  objectMetadataItem: ObjectMetadataItem;
 };
 
 export const useGraphLineChartWidgetData = ({
@@ -87,14 +90,14 @@ export const useGraphLineChartWidgetData = ({
     (seriesItem: {
       id: string;
       label: string;
-      data: Array<{ x: string; y: number }>;
-    }): LineChartSeries => {
+      data: Array<LineChartDataPoint>;
+    }): LineChartSeriesWithColor => {
       const rawValue = formattedToRawLookup.get(seriesItem.id);
 
       const itemColor = determineChartItemColor({
         configurationColor,
         selectOptions: selectFieldOptions,
-        rawValue: typeof rawValue === 'string' ? rawValue : undefined,
+        rawValue: isString(rawValue) ? rawValue : undefined,
       });
 
       return {
@@ -102,7 +105,7 @@ export const useGraphLineChartWidgetData = ({
         label: seriesItem.label,
         color: itemColor,
         data: seriesItem.data.map(
-          (point: { x: string; y: number }): LineChartDataPoint => ({
+          (point: LineChartDataPoint): LineChartDataPoint => ({
             x: point.x,
             y: point.y,
           }),

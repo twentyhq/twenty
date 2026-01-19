@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import {
   FieldMetadataType,
   type FirstDayOfTheWeek,
@@ -144,7 +144,7 @@ export const formatDimensionValue = ({
 
         return String(value);
       }
-      const numericValue = typeof value === 'number' ? value : Number(value);
+      const numericValue = isNumber(value) ? value : Number(value);
 
       if (isNaN(numericValue)) {
         return String(value);
