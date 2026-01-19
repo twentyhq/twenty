@@ -132,7 +132,9 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
   const handleSelectionChange = (selectedValue: string) => {
     if (selectedValue.startsWith('morph:')) {
       const morphId = selectedValue.replace('morph:', '');
-      setValue('settings.junctionTargetMorphId', morphId, { shouldDirty: true });
+      setValue('settings.junctionTargetMorphId', morphId, {
+        shouldDirty: true,
+      });
       setValue('settings.junctionTargetFieldId', undefined, {
         shouldDirty: true,
       });
