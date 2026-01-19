@@ -163,7 +163,7 @@ describe('sortChartDataIfNeeded', () => {
       expect(result).toEqual(testData);
     });
 
-    it('should return data unchanged for FIELD_ASC', () => {
+    it('should sort by field value ascending for FIELD_ASC', () => {
       const result = sortChartDataIfNeeded({
         data: testData,
         orderBy: GraphOrderBy.FIELD_ASC,
@@ -175,7 +175,7 @@ describe('sortChartDataIfNeeded', () => {
       expect(result).toEqual(testData);
     });
 
-    it('should return data unchanged for FIELD_DESC', () => {
+    it('should sort by field value descending for FIELD_DESC', () => {
       const result = sortChartDataIfNeeded({
         data: testData,
         orderBy: GraphOrderBy.FIELD_DESC,
@@ -184,7 +184,11 @@ describe('sortChartDataIfNeeded', () => {
         getNumericValue,
       });
 
-      expect(result).toEqual(testData);
+      expect(result.map((item) => item.label)).toEqual([
+        'Paris',
+        'London',
+        'Berlin',
+      ]);
     });
 
     it('should handle empty data array', () => {
