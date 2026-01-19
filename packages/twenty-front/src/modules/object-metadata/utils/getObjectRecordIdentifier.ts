@@ -21,7 +21,7 @@ export const getObjectRecordIdentifier = ({
     | 'imageIdentifierFieldMetadataId'
   >;
   record: ObjectRecord;
-  allowRequestsToTwentyIcons?: boolean;
+  allowRequestsToTwentyIcons: boolean;
 }): ObjectRecordIdentifier => {
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);

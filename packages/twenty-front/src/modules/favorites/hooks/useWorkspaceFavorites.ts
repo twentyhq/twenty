@@ -14,6 +14,7 @@ import {
   FieldMetadataType,
 } from '~/generated-metadata/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 export const useWorkspaceFavorites = () => {
   const featureFlags = useFeatureFlagsMap();
@@ -24,8 +25,11 @@ export const useWorkspaceFavorites = () => {
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Favorite,
     });
+  const allowRequestsToTwentyIcons = useRecoilValue(
+    allowRequestsToTwentyIconsState,
+  );
   const getObjectRecordIdentifierByNameSingular =
-    useGetObjectRecordIdentifierByNameSingular();
+    useGetObjectRecordIdentifierByNameSingular(allowRequestsToTwentyIcons);
 
   const favoriteRelationFieldMetadataItems = useMemo(
     () =>
