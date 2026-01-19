@@ -1,20 +1,20 @@
-import { formatPath } from '@/cli/utils/format-path';
+import { formatPath } from '@/cli/utilities/file/utils/file-path';
 import chalk from 'chalk';
 import type { Command } from 'commander';
-import {
-  AppAddCommand,
-  isSyncableEntity,
-  SyncableEntity,
-} from './app/app-add';
 import { AppBuildCommand } from './app/app-build';
+import { AppDevCommand } from './app/app-dev';
 import { AppGenerateCommand } from './app/app-generate';
 import { AppLogsCommand } from './app/app-logs';
 import { AppSyncCommand } from './app/app-sync';
 import { AppUninstallCommand } from './app/app-uninstall';
-import { AppWatchCommand } from './app/app-watch';
 import { AuthLoginCommand } from './auth/auth-login';
 import { AuthLogoutCommand } from './auth/auth-logout';
 import { AuthStatusCommand } from './auth/auth-status';
+import {
+  EntityAddCommand,
+  isSyncableEntity,
+  SyncableEntity,
+} from './entity/entity-add';
 
 export const registerCommands = (program: Command): void => {
   // Auth commands
@@ -46,20 +46,20 @@ export const registerCommands = (program: Command): void => {
     });
 
   // App commands
-  const watchCommand = new AppWatchCommand();
+  const devCommand = new AppDevCommand();
   const syncCommand = new AppSyncCommand();
   const uninstallCommand = new AppUninstallCommand();
-  const addCommand = new AppAddCommand();
+  const addCommand = new EntityAddCommand();
   const generateCommand = new AppGenerateCommand();
   const logsCommand = new AppLogsCommand();
   const buildCommand = new AppBuildCommand();
 
   program
     .command('app:dev [appPath]')
-    .description('Watch and sync local application changes')
+    .description('Start development mode: sync local application changes')
     .option('-d, --debounce <ms>', 'Debounce delay in milliseconds', '1000')
     .action(async (appPath, options) => {
-      await watchCommand.execute({
+      await devCommand.execute({
         ...options,
         appPath: formatPath(appPath),
       });
