@@ -1,13 +1,17 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import {
-  FieldMetadataType,
   type ObjectsPermissionsByRoleId,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { COMPANY_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/company-flat-fields.mock';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
@@ -49,6 +53,18 @@ type MockObjectRecordEvent = {
   };
 };
 
+const buildFlatFieldMetadataMaps = (
+  fields: FlatFieldMetadata[],
+): FlatEntityMaps<FlatFieldMetadata> =>
+  fields.reduce(
+    (maps, field) =>
+      addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: field,
+        flatEntityMaps: maps,
+      }),
+    createEmptyFlatEntityMaps() as FlatEntityMaps<FlatFieldMetadata>,
+  );
+
 describe('WorkspaceEventEmitterService', () => {
   let service: WorkspaceEventEmitterService;
   let mockSubscriptionService: jest.Mocked<
@@ -64,45 +80,17 @@ describe('WorkspaceEventEmitterService', () => {
     getOrRecompute: jest.Mock;
   };
 
-  const workspaceId = 'test-workspace-id';
+  const workspaceId = COMPANY_FLAT_OBJECT_MOCK.workspaceId;
   const streamChannelId = 'test-stream-channel-id';
   const userWorkspaceId = 'test-user-workspace-id';
   const roleId = 'test-role-id';
-  const objectMetadataId = 'test-object-metadata-id';
-  const fieldMetadataId = 'test-field-metadata-id';
 
-  const createMockObjectMetadata = (): FlatObjectMetadata =>
-    ({
-      id: objectMetadataId,
-      nameSingular: 'company',
-      namePlural: 'companies',
-      labelSingular: 'Company',
-      labelPlural: 'Companies',
-      fieldMetadataIds: [fieldMetadataId],
-      workspaceId,
-    }) as FlatObjectMetadata;
+  const companyObjectMetadata: FlatObjectMetadata = COMPANY_FLAT_OBJECT_MOCK;
 
-  const createMockFlatFieldMetadata = (
-    id: string,
-    name: string,
-  ): FlatFieldMetadata =>
-    ({
-      id,
-      name,
-      type: FieldMetadataType.TEXT,
-      objectMetadataId,
-    }) as FlatFieldMetadata;
+  const companyNameField = COMPANY_FLAT_FIELDS_MOCK.name;
 
-  const createMockFlatFieldMetadataMaps = (
-    fields: FlatFieldMetadata[],
-  ): FlatEntityMaps<FlatFieldMetadata> => ({
-    byId: Object.fromEntries(fields.map((field) => [field.id, field])),
-    idByUniversalIdentifier: {},
-    universalIdentifiersByApplicationId: {},
-  });
-
-  const mockFlatFieldMetadataMaps = createMockFlatFieldMetadataMaps([
-    createMockFlatFieldMetadata(fieldMetadataId, 'name'),
+  const mockFlatFieldMetadataMaps = buildFlatFieldMetadataMaps([
+    companyNameField,
   ]);
 
   const mockUserWorkspaceRoleMap: Record<string, string> = {
@@ -111,7 +99,7 @@ describe('WorkspaceEventEmitterService', () => {
 
   const mockRolesPermissions: ObjectsPermissionsByRoleId = {
     [roleId]: {
-      [objectMetadataId]: {
+      [companyObjectMetadata.id]: {
         canReadObjectRecords: true,
         canUpdateObjectRecords: true,
         canSoftDeleteObjectRecords: true,
@@ -239,7 +227,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.created',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [createMockEvent()],
       };
 
@@ -258,7 +246,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.created',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [createMockEvent()],
       };
 
@@ -278,7 +266,7 @@ describe('WorkspaceEventEmitterService', () => {
     it('should not publish events when object-level read permission is denied', async () => {
       const permissionsWithoutRead: ObjectsPermissionsByRoleId = {
         [roleId]: {
-          [objectMetadataId]: {
+          [companyObjectMetadata.id]: {
             canReadObjectRecords: false,
             canUpdateObjectRecords: true,
             canSoftDeleteObjectRecords: true,
@@ -297,7 +285,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.created',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [createMockEvent()],
       };
 
@@ -329,7 +317,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.created',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [createMockEvent()],
       };
 
@@ -367,7 +355,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.created',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [createMockEvent()],
       };
 
@@ -379,17 +367,23 @@ describe('WorkspaceEventEmitterService', () => {
     });
 
     it('should filter restricted fields from events', async () => {
-      const restrictedFieldMetadataId = 'restricted-field-id';
+      const restrictedField = getFlatFieldMetadataMock({
+        objectMetadataId: companyObjectMetadata.id,
+        type: COMPANY_FLAT_FIELDS_MOCK.name.type,
+        name: 'secretField',
+        universalIdentifier: 'restricted-field-universal-id',
+        workspaceId,
+      });
 
       const permissionsWithRestrictedFields: ObjectsPermissionsByRoleId = {
         [roleId]: {
-          [objectMetadataId]: {
+          [companyObjectMetadata.id]: {
             canReadObjectRecords: true,
             canUpdateObjectRecords: true,
             canSoftDeleteObjectRecords: true,
             canDestroyObjectRecords: true,
             restrictedFields: {
-              [restrictedFieldMetadataId]: { canRead: false, canUpdate: false },
+              [restrictedField.id]: { canRead: false, canUpdate: false },
             },
             rowLevelPermissionPredicates: [],
             rowLevelPermissionPredicateGroups: [],
@@ -397,8 +391,8 @@ describe('WorkspaceEventEmitterService', () => {
         },
       };
 
-      const fieldMetadataMapsWithRestricted = createMockFlatFieldMetadataMaps([
-        createMockFlatFieldMetadata(restrictedFieldMetadataId, 'secretField'),
+      const fieldMetadataMapsWithRestricted = buildFlatFieldMetadataMaps([
+        restrictedField,
       ]);
 
       mockWorkspaceCacheService.getOrRecompute.mockResolvedValue(
@@ -411,7 +405,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.created',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [
           createMockEvent({
             properties: {
@@ -441,17 +435,23 @@ describe('WorkspaceEventEmitterService', () => {
     });
 
     it('should skip update events when all updated fields are restricted', async () => {
-      const restrictedFieldMetadataId = 'restricted-field-id';
+      const restrictedField = getFlatFieldMetadataMock({
+        objectMetadataId: companyObjectMetadata.id,
+        type: COMPANY_FLAT_FIELDS_MOCK.name.type,
+        name: 'secretField',
+        universalIdentifier: 'restricted-field-universal-id',
+        workspaceId,
+      });
 
       const permissionsWithRestrictedFields: ObjectsPermissionsByRoleId = {
         [roleId]: {
-          [objectMetadataId]: {
+          [companyObjectMetadata.id]: {
             canReadObjectRecords: true,
             canUpdateObjectRecords: true,
             canSoftDeleteObjectRecords: true,
             canDestroyObjectRecords: true,
             restrictedFields: {
-              [restrictedFieldMetadataId]: { canRead: false, canUpdate: false },
+              [restrictedField.id]: { canRead: false, canUpdate: false },
             },
             rowLevelPermissionPredicates: [],
             rowLevelPermissionPredicateGroups: [],
@@ -459,8 +459,8 @@ describe('WorkspaceEventEmitterService', () => {
         },
       };
 
-      const fieldMetadataMapsWithRestricted = createMockFlatFieldMetadataMaps([
-        createMockFlatFieldMetadata(restrictedFieldMetadataId, 'secretField'),
+      const fieldMetadataMapsWithRestricted = buildFlatFieldMetadataMaps([
+        restrictedField,
       ]);
 
       mockWorkspaceCacheService.getOrRecompute.mockResolvedValue(
@@ -473,7 +473,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.updated',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [
           createMockEvent({
             properties: {
@@ -496,17 +496,23 @@ describe('WorkspaceEventEmitterService', () => {
     });
 
     it('should filter diff when restricted fields are updated', async () => {
-      const restrictedFieldMetadataId = 'restricted-field-id';
+      const restrictedField = getFlatFieldMetadataMock({
+        objectMetadataId: companyObjectMetadata.id,
+        type: COMPANY_FLAT_FIELDS_MOCK.name.type,
+        name: 'secretField',
+        universalIdentifier: 'restricted-field-universal-id',
+        workspaceId,
+      });
 
       const permissionsWithRestrictedFields: ObjectsPermissionsByRoleId = {
         [roleId]: {
-          [objectMetadataId]: {
+          [companyObjectMetadata.id]: {
             canReadObjectRecords: true,
             canUpdateObjectRecords: true,
             canSoftDeleteObjectRecords: true,
             canDestroyObjectRecords: true,
             restrictedFields: {
-              [restrictedFieldMetadataId]: { canRead: false, canUpdate: false },
+              [restrictedField.id]: { canRead: false, canUpdate: false },
             },
             rowLevelPermissionPredicates: [],
             rowLevelPermissionPredicateGroups: [],
@@ -514,8 +520,8 @@ describe('WorkspaceEventEmitterService', () => {
         },
       };
 
-      const fieldMetadataMapsWithRestricted = createMockFlatFieldMetadataMaps([
-        createMockFlatFieldMetadata(restrictedFieldMetadataId, 'secretField'),
+      const fieldMetadataMapsWithRestricted = buildFlatFieldMetadataMaps([
+        restrictedField,
       ]);
 
       mockWorkspaceCacheService.getOrRecompute.mockResolvedValue(
@@ -528,7 +534,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.updated',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [
           createMockEvent({
             properties: {
@@ -586,7 +592,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.created',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [createMockEvent()],
       };
 
@@ -613,7 +619,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.created',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [createMockEvent()],
       };
 
@@ -632,7 +638,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.created',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [createMockEvent()],
       };
 
@@ -672,7 +678,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.created',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [
           createMockEvent({
             properties: {
@@ -710,7 +716,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.created',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [
           createMockEvent({
             recordId: 'record-1',
@@ -758,7 +764,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.created',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [createMockEvent()],
       };
 
@@ -796,7 +802,7 @@ describe('WorkspaceEventEmitterService', () => {
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
         name: 'company.deleted',
         workspaceId,
-        objectMetadata: createMockObjectMetadata(),
+        objectMetadata: companyObjectMetadata,
         events: [
           createMockEvent({
             properties: {
@@ -848,7 +854,7 @@ describe('WorkspaceEventEmitterService', () => {
         const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
           name: 'company.created',
           workspaceId,
-          objectMetadata: createMockObjectMetadata(),
+          objectMetadata: companyObjectMetadata,
           events: [createMockEvent()],
         };
 
@@ -889,7 +895,7 @@ describe('WorkspaceEventEmitterService', () => {
         const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
           name: 'company.created',
           workspaceId,
-          objectMetadata: createMockObjectMetadata(),
+          objectMetadata: companyObjectMetadata,
           events: [createMockEvent()],
         };
 
@@ -944,7 +950,7 @@ describe('WorkspaceEventEmitterService', () => {
         const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
           name: 'company.created',
           workspaceId,
-          objectMetadata: createMockObjectMetadata(),
+          objectMetadata: companyObjectMetadata,
           events: [
             createMockEvent({
               properties: {

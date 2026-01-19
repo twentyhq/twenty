@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
@@ -28,8 +28,6 @@ import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/
 
 @Injectable()
 export class WorkspaceEventEmitterService {
-  private readonly logger = new Logger(WorkspaceEventEmitterService.name);
-
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly eventStreamService: EventStreamService,
@@ -126,20 +124,12 @@ export class WorkspaceEventEmitterService {
     const { userWorkspaceId } = streamData.authContext;
 
     if (!isDefined(userWorkspaceId)) {
-      this.logger.warn(
-        `SSE subscriber has no userWorkspaceId, skipping event delivery for stream ${streamChannelId}`,
-      );
-
       return;
     }
 
     const roleId = permissionsContext.userWorkspaceRoleMap[userWorkspaceId];
 
     if (!isDefined(roleId)) {
-      this.logger.warn(
-        `Could not find role for userWorkspaceId ${userWorkspaceId}, skipping event delivery for stream ${streamChannelId}`,
-      );
-
       return;
     }
 
@@ -194,7 +184,7 @@ export class WorkspaceEventEmitterService {
         continue;
       }
 
-      const matchedQueryIds = this.matchQueriesWithEventAndRLS(
+      const matchedQueryIds = this.getMatchingQueryIds(
         streamData.queries,
         filteredEvent,
         subscriberRLSFilter,
@@ -310,7 +300,7 @@ export class WorkspaceEventEmitterService {
     } as ObjectRecordEvent & { objectNameSingular: string };
   }
 
-  private matchQueriesWithEventAndRLS(
+  private getMatchingQueryIds(
     queries: Record<
       string,
       {
@@ -327,7 +317,7 @@ export class WorkspaceEventEmitterService {
 
     for (const [queryId, operationSignature] of Object.entries(queries)) {
       if (
-        this.isQueryMatchingEventWithRLS(
+        this.isQueryMatchingEvent(
           operationSignature,
           event,
           subscriberRLSFilter,
@@ -342,7 +332,7 @@ export class WorkspaceEventEmitterService {
     return matchedQueryIds;
   }
 
-  private isQueryMatchingEventWithRLS(
+  private isQueryMatchingEvent(
     operationSignature: {
       objectNameSingular: string;
       variables?: { filter?: RecordGqlOperationFilter };
@@ -416,5 +406,5 @@ export class WorkspaceEventEmitterService {
       userWorkspaceRoleMap,
       rolesPermissions,
     };
-  };
+  }
 }
