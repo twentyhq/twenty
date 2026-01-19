@@ -5,7 +5,6 @@ import { FieldMetadataType, type FullNameMetadata } from 'twenty-shared/types';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -16,6 +15,7 @@ import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/co
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { Relation } from 'typeorm';
 
 export enum WorkspaceMemberDateFormatEnum {
   SYSTEM = 'SYSTEM',
@@ -74,18 +74,18 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   timeZone: string;
   dateFormat: string;
   timeFormat: string;
-  assignedTasks: EntityRelation<TaskWorkspaceEntity[]>;
-  favorites: EntityRelation<FavoriteWorkspaceEntity[]>;
-  accountOwnerForCompanies: EntityRelation<CompanyWorkspaceEntity[]>;
-  authoredAttachments: EntityRelation<AttachmentWorkspaceEntity[]>;
-  connectedAccounts: EntityRelation<ConnectedAccountWorkspaceEntity[]>;
-  messageParticipants: EntityRelation<MessageParticipantWorkspaceEntity[]>;
-  blocklist: EntityRelation<BlocklistWorkspaceEntity[]>;
-  calendarEventParticipants: EntityRelation<
+  assignedTasks: Relation<TaskWorkspaceEntity[]>;
+  favorites: Relation<FavoriteWorkspaceEntity[]>;
+  accountOwnerForCompanies: Relation<CompanyWorkspaceEntity[]>;
+  authoredAttachments: Relation<AttachmentWorkspaceEntity[]>;
+  connectedAccounts: Relation<ConnectedAccountWorkspaceEntity[]>;
+  messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
+  blocklist: Relation<BlocklistWorkspaceEntity[]>;
+  calendarEventParticipants: Relation<
     CalendarEventParticipantWorkspaceEntity[]
   >;
-  timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
-  ownedOpportunities: EntityRelation<OpportunityWorkspaceEntity[]>;
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+  ownedOpportunities: Relation<OpportunityWorkspaceEntity[]>;
   searchVector: string;
   numberFormat: string;
 }
