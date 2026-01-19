@@ -27,6 +27,7 @@ import {
 } from 'src/engine/core-modules/tool/types/tool.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
@@ -44,6 +45,7 @@ export class SendEmailTool implements Tool {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly sendMessageService: MessagingSendMessageService,
+    private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly fileService: FileService,
@@ -211,6 +213,18 @@ export class SendEmailTool implements Tool {
         workspaceId,
       );
 
+      const { accessToken, refreshToken } =
+        await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
+          connectedAccount,
+          workspaceId,
+        );
+
+      const connectedAccountWithFreshTokens = {
+        ...connectedAccount,
+        accessToken,
+        refreshToken,
+      };
+
       const attachments = await this.getAttachments(files || [], workspaceId);
 
       const parsedBody = parseEmailBody(body);
@@ -232,7 +246,7 @@ export class SendEmailTool implements Tool {
           html: safeHtmlBody,
           attachments,
         },
-        connectedAccount,
+        connectedAccountWithFreshTokens,
       );
 
       this.logger.log(
