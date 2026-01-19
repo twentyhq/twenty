@@ -1,4 +1,4 @@
-import { ApiService } from '@/cli/utilities/api/services/api.service';
+import { OUTPUT_DIR } from '@/cli/constants/output-dir';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import { ManifestValidationError } from '@/cli/utilities/manifest/types/manifest.types';
 import { type BuildManifestResult } from '@/cli/utilities/manifest/utils/manifest-build';
@@ -12,6 +12,7 @@ import {
   type ManifestBuildError,
 } from '@/cli/utilities/vite-plugin/vite-manifest-plugin';
 import chalk from 'chalk';
+import * as fs from 'fs-extra';
 import path from 'path';
 import { createServer, type ViteDevServer } from 'vite';
 
@@ -20,15 +21,15 @@ export type AppDevOptions = {
 };
 
 export class AppDevCommand {
-  private apiService = new ApiService();
   private server: ViteDevServer | null = null;
+  private appPath: string = '';
 
   async execute(options: AppDevOptions): Promise<void> {
-    const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
+    this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
-    this.logStartupInfo(appPath);
+    this.logStartupInfo(this.appPath);
 
-    this.server = await this.createViteDevServer(appPath);
+    this.server = await this.createViteDevServer(this.appPath);
 
     await this.server.listen();
 
@@ -66,20 +67,14 @@ export class AppDevCommand {
         watch: {
           ignored: ['**/node_modules/**', '**/.twenty/**', '**/dist/**'],
         },
-        // Use a random available port since we don't need HTTP access
         port: 0,
-        // Don't open browser
         open: false,
-        // Disable HMR websocket since we only use file watching
         hmr: false,
       },
-      // Disable build optimization since we only need file watching
       optimizeDeps: {
         noDiscovery: true,
       },
-      // Suppress Vite logs - we handle our own logging
       logLevel: 'silent',
-      // Watch the src folder
       publicDir: false,
       build: {
         watch: {
@@ -94,7 +89,7 @@ export class AppDevCommand {
 
     displayWarnings(result.warnings);
 
-    this.syncWithServer(result);
+    this.writeManifestToOutput(result);
   }
 
   private handleBuildError(error: ManifestBuildError): void {
@@ -105,22 +100,26 @@ export class AppDevCommand {
     }
   }
 
-  private async syncWithServer(result: BuildManifestResult): Promise<void> {
+  private async writeManifestToOutput(
+    result: BuildManifestResult,
+  ): Promise<void> {
     try {
-      await this.apiService.syncApplication({
-        manifest: result.manifest,
-        packageJson: result.packageJson,
-        yarnLock: result.yarnLock,
-      });
+      const outputDir = path.join(this.appPath, OUTPUT_DIR);
 
-      console.log(chalk.green('  ✓ Synced with server'));
+      await fs.ensureDir(outputDir);
+
+      const manifestPath = path.join(outputDir, 'manifest.json');
+
+      await fs.writeJSON(manifestPath, result.manifest, { spaces: 2 });
+
+      console.log(chalk.green(`  ✓ Manifest written to ${manifestPath}`));
       console.log('');
       console.log(
         chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
       );
     } catch (error) {
       console.error(
-        chalk.red('  ✗ Sync failed:'),
+        chalk.red('  ✗ Failed to write manifest:'),
         error instanceof Error ? error.message : error,
       );
     }
