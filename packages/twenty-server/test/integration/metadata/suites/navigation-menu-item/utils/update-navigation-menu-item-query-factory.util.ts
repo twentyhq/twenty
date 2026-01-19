@@ -3,7 +3,8 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 
 import { type UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 
-export type UpdateNavigationMenuItemFactoryInput = UpdateNavigationMenuItemInput;
+export type UpdateNavigationMenuItemFactoryInput =
+  UpdateNavigationMenuItemInput;
 
 const DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS = `
   id

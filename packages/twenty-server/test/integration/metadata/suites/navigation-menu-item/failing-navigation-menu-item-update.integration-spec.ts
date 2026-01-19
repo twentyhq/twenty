@@ -125,7 +125,7 @@ describe('NavigationMenuItem update should fail', () => {
           input: (testSetup) => ({
             id: testSetup.testNavigationMenuItemId,
             position: -1,
-        }),
+          }),
         },
       },
     ];
