@@ -172,7 +172,11 @@ describe('sortChartDataIfNeeded', () => {
         getNumericValue,
       });
 
-      expect(result).toEqual(testData);
+      expect(result.map((item) => item.label)).toEqual([
+        'Berlin',
+        'London',
+        'Paris',
+      ]);
     });
 
     it('should sort by field value descending for FIELD_DESC', () => {

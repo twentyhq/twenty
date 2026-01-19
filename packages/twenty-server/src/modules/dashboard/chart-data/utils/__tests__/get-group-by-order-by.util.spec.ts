@@ -88,7 +88,7 @@ describe('getGroupByOrderBy', () => {
 
       expect(result).toEqual({
         aggregate: {
-          SUM_amount: OrderByDirection.AscNullsLast,
+          sumAmount: OrderByDirection.AscNullsLast,
         },
       });
     });
@@ -129,7 +129,7 @@ describe('getGroupByOrderBy', () => {
 
       expect(result).toEqual({
         aggregate: {
-          COUNT_amount: OrderByDirection.DescNullsLast,
+          totalCount: OrderByDirection.DescNullsLast,
         },
       });
     });
@@ -144,7 +144,7 @@ describe('getGroupByOrderBy', () => {
 
       expect(result).toEqual({
         aggregate: {
-          AVG_amount: OrderByDirection.DescNullsLast,
+          avgAmount: OrderByDirection.DescNullsLast,
         },
       });
     });
