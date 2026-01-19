@@ -74,7 +74,7 @@ export const useGraphBarChartWidgetData = ({
   });
 
 
-  const chartData = queryData?.barChartData?.data as BarDatum[];
+  const chartData = (queryData?.barChartData?.data as BarDatum[]) ?? [];
 
   const formattedToRawLookup = isDefined(
     queryData?.barChartData?.formattedToRawLookup,
