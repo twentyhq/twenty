@@ -70,6 +70,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
     case 'pageLayoutWidget':
     case 'pageLayoutTab':
     case 'commandMenuItem':
+    case 'navigationMenuItem':
     case 'frontComponent': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
         flatEntity: action.flatEntity,
