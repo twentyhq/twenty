@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 as uuidv4 } from 'uuid';
 
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
@@ -23,16 +23,20 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     let position = createNavigationMenuItemInput.position;
 
     if (!isDefined(position)) {
+      const normalizedForWorkspaceMemberId =
+        createNavigationMenuItemInput.forWorkspaceMemberId ?? null;
+      const normalizedFavoriteFolderId =
+        createNavigationMenuItemInput.favoriteFolderId ?? null;
+
       const existingItems = Object.values(
         flatNavigationMenuItemMaps.byId,
       ).filter(
         (item) =>
           isDefined(item) &&
           item.workspaceId === workspaceId &&
-          item.forWorkspaceMemberId ===
-            createNavigationMenuItemInput.forWorkspaceMemberId &&
-          item.favoriteFolderId ===
-            createNavigationMenuItemInput.favoriteFolderId,
+          (item.forWorkspaceMemberId ?? null) ===
+            normalizedForWorkspaceMemberId &&
+          (item.favoriteFolderId ?? null) === normalizedFavoriteFolderId,
       );
 
       const maxPosition = existingItems.reduce(
