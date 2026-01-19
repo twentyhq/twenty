@@ -31,6 +31,7 @@ export const DEFAULT_HANDLER_NAME = 'main';
 
 @Entity('serverlessFunction')
 @Index('IDX_SERVERLESS_FUNCTION_ID_DELETED_AT', ['id', 'deletedAt'])
+@Index('IDX_SERVERLESS_FUNCTION_LAYER_ID', ['serverlessFunctionLayerId'])
 export class ServerlessFunctionEntity
   extends SyncableEntity
   implements Required<ServerlessFunctionEntity>

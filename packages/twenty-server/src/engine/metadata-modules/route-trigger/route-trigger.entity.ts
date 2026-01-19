@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -20,6 +21,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'httpMethod',
   'workspaceId',
 ])
+@Index('IDX_ROUTE_TRIGGER_SERVERLESS_FUNCTION_ID', ['serverlessFunctionId'])
 export class RouteTriggerEntity
   extends SyncableEntity
   implements Required<RouteTriggerEntity>

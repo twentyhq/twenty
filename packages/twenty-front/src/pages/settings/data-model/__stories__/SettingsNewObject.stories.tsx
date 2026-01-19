@@ -26,8 +26,8 @@ export default meta;
 export type Story = StoryObj<typeof SettingsNewObject>;
 
 export const WithStandardSelected: Story = {
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
     await canvas.findByRole(
       'heading',
