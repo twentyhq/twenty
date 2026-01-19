@@ -5,19 +5,19 @@ This is a [Twenty](https://twenty.com) application project bootstrapped with [`c
 First, authenticate to your workspace:
 
 ```bash
-yarn auth
+yarn auth:login
 ```
 
 Then, start development mode to sync your app and watch for changes:
 
 ```bash
-yarn dev
+yarn app:dev
 ```
 
 Or run a one-time sync:
 
 ```bash
-yarn sync
+yarn app:sync
 ```
 
 Open your Twenty instance and go to `/settings/applications` section to see the result.
@@ -25,14 +25,18 @@ Open your Twenty instance and go to `/settings/applications` section to see the 
 ## Available Commands
 
 ```bash
-yarn auth           # Authenticate with Twenty
-yarn dev            # Start dev mode (sync + watch)
-yarn sync           # One-time sync
-yarn create-entity  # Add a new entity (function, object, role)
-yarn generate       # Generate typed Twenty client
-yarn logs           # Stream function logs
-yarn uninstall      # Uninstall app from workspace
-yarn help           # Display help
+# Authentication
+yarn auth:login     # Authenticate with Twenty
+yarn auth:logout    # Remove credentials
+yarn auth:status    # Check auth status
+
+# Application
+yarn app:dev        # Start dev mode (sync + watch)
+yarn app:sync       # One-time sync
+yarn app:add        # Add a new entity (function, object, role)
+yarn app:generate   # Generate typed Twenty client
+yarn app:logs       # Stream function logs
+yarn app:uninstall  # Uninstall app from workspace
 ```
 
 ## Learn More

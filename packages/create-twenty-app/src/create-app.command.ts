@@ -1,12 +1,12 @@
+import { copyBaseApplicationProject } from '@/utils/app-template';
+import { convertToLabel } from '@/utils/convert-to-label';
+import { install } from '@/utils/install';
+import { tryGitInit } from '@/utils/try-git-init';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
-import * as path from 'path';
-import { copyBaseApplicationProject } from '@/utils/app-template';
 import kebabCase from 'lodash.kebabcase';
-import { convertToLabel } from '@/utils/convert-to-label';
-import { tryGitInit } from '@/utils/try-git-init';
-import { install } from '@/utils/install';
+import * as path from 'path';
 
 const CURRENT_EXECUTION_DIRECTORY = process.env.INIT_CWD || process.cwd();
 
@@ -125,7 +125,7 @@ export class CreateAppCommand {
     console.log('');
     console.log(chalk.blue('Next steps:'));
     console.log(chalk.gray(`  cd ${dirName}`));
-    console.log(chalk.gray('  yarn auth        # Authenticate with Twenty'));
-    console.log(chalk.gray('  yarn dev         # Start dev mode'));
+    console.log(chalk.gray('  yarn auth:login  # Authenticate with Twenty'));
+    console.log(chalk.gray('  yarn app:dev     # Start dev mode'));
   }
 }
