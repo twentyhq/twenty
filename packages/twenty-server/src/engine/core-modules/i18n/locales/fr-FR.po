@@ -4338,6 +4338,12 @@ msgstr "La version du flux de travail ne contient pas de déclencheur"
 msgid "Workflow version is not in draft status"
 msgstr "La version du flux de travail n'est pas en statut brouillon"
 
+#. js-lingui-id: bK8AyJ
+#: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
+#: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
+msgid "Workspace {workspaceId} is not found."
+msgstr ""
+
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"

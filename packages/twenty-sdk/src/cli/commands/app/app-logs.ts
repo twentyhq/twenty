@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import { ApiService } from '@/cli/utilities/api/services/api.service';
-import { loadManifest } from '@/cli/utilities/manifest/utils/manifest-load';
+import { buildManifest } from '@/cli/utilities/manifest/utils/manifest-build';
 
 export class AppLogsCommand {
   private apiService = new ApiService();
@@ -16,7 +16,7 @@ export class AppLogsCommand {
     functionName?: string;
   }): Promise<void> {
     try {
-      const { manifest } = await loadManifest(appPath);
+      const { manifest } = await buildManifest(appPath);
       this.logWatchInfo({
         appName: manifest.application.displayName,
         functionUniversalIdentifier,

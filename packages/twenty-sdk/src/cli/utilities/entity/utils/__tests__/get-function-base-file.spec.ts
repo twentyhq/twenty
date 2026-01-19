@@ -7,11 +7,9 @@ describe('getFunctionBaseFile', () => {
       universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4',
     });
 
-    // Verify it uses defineFunction
     expect(result).toContain("import { defineFunction } from 'twenty-sdk'");
     expect(result).toContain('export default defineFunction({');
 
-    // Verify function properties
     expect(result).toContain(
       "universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4'",
     );
@@ -20,10 +18,8 @@ describe('getFunctionBaseFile', () => {
     expect(result).toContain('handler,');
     expect(result).toContain('triggers: [');
 
-    // Verify handler is exported
     expect(result).toContain('export const handler = async');
 
-    // Verify description is included
     expect(result).toContain(
       "description: 'Add a description for your function'",
     );
@@ -34,7 +30,6 @@ describe('getFunctionBaseFile', () => {
       name: 'auto-uuid-function',
     });
 
-    // Verify it has a universalIdentifier (UUID format)
     expect(result).toMatch(
       /universalIdentifier: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'/,
     );
@@ -54,7 +49,6 @@ describe('getFunctionBaseFile', () => {
       name: 'example-function',
     });
 
-    // Verify trigger examples are included as comments
     expect(result).toContain("type: 'route'");
     expect(result).toContain("type: 'cron'");
     expect(result).toContain("type: 'databaseEvent'");

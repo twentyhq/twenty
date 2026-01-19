@@ -1,5 +1,10 @@
-import * as fs from 'fs-extra';
+import { type FunctionConfig } from '@/application/functions/function-config';
+import { type RoleConfig } from '@/application/role-config';
+import { loadConfig, loadFunctionModule } from '@/cli/utilities/file/utils/file-config-loader';
+import { findPathFile } from '@/cli/utilities/file/utils/file-find';
+import { parseJsoncFile, parseTextFile } from '@/cli/utilities/file/utils/file-jsonc';
 import { glob } from 'fast-glob';
+import * as fs from 'fs-extra';
 import path, { posix, relative, sep } from 'path';
 import {
   type Application,
@@ -11,16 +16,11 @@ import {
   type ServerlessFunctionManifest,
 } from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
-import { type FunctionConfig } from '@/application/functions/function-config';
-import { type RoleConfig } from '@/application/role-config';
-import { loadConfig, loadFunctionModule } from '@/cli/utilities/file/utils/file-config-loader';
-import { findPathFile } from '@/cli/utilities/file/utils/file-find';
-import { parseJsoncFile, parseTextFile } from '@/cli/utilities/file/utils/file-jsonc';
-import { validateManifest } from './manifest-validate';
 import {
   ManifestValidationError,
   type ValidationWarning,
 } from '../types/manifest.types';
+import { validateManifest } from './manifest-validate';
 
 /**
  * Validate that the required folder structure exists.
@@ -236,7 +236,7 @@ const checkShouldGenerate = async (appPath: string): Promise<boolean> => {
   return false;
 };
 
-export type LoadManifestResult = {
+export type BuildManifestResult = {
   packageJson: PackageJson;
   yarnLock: string;
   manifest: ApplicationManifest;
@@ -245,11 +245,11 @@ export type LoadManifestResult = {
 };
 
 /**
- * Load an application manifest using the folder structure with jiti runtime evaluation.
+ * Build an application manifest using the folder structure with jiti runtime evaluation.
  */
-export const loadManifest = async (
+export const buildManifest = async (
   appPath: string,
-): Promise<LoadManifestResult> => {
+): Promise<BuildManifestResult> => {
   // Validate folder structure
   await validateFolderStructure(appPath);
 
