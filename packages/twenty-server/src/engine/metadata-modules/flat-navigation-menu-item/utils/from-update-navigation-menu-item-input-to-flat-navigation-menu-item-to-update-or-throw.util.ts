@@ -6,8 +6,8 @@ import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/fla
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 import {
-    NavigationMenuItemException,
-    NavigationMenuItemExceptionCode,
+  NavigationMenuItemException,
+  NavigationMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 

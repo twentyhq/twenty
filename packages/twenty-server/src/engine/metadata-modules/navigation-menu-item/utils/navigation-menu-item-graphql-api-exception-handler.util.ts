@@ -1,12 +1,12 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-    NotFoundError,
-    UserInputError,
+  NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-    NavigationMenuItemException,
-    NavigationMenuItemExceptionCode,
+  NavigationMenuItemException,
+  NavigationMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 
 export const navigationMenuItemGraphqlApiExceptionHandler = (error: Error) => {

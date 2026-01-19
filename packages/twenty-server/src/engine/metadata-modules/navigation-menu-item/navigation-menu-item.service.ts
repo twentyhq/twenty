@@ -14,8 +14,8 @@ import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/
 import { type NavigationMenuItemDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/navigation-menu-item.dto';
 import { type UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 import {
-    NavigationMenuItemException,
-    NavigationMenuItemExceptionCode,
+  NavigationMenuItemException,
+  NavigationMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -204,7 +204,10 @@ export class NavigationMenuItemService {
     );
   }
 
-  async delete(id: string, workspaceId: string): Promise<NavigationMenuItemDTO> {
+  async delete(
+    id: string,
+    workspaceId: string,
+  ): Promise<NavigationMenuItemDTO> {
     const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {

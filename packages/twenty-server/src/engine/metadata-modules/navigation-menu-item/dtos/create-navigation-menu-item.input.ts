@@ -1,11 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import {
-    IsNotEmpty,
-    IsNumber,
-    IsOptional,
-    IsUUID,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 

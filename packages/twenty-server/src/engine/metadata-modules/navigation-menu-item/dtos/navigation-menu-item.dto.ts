@@ -1,15 +1,11 @@
-import {
-    Field,
-    HideField,
-    ObjectType,
-} from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import {
-    IsDateString,
-    IsNotEmpty,
-    IsNumber,
-    IsOptional,
-    IsUUID,
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsUUID,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';

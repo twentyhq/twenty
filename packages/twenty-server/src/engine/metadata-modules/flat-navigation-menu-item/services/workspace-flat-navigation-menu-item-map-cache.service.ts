@@ -22,7 +22,9 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCac
     super();
   }
 
-  async computeForCache(workspaceId: string): Promise<FlatNavigationMenuItemMaps> {
+  async computeForCache(
+    workspaceId: string,
+  ): Promise<FlatNavigationMenuItemMaps> {
     const navigationMenuItems = await this.navigationMenuItemRepository.find({
       where: { workspaceId },
       withDeleted: true,

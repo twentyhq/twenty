@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
-import { isDefined } from 'twenty-shared/utils';
 
 export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
   ({
@@ -21,6 +21,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     const now = new Date().toISOString();
 
     let position = createNavigationMenuItemInput.position;
+
     if (!isDefined(position)) {
       const existingItems = Object.values(
         flatNavigationMenuItemMaps.byId,
@@ -48,7 +49,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       forWorkspaceMemberId:
         createNavigationMenuItemInput.forWorkspaceMemberId ?? null,
       targetRecordId: createNavigationMenuItemInput.targetRecordId,
-      targetObjectMetadataId: createNavigationMenuItemInput.targetObjectMetadataId,
+      targetObjectMetadataId:
+        createNavigationMenuItemInput.targetObjectMetadataId,
       favoriteFolderId: createNavigationMenuItemInput.favoriteFolderId ?? null,
       position,
       workspaceId,

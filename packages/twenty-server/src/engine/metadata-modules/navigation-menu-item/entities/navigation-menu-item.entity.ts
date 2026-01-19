@@ -18,10 +18,11 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   'forWorkspaceMemberId',
   'workspaceId',
 ])
-@Index(
-  'IDX_NAVIGATION_MENU_ITEM_TARGET_RECORD_OBJECT_METADATA_WORKSPACE_ID',
-  ['targetRecordId', 'targetObjectMetadataId', 'workspaceId'],
-)
+@Index('IDX_NAVIGATION_MENU_ITEM_TARGET_RECORD_OBJECT_METADATA_WORKSPACE_ID', [
+  'targetRecordId',
+  'targetObjectMetadataId',
+  'workspaceId',
+])
 @Index('IDX_NAVIGATION_MENU_ITEM_FAVORITE_FOLDER_ID_WORKSPACE_ID', [
   'favoriteFolderId',
   'workspaceId',
