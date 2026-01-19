@@ -1094,6 +1094,11 @@ msgstr "Hallintapaneelin monistaminen epäonnistui."
 msgid "Failed to load queue jobs. Please try again later."
 msgstr "Jono-tehtävien lataaminen epäonnistui. Yritä uudelleen myöhemmin."
 
+#. js-lingui-id: ruD0s1
+#: src/engine/subscriptions/event-stream.exception.ts
+msgid "Failed to receive real time updates."
+msgstr ""
+
 #. js-lingui-id: /E7MoD
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Failed to record billing event."
@@ -1185,6 +1190,7 @@ msgid "Field metadata not found"
 msgstr "Kenttätietoja ei löytynyt"
 
 #. js-lingui-id: JrAl/I
+#: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -1993,6 +1999,11 @@ msgstr "Virheellinen vahvistuskoodi."
 msgid "Invalid verification code. Please try again."
 msgstr "Virheellinen vahvistuskoodi. Yritä uudelleen."
 
+#. js-lingui-id: c4NCfN
+#: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
+msgid "Invalid widget configuration."
+msgstr ""
+
 #. js-lingui-id: bznmUY
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
 msgid "Invalid workflow edge request."
@@ -2353,6 +2364,11 @@ msgstr "Nimet eivät ole synkronoitu tunnisteiden kanssa"
 msgid "New email must be different from current email"
 msgstr ""
 
+#. js-lingui-id: 1UzENP
+#: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
+msgid "No"
+msgstr ""
+
 #. js-lingui-id: LnV8zi
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "No active subscription found."
@@ -2433,6 +2449,12 @@ msgstr "Ei laukaisutyyppiä annettu"
 msgid "No valid authentication context found."
 msgstr "Kelvollista autentikointikontekstia ei löytynyt."
 
+#. js-lingui-id: NpVtef
+#: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
+#: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
+msgid "Not Set"
+msgstr ""
+
 #. js-lingui-id: t9QlBd
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "November"
@@ -2470,6 +2492,7 @@ msgstr "Objektitietoja ei löytynyt"
 
 #. js-lingui-id: rHce90
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
+#: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -2858,6 +2881,11 @@ msgstr "Julkista verkkotunnusta ei löytynyt."
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
 msgstr "Julkisen toimialueen URL ei ole määritelty. Aseta PUBLIC_DOMAIN_URL-ympäristömuuttuja."
+
+#. js-lingui-id: vVCf2E
+#: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
+msgid "Query execution failed."
+msgstr ""
 
 #. js-lingui-id: 9QTny9
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -3722,6 +3750,11 @@ msgstr "Liian monta pyyntöä. Yritä myöhemmin uudelleen."
 msgid "Too many workspace invitations sent. Please try again later."
 msgstr ""
 
+#. js-lingui-id: tEb/hR
+#: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
+msgid "Transformation failed."
+msgstr ""
+
 #. js-lingui-id: VD8J6l
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Trigger not found."
@@ -4203,6 +4236,11 @@ msgstr ""
 msgid "Widget extends beyond grid width"
 msgstr ""
 
+#. js-lingui-id: 09IBNJ
+#: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
+msgid "Widget not found."
+msgstr ""
+
 #. js-lingui-id: D5gHL1
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
 msgid "Widget row exceeds grid height"
@@ -4338,6 +4376,12 @@ msgstr "Työnkulkuversiossa ei ole laukaisinta"
 msgid "Workflow version is not in draft status"
 msgstr "Työnkulkuversio ei ole luonnostilassa"
 
+#. js-lingui-id: bK8AyJ
+#: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
+#: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
+msgid "Workspace {workspaceId} is not found."
+msgstr ""
+
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"
@@ -4432,6 +4476,16 @@ msgstr "Väärä salasana"
 #. js-lingui-id: RksBK0
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password."
+msgstr ""
+
+#. js-lingui-id: l75CjT
+#: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
+msgid "Yes"
+msgstr ""
+
+#. js-lingui-id: chHKg8
+#: src/engine/subscriptions/event-stream.exception.ts
+msgid "You are not authorized to perform this action."
 msgstr ""
 
 #. js-lingui-id: 84/Dko
