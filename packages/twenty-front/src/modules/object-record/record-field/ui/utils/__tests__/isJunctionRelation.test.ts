@@ -1,6 +1,5 @@
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { hasJunctionTargetFieldId } from '@/object-record/record-field/ui/utils/junction/hasJunctionTargetFieldId';
-import { hasJunctionTargetMorphId } from '@/object-record/record-field/ui/utils/junction/hasJunctionTargetMorphId';
 import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -32,33 +31,6 @@ describe('isJunctionRelation', () => {
     });
   });
 
-  describe('hasJunctionTargetMorphId', () => {
-    it.each([
-      { settings: undefined, expected: false, desc: 'undefined' },
-      { settings: null, expected: false, desc: 'null' },
-      { settings: {}, expected: false, desc: 'empty object' },
-      {
-        settings: { junctionTargetMorphId: '' },
-        expected: false,
-        desc: 'empty string',
-      },
-      {
-        settings: { junctionTargetMorphId: 'morph-id' },
-        expected: true,
-        desc: 'valid value',
-      },
-    ])('returns $expected for $desc', ({ settings, expected }) => {
-      expect(hasJunctionTargetMorphId(settings)).toBe(expected);
-    });
-
-    it('narrows type correctly', () => {
-      const settings = { junctionTargetMorphId: 'morph-id-123' };
-      if (hasJunctionTargetMorphId(settings)) {
-        expect(settings.junctionTargetMorphId).toBe('morph-id-123');
-      }
-    });
-  });
-
   describe('hasJunctionConfig', () => {
     it.each([
       { settings: undefined, expected: false, desc: 'undefined' },
@@ -69,17 +41,9 @@ describe('isJunctionRelation', () => {
         desc: 'fieldId set',
       },
       {
-        settings: { junctionTargetMorphId: 'morph-id' },
-        expected: true,
-        desc: 'morphId set',
-      },
-      {
-        settings: {
-          junctionTargetFieldId: 'field-id',
-          junctionTargetMorphId: 'morph-id',
-        },
-        expected: true,
-        desc: 'both set',
+        settings: { junctionTargetFieldId: '' },
+        expected: false,
+        desc: 'empty fieldId',
       },
     ])('returns $expected for $desc', ({ settings, expected }) => {
       expect(hasJunctionConfig(settings)).toBe(expected);

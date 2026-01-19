@@ -35,7 +35,6 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
   const relationType = watch('relationType') ?? RelationType.ONE_TO_MANY;
   const targetObjectIds = watch('morphRelationObjectMetadataIds') ?? [];
   const junctionTargetFieldId = watch('settings.junctionTargetFieldId');
-  const junctionTargetMorphId = watch('settings.junctionTargetMorphId');
 
   // Only applies to ONE_TO_MANY with single target
   if (
@@ -64,7 +63,8 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
   // Build options from junction object fields
   const junctionFieldOptions: { label: string; value: string }[] = [];
 
-  // Group MORPH_RELATION fields by morphId
+  // Add MORPH_RELATION fields (use first field of each morphId group)
+  // morphRelations already contains all targets, so any sibling works
   const morphIdsSeen = new Set<string>();
   junctionObjectMetadataItem.fields
     .filter(
@@ -77,7 +77,7 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
         morphIdsSeen.add(field.morphId!);
         junctionFieldOptions.push({
           label: `${field.label} (polymorphic)`,
-          value: `morph:${field.morphId}`,
+          value: field.id,
         });
       }
     });
@@ -99,7 +99,7 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
     .forEach((field) => {
       junctionFieldOptions.push({
         label: field.label,
-        value: `field:${field.id}`,
+        value: field.id,
       });
     });
 
@@ -107,46 +107,28 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
     return null;
   }
 
-  const isJunctionConfigEnabled =
-    isDefined(junctionTargetMorphId) || isDefined(junctionTargetFieldId);
-
-  const currentSelectionValue = isDefined(junctionTargetMorphId)
-    ? `morph:${junctionTargetMorphId}`
-    : isDefined(junctionTargetFieldId)
-      ? `field:${junctionTargetFieldId}`
-      : undefined;
+  const isJunctionConfigEnabled = isDefined(junctionTargetFieldId);
 
   const handleJunctionToggle = (checked: boolean) => {
     if (checked && junctionFieldOptions.length > 0) {
-      handleSelectionChange(junctionFieldOptions[0].value);
+      setValue(
+        'settings.junctionTargetFieldId',
+        junctionFieldOptions[0].value,
+        {
+          shouldDirty: true,
+        },
+      );
     } else {
       setValue('settings.junctionTargetFieldId', undefined, {
-        shouldDirty: true,
-      });
-      setValue('settings.junctionTargetMorphId', undefined, {
         shouldDirty: true,
       });
     }
   };
 
   const handleSelectionChange = (selectedValue: string) => {
-    if (selectedValue.startsWith('morph:')) {
-      const morphId = selectedValue.replace('morph:', '');
-      setValue('settings.junctionTargetMorphId', morphId, {
-        shouldDirty: true,
-      });
-      setValue('settings.junctionTargetFieldId', undefined, {
-        shouldDirty: true,
-      });
-    } else if (selectedValue.startsWith('field:')) {
-      const fieldId = selectedValue.replace('field:', '');
-      setValue('settings.junctionTargetFieldId', fieldId, {
-        shouldDirty: true,
-      });
-      setValue('settings.junctionTargetMorphId', undefined, {
-        shouldDirty: true,
-      });
-    }
+    setValue('settings.junctionTargetFieldId', selectedValue, {
+      shouldDirty: true,
+    });
   };
 
   return (
@@ -170,7 +152,7 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
             dropdownId="junction-target-field-select"
             selectSizeVariant="small"
             dropdownWidth={120}
-            value={currentSelectionValue}
+            value={junctionTargetFieldId}
             options={junctionFieldOptions}
             onChange={handleSelectionChange}
           />

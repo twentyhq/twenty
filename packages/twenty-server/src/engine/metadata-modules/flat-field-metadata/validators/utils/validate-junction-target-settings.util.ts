@@ -16,7 +16,6 @@ type ValidateJunctionTargetSettingsArgs = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 };
 
-// Helper to create a validation error
 const createError = (
   code: FieldMetadataExceptionCode,
   message: string,
@@ -38,27 +37,11 @@ export const validateJunctionTargetSettings = ({
   const hasFieldId =
     isDefined(settings.junctionTargetFieldId) &&
     settings.junctionTargetFieldId.length > 0;
-  const hasMorphId =
-    isDefined(settings.junctionTargetMorphId) &&
-    settings.junctionTargetMorphId.length > 0;
 
-  // No junction config set - nothing to validate
-  if (!hasFieldId && !hasMorphId) {
+  if (!hasFieldId) {
     return [];
   }
 
-  // Validate mutual exclusivity
-  if (hasFieldId && hasMorphId) {
-    return [
-      createError(
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        'Cannot set both junctionTargetFieldId and junctionTargetMorphId',
-        msg`Cannot set both junction target field ID and junction target morph ID`,
-      ),
-    ];
-  }
-
-  // Junction config should only be set on ONE_TO_MANY relations
   if (settings.relationType !== RelationType.ONE_TO_MANY) {
     return [
       createError(
@@ -69,68 +52,8 @@ export const validateJunctionTargetSettings = ({
     ];
   }
 
-  // Validate the specific junction target type
-  if (hasMorphId) {
-    return validateJunctionTargetMorphId(
-      flatFieldMetadata,
-      flatFieldMetadataMaps,
-      settings.junctionTargetMorphId!,
-    );
-  }
+  const junctionTargetFieldId = settings.junctionTargetFieldId;
 
-  return validateJunctionTargetFieldId(
-    flatFieldMetadata,
-    flatFieldMetadataMaps,
-    settings.junctionTargetFieldId!,
-  );
-};
-
-const validateJunctionTargetMorphId = (
-  flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  junctionTargetMorphId: string,
-): FlatFieldMetadataValidationError[] => {
-  if (!isValidUuid(junctionTargetMorphId)) {
-    return [
-      createError(
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        `Invalid junction target morph ID: ${junctionTargetMorphId}`,
-        msg`Invalid junction target morph ID`,
-        junctionTargetMorphId,
-      ),
-    ];
-  }
-
-  // Find morph fields with this morphId on the junction object
-  const junctionObjectId = flatFieldMetadata.relationTargetObjectMetadataId;
-  const morphFieldsOnJunction = Object.values(
-    flatFieldMetadataMaps.byId,
-  ).filter(
-    (field) =>
-      isDefined(field) &&
-      field.objectMetadataId === junctionObjectId &&
-      field.morphId === junctionTargetMorphId,
-  );
-
-  if (morphFieldsOnJunction.length === 0) {
-    return [
-      createError(
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        `No morph fields found with morphId: ${junctionTargetMorphId} on junction object`,
-        msg`No morph fields found with the specified morph ID`,
-        junctionTargetMorphId,
-      ),
-    ];
-  }
-
-  return [];
-};
-
-const validateJunctionTargetFieldId = (
-  flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  junctionTargetFieldId: string,
-): FlatFieldMetadataValidationError[] => {
   if (!isValidUuid(junctionTargetFieldId)) {
     return [
       createError(
@@ -158,7 +81,6 @@ const validateJunctionTargetFieldId = (
     ];
   }
 
-  // The target field must be on the junction object
   if (
     targetField.objectMetadataId !==
     flatFieldMetadata.relationTargetObjectMetadataId
@@ -173,7 +95,6 @@ const validateJunctionTargetFieldId = (
     ];
   }
 
-  // The target field must be a RELATION or MORPH_RELATION
   if (!isMorphOrRelationFlatFieldMetadata(targetField)) {
     return [
       createError(
@@ -190,7 +111,6 @@ const validateJunctionTargetFieldId = (
     return [];
   }
 
-  // For regular RELATION fields, must be MANY_TO_ONE
   if (targetField.settings.relationType !== RelationType.MANY_TO_ONE) {
     return [
       createError(

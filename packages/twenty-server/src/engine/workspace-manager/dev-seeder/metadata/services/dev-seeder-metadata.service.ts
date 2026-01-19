@@ -46,10 +46,8 @@ type JunctionFieldSeed = {
   targetObjectName: string;
   targetFieldLabel: string;
   targetFieldIcon: string;
-  // For junctionTargetFieldId - reference field by object.fieldName
-  junctionTargetFieldRef?: string;
-  // For junctionTargetMorphId - reference morph by object.fieldName (will resolve to morphId)
-  junctionTargetMorphRef?: string;
+  // Reference field by object.fieldName (for morph fields, any sibling works)
+  junctionTargetFieldRef: string;
 };
 
 @Injectable()
@@ -75,7 +73,7 @@ export class DevSeederMetadataService {
         objectName: string;
         seeds: RegularRelationSeed[];
       }[];
-      // Junction fields with junctionTargetFieldId or junctionTargetMorphId config
+      // Junction fields with junctionTargetFieldId config
       junctionFields?: JunctionFieldSeed[];
     }
   > = {
@@ -127,6 +125,7 @@ export class DevSeederMetadataService {
           junctionTargetFieldRef: `${EMPLOYMENT_HISTORY_CUSTOM_OBJECT_SEED.nameSingular}.company`,
         },
         // Pet.caretakers - shows caretakers (Person/Company) directly via PetCareAgreement
+        // Any morph sibling field works since morphRelations contains all targets
         {
           sourceObjectName: PET_CUSTOM_OBJECT_SEED.nameSingular,
           label: 'Caretakers',
@@ -135,7 +134,7 @@ export class DevSeederMetadataService {
           targetObjectName: PET_CARE_AGREEMENT_CUSTOM_OBJECT_SEED.nameSingular,
           targetFieldLabel: 'Pet',
           targetFieldIcon: 'IconCat',
-          junctionTargetMorphRef: `${PET_CARE_AGREEMENT_CUSTOM_OBJECT_SEED.nameSingular}.caretaker`,
+          junctionTargetFieldRef: `${PET_CARE_AGREEMENT_CUSTOM_OBJECT_SEED.nameSingular}.caretakerPerson`,
         },
       ],
     },
@@ -530,41 +529,20 @@ export class DevSeederMetadataService {
     }
 
     // Resolve junction target settings
-    const settings: {
-      relationType: RelationType;
-      junctionTargetFieldId?: string;
-      junctionTargetMorphId?: string;
-    } = {
+    const [objectName, fieldName] =
+      junctionField.junctionTargetFieldRef.split('.');
+    const junctionTargetFieldId = this.findFieldIdByObjectAndName({
+      objectName,
+      fieldName,
+      objectIdByNameSingular,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    });
+
+    const settings = {
       relationType: RelationType.ONE_TO_MANY,
+      junctionTargetFieldId,
     };
-
-    if (junctionField.junctionTargetFieldRef) {
-      const [objectName, fieldName] =
-        junctionField.junctionTargetFieldRef.split('.');
-      const fieldId = this.findFieldIdByObjectAndName({
-        objectName,
-        fieldName,
-        objectIdByNameSingular,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      });
-
-      settings.junctionTargetFieldId = fieldId;
-    }
-
-    if (junctionField.junctionTargetMorphRef) {
-      const [objectName, fieldName] =
-        junctionField.junctionTargetMorphRef.split('.');
-      const morphId = this.findMorphIdByObjectAndName({
-        objectName,
-        fieldName,
-        objectIdByNameSingular,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      });
-
-      settings.junctionTargetMorphId = morphId;
-    }
 
     const createFieldInput = {
       type: FieldMetadataType.RELATION,
@@ -627,48 +605,5 @@ export class DevSeederMetadataService {
     }
 
     throw new Error(`Field not found: ${objectName}.${fieldName}`);
-  }
-
-  private findMorphIdByObjectAndName({
-    objectName,
-    fieldName,
-    objectIdByNameSingular,
-    flatFieldMetadataMaps,
-    flatObjectMetadataMaps,
-  }: {
-    objectName: string;
-    fieldName: string;
-    objectIdByNameSingular: Record<string, string>;
-    flatFieldMetadataMaps: {
-      byId: Record<string, { name: string; morphId?: string }>;
-    };
-    flatObjectMetadataMaps: {
-      byId: Record<string, { fieldMetadataIds: string[] }>;
-    };
-  }): string {
-    const objectId = objectIdByNameSingular[objectName];
-
-    if (!isDefined(objectId)) {
-      throw new Error(`Object not found: ${objectName}`);
-    }
-
-    // Access via byId
-    const objectMetadata = flatObjectMetadataMaps.byId[objectId];
-
-    if (!isDefined(objectMetadata)) {
-      throw new Error(`Object metadata not found for id: ${objectId}`);
-    }
-
-    // Find the morph field by name pattern (morph creates fields like caretakerPerson, caretakerCompany)
-    // We need to find any field that starts with the morph name and has a morphId
-    for (const fieldId of objectMetadata.fieldMetadataIds) {
-      const field = flatFieldMetadataMaps.byId[fieldId];
-
-      if (field?.name.startsWith(fieldName) && isDefined(field.morphId)) {
-        return field.morphId;
-      }
-    }
-
-    throw new Error(`Morph field not found: ${objectName}.${fieldName}`);
   }
 }

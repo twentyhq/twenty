@@ -146,10 +146,9 @@ export type FieldRelationMetadataSettings = {
   relationType?: RelationType;
   // Join column name for the foreign key (e.g., "petId" for a "pet" relation)
   joinColumnName?: string | null;
-  // For regular RELATION junctions - points to ONE field on the junction object
+  // Points to the target field on the junction object
+  // For MORPH_RELATION fields, morphRelations already contains all targets
   junctionTargetFieldId?: string;
-  // For MORPH_RELATION junctions - auto-discovers all fields with this morphId
-  junctionTargetMorphId?: string;
 } | null;
 
 // for later: refactor this in order to directly use relation without mapping

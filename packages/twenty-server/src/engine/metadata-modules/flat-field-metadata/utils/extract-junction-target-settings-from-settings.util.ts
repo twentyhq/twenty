@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 type JunctionTargetSettings = {
   junctionTargetFieldId?: string;
-  junctionTargetMorphId?: string;
 };
 
 // Extracts junction target settings from untyped settings input
@@ -21,20 +20,11 @@ export const extractJunctionTargetSettingsFromSettings = (
 
   const result: JunctionTargetSettings = {};
 
-  // Extract junctionTargetFieldId (singular string)
   if (
     'junctionTargetFieldId' in settings &&
     typeof settings.junctionTargetFieldId === 'string'
   ) {
     result.junctionTargetFieldId = settings.junctionTargetFieldId;
-  }
-
-  // Extract junctionTargetMorphId
-  if (
-    'junctionTargetMorphId' in settings &&
-    typeof settings.junctionTargetMorphId === 'string'
-  ) {
-    result.junctionTargetMorphId = settings.junctionTargetMorphId;
   }
 
   return result;

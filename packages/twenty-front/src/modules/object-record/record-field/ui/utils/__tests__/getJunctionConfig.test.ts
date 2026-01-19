@@ -89,91 +89,6 @@ describe('getJunctionConfig', () => {
     });
   });
 
-  describe('junctionTargetMorphId configuration', () => {
-    it('should return targetFields when junctionTargetMorphId is set', () => {
-      const morphField1 = createMockField({
-        id: 'morph-field-1',
-        name: 'company',
-        morphId: 'morph-group-1',
-        type: FieldMetadataType.MORPH_RELATION,
-        relation: createMockRelation('company-id', 'company'),
-      });
-      const morphField2 = createMockField({
-        id: 'morph-field-2',
-        name: 'person',
-        morphId: 'morph-group-1',
-        type: FieldMetadataType.MORPH_RELATION,
-        relation: createMockRelation('person-id', 'person'),
-      });
-      const junctionObject = createMockObjectMetadata({
-        id: 'junction-id',
-        fields: [morphField1, morphField2],
-      });
-
-      const result = getJunctionConfig({
-        settings: { junctionTargetMorphId: 'morph-group-1' },
-        relationObjectMetadataId: 'junction-id',
-        objectMetadataItems: [junctionObject],
-      });
-
-      expect(result).not.toBeNull();
-      expect(result!.isMorphRelation).toBe(true);
-      expect(result!.targetFields).toHaveLength(2);
-      expect(result!.targetFields[0].name).toBe('company');
-      expect(result!.targetFields[1].name).toBe('person');
-    });
-
-    it('should return null when no fields match the morphId', () => {
-      const junctionObject = createMockObjectMetadata({
-        id: 'junction-id',
-        fields: [
-          createMockField({
-            id: 'other-field',
-            morphId: 'different-morph-id',
-          }),
-        ],
-      });
-
-      const result = getJunctionConfig({
-        settings: { junctionTargetMorphId: 'morph-group-1' },
-        relationObjectMetadataId: 'junction-id',
-        objectMetadataItems: [junctionObject],
-      });
-
-      expect(result).toBeNull();
-    });
-
-    it('should find sourceField when sourceObjectMetadataId is provided', () => {
-      const sourceField = createMockField({
-        id: 'source-field',
-        name: 'project',
-        type: FieldMetadataType.RELATION,
-        relation: createMockRelation('source-object-id', 'project'),
-      });
-      const morphField = createMockField({
-        id: 'morph-field-1',
-        name: 'company',
-        morphId: 'morph-group-1',
-        type: FieldMetadataType.MORPH_RELATION,
-      });
-      const junctionObject = createMockObjectMetadata({
-        id: 'junction-id',
-        fields: [sourceField, morphField],
-      });
-
-      const result = getJunctionConfig({
-        settings: { junctionTargetMorphId: 'morph-group-1' },
-        relationObjectMetadataId: 'junction-id',
-        sourceObjectMetadataId: 'source-object-id',
-        objectMetadataItems: [junctionObject],
-      });
-
-      expect(result).not.toBeNull();
-      expect(result!.sourceField).toBeDefined();
-      expect(result!.sourceField!.name).toBe('project');
-    });
-  });
-
   describe('junctionTargetFieldId configuration', () => {
     it('should return targetFields for regular relation', () => {
       const targetField = createMockField({
@@ -282,6 +197,36 @@ describe('getJunctionConfig', () => {
 
       const result = getJunctionConfig({
         settings: { junctionTargetFieldId: 'target-field-id' },
+        relationObjectMetadataId: 'junction-id',
+        sourceObjectMetadataId: 'source-object-id',
+        objectMetadataItems: [junctionObject],
+      });
+
+      expect(result).not.toBeNull();
+      expect(result!.sourceField).toBeDefined();
+      expect(result!.sourceField!.name).toBe('project');
+    });
+
+    it('should find sourceField from morph relation when sourceObjectMetadataId is provided', () => {
+      const sourceField = createMockField({
+        id: 'source-field',
+        name: 'project',
+        type: FieldMetadataType.RELATION,
+        relation: createMockRelation('source-object-id', 'project'),
+      });
+      const morphField = createMockField({
+        id: 'morph-field-1',
+        name: 'company',
+        morphId: 'morph-group-1',
+        type: FieldMetadataType.MORPH_RELATION,
+      });
+      const junctionObject = createMockObjectMetadata({
+        id: 'junction-id',
+        fields: [sourceField, morphField],
+      });
+
+      const result = getJunctionConfig({
+        settings: { junctionTargetFieldId: 'morph-field-1' },
         relationObjectMetadataId: 'junction-id',
         sourceObjectMetadataId: 'source-object-id',
         objectMetadataItems: [junctionObject],

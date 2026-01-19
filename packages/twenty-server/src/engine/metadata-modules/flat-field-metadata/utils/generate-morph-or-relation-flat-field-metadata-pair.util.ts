@@ -22,13 +22,11 @@ type ComputeFieldMetadataRelationSettingsForRelationTypeArgs = {
   relationType: RelationType;
   joinColumnName: string;
   junctionTargetFieldId?: string;
-  junctionTargetMorphId?: string;
 };
 const computeFieldMetadataRelationSettingsForRelationType = ({
   relationType,
   joinColumnName,
   junctionTargetFieldId,
-  junctionTargetMorphId,
 }: ComputeFieldMetadataRelationSettingsForRelationTypeArgs) => {
   if (relationType === RelationType.MANY_TO_ONE) {
     return {
@@ -41,7 +39,6 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
   return {
     relationType: RelationType.ONE_TO_MANY,
     ...(junctionTargetFieldId && { junctionTargetFieldId }),
-    ...(junctionTargetMorphId && { junctionTargetMorphId }),
   };
 };
 
@@ -80,15 +77,15 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
 
   const { relationCreationPayload } = createFieldInput;
 
-  const { junctionTargetFieldId, junctionTargetMorphId } =
-    extractJunctionTargetSettingsFromSettings(createFieldInput.settings);
+  const { junctionTargetFieldId } = extractJunctionTargetSettingsFromSettings(
+    createFieldInput.settings,
+  );
 
   const sourceFlatFieldMetadataSettings =
     computeFieldMetadataRelationSettingsForRelationType({
       joinColumnName: sourceFlatObjectMetadataJoinColumnName,
       relationType: relationCreationPayload.type,
       junctionTargetFieldId,
-      junctionTargetMorphId,
     });
   const targetRelationTargetFieldMetadataId = v4();
   const sourceRelationTargetFieldMetadataId = v4();

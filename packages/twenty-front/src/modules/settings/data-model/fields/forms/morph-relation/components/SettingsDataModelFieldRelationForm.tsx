@@ -87,7 +87,6 @@ export const SettingsDataModelFieldRelationForm = ({
       fieldMetadataItem: existingFieldMetadataItem,
     });
 
-  // For RELATION fields, relationType is stored in relation.type
   const initialRelationType =
     existingFieldMetadataItem?.relation?.type ?? RelationType.ONE_TO_MANY;
 

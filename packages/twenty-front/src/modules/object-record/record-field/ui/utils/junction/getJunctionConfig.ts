@@ -3,7 +3,6 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { hasJunctionTargetFieldId } from './hasJunctionTargetFieldId';
-import { hasJunctionTargetMorphId } from './hasJunctionTargetMorphId';
 
 export type JunctionObjectMetadataItem = Pick<
   ObjectMetadataItem,
@@ -72,51 +71,28 @@ export const getJunctionConfig = ({
     );
   };
 
-  let targetFields: FieldMetadataItem[] = [];
-  let isMorphRelation = false;
-
-  if (hasJunctionTargetMorphId(settings) === true) {
-    targetFields = junctionObjectMetadata.fields.filter(
-      (field) => field.morphId === settings.junctionTargetMorphId,
-    );
-    isMorphRelation = true;
-
-    if (targetFields.length === 0) {
-      return null;
-    }
-
-    return {
-      junctionObjectMetadata,
-      targetFields,
-      sourceField: findSourceField(),
-      isMorphRelation,
-    };
+  if (!hasJunctionTargetFieldId(settings)) {
+    return null;
   }
 
-  if (hasJunctionTargetFieldId(settings) === true) {
-    const targetField = junctionObjectMetadata.fields.find(
-      (field) => field.id === settings.junctionTargetFieldId,
-    );
+  const targetField = junctionObjectMetadata.fields.find(
+    (field) => field.id === settings.junctionTargetFieldId,
+  );
 
-    if (!isDefined(targetField)) {
-      return null;
-    }
-
-    isMorphRelation = targetField.type === FieldMetadataType.MORPH_RELATION;
-
-    if (!isMorphRelation && !isDefined(targetField.relation)) {
-      return null;
-    }
-
-    targetFields = [targetField];
-
-    return {
-      junctionObjectMetadata,
-      targetFields,
-      sourceField: findSourceField(settings.junctionTargetFieldId),
-      isMorphRelation,
-    };
+  if (!isDefined(targetField)) {
+    return null;
   }
 
-  return null;
+  const isMorphRelation = targetField.type === FieldMetadataType.MORPH_RELATION;
+
+  if (!isMorphRelation && !isDefined(targetField.relation)) {
+    return null;
+  }
+
+  return {
+    junctionObjectMetadata,
+    targetFields: [targetField],
+    sourceField: findSourceField(settings.junctionTargetFieldId),
+    isMorphRelation,
+  };
 };
