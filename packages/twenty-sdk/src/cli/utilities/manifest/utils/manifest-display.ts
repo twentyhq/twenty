@@ -13,6 +13,11 @@ export const displayEntitySummary = (manifest: ApplicationManifest): void => {
     chalk.green(`  ✓ Found ${manifest.serverlessFunctions.length} function(s)`),
   );
   console.log(
+    chalk.green(
+      `  ✓ Found ${manifest.frontComponents?.length ?? 0} front component(s)`,
+    ),
+  );
+  console.log(
     chalk.green(`  ✓ Found ${manifest.roles?.length ?? 'no'} role(s)`),
   );
 };

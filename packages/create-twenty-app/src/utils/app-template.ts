@@ -32,6 +32,10 @@ export const copyBaseApplicationProject = async ({
     appDirectory: appFolderPath,
   });
 
+  await createDefaultFrontComponent({
+    appDirectory: appFolderPath,
+  });
+
   await createApplicationConfig({
     displayName: appDisplayName,
     description: appDescription,
@@ -113,6 +117,38 @@ export default defineRole({
 `;
 
   await fs.writeFile(join(appDirectory, 'default-function.role.ts'), content);
+};
+
+const createDefaultFrontComponent = async ({
+  appDirectory,
+}: {
+  appDirectory: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineFrontComponent } from 'twenty-sdk';
+
+export const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello, World!</h1>
+      <p>This is your first front component.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '${universalIdentifier}',
+  name: 'hello-world',
+  description: 'A sample front component',
+  component: HelloWorld,
+});
+`;
+
+  await fs.writeFile(
+    join(appDirectory, 'hello-world.front-component.tsx'),
+    content,
+  );
 };
 
 const createApplicationConfig = async ({

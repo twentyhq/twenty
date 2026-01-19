@@ -34,7 +34,7 @@ export const createManifestPlugin = (
   callbacks: ManifestPluginCallbacks = {},
 ): Plugin => {
   const isRelevantFile = (file: string): boolean => {
-    return ['.ts', '.json'].some((ext) => file.endsWith(ext));
+    return ['.ts', '.tsx', '.json'].some((ext) => file.endsWith(ext));
   };
 
   return {
@@ -66,6 +66,15 @@ export const runManifestBuild = async (
       for (const fn of functions) {
         const name = fn.name || fn.universalIdentifier;
         console.log(chalk.gray(`     - ${name} (${fn.handlerPath})`));
+      }
+    }
+
+    const frontComponents = result.manifest.frontComponents;
+    if (frontComponents && frontComponents.length > 0) {
+      console.log(chalk.gray(`  📍 Front component entry points:`));
+      for (const component of frontComponents) {
+        const name = component.name || component.universalIdentifier;
+        console.log(chalk.gray(`     - ${name} (${component.componentPath})`));
       }
     }
 

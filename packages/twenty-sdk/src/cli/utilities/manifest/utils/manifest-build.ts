@@ -1,6 +1,11 @@
+import { type FrontComponentConfig } from '@/application/front-components/front-component-config';
 import { type FunctionConfig } from '@/application/functions/function-config';
 import { type RoleConfig } from '@/application/role-config';
-import { loadConfig, loadFunctionModule } from '@/cli/utilities/file/utils/file-config-loader';
+import {
+  loadConfig,
+  loadFrontComponentModule,
+  loadFunctionModule,
+} from '@/cli/utilities/file/utils/file-config-loader';
 import { findPathFile } from '@/cli/utilities/file/utils/file-find';
 import { parseJsoncFile, parseTextFile } from '@/cli/utilities/file/utils/file-jsonc';
 import { glob } from 'fast-glob';
@@ -9,6 +14,7 @@ import path, { posix, relative, sep } from 'path';
 import {
   type Application,
   type ApplicationManifest,
+  type FrontComponentManifest,
   type ObjectExtensionManifest,
   type ObjectManifest,
   type PackageJson,
@@ -177,6 +183,45 @@ const loadRoles = async (appPath: string): Promise<RoleManifest[]> => {
 };
 
 /**
+ * Load all front component definitions from src/app/ (any *.front-component.tsx file).
+ */
+const loadFrontComponents = async (
+  appPath: string,
+): Promise<FrontComponentManifest[]> => {
+  const componentFiles = await loadFiles(
+    ['src/app/**/*.front-component.tsx'],
+    appPath,
+  );
+
+  const components: FrontComponentManifest[] = [];
+
+  for (const filepath of componentFiles) {
+    try {
+      const { config, componentName, componentPath } =
+        await loadFrontComponentModule(filepath, appPath);
+      const componentConfig = config as FrontComponentConfig;
+
+      const manifest: FrontComponentManifest = {
+        universalIdentifier: componentConfig.universalIdentifier,
+        name: componentConfig.name,
+        description: componentConfig.description,
+        componentPath,
+        componentName,
+      };
+
+      components.push(manifest);
+    } catch (error) {
+      const relPath = toPosixRelative(filepath, appPath);
+      throw new Error(
+        `Failed to load front component from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  return components;
+};
+
+/**
  * Build a nested object structure from all TypeScript source files.
  */
 const loadSources = async (appPath: string): Promise<Sources> => {
@@ -276,6 +321,7 @@ export const buildManifest = async (
     objects,
     objectExtensions,
     serverlessFunctions,
+    frontComponents,
     roles,
     sources,
     shouldGenerate,
@@ -283,6 +329,7 @@ export const buildManifest = async (
     loadObjects(appPath),
     loadObjectExtensions(appPath),
     loadFunctions(appPath),
+    loadFrontComponents(appPath),
     loadRoles(appPath),
     loadSources(appPath),
     checkShouldGenerate(appPath),
@@ -295,6 +342,7 @@ export const buildManifest = async (
     objectExtensions:
       objectExtensions.length > 0 ? objectExtensions : undefined,
     serverlessFunctions,
+    frontComponents: frontComponents.length > 0 ? frontComponents : undefined,
     roles,
     sources,
   };
@@ -305,6 +353,7 @@ export const buildManifest = async (
     objects,
     objectExtensions,
     serverlessFunctions,
+    frontComponents,
     roles,
   });
 

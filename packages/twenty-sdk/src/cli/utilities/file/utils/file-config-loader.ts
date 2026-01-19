@@ -303,3 +303,91 @@ export const loadFunctionModule = async (
     throw error;
   }
 };
+
+/**
+ * Load a front component module and extract component info from config.component property.
+ *
+ * The component can be either:
+ * 1. Imported from another file:
+ *    ```typescript
+ *    import { MyComponent } from '../src/components/my-component';
+ *    export default defineFrontComponent({ component: MyComponent, ... });
+ *    ```
+ *
+ * 2. Defined locally in the same file:
+ *    ```typescript
+ *    export const MyComponent = () => { ... };
+ *    export default defineFrontComponent({ component: MyComponent, ... });
+ *    ```
+ *
+ * @example
+ * ```typescript
+ * const { config, componentName, componentPath } = await loadFrontComponentModule(
+ *   '/path/to/src/app/components/my-component.front-component.tsx',
+ *   '/path/to/app'
+ * );
+ * ```
+ */
+export const loadFrontComponentModule = async (
+  filepath: string,
+  appPath: string,
+): Promise<{
+  config: unknown;
+  componentName: string;
+  componentPath: string;
+}> => {
+  const jiti = await createConfigLoader(appPath);
+
+  try {
+    const mod = (await jiti.import(filepath)) as Record<string, unknown>;
+
+    // Find config with a component property
+    const hasComponent = (value: unknown): boolean => {
+      return (
+        typeof value === 'object' &&
+        value !== null &&
+        'component' in value &&
+        typeof (value as { component: unknown }).component === 'function'
+      );
+    };
+
+    const config = findConfigExport<{ component: Function }>(mod, hasComponent);
+
+    if (!config) {
+      throw new Error(
+        `Front component file ${filepath} must export a config object with a "component" property`,
+      );
+    }
+
+    // Get component name from the function's name property
+    const componentName = config.component.name;
+
+    if (!componentName) {
+      throw new Error(
+        `Component function in ${filepath} must be a named function`,
+      );
+    }
+
+    // Parse source to find where the component is imported from
+    const source = await fs.readFile(filepath, 'utf8');
+    const importPath = extractImportPath(
+      source,
+      componentName,
+      filepath,
+      appPath,
+    );
+
+    // If component is imported, use the import path; otherwise use the component file itself
+    const componentPath =
+      importPath ?? path.relative(appPath, filepath).replace(/\\/g, '/');
+
+    return { config, componentName, componentPath };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(
+        `Failed to load front component module from ${filepath}: ${error.message}`,
+      );
+    }
+    throw error;
+  }
+};
