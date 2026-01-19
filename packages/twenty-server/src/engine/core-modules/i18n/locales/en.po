@@ -1185,6 +1185,7 @@ msgid "Field metadata not found"
 msgstr "Field metadata not found"
 
 #. js-lingui-id: JrAl/I
+#: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -1993,6 +1994,11 @@ msgstr "Invalid verification code."
 msgid "Invalid verification code. Please try again."
 msgstr "Invalid verification code. Please try again."
 
+#. js-lingui-id: c4NCfN
+#: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
+msgid "Invalid widget configuration."
+msgstr "Invalid widget configuration."
+
 #. js-lingui-id: bznmUY
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
 msgid "Invalid workflow edge request."
@@ -2353,6 +2359,11 @@ msgstr "Names are not synced with labels"
 msgid "New email must be different from current email"
 msgstr "New email must be different from current email"
 
+#. js-lingui-id: 1UzENP
+#: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
+msgid "No"
+msgstr "No"
+
 #. js-lingui-id: LnV8zi
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "No active subscription found."
@@ -2433,6 +2444,12 @@ msgstr "No trigger type provided"
 msgid "No valid authentication context found."
 msgstr "No valid authentication context found."
 
+#. js-lingui-id: NpVtef
+#: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
+#: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
+msgid "Not Set"
+msgstr "Not Set"
+
 #. js-lingui-id: t9QlBd
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "November"
@@ -2470,6 +2487,7 @@ msgstr "Object metadata not found"
 
 #. js-lingui-id: rHce90
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
+#: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -2858,6 +2876,11 @@ msgstr "Public domain not found."
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
 msgstr "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
+
+#. js-lingui-id: vVCf2E
+#: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
+msgid "Query execution failed."
+msgstr "Query execution failed."
 
 #. js-lingui-id: 9QTny9
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -3722,6 +3745,11 @@ msgstr "Too many requests. Please try again later."
 msgid "Too many workspace invitations sent. Please try again later."
 msgstr "Too many workspace invitations sent. Please try again later."
 
+#. js-lingui-id: tEb/hR
+#: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
+msgid "Transformation failed."
+msgstr "Transformation failed."
+
 #. js-lingui-id: VD8J6l
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Trigger not found."
@@ -4203,6 +4231,11 @@ msgstr "Widget extends beyond grid height"
 msgid "Widget extends beyond grid width"
 msgstr "Widget extends beyond grid width"
 
+#. js-lingui-id: 09IBNJ
+#: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
+msgid "Widget not found."
+msgstr "Widget not found."
+
 #. js-lingui-id: D5gHL1
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
 msgid "Widget row exceeds grid height"
@@ -4439,6 +4472,11 @@ msgstr "Wrong password"
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password."
 msgstr "Wrong password."
+
+#. js-lingui-id: l75CjT
+#: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
+msgid "Yes"
+msgstr "Yes"
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
