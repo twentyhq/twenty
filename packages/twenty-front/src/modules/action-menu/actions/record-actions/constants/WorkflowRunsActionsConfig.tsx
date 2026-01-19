@@ -61,7 +61,9 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       scope: ActionScope.RecordSelection,
       Icon: IconPlayerStop,
       shouldBeRegistered: ({ selectedRecord }) => {
-        return selectedRecord?.status === 'RUNNING';
+        const stoppableStatuses = ['NOT_STARTED', 'ENQUEUED', 'RUNNING'];
+
+        return stoppableStatuses.includes(selectedRecord?.status);
       },
       availableOn: [
         ActionViewType.SHOW_PAGE,
