@@ -7,12 +7,14 @@ export const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
     // Check if stream is already ended
     if (stream.readableEnded) {
       reject(new Error('Stream has already ended'));
+
       return;
     }
 
     // Check if stream is not readable (destroyed or closed)
     if (!stream.readable) {
       reject(new Error('Stream is not readable'));
+
       return;
     }
 
