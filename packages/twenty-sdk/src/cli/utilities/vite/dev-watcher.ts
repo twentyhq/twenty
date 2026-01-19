@@ -13,7 +13,7 @@ export const EXTERNAL_MODULES: (string | RegExp)[] = [
   /^twenty-sdk/, /^twenty-shared/, /^@\//, /(?:^|\/)generated(?:\/|$)/,
 ];
 
-export type DevServerOptions = {
+export type DevWatcherOptions = {
   appPath: string;
   functionInput: Record<string, string>;
   plugins?: InlineConfig['plugins'];
@@ -24,7 +24,7 @@ export type BuildWatcher = Rollup.RollupWatcher;
 /**
  * Creates Vite build config for function building with watch mode.
  */
-export const createDevServerConfig = (options: DevServerOptions): InlineConfig => {
+export const createDevWatcherConfig = (options: DevWatcherOptions): InlineConfig => {
   const { appPath, functionInput, plugins = [] } = options;
 
   const outputDir = path.join(appPath, OUTPUT_DIR);
@@ -80,10 +80,10 @@ export const createDevServerConfig = (options: DevServerOptions): InlineConfig =
  * Creates a Vite build watcher for function building.
  * Uses build with watch mode to actually write files to disk.
  */
-export const createDevServer = async (
-  options: DevServerOptions,
+export const createDevWatcher = async (
+  options: DevWatcherOptions,
 ): Promise<BuildWatcher> => {
-  const config = createDevServerConfig(options);
+  const config = createDevWatcherConfig(options);
   const watcher = await build(config);
   return watcher as BuildWatcher;
 };

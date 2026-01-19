@@ -3,7 +3,7 @@ import { OUTPUT_DIR } from '@/cli/constants/output-dir';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import {
   cleanupOldFunctions,
-  createDevServer,
+  createDevWatcher,
   createManifestPlugin,
   runManifestBuild,
   type BuildWatcher,
@@ -70,7 +70,7 @@ export class AppDevCommand {
     );
 
     // Create and start build watcher with function entry points
-    this.watcher = await createDevServer({
+    this.watcher = await createDevWatcher({
       appPath: this.appPath,
       functionInput,
       plugins: [manifestPlugin],

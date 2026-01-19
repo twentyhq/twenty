@@ -1,10 +1,10 @@
 export {
-  createDevServer,
-  createDevServerConfig,
+  createDevWatcher,
+  createDevWatcherConfig,
   EXTERNAL_MODULES,
   type BuildWatcher,
-  type DevServerOptions
-} from './dev-server';
+  type DevWatcherOptions
+} from './dev-watcher';
 
 export {
   extractFunctionEntryPoints,
