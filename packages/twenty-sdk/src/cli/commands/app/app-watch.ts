@@ -8,7 +8,7 @@ import { loadManifest } from '@/cli/utils/load-manifest';
 import { displayWarnings } from '@/cli/utils/display-warnings';
 import { displayErrors } from '@/cli/utils/display-errors';
 
-export class AppDevCommand {
+export class AppWatchCommand {
   private apiService = new ApiService();
 
   async execute(options: {

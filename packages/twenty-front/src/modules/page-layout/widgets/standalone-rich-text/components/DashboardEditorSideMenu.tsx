@@ -44,8 +44,7 @@ const StyledDragHandleContainer = styled.div`
     background: ${({ theme }) => theme.background.transparent.secondary};
     backdrop-filter: ${({ theme }) => theme.blur.medium};
     color: ${({ theme }) => theme.font.color.primary};
-    box-shadow:
-      ${({ theme }) => theme.boxShadow.light},
+    box-shadow: ${({ theme }) => theme.boxShadow.light},
       ${({ theme }) => theme.boxShadow.strong};
   }
 
