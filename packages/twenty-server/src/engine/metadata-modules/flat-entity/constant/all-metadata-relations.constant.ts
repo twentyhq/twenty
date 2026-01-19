@@ -91,6 +91,18 @@ export const ALL_METADATA_RELATIONS = {
     },
     oneToMany: {},
   },
+  navigationMenuItem: {
+    manyToOne: {
+      workspace: null,
+      application: null,
+      targetObjectMetadata: {
+        metadataName: 'objectMetadata',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'targetObjectMetadataId',
+      },
+    },
+    oneToMany: {},
+  },
   fieldMetadata: {
     manyToOne: {
       object: {

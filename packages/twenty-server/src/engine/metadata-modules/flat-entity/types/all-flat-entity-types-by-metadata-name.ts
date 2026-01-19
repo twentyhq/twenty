@@ -1,5 +1,6 @@
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { type NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { type CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
@@ -7,6 +8,7 @@ import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/datab
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -54,6 +56,11 @@ import {
   type DeleteCommandMenuItemAction,
   type UpdateCommandMenuItemAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
+import {
+  type CreateNavigationMenuItemAction,
+  type DeleteNavigationMenuItemAction,
+  type UpdateNavigationMenuItemAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
 import {
   type CreateCronTriggerAction,
   type DeleteCronTriggerAction,
@@ -331,6 +338,15 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatCommandMenuItem;
     entity: CommandMenuItemEntity;
+  };
+  navigationMenuItem: {
+    actions: {
+      create: CreateNavigationMenuItemAction;
+      update: UpdateNavigationMenuItemAction;
+      delete: DeleteNavigationMenuItemAction;
+    };
+    flatEntity: FlatNavigationMenuItem;
+    entity: NavigationMenuItemEntity;
   };
   pageLayout: {
     actions: {
