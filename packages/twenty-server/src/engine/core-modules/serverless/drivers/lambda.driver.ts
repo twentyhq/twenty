@@ -36,16 +36,17 @@ import {
   LambdaBuildDirectoryManager,
   NODE_LAYER_SUBFOLDER,
 } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
-import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import {
-  type ServerlessFunctionEntity,
+  ServerlessFunctionEntity,
   ServerlessFunctionRuntime,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { fromServerlessFunctionEntityToFlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/utils/from-serverless-function-entity-to-flat-serverless-function.type';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -320,8 +321,11 @@ export class LambdaDriver implements ServerlessDriver {
 
     const startTime = Date.now();
 
-    const folderPath = getServerlessFolder({
-      serverlessFunction,
+    const folderPath = getServerlessFolderOrThrow({
+      flatServerlessFunction:
+        fromServerlessFunctionEntityToFlatServerlessFunction(
+          serverlessFunction,
+        ),
       version,
     });
 

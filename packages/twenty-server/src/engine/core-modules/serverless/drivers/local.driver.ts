@@ -14,7 +14,7 @@ import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/dri
 import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
 import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
-import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
@@ -75,8 +75,8 @@ export class LocalDriver implements ServerlessDriver {
 
     const startTime = Date.now();
 
-    const folderPath = getServerlessFolder({
-      serverlessFunction,
+    const folderPath = getServerlessFolderOrThrow({
+      flatServerlessFunction: serverlessFunction,
       version,
     });
 

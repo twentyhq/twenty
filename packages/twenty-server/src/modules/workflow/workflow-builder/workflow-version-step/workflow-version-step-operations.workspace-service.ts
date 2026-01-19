@@ -86,6 +86,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         if (
           !(await this.serverlessFunctionService.hasServerlessFunctionPublishedVersion(
             step.settings.input.serverlessFunctionId,
+            workspaceId,
           ))
         ) {
           await this.serverlessFunctionService.deleteOneServerlessFunction({

@@ -7,7 +7,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
-import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
@@ -80,8 +80,8 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
     serverlessFunction: FlatServerlessFunction;
     code: Sources;
   }) {
-    const fileFolder = getServerlessFolder({
-      serverlessFunction,
+    const fileFolder = getServerlessFolderOrThrow({
+      flatServerlessFunction: serverlessFunction,
       version: 'draft',
     });
 
