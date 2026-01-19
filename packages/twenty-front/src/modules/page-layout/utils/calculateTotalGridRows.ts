@@ -1,9 +1,9 @@
-import { type Layouts } from 'react-grid-layout';
 import { GRID_BUFFER_ROWS } from '@/page-layout/constants/GridBufferRows';
 import { GRID_MIN_ROWS } from '@/page-layout/constants/GridMinRows';
+import { type ResponsiveLayouts } from 'react-grid-layout';
 
 export const calculateTotalGridRows = (
-  layouts: Layouts,
+  layouts: ResponsiveLayouts,
   minRows = GRID_MIN_ROWS,
   bufferRows = GRID_BUFFER_ROWS,
 ): number => {

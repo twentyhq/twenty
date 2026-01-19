@@ -132,7 +132,7 @@ describe('convertPageLayoutToTabLayouts', () => {
     const richTextMinSize =
       WIDGET_SIZES[WidgetType.STANDALONE_RICH_TEXT]!.minimum;
 
-    expect(result['tab-1'].desktop[0]).toMatchObject({
+    expect(result['tab-1']!.desktop![0]).toMatchObject({
       i: 'rich-text-widget',
       minW: richTextMinSize.w,
       minH: richTextMinSize.h,
