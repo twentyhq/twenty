@@ -909,6 +909,14 @@ export type CreateFrontComponentInput = {
   name: Scalars['String'];
 };
 
+export type CreateNavigationMenuItemInput = {
+  favoriteFolderId?: InputMaybe<Scalars['UUID']>;
+  forWorkspaceMemberId?: InputMaybe<Scalars['UUID']>;
+  position?: InputMaybe<Scalars['Float']>;
+  targetObjectMetadataId: Scalars['UUID'];
+  targetRecordId: Scalars['UUID'];
+};
+
 export type CreateObjectInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
@@ -1922,6 +1930,7 @@ export type Mutation = {
   createFrontComponent: FrontComponent;
   createManyCoreViewFields: Array<CoreViewField>;
   createManyCoreViewGroups: Array<CoreViewGroup>;
+  createNavigationMenuItem: NavigationMenuItem;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
   createOneAgent: Agent;
@@ -1961,6 +1970,7 @@ export type Mutation = {
   deleteFile: File;
   deleteFrontComponent: FrontComponent;
   deleteJobs: DeleteJobsResponse;
+  deleteNavigationMenuItem: NavigationMenuItem;
   deleteOneAgent: Agent;
   deleteOneCronTrigger: CronTrigger;
   deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
@@ -2049,6 +2059,7 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlagDto;
+  updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
   updateOneCronTrigger: CronTrigger;
@@ -2227,6 +2238,11 @@ export type MutationCreateManyCoreViewFieldsArgs = {
 
 export type MutationCreateManyCoreViewGroupsArgs = {
   inputs: Array<CreateViewGroupInput>;
+};
+
+
+export type MutationCreateNavigationMenuItemArgs = {
+  input: CreateNavigationMenuItemInput;
 };
 
 
@@ -2422,6 +2438,11 @@ export type MutationDeleteFrontComponentArgs = {
 export type MutationDeleteJobsArgs = {
   jobIds: Array<Scalars['String']>;
   queueName: Scalars['String'];
+};
+
+
+export type MutationDeleteNavigationMenuItemArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -2853,6 +2874,11 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
 };
 
 
+export type MutationUpdateNavigationMenuItemArgs = {
+  input: UpdateNavigationMenuItemInput;
+};
+
+
 export type MutationUpdateOneAgentArgs = {
   input: UpdateAgentInput;
 };
@@ -3069,6 +3095,19 @@ export type NativeModelCapabilities = {
   __typename?: 'NativeModelCapabilities';
   twitterSearch?: Maybe<Scalars['Boolean']>;
   webSearch?: Maybe<Scalars['Boolean']>;
+};
+
+export type NavigationMenuItem = {
+  __typename?: 'NavigationMenuItem';
+  applicationId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  favoriteFolderId?: Maybe<Scalars['UUID']>;
+  forWorkspaceMemberId?: Maybe<Scalars['UUID']>;
+  id: Scalars['UUID'];
+  position: Scalars['Float'];
+  targetObjectMetadataId: Scalars['UUID'];
+  targetRecordId: Scalars['UUID'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type NotesConfiguration = {
@@ -3511,6 +3550,8 @@ export type Query = {
   index: Index;
   indexMetadatas: IndexConnection;
   listPlans: Array<BillingPlanOutput>;
+  navigationMenuItem?: Maybe<NavigationMenuItem>;
+  navigationMenuItems: Array<NavigationMenuItem>;
   object: Object;
   objects: ObjectConnection;
   search: SearchResultConnection;
@@ -3829,6 +3870,11 @@ export type QueryIndexArgs = {
 export type QueryIndexMetadatasArgs = {
   filter?: IndexFilter;
   paging?: CursorPaging;
+};
+
+
+export type QueryNavigationMenuItemArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -4611,6 +4657,12 @@ export type UpdateFrontComponentInputUpdates = {
 export type UpdateLabPublicFeatureFlagInput = {
   publicFeatureFlag: Scalars['String'];
   value: Scalars['Boolean'];
+};
+
+export type UpdateNavigationMenuItemInput = {
+  favoriteFolderId?: InputMaybe<Scalars['UUID']>;
+  id: Scalars['UUID'];
+  position?: InputMaybe<Scalars['Float']>;
 };
 
 export type UpdateObjectPayload = {
