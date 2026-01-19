@@ -165,6 +165,7 @@ const createPackageJson = async ({
       'app:generate': 'twenty app:generate',
       'app:logs': 'twenty app:logs',
       'app:uninstall': 'twenty app:uninstall',
+      help: 'twenty help',
       lint: 'eslint',
       'lint:fix': 'eslint --fix',
     },
