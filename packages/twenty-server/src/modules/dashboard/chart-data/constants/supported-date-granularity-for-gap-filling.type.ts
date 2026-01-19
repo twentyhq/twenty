@@ -1,4 +1,4 @@
-import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
+import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 
 export type SupportedDateGranularityForGapFilling =
   | ObjectRecordGroupByDateGranularity.DAY

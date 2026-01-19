@@ -1,9 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import {
-  GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE,
   CalendarStartDay,
+  GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE,
 } from 'twenty-shared/constants';
 import {
   FirstDayOfTheWeek,
@@ -39,7 +40,7 @@ export const buildGroupByFieldObject = ({
   isNestedDateField,
   timeZone,
 }: BuildGroupByFieldObjectParams): GroupByFieldObject => {
-  const isRelation = isFieldRelation(field);
+  const isRelation = isFieldRelation(field) || isFieldMorphRelation(field);
   const isComposite = isCompositeFieldType(field.type);
   const isDateField = isFieldMetadataDateKind(field.type);
 
