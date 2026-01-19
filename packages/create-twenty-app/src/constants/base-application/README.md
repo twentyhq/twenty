@@ -8,13 +8,32 @@ First, authenticate to your workspace:
 yarn auth
 ```
 
-Then, install this app to your workspace:
+Then, start development mode to sync your app and watch for changes:
+
+```bash
+yarn dev
+```
+
+Or run a one-time sync:
 
 ```bash
 yarn sync
 ```
 
 Open your Twenty instance and go to `/settings/applications` section to see the result.
+
+## Available Commands
+
+```bash
+yarn auth           # Authenticate with Twenty
+yarn dev            # Start dev mode (sync + watch)
+yarn sync           # One-time sync
+yarn create-entity  # Add a new entity (function, object, role)
+yarn generate       # Generate typed Twenty client
+yarn logs           # Stream function logs
+yarn uninstall      # Uninstall app from workspace
+yarn help           # Display help
+```
 
 ## Learn More
 

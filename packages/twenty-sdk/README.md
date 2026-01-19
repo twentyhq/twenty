@@ -94,7 +94,7 @@ Application development commands.
 - `twenty app sync [appPath]` — One-time sync of the application to your Twenty workspace.
 - Behavior: Compute your application's manifest and send it to your workspace to sync your application
 
-- `twenty app dev [appPath]` — Watch and sync local application changes.
+- `twenty app dev [appPath]` — Start development mode: sync local application changes.
   - Options:
     - `-d, --debounce <ms>`: Debounce delay in milliseconds (default: `1000`).
   - Behavior: Performs an initial sync, then watches the directory for changes and re-syncs after debounced edits. Press Ctrl+C to stop.
@@ -183,5 +183,50 @@ Notes:
 - Not seeing changes in dev: make sure dev mode is running (`twenty app dev`).
 
 ## Contributing
+
+### Development Setup
+
+To contribute to the twenty-sdk package, clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/twentyhq/twenty.git
+cd twenty
+yarn install
+```
+
+### Development Mode
+
+Run the SDK build in watch mode to automatically rebuild on file changes:
+
+```bash
+npx nx run twenty-sdk:dev
+```
+
+This will watch for changes and rebuild the `dist` folder automatically.
+
+### Production Build
+
+Build the SDK for production:
+
+```bash
+npx nx run twenty-sdk:build
+```
+
+### Running the CLI Locally
+
+After building, you can run the CLI directly:
+
+```bash
+npx nx run twenty-sdk:start -- <command>
+# Example: npx nx run twenty-sdk:start -- auth status
+```
+
+Or run the built CLI directly:
+
+```bash
+node packages/twenty-sdk/dist/cli.cjs <command>
+```
+
+### Resources
 - See our [GitHub](https://github.com/twentyhq/twenty)
 - Join our [Discord](https://discord.gg/cx5n4Jzs57)

@@ -119,10 +119,13 @@ export class CreateAppCommand {
   }
 
   private logSuccess(appDirectory: string): void {
+    const dirName = appDirectory.split('/').reverse()[0] ?? '';
+
     console.log(chalk.green('✅ Application created!'));
     console.log('');
     console.log(chalk.blue('Next steps:'));
-    console.log(`cd ${appDirectory.split('/').reverse()[0] ?? ''}`);
-    console.log('yarn auth');
+    console.log(chalk.gray(`  cd ${dirName}`));
+    console.log(chalk.gray('  yarn auth        # Authenticate with Twenty'));
+    console.log(chalk.gray('  yarn dev         # Start dev mode'));
   }
 }
