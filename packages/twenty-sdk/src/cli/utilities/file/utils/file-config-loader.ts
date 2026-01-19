@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra';
 import { createJiti } from 'jiti';
+import { JitiOptions } from 'jiti/lib/types';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { parseJsoncFile } from './file-jsonc';
@@ -72,8 +73,7 @@ const transformJsxFile = async (filepath: string): Promise<string> => {
 const createConfigLoader = async (appPath?: string) => {
   const basePath = appPath ?? fileURLToPath(import.meta.url);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const options: any = {
+  const options: JitiOptions = {
     moduleCache: false, // Don't cache during dev for hot reload
     fsCache: false,
     interopDefault: true,
