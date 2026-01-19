@@ -40,7 +40,7 @@ export const getBarChartAxisConfigs = ({
       ? valueTickValues
       : numberOfValueTicks;
 
-  const baseMargins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
+  const baseMargins = getBarChartMargins({ xAxisLabel, yAxisLabel });
 
   const hasRotation = bottomAxisTickRotation !== 0;
   const margins =

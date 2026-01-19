@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { AxisNameDisplay, BarChartLayout } from '~/generated/graphql';
+import { AxisNameDisplay } from '~/generated/graphql';
 
 const GraphWidgetBarChart = lazy(() =>
   import(
@@ -70,19 +70,13 @@ export const GraphWidgetBarChartRenderer = () => {
     hasGroupByOnSecondaryAxis,
   );
 
-  const isHorizontal = layout === BarChartLayout.HORIZONTAL;
   const axisNameDisplay = configuration.axisNameDisplay;
 
-  const showXLabel = isHorizontal
-    ? axisNameDisplay === AxisNameDisplay.Y ||
-      axisNameDisplay === AxisNameDisplay.BOTH
-    : axisNameDisplay === AxisNameDisplay.X ||
+  const showXLabel =
+     axisNameDisplay === AxisNameDisplay.X ||
       axisNameDisplay === AxisNameDisplay.BOTH;
 
-  const showYLabel = isHorizontal
-    ? axisNameDisplay === AxisNameDisplay.X ||
-      axisNameDisplay === AxisNameDisplay.BOTH
-    : axisNameDisplay === AxisNameDisplay.Y ||
+  const showYLabel = axisNameDisplay === AxisNameDisplay.Y ||
       axisNameDisplay === AxisNameDisplay.BOTH;
 
   const xAxisLabelToDisplay = showXLabel ? xAxisLabel : undefined;

@@ -100,6 +100,8 @@ export const GraphWidgetBarChart = ({
   customFormatter,
   onSliceClick,
 }: GraphWidgetBarChartProps) => {
+  console.log('xAxisLabel', xAxisLabel);
+  console.log('yAxisLabel', yAxisLabel);
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
 
