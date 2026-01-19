@@ -636,6 +636,26 @@ export type ClientAiModelConfig = {
   provider: ModelProvider;
 };
 
+export type CommandMenuItem = {
+  __typename?: 'CommandMenuItem';
+  applicationId?: Maybe<Scalars['UUID']>;
+  availabilityObjectMetadataId?: Maybe<Scalars['UUID']>;
+  availabilityType: CommandMenuItemAvailabilityType;
+  createdAt: Scalars['DateTime'];
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isPinned: Scalars['Boolean'];
+  label: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  workflowVersionId: Scalars['UUID'];
+};
+
+export enum CommandMenuItemAvailabilityType {
+  BULK_RECORDS = 'BULK_RECORDS',
+  GLOBAL = 'GLOBAL',
+  SINGLE_RECORD = 'SINGLE_RECORD'
+}
+
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON'];
@@ -863,6 +883,15 @@ export type CreateApprovedAccessDomainInput = {
   email: Scalars['String'];
 };
 
+export type CreateCommandMenuItemInput = {
+  availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
+  availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
+  icon?: InputMaybe<Scalars['String']>;
+  isPinned?: InputMaybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
+};
+
 export type CreateCronTriggerInput = {
   serverlessFunctionId: Scalars['String'];
   settings: Scalars['JSON'];
@@ -900,6 +929,11 @@ export type CreateFieldInput = {
   relationCreationPayload?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
   type: FieldMetadataType;
+};
+
+export type CreateFrontComponentInput = {
+  id?: InputMaybe<Scalars['UUID']>;
+  name: Scalars['String'];
 };
 
 export type CreateObjectInput = {
@@ -1013,6 +1047,7 @@ export type CreateSkillInput = {
   content: Scalars['String'];
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
   label: Scalars['String'];
   name: Scalars['String'];
 };
@@ -1394,6 +1429,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
+  IS_COMMAND_MENU_ITEM_ENABLED = 'IS_COMMAND_MENU_ITEM_ENABLED',
   IS_DASHBOARD_V2_ENABLED = 'IS_DASHBOARD_V2_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
   IS_IF_ELSE_ENABLED = 'IS_IF_ELSE_ENABLED',
@@ -1524,11 +1560,9 @@ export type FieldsConfiguration = {
 export type File = {
   __typename?: 'File';
   createdAt: Scalars['DateTime'];
-  fullPath: Scalars['String'];
   id: Scalars['UUID'];
-  name: Scalars['String'];
+  path: Scalars['String'];
   size: Scalars['Float'];
-  type: Scalars['String'];
 };
 
 export enum FileFolder {
@@ -1560,6 +1594,15 @@ export type FindAvailableSsoidpOutput = {
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
   workspace: WorkspaceNameAndId;
+};
+
+export type FrontComponent = {
+  __typename?: 'FrontComponent';
+  applicationId: Scalars['UUID'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type FullName = {
@@ -1921,6 +1964,7 @@ export type Mutation = {
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createChatThread: AgentChatThread;
+  createCommandMenuItem: CommandMenuItem;
   createCoreView: CoreView;
   createCoreViewField: CoreViewField;
   createCoreViewFilter: CoreViewFilter;
@@ -1931,6 +1975,7 @@ export type Mutation = {
   createDraftFromWorkflowVersion: WorkflowVersionDto;
   createEmailingDomain: EmailingDomain;
   createFile: File;
+  createFrontComponent: FrontComponent;
   createManyCoreViewFields: Array<CoreViewField>;
   createManyCoreViewGroups: Array<CoreViewGroup>;
   createOIDCIdentityProvider: SetupSsoOutput;
@@ -1959,6 +2004,7 @@ export type Mutation = {
   deactivateSkill: Skill;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
+  deleteCommandMenuItem: CommandMenuItem;
   deleteCoreView: Scalars['Boolean'];
   deleteCoreViewField: CoreViewField;
   deleteCoreViewFilter: CoreViewFilter;
@@ -1969,6 +2015,7 @@ export type Mutation = {
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
+  deleteFrontComponent: FrontComponent;
   deleteJobs: DeleteJobsResponse;
   deleteOneAgent: Agent;
   deleteOneCronTrigger: CronTrigger;
@@ -2048,6 +2095,7 @@ export type Mutation = {
   trackAnalytics: Analytics;
   uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
+  updateCommandMenuItem: CommandMenuItem;
   updateCoreView: CoreView;
   updateCoreViewField: CoreViewField;
   updateCoreViewFilter: CoreViewFilter;
@@ -2055,6 +2103,7 @@ export type Mutation = {
   updateCoreViewGroup: CoreViewGroup;
   updateCoreViewSort: CoreViewSort;
   updateDatabaseConfigVariable: Scalars['Boolean'];
+  updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
@@ -2165,6 +2214,11 @@ export type MutationCreateApprovedAccessDomainArgs = {
 };
 
 
+export type MutationCreateCommandMenuItemArgs = {
+  input: CreateCommandMenuItemInput;
+};
+
+
 export type MutationCreateCoreViewArgs = {
   input: CreateViewInput;
 };
@@ -2214,6 +2268,11 @@ export type MutationCreateEmailingDomainArgs = {
 
 export type MutationCreateFileArgs = {
   file: Scalars['Upload'];
+};
+
+
+export type MutationCreateFrontComponentArgs = {
+  input: CreateFrontComponentInput;
 };
 
 
@@ -2361,6 +2420,11 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 };
 
 
+export type MutationDeleteCommandMenuItemArgs = {
+  id: Scalars['UUID'];
+};
+
+
 export type MutationDeleteCoreViewArgs = {
   id: Scalars['String'];
 };
@@ -2403,6 +2467,11 @@ export type MutationDeleteEmailingDomainArgs = {
 
 export type MutationDeleteFileArgs = {
   fileId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteFrontComponentArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -2786,6 +2855,11 @@ export type MutationUpdateApiKeyArgs = {
 };
 
 
+export type MutationUpdateCommandMenuItemArgs = {
+  input: UpdateCommandMenuItemInput;
+};
+
+
 export type MutationUpdateCoreViewArgs = {
   id: Scalars['String'];
   input: UpdateViewInput;
@@ -2822,6 +2896,11 @@ export type MutationUpdateCoreViewSortArgs = {
 export type MutationUpdateDatabaseConfigVariableArgs = {
   key: Scalars['String'];
   value: Scalars['JSON'];
+};
+
+
+export type MutationUpdateFrontComponentArgs = {
+  input: UpdateFrontComponentInput;
 };
 
 
@@ -3438,6 +3517,8 @@ export type Query = {
   chatThreads: Array<AgentChatThread>;
   checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
+  commandMenuItem?: Maybe<CommandMenuItem>;
+  commandMenuItems: Array<CommandMenuItem>;
   currentUser: User;
   currentWorkspace: Workspace;
   field: Field;
@@ -3457,6 +3538,8 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  frontComponent?: Maybe<FrontComponent>;
+  frontComponents: Array<FrontComponent>;
   getAddressDetails: PlaceDetailsResult;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAutoCompleteAddress: Array<AutocompleteResult>;
@@ -3561,6 +3644,11 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 };
 
 
+export type QueryCommandMenuItemArgs = {
+  id: Scalars['UUID'];
+};
+
+
 export type QueryFieldArgs = {
   id: Scalars['UUID'];
 };
@@ -3604,6 +3692,11 @@ export type QueryFindOneServerlessFunctionArgs = {
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type QueryFrontComponentArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -4551,6 +4644,15 @@ export type UpdateApiKeyInput = {
   revokedAt?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateCommandMenuItemInput = {
+  availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
+  availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
+  icon?: InputMaybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isPinned?: InputMaybe<Scalars['Boolean']>;
+  label?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateCronTriggerInput = {
   /** The id of the cron trigger to update */
   id: Scalars['String'];
@@ -4588,6 +4690,17 @@ export type UpdateFieldInput = {
   name?: InputMaybe<Scalars['String']>;
   options?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateFrontComponentInput = {
+  /** The id of the front component to update */
+  id: Scalars['UUID'];
+  /** The front component fields to update */
+  update: UpdateFrontComponentInputUpdates;
+};
+
+export type UpdateFrontComponentInputUpdates = {
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateLabPublicFeatureFlagInput = {
@@ -5856,14 +5969,14 @@ export type CreateFileMutationVariables = Exact<{
 }>;
 
 
-export type CreateFileMutation = { __typename?: 'Mutation', createFile: { __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string } };
+export type CreateFileMutation = { __typename?: 'Mutation', createFile: { __typename?: 'File', id: string, path: string, size: number, createdAt: string } };
 
 export type DeleteFileMutationVariables = Exact<{
   fileId: Scalars['UUID'];
 }>;
 
 
-export type DeleteFileMutation = { __typename?: 'Mutation', deleteFile: { __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string } };
+export type DeleteFileMutation = { __typename?: 'Mutation', deleteFile: { __typename?: 'File', id: string, path: string, size: number, createdAt: string } };
 
 export type ObjectMetadataFieldsFragment = { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, applicationId?: string | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> };
 
@@ -10027,10 +10140,8 @@ export const CreateFileDocument = gql`
     mutation CreateFile($file: Upload!) {
   createFile(file: $file) {
     id
-    name
-    fullPath
+    path
     size
-    type
     createdAt
   }
 }
@@ -10065,10 +10176,8 @@ export const DeleteFileDocument = gql`
     mutation DeleteFile($fileId: UUID!) {
   deleteFile(fileId: $fileId) {
     id
-    name
-    fullPath
+    path
     size
-    type
     createdAt
   }
 }

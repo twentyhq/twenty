@@ -4,14 +4,14 @@ title: Osvědčené postupy
 
 Tento dokument popisuje osvědčené postupy, které byste měli dodržovat při práci na backendu.
 
-## Follow a modular approach
+## Dodržujte modulární přístup
 
 Backend sleduje modulární přístup, což je základní princip při práci s NestJS. Ujistěte se, že rozdělujete svůj kód na znovupoužitelné moduly, abyste udrželi čistý a organizovaný kód.
-Každý modul by měl zahrnovat určitou funkci nebo funkcionalitu a mít jasně definovaný rozsah. This modular approach enables clear separation of concerns and removes unnecessary complexities.
+Každý modul by měl zahrnovat určitou funkci nebo funkcionalitu a mít jasně definovaný rozsah. Tento modulární přístup umožňuje jasné oddělení odpovědností a odstraňuje zbytečné složitosti.
 
-## Expose services to use in modules
+## Zpřístupněte služby pro použití v modulech.
 
-Always create services that have a clear and single responsibility, which enhances code readability and maintainability. Pojmenovávejte služby výstižně a konzistentně.
+Vždy vytvářejte služby s jasně vymezenou jedinou odpovědností, což zvyšuje čitelnost a udržovatelnost kódu. Pojmenovávejte služby výstižně a konzistentně.
 
 Měli byste také zpřístupnit služby, které chcete používat v jiných modulech. Zpřístupnění služeb ostatním modulům je možné díky výkonnému systému injektování závislostí v NestJS a podporuje volné vazby mezi komponentami.
 

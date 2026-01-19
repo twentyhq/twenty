@@ -8,7 +8,6 @@ import {
   ComponentDecorator,
   ComponentWithRouterDecorator,
 } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const PlaygroundApiKeySetterEffect = () => {
@@ -24,11 +23,7 @@ const PlaygroundApiKeySetterEffect = () => {
 const meta: Meta<typeof GraphQLPlayground> = {
   title: 'Modules/Settings/Playground/GraphQLPlayground',
   component: GraphQLPlayground,
-  decorators: [
-    ComponentDecorator,
-    I18nFrontDecorator,
-    ComponentWithRouterDecorator,
-  ],
+  decorators: [ComponentDecorator, ComponentWithRouterDecorator],
   parameters: {
     docs: {
       description: {

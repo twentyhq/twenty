@@ -17,7 +17,6 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
@@ -135,7 +134,7 @@ const meta: Meta = {
     onTab: { control: false },
     onShiftTab: { control: false },
   },
-  decorators: [clearMocksDecorator, SnackBarDecorator, I18nFrontDecorator],
+  decorators: [clearMocksDecorator, SnackBarDecorator],
   parameters: {
     clearMocks: true,
   },

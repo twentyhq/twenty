@@ -22,7 +22,7 @@ interface BlockEditorProps {
   readonly?: boolean;
 }
 
-// eslint-disable-next-line @nx/workspace-no-hardcoded-colors
+// eslint-disable-next-line twenty/no-hardcoded-colors
 const StyledEditor = styled.div`
   width: 100%;
 

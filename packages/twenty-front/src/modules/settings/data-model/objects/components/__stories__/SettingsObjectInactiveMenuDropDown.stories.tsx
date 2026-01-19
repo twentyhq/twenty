@@ -7,7 +7,6 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const handleActivateMockFunction = fn();
 const handleDeleteMockFunction = fn();
@@ -28,7 +27,7 @@ const meta: Meta<typeof SettingsObjectInactiveMenuDropDown> = {
     onActivate: handleActivateMockFunction,
     onDelete: handleDeleteMockFunction,
   },
-  decorators: [I18nFrontDecorator, ComponentDecorator, ClearMocksDecorator],
+  decorators: [ComponentDecorator, ClearMocksDecorator],
   parameters: {
     clearMocks: true,
   },
@@ -40,8 +39,8 @@ type Story = StoryObj<typeof SettingsObjectInactiveMenuDropDown>;
 export const Default: Story = {};
 
 export const Open: Story = {
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const dropdownButton = await canvas.findByRole('button', {
       name: 'Inactive Object Options',
@@ -52,8 +51,8 @@ export const Open: Story = {
 };
 
 export const WithActivate: Story = {
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const dropdownButton = await canvas.findByRole('button', {
       name: 'Inactive Object Options',
@@ -75,8 +74,8 @@ export const WithActivate: Story = {
 
 export const WithDelete: Story = {
   args: { isCustomObject: true },
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const dropdownButton = await canvas.findByRole('button', {
       name: 'Inactive Object Options',

@@ -4,7 +4,6 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getRolesMock } from '~/testing/mock-data/roles';
 
 const SettingsRolePermissionsWrapper = (
@@ -31,7 +30,7 @@ const SettingsRolePermissionsWrapper = (
 const meta: Meta<typeof SettingsRolePermissionsWrapper> = {
   title: 'Modules/Settings/Roles/RolePermissions/SettingsRolePermissions',
   component: SettingsRolePermissionsWrapper,
-  decorators: [RouterDecorator, ComponentDecorator, I18nFrontDecorator],
+  decorators: [RouterDecorator, ComponentDecorator],
 };
 
 export default meta;

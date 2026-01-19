@@ -28,6 +28,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   ['workspaceId', 'pageLayoutTabId'],
   { where: '"deletedAt" IS NULL' },
 )
+@Index('IDX_PAGE_LAYOUT_WIDGET_OBJECT_METADATA_ID', ['objectMetadataId'])
 export class PageLayoutWidgetEntity<
     TWidgetConfigurationType extends
       WidgetConfigurationType = WidgetConfigurationType,

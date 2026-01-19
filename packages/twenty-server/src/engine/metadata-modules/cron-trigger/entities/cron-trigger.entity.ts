@@ -19,6 +19,7 @@ export type CronTriggerSettings = {
 
 @Entity({ name: 'cronTrigger', schema: 'core' })
 @Index('IDX_CRON_TRIGGER_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_CRON_TRIGGER_SERVERLESS_FUNCTION_ID', ['serverlessFunctionId'])
 export class CronTriggerEntity
   extends SyncableEntity
   implements Required<CronTriggerEntity>
