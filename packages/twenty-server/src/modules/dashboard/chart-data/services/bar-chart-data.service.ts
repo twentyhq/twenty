@@ -165,34 +165,34 @@ export class BarChartDataService {
 
     try {
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
-      return this.transformToTwoDimensionalBarChartData({
+        return this.transformToTwoDimensionalBarChartData({
+          rawResults,
+          primaryAxisGroupByField,
+          secondaryAxisGroupByField,
+          aggregateField,
+          configuration,
+          userTimezone,
+          firstDayOfTheWeek,
+        });
+      }
+
+      return this.transformToBarChartData({
         rawResults,
         primaryAxisGroupByField,
-        secondaryAxisGroupByField,
         aggregateField,
         configuration,
         userTimezone,
         firstDayOfTheWeek,
       });
-    }
-
-    return this.transformToBarChartData({
-      rawResults,
-      primaryAxisGroupByField,
-      aggregateField,
-      configuration,
-      userTimezone,
-      firstDayOfTheWeek,
-    });
-  } catch (error) {
-    throw new ChartDataException(
-      generateChartDataExceptionMessage(
+    } catch (error) {
+      throw new ChartDataException(
+        generateChartDataExceptionMessage(
+          ChartDataExceptionCode.TRANSFORMATION_FAILED,
+          `Failed to transform bar chart data: ${error.message}`,
+        ),
         ChartDataExceptionCode.TRANSFORMATION_FAILED,
-      `Failed to transform bar chart data: ${error.message}`,
-      ),
-      ChartDataExceptionCode.TRANSFORMATION_FAILED,
-    );
-  }
+      );
+    }
   }
 
   private transformToBarChartData({
@@ -214,8 +214,10 @@ export class BarChartDataService {
     const isHorizontal = layout === BarChartLayout.HORIZONTAL;
 
     const filteredResults = configuration.omitNullValues
-      ? rawResults.filter((result) =>
-          isDefined(result.groupByDimensionValues?.[0]),
+      ? rawResults.filter(
+          (result) =>
+            isDefined(result.groupByDimensionValues?.[0]) &&
+            result.aggregateValue !== 0,
         )
       : rawResults;
 
@@ -358,8 +360,10 @@ export class BarChartDataService {
     const isHorizontal = layout === BarChartLayout.HORIZONTAL;
 
     const filteredResults = configuration.omitNullValues
-      ? rawResults.filter((result) =>
-          isDefined(result.groupByDimensionValues?.[0]),
+      ? rawResults.filter(
+          (result) =>
+            isDefined(result.groupByDimensionValues?.[0]) &&
+            result.aggregateValue !== 0,
         )
       : rawResults;
 

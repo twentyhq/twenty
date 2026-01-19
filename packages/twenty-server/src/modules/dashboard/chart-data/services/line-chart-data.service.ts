@@ -168,35 +168,35 @@ export class LineChartDataService {
     });
 
     try {
-    if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
-      return this.transformToTwoDimensionalLineChartData({
+      if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
+        return this.transformToTwoDimensionalLineChartData({
+          rawResults,
+          primaryAxisGroupByField,
+          secondaryAxisGroupByField,
+          aggregateField,
+          configuration,
+          userTimezone,
+          firstDayOfTheWeek,
+        });
+      }
+
+      return this.transformToLineChartData({
         rawResults,
         primaryAxisGroupByField,
-        secondaryAxisGroupByField,
         aggregateField,
         configuration,
         userTimezone,
         firstDayOfTheWeek,
       });
-    }
-
-    return this.transformToLineChartData({
-      rawResults,
-      primaryAxisGroupByField,
-      aggregateField,
-      configuration,
-      userTimezone,
-      firstDayOfTheWeek,
-    });
-  } catch (error) {
-    throw new ChartDataException(
-      generateChartDataExceptionMessage(
+    } catch (error) {
+      throw new ChartDataException(
+        generateChartDataExceptionMessage(
+          ChartDataExceptionCode.TRANSFORMATION_FAILED,
+          `Failed to transform line chart data: ${error.message}`,
+        ),
         ChartDataExceptionCode.TRANSFORMATION_FAILED,
-        `Failed to transform line chart data: ${error.message}`,
-      ),
-      ChartDataExceptionCode.TRANSFORMATION_FAILED,
-    );
-  }
+      );
+    }
   }
 
   private transformToLineChartData({
@@ -215,8 +215,10 @@ export class LineChartDataService {
     firstDayOfTheWeek: CalendarStartDay;
   }): LineChartDataOutputDTO {
     const filteredResults = configuration.omitNullValues
-      ? rawResults.filter((result) =>
-          isDefined(result.groupByDimensionValues?.[0]),
+      ? rawResults.filter(
+          (result) =>
+            isDefined(result.groupByDimensionValues?.[0]) &&
+            result.aggregateValue !== 0,
         )
       : rawResults;
 
@@ -344,8 +346,10 @@ export class LineChartDataService {
     firstDayOfTheWeek: CalendarStartDay;
   }): LineChartDataOutputDTO {
     const filteredResults = configuration.omitNullValues
-      ? rawResults.filter((result) =>
-          isDefined(result.groupByDimensionValues?.[0]),
+      ? rawResults.filter(
+          (result) =>
+            isDefined(result.groupByDimensionValues?.[0]) &&
+            result.aggregateValue !== 0,
         )
       : rawResults;
 

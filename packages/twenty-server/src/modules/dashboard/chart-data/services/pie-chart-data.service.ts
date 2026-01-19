@@ -131,25 +131,25 @@ export class PieChartDataService {
     });
 
     try {
-    return this.transformToPieChartData({
-      rawResults,
-      groupByField,
-      aggregateField,
-      configuration,
-      userTimezone: configuration.timezone ?? 'UTC',
-      firstDayOfTheWeek:
-        (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
-        CalendarStartDay.MONDAY,
-    });
-  } catch (error) {
-    throw new ChartDataException(
-      generateChartDataExceptionMessage(
+      return this.transformToPieChartData({
+        rawResults,
+        groupByField,
+        aggregateField,
+        configuration,
+        userTimezone: configuration.timezone ?? 'UTC',
+        firstDayOfTheWeek:
+          (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
+          CalendarStartDay.MONDAY,
+      });
+    } catch (error) {
+      throw new ChartDataException(
+        generateChartDataExceptionMessage(
+          ChartDataExceptionCode.TRANSFORMATION_FAILED,
+          `Failed to transform pie chart data: ${error.message}`,
+        ),
         ChartDataExceptionCode.TRANSFORMATION_FAILED,
-        `Failed to transform pie chart data: ${error.message}`,
-      ),
-      ChartDataExceptionCode.TRANSFORMATION_FAILED,
-    );
-  }
+      );
+    }
   }
 
   private transformToPieChartData({
@@ -171,8 +171,10 @@ export class PieChartDataService {
     firstDayOfTheWeek: CalendarStartDay;
   }): PieChartDataOutputDTO {
     const filteredResults = configuration.hideEmptyCategory
-      ? rawResults.filter((result) =>
-          isDefined(result.groupByDimensionValues?.[0]),
+      ? rawResults.filter(
+          (result) =>
+            isDefined(result.groupByDimensionValues?.[0]) &&
+            result.aggregateValue !== 0,
         )
       : rawResults;
 
