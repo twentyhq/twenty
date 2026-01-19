@@ -165,7 +165,7 @@ l
 
 ## Authentication
 
-The first time you run `yarn app:auth`, you'll be prompted for:
+The first time you run `yarn auth:login`, you'll be prompted for:
 
 - API URL (defaults to http://localhost:3000 or your current workspace profile)
 - API key
@@ -176,10 +176,10 @@ Examples:
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
-yarn app:auth
+yarn auth:login
 
 # Use a specific workspace profile
-yarn app:auth --workspace my-custom-workspace
+yarn auth:login --workspace my-custom-workspace
 ```
 
 ## Use the SDK resources (types & config)
@@ -662,7 +662,7 @@ Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:sync`
 
 ## Troubleshooting
 
-- Authentication errors: run `yarn app:auth` and ensure your API key has the required permissions.
+- Authentication errors: run `yarn auth:login` and ensure your API key has the required permissions.
 - Cannot connect to server: verify the API URL and that the Twenty server is reachable.
 - Types or client missing/outdated: run `yarn app:generate` and then `yarn app:dev`.
 - Dev mode not syncing: ensure `yarn app:dev` is running and that changes are not ignored by your environment.
