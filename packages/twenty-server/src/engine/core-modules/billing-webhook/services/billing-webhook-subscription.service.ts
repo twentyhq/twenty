@@ -80,7 +80,7 @@ export class BillingWebhookSubscriptionService {
         `Workspace not found for subscription event ${event.id} / workspaceId: ${workspaceId}`,
         BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
         {
-          userFriendlyMessage: msg`Your billing subscription is corrupted. Please contact support.`,
+          userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
         },
       );
     }
@@ -93,7 +93,7 @@ export class BillingWebhookSubscriptionService {
         `Workspace not found for subscription event ${event.id} / workspaceId: ${workspaceId}`,
         BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
         {
-          userFriendlyMessage: msg`Your billing subscription is corrupted. Please contact support.`,
+          userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
         },
       );
     }
