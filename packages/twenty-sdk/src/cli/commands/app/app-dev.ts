@@ -1,20 +1,6 @@
-import { OUTPUT_DIR } from '@/cli/constants/output-dir';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import { ManifestValidationError } from '@/cli/utilities/manifest/types/manifest.types';
-import { type BuildManifestResult } from '@/cli/utilities/manifest/utils/manifest-build';
-import {
-  displayEntitySummary,
-  displayErrors,
-  displayWarnings,
-} from '@/cli/utilities/manifest/utils/manifest-display';
-import {
-  createDevServer,
-  createManifestPlugin,
-  type ManifestBuildError,
-} from '@/cli/utilities/vite';
+import { createDevServer, createManifestPlugin } from '@/cli/utilities/vite';
 import chalk from 'chalk';
-import * as fs from 'fs-extra';
-import path from 'path';
 import { type ViteDevServer } from 'vite';
 
 export type AppDevOptions = {
@@ -46,15 +32,6 @@ export class AppDevCommand {
 
     const manifestPlugin = createManifestPlugin({
       appPath: this.appPath,
-      onBuildStart: () => {
-        console.log(chalk.blue('🔄 Building manifest...'));
-      },
-      onBuildSuccess: (result: BuildManifestResult) => {
-        this.handleBuildSuccess(result);
-      },
-      onBuildError: (error: ManifestBuildError) => {
-        this.handleBuildError(error);
-      },
       onFunctionEntryPointsChange: (entryPoints: string[]) => {
         this.handleFunctionEntryPointsChange(entryPoints, isInitialBuild);
       },
@@ -119,51 +96,6 @@ export class AppDevCommand {
       setImmediate(() => {
         this.restartServer();
       });
-    }
-  }
-
-  getFunctionEntryPoints(): string[] {
-    return this.functionEntryPoints;
-  }
-
-  private handleBuildSuccess(result: BuildManifestResult): void {
-    displayEntitySummary(result.manifest);
-
-    displayWarnings(result.warnings);
-
-    this.writeManifestToOutput(result);
-  }
-
-  private handleBuildError(error: ManifestBuildError): void {
-    if (error.errors) {
-      displayErrors(new ManifestValidationError(error.errors));
-    } else {
-      console.error(chalk.red('  ✗ Build failed:'), error.message);
-    }
-  }
-
-  private async writeManifestToOutput(
-    result: BuildManifestResult,
-  ): Promise<void> {
-    try {
-      const outputDir = path.join(this.appPath, OUTPUT_DIR);
-
-      await fs.ensureDir(outputDir);
-
-      const manifestPath = path.join(outputDir, 'manifest.json');
-
-      await fs.writeJSON(manifestPath, result.manifest, { spaces: 2 });
-
-      console.log(chalk.green(`  ✓ Manifest written to ${manifestPath}`));
-      console.log('');
-      console.log(
-        chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
-      );
-    } catch (error) {
-      console.error(
-        chalk.red('  ✗ Failed to write manifest:'),
-        error instanceof Error ? error.message : error,
-      );
     }
   }
 

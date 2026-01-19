@@ -12,6 +12,5 @@ export {
 
 export {
   createManifestPlugin,
-  type ManifestBuildError,
   type ManifestPluginOptions,
 } from './manifest-plugin';
