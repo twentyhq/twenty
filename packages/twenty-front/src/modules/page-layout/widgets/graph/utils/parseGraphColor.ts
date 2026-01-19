@@ -13,8 +13,10 @@ export const parseGraphColor = (
     return 'auto';
   }
 
-  if (MAIN_COLOR_NAMES.includes(value as ThemeColor)) {
-    return value as GraphColor;
+  const normalizedValue = value.toLowerCase();
+
+  if (MAIN_COLOR_NAMES.includes(normalizedValue as ThemeColor)) {
+    return normalizedValue as GraphColor;
   }
 
   return undefined;

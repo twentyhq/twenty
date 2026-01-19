@@ -11,11 +11,11 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { formatToShortNumber } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { SubscriptionStatus } from '~/generated/graphql';
-import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 
 const StyledLineSeparator = styled.div`
   width: 100%;
