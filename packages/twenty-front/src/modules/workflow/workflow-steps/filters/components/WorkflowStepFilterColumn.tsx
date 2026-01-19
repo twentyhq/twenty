@@ -14,6 +14,7 @@ type WorkflowStepFilterColumnProps = {
   stepFilter: StepFilter;
   stepFilterIndex: number;
   firstFilterLabel?: string;
+  preventDeletion?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -28,8 +29,9 @@ export const WorkflowStepFilterColumn = ({
   stepFilter,
   stepFilterIndex,
   firstFilterLabel,
+  preventDeletion = false,
 }: WorkflowStepFilterColumnProps) => {
-  const { readonly, preventDeletion } = useContext(WorkflowStepFilterContext);
+  const { readonly } = useContext(WorkflowStepFilterContext);
 
   const shouldShowDropdown = !readonly && !preventDeletion;
 
