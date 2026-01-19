@@ -15,11 +15,14 @@ import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-fla
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
 
 @Entity('role')
 @Unique('IDX_ROLE_LABEL_WORKSPACE_ID_UNIQUE', ['label', 'workspaceId'])
-export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
+export class RoleEntity
+  extends SyncableEntityRequired
+  implements Required<RoleEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
