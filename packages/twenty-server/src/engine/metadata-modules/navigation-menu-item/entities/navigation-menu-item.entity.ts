@@ -18,7 +18,7 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   'forWorkspaceMemberId',
   'workspaceId',
 ])
-@Index('IDX_NAVIGATION_MENU_ITEM_TARGET_RECORD_OBJECT_METADATA_WORKSPACE_ID', [
+@Index('IDX_NAVIGATION_MENU_ITEM_TARGET_RECORD_OBJ_METADATA_WS_ID', [
   'targetRecordId',
   'targetObjectMetadataId',
   'workspaceId',

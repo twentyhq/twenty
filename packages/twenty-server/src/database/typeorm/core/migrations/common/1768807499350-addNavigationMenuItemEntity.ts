@@ -16,7 +16,7 @@ export class AddNavigationMenuItemEntity1768807499350
       `CREATE INDEX "IDX_NAVIGATION_MENU_ITEM_FAVORITE_FOLDER_ID_WORKSPACE_ID" ON "core"."navigationMenuItem" ("favoriteFolderId", "workspaceId") `,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_NAVIGATION_MENU_ITEM_TARGET_RECORD_OBJECT_METADATA_WORKSPACE_ID" ON "core"."navigationMenuItem" ("targetRecordId", "targetObjectMetadataId", "workspaceId") `,
+      `CREATE INDEX "IDX_NAVIGATION_MENU_ITEM_TARGET_RECORD_OBJ_METADATA_WS_ID" ON "core"."navigationMenuItem" ("targetRecordId", "targetObjectMetadataId", "workspaceId") `,
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_NAVIGATION_MENU_ITEM_FOR_WORKSPACE_MEMBER_ID_WORKSPACE_ID" ON "core"."navigationMenuItem" ("forWorkspaceMemberId", "workspaceId") `,
@@ -46,7 +46,7 @@ export class AddNavigationMenuItemEntity1768807499350
       `DROP INDEX "core"."IDX_NAVIGATION_MENU_ITEM_FOR_WORKSPACE_MEMBER_ID_WORKSPACE_ID"`,
     );
     await queryRunner.query(
-      `DROP INDEX "core"."IDX_NAVIGATION_MENU_ITEM_TARGET_RECORD_OBJECT_METADATA_WORKSPACE_ID"`,
+      `DROP INDEX "core"."IDX_NAVIGATION_MENU_ITEM_TARGET_RECORD_OBJ_METADATA_WS_ID"`,
     );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_NAVIGATION_MENU_ITEM_FAVORITE_FOLDER_ID_WORKSPACE_ID"`,
