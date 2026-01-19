@@ -433,7 +433,19 @@ export class LineChartDataService {
       manualSortOrder: configuration.primaryAxisManualSortOrder,
       formattedToRawLookup,
       getFieldValue: (x) => x,
-      getNumericValue: (_x) => 0,
+      getNumericValue: (xValue) => {
+        let sum = 0;
+
+        for (const xToYMap of seriesMap.values()) {
+          const value = xToYMap.get(xValue);
+
+          if (isDefined(value)) {
+            sum += value;
+          }
+        }
+
+        return sum;
+      },
       selectFieldOptions: primarySelectOptions,
       fieldType: primaryAxisGroupByField.type,
       subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
