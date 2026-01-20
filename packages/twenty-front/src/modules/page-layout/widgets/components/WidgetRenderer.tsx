@@ -125,6 +125,19 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const actions = useWidgetActions({ widget });
 
+  const renderedWidgetContent = hasAccess ? (
+    <ErrorBoundary FallbackComponent={PageLayoutWidgetInvalidConfigDisplay}>
+      <WidgetContentRenderer widget={widget} />
+    </ErrorBoundary>
+  ) : (
+    <StyledNoAccessContainer>
+      <IconLock
+        color={theme.font.color.tertiary}
+        stroke={theme.icon.stroke.sm}
+      />
+    </StyledNoAccessContainer>
+  );
+
   return (
     <WidgetComponentInstanceContext.Provider value={{ instanceId: widget.id }}>
       <WidgetCard
@@ -161,22 +174,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
           />
         )}
 
-        <WidgetCardContent variant={variant}>
-          {hasAccess && (
-            <ErrorBoundary
-              FallbackComponent={PageLayoutWidgetInvalidConfigDisplay}
-            >
-              <WidgetContentRenderer widget={widget} />
-            </ErrorBoundary>
-          )}
-          {!hasAccess && (
-            <StyledNoAccessContainer>
-              <IconLock
-                color={theme.font.color.tertiary}
-                stroke={theme.icon.stroke.sm}
-              />
-            </StyledNoAccessContainer>
-          )}
+        <WidgetCardContent variant={variant} hasHeader={showHeader}>
+          {renderedWidgetContent}
         </WidgetCardContent>
       </WidgetCard>
     </WidgetComponentInstanceContext.Provider>
