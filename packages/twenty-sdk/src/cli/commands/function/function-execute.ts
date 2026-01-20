@@ -12,13 +12,11 @@ export class FunctionExecuteCommand {
     functionUniversalIdentifier,
     functionName,
     payload = '{}',
-    version = 'latest',
   }: {
     appPath?: string;
     functionUniversalIdentifier?: string;
     functionName?: string;
     payload?: string;
-    version?: string;
   }): Promise<void> {
     try {
       // Parse JSON payload
@@ -92,13 +90,12 @@ export class FunctionExecuteCommand {
         chalk.blue(`🚀 Executing function "${targetFunction.name}"...`),
       );
       console.log(chalk.gray(`   Payload: ${JSON.stringify(parsedPayload)}`));
-      console.log(chalk.gray(`   Version: ${version}`));
       console.log('');
 
       const result = await this.apiService.executeServerlessFunction({
         functionId: targetFunction.id,
         payload: parsedPayload,
-        version,
+        version: 'draft',
       });
 
       if (!result.success) {

@@ -96,6 +96,9 @@ export class ServerlessFunctionDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   applicationId?: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  universalIdentifier?: string;
+
   @HideField()
   workspaceId: string;
 

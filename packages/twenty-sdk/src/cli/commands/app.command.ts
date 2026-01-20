@@ -169,7 +169,11 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('function:execute [appPath]')
-    .option('-p, --payload <payload>', 'JSON payload to send to the function', '{}')
+    .option(
+      '-p, --payload <payload>',
+      'JSON payload to send to the function',
+      '{}',
+    )
     .option(
       '-u, --functionUniversalIdentifier <functionUniversalIdentifier>',
       'Universal ID of the function to execute',
@@ -178,7 +182,6 @@ export const registerCommands = (program: Command): void => {
       '-n, --functionName <functionName>',
       'Name of the function to execute',
     )
-    .option('-v, --version <version>', 'Function version to execute', 'latest')
     .description('Execute a serverless function with a JSON payload')
     .action(
       async (
@@ -187,7 +190,6 @@ export const registerCommands = (program: Command): void => {
           payload?: string;
           functionUniversalIdentifier?: string;
           functionName?: string;
-          version?: string;
         },
       ) => {
         if (!options?.functionUniversalIdentifier && !options?.functionName) {
