@@ -108,6 +108,7 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
           objectMetadataSingularName,
           input,
           validateInput,
+          true,
         );
       },
     );
