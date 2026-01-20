@@ -12,14 +12,18 @@ export class CreateNavigationMenuItemInput {
   userWorkspaceId?: string;
 
   @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  targetRecordId: string;
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  targetRecordId?: string | null;
 
   @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  targetObjectMetadataId: string;
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  targetObjectMetadataId?: string | null;
+
+  @IsOptional()
+  @Field({ nullable: true })
+  name?: string | null;
 
   @IsUUID()
   @IsOptional()

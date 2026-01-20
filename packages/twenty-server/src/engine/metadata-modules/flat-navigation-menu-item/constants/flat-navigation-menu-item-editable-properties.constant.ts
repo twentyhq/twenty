@@ -3,4 +3,5 @@ import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-na
 export const FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES = [
   'position',
   'folderId',
+  'name',
 ] as const satisfies (keyof FlatNavigationMenuItem)[];

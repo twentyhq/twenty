@@ -45,18 +45,21 @@ export class NavigationMenuItemEntity
   @Column({ nullable: true, type: 'uuid' })
   userWorkspaceId: string | null;
 
-  @Column({ nullable: false, type: 'uuid' })
-  targetRecordId: string;
+  @Column({ nullable: true, type: 'uuid' })
+  targetRecordId: string | null;
 
-  @Column({ nullable: false, type: 'uuid' })
-  targetObjectMetadataId: string;
+  @Column({ nullable: true, type: 'uuid' })
+  targetObjectMetadataId: string | null;
 
   @ManyToOne(() => ObjectMetadataEntity, {
     onDelete: 'CASCADE',
-    nullable: false,
+    nullable: true,
   })
   @JoinColumn({ name: 'targetObjectMetadataId' })
-  targetObjectMetadata: Relation<ObjectMetadataEntity>;
+  targetObjectMetadata: Relation<ObjectMetadataEntity> | null;
+
+  @Column({ nullable: true, type: 'text' })
+  name: string | null;
 
   @ManyToOne(() => NavigationMenuItemEntity, {
     onDelete: 'CASCADE',
