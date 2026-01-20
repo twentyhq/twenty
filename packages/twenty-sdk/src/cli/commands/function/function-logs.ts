@@ -3,7 +3,7 @@ import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/cu
 import { ApiService } from '@/cli/utilities/api/services/api.service';
 import { buildManifest } from '@/cli/utilities/manifest/utils/manifest-build';
 
-export class AppLogsCommand {
+export class FunctionLogsCommand {
   private apiService = new ApiService();
 
   async execute({

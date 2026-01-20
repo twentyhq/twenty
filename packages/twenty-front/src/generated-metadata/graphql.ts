@@ -1570,12 +1570,16 @@ export type File = {
 
 export enum FileFolder {
   AgentChat = 'AgentChat',
+  Assets = 'Assets',
   Attachment = 'Attachment',
   File = 'File',
+  FrontComponents = 'FrontComponents',
+  Functions = 'Functions',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
   ServerlessFunctionToDelete = 'ServerlessFunctionToDelete',
+  SourceCode = 'SourceCode',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
@@ -2133,6 +2137,7 @@ export type Mutation = {
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
+  uploadApplicationFile: File;
   uploadFile: SignedFile;
   uploadImage: SignedFile;
   uploadWorkspaceLogo: SignedFile;
@@ -3045,6 +3050,14 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
 export type MutationUpdateWorkspaceMemberRoleArgs = {
   roleId: Scalars['UUID'];
   workspaceMemberId: Scalars['UUID'];
+};
+
+
+export type MutationUploadApplicationFileArgs = {
+  applicationUniversalIdentifier: Scalars['String'];
+  file: Scalars['Upload'];
+  fileFolder: FileFolder;
+  filePath: Scalars['String'];
 };
 
 
@@ -4286,6 +4299,7 @@ export type ServerlessFunction = {
   runtime: Scalars['String'];
   timeoutSeconds: Scalars['Float'];
   toolInputSchema?: Maybe<Scalars['JSON']>;
+  universalIdentifier?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
 };
 
