@@ -1,7 +1,6 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
-import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import {
   CustomCrosshairLayer,
   type SliceHoverData,
@@ -10,18 +9,15 @@ import { CustomLinesLayer } from '@/page-layout/widgets/graph/graphWidgetLineCha
 import { CustomPointLabelsLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomPointLabelsLayer';
 import { CustomStackedAreasLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomStackedAreasLayer';
 import { GraphLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphLineChartTooltip';
-import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTheme';
 import { graphWidgetLineCrosshairXComponentState } from '@/page-layout/widgets/graph/graphWidgetLineChart/states/graphWidgetLineCrosshairXComponentState';
 import { graphWidgetLineTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetLineChart/states/graphWidgetLineTooltipComponentState';
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeriesWithColor';
 import { calculateValueRangeFromLineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/calculateValueRangeFromLineChartSeries';
-import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
-import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
+import { getLineChartLayout } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartLayout';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
-import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
@@ -164,6 +160,24 @@ export const GraphWidgetLineChart = ({
     debouncedHideTooltip();
   };
 
+  const {
+    margins,
+    axisBottomConfiguration,
+    axisLeftConfiguration,
+    valueTickValues,
+    valueDomain,
+  } = getLineChartLayout({
+    axisTheme: chartTheme.axis,
+    fontFamily: theme.font.family,
+    chartWidth,
+    data,
+    xAxisLabel,
+    yAxisLabel,
+    formatOptions,
+    effectiveMinimumValue,
+    effectiveMaximumValue,
+  });
+
   const handleSliceEnter = (sliceData: SliceHoverData) => {
     const slice: SliceTooltipProps<LineSeries>['slice'] = {
       id: String(sliceData.nearestSlice.xValue ?? ''),
@@ -176,8 +190,8 @@ export const GraphWidgetLineChart = ({
       points: sliceData.nearestSlice.points,
     };
 
-    const offsetLeft = sliceData.nearestSlice.x + marginLeft;
-    const offsetTop = sliceData.mouseY + COMMON_CHART_CONSTANTS.MARGIN_TOP;
+    const offsetLeft = sliceData.nearestSlice.x + margins.left;
+    const offsetTop = sliceData.mouseY + margins.top;
 
     debouncedHideTooltip.cancel();
     setCrosshairX(sliceData.sliceX);
@@ -217,8 +231,8 @@ export const GraphWidgetLineChart = ({
         points={layerProps.points}
         innerHeight={layerProps.innerHeight}
         innerWidth={layerProps.innerWidth}
-        marginLeft={marginLeft}
-        marginTop={COMMON_CHART_CONSTANTS.MARGIN_TOP}
+        marginLeft={margins.left}
+        marginTop={margins.top}
         onSliceHover={handleSliceEnter}
         onSliceClick={
           isDefined(onSliceClick)
@@ -269,26 +283,6 @@ export const GraphWidgetLineChart = ({
     />
   );
 
-  const marginLeft = isDefined(yAxisLabel)
-    ? COMMON_CHART_CONSTANTS.MARGIN_LEFT_WITH_LABEL
-    : COMMON_CHART_CONSTANTS.MARGIN_LEFT_WITHOUT_LABEL;
-
-  const { config: axisBottomConfig, marginBottom } =
-    getLineChartAxisBottomConfig(xAxisLabel, chartWidth, data, marginLeft);
-
-  const { tickValues: valueTickValues, domain: valueDomain } =
-    computeValueTickValues({
-      minimum: effectiveMinimumValue,
-      maximum: effectiveMaximumValue,
-      tickCount: LINE_CHART_CONSTANTS.DEFAULT_TICK_COUNT,
-    });
-
-  const axisLeftConfig = getLineChartAxisLeftConfig(
-    yAxisLabel,
-    formatOptions,
-    valueTickValues,
-  );
-
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
@@ -303,10 +297,10 @@ export const GraphWidgetLineChart = ({
         <ResponsiveLine
           data={nivoData}
           margin={{
-            top: COMMON_CHART_CONSTANTS.MARGIN_TOP,
-            right: COMMON_CHART_CONSTANTS.MARGIN_RIGHT,
-            bottom: marginBottom,
-            left: marginLeft,
+            top: margins.top,
+            right: margins.right,
+            bottom: margins.bottom,
+            left: margins.left,
           }}
           xScale={{ type: 'point' }}
           yScale={{
@@ -325,8 +319,8 @@ export const GraphWidgetLineChart = ({
           colors={colors}
           axisTop={null}
           axisRight={null}
-          axisBottom={axisBottomConfig}
-          axisLeft={axisLeftConfig}
+          axisBottom={axisBottomConfiguration}
+          axisLeft={axisLeftConfiguration}
           enableGridX={showGrid}
           enableGridY={showGrid}
           gridYValues={valueTickValues}

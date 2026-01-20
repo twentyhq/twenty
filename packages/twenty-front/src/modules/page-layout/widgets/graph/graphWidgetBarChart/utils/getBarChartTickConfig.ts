@@ -2,8 +2,8 @@ import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateWidthPerTick';
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
 import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
-import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 import { computeMaxLabelLengthForMargin } from '@/page-layout/widgets/graph/utils/computeMaxLabelLengthForMargin';
+import { type ChartMargins } from '@/page-layout/widgets/graph/utils/getChartMarginsFromText';
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
 import { type BarDatum } from '@nivo/bar';
 import { BarChartLayout } from '~/generated/graphql';
@@ -21,19 +21,17 @@ export const getBarChartTickConfig = ({
   height,
   data,
   indexBy,
-  xAxisLabel,
-  yAxisLabel,
   axisFontSize,
   layout,
+  margins,
 }: {
   width: number;
   height: number;
   data: BarDatum[];
   indexBy: string;
-  xAxisLabel?: string;
-  yAxisLabel?: string;
   axisFontSize: number;
   layout: BarChartLayout;
+  margins: ChartMargins;
 }): BarChartTickConfig => {
   const clampValueTickCount = (tickCount: number) =>
     Math.min(
@@ -46,12 +44,9 @@ export const getBarChartTickConfig = ({
     axisFontSize,
     data,
     indexBy,
-    xAxisLabel,
-    yAxisLabel,
+    margins,
     layout,
   });
-
-  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel });
 
   const availableWidth = width - (margins.left + margins.right);
   const availableHeight = height - (margins.top + margins.bottom);
