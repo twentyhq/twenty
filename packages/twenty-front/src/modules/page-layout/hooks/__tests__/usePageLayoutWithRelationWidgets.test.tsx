@@ -11,7 +11,9 @@ import {
 } from '~/generated/graphql';
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext');
-jest.mock('@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems');
+jest.mock(
+  '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems',
+);
 
 describe('usePageLayoutWithRelationWidgets', () => {
   const mockBasePageLayout: PageLayout = {
