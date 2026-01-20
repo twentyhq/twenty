@@ -58,5 +58,5 @@ describe('Chip', () => {
 
     expect(screen.getByTestId('right-fn')).toBeInTheDocument();
   });
-}
+});
 
