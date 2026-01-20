@@ -29,6 +29,7 @@ import {
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { fromFlatServerlessFunctionToServerlessFunctionDto } from 'src/engine/metadata-modules/serverless-function/utils/from-flat-serverless-function-to-serverless-function-dto.util';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
@@ -78,7 +79,10 @@ export class ServerlessFunctionResolver {
         flatEntityMaps: flatServerlessFunctionMaps,
       });
 
-      if (!isDefined(flatServerlessFunction)) {
+      if (
+        !isDefined(flatServerlessFunction) ||
+        isDefined(flatServerlessFunction.deletedAt)
+      ) {
         throw new ServerlessFunctionException(
           `Serverless function with id ${id} not found`,
           ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
@@ -120,7 +124,13 @@ export class ServerlessFunctionResolver {
         );
 
       return Object.values(flatServerlessFunctionMaps.byId)
-        .filter(isDefined)
+        .filter(
+          (
+            flatServerlessFunction,
+          ): flatServerlessFunction is FlatServerlessFunction =>
+            isDefined(flatServerlessFunction) &&
+            !isDefined(flatServerlessFunction.deletedAt),
+        )
         .map((flatServerlessFunction) =>
           fromFlatServerlessFunctionToServerlessFunctionDto({
             flatServerlessFunction,
