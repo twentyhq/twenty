@@ -134,10 +134,9 @@ export class ObjectMetadataGqlObjectTypeGenerator {
 
         type = enumFieldEnumType;
       } else {
-        type = this.typeMapperService.mapToPreBuiltGraphQLType({
+        type = this.typeMapperService.mapToPreBuiltGraphQLOutputType({
           fieldMetadataType: field.type,
           typeOptions: typeFactoryOptions,
-          isForOutputType: true,
         });
 
         if (!isDefined(type)) {

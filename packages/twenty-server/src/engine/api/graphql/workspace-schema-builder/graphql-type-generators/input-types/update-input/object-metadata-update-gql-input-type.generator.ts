@@ -141,7 +141,7 @@ export class ObjectMetadataUpdateGqlInputTypeGenerator {
 
           type = compositeType;
         } else {
-          type = this.typeMapperService.mapToPreBuiltGraphQLType({
+          type = this.typeMapperService.mapToPreBuiltGraphQLInputType({
             fieldMetadataType: fieldMetadata.type,
             typeOptions,
           });

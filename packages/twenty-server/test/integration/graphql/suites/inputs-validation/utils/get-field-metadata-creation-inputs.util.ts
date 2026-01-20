@@ -168,7 +168,7 @@ export const getFieldMetadataCreationInputs = (
       type: FieldMetadataType.FILES,
       objectMetadataId,
       settings: {
-        maxNumberOfValues: 10,
+        maxNumberOfValues: 2,
       },
     },
     [FieldMetadataType.UUID]: {

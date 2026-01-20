@@ -66,64 +66,85 @@ const StringArrayScalarType = new GraphQLList(GraphQLString);
 
 @Injectable()
 export class TypeMapperService {
-  mapToPreBuiltGraphQLType(params: {
-    fieldMetadataType: FieldMetadataType;
-    typeOptions?: TypeOptions;
-    isForOutputType: true;
-  }): GraphQLScalarType | GraphQLList<GraphQLOutputType> | undefined;
+  private readonly baseTypeScalarMapping = new Map<
+    FieldMetadataType,
+    GraphQLScalarType | GraphQLList<GraphQLScalarType>
+  >([
+    [FieldMetadataType.UUID, UUIDScalarType],
+    [FieldMetadataType.TEXT, GraphQLString],
+    [FieldMetadataType.DATE_TIME, GraphQLISODateTime],
+    [FieldMetadataType.DATE, DateScalarType],
+    [FieldMetadataType.BOOLEAN, GraphQLBoolean],
+    [FieldMetadataType.NUMERIC, BigFloatScalarType],
+    [FieldMetadataType.POSITION, PositionScalarType],
+    [FieldMetadataType.RAW_JSON, GraphQLJSON],
+    [FieldMetadataType.ARRAY, StringArrayScalarType],
+    [FieldMetadataType.RICH_TEXT, GraphQLString],
+    [FieldMetadataType.TS_VECTOR, TSVectorScalarType],
+  ]);
 
-  mapToPreBuiltGraphQLType(params: {
-    fieldMetadataType: FieldMetadataType;
-    typeOptions?: TypeOptions;
-    isForOutputType?: false;
-  }): GraphQLScalarType | GraphQLList<GraphQLInputType> | undefined;
-
-  mapToPreBuiltGraphQLType({
+  mapToPreBuiltGraphQLOutputType({
     fieldMetadataType,
     typeOptions,
-    isForOutputType = false,
   }: {
     fieldMetadataType: FieldMetadataType;
     typeOptions?: TypeOptions;
-    isForOutputType?: boolean;
-  }): GraphQLScalarType | GraphQLList<GraphQLType> | undefined {
-    if (
-      typeOptions?.isIdField ||
-      fieldMetadataType === FieldMetadataType.RELATION ||
-      fieldMetadataType === FieldMetadataType.MORPH_RELATION
-    ) {
+  }): GraphQLScalarType | GraphQLList<GraphQLOutputType> | undefined {
+    if (this.isIdOrRelationType(fieldMetadataType, typeOptions)) {
       return GraphQLID;
     }
-    const typeScalarMapping = new Map<
-      FieldMetadataType,
-      GraphQLScalarType | GraphQLList<GraphQLType>
-    >([
-      [FieldMetadataType.UUID, UUIDScalarType],
-      [FieldMetadataType.TEXT, GraphQLString],
-      [FieldMetadataType.DATE_TIME, GraphQLISODateTime],
-      [FieldMetadataType.DATE, DateScalarType],
-      [FieldMetadataType.BOOLEAN, GraphQLBoolean],
-      [
-        FieldMetadataType.NUMBER,
-        getNumberScalarType(
-          (
-            typeOptions?.settings as FieldMetadataSettings<FieldMetadataType.NUMBER>
-          )?.dataType ?? NumberDataType.FLOAT,
-        ),
-      ],
-      [FieldMetadataType.NUMERIC, BigFloatScalarType],
-      [FieldMetadataType.POSITION, PositionScalarType],
-      [
-        FieldMetadataType.FILES,
-        isForOutputType ? FilesObjectType : FilesInputType,
-      ],
-      [FieldMetadataType.RAW_JSON, GraphQLJSON],
-      [FieldMetadataType.ARRAY, StringArrayScalarType],
-      [FieldMetadataType.RICH_TEXT, GraphQLString],
-      [FieldMetadataType.TS_VECTOR, TSVectorScalarType],
-    ]);
 
-    return typeScalarMapping.get(fieldMetadataType);
+    if (fieldMetadataType === FieldMetadataType.NUMBER) {
+      return this.getNumberScalarTypeFromOptions(typeOptions);
+    }
+
+    if (fieldMetadataType === FieldMetadataType.FILES) {
+      return FilesObjectType;
+    }
+
+    return this.baseTypeScalarMapping.get(fieldMetadataType);
+  }
+
+  mapToPreBuiltGraphQLInputType({
+    fieldMetadataType,
+    typeOptions,
+  }: {
+    fieldMetadataType: FieldMetadataType;
+    typeOptions?: TypeOptions;
+  }): GraphQLScalarType | GraphQLList<GraphQLInputType> | undefined {
+    if (this.isIdOrRelationType(fieldMetadataType, typeOptions)) {
+      return GraphQLID;
+    }
+
+    if (fieldMetadataType === FieldMetadataType.NUMBER) {
+      return this.getNumberScalarTypeFromOptions(typeOptions);
+    }
+
+    if (fieldMetadataType === FieldMetadataType.FILES) {
+      return FilesInputType;
+    }
+
+    return this.baseTypeScalarMapping.get(fieldMetadataType);
+  }
+
+  private isIdOrRelationType(
+    fieldMetadataType: FieldMetadataType,
+    typeOptions?: TypeOptions,
+  ): boolean {
+    return (
+      typeOptions?.isIdField === true ||
+      fieldMetadataType === FieldMetadataType.RELATION ||
+      fieldMetadataType === FieldMetadataType.MORPH_RELATION
+    );
+  }
+
+  private getNumberScalarTypeFromOptions(
+    typeOptions?: TypeOptions,
+  ): GraphQLScalarType {
+    return getNumberScalarType(
+      (typeOptions?.settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
+        ?.dataType ?? NumberDataType.FLOAT,
+    );
   }
 
   mapToFilterType(

@@ -71,10 +71,9 @@ export class CompositeFieldMetadataGqlObjectTypeGenerator {
 
       const type = isEnumFieldMetadataType(property.type)
         ? this.gqlTypesStorage.getGqlTypeByKey(key)
-        : this.typeMapperService.mapToPreBuiltGraphQLType({
+        : this.typeMapperService.mapToPreBuiltGraphQLOutputType({
             fieldMetadataType: property.type,
             typeOptions,
-            isForOutputType: true,
           });
 
       if (!isDefined(type) || isInputObjectType(type)) {

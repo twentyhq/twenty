@@ -187,7 +187,7 @@ export class ObjectMetadataCreateGqlInputTypeGenerator {
     fieldMetadata: FlatFieldMetadata,
     typeOptions: TypeOptions,
   ) {
-    const type = this.typeMapperService.mapToPreBuiltGraphQLType({
+    const type = this.typeMapperService.mapToPreBuiltGraphQLInputType({
       fieldMetadataType: fieldMetadata.type,
       typeOptions,
     });

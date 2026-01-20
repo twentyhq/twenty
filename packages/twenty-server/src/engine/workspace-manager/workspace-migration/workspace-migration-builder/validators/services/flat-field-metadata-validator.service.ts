@@ -302,7 +302,6 @@ export class FlatFieldMetadataValidatorService {
       type: 'create',
     });
 
-
     const parentFlatObjectMetadata =
       flatObjectMetadataMaps.byId[flatFieldMetadataToValidate.objectMetadataId];
 

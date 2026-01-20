@@ -124,7 +124,7 @@ export class RelationConnectGqlInputTypeGenerator {
 
             uniqueProperties.forEach((property) => {
               const scalarType =
-                this.typeMapperService.mapToPreBuiltGraphQLType({
+                this.typeMapperService.mapToPreBuiltGraphQLInputType({
                   fieldMetadataType: property.type,
                 });
 
@@ -145,14 +145,14 @@ export class RelationConnectGqlInputTypeGenerator {
             };
           }
         } else {
-          const scalarType = this.typeMapperService.mapToPreBuiltGraphQLType({
-            fieldMetadataType: field.type,
-            typeOptions: {
-              settings: field.settings,
-              isIdField: field.name === 'id',
-            },
-            isForOutputType: false,
-          });
+          const scalarType =
+            this.typeMapperService.mapToPreBuiltGraphQLInputType({
+              fieldMetadataType: field.type,
+              typeOptions: {
+                settings: field.settings,
+                isIdField: field.name === 'id',
+              },
+            });
 
           inputFields[field.name] = {
             type: scalarType || GraphQLString,
