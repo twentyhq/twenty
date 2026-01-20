@@ -1,18 +1,13 @@
-import { t } from '@lingui/core/macro';
 import {
   extractAndSanitizeObjectStringFields,
-  isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/serverless-function/constants/flat-serverless-function-editable-properties.constant';
 import { type UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
-import {
-  ServerlessFunctionException,
-  ServerlessFunctionExceptionCode,
-} from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { findFlatServerlessFunctionOrThrow } from 'src/engine/metadata-modules/serverless-function/utils/find-flat-serverless-function-or-throw.util';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
@@ -22,7 +17,7 @@ export const fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOr
     flatServerlessFunctionMaps,
   }: {
     updateServerlessFunctionInput: UpdateServerlessFunctionInput;
-    flatServerlessFunctionMaps: FlatEntityMaps<FlatServerlessFunction>;
+    flatServerlessFunctionMaps: MetadataFlatEntityMaps<'serverlessFunction'>;
   }): FlatServerlessFunction => {
     const { id: serverlessFunctionToUpdateId } =
       trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -31,14 +26,10 @@ export const fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOr
       );
 
     const existingFlatServerlessFunctionToUpdate =
-      flatServerlessFunctionMaps.byId[serverlessFunctionToUpdateId];
-
-    if (!isDefined(existingFlatServerlessFunctionToUpdate)) {
-      throw new ServerlessFunctionException(
-        t`Serverless function to update not found`,
-        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
-      );
-    }
+      findFlatServerlessFunctionOrThrow({
+        id: serverlessFunctionToUpdateId,
+        flatServerlessFunctionMaps,
+      });
     const updatedEditableFieldProperties = {
       ...extractAndSanitizeObjectStringFields(
         {

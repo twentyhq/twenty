@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`updateOne FILES field metadata - failing should fail to update files field settings with maxNumberOfValues = 0 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+              "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "testFilesForFailure",
+            "objectMetadataId": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`updateOne FILES field metadata - failing should fail to update files field settings with maxNumberOfValues = 11 (exceeds max) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+              "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "testFilesForFailure",
+            "objectMetadataId": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`updateOne FILES field metadata - failing should fail to update files field with isUnique = true 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Files field is not supported for unique fields",
+              "userFriendlyMessage": "Files field is not supported for unique fields",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "testFilesForFailure",
+            "objectMetadataId": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating field",
+  "name": "GraphQLError",
+}
+`;

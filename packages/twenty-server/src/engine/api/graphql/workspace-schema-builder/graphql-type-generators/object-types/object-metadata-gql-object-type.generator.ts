@@ -134,10 +134,10 @@ export class ObjectMetadataGqlObjectTypeGenerator {
 
         type = enumFieldEnumType;
       } else {
-        type = this.typeMapperService.mapToScalarType(
-          field.type,
-          typeFactoryOptions,
-        );
+        type = this.typeMapperService.mapToPreBuiltGraphQLOutputType({
+          fieldMetadataType: field.type,
+          typeOptions: typeFactoryOptions,
+        });
 
         if (!isDefined(type)) {
           const message = `Could not find a GraphQL output type for ${field.name} scalar field metadata of object ${objectNameSingular}`;

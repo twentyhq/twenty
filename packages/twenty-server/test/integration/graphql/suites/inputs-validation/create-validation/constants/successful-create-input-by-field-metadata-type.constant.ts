@@ -509,4 +509,41 @@ export const successfulCreateInputByFieldMetadataType: {
       },
     },
   ],
+  [FieldMetadataType.FILES]: [
+    {
+      input: {
+        filesField: [
+          {
+            fileId: '20202020-a21e-4ec2-873b-de4264d89025',
+            label: 'Document.pdf',
+          },
+        ],
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          Array.isArray(record.filesField) &&
+          record.filesField.length === 1 &&
+          record.filesField[0].fileId ===
+            '20202020-a21e-4ec2-873b-de4264d89025' &&
+          record.filesField[0].label === 'Document.pdf'
+        );
+      },
+    },
+    {
+      input: {
+        filesField: [],
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record.filesField === null;
+      },
+    },
+    {
+      input: {
+        filesField: null,
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record.filesField === null;
+      },
+    },
+  ],
 };

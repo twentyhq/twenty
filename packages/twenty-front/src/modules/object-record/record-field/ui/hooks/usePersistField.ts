@@ -31,6 +31,8 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
+import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
+import { isFieldFilesValue } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationManyToOneValue } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOneValue';
@@ -153,6 +155,9 @@ export const usePersistField = ({
         const fieldIsArray =
           isFieldArray(fieldDefinition) && isFieldArrayValue(valueToPersist);
 
+        const fieldIsFiles =
+          isFieldFiles(fieldDefinition) && isFieldFilesValue(valueToPersist);
+
         const fieldIsUIReadOnly =
           fieldDefinition.metadata.isUIReadOnly ?? false;
 
@@ -179,6 +184,7 @@ export const usePersistField = ({
           fieldIsAddress ||
           fieldIsRawJson ||
           fieldIsArray ||
+          fieldIsFiles ||
           fieldIsRichText ||
           fieldIsRichTextV2;
 

@@ -1313,6 +1313,16 @@ msgstr "FieldMetadataId is required to create a view sort."
 msgid "File not found."
 msgstr "File not found."
 
+#. js-lingui-id: psMxtB
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
+msgid "Files field is not supported for unique fields"
+msgstr "Files field is not supported for unique fields"
+
+#. js-lingui-id: AMd8Po
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
+msgid "Files field type is not supported"
+msgstr "Files field type is not supported"
+
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Forbidden updated properties for relation field metadata"
@@ -1897,6 +1907,11 @@ msgstr "Invalid UUID format."
 msgid "Invalid validation token."
 msgstr "Invalid validation token."
 
+#. js-lingui-id: xvTxwi
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
+msgid "Invalid value \"{inspectedValue}\" for FILES field \"{fieldName}\" - It should be an array of objects with \"fileId\" and \"label\" properties."
+msgstr "Invalid value \"{inspectedValue}\" for FILES field \"{fieldName}\" - It should be an array of objects with \"fileId\" and \"label\" properties."
+
 #. js-lingui-id: 56bPee
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util.ts
 msgid "Invalid value for actor."
@@ -1921,6 +1936,11 @@ msgstr "Invalid value for date: \"{inspectedValue}\""
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util.ts
 msgid "Invalid value for emails."
 msgstr "Invalid value for emails."
+
+#. js-lingui-id: tfoEIq
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
+msgid "Invalid value for FILES field \"{fieldName}\" - {errorMessage}"
+msgstr "Invalid value for FILES field \"{fieldName}\" - {errorMessage}"
 
 #. js-lingui-id: SF3Mp4
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-full-name-field-or-throw.util.ts
@@ -2194,10 +2214,20 @@ msgstr "Layout is required for bar chart widget \"{widgetTitle}\""
 msgid "March"
 msgstr "March"
 
+#. js-lingui-id: N/Fjss
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
+msgid "Max number of files is {maxNumberOfValues}"
+msgstr "Max number of files is {maxNumberOfValues}"
+
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
 msgstr "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
+
+#. js-lingui-id: b85bAt
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
+msgid "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to {FILES_FIELD_MAX_NUMBER_OF_VALUES}"
+msgstr "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to {FILES_FIELD_MAX_NUMBER_OF_VALUES}"
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3111,6 +3141,12 @@ msgstr "Route with same id already exists"
 msgid "Route with same path already exists"
 msgstr "Route with same path already exists"
 
+#. js-lingui-id: RwBHMj
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
+msgid "Row level permission predicate feature is disabled."
+msgstr "Row level permission predicate feature is disabled."
+
 #. js-lingui-id: va8c5P
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3236,11 +3272,6 @@ msgstr "Serverless function not found"
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Serverless function not found."
 msgstr "Serverless function not found."
-
-#. js-lingui-id: jNhvmj
-#: src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util.ts
-msgid "Serverless function to update not found"
-msgstr "Serverless function to update not found"
 
 #. js-lingui-id: zoBkIJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
@@ -4334,10 +4365,10 @@ msgstr "Workflow not found."
 msgid "Workflow root step not found."
 msgstr "Workflow root step not found."
 
-#. js-lingui-id: C5dusT
+#. js-lingui-id: TgOSaQ
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
-msgid "Workflow run is not running"
-msgstr "Workflow run is not running"
+msgid "Workflow run cannot be stopped in its current status"
+msgstr "Workflow run cannot be stopped in its current status"
 
 #. js-lingui-id: AzylSS
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
