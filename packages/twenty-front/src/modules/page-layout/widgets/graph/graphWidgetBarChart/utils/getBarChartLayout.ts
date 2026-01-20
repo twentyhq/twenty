@@ -1,6 +1,9 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
-import { getBarChartTickConfig, type BarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
+import {
+  getBarChartTickConfig,
+  type BarChartTickConfig,
+} from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import { computeChartMargins } from '@/page-layout/widgets/graph/utils/computeChartMargins';
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
@@ -38,7 +41,9 @@ export type GetBarChartLayoutParams = {
 
 export type BarChartLayoutResult = {
   margins: ChartMargins;
-  axisBottomConfiguration: ReturnType<typeof getBarChartAxisConfigs>['axisBottom'];
+  axisBottomConfiguration: ReturnType<
+    typeof getBarChartAxisConfigs
+  >['axisBottom'];
   axisLeftConfiguration: ReturnType<typeof getBarChartAxisConfigs>['axisLeft'];
   valueTickValues: number[];
   valueDomain: { min: number; max: number };
@@ -76,10 +81,16 @@ const resolveMarginInputs = ({
   const bottomTickLabels =
     layout === BarChartLayout.VERTICAL
       ? tickConfiguration.categoryTickValues.map((value) =>
-          formatCategoryTick(value, tickConfiguration.maxBottomAxisTickLabelLength),
+          formatCategoryTick(
+            value,
+            tickConfiguration.maxBottomAxisTickLabelLength,
+          ),
         )
       : tickResult.tickValues.map((value) =>
-          formatValueTick(value, tickConfiguration.maxBottomAxisTickLabelLength),
+          formatValueTick(
+            value,
+            tickConfiguration.maxBottomAxisTickLabelLength,
+          ),
         );
 
   const leftTickLabels =
@@ -88,7 +99,10 @@ const resolveMarginInputs = ({
           formatValueTick(value, tickConfiguration.maxLeftAxisTickLabelLength),
         )
       : tickConfiguration.categoryTickValues.map((value) =>
-          formatCategoryTick(value, tickConfiguration.maxLeftAxisTickLabelLength),
+          formatCategoryTick(
+            value,
+            tickConfiguration.maxLeftAxisTickLabelLength,
+          ),
         );
 
   return { bottomTickLabels, leftTickLabels };
@@ -138,47 +152,46 @@ export const getBarChartLayout = ({
     tickConfig: tickConfiguration,
     valueTickResult,
     bottomLegendOffset,
-  } =
-    computeChartMargins({
-      tickFontSize,
-      legendFontSize,
-      fontFamily,
-      xAxisLabel,
-      yAxisLabel,
-      initialTickRotation: BAR_CHART_CONSTANTS.NO_ROTATION_ANGLE,
-      computeTickConfig: (currentMargins) =>
-        getBarChartTickConfig({
-          width: chartWidth,
-          height: chartHeight,
-          data,
-          indexBy,
-          axisFontSize: tickFontSize,
-          layout,
-          margins: currentMargins,
-        }),
-      computeValueTickValues: (currentTickConfiguration) =>
-        computeValueTickValues({
-          minimum: effectiveMinimumValue,
-          maximum: effectiveMaximumValue,
-          tickCount: currentTickConfiguration.numberOfValueTicks,
-        }),
-      getTickRotation: (currentTickConfiguration) =>
-        currentTickConfiguration.bottomAxisTickRotation,
-      getBottomLegendOffset: (parameters) =>
-        computeBottomLegendOffsetFromText({
-          tickLabels: parameters.marginInputs.bottomTickLabels,
-          tickFontSize,
-          fontFamily,
-          tickRotation: parameters.tickConfig.bottomAxisTickRotation,
-        }),
-      resolveMarginInputs: (currentTickConfiguration, tickResult) =>
-        resolveMarginInputs({
-          tickConfiguration: currentTickConfiguration,
-          tickResult,
-          layout,
-          formatOptions,
-        }),
-    });
+  } = computeChartMargins({
+    tickFontSize,
+    legendFontSize,
+    fontFamily,
+    xAxisLabel,
+    yAxisLabel,
+    initialTickRotation: BAR_CHART_CONSTANTS.NO_ROTATION_ANGLE,
+    computeTickConfig: (currentMargins) =>
+      getBarChartTickConfig({
+        width: chartWidth,
+        height: chartHeight,
+        data,
+        indexBy,
+        axisFontSize: tickFontSize,
+        layout,
+        margins: currentMargins,
+      }),
+    computeValueTickValues: (currentTickConfiguration) =>
+      computeValueTickValues({
+        minimum: effectiveMinimumValue,
+        maximum: effectiveMaximumValue,
+        tickCount: currentTickConfiguration.numberOfValueTicks,
+      }),
+    getTickRotation: (currentTickConfiguration) =>
+      currentTickConfiguration.bottomAxisTickRotation,
+    getBottomLegendOffset: (parameters) =>
+      computeBottomLegendOffsetFromText({
+        tickLabels: parameters.marginInputs.bottomTickLabels,
+        tickFontSize,
+        fontFamily,
+        tickRotation: parameters.tickConfig.bottomAxisTickRotation,
+      }),
+    resolveMarginInputs: (currentTickConfiguration, tickResult) =>
+      resolveMarginInputs({
+        tickConfiguration: currentTickConfiguration,
+        tickResult,
+        layout,
+        formatOptions,
+      }),
+  });
 
   const { tickValues: valueTickValues, domain: valueDomain } = valueTickResult;
 
