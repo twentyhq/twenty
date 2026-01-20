@@ -34,9 +34,15 @@ export function generateFrontConfig(): void {
     );
 
     fs.writeFileSync(indexPath, indexContent, 'utf8');
-  } catch {
+    console.log(`[generateFrontConfig] Successfully injected config into ${indexPath}`);
+  } catch (error) {
     // eslint-disable-next-line no-console
-    console.log(
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(
+      `[generateFrontConfig] Frontend build not found or not writable: ${errorMessage}`,
+    );
+    console.error(`[generateFrontConfig] Attempted path: ${indexPath}`);
+    console.error(
       'Frontend build not found or not writable, assuming it is served independently',
     );
   }

@@ -95,12 +95,24 @@ export class AppModule {
     } */
 
     if (existsSync(frontPath)) {
+      console.log(`[AppModule] Frontend directory found at: ${frontPath}`);
+      const indexPath = join(frontPath, 'index.html');
+      if (existsSync(indexPath)) {
+        console.log(`[AppModule] Frontend index.html found`);
+      } else {
+        console.error(`[AppModule] WARNING: Frontend index.html NOT found at: ${indexPath}`);
+      }
       modules.push(
         ServeStaticModule.forRoot({
           rootPath: frontPath,
+          serveRoot: '/',
           exclude: ['/api*', '/graphql*', '/metadata*', '/rest*', '/healthz'],
+          renderPath: /^(?!\/api|\/graphql|\/metadata|\/rest|\/healthz).*/,
         }),
       );
+    } else {
+      console.error(`[AppModule] ERROR: Frontend directory NOT found at: ${frontPath}`);
+      console.error(`[AppModule] __dirname is: ${__dirname}`);
     }
 
     // Messaque Queue explorer only for sync driver
