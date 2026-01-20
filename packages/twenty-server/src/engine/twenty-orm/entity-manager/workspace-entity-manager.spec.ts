@@ -223,6 +223,7 @@ describe('WorkspaceEntityManager', () => {
         IS_IF_ELSE_ENABLED: false,
         IS_SSE_DB_EVENTS_ENABLED: false,
         IS_COMMAND_MENU_ITEM_ENABLED: false,
+        IS_NAVIGATION_MENU_ITEM_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
