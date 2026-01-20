@@ -16,9 +16,7 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = (
     ...indexMetadataEntityWithoutRelations,
     createdAt: indexMetadataEntity.createdAt.toISOString(),
     updatedAt: indexMetadataEntity.updatedAt.toISOString(),
-    universalIdentifier:
-      indexMetadataEntityWithoutRelations.universalIdentifier ??
-      indexMetadataEntityWithoutRelations.id,
+    universalIdentifier: indexMetadataEntityWithoutRelations.universalIdentifier,
     flatIndexFieldMetadatas: indexMetadataEntity.indexFieldMetadatas.map(
       (indexFieldMetadata) => ({
         ...removePropertiesFromRecord(indexFieldMetadata, [

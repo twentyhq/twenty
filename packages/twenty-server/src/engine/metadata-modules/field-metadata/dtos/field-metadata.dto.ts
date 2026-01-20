@@ -161,7 +161,6 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field()
   updatedAt: Date;
 
-  // TODO prastoin make non nullable once MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand has passed in production  @Field(() => UUIDScalarType, { nullable: true })
-  @Field(() => UUIDScalarType, { nullable: true })
-  applicationId?: string;
+  @Field(() => UUIDScalarType)
+  applicationId: string;
 }
