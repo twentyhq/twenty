@@ -103,7 +103,11 @@ export class ApplicationResolver {
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, mimetype }: FileUpload,
     @Args()
-    { universalIdentifier, fileFolder, filePath }: UploadApplicationFileInput,
+    {
+      applicationUniversalIdentifier,
+      fileFolder,
+      filePath,
+    }: UploadApplicationFileInput,
   ): Promise<FileDTO> {
     const allowedApplicationFileFolders: FileFolder[] = [
       FileFolder.Functions,
@@ -128,7 +132,7 @@ export class ApplicationResolver {
 
     const folderPath = join(
       `workspace-${workspaceId}`,
-      universalIdentifier,
+      applicationUniversalIdentifier,
       fileFolder,
       dirname,
     );

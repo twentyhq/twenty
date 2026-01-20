@@ -5,7 +5,7 @@ import { FileFolder } from 'twenty-shared/types';
 @ArgsType()
 export class UploadApplicationFileInput {
   @Field(() => String)
-  universalIdentifier: string;
+  applicationUniversalIdentifier: string;
 
   @Field(() => FileFolder)
   fileFolder: FileFolder;
