@@ -9,7 +9,7 @@ import { printWatchingMessage } from '../common/display';
 import {
   type RestartableWatcher,
   type RestartableWatcherOptions,
-} from '../common/watcher';
+} from '../common/restartable-watcher.interface';
 import { FRONT_COMPONENTS_DIR } from './constants';
 
 export const FRONT_COMPONENT_EXTERNAL_MODULES: (string | RegExp)[] = [

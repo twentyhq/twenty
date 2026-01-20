@@ -9,9 +9,24 @@ import { printWatchingMessage } from '../common/display';
 import {
   type RestartableWatcher,
   type RestartableWatcherOptions,
-} from '../common/watcher';
+} from '../common/restartable-watcher.interface';
 import { FUNCTIONS_DIR } from './constants';
-import { buildFunctionEntries } from './function-paths';
+import { computeFunctionOutputPath } from './function-paths';
+
+const buildFunctionEntries = (
+  appPath: string,
+  handlerPaths: Array<{ handlerPath: string }>,
+): Record<string, string> => {
+  const entries: Record<string, string> = {};
+
+  for (const fn of handlerPaths) {
+    const { relativePath } = computeFunctionOutputPath(fn.handlerPath);
+    const chunkName = relativePath.replace(/\.js$/, '');
+    entries[chunkName] = path.join(appPath, fn.handlerPath);
+  }
+
+  return entries;
+};
 
 export const FUNCTION_EXTERNAL_MODULES: (string | RegExp)[] = [
   'path', 'fs', 'crypto', 'stream', 'util', 'os', 'url', 'http', 'https',

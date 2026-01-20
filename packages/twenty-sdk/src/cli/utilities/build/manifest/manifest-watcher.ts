@@ -6,7 +6,7 @@ import { build, type InlineConfig, type Plugin, type Rollup } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { OUTPUT_DIR } from '../common/constants';
 import { printWatchingMessage } from '../common/display';
-import { type RestartableWatcher } from '../common/watcher';
+import { type RestartableWatcher } from '../common/restartable-watcher.interface';
 import { runManifestBuild } from './manifest-build';
 
 export type ManifestWatcherCallbacks = {

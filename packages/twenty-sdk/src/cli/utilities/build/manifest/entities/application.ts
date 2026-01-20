@@ -1,62 +1,73 @@
 import chalk from 'chalk';
 import path from 'path';
-import { type Application, type ApplicationManifest } from 'twenty-shared/application';
+import { type Application } from 'twenty-shared/application';
 import { extractManifestFromFile } from '../manifest-file-extractor';
 import { type ValidationError } from '../manifest.types';
+import {
+  type DuplicateId,
+  type ManifestEntityBuilder,
+} from './entity.interface';
 
-export const buildApplication = async (appPath: string): Promise<Application> => {
-  const applicationConfigPath = path.join(appPath, 'src', 'app', 'application.config.ts');
+export class ApplicationEntityBuilder
+  implements ManifestEntityBuilder<Application>
+{
+  async build(appPath: string): Promise<Application> {
+    const applicationConfigPath = path.join(
+      appPath,
+      'src',
+      'app',
+      'application.config.ts',
+    );
 
-  return extractManifestFromFile<Application>(applicationConfigPath, appPath);
-};
-
-export const validateApplication = (
-  application: Application | undefined,
-  errors: ValidationError[],
-): void => {
-  if (!application) {
-    errors.push({
-      path: 'application',
-      message: 'Application config is required',
-    });
-    return;
+    return extractManifestFromFile<Application>(applicationConfigPath, appPath);
   }
 
-  if (!application.universalIdentifier) {
-    errors.push({
-      path: 'application',
-      message: 'Application must have a universalIdentifier',
-    });
-  }
-};
+  validate(application: Application, errors: ValidationError[]): void {
+    if (!application) {
+      errors.push({
+        path: 'application',
+        message: 'Application config is required',
+      });
+      return;
+    }
 
-export const displayApplication = (manifest: ApplicationManifest): void => {
-  const appName = manifest.application.displayName ?? 'Application';
-  console.log(chalk.green(`  ✓ Loaded "${appName}"`));
-};
-
-export const collectApplicationIds = (
-  application: Application | undefined,
-): Array<{ id: string; location: string }> => {
-  const ids: Array<{ id: string; location: string }> = [];
-
-  if (application?.universalIdentifier) {
-    ids.push({
-      id: application.universalIdentifier,
-      location: 'application',
-    });
-  }
-
-  if (application?.applicationVariables) {
-    for (const [name, variable] of Object.entries(application.applicationVariables)) {
-      if (variable.universalIdentifier) {
-        ids.push({
-          id: variable.universalIdentifier,
-          location: `application.variables.${name}`,
-        });
-      }
+    if (!application.universalIdentifier) {
+      errors.push({
+        path: 'application',
+        message: 'Application must have a universalIdentifier',
+      });
     }
   }
 
-  return ids;
-};
+  display(application: Application): void {
+    const appName = application.displayName ?? 'Application';
+    console.log(chalk.green(`  ✓ Loaded "${appName}"`));
+  }
+
+  findDuplicates(application: Application): DuplicateId[] {
+    const seen = new Map<string, string[]>();
+
+    if (application?.universalIdentifier) {
+      seen.set(application.universalIdentifier, ['application']);
+    }
+
+    if (application?.applicationVariables) {
+      for (const [name, variable] of Object.entries(
+        application.applicationVariables,
+      )) {
+        if (variable.universalIdentifier) {
+          const locations = seen.get(variable.universalIdentifier) ?? [];
+          locations.push(`application.variables.${name}`);
+          seen.set(variable.universalIdentifier, locations);
+        }
+
+      }
+    }
+
+    return Array.from(seen.entries())
+      .filter(([_, locations]) => locations.length > 1)
+      .map(([id, locations]) => ({ id, locations }));
+  }
+}
+
+export const applicationEntityBuilder = new ApplicationEntityBuilder();
