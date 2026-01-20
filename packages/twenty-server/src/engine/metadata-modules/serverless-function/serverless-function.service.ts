@@ -37,6 +37,7 @@ import { fromCreateServerlessFunctionInputToFlatServerlessFunction } from 'src/e
 import { fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOrThrow } from 'src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import {
@@ -63,6 +64,7 @@ export class ServerlessFunctionService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async hasServerlessFunctionPublishedVersion(
@@ -132,30 +134,57 @@ export class ServerlessFunctionService {
   }): Promise<ServerlessExecuteResult> {
     await this.throttleExecution(workspaceId);
 
-    const functionToExecute =
-      await this.serverlessFunctionRepository.findOneOrFail({
-        where: {
-          id,
-          workspaceId,
-        },
-        relations: [
-          'serverlessFunctionLayer',
-          'application.applicationVariables',
-        ],
-      });
+    const {
+      flatServerlessFunctionMaps,
+      flatApplicationMaps,
+      applicationVariableMaps,
+      serverlessFunctionLayerMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatServerlessFunctionMaps',
+      'flatApplicationMaps',
+      'applicationVariableMaps',
+      'serverlessFunctionLayerMaps',
+    ]);
 
-    const applicationAccessToken = isDefined(functionToExecute.applicationId)
+    const flatServerlessFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: flatServerlessFunctionMaps,
+    });
+
+    const flatServerlessFunctionLayer =
+      serverlessFunctionLayerMaps.byId[
+        flatServerlessFunction.serverlessFunctionLayerId
+      ];
+
+    if (!isDefined(flatServerlessFunctionLayer)) {
+      throw new ServerlessFunctionException(
+        `Serverless function layer with id ${flatServerlessFunction.serverlessFunctionLayerId} not found`,
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const applicationAccessToken = isDefined(
+      flatServerlessFunction.applicationId,
+    )
       ? await this.applicationTokenService.generateApplicationToken({
           workspaceId,
-          applicationId: functionToExecute.applicationId,
+          applicationId: flatServerlessFunction.applicationId,
           expiresInSeconds: Math.max(
-            functionToExecute.timeoutSeconds,
+            flatServerlessFunction.timeoutSeconds,
             MIN_TOKEN_EXPIRATION_IN_SECONDS,
           ),
         })
       : undefined;
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
+
+    const flatApplicationVariables = isDefined(
+      flatServerlessFunction.applicationId,
+    )
+      ? (applicationVariableMaps.byApplicationId[
+          flatServerlessFunction.applicationId
+        ] ?? [])
+      : [];
 
     const envVariables = {
       ...(isDefined(baseUrl)
@@ -168,18 +197,19 @@ export class ServerlessFunctionService {
             [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
           }
         : {}),
-      ...buildEnvVar(functionToExecute),
+      ...buildEnvVar(flatApplicationVariables),
     };
 
     const resultServerlessFunction = await this.callWithTimeout({
       callback: () =>
         this.serverlessService.execute({
-          serverlessFunction: functionToExecute,
+          flatServerlessFunction,
+          flatServerlessFunctionLayer,
           payload,
           version,
           env: envVariables,
         }),
-      timeoutMs: functionToExecute.timeoutSeconds * 1000,
+      timeoutMs: flatServerlessFunction.timeoutSeconds * 1000,
     });
 
     if (this.twentyConfigService.get('SERVERLESS_LOGS_ENABLED')) {
@@ -187,18 +217,24 @@ export class ServerlessFunctionService {
       console.log(resultServerlessFunction.logs);
     }
 
+    const applicationUniversalIdentifier = isDefined(
+      flatServerlessFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[flatServerlessFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
     await this.subscriptionService.publish({
       channel: SubscriptionChannel.SERVERLESS_FUNCTION_LOGS_CHANNEL,
       workspaceId,
       payload: {
         serverlessFunctionLogs: {
           logs: resultServerlessFunction.logs,
-          id: functionToExecute.id,
-          name: functionToExecute.name,
-          universalIdentifier: functionToExecute.universalIdentifier,
-          applicationId: functionToExecute.applicationId,
-          applicationUniversalIdentifier:
-            functionToExecute.application?.universalIdentifier,
+          id: flatServerlessFunction.id,
+          name: flatServerlessFunction.name,
+          universalIdentifier: flatServerlessFunction.universalIdentifier,
+          applicationId: flatServerlessFunction.applicationId,
+          applicationUniversalIdentifier,
         },
       },
     });
@@ -213,8 +249,8 @@ export class ServerlessFunctionService {
         ...(resultServerlessFunction.error && {
           errorType: resultServerlessFunction.error.errorType,
         }),
-        functionId: functionToExecute.id,
-        functionName: functionToExecute.name,
+        functionId: flatServerlessFunction.id,
+        functionName: flatServerlessFunction.name,
       });
 
     return resultServerlessFunction;

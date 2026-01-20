@@ -37,16 +37,14 @@ import {
   NODE_LAYER_SUBFOLDER,
 } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
 import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { type FlatServerlessFunctionLayer } from 'src/engine/metadata-modules/serverless-function-layer/types/flat-serverless-function-layer.type';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
-import {
-  type ServerlessFunctionEntity,
-  ServerlessFunctionRuntime,
-} from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { ServerlessFunctionRuntime } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { fromServerlessFunctionEntityToFlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/utils/from-serverless-function-entity-to-flat-serverless-function.type';
+import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -127,11 +125,11 @@ export class LambdaDriver implements ServerlessDriver {
   }
 
   private async waitFunctionUpdates(
-    serverlessFunction: ServerlessFunctionEntity,
+    flatServerlessFunction: FlatServerlessFunction,
     maxWaitTime: number = UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
   ) {
     const waitParams = {
-      FunctionName: serverlessFunction.id,
+      FunctionName: flatServerlessFunction.id,
     };
 
     await waitUntilFunctionUpdatedV2(
@@ -140,14 +138,14 @@ export class LambdaDriver implements ServerlessDriver {
     );
   }
 
-  private getLayerName(serverlessFunction: ServerlessFunctionEntity) {
-    return serverlessFunction.serverlessFunctionLayer.checksum;
+  private getLayerName(flatServerlessFunctionLayer: FlatServerlessFunctionLayer) {
+    return flatServerlessFunctionLayer.checksum;
   }
 
   private async createLayerIfNotExists(
-    serverlessFunction: ServerlessFunctionEntity,
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer,
   ): Promise<string> {
-    const layerName = this.getLayerName(serverlessFunction);
+    const layerName = this.getLayerName(flatServerlessFunctionLayer);
 
     const listLayerParams: ListLayerVersionsCommandInput = {
       LayerName: layerName,
@@ -173,7 +171,10 @@ export class LambdaDriver implements ServerlessDriver {
       NODE_LAYER_SUBFOLDER,
     );
 
-    await copyAndBuildDependencies(nodeDependenciesFolder, serverlessFunction);
+    await copyAndBuildDependencies(
+      nodeDependenciesFolder,
+      flatServerlessFunctionLayer,
+    );
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
@@ -202,11 +203,11 @@ export class LambdaDriver implements ServerlessDriver {
   }
 
   private async getLambdaExecutor(
-    serverlessFunction: ServerlessFunctionEntity,
+    flatServerlessFunction: FlatServerlessFunction,
   ) {
     try {
       const getFunctionCommand: GetFunctionCommand = new GetFunctionCommand({
-        FunctionName: serverlessFunction.id,
+        FunctionName: flatServerlessFunction.id,
       });
 
       return await (await this.getLambdaClient()).send(getFunctionCommand);
@@ -217,20 +218,23 @@ export class LambdaDriver implements ServerlessDriver {
     }
   }
 
-  async delete(serverlessFunction: ServerlessFunctionEntity) {
-    const lambdaExecutor = await this.getLambdaExecutor(serverlessFunction);
+  async delete(flatServerlessFunction: FlatServerlessFunction) {
+    const lambdaExecutor = await this.getLambdaExecutor(flatServerlessFunction);
 
     if (isDefined(lambdaExecutor)) {
       const deleteFunctionCommand = new DeleteFunctionCommand({
-        FunctionName: serverlessFunction.id,
+        FunctionName: flatServerlessFunction.id,
       });
 
       await (await this.getLambdaClient()).send(deleteFunctionCommand);
     }
   }
 
-  private async isAlreadyBuilt(serverlessFunction: ServerlessFunctionEntity) {
-    const lambdaExecutor = await this.getLambdaExecutor(serverlessFunction);
+  private async isAlreadyBuilt(
+    flatServerlessFunction: FlatServerlessFunction,
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer,
+  ) {
+    const lambdaExecutor = await this.getLambdaExecutor(flatServerlessFunction);
 
     if (!isDefined(lambdaExecutor)) {
       return false;
@@ -239,28 +243,38 @@ export class LambdaDriver implements ServerlessDriver {
     const layers = lambdaExecutor.Configuration?.Layers;
 
     if (!isDefined(layers) || layers.length !== 1) {
-      await this.delete(serverlessFunction);
+      await this.delete(flatServerlessFunction);
 
       return false;
     }
 
-    const layerName = this.getLayerName(serverlessFunction);
+    const layerName = this.getLayerName(flatServerlessFunctionLayer);
 
     if (layers[0].Arn?.includes(layerName)) {
       return true;
     }
 
-    await this.delete(serverlessFunction);
+    await this.delete(flatServerlessFunction);
 
     return false;
   }
 
-  private async build(serverlessFunction: ServerlessFunctionEntity) {
-    if (await this.isAlreadyBuilt(serverlessFunction)) {
+  private async build(
+    flatServerlessFunction: FlatServerlessFunction,
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer,
+  ) {
+    if (
+      await this.isAlreadyBuilt(
+        flatServerlessFunction,
+        flatServerlessFunctionLayer,
+      )
+    ) {
       return;
     }
 
-    const layerArn = await this.createLayerIfNotExists(serverlessFunction);
+    const layerArn = await this.createLayerIfNotExists(
+      flatServerlessFunctionLayer,
+    );
 
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
@@ -275,11 +289,11 @@ export class LambdaDriver implements ServerlessDriver {
       Code: {
         ZipFile: await fs.readFile(lambdaZipPath),
       },
-      FunctionName: serverlessFunction.id,
+      FunctionName: flatServerlessFunction.id,
       Layers: [layerArn],
       Handler: 'index.handler',
       Role: this.options.lambdaRole,
-      Runtime: serverlessFunction.runtime,
+      Runtime: flatServerlessFunction.runtime,
       Timeout: 900, // timeout is handled by the serverless function service
     };
 
@@ -306,26 +320,25 @@ export class LambdaDriver implements ServerlessDriver {
   }
 
   async execute({
-    serverlessFunction,
+    flatServerlessFunction,
+    flatServerlessFunctionLayer,
     payload,
     version,
     env,
   }: {
-    serverlessFunction: ServerlessFunctionEntity;
+    flatServerlessFunction: FlatServerlessFunction;
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer;
     payload: object;
     version: string;
     env?: Record<string, string>;
   }): Promise<ServerlessExecuteResult> {
-    await this.build(serverlessFunction);
-    await this.waitFunctionUpdates(serverlessFunction);
+    await this.build(flatServerlessFunction, flatServerlessFunctionLayer);
+    await this.waitFunctionUpdates(flatServerlessFunction);
 
     const startTime = Date.now();
 
     const folderPath = getServerlessFolderOrThrow({
-      flatServerlessFunction:
-        fromServerlessFunctionEntityToFlatServerlessFunction(
-          serverlessFunction,
-        ),
+      flatServerlessFunction,
       version,
     });
 
@@ -344,7 +357,7 @@ export class LambdaDriver implements ServerlessDriver {
       try {
         builtBundleFilePath = await buildServerlessFunctionInMemory({
           sourceTemporaryDir,
-          handlerPath: serverlessFunction.handlerPath,
+          handlerPath: flatServerlessFunction.handlerPath,
         });
       } catch (error) {
         return formatBuildError(error, startTime);
@@ -358,11 +371,11 @@ export class LambdaDriver implements ServerlessDriver {
         params: payload,
         code: compiledCode,
         env: env ?? {},
-        handlerName: serverlessFunction.handlerName,
+        handlerName: flatServerlessFunction.handlerName,
       };
 
       const params: InvokeCommandInput = {
-        FunctionName: serverlessFunction.id,
+        FunctionName: flatServerlessFunction.id,
         Payload: JSON.stringify(executorPayload),
         LogType: LogType.Tail,
       };
