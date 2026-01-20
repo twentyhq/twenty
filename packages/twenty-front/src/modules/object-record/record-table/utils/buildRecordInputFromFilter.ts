@@ -37,10 +37,14 @@ export const buildRecordInputFromFilter = ({
       }
       recordInput[`${fieldMetadataItem.name}Id`] = value;
     } else {
-      recordInput[fieldMetadataItem.name] = buildValueFromFilter({
+      const value = buildValueFromFilter({
         filter,
         options: fieldMetadataItem.options ?? undefined,
       });
+      if (!isDefined(value)) {
+        return;
+      }
+      recordInput[fieldMetadataItem.name] = value;
     }
   });
 
