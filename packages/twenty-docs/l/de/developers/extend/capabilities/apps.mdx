@@ -543,7 +543,7 @@ Notizen:
   };
   ```
 
-  **So migrieren Sie bestehende Funktionen:** Aktualisieren Sie Ihren Handler, sodass er statt direkt aus dem params-Objekt aus `event.body`, `event.queryStringParameters` oder `event.pathParameters` destrukturiert.
+  **So migrieren Sie bestehende Funktionen:** Aktualisieren Sie Ihren Handler, sodass er nicht mehr direkt aus dem params-Objekt destrukturiert, sondern aus `event.body`, `event.queryStringParameters` oder `event.pathParameters`.
 </Warning>
 
 Wenn ein Routen-Trigger Ihre Funktion aufruft, erhält sie ein `RoutePayload`-Objekt, das dem AWS-HTTP-API-v2-Format entspricht. Importieren Sie den Typ aus `twenty-sdk`:

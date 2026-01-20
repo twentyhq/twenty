@@ -570,7 +570,7 @@ const handler = async (event: RoutePayload) => {
 | `queryStringParameters`      | `Record<string, string \| undefined>` | معلمات سلسلة الاستعلام (تُضمّ القيم المتعددة باستخدام فواصل)                            |
 | `pathParameters`             | `Record<string, string \| undefined>` | معلمات المسار المستخرجة من نمط المسار (على سبيل المثال، `/users/:id` → `{ id: '123' }`) |
 | `المحتوى`                    | `object \| null`                      | جسم الطلب المُحلَّل (JSON)                                                              |
-| `isBase64Encoded`            | `قيمة منطقية`                         | ما إذا كان جسم الطلب مُشفّرًا بصيغة base64                                              |
+| `isBase64Encoded`            | `قيمة منطقية`                         | ما إذا كان جسم الطلب مُرمَّزًا بترميز base64                                            |
 | `requestContext.http.method` | `string`                              | طريقة HTTP (GET, POST, PUT, PATCH, DELETE)                                              |
 | `requestContext.http.path`   | `string`                              | المسار الخام للطلب                                                                      |
 
