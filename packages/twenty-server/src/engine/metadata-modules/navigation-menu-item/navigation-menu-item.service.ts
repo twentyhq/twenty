@@ -204,19 +204,22 @@ export class NavigationMenuItemService {
         },
       );
 
-    const existingNavigationMenuItem =
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: input.id,
-        flatEntityMaps: existingFlatNavigationMenuItemMaps,
-      });
-
-    await this.navigationMenuItemAccessService.canUserUpdateNavigationMenuItem({
-      userWorkspaceId: authUserWorkspaceId,
-      workspaceId,
-      apiKeyId: authApiKeyId,
-      applicationId: authApplicationId,
-      existingUserWorkspaceId: existingNavigationMenuItem.userWorkspaceId,
+    const existingNavigationMenuItem = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: input.id,
+      flatEntityMaps: existingFlatNavigationMenuItemMaps,
     });
+
+    if (isDefined(existingNavigationMenuItem)) {
+      await this.navigationMenuItemAccessService.canUserUpdateNavigationMenuItem(
+        {
+          userWorkspaceId: authUserWorkspaceId,
+          workspaceId,
+          apiKeyId: authApiKeyId,
+          applicationId: authApplicationId,
+          existingUserWorkspaceId: existingNavigationMenuItem.userWorkspaceId,
+        },
+      );
+    }
 
     const flatNavigationMenuItemToUpdate =
       fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOrThrow({
