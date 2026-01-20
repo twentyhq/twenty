@@ -223,8 +223,7 @@ export class LineChartDataService {
       : rawResults;
 
     const rangeFilteredResults =
-      !configuration.isCumulative &&
-      (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
+      isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax)
         ? filterByRange(
             filteredResults,
             configuration.rangeMin,
@@ -290,11 +289,7 @@ export class LineChartDataService {
     );
 
     const transformedData = configuration.isCumulative
-      ? this.applyCumulativeTransform(
-          limitedSortedData,
-          configuration.rangeMin,
-          configuration.rangeMax,
-        )
+      ? this.applyCumulativeTransform(limitedSortedData)
       : limitedSortedData;
 
     const dataPoints = transformedData.map(({ x, y }) => ({
@@ -354,7 +349,6 @@ export class LineChartDataService {
     const isStacked = configuration.isStacked ?? false;
 
     const rangeFilteredResults =
-      !configuration.isCumulative &&
       !isStacked &&
       (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
         ? filterByRange(
@@ -484,7 +478,6 @@ export class LineChartDataService {
     const limitedSeriesIds = sortedSeriesIds.slice(0, maxSeries);
 
     const filteredXValues =
-      !configuration.isCumulative &&
       isStacked &&
       (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
         ? filterLineChartXValuesByRange(
@@ -505,11 +498,7 @@ export class LineChartDataService {
       }));
 
       if (configuration.isCumulative) {
-        dataPoints = this.applyCumulativeTransform(
-          dataPoints,
-          configuration.rangeMin,
-          configuration.rangeMax,
-        );
+        dataPoints = this.applyCumulativeTransform(dataPoints);
       }
 
       return {
@@ -595,8 +584,6 @@ export class LineChartDataService {
 
   private applyCumulativeTransform<T extends { y: number | null }>(
     data: T[],
-    rangeMin?: number | null,
-    rangeMax?: number | null,
   ): T[] {
     const result: T[] = [];
     let runningTotal = 0;
@@ -608,13 +595,7 @@ export class LineChartDataService {
 
       const cumulativeValue = runningTotal;
 
-      const isOutOfRange =
-        (isDefined(rangeMin) && cumulativeValue < rangeMin) ||
-        (isDefined(rangeMax) && cumulativeValue > rangeMax);
-
-      if (!isOutOfRange) {
-        result.push({ ...point, y: cumulativeValue });
-      }
+      result.push({ ...point, y: cumulativeValue });
     }
 
     return result;
