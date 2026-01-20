@@ -1,10 +1,8 @@
-import { FUNCTIONS_DIR } from '@/cli/constants/functions-dir';
-import { OUTPUT_DIR } from '@/cli/constants/output-dir';
+import { OUTPUT_DIR } from '../common/constants';
+import { FUNCTIONS_DIR } from './constants';
 import * as fs from 'fs-extra';
 import path from 'path';
 
-// src/app/hello.function.ts → { relativePath: 'hello.function.js', outputDir: '' }
-// src/app/utils/greet.function.ts → { relativePath: 'utils/greet.function.js', outputDir: 'utils' }
 export const computeFunctionOutputPath = (
   handlerPath: string,
 ): { relativePath: string; outputDir: string } => {
@@ -28,19 +26,19 @@ export const computeFunctionOutputPath = (
   };
 };
 
-export const buildFunctionInput = (
+export const buildFunctionEntries = (
   appPath: string,
   handlerPaths: Array<{ handlerPath: string }>,
 ): Record<string, string> => {
-  const input: Record<string, string> = {};
+  const entries: Record<string, string> = {};
 
   for (const fn of handlerPaths) {
     const { relativePath } = computeFunctionOutputPath(fn.handlerPath);
     const chunkName = relativePath.replace(/\.js$/, '');
-    input[chunkName] = path.join(appPath, fn.handlerPath);
+    entries[chunkName] = path.join(appPath, fn.handlerPath);
   }
 
-  return input;
+  return entries;
 };
 
 export const cleanupOldFunctions = async (
@@ -66,7 +64,7 @@ export const cleanupOldFunctions = async (
     expectedFilesWithMaps.add(`${file}.map`);
   }
 
-  const removeOrphans = async (dir: string, relativeBase: string = ''): Promise<void> => {
+  const removeOrphanedFiles = async (dir: string, relativeBase: string = ''): Promise<void> => {
     const entries = await fs.readdir(dir, { withFileTypes: true });
 
     for (const entry of entries) {
@@ -74,7 +72,7 @@ export const cleanupOldFunctions = async (
       const relativePath = relativeBase ? `${relativeBase}/${entry.name}` : entry.name;
 
       if (entry.isDirectory()) {
-        await removeOrphans(fullPath, relativePath);
+        await removeOrphanedFiles(fullPath, relativePath);
         const remaining = await fs.readdir(fullPath);
         if (remaining.length === 0) {
           await fs.remove(fullPath);
@@ -87,5 +85,5 @@ export const cleanupOldFunctions = async (
     }
   };
 
-  await removeOrphans(functionsDir);
+  await removeOrphanedFiles(functionsDir);
 };

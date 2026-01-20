@@ -1,4 +1,4 @@
-import { validateManifest } from '@/cli/utilities/manifest/utils/manifest-validate';
+import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   type Application,
