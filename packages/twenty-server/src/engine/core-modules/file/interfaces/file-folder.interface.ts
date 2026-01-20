@@ -11,6 +11,7 @@ export enum FileFolder {
   ServerlessFunctionToDelete = 'serverless-function-to-delete',
   File = 'file',
   AgentChat = 'agent-chat',
+  Application = 'application',
 }
 
 registerEnumType(FileFolder, {
@@ -44,6 +45,9 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     ignoreExpirationToken: false,
   },
   [FileFolder.AgentChat]: {
+    ignoreExpirationToken: false,
+  },
+  [FileFolder.Application]: {
     ignoreExpirationToken: false,
   },
 };

@@ -1,7 +1,16 @@
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import path, { join } from 'path';
+
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { Repository } from 'typeorm';
+
+import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+
+import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
@@ -11,12 +20,16 @@ import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/applica
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/dtos/uninstallApplicationInput';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { UploadApplicationFileInput } from 'src/engine/core-modules/application/dtos/uploadApplicationFileInput';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -29,6 +42,9 @@ export class ApplicationResolver {
   constructor(
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationService: ApplicationService,
+    @InjectRepository(FileEntity)
+    private readonly fileRepository: Repository<FileEntity>,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   @Query(() => [ApplicationDTO])
@@ -72,6 +88,44 @@ export class ApplicationResolver {
       applicationUniversalIdentifier: universalIdentifier,
       workspaceId,
     });
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  async uploadApplicationFile(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream, filename, mimetype }: FileUpload,
+    @Args() { universalIdentifier, filePath }: UploadApplicationFileInput,
+  ): Promise<boolean> {
+    const stream = createReadStream();
+    const buffer = await streamToBuffer(stream);
+
+    const fileFolderPath = path.dirname(filePath);
+
+    const folderPath = join(
+      `workspace-${workspaceId}`,
+      FileFolder.Application,
+      universalIdentifier,
+      fileFolderPath,
+    );
+
+    await this.fileStorageService.write({
+      file: buffer,
+      name: filename,
+      folder: folderPath,
+      mimeType: mimetype,
+    });
+
+    const createdFile = this.fileRepository.create({
+      path: join(folderPath, filename),
+      size: buffer.length,
+      workspaceId,
+    });
+
+    await this.fileRepository.save(createdFile);
 
     return true;
   }

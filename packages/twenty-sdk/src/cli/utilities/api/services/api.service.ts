@@ -6,6 +6,8 @@ import {
   printSchema,
 } from 'graphql/index';
 import { createClient } from 'graphql-sse';
+import * as fs from 'fs';
+import * as path from 'path';
 import { type ApiResponse } from '../types/api-response.types';
 import { ConfigService } from '@/cli/utilities/config/services/config.service';
 import {
@@ -284,5 +286,130 @@ export class ApiService {
         complete: () => console.log('Completed'),
       },
     );
+  }
+
+  async uploadFile({
+    filePath,
+    applicationUniversalIdentifier,
+  }: {
+    filePath: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<ApiResponse<boolean>> {
+    try {
+      const absolutePath = path.resolve(filePath);
+
+      if (!fs.existsSync(absolutePath)) {
+        return {
+          success: false,
+          error: `File not found: ${absolutePath}`,
+        };
+      }
+
+      const filename = path.basename(absolutePath);
+      const buffer = fs.readFileSync(absolutePath);
+      const mimeType = this.getMimeType(filename);
+
+      const mutation = `
+      mutation UploadApplicationFile($file: Upload!, $universalIdentifier: !String, $filePath: !String) {
+        uploadApplicationFile(file: $file, universalIdentifier: $fileFolder, filePath: $filePath)
+      }
+    `;
+
+      const operations = JSON.stringify({
+        query: mutation,
+        variables: {
+          file: null,
+          universalIdentifier: applicationUniversalIdentifier,
+          filePath,
+        },
+      });
+
+      const map = JSON.stringify({
+        '0': ['variables.file'],
+      });
+
+      const formData = new FormData();
+
+      formData.append('operations', operations);
+      formData.append('map', map);
+      formData.append(
+        '0',
+        new Blob([new Uint8Array(buffer)], { type: mimeType }),
+        filename,
+      );
+
+      const response: AxiosResponse = await this.client.post(
+        '/graphql',
+        formData,
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0]?.message || 'Failed to upload file',
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.uploadFile,
+        message: `Successfully uploaded ${filename}`,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return {
+          success: false,
+          error: error.response.data?.errors?.[0]?.message || error.message,
+        };
+      }
+
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  private getMimeType(filename: string): string {
+    const ext = path.extname(filename).toLowerCase();
+    const mimeTypes: Record<string, string> = {
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.png': 'image/png',
+      '.gif': 'image/gif',
+      '.webp': 'image/webp',
+      '.svg': 'image/svg+xml',
+      '.bmp': 'image/bmp',
+      '.ico': 'image/x-icon',
+      '.pdf': 'application/pdf',
+      '.doc': 'application/msword',
+      '.docx':
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      '.xls': 'application/vnd.ms-excel',
+      '.xlsx':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      '.ppt': 'application/vnd.ms-powerpoint',
+      '.pptx':
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      '.txt': 'text/plain',
+      '.csv': 'text/csv',
+      '.json': 'application/json',
+      '.xml': 'application/xml',
+      '.zip': 'application/zip',
+      '.tar': 'application/x-tar',
+      '.gz': 'application/gzip',
+      '.mp3': 'audio/mpeg',
+      '.mp4': 'video/mp4',
+      '.avi': 'video/x-msvideo',
+      '.mov': 'video/quicktime',
+      '.js': 'application/javascript',
+      '.ts': 'application/typescript',
+      '.jsx': 'application/javascript',
+      '.tsx': 'application/typescript',
+      '.html': 'text/html',
+      '.css': 'text/css',
+    };
+
+    return mimeTypes[ext] || 'application/octet-stream';
   }
 }
