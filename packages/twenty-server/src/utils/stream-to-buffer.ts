@@ -4,14 +4,12 @@ export const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
   const chunks: Buffer[] = [];
 
   return new Promise((resolve, reject) => {
-    // Check if stream is already ended
     if (stream.readableEnded) {
       reject(new Error('Stream has already ended'));
 
       return;
     }
 
-    // Check if stream is not readable (destroyed or closed)
     if (!stream.readable) {
       reject(new Error('Stream is not readable'));
 
@@ -51,13 +49,11 @@ export const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
 
     const onClose = () => {
       if (!isResolved) {
-        // If stream has ended, resolve successfully (close can fire after end)
         if (stream.readableEnded) {
           isResolved = true;
           cleanup();
           resolve(Buffer.concat(chunks));
         } else {
-          // Stream closed before end - this is an error
           isResolved = true;
           cleanup();
           reject(new Error('Stream closed before end'));
