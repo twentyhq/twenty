@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { deleteNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/delete-navigation-menu-item.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
@@ -39,12 +40,15 @@ describe('NavigationMenuItem creation should succeed', () => {
     companyObjectMetadataId = companyObjectMetadata.id;
     personObjectMetadataId = personObjectMetadata.id;
 
-    const userWorkspaceResult = await global.testDataSource.query<
-      Array<{ id: string }>
-    >(`SELECT id FROM core."userWorkspace" LIMIT 1`);
+    const { data: currentUserData } = await getCurrentUser({
+      accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      expectToFail: false,
+    });
+
+    jestExpectToBeDefined(currentUserData?.currentUser?.currentUserWorkspace);
 
     validUserWorkspaceId =
-      userWorkspaceResult.length > 0 ? userWorkspaceResult[0].id : null;
+      currentUserData?.currentUser?.currentUserWorkspace?.id ?? null;
   });
 
   afterEach(async () => {
