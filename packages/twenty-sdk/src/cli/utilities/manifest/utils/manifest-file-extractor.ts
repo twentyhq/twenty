@@ -4,10 +4,9 @@ import { type JitiOptions } from 'jiti/lib/types';
 import path from 'path';
 import { parseJsoncFile } from '../../file/utils/file-jsonc';
 
-export type ExtractConfigOptions<T> = {
+export type ExtractManifestOptions = {
   jsx?: boolean;
   entryProperty?: string;
-  defaults?: Partial<T>;
 };
 
 const getTsconfigAliases = async (
@@ -47,7 +46,7 @@ const getTsconfigAliases = async (
   }
 };
 
-const createConfigLoader = async (
+const createModuleLoader = async (
   appPath: string,
   options: { jsx?: boolean } = {},
 ) => {
@@ -70,17 +69,17 @@ const createConfigLoader = async (
   return createJiti(appPath, jitiOptions);
 };
 
-const findConfigExport = <T>(
-  mod: Record<string, unknown>,
+const findConfigInModule = <T>(
+  module: Record<string, unknown>,
   validator?: (value: unknown) => boolean,
 ): T | undefined => {
-  if (mod.default !== undefined) {
-    if (!validator || validator(mod.default)) {
-      return mod.default as T;
+  if (module.default !== undefined) {
+    if (!validator || validator(module.default)) {
+      return module.default as T;
     }
   }
 
-  for (const [key, value] of Object.entries(mod)) {
+  for (const [key, value] of Object.entries(module)) {
     if (key === 'default') continue;
     if (value === undefined || value === null) continue;
     if (typeof value !== 'object') continue;
@@ -136,17 +135,17 @@ const extractImportPath = (
   return null;
 };
 
-export const extractConfigFromFile = async <T>(
+export const extractManifestFromFile = async <TManifest>(
   filepath: string,
   appPath: string,
-  options: ExtractConfigOptions<T> = {},
-): Promise<T> => {
-  const { jsx, entryProperty, defaults } = options;
-  const jiti = await createConfigLoader(appPath, { jsx });
+  options: ExtractManifestOptions = {},
+): Promise<TManifest> => {
+  const { jsx, entryProperty } = options;
+  const jiti = await createModuleLoader(appPath, { jsx });
 
-  const mod = (await jiti.import(filepath)) as Record<string, unknown>;
+  const module = (await jiti.import(filepath)) as Record<string, unknown>;
 
-  const validator = entryProperty
+  const configValidator = entryProperty
     ? (value: unknown): boolean =>
         typeof value === 'object' &&
         value !== null &&
@@ -154,7 +153,10 @@ export const extractConfigFromFile = async <T>(
         typeof (value as Record<string, unknown>)[entryProperty] === 'function'
     : undefined;
 
-  const config = findConfigExport<Record<string, unknown>>(mod, validator);
+  const config = findConfigInModule<Record<string, unknown>>(
+    module,
+    configValidator,
+  );
 
   if (!config) {
     const expectedExport = entryProperty
@@ -164,7 +166,7 @@ export const extractConfigFromFile = async <T>(
   }
 
   if (!entryProperty) {
-    return { ...defaults, ...config } as T;
+    return config as TManifest;
   }
 
   const entryFunction = config[entryProperty] as Function;
@@ -183,10 +185,11 @@ export const extractConfigFromFile = async <T>(
 
   const { [entryProperty]: _, ...configWithoutEntry } = config;
 
-  return {
-    ...defaults,
+  const manifest = {
     ...configWithoutEntry,
     [`${entryProperty}Name`]: entryName,
     [`${entryProperty}Path`]: entryPath,
-  } as T;
+  };
+
+  return manifest as TManifest;
 };

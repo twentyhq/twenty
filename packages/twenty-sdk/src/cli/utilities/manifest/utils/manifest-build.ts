@@ -21,7 +21,7 @@ import {
   ManifestValidationError,
   type ValidationWarning,
 } from '../types/manifest.types';
-import { extractConfigFromFile } from './manifest-config-loader';
+import { extractManifestFromFile } from './manifest-file-extractor';
 import { validateManifest } from './manifest-validate';
 
 const validateFolderStructure = async (appPath: string): Promise<void> => {
@@ -56,15 +56,17 @@ const loadFiles = async (
   });
 };
 
-const loadObjects = async (appPath: string): Promise<ObjectManifest[]> => {
+const loadObjectManifests = async (
+  appPath: string,
+): Promise<ObjectManifest[]> => {
   const objectFiles = await loadFiles(['src/app/**/*.object.ts'], appPath);
 
-  const objects: ObjectManifest[] = [];
+  const objectManifests: ObjectManifest[] = [];
 
   for (const filepath of objectFiles) {
     try {
-      objects.push(
-        await extractConfigFromFile<ObjectManifest>(filepath, appPath),
+      objectManifests.push(
+        await extractManifestFromFile<ObjectManifest>(filepath, appPath),
       );
     } catch (error) {
       const relPath = toPosixRelative(filepath, appPath);
@@ -74,10 +76,10 @@ const loadObjects = async (appPath: string): Promise<ObjectManifest[]> => {
     }
   }
 
-  return objects;
+  return objectManifests;
 };
 
-const loadObjectExtensions = async (
+const loadObjectExtensionManifests = async (
   appPath: string,
 ): Promise<ObjectExtensionManifest[]> => {
   const extensionFiles = await loadFiles(
@@ -85,12 +87,12 @@ const loadObjectExtensions = async (
     appPath,
   );
 
-  const extensions: ObjectExtensionManifest[] = [];
+  const objectExtensionManifests: ObjectExtensionManifest[] = [];
 
   for (const filepath of extensionFiles) {
     try {
-      extensions.push(
-        await extractConfigFromFile<ObjectExtensionManifest>(filepath, appPath),
+      objectExtensionManifests.push(
+        await extractManifestFromFile<ObjectExtensionManifest>(filepath, appPath),
       );
     } catch (error) {
       const relPath = toPosixRelative(filepath, appPath);
@@ -100,23 +102,23 @@ const loadObjectExtensions = async (
     }
   }
 
-  return extensions;
+  return objectExtensionManifests;
 };
 
-const loadFunctions = async (
+const loadFunctionManifests = async (
   appPath: string,
 ): Promise<ServerlessFunctionManifest[]> => {
   const functionFiles = await loadFiles(['src/app/**/*.function.ts'], appPath);
 
-  const functions: ServerlessFunctionManifest[] = [];
+  const functionManifests: ServerlessFunctionManifest[] = [];
 
   for (const filepath of functionFiles) {
     try {
-      functions.push(
-        await extractConfigFromFile<ServerlessFunctionManifest>(
+      functionManifests.push(
+        await extractManifestFromFile<ServerlessFunctionManifest>(
           filepath,
           appPath,
-          { entryProperty: 'handler', defaults: { triggers: [] } },
+          { entryProperty: 'handler' },
         ),
       );
     } catch (error) {
@@ -127,18 +129,18 @@ const loadFunctions = async (
     }
   }
 
-  return functions;
+  return functionManifests;
 };
 
-const loadRoles = async (appPath: string): Promise<RoleManifest[]> => {
+const loadRoleManifests = async (appPath: string): Promise<RoleManifest[]> => {
   const roleFiles = await loadFiles(['src/app/**/*.role.ts'], appPath);
 
-  const roles: RoleManifest[] = [];
+  const roleManifests: RoleManifest[] = [];
 
   for (const filepath of roleFiles) {
     try {
-      roles.push(
-        await extractConfigFromFile<RoleManifest>(filepath, appPath),
+      roleManifests.push(
+        await extractManifestFromFile<RoleManifest>(filepath, appPath),
       );
     } catch (error) {
       const relPath = toPosixRelative(filepath, appPath);
@@ -148,10 +150,10 @@ const loadRoles = async (appPath: string): Promise<RoleManifest[]> => {
     }
   }
 
-  return roles;
+  return roleManifests;
 };
 
-const loadFrontComponents = async (
+const loadFrontComponentManifests = async (
   appPath: string,
 ): Promise<FrontComponentManifest[]> => {
   const componentFiles = await loadFiles(
@@ -159,12 +161,12 @@ const loadFrontComponents = async (
     appPath,
   );
 
-  const components: FrontComponentManifest[] = [];
+  const frontComponentManifests: FrontComponentManifest[] = [];
 
   for (const filepath of componentFiles) {
     try {
-      components.push(
-        await extractConfigFromFile<FrontComponentManifest>(
+      frontComponentManifests.push(
+        await extractManifestFromFile<FrontComponentManifest>(
           filepath,
           appPath,
           { entryProperty: 'component', jsx: true },
@@ -178,7 +180,7 @@ const loadFrontComponents = async (
     }
   }
 
-  return components;
+  return frontComponentManifests;
 };
 
 const loadSources = async (appPath: string): Promise<Sources> => {
@@ -256,47 +258,48 @@ export const buildManifest = async (
     'app',
     'application.config.ts',
   );
-  const application = await extractConfigFromFile<Application>(
+  const application = await extractManifestFromFile<Application>(
     applicationConfigPath,
     appPath,
   );
 
   const [
-    objects,
-    objectExtensions,
-    serverlessFunctions,
-    frontComponents,
-    roles,
+    objectManifests,
+    objectExtensionManifests,
+    functionManifests,
+    frontComponentManifests,
+    roleManifests,
     sources,
     shouldGenerate,
   ] = await Promise.all([
-    loadObjects(appPath),
-    loadObjectExtensions(appPath),
-    loadFunctions(appPath),
-    loadFrontComponents(appPath),
-    loadRoles(appPath),
+    loadObjectManifests(appPath),
+    loadObjectExtensionManifests(appPath),
+    loadFunctionManifests(appPath),
+    loadFrontComponentManifests(appPath),
+    loadRoleManifests(appPath),
     loadSources(appPath),
     checkShouldGenerate(appPath),
   ]);
 
   const manifest: ApplicationManifest = {
     application,
-    objects,
+    objects: objectManifests,
     objectExtensions:
-      objectExtensions.length > 0 ? objectExtensions : undefined,
-    serverlessFunctions,
-    frontComponents: frontComponents.length > 0 ? frontComponents : undefined,
-    roles,
+      objectExtensionManifests.length > 0 ? objectExtensionManifests : undefined,
+    serverlessFunctions: functionManifests,
+    frontComponents:
+      frontComponentManifests.length > 0 ? frontComponentManifests : undefined,
+    roles: roleManifests,
     sources,
   };
 
   const validation = validateManifest({
     application,
-    objects,
-    objectExtensions,
-    serverlessFunctions,
-    frontComponents,
-    roles,
+    objects: objectManifests,
+    objectExtensions: objectExtensionManifests,
+    serverlessFunctions: functionManifests,
+    frontComponents: frontComponentManifests,
+    roles: roleManifests,
   });
 
   if (!validation.isValid) {
