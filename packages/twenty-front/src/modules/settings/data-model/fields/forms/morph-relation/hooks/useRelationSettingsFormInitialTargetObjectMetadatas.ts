@@ -38,8 +38,14 @@ export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
 
   const availableItems = activeObjectMetadataItems
     .filter(isObjectMetadataAvailableForRelation)
-    .sort((a, b) => a.labelSingular.localeCompare(b.labelSingular))
-    .filter((item) => item.id !== sourceObjectMetadataId);
+    .filter((item) => item.id !== sourceObjectMetadataId)
+    .sort((a, b) => {
+      if (a.isCustom === b.isCustom) {
+        return 0;
+      }
+      return a.isCustom ? -1 : 1;
+    });
+
   const firstInitialObjectCandidate = availableItems[0];
   if (!isDefined(firstInitialObjectCandidate)) {
     throw new Error(

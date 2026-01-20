@@ -19,6 +19,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBox, useIcons, type IconComponent } from 'twenty-ui/display';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
@@ -267,14 +268,6 @@ export const SettingsMorphRelationMultiSelect = ({
                                 localSelectedObjectMetadataIds,
                                 option.objectMetadataId,
                               );
-
-                            console.log(
-                              'newSelectedObjectMetadataIds',
-                              newSelectedObjectMetadataIds,
-                              'localSelectedObjectMetadataIds',
-                              localSelectedObjectMetadataIds,
-                            );
-
                             setLocalSelectedObjectMetadataIds(
                               newSelectedObjectMetadataIds,
                             );
@@ -303,8 +296,10 @@ export const SettingsMorphRelationMultiSelect = ({
           }
         />
       )}
-      {!!description && <StyledDescription>{description}</StyledDescription>}
-      {!!error && <StyledError>{error}</StyledError>}
+      {isNonEmptyString(description) && (
+        <StyledDescription>{description}</StyledDescription>
+      )}
+      {isNonEmptyString(error) && <StyledError>{error}</StyledError>}
     </StyledContainer>
   );
 };
