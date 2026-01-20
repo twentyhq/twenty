@@ -50,6 +50,21 @@ type JunctionFieldSeed = {
   junctionTargetFieldRef: string;
 };
 
+// Update an existing field to use junction config (for auto-created inverse fields)
+type JunctionUpdateSeed = {
+  objectName: string;
+  fieldName: string;
+  junctionTargetFieldRef: string;
+  label?: string;
+};
+
+// Helper type for flat entity maps
+type FlatMaps = {
+  fieldMaps: { byId: Record<string, { name: string; morphId?: string }> };
+  objectMaps: { byId: Record<string, { fieldMetadataIds: string[] }> };
+  objectIdByName: Record<string, string>;
+};
+
 @Injectable()
 export class DevSeederMetadataService {
   constructor(
@@ -75,6 +90,8 @@ export class DevSeederMetadataService {
       }[];
       // Junction fields with junctionTargetFieldId config
       junctionFields?: JunctionFieldSeed[];
+      // Update existing fields to use junction config (for auto-created inverse fields)
+      junctionUpdates?: JunctionUpdateSeed[];
     }
   > = {
     [SEED_APPLE_WORKSPACE_ID]: {
@@ -125,7 +142,6 @@ export class DevSeederMetadataService {
           junctionTargetFieldRef: `${EMPLOYMENT_HISTORY_CUSTOM_OBJECT_SEED.nameSingular}.company`,
         },
         // Pet.caretakers - shows caretakers (Person/Company) directly via PetCareAgreement
-        // Any morph sibling field works since morphRelations contains all targets
         {
           sourceObjectName: PET_CUSTOM_OBJECT_SEED.nameSingular,
           label: 'Caretakers',
@@ -135,6 +151,28 @@ export class DevSeederMetadataService {
           targetFieldLabel: 'Pet',
           targetFieldIcon: 'IconCat',
           junctionTargetFieldRef: `${PET_CARE_AGREEMENT_CUSTOM_OBJECT_SEED.nameSingular}.caretakerPerson`,
+        },
+      ],
+      // Update auto-created inverse fields to show target records via junction
+      junctionUpdates: [
+        // Company.caredForPets -> shows Pets via PetCareAgreement
+        {
+          objectName: 'company',
+          fieldName: 'caredForPets',
+          junctionTargetFieldRef: `${PET_CARE_AGREEMENT_CUSTOM_OBJECT_SEED.nameSingular}.pet`,
+        },
+        // Person.caredForPets -> shows Pets via PetCareAgreement
+        {
+          objectName: 'person',
+          fieldName: 'caredForPets',
+          junctionTargetFieldRef: `${PET_CARE_AGREEMENT_CUSTOM_OBJECT_SEED.nameSingular}.pet`,
+        },
+        // Company.employmentHistories -> shows People via EmploymentHistory
+        {
+          objectName: 'company',
+          fieldName: 'employmentHistories',
+          junctionTargetFieldRef: `${EMPLOYMENT_HISTORY_CUSTOM_OBJECT_SEED.nameSingular}.person`,
+          label: 'Employees',
         },
       ],
     },
@@ -167,7 +205,6 @@ export class DevSeederMetadataService {
       );
     }
 
-    // TODO get
     for (const obj of config.objects) {
       await this.seedCustomObject({
         dataSourceId: dataSourceMetadata.id,
@@ -250,134 +287,113 @@ export class DevSeederMetadataService {
       );
     }
 
-    const { flatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
-
-    const { idByNameSingular: objectIdByNameSingular } =
-      buildObjectIdByNameMaps(flatObjectMetadataMaps);
+    const flatMaps = await this.getFreshFlatMaps(workspaceId);
 
     // Seed regular relations (single target)
-    if (config.regularRelations) {
-      for (const relation of config.regularRelations) {
-        await this.seedRegularRelations({
-          workspaceId,
-          relation,
-          objectIdByNameSingular,
-        });
-      }
+    for (const relation of config.regularRelations ?? []) {
+      await this.seedRegularRelations({
+        workspaceId,
+        relation,
+        objectIdByNameSingular: flatMaps.objectIdByName,
+      });
     }
 
     // Seed morph relations (multiple targets)
-    if (config.morphRelations) {
-      for (const relation of config.morphRelations) {
-        await this.seedMorphRelations({
-          workspaceId,
-          relation,
-          objectIdByNameSingular,
-        });
-      }
+    for (const relation of config.morphRelations ?? []) {
+      await this.seedMorphRelations({
+        workspaceId,
+        relation,
+        objectIdByNameSingular: flatMaps.objectIdByName,
+      });
     }
 
     // Seed junction fields (after relations are created so we can resolve field IDs)
-    if (config.junctionFields) {
-      // Invalidate and refresh the flat entity maps to get the newly created fields
-      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-        workspaceId,
-        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-      });
-
-      const {
-        flatObjectMetadataMaps: updatedObjectMaps,
-        flatFieldMetadataMaps,
-      } =
-        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-          },
-        );
-
-      const { idByNameSingular: updatedObjectIdByNameSingular } =
-        buildObjectIdByNameMaps(updatedObjectMaps);
+    if (config.junctionFields && config.junctionFields.length > 0) {
+      const updatedMaps = await this.getFreshFlatMaps(workspaceId);
 
       for (const junctionField of config.junctionFields) {
         await this.seedJunctionField({
           workspaceId,
           junctionField,
-          objectIdByNameSingular: updatedObjectIdByNameSingular,
-          // Type assertions needed because FlatEntityMaps uses Partial<Record<...>>
-          // but method expects non-partial for type safety in accessing byId
-          flatFieldMetadataMaps: flatFieldMetadataMaps as {
-            byId: Record<string, { name: string; morphId?: string }>;
-          },
-          flatObjectMetadataMaps: updatedObjectMaps as {
-            byId: Record<string, { fieldMetadataIds: string[] }>;
-          },
+          flatMaps: updatedMaps,
         });
-      }
-
-      // Update Company/Person caredForPets to show Pet names via junction config
-      // Need to refresh cache since Pet.caretakers just created PetCareAgreement.pet
-      if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
-        await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-        });
-        const {
-          flatObjectMetadataMaps: refreshedObjectMaps,
-          flatFieldMetadataMaps: refreshedFieldMaps,
-        } =
-          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-            {
-              workspaceId,
-              flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-            },
-          );
-        const { idByNameSingular: refreshedObjectIdByNameSingular } =
-          buildObjectIdByNameMaps(refreshedObjectMaps);
-
-        const fieldMaps = refreshedFieldMaps as {
-          byId: Record<string, { name: string; morphId?: string }>;
-        };
-        const objectMaps = refreshedObjectMaps as {
-          byId: Record<string, { fieldMetadataIds: string[] }>;
-        };
-
-        const petFieldId = this.findFieldIdByObjectAndName({
-          objectName: 'petCareAgreement',
-          fieldName: 'pet',
-          objectIdByNameSingular: refreshedObjectIdByNameSingular,
-          flatFieldMetadataMaps: fieldMaps,
-          flatObjectMetadataMaps: objectMaps,
-        });
-
-        for (const objName of ['company', 'person']) {
-          const fieldId = this.findFieldIdByObjectAndName({
-            objectName: objName,
-            fieldName: 'caredForPets',
-            objectIdByNameSingular: refreshedObjectIdByNameSingular,
-            flatFieldMetadataMaps: fieldMaps,
-            flatObjectMetadataMaps: objectMaps,
-          });
-
-          await this.fieldMetadataService.updateOneField({
-            workspaceId,
-            updateFieldInput: {
-              id: fieldId,
-              settings: {
-                relationType: RelationType.ONE_TO_MANY,
-                junctionTargetFieldId: petFieldId,
-              },
-            },
-          });
-        }
       }
     }
+
+    // Update existing fields to use junction config
+    if (config.junctionUpdates && config.junctionUpdates.length > 0) {
+      const refreshedMaps = await this.getFreshFlatMaps(workspaceId);
+
+      for (const update of config.junctionUpdates) {
+        await this.applyJunctionUpdate({
+          workspaceId,
+          update,
+          flatMaps: refreshedMaps,
+        });
+      }
+    }
+  }
+
+  private async getFreshFlatMaps(workspaceId: string): Promise<FlatMaps> {
+    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+    });
+
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
+      );
+
+    const { idByNameSingular } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
+    );
+
+    return {
+      fieldMaps: flatFieldMetadataMaps as FlatMaps['fieldMaps'],
+      objectMaps: flatObjectMetadataMaps as FlatMaps['objectMaps'],
+      objectIdByName: idByNameSingular,
+    };
+  }
+
+  private async applyJunctionUpdate({
+    workspaceId,
+    update,
+    flatMaps,
+  }: {
+    workspaceId: string;
+    update: JunctionUpdateSeed;
+    flatMaps: FlatMaps;
+  }): Promise<void> {
+    const [targetObjectName, targetFieldName] =
+      update.junctionTargetFieldRef.split('.');
+
+    const junctionTargetFieldId = this.findFieldId(
+      targetObjectName,
+      targetFieldName,
+      flatMaps,
+    );
+
+    const fieldId = this.findFieldId(
+      update.objectName,
+      update.fieldName,
+      flatMaps,
+    );
+
+    await this.fieldMetadataService.updateOneField({
+      workspaceId,
+      updateFieldInput: {
+        id: fieldId,
+        ...(update.label && { label: update.label }),
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+          junctionTargetFieldId,
+        },
+      },
+    });
   }
 
   private async seedRegularRelations({
@@ -497,109 +513,81 @@ export class DevSeederMetadataService {
   private async seedJunctionField({
     workspaceId,
     junctionField,
-    objectIdByNameSingular,
-    flatFieldMetadataMaps,
-    flatObjectMetadataMaps,
+    flatMaps,
   }: {
     workspaceId: string;
     junctionField: JunctionFieldSeed;
-    objectIdByNameSingular: Record<string, string>;
-    flatFieldMetadataMaps: {
-      byId: Record<string, { name: string; morphId?: string }>;
-    };
-    flatObjectMetadataMaps: {
-      byId: Record<string, { fieldMetadataIds: string[] }>;
-    };
+    flatMaps: FlatMaps;
   }): Promise<void> {
     const sourceObjectMetadataId =
-      objectIdByNameSingular[junctionField.sourceObjectName];
+      flatMaps.objectIdByName[junctionField.sourceObjectName];
     const targetObjectMetadataId =
-      objectIdByNameSingular[junctionField.targetObjectName];
+      flatMaps.objectIdByName[junctionField.targetObjectName];
 
     if (!isDefined(sourceObjectMetadataId)) {
       throw new Error(
-        `Source object metadata id not found for: ${junctionField.sourceObjectName}`,
+        `Source object not found: ${junctionField.sourceObjectName}`,
       );
     }
 
     if (!isDefined(targetObjectMetadataId)) {
       throw new Error(
-        `Target object metadata id not found for: ${junctionField.targetObjectName}`,
+        `Target object not found: ${junctionField.targetObjectName}`,
       );
     }
 
-    // Resolve junction target settings
     const [objectName, fieldName] =
       junctionField.junctionTargetFieldRef.split('.');
-    const junctionTargetFieldId = this.findFieldIdByObjectAndName({
+
+    const junctionTargetFieldId = this.findFieldId(
       objectName,
       fieldName,
-      objectIdByNameSingular,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    });
-
-    const settings = {
-      relationType: RelationType.ONE_TO_MANY,
-      junctionTargetFieldId,
-    };
-
-    const createFieldInput = {
-      type: FieldMetadataType.RELATION,
-      label: junctionField.label,
-      name: junctionField.name,
-      icon: junctionField.icon,
-      objectMetadataId: sourceObjectMetadataId,
-      settings,
-      relationCreationPayload: {
-        type: RelationType.ONE_TO_MANY,
-        targetFieldLabel: junctionField.targetFieldLabel,
-        targetFieldIcon: junctionField.targetFieldIcon,
-        targetObjectMetadataId,
-      },
-    };
+      flatMaps,
+    );
 
     await this.fieldMetadataService.createManyFields({
-      createFieldInputs: [createFieldInput],
+      createFieldInputs: [
+        {
+          type: FieldMetadataType.RELATION,
+          label: junctionField.label,
+          name: junctionField.name,
+          icon: junctionField.icon,
+          objectMetadataId: sourceObjectMetadataId,
+          settings: {
+            relationType: RelationType.ONE_TO_MANY,
+            junctionTargetFieldId,
+          },
+          relationCreationPayload: {
+            type: RelationType.ONE_TO_MANY,
+            targetFieldLabel: junctionField.targetFieldLabel,
+            targetFieldIcon: junctionField.targetFieldIcon,
+            targetObjectMetadataId,
+          },
+        },
+      ],
       workspaceId,
     });
   }
 
-  private findFieldIdByObjectAndName({
-    objectName,
-    fieldName,
-    objectIdByNameSingular,
-    flatFieldMetadataMaps,
-    flatObjectMetadataMaps,
-  }: {
-    objectName: string;
-    fieldName: string;
-    objectIdByNameSingular: Record<string, string>;
-    flatFieldMetadataMaps: {
-      byId: Record<string, { name: string; morphId?: string }>;
-    };
-    flatObjectMetadataMaps: {
-      byId: Record<string, { fieldMetadataIds: string[] }>;
-    };
-  }): string {
-    const objectId = objectIdByNameSingular[objectName];
+  private findFieldId(
+    objectName: string,
+    fieldName: string,
+    flatMaps: FlatMaps,
+  ): string {
+    const objectId = flatMaps.objectIdByName[objectName];
 
     if (!isDefined(objectId)) {
       throw new Error(`Object not found: ${objectName}`);
     }
 
-    // Get the object to find its field IDs - access via byId
-    const objectMetadata = flatObjectMetadataMaps.byId[objectId];
+    const objectMetadata = flatMaps.objectMaps.byId[objectId];
 
     if (!isDefined(objectMetadata)) {
-      throw new Error(`Object metadata not found for id: ${objectId}`);
+      throw new Error(`Object metadata not found: ${objectName}`);
     }
 
-    // Find the field by name - access via byId
     for (const fieldId of objectMetadata.fieldMetadataIds) {
-      const field = flatFieldMetadataMaps.byId[fieldId];
-
-      if (field?.name === fieldName) {
+      if (flatMaps.fieldMaps.byId[fieldId]?.name === fieldName) {
         return fieldId;
       }
     }
