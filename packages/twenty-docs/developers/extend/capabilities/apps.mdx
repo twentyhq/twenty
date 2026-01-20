@@ -82,10 +82,6 @@ my-twenty-app/
   .gitignore
   .nvmrc
   .yarnrc.yml
-  .yarn/
-    releases/
-      yarn-4.9.2.cjs
-    install-state.gz
   eslint.config.mjs
   tsconfig.json
   README.md
@@ -146,7 +142,7 @@ At a high level:
 
 - **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall`, and `auth` that delegate to the local `twenty` CLI.
 - **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `generated/` (typed client), `dist/`, `build/`, coverage folders, log files, and `.env*` files.
-- **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Lock and configure the Yarn 4 toolchain used by the project.
+- **yarn.lock**, **.yarnrc.yml**: Lock and configure the Yarn 4 toolchain used by the project. Yarn is managed by Corepack based on the `packageManager` field in `package.json`.
 - **.nvmrc**: Pins the Node.js version expected by the project.
 - **eslint.config.mjs** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
 - **README.md**: A short README in the app root with basic instructions.

@@ -90,8 +90,9 @@ git push
 Our team reviews contributions for quality, security, and reusability before merging.
 
 ## Troubleshooting
-- Auth prompts not appearing: run `yarn auth:login` again and verify the API key permissions.
-- Types not generated: ensure `yarn app:generate` runs without errors, then re‑start `yarn app:dev`.
+- **Yarn not found or wrong version**: Run `corepack enable` to enable Corepack, which manages Yarn automatically.
+- **Auth prompts not appearing**: Run `yarn auth:login` again and verify the API key permissions.
+- **Types not generated**: Ensure `yarn app:generate` runs without errors, then re‑start `yarn app:dev`.
 
 ## Contributing
 - See our [GitHub](https://github.com/twentyhq/twenty)
