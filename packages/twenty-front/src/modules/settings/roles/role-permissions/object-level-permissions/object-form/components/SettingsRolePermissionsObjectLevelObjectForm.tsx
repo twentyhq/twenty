@@ -15,7 +15,7 @@ import { SettingsPath, type ViewFilterOperand } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import {
-  BillingEntitlement,
+  type BillingEntitlement,
   BillingEntitlementKey,
   FeatureFlagKey,
   useFindOneAgentQuery,
@@ -53,15 +53,18 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
 
   const workspaceBillingEntitlements = currentWorkspace?.billingEntitlements;
 
-  const isBillingEntitlementEnabled = workspaceBillingEntitlements?.some(
-    (entitlement: BillingEntitlement) =>
-      entitlement.key === BillingEntitlementKey.RLS && entitlement.value === true,
-  ) ?? false;
+  const isBillingEntitlementEnabled =
+    workspaceBillingEntitlements?.some(
+      (entitlement: BillingEntitlement) =>
+        entitlement.key === BillingEntitlementKey.RLS &&
+        entitlement.value === true,
+    ) ?? false;
 
   const isRowLevelPermissionPredicatesEnabled =
     featureFlagsMap[
       FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-    ] && (hasValidEnterpriseKey || isBillingEntitlementEnabled);
+    ] &&
+    (hasValidEnterpriseKey || isBillingEntitlementEnabled);
 
   const objectMetadataItem = objectMetadata.objectMetadataItem;
 
