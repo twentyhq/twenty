@@ -23,6 +23,7 @@ module.exports = {
     './src/modules/workflow/**/graphql/**/*.{ts,tsx}',
     './src/modules/analytics/graphql/**/*.{ts,tsx}',
     './src/modules/object-metadata/graphql/**/*.{ts,tsx}',
+    './src/modules/navigation-menu-item/graphql/**/*.{ts,tsx}',
     './src/modules/attachments/graphql/**/*.{ts,tsx}',
     './src/modules/file/graphql/**/*.{ts,tsx}',
     './src/modules/onboarding/graphql/**/*.{ts,tsx}',
