@@ -33,7 +33,7 @@ export class NavigationMenuItemDTO {
   targetObjectMetadataId?: string | null;
 
   @IsOptional()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   name?: string | null;
 
   @IsUUID()
