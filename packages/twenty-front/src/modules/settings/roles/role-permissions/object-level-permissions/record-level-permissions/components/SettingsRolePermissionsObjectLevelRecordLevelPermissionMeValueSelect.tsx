@@ -22,7 +22,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
-import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/recordLevelPermissionPredicateFieldTypes';
+import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -124,7 +124,11 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
             return true;
           }
 
-          if (!RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(targetFieldType)) {
+          if (
+            !RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
+              targetFieldType,
+            )
+          ) {
             return false;
           }
 

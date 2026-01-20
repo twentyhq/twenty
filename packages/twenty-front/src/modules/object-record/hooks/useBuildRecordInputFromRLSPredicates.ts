@@ -14,7 +14,15 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isUndefined } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
+
+const mergeCompositeValues = (
+  existingValue: unknown,
+  incomingValue: unknown,
+) =>
+  isPlainObject(existingValue) && isPlainObject(incomingValue)
+    ? { ...existingValue, ...incomingValue }
+    : incomingValue;
 
 export const useBuildRecordInputFromRLSPredicates = ({
   objectMetadataItem,
@@ -93,8 +101,6 @@ export const useBuildRecordInputFromRLSPredicates = ({
   };
 
   const buildRecordInputFromRLSPredicates = (): Partial<ObjectRecord> => {
-    const recordInput: Partial<ObjectRecord> = {};
-
     const rlsPredicates = objectPermissions.rowLevelPermissionPredicates.filter(
       (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
     );
@@ -111,6 +117,8 @@ export const useBuildRecordInputFromRLSPredicates = ({
         ),
       )
       .filter(isDefined);
+
+    const recordInputFromDynamicFilters: Partial<ObjectRecord> = {};
 
     rlsPredicatesAsRecordFilters.forEach((filter) => {
       const fieldMetadataItem = fieldMetadataItemMap.get(
@@ -149,9 +157,14 @@ export const useBuildRecordInputFromRLSPredicates = ({
             );
           }
 
-          recordInput[recordInputField] = compositeValue;
+          recordInputFromDynamicFilters[recordInputField] =
+            mergeCompositeValues(
+              recordInputFromDynamicFilters[recordInputField],
+              compositeValue,
+            );
         } else {
-          recordInput[recordInputField] = currentWorkspaceMemberFieldValue;
+          recordInputFromDynamicFilters[recordInputField] =
+            currentWorkspaceMemberFieldValue;
         }
       }
     });
@@ -162,16 +175,24 @@ export const useBuildRecordInputFromRLSPredicates = ({
       (filter) => !isDefined(filter.rlsDynamicValue),
     );
 
-    const recordInputFromFilters = buildRecordInputFromFilter({
+    const recordInputFromStaticFilters = buildRecordInputFromFilter({
       currentRecordFilters: staticFilters,
       objectMetadataItem,
       currentWorkspaceMember: currentWorkspaceMember ?? undefined,
     });
 
-    return {
-      ...recordInput,
-      ...recordInputFromFilters,
+    const mergedRecordInput: Partial<ObjectRecord> = {
+      ...recordInputFromDynamicFilters,
     };
+
+    Object.entries(recordInputFromStaticFilters).forEach(([key, value]) => {
+      mergedRecordInput[key] = mergeCompositeValues(
+        mergedRecordInput[key],
+        value,
+      );
+    });
+
+    return mergedRecordInput;
   };
 
   return { buildRecordInputFromRLSPredicates };

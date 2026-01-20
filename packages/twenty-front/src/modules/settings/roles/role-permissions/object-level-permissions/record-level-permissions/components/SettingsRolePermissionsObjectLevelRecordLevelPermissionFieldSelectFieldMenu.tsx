@@ -16,7 +16,7 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
-import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/recordLevelPermissionPredicateFieldTypes';
+import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
@@ -56,16 +56,17 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
     );
 
     const filteredFieldMetadataItems = filterableFieldMetadataItems
-      .filter((fieldMetadataItem) =>
-        fieldMetadataItem.label
-          .toLocaleLowerCase()
-          .includes(objectFilterDropdownSearchInput.toLocaleLowerCase()) &&
-          (
-            RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(fieldMetadataItem.type)
-            || (fieldMetadataItem.type === FieldMetadataType.RELATION
-                && fieldMetadataItem.relation?.targetObjectMetadata.nameSingular === CoreObjectNameSingular.WorkspaceMember
-              )
-            ),
+      .filter(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.label
+            .toLocaleLowerCase()
+            .includes(objectFilterDropdownSearchInput.toLocaleLowerCase()) &&
+          (RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
+            fieldMetadataItem.type,
+          ) ||
+            (fieldMetadataItem.type === FieldMetadataType.RELATION &&
+              fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
+                CoreObjectNameSingular.WorkspaceMember)),
       )
       .sort((a, b) => a.label.localeCompare(b.label));
 

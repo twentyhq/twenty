@@ -50,10 +50,6 @@ import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/work
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
@@ -214,10 +210,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
     const recordFieldValue = record[filterKey];
 
     if (!isDefined(recordFieldValue)) {
-      throw new TwentyORMException(
-        'Record does not satisfy security constraints.',
-        TwentyORMExceptionCode.RLS_VALIDATION_FAILED,
-      );
+      return false;
     }
 
     switch (objectMetadataField.type) {
