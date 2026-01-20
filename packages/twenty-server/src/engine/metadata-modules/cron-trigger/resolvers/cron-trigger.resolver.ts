@@ -18,6 +18,7 @@ import { UpdateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger
 import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { cronTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/cron-trigger/utils/cron-trigger-graphql-api-exception-handler.util';
+import { fromFlatCronTriggerToCronTriggerDto } from 'src/engine/metadata-modules/cron-trigger/utils/from-flat-cron-trigger-to-cron-trigger-dto.util';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -37,7 +38,7 @@ export class CronTriggerResolver {
   async findOneCronTrigger(
     @Args('input') { id }: CronTriggerIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<CronTriggerDTO> {
     try {
       return await this.cronTriggerRepository.findOneOrFail({
         where: {
@@ -53,7 +54,7 @@ export class CronTriggerResolver {
   @Query(() => [CronTriggerDTO])
   async findManyCronTriggers(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<CronTriggerDTO[]> {
     try {
       return await this.cronTriggerRepository.find({
         where: { workspaceId },
@@ -67,12 +68,14 @@ export class CronTriggerResolver {
   async deleteOneCronTrigger(
     @Args('input') input: CronTriggerIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<CronTriggerDTO> {
     try {
-      return await this.cronTriggerV2Service.destroyOne({
+      const flatCronTrigger = await this.cronTriggerV2Service.destroyOne({
         destroyCronTriggerInput: input,
         workspaceId,
       });
+
+      return fromFlatCronTriggerToCronTriggerDto(flatCronTrigger);
     } catch (error) {
       cronTriggerGraphQLApiExceptionHandler(error);
     }
@@ -83,9 +86,14 @@ export class CronTriggerResolver {
     @Args('input')
     input: UpdateCronTriggerInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<CronTriggerDTO> {
     try {
-      return await this.cronTriggerV2Service.updateOne(input, workspaceId);
+      const flatCronTrigger = await this.cronTriggerV2Service.updateOne(
+        input,
+        workspaceId,
+      );
+
+      return fromFlatCronTriggerToCronTriggerDto(flatCronTrigger);
     } catch (error) {
       cronTriggerGraphQLApiExceptionHandler(error);
     }
@@ -96,9 +104,14 @@ export class CronTriggerResolver {
     @Args('input')
     input: CreateCronTriggerInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<CronTriggerDTO> {
     try {
-      return await this.cronTriggerV2Service.createOne(input, workspaceId);
+      const flatCronTrigger = await this.cronTriggerV2Service.createOne(
+        input,
+        workspaceId,
+      );
+
+      return fromFlatCronTriggerToCronTriggerDto(flatCronTrigger);
     } catch (error) {
       cronTriggerGraphQLApiExceptionHandler(error);
     }

@@ -18,6 +18,7 @@ import { RouteTriggerDTO } from 'src/engine/metadata-modules/route-trigger/dtos/
 import { UpdateRouteTriggerInput } from 'src/engine/metadata-modules/route-trigger/dtos/update-route-trigger.input';
 import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
+import { fromFlatRouteTriggerToRouteTriggerDto } from 'src/engine/metadata-modules/route-trigger/utils/from-flat-route-trigger-to-route-trigger-dto.util';
 import { routeTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/route-trigger/utils/route-trigger-graphql-api-exception-handler.utils';
 
 @UseGuards(
@@ -41,7 +42,7 @@ export class RouteTriggerResolver {
   async findOneRouteTrigger(
     @Args('input') { id }: RouteTriggerIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<RouteTriggerDTO> {
     try {
       return await this.routeTriggerRepository.findOneOrFail({
         where: {
@@ -57,7 +58,7 @@ export class RouteTriggerResolver {
   @Query(() => [RouteTriggerDTO])
   async findManyRouteTriggers(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<RouteTriggerDTO[]> {
     try {
       return await this.routeTriggerRepository.find({
         where: { workspaceId },
@@ -71,12 +72,14 @@ export class RouteTriggerResolver {
   async deleteOneRouteTrigger(
     @Args('input') input: RouteTriggerIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<RouteTriggerDTO> {
     try {
-      return await this.routeV2Service.destroyOne({
+      const flatRouteTrigger = await this.routeV2Service.destroyOne({
         destroyRouteTriggerInput: input,
         workspaceId,
       });
+
+      return fromFlatRouteTriggerToRouteTriggerDto(flatRouteTrigger);
     } catch (error) {
       routeTriggerGraphQLApiExceptionHandler(error);
     }
@@ -87,9 +90,14 @@ export class RouteTriggerResolver {
     @Args('input')
     input: UpdateRouteTriggerInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<RouteTriggerDTO> {
     try {
-      return await this.routeV2Service.updateOne(input, workspaceId);
+      const flatRouteTrigger = await this.routeV2Service.updateOne(
+        input,
+        workspaceId,
+      );
+
+      return fromFlatRouteTriggerToRouteTriggerDto(flatRouteTrigger);
     } catch (error) {
       routeTriggerGraphQLApiExceptionHandler(error);
     }
@@ -100,9 +108,14 @@ export class RouteTriggerResolver {
     @Args('input')
     input: CreateRouteTriggerInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<RouteTriggerDTO> {
     try {
-      return await this.routeV2Service.createOne(input, workspaceId);
+      const flatRouteTrigger = await this.routeV2Service.createOne(
+        input,
+        workspaceId,
+      );
+
+      return fromFlatRouteTriggerToRouteTriggerDto(flatRouteTrigger);
     } catch (error) {
       routeTriggerGraphQLApiExceptionHandler(error);
     }

@@ -18,6 +18,7 @@ import { UpdateDatabaseEventTriggerInput } from 'src/engine/metadata-modules/dat
 import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
 import { databaseEventTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/database-event-trigger/utils/database-event-trigger-graphql-api-exception-handler.utils';
+import { fromFlatDatabaseEventTriggerToDatabaseEventTriggerDto } from 'src/engine/metadata-modules/database-event-trigger/utils/from-flat-database-event-trigger-to-database-event-trigger-dto.util';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -37,7 +38,7 @@ export class DatabaseEventTriggerResolver {
   async findOneDatabaseEventTrigger(
     @Args('input') { id }: DatabaseEventTriggerIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<DatabaseEventTriggerDTO> {
     try {
       return await this.databaseEventTriggerRepository.findOneOrFail({
         where: {
@@ -53,7 +54,7 @@ export class DatabaseEventTriggerResolver {
   @Query(() => [DatabaseEventTriggerDTO])
   async findManyDatabaseEventTriggers(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<DatabaseEventTriggerDTO[]> {
     try {
       return await this.databaseEventTriggerRepository.find({
         where: { workspaceId },
@@ -67,12 +68,17 @@ export class DatabaseEventTriggerResolver {
   async deleteOneDatabaseEventTrigger(
     @Args('input') input: DatabaseEventTriggerIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<DatabaseEventTriggerDTO> {
     try {
-      return await this.databaseEventTriggerV2Service.destroyOne({
-        destroyDatabaseEventTriggerInput: input,
-        workspaceId,
-      });
+      const flatDatabaseEventTrigger =
+        await this.databaseEventTriggerV2Service.destroyOne({
+          destroyDatabaseEventTriggerInput: input,
+          workspaceId,
+        });
+
+      return fromFlatDatabaseEventTriggerToDatabaseEventTriggerDto(
+        flatDatabaseEventTrigger,
+      );
     } catch (error) {
       databaseEventTriggerGraphQLApiExceptionHandler(error);
     }
@@ -83,11 +89,13 @@ export class DatabaseEventTriggerResolver {
     @Args('input')
     input: UpdateDatabaseEventTriggerInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<DatabaseEventTriggerDTO> {
     try {
-      return await this.databaseEventTriggerV2Service.updateOne(
-        input,
-        workspaceId,
+      const flatDatabaseEventTrigger =
+        await this.databaseEventTriggerV2Service.updateOne(input, workspaceId);
+
+      return fromFlatDatabaseEventTriggerToDatabaseEventTriggerDto(
+        flatDatabaseEventTrigger,
       );
     } catch (error) {
       databaseEventTriggerGraphQLApiExceptionHandler(error);
@@ -99,11 +107,13 @@ export class DatabaseEventTriggerResolver {
     @Args('input')
     input: CreateDatabaseEventTriggerInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<DatabaseEventTriggerDTO> {
     try {
-      return await this.databaseEventTriggerV2Service.createOne(
-        input,
-        workspaceId,
+      const flatDatabaseEventTrigger =
+        await this.databaseEventTriggerV2Service.createOne(input, workspaceId);
+
+      return fromFlatDatabaseEventTriggerToDatabaseEventTriggerDto(
+        flatDatabaseEventTrigger,
       );
     } catch (error) {
       databaseEventTriggerGraphQLApiExceptionHandler(error);
