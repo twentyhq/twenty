@@ -51,9 +51,17 @@ export const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
 
     const onClose = () => {
       if (!isResolved) {
-        isResolved = true;
-        cleanup();
-        reject(new Error('Stream closed before end'));
+        // If stream has ended, resolve successfully (close can fire after end)
+        if (stream.readableEnded) {
+          isResolved = true;
+          cleanup();
+          resolve(Buffer.concat(chunks));
+        } else {
+          // Stream closed before end - this is an error
+          isResolved = true;
+          cleanup();
+          reject(new Error('Stream closed before end'));
+        }
       }
     };
 
