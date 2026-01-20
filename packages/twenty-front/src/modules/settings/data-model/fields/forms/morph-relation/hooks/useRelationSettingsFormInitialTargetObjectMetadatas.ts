@@ -5,8 +5,10 @@ import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
+  sourceObjectMetadataId,
   fieldMetadataItem,
 }: {
+  sourceObjectMetadataId: string;
   fieldMetadataItem?: Pick<
     FieldMetadataItem,
     'type' | 'morphRelations' | 'relation'
@@ -36,7 +38,8 @@ export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
 
   const availableItems = activeObjectMetadataItems
     .filter(isObjectMetadataAvailableForRelation)
-    .sort((a, b) => a.labelSingular.localeCompare(b.labelSingular));
+    .sort((a, b) => a.labelSingular.localeCompare(b.labelSingular))
+    .filter((item) => item.id !== sourceObjectMetadataId);
   const firstInitialObjectCandidate = availableItems[0];
   if (!isDefined(firstInitialObjectCandidate)) {
     throw new Error(

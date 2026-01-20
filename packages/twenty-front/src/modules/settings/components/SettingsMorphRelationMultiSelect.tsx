@@ -49,6 +49,7 @@ export type SettingsMorphRelationMultiSelectProps = {
   callToActionButton?: CallToActionButton;
   dropdownOffset?: DropdownOffset;
   hasRightElement?: boolean;
+  error?: string;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -68,6 +69,13 @@ const StyledDescription = styled.span`
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
+const StyledError = styled.span`
+  color: ${({ theme }) => theme.color.red};
+  display: block;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+`;
+
 export const SettingsMorphRelationMultiSelect = ({
   className,
   disabled: disabledFromProps,
@@ -85,6 +93,7 @@ export const SettingsMorphRelationMultiSelect = ({
   callToActionButton,
   dropdownOffset,
   hasRightElement,
+  error,
 }: SettingsMorphRelationMultiSelectProps) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -282,6 +291,7 @@ export const SettingsMorphRelationMultiSelect = ({
         />
       )}
       {!!description && <StyledDescription>{description}</StyledDescription>}
+      {!!error && <StyledError>{error}</StyledError>}
     </StyledContainer>
   );
 };

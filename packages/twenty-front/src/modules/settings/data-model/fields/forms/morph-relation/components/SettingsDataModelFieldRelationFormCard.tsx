@@ -34,6 +34,14 @@ export const SettingsDataModelFieldRelationFormCard = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
+  const sourceObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === objectNameSingular,
+  );
+
+  if (!sourceObjectMetadataItem) {
+    throw new Error('Object not found.');
+  }
+
   const relationObjectMetadataIds: string[] = watch(
     'morphRelationObjectMetadataIds',
     [],
@@ -109,6 +117,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
       form={
         <SettingsDataModelFieldRelationForm
           existingFieldMetadataId={existingFieldMetadataId}
+          sourceObjectMetadataId={sourceObjectMetadataItem?.id}
           disabled={disabled}
         />
       }
