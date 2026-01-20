@@ -6,6 +6,7 @@ import {
   ConnectedAccountProvider,
   type AllowedAddressSubField,
   type FieldMetadataMultiItemSettings,
+  type FileCategory,
 } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
@@ -189,6 +190,10 @@ export type FieldTsVectorMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
+export type FieldFilesMetadata = BaseFieldMetadata & {
+  settings?: FieldMetadataMultiItemSettings | null;
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
@@ -196,6 +201,7 @@ export type FieldMetadata =
   | FieldDateMetadata
   | FieldEmailMetadata
   | FieldEmailsMetadata
+  | FieldFilesMetadata
   | FieldFullNameMetadata
   | FieldLinkMetadata
   | FieldLinksMetadata
@@ -319,3 +325,11 @@ export type FieldPhonesValue = {
   primaryPhoneCallingCode?: string;
   additionalPhones?: PhoneRecord[] | null;
 };
+
+export type FieldFileValue = {
+  fileId: string;
+  label: string;
+  fileCategory: FileCategory;
+};
+
+export type FieldFilesValue = FieldFileValue[];
