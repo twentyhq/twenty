@@ -53,7 +53,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
 
   const workspaceBillingEntitlements = currentWorkspace?.billingEntitlements;
 
-  const isBillingEntitlementEnabled =
+  const isRLSBillingEntitlementEnabled =
     workspaceBillingEntitlements?.some(
       (entitlement: BillingEntitlement) =>
         entitlement.key === BillingEntitlementKey.RLS &&
@@ -64,7 +64,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     featureFlagsMap[
       FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
     ] &&
-    (hasValidEnterpriseKey || isBillingEntitlementEnabled);
+    (hasValidEnterpriseKey || isRLSBillingEntitlementEnabled);
 
   const objectMetadataItem = objectMetadata.objectMetadataItem;
 

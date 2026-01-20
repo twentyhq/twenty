@@ -160,8 +160,6 @@ export const FormSingleRecordPicker = ({
     }
   };
 
-  const objectNames = objectNameSingulars.join(' or ');
-
   return (
     <FormFieldInputContainer data-testid={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
