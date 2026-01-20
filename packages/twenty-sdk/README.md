@@ -113,7 +113,7 @@ Application development commands.
 
 - `twenty app:generate [appPath]` — Generate the typed Twenty client for your application.
 
-- `twenty app:logs [appPath]` — Stream application function logs.
+- `twenty function:logs [appPath]` — Stream application function logs.
   - Options:
     - `-u, --functionUniversalIdentifier <id>`: Only show logs for a specific function universal ID.
     - `-n, --functionName <name>`: Only show logs for a specific function name.
@@ -140,10 +140,10 @@ twenty entity:add
 twenty app:generate
 
 # Watch all function logs
-twenty app:logs
+twenty function:logs
 
 # Watch logs for a specific function by name
-twenty app:logs -n my-function
+twenty function:logs -n my-function
 ```
 
 ## Configuration
