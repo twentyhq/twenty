@@ -32,8 +32,10 @@ export class NavigationMenuItemService {
 
   async findAll({
     workspaceId,
+    userWorkspaceId,
   }: {
     workspaceId: string;
+    userWorkspaceId?: string;
   }): Promise<NavigationMenuItemDTO[]> {
     const { flatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -44,7 +46,12 @@ export class NavigationMenuItemService {
       );
 
     return Object.values(flatNavigationMenuItemMaps.byId)
-      .filter(isDefined)
+      .filter(
+        (item): item is NonNullable<typeof item> =>
+          isDefined(item) &&
+          (!isDefined(item.userWorkspaceId) ||
+            item.userWorkspaceId === userWorkspaceId),
+      )
       .sort((a, b) => a.position - b.position)
       .map(fromFlatNavigationMenuItemToNavigationMenuItemDto);
   }

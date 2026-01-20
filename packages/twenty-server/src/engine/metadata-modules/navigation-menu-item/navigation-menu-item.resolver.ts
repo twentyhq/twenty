@@ -32,9 +32,11 @@ export class NavigationMenuItemResolver {
   @UseGuards(NoPermissionGuard)
   async navigationMenuItems(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<NavigationMenuItemDTO[]> {
     return await this.navigationMenuItemService.findAll({
       workspaceId: workspace.id,
+      userWorkspaceId,
     });
   }
 
