@@ -511,21 +511,21 @@ Běžné typy spouštěčů:
 > např. `path: '/post-card/create',` -> volání na `<APP_URL>/s/post-card/create`
 
 * **cron**: Spouští vaši funkci podle plánu pomocí výrazu CRON.
-* **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
+* **databaseEvent**: Spouští se při událostech životního cyklu objektů v pracovním prostoru. Když je operace události `updated`, lze konkrétní sledovaná pole určit v poli `updatedFields`. Pokud zůstane nedefinované nebo prázdné, spustí funkci jakákoli aktualizace.
 
-> e.g. `person.updated`
+> např. `person.updated`
 
 Poznámky:
 
 * Pole `triggers` je volitelné. Funkce bez spouštěčů lze použít jako pomocné funkce volané jinými funkcemi.
 * V jedné funkci můžete kombinovat více typů spouštěčů.
 
-### Route trigger payload
+### Payload spouštěče trasy
 
 <Warning>
-  **Breaking change (v1.16, January 2026):** The route trigger payload format has changed. Prior to v1.16, query parameters, path parameters, and body were sent directly as the payload. Starting with v1.16, they are nested inside a structured `RoutePayload` object.
+  **Zpětně nekompatibilní změna (v1.16, leden 2026):** Formát payloadu spouštěče trasy se změnil. Před verzí v1.16 byly parametry dotazu, parametry cesty a tělo odesílány přímo jako payload. Od verze v1.16 jsou zanořeny uvnitř strukturovaného objektu `RoutePayload`.
 
-  **Before v1.16:**
+  **Před v1.16:**
 
   ```typescript
   const handler = async (params) => {
@@ -533,7 +533,7 @@ Poznámky:
   };
   ```
 
-  **After v1.16:**
+  **Po v1.16:**
 
   ```typescript
   const handler = async (event: RoutePayload) => {
@@ -543,10 +543,10 @@ Poznámky:
   };
   ```
 
-  **To migrate existing functions:** Update your handler to destructure from `event.body`, `event.queryStringParameters`, or `event.pathParameters` instead of directly from the params object.
+  **Jak migrovat existující funkce:** Aktualizujte svůj handler tak, aby destrukturoval z `event.body`, `event.queryStringParameters` nebo `event.pathParameters` místo přímo z objektu params.
 </Warning>
 
-When a route trigger invokes your function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Import the type from `twenty-sdk`:
+Když spouštěč trasy vyvolá vaši funkci, ta obdrží objekt `RoutePayload`, který odpovídá formátu AWS HTTP API v2. Importujte typ z `twenty-sdk`:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -562,21 +562,21 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-The `RoutePayload` type has the following structure:
+Typ `RoutePayload` má následující strukturu:
 
-| Property                     | Typ                                   | Popis                                                                                   |
-| ---------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------- |
-| `headers`                    | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`)                           |
-| `queryStringParameters`      | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)                            |
-| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern (e.g., `/users/:id` → `{ id: '123' }`) |
-| `text zprávy`                | `object \| null`                      | Parsed request body (JSON)                                                              |
-| `isBase64Encoded`            | `booleovská hodnota`                  | Whether the body is base64 encoded                                                      |
-| `requestContext.http.method` | `string`                              | HTTP method (GET, POST, PUT, PATCH, DELETE)                                             |
-| `requestContext.http.path`   | `string`                              | Raw request path                                                                        |
+| Vlastnost                    | Typ                                   | Popis                                                                             |
+| ---------------------------- | ------------------------------------- | --------------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | Záhlaví HTTP (pouze ta uvedená v `forwardedRequestHeaders`)                       |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Parametry query stringu (více hodnot spojených čárkami)                           |
+| `pathParameters`             | `Record<string, string \| undefined>` | Parametry cesty extrahované ze vzoru trasy (např. `/users/:id` → `{ id: '123' }`) |
+| `text zprávy`                | `object \| null`                      | Parsované tělo požadavku (JSON)                                                   |
+| `isBase64Encoded`            | `booleovská hodnota`                  | Zda je tělo kódováno base64                                                       |
+| `requestContext.http.method` | `string`                              | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                       |
+| `requestContext.http.path`   | `string`                              | Nezpracovaná cesta požadavku                                                      |
 
-### Forwarding HTTP headers
+### Přeposílání záhlaví HTTP
 
-By default, HTTP headers from incoming requests are **not** passed to your serverless function for security reasons. To access specific headers, explicitly list them in the `forwardedRequestHeaders` array:
+Ve výchozím nastavení se záhlaví HTTP z příchozích požadavků z bezpečnostních důvodů do vaší serverless funkce **ne** předávají. Chcete-li zpřístupnit konkrétní záhlaví, výslovně je uveďte v poli `forwardedRequestHeaders`:
 
 ```typescript
 export default defineFunction({
@@ -596,7 +596,7 @@ export default defineFunction({
 });
 ```
 
-In your handler, you can then access these headers:
+Ve vašem handleru k nim poté můžete přistupovat:
 
 ```typescript
 const handler = async (event: RoutePayload) => {
@@ -609,7 +609,7 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-  Header names are normalized to lowercase. Access them using lowercase keys (for example, `event.headers['content-type']`).
+  Názvy záhlaví jsou normalizovány na malá písmena. Přistupujte k nim pomocí klíčů s malými písmeny (například `event.headers['content-type']`).
 </Note>
 
 Nové funkce můžete vytvářet dvěma způsoby:
