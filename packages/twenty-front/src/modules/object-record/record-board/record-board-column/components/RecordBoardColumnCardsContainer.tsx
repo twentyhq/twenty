@@ -55,17 +55,13 @@ export const RecordBoardColumnCardsContainer = ({
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
-      {recordIndexRecordGroupsAreInInitialLoading ? (
-        <RecordBoardColumnLoadingSkeletonCards />
-      ) : (
-        recordIds.map((recordId, index) => (
+      {recordIds.map((recordId, index) => (
           <RecordBoardCardDraggableContainer
             key={recordId}
             recordId={recordId}
             rowIndex={index}
           />
-        ))
-      )}
+        ))}
       {recordBoardShouldFetchMoreInColumn ? (
         <RecordBoardColumnLoadingSkeletonCards />
       ) : null}
