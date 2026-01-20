@@ -51,7 +51,7 @@ export class RouteTriggerResolver {
         },
       });
     } catch (error) {
-      routeTriggerGraphQLApiExceptionHandler(error);
+      return routeTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -64,7 +64,7 @@ export class RouteTriggerResolver {
         where: { workspaceId },
       });
     } catch (error) {
-      routeTriggerGraphQLApiExceptionHandler(error);
+      return routeTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -81,7 +81,7 @@ export class RouteTriggerResolver {
 
       return fromFlatRouteTriggerToRouteTriggerDto(flatRouteTrigger);
     } catch (error) {
-      routeTriggerGraphQLApiExceptionHandler(error);
+      return routeTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -99,7 +99,7 @@ export class RouteTriggerResolver {
 
       return fromFlatRouteTriggerToRouteTriggerDto(flatRouteTrigger);
     } catch (error) {
-      routeTriggerGraphQLApiExceptionHandler(error);
+      return routeTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -117,7 +117,7 @@ export class RouteTriggerResolver {
 
       return fromFlatRouteTriggerToRouteTriggerDto(flatRouteTrigger);
     } catch (error) {
-      routeTriggerGraphQLApiExceptionHandler(error);
+      return routeTriggerGraphQLApiExceptionHandler(error);
     }
   }
 }

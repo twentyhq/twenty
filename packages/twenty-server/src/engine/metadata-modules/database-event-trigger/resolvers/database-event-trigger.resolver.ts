@@ -47,7 +47,7 @@ export class DatabaseEventTriggerResolver {
         },
       });
     } catch (error) {
-      databaseEventTriggerGraphQLApiExceptionHandler(error);
+      return databaseEventTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -60,7 +60,7 @@ export class DatabaseEventTriggerResolver {
         where: { workspaceId },
       });
     } catch (error) {
-      databaseEventTriggerGraphQLApiExceptionHandler(error);
+      return databaseEventTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -80,7 +80,7 @@ export class DatabaseEventTriggerResolver {
         flatDatabaseEventTrigger,
       );
     } catch (error) {
-      databaseEventTriggerGraphQLApiExceptionHandler(error);
+      return databaseEventTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -98,7 +98,7 @@ export class DatabaseEventTriggerResolver {
         flatDatabaseEventTrigger,
       );
     } catch (error) {
-      databaseEventTriggerGraphQLApiExceptionHandler(error);
+      return databaseEventTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -116,7 +116,7 @@ export class DatabaseEventTriggerResolver {
         flatDatabaseEventTrigger,
       );
     } catch (error) {
-      databaseEventTriggerGraphQLApiExceptionHandler(error);
+      return databaseEventTriggerGraphQLApiExceptionHandler(error);
     }
   }
 }

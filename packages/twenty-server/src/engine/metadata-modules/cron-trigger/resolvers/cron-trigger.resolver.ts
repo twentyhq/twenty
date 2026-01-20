@@ -2,8 +2,8 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { Repository } from 'typeorm';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -47,7 +47,7 @@ export class CronTriggerResolver {
         },
       });
     } catch (error) {
-      cronTriggerGraphQLApiExceptionHandler(error);
+      return cronTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -60,7 +60,7 @@ export class CronTriggerResolver {
         where: { workspaceId },
       });
     } catch (error) {
-      cronTriggerGraphQLApiExceptionHandler(error);
+      return cronTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -77,7 +77,7 @@ export class CronTriggerResolver {
 
       return fromFlatCronTriggerToCronTriggerDto(flatCronTrigger);
     } catch (error) {
-      cronTriggerGraphQLApiExceptionHandler(error);
+      return cronTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -95,7 +95,7 @@ export class CronTriggerResolver {
 
       return fromFlatCronTriggerToCronTriggerDto(flatCronTrigger);
     } catch (error) {
-      cronTriggerGraphQLApiExceptionHandler(error);
+      return cronTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -113,7 +113,7 @@ export class CronTriggerResolver {
 
       return fromFlatCronTriggerToCronTriggerDto(flatCronTrigger);
     } catch (error) {
-      cronTriggerGraphQLApiExceptionHandler(error);
+      return cronTriggerGraphQLApiExceptionHandler(error);
     }
   }
 }

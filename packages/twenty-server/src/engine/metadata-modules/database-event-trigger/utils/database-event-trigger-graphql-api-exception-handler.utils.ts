@@ -9,7 +9,7 @@ import {
 
 export const databaseEventTriggerGraphQLApiExceptionHandler = (
   error: Error,
-): void => {
+): never => {
   if (error instanceof DatabaseEventTriggerException) {
     switch (error.code) {
       case DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_NOT_FOUND:
