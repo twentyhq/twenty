@@ -22,7 +22,7 @@ export const useCreateFavorite = () => {
     targetObjectNameSingular: string,
     favoriteFolderId?: string,
   ) => {
-    if (isNavigationMenuItemEnabled === true) {
+    if (isNavigationMenuItemEnabled) {
       await createNavigationMenuItem(
         targetRecord,
         targetObjectNameSingular,
