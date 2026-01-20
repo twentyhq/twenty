@@ -1,12 +1,10 @@
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import path, { join } from 'path';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -28,7 +26,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/dtos/uploadApplicationFileInput';
 
 @UseGuards(
@@ -42,8 +39,6 @@ export class ApplicationResolver {
   constructor(
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationService: ApplicationService,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
     private readonly fileStorageService: FileStorageService,
   ) {}
 
@@ -118,14 +113,6 @@ export class ApplicationResolver {
       folder: folderPath,
       mimeType: mimetype,
     });
-
-    const createdFile = this.fileRepository.create({
-      path: join(folderPath, filename),
-      size: buffer.length,
-      workspaceId,
-    });
-
-    await this.fileRepository.save(createdFile);
 
     return true;
   }
