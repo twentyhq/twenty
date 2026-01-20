@@ -950,9 +950,10 @@ export type CreateFrontComponentInput = {
 
 export type CreateNavigationMenuItemInput = {
   folderId?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['Int']>;
-  targetObjectMetadataId: Scalars['UUID'];
-  targetRecordId: Scalars['UUID'];
+  targetObjectMetadataId?: InputMaybe<Scalars['UUID']>;
+  targetRecordId?: InputMaybe<Scalars['UUID']>;
   userWorkspaceId?: InputMaybe<Scalars['UUID']>;
 };
 
@@ -3186,9 +3187,10 @@ export type NavigationMenuItem = {
   createdAt: Scalars['DateTime'];
   folderId?: Maybe<Scalars['UUID']>;
   id: Scalars['UUID'];
+  name?: Maybe<Scalars['String']>;
   position: Scalars['Float'];
-  targetObjectMetadataId: Scalars['UUID'];
-  targetRecordId: Scalars['UUID'];
+  targetObjectMetadataId?: Maybe<Scalars['UUID']>;
+  targetRecordId?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
   userWorkspaceId?: Maybe<Scalars['UUID']>;
 };
@@ -4785,6 +4787,7 @@ export type UpdateLabPublicFeatureFlagInput = {
 export type UpdateNavigationMenuItemInput = {
   folderId?: InputMaybe<Scalars['UUID']>;
   id: Scalars['UUID'];
+  name?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['Int']>;
 };
 

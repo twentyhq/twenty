@@ -3070,9 +3070,10 @@ export type NavigationMenuItem = {
   createdAt: Scalars['DateTime'];
   folderId?: Maybe<Scalars['UUID']>;
   id: Scalars['UUID'];
+  name?: Maybe<Scalars['String']>;
   position: Scalars['Float'];
-  targetObjectMetadataId: Scalars['UUID'];
-  targetRecordId: Scalars['UUID'];
+  targetObjectMetadataId?: Maybe<Scalars['UUID']>;
+  targetRecordId?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
   userWorkspaceId?: Maybe<Scalars['UUID']>;
 };
