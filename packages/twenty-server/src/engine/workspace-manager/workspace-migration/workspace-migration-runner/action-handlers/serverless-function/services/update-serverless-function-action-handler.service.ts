@@ -68,9 +68,7 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
   }: {
     flatServerlessFunction: FlatServerlessFunction;
   }) {
-    this.serverlessService.delete(
-      flatServerlessFunction,
-    );
+    this.serverlessService.delete(flatServerlessFunction);
   }
 
   async handleChecksumUpdate({
