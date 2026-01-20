@@ -939,7 +939,7 @@ export type CreateFrontComponentInput = {
 export type CreateNavigationMenuItemInput = {
   favoriteFolderId?: InputMaybe<Scalars['UUID']>;
   forWorkspaceMemberId?: InputMaybe<Scalars['UUID']>;
-  position?: InputMaybe<Scalars['Float']>;
+  position?: InputMaybe<Scalars['Int']>;
   targetObjectMetadataId: Scalars['UUID'];
   targetRecordId: Scalars['UUID'];
 };
@@ -4757,7 +4757,7 @@ export type UpdateLabPublicFeatureFlagInput = {
 export type UpdateNavigationMenuItemInput = {
   favoriteFolderId?: InputMaybe<Scalars['UUID']>;
   id: Scalars['UUID'];
-  position?: InputMaybe<Scalars['Float']>;
+  position?: InputMaybe<Scalars['Int']>;
 };
 
 export type UpdateObjectPayload = {
