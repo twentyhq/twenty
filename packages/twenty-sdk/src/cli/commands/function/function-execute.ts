@@ -1,7 +1,7 @@
-import chalk from 'chalk';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import { ApiService } from '@/cli/utilities/api/services/api.service';
-import { buildManifest } from '@/cli/utilities/manifest/utils/manifest-build';
+import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import chalk from 'chalk';
 import { type ApplicationManifest } from 'twenty-shared/application';
 
 export class FunctionExecuteCommand {
@@ -29,7 +29,12 @@ export class FunctionExecuteCommand {
         process.exit(1);
       }
 
-      const { manifest } = await buildManifest(appPath);
+      const manifest = await runManifestBuild(appPath);
+
+      if (!manifest) {
+        console.error(chalk.red('Failed to build manifest.'));
+        process.exit(1);
+      }
 
       const functionsResult = await this.apiService.findServerlessFunctions();
       if (!functionsResult.success) {
