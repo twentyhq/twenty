@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { In } from 'typeorm';
-
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -46,7 +44,8 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       );
 
     await fieldMetadataRepository.delete({
-      id: In([flatFieldMetadata.id]),
+      id: flatFieldMetadata.id,
+      workspaceId: context.workspaceId,
     });
   }
 

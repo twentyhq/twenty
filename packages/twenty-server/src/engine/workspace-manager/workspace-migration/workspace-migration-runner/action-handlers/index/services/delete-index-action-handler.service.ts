@@ -26,7 +26,7 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<DeleteIndexAction>,
   ): Promise<void> {
-    const { action, queryRunner, allFlatEntityMaps } = context;
+    const { action, queryRunner, allFlatEntityMaps, workspaceId } = context;
     const { universalIdentifier } = action;
 
     const flatIndex = findFlatEntityByUniversalIdentifierOrThrow({
@@ -37,6 +37,7 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     await deleteIndexMetadata({
       entityId: flatIndex.id,
       queryRunner,
+      workspaceId,
     });
   }
 
