@@ -6,7 +6,7 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = (
 ): FlatNavigationMenuItem => {
   return {
     id: navigationMenuItemEntity.id,
-    forWorkspaceMemberId: navigationMenuItemEntity.forWorkspaceMemberId,
+    userWorkspaceId: navigationMenuItemEntity.userWorkspaceId,
     targetRecordId: navigationMenuItemEntity.targetRecordId,
     targetObjectMetadataId: navigationMenuItemEntity.targetObjectMetadataId,
     folderId: navigationMenuItemEntity.folderId,

@@ -3042,12 +3042,12 @@ export type NavigationMenuItem = {
   applicationId?: Maybe<Scalars['UUID']>;
   createdAt: Scalars['DateTime'];
   folderId?: Maybe<Scalars['UUID']>;
-  forWorkspaceMemberId?: Maybe<Scalars['UUID']>;
   id: Scalars['UUID'];
   position: Scalars['Float'];
   targetObjectMetadataId: Scalars['UUID'];
   targetRecordId: Scalars['UUID'];
   updatedAt: Scalars['DateTime'];
+  userWorkspaceId?: Maybe<Scalars['UUID']>;
 };
 
 export type NotesConfiguration = {

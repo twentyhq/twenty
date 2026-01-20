@@ -67,12 +67,12 @@ const failingNavigationMenuItemCreationTestCases: EachTestingContext<TestContext
       },
     },
     {
-      title: 'when creating with invalid forWorkspaceMemberId (not a UUID)',
+      title: 'when creating with invalid userWorkspaceId (not a UUID)',
       context: {
         input: {
           targetRecordId: faker.string.uuid(),
           targetObjectMetadataId: faker.string.uuid(),
-          forWorkspaceMemberId: 'not-a-valid-uuid',
+          userWorkspaceId: 'not-a-valid-uuid',
         },
       },
     },

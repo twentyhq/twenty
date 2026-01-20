@@ -20,7 +20,7 @@ export class NavigationMenuItemDTO {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
-  forWorkspaceMemberId?: string;
+  userWorkspaceId?: string;
 
   @IsUUID()
   @IsNotEmpty()

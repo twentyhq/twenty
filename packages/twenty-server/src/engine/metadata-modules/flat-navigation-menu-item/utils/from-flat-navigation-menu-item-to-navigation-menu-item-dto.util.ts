@@ -5,8 +5,8 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemDto = (
   flatNavigationMenuItem: FlatNavigationMenuItem,
 ): NavigationMenuItemDTO => ({
   id: flatNavigationMenuItem.id,
-  forWorkspaceMemberId:
-    flatNavigationMenuItem.forWorkspaceMemberId ?? undefined,
+  userWorkspaceId:
+    flatNavigationMenuItem.userWorkspaceId ?? undefined,
   targetRecordId: flatNavigationMenuItem.targetRecordId,
   targetObjectMetadataId: flatNavigationMenuItem.targetObjectMetadataId,
   folderId: flatNavigationMenuItem.folderId ?? undefined,

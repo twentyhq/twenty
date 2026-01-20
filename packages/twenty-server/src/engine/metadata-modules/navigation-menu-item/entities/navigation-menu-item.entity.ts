@@ -10,12 +10,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
 
 @Entity({ name: 'navigationMenuItem', schema: 'core' })
-@Index('IDX_NAVIGATION_MENU_ITEM_FOR_WORKSPACE_MEMBER_ID_WORKSPACE_ID', [
-  'forWorkspaceMemberId',
+@Index('IDX_NAVIGATION_MENU_ITEM_USER_WORKSPACE_ID_WORKSPACE_ID', [
+  'userWorkspaceId',
   'workspaceId',
 ])
 @Index('IDX_NAVIGATION_MENU_ITEM_TARGET_RECORD_OBJ_METADATA_WS_ID', [
@@ -34,8 +35,15 @@ export class NavigationMenuItemEntity
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ManyToOne(() => UserWorkspaceEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'userWorkspaceId' })
+  userWorkspace: Relation<UserWorkspaceEntity> | null;
+
   @Column({ nullable: true, type: 'uuid' })
-  forWorkspaceMemberId: string | null;
+  userWorkspaceId: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   targetRecordId: string;

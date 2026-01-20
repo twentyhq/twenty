@@ -65,7 +65,7 @@ describe('NavigationMenuItem creation should succeed', () => {
       id: expect.any(String),
       targetRecordId,
       targetObjectMetadataId: personObjectMetadataId,
-      forWorkspaceMemberId: null,
+      userWorkspaceId: null,
       folderId: null,
       position: expect.any(Number),
     });
@@ -73,7 +73,7 @@ describe('NavigationMenuItem creation should succeed', () => {
 
   it('should create navigation menu item with all optional fields', async () => {
     const targetRecordId = faker.string.uuid();
-    const forWorkspaceMemberId = faker.string.uuid();
+    const userWorkspaceId = faker.string.uuid();
     const folderId = faker.string.uuid();
 
     const { data } = await createNavigationMenuItem({
@@ -81,7 +81,7 @@ describe('NavigationMenuItem creation should succeed', () => {
       input: {
         targetRecordId,
         targetObjectMetadataId: companyObjectMetadataId,
-        forWorkspaceMemberId,
+        userWorkspaceId,
         folderId,
         position: 5,
       },
@@ -93,7 +93,7 @@ describe('NavigationMenuItem creation should succeed', () => {
       id: expect.any(String),
       targetRecordId,
       targetObjectMetadataId: companyObjectMetadataId,
-      forWorkspaceMemberId,
+      userWorkspaceId,
       folderId,
       position: 5,
     });

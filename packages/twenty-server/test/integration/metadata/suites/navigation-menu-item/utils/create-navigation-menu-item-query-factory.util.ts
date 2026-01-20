@@ -8,7 +8,7 @@ export type CreateNavigationMenuItemFactoryInput =
 
 const DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS = `
   id
-  forWorkspaceMemberId
+  userWorkspaceId
   targetRecordId
   targetObjectMetadataId
   folderId

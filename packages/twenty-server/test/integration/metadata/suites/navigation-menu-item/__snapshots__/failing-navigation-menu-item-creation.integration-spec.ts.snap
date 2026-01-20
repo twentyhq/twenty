@@ -45,7 +45,7 @@ exports[`NavigationMenuItem creation should fail when creating with invalid fold
 }
 `;
 
-exports[`NavigationMenuItem creation should fail when creating with invalid forWorkspaceMemberId (not a UUID) 1`] = `
+exports[`NavigationMenuItem creation should fail when creating with invalid userWorkspaceId (not a UUID) 1`] = `
 {
   "extensions": {
     "code": "GRAPHQL_VALIDATION_FAILED",
