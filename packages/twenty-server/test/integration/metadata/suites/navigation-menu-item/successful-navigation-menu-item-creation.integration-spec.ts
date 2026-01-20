@@ -157,7 +157,6 @@ describe('NavigationMenuItem creation should succeed', () => {
       firstPosition,
     );
 
-    // Clean up first item
     await deleteNavigationMenuItem({
       expectToFail: false,
       input: { id: firstItemId },
