@@ -7,6 +7,7 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     targetRecordId
     targetObjectMetadataId
     folderId
+    name
     position
     applicationId
     createdAt

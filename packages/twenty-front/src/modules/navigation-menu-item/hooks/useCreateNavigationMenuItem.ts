@@ -18,7 +18,7 @@ export const useCreateNavigationMenuItem = () => {
   const createNavigationMenuItem = async (
     targetRecord: ObjectRecord,
     targetObjectNameSingular: string,
-    favoriteFolderId?: string,
+    folderId?: string,
   ) => {
     const objectMetadataItem = objectMetadataItems.find(
       (item) => item.nameSingular === targetObjectNameSingular,
@@ -30,8 +30,8 @@ export const useCreateNavigationMenuItem = () => {
       );
     }
 
-    const relevantItems = favoriteFolderId
-      ? navigationMenuItems.filter((item) => item.folderId === favoriteFolderId)
+    const relevantItems = folderId
+      ? navigationMenuItems.filter((item) => item.folderId === folderId)
       : navigationMenuItems.filter(
           (item) => !item.folderId && item.userWorkspaceId,
         );
@@ -47,7 +47,7 @@ export const useCreateNavigationMenuItem = () => {
           targetRecordId: targetRecord.id,
           targetObjectMetadataId: objectMetadataItem.id,
           userWorkspaceId: currentWorkspaceMemberId,
-          folderId: favoriteFolderId,
+          folderId,
           position: maxPosition + 1,
         },
       },
