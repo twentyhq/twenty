@@ -57231,6 +57231,7 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:0.32.6"
     stripe: "npm:19.3.1"
+    temporal-polyfill: "npm:^0.3.0"
     transliteration: "npm:2.3.5"
     tsconfig-paths: "npm:^4.2.0"
     tsdav: "npm:^2.1.5"
