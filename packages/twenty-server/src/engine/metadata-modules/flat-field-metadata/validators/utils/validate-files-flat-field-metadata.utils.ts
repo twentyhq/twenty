@@ -23,16 +23,24 @@ export const validateFilesFlatFieldMetadata = ({
     });
   }
 
+  if (flatEntityToValidate.isUnique === true) {
+    errors.push({
+      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      message: 'Files field is not supported for unique fields',
+      userFriendlyMessage: msg`Files field is not supported for unique fields`,
+    });
+  }
+
   if (
-    !isDefined(flatEntityToValidate.settings) &&
-    (flatEntityToValidate.settings.maxNumberOfValues < 1 ||
-      flatEntityToValidate.settings.maxNumberOfValues >
-        FILES_FIELD_MAX_NUMBER_OF_VALUES)
+    !isDefined(flatEntityToValidate.settings) ||
+    flatEntityToValidate.settings.maxNumberOfValues < 1 ||
+    flatEntityToValidate.settings.maxNumberOfValues >
+      FILES_FIELD_MAX_NUMBER_OF_VALUES
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      message: `maxNumberOfValues must be defined in settings and be a number greater than 0 and less than ${FILES_FIELD_MAX_NUMBER_OF_VALUES}`,
-      userFriendlyMessage: msg`maxNumberOfValues must be defined in settings and be a number greater than 0 and less than ${FILES_FIELD_MAX_NUMBER_OF_VALUES}`,
+      message: `maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to ${FILES_FIELD_MAX_NUMBER_OF_VALUES}`,
+      userFriendlyMessage: msg`maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to ${FILES_FIELD_MAX_NUMBER_OF_VALUES}`,
     });
   }
 

@@ -4,7 +4,9 @@ import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-r
 describe('validateFilesFieldOrThrow', () => {
   describe('valid inputs', () => {
     it('should return null when value is null', () => {
-      const result = validateFilesFieldOrThrow(null, 'testField');
+      const result = validateFilesFieldOrThrow(null, 'testField', {
+        maxNumberOfValues: 10,
+      });
 
       expect(result).toBeNull();
     });
@@ -14,13 +16,17 @@ describe('validateFilesFieldOrThrow', () => {
         { fileId: '550e8400-e29b-41d4-a716-446655440000', label: 'Document 1' },
         { fileId: '660e8400-e29b-41d4-a716-446655440001', label: 'Document 2' },
       ];
-      const result = validateFilesFieldOrThrow(filesValue, 'testField');
+      const result = validateFilesFieldOrThrow(filesValue, 'testField', {
+        maxNumberOfValues: 10,
+      });
 
       expect(result).toEqual(filesValue);
     });
 
     it('should return an empty array when value is an empty array', () => {
-      const result = validateFilesFieldOrThrow([], 'testField');
+      const result = validateFilesFieldOrThrow([], 'testField', {
+        maxNumberOfValues: 10,
+      });
 
       expect(result).toEqual([]);
     });
@@ -30,7 +36,9 @@ describe('validateFilesFieldOrThrow', () => {
         { fileId: '550e8400-e29b-41d4-a716-446655440000', label: 'Document 1' },
       ];
       const stringifiedValue = JSON.stringify(filesValue);
-      const result = validateFilesFieldOrThrow(stringifiedValue, 'testField');
+      const result = validateFilesFieldOrThrow(stringifiedValue, 'testField', {
+        maxNumberOfValues: 10,
+      });
 
       expect(result).toEqual(filesValue);
     });
@@ -39,7 +47,9 @@ describe('validateFilesFieldOrThrow', () => {
   describe('invalid inputs', () => {
     it('should throw when value is an invalid JSON string', () => {
       expect(() =>
-        validateFilesFieldOrThrow('not valid json', 'testField'),
+        validateFilesFieldOrThrow('not valid json', 'testField', {
+          maxNumberOfValues: 10,
+        }),
       ).toThrow(CommonQueryRunnerException);
     });
 
@@ -48,31 +58,40 @@ describe('validateFilesFieldOrThrow', () => {
         validateFilesFieldOrThrow(
           { fileId: '550e8400-e29b-41d4-a716-446655440000', label: 'test' },
           'testField',
+          { maxNumberOfValues: 10 },
         ),
       ).toThrow(CommonQueryRunnerException);
     });
 
     it('should throw when value is undefined', () => {
-      expect(() => validateFilesFieldOrThrow(undefined, 'testField')).toThrow(
-        CommonQueryRunnerException,
-      );
+      expect(() =>
+        validateFilesFieldOrThrow(undefined, 'testField', {
+          maxNumberOfValues: 10,
+        }),
+      ).toThrow(CommonQueryRunnerException);
     });
 
     it('should throw when array item is not an object', () => {
       expect(() =>
-        validateFilesFieldOrThrow(['not an object'], 'testField'),
+        validateFilesFieldOrThrow(['not an object'], 'testField', {
+          maxNumberOfValues: 10,
+        }),
       ).toThrow(CommonQueryRunnerException);
     });
 
     it('should throw when array item is null', () => {
-      expect(() => validateFilesFieldOrThrow([null], 'testField')).toThrow(
-        CommonQueryRunnerException,
-      );
+      expect(() =>
+        validateFilesFieldOrThrow([null], 'testField', {
+          maxNumberOfValues: 10,
+        }),
+      ).toThrow(CommonQueryRunnerException);
     });
 
     it('should throw when fileId key is missing', () => {
       expect(() =>
-        validateFilesFieldOrThrow([{ label: 'test' }], 'testField'),
+        validateFilesFieldOrThrow([{ label: 'test' }], 'testField', {
+          maxNumberOfValues: 10,
+        }),
       ).toThrow(CommonQueryRunnerException);
     });
 
@@ -81,6 +100,7 @@ describe('validateFilesFieldOrThrow', () => {
         validateFilesFieldOrThrow(
           [{ fileId: '550e8400-e29b-41d4-a716-446655440000' }],
           'testField',
+          { maxNumberOfValues: 10 },
         ),
       ).toThrow(CommonQueryRunnerException);
     });
@@ -96,6 +116,7 @@ describe('validateFilesFieldOrThrow', () => {
             },
           ],
           'testField',
+          { maxNumberOfValues: 10 },
         ),
       ).toThrow(CommonQueryRunnerException);
     });
@@ -105,6 +126,7 @@ describe('validateFilesFieldOrThrow', () => {
         validateFilesFieldOrThrow(
           [{ fileId: 'not-a-uuid', label: 'test' }],
           'testField',
+          { maxNumberOfValues: 10 },
         ),
       ).toThrow(CommonQueryRunnerException);
     });
@@ -114,6 +136,7 @@ describe('validateFilesFieldOrThrow', () => {
         validateFilesFieldOrThrow(
           [{ fileId: 12345, label: 'test' }],
           'testField',
+          { maxNumberOfValues: 10 },
         ),
       ).toThrow(CommonQueryRunnerException);
     });
@@ -123,6 +146,19 @@ describe('validateFilesFieldOrThrow', () => {
         validateFilesFieldOrThrow(
           [{ fileId: '550e8400-e29b-41d4-a716-446655440000', label: 12345 }],
           'testField',
+          { maxNumberOfValues: 10 },
+        ),
+      ).toThrow(CommonQueryRunnerException);
+    });
+    it('should throw when max number of files is exceeded', () => {
+      expect(() =>
+        validateFilesFieldOrThrow(
+          [
+            { fileId: '550e8400-e29b-41d4-a716-446655440000', label: 'test' },
+            { fileId: '550e8400-e29b-41d4-a716-446655440001', label: 'test' },
+          ],
+          'testField',
+          { maxNumberOfValues: 1 },
         ),
       ).toThrow(CommonQueryRunnerException);
     });

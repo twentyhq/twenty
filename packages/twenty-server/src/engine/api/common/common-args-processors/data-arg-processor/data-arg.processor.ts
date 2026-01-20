@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isNull, isUndefined } from '@sniptt/guards';
 import {
+  FieldMetadataFilesSettings,
   FieldMetadataRelationSettings,
   FieldMetadataType,
   ObjectRecord,
@@ -248,7 +249,11 @@ export class DataArgProcessor {
         return transformEmailsValue(validatedValue);
       }
       case FieldMetadataType.FILES: {
-        const validatedValue = validateFilesFieldOrThrow(value, key);
+        const validatedValue = validateFilesFieldOrThrow(
+          value,
+          key,
+          fieldMetadata.settings as FieldMetadataFilesSettings,
+        );
 
         return transformRawJsonField(validatedValue);
       }
