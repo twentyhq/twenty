@@ -20,6 +20,7 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectRecord as ObjectRecordShared } from 'twenty-shared/types';
 
+import { BaseObjectRecord } from '@/object-record/types/BaseObjectRecord';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
@@ -137,7 +138,7 @@ export const useCreateOneRecord = <
       getCreateOneRecordMutationResponseField(objectNameSingular);
 
     const createdObject = await apolloCoreClient
-      .mutate({
+      .mutate<ObjectRecord>({
         mutation: createOneRecordMutation,
         variables: {
           input: sanitizedInput,
@@ -190,17 +191,19 @@ export const useCreateOneRecord = <
 
     const positionToUse = recordInput.position === "first" ? "first" : recordInput.position === "last" ? "last" : null;
 
+    const createdRecord = createdObject.data?.[mutationResponseField] as ObjectRecordShared & BaseObjectRecord;
+
     dispatchObjectRecordOperationBrowserEvent({
       objectMetadataItem,
-      operation: { type: 'create-one', createdRecord: { ...createdObject, position: positionToUse } as unknown as ObjectRecordShared },
+      operation: { type: 'create-one', createdRecord: { ...createdRecord, position: positionToUse } },
     });
 
-    if (!isDefined(createdObject.data?.[mutationResponseField])) {
+    if (!isDefined(createdRecord)) {
       throw new CustomError('Failed to create record');
     }
 
     return getRecordFromRecordNode({
-      recordNode: createdObject.data?.[mutationResponseField],
+      recordNode: createdRecord,
     });
   };
 

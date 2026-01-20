@@ -67,8 +67,8 @@ export const useTriggerOptimisticEffectFromSseCreateEvents = () => {
       apolloCoreClient.cache,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
-      refetchAggregateQueriesForObjectMetadataItem,
       upsertRecordsInStore,
+      debouncedRefetchAggregateQueriesForObjectMetadataItem
     ],
   );
 

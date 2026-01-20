@@ -56,11 +56,6 @@ export const RecordBoardDataChangedEffect = () => {
             return;
           }
 
-          if(createdRecordPosition === "first" ) {
-            triggerRecordBoardInitialQuery();
-            return;
-          }
-
           const recordIndexGroupFieldMetadataItem = getSnapshotValue(snapshot, recordIndexGroupFieldMetadataItemCallbackState);
 
           if(!isDefined(recordIndexGroupFieldMetadataItem)) {
@@ -79,6 +74,13 @@ export const RecordBoardDataChangedEffect = () => {
 
           const recordIdsWithoutCreatedRecord = recordIdsForGroup.filter(recordId => recordId !== objectRecordOperation.createdRecord.id);
 
+          const groupIsEmpty = recordIdsWithoutCreatedRecord.length === 0;
+
+          if(groupIsEmpty) {
+            triggerRecordBoardInitialQuery();
+            return;
+          }
+
           const firstRecordIdInGroup = recordIdsWithoutCreatedRecord[0];
           const firstExistingRecordInGroup = getSnapshotValue(snapshot, recordStoreFamilyState(firstRecordIdInGroup));
 
@@ -96,7 +98,7 @@ export const RecordBoardDataChangedEffect = () => {
         triggerRecordBoardInitialQuery();
       }
     }
-  }, [triggerRecordBoardInitialQuery, getShouldInitializeRecordBoardForUpdateInputs]);
+  }, [triggerRecordBoardInitialQuery, getShouldInitializeRecordBoardForUpdateInputs, recordIndexGroupFieldMetadataItemCallbackState, recordGroupFromGroupValueCallbackState, recordIndexRecordIdsByGroupCallbackState]);
 
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: handleObjectRecordOperation,
