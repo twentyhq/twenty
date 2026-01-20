@@ -30,9 +30,9 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
           {
             "errors": [
               {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "View field is linked to an unavailable field",
-                "userFriendlyMessage": "View field must be linked to an available field",
+                "code": "INVALID_VIEW_DATA",
+                "message": "View field position cannot be lower than label identifier view field position",
+                "userFriendlyMessage": "View field position cannot be lower than label identifier view field position",
               },
             ],
             "flatEntityMinimalInformation": {
@@ -43,7 +43,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
             },
             "metadataName": "viewField",
             "status": "fail",
-            "type": "update",
+            "type": "create",
           },
         ],
       },
