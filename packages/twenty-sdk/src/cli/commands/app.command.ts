@@ -11,6 +11,7 @@ import { AuthLogoutCommand } from './auth/auth-logout';
 import { AuthStatusCommand } from './auth/auth-status';
 import { FunctionExecuteCommand } from './function/function-execute';
 import { FunctionLogsCommand } from './function/function-logs';
+import { AuthSwitchCommand } from './auth/auth-switch';
 import {
   EntityAddCommand,
   isSyncableEntity,
@@ -22,6 +23,7 @@ export const registerCommands = (program: Command): void => {
   const loginCommand = new AuthLoginCommand();
   const logoutCommand = new AuthLogoutCommand();
   const statusCommand = new AuthStatusCommand();
+  const switchCommand = new AuthSwitchCommand();
 
   program
     .command('auth:login')
@@ -44,6 +46,13 @@ export const registerCommands = (program: Command): void => {
     .description('Check authentication status')
     .action(async () => {
       await statusCommand.execute();
+    });
+
+  program
+    .command('auth:switch [workspace]')
+    .description('Switch the default workspace for authentication')
+    .action(async (workspace?: string) => {
+      await switchCommand.execute({ workspace });
     });
 
   // App commands
