@@ -21,7 +21,7 @@ import {
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'rowLevelPermissionPredicateGroup', schema: 'core' })
 @Index('IDX_RLPPG_WORKSPACE_ID_ROLE_ID_OBJECT_METADATA_ID', [
@@ -33,7 +33,7 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   'parentRowLevelPermissionPredicateGroupId',
 ])
 export class RowLevelPermissionPredicateGroupEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements
     Required<RowLevelPermissionPredicateGroupEntity>,
     RowLevelPermissionPredicateGroup

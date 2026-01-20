@@ -13,7 +13,7 @@ import {
 } from 'typeorm';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'routeTrigger', schema: 'core' })
 @Unique('IDX_ROUTE_TRIGGER_PATH_HTTP_METHOD_WORKSPACE_ID_UNIQUE', [
@@ -23,7 +23,7 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
 ])
 @Index('IDX_ROUTE_TRIGGER_SERVERLESS_FUNCTION_ID', ['serverlessFunctionId'])
 export class RouteTriggerEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<RouteTriggerEntity>
 {
   @PrimaryGeneratedColumn('uuid')

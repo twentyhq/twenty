@@ -15,13 +15,13 @@ import {
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'viewFilterGroup', schema: 'core' })
 @Index('IDX_VIEW_FILTER_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_FILTER_GROUP_VIEW_ID', ['viewId'])
 @Index('IDX_VIEW_FILTER_GROUP_PARENT_ID', ['parentViewFilterGroupId'])
-export class ViewFilterGroupEntity extends SyncableEntityRequired {
+export class ViewFilterGroupEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

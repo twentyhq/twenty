@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('skill')
 @Index('IDX_SKILL_ID_IS_ACTIVE', ['id', 'isActive'])
@@ -16,7 +16,7 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   where: '"isActive" = true',
 })
 export class SkillEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<SkillEntity>
 {
   @PrimaryGeneratedColumn('uuid')

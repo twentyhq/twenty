@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 export type CronTriggerSettings = {
   pattern: string;
@@ -21,7 +21,7 @@ export type CronTriggerSettings = {
 @Index('IDX_CRON_TRIGGER_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_CRON_TRIGGER_SERVERLESS_FUNCTION_ID', ['serverlessFunctionId'])
 export class CronTriggerEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<CronTriggerEntity>
 {
   @PrimaryGeneratedColumn('uuid')

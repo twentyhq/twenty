@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 export type DatabaseEventTriggerSettings = {
   eventName: string;
@@ -24,7 +24,7 @@ export type DatabaseEventTriggerSettings = {
   'serverlessFunctionId',
 ])
 export class DatabaseEventTriggerEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<DatabaseEventTriggerEntity>
 {
   @PrimaryGeneratedColumn('uuid')

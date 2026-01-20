@@ -17,7 +17,7 @@ import {
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'pageLayout', schema: 'core' })
 @ObjectType('PageLayout')
@@ -27,7 +27,7 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   { where: '"deletedAt" IS NULL' },
 )
 export class PageLayoutEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<PageLayoutEntity>
 {
   @PrimaryGeneratedColumn('uuid')

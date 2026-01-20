@@ -19,7 +19,7 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
 import { PageLayoutWidgetConfigurationTypeSettings } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configuration.type';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
 @ObjectType('PageLayoutWidget')
@@ -33,7 +33,7 @@ export class PageLayoutWidgetEntity<
     TWidgetConfigurationType extends
       WidgetConfigurationType = WidgetConfigurationType,
   >
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<PageLayoutWidgetEntity>
 {
   @PrimaryGeneratedColumn('uuid')
