@@ -36,6 +36,7 @@ const StyledWidgetCardContent = styled.div<{
     }
 
     if (variant === 'side-column') {
+      // Side-column variant has no base padding, only header spacing when needed
       return css`
         ${headerPadding}
       `;
