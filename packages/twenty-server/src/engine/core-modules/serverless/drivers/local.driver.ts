@@ -33,10 +33,7 @@ export class LocalDriver implements ServerlessDriver {
   private getInMemoryLayerFolderPath = (
     flatServerlessFunctionLayer: FlatServerlessFunctionLayer,
   ) => {
-    return join(
-      SERVERLESS_TMPDIR_FOLDER,
-      flatServerlessFunctionLayer.checksum,
-    );
+    return join(SERVERLESS_TMPDIR_FOLDER, flatServerlessFunctionLayer.checksum);
   };
 
   private async createLayerIfNotExists(
@@ -58,7 +55,9 @@ export class LocalDriver implements ServerlessDriver {
 
   async delete() {}
 
-  private async build(flatServerlessFunctionLayer: FlatServerlessFunctionLayer) {
+  private async build(
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer,
+  ) {
     await this.createLayerIfNotExists(flatServerlessFunctionLayer);
   }
 

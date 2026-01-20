@@ -138,7 +138,9 @@ export class LambdaDriver implements ServerlessDriver {
     );
   }
 
-  private getLayerName(flatServerlessFunctionLayer: FlatServerlessFunctionLayer) {
+  private getLayerName(
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer,
+  ) {
     return flatServerlessFunctionLayer.checksum;
   }
 
