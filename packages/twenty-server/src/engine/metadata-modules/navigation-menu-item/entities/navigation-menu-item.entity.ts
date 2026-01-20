@@ -58,6 +58,13 @@ export class NavigationMenuItemEntity
   @JoinColumn({ name: 'targetObjectMetadataId' })
   targetObjectMetadata: Relation<ObjectMetadataEntity>;
 
+  @ManyToOne(() => NavigationMenuItemEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'folderId' })
+  folder: Relation<NavigationMenuItemEntity> | null;
+
   @Column({ nullable: true, type: 'uuid' })
   folderId: string | null;
 

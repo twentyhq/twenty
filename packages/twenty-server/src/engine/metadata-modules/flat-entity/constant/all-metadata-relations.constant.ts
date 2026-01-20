@@ -101,6 +101,11 @@ export const ALL_METADATA_RELATIONS = {
         flatEntityForeignKeyAggregator: null,
         foreignKey: 'targetObjectMetadataId',
       },
+      folder: {
+        metadataName: 'navigationMenuItem',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'folderId',
+      },
     },
     oneToMany: {},
   },
