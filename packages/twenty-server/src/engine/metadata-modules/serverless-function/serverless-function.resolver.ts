@@ -13,7 +13,7 @@ import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { ExecuteServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/execute-serverless-function.input';
 import { GetServerlessFunctionSourceCodeInput } from 'src/engine/metadata-modules/serverless-function/dtos/get-serverless-function-source-code.input';
@@ -24,6 +24,10 @@ import { ServerlessFunctionLogsDTO } from 'src/engine/metadata-modules/serverles
 import { ServerlessFunctionLogsInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-logs.input';
 import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
+import {
+  ServerlessFunctionException,
+  ServerlessFunctionExceptionCode,
+} from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { fromFlatServerlessFunctionToServerlessFunctionDto } from 'src/engine/metadata-modules/serverless-function/utils/from-flat-serverless-function-to-serverless-function-dto.util';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
@@ -69,10 +73,17 @@ export class ServerlessFunctionResolver {
           },
         );
 
-      const flatServerlessFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      const flatServerlessFunction = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: id,
         flatEntityMaps: flatServerlessFunctionMaps,
       });
+
+      if (!isDefined(flatServerlessFunction)) {
+        throw new ServerlessFunctionException(
+          `Serverless function with id ${id} not found`,
+          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        );
+      }
 
       return fromFlatServerlessFunctionToServerlessFunctionDto({
         flatServerlessFunction,
