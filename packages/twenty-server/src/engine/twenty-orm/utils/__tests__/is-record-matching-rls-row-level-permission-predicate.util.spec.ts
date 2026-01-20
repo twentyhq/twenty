@@ -119,8 +119,10 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
 
   const baseRecord: ObjectRecord = {
     jobTitle: 'Engineer',
-    nameFirstName: 'Jane',
-    nameLastName: 'Doe',
+    name: {
+      firstName: 'Jane',
+      lastName: 'Doe',
+    },
     address: {
       addressStreet1: 'Main Street',
       addressCity: 'Paris',
@@ -198,7 +200,13 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     });
 
     const nonMatchingResult = isRecordMatchingRLSRowLevelPermissionPredicate({
-      record: { ...baseRecord, nameLastName: 'Smith' },
+      record: {
+        ...baseRecord,
+        name: {
+          ...baseRecord.name,
+          lastName: 'Smith',
+        },
+      },
       filter: {
         or: {
           jobTitle: {
