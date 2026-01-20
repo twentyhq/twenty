@@ -35,7 +35,9 @@ export const joinColumnNameForManyToOneMorphRelationField1 =
     targetObjectMetadataNamePlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1,
   }) + 'Id';
 
-export const setupTestObjectsWithAllFieldTypes = async () => {
+export const setupTestObjectsWithAllFieldTypes = async (
+  withFilesField: boolean = false,
+) => {
   const createdObjectMetadata = await createOneObjectMetadata({
     input: {
       nameSingular: TEST_OBJECT_METADATA_NAME_SINGULAR,
@@ -163,12 +165,16 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
             test: 'test',
           },
           arrayField: ['test'],
-          filesField: [
-            {
-              fileId: '20202020-a21e-4ec2-873b-de4264d89025',
-              label: 'Document.pdf',
-            },
-          ],
+          ...(withFilesField
+            ? {
+                filesField: [
+                  {
+                    fileId: '20202020-a21e-4ec2-873b-de4264d89025',
+                    label: 'Document.pdf',
+                  },
+                ],
+              }
+            : {}),
         },
         {
           id: v4(),

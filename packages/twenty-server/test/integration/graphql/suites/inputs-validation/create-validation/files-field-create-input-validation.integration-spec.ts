@@ -36,7 +36,7 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
       ),
     );
 
-    const setupTest = await setupTestObjectsWithAllFieldTypes();
+    const setupTest = await setupTestObjectsWithAllFieldTypes(true);
 
     objectMetadataId = setupTest.objectMetadataId;
     objectMetadataSingularName = setupTest.objectMetadataSingularName;

@@ -8,10 +8,18 @@ export const expectGqlCreateInputValidationSuccess = async (
   objectMetadataSingularName: string,
   input: any,
   validateInput: (record: Record<string, any>) => boolean,
+  withFilesField: boolean = false,
 ) => {
   const createOneOperation = createOneOperationFactory({
     objectMetadataSingularName: objectMetadataSingularName,
-    gqlFields: TEST_OBJECT_GQL_FIELDS,
+    gqlFields:
+      TEST_OBJECT_GQL_FIELDS +
+      (withFilesField
+        ? ` filesField {
+      fileId
+      label
+  }`
+        : ''),
     data: input,
   });
 

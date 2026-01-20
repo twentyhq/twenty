@@ -1047,7 +1047,8 @@ export const successfulFilterInputByFieldMetadataType: {
       restFilterInput: 'arrayField[is]:NULL',
       validateFilter: (record: Record<string, any>) => {
         return (
-          Array.isArray(record.arrayField) && record.arrayField.length === 0
+          record.arrayField === null ||
+          (Array.isArray(record.arrayField) && record.arrayField.length === 0)
         );
       },
     },
