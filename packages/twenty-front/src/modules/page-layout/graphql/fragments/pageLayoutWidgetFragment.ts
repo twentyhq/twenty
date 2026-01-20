@@ -85,6 +85,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         displayDataLabel
         showCenterMetric
         displayLegend
+        hideEmptyCategory
         color
         description
         filter
