@@ -118,10 +118,10 @@ Application development commands.
     - `-u, --functionUniversalIdentifier <id>`: Only show logs for a specific function universal ID.
     - `-n, --functionName <name>`: Only show logs for a specific function name.
 
-- `twenty function:test [appPath]` — Execute a serverless function with a JSON payload.
+- `twenty function:execute [appPath]` — Execute a serverless function with a JSON payload.
   - Options:
-    - `-n, --functionName <name>`: Name of the function to test (required if `-u` not provided).
-    - `-u, --functionUniversalIdentifier <id>`: Universal ID of the function to test (required if `-n` not provided).
+    - `-n, --functionName <name>`: Name of the function to execute (required if `-u` not provided).
+    - `-u, --functionUniversalIdentifier <id>`: Universal ID of the function to execute (required if `-n` not provided).
     - `-p, --payload <payload>`: JSON payload to send to the function (default: `{}`).
 
 Examples:
@@ -151,14 +151,14 @@ twenty function:logs
 # Watch logs for a specific function by name
 twenty function:logs -n my-function
 
-# Test a function by name (with empty payload)
-twenty function:test -n my-function
+# Execute a function by name (with empty payload)
+twenty function:execute -n my-function
 
-# Test a function with a JSON payload
-twenty function:test -n my-function -p '{"name": "test"}'
+# Execute a function with a JSON payload
+twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Test a function by universal identifier
-twenty function:test -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf -p '{"key": "value"}'
+# Execute a function by universal identifier
+twenty function:execute -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf -p '{"key": "value"}'
 ```
 
 ## Configuration

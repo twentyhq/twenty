@@ -4,7 +4,7 @@ import { ApiService } from '@/cli/utilities/api/services/api.service';
 import { buildManifest } from '@/cli/utilities/manifest/utils/manifest-build';
 import { type ApplicationManifest } from 'twenty-shared/application';
 
-export class FunctionTestCommand {
+export class FunctionExecuteCommand {
   private apiService = new ApiService();
 
   async execute({
@@ -163,7 +163,7 @@ export class FunctionTestCommand {
       }
     } catch (error) {
       console.error(
-        chalk.red('Test execution failed:'),
+        chalk.red('Execution failed:'),
         error instanceof Error ? error.message : error,
       );
       process.exit(1);

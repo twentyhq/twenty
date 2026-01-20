@@ -9,8 +9,8 @@ import { AppUninstallCommand } from './app/app-uninstall';
 import { AuthLoginCommand } from './auth/auth-login';
 import { AuthLogoutCommand } from './auth/auth-logout';
 import { AuthStatusCommand } from './auth/auth-status';
+import { FunctionExecuteCommand } from './function/function-execute';
 import { FunctionLogsCommand } from './function/function-logs';
-import { FunctionTestCommand } from './function/function-test';
 import {
   EntityAddCommand,
   isSyncableEntity,
@@ -53,7 +53,7 @@ export const registerCommands = (program: Command): void => {
   const addCommand = new EntityAddCommand();
   const generateCommand = new AppGenerateCommand();
   const logsCommand = new FunctionLogsCommand();
-  const testCommand = new FunctionTestCommand();
+  const executeCommand = new FunctionExecuteCommand();
   const buildCommand = new AppBuildCommand();
 
   program
@@ -168,15 +168,15 @@ export const registerCommands = (program: Command): void => {
     );
 
   program
-    .command('function:test [appPath]')
+    .command('function:execute [appPath]')
     .option('-p, --payload <payload>', 'JSON payload to send to the function', '{}')
     .option(
       '-u, --functionUniversalIdentifier <functionUniversalIdentifier>',
-      'Universal ID of the function to test',
+      'Universal ID of the function to execute',
     )
     .option(
       '-n, --functionName <functionName>',
-      'Name of the function to test',
+      'Name of the function to execute',
     )
     .option('-v, --version <version>', 'Function version to execute', 'latest')
     .description('Execute a serverless function with a JSON payload')
@@ -198,7 +198,7 @@ export const registerCommands = (program: Command): void => {
           );
           process.exit(1);
         }
-        await testCommand.execute({
+        await executeCommand.execute({
           ...options,
           payload: options?.payload ?? '{}',
           appPath: formatPath(appPath),
