@@ -55,7 +55,10 @@ yarn app:generate
 yarn app:sync
 
 # Watch your application's functions logs
-yarn app:logs
+yarn function:logs
+
+# Execute a function by name
+yarn function:execute -n my-function -p '{"name": "test"}'
 
 # Uninstall the application from the current workspace
 yarn app:uninstall
@@ -175,17 +178,31 @@ src/app/
 * عنوان URL لواجهة برمجة التطبيقات (الافتراضي http://localhost:3000 أو ملف تعريف مساحة العمل الحالية لديك)
 * مفتاح واجهة برمجة التطبيقات
 
-تُخزَّن بيانات اعتمادك لكل مستخدم في `~/.twenty/config.json`. يمكنك الاحتفاظ بملفات تعريف متعددة والتبديل باستخدام `--workspace <name>`.
+تُخزَّن بيانات اعتمادك لكل مستخدم في `~/.twenty/config.json`. You can maintain multiple profiles and switch between them.
 
-الأمثلة:
+### Managing workspaces
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
 yarn auth:login
 
-# Use a specific workspace profile
+# Login to a specific workspace profile
 yarn auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn auth:list
+
+# Switch the default workspace (interactive)
+yarn auth:switch
+
+# Switch to a specific workspace
+yarn auth:switch production
+
+# Check current authentication status
+yarn auth:status
 ```
+
+Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
 
 ## استخدم موارد SDK (الأنواع والتكوين)
 

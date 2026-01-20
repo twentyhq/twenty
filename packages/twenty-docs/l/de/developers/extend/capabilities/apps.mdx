@@ -55,7 +55,10 @@ yarn app:generate
 yarn app:sync
 
 # Watch your application's functions logs
-yarn app:logs
+yarn function:logs
+
+# Execute a function by name
+yarn function:execute -n my-function -p '{"name": "test"}'
 
 # Uninstall the application from the current workspace
 yarn app:uninstall
@@ -175,17 +178,31 @@ Wenn Sie `yarn auth:login` zum ersten Mal ausführen, werden Sie nach Folgendem 
 * API-URL (standardmäßig http://localhost:3000 oder Ihr aktuelles Workspace-Profil)
 * API-Schlüssel
 
-Ihre Anmeldedaten werden pro Benutzer in `~/.twenty/config.json` gespeichert. Sie können mehrere Profile verwalten und mit `--workspace <name>` wechseln.
+Ihre Anmeldedaten werden pro Benutzer in `~/.twenty/config.json` gespeichert. You can maintain multiple profiles and switch between them.
 
-Beispiele:
+### Managing workspaces
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
 yarn auth:login
 
-# Use a specific workspace profile
+# Login to a specific workspace profile
 yarn auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn auth:list
+
+# Switch the default workspace (interactive)
+yarn auth:switch
+
+# Switch to a specific workspace
+yarn auth:switch production
+
+# Check current authentication status
+yarn auth:status
 ```
+
+Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
 
 ## SDK-Ressourcen verwenden (Typen & Konfiguration)
 

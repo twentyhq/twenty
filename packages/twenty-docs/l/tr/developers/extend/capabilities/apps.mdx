@@ -178,17 +178,31 @@ The first time you run `yarn auth:login`, you'll be prompted for:
 * API URL (defaults to http://localhost:3000 or your current workspace profile)
 * API key
 
-Your credentials are stored per-user in `~/.twenty/config.json`. You can maintain multiple profiles and switch using `--workspace <name>`.
+Your credentials are stored per-user in `~/.twenty/config.json`. You can maintain multiple profiles and switch between them.
 
-Örnekler:
+### Managing workspaces
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
 yarn auth:login
 
-# Use a specific workspace profile
+# Login to a specific workspace profile
 yarn auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn auth:list
+
+# Switch the default workspace (interactive)
+yarn auth:switch
+
+# Switch to a specific workspace
+yarn auth:switch production
+
+# Check current authentication status
+yarn auth:status
 ```
+
+Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
 
 ## Use the SDK resources (types & config)
 
