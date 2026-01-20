@@ -10823,6 +10823,16 @@ msgstr ""
 msgid "Skip"
 msgstr "Παράλειψη"
 
+#. js-lingui-id: TyudBs
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+msgid "Skip creating a Name field "
+msgstr ""
+
+#. js-lingui-id: PlF+NA
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
+msgid "Skip the junction object (similar to many-to-many relations)"
+msgstr ""
+
 #. js-lingui-id: BIZl8w
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Sky"
@@ -11375,6 +11385,11 @@ msgstr "Ρυθμίσεις Καρτέλας"
 msgid "Table"
 msgstr "Πίνακας"
 
+#. js-lingui-id: sceIIK
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
+msgid "Target relation on Junction Object"
+msgstr ""
+
 #. js-lingui-id: R+s8S+
 #: src/modules/activities/tasks/components/TaskRow.tsx
 msgid "Task title"
@@ -11658,6 +11673,11 @@ msgstr ""
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "This file type cannot be previewed. Please download the file to view it."
 msgstr "Αυτός ο τύπος αρχείου δεν μπορεί να προεπισκοπηθεί. Παρακαλούμε κάντε λήψη του αρχείου για να το προβάλετε."
+
+#. js-lingui-id: njWene
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
+msgid "This is a relation to a Junction Object"
+msgstr ""
 
 #. js-lingui-id: E4JJ5C
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -12383,6 +12403,11 @@ msgstr "Χρησιμοποιήστε εφαρμογές ταυτοποίησης
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Χρησιμοποιήστε το API μας ή προσθέστε το πρώτο σας {objectLabel} χειροκίνητα"
 
+#. js-lingui-id: AQVj2A
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+msgid "Useful for pivot/junction tables"
+msgstr ""
+
 #. js-lingui-id: 7PzzBU
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
@@ -12809,6 +12834,11 @@ msgstr "Όπου"
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "Widget type"
 msgstr "Τύπος στοιχείου"
+
+#. js-lingui-id: erVUKK
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
+msgid "Will show linked records directly instead of intermediate junction record"
+msgstr ""
 
 #. js-lingui-id: bB8dFW
 #: src/modules/billing/components/TrialCard.tsx
