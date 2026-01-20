@@ -2,7 +2,6 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
-import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { useMorphPersistManyToOne } from '@/object-record/record-field/ui/meta-types/input/hooks/useMorphPersistManyToOne';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -45,9 +44,20 @@ const mockMorphFieldDefinition = {
     morphRelations: [
       {
         type: RelationType.MANY_TO_ONE,
-        sourceFieldMetadata: { id: 'source-field-1', name: 'polymorphicOwner' },
-        targetFieldMetadata: { id: 'target-field-1', name: 'tasks', isCustom: false },
-        sourceObjectMetadata: { id: 'task-metadata-id', nameSingular: 'task', namePlural: 'tasks' },
+        sourceFieldMetadata: {
+          id: 'source-field-1',
+          name: 'polymorphicOwner',
+        },
+        targetFieldMetadata: {
+          id: 'target-field-1',
+          name: 'tasks',
+          isCustom: false,
+        },
+        sourceObjectMetadata: {
+          id: 'task-metadata-id',
+          nameSingular: 'task',
+          namePlural: 'tasks',
+        },
         targetObjectMetadata: {
           id: 'company-metadata-id',
           nameSingular: 'company',
@@ -56,9 +66,20 @@ const mockMorphFieldDefinition = {
       },
       {
         type: RelationType.MANY_TO_ONE,
-        sourceFieldMetadata: { id: 'source-field-2', name: 'polymorphicOwner' },
-        targetFieldMetadata: { id: 'target-field-2', name: 'tasks', isCustom: false },
-        sourceObjectMetadata: { id: 'task-metadata-id', nameSingular: 'task', namePlural: 'tasks' },
+        sourceFieldMetadata: {
+          id: 'source-field-2',
+          name: 'polymorphicOwner',
+        },
+        targetFieldMetadata: {
+          id: 'target-field-2',
+          name: 'tasks',
+          isCustom: false,
+        },
+        sourceObjectMetadata: {
+          id: 'task-metadata-id',
+          nameSingular: 'task',
+          namePlural: 'tasks',
+        },
         targetObjectMetadata: {
           id: 'person-metadata-id',
           nameSingular: 'person',
