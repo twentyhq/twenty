@@ -200,6 +200,7 @@ const createPackageJson = async ({
       'entity:add': 'twenty entity:add',
       'app:generate': 'twenty app:generate',
       'function:logs': 'twenty function:logs',
+      'function:test': 'twenty function:test',
       'app:uninstall': 'twenty app:uninstall',
       help: 'twenty help',
       lint: 'eslint',

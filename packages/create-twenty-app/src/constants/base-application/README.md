@@ -36,6 +36,7 @@ yarn app:sync       # One-time sync
 yarn entity:add     # Add a new entity (function, object, role)
 yarn app:generate   # Generate typed Twenty client
 yarn function:logs  # Stream function logs
+yarn function:test  # Test a function with JSON payload
 yarn app:uninstall  # Uninstall app from workspace
 ```
 

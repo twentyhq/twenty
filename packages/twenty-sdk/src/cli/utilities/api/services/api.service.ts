@@ -237,6 +237,135 @@ export class ApiService {
     }
   }
 
+  async findServerlessFunctions(): Promise<
+    ApiResponse<
+      Array<{
+        id: string;
+        name: string;
+        universalIdentifier: string;
+        applicationId: string | null;
+      }>
+    >
+  > {
+    try {
+      const query = `
+        query FindManyServerlessFunctions {
+          findManyServerlessFunctions {
+            id
+            name
+            universalIdentifier
+            applicationId
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        { query },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0]?.message || 'Failed to fetch functions',
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.findManyServerlessFunctions,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async executeServerlessFunction({
+    functionId,
+    payload,
+    version = 'latest',
+  }: {
+    functionId: string;
+    payload: Record<string, unknown>;
+    version?: string;
+  }): Promise<
+    ApiResponse<{
+      data: unknown;
+      logs: string;
+      duration: number;
+      status: string;
+      error?: {
+        errorType: string;
+        errorMessage: string;
+        stackTrace: string;
+      };
+    }>
+  > {
+    try {
+      const mutation = `
+        mutation ExecuteOneServerlessFunction($input: ExecuteServerlessFunctionInput!) {
+          executeOneServerlessFunction(input: $input) {
+            data
+            logs
+            duration
+            status
+            error
+          }
+        }
+      `;
+
+      const variables = {
+        input: {
+          id: functionId,
+          payload,
+          version,
+        },
+      };
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error:
+            response.data.errors[0]?.message ||
+            'Failed to execute serverless function',
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.executeOneServerlessFunction,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
   async subscribeToLogs({
     applicationUniversalIdentifier,
     functionUniversalIdentifier,
