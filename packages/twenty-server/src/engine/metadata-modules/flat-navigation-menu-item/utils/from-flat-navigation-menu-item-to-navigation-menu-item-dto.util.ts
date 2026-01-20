@@ -9,7 +9,7 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemDto = (
     flatNavigationMenuItem.forWorkspaceMemberId ?? undefined,
   targetRecordId: flatNavigationMenuItem.targetRecordId,
   targetObjectMetadataId: flatNavigationMenuItem.targetObjectMetadataId,
-  favoriteFolderId: flatNavigationMenuItem.favoriteFolderId ?? undefined,
+  folderId: flatNavigationMenuItem.folderId ?? undefined,
   position: flatNavigationMenuItem.position,
   workspaceId: flatNavigationMenuItem.workspaceId,
   applicationId: flatNavigationMenuItem.applicationId ?? undefined,

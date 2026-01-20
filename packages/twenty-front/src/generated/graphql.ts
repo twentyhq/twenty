@@ -3041,7 +3041,7 @@ export type NavigationMenuItem = {
   __typename?: 'NavigationMenuItem';
   applicationId?: Maybe<Scalars['UUID']>;
   createdAt: Scalars['DateTime'];
-  favoriteFolderId?: Maybe<Scalars['UUID']>;
+  folderId?: Maybe<Scalars['UUID']>;
   forWorkspaceMemberId?: Maybe<Scalars['UUID']>;
   id: Scalars['UUID'];
   position: Scalars['Float'];

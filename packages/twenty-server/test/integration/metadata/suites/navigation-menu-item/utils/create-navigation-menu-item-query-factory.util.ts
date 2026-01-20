@@ -11,7 +11,7 @@ const DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS = `
   forWorkspaceMemberId
   targetRecordId
   targetObjectMetadataId
-  favoriteFolderId
+  folderId
   position
   applicationId
   createdAt

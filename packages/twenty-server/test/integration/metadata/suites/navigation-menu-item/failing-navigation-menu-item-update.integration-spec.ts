@@ -111,11 +111,11 @@ describe('NavigationMenuItem update should fail', () => {
         },
       },
       {
-        title: 'when updating with invalid favoriteFolderId (not a UUID)',
+        title: 'when updating with invalid folderId (not a UUID)',
         context: {
           input: (testSetup) => ({
             id: testSetup.testNavigationMenuItemId,
-            favoriteFolderId: 'not-a-valid-uuid',
+            folderId: 'not-a-valid-uuid',
           }),
         },
       },

@@ -66,7 +66,7 @@ describe('NavigationMenuItem creation should succeed', () => {
       targetRecordId,
       targetObjectMetadataId: personObjectMetadataId,
       forWorkspaceMemberId: null,
-      favoriteFolderId: null,
+      folderId: null,
       position: expect.any(Number),
     });
   });
@@ -74,7 +74,7 @@ describe('NavigationMenuItem creation should succeed', () => {
   it('should create navigation menu item with all optional fields', async () => {
     const targetRecordId = faker.string.uuid();
     const forWorkspaceMemberId = faker.string.uuid();
-    const favoriteFolderId = faker.string.uuid();
+    const folderId = faker.string.uuid();
 
     const { data } = await createNavigationMenuItem({
       expectToFail: false,
@@ -82,7 +82,7 @@ describe('NavigationMenuItem creation should succeed', () => {
         targetRecordId,
         targetObjectMetadataId: companyObjectMetadataId,
         forWorkspaceMemberId,
-        favoriteFolderId,
+        folderId,
         position: 5,
       },
     });
@@ -94,7 +94,7 @@ describe('NavigationMenuItem creation should succeed', () => {
       targetRecordId,
       targetObjectMetadataId: companyObjectMetadataId,
       forWorkspaceMemberId,
-      favoriteFolderId,
+      folderId,
       position: 5,
     });
   });

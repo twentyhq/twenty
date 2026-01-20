@@ -23,8 +23,8 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   'targetObjectMetadataId',
   'workspaceId',
 ])
-@Index('IDX_NAVIGATION_MENU_ITEM_FAVORITE_FOLDER_ID_WORKSPACE_ID', [
-  'favoriteFolderId',
+@Index('IDX_NAVIGATION_MENU_ITEM_FOLDER_ID_WORKSPACE_ID', [
+  'folderId',
   'workspaceId',
 ])
 export class NavigationMenuItemEntity
@@ -51,7 +51,7 @@ export class NavigationMenuItemEntity
   targetObjectMetadata: Relation<ObjectMetadataEntity>;
 
   @Column({ nullable: true, type: 'uuid' })
-  favoriteFolderId: string | null;
+  folderId: string | null;
 
   @Column({ nullable: false })
   position: number;

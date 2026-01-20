@@ -14,7 +14,7 @@ export class UpdateNavigationMenuItemInput {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
-  favoriteFolderId?: string | null;
+  folderId?: string | null;
 
   @IsInt()
   @Min(0)
