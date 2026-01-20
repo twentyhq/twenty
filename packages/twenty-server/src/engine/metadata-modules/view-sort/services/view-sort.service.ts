@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import {
   ViewSortException,
@@ -14,13 +15,16 @@ import {
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { v4 } from 'uuid';
 
+// TODO migrate to v2
 @Injectable()
 export class ViewSortService {
   constructor(
     @InjectRepository(ViewSortEntity)
     private readonly viewSortRepository: Repository<ViewSortEntity>,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewSortEntity[]> {
@@ -78,6 +82,13 @@ export class ViewSortService {
       );
     }
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId: viewSortData.workspaceId,
+        },
+      );
+
     if (!isDefined(viewSortData.viewId)) {
       throw new ViewSortException(
         generateViewSortExceptionMessage(
@@ -106,7 +117,11 @@ export class ViewSortService {
       );
     }
 
-    const viewSort = this.viewSortRepository.create(viewSortData);
+    const viewSort = this.viewSortRepository.create({
+      ...viewSortData,
+      universalIdentifier: v4(),
+      applicationId: workspaceCustomFlatApplication.id,
+    });
 
     const savedViewSort = await this.viewSortRepository.save(viewSort);
 
