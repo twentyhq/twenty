@@ -6,105 +6,110 @@ import { build, type InlineConfig, type Plugin, type Rollup } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { OUTPUT_DIR } from '../common/constants';
 import { printWatchingMessage } from '../common/display';
+import { type RestartableWatcher } from '../common/watcher';
 import { runManifestBuild } from './manifest-build';
 
 export type ManifestWatcherCallbacks = {
   onBuildSuccess?: (manifest: ApplicationManifest) => void;
 };
 
-export type ManifestWatcher = {
-  close: () => Promise<void>;
-};
-
 export type ManifestWatcherOptions = {
   appPath: string;
   callbacks?: ManifestWatcherCallbacks;
-  plugins?: InlineConfig['plugins'];
 };
 
-const createManifestBuildPlugin = (
-  appPath: string,
-  callbacks: ManifestWatcherCallbacks,
-): Plugin => {
-  let isFirstBuild = true;
+export class ManifestWatcher implements RestartableWatcher {
+  private appPath: string;
+  private callbacks: ManifestWatcherCallbacks;
+  private innerWatcher: Rollup.RollupWatcher | null = null;
 
-  return {
-    name: 'manifest-build-plugin',
-    async writeBundle() {
-      if (isFirstBuild) {
-        isFirstBuild = false;
-        return;
+  constructor(options: ManifestWatcherOptions) {
+    this.appPath = options.appPath;
+    this.callbacks = options.callbacks ?? {};
+  }
+  restart(manifest: ApplicationManifest): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  shouldRestart(oldManifest: ApplicationManifest | null, newManifest: ApplicationManifest): boolean {
+    throw new Error('Method not implemented.');
+  }
+
+  async start(): Promise<void> {
+    const config = this.createConfig();
+    this.innerWatcher = await build(config) as Rollup.RollupWatcher;
+
+    this.innerWatcher.on('event', (event) => {
+      if (event.code === 'ERROR') {
+        console.error(chalk.red('  ✗ Manifest watcher error:'), event.error?.message);
       }
+    });
 
-      const manifest = await runManifestBuild(appPath);
+    console.log(chalk.gray('  📂 Manifest watcher started'));
+  }
 
-      if (manifest) {
-        printWatchingMessage();
-        callbacks.onBuildSuccess?.(manifest);
-      }
-    },
-  };
-};
+  async close(): Promise<void> {
+    await this.innerWatcher?.close();
+    const tmpDir = path.join(this.appPath, OUTPUT_DIR, 'manifest-watcher-tmp');
+    await fs.remove(tmpDir);
+  }
 
-const createManifestWatcherConfig = (
-  appPath: string,
-  callbacks: ManifestWatcherCallbacks,
-  plugins: InlineConfig['plugins'] = [],
-): InlineConfig => {
-  const outputDir = path.join(appPath, OUTPUT_DIR, 'manifest-watcher-tmp');
+  private createManifestBuildPlugin(): Plugin {
+    let isFirstBuild = true;
 
-  return {
-    root: appPath,
-    plugins: [
-      tsconfigPaths({ root: appPath }),
-      createManifestBuildPlugin(appPath, callbacks),
-      ...plugins,
-    ],
-    build: {
-      outDir: outputDir,
-      emptyOutDir: true,
-      watch: {
-        include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.json'],
-        exclude: ['node_modules/**', '.twenty/**', 'dist/**'],
+    return {
+      name: 'manifest-build-plugin',
+      writeBundle: async () => {
+        if (isFirstBuild) {
+          isFirstBuild = false;
+          return;
+        }
+
+        const manifest = await runManifestBuild(this.appPath);
+
+        if (manifest) {
+          printWatchingMessage();
+          this.callbacks.onBuildSuccess?.(manifest);
+        }
       },
-      lib: {
-        entry: { __manifest_watch__: path.join(appPath, 'src/app/application.config.ts') },
-        formats: ['es'],
-        fileName: () => '__manifest_watch__.js',
+    };
+  }
+
+  private createConfig(): InlineConfig {
+    const outputDir = path.join(this.appPath, OUTPUT_DIR, 'manifest-watcher-tmp');
+    const entryPath = path.join(this.appPath, 'src/app/application.config.ts');
+
+    return {
+      root: this.appPath,
+      plugins: [
+        tsconfigPaths({ root: this.appPath }),
+        this.createManifestBuildPlugin(),
+      ],
+      build: {
+        outDir: outputDir,
+        emptyOutDir: true,
+        watch: {
+          include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.json'],
+          exclude: ['node_modules/**', '.twenty/**', 'dist/**'],
+        },
+        lib: {
+          entry: { __manifest_watch__: entryPath },
+          formats: ['es'],
+          fileName: () => '__manifest_watch__.js',
+        },
+        rollupOptions: {
+          external: (id) => {
+            if (id === entryPath || id.endsWith('application.config.ts')) {
+              return false;
+            }
+            return true;
+          },
+          treeshake: false,
+        },
+        minify: false,
+        sourcemap: false,
       },
-      rollupOptions: {
-        external: [/.*/],
-        treeshake: false,
-      },
-      minify: false,
-      sourcemap: false,
-    },
-    logLevel: 'silent',
-    configFile: false,
-  };
-};
-
-export const createManifestWatcher = async (
-  options: ManifestWatcherOptions,
-): Promise<ManifestWatcher> => {
-  const { appPath, callbacks = {}, plugins } = options;
-
-  const config = createManifestWatcherConfig(appPath, callbacks, plugins);
-  const watcher = await build(config) as Rollup.RollupWatcher;
-
-  watcher.on('event', (event) => {
-    if (event.code === 'ERROR') {
-      console.error(chalk.red('  ✗ Manifest watcher error:'), event.error?.message);
-    }
-  });
-
-  console.log(chalk.gray('  📂 Manifest watcher started'));
-
-  return {
-    close: async () => {
-      await watcher.close();
-      const tmpDir = path.join(appPath, OUTPUT_DIR, 'manifest-watcher-tmp');
-      await fs.remove(tmpDir);
-    },
-  };
-};
+      logLevel: 'silent',
+      configFile: false,
+    };
+  }
+}

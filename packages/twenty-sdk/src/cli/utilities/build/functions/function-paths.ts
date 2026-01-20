@@ -26,19 +26,19 @@ export const computeFunctionOutputPath = (
   };
 };
 
-export const buildFunctionInput = (
+export const buildFunctionEntries = (
   appPath: string,
   handlerPaths: Array<{ handlerPath: string }>,
 ): Record<string, string> => {
-  const input: Record<string, string> = {};
+  const entries: Record<string, string> = {};
 
   for (const fn of handlerPaths) {
     const { relativePath } = computeFunctionOutputPath(fn.handlerPath);
     const chunkName = relativePath.replace(/\.js$/, '');
-    input[chunkName] = path.join(appPath, fn.handlerPath);
+    entries[chunkName] = path.join(appPath, fn.handlerPath);
   }
 
-  return input;
+  return entries;
 };
 
 export const cleanupOldFunctions = async (

@@ -1,7 +1,7 @@
-import { createFrontComponentsWatcher, type FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
-import { createFunctionsWatcher, type FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
+import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
+import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
 import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
-import { createManifestWatcher, type ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
+import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import chalk from 'chalk';
 import { type ApplicationManifest } from 'twenty-shared/application';
@@ -51,36 +51,42 @@ export class AppDevCommand {
   }
 
   private async startManifestWatcher(): Promise<void> {
-    this.manifestWatcher = await createManifestWatcher({
+    this.manifestWatcher = new ManifestWatcher({
       appPath: this.appPath,
       callbacks: {
         onBuildSuccess: (manifest) => {
           this.state.manifest = manifest;
 
-          if (manifest.serverlessFunctions.length > 0) {
-            this.functionsWatcher?.restart(manifest);
+          if (this.functionsWatcher?.shouldRestart(manifest)) {
+            this.functionsWatcher.restart(manifest);
           }
 
-          if (manifest.frontComponents && manifest.frontComponents.length > 0) {
-            this.frontComponentsWatcher?.restart(manifest);
+          if (this.frontComponentsWatcher?.shouldRestart(manifest)) {
+            this.frontComponentsWatcher.restart(manifest);
           }
         },
       },
     });
+
+    await this.manifestWatcher.start();
   }
 
   private async startFunctionsWatcher(manifest: ApplicationManifest): Promise<void> {
-    this.functionsWatcher = await createFunctionsWatcher({
+    this.functionsWatcher = new FunctionsWatcher({
       appPath: this.appPath,
       manifest,
     });
+
+    await this.functionsWatcher.start();
   }
 
   private async startFrontComponentsWatcher(manifest: ApplicationManifest): Promise<void> {
-    this.frontComponentsWatcher = await createFrontComponentsWatcher({
+    this.frontComponentsWatcher = new FrontComponentsWatcher({
       appPath: this.appPath,
       manifest,
     });
+
+    await this.frontComponentsWatcher.start();
   }
 
   private setupGracefulShutdown(): void {
