@@ -7025,6 +7025,11 @@ msgstr "Limit"
 msgid "Limit cannot exceed {maxRecordsFormatted} records."
 msgstr "Limit cannot exceed {maxRecordsFormatted} records."
 
+#. js-lingui-id: g3YJC1
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Limit how many files can be attached to this field"
+msgstr "Limit how many files can be attached to this field"
+
 #. js-lingui-id: Qds9fe
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Limit how many values can be added to this field"
@@ -7312,6 +7317,11 @@ msgstr "Max range"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Maximum email addresses"
 msgstr "Maximum email addresses"
+
+#. js-lingui-id: PAhTVY
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum files"
+msgstr "Maximum files"
 
 #. js-lingui-id: iwCoSG
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
@@ -12191,6 +12201,7 @@ msgid "Unordered list with bullets"
 msgstr "Unordered list with bullets"
 
 #. js-lingui-id: wja8aL
+#: src/modules/ui/field/display/components/FilesDisplay.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
