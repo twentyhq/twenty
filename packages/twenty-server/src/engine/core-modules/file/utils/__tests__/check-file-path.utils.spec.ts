@@ -1,4 +1,4 @@
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { FileFolder } from 'twenty-shared/types';
 
 import { checkFilePath } from 'src/engine/core-modules/file/utils/check-file-path.utils';
 

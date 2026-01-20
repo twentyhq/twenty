@@ -14,6 +14,7 @@ import {
   type PackageJson,
   type ApplicationManifest,
 } from 'twenty-shared/application';
+import { type FileFolder } from 'twenty-shared/types';
 
 export class ApiService {
   private client: AxiosInstance;
@@ -290,9 +291,11 @@ export class ApiService {
 
   async uploadFile({
     filePath,
+    fileFolder,
     applicationUniversalIdentifier,
   }: {
     filePath: string;
+    fileFolder: FileFolder;
     applicationUniversalIdentifier: string;
   }): Promise<ApiResponse<boolean>> {
     try {
@@ -310,8 +313,9 @@ export class ApiService {
       const mimeType = this.getMimeType(filename);
 
       const mutation = `
-      mutation UploadApplicationFile($file: Upload!, $universalIdentifier: !String, $filePath: !String) {
-        uploadApplicationFile(file: $file, universalIdentifier: $fileFolder, filePath: $filePath)
+      mutation UploadApplicationFile($file: Upload!, $universalIdentifier: !String, $fileFolder: !FileFolder, $filePath: !String) {
+        uploadApplicationFile(file: $file, universalIdentifier: $universalIdentifier, fileFolder: $fileFolder, filePath: $filePath)
+        { path }
       }
     `;
 
@@ -321,6 +325,7 @@ export class ApiService {
           file: null,
           universalIdentifier: applicationUniversalIdentifier,
           filePath,
+          fileFolder,
         },
       });
 

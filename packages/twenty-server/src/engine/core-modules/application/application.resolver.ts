@@ -1,12 +1,13 @@
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import path, { join } from 'path';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
-
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { type Repository } from 'typeorm';
+import { FileFolder } from 'twenty-shared/types';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
@@ -27,6 +28,12 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/dtos/uploadApplicationFileInput';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -40,6 +47,8 @@ export class ApplicationResolver {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationService: ApplicationService,
     private readonly fileStorageService: FileStorageService,
+    @InjectRepository(FileEntity)
+    private readonly fileRepository: Repository<FileEntity>,
   ) {}
 
   @Query(() => [ApplicationDTO])
@@ -87,24 +96,37 @@ export class ApplicationResolver {
     return true;
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => FileDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async uploadApplicationFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
-    @Args() { universalIdentifier, filePath }: UploadApplicationFileInput,
-  ): Promise<boolean> {
+    @Args()
+    { universalIdentifier, fileFolder, filePath }: UploadApplicationFileInput,
+  ): Promise<FileDTO> {
+    const allowedApplicationFileFolders: FileFolder[] = [
+      FileFolder.Functions,
+      FileFolder.FrontComponents,
+      FileFolder.Assets,
+      FileFolder.SourceCode,
+    ];
+
+    if (!allowedApplicationFileFolders.includes(fileFolder)) {
+      throw new ApplicationException(
+        `Invalid fileFolder for application file upload. Allowed values: ${allowedApplicationFileFolders.join(', ')}`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
 
-    const fileFolderPath = path.dirname(filePath);
-
     const folderPath = join(
       `workspace-${workspaceId}`,
-      FileFolder.Application,
       universalIdentifier,
-      fileFolderPath,
+      fileFolder,
+      path.dirname(filePath),
     );
 
     await this.fileStorageService.write({
@@ -114,6 +136,12 @@ export class ApplicationResolver {
       mimeType: mimetype,
     });
 
-    return true;
+    const createdFile = this.fileRepository.create({
+      path: join(folderPath, filename),
+      size: buffer.length,
+      workspaceId,
+    });
+
+    return await this.fileRepository.save(createdFile);
   }
 }
