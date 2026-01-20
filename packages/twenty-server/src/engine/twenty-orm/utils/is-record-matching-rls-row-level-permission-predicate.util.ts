@@ -207,16 +207,22 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       );
     }
 
+    const recordFieldValue = record[filterKey];
+
+    if (!isDefined(recordFieldValue)) {
+      return false;
+    }
+
     switch (objectMetadataField.type) {
       case FieldMetadataType.RATING:
         return isMatchingRatingFilter({
           ratingFilter: filterValue as RatingFilter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       case FieldMetadataType.TEXT: {
         return isMatchingStringFilter({
           stringFilter: filterValue as StringFilter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       }
       case FieldMetadataType.RICH_TEXT: {
@@ -225,35 +231,35 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         // This should be tackled in Q4'24
         return isMatchingStringFilter({
           stringFilter: filterValue as StringFilter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       }
       case FieldMetadataType.RICH_TEXT_V2: {
         return isMatchingRichTextV2Filter({
           richTextV2Filter: filterValue as RichTextV2Filter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       }
       case FieldMetadataType.SELECT:
         return isMatchingSelectFilter({
           selectFilter: filterValue as SelectFilter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       case FieldMetadataType.MULTI_SELECT:
         return isMatchingMultiSelectFilter({
           multiSelectFilter: filterValue as MultiSelectFilter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       case FieldMetadataType.ARRAY: {
         return isMatchingArrayFilter({
           arrayFilter: filterValue as ArrayFilter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       }
       case FieldMetadataType.RAW_JSON: {
         return isMatchingRawJsonFilter({
           rawJsonFilter: filterValue as RawJsonFilter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       }
       case FieldMetadataType.FULL_NAME: {
@@ -263,12 +269,12 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           (fullNameFilter.firstName === undefined ||
             isMatchingStringFilter({
               stringFilter: fullNameFilter.firstName,
-              value: record[filterKey].firstName,
+              value: recordFieldValue.firstName,
             })) &&
           (fullNameFilter.lastName === undefined ||
             isMatchingStringFilter({
               stringFilter: fullNameFilter.lastName,
-              value: record[filterKey].lastName,
+              value: recordFieldValue.lastName,
             }))
         );
       }
@@ -293,7 +299,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
           return isMatchingStringFilter({
             stringFilter: value,
-            value: record[filterKey][key],
+            value: recordFieldValue[key],
           });
         });
       }
@@ -311,7 +317,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
           return isMatchingStringFilter({
             stringFilter: value,
-            value: record[filterKey][key],
+            value: recordFieldValue[key],
           });
         });
       }
@@ -319,32 +325,32 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       case FieldMetadataType.DATE_TIME: {
         return isMatchingDateFilter({
           dateFilter: filterValue as DateFilter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       }
       case FieldMetadataType.NUMBER:
       case FieldMetadataType.NUMERIC: {
         return isMatchingFloatFilter({
           floatFilter: filterValue as FloatFilter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       }
       case FieldMetadataType.UUID: {
         return isMatchingUUIDFilter({
           uuidFilter: filterValue as UUIDFilter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       }
       case FieldMetadataType.BOOLEAN: {
         return isMatchingBooleanFilter({
           booleanFilter: filterValue as BooleanFilter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       }
       case FieldMetadataType.CURRENCY: {
         return isMatchingCurrencyFilter({
           currencyFilter: filterValue as CurrencyFilter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       }
       case FieldMetadataType.ACTOR: {
@@ -354,7 +360,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           actorFilter.name === undefined ||
           isMatchingStringFilter({
             stringFilter: actorFilter.name,
-            value: record[filterKey].name,
+            value: recordFieldValue.name,
           })
         );
       }
@@ -367,7 +373,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
         return isMatchingStringFilter({
           stringFilter: emailsFilter.primaryEmail,
-          value: record[filterKey].primaryEmail,
+          value: recordFieldValue.primaryEmail,
         });
       }
       case FieldMetadataType.PHONES: {
@@ -384,7 +390,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
           return isMatchingStringFilter({
             stringFilter: value,
-            value: record[filterKey][key],
+            value: recordFieldValue[key],
           });
         });
       }
@@ -399,7 +405,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         if (isJoinColumn) {
           return isMatchingUUIDFilter({
             uuidFilter: filterValue as UUIDFilter,
-            value: record[filterKey],
+            value: recordFieldValue,
           });
         }
 
@@ -410,7 +416,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       case FieldMetadataType.TS_VECTOR: {
         return isMatchingTSVectorFilter({
           tsVectorFilter: filterValue as TSVectorFilter,
-          value: record[filterKey],
+          value: recordFieldValue,
         });
       }
       default: {

@@ -1,127 +1,126 @@
+import { FUNCTIONS_DIR } from '@/cli/constants/functions-dir';
 import { OUTPUT_DIR } from '@/cli/constants/output-dir';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import { ManifestValidationError } from '@/cli/utilities/manifest/types/manifest.types';
-import { type BuildManifestResult } from '@/cli/utilities/manifest/utils/manifest-build';
 import {
-  displayEntitySummary,
-  displayErrors,
-  displayWarnings,
-} from '@/cli/utilities/manifest/utils/manifest-display';
-import {
+  cleanupOldFunctions,
+  createDevWatcher,
   createManifestPlugin,
-  type ManifestBuildError,
-} from '@/cli/utilities/vite-plugin/vite-manifest-plugin';
+  runManifestBuild,
+  type BuildWatcher,
+  type ManifestPluginState,
+} from '@/cli/utilities/vite';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { createServer, type ViteDevServer } from 'vite';
 
 export type AppDevOptions = {
   appPath?: string;
 };
 
 export class AppDevCommand {
-  private server: ViteDevServer | null = null;
+  private watcher: BuildWatcher | null = null;
   private appPath: string = '';
+  private isRestarting: boolean = false;
+  private manifestState: ManifestPluginState = { currentEntryPoints: [] };
 
   async execute(options: AppDevOptions): Promise<void> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
-    this.logStartupInfo(this.appPath);
+    console.log(chalk.blue('🚀 Starting Twenty Application Development Mode'));
+    console.log(chalk.gray(`📁 App Path: ${this.appPath}`));
+    console.log('');
 
-    this.server = await this.createViteDevServer(this.appPath);
-
-    await this.server.listen();
+    await this.ensureOutputDirs();
+    await this.startWatcher();
 
     this.setupGracefulShutdown();
+  }
 
-    console.log(
-      chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
+  private async ensureOutputDirs(): Promise<void> {
+    const outputDir = path.join(this.appPath, OUTPUT_DIR);
+    const functionsDir = path.join(outputDir, FUNCTIONS_DIR);
+    await fs.ensureDir(functionsDir);
+  }
+
+  private async startWatcher(): Promise<void> {
+    const functionInput = await runManifestBuild(
+      this.appPath,
+      this.manifestState,
     );
-  }
 
-  private logStartupInfo(appPath: string): void {
-    console.log(chalk.blue('🚀 Starting Twenty Application Development Mode'));
-    console.log(chalk.gray(`📁 App Path: ${appPath}`));
-    console.log('');
-  }
+    await cleanupOldFunctions(this.appPath, this.manifestState.currentEntryPoints);
 
-  private async createViteDevServer(appPath: string): Promise<ViteDevServer> {
-    const manifestPlugin = createManifestPlugin({
-      appPath,
-      onBuildStart: () => {
-        console.log(chalk.blue('🔄 Building manifest...'));
-      },
-      onBuildSuccess: (result: BuildManifestResult) => {
-        this.handleBuildSuccess(result);
-      },
-      onBuildError: (error: ManifestBuildError) => {
-        this.handleBuildError(error);
-      },
-    });
+    const hasFunctions = Object.keys(functionInput).length > 0;
 
-    return createServer({
-      root: appPath,
-      plugins: [manifestPlugin],
-      server: {
-        watch: {
-          ignored: ['**/node_modules/**', '**/.twenty/**', '**/dist/**'],
-        },
-        port: 0,
-        open: false,
-        hmr: false,
-      },
-      optimizeDeps: {
-        noDiscovery: true,
-      },
-      logLevel: 'silent',
-      publicDir: false,
-      build: {
-        watch: {
-          include: [path.join(appPath, 'src/**')],
-        },
-      },
-    });
-  }
-
-  private handleBuildSuccess(result: BuildManifestResult): void {
-    displayEntitySummary(result.manifest);
-
-    displayWarnings(result.warnings);
-
-    this.writeManifestToOutput(result);
-  }
-
-  private handleBuildError(error: ManifestBuildError): void {
-    if (error.errors) {
-      displayErrors(new ManifestValidationError(error.errors));
+    if (hasFunctions) {
+      console.log(chalk.blue('  📦 Building functions...'));
     } else {
-      console.error(chalk.red('  ✗ Build failed:'), error.message);
+      console.log(chalk.gray('  No functions to build'));
     }
+
+    const manifestPlugin = createManifestPlugin(
+      this.appPath,
+      this.manifestState,
+      {
+        onEntryPointsChange: (newEntryPoints) => {
+          console.log(chalk.yellow(`🔄 Entry points changed: ${JSON.stringify(newEntryPoints)}`));
+          this.scheduleRestart();
+        },
+      },
+    );
+
+    this.watcher = await createDevWatcher({
+      appPath: this.appPath,
+      functionInput,
+      plugins: [manifestPlugin],
+    });
+
+    this.watcher.on('event', (event) => {
+      if (event.code === 'END') {
+        if (hasFunctions) {
+          console.log(chalk.green('  ✓ Functions built'));
+        }
+        console.log('');
+        console.log(
+          chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
+        );
+      } else if (event.code === 'ERROR') {
+        console.error(chalk.red('  ✗ Build error:'), event.error?.message);
+      }
+    });
   }
 
-  private async writeManifestToOutput(
-    result: BuildManifestResult,
-  ): Promise<void> {
+  private scheduleRestart(): void {
+    if (this.isRestarting) {
+      return;
+    }
+
+    setImmediate(() => {
+      this.restartWatcher();
+    });
+  }
+
+  private async restartWatcher(): Promise<void> {
+    if (this.isRestarting) {
+      return;
+    }
+
+    this.isRestarting = true;
+
     try {
-      const outputDir = path.join(this.appPath, OUTPUT_DIR);
-
-      await fs.ensureDir(outputDir);
-
-      const manifestPath = path.join(outputDir, 'manifest.json');
-
-      await fs.writeJSON(manifestPath, result.manifest, { spaces: 2 });
-
-      console.log(chalk.green(`  ✓ Manifest written to ${manifestPath}`));
-      console.log('');
       console.log(
-        chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
+        chalk.yellow('🔄 Function entry points changed, restarting watcher...'),
       );
-    } catch (error) {
-      console.error(
-        chalk.red('  ✗ Failed to write manifest:'),
-        error instanceof Error ? error.message : error,
-      );
+
+      if (this.watcher) {
+        await this.watcher.close();
+      }
+
+      await this.startWatcher();
+
+      console.log(chalk.green('✓ Watcher restarted with new entry points'));
+    } finally {
+      this.isRestarting = false;
     }
   }
 
@@ -129,8 +128,8 @@ export class AppDevCommand {
     process.on('SIGINT', async () => {
       console.log(chalk.yellow('\n🛑 Stopping development mode...'));
 
-      if (this.server) {
-        await this.server.close();
+      if (this.watcher) {
+        await this.watcher.close();
       }
 
       process.exit(0);

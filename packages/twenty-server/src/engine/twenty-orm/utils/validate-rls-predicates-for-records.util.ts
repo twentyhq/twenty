@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { type ObjectRecord } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -59,7 +60,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
 
   for (const record of records) {
     const matchesRLS = isRecordMatchingRLSRowLevelPermissionPredicate({
-      record,
+      record: record as unknown as ObjectRecord,
       filter: recordFilter,
       flatObjectMetadata: objectMetadata,
       flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,

@@ -28,6 +28,7 @@ import {
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
 import { parseEmailBody } from 'src/utils/parse-email-body';
@@ -44,6 +45,7 @@ export class SendEmailTool implements Tool {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly sendMessageService: MessagingSendMessageService,
+    private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly fileService: FileService,
@@ -211,6 +213,25 @@ export class SendEmailTool implements Tool {
         workspaceId,
       );
 
+      const messageChannelId = connectedAccount.messageChannels.find(
+        (channel) => channel.handle === connectedAccount.handle,
+      )?.id!;
+
+      const { accessToken, refreshToken } =
+        await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
+          {
+            connectedAccount,
+            workspaceId,
+            messageChannelId,
+          },
+        );
+
+      const connectedAccountWithFreshTokens = {
+        ...connectedAccount,
+        accessToken,
+        refreshToken,
+      };
+
       const attachments = await this.getAttachments(files || [], workspaceId);
 
       const parsedBody = parseEmailBody(body);
@@ -232,7 +253,7 @@ export class SendEmailTool implements Tool {
           html: safeHtmlBody,
           attachments,
         },
-        connectedAccount,
+        connectedAccountWithFreshTokens,
       );
 
       this.logger.log(

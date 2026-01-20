@@ -1,5 +1,6 @@
 import {
   type ApplicationManifest,
+  type FrontComponentManifest,
   type ServerlessFunctionManifest,
   type ObjectExtensionManifest,
   type ObjectManifest,
@@ -103,6 +104,16 @@ const collectAllIds = (
       ids.push({
         id: role.universalIdentifier,
         location: `roles/${role.label}`,
+      });
+    }
+  }
+
+  // Front Components
+  for (const component of manifest.frontComponents ?? []) {
+    if (component.universalIdentifier) {
+      ids.push({
+        id: component.universalIdentifier,
+        location: `front-components/${component.name ?? component.componentName}`,
       });
     }
   }
@@ -411,6 +422,25 @@ const validateRoles = (
 };
 
 /**
+ * Validate front components.
+ */
+const validateFrontComponents = (
+  components: FrontComponentManifest[],
+  errors: ValidationError[],
+): void => {
+  for (const component of components) {
+    const componentPath = `front-components/${component.name ?? component.componentName ?? 'unknown'}`;
+
+    if (!component.universalIdentifier) {
+      errors.push({
+        path: componentPath,
+        message: 'Front component must have a universalIdentifier',
+      });
+    }
+  }
+};
+
+/**
  * Validate a complete application manifest.
  */
 export const validateManifest = (
@@ -433,6 +463,9 @@ export const validateManifest = (
 
   // Validate roles
   validateRoles(manifest.roles ?? [], errors);
+
+  // Validate front components
+  validateFrontComponents(manifest.frontComponents ?? [], errors);
 
   // Check for duplicate universalIdentifiers
   const allIds = collectAllIds(manifest);

@@ -132,7 +132,7 @@ export const registerCommands = (program: Command): void => {
     });
 
   program
-    .command('app:add [entityType]')
+    .command('entity:add [entityType]')
     .option('--path <path>', 'Path in which the entity should be created.')
     .description(
       `Add a new entity to your application (${Object.values(SyncableEntity).join('|')})`,

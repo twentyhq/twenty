@@ -1,6 +1,9 @@
-import { type FunctionConfig } from '@/application/functions/function-config';
 import { type RoleConfig } from '@/application/role-config';
-import { loadConfig, loadFunctionModule } from '@/cli/utilities/file/utils/file-config-loader';
+import {
+  extractFrontComponentConfig,
+  extractFunctionConfig,
+  loadConfig,
+} from '@/cli/utilities/file/utils/file-config-loader';
 import { findPathFile } from '@/cli/utilities/file/utils/file-find';
 import { parseJsoncFile, parseTextFile } from '@/cli/utilities/file/utils/file-jsonc';
 import { glob } from 'fast-glob';
@@ -9,6 +12,7 @@ import path, { posix, relative, sep } from 'path';
 import {
   type Application,
   type ApplicationManifest,
+  type FrontComponentManifest,
   type ObjectExtensionManifest,
   type ObjectManifest,
   type PackageJson,
@@ -113,9 +117,6 @@ const loadObjectExtensions = async (
   return extensions;
 };
 
-/**
- * Load all function definitions from src/app/ (any *.function.ts file).
- */
 const loadFunctions = async (
   appPath: string,
 ): Promise<ServerlessFunctionManifest[]> => {
@@ -125,23 +126,7 @@ const loadFunctions = async (
 
   for (const filepath of functionFiles) {
     try {
-      const { config, handlerName, handlerPath } = await loadFunctionModule(
-        filepath,
-        appPath,
-      );
-      const fnConfig = config as FunctionConfig;
-
-      const manifest: ServerlessFunctionManifest = {
-        universalIdentifier: fnConfig.universalIdentifier,
-        name: fnConfig.name,
-        description: fnConfig.description,
-        timeoutSeconds: fnConfig.timeoutSeconds,
-        triggers: fnConfig.triggers ?? [],
-        handlerPath,
-        handlerName,
-      };
-
-      functions.push(manifest);
+      functions.push(await extractFunctionConfig(filepath, appPath));
     } catch (error) {
       const relPath = toPosixRelative(filepath, appPath);
       throw new Error(
@@ -174,6 +159,30 @@ const loadRoles = async (appPath: string): Promise<RoleManifest[]> => {
   }
 
   return roles;
+};
+
+const loadFrontComponents = async (
+  appPath: string,
+): Promise<FrontComponentManifest[]> => {
+  const componentFiles = await loadFiles(
+    ['src/app/**/*.front-component.tsx'],
+    appPath,
+  );
+
+  const components: FrontComponentManifest[] = [];
+
+  for (const filepath of componentFiles) {
+    try {
+      components.push(await extractFrontComponentConfig(filepath, appPath));
+    } catch (error) {
+      const relPath = toPosixRelative(filepath, appPath);
+      throw new Error(
+        `Failed to load front component from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  return components;
 };
 
 /**
@@ -276,6 +285,7 @@ export const buildManifest = async (
     objects,
     objectExtensions,
     serverlessFunctions,
+    frontComponents,
     roles,
     sources,
     shouldGenerate,
@@ -283,6 +293,7 @@ export const buildManifest = async (
     loadObjects(appPath),
     loadObjectExtensions(appPath),
     loadFunctions(appPath),
+    loadFrontComponents(appPath),
     loadRoles(appPath),
     loadSources(appPath),
     checkShouldGenerate(appPath),
@@ -295,6 +306,7 @@ export const buildManifest = async (
     objectExtensions:
       objectExtensions.length > 0 ? objectExtensions : undefined,
     serverlessFunctions,
+    frontComponents: frontComponents.length > 0 ? frontComponents : undefined,
     roles,
     sources,
   };
@@ -305,6 +317,7 @@ export const buildManifest = async (
     objects,
     objectExtensions,
     serverlessFunctions,
+    frontComponents,
     roles,
   });
 
