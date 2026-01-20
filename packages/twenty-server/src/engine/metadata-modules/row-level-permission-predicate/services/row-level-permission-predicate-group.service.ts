@@ -1,8 +1,10 @@
 /* @license Enterprise */
 
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -19,6 +21,7 @@ import { type DeleteRowLevelPermissionPredicateGroupInput } from 'src/engine/met
 import { type DestroyRowLevelPermissionPredicateGroupInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/destroy-row-level-permission-predicate-group.input';
 import { type UpdateRowLevelPermissionPredicateGroupInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/update-row-level-permission-predicate-group.input';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
+import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import {
   RowLevelPermissionPredicateGroupException,
   RowLevelPermissionPredicateGroupExceptionCode,
@@ -35,6 +38,8 @@ export class RowLevelPermissionPredicateGroupService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly billingService: BillingService,
+    @InjectRepository(RowLevelPermissionPredicateGroupEntity)
+    private readonly rowLevelPermissionPredicateGroupRepository: Repository<RowLevelPermissionPredicateGroupEntity>,
   ) {}
 
   async createOne({
@@ -203,7 +208,19 @@ export class RowLevelPermissionPredicateGroupService {
   async findByWorkspaceId(
     workspaceId: string,
   ): Promise<RowLevelPermissionPredicateGroupDTO[]> {
-    await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    try {
+      await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    } catch (error) {
+      if (
+        error instanceof RowLevelPermissionPredicateGroupException &&
+        error.code ===
+          RowLevelPermissionPredicateGroupExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED
+      ) {
+        return [];
+      }
+
+      return [];
+    }
 
     const { flatRowLevelPermissionPredicateGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -228,7 +245,19 @@ export class RowLevelPermissionPredicateGroupService {
     workspaceId: string,
     roleId: string,
   ): Promise<RowLevelPermissionPredicateGroupDTO[]> {
-    await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    try {
+      await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    } catch (error) {
+      if (
+        error instanceof RowLevelPermissionPredicateGroupException &&
+        error.code ===
+          RowLevelPermissionPredicateGroupExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED
+      ) {
+        return [];
+      }
+
+      return [];
+    }
 
     const { flatRowLevelPermissionPredicateGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -253,7 +282,19 @@ export class RowLevelPermissionPredicateGroupService {
     id: string,
     workspaceId: string,
   ): Promise<RowLevelPermissionPredicateGroupDTO | null> {
-    await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    try {
+      await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    } catch (error) {
+      if (
+        error instanceof RowLevelPermissionPredicateGroupException &&
+        error.code ===
+          RowLevelPermissionPredicateGroupExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED
+      ) {
+        return null;
+      }
+
+      return null;
+    }
 
     const { flatRowLevelPermissionPredicateGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -273,6 +314,18 @@ export class RowLevelPermissionPredicateGroupService {
     }
 
     return fromFlatRowLevelPermissionPredicateGroupToDto(flatGroup);
+  }
+
+  public async deleteAllRowLevelPermissionPredicateGroups(workspaceId: string) {
+    await this.rowLevelPermissionPredicateGroupRepository.delete({
+      workspaceId,
+    });
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'rolesPermissions',
+      'flatRowLevelPermissionPredicateMaps',
+      'flatRowLevelPermissionPredicateGroupMaps',
+    ]);
   }
 
   private async runMigration({

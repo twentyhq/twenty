@@ -213,7 +213,19 @@ export class RowLevelPermissionPredicateService {
   async findByWorkspaceId(
     workspaceId: string,
   ): Promise<RowLevelPermissionPredicateDTO[]> {
-    await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    try {
+      await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    } catch (error) {
+      if (
+        error instanceof RowLevelPermissionPredicateException &&
+        error.code ===
+          RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED
+      ) {
+        return [];
+      }
+
+      return [];
+    }
 
     const { flatRowLevelPermissionPredicateMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -239,7 +251,19 @@ export class RowLevelPermissionPredicateService {
     roleId: string,
     objectMetadataId: string,
   ): Promise<RowLevelPermissionPredicateDTO[]> {
-    await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    try {
+      await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    } catch (error) {
+      if (
+        error instanceof RowLevelPermissionPredicateException &&
+        error.code ===
+          RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED
+      ) {
+        return [];
+      }
+
+      return [];
+    }
 
     const { flatRowLevelPermissionPredicateMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -269,7 +293,19 @@ export class RowLevelPermissionPredicateService {
     id: string,
     workspaceId: string,
   ): Promise<RowLevelPermissionPredicateDTO | null> {
-    await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    try {
+      await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    } catch (error) {
+      if (
+        error instanceof RowLevelPermissionPredicateException &&
+        error.code ===
+          RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED
+      ) {
+        return null;
+      }
+
+      return null;
+    }
 
     const { flatRowLevelPermissionPredicateMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
