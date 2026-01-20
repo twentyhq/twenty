@@ -7,6 +7,7 @@ import {
   type EmailsConfiguration,
   type FieldRichTextConfiguration,
   type FilesConfiguration,
+  type FrontComponentConfiguration,
   type GaugeChartConfiguration,
   type IframeConfiguration,
   type LineChartConfiguration,
@@ -35,6 +36,12 @@ type WidgetConfigurationTypenameMap = {
   };
   CalendarConfiguration: Omit<CalendarConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.CALENDAR;
+  };
+  FrontComponentConfiguration: Omit<
+    FrontComponentConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.FRONT_COMPONENT;
   };
   EmailsConfiguration: Omit<EmailsConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.EMAILS;

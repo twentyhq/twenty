@@ -11,6 +11,7 @@ import { fromDeleteFrontComponentInputToFlatFrontComponentOrThrow } from 'src/en
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
 import { fromUpdateFrontComponentInputToFlatFrontComponentToUpdateOrThrow } from 'src/engine/metadata-modules/flat-front-component/utils/from-update-front-component-input-to-flat-front-component-to-update-or-throw.util';
 import { type CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
+import { type FrontComponentCodeDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component-code.dto';
 import { type FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 import { type UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
 import {
@@ -233,5 +234,33 @@ export class FrontComponentService {
     }
 
     return frontComponent;
+  }
+
+  // Mocked implementation - returns Hello World component regardless of id
+  async getFrontComponentCode(
+    _id: string,
+    _workspaceId: string,
+  ): Promise<FrontComponentCodeDTO> {
+    const sourceCode = `
+import { RemoteElement, RemoteRootElement } from '@remote-dom/core/elements';
+
+customElements.define('remote-root', RemoteRootElement);
+customElements.define('remote-element', RemoteElement);
+
+const root = document.createElement('remote-root');
+document.body.appendChild(root);
+
+const container = document.createElement('remote-element');
+container.setAttribute('type', 'div');
+
+const text = document.createElement('remote-element');
+text.setAttribute('type', 'span');
+text.textContent = 'Hello World from Custom Widget!';
+
+container.appendChild(text);
+root.appendChild(container);
+`;
+
+    return { sourceCode };
   }
 }

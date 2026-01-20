@@ -1,5 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { CalendarWidget } from '@/page-layout/widgets/calendar/components/CalendarWidget';
+import { FrontComponentRenderer } from '@/page-layout/widgets/front-component/components/FrontComponentRenderer';
 import { EmailWidget } from '@/page-layout/widgets/emails/components/EmailWidget';
 import { FieldRichTextWidgetRenderer } from '@/page-layout/widgets/field-rich-text/components/FieldRichTextWidgetRenderer';
 import { FieldWidget } from '@/page-layout/widgets/field/components/FieldWidget';
@@ -68,6 +69,9 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.STANDALONE_RICH_TEXT:
       return <StandaloneRichTextWidgetRenderer widget={widget} />;
+
+    case WidgetType.FRONT_COMPONENT:
+      return <FrontComponentRenderer widget={widget} />;
 
     default:
       return null;

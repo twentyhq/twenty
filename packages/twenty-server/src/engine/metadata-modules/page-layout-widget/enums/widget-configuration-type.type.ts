@@ -25,7 +25,7 @@ export enum WidgetConfigurationType {
   WORKFLOW = 'WORKFLOW',
   WORKFLOW_VERSION = 'WORKFLOW_VERSION',
   WORKFLOW_RUN = 'WORKFLOW_RUN',
-  CUSTOM_WIDGET = 'CUSTOM_WIDGET',
+  FRONT_COMPONENT = 'FRONT_COMPONENT',
 }
 
 registerEnumType(WidgetConfigurationType, {
