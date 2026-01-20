@@ -40,7 +40,7 @@ export const getBarChartAxisConfigs = ({
       ? valueTickValues
       : numberOfValueTicks;
 
-  const baseMargins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
+  const baseMargins = getBarChartMargins({ xAxisLabel, yAxisLabel });
 
   const hasRotation = bottomAxisTickRotation !== 0;
   const margins =
@@ -96,7 +96,7 @@ export const getBarChartAxisConfigs = ({
       legendPosition: 'middle' as const,
       tickRotation: BAR_CHART_CONSTANTS.NO_ROTATION_ANGLE,
       tickValues: resolvedValueTickValues,
-      legend: yAxisLabel,
+      legend: xAxisLabel,
       legendOffset: BAR_CHART_CONSTANTS.BOTTOM_AXIS_LEGEND_OFFSET,
       format: (value: number) =>
         truncateTickLabel(
@@ -110,7 +110,7 @@ export const getBarChartAxisConfigs = ({
       legendPosition: 'middle' as const,
       tickRotation: COMMON_CHART_CONSTANTS.NO_ROTATION_ANGLE,
       tickValues: categoryTickValues,
-      legend: xAxisLabel,
+      legend: yAxisLabel,
       legendOffset:
         -margins.left + BAR_CHART_CONSTANTS.LEFT_AXIS_LEGEND_OFFSET_PADDING,
       format: (value: string | number) =>

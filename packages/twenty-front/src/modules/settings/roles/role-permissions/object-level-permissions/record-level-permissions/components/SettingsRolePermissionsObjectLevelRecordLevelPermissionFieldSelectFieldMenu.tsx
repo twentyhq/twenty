@@ -3,6 +3,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedFilterFieldSelectSearchInput } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
@@ -15,6 +16,7 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
+import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
@@ -25,6 +27,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useContext } from 'react';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenuProps =
   {
@@ -53,10 +56,17 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
     );
 
     const filteredFieldMetadataItems = filterableFieldMetadataItems
-      .filter((fieldMetadataItem) =>
-        fieldMetadataItem.label
-          .toLocaleLowerCase()
-          .includes(objectFilterDropdownSearchInput.toLocaleLowerCase()),
+      .filter(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.label
+            .toLocaleLowerCase()
+            .includes(objectFilterDropdownSearchInput.toLocaleLowerCase()) &&
+          (RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
+            fieldMetadataItem.type,
+          ) ||
+            (fieldMetadataItem.type === FieldMetadataType.RELATION &&
+              fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
+                CoreObjectNameSingular.WorkspaceMember)),
       )
       .sort((a, b) => a.label.localeCompare(b.label));
 

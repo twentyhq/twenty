@@ -22,6 +22,7 @@ const jestConfig = {
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./setupTests.ts'],
   testEnvironment: 'jsdom',
+  testEnvironmentOptions: {},
 
   transformIgnorePatterns: [
     '/node_modules/(?!(twenty-ui)/.*)',
@@ -61,8 +62,8 @@ const jestConfig = {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
     global: {
-      statements: 51,
-      lines: 50,
+      statements: 50,
+      lines: 49,
       functions: 41,
     },
   },

@@ -34,12 +34,11 @@ import {
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',
   component: Dropdown,
-  decorators: [I18nFrontDecorator, ComponentDecorator, (Story) => <Story />],
+  decorators: [ComponentDecorator, (Story) => <Story />],
   args: {
     clickableComponent: <Button title="Open Dropdown" />,
     dropdownOffset: { x: 0, y: 8 },
@@ -92,8 +91,8 @@ export const Empty: Story = {
       </DropdownContent>
     ),
   },
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const buttons = await canvas.findAllByRole('button');
     await userEvent.click(buttons[0]);
@@ -223,8 +222,8 @@ const optionsMock = [
 //   );
 // };
 
-const playInteraction: PlayFunction<any, any> = async () => {
-  const canvas = within(document.body);
+const playInteraction: PlayFunction<any, any> = async ({ canvasElement }) => {
+  const canvas = within(canvasElement.ownerDocument.body);
 
   const buttons = await canvas.findAllByRole('button');
   await userEvent.click(buttons[0]);
@@ -280,8 +279,8 @@ export const SearchWithLoadingMenu: Story = {
       </DropdownContent>
     ),
   },
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const buttons = await canvas.findAllByRole('button');
 
@@ -403,7 +402,7 @@ export const WithInput: Story = {
 
 // TEMP_DISABLED_TEST: Temporarily commented out due to test failure
 // export const DropdownInsideModal: Story = {
-//   decorators: [I18nFrontDecorator, RootDecorator, ComponentDecorator],
+//   decorators: [RootDecorator, ComponentDecorator],
 //   parameters: {
 //     initializeState: initializeModalState,
 //     disableHotkeyInitialization: true,

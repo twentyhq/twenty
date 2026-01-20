@@ -1,4 +1,4 @@
-import { SSEProviderEffect } from '@/sse-db-event/components/SSEProviderEffect';
+import { SSEEventStreamEffect } from '@/sse-db-event/components/SSEEventStreamEffect';
 import { SSEQuerySubscribeEffect } from '@/sse-db-event/components/SSEQuerySubscribeEffect';
 import { SseClientContext } from '@/sse-db-event/contexts/SseClientContext';
 import { useSseClient } from '@/sse-db-event/hooks/useSseClient.util';
@@ -26,7 +26,7 @@ export const SSEProvider = ({ children }: SSEProviderProps) => {
 
   return (
     <SseClientContext.Provider value={sseClient}>
-      <SSEProviderEffect />
+      <SSEEventStreamEffect />
       <SSEQuerySubscribeEffect />
       {children}
     </SseClientContext.Provider>

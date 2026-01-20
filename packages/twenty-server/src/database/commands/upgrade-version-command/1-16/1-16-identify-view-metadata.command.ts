@@ -2,14 +2,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { capitalize, isDefined, uncapitalize } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import {
-  RunOnWorkspaceArgs,
-  WorkspacesMigrationCommandRunner,
-} from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { ALL_ENTITY_VIEW_NAME } from 'src/database/commands/upgrade-version-command/1-16/utils/compute-formatted-view-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -42,11 +39,18 @@ type ViewMetadataException = {
   objectNameSingular?: string;
 };
 
+type DuplicateStandardView = {
+  skippedFlatView: FlatView;
+  keptFlatView: FlatView;
+  objectNameSingular: string;
+  universalIdentifier: string;
+};
+
 @Command({
   name: 'upgrade:1-16:identify-view-metadata',
   description: 'Identify standard view metadata',
 })
-export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunner {
+export class IdentifyViewMetadataCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -58,11 +62,7 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
     protected readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, dataSourceService, [
-      WorkspaceActivationStatus.ACTIVE,
-      WorkspaceActivationStatus.SUSPENDED,
-      WorkspaceActivationStatus.ONGOING_CREATION,
-    ]);
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
   override async runOnWorkspace({
@@ -109,10 +109,12 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
     this.logger.log(
       `Invalidating caches: ${relatedCacheKeysToInvalidate.join(' ')}`,
     );
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatViewMaps',
-      ...relatedCacheKeysToInvalidate,
-    ]);
+    if (!options.dryRun) {
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatViewMaps',
+        ...relatedCacheKeysToInvalidate,
+      ]);
+    }
   }
 
   private async identifyStandardViewsOrThrow({
@@ -163,6 +165,10 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       });
 
       for (const flatView of relatedFlatViews) {
+        if (isDefined(flatView.applicationId)) {
+          continue;
+        }
+
         // INDEX views -> forward to standard (if object has views config)
         if (
           flatView.key === ViewKey.INDEX &&
@@ -184,8 +190,7 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
 
           standardViewUpdates.push({
             flatView,
-            universalIdentifier:
-              flatView.universalIdentifier ?? universalIdentifier,
+            universalIdentifier,
             objectNameSingular: flatObjectMetadata.nameSingular,
           });
           continue;
@@ -210,8 +215,7 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
 
         standardViewUpdates.push({
           flatView,
-          universalIdentifier:
-            flatView.universalIdentifier ?? universalIdentifier,
+          universalIdentifier,
           objectNameSingular: flatObjectMetadata.nameSingular,
         });
       }
@@ -224,7 +228,7 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
 
       for (const { flatView, exception, objectNameSingular } of exceptions) {
         this.logger.error(
-          `Exception for view "${flatView.name}" on object "${objectNameSingular ?? 'unknown'}" (id=${flatView.id}): ${exception}`,
+          `  - Exception for view "${flatView.name}" on object "${objectNameSingular ?? 'unknown'}" (id=${flatView.id}): ${exception}`,
         );
       }
 
@@ -233,7 +237,68 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       );
     }
 
-    const standardUpdates = standardViewUpdates.map(
+    // Detect duplicate universalIdentifiers and keep the oldest view (created during workspace setup)
+    const seenUniversalIdentifiers = new Map<string, StandardViewUpdate>();
+    const duplicates: DuplicateStandardView[] = [];
+
+    for (const update of standardViewUpdates) {
+      const existingUpdate = seenUniversalIdentifiers.get(
+        update.universalIdentifier,
+      );
+
+      if (isDefined(existingUpdate)) {
+        const currentCreatedAt = new Date(update.flatView.createdAt).getTime();
+        const existingCreatedAt = new Date(
+          existingUpdate.flatView.createdAt,
+        ).getTime();
+
+        // Keep the oldest view, skip the newer one
+        if (currentCreatedAt < existingCreatedAt) {
+          // Current is older, replace existing
+          duplicates.push({
+            skippedFlatView: existingUpdate.flatView,
+            keptFlatView: update.flatView,
+            objectNameSingular: update.objectNameSingular,
+            universalIdentifier: update.universalIdentifier,
+          });
+          seenUniversalIdentifiers.set(update.universalIdentifier, update);
+        } else {
+          // Existing is older, skip current
+          duplicates.push({
+            skippedFlatView: update.flatView,
+            keptFlatView: existingUpdate.flatView,
+            objectNameSingular: update.objectNameSingular,
+            universalIdentifier: update.universalIdentifier,
+          });
+        }
+        continue;
+      }
+
+      seenUniversalIdentifiers.set(update.universalIdentifier, update);
+    }
+
+    if (duplicates.length > 0) {
+      this.logger.warn(
+        `Found ${duplicates.length} duplicate standard view(s) for workspace ${workspaceId}. Keeping oldest, newer duplicates will be treated as custom views.`,
+      );
+
+      for (const {
+        skippedFlatView,
+        keptFlatView,
+        objectNameSingular,
+        universalIdentifier,
+      } of duplicates) {
+        this.logger.warn(
+          `  - Duplicate view "${skippedFlatView.name}" on object "${objectNameSingular}" (id=${skippedFlatView.id}, createdAt=${skippedFlatView.createdAt}) skipped in favor of older view (id=${keptFlatView.id}, createdAt=${keptFlatView.createdAt}) for universalIdentifier=${universalIdentifier}`,
+        );
+      }
+    }
+
+    const deduplicatedStandardViewUpdates = Array.from(
+      seenUniversalIdentifiers.values(),
+    );
+
+    const standardUpdates = deduplicatedStandardViewUpdates.map(
       ({ flatView, universalIdentifier }) => ({
         id: flatView.id,
         universalIdentifier,
@@ -249,7 +314,7 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       flatView,
       universalIdentifier,
       objectNameSingular,
-    } of standardViewUpdates) {
+    } of deduplicatedStandardViewUpdates) {
       this.logger.log(
         `  - Standard view "${flatView.name}" on object "${objectNameSingular}" (id=${flatView.id}) -> universalIdentifier=${universalIdentifier}`,
       );
@@ -284,6 +349,7 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
         workspaceId,
         applicationId: IsNull(),
       },
+      withDeleted: true,
     });
 
     const customUpdates = remainingCustomViews.map((viewEntity) => ({

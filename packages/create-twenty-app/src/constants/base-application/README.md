@@ -5,16 +5,39 @@ This is a [Twenty](https://twenty.com) application project bootstrapped with [`c
 First, authenticate to your workspace:
 
 ```bash
-yarn auth
+yarn auth:login
 ```
 
-Then, install this app to your workspace:
+Then, start development mode to sync your app and watch for changes:
 
 ```bash
-yarn sync
+yarn app:dev
+```
+
+Or run a one-time sync:
+
+```bash
+yarn app:sync
 ```
 
 Open your Twenty instance and go to `/settings/applications` section to see the result.
+
+## Available Commands
+
+```bash
+# Authentication
+yarn auth:login     # Authenticate with Twenty
+yarn auth:logout    # Remove credentials
+yarn auth:status    # Check auth status
+
+# Application
+yarn app:dev        # Start dev mode (sync + watch)
+yarn app:sync       # One-time sync
+yarn entity:add     # Add a new entity (function, object, role)
+yarn app:generate   # Generate typed Twenty client
+yarn app:logs       # Stream function logs
+yarn app:uninstall  # Uninstall app from workspace
+```
 
 ## Learn More
 

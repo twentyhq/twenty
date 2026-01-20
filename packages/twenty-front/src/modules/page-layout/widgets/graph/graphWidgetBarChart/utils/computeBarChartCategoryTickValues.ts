@@ -28,7 +28,7 @@ export const computeBarChartCategoryTickValues = ({
 
   const values = data.map((item) => item[indexBy] as string | number);
 
-  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
+  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel });
 
   const totalMargins =
     layout === BarChartLayout.VERTICAL

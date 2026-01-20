@@ -1,8 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "types": ["node"],
-    "baseUrl": "."
+    "types": ["node"]
   },
   "exclude": [
     "**/__mocks__/**/*",
