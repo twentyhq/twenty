@@ -8,6 +8,7 @@ describe('NavigationMenuItem creation should succeed', () => {
   let createdNavigationMenuItemId: string;
   let companyObjectMetadataId: string;
   let personObjectMetadataId: string;
+  let validUserWorkspaceId: string | null;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -36,6 +37,13 @@ describe('NavigationMenuItem creation should succeed', () => {
 
     companyObjectMetadataId = companyObjectMetadata.id;
     personObjectMetadataId = personObjectMetadata.id;
+
+    const userWorkspaceResult = await global.testDataSource.query<
+      Array<{ id: string }>
+    >(`SELECT id FROM core."userWorkspace" LIMIT 1`);
+
+    validUserWorkspaceId =
+      userWorkspaceResult.length > 0 ? userWorkspaceResult[0].id : null;
   });
 
   afterEach(async () => {
@@ -73,7 +81,6 @@ describe('NavigationMenuItem creation should succeed', () => {
 
   it('should create navigation menu item with all optional fields', async () => {
     const targetRecordId = faker.string.uuid();
-    const userWorkspaceId = faker.string.uuid();
     const folderId = faker.string.uuid();
 
     const { data } = await createNavigationMenuItem({
@@ -81,7 +88,7 @@ describe('NavigationMenuItem creation should succeed', () => {
       input: {
         targetRecordId,
         targetObjectMetadataId: companyObjectMetadataId,
-        userWorkspaceId,
+        userWorkspaceId: validUserWorkspaceId ?? undefined,
         folderId,
         position: 5,
       },
@@ -93,7 +100,7 @@ describe('NavigationMenuItem creation should succeed', () => {
       id: expect.any(String),
       targetRecordId,
       targetObjectMetadataId: companyObjectMetadataId,
-      userWorkspaceId,
+      userWorkspaceId: validUserWorkspaceId,
       folderId,
       position: 5,
     });
