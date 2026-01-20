@@ -1,11 +1,11 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { CalendarWidget } from '@/page-layout/widgets/calendar/components/CalendarWidget';
-import { FrontComponentRenderer } from '@/page-layout/widgets/front-component/components/FrontComponentRenderer';
 import { EmailWidget } from '@/page-layout/widgets/emails/components/EmailWidget';
 import { FieldRichTextWidgetRenderer } from '@/page-layout/widgets/field-rich-text/components/FieldRichTextWidgetRenderer';
 import { FieldWidget } from '@/page-layout/widgets/field/components/FieldWidget';
 import { FieldsWidget } from '@/page-layout/widgets/fields/components/FieldsWidget';
 import { FileWidget } from '@/page-layout/widgets/files/components/FileWidget';
+import { FrontComponentWidgetRenderer } from '@/page-layout/widgets/front-component/components/FrontComponentWidgetRenderer';
 import { GraphWidgetRenderer } from '@/page-layout/widgets/graph/components/GraphWidgetRenderer';
 import { IframeWidget } from '@/page-layout/widgets/iframe/components/IframeWidget';
 import { NoteWidget } from '@/page-layout/widgets/notes/components/NoteWidget';
@@ -71,7 +71,7 @@ export const WidgetContentRenderer = ({
       return <StandaloneRichTextWidgetRenderer widget={widget} />;
 
     case WidgetType.FRONT_COMPONENT:
-      return <FrontComponentRenderer widget={widget} />;
+      return <FrontComponentWidgetRenderer widget={widget} />;
 
     default:
       return null;
