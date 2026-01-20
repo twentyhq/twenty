@@ -43,7 +43,7 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
       fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     );
 
-    const serverlessFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const flatServerlessFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: entityId,
       flatEntityMaps: context.allFlatEntityMaps.flatServerlessFunctionMaps,
     });
@@ -51,37 +51,37 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
     for (const update of action.updates) {
       if (update.property === 'checksum' && isDefined(code)) {
         await this.handleChecksumUpdate({
-          serverlessFunction,
+          flatServerlessFunction,
           code,
         });
       }
       if (update.property === 'deletedAt' && isDefined(update.to)) {
         await this.handleDeletedAtUpdate({
-          serverlessFunction,
+          flatServerlessFunction,
         });
       }
     }
   }
 
   async handleDeletedAtUpdate({
-    serverlessFunction,
+    flatServerlessFunction,
   }: {
-    serverlessFunction: FlatServerlessFunction;
+    flatServerlessFunction: FlatServerlessFunction;
   }) {
     this.serverlessService.delete(
-      serverlessFunction as unknown as ServerlessFunctionEntity,
+      flatServerlessFunction as unknown as ServerlessFunctionEntity,
     );
   }
 
   async handleChecksumUpdate({
-    serverlessFunction,
+    flatServerlessFunction,
     code,
   }: {
-    serverlessFunction: FlatServerlessFunction;
+    flatServerlessFunction: FlatServerlessFunction;
     code: Sources;
   }) {
     const fileFolder = getServerlessFolderOrThrow({
-      flatServerlessFunction: serverlessFunction,
+      flatServerlessFunction,
       version: 'draft',
     });
 

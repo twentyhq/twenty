@@ -17,6 +17,7 @@ import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/
 import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { fromServerlessFunctionEntityToFlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/utils/from-serverless-function-entity-to-flat-serverless-function.type';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -76,7 +77,10 @@ export class LocalDriver implements ServerlessDriver {
     const startTime = Date.now();
 
     const folderPath = getServerlessFolderOrThrow({
-      flatServerlessFunction: serverlessFunction,
+      flatServerlessFunction:
+        fromServerlessFunctionEntityToFlatServerlessFunction(
+          serverlessFunction,
+        ),
       version,
     });
 
