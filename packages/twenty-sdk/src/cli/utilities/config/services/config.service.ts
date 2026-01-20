@@ -41,16 +41,19 @@ export class ConfigService {
   }
 
   async getConfig(): Promise<TwentyConfig> {
+    return this.getConfigForWorkspace(this.getActiveWorkspaceName());
+  }
+
+  async getConfigForWorkspace(workspaceName: string): Promise<TwentyConfig> {
     const defaultConfig = this.getDefaultConfig();
     try {
       const raw = await this.readRawConfig();
-      const profile = this.getActiveWorkspaceName();
 
       const profileConfig =
-        profile === DEFAULT_WORKSPACE_NAME &&
+        workspaceName === DEFAULT_WORKSPACE_NAME &&
         !raw.profiles?.[DEFAULT_WORKSPACE_NAME]
           ? raw
-          : raw.profiles?.[profile];
+          : raw.profiles?.[workspaceName];
 
       // Fallback to legacy top-level values if profile value is missing
       const apiUrl = profileConfig?.apiUrl ?? defaultConfig.apiUrl;

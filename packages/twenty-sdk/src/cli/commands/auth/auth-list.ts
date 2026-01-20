@@ -22,8 +22,7 @@ export class AuthListCommand {
       console.log(chalk.blue('Available workspaces:\n'));
 
       for (const workspace of availableWorkspaces) {
-        ConfigService.setActiveWorkspace(workspace);
-        const config = await this.configService.getConfig();
+        const config = await this.configService.getConfigForWorkspace(workspace);
         const hasCredentials = !!config.apiKey;
         const isDefault = workspace === currentDefault;
 
