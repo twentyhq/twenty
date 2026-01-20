@@ -35,7 +35,7 @@ yarn run help
 yarn auth:login
 
 # Add a new entity to your application (guided)
-yarn app:add
+yarn entity:add
 
 # Generate a typed Twenty client and workspace entity types
 yarn app:generate
@@ -60,7 +60,7 @@ yarn app:uninstall
 - Example placeholders to help you add entities, actions, and sync logic
 
 ## Next steps
-- Explore the generated project and add your first entity with `yarn app:add`.
+- Explore the generated project and add your first entity with `yarn entity:add`.
 - Keep your types up‑to‑date using `yarn app:generate`.
 - Use `yarn app:dev` while you iterate to see changes instantly in your workspace.
 

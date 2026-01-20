@@ -1,14 +1,15 @@
-import { type FunctionConfig } from '@/application/functions/function-config';
-import { type RoleConfig } from '@/application/role-config';
-import { loadConfig, loadFunctionModule } from '@/cli/utilities/file/utils/file-config-loader';
 import { findPathFile } from '@/cli/utilities/file/utils/file-find';
-import { parseJsoncFile, parseTextFile } from '@/cli/utilities/file/utils/file-jsonc';
+import {
+  parseJsoncFile,
+  parseTextFile,
+} from '@/cli/utilities/file/utils/file-jsonc';
 import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';
 import path, { posix, relative, sep } from 'path';
 import {
   type Application,
   type ApplicationManifest,
+  type FrontComponentManifest,
   type ObjectExtensionManifest,
   type ObjectManifest,
   type PackageJson,
@@ -20,11 +21,9 @@ import {
   ManifestValidationError,
   type ValidationWarning,
 } from '../types/manifest.types';
+import { extractManifestFromFile } from './manifest-file-extractor';
 import { validateManifest } from './manifest-validate';
 
-/**
- * Validate that the required folder structure exists.
- */
 const validateFolderStructure = async (appPath: string): Promise<void> => {
   const appFolder = path.join(appPath, 'src', 'app');
 
@@ -41,9 +40,6 @@ const validateFolderStructure = async (appPath: string): Promise<void> => {
   }
 };
 
-/**
- * Convert a file path to posix format relative to appPath.
- */
 const toPosixRelative = (filepath: string, appPath: string): string => {
   const rel = relative(appPath, filepath);
   return rel.split(sep).join(posix.sep);
@@ -60,19 +56,18 @@ const loadFiles = async (
   });
 };
 
-/**
- * Load all object definitions from src/app/ (any *.object.ts file).
- */
-const loadObjects = async (appPath: string): Promise<ObjectManifest[]> => {
+const loadObjectManifests = async (
+  appPath: string,
+): Promise<ObjectManifest[]> => {
   const objectFiles = await loadFiles(['src/app/**/*.object.ts'], appPath);
 
-  const objects: ObjectManifest[] = [];
+  const objectManifests: ObjectManifest[] = [];
 
   for (const filepath of objectFiles) {
     try {
-      const manifest = await loadConfig<ObjectManifest>(filepath, appPath);
-
-      objects.push(manifest);
+      objectManifests.push(
+        await extractManifestFromFile<ObjectManifest>(filepath, appPath),
+      );
     } catch (error) {
       const relPath = toPosixRelative(filepath, appPath);
       throw new Error(
@@ -81,13 +76,10 @@ const loadObjects = async (appPath: string): Promise<ObjectManifest[]> => {
     }
   }
 
-  return objects;
+  return objectManifests;
 };
 
-/**
- * Load all object extension definitions from src/app/ (any *.object-extension.ts file).
- */
-const loadObjectExtensions = async (
+const loadObjectExtensionManifests = async (
   appPath: string,
 ): Promise<ObjectExtensionManifest[]> => {
   const extensionFiles = await loadFiles(
@@ -95,13 +87,13 @@ const loadObjectExtensions = async (
     appPath,
   );
 
-  const extensions: ObjectExtensionManifest[] = [];
+  const objectExtensionManifests: ObjectExtensionManifest[] = [];
 
   for (const filepath of extensionFiles) {
     try {
-      const manifest = await loadConfig<ObjectExtensionManifest>(filepath, appPath);
-
-      extensions.push(manifest);
+      objectExtensionManifests.push(
+        await extractManifestFromFile<ObjectExtensionManifest>(filepath, appPath),
+      );
     } catch (error) {
       const relPath = toPosixRelative(filepath, appPath);
       throw new Error(
@@ -110,38 +102,25 @@ const loadObjectExtensions = async (
     }
   }
 
-  return extensions;
+  return objectExtensionManifests;
 };
 
-/**
- * Load all function definitions from src/app/ (any *.function.ts file).
- */
-const loadFunctions = async (
+const loadFunctionManifests = async (
   appPath: string,
 ): Promise<ServerlessFunctionManifest[]> => {
   const functionFiles = await loadFiles(['src/app/**/*.function.ts'], appPath);
 
-  const functions: ServerlessFunctionManifest[] = [];
+  const functionManifests: ServerlessFunctionManifest[] = [];
 
   for (const filepath of functionFiles) {
     try {
-      const { config, handlerName, handlerPath } = await loadFunctionModule(
-        filepath,
-        appPath,
+      functionManifests.push(
+        await extractManifestFromFile<ServerlessFunctionManifest>(
+          filepath,
+          appPath,
+          { entryProperty: 'handler' },
+        ),
       );
-      const fnConfig = config as FunctionConfig;
-
-      const manifest: ServerlessFunctionManifest = {
-        universalIdentifier: fnConfig.universalIdentifier,
-        name: fnConfig.name,
-        description: fnConfig.description,
-        timeoutSeconds: fnConfig.timeoutSeconds,
-        triggers: fnConfig.triggers ?? [],
-        handlerPath,
-        handlerName,
-      };
-
-      functions.push(manifest);
     } catch (error) {
       const relPath = toPosixRelative(filepath, appPath);
       throw new Error(
@@ -150,21 +129,19 @@ const loadFunctions = async (
     }
   }
 
-  return functions;
+  return functionManifests;
 };
 
-/**
- * Load all role definitions from src/app/ (any *.role.ts file).
- */
-const loadRoles = async (appPath: string): Promise<RoleManifest[]> => {
+const loadRoleManifests = async (appPath: string): Promise<RoleManifest[]> => {
   const roleFiles = await loadFiles(['src/app/**/*.role.ts'], appPath);
 
-  const roles: RoleManifest[] = [];
+  const roleManifests: RoleManifest[] = [];
 
   for (const filepath of roleFiles) {
     try {
-      const config = await loadConfig<RoleConfig>(filepath, appPath);
-      roles.push(config);
+      roleManifests.push(
+        await extractManifestFromFile<RoleManifest>(filepath, appPath),
+      );
     } catch (error) {
       const relPath = toPosixRelative(filepath, appPath);
       throw new Error(
@@ -173,16 +150,42 @@ const loadRoles = async (appPath: string): Promise<RoleManifest[]> => {
     }
   }
 
-  return roles;
+  return roleManifests;
 };
 
-/**
- * Build a nested object structure from all TypeScript source files.
- */
+const loadFrontComponentManifests = async (
+  appPath: string,
+): Promise<FrontComponentManifest[]> => {
+  const componentFiles = await loadFiles(
+    ['src/app/**/*.front-component.tsx'],
+    appPath,
+  );
+
+  const frontComponentManifests: FrontComponentManifest[] = [];
+
+  for (const filepath of componentFiles) {
+    try {
+      frontComponentManifests.push(
+        await extractManifestFromFile<FrontComponentManifest>(
+          filepath,
+          appPath,
+          { entryProperty: 'component', jsx: true },
+        ),
+      );
+    } catch (error) {
+      const relPath = toPosixRelative(filepath, appPath);
+      throw new Error(
+        `Failed to load front component from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  return frontComponentManifests;
+};
+
 const loadSources = async (appPath: string): Promise<Sources> => {
   const sources: Sources = {};
 
-  // Get all TypeScript files in src/ folder
   const tsFiles = await loadFiles(
     ['src/**/*.ts', 'generated/**/*.ts'],
     appPath,
@@ -193,7 +196,6 @@ const loadSources = async (appPath: string): Promise<Sources> => {
     const parts = relPath.split(sep);
     const content = await fs.readFile(filepath, 'utf8');
 
-    // Build nested structure
     let current: Sources = sources;
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
@@ -209,19 +211,12 @@ const loadSources = async (appPath: string): Promise<Sources> => {
   return sources;
 };
 
-/**
- * Check if the app imports from the generated folder.
- * Detects ESM imports: `import ... from '...generated'` or `import ... from '...generated/...'`
- * Detects CommonJS requires: `require('...generated')` or `require('...generated/...')`
- */
 const checkShouldGenerate = async (appPath: string): Promise<boolean> => {
   const tsFiles = await loadFiles(['src/**/*.ts'], appPath);
 
-  // Matches ESM: import ... from 'generated' or from '.../generated' or from '.../generated/...'
   const esmImportPattern =
     /from\s+['"][^'"]*\/generated(?:\/[^'"]*)?['"]|from\s+['"]generated['"]/;
 
-  // Matches CommonJS: require('generated') or require('.../generated') or require('.../generated/...')
   const commonJsRequirePattern =
     /require\s*\(\s*['"][^'"]*\/generated(?:\/[^'"]*)?['"]\s*\)|require\s*\(\s*['"]generated['"]\s*\)/;
 
@@ -244,16 +239,11 @@ export type BuildManifestResult = {
   warnings: ValidationWarning[];
 };
 
-/**
- * Build an application manifest using the folder structure with jiti runtime evaluation.
- */
 export const buildManifest = async (
   appPath: string,
 ): Promise<BuildManifestResult> => {
-  // Validate folder structure
   await validateFolderStructure(appPath);
 
-  // Load package.json and yarn.lock
   const packageJson = await parseJsoncFile(
     await findPathFile(appPath, 'package.json'),
   );
@@ -262,50 +252,54 @@ export const buildManifest = async (
     await findPathFile(appPath, 'yarn.lock'),
   );
 
-  // Load application config
   const applicationConfigPath = path.join(
     appPath,
     'src',
     'app',
     'application.config.ts',
   );
-  const application = await loadConfig<Application>(applicationConfigPath, appPath);
+  const application = await extractManifestFromFile<Application>(
+    applicationConfigPath,
+    appPath,
+  );
 
-  // Load all entities in parallel
   const [
-    objects,
-    objectExtensions,
-    serverlessFunctions,
-    roles,
+    objectManifests,
+    objectExtensionManifests,
+    functionManifests,
+    frontComponentManifests,
+    roleManifests,
     sources,
     shouldGenerate,
   ] = await Promise.all([
-    loadObjects(appPath),
-    loadObjectExtensions(appPath),
-    loadFunctions(appPath),
-    loadRoles(appPath),
+    loadObjectManifests(appPath),
+    loadObjectExtensionManifests(appPath),
+    loadFunctionManifests(appPath),
+    loadFrontComponentManifests(appPath),
+    loadRoleManifests(appPath),
     loadSources(appPath),
     checkShouldGenerate(appPath),
   ]);
 
-  // Build manifest
   const manifest: ApplicationManifest = {
     application,
-    objects,
+    objects: objectManifests,
     objectExtensions:
-      objectExtensions.length > 0 ? objectExtensions : undefined,
-    serverlessFunctions,
-    roles,
+      objectExtensionManifests.length > 0 ? objectExtensionManifests : undefined,
+    serverlessFunctions: functionManifests,
+    frontComponents:
+      frontComponentManifests.length > 0 ? frontComponentManifests : undefined,
+    roles: roleManifests,
     sources,
   };
 
-  // Validate manifest
   const validation = validateManifest({
     application,
-    objects,
-    objectExtensions,
-    serverlessFunctions,
-    roles,
+    objects: objectManifests,
+    objectExtensions: objectExtensionManifests,
+    serverlessFunctions: functionManifests,
+    frontComponents: frontComponentManifests,
+    roles: roleManifests,
   });
 
   if (!validation.isValid) {

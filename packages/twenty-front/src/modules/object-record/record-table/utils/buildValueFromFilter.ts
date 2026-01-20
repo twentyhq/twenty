@@ -1,122 +1,84 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 
 import {
   type RecordFilter,
   type RecordFilterToRecordInputOperand,
 } from '@/object-record/record-filter/types/RecordFilter';
-import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { ViewFilterOperand } from 'twenty-shared/types';
+import {
+  FILTER_OPERANDS_MAP,
+  getRecordFilterOperands,
+} from '@/object-record/record-filter/utils/getRecordFilterOperands';
+import { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from 'twenty-shared/constants';
+import {
+  compositeTypeDefinitions,
+  FieldMetadataType,
+  ViewFilterOperand,
+  type FieldMetadataOptions,
+} from 'twenty-shared/types';
 import { assertUnreachable, parseJson } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
+import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 
-export const buildValueFromFilter = ({
-  filter,
-  options,
-  relationType,
-  currentWorkspaceMember,
-  label,
-}: {
-  filter: RecordFilter;
-  options?: FieldMetadataItemOption[];
+type FilterOption = {
+  label: string;
+  position: number;
+  value: string;
+};
+
+type CompositeValue = Record<string, unknown>;
+
+type ValueComputeContext = {
+  value: string;
+  operand: ViewFilterOperand;
+  options?: FilterOption[] | null;
   relationType?: RelationType;
   currentWorkspaceMember?: CurrentWorkspaceMember;
   label?: string;
-}) => {
-  if (isCompositeFieldType(filter.type)) {
-    return;
-  }
-
-  if (filter.type === 'RAW_JSON') {
-    return;
-  }
-
-  const operands = FILTER_OPERANDS_MAP[filter.type];
-  if (!operands.some((operand) => operand === filter.operand)) {
-    throw new Error('Operand not supported for this field type');
-  }
-
-  switch (filter.type) {
-    case 'TEXT': {
-      return computeValueFromFilterText(
-        filter.operand as (typeof FILTER_OPERANDS_MAP)['TEXT'][number],
-        filter.value,
-      );
-    }
-    case 'RATING':
-      return computeValueFromFilterRating(
-        filter.operand as (typeof FILTER_OPERANDS_MAP)['RATING'][number],
-        filter.value,
-        options,
-      );
-    case 'DATE_TIME':
-    case 'DATE':
-      return computeValueFromFilterDate(
-        filter.operand as (typeof FILTER_OPERANDS_MAP)['DATE_TIME'][number],
-        filter.value,
-      );
-    case 'NUMBER':
-      return computeValueFromFilterNumber(
-        filter.operand as (typeof FILTER_OPERANDS_MAP)['NUMBER'][number],
-        filter.value,
-      );
-    case 'BOOLEAN':
-      return computeValueFromFilterBoolean(
-        filter.operand as (typeof FILTER_OPERANDS_MAP)['BOOLEAN'][number],
-        filter.value,
-      );
-    case 'TS_VECTOR':
-      return computeValueFromFilterTSVector(
-        filter.operand as (typeof FILTER_OPERANDS_MAP)['TS_VECTOR'][number],
-        filter.value,
-      );
-    case 'ARRAY':
-      return computeValueFromFilterArray(
-        filter.operand as (typeof FILTER_OPERANDS_MAP)['ARRAY'][number],
-        filter.value,
-      );
-    case 'SELECT':
-      return computeValueFromFilterSelect(
-        filter.operand as (typeof FILTER_OPERANDS_MAP)['SELECT'][number],
-        filter.value,
-        options,
-      );
-    case 'MULTI_SELECT':
-      return computeValueFromFilterMultiSelect(
-        filter.operand as (typeof FILTER_OPERANDS_MAP)['MULTI_SELECT'][number],
-        filter.value,
-      );
-    case 'RELATION': {
-      return computeValueFromFilterRelation(
-        filter.operand as (typeof FILTER_OPERANDS_MAP)['RELATION'][number],
-        filter.value,
-        relationType,
-        currentWorkspaceMember,
-        label,
-      );
-    }
-    case 'UUID':
-      return computeValueFromFilterUUID(
-        filter.operand as (typeof FILTER_OPERANDS_MAP)['UUID'][number],
-        filter.value,
-      );
-    default:
-      assertUnreachable(filter.type);
-  }
 };
 
-const computeValueFromFilterText = (
-  operand: RecordFilterToRecordInputOperand<'TEXT'>,
+type ValueHandler = (context: ValueComputeContext) => unknown;
+
+type CompositeFilterContext = {
+  filter: RecordFilter;
+  relationType?: RelationType;
+  currentWorkspaceMember?: CurrentWorkspaceMember;
+  label?: string;
+};
+
+const getCompositeSubFieldProperty = ({
+  compositeFieldType,
+  subFieldName,
+}: {
+  compositeFieldType: FieldMetadataType;
+  subFieldName: string;
+}) => {
+  const compositeType = compositeTypeDefinitions.get(compositeFieldType);
+  if (!compositeType) {
+    return;
+  }
+
+  return compositeType.properties.find(
+    (property) => property.name === subFieldName,
+  );
+};
+
+type ContainsBasedOperand =
+  | ViewFilterOperand.CONTAINS
+  | ViewFilterOperand.DOES_NOT_CONTAIN
+  | ViewFilterOperand.IS_EMPTY
+  | ViewFilterOperand.IS_NOT_EMPTY;
+
+const computeValueFromContainsOperand = (
+  operand: ContainsBasedOperand,
   value: string,
 ) => {
   switch (operand) {
     case ViewFilterOperand.CONTAINS:
-      return value;
     case ViewFilterOperand.IS_NOT_EMPTY:
       return value;
-    case ViewFilterOperand.IS_EMPTY:
     case ViewFilterOperand.DOES_NOT_CONTAIN:
+    case ViewFilterOperand.IS_EMPTY:
       return undefined;
     default:
       assertUnreachable(operand);
@@ -151,17 +113,15 @@ const computeValueFromFilterNumber = (
   value: string,
 ) => {
   switch (operand) {
-    //TODO: we shouln't create values from those filters as it makes no sense for the user
+    // TODO: we shouln't create values from those filters as it makes no sense for the user
     case ViewFilterOperand.GREATER_THAN_OR_EQUAL:
       return Number(value) + 1;
     case ViewFilterOperand.LESS_THAN_OR_EQUAL:
       return Number(value) - 1;
     case ViewFilterOperand.IS_NOT_EMPTY:
-      return Number(value);
     case ViewFilterOperand.IS:
       return Number(value);
     case ViewFilterOperand.IS_NOT:
-      return undefined;
     case ViewFilterOperand.IS_EMPTY:
       return undefined;
     default:
@@ -181,28 +141,12 @@ const computeValueFromFilterBoolean = (
   }
 };
 
-const computeValueFromFilterArray = (
-  operand: RecordFilterToRecordInputOperand<'ARRAY'>,
-  value: string,
-) => {
-  switch (operand) {
-    case ViewFilterOperand.CONTAINS:
-    case ViewFilterOperand.IS_NOT_EMPTY:
-      return value;
-    case ViewFilterOperand.DOES_NOT_CONTAIN:
-    case ViewFilterOperand.IS_EMPTY:
-      return undefined;
-    default:
-      assertUnreachable(operand);
-  }
-};
-
 const computeValueFromFilterRating = (
   operand: RecordFilterToRecordInputOperand<'RATING'>,
   value: string,
-  options?: FieldMetadataItemOption[],
+  options?: FilterOption[] | null,
 ) => {
-  const option = options?.find((option) => option.label === value);
+  const option = options?.find((optionItem) => optionItem.label === value);
   if (!option) {
     return undefined;
   }
@@ -213,15 +157,15 @@ const computeValueFromFilterRating = (
       return option.value;
     case ViewFilterOperand.GREATER_THAN_OR_EQUAL: {
       const plusOne = options?.find(
-        (opt) => opt.position === option.position + 1,
+        (optionItem) => optionItem.position === option.position + 1,
       )?.value;
-      return plusOne ? plusOne : option.value;
+      return plusOne ?? option.value;
     }
     case ViewFilterOperand.LESS_THAN_OR_EQUAL: {
       const minusOne = options?.find(
-        (opt) => opt.position === option.position - 1,
+        (optionItem) => optionItem.position === option.position - 1,
       )?.value;
-      return minusOne ? minusOne : option.value;
+      return minusOne ?? option.value;
     }
     case ViewFilterOperand.IS_EMPTY:
       return undefined;
@@ -233,14 +177,16 @@ const computeValueFromFilterRating = (
 const computeValueFromFilterSelect = (
   operand: RecordFilterToRecordInputOperand<'SELECT'>,
   value: string,
-  options?: FieldMetadataItemOption[],
+  options?: FilterOption[] | null,
 ) => {
   switch (operand) {
     case ViewFilterOperand.IS:
     case ViewFilterOperand.IS_NOT_EMPTY:
       try {
         const valueParsed = parseJson<string[]>(value)?.[0];
-        const option = options?.find((option) => option.value === valueParsed);
+        const option = options?.find(
+          (optionItem) => optionItem.value === valueParsed,
+        );
         if (!option) {
           return undefined;
         }
@@ -265,7 +211,7 @@ const computeValueFromFilterMultiSelect = (
     case ViewFilterOperand.IS_NOT_EMPTY:
       try {
         const parsedValue = parseJson<string[]>(value);
-        return parsedValue ? parsedValue : undefined;
+        return parsedValue ?? undefined;
       } catch {
         return undefined;
       }
@@ -299,7 +245,7 @@ const computeValueFromFilterRelation = (
           return parsedValue?.selectedRecordIds?.[0];
         }
       }
-      return undefined; //todo
+      return undefined; // todo
     }
     case ViewFilterOperand.IS_NOT:
     case ViewFilterOperand.IS_NOT_EMPTY: // todo
@@ -332,4 +278,263 @@ const computeValueFromFilterUUID = (
     default:
       assertUnreachable(operand);
   }
+};
+
+const VALUE_HANDLER_REGISTRY: Partial<Record<FieldMetadataType, ValueHandler>> =
+  {
+    [FieldMetadataType.TEXT]: ({ operand, value }) =>
+      computeValueFromContainsOperand(operand as ContainsBasedOperand, value),
+    [FieldMetadataType.ARRAY]: ({ operand, value }) =>
+      computeValueFromContainsOperand(operand as ContainsBasedOperand, value),
+    [FieldMetadataType.RAW_JSON]: ({ operand, value }) =>
+      computeValueFromContainsOperand(operand as ContainsBasedOperand, value),
+    [FieldMetadataType.DATE_TIME]: ({ operand, value }) =>
+      computeValueFromFilterDate(
+        operand as RecordFilterToRecordInputOperand<'DATE_TIME'>,
+        value,
+      ),
+    [FieldMetadataType.DATE]: ({ operand, value }) =>
+      computeValueFromFilterDate(
+        operand as RecordFilterToRecordInputOperand<'DATE_TIME'>,
+        value,
+      ),
+    [FieldMetadataType.NUMBER]: ({ operand, value }) =>
+      computeValueFromFilterNumber(
+        operand as RecordFilterToRecordInputOperand<'NUMBER'>,
+        value,
+      ),
+    [FieldMetadataType.NUMERIC]: ({ operand, value }) =>
+      computeValueFromFilterNumber(
+        operand as RecordFilterToRecordInputOperand<'NUMBER'>,
+        value,
+      ),
+    [FieldMetadataType.BOOLEAN]: ({ operand, value }) =>
+      computeValueFromFilterBoolean(
+        operand as RecordFilterToRecordInputOperand<'BOOLEAN'>,
+        value,
+      ),
+    [FieldMetadataType.RATING]: ({ operand, value, options }) =>
+      computeValueFromFilterRating(
+        operand as RecordFilterToRecordInputOperand<'RATING'>,
+        value,
+        options,
+      ),
+    [FieldMetadataType.SELECT]: ({ operand, value, options }) =>
+      computeValueFromFilterSelect(
+        operand as RecordFilterToRecordInputOperand<'SELECT'>,
+        value,
+        options,
+      ),
+    [FieldMetadataType.MULTI_SELECT]: ({ operand, value }) =>
+      computeValueFromFilterMultiSelect(
+        operand as RecordFilterToRecordInputOperand<'MULTI_SELECT'>,
+        value,
+      ),
+    [FieldMetadataType.RELATION]: ({
+      operand,
+      value,
+      relationType,
+      currentWorkspaceMember,
+      label,
+    }) =>
+      computeValueFromFilterRelation(
+        operand as RecordFilterToRecordInputOperand<'RELATION'>,
+        value,
+        relationType,
+        currentWorkspaceMember,
+        label,
+      ),
+    [FieldMetadataType.TS_VECTOR]: ({ operand, value }) =>
+      computeValueFromFilterTSVector(
+        operand as RecordFilterToRecordInputOperand<'TS_VECTOR'>,
+        value,
+      ),
+    [FieldMetadataType.UUID]: ({ operand, value }) =>
+      computeValueFromFilterUUID(
+        operand as RecordFilterToRecordInputOperand<'UUID'>,
+        value,
+      ),
+  };
+
+const COMPOSITE_FIELD_VALUE_TRANSFORMERS: Partial<
+  Record<FieldMetadataType, (value: unknown, subFieldName: string) => unknown>
+> = {
+  [FieldMetadataType.CURRENCY]: (value, subFieldName) =>
+    subFieldName ===
+    COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.CURRENCY]
+      .amountMicros
+      ? convertCurrencyAmountToCurrencyMicros(Number(value))
+      : value,
+};
+
+const SUPPORTED_COMPOSITE_FIELD_TYPES: FieldMetadataType[] = [
+  FieldMetadataType.CURRENCY,
+  FieldMetadataType.ADDRESS,
+  FieldMetadataType.FULL_NAME,
+  FieldMetadataType.LINKS,
+  FieldMetadataType.EMAILS,
+  FieldMetadataType.PHONES,
+  FieldMetadataType.ACTOR,
+  FieldMetadataType.RICH_TEXT_V2,
+];
+
+const computeValueFromSubFieldType = ({
+  fieldType,
+  filter,
+  options,
+  relationType,
+  currentWorkspaceMember,
+  label,
+}: {
+  fieldType: FieldMetadataType;
+  filter: RecordFilter;
+  options?: FieldMetadataOptions | null;
+  relationType?: RelationType;
+  currentWorkspaceMember?: CurrentWorkspaceMember;
+  label?: string;
+}) => {
+  const handler = VALUE_HANDLER_REGISTRY[fieldType];
+  if (!handler) {
+    return;
+  }
+
+  return handler({
+    value: filter.value,
+    operand: filter.operand,
+    options: options as FilterOption[] | null | undefined,
+    relationType,
+    currentWorkspaceMember,
+    label,
+  });
+};
+
+export const buildCompositeValueFromSubField = ({
+  compositeFieldType,
+  subFieldName,
+  value,
+  transformValue,
+}: {
+  compositeFieldType: FieldMetadataType;
+  subFieldName: string;
+  value: unknown;
+  transformValue?: (value: unknown) => unknown;
+}): CompositeValue | undefined => {
+  const subFieldProperty = getCompositeSubFieldProperty({
+    compositeFieldType,
+    subFieldName,
+  });
+
+  if (!subFieldProperty) {
+    return;
+  }
+
+  return {
+    [subFieldName]: transformValue ? transformValue(value) : value,
+  };
+};
+
+const buildCompositeValueFromFilter = ({
+  filter,
+  relationType,
+  currentWorkspaceMember,
+  label,
+}: CompositeFilterContext) => {
+  if (!filter.subFieldName) {
+    return;
+  }
+
+  const compositeFieldType = filter.type as FieldMetadataType;
+
+  if (!SUPPORTED_COMPOSITE_FIELD_TYPES.includes(compositeFieldType)) {
+    return;
+  }
+
+  const subFieldProperty = getCompositeSubFieldProperty({
+    compositeFieldType,
+    subFieldName: filter.subFieldName,
+  });
+
+  if (!subFieldProperty) {
+    return;
+  }
+
+  const operands = getRecordFilterOperands({
+    filterType: filter.type,
+    subFieldName: filter.subFieldName,
+  });
+
+  if (!operands.some((operand) => operand === filter.operand)) {
+    throw new Error('Operand not supported for this sub field type');
+  }
+
+  const subFieldValue = computeValueFromSubFieldType({
+    fieldType: subFieldProperty.type,
+    filter,
+    options: subFieldProperty.options,
+    relationType,
+    currentWorkspaceMember,
+    label,
+  });
+
+  if (subFieldValue === undefined) {
+    return;
+  }
+
+  const transformValue = COMPOSITE_FIELD_VALUE_TRANSFORMERS[compositeFieldType];
+
+  return buildCompositeValueFromSubField({
+    compositeFieldType,
+    subFieldName: filter.subFieldName,
+    value: subFieldValue,
+    transformValue: transformValue
+      ? (fieldValue) =>
+          transformValue(fieldValue, filter.subFieldName as string)
+      : undefined,
+  });
+};
+
+export const buildValueFromFilter = ({
+  filter,
+  options,
+  relationType,
+  currentWorkspaceMember,
+  label,
+}: {
+  filter: RecordFilter;
+  options?: FilterOption[] | null;
+  relationType?: RelationType;
+  currentWorkspaceMember?: CurrentWorkspaceMember;
+  label?: string;
+}) => {
+  if (isCompositeFieldType(filter.type)) {
+    return buildCompositeValueFromFilter({
+      filter,
+      relationType,
+      currentWorkspaceMember,
+      label,
+    });
+  }
+
+  if (filter.type === 'RAW_JSON') {
+    return;
+  }
+
+  const operands = FILTER_OPERANDS_MAP[filter.type];
+  if (!operands.some((operand) => operand === filter.operand)) {
+    throw new Error('Operand not supported for this field type');
+  }
+
+  const handler = VALUE_HANDLER_REGISTRY[filter.type as FieldMetadataType];
+  if (!handler) {
+    return;
+  }
+
+  return handler({
+    value: filter.value,
+    operand: filter.operand,
+    options,
+    relationType,
+    currentWorkspaceMember,
+    label,
+  });
 };
