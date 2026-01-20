@@ -313,7 +313,7 @@ export class ApiService {
       const mimeType = this.getMimeType(filename);
 
       const mutation = `
-      mutation UploadApplicationFile($file: Upload!, $universalIdentifier: !String, $fileFolder: !FileFolder, $filePath: !String) {
+      mutation UploadApplicationFile($file: Upload!, $universalIdentifier: String!, $fileFolder: FileFolder!, $filePath: String!) {
         uploadApplicationFile(file: $file, universalIdentifier: $universalIdentifier, fileFolder: $fileFolder, filePath: $filePath)
         { path }
       }

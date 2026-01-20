@@ -101,7 +101,7 @@ export class ApplicationResolver {
   async uploadApplicationFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
-    { createReadStream, filename, mimetype }: FileUpload,
+    { createReadStream, mimetype }: FileUpload,
     @Args()
     { universalIdentifier, fileFolder, filePath }: UploadApplicationFileInput,
   ): Promise<FileDTO> {
@@ -122,11 +122,15 @@ export class ApplicationResolver {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
 
+    const dirname = path.dirname(filePath);
+
+    const filename = path.basename(filePath);
+
     const folderPath = join(
       `workspace-${workspaceId}`,
       universalIdentifier,
       fileFolder,
-      path.dirname(filePath),
+      dirname,
     );
 
     await this.fileStorageService.write({
