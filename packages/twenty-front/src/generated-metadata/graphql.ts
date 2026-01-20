@@ -6030,6 +6030,41 @@ export type DeleteFileMutationVariables = Exact<{
 
 export type DeleteFileMutation = { __typename?: 'Mutation', deleteFile: { __typename?: 'File', id: string, path: string, size: number, createdAt: string } };
 
+export type NavigationMenuItemFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, forWorkspaceMemberId?: string | null, targetRecordId: string, targetObjectMetadataId: string, favoriteFolderId?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string };
+
+export type CreateNavigationMenuItemMutationVariables = Exact<{
+  input: CreateNavigationMenuItemInput;
+}>;
+
+
+export type CreateNavigationMenuItemMutation = { __typename?: 'Mutation', createNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, forWorkspaceMemberId?: string | null, targetRecordId: string, targetObjectMetadataId: string, favoriteFolderId?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type DeleteNavigationMenuItemMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type DeleteNavigationMenuItemMutation = { __typename?: 'Mutation', deleteNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, forWorkspaceMemberId?: string | null, targetRecordId: string, targetObjectMetadataId: string, favoriteFolderId?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type UpdateNavigationMenuItemMutationVariables = Exact<{
+  input: UpdateNavigationMenuItemInput;
+}>;
+
+
+export type UpdateNavigationMenuItemMutation = { __typename?: 'Mutation', updateNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, forWorkspaceMemberId?: string | null, targetRecordId: string, targetObjectMetadataId: string, favoriteFolderId?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type FindManyNavigationMenuItemsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindManyNavigationMenuItemsQuery = { __typename?: 'Query', navigationMenuItems: Array<{ __typename?: 'NavigationMenuItem', id: string, forWorkspaceMemberId?: string | null, targetRecordId: string, targetObjectMetadataId: string, favoriteFolderId?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string }> };
+
+export type FindOneNavigationMenuItemQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type FindOneNavigationMenuItemQuery = { __typename?: 'Query', navigationMenuItem?: { __typename?: 'NavigationMenuItem', id: string, forWorkspaceMemberId?: string | null, targetRecordId: string, targetObjectMetadataId: string, favoriteFolderId?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } | null };
+
 export type ObjectMetadataFieldsFragment = { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, applicationId?: string | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> };
 
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{
@@ -7335,6 +7370,19 @@ export const BillingPriceMeteredFragmentFragmentDoc = gql`
     unitAmount
     upTo
   }
+}
+    `;
+export const NavigationMenuItemFieldsFragmentDoc = gql`
+    fragment NavigationMenuItemFields on NavigationMenuItem {
+  id
+  forWorkspaceMemberId
+  targetRecordId
+  targetObjectMetadataId
+  favoriteFolderId
+  position
+  applicationId
+  createdAt
+  updatedAt
 }
     `;
 export const ApiKeyFragmentFragmentDoc = gql`
@@ -10260,6 +10308,174 @@ export function useDeleteFileMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteFileMutationHookResult = ReturnType<typeof useDeleteFileMutation>;
 export type DeleteFileMutationResult = Apollo.MutationResult<DeleteFileMutation>;
 export type DeleteFileMutationOptions = Apollo.BaseMutationOptions<DeleteFileMutation, DeleteFileMutationVariables>;
+export const CreateNavigationMenuItemDocument = gql`
+    mutation CreateNavigationMenuItem($input: CreateNavigationMenuItemInput!) {
+  createNavigationMenuItem(input: $input) {
+    ...NavigationMenuItemFields
+  }
+}
+    ${NavigationMenuItemFieldsFragmentDoc}`;
+export type CreateNavigationMenuItemMutationFn = Apollo.MutationFunction<CreateNavigationMenuItemMutation, CreateNavigationMenuItemMutationVariables>;
+
+/**
+ * __useCreateNavigationMenuItemMutation__
+ *
+ * To run a mutation, you first call `useCreateNavigationMenuItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateNavigationMenuItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createNavigationMenuItemMutation, { data, loading, error }] = useCreateNavigationMenuItemMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateNavigationMenuItemMutation(baseOptions?: Apollo.MutationHookOptions<CreateNavigationMenuItemMutation, CreateNavigationMenuItemMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateNavigationMenuItemMutation, CreateNavigationMenuItemMutationVariables>(CreateNavigationMenuItemDocument, options);
+      }
+export type CreateNavigationMenuItemMutationHookResult = ReturnType<typeof useCreateNavigationMenuItemMutation>;
+export type CreateNavigationMenuItemMutationResult = Apollo.MutationResult<CreateNavigationMenuItemMutation>;
+export type CreateNavigationMenuItemMutationOptions = Apollo.BaseMutationOptions<CreateNavigationMenuItemMutation, CreateNavigationMenuItemMutationVariables>;
+export const DeleteNavigationMenuItemDocument = gql`
+    mutation DeleteNavigationMenuItem($id: UUID!) {
+  deleteNavigationMenuItem(id: $id) {
+    ...NavigationMenuItemFields
+  }
+}
+    ${NavigationMenuItemFieldsFragmentDoc}`;
+export type DeleteNavigationMenuItemMutationFn = Apollo.MutationFunction<DeleteNavigationMenuItemMutation, DeleteNavigationMenuItemMutationVariables>;
+
+/**
+ * __useDeleteNavigationMenuItemMutation__
+ *
+ * To run a mutation, you first call `useDeleteNavigationMenuItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteNavigationMenuItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteNavigationMenuItemMutation, { data, loading, error }] = useDeleteNavigationMenuItemMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteNavigationMenuItemMutation(baseOptions?: Apollo.MutationHookOptions<DeleteNavigationMenuItemMutation, DeleteNavigationMenuItemMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteNavigationMenuItemMutation, DeleteNavigationMenuItemMutationVariables>(DeleteNavigationMenuItemDocument, options);
+      }
+export type DeleteNavigationMenuItemMutationHookResult = ReturnType<typeof useDeleteNavigationMenuItemMutation>;
+export type DeleteNavigationMenuItemMutationResult = Apollo.MutationResult<DeleteNavigationMenuItemMutation>;
+export type DeleteNavigationMenuItemMutationOptions = Apollo.BaseMutationOptions<DeleteNavigationMenuItemMutation, DeleteNavigationMenuItemMutationVariables>;
+export const UpdateNavigationMenuItemDocument = gql`
+    mutation UpdateNavigationMenuItem($input: UpdateNavigationMenuItemInput!) {
+  updateNavigationMenuItem(input: $input) {
+    ...NavigationMenuItemFields
+  }
+}
+    ${NavigationMenuItemFieldsFragmentDoc}`;
+export type UpdateNavigationMenuItemMutationFn = Apollo.MutationFunction<UpdateNavigationMenuItemMutation, UpdateNavigationMenuItemMutationVariables>;
+
+/**
+ * __useUpdateNavigationMenuItemMutation__
+ *
+ * To run a mutation, you first call `useUpdateNavigationMenuItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateNavigationMenuItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateNavigationMenuItemMutation, { data, loading, error }] = useUpdateNavigationMenuItemMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateNavigationMenuItemMutation(baseOptions?: Apollo.MutationHookOptions<UpdateNavigationMenuItemMutation, UpdateNavigationMenuItemMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateNavigationMenuItemMutation, UpdateNavigationMenuItemMutationVariables>(UpdateNavigationMenuItemDocument, options);
+      }
+export type UpdateNavigationMenuItemMutationHookResult = ReturnType<typeof useUpdateNavigationMenuItemMutation>;
+export type UpdateNavigationMenuItemMutationResult = Apollo.MutationResult<UpdateNavigationMenuItemMutation>;
+export type UpdateNavigationMenuItemMutationOptions = Apollo.BaseMutationOptions<UpdateNavigationMenuItemMutation, UpdateNavigationMenuItemMutationVariables>;
+export const FindManyNavigationMenuItemsDocument = gql`
+    query FindManyNavigationMenuItems {
+  navigationMenuItems {
+    ...NavigationMenuItemFields
+  }
+}
+    ${NavigationMenuItemFieldsFragmentDoc}`;
+
+/**
+ * __useFindManyNavigationMenuItemsQuery__
+ *
+ * To run a query within a React component, call `useFindManyNavigationMenuItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindManyNavigationMenuItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindManyNavigationMenuItemsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFindManyNavigationMenuItemsQuery(baseOptions?: Apollo.QueryHookOptions<FindManyNavigationMenuItemsQuery, FindManyNavigationMenuItemsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindManyNavigationMenuItemsQuery, FindManyNavigationMenuItemsQueryVariables>(FindManyNavigationMenuItemsDocument, options);
+      }
+export function useFindManyNavigationMenuItemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyNavigationMenuItemsQuery, FindManyNavigationMenuItemsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindManyNavigationMenuItemsQuery, FindManyNavigationMenuItemsQueryVariables>(FindManyNavigationMenuItemsDocument, options);
+        }
+export type FindManyNavigationMenuItemsQueryHookResult = ReturnType<typeof useFindManyNavigationMenuItemsQuery>;
+export type FindManyNavigationMenuItemsLazyQueryHookResult = ReturnType<typeof useFindManyNavigationMenuItemsLazyQuery>;
+export type FindManyNavigationMenuItemsQueryResult = Apollo.QueryResult<FindManyNavigationMenuItemsQuery, FindManyNavigationMenuItemsQueryVariables>;
+export const FindOneNavigationMenuItemDocument = gql`
+    query FindOneNavigationMenuItem($id: UUID!) {
+  navigationMenuItem(id: $id) {
+    ...NavigationMenuItemFields
+  }
+}
+    ${NavigationMenuItemFieldsFragmentDoc}`;
+
+/**
+ * __useFindOneNavigationMenuItemQuery__
+ *
+ * To run a query within a React component, call `useFindOneNavigationMenuItemQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindOneNavigationMenuItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindOneNavigationMenuItemQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useFindOneNavigationMenuItemQuery(baseOptions: Apollo.QueryHookOptions<FindOneNavigationMenuItemQuery, FindOneNavigationMenuItemQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindOneNavigationMenuItemQuery, FindOneNavigationMenuItemQueryVariables>(FindOneNavigationMenuItemDocument, options);
+      }
+export function useFindOneNavigationMenuItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneNavigationMenuItemQuery, FindOneNavigationMenuItemQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindOneNavigationMenuItemQuery, FindOneNavigationMenuItemQueryVariables>(FindOneNavigationMenuItemDocument, options);
+        }
+export type FindOneNavigationMenuItemQueryHookResult = ReturnType<typeof useFindOneNavigationMenuItemQuery>;
+export type FindOneNavigationMenuItemLazyQueryHookResult = ReturnType<typeof useFindOneNavigationMenuItemLazyQuery>;
+export type FindOneNavigationMenuItemQueryResult = Apollo.QueryResult<FindOneNavigationMenuItemQuery, FindOneNavigationMenuItemQueryVariables>;
 export const CreateOneObjectMetadataItemDocument = gql`
     mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
   createOneObject(input: $input) {
