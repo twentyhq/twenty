@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
@@ -55,20 +54,9 @@ export const SingleRecordPickerMenuItem = ({
     recordPickerComponentInstanceId,
   );
 
-  const { objectMetadataItems } = useObjectMetadataItems();
-
   if (!isDefined(searchRecord)) {
     return null;
   }
-
-  const currentObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === morphItem.objectMetadataId,
-  );
-
-  const objectDisplayName =
-    currentObjectMetadataItem?.labelSingular ??
-    currentObjectMetadataItem?.nameSingular ??
-    searchRecord.objectNameSingular;
 
   const showObjectName = searchableObjectMetadataItems.length > 1;
 
@@ -96,7 +84,9 @@ export const SingleRecordPickerMenuItem = ({
           />
         }
         contextualText={
-          showObjectName ? capitalize(objectDisplayName) : undefined
+          showObjectName
+            ? capitalize(searchRecord.objectNameSingular)
+            : undefined
         }
       />
     </StyledSelectableItem>
