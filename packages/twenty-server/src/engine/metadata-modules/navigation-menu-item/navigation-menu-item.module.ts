@@ -6,6 +6,8 @@ import { FlatNavigationMenuItemModule } from 'src/engine/metadata-modules/flat-n
 import { NavigationMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/navigation-menu-item/interceptors/navigation-menu-item-graphql-api-exception.interceptor';
 import { NavigationMenuItemResolver } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.resolver';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
+import { NavigationMenuItemAccessService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -15,9 +17,11 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
     ApplicationModule,
     FlatNavigationMenuItemModule,
+    PermissionsModule,
   ],
   providers: [
     NavigationMenuItemService,
+    NavigationMenuItemAccessService,
     NavigationMenuItemResolver,
     NavigationMenuItemGraphqlApiExceptionInterceptor,
     WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
