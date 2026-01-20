@@ -1,69 +1,50 @@
+import { MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-not-synced-labels';
 import { computeGmailExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-exclude-search-filter.util';
 
 describe('computeGmailExcludeSearchFilter', () => {
-  it('should return correct exclude search filter with empty label array', () => {
+  it('should always include default excluded labels', () => {
     const result = computeGmailExcludeSearchFilter([]);
-
-    expect(result).toBe('');
+    const expectedLabels = MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS.map(
+      (label) => `-label:${label}`,
+    ).join(' ');
+    expect(result).toBe(expectedLabels);
   });
 
-  it('should return correct exclude search filter with one label', () => {
+  it('should include user disabled label', () => {
     const result = computeGmailExcludeSearchFilter([
-      {
-        externalId: 'LABEL1',
-        isSynced: false,
-      },
+      { externalId: 'Label_personal', isSynced: false },
     ]);
 
-    expect(result).toBe('-label:LABEL1');
+    expect(result).toContain('-label:Label_personal');
   });
 
-  it('should return correct exclude search filter with multiple categories', () => {
+  it('should include multiple user disabled labels', () => {
     const result = computeGmailExcludeSearchFilter([
-      {
-        externalId: 'LABEL1',
-        isSynced: false,
-      },
-      {
-        externalId: 'LABEL2',
-        isSynced: false,
-      },
-      {
-        externalId: 'LABEL3',
-        isSynced: false,
-      },
+      { externalId: 'Label_personal', isSynced: false },
+      { externalId: 'Label_newsletters', isSynced: false },
     ]);
 
-    expect(result).toBe('-label:LABEL1 -label:LABEL2 -label:LABEL3');
+    expect(result).toContain('-label:Label_personal');
+    expect(result).toContain('-label:Label_newsletters');
   });
 
-  it('should return correct exclude search filter with one label that is synced', () => {
+  it('should not include synced folders', () => {
     const result = computeGmailExcludeSearchFilter([
-      {
-        externalId: 'LABEL1',
-        isSynced: true,
-      },
+      { externalId: 'Label_work', isSynced: true },
     ]);
 
-    expect(result).toBe('');
+    expect(result).not.toContain('-label:Label_work');
   });
 
-  it('should return correct exclude search filter with multiple categories that are synced', () => {
+  it('should only exclude non-synced user folders', () => {
     const result = computeGmailExcludeSearchFilter([
-      {
-        externalId: 'LABEL1',
-        isSynced: true,
-      },
-      {
-        externalId: 'LABEL2',
-        isSynced: false,
-      },
-      {
-        externalId: 'LABEL3',
-        isSynced: true,
-      },
+      { externalId: 'Label_work', isSynced: true },
+      { externalId: 'Label_personal', isSynced: false },
+      { externalId: 'Label_newsletters', isSynced: true },
     ]);
 
-    expect(result).toBe('-label:LABEL2');
+    expect(result).toContain('-label:Label_personal');
+    expect(result).not.toContain('-label:Label_work');
+    expect(result).not.toContain('-label:Label_newsletters');
   });
 });

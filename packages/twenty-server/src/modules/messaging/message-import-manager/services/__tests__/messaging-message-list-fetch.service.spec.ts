@@ -6,10 +6,13 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-  MessageFolderPendingSyncAction,
-  type MessageFolderWorkspaceEntity,
+    MessageFolderImportPolicy,
+    type MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+    MessageFolderPendingSyncAction,
+    type MessageFolderWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
@@ -54,6 +57,7 @@ describe('MessagingMessageListFetchService', () => {
           messageChannelId: 'microsoft-message-channel-id',
         } as MessageFolderWorkspaceEntity,
       ],
+      messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
     } as MessageChannelWorkspaceEntity;
 
     mockGoogleMessageChannel = {
@@ -68,6 +72,7 @@ describe('MessagingMessageListFetchService', () => {
       },
       syncCursor: 'google-sync-cursor',
       messageFolders: [],
+      messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
     } as unknown as MessageChannelWorkspaceEntity;
   });
 
@@ -339,6 +344,7 @@ describe('MessagingMessageListFetchService', () => {
           pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
+      MessageFolderImportPolicy.SELECTED_FOLDERS,
     );
 
     expect(globalWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(
@@ -401,6 +407,7 @@ describe('MessagingMessageListFetchService', () => {
           pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
+      MessageFolderImportPolicy.SELECTED_FOLDERS,
     );
 
     expect(globalWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(

@@ -7,10 +7,13 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-  MessageFolderPendingSyncAction,
-  MessageFolderWorkspaceEntity,
+    MessageChannelWorkspaceEntity,
+    MessageFolderImportPolicy,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+    MessageFolderPendingSyncAction,
+    MessageFolderWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { microsoftGraphWithMessagesDeltaLink } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
@@ -86,6 +89,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
           pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
+      messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
     });
 
     expect(result[0].messageExternalIds.length).toBeGreaterThan(0);
@@ -117,6 +121,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
             pendingSyncAction: MessageFolderPendingSyncAction.NONE,
           },
         ],
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       }),
     ).rejects.toThrowError('Access token is undefined or empty');
   });
@@ -138,6 +143,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
           pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
+      messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
     });
 
     expect(result[0].nextSyncCursor).toBeTruthy();
@@ -163,6 +169,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
             pendingSyncAction: MessageFolderPendingSyncAction.NONE,
           },
         ],
+        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       }),
     ).rejects.toThrowError(
       /Resource not found for the segment|Badly formed content/g,
@@ -251,6 +258,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
       messageChannel: messageChannelNoFolders,
       connectedAccount: mockConnectedAccount,
       messageFolders: [],
+      messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
     });
 
     expect(result.length).toBe(0);
@@ -261,6 +269,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
       messageChannel: messageChannelMicrosoftOneFolder,
       connectedAccount: mockConnectedAccount,
       messageFolders: [inboxFolder],
+      messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
     });
 
     expect(result.length).toBe(1);
@@ -273,6 +282,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
       messageChannel: messageChannelMicrosoft,
       connectedAccount: mockConnectedAccount,
       messageFolders: [inboxFolder, sentFolder],
+      messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
     });
 
     expect(result.length).toBe(2);
