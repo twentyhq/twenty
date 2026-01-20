@@ -19,7 +19,6 @@ export class FunctionExecuteCommand {
     payload?: string;
   }): Promise<void> {
     try {
-      // Parse JSON payload
       let parsedPayload: Record<string, unknown>;
       try {
         parsedPayload = JSON.parse(payload);
@@ -30,10 +29,8 @@ export class FunctionExecuteCommand {
         process.exit(1);
       }
 
-      // Build manifest to get application info
       const { manifest } = await buildManifest(appPath);
 
-      // Find the function
       const functionsResult = await this.apiService.findServerlessFunctions();
       if (!functionsResult.success) {
         console.error(
@@ -45,13 +42,11 @@ export class FunctionExecuteCommand {
         process.exit(1);
       }
 
-      // Filter functions belonging to this application
       const appFunctions = functionsResult.data.filter(
         (fn) =>
           fn.universalIdentifier && this.belongsToApplication(fn, manifest),
       );
 
-      // Find the specific function
       const targetFunction = appFunctions.find((fn) => {
         if (functionUniversalIdentifier) {
           return fn.universalIdentifier === functionUniversalIdentifier;
@@ -85,7 +80,6 @@ export class FunctionExecuteCommand {
         process.exit(1);
       }
 
-      // Execute the function
       console.log(
         chalk.blue(`🚀 Executing function "${targetFunction.name}"...`),
       );
@@ -108,29 +102,24 @@ export class FunctionExecuteCommand {
 
       const executionResult = result.data!;
 
-      // Display results
       console.log(chalk.cyan('─'.repeat(60)));
       console.log(chalk.cyan('Execution Result'));
       console.log(chalk.cyan('─'.repeat(60)));
 
-      // Status
       const statusColor =
         executionResult.status === 'SUCCESS' ? chalk.green : chalk.red;
       console.log(
         `${chalk.bold('Status:')} ${statusColor(executionResult.status)}`,
       );
 
-      // Duration
       console.log(`${chalk.bold('Duration:')} ${executionResult.duration}ms`);
 
-      // Data
       if (executionResult.data !== undefined && executionResult.data !== null) {
         console.log('');
         console.log(chalk.bold('Data:'));
         console.log(chalk.white(JSON.stringify(executionResult.data, null, 2)));
       }
 
-      // Error
       if (executionResult.error) {
         console.log('');
         console.log(chalk.bold.red('Error:'));
@@ -145,7 +134,6 @@ export class FunctionExecuteCommand {
         }
       }
 
-      // Logs
       if (executionResult.logs) {
         console.log('');
         console.log(chalk.bold('Logs:'));
@@ -154,7 +142,6 @@ export class FunctionExecuteCommand {
 
       console.log(chalk.cyan('─'.repeat(60)));
 
-      // Exit with error code if execution failed
       if (executionResult.status !== 'SUCCESS') {
         process.exit(1);
       }
@@ -171,7 +158,6 @@ export class FunctionExecuteCommand {
     fn: { universalIdentifier: string; applicationId: string | null },
     manifest: ApplicationManifest,
   ): boolean {
-    // Check if function's universalIdentifier matches any function in the manifest
     return manifest.serverlessFunctions.some(
       (manifestFn) => manifestFn.universalIdentifier === fn.universalIdentifier,
     );

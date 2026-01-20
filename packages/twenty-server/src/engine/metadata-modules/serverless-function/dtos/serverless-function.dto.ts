@@ -96,6 +96,8 @@ export class ServerlessFunctionDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   applicationId?: string;
 
+  @IsUUID()
+  @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   universalIdentifier?: string;
 
