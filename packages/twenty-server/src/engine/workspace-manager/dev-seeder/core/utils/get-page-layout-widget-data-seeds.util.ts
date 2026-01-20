@@ -406,6 +406,7 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 2, column: 7, rowSpan: 2, columnSpan: 5 },
       configuration: {
         configurationType: WidgetConfigurationType.CUSTOM_WIDGET,
+        frontComponentId: '6cdf2607-4b28-40e6-8c53-cc06799ddc88',
       } as const,
       objectMetadataId: null,
     } satisfies SeederFlatPageLayoutWidget,
