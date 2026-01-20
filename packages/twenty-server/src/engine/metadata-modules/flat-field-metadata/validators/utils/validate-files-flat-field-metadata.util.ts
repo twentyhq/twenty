@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'class-validator';
 import { FILES_FIELD_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
 import { type FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
