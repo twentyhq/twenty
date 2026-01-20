@@ -33,7 +33,7 @@ yarn auth:status    # Check auth status
 # Application
 yarn app:dev        # Start dev mode (sync + watch)
 yarn app:sync       # One-time sync
-yarn app:add        # Add a new entity (function, object, role)
+yarn entity:add     # Add a new entity (function, object, role)
 yarn app:generate   # Generate typed Twenty client
 yarn app:logs       # Stream function logs
 yarn app:uninstall  # Uninstall app from workspace

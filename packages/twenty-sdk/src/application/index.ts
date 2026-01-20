@@ -24,6 +24,11 @@ export { Field } from './fields/field.decorator';
 export { OnDeleteAction } from './fields/on-delete-action';
 export { RelationType } from './fields/relation-type';
 export { Relation } from './fields/relation.decorator';
+export { defineFrontComponent } from './front-components/define-front-component';
+export type {
+  FrontComponentType,
+  FrontComponentConfig,
+} from './front-components/front-component-config';
 export { defineFunction } from './functions/define-function';
 export type {
   FunctionHandler,

@@ -102,7 +102,7 @@ Application development commands.
 - `twenty app:uninstall [appPath]` — Uninstall the application from the current workspace.
   - Note: `twenty app:delete` exists as a hidden alias for backward compatibility.
 
-- `twenty app:add [entityType]` — Add a new entity to your application.
+- `twenty entity:add [entityType]` — Add a new entity to your application.
   - Arguments:
     - `entityType`: one of `function` or `object`. If omitted, an interactive prompt is shown.
   - Options:
@@ -134,7 +134,7 @@ twenty app:dev --debounce 1500
 twenty app:sync
 
 # Add a new object interactively
-twenty app:add
+twenty entity:add
 
 # Generate client types
 twenty app:generate
