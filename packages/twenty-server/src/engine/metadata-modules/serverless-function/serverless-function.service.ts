@@ -24,6 +24,7 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { type UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
@@ -80,11 +81,14 @@ export class ServerlessFunctionService {
         },
       );
 
-    const flatServerlessFunction =
-      flatServerlessFunctionMaps.byId[serverlessFunctionId];
+    const flatServerlessFunction = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: serverlessFunctionId,
+      flatEntityMaps: flatServerlessFunctionMaps,
+    });
 
     return (
       isDefined(flatServerlessFunction) &&
+      !isDefined(flatServerlessFunction.deletedAt) &&
       isDefined(flatServerlessFunction.latestVersion)
     );
   }
@@ -102,14 +106,14 @@ export class ServerlessFunctionService {
         },
       );
 
-    const flatServerlessFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: flatServerlessFunctionMaps,
+    const flatServerlessFunction = findFlatServerlessFunctionOrThrow({
+      id,
+      flatServerlessFunctionMaps,
     });
 
     try {
       const folderPath = getServerlessFolderOrThrow({
-        flatServerlessFunction: flatServerlessFunction,
+        flatServerlessFunction,
         version,
       });
 
@@ -269,11 +273,10 @@ export class ServerlessFunctionService {
         },
       );
 
-    const existingFlatServerlessFunction =
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: flatServerlessFunctionMaps,
-      });
+    const existingFlatServerlessFunction = findFlatServerlessFunctionOrThrow({
+      id,
+      flatServerlessFunctionMaps,
+    });
 
     if (isDefined(existingFlatServerlessFunction.latestVersion)) {
       const latestCode = await this.getServerlessFunctionSourceCode(
@@ -693,21 +696,21 @@ export class ServerlessFunctionService {
         },
       );
 
-    const flatServerlessFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: flatServerlessFunctionMaps,
+    const flatServerlessFunction = findFlatServerlessFunctionOrThrow({
+      id,
+      flatServerlessFunctionMaps,
     });
 
     await this.fileStorageService.copy({
       from: {
         folderPath: getServerlessFolderOrThrow({
-          flatServerlessFunction: flatServerlessFunction,
+          flatServerlessFunction,
           version,
         }),
       },
       to: {
         folderPath: getServerlessFolderOrThrow({
-          flatServerlessFunction: flatServerlessFunction,
+          flatServerlessFunction,
           version: 'draft',
         }),
       },
@@ -731,11 +734,12 @@ export class ServerlessFunctionService {
         },
       );
 
-    const flatServerlessFunctionToDuplicate =
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: flatServerlessFunctionMaps,
-      });
+    const flatServerlessFunctionToDuplicate = findFlatServerlessFunctionOrThrow(
+      {
+        id,
+        flatServerlessFunctionMaps,
+      },
+    );
 
     const newFlatServerlessFunction = await this.createOneServerlessFunction(
       {
