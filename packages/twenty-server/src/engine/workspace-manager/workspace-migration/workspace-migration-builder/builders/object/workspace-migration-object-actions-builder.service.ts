@@ -71,7 +71,7 @@ export class WorkspaceMigrationObjectActionsBuilderService extends WorkspaceEnti
       action: {
         type: 'delete',
         metadataName: 'objectMetadata',
-        entityId: flatObjectMetadataToValidate.id,
+        universalIdentifier: flatObjectMetadataToValidate.universalIdentifier,
       },
     };
   }
