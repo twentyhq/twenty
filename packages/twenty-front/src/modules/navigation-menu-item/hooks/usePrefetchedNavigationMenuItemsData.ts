@@ -1,7 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { useRecoilValue } from 'recoil';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type PrefetchedNavigationMenuItemsData = {
   navigationMenuItems: NavigationMenuItem[];
@@ -18,11 +18,11 @@ export const usePrefetchedNavigationMenuItemsData =
     );
 
     const navigationMenuItems = prefetchNavigationMenuItems.filter(
-      (item) => item.forWorkspaceMemberId === currentWorkspaceMemberId,
+      (item) => item.userWorkspaceId === currentWorkspaceMemberId,
     );
 
     const workspaceNavigationMenuItems = prefetchNavigationMenuItems.filter(
-      (item) => item.forWorkspaceMemberId === null,
+      (item) => item.userWorkspaceId === null,
     );
 
     return {

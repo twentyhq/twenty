@@ -31,11 +31,9 @@ export const useCreateNavigationMenuItem = () => {
     }
 
     const relevantItems = favoriteFolderId
-      ? navigationMenuItems.filter(
-          (item) => item.favoriteFolderId === favoriteFolderId,
-        )
+      ? navigationMenuItems.filter((item) => item.folderId === favoriteFolderId)
       : navigationMenuItems.filter(
-          (item) => !item.favoriteFolderId && item.forWorkspaceMemberId,
+          (item) => !item.folderId && item.userWorkspaceId,
         );
 
     const maxPosition = Math.max(
@@ -48,8 +46,8 @@ export const useCreateNavigationMenuItem = () => {
         input: {
           targetRecordId: targetRecord.id,
           targetObjectMetadataId: objectMetadataItem.id,
-          forWorkspaceMemberId: currentWorkspaceMemberId ?? undefined,
-          favoriteFolderId: favoriteFolderId ?? undefined,
+          userWorkspaceId: currentWorkspaceMemberId,
+          folderId: favoriteFolderId,
           position: maxPosition + 1,
         },
       },

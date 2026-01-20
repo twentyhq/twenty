@@ -56,8 +56,8 @@ export const useTransformNavigationMenuItemsToFavorites = (
         const favorite: Favorite = {
           id: navigationMenuItem.id,
           position: navigationMenuItem.position,
-          forWorkspaceMemberId: navigationMenuItem.forWorkspaceMemberId ?? '',
-          favoriteFolderId: navigationMenuItem.favoriteFolderId ?? undefined,
+          forWorkspaceMemberId: navigationMenuItem.userWorkspaceId ?? '',
+          favoriteFolderId: navigationMenuItem.folderId ?? undefined,
           recordId: navigationMenuItem.targetRecordId,
           __typename: 'Favorite',
           [`${objectMetadataItem.nameSingular}Id`]:

@@ -3,10 +3,10 @@ import { gql } from '@apollo/client';
 export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
   fragment NavigationMenuItemFields on NavigationMenuItem {
     id
-    forWorkspaceMemberId
+    userWorkspaceId
     targetRecordId
     targetObjectMetadataId
-    favoriteFolderId
+    folderId
     position
     applicationId
     createdAt
