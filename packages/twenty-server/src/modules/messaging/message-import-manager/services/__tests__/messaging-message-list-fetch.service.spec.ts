@@ -7,12 +7,12 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
-    MessageFolderImportPolicy,
-    type MessageChannelWorkspaceEntity,
+  MessageFolderImportPolicy,
+  type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-    MessageFolderPendingSyncAction,
-    type MessageFolderWorkspaceEntity,
+  MessageFolderPendingSyncAction,
+  type MessageFolderWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';

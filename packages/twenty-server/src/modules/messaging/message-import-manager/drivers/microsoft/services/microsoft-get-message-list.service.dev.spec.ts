@@ -8,12 +8,12 @@ import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-accou
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
-    MessageChannelWorkspaceEntity,
-    MessageFolderImportPolicy,
+  MessageChannelWorkspaceEntity,
+  MessageFolderImportPolicy,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-    MessageFolderPendingSyncAction,
-    MessageFolderWorkspaceEntity,
+  MessageFolderPendingSyncAction,
+  MessageFolderWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { microsoftGraphWithMessagesDeltaLink } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';

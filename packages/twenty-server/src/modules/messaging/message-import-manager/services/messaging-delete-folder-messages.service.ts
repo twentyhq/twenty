@@ -4,8 +4,8 @@ import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-    MessageFolderImportPolicy,
-    type MessageChannelWorkspaceEntity,
+  MessageFolderImportPolicy,
+  type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';

@@ -7,6 +7,7 @@ describe('computeGmailExcludeSearchFilter', () => {
     const expectedLabels = MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS.map(
       (label) => `-label:${label}`,
     ).join(' ');
+
     expect(result).toBe(expectedLabels);
   });
 

@@ -473,6 +473,7 @@ describe('GmailGetMessageListService', () => {
               historyId: 'new-cursor',
             });
           }
+
           return Promise.resolve({ history: [], historyId: 'new-cursor' });
         },
       );

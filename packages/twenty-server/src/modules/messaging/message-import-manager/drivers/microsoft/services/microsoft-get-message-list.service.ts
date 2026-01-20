@@ -48,6 +48,7 @@ export class MicrosoftGetMessageListService {
       this.logger.warn(
         `Connected account ${connectedAccount.id}: No folders to process`,
       );
+
       return [];
     }
 

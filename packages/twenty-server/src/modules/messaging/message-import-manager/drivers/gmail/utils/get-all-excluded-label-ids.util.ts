@@ -13,5 +13,8 @@ export const getAllExcludedLabelIds = (
     .filter((folder) => !folder.isSynced && isDefined(folder.externalId))
     .map((folder) => folder.externalId!);
 
-  return [...MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS, ...userDisabledLabelIds];
+  return [
+    ...MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS,
+    ...userDisabledLabelIds,
+  ];
 };
