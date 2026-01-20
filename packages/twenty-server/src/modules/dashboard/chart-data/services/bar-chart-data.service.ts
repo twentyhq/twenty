@@ -226,8 +226,7 @@ export class BarChartDataService {
       : rawResults;
 
     const rangeFilteredResults =
-      !configuration.isCumulative &&
-      (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
+      isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax)
         ? filterByRange(
             filteredResults,
             configuration.rangeMin,
@@ -294,11 +293,7 @@ export class BarChartDataService {
     );
 
     const transformedData = configuration.isCumulative
-      ? this.applyCumulativeTransformInternal(
-          limitedSortedData,
-          configuration.rangeMin,
-          configuration.rangeMax,
-        )
+      ? this.applyCumulativeTransformInternal(limitedSortedData)
       : limitedSortedData;
 
     const data = transformedData.map((item) => ({
@@ -370,7 +365,6 @@ export class BarChartDataService {
     const isStacked = effectiveGroupMode === BarChartGroupMode.STACKED;
 
     const rangeFilteredResults =
-      !configuration.isCumulative &&
       !isStacked &&
       (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
         ? filterByRange(
@@ -508,7 +502,6 @@ export class BarChartDataService {
     }
 
     if (
-      !configuration.isCumulative &&
       isStacked &&
       (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
     ) {
@@ -521,12 +514,7 @@ export class BarChartDataService {
     }
 
     const finalData = configuration.isCumulative
-      ? this.applyCumulativeTwoDimensional(
-          finalLimitedData,
-          limitedKeys,
-          configuration.rangeMin,
-          configuration.rangeMax,
-        )
+      ? this.applyCumulativeTwoDimensional(finalLimitedData, limitedKeys)
       : finalLimitedData;
 
     const series = limitedKeys.map((key) => ({
@@ -623,8 +611,6 @@ export class BarChartDataService {
   private applyCumulativeTwoDimensional(
     data: Record<string, string | number>[],
     keys: string[],
-    rangeMin?: number | null,
-    rangeMax?: number | null,
   ): Record<string, string | number>[] {
     const runningTotals: Record<string, number> = {};
 
@@ -647,19 +633,7 @@ export class BarChartDataService {
         newDatum[key] = runningTotals[key];
       }
 
-      const totalValue = keys.reduce((sum, key) => {
-        const value = newDatum[key];
-
-        return sum + (isNumber(value) ? value : 0);
-      }, 0);
-
-      const isOutOfRange =
-        (isDefined(rangeMin) && totalValue < rangeMin) ||
-        (isDefined(rangeMax) && totalValue > rangeMax);
-
-      if (!isOutOfRange) {
-        result.push(newDatum);
-      }
+      result.push(newDatum);
     }
 
     return result;
@@ -671,8 +645,6 @@ export class BarChartDataService {
       aggregateValue: number;
       rawValue: RawDimensionValue;
     }>,
-    rangeMin?: number | null,
-    rangeMax?: number | null,
   ): Array<{
     formattedValue: string;
     aggregateValue: number;
@@ -690,13 +662,7 @@ export class BarChartDataService {
 
       const cumulativeValue = runningTotal;
 
-      const isOutOfRange =
-        (isDefined(rangeMin) && cumulativeValue < rangeMin) ||
-        (isDefined(rangeMax) && cumulativeValue > rangeMax);
-
-      if (!isOutOfRange) {
-        result.push({ ...point, aggregateValue: cumulativeValue });
-      }
+      result.push({ ...point, aggregateValue: cumulativeValue });
     }
 
     return result;

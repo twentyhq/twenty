@@ -1,4 +1,5 @@
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { getFrontComponentBaseFile } from '@/cli/utilities/entity/utils/entity-front-component-template';
 import { getFunctionBaseFile } from '@/cli/utilities/entity/utils/entity-function-template';
 import { convertToLabel } from '@/cli/utilities/entity/utils/entity-label';
 import { getNewObjectFileContent } from '@/cli/utilities/entity/utils/entity-object-template';
@@ -16,6 +17,7 @@ export enum SyncableEntity {
   AGENT = 'agent',
   OBJECT = 'object',
   FUNCTION = 'function',
+  FRONT_COMPONENT = 'front-component',
   ROLE = 'role',
 }
 
@@ -82,6 +84,28 @@ export class EntityAddCommand {
         return;
       }
 
+      if (entity === SyncableEntity.FRONT_COMPONENT) {
+        const entityName = await this.getEntityName(entity);
+
+        // Use *.front-component.tsx naming convention
+        const frontComponentFileName = `${kebabcase(entityName)}.front-component.tsx`;
+
+        const decoratedFrontComponent = getFrontComponentBaseFile({
+          name: entityName,
+        });
+
+        const filePath = join(appPath, frontComponentFileName);
+
+        await fs.writeFile(filePath, decoratedFrontComponent);
+
+        console.log(
+          chalk.green(`✓ Created front component:`),
+          chalk.cyan(filePath.replace(CURRENT_EXECUTION_DIRECTORY + '/', '')),
+        );
+
+        return;
+      }
+
       if (entity === SyncableEntity.ROLE) {
         const entityName = await this.getEntityName(entity);
 
@@ -119,7 +143,12 @@ export class EntityAddCommand {
         name: 'entity',
         message: `What entity do you want to create?`,
         default: '',
-        choices: [SyncableEntity.FUNCTION, SyncableEntity.OBJECT, SyncableEntity.ROLE],
+        choices: [
+          SyncableEntity.FUNCTION,
+          SyncableEntity.FRONT_COMPONENT,
+          SyncableEntity.OBJECT,
+          SyncableEntity.ROLE,
+        ],
       },
     ]);
 

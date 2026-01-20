@@ -1,9 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -15,9 +14,15 @@ import { CreateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger
 import { CronTriggerIdInput } from 'src/engine/metadata-modules/cron-trigger/dtos/cron-trigger-id.input';
 import { CronTriggerDTO } from 'src/engine/metadata-modules/cron-trigger/dtos/cron-trigger.dto';
 import { UpdateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger/dtos/update-cron-trigger.input';
-import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+import {
+  CronTriggerException,
+  CronTriggerExceptionCode,
+} from 'src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { cronTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/cron-trigger/utils/cron-trigger-graphql-api-exception-handler.util';
+import { fromFlatCronTriggerToCronTriggerDto } from 'src/engine/metadata-modules/cron-trigger/utils/from-flat-cron-trigger-to-cron-trigger-dto.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -29,37 +34,59 @@ import { cronTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modul
 export class CronTriggerResolver {
   constructor(
     private readonly cronTriggerV2Service: CronTriggerV2Service,
-    @InjectRepository(CronTriggerEntity)
-    private readonly cronTriggerRepository: Repository<CronTriggerEntity>,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   @Query(() => CronTriggerDTO)
   async findOneCronTrigger(
     @Args('input') { id }: CronTriggerIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<CronTriggerDTO> {
     try {
-      return await this.cronTriggerRepository.findOneOrFail({
-        where: {
-          id,
-          workspaceId,
-        },
+      const { flatCronTriggerMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatCronTriggerMaps'],
+          },
+        );
+
+      const flatCronTrigger = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: id,
+        flatEntityMaps: flatCronTriggerMaps,
       });
+
+      if (!isDefined(flatCronTrigger)) {
+        throw new CronTriggerException(
+          `Cron trigger with id ${id} not found`,
+          CronTriggerExceptionCode.CRON_TRIGGER_NOT_FOUND,
+        );
+      }
+
+      return fromFlatCronTriggerToCronTriggerDto(flatCronTrigger);
     } catch (error) {
-      cronTriggerGraphQLApiExceptionHandler(error);
+      return cronTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
   @Query(() => [CronTriggerDTO])
   async findManyCronTriggers(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<CronTriggerDTO[]> {
     try {
-      return await this.cronTriggerRepository.find({
-        where: { workspaceId },
-      });
+      const { flatCronTriggerMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatCronTriggerMaps'],
+          },
+        );
+
+      return Object.values(flatCronTriggerMaps.byId)
+        .filter(isDefined)
+        .map(fromFlatCronTriggerToCronTriggerDto);
     } catch (error) {
-      cronTriggerGraphQLApiExceptionHandler(error);
+      return cronTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -67,14 +94,16 @@ export class CronTriggerResolver {
   async deleteOneCronTrigger(
     @Args('input') input: CronTriggerIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<CronTriggerDTO> {
     try {
-      return await this.cronTriggerV2Service.destroyOne({
+      const flatCronTrigger = await this.cronTriggerV2Service.destroyOne({
         destroyCronTriggerInput: input,
         workspaceId,
       });
+
+      return fromFlatCronTriggerToCronTriggerDto(flatCronTrigger);
     } catch (error) {
-      cronTriggerGraphQLApiExceptionHandler(error);
+      return cronTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -83,11 +112,16 @@ export class CronTriggerResolver {
     @Args('input')
     input: UpdateCronTriggerInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<CronTriggerDTO> {
     try {
-      return await this.cronTriggerV2Service.updateOne(input, workspaceId);
+      const flatCronTrigger = await this.cronTriggerV2Service.updateOne(
+        input,
+        workspaceId,
+      );
+
+      return fromFlatCronTriggerToCronTriggerDto(flatCronTrigger);
     } catch (error) {
-      cronTriggerGraphQLApiExceptionHandler(error);
+      return cronTriggerGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -96,11 +130,16 @@ export class CronTriggerResolver {
     @Args('input')
     input: CreateCronTriggerInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<CronTriggerDTO> {
     try {
-      return await this.cronTriggerV2Service.createOne(input, workspaceId);
+      const flatCronTrigger = await this.cronTriggerV2Service.createOne(
+        input,
+        workspaceId,
+      );
+
+      return fromFlatCronTriggerToCronTriggerDto(flatCronTrigger);
     } catch (error) {
-      cronTriggerGraphQLApiExceptionHandler(error);
+      return cronTriggerGraphQLApiExceptionHandler(error);
     }
   }
 }

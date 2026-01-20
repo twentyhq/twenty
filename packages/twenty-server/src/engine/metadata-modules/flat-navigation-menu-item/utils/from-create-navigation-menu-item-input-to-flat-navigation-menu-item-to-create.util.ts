@@ -49,10 +49,11 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       id,
       universalIdentifier: id,
       userWorkspaceId: createNavigationMenuItemInput.userWorkspaceId ?? null,
-      targetRecordId: createNavigationMenuItemInput.targetRecordId,
+      targetRecordId: createNavigationMenuItemInput.targetRecordId ?? null,
       targetObjectMetadataId:
-        createNavigationMenuItemInput.targetObjectMetadataId,
+        createNavigationMenuItemInput.targetObjectMetadataId ?? null,
       folderId: createNavigationMenuItemInput.folderId ?? null,
+      name: createNavigationMenuItemInput.name ?? null,
       position,
       workspaceId,
       applicationId,

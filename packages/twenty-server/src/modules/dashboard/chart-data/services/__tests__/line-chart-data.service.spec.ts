@@ -163,7 +163,7 @@ describe('LineChartDataService', () => {
         authContext: mockAuthContext,
       });
 
-      expect(result.series[0].data.map((d) => d.y)).toEqual([20, 30]);
+      expect(result.series[0].data.map((d) => d.y)).toEqual([]);
     });
 
     it('should filter by rangeMax when cumulative', async () => {
@@ -184,7 +184,7 @@ describe('LineChartDataService', () => {
         authContext: mockAuthContext,
       });
 
-      expect(result.series[0].data.map((d) => d.y)).toEqual([10]);
+      expect(result.series[0].data.map((d) => d.y)).toEqual([10, 30]);
     });
 
     it('should handle null y values by keeping running total', async () => {
@@ -356,6 +356,47 @@ describe('LineChartDataService', () => {
       expect(seriesA?.data[1].y).toBe(30);
       expect(seriesB?.data[0].y).toBe(100);
       expect(seriesB?.data[1].y).toBe(300);
+    });
+
+    it('should filter stacked two-dimensional cumulative data by rangeMax', async () => {
+      mockExecuteGroupByQuery.mockResolvedValue([
+        { groupByDimensionValues: ['2024-01-01', 'A'], aggregateValue: 10 },
+        { groupByDimensionValues: ['2024-01-01', 'B'], aggregateValue: 20 },
+        { groupByDimensionValues: ['2024-02-01', 'A'], aggregateValue: 5 },
+        { groupByDimensionValues: ['2024-02-01', 'B'], aggregateValue: 5 },
+        { groupByDimensionValues: ['2024-03-01', 'A'], aggregateValue: 50 },
+        { groupByDimensionValues: ['2024-03-01', 'B'], aggregateValue: 30 },
+      ]);
+
+      const result = await service.getLineChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: {
+          ...twoDimConfiguration,
+          isStacked: true,
+          isCumulative: true,
+          rangeMax: 60,
+        } as any,
+        authContext: mockAuthContext,
+      });
+
+      const seriesA = result.series.find((s) => s.id === 'A');
+      const seriesB = result.series.find((s) => s.id === 'B');
+
+      expect(seriesA).toBeDefined();
+      expect(seriesB).toBeDefined();
+      expect(seriesA!.data).toHaveLength(2);
+      expect(seriesB!.data).toHaveLength(2);
+
+      const seriesAXValues = seriesA!.data.map((point) => point.x);
+      const seriesBXValues = seriesB!.data.map((point) => point.x);
+
+      expect(seriesAXValues).toEqual(seriesBXValues);
+      expect(new Set(seriesAXValues).size).toBe(2);
+      expect(seriesA!.data[0].y).toBe(10);
+      expect(seriesA!.data[1].y).toBe(15);
+      expect(seriesB!.data[0].y).toBe(20);
+      expect(seriesB!.data[1].y).toBe(25);
     });
 
     it('should handle empty results', async () => {

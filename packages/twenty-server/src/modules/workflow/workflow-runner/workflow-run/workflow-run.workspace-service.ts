@@ -156,7 +156,10 @@ export class WorkflowRunWorkspaceService {
       workflowRunToUpdate.status !== WorkflowRunStatus.ENQUEUED &&
       workflowRunToUpdate.status !== WorkflowRunStatus.NOT_STARTED
     ) {
-      return;
+      throw new WorkflowRunException(
+        'Workflow run is not enqueued or not started',
+        WorkflowRunExceptionCode.INVALID_OPERATION,
+      );
     }
 
     const partialUpdate = {
