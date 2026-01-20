@@ -289,6 +289,12 @@ describe('createOne FILES field metadata - feature flag disabled', () => {
       expectToFail: false,
       input: { idToDelete: createdObjectMetadataId },
     });
+
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
   });
 
   it('should fail to create files field when feature flag is disabled', async () => {
