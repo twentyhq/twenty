@@ -30,7 +30,8 @@ export class FlatNavigationMenuItemValidatorService {
 
     if (
       isDefined(flatNavigationMenuItem.position) &&
-      flatNavigationMenuItem.position < 0
+      (!Number.isInteger(flatNavigationMenuItem.position) ||
+        flatNavigationMenuItem.position < 0)
     ) {
       validationResult.errors.push({
         code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
@@ -113,7 +114,10 @@ export class FlatNavigationMenuItemValidatorService {
       property: 'position',
     });
 
-    if (isDefined(positionUpdate) && positionUpdate.to < 0) {
+    if (
+      isDefined(positionUpdate) &&
+      (!Number.isInteger(positionUpdate.to) || positionUpdate.to < 0)
+    ) {
       validationResult.errors.push({
         code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
         message: t`Position must be a non-negative integer`,
