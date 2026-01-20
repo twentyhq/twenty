@@ -1,51 +1,146 @@
-import { MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-not-synced-labels';
 import { computeGmailExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-exclude-search-filter.util';
 
 describe('computeGmailExcludeSearchFilter', () => {
-  it('should always include default excluded labels', () => {
+  it('should return empty string with empty folder array', () => {
     const result = computeGmailExcludeSearchFilter([]);
-    const expectedLabels = MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS.map(
-      (label) => `-label:${label}`,
-    ).join(' ');
 
-    expect(result).toBe(expectedLabels);
+    expect(result).toBe('');
   });
 
-  it('should include user disabled label', () => {
+  it('should return correct exclude filter for one unsynced folder', () => {
     const result = computeGmailExcludeSearchFilter([
-      { externalId: 'Label_personal', isSynced: false },
+      {
+        externalId: 'Label_123',
+        name: 'Custom Folder',
+        isSynced: false,
+        parentFolderId: null,
+      },
     ]);
 
-    expect(result).toContain('-label:Label_personal');
+    expect(result).toBe('-label:custom-folder');
   });
 
-  it('should include multiple user disabled labels', () => {
+  it('should return correct exclude filter for multiple unsynced folders', () => {
     const result = computeGmailExcludeSearchFilter([
-      { externalId: 'Label_personal', isSynced: false },
-      { externalId: 'Label_newsletters', isSynced: false },
+      {
+        externalId: 'Label_1',
+        name: 'Folder One',
+        isSynced: false,
+        parentFolderId: null,
+      },
+      {
+        externalId: 'Label_2',
+        name: 'Folder Two',
+        isSynced: false,
+        parentFolderId: null,
+      },
     ]);
 
-    expect(result).toContain('-label:Label_personal');
-    expect(result).toContain('-label:Label_newsletters');
+    expect(result).toBe('-label:folder-one -label:folder-two');
   });
 
-  it('should not include synced folders', () => {
+  it('should return empty string when all folders are synced', () => {
     const result = computeGmailExcludeSearchFilter([
-      { externalId: 'Label_work', isSynced: true },
+      {
+        externalId: 'Label_1',
+        name: 'Synced Folder',
+        isSynced: true,
+        parentFolderId: null,
+      },
     ]);
 
-    expect(result).not.toContain('-label:Label_work');
+    expect(result).toBe('');
   });
 
-  it('should only exclude non-synced user folders', () => {
+  it('should only exclude unsynced folders', () => {
     const result = computeGmailExcludeSearchFilter([
-      { externalId: 'Label_work', isSynced: true },
-      { externalId: 'Label_personal', isSynced: false },
-      { externalId: 'Label_newsletters', isSynced: true },
+      {
+        externalId: 'Label_1',
+        name: 'Synced',
+        isSynced: true,
+        parentFolderId: null,
+      },
+      {
+        externalId: 'Label_2',
+        name: 'Not Synced',
+        isSynced: false,
+        parentFolderId: null,
+      },
+      {
+        externalId: 'Label_3',
+        name: 'Also Synced',
+        isSynced: true,
+        parentFolderId: null,
+      },
     ]);
 
-    expect(result).toContain('-label:Label_personal');
-    expect(result).not.toContain('-label:Label_work');
-    expect(result).not.toContain('-label:Label_newsletters');
+    expect(result).toBe('-label:not-synced');
+  });
+
+  it('should handle nested folders with parent path', () => {
+    const folders = [
+      {
+        externalId: 'Label_parent',
+        name: 'Parent Folder',
+        isSynced: true,
+        parentFolderId: null,
+      },
+      {
+        externalId: 'Label_child',
+        name: 'Child Folder',
+        isSynced: false,
+        parentFolderId: 'Label_parent',
+      },
+    ];
+
+    const result = computeGmailExcludeSearchFilter(folders);
+
+    expect(result).toBe('-label:parent-folder-child-folder');
+  });
+
+  it('should handle deeply nested folders', () => {
+    const folders = [
+      {
+        externalId: 'Label_grandparent',
+        name: 'Level One',
+        isSynced: true,
+        parentFolderId: null,
+      },
+      {
+        externalId: 'Label_parent',
+        name: 'Level Two',
+        isSynced: true,
+        parentFolderId: 'Label_grandparent',
+      },
+      {
+        externalId: 'Label_child',
+        name: 'Level Three',
+        isSynced: false,
+        parentFolderId: 'Label_parent',
+      },
+    ];
+
+    const result = computeGmailExcludeSearchFilter(folders);
+
+    expect(result).toBe('-label:level-one-level-two-level-three');
+  });
+
+  it('should skip folders without names', () => {
+    const result = computeGmailExcludeSearchFilter([
+      {
+        externalId: 'Label_1',
+        name: '',
+        isSynced: false,
+        parentFolderId: null,
+      },
+      {
+        externalId: 'Label_2',
+        name: 'Valid Folder',
+        isSynced: false,
+        parentFolderId: null,
+      },
+    ]);
+
+    expect(result).toBe('-label:valid-folder');
   });
 });

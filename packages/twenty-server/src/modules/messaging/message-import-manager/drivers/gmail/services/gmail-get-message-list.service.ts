@@ -3,10 +3,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { batchFetchImplementation } from '@jrmdayn/googleapis-batcher';
 import { isNonEmptyString } from '@sniptt/guards';
 import { google } from 'googleapis';
+import { isDefined } from 'twenty-shared/utils';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageChannelWorkspaceEntity,
+  MessageFolderImportPolicy,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import {
   MessageImportDriverException,
@@ -16,7 +20,6 @@ import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/mess
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
 import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
 import { computeGmailExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-exclude-search-filter.util';
-import { getAllExcludedLabelIds } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/get-all-excluded-label-ids.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import { type GetMessageListsResponse } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
 import { assertNotNull } from 'src/utils/assert';
@@ -39,9 +42,12 @@ export class GmailGetMessageListService {
     >,
     messageFolders: Pick<
       MessageFolderWorkspaceEntity,
-      'name' | 'externalId' | 'isSynced'
+      'name' | 'externalId' | 'isSynced' | 'parentFolderId'
     >[],
-    messageFolderImportPolicy: MessageFolderImportPolicy,
+    messageChannel: Pick<
+      MessageChannelWorkspaceEntity,
+      'messageFolderImportPolicy'
+    >,
   ): Promise<GetMessageListsResponse> {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
@@ -58,7 +64,8 @@ export class GmailGetMessageListService {
     const messageExternalIds: string[] = [];
 
     const excludedSearchFilter =
-      messageFolderImportPolicy === MessageFolderImportPolicy.SELECTED_FOLDERS
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.SELECTED_FOLDERS
         ? computeGmailExcludeSearchFilter(messageFolders)
         : '';
 
@@ -177,7 +184,7 @@ export class GmailGetMessageListService {
       return this.getMessageListWithoutCursor(
         connectedAccount,
         messageFolders,
-        messageChannel.messageFolderImportPolicy,
+        messageChannel,
       );
     }
 
@@ -194,7 +201,6 @@ export class GmailGetMessageListService {
       connectedAccount,
       messageChannel.syncCursor,
       messageFolders,
-      messageChannel.messageFolderImportPolicy,
     );
 
     const messagesAddedFiltered = messagesAdded.filter(
@@ -229,15 +235,12 @@ export class GmailGetMessageListService {
       MessageFolderWorkspaceEntity,
       'name' | 'externalId' | 'isSynced'
     >[],
-    messageFolderImportPolicy: MessageFolderImportPolicy,
   ): Promise<string[]> {
-    if (messageFolderImportPolicy === MessageFolderImportPolicy.ALL_FOLDERS) {
-      return [];
-    }
+    const toBeExcludedFolders = messageFolders.filter(
+      (folder) => !folder.isSynced && isDefined(folder.externalId),
+    );
 
-    const allExcludedLabelIds = getAllExcludedLabelIds(messageFolders);
-
-    if (allExcludedLabelIds.length === 0) {
+    if (toBeExcludedFolders.length === 0) {
       return [];
     }
 
@@ -255,12 +258,12 @@ export class GmailGetMessageListService {
       fetchImplementation: batchedFetchImplementation,
     });
 
-    const historyPromises = allExcludedLabelIds.map((labelId) =>
+    const historyPromises = toBeExcludedFolders.map((folder) =>
       this.gmailGetHistoryService.getHistory(
         batchedGmailClient,
         lastSyncHistoryId,
         ['messageAdded'],
-        labelId,
+        folder.externalId!,
       ),
     );
 
