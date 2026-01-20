@@ -74,8 +74,7 @@ export class WorkspaceMigrationPageLayoutWidgetActionsBuilderService extends Wor
       action: {
         type: 'delete',
         metadataName: 'pageLayoutWidget',
-        universalIdentifier:
-          flatPageLayoutWidgetToValidate.universalIdentifier,
+        universalIdentifier: flatPageLayoutWidgetToValidate.universalIdentifier,
       },
     };
   }

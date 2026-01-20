@@ -74,7 +74,9 @@ export class WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService 
     }
 
     const {
-      flatEntityToValidate: { universalIdentifier: predicateUniversalIdentifier },
+      flatEntityToValidate: {
+        universalIdentifier: predicateUniversalIdentifier,
+      },
     } = args;
 
     return {
