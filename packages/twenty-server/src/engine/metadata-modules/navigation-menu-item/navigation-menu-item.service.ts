@@ -145,38 +145,35 @@ export class NavigationMenuItemService {
           : input.userWorkspaceId,
     };
 
-    const isFolder = !isDefined(normalizedInput.targetRecordId);
+    const hasTargetRecordId = isDefined(normalizedInput.targetRecordId);
+    const hasTargetObjectMetadataId = isDefined(
+      normalizedInput.targetObjectMetadataId,
+    );
 
-    if (isFolder) {
-      if (
-        !isDefined(normalizedInput.name) ||
-        normalizedInput.name.trim() === ''
-      ) {
-        throw new NavigationMenuItemException(
-          'Folder name is required when creating a folder',
-          NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        );
-      }
+    if (hasTargetObjectMetadataId && !hasTargetRecordId) {
+      throw new NavigationMenuItemException(
+        'targetRecordId is required for navigation menu items',
+        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+      );
+    }
 
-      if (isDefined(normalizedInput.targetObjectMetadataId)) {
-        throw new NavigationMenuItemException(
-          'Folders cannot have targetObjectMetadataId',
-          NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        );
-      }
-    } else {
-      if (!isDefined(normalizedInput.targetRecordId)) {
-        throw new NavigationMenuItemException(
-          'targetRecordId is required for navigation menu items',
-          NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        );
-      }
-      if (!isDefined(normalizedInput.targetObjectMetadataId)) {
-        throw new NavigationMenuItemException(
-          'targetObjectMetadataId is required for navigation menu items',
-          NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        );
-      }
+    if (hasTargetRecordId && !hasTargetObjectMetadataId) {
+      throw new NavigationMenuItemException(
+        'targetObjectMetadataId is required for navigation menu items',
+        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+      );
+    }
+
+    const isFolder = !hasTargetRecordId && !hasTargetObjectMetadataId;
+
+    if (
+      isFolder &&
+      (!isDefined(normalizedInput.name) || normalizedInput.name.trim() === '')
+    ) {
+      throw new NavigationMenuItemException(
+        'Folder name is required when creating a folder',
+        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+      );
     }
 
     const flatNavigationMenuItemToCreate =
