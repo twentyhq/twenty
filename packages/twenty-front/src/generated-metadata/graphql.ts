@@ -5236,6 +5236,7 @@ export enum WidgetConfigurationType {
   AGGREGATE_CHART = 'AGGREGATE_CHART',
   BAR_CHART = 'BAR_CHART',
   CALENDAR = 'CALENDAR',
+  CUSTOM_WIDGET = 'CUSTOM_WIDGET',
   EMAILS = 'EMAILS',
   FIELD = 'FIELD',
   FIELDS = 'FIELDS',
@@ -5257,6 +5258,7 @@ export enum WidgetConfigurationType {
 
 export enum WidgetType {
   CALENDAR = 'CALENDAR',
+  CUSTOM_WIDGET = 'CUSTOM_WIDGET',
   EMAILS = 'EMAILS',
   FIELD = 'FIELD',
   FIELDS = 'FIELDS',
