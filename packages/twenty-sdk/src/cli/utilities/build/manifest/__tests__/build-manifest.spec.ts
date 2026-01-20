@@ -3,33 +3,25 @@ import {
   POST_CARD_EXTENSION_CATEGORY_FIELD_ID,
   POST_CARD_EXTENSION_PRIORITY_FIELD_ID,
 } from '@/cli/__tests__/test-app/src/app/postCard.object-extension';
-import { buildManifest, type BuildManifestResult } from '@/cli/utilities/manifest/utils/manifest-build';
+import { buildManifest, type BuildManifestResult } from '@/cli/utilities/build/manifest/manifest-build';
 import { join } from 'path';
 
 const TEST_APP_PATH = join(__dirname, '../../../../__tests__/test-app');
 
 describe('buildManifest with test-app', () => {
   let manifest: BuildManifestResult['manifest'];
-  let packageJson: BuildManifestResult['packageJson'];
-  let yarnLock: BuildManifestResult['yarnLock'];
   let warnings: BuildManifestResult['warnings'];
-  let shouldGenerate: BuildManifestResult['shouldGenerate'];
 
   beforeAll(async () => {
     const result = await buildManifest(TEST_APP_PATH);
 
     manifest = result.manifest;
-    packageJson = result.packageJson;
-    yarnLock = result.yarnLock;
     warnings = result.warnings;
-    shouldGenerate = result.shouldGenerate;
   }, 15_000);
 
   it('should load manifest from test-app directory', async () => {
-    expect(packageJson.name).toBe('test-app');
-    expect(packageJson.version).toBe('0.0.1');
-
-    expect(yarnLock).toBeDefined();
+    expect(manifest.packageJson.name).toBe('test-app');
+    expect(manifest.packageJson.version).toBe('0.0.1');
 
     expect(warnings).toEqual([]);
 
@@ -185,8 +177,6 @@ describe('buildManifest with test-app', () => {
     expect(categoryField?.type).toBe('SELECT');
     expect(categoryField?.label).toBe('Category');
     expect((categoryField as any)?.options).toHaveLength(3);
-
-    expect(shouldGenerate).toBe(true);
 
     const expectedRoleId = DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER;
 

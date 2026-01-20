@@ -12,17 +12,13 @@ import {
   type ValidationError,
   type ValidationResult,
   type ValidationWarning,
-} from '../types/manifest.types';
+} from './manifest.types';
 
-/**
- * Collect all universalIdentifiers from the manifest for duplicate checking.
- */
 const collectAllIds = (
   manifest: Omit<ApplicationManifest, 'sources'>,
 ): Array<{ id: string; location: string }> => {
   const ids: Array<{ id: string; location: string }> = [];
 
-  // Application
   if (manifest.application?.universalIdentifier) {
     ids.push({
       id: manifest.application.universalIdentifier,
@@ -30,7 +26,6 @@ const collectAllIds = (
     });
   }
 
-  // Application variables
   if (manifest.application?.applicationVariables) {
     for (const [name, variable] of Object.entries(
       manifest.application.applicationVariables,
@@ -44,7 +39,6 @@ const collectAllIds = (
     }
   }
 
-  // Objects
   for (const obj of manifest.objects ?? []) {
     if (obj.universalIdentifier) {
       ids.push({
@@ -52,7 +46,6 @@ const collectAllIds = (
         location: `objects/${obj.nameSingular}`,
       });
     }
-    // Object fields
     for (const field of obj.fields ?? []) {
       if (field.universalIdentifier) {
         ids.push({
@@ -68,7 +61,6 @@ const collectAllIds = (
       ext.targetObject?.nameSingular ??
       ext.targetObject?.universalIdentifier ??
       'unknown';
-    // Extension fields
     for (const field of ext.fields ?? []) {
       if (field.universalIdentifier) {
         ids.push({
@@ -79,7 +71,6 @@ const collectAllIds = (
     }
   }
 
-  // Functions
   for (const fn of manifest.serverlessFunctions ?? []) {
     if (fn.universalIdentifier) {
       ids.push({
@@ -87,7 +78,6 @@ const collectAllIds = (
         location: `functions/${fn.name ?? fn.handlerName}`,
       });
     }
-    // Function triggers
     for (const trigger of fn.triggers ?? []) {
       if (trigger.universalIdentifier) {
         ids.push({
@@ -98,7 +88,6 @@ const collectAllIds = (
     }
   }
 
-  // Roles
   for (const role of manifest.roles ?? []) {
     if (role.universalIdentifier) {
       ids.push({
@@ -108,7 +97,6 @@ const collectAllIds = (
     }
   }
 
-  // Front Components
   for (const component of manifest.frontComponents ?? []) {
     if (component.universalIdentifier) {
       ids.push({
@@ -121,9 +109,6 @@ const collectAllIds = (
   return ids;
 };
 
-/**
- * Find duplicate universalIdentifiers.
- */
 const findDuplicates = (
   ids: Array<{ id: string; location: string }>,
 ): Array<{ id: string; locations: string[] }> => {
@@ -140,9 +125,6 @@ const findDuplicates = (
     .map(([id, locations]) => ({ id, locations }));
 };
 
-/**
- * Validate an application config.
- */
 const validateApplication = (
   application: Application | undefined,
   errors: ValidationError[],
@@ -163,9 +145,6 @@ const validateApplication = (
   }
 };
 
-/**
- * Validate objects and their fields.
- */
 const validateObjects = (
   objects: ObjectManifest[],
   errors: ValidationError[],
@@ -194,7 +173,6 @@ const validateObjects = (
       });
     }
 
-    // Validate fields
     for (const field of obj.fields ?? []) {
       const fieldPath = `${objPath}.fields.${field.label ?? 'unknown'}`;
 
@@ -219,7 +197,6 @@ const validateObjects = (
         });
       }
 
-      // Check SELECT/MULTI_SELECT fields have options
       if (
         (field.type === FieldMetadataType.SELECT ||
           field.type === FieldMetadataType.MULTI_SELECT) &&
@@ -234,9 +211,6 @@ const validateObjects = (
   }
 };
 
-/**
- * Validate object extensions and their fields.
- */
 const validateObjectExtensions = (
   extensions: ObjectExtensionManifest[],
   errors: ValidationError[],
@@ -281,7 +255,6 @@ const validateObjectExtensions = (
       });
     }
 
-    // Validate fields
     for (const field of ext.fields ?? []) {
       const fieldPath = `${extPath}.fields.${field.label ?? 'unknown'}`;
 
@@ -306,7 +279,6 @@ const validateObjectExtensions = (
         });
       }
 
-      // Check SELECT/MULTI_SELECT fields have options
       if (
         (field.type === FieldMetadataType.SELECT ||
           field.type === FieldMetadataType.MULTI_SELECT) &&
@@ -321,9 +293,6 @@ const validateObjectExtensions = (
   }
 };
 
-/**
- * Validate serverless functions.
- */
 const validateFunctions = (
   functions: ServerlessFunctionManifest[],
   errors: ValidationError[],
@@ -338,7 +307,6 @@ const validateFunctions = (
       });
     }
 
-    // Validate triggers
     for (const trigger of fn.triggers ?? []) {
       const triggerPath = `${fnPath}.triggers.${trigger.type ?? 'unknown'}`;
 
@@ -395,9 +363,6 @@ const validateFunctions = (
   }
 };
 
-/**
- * Validate roles.
- */
 const validateRoles = (
   roles: RoleManifest[],
   errors: ValidationError[],
@@ -421,9 +386,6 @@ const validateRoles = (
   }
 };
 
-/**
- * Validate front components.
- */
 const validateFrontComponents = (
   components: FrontComponentManifest[],
   errors: ValidationError[],
@@ -440,34 +402,24 @@ const validateFrontComponents = (
   }
 };
 
-/**
- * Validate a complete application manifest.
- */
 export const validateManifest = (
   manifest: Omit<ApplicationManifest, 'sources'>,
 ): ValidationResult => {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
-  // Validate application
   validateApplication(manifest.application, errors);
 
-  // Validate objects
   validateObjects(manifest.objects ?? [], errors);
 
-  // Validate object extensions
   validateObjectExtensions(manifest.objectExtensions ?? [], errors);
 
-  // Validate functions
   validateFunctions(manifest.serverlessFunctions ?? [], errors);
 
-  // Validate roles
   validateRoles(manifest.roles ?? [], errors);
 
-  // Validate front components
   validateFrontComponents(manifest.frontComponents ?? [], errors);
 
-  // Check for duplicate universalIdentifiers
   const allIds = collectAllIds(manifest);
   const duplicates = findDuplicates(allIds);
   for (const dup of duplicates) {
@@ -477,7 +429,6 @@ export const validateManifest = (
     });
   }
 
-  // Warnings
   if (!manifest.objects || manifest.objects.length === 0) {
     warnings.push({
       message: 'No objects defined in src/app/objects/',

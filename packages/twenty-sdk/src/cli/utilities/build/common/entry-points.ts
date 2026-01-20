@@ -4,7 +4,16 @@ export const extractFunctionEntryPoints = (
   return serverlessFunctions.map((fn) => fn.handlerPath).sort();
 };
 
-export const haveFunctionEntryPointsChanged = (
+export const extractFrontComponentEntryPoints = (
+  frontComponents: Array<{ componentPath: string }> | undefined,
+): string[] => {
+  if (!frontComponents) {
+    return [];
+  }
+  return frontComponents.map((component) => component.componentPath).sort();
+};
+
+export const haveEntryPointsChanged = (
   currentEntryPoints: string[],
   newEntryPoints: string[],
 ): boolean => {
@@ -16,3 +25,5 @@ export const haveFunctionEntryPointsChanged = (
     (entryPoint, index) => entryPoint !== currentEntryPoints[index],
   );
 };
+
+export const haveFunctionEntryPointsChanged = haveEntryPointsChanged;

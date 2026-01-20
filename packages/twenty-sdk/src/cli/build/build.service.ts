@@ -1,11 +1,10 @@
 import { ASSETS_DIR } from '@/cli/constants/assets-dir';
-import { FUNCTIONS_DIR } from '@/cli/constants/functions-dir';
-import { GENERATED_DIR } from '@/cli/constants/generated-dir';
-import { OUTPUT_DIR } from '@/cli/constants/output-dir';
+import { GENERATED_DIR, OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
+import { FUNCTIONS_DIR } from '@/cli/utilities/build/functions/constants';
 import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
 import { TarballService } from '@/cli/utilities/file/utils/file-tarball';
-import { buildManifest, type BuildManifestResult } from '@/cli/utilities/manifest/utils/manifest-build';
-import { BuildManifestWriter, type BuiltFunctionInfo } from '@/cli/utilities/manifest/utils/manifest-writer';
+import { buildManifest, type BuildManifestResult } from '@/cli/utilities/build/manifest/manifest-build';
+import { BuildManifestWriter, type BuiltFunctionInfo } from '@/cli/utilities/build/manifest/manifest-writer';
 import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';

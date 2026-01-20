@@ -3,7 +3,7 @@ import inquirer from 'inquirer';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import { ApiService } from '@/cli/utilities/api/services/api.service';
 import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
-import { buildManifest } from '@/cli/utilities/manifest/utils/manifest-build';
+import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
 
 export class AppUninstallCommand {
   private apiService = new ApiService();

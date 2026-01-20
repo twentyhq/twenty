@@ -8,10 +8,7 @@ import {
 import { createClient } from 'graphql-sse';
 import { type ApiResponse } from '../types/api-response.types';
 import { ConfigService } from '@/cli/utilities/config/services/config.service';
-import {
-  type PackageJson,
-  type ApplicationManifest,
-} from 'twenty-shared/application';
+import { type ApplicationManifest } from 'twenty-shared/application';
 
 export class ApiService {
   private client: AxiosInstance;
@@ -88,25 +85,19 @@ export class ApiService {
   }
 
   async syncApplication({
-    packageJson,
-    yarnLock,
     manifest,
   }: {
-    packageJson: PackageJson;
-    yarnLock: string;
     manifest: ApplicationManifest;
   }): Promise<ApiResponse> {
     try {
       const mutation = `
-        mutation SyncApplication($manifest: JSON!, $packageJson: JSON!, $yarnLock: String!) {
-          syncApplication(manifest: $manifest, packageJson: $packageJson, yarnLock: $yarnLock)
+        mutation SyncApplication($manifest: JSON!) {
+          syncApplication(manifest: $manifest)
         }
       `;
 
       const variables = {
         manifest,
-        yarnLock,
-        packageJson,
       };
 
       const response: AxiosResponse = await this.client.post(
@@ -133,7 +124,7 @@ export class ApiService {
       return {
         success: true,
         data: response.data.data.syncApplication,
-        message: `Successfully synced application: ${packageJson.name}`,
+        message: `Successfully synced application: ${manifest.packageJson.name}`,
       };
     } catch (error) {
       return {

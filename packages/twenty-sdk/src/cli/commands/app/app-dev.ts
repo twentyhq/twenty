@@ -1,27 +1,39 @@
-import { FUNCTIONS_DIR } from '@/cli/constants/functions-dir';
-import { OUTPUT_DIR } from '@/cli/constants/output-dir';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import {
-  cleanupOldFunctions,
-  createDevWatcher,
-  createManifestPlugin,
+  extractFrontComponentEntryPoints,
+  extractFunctionEntryPoints,
+} from '@/cli/utilities/build/common/entry-points';
+import { createFrontComponentsWatcher, type FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
+import { createFunctionsWatcher, type FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
+import {
+  createManifestWatcher,
   runManifestBuild,
-  type BuildWatcher,
-  type ManifestPluginState,
-} from '@/cli/utilities/vite';
+  type ManifestWatcher,
+} from '@/cli/utilities/build/manifest/manifest-watcher';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import chalk from 'chalk';
-import * as fs from 'fs-extra';
-import path from 'path';
+import { type ApplicationManifest } from 'twenty-shared/application';
 
 export type AppDevOptions = {
   appPath?: string;
 };
 
+type AppDevState = {
+  manifest: ApplicationManifest | null;
+  builtFunctionEntryPoints: string[];
+  builtFrontComponentEntryPoints: string[];
+};
+
 export class AppDevCommand {
-  private watcher: BuildWatcher | null = null;
+  private manifestWatcher: ManifestWatcher | null = null;
+  private functionsWatcher: FunctionsWatcher | null = null;
+  private frontComponentsWatcher: FrontComponentsWatcher | null = null;
+
   private appPath: string = '';
-  private isRestarting: boolean = false;
-  private manifestState: ManifestPluginState = { currentEntryPoints: [] };
+  private state: AppDevState = {
+    manifest: null,
+    builtFunctionEntryPoints: [],
+    builtFrontComponentEntryPoints: [],
+  };
 
   async execute(options: AppDevOptions): Promise<void> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
@@ -30,107 +42,94 @@ export class AppDevCommand {
     console.log(chalk.gray(`📁 App Path: ${this.appPath}`));
     console.log('');
 
-    await this.ensureOutputDirs();
-    await this.startWatcher();
+    await this.startWatchers();
 
     this.setupGracefulShutdown();
   }
 
-  private async ensureOutputDirs(): Promise<void> {
-    const outputDir = path.join(this.appPath, OUTPUT_DIR);
-    const functionsDir = path.join(outputDir, FUNCTIONS_DIR);
-    await fs.ensureDir(functionsDir);
-  }
+  private async startWatchers(): Promise<void> {
+    const { manifest } = await runManifestBuild(this.appPath, null);
 
-  private async startWatcher(): Promise<void> {
-    const functionInput = await runManifestBuild(
-      this.appPath,
-      this.manifestState,
-    );
-
-    await cleanupOldFunctions(this.appPath, this.manifestState.currentEntryPoints);
-
-    const hasFunctions = Object.keys(functionInput).length > 0;
-
-    if (hasFunctions) {
-      console.log(chalk.blue('  📦 Building functions...'));
-    } else {
-      console.log(chalk.gray('  No functions to build'));
+    if (manifest) {
+      this.state.manifest = manifest;
     }
 
-    const manifestPlugin = createManifestPlugin(
-      this.appPath,
-      this.manifestState,
-      {
-        onEntryPointsChange: (newEntryPoints) => {
-          console.log(chalk.yellow(`🔄 Entry points changed: ${JSON.stringify(newEntryPoints)}`));
-          this.scheduleRestart();
+    await Promise.all([
+      this.startManifestWatcher(manifest),
+      this.startFunctionsWatcher(manifest),
+      this.startFrontComponentsWatcher(manifest),
+    ]);
+  }
+
+  private async startManifestWatcher(initialManifest: ApplicationManifest): Promise<void> {
+    this.manifestWatcher = createManifestWatcher({
+      appPath: this.appPath,
+      initialManifest,
+      callbacks: {
+        onBuildSuccess: ({ manifest }) => {
+          this.state.manifest = manifest;
+
+          if (manifest.serverlessFunctions.length > 0) {
+            this.functionsWatcher?.restart(manifest);
+          }
+
+          if (manifest.frontComponents && manifest.frontComponents.length > 0) {
+            this.frontComponentsWatcher?.restart(manifest);
+          }
         },
       },
-    );
+    });
 
-    this.watcher = await createDevWatcher({
+    console.log(chalk.gray('  📂 Manifest watcher started'));
+  }
+
+  private async startFunctionsWatcher(manifest: ApplicationManifest): Promise<void> {
+    this.functionsWatcher = await createFunctionsWatcher({
       appPath: this.appPath,
-      functionInput,
-      plugins: [manifestPlugin],
-    });
-
-    this.watcher.on('event', (event) => {
-      if (event.code === 'END') {
-        if (hasFunctions) {
-          console.log(chalk.green('  ✓ Functions built'));
-        }
-        console.log('');
-        console.log(
-          chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
-        );
-      } else if (event.code === 'ERROR') {
-        console.error(chalk.red('  ✗ Build error:'), event.error?.message);
-      }
+      manifest,
+      callbacks: {
+        onBuildSuccess: () => {
+          this.state.builtFunctionEntryPoints = extractFunctionEntryPoints(
+            this.state.manifest?.serverlessFunctions ?? [],
+          );
+        },
+      },
     });
   }
 
-  private scheduleRestart(): void {
-    if (this.isRestarting) {
-      return;
-    }
-
-    setImmediate(() => {
-      this.restartWatcher();
+  private async startFrontComponentsWatcher(manifest: ApplicationManifest): Promise<void> {
+    this.frontComponentsWatcher = await createFrontComponentsWatcher({
+      appPath: this.appPath,
+      manifest,
+      callbacks: {
+        onBuildSuccess: () => {
+          this.state.builtFrontComponentEntryPoints = extractFrontComponentEntryPoints(
+            this.state.manifest?.frontComponents ?? [],
+          );
+        },
+      },
     });
-  }
-
-  private async restartWatcher(): Promise<void> {
-    if (this.isRestarting) {
-      return;
-    }
-
-    this.isRestarting = true;
-
-    try {
-      console.log(
-        chalk.yellow('🔄 Function entry points changed, restarting watcher...'),
-      );
-
-      if (this.watcher) {
-        await this.watcher.close();
-      }
-
-      await this.startWatcher();
-
-      console.log(chalk.green('✓ Watcher restarted with new entry points'));
-    } finally {
-      this.isRestarting = false;
-    }
   }
 
   private setupGracefulShutdown(): void {
     process.on('SIGINT', async () => {
       console.log(chalk.yellow('\n🛑 Stopping development mode...'));
 
-      if (this.watcher) {
-        await this.watcher.close();
+      const closePromises: Promise<void>[] = [];
+
+      if (this.manifestWatcher) {
+        closePromises.push(this.manifestWatcher.close());
       }
+
+      if (this.functionsWatcher) {
+        closePromises.push(this.functionsWatcher.close());
+      }
+
+      if (this.frontComponentsWatcher) {
+        closePromises.push(this.frontComponentsWatcher.close());
+      }
+
+      await Promise.all(closePromises);
 
       process.exit(0);
     });

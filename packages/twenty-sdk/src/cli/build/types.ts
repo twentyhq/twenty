@@ -1,5 +1,5 @@
 import { type ApplicationManifest } from 'twenty-shared/application';
-import { type BuiltFunctionInfo } from '@/cli/utilities/manifest/utils/manifest-writer';
+import { type BuiltFunctionInfo } from '@/cli/utilities/build/manifest/manifest-writer';
 
 export type BuildOptions = {
   appPath: string;

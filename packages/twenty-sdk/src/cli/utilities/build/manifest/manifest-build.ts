@@ -1,8 +1,5 @@
 import { findPathFile } from '@/cli/utilities/file/utils/file-find';
-import {
-  parseJsoncFile,
-  parseTextFile,
-} from '@/cli/utilities/file/utils/file-jsonc';
+import { parseJsoncFile } from '@/cli/utilities/file/utils/file-jsonc';
 import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';
 import path, { posix, relative, sep } from 'path';
@@ -12,17 +9,16 @@ import {
   type FrontComponentManifest,
   type ObjectExtensionManifest,
   type ObjectManifest,
-  type PackageJson,
   type RoleManifest,
   type ServerlessFunctionManifest,
 } from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
+import { extractManifestFromFile } from './manifest-file-extractor';
+import { validateManifest } from './manifest-validate';
 import {
   ManifestValidationError,
   type ValidationWarning,
-} from '../types/manifest.types';
-import { extractManifestFromFile } from './manifest-file-extractor';
-import { validateManifest } from './manifest-validate';
+} from './manifest.types';
 
 const validateFolderStructure = async (appPath: string): Promise<void> => {
   const appFolder = path.join(appPath, 'src', 'app');
@@ -211,31 +207,8 @@ const loadSources = async (appPath: string): Promise<Sources> => {
   return sources;
 };
 
-const checkShouldGenerate = async (appPath: string): Promise<boolean> => {
-  const tsFiles = await loadFiles(['src/**/*.ts'], appPath);
-
-  const esmImportPattern =
-    /from\s+['"][^'"]*\/generated(?:\/[^'"]*)?['"]|from\s+['"]generated['"]/;
-
-  const commonJsRequirePattern =
-    /require\s*\(\s*['"][^'"]*\/generated(?:\/[^'"]*)?['"]\s*\)|require\s*\(\s*['"]generated['"]\s*\)/;
-
-  for (const filepath of tsFiles) {
-    const content = await fs.readFile(filepath, 'utf8');
-
-    if (esmImportPattern.test(content) || commonJsRequirePattern.test(content)) {
-      return true;
-    }
-  }
-
-  return false;
-};
-
 export type BuildManifestResult = {
-  packageJson: PackageJson;
-  yarnLock: string;
-  manifest: ApplicationManifest;
-  shouldGenerate: boolean;
+  manifest: ApplicationManifest | null;
   warnings: ValidationWarning[];
 };
 
@@ -246,10 +219,6 @@ export const buildManifest = async (
 
   const packageJson = await parseJsoncFile(
     await findPathFile(appPath, 'package.json'),
-  );
-
-  const yarnLock = await parseTextFile(
-    await findPathFile(appPath, 'yarn.lock'),
   );
 
   const applicationConfigPath = path.join(
@@ -270,7 +239,6 @@ export const buildManifest = async (
     frontComponentManifests,
     roleManifests,
     sources,
-    shouldGenerate,
   ] = await Promise.all([
     loadObjectManifests(appPath),
     loadObjectExtensionManifests(appPath),
@@ -278,7 +246,6 @@ export const buildManifest = async (
     loadFrontComponentManifests(appPath),
     loadRoleManifests(appPath),
     loadSources(appPath),
-    checkShouldGenerate(appPath),
   ]);
 
   const manifest: ApplicationManifest = {
@@ -291,6 +258,7 @@ export const buildManifest = async (
       frontComponentManifests.length > 0 ? frontComponentManifests : undefined,
     roles: roleManifests,
     sources,
+    packageJson,
   };
 
   const validation = validateManifest({
@@ -300,6 +268,7 @@ export const buildManifest = async (
     serverlessFunctions: functionManifests,
     frontComponents: frontComponentManifests,
     roles: roleManifests,
+    packageJson,
   });
 
   if (!validation.isValid) {
@@ -307,10 +276,7 @@ export const buildManifest = async (
   }
 
   return {
-    packageJson,
-    yarnLock,
     manifest,
-    shouldGenerate,
     warnings: validation.warnings,
   };
 };

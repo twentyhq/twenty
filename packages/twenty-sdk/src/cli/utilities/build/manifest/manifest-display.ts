@@ -3,7 +3,7 @@ import { type ApplicationManifest } from 'twenty-shared/application';
 import {
   type ManifestValidationError,
   type ValidationWarning,
-} from '../types/manifest.types';
+} from './manifest.types';
 
 export const displayEntitySummary = (manifest: ApplicationManifest): void => {
   const appName = manifest.application.displayName ?? 'Application';
