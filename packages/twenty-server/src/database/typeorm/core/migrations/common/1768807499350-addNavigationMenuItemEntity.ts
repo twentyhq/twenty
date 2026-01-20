@@ -33,9 +33,15 @@ export class AddNavigationMenuItemEntity1768807499350
     await queryRunner.query(
       `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "FK_62d47d14b50b67a03f832481de7" FOREIGN KEY ("targetObjectMetadataId") REFERENCES "core"."objectMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
+    await queryRunner.query(
+      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "FK_175fc64110c36793eaf9765d1c6" FOREIGN KEY ("folderId") REFERENCES "core"."navigationMenuItem"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT "FK_175fc64110c36793eaf9765d1c6"`,
+    );
     await queryRunner.query(
       `ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT "FK_62d47d14b50b67a03f832481de7"`,
     );
