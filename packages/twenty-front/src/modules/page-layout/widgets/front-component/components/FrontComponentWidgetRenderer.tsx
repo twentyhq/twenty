@@ -52,13 +52,13 @@ const StyledRemoteContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-type FrontComponentRendererProps = {
+type FrontComponentWidgetRendererProps = {
   widget: PageLayoutWidget;
 };
 
-export const FrontComponentRenderer = ({
+export const FrontComponentWidgetRenderer = ({
   widget,
-}: FrontComponentRendererProps) => {
+}: FrontComponentWidgetRendererProps) => {
   const configuration = widget.configuration;
 
   if (!isDefined(configuration) || !('frontComponentId' in configuration)) {
