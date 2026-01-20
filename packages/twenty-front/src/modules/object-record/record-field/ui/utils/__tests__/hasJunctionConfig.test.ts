@@ -1,4 +1,4 @@
-import { hasJunctionConfig } from '../junction/hasJunctionConfig';
+import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 
 describe('hasJunctionConfig', () => {
   it('should return false for undefined settings', () => {

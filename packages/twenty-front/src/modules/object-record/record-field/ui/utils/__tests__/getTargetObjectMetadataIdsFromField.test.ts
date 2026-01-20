@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getTargetObjectMetadataIdsFromField } from '../junction/getTargetObjectMetadataIdsFromField';
+import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 
 describe('getTargetObjectMetadataIdsFromField', () => {
   it('should return empty array for field without morphRelations and relation', () => {
@@ -76,6 +76,8 @@ describe('getTargetObjectMetadataIdsFromField', () => {
       },
     } as FieldMetadataItem;
 
-    expect(getTargetObjectMetadataIdsFromField(field)).toEqual(['morph-target']);
+    expect(getTargetObjectMetadataIdsFromField(field)).toEqual([
+      'morph-target',
+    ]);
   });
 });

@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { isActivityTargetField } from '../categorizeRelationFields';
+import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 
 describe('isActivityTargetField', () => {
   it('should return true for noteTargets field on Note object', () => {

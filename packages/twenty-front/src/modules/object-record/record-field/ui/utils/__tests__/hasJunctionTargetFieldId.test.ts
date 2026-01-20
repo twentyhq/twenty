@@ -1,4 +1,4 @@
-import { hasJunctionTargetFieldId } from '../junction/hasJunctionTargetFieldId';
+import { hasJunctionTargetFieldId } from '@/object-record/record-field/ui/utils/junction/hasJunctionTargetFieldId';
 
 describe('hasJunctionTargetFieldId', () => {
   it('should return false for undefined settings', () => {

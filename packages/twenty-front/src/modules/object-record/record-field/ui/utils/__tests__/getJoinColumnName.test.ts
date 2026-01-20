@@ -1,4 +1,4 @@
-import { getJoinColumnName } from '../junction/getJoinColumnName';
+import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
 
 describe('getJoinColumnName', () => {
   it('should return undefined for undefined settings', () => {
@@ -23,6 +23,8 @@ describe('getJoinColumnName', () => {
 
   it('should return the joinColumnName for valid settings', () => {
     expect(getJoinColumnName({ joinColumnName: 'personId' })).toBe('personId');
-    expect(getJoinColumnName({ joinColumnName: 'companyId' })).toBe('companyId');
+    expect(getJoinColumnName({ joinColumnName: 'companyId' })).toBe(
+      'companyId',
+    );
   });
 });

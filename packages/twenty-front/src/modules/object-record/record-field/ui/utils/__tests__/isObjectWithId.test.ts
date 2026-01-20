@@ -1,4 +1,4 @@
-import { isObjectWithId } from '../junction/isObjectWithId';
+import { isObjectWithId } from '@/object-record/record-field/ui/utils/junction/isObjectWithId';
 
 describe('isObjectWithId', () => {
   it('should return false for undefined', () => {
