@@ -81,7 +81,20 @@ describe('NavigationMenuItem creation should succeed', () => {
 
   it('should create navigation menu item with all optional fields', async () => {
     const targetRecordId = faker.string.uuid();
-    const folderId = faker.string.uuid();
+    const folderTargetRecordId = faker.string.uuid();
+
+    const { data: folderData } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: {
+        targetRecordId: folderTargetRecordId,
+        targetObjectMetadataId: companyObjectMetadataId,
+        userWorkspaceId: validUserWorkspaceId ?? undefined,
+      },
+    });
+
+    const folderId = folderData?.createNavigationMenuItem?.id;
+
+    jestExpectToBeDefined(folderId);
 
     const { data } = await createNavigationMenuItem({
       expectToFail: false,
@@ -103,6 +116,12 @@ describe('NavigationMenuItem creation should succeed', () => {
       userWorkspaceId: validUserWorkspaceId,
       folderId,
       position: 5,
+    });
+
+    // Clean up folder item
+    await deleteNavigationMenuItem({
+      expectToFail: false,
+      input: { id: folderId },
     });
   });
 

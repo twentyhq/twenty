@@ -8,6 +8,7 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 describe('NavigationMenuItem update should succeed', () => {
   let createdNavigationMenuItemId: string;
   let personObjectMetadataId: string;
+  let createdFolderId: string | undefined;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -56,6 +57,13 @@ describe('NavigationMenuItem update should succeed', () => {
       });
       createdNavigationMenuItemId = undefined as unknown as string;
     }
+    if (createdFolderId) {
+      await deleteNavigationMenuItem({
+        expectToFail: false,
+        input: { id: createdFolderId },
+      });
+      createdFolderId = undefined;
+    }
   });
 
   it('should update the position', async () => {
@@ -74,7 +82,20 @@ describe('NavigationMenuItem update should succeed', () => {
   });
 
   it('should update the folderId', async () => {
-    const folderId = faker.string.uuid();
+    const folderTargetRecordId = faker.string.uuid();
+
+    const { data: folderData } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: {
+        targetRecordId: folderTargetRecordId,
+        targetObjectMetadataId: personObjectMetadataId,
+      },
+    });
+
+    const folderId = folderData?.createNavigationMenuItem?.id;
+
+    jestExpectToBeDefined(folderId);
+    createdFolderId = folderId;
 
     const { data } = await updateNavigationMenuItem({
       expectToFail: false,
@@ -91,7 +112,20 @@ describe('NavigationMenuItem update should succeed', () => {
   });
 
   it('should update folderId to null', async () => {
-    const folderId = faker.string.uuid();
+    const folderTargetRecordId = faker.string.uuid();
+
+    const { data: folderData } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: {
+        targetRecordId: folderTargetRecordId,
+        targetObjectMetadataId: personObjectMetadataId,
+      },
+    });
+
+    const folderId = folderData?.createNavigationMenuItem?.id;
+
+    jestExpectToBeDefined(folderId);
+    createdFolderId = folderId;
 
     await updateNavigationMenuItem({
       expectToFail: false,
@@ -116,7 +150,20 @@ describe('NavigationMenuItem update should succeed', () => {
   });
 
   it('should update multiple fields at once', async () => {
-    const folderId = faker.string.uuid();
+    const folderTargetRecordId = faker.string.uuid();
+
+    const { data: folderData } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: {
+        targetRecordId: folderTargetRecordId,
+        targetObjectMetadataId: personObjectMetadataId,
+      },
+    });
+
+    const folderId = folderData?.createNavigationMenuItem?.id;
+
+    jestExpectToBeDefined(folderId);
+    createdFolderId = folderId;
 
     const { data } = await updateNavigationMenuItem({
       expectToFail: false,
