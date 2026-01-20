@@ -137,7 +137,6 @@ export class MessagingMessageListFetchService {
             await this.messagingGetMessageListService.getMessageLists(
               messageChannelWithFreshTokens,
               messageFoldersToSync,
-              messageChannelWithFreshTokens.messageFolderImportPolicy,
             );
 
           await this.cacheStorage.del(
