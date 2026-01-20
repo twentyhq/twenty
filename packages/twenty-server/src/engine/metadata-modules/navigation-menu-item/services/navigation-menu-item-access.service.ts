@@ -62,13 +62,6 @@ export class NavigationMenuItemAccessService {
       );
     }
 
-    if (inputUserWorkspaceId !== userWorkspaceId) {
-      throw new NavigationMenuItemException(
-        'You can only create navigation menu items for yourself',
-        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-      );
-    }
-
     return true;
   }
 

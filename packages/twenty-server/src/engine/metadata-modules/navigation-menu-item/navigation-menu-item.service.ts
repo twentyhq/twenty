@@ -137,9 +137,17 @@ export class NavigationMenuItemService {
         },
       );
 
+    const normalizedInput: CreateNavigationMenuItemInput = {
+      ...input,
+      userWorkspaceId:
+        isDefined(input.userWorkspaceId) && isDefined(authUserWorkspaceId)
+          ? authUserWorkspaceId
+          : input.userWorkspaceId,
+    };
+
     const flatNavigationMenuItemToCreate =
       fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate({
-        createNavigationMenuItemInput: input,
+        createNavigationMenuItemInput: normalizedInput,
         workspaceId,
         applicationId: workspaceCustomFlatApplication.id,
         flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
