@@ -15,6 +15,8 @@ import { SettingsPath, type ViewFilterOperand } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import {
+  type BillingEntitlement,
+  BillingEntitlementKey,
   FeatureFlagKey,
   useFindOneAgentQuery,
 } from '~/generated-metadata/graphql';
@@ -48,10 +50,21 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   });
 
   const featureFlagsMap = useFeatureFlagsMap();
+
+  const workspaceBillingEntitlements = currentWorkspace?.billingEntitlements;
+
+  const isRLSBillingEntitlementEnabled =
+    workspaceBillingEntitlements?.some(
+      (entitlement: BillingEntitlement) =>
+        entitlement.key === BillingEntitlementKey.RLS &&
+        entitlement.value === true,
+    ) ?? false;
+
   const isRowLevelPermissionPredicatesEnabled =
     featureFlagsMap[
       FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-    ] && hasValidEnterpriseKey;
+    ] &&
+    (hasValidEnterpriseKey || isRLSBillingEntitlementEnabled);
 
   const objectMetadataItem = objectMetadata.objectMetadataItem;
 

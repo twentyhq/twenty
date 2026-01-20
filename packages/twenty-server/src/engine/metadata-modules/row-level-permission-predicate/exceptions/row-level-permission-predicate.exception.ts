@@ -19,6 +19,8 @@ export const RowLevelPermissionPredicateExceptionCode =
     ROLE_NOT_FOUND: 'ROLE_NOT_FOUND',
     UNAUTHORIZED_ROLE_MODIFICATION: 'UNAUTHORIZED_ROLE_MODIFICATION',
     UNAUTHORIZED_OBJECT_MODIFICATION: 'UNAUTHORIZED_OBJECT_MODIFICATION',
+    ROW_LEVEL_PERMISSION_FEATURE_DISABLED:
+      'ROW_LEVEL_PERMISSION_FEATURE_DISABLED',
   } as const);
 
 const rowLevelPermissionPredicateExceptionUserFriendlyMessages: Record<
@@ -32,6 +34,7 @@ const rowLevelPermissionPredicateExceptionUserFriendlyMessages: Record<
   ROLE_NOT_FOUND: msg`Role not found.`,
   UNAUTHORIZED_ROLE_MODIFICATION: msg`Cannot modify predicate belonging to a different role.`,
   UNAUTHORIZED_OBJECT_MODIFICATION: msg`Cannot modify predicate belonging to a different object.`,
+  ROW_LEVEL_PERMISSION_FEATURE_DISABLED: msg`Row level permission predicate feature is disabled.`,
   INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
 };
 

@@ -73,6 +73,8 @@ export const useShouldActionBeRegisteredParams = ({
     contextStoreTargetedRecordsRule,
   );
 
+  const isSelectAll = contextStoreTargetedRecordsRule.mode === 'exclusion';
+
   const getObjectReadPermission = useRecoilCallback(
     ({ snapshot }) =>
       (objectMetadataNameSingular: string) => {
@@ -113,6 +115,7 @@ export const useShouldActionBeRegisteredParams = ({
     isInRightDrawer,
     hasAnySoftDeleteFilterOnView,
     isShowPage,
+    isSelectAll,
     selectedRecord,
     numberOfSelectedRecords,
     viewType: viewType ?? undefined,

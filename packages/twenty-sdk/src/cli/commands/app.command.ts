@@ -6,11 +6,13 @@ import { AppDevCommand } from './app/app-dev';
 import { AppGenerateCommand } from './app/app-generate';
 import { AppSyncCommand } from './app/app-sync';
 import { AppUninstallCommand } from './app/app-uninstall';
+import { AuthListCommand } from './auth/auth-list';
 import { AuthLoginCommand } from './auth/auth-login';
 import { AuthLogoutCommand } from './auth/auth-logout';
 import { AuthStatusCommand } from './auth/auth-status';
 import { FunctionExecuteCommand } from './function/function-execute';
 import { FunctionLogsCommand } from './function/function-logs';
+import { AuthSwitchCommand } from './auth/auth-switch';
 import {
   EntityAddCommand,
   isSyncableEntity,
@@ -19,9 +21,11 @@ import {
 
 export const registerCommands = (program: Command): void => {
   // Auth commands
+  const listCommand = new AuthListCommand();
   const loginCommand = new AuthLoginCommand();
   const logoutCommand = new AuthLogoutCommand();
   const statusCommand = new AuthStatusCommand();
+  const switchCommand = new AuthSwitchCommand();
 
   program
     .command('auth:login')
@@ -44,6 +48,20 @@ export const registerCommands = (program: Command): void => {
     .description('Check authentication status')
     .action(async () => {
       await statusCommand.execute();
+    });
+
+  program
+    .command('auth:switch [workspace]')
+    .description('Switch the default workspace for authentication')
+    .action(async (workspace?: string) => {
+      await switchCommand.execute({ workspace });
+    });
+
+  program
+    .command('auth:list')
+    .description('List all configured workspaces')
+    .action(async () => {
+      await listCommand.execute();
     });
 
   // App commands

@@ -14,9 +14,10 @@ import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/dri
 import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
 import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
-import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { type FlatServerlessFunctionLayer } from 'src/engine/metadata-modules/serverless-function-layer/types/flat-serverless-function-layer.type';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
-import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -30,53 +31,55 @@ export class LocalDriver implements ServerlessDriver {
   }
 
   private getInMemoryLayerFolderPath = (
-    serverlessFunction: ServerlessFunctionEntity,
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer,
   ) => {
-    return join(
-      SERVERLESS_TMPDIR_FOLDER,
-      serverlessFunction.serverlessFunctionLayer.checksum,
-    );
+    return join(SERVERLESS_TMPDIR_FOLDER, flatServerlessFunctionLayer.checksum);
   };
 
   private async createLayerIfNotExists(
-    serverlessFunction: ServerlessFunctionEntity,
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer,
   ) {
-    const inMemoryLayerFolderPath =
-      this.getInMemoryLayerFolderPath(serverlessFunction);
+    const inMemoryLayerFolderPath = this.getInMemoryLayerFolderPath(
+      flatServerlessFunctionLayer,
+    );
 
     try {
       await fs.access(inMemoryLayerFolderPath);
     } catch {
       await copyAndBuildDependencies(
         inMemoryLayerFolderPath,
-        serverlessFunction,
+        flatServerlessFunctionLayer,
       );
     }
   }
 
   async delete() {}
 
-  private async build(serverlessFunction: ServerlessFunctionEntity) {
-    await this.createLayerIfNotExists(serverlessFunction);
+  private async build(
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer,
+  ) {
+    await this.createLayerIfNotExists(flatServerlessFunctionLayer);
   }
 
   async execute({
-    serverlessFunction,
+    flatServerlessFunction,
+    flatServerlessFunctionLayer,
     payload,
     version,
     env,
   }: {
-    serverlessFunction: ServerlessFunctionEntity;
+    flatServerlessFunction: FlatServerlessFunction;
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer;
     payload: object;
     version: string;
     env?: Record<string, string>;
   }): Promise<ServerlessExecuteResult> {
-    await this.build(serverlessFunction);
+    await this.build(flatServerlessFunctionLayer);
 
     const startTime = Date.now();
 
-    const folderPath = getServerlessFolder({
-      serverlessFunction,
+    const folderPath = getServerlessFolderOrThrow({
+      flatServerlessFunction,
       version,
     });
 
@@ -95,7 +98,7 @@ export class LocalDriver implements ServerlessDriver {
       try {
         builtBundleFilePath = await buildServerlessFunctionInMemory({
           sourceTemporaryDir,
-          handlerPath: serverlessFunction.handlerPath,
+          handlerPath: flatServerlessFunction.handlerPath,
         });
       } catch (error) {
         return formatBuildError(error, startTime);
@@ -104,7 +107,7 @@ export class LocalDriver implements ServerlessDriver {
       try {
         await fs.symlink(
           join(
-            this.getInMemoryLayerFolderPath(serverlessFunction),
+            this.getInMemoryLayerFolderPath(flatServerlessFunctionLayer),
             'node_modules',
           ),
           join(sourceTemporaryDir, 'node_modules'),
@@ -153,7 +156,7 @@ export class LocalDriver implements ServerlessDriver {
         const runnerPath = await this.writeBootstrapRunner({
           dir: sourceTemporaryDir,
           builtFileAbsPath: builtBundleFilePath,
-          handlerName: serverlessFunction.handlerName,
+          handlerName: flatServerlessFunction.handlerName,
         });
 
         const { ok, result, error, stack, stdout, stderr } =

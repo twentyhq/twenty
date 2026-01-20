@@ -1,0 +1,1 @@
+export const FILES_FIELD_MAX_NUMBER_OF_VALUES = 10;

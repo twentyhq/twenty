@@ -68,6 +68,14 @@ Authenticate the CLI against your Twenty workspace.
 
 - `twenty auth:status` — Print the current authentication status (API URL, masked API key, validity).
 
+- `twenty auth:list` — List all configured workspaces.
+  - Behavior: Displays all available workspaces with their authentication status and API URLs. Shows which workspace is the current default.
+
+- `twenty auth:switch [workspace]` — Switch the default workspace for authentication.
+  - Arguments:
+    - `workspace` (optional): Name of the workspace to switch to. If omitted, shows an interactive selection.
+  - Behavior: Sets the specified workspace as the default, so subsequent commands use it without needing `--workspace`.
+
 Examples:
 
 ```bash
@@ -85,6 +93,15 @@ twenty auth:status
 
 # Logout current profile
 twenty auth:logout
+
+# List all configured workspaces
+twenty auth:list
+
+# Switch default workspace interactively
+twenty auth:switch
+
+# Switch to a specific workspace
+twenty auth:switch production
 ```
 
 ### App
@@ -166,12 +183,13 @@ twenty function:execute -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf -p '{"key": "val
 The CLI stores configuration per user in a JSON file:
 
 - Location: `~/.twenty/config.json`
-- Structure: Profiles keyed by workspace name. The active profile is selected with `--workspace <name>`.
+- Structure: Profiles keyed by workspace name. The active profile is selected with `--workspace <name>` or by the `defaultWorkspace` setting.
 
 Example configuration file:
 
 ```json
 {
+  "defaultWorkspace": "prod",
   "profiles": {
     "default": {
       "apiUrl": "http://localhost:3000",
@@ -188,8 +206,10 @@ Example configuration file:
 Notes:
 
 - If a profile is missing, `apiUrl` defaults to `http://localhost:3000` until set.
-- `twenty auth:login` writes the `apiUrl` and `apiKey` for the default profile.
+- `twenty auth:login` writes the `apiUrl` and `apiKey` for the active workspace profile.
 - `twenty auth:login --workspace custom-workspace` writes the `apiUrl` and `apiKey` for a custom `custom-workspace` profile.
+- `twenty auth:switch` sets the `defaultWorkspace` field, which is used when `--workspace` is not specified.
+- `twenty auth:list` shows all configured workspaces and their authentication status.
 
 
 ## Troubleshooting
