@@ -28,19 +28,19 @@ export class AddNavigationMenuItemEntity1768807499350
       `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "FK_6fd84a774fe4ea4daa9aeeee5ed" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "FK_62d47d14b50b67a03f832481de7" FOREIGN KEY ("targetObjectMetadataId") REFERENCES "core"."objectMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "FK_b2e02050a5faa58ed3e08624659" FOREIGN KEY ("userWorkspaceId") REFERENCES "core"."userWorkspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "FK_navigation_menu_item_user_workspace_id" FOREIGN KEY ("userWorkspaceId") REFERENCES "core"."userWorkspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "FK_62d47d14b50b67a03f832481de7" FOREIGN KEY ("targetObjectMetadataId") REFERENCES "core"."objectMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT "FK_navigation_menu_item_user_workspace_id"`,
+      `ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT "FK_62d47d14b50b67a03f832481de7"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT "FK_62d47d14b50b67a03f832481de7"`,
+      `ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT "FK_b2e02050a5faa58ed3e08624659"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT "FK_6fd84a774fe4ea4daa9aeeee5ed"`,
