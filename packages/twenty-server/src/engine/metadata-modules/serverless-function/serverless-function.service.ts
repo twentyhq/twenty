@@ -33,6 +33,7 @@ import {
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { findFlatServerlessFunctionOrThrow } from 'src/engine/metadata-modules/serverless-function/utils/find-flat-serverless-function-or-throw.util';
 import { fromCreateServerlessFunctionInputToFlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/utils/from-create-serverless-function-input-to-flat-serverless-function.util';
 import { fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOrThrow } from 'src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
@@ -146,9 +147,9 @@ export class ServerlessFunctionService {
       'serverlessFunctionLayerMaps',
     ]);
 
-    const flatServerlessFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: flatServerlessFunctionMaps,
+    const flatServerlessFunction = findFlatServerlessFunctionOrThrow({
+      id,
+      flatServerlessFunctionMaps,
     });
 
     const flatServerlessFunctionLayer =
