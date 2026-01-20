@@ -6,14 +6,14 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
-@ObjectType('CustomWidgetConfiguration')
-export class CustomWidgetConfigurationDTO
+@ObjectType('FrontComponentConfiguration')
+export class FrontComponentConfigurationDTO
   implements PageLayoutWidgetConfigurationBase
 {
   @Field(() => WidgetConfigurationType)
-  @IsIn([WidgetConfigurationType.CUSTOM_WIDGET])
+  @IsIn([WidgetConfigurationType.FRONT_COMPONENT])
   @IsNotEmpty()
-  configurationType: WidgetConfigurationType.CUSTOM_WIDGET;
+  configurationType: WidgetConfigurationType.FRONT_COMPONENT;
 
   @Field(() => UUIDScalarType)
   @IsNotEmpty()

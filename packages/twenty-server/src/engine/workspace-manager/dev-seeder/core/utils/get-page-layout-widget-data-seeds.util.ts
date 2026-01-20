@@ -394,18 +394,18 @@ export const getPageLayoutWidgetDataSeeds = (
         } satisfies SeederFlatPageLayoutWidget)
       : null,
 
-    // Sales Overview Tab Widgets - Custom Widget
+    // Sales Overview Tab Widgets - Front Component
     {
-      id: generateSeedId(workspaceId, PAGE_LAYOUT_WIDGET_SEEDS.CUSTOM_WIDGET),
+      id: generateSeedId(workspaceId, PAGE_LAYOUT_WIDGET_SEEDS.FRONT_COMPONENT),
       pageLayoutTabId: generateSeedId(
         workspaceId,
         PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
       ),
-      title: 'Custom Widget',
-      type: WidgetType.CUSTOM_WIDGET,
+      title: 'Front Component',
+      type: WidgetType.FRONT_COMPONENT,
       gridPosition: { row: 2, column: 7, rowSpan: 2, columnSpan: 5 },
       configuration: {
-        configurationType: WidgetConfigurationType.CUSTOM_WIDGET,
+        configurationType: WidgetConfigurationType.FRONT_COMPONENT,
         frontComponentId: '6cdf2607-4b28-40e6-8c53-cc06799ddc88',
       } as const,
       objectMetadataId: null,
