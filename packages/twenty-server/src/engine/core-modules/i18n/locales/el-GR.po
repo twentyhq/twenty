@@ -3278,11 +3278,6 @@ msgstr "Η λειτουργία χωρίς διακομιστή δεν βρέθ�
 msgid "Serverless function not found."
 msgstr "Η λειτουργία χωρίς διακομιστή δεν βρέθηκε."
 
-#. js-lingui-id: jNhvmj
-#: src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util.ts
-msgid "Serverless function to update not found"
-msgstr "Η λειτουργία χωρίς διακομιστή προς ενημέρωση δεν βρέθηκε"
-
 #. js-lingui-id: zoBkIJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
 msgid "Serverless function with same id already exists"
