@@ -113,10 +113,16 @@ Application development commands.
 
 - `twenty app:generate [appPath]` — Generate the typed Twenty client for your application.
 
-- `twenty app:logs [appPath]` — Stream application function logs.
+- `twenty function:logs [appPath]` — Stream application function logs.
   - Options:
     - `-u, --functionUniversalIdentifier <id>`: Only show logs for a specific function universal ID.
     - `-n, --functionName <name>`: Only show logs for a specific function name.
+
+- `twenty function:execute [appPath]` — Execute a serverless function with a JSON payload.
+  - Options:
+    - `-n, --functionName <name>`: Name of the function to execute (required if `-u` not provided).
+    - `-u, --functionUniversalIdentifier <id>`: Universal ID of the function to execute (required if `-n` not provided).
+    - `-p, --payload <payload>`: JSON payload to send to the function (default: `{}`).
 
 Examples:
 
@@ -140,10 +146,19 @@ twenty entity:add
 twenty app:generate
 
 # Watch all function logs
-twenty app:logs
+twenty function:logs
 
 # Watch logs for a specific function by name
-twenty app:logs -n my-function
+twenty function:logs -n my-function
+
+# Execute a function by name (with empty payload)
+twenty function:execute -n my-function
+
+# Execute a function with a JSON payload
+twenty function:execute -n my-function -p '{"name": "test"}'
+
+# Execute a function by universal identifier
+twenty function:execute -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf -p '{"key": "value"}'
 ```
 
 ## Configuration
