@@ -13,13 +13,16 @@ const StyledWidgetCardContent = styled.div<{
   overflow: hidden;
 
   ${({ theme, variant, hasHeader }) => {
+    const headerPadding = hasHeader
+      ? css`
+          padding-top: ${theme.spacing(2)};
+        `
+      : '';
+
     if (variant === 'dashboard') {
       return css`
         padding: ${theme.spacing(2)};
-        ${hasHeader &&
-        css`
-          padding-top: ${theme.spacing(2)};
-        `}
+        ${headerPadding}
       `;
     }
 
@@ -28,19 +31,13 @@ const StyledWidgetCardContent = styled.div<{
         border: 1px solid ${theme.border.color.medium};
         border-radius: ${theme.border.radius.md};
         padding: ${theme.spacing(2)};
-        ${hasHeader &&
-        css`
-          padding-top: ${theme.spacing(2)};
-        `}
+        ${headerPadding}
       `;
     }
 
     if (variant === 'side-column') {
       return css`
-        ${hasHeader &&
-        css`
-          padding-top: ${theme.spacing(2)};
-        `}
+        ${headerPadding}
       `;
     }
   }}
