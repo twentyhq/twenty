@@ -46,11 +46,11 @@ export const getLineChartTooltipData = ({
   const getSeriesIndex = (seriesId: string) =>
     seriesIndexMap.get(seriesId) ?? seriesIndexMap.size;
 
-  const sortedPoints = [...slice.points].sort((a, b) => {
+  const sortedPoints = slice.points.toSorted((a, b) => {
     if (!isStacked) {
       const valueDiff = getPointValue(b) - getPointValue(a);
-      if (valueDiff !== 0){
-          return valueDiff;
+      if (valueDiff !== 0) {
+        return valueDiff;
       }
     }
     return (

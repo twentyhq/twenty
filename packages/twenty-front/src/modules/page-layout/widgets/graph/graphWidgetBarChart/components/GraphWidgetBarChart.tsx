@@ -147,7 +147,7 @@ export const GraphWidgetBarChart = ({
 
   const orderedKeys =
     groupMode === 'stacked' && layout === BarChartLayout.VERTICAL
-      ? [...visibleKeys].reverse()
+      ? visibleKeys.toReversed()
       : visibleKeys;
 
   const calculatedValueRange =
