@@ -1,28 +1,28 @@
 /* @license Enterprise */
 
 import {
-  RowLevelPermissionPredicate,
-  RowLevelPermissionPredicateOperand,
-  RowLevelPermissionPredicateValue,
+    RowLevelPermissionPredicate,
+    RowLevelPermissionPredicateOperand,
+    RowLevelPermissionPredicateValue,
 } from 'twenty-shared/types';
 import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Relation,
-  UpdateDateColumn,
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    Index,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    Relation,
+    UpdateDateColumn,
 } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
 
 @Entity({ name: 'rowLevelPermissionPredicate', schema: 'core' })
 @Index('IDX_RLPP_WORKSPACE_ID_ROLE_ID_OBJECT_METADATA_ID', [
@@ -36,7 +36,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'workspaceMemberFieldMetadataId',
 ])
 export class RowLevelPermissionPredicateEntity
-  extends SyncableEntity
+  extends SyncableEntityRequired
   implements
     Required<RowLevelPermissionPredicateEntity>,
     RowLevelPermissionPredicate

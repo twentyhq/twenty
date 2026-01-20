@@ -14,7 +14,7 @@ import {
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
 
 @Entity({ name: 'viewSort', schema: 'core' })
 @Index('IDX_VIEW_SORT_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
@@ -28,7 +28,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
     where: '"deletedAt" IS NULL',
   },
 )
-export class ViewSortEntity extends SyncableEntity {
+export class ViewSortEntity extends SyncableEntityRequired {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

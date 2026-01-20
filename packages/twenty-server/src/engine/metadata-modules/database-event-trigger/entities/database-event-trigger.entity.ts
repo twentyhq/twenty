@@ -1,17 +1,17 @@
 import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Relation,
-  UpdateDateColumn,
+    Column,
+    CreateDateColumn,
+    Entity,
+    Index,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    Relation,
+    UpdateDateColumn,
 } from 'typeorm';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
 
 export type DatabaseEventTriggerSettings = {
   eventName: string;
@@ -24,7 +24,7 @@ export type DatabaseEventTriggerSettings = {
   'serverlessFunctionId',
 ])
 export class DatabaseEventTriggerEntity
-  extends SyncableEntity
+  extends SyncableEntityRequired
   implements Required<DatabaseEventTriggerEntity>
 {
   @PrimaryGeneratedColumn('uuid')

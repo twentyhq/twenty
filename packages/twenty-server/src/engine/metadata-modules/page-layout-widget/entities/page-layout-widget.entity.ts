@@ -1,16 +1,16 @@
 import { ObjectType } from '@nestjs/graphql';
 
 import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  type Relation,
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    Index,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+    type Relation,
 } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -19,7 +19,7 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
 import { PageLayoutWidgetConfigurationTypeSettings } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configuration.type';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
 @ObjectType('PageLayoutWidget')
@@ -33,7 +33,7 @@ export class PageLayoutWidgetEntity<
     TWidgetConfigurationType extends
       WidgetConfigurationType = WidgetConfigurationType,
   >
-  extends SyncableEntity
+  extends SyncableEntityRequired
   implements Required<PageLayoutWidgetEntity>
 {
   @PrimaryGeneratedColumn('uuid')

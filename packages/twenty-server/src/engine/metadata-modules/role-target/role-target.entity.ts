@@ -1,20 +1,20 @@
 import {
-  Check,
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  type Relation,
-  Unique,
-  UpdateDateColumn,
+    Check,
+    Column,
+    CreateDateColumn,
+    Entity,
+    Index,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    type Relation,
+    Unique,
+    UpdateDateColumn,
 } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
 
 @Entity('roleTarget')
 @Unique('IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE', [
@@ -31,7 +31,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'CHK_role_target_single_entity',
   '("agentId" IS NOT NULL AND "userWorkspaceId" IS NULL AND "apiKeyId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NOT NULL AND "apiKeyId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NULL AND "apiKeyId" IS NOT NULL)',
 )
-export class RoleTargetEntity extends SyncableEntity {
+export class RoleTargetEntity extends SyncableEntityRequired {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

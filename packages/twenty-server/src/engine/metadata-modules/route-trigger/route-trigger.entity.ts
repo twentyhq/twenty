@@ -1,19 +1,19 @@
 import { HTTPMethod } from 'twenty-shared/types';
 import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Relation,
-  Unique,
-  UpdateDateColumn,
+    Column,
+    CreateDateColumn,
+    Entity,
+    Index,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    Relation,
+    Unique,
+    UpdateDateColumn,
 } from 'typeorm';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
 
 @Entity({ name: 'routeTrigger', schema: 'core' })
 @Unique('IDX_ROUTE_TRIGGER_PATH_HTTP_METHOD_WORKSPACE_ID_UNIQUE', [
@@ -23,7 +23,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 ])
 @Index('IDX_ROUTE_TRIGGER_SERVERLESS_FUNCTION_ID', ['serverlessFunctionId'])
 export class RouteTriggerEntity
-  extends SyncableEntity
+  extends SyncableEntityRequired
   implements Required<RouteTriggerEntity>
 {
   @PrimaryGeneratedColumn('uuid')
