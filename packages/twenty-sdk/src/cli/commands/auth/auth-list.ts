@@ -22,7 +22,6 @@ export class AuthListCommand {
       console.log(chalk.blue('Available workspaces:\n'));
 
       for (const workspace of availableWorkspaces) {
-        // Set active workspace temporarily to read its config
         ConfigService.setActiveWorkspace(workspace);
         const config = await this.configService.getConfig();
         const hasCredentials = !!config.apiKey;
@@ -33,9 +32,7 @@ export class AuthListCommand {
           ? chalk.green('●')
           : chalk.gray('○');
 
-        console.log(
-          `  ${credentialStatus} ${workspace}${defaultIndicator}`,
-        );
+        console.log(`  ${credentialStatus} ${workspace}${defaultIndicator}`);
         console.log(chalk.gray(`      API URL: ${config.apiUrl}`));
       }
 
