@@ -1,25 +1,18 @@
 import chalk from 'chalk';
 import { type ApplicationManifest } from 'twenty-shared/application';
-import {
-  type ManifestValidationError,
-  type ValidationWarning,
-} from './manifest.types';
+import { displayApplication } from './entities/application';
+import { displayFrontComponents } from './entities/front-component';
+import { displayFunctions } from './entities/function';
+import { displayObjects } from './entities/object';
+import { displayRoles } from './entities/role';
+import { type ManifestValidationError, type ValidationWarning } from './manifest.types';
 
 export const displayEntitySummary = (manifest: ApplicationManifest): void => {
-  const appName = manifest.application.displayName ?? 'Application';
-  console.log(chalk.green(`  ✓ Loaded "${appName}"`));
-  console.log(chalk.green(`  ✓ Found ${manifest.objects.length} object(s)`));
-  console.log(
-    chalk.green(`  ✓ Found ${manifest.serverlessFunctions.length} function(s)`),
-  );
-  console.log(
-    chalk.green(
-      `  ✓ Found ${manifest.frontComponents?.length ?? 0} front component(s)`,
-    ),
-  );
-  console.log(
-    chalk.green(`  ✓ Found ${manifest.roles?.length ?? 'no'} role(s)`),
-  );
+  displayApplication(manifest);
+  displayObjects(manifest.objects);
+  displayFunctions(manifest.serverlessFunctions);
+  displayFrontComponents(manifest.frontComponents ?? []);
+  displayRoles(manifest.roles ?? []);
 };
 
 export const displayErrors = (error: ManifestValidationError): void => {
@@ -30,8 +23,8 @@ export const displayErrors = (error: ManifestValidationError): void => {
   console.log('');
 };
 
-export const displayWarnings = (warnings?: ValidationWarning[]): void => {
-  if (!warnings || warnings.length === 0) {
+export const displayWarnings = (warnings: ValidationWarning[]): void => {
+  if (warnings.length === 0) {
     return;
   }
 

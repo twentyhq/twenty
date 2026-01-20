@@ -3,27 +3,28 @@ import {
   POST_CARD_EXTENSION_CATEGORY_FIELD_ID,
   POST_CARD_EXTENSION_PRIORITY_FIELD_ID,
 } from '@/cli/__tests__/test-app/src/app/postCard.object-extension';
-import { buildManifest, type BuildManifestResult } from '@/cli/utilities/build/manifest/manifest-build';
+import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
+import { type ApplicationManifest } from 'twenty-shared/application';
 import { join } from 'path';
 
 const TEST_APP_PATH = join(__dirname, '../../../../__tests__/test-app');
 
-describe('buildManifest with test-app', () => {
-  let manifest: BuildManifestResult['manifest'];
-  let warnings: BuildManifestResult['warnings'];
+describe('runManifestBuild with test-app', () => {
+  let manifest: ApplicationManifest;
 
   beforeAll(async () => {
-    const result = await buildManifest(TEST_APP_PATH);
+    const result = await runManifestBuild(TEST_APP_PATH, { display: false, writeOutput: false });
 
-    manifest = result.manifest;
-    warnings = result.warnings;
+    if (!result) {
+      throw new Error('Failed to build manifest');
+    }
+
+    manifest = result;
   }, 15_000);
 
   it('should load manifest from test-app directory', async () => {
     expect(manifest.packageJson.name).toBe('test-app');
     expect(manifest.packageJson.version).toBe('0.0.1');
-
-    expect(warnings).toEqual([]);
 
     expect(manifest.application).toBeDefined();
     expect(manifest.application.universalIdentifier).toBe(

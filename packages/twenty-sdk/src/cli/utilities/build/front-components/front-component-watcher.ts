@@ -43,15 +43,9 @@ const buildFrontComponentInput = (
   return input;
 };
 
-export type FrontComponentsWatcherCallbacks = {
-  onBuildSuccess?: () => void;
-  onBuildError?: (error: Error) => void;
-};
-
 export type FrontComponentsWatcherOptions = {
   appPath: string;
   manifest: ApplicationManifest | null;
-  callbacks?: FrontComponentsWatcherCallbacks;
   plugins?: InlineConfig['plugins'];
 };
 
@@ -117,7 +111,7 @@ const createFrontComponentWatcherConfig = (options: FrontComponentWatcherConfigO
 export const createFrontComponentsWatcher = async (
   options: FrontComponentsWatcherOptions,
 ): Promise<FrontComponentsWatcher> => {
-  const { appPath, callbacks = {}, plugins } = options;
+  const { appPath, plugins } = options;
   let componentInput = buildFrontComponentInput(appPath, options.manifest?.frontComponents ?? []);
   let isRestarting = false;
 
@@ -142,10 +136,8 @@ export const createFrontComponentsWatcher = async (
           console.log(chalk.green('  ✓ Front components built'));
         }
         printWatchingMessage();
-        callbacks.onBuildSuccess?.();
       } else if (event.code === 'ERROR') {
         console.error(chalk.red('  ✗ Front component build error:'), event.error?.message);
-        callbacks.onBuildError?.(event.error);
       }
     });
 

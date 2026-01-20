@@ -16,15 +16,9 @@ export const FUNCTION_EXTERNAL_MODULES: (string | RegExp)[] = [
   /^twenty-sdk/, /^twenty-shared/, /^@\//, /(?:^|\/)generated(?:\/|$)/,
 ];
 
-export type FunctionsWatcherCallbacks = {
-  onBuildSuccess?: () => void;
-  onBuildError?: (error: Error) => void;
-};
-
 export type FunctionsWatcherOptions = {
   appPath: string;
   manifest: ApplicationManifest | null;
-  callbacks?: FunctionsWatcherCallbacks;
   plugins?: InlineConfig['plugins'];
 };
 
@@ -93,7 +87,7 @@ const createFunctionWatcherConfig = (options: FunctionWatcherConfigOptions): Inl
 export const createFunctionsWatcher = async (
   options: FunctionsWatcherOptions,
 ): Promise<FunctionsWatcher> => {
-  const { appPath, callbacks = {}, plugins } = options;
+  const { appPath, plugins } = options;
   let functionInput = buildFunctionInput(appPath, options.manifest?.serverlessFunctions ?? []);
   let isRestarting = false;
 
@@ -118,10 +112,8 @@ export const createFunctionsWatcher = async (
           console.log(chalk.green('  ✓ Functions built'));
         }
         printWatchingMessage();
-        callbacks.onBuildSuccess?.();
       } else if (event.code === 'ERROR') {
         console.error(chalk.red('  ✗ Function build error:'), event.error?.message);
-        callbacks.onBuildError?.(event.error);
       }
     });
 

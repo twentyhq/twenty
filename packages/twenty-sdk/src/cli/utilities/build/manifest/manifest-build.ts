@@ -1,24 +1,21 @@
 import { findPathFile } from '@/cli/utilities/file/utils/file-find';
 import { parseJsoncFile } from '@/cli/utilities/file/utils/file-jsonc';
+import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';
-import path, { posix, relative, sep } from 'path';
-import {
-  type Application,
-  type ApplicationManifest,
-  type FrontComponentManifest,
-  type ObjectExtensionManifest,
-  type ObjectManifest,
-  type RoleManifest,
-  type ServerlessFunctionManifest,
-} from 'twenty-shared/application';
+import path, { relative, sep } from 'path';
+import { type ApplicationManifest } from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
-import { extractManifestFromFile } from './manifest-file-extractor';
+import { OUTPUT_DIR } from '../common/constants';
+import { buildApplication } from './entities/application';
+import { buildFrontComponents } from './entities/front-component';
+import { buildFunctions } from './entities/function';
+import { buildObjects } from './entities/object';
+import { buildObjectExtensions } from './entities/object-extension';
+import { buildRoles } from './entities/role';
+import { displayEntitySummary, displayErrors, displayWarnings } from './manifest-display';
 import { validateManifest } from './manifest-validate';
-import {
-  ManifestValidationError,
-  type ValidationWarning,
-} from './manifest.types';
+import { ManifestValidationError } from './manifest.types';
 
 const validateFolderStructure = async (appPath: string): Promise<void> => {
   const appFolder = path.join(appPath, 'src', 'app');
@@ -36,156 +33,14 @@ const validateFolderStructure = async (appPath: string): Promise<void> => {
   }
 };
 
-const toPosixRelative = (filepath: string, appPath: string): string => {
-  const rel = relative(appPath, filepath);
-  return rel.split(sep).join(posix.sep);
-};
-
-const loadFiles = async (
-  patterns: string[],
-  cwd: string,
-): Promise<string[]> => {
-  return glob(patterns, {
-    cwd,
-    absolute: true,
-    ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
-  });
-};
-
-const loadObjectManifests = async (
-  appPath: string,
-): Promise<ObjectManifest[]> => {
-  const objectFiles = await loadFiles(['src/app/**/*.object.ts'], appPath);
-
-  const objectManifests: ObjectManifest[] = [];
-
-  for (const filepath of objectFiles) {
-    try {
-      objectManifests.push(
-        await extractManifestFromFile<ObjectManifest>(filepath, appPath),
-      );
-    } catch (error) {
-      const relPath = toPosixRelative(filepath, appPath);
-      throw new Error(
-        `Failed to load object from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-  }
-
-  return objectManifests;
-};
-
-const loadObjectExtensionManifests = async (
-  appPath: string,
-): Promise<ObjectExtensionManifest[]> => {
-  const extensionFiles = await loadFiles(
-    ['src/app/**/*.object-extension.ts'],
-    appPath,
-  );
-
-  const objectExtensionManifests: ObjectExtensionManifest[] = [];
-
-  for (const filepath of extensionFiles) {
-    try {
-      objectExtensionManifests.push(
-        await extractManifestFromFile<ObjectExtensionManifest>(filepath, appPath),
-      );
-    } catch (error) {
-      const relPath = toPosixRelative(filepath, appPath);
-      throw new Error(
-        `Failed to load object extension from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-  }
-
-  return objectExtensionManifests;
-};
-
-const loadFunctionManifests = async (
-  appPath: string,
-): Promise<ServerlessFunctionManifest[]> => {
-  const functionFiles = await loadFiles(['src/app/**/*.function.ts'], appPath);
-
-  const functionManifests: ServerlessFunctionManifest[] = [];
-
-  for (const filepath of functionFiles) {
-    try {
-      functionManifests.push(
-        await extractManifestFromFile<ServerlessFunctionManifest>(
-          filepath,
-          appPath,
-          { entryProperty: 'handler' },
-        ),
-      );
-    } catch (error) {
-      const relPath = toPosixRelative(filepath, appPath);
-      throw new Error(
-        `Failed to load function from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-  }
-
-  return functionManifests;
-};
-
-const loadRoleManifests = async (appPath: string): Promise<RoleManifest[]> => {
-  const roleFiles = await loadFiles(['src/app/**/*.role.ts'], appPath);
-
-  const roleManifests: RoleManifest[] = [];
-
-  for (const filepath of roleFiles) {
-    try {
-      roleManifests.push(
-        await extractManifestFromFile<RoleManifest>(filepath, appPath),
-      );
-    } catch (error) {
-      const relPath = toPosixRelative(filepath, appPath);
-      throw new Error(
-        `Failed to load role from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-  }
-
-  return roleManifests;
-};
-
-const loadFrontComponentManifests = async (
-  appPath: string,
-): Promise<FrontComponentManifest[]> => {
-  const componentFiles = await loadFiles(
-    ['src/app/**/*.front-component.tsx'],
-    appPath,
-  );
-
-  const frontComponentManifests: FrontComponentManifest[] = [];
-
-  for (const filepath of componentFiles) {
-    try {
-      frontComponentManifests.push(
-        await extractManifestFromFile<FrontComponentManifest>(
-          filepath,
-          appPath,
-          { entryProperty: 'component', jsx: true },
-        ),
-      );
-    } catch (error) {
-      const relPath = toPosixRelative(filepath, appPath);
-      throw new Error(
-        `Failed to load front component from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-  }
-
-  return frontComponentManifests;
-};
-
 const loadSources = async (appPath: string): Promise<Sources> => {
   const sources: Sources = {};
 
-  const tsFiles = await loadFiles(
-    ['src/**/*.ts', 'generated/**/*.ts'],
-    appPath,
-  );
+  const tsFiles = await glob(['src/**/*.ts', 'generated/**/*.ts'], {
+    cwd: appPath,
+    absolute: true,
+    ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+  });
 
   for (const filepath of tsFiles) {
     const relPath = relative(appPath, filepath);
@@ -207,76 +62,116 @@ const loadSources = async (appPath: string): Promise<Sources> => {
   return sources;
 };
 
-export type BuildManifestResult = {
-  manifest: ApplicationManifest | null;
-  warnings: ValidationWarning[];
+const writeManifestToOutput = async (
+  appPath: string,
+  manifest: ApplicationManifest,
+): Promise<void> => {
+  try {
+    const outputDir = path.join(appPath, OUTPUT_DIR);
+    await fs.ensureDir(outputDir);
+
+    const manifestPath = path.join(outputDir, 'manifest.json');
+    await fs.writeJSON(manifestPath, manifest, { spaces: 2 });
+
+    console.log(chalk.green(`  ✓ Manifest written to ${manifestPath}`));
+  } catch (error) {
+    console.error(
+      chalk.red('  ✗ Failed to write manifest:'),
+      error instanceof Error ? error.message : error,
+    );
+  }
 };
 
-export const buildManifest = async (
+export type RunManifestBuildOptions = {
+  display?: boolean;
+  writeOutput?: boolean;
+};
+
+export const runManifestBuild = async (
   appPath: string,
-): Promise<BuildManifestResult> => {
-  await validateFolderStructure(appPath);
+  options: RunManifestBuildOptions = {},
+): Promise<ApplicationManifest | null> => {
+  const { display = true, writeOutput = true } = options;
 
-  const packageJson = await parseJsoncFile(
-    await findPathFile(appPath, 'package.json'),
-  );
-
-  const applicationConfigPath = path.join(
-    appPath,
-    'src',
-    'app',
-    'application.config.ts',
-  );
-  const application = await extractManifestFromFile<Application>(
-    applicationConfigPath,
-    appPath,
-  );
-
-  const [
-    objectManifests,
-    objectExtensionManifests,
-    functionManifests,
-    frontComponentManifests,
-    roleManifests,
-    sources,
-  ] = await Promise.all([
-    loadObjectManifests(appPath),
-    loadObjectExtensionManifests(appPath),
-    loadFunctionManifests(appPath),
-    loadFrontComponentManifests(appPath),
-    loadRoleManifests(appPath),
-    loadSources(appPath),
-  ]);
-
-  const manifest: ApplicationManifest = {
-    application,
-    objects: objectManifests,
-    objectExtensions:
-      objectExtensionManifests.length > 0 ? objectExtensionManifests : undefined,
-    serverlessFunctions: functionManifests,
-    frontComponents:
-      frontComponentManifests.length > 0 ? frontComponentManifests : undefined,
-    roles: roleManifests,
-    sources,
-    packageJson,
-  };
-
-  const validation = validateManifest({
-    application,
-    objects: objectManifests,
-    objectExtensions: objectExtensionManifests,
-    serverlessFunctions: functionManifests,
-    frontComponents: frontComponentManifests,
-    roles: roleManifests,
-    packageJson,
-  });
-
-  if (!validation.isValid) {
-    throw new ManifestValidationError(validation.errors);
+  if (display) {
+    console.log(chalk.blue('🔄 Building manifest...'));
   }
 
-  return {
-    manifest,
-    warnings: validation.warnings,
-  };
+  try {
+    await validateFolderStructure(appPath);
+
+    const packageJson = await parseJsoncFile(
+      await findPathFile(appPath, 'package.json'),
+    );
+
+    const [
+      application,
+      objectManifests,
+      objectExtensionManifests,
+      functionManifests,
+      frontComponentManifests,
+      roleManifests,
+      sources,
+    ] = await Promise.all([
+      buildApplication(appPath),
+      buildObjects(appPath),
+      buildObjectExtensions(appPath),
+      buildFunctions(appPath),
+      buildFrontComponents(appPath),
+      buildRoles(appPath),
+      loadSources(appPath),
+    ]);
+
+    const manifest: ApplicationManifest = {
+      application,
+      objects: objectManifests,
+      objectExtensions:
+        objectExtensionManifests.length > 0 ? objectExtensionManifests : undefined,
+      serverlessFunctions: functionManifests,
+      frontComponents:
+        frontComponentManifests.length > 0 ? frontComponentManifests : undefined,
+      roles: roleManifests,
+      sources,
+      packageJson,
+    };
+
+    const validation = validateManifest({
+      application,
+      objects: objectManifests,
+      objectExtensions: objectExtensionManifests,
+      serverlessFunctions: functionManifests,
+      frontComponents: frontComponentManifests,
+      roles: roleManifests,
+      packageJson,
+    });
+
+    if (!validation.isValid) {
+      throw new ManifestValidationError(validation.errors);
+    }
+
+    if (display) {
+      displayEntitySummary(manifest);
+      if (validation.warnings.length > 0) {
+        displayWarnings(validation.warnings);
+      }
+    }
+
+    if (writeOutput) {
+      await writeManifestToOutput(appPath, manifest);
+    }
+
+    return manifest;
+  } catch (error) {
+    if (display) {
+      if (error instanceof ManifestValidationError) {
+        displayErrors(error);
+      } else {
+        console.error(
+          chalk.red('  ✗ Build failed:'),
+          error instanceof Error ? error.message : error,
+        );
+      }
+    }
+    return null;
+  }
 };
