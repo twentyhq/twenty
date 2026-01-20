@@ -4345,10 +4345,10 @@ msgstr "ワークフローが見つかりません。"
 msgid "Workflow root step not found."
 msgstr "ワークフローのルートステップが見つかりません。"
 
-#. js-lingui-id: C5dusT
+#. js-lingui-id: TgOSaQ
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
-msgid "Workflow run is not running"
-msgstr "ワークフロー実行は実行中ではありません"
+msgid "Workflow run cannot be stopped in its current status"
+msgstr ""
 
 #. js-lingui-id: AzylSS
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
