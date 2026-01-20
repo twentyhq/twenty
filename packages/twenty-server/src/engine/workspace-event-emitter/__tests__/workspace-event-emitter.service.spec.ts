@@ -139,6 +139,20 @@ describe('WorkspaceEventEmitterService', () => {
     ...overrides,
   });
 
+  const mockFlatWorkspaceMemberMaps = {
+    byId: {
+      'test-workspace-member-id': {
+        id: 'test-workspace-member-id',
+        userId: 'test-user-id',
+        name: { firstName: 'Test', lastName: 'User' },
+        locale: 'en',
+      },
+    },
+    idByUserId: {
+      'test-user-id': 'test-workspace-member-id',
+    },
+  };
+
   const createPermissionsContext = (
     overrides: {
       flatFieldMetadataMaps?: FlatEntityMaps<FlatFieldMetadata>;
@@ -163,6 +177,29 @@ describe('WorkspaceEventEmitterService', () => {
     rolesPermissions: overrides.rolesPermissions ?? mockRolesPermissions,
   });
 
+  const createCacheMock = (
+    permissionsOverrides: {
+      flatFieldMetadataMaps?: FlatEntityMaps<FlatFieldMetadata>;
+      userWorkspaceRoleMap?: Record<string, string>;
+      rolesPermissions?: ObjectsPermissionsByRoleId;
+    } = {},
+    workspaceMemberMapsOverride?: {
+      byId: Record<string, unknown>;
+      idByUserId: Record<string, string>;
+    },
+  ) => {
+    return (_workspaceId: string, keys: string[]) => {
+      if (keys.includes('flatWorkspaceMemberMaps')) {
+        return Promise.resolve({
+          flatWorkspaceMemberMaps:
+            workspaceMemberMapsOverride ?? mockFlatWorkspaceMemberMaps,
+        });
+      }
+
+      return Promise.resolve(createPermissionsContext(permissionsOverrides));
+    };
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
 
@@ -185,7 +222,7 @@ describe('WorkspaceEventEmitterService', () => {
     };
 
     mockWorkspaceCacheService = {
-      getOrRecompute: jest.fn().mockResolvedValue(createPermissionsContext()),
+      getOrRecompute: jest.fn().mockImplementation(createCacheMock()),
     };
 
     (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue({});
@@ -278,8 +315,8 @@ describe('WorkspaceEventEmitterService', () => {
         },
       };
 
-      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue(
-        createPermissionsContext({ rolesPermissions: permissionsWithoutRead }),
+      mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+        createCacheMock({ rolesPermissions: permissionsWithoutRead }),
       );
 
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
@@ -395,8 +432,8 @@ describe('WorkspaceEventEmitterService', () => {
         restrictedField,
       ]);
 
-      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue(
-        createPermissionsContext({
+      mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+        createCacheMock({
           flatFieldMetadataMaps: fieldMetadataMapsWithRestricted,
           rolesPermissions: permissionsWithRestrictedFields,
         }),
@@ -463,8 +500,8 @@ describe('WorkspaceEventEmitterService', () => {
         restrictedField,
       ]);
 
-      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue(
-        createPermissionsContext({
+      mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+        createCacheMock({
           flatFieldMetadataMaps: fieldMetadataMapsWithRestricted,
           rolesPermissions: permissionsWithRestrictedFields,
         }),
@@ -524,8 +561,8 @@ describe('WorkspaceEventEmitterService', () => {
         restrictedField,
       ]);
 
-      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue(
-        createPermissionsContext({
+      mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+        createCacheMock({
           flatFieldMetadataMaps: fieldMetadataMapsWithRestricted,
           rolesPermissions: permissionsWithRestrictedFields,
         }),
@@ -631,8 +668,8 @@ describe('WorkspaceEventEmitterService', () => {
     });
 
     it('should not publish when user has no role assigned', async () => {
-      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue(
-        createPermissionsContext({ userWorkspaceRoleMap: {} }),
+      mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+        createCacheMock({ userWorkspaceRoleMap: {} }),
       );
 
       const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
@@ -847,8 +884,8 @@ describe('WorkspaceEventEmitterService', () => {
           >,
         );
 
-        mockWorkspaceCacheService.getOrRecompute.mockResolvedValue(
-          createPermissionsContext(),
+        mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+          createCacheMock(),
         );
 
         const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
@@ -888,8 +925,8 @@ describe('WorkspaceEventEmitterService', () => {
           >,
         );
 
-        mockWorkspaceCacheService.getOrRecompute.mockResolvedValue(
-          createPermissionsContext({ userWorkspaceRoleMap: {} }),
+        mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+          createCacheMock({ userWorkspaceRoleMap: {} }),
         );
 
         const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
@@ -943,8 +980,8 @@ describe('WorkspaceEventEmitterService', () => {
           >,
         );
 
-        mockWorkspaceCacheService.getOrRecompute.mockResolvedValue(
-          createPermissionsContext(),
+        mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+          createCacheMock(),
         );
 
         const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
@@ -971,6 +1008,147 @@ describe('WorkspaceEventEmitterService', () => {
             authContext: expect.objectContaining({
               userWorkspaceId,
               workspaceMemberId,
+            }),
+          }),
+        );
+      });
+
+      it('should pass full workspaceMember data from cache for dynamic predicates', async () => {
+        const workspaceMemberId = 'test-workspace-member-id';
+        const customWorkspaceMember = {
+          id: workspaceMemberId,
+          userId: 'test-user-id',
+          name: { firstName: 'John', lastName: 'Doe' },
+          locale: 'en',
+          colorScheme: 'light',
+        };
+
+        const customFlatWorkspaceMemberMaps = {
+          byId: {
+            [workspaceMemberId]: customWorkspaceMember,
+          },
+          idByUserId: {
+            'test-user-id': workspaceMemberId,
+          },
+        };
+
+        const rlsFilter: RecordGqlOperationFilter = {
+          locale: { eq: 'en' },
+        };
+
+        (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
+          rlsFilter,
+        );
+
+        const streamDataWithWorkspaceMember: EventStreamData = {
+          authContext: {
+            userWorkspaceId,
+            userId: 'test-user-id',
+            workspaceMemberId,
+          },
+          workspaceId,
+          queries: {
+            'query-1': {
+              objectNameSingular: 'company',
+              variables: {},
+            },
+          },
+          createdAt: Date.now(),
+        };
+
+        mockEventStreamService.getStreamsData.mockResolvedValue(
+          new Map([[streamChannelId, streamDataWithWorkspaceMember]]) as Map<
+            string,
+            EventStreamData | undefined
+          >,
+        );
+
+        mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+          createCacheMock({}, customFlatWorkspaceMemberMaps),
+        );
+
+        const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+          name: 'company.created',
+          workspaceId,
+          objectMetadata: companyObjectMetadata,
+          events: [
+            createMockEvent({
+              properties: {
+                after: {
+                  id: 'record-1',
+                  name: 'Test Company',
+                  locale: 'en',
+                },
+              },
+            }),
+          ],
+        };
+
+        await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+        expect(buildRowLevelPermissionRecordFilter).toHaveBeenCalledWith(
+          expect.objectContaining({
+            authContext: expect.objectContaining({
+              userWorkspaceId,
+              workspaceMemberId,
+              workspaceMember: customWorkspaceMember,
+            }),
+          }),
+        );
+      });
+
+      it('should pass undefined workspaceMember when workspaceMemberId is not in cache', async () => {
+        const workspaceMemberId = 'non-existent-workspace-member-id';
+
+        const emptyFlatWorkspaceMemberMaps = {
+          byId: {},
+          idByUserId: {},
+        };
+
+        (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue({});
+
+        const streamDataWithWorkspaceMember: EventStreamData = {
+          authContext: {
+            userWorkspaceId,
+            userId: 'test-user-id',
+            workspaceMemberId,
+          },
+          workspaceId,
+          queries: {
+            'query-1': {
+              objectNameSingular: 'company',
+              variables: {},
+            },
+          },
+          createdAt: Date.now(),
+        };
+
+        mockEventStreamService.getStreamsData.mockResolvedValue(
+          new Map([[streamChannelId, streamDataWithWorkspaceMember]]) as Map<
+            string,
+            EventStreamData | undefined
+          >,
+        );
+
+        mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+          createCacheMock({}, emptyFlatWorkspaceMemberMaps),
+        );
+
+        const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+          name: 'company.created',
+          workspaceId,
+          objectMetadata: companyObjectMetadata,
+          events: [createMockEvent()],
+        };
+
+        await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+        expect(buildRowLevelPermissionRecordFilter).toHaveBeenCalledWith(
+          expect.objectContaining({
+            authContext: expect.objectContaining({
+              userWorkspaceId,
+              workspaceMemberId,
+              workspaceMember: undefined,
             }),
           }),
         );
