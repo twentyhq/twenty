@@ -1,6 +1,6 @@
 import { type Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 
@@ -127,19 +127,6 @@ const StyledContainer = withTheme(styled.div<
       : 'var(--chip-horizontal-padding)'};
 `);
 
-// TODO: refactor this
-const renderRightComponent = (
-  rightComponent: (() => ReactNode) | ReactNode | null,
-) => {
-  if (!rightComponent) {
-    return null;
-  }
-
-  return typeof rightComponent === 'function'
-    ? rightComponent()
-    : rightComponent;
-};
-
 export const Chip = ({
   size = ChipSize.Small,
   label,
@@ -155,6 +142,16 @@ export const Chip = ({
   forceEmptyText = false,
   emptyLabel = 'Untitled',
 }: ChipProps) => {
+  const resolvedRightComponent = useMemo(() => {
+    if (!rightComponent) {
+      return null;
+    }
+
+    return typeof rightComponent === 'function'
+      ? rightComponent()
+      : rightComponent;
+  }, [rightComponent]);
+
   return (
     <StyledContainer
       data-testid="chip"
@@ -174,7 +171,7 @@ export const Chip = ({
       ) : (
         ''
       )}
-      {renderRightComponent(rightComponent)}
+      {resolvedRightComponent}
     </StyledContainer>
   );
 };
