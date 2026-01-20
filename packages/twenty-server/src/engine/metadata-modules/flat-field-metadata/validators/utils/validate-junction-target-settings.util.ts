@@ -34,11 +34,9 @@ export const validateJunctionTargetSettings = ({
 }: ValidateJunctionTargetSettingsArgs): FlatFieldMetadataValidationError[] => {
   const { settings } = flatFieldMetadata;
 
-  const hasFieldId =
-    isDefined(settings.junctionTargetFieldId) &&
-    settings.junctionTargetFieldId.length > 0;
+  const junctionTargetFieldId = settings.junctionTargetFieldId;
 
-  if (!hasFieldId) {
+  if (!isDefined(junctionTargetFieldId) || junctionTargetFieldId.length === 0) {
     return [];
   }
 
@@ -51,8 +49,6 @@ export const validateJunctionTargetSettings = ({
       ),
     ];
   }
-
-  const junctionTargetFieldId = settings.junctionTargetFieldId;
 
   if (!isValidUuid(junctionTargetFieldId)) {
     return [
