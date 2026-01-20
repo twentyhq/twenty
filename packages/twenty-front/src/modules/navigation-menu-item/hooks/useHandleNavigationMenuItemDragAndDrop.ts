@@ -1,0 +1,134 @@
+import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
+import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
+import { validateAndExtractFolderId } from '@/favorites/utils/validateAndExtractFolderId';
+import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSortedNavigationMenuItems';
+import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
+import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { type OnDragEndResponder } from '@hello-pangea/dnd';
+import { useSetRecoilState } from 'recoil';
+import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
+
+export const useHandleNavigationMenuItemDragAndDrop = () => {
+  const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
+  const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
+  const { updateNavigationMenuItem } = useUpdateNavigationMenuItem();
+  const setOpenNavigationMenuItemFolderIds = useSetRecoilState(
+    openNavigationMenuItemFolderIdsState,
+  );
+
+  const openDestinationFolder = (folderId: string | null) => {
+    if (!folderId) {
+      return;
+    }
+
+    setOpenNavigationMenuItemFolderIds((current) => {
+      if (!current.includes(folderId)) {
+        return [...current, folderId];
+      }
+      return current;
+    });
+  };
+
+  const handleNavigationMenuItemDragAndDrop: OnDragEndResponder = (result) => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) {
+      return;
+    }
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    const draggedNavigationMenuItem = navigationMenuItems.find(
+      (item) => item.id === draggableId,
+    );
+    if (!draggedNavigationMenuItem) {
+      return;
+    }
+
+    const destinationFolderId = validateAndExtractFolderId(
+      destination.droppableId,
+    );
+    const sourceFolderId = validateAndExtractFolderId(source.droppableId);
+
+    if (
+      destination.droppableId.startsWith(
+        FAVORITE_DROPPABLE_IDS.FOLDER_HEADER_PREFIX,
+      )
+    ) {
+      if (destinationFolderId === null)
+        throw new Error('Invalid folder header ID');
+
+      const folderNavigationMenuItems = navigationMenuItemsSorted.filter(
+        (item) => item.folderId === destinationFolderId,
+      );
+
+      const newPosition =
+        folderNavigationMenuItems.length === 0
+          ? 1
+          : folderNavigationMenuItems[folderNavigationMenuItems.length - 1]
+              .position + 1;
+
+      updateNavigationMenuItem({
+        id: draggableId,
+        folderId: destinationFolderId,
+        position: newPosition,
+      });
+
+      openDestinationFolder(destinationFolderId);
+      return;
+    }
+
+    if (destination.droppableId !== source.droppableId) {
+      const destinationNavigationMenuItems = navigationMenuItemsSorted.filter(
+        (item) => item.folderId === destinationFolderId,
+      );
+
+      let newPosition;
+      if (destinationNavigationMenuItems.length === 0) {
+        newPosition = 1;
+      } else if (destination.index === 0) {
+        newPosition = destinationNavigationMenuItems[0].position - 1;
+      } else if (destination.index >= destinationNavigationMenuItems.length) {
+        newPosition =
+          destinationNavigationMenuItems[
+            destinationNavigationMenuItems.length - 1
+          ].position + 1;
+      } else {
+        newPosition = calculateNewPosition({
+          destinationIndex: destination.index,
+          sourceIndex: -1,
+          items: destinationNavigationMenuItems,
+        });
+      }
+
+      updateNavigationMenuItem({
+        id: draggableId,
+        folderId: destinationFolderId ?? null,
+        position: newPosition,
+      });
+      return;
+    }
+
+    const navigationMenuItemsInSameList = navigationMenuItemsSorted
+      .filter((item) => item.folderId === sourceFolderId)
+      .filter((item) => item.id !== draggableId);
+
+    const newPosition = calculateNewPosition({
+      destinationIndex: destination.index,
+      sourceIndex: source.index,
+      items: navigationMenuItemsInSameList,
+    });
+
+    updateNavigationMenuItem({
+      id: draggableId,
+      position: newPosition,
+    });
+  };
+
+  return { handleNavigationMenuItemDragAndDrop };
+};
