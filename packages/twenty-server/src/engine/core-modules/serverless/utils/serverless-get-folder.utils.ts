@@ -18,7 +18,10 @@ export const getServerlessFolderOrThrow = ({
   version?: 'draft' | 'latest' | (string & NonNullable<unknown>);
   toDelete?: boolean;
 }) => {
-  if (version === 'latest' && !isDefined(flatServerlessFunction.latestVersion)) {
+  if (
+    version === 'latest' &&
+    !isDefined(flatServerlessFunction.latestVersion)
+  ) {
     throw new ServerlessFunctionException(
       "Can't get 'latest' version when serverlessFunction 'latestVersion' is undefined",
       ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_VERSION_NOT_FOUND,

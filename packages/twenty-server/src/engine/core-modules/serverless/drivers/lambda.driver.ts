@@ -39,7 +39,7 @@ import {
 import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import {
-  ServerlessFunctionEntity,
+  type ServerlessFunctionEntity,
   ServerlessFunctionRuntime,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
