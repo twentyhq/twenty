@@ -28,7 +28,7 @@ const rowLevelPermissionPredicateGroupExceptionUserFriendlyMessages: Record<
   INVALID_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_DATA: msg`Invalid row level permission predicate group data.`,
   ROLE_NOT_FOUND: msg`Role not found.`,
   UNAUTHORIZED_ROLE_MODIFICATION: msg`Cannot modify predicate group belonging to a different role.`,
-  ROW_LEVEL_PERMISSION_FEATURE_DISABLED: msg`Row level permissions are not enabled for this workspace.`,
+  ROW_LEVEL_PERMISSION_FEATURE_DISABLED: msg`Row level permission predicate feature is disabled.`,
   INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
 };
 

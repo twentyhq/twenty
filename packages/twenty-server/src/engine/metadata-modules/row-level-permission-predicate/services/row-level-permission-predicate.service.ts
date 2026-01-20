@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -45,6 +46,7 @@ export class RowLevelPermissionPredicateService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly billingService: BillingService,
+    private readonly configService: ConfigService,
   ) {}
 
   async createOne({
@@ -714,15 +716,22 @@ export class RowLevelPermissionPredicateService {
   }
 
   private async ensureRowLevelPermissionEntitlement(workspaceId: string) {
+    const isBillingEnabled = this.configService.get('IS_BILLING_ENABLED');
+    const entrepriseKey = this.configService.get('ENTERPRISE_KEY');
+
     const isRowLevelPermissionEnabled =
       await this.billingService.hasEntitlement(
         workspaceId,
         BillingEntitlementKey.RLS,
       );
 
-    if (!isRowLevelPermissionEnabled) {
+    if (isDefined(entrepriseKey)) {
+      return;
+    }
+
+    if (isBillingEnabled && !isRowLevelPermissionEnabled) {
       throw new RowLevelPermissionPredicateException(
-        'No entitlement found for this workspace',
+        'Row level permission predicate feature is disabled',
         RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED,
       );
     }
