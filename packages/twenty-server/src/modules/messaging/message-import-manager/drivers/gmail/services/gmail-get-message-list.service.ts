@@ -197,11 +197,15 @@ export class GmailGetMessageListService {
     const { messagesAdded, messagesDeleted } =
       await this.gmailGetHistoryService.getMessageIdsFromHistory(history);
 
-    const messageIdsToFilter = await this.getEmailIdsFromExcludedFolders(
-      connectedAccount,
-      messageChannel.syncCursor,
-      messageFolders,
-    );
+    const messageIdsToFilter =
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.SELECTED_FOLDERS
+        ? await this.getEmailIdsFromExcludedFolders(
+            connectedAccount,
+            messageChannel.syncCursor,
+            messageFolders,
+          )
+        : [];
 
     const messagesAddedFiltered = messagesAdded.filter(
       (messageId) => !messageIdsToFilter.includes(messageId),

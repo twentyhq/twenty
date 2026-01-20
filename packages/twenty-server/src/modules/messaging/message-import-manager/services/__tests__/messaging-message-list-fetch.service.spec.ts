@@ -344,7 +344,6 @@ describe('MessagingMessageListFetchService', () => {
           pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
-      MessageFolderImportPolicy.SELECTED_FOLDERS,
     );
 
     expect(globalWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(
@@ -407,7 +406,6 @@ describe('MessagingMessageListFetchService', () => {
           pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
-      MessageFolderImportPolicy.SELECTED_FOLDERS,
     );
 
     expect(globalWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(

@@ -9,7 +9,6 @@ import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderPendingSyncAction } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
-import { MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-not-synced-labels';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
 import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
@@ -390,8 +389,18 @@ describe('GmailGetMessageListService', () => {
       });
 
       const expectedQuery = computeGmailExcludeSearchFilter([
-        { externalId: 'Label_personal', isSynced: false },
-        { externalId: 'Label_newsletters', isSynced: false },
+        {
+          externalId: 'Label_personal',
+          name: 'Personal',
+          isSynced: false,
+          parentFolderId: null,
+        },
+        {
+          externalId: 'Label_newsletters',
+          name: 'Newsletters',
+          isSynced: false,
+          parentFolderId: null,
+        },
       ]);
 
       expect(mockGmailClient.users.messages.list).toHaveBeenCalledWith(
@@ -539,17 +548,11 @@ describe('GmailGetMessageListService', () => {
         .map((call) => call[3])
         .filter(Boolean);
 
-      for (const defaultLabel of MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS) {
-        expect(labelIdsQueried).toContain(defaultLabel);
-      }
       expect(labelIdsQueried).toContain('Label_personal');
+      expect(labelIdsQueried).toHaveLength(1);
 
-      const expectedTotalCalls =
-        1 + MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS.length + 1;
-
-      expect(mockHistoryService.getHistory).toHaveBeenCalledTimes(
-        expectedTotalCalls,
-      );
+      // 1 main history call + 1 excluded folder call
+      expect(mockHistoryService.getHistory).toHaveBeenCalledTimes(2);
     });
 
     it('should skip per-folder filtering when ALL_FOLDERS policy is set', async () => {
