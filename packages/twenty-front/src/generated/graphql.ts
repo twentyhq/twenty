@@ -2961,10 +2961,10 @@ export type MutationUpdateWorkspaceMemberRoleArgs = {
 
 
 export type MutationUploadApplicationFileArgs = {
+  applicationUniversalIdentifier: Scalars['String'];
   file: Scalars['Upload'];
   fileFolder: FileFolder;
   filePath: Scalars['String'];
-  universalIdentifier: Scalars['String'];
 };
 
 
