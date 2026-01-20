@@ -30,7 +30,7 @@ exports[`NavigationMenuItem creation should fail when creating with empty target
 }
 `;
 
-exports[`NavigationMenuItem creation should fail when creating with invalid favoriteFolderId (not a UUID) 1`] = `
+exports[`NavigationMenuItem creation should fail when creating with invalid folderId (not a UUID) 1`] = `
 {
   "extensions": {
     "code": "GRAPHQL_VALIDATION_FAILED",
@@ -45,7 +45,7 @@ exports[`NavigationMenuItem creation should fail when creating with invalid favo
 }
 `;
 
-exports[`NavigationMenuItem creation should fail when creating with invalid forWorkspaceMemberId (not a UUID) 1`] = `
+exports[`NavigationMenuItem creation should fail when creating with invalid userWorkspaceId (not a UUID) 1`] = `
 {
   "extensions": {
     "code": "GRAPHQL_VALIDATION_FAILED",

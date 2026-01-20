@@ -3,10 +3,10 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 
 const DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS = `
   id
-  forWorkspaceMemberId
+  userWorkspaceId
   targetRecordId
   targetObjectMetadataId
-  favoriteFolderId
+  folderId
   position
   applicationId
   createdAt

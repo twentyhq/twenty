@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 
 import { IsInt, IsNotEmpty, IsOptional, IsUUID, Min } from 'class-validator';
 
@@ -9,7 +9,7 @@ export class CreateNavigationMenuItemInput {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
-  forWorkspaceMemberId?: string;
+  userWorkspaceId?: string;
 
   @IsUUID()
   @IsNotEmpty()
@@ -24,11 +24,11 @@ export class CreateNavigationMenuItemInput {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
-  favoriteFolderId?: string;
+  folderId?: string;
 
   @IsInt()
   @Min(0)
   @IsOptional()
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   position?: number;
 }

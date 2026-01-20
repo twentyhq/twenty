@@ -6,10 +6,10 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = (
 ): FlatNavigationMenuItem => {
   return {
     id: navigationMenuItemEntity.id,
-    forWorkspaceMemberId: navigationMenuItemEntity.forWorkspaceMemberId,
+    userWorkspaceId: navigationMenuItemEntity.userWorkspaceId,
     targetRecordId: navigationMenuItemEntity.targetRecordId,
     targetObjectMetadataId: navigationMenuItemEntity.targetObjectMetadataId,
-    favoriteFolderId: navigationMenuItemEntity.favoriteFolderId,
+    folderId: navigationMenuItemEntity.folderId,
     position: navigationMenuItemEntity.position,
     workspaceId: navigationMenuItemEntity.workspaceId,
     universalIdentifier: navigationMenuItemEntity.universalIdentifier,

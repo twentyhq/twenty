@@ -27,7 +27,7 @@ exports[`NavigationMenuItem update should fail when updating with empty id 1`] =
 }
 `;
 
-exports[`NavigationMenuItem update should fail when updating with invalid favoriteFolderId (not a UUID) 1`] = `
+exports[`NavigationMenuItem update should fail when updating with invalid folderId (not a UUID) 1`] = `
 {
   "extensions": {
     "code": "GRAPHQL_VALIDATION_FAILED",

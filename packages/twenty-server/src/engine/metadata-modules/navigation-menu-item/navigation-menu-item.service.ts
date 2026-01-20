@@ -17,6 +17,7 @@ import {
   NavigationMenuItemException,
   NavigationMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
+import { NavigationMenuItemAccessService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -26,9 +27,16 @@ export class NavigationMenuItemService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly navigationMenuItemAccessService: NavigationMenuItemAccessService,
   ) {}
 
-  async findAll(workspaceId: string): Promise<NavigationMenuItemDTO[]> {
+  async findAll({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<NavigationMenuItemDTO[]> {
     const { flatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -38,15 +46,23 @@ export class NavigationMenuItemService {
       );
 
     return Object.values(flatNavigationMenuItemMaps.byId)
-      .filter(isDefined)
+      .filter(
+        (item): item is NonNullable<typeof item> =>
+          isDefined(item) &&
+          (!isDefined(item.userWorkspaceId) ||
+            item.userWorkspaceId === userWorkspaceId),
+      )
       .sort((a, b) => a.position - b.position)
       .map(fromFlatNavigationMenuItemToNavigationMenuItemDto);
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<NavigationMenuItemDTO | null> {
+  async findById({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<NavigationMenuItemDTO | null> {
     const { flatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -69,11 +85,14 @@ export class NavigationMenuItemService {
     );
   }
 
-  async findByIdOrThrow(
-    id: string,
-    workspaceId: string,
-  ): Promise<NavigationMenuItemDTO> {
-    const navigationMenuItem = await this.findById(id, workspaceId);
+  async findByIdOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<NavigationMenuItemDTO> {
+    const navigationMenuItem = await this.findById({ id, workspaceId });
 
     if (!isDefined(navigationMenuItem)) {
       throw new NavigationMenuItemException(
@@ -85,10 +104,26 @@ export class NavigationMenuItemService {
     return navigationMenuItem;
   }
 
-  async create(
-    input: CreateNavigationMenuItemInput,
-    workspaceId: string,
-  ): Promise<NavigationMenuItemDTO> {
+  async create({
+    input,
+    workspaceId,
+    authUserWorkspaceId,
+    authApiKeyId,
+    authApplicationId,
+  }: {
+    input: CreateNavigationMenuItemInput;
+    workspaceId: string;
+    authUserWorkspaceId?: string;
+    authApiKeyId?: string;
+    authApplicationId?: string;
+  }): Promise<NavigationMenuItemDTO> {
+    await this.navigationMenuItemAccessService.canUserCreateNavigationMenuItem({
+      userWorkspaceId: authUserWorkspaceId,
+      workspaceId,
+      apiKeyId: authApiKeyId,
+      applicationId: authApplicationId,
+      inputUserWorkspaceId: input.userWorkspaceId,
+    });
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -148,10 +183,19 @@ export class NavigationMenuItemService {
     );
   }
 
-  async update(
-    input: UpdateNavigationMenuItemInput,
-    workspaceId: string,
-  ): Promise<NavigationMenuItemDTO> {
+  async update({
+    input,
+    workspaceId,
+    authUserWorkspaceId,
+    authApiKeyId,
+    authApplicationId,
+  }: {
+    input: UpdateNavigationMenuItemInput;
+    workspaceId: string;
+    authUserWorkspaceId?: string;
+    authApiKeyId?: string;
+    authApplicationId?: string;
+  }): Promise<NavigationMenuItemDTO> {
     const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -159,6 +203,23 @@ export class NavigationMenuItemService {
           flatMapsKeys: ['flatNavigationMenuItemMaps'],
         },
       );
+
+    const existingNavigationMenuItem = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: input.id,
+      flatEntityMaps: existingFlatNavigationMenuItemMaps,
+    });
+
+    if (isDefined(existingNavigationMenuItem)) {
+      await this.navigationMenuItemAccessService.canUserUpdateNavigationMenuItem(
+        {
+          userWorkspaceId: authUserWorkspaceId,
+          workspaceId,
+          apiKeyId: authApiKeyId,
+          applicationId: authApplicationId,
+          existingUserWorkspaceId: existingNavigationMenuItem.userWorkspaceId,
+        },
+      );
+    }
 
     const flatNavigationMenuItemToUpdate =
       fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOrThrow({
@@ -204,10 +265,19 @@ export class NavigationMenuItemService {
     );
   }
 
-  async delete(
-    id: string,
-    workspaceId: string,
-  ): Promise<NavigationMenuItemDTO> {
+  async delete({
+    id,
+    workspaceId,
+    authUserWorkspaceId,
+    authApiKeyId,
+    authApplicationId,
+  }: {
+    id: string;
+    workspaceId: string;
+    authUserWorkspaceId?: string;
+    authApiKeyId?: string;
+    authApplicationId?: string;
+  }): Promise<NavigationMenuItemDTO> {
     const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -221,6 +291,14 @@ export class NavigationMenuItemService {
         flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
         navigationMenuItemId: id,
       });
+
+    await this.navigationMenuItemAccessService.canUserDeleteNavigationMenuItem({
+      userWorkspaceId: authUserWorkspaceId,
+      workspaceId,
+      apiKeyId: authApiKeyId,
+      applicationId: authApplicationId,
+      existingUserWorkspaceId: flatNavigationMenuItemToDelete.userWorkspaceId,
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(

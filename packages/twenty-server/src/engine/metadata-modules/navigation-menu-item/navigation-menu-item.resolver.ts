@@ -1,8 +1,12 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -28,8 +32,12 @@ export class NavigationMenuItemResolver {
   @UseGuards(NoPermissionGuard)
   async navigationMenuItems(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<NavigationMenuItemDTO[]> {
-    return await this.navigationMenuItemService.findAll(workspace.id);
+    return await this.navigationMenuItemService.findAll({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
   }
 
   @Query(() => NavigationMenuItemDTO, { nullable: true })
@@ -38,7 +46,10 @@ export class NavigationMenuItemResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<NavigationMenuItemDTO | null> {
-    return await this.navigationMenuItemService.findById(id, workspace.id);
+    return await this.navigationMenuItemService.findById({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => NavigationMenuItemDTO)
@@ -46,8 +57,17 @@ export class NavigationMenuItemResolver {
   async createNavigationMenuItem(
     @Args('input') input: CreateNavigationMenuItemInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
+    @Context() context: { req: { application?: ApplicationEntity } },
   ): Promise<NavigationMenuItemDTO> {
-    return await this.navigationMenuItemService.create(input, workspace.id);
+    return await this.navigationMenuItemService.create({
+      input,
+      workspaceId: workspace.id,
+      authUserWorkspaceId: userWorkspaceId,
+      authApiKeyId: apiKey?.id,
+      authApplicationId: context.req.application?.id,
+    });
   }
 
   @Mutation(() => NavigationMenuItemDTO)
@@ -55,8 +75,17 @@ export class NavigationMenuItemResolver {
   async updateNavigationMenuItem(
     @Args('input') input: UpdateNavigationMenuItemInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
+    @Context() context: { req: { application?: ApplicationEntity } },
   ): Promise<NavigationMenuItemDTO> {
-    return await this.navigationMenuItemService.update(input, workspace.id);
+    return await this.navigationMenuItemService.update({
+      input,
+      workspaceId: workspace.id,
+      authUserWorkspaceId: userWorkspaceId,
+      authApiKeyId: apiKey?.id,
+      authApplicationId: context.req.application?.id,
+    });
   }
 
   @Mutation(() => NavigationMenuItemDTO)
@@ -64,7 +93,16 @@ export class NavigationMenuItemResolver {
   async deleteNavigationMenuItem(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
+    @Context() context: { req: { application?: ApplicationEntity } },
   ): Promise<NavigationMenuItemDTO> {
-    return await this.navigationMenuItemService.delete(id, workspace.id);
+    return await this.navigationMenuItemService.delete({
+      id,
+      workspaceId: workspace.id,
+      authUserWorkspaceId: userWorkspaceId,
+      authApiKeyId: apiKey?.id,
+      authApplicationId: context.req.application?.id,
+    });
   }
 }

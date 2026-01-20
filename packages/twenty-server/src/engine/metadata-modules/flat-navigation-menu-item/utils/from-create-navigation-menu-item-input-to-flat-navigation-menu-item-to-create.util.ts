@@ -23,10 +23,9 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     let position = createNavigationMenuItemInput.position;
 
     if (!isDefined(position)) {
-      const normalizedForWorkspaceMemberId =
-        createNavigationMenuItemInput.forWorkspaceMemberId ?? null;
-      const normalizedFavoriteFolderId =
-        createNavigationMenuItemInput.favoriteFolderId ?? null;
+      const normalizedUserWorkspaceId =
+        createNavigationMenuItemInput.userWorkspaceId ?? null;
+      const normalizedFolderId = createNavigationMenuItemInput.folderId ?? null;
 
       const existingItems = Object.values(
         flatNavigationMenuItemMaps.byId,
@@ -34,9 +33,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
         (item) =>
           isDefined(item) &&
           item.workspaceId === workspaceId &&
-          (item.forWorkspaceMemberId ?? null) ===
-            normalizedForWorkspaceMemberId &&
-          (item.favoriteFolderId ?? null) === normalizedFavoriteFolderId,
+          (item.userWorkspaceId ?? null) === normalizedUserWorkspaceId &&
+          (item.folderId ?? null) === normalizedFolderId,
       );
 
       const maxPosition = existingItems.reduce(
@@ -50,12 +48,11 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     return {
       id,
       universalIdentifier: id,
-      forWorkspaceMemberId:
-        createNavigationMenuItemInput.forWorkspaceMemberId ?? null,
+      userWorkspaceId: createNavigationMenuItemInput.userWorkspaceId ?? null,
       targetRecordId: createNavigationMenuItemInput.targetRecordId,
       targetObjectMetadataId:
         createNavigationMenuItemInput.targetObjectMetadataId,
-      favoriteFolderId: createNavigationMenuItemInput.favoriteFolderId ?? null,
+      folderId: createNavigationMenuItemInput.folderId ?? null,
       position,
       workspaceId,
       applicationId,
