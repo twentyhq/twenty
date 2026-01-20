@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { FileFolder } from 'twenty-shared/types';
 
 import { checkFileFolder } from 'src/engine/core-modules/file/utils/check-file-folder.utils';
 

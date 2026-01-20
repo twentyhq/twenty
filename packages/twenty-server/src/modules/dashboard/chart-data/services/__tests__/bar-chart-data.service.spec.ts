@@ -168,7 +168,7 @@ describe('BarChartDataService', () => {
         authContext: mockAuthContext,
       });
 
-      expect(result.data.map((d) => d.amount)).toEqual([20, 30]);
+      expect(result.data.map((d) => d.amount)).toEqual([]);
     });
 
     it('should filter by rangeMax when cumulative', async () => {
@@ -189,7 +189,30 @@ describe('BarChartDataService', () => {
         authContext: mockAuthContext,
       });
 
-      expect(result.data.map((d) => d.amount)).toEqual([10]);
+      expect(result.data.map((d) => d.amount)).toEqual([10, 30]);
+    });
+
+    it('should filter by both rangeMin and rangeMax when cumulative', async () => {
+      mockExecuteGroupByQuery.mockResolvedValue([
+        { groupByDimensionValues: ['a'], aggregateValue: 5 },
+        { groupByDimensionValues: ['b'], aggregateValue: 15 },
+        { groupByDimensionValues: ['c'], aggregateValue: 25 },
+        { groupByDimensionValues: ['d'], aggregateValue: 35 },
+      ]);
+
+      const result = await service.getBarChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: {
+          ...baseConfiguration,
+          isCumulative: true,
+          rangeMin: 10,
+          rangeMax: 30,
+        } as any,
+        authContext: mockAuthContext,
+      });
+
+      expect(result.data.map((d) => d.amount)).toEqual([15, 40]);
     });
 
     it('should handle null values when omitNullValues is true', async () => {
@@ -333,14 +356,14 @@ describe('BarChartDataService', () => {
       expect(result.data[2]['Closed']).toBe(60);
     });
 
-    it('should filter two-dimensional data by rangeMin when cumulative', async () => {
+    it('should filter stacked two-dimensional cumulative data by rangeMax', async () => {
       mockExecuteGroupByQuery.mockResolvedValue([
         { groupByDimensionValues: ['a', 'open'], aggregateValue: 10 },
-        { groupByDimensionValues: ['a', 'closed'], aggregateValue: 10 },
-        { groupByDimensionValues: ['b', 'open'], aggregateValue: 10 },
-        { groupByDimensionValues: ['b', 'closed'], aggregateValue: 10 },
-        { groupByDimensionValues: ['c', 'open'], aggregateValue: 10 },
-        { groupByDimensionValues: ['c', 'closed'], aggregateValue: 10 },
+        { groupByDimensionValues: ['a', 'closed'], aggregateValue: 20 },
+        { groupByDimensionValues: ['b', 'open'], aggregateValue: 5 },
+        { groupByDimensionValues: ['b', 'closed'], aggregateValue: 5 },
+        { groupByDimensionValues: ['c', 'open'], aggregateValue: 50 },
+        { groupByDimensionValues: ['c', 'closed'], aggregateValue: 30 },
       ]);
 
       const result = await service.getBarChartData({
@@ -349,12 +372,16 @@ describe('BarChartDataService', () => {
         configuration: {
           ...twoDimConfiguration,
           isCumulative: true,
-          rangeMin: 50,
+          rangeMax: 60,
         } as any,
         authContext: mockAuthContext,
       });
 
-      expect(result.data.length).toBeLessThan(3);
+      expect(result.data.length).toBe(2);
+      expect(result.data[0]['Open']).toBe(10);
+      expect(result.data[0]['Closed']).toBe(20);
+      expect(result.data[1]['Open']).toBe(15);
+      expect(result.data[1]['Closed']).toBe(25);
     });
 
     it('should order keys correctly despite unordered raw results', async () => {

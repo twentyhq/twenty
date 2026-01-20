@@ -4,12 +4,13 @@ import type { Command } from 'commander';
 import { AppBuildCommand } from './app/app-build';
 import { AppDevCommand } from './app/app-dev';
 import { AppGenerateCommand } from './app/app-generate';
-import { AppLogsCommand } from './app/app-logs';
 import { AppSyncCommand } from './app/app-sync';
 import { AppUninstallCommand } from './app/app-uninstall';
 import { AuthLoginCommand } from './auth/auth-login';
 import { AuthLogoutCommand } from './auth/auth-logout';
 import { AuthStatusCommand } from './auth/auth-status';
+import { FunctionExecuteCommand } from './function/function-execute';
+import { FunctionLogsCommand } from './function/function-logs';
 import {
   EntityAddCommand,
   isSyncableEntity,
@@ -51,7 +52,8 @@ export const registerCommands = (program: Command): void => {
   const uninstallCommand = new AppUninstallCommand();
   const addCommand = new EntityAddCommand();
   const generateCommand = new AppGenerateCommand();
-  const logsCommand = new AppLogsCommand();
+  const logsCommand = new FunctionLogsCommand();
+  const executeCommand = new FunctionExecuteCommand();
   const buildCommand = new AppBuildCommand();
 
   program
@@ -113,24 +115,6 @@ export const registerCommands = (program: Command): void => {
       }
     });
 
-  // Keeping to avoid breaking changes
-  program
-    .command('app:delete [appPath]', { hidden: true })
-    .description('Delete application from Twenty')
-    .action(async (appPath?: string) => {
-      try {
-        const result = await uninstallCommand.execute({
-          appPath: formatPath(appPath),
-          askForConfirmation: true,
-        });
-        if (!result.success) {
-          process.exit(1);
-        }
-      } catch {
-        process.exit(1);
-      }
-    });
-
   program
     .command('entity:add [entityType]')
     .option('--path <path>', 'Path in which the entity should be created.')
@@ -156,8 +140,9 @@ export const registerCommands = (program: Command): void => {
       await generateCommand.execute(formatPath(appPath));
     });
 
+  // Function commands
   program
-    .command('app:logs [appPath]')
+    .command('function:logs [appPath]')
     .option(
       '-u, --functionUniversalIdentifier <functionUniversalIdentifier>',
       'Only show logs for the function with this universal ID',
@@ -177,6 +162,47 @@ export const registerCommands = (program: Command): void => {
       ) => {
         await logsCommand.execute({
           ...options,
+          appPath: formatPath(appPath),
+        });
+      },
+    );
+
+  program
+    .command('function:execute [appPath]')
+    .option(
+      '-p, --payload <payload>',
+      'JSON payload to send to the function',
+      '{}',
+    )
+    .option(
+      '-u, --functionUniversalIdentifier <functionUniversalIdentifier>',
+      'Universal ID of the function to execute',
+    )
+    .option(
+      '-n, --functionName <functionName>',
+      'Name of the function to execute',
+    )
+    .description('Execute a serverless function with a JSON payload')
+    .action(
+      async (
+        appPath?: string,
+        options?: {
+          payload?: string;
+          functionUniversalIdentifier?: string;
+          functionName?: string;
+        },
+      ) => {
+        if (!options?.functionUniversalIdentifier && !options?.functionName) {
+          console.error(
+            chalk.red(
+              'Error: Either --functionName (-n) or --functionUniversalIdentifier (-u) is required.',
+            ),
+          );
+          process.exit(1);
+        }
+        await executeCommand.execute({
+          ...options,
+          payload: options?.payload ?? '{}',
           appPath: formatPath(appPath),
         });
       },
