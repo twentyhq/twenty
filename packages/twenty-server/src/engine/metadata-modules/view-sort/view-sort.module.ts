@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
 import { ViewSortController } from 'src/engine/metadata-modules/view-sort/controllers/view-sort.controller';
