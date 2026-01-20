@@ -1,17 +1,9 @@
-import { useCreateNavigationMenuItem } from '@/navigation-menu-item/hooks/useCreateNavigationMenuItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
 export const useCreateFavorite = () => {
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
-  );
-
-  const { createNavigationMenuItem } = useCreateNavigationMenuItem();
   const { favorites, currentWorkspaceMemberId } = usePrefetchedFavoritesData();
   const { createOneRecord: createOneFavorite } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Favorite,
@@ -22,31 +14,23 @@ export const useCreateFavorite = () => {
     targetObjectNameSingular: string,
     favoriteFolderId?: string,
   ) => {
-    if (isNavigationMenuItemEnabled) {
-      await createNavigationMenuItem(
-        targetRecord,
-        targetObjectNameSingular,
-        favoriteFolderId,
-      );
-    } else {
-      const relevantFavorites = favoriteFolderId
-        ? favorites.filter((fav) => fav.favoriteFolderId === favoriteFolderId)
-        : favorites.filter(
-            (fav) => !fav.favoriteFolderId && fav.forWorkspaceMemberId,
-          );
+    const relevantFavorites = favoriteFolderId
+      ? favorites.filter((fav) => fav.favoriteFolderId === favoriteFolderId)
+      : favorites.filter(
+          (fav) => !fav.favoriteFolderId && fav.forWorkspaceMemberId,
+        );
 
-      const maxPosition = Math.max(
-        ...relevantFavorites.map((fav) => fav.position),
-        0,
-      );
+    const maxPosition = Math.max(
+      ...relevantFavorites.map((fav) => fav.position),
+      0,
+    );
 
-      createOneFavorite({
-        [`${targetObjectNameSingular}Id`]: targetRecord.id,
-        position: maxPosition + 1,
-        forWorkspaceMemberId: currentWorkspaceMemberId,
-        favoriteFolderId,
-      });
-    }
+    createOneFavorite({
+      [`${targetObjectNameSingular}Id`]: targetRecord.id,
+      position: maxPosition + 1,
+      forWorkspaceMemberId: currentWorkspaceMemberId,
+      favoriteFolderId,
+    });
   };
 
   return { createFavorite };

@@ -3,23 +3,15 @@ import { useSortedFavorites } from '@/favorites/hooks/useSortedFavorites';
 import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { validateAndExtractFolderId } from '@/favorites/utils/validateAndExtractFolderId';
-import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useSetRecoilState } from 'recoil';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
 export const useHandleFavoriteDragAndDrop = () => {
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
-  );
-
   const { favorites } = usePrefetchedFavoritesData();
   const { favoritesSorted } = useSortedFavorites();
-  const { updateNavigationMenuItem } = useUpdateNavigationMenuItem();
   const { updateOneRecord: updateOneFavorite } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Favorite,
   });
@@ -75,21 +67,13 @@ export const useHandleFavoriteDragAndDrop = () => {
           ? 1
           : folderFavorites[folderFavorites.length - 1].position + 1;
 
-      if (isNavigationMenuItemEnabled) {
-        updateNavigationMenuItem({
-          id: draggableId,
+      updateOneFavorite({
+        idToUpdate: draggableId,
+        updateOneRecordInput: {
           favoriteFolderId: destinationFolderId,
           position: newPosition,
-        });
-      } else {
-        updateOneFavorite({
-          idToUpdate: draggableId,
-          updateOneRecordInput: {
-            favoriteFolderId: destinationFolderId,
-            position: newPosition,
-          },
-        });
-      }
+        },
+      });
 
       openDestinationFolder(destinationFolderId);
       return;
@@ -116,21 +100,13 @@ export const useHandleFavoriteDragAndDrop = () => {
         });
       }
 
-      if (isNavigationMenuItemEnabled) {
-        updateNavigationMenuItem({
-          id: draggableId,
+      updateOneFavorite({
+        idToUpdate: draggableId,
+        updateOneRecordInput: {
           favoriteFolderId: destinationFolderId ?? null,
           position: newPosition,
-        });
-      } else {
-        updateOneFavorite({
-          idToUpdate: draggableId,
-          updateOneRecordInput: {
-            favoriteFolderId: destinationFolderId ?? null,
-            position: newPosition,
-          },
-        });
-      }
+        },
+      });
       return;
     }
 
@@ -144,17 +120,10 @@ export const useHandleFavoriteDragAndDrop = () => {
       items: favoritesInSameList,
     });
 
-    if (isNavigationMenuItemEnabled) {
-      updateNavigationMenuItem({
-        id: draggableId,
-        position: newPosition,
-      });
-    } else {
-      updateOneFavorite({
-        idToUpdate: draggableId,
-        updateOneRecordInput: { position: newPosition },
-      });
-    }
+    updateOneFavorite({
+      idToUpdate: draggableId,
+      updateOneRecordInput: { position: newPosition },
+    });
   };
 
   return { handleFavoriteDragAndDrop };
