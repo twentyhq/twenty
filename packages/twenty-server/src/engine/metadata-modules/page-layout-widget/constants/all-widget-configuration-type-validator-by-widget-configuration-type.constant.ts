@@ -1,6 +1,7 @@
 import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { CalendarConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/calendar-configuration.dto';
+import { CustomWidgetConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/custom-widget-configuration.dto';
 import { EmailsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/emails-configuration.dto';
 import { FieldConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/field-configuration.dto';
 import { FieldRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/field-rich-text-configuration.dto';
@@ -31,6 +32,7 @@ export const ALL_WIDGET_CONFIGURATION_TYPE_VALIDATOR_BY_WIDGET_CONFIGURATION_TYP
     GAUGE_CHART: GaugeChartConfigurationDTO,
     BAR_CHART: BarChartConfigurationDTO,
     CALENDAR: CalendarConfigurationDTO,
+    CUSTOM_WIDGET: CustomWidgetConfigurationDTO,
     EMAILS: EmailsConfigurationDTO,
     FIELD: FieldConfigurationDTO,
     FIELD_RICH_TEXT: FieldRichTextConfigurationDTO,
