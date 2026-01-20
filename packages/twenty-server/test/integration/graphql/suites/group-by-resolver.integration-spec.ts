@@ -1554,11 +1554,11 @@ describe('group-by resolver (integration)', () => {
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'pet',
-            gqlFields: 'id name ownerRocket { id name }',
+            gqlFields: 'id name polymorphicOwnerRocket { id name }',
             data: {
               id: testPetId,
               name: 'Pet 1',
-              ownerRocketId: testRocketId,
+              polymorphicOwnerRocketId: testRocketId,
               createdAt: '2025-03-03T09:30:00.000Z',
             },
           }),
@@ -1567,11 +1567,11 @@ describe('group-by resolver (integration)', () => {
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'pet',
-            gqlFields: 'id name ownerRocket { id name }',
+            gqlFields: 'id name polymorphicOwnerRocket { id name }',
             data: {
               id: testPet2Id,
               name: 'Pet 2',
-              ownerRocketId: testRocketId,
+              polymorphicOwnerRocketId: testRocketId,
               createdAt: '2025-03-03T09:30:00.000Z',
             },
           }),
@@ -1580,11 +1580,11 @@ describe('group-by resolver (integration)', () => {
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'pet',
-            gqlFields: 'id name ownerRocket { id name }',
+            gqlFields: 'id name polymorphicOwnerRocket { id name }',
             data: {
               id: testPet3Id,
               name: 'Pet 3',
-              ownerRocketId: testRocket2Id,
+              polymorphicOwnerRocketId: testRocket2Id,
               createdAt: '2025-03-03T09:30:00.000Z',
             },
           }),
@@ -1615,14 +1615,14 @@ describe('group-by resolver (integration)', () => {
         }
       });
 
-      it('groups by morph relation field - ownerRocket name', async () => {
+      it('groups by morph relation field - polymorphicOwnerRocket name', async () => {
         const response = await makeGraphqlAPIRequest(
           groupByOperationFactory({
             objectMetadataSingularName: 'pet',
             objectMetadataPluralName: 'pets',
             groupBy: [
               {
-                ownerRocket: {
+                polymorphicOwnerRocket: {
                   name: true,
                 },
               },
@@ -1794,11 +1794,11 @@ describe('group-by resolver (integration)', () => {
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'pet',
-            gqlFields: 'id name ownerRocket { id name }',
+            gqlFields: 'id name polymorphicOwnerRocket { id name }',
             data: {
               id: testPetId,
               name: 'Test Pet',
-              ownerRocketId: testRocketId,
+              polymorphicOwnerRocketId: testRocketId,
               createdAt: '2025-03-03T09:30:00.000Z',
             },
           }),
@@ -1849,7 +1849,7 @@ describe('group-by resolver (integration)', () => {
         }
       });
 
-      it('should throw a permission error when grouping by ownerRocket field without read permission', async () => {
+      it('should throw a permission error when grouping by polymorphicOwnerRocket field without read permission', async () => {
         const filter2025 = {
           and: [
             {
@@ -1871,7 +1871,7 @@ describe('group-by resolver (integration)', () => {
             objectMetadataPluralName: 'pets',
             groupBy: [
               {
-                ownerRocket: {
+                polymorphicOwnerRocket: {
                   name: true,
                 },
               },

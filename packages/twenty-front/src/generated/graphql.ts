@@ -951,6 +951,7 @@ export type CreateObjectInput = {
   primaryKeyColumnType?: InputMaybe<Scalars['String']>;
   primaryKeyFieldMetadataSettings?: InputMaybe<Scalars['JSON']>;
   shortcut?: InputMaybe<Scalars['String']>;
+  skipNameField?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type CreateOneFieldMetadataInput = {
@@ -1424,6 +1425,7 @@ export enum FeatureFlagKey {
   IS_FILES_FIELD_ENABLED = 'IS_FILES_FIELD_ENABLED',
   IS_IF_ELSE_ENABLED = 'IS_IF_ELSE_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
+  IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
   IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
   IS_RECORD_PAGE_LAYOUT_ENABLED = 'IS_RECORD_PAGE_LAYOUT_ENABLED',
@@ -1449,6 +1451,7 @@ export type Field = {
   isUIReadOnly?: Maybe<Scalars['Boolean']>;
   isUnique?: Maybe<Scalars['Boolean']>;
   label: Scalars['String'];
+  morphId?: Maybe<Scalars['UUID']>;
   morphRelations?: Maybe<Array<Relation>>;
   name: Scalars['String'];
   object?: Maybe<Object>;
