@@ -1,11 +1,9 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import graphqlTypeJson from 'graphql-type-json';
-import { Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -14,19 +12,21 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { ExecuteServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/execute-serverless-function.input';
 import { GetServerlessFunctionSourceCodeInput } from 'src/engine/metadata-modules/serverless-function/dtos/get-serverless-function-source-code.input';
 import { PublishServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/publish-serverless-function.input';
 import { ServerlessFunctionExecutionResultDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { ServerlessFunctionIdInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-id.input';
-import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
-import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
 import { ServerlessFunctionLogsDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-logs.dto';
 import { ServerlessFunctionLogsInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-logs.input';
+import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
+import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
+import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { fromFlatServerlessFunctionToServerlessFunctionDto } from 'src/engine/metadata-modules/serverless-function/utils/from-flat-serverless-function-to-serverless-function-dto.util';
+import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 
@@ -41,40 +41,85 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 export class ServerlessFunctionResolver {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    @InjectRepository(ServerlessFunctionEntity)
-    private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     private readonly subscriptionService: SubscriptionService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   @Query(() => ServerlessFunctionDTO)
   async findOneServerlessFunction(
     @Args('input') { id }: ServerlessFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<ServerlessFunctionDTO> {
     try {
-      return await this.serverlessFunctionRepository.findOneOrFail({
-        where: {
-          id,
-          workspaceId,
-        },
-        relations: ['cronTriggers', 'databaseEventTriggers', 'routeTriggers'],
+      const {
+        flatServerlessFunctionMaps,
+        flatCronTriggerMaps,
+        flatDatabaseEventTriggerMaps,
+        flatRouteTriggerMaps,
+      } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: [
+              'flatServerlessFunctionMaps',
+              'flatCronTriggerMaps',
+              'flatDatabaseEventTriggerMaps',
+              'flatRouteTriggerMaps',
+            ],
+          },
+        );
+
+      const flatServerlessFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: flatServerlessFunctionMaps,
+      });
+
+      return fromFlatServerlessFunctionToServerlessFunctionDto({
+        flatServerlessFunction,
+        flatCronTriggerMaps,
+        flatDatabaseEventTriggerMaps,
+        flatRouteTriggerMaps,
       });
     } catch (error) {
-      serverlessFunctionGraphQLApiExceptionHandler(error);
+      return serverlessFunctionGraphQLApiExceptionHandler(error);
     }
   }
 
   @Query(() => [ServerlessFunctionDTO])
   async findManyServerlessFunctions(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<ServerlessFunctionDTO[]> {
     try {
-      return this.serverlessFunctionRepository.find({
-        where: { workspaceId },
-        relations: ['cronTriggers', 'databaseEventTriggers', 'routeTriggers'],
-      });
+      const {
+        flatServerlessFunctionMaps,
+        flatCronTriggerMaps,
+        flatDatabaseEventTriggerMaps,
+        flatRouteTriggerMaps,
+      } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: [
+              'flatServerlessFunctionMaps',
+              'flatCronTriggerMaps',
+              'flatDatabaseEventTriggerMaps',
+              'flatRouteTriggerMaps',
+            ],
+          },
+        );
+
+      return Object.values(flatServerlessFunctionMaps.byId)
+        .filter(isDefined)
+        .map((flatServerlessFunction) =>
+          fromFlatServerlessFunctionToServerlessFunctionDto({
+            flatServerlessFunction,
+            flatCronTriggerMaps,
+            flatDatabaseEventTriggerMaps,
+            flatRouteTriggerMaps,
+          }),
+        );
     } catch (error) {
-      serverlessFunctionGraphQLApiExceptionHandler(error);
+      return serverlessFunctionGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -83,7 +128,7 @@ export class ServerlessFunctionResolver {
     try {
       return await this.serverlessFunctionService.getAvailablePackages(id);
     } catch (error) {
-      serverlessFunctionGraphQLApiExceptionHandler(error);
+      return serverlessFunctionGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -99,7 +144,7 @@ export class ServerlessFunctionResolver {
         input.version,
       );
     } catch (error) {
-      serverlessFunctionGraphQLApiExceptionHandler(error);
+      return serverlessFunctionGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -108,14 +153,38 @@ export class ServerlessFunctionResolver {
   async deleteOneServerlessFunction(
     @Args('input') input: ServerlessFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<ServerlessFunctionDTO> {
     try {
-      return await this.serverlessFunctionService.deleteOneServerlessFunction({
-        id: input.id,
-        workspaceId,
+      const flatServerlessFunction =
+        await this.serverlessFunctionService.deleteOneServerlessFunction({
+          id: input.id,
+          workspaceId,
+        });
+
+      const {
+        flatCronTriggerMaps,
+        flatDatabaseEventTriggerMaps,
+        flatRouteTriggerMaps,
+      } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: [
+              'flatCronTriggerMaps',
+              'flatDatabaseEventTriggerMaps',
+              'flatRouteTriggerMaps',
+            ],
+          },
+        );
+
+      return fromFlatServerlessFunctionToServerlessFunctionDto({
+        flatServerlessFunction,
+        flatCronTriggerMaps,
+        flatDatabaseEventTriggerMaps,
+        flatRouteTriggerMaps,
       });
     } catch (error) {
-      serverlessFunctionGraphQLApiExceptionHandler(error);
+      return serverlessFunctionGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -125,14 +194,38 @@ export class ServerlessFunctionResolver {
     @Args('input')
     input: UpdateServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<ServerlessFunctionDTO> {
     try {
-      return await this.serverlessFunctionService.updateOneServerlessFunction(
-        input,
-        workspaceId,
-      );
+      const flatServerlessFunction =
+        await this.serverlessFunctionService.updateOneServerlessFunction(
+          input,
+          workspaceId,
+        );
+
+      const {
+        flatCronTriggerMaps,
+        flatDatabaseEventTriggerMaps,
+        flatRouteTriggerMaps,
+      } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: [
+              'flatCronTriggerMaps',
+              'flatDatabaseEventTriggerMaps',
+              'flatRouteTriggerMaps',
+            ],
+          },
+        );
+
+      return fromFlatServerlessFunctionToServerlessFunctionDto({
+        flatServerlessFunction,
+        flatCronTriggerMaps,
+        flatDatabaseEventTriggerMaps,
+        flatRouteTriggerMaps,
+      });
     } catch (error) {
-      serverlessFunctionGraphQLApiExceptionHandler(error);
+      return serverlessFunctionGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -142,14 +235,38 @@ export class ServerlessFunctionResolver {
     @Args('input')
     input: CreateServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<ServerlessFunctionDTO> {
     try {
-      return await this.serverlessFunctionService.createOneServerlessFunction(
-        input,
-        workspaceId,
-      );
+      const flatServerlessFunction =
+        await this.serverlessFunctionService.createOneServerlessFunction(
+          input,
+          workspaceId,
+        );
+
+      const {
+        flatCronTriggerMaps,
+        flatDatabaseEventTriggerMaps,
+        flatRouteTriggerMaps,
+      } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: [
+              'flatCronTriggerMaps',
+              'flatDatabaseEventTriggerMaps',
+              'flatRouteTriggerMaps',
+            ],
+          },
+        );
+
+      return fromFlatServerlessFunctionToServerlessFunctionDto({
+        flatServerlessFunction,
+        flatCronTriggerMaps,
+        flatDatabaseEventTriggerMaps,
+        flatRouteTriggerMaps,
+      });
     } catch (error) {
-      serverlessFunctionGraphQLApiExceptionHandler(error);
+      return serverlessFunctionGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -169,7 +286,7 @@ export class ServerlessFunctionResolver {
         version,
       });
     } catch (error) {
-      serverlessFunctionGraphQLApiExceptionHandler(error);
+      return serverlessFunctionGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -178,16 +295,40 @@ export class ServerlessFunctionResolver {
   async publishServerlessFunction(
     @Args('input') input: PublishServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
+  ): Promise<ServerlessFunctionDTO> {
     try {
       const { id } = input;
 
-      return await this.serverlessFunctionService.publishOneServerlessFunctionOrFail(
-        id,
-        workspaceId,
-      );
+      const flatServerlessFunction =
+        await this.serverlessFunctionService.publishOneServerlessFunctionOrFail(
+          id,
+          workspaceId,
+        );
+
+      const {
+        flatCronTriggerMaps,
+        flatDatabaseEventTriggerMaps,
+        flatRouteTriggerMaps,
+      } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: [
+              'flatCronTriggerMaps',
+              'flatDatabaseEventTriggerMaps',
+              'flatRouteTriggerMaps',
+            ],
+          },
+        );
+
+      return fromFlatServerlessFunctionToServerlessFunctionDto({
+        flatServerlessFunction,
+        flatCronTriggerMaps,
+        flatDatabaseEventTriggerMaps,
+        flatRouteTriggerMaps,
+      });
     } catch (error) {
-      serverlessFunctionGraphQLApiExceptionHandler(error);
+      return serverlessFunctionGraphQLApiExceptionHandler(error);
     }
   }
 

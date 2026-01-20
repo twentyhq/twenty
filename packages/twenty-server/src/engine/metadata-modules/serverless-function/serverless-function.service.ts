@@ -32,12 +32,8 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { fromCreateServerlessFunctionInputToFlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/utils/from-create-serverless-function-input-to-flat-serverless-function.util';
-import {
-  fromFlatServerlessFunctionToServerlessFunctionDto,
-  ServerlessFunctionDtoFromFlat,
-} from 'src/engine/metadata-modules/serverless-function/utils/from-flat-serverless-function-to-serverless-function-dto.util';
 import { fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOrThrow } from 'src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
@@ -227,7 +223,7 @@ export class ServerlessFunctionService {
   async publishOneServerlessFunctionOrFail(
     id: string,
     workspaceId: string,
-  ): Promise<ServerlessFunctionDtoFromFlat> {
+  ): Promise<FlatServerlessFunction> {
     const { flatServerlessFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -255,9 +251,7 @@ export class ServerlessFunctionService {
       );
 
       if (deepEqual(latestCode, draftCode)) {
-        return fromFlatServerlessFunctionToServerlessFunctionDto(
-          existingFlatServerlessFunction,
-        );
+        return existingFlatServerlessFunction;
       }
     }
 
@@ -334,9 +328,7 @@ export class ServerlessFunctionService {
       );
     }
 
-    return fromFlatServerlessFunctionToServerlessFunctionDto(
-      publishedFlatServerlessFunction,
-    );
+    return publishedFlatServerlessFunction;
   }
 
   async deleteOneServerlessFunction({
@@ -347,7 +339,7 @@ export class ServerlessFunctionService {
     id: string;
     workspaceId: string;
     softDelete?: boolean;
-  }): Promise<ServerlessFunctionDtoFromFlat> {
+  }): Promise<FlatServerlessFunction> {
     const { flatServerlessFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -396,9 +388,7 @@ export class ServerlessFunctionService {
         );
       }
 
-      return fromFlatServerlessFunctionToServerlessFunctionDto(
-        updatedFlatServerlessFunctionWithDeletedAt,
-      );
+      return updatedFlatServerlessFunctionWithDeletedAt;
     } else {
       const validateAndBuildResult =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -423,15 +413,13 @@ export class ServerlessFunctionService {
       }
     }
 
-    return fromFlatServerlessFunctionToServerlessFunctionDto(
-      existingFlatServerlessFunction,
-    );
+    return existingFlatServerlessFunction;
   }
 
   async restoreOneServerlessFunction(
     id: string,
     workspaceId: string,
-  ): Promise<ServerlessFunctionDtoFromFlat> {
+  ): Promise<FlatServerlessFunction> {
     const { flatServerlessFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -484,18 +472,16 @@ export class ServerlessFunctionService {
         },
       );
 
-    return fromFlatServerlessFunctionToServerlessFunctionDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedFlatServerlessFunctionMaps,
-      }),
-    );
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatServerlessFunctionMaps,
+    });
   }
 
   async updateOneServerlessFunction(
     serverlessFunctionInput: UpdateServerlessFunctionInput,
     workspaceId: string,
-  ): Promise<ServerlessFunctionDtoFromFlat> {
+  ): Promise<FlatServerlessFunction> {
     const { flatServerlessFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -540,12 +526,10 @@ export class ServerlessFunctionService {
         },
       );
 
-    return fromFlatServerlessFunctionToServerlessFunctionDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: updatedFlatServerlessFunction.id,
-        flatEntityMaps: recomputedFlatServerlessFunctionMaps,
-      }),
-    );
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: updatedFlatServerlessFunction.id,
+      flatEntityMaps: recomputedFlatServerlessFunctionMaps,
+    });
   }
 
   async getAvailablePackages(serverlessFunctionId: string) {
@@ -583,7 +567,7 @@ export class ServerlessFunctionService {
       serverlessFunctionLayerId?: string;
     },
     workspaceId: string,
-  ): Promise<ServerlessFunctionDtoFromFlat> {
+  ): Promise<FlatServerlessFunction> {
     let serverlessFunctionToCreateLayerId =
       serverlessFunctionInput.serverlessFunctionLayerId;
 
@@ -645,12 +629,10 @@ export class ServerlessFunctionService {
         },
       );
 
-    return fromFlatServerlessFunctionToServerlessFunctionDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatServerlessFunctionToCreate.id,
-        flatEntityMaps: recomputedFlatServerlessFunctionMaps,
-      }),
-    );
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatServerlessFunctionToCreate.id,
+      flatEntityMaps: recomputedFlatServerlessFunctionMaps,
+    });
   }
 
   async createDraftFromPublishedVersion({
@@ -703,7 +685,7 @@ export class ServerlessFunctionService {
     id: string;
     version: string;
     workspaceId: string;
-  }): Promise<ServerlessFunctionDtoFromFlat> {
+  }): Promise<FlatServerlessFunction> {
     const { flatServerlessFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -718,7 +700,7 @@ export class ServerlessFunctionService {
         flatEntityMaps: flatServerlessFunctionMaps,
       });
 
-    const newServerlessFunction = await this.createOneServerlessFunction(
+    const newFlatServerlessFunction = await this.createOneServerlessFunction(
       {
         name: flatServerlessFunctionToDuplicate.name,
         description: flatServerlessFunctionToDuplicate.description ?? undefined,
@@ -740,16 +722,13 @@ export class ServerlessFunctionService {
       },
       to: {
         folderPath: getServerlessFolderOrThrow({
-          flatServerlessFunction: {
-            ...newServerlessFunction,
-            workspaceId,
-          },
+          flatServerlessFunction: newFlatServerlessFunction,
           version: 'draft',
         }),
       },
     });
 
-    return newServerlessFunction;
+    return newFlatServerlessFunction;
   }
 
   private async throttleExecution(workspaceId: string) {
