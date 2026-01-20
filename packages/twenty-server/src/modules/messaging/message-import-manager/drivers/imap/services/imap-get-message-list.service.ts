@@ -36,10 +36,11 @@ export class ImapGetMessageListService {
   async getMessageLists({
     connectedAccount,
     messageFolders,
-    messageFolderImportPolicy,
+    messageChannel,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
     const foldersToProcess =
-      messageFolderImportPolicy === MessageFolderImportPolicy.SELECTED_FOLDERS
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.SELECTED_FOLDERS
         ? messageFolders.filter((folder) => folder.isSynced)
         : messageFolders;
 

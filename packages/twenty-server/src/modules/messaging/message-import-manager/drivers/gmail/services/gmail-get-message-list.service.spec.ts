@@ -108,7 +108,11 @@ describe('GmailGetMessageListService', () => {
       ).mockResolvedValue({});
 
       const result = await service.getMessageLists({
-        messageChannel: { syncCursor: '', id: 'my-id' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'my-id',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
         connectedAccount: mockConnectedAccount,
         messageFolders: [
           createMockFolder({
@@ -117,7 +121,6 @@ describe('GmailGetMessageListService', () => {
             isSynced: true,
           }),
         ],
-        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result[0].messageExternalIds).toHaveLength(0);
@@ -168,7 +171,11 @@ describe('GmailGetMessageListService', () => {
       ).mockResolvedValue({});
 
       const result = await service.getMessageLists({
-        messageChannel: { syncCursor: '', id: 'my-id' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'my-id',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
         connectedAccount: mockConnectedAccount,
         messageFolders: [
           createMockFolder({
@@ -177,7 +184,6 @@ describe('GmailGetMessageListService', () => {
             isSynced: true,
           }),
         ],
-        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result[0].messageExternalIds).toHaveLength(5);
@@ -228,7 +234,11 @@ describe('GmailGetMessageListService', () => {
       ).mockResolvedValue({});
 
       const result = await service.getMessageLists({
-        messageChannel: { syncCursor: '', id: 'my-id' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'my-id',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
         connectedAccount: mockConnectedAccount,
         messageFolders: [
           createMockFolder({
@@ -237,7 +247,6 @@ describe('GmailGetMessageListService', () => {
             isSynced: true,
           }),
         ],
-        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result[0].messageExternalIds).toHaveLength(3);
@@ -269,7 +278,11 @@ describe('GmailGetMessageListService', () => {
       ).mockResolvedValue({});
 
       const result = await service.getMessageLists({
-        messageChannel: { syncCursor: '', id: 'my-id' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'my-id',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
         connectedAccount: mockConnectedAccount,
         messageFolders: [
           createMockFolder({
@@ -278,7 +291,6 @@ describe('GmailGetMessageListService', () => {
             isSynced: true,
           }),
         ],
-        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result[0].messageExternalIds).toHaveLength(0);
@@ -301,7 +313,11 @@ describe('GmailGetMessageListService', () => {
       ).mockResolvedValue({});
 
       const result = await service.getMessageLists({
-        messageChannel: { syncCursor: '', id: 'my-id' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'my-id',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
         connectedAccount: mockConnectedAccount,
         messageFolders: [
           createMockFolder({
@@ -315,7 +331,6 @@ describe('GmailGetMessageListService', () => {
             isSynced: false,
           }),
         ],
-        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result).toEqual([]);
@@ -344,7 +359,11 @@ describe('GmailGetMessageListService', () => {
       ).mockResolvedValue({});
 
       await service.getMessageLists({
-        messageChannel: { syncCursor: '', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
         connectedAccount: mockConnectedAccount,
         messageFolders: [
           createMockFolder({
@@ -368,7 +387,6 @@ describe('GmailGetMessageListService', () => {
             isSynced: false,
           }),
         ],
-        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       const expectedQuery = computeGmailExcludeSearchFilter([
@@ -403,7 +421,11 @@ describe('GmailGetMessageListService', () => {
       ).mockResolvedValue({});
 
       await service.getMessageLists({
-        messageChannel: { syncCursor: '', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
         connectedAccount: mockConnectedAccount,
         messageFolders: [
           createMockFolder({
@@ -417,7 +439,6 @@ describe('GmailGetMessageListService', () => {
             isSynced: false,
           }),
         ],
-        messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
       });
 
       expect(mockGmailClient.users.messages.list).toHaveBeenCalledWith(
@@ -486,7 +507,11 @@ describe('GmailGetMessageListService', () => {
       jest.spyOn(google, 'gmail').mockReturnValue({} as never);
 
       const result = await testService.getMessageLists({
-        messageChannel: { syncCursor: 'old-cursor', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: 'old-cursor',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
         connectedAccount: mockConnectedAccount,
         messageFolders: [
           createMockFolder({
@@ -500,7 +525,6 @@ describe('GmailGetMessageListService', () => {
             isSynced: false,
           }),
         ],
-        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result[0].messageExternalIds).toEqual(['inbox-msg']);
@@ -571,7 +595,11 @@ describe('GmailGetMessageListService', () => {
       jest.spyOn(google, 'gmail').mockReturnValue({} as never);
 
       const result = await testService.getMessageLists({
-        messageChannel: { syncCursor: 'old-cursor', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: 'old-cursor',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
         connectedAccount: mockConnectedAccount,
         messageFolders: [
           createMockFolder({
@@ -585,7 +613,6 @@ describe('GmailGetMessageListService', () => {
             isSynced: false,
           }),
         ],
-        messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
       });
 
       expect(result[0].messageExternalIds).toEqual([

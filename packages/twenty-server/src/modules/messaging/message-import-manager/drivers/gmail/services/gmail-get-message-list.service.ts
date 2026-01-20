@@ -148,10 +148,10 @@ export class GmailGetMessageListService {
     messageChannel,
     connectedAccount,
     messageFolders,
-    messageFolderImportPolicy,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
     if (
-      messageFolderImportPolicy === MessageFolderImportPolicy.SELECTED_FOLDERS
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.SELECTED_FOLDERS
     ) {
       const foldersToSync = messageFolders.filter((folder) => folder.isSynced);
 
@@ -177,7 +177,7 @@ export class GmailGetMessageListService {
       return this.getMessageListWithoutCursor(
         connectedAccount,
         messageFolders,
-        messageFolderImportPolicy,
+        messageChannel.messageFolderImportPolicy,
       );
     }
 
@@ -194,7 +194,7 @@ export class GmailGetMessageListService {
       connectedAccount,
       messageChannel.syncCursor,
       messageFolders,
-      messageFolderImportPolicy,
+      messageChannel.messageFolderImportPolicy,
     );
 
     const messagesAddedFiltered = messagesAdded.filter(

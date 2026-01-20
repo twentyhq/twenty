@@ -1,13 +1,13 @@
 import { type MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  type MessageFolderImportPolicy,
-  type MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 export type GetMessageListsArgs = {
-  messageChannel: Pick<MessageChannelWorkspaceEntity, 'syncCursor' | 'id'>;
+  messageChannel: Pick<
+    MessageChannelWorkspaceEntity,
+    'syncCursor' | 'id' | 'messageFolderImportPolicy'
+  >;
   connectedAccount: Pick<
     ConnectedAccountWorkspaceEntity,
     | 'provider'
@@ -18,5 +18,4 @@ export type GetMessageListsArgs = {
     | 'connectionParameters'
   >;
   messageFolders: MessageFolder[];
-  messageFolderImportPolicy: MessageFolderImportPolicy;
 };

@@ -107,9 +107,12 @@ describe('MicrosoftGetMessageListService', () => {
 
       const result = await service.getMessageLists({
         connectedAccount: mockConnectedAccount,
-        messageChannel: { syncCursor: '', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
         messageFolders: [syncedFolder, nonSyncedFolder],
-        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result).toHaveLength(1);
@@ -140,9 +143,12 @@ describe('MicrosoftGetMessageListService', () => {
 
       const result = await service.getMessageLists({
         connectedAccount: mockConnectedAccount,
-        messageChannel: { syncCursor: '', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
         messageFolders: [syncedFolder, nonSyncedFolder],
-        messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
       });
 
       expect(result).toHaveLength(2);
@@ -167,9 +173,12 @@ describe('MicrosoftGetMessageListService', () => {
 
       const result = await service.getMessageLists({
         connectedAccount: mockConnectedAccount,
-        messageChannel: { syncCursor: '', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
         messageFolders: [nonSyncedFolder1, nonSyncedFolder2],
-        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result).toEqual([]);
@@ -196,9 +205,12 @@ describe('MicrosoftGetMessageListService', () => {
 
       const result = await service.getMessageLists({
         connectedAccount: mockConnectedAccount,
-        messageChannel: { syncCursor: '', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
         messageFolders: [nonSyncedFolder1, nonSyncedFolder2],
-        messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
       });
 
       expect(result).toHaveLength(2);
@@ -207,9 +219,12 @@ describe('MicrosoftGetMessageListService', () => {
     it('should return empty array when ALL_FOLDERS policy but messageFolders array is empty', async () => {
       const result = await service.getMessageLists({
         connectedAccount: mockConnectedAccount,
-        messageChannel: { syncCursor: '', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
         messageFolders: [],
-        messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
       });
 
       expect(result).toEqual([]);

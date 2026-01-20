@@ -110,9 +110,12 @@ describe('ImapGetMessageListService', () => {
 
       const result = await service.getMessageLists({
         connectedAccount: mockConnectedAccount,
-        messageChannel: { syncCursor: '', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
         messageFolders: [syncedFolder, nonSyncedFolder],
-        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result).toHaveLength(1);
@@ -134,9 +137,12 @@ describe('ImapGetMessageListService', () => {
 
       const result = await service.getMessageLists({
         connectedAccount: mockConnectedAccount,
-        messageChannel: { syncCursor: '', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
         messageFolders: [syncedFolder, nonSyncedFolder],
-        messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
       });
 
       expect(result).toHaveLength(2);
@@ -161,9 +167,12 @@ describe('ImapGetMessageListService', () => {
 
       const result = await service.getMessageLists({
         connectedAccount: mockConnectedAccount,
-        messageChannel: { syncCursor: '', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
         messageFolders: [nonSyncedFolder1, nonSyncedFolder2],
-        messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
       expect(result).toHaveLength(0);
@@ -184,9 +193,12 @@ describe('ImapGetMessageListService', () => {
 
       const result = await service.getMessageLists({
         connectedAccount: mockConnectedAccount,
-        messageChannel: { syncCursor: '', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
         messageFolders: [nonSyncedFolder1, nonSyncedFolder2],
-        messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
       });
 
       expect(result).toHaveLength(2);
@@ -201,9 +213,12 @@ describe('ImapGetMessageListService', () => {
 
       await service.getMessageLists({
         connectedAccount: mockConnectedAccount,
-        messageChannel: { syncCursor: '', id: 'channel-1' },
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
         messageFolders: [folder],
-        messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
       });
 
       expect(imapClientProvider.closeClient).toHaveBeenCalledTimes(1);

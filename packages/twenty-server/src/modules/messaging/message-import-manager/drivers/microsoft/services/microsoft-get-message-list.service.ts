@@ -37,16 +37,16 @@ export class MicrosoftGetMessageListService {
     messageChannel,
     connectedAccount,
     messageFolders,
-    messageFolderImportPolicy,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
     const foldersToProcess =
-      messageFolderImportPolicy === MessageFolderImportPolicy.SELECTED_FOLDERS
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.SELECTED_FOLDERS
         ? messageFolders.filter((folder) => folder.isSynced)
         : messageFolders;
 
     if (foldersToProcess.length === 0) {
       this.logger.warn(
-        `Connected account ${connectedAccount.id}: No folders to process`,
+        `Connected account ${connectedAccount.id}: Message Channel: ${messageChannel.id}: No folders to process`,
       );
 
       return [];
