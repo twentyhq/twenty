@@ -63,5 +63,8 @@ export const SURVEY_RESULT_CUSTOM_FIELD_SEEDS: FieldMetadataSeed[] = [
     label: 'Files',
     name: 'files',
     icon: 'IconFiles',
+    settings: {
+      maxNumberOfValues: 5,
+    },
   } as FieldMetadataDTO<FieldMetadataType.FILES>,
 ];

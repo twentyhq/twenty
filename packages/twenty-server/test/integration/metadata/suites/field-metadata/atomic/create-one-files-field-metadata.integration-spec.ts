@@ -4,120 +4,9 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import {
-  type EachTestingContext,
-  eachTestingContextFilter,
-} from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-
-type FilesFieldInput = {
-  name: string;
-  label: string;
-  type: FieldMetadataType.FILES;
-  settings?: { maxNumberOfValues: number };
-  isUnique?: boolean;
-};
-
-type TestContext = EachTestingContext<{
-  input: FilesFieldInput;
-}>[];
-
-const SUCCESSFUL_TEST_CASES: TestContext = [
-  {
-    title: 'files field with maxNumberOfValues = 1',
-    context: {
-      input: {
-        name: 'filesFieldOne',
-        label: 'Files Field One',
-        type: FieldMetadataType.FILES,
-        settings: {
-          maxNumberOfValues: 1,
-        },
-      },
-    },
-  },
-  {
-    title: 'files field with maxNumberOfValues = 5',
-    context: {
-      input: {
-        name: 'filesFieldFive',
-        label: 'Files Field Five',
-        type: FieldMetadataType.FILES,
-        settings: {
-          maxNumberOfValues: 5,
-        },
-      },
-    },
-  },
-  {
-    title: 'files field with maxNumberOfValues = 10 (max allowed)',
-    context: {
-      input: {
-        name: 'filesFieldTen',
-        label: 'Files Field Ten',
-        type: FieldMetadataType.FILES,
-        settings: {
-          maxNumberOfValues: 10,
-        },
-      },
-    },
-  },
-];
-
-const FAILING_TEST_CASES: TestContext = [
-  {
-    title: 'files field with maxNumberOfValues = 0',
-    context: {
-      input: {
-        name: 'filesFieldInvalid',
-        label: 'Files Field Invalid',
-        type: FieldMetadataType.FILES,
-        settings: {
-          maxNumberOfValues: 0,
-        },
-      },
-    },
-  },
-  {
-    title: 'files field with maxNumberOfValues = 11 (exceeds max)',
-    context: {
-      input: {
-        name: 'filesFieldExceeds',
-        label: 'Files Field Exceeds',
-        type: FieldMetadataType.FILES,
-        settings: {
-          maxNumberOfValues: 11,
-        },
-      },
-    },
-  },
-  {
-    title: 'files field without settings',
-    context: {
-      input: {
-        name: 'filesFieldNoSettings',
-        label: 'Files Field No Settings',
-        type: FieldMetadataType.FILES,
-      },
-    },
-  },
-  {
-    title: 'files field with isUnique = true',
-    context: {
-      input: {
-        name: 'filesFieldUnique',
-        label: 'Files Field Unique',
-        type: FieldMetadataType.FILES,
-        settings: {
-          maxNumberOfValues: 5,
-        },
-        isUnique: true,
-      },
-    },
-  },
-];
 
 describe('createOne FILES field metadata - successful', () => {
   let createdObjectMetadataId: string;
@@ -164,31 +53,83 @@ describe('createOne FILES field metadata - successful', () => {
     });
   });
 
-  test.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
-    'should create $title',
-    async ({ context: { input } }) => {
-      const { data, errors } = await createOneFieldMetadata({
-        expectToFail: false,
-        input: {
-          objectMetadataId: createdObjectMetadataId,
-          ...input,
-        },
-        gqlFields: `
-          id
-          type
-          name
-          label
-          settings
-        `,
-      });
+  it('should create files field with maxNumberOfValues = 1', async () => {
+    const { data, errors } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        name: 'filesFieldOne',
+        label: 'Files Field One',
+        type: FieldMetadataType.FILES,
+        settings: { maxNumberOfValues: 1 },
+      },
+      gqlFields: `
+        id
+        type
+        name
+        label
+        settings
+      `,
+    });
 
-      expect(errors).toBeUndefined();
-      expect(data).not.toBeNull();
-      expect(data.createOneField).toBeDefined();
-      expect(data.createOneField.type).toBe(FieldMetadataType.FILES);
-      expect(data.createOneField.settings).toEqual(input.settings);
-    },
-  );
+    expect(errors).toBeUndefined();
+    expect(data).not.toBeNull();
+    expect(data.createOneField).toBeDefined();
+    expect(data.createOneField.type).toBe(FieldMetadataType.FILES);
+    expect(data.createOneField.settings).toEqual({ maxNumberOfValues: 1 });
+  });
+
+  it('should create files field with maxNumberOfValues = 5', async () => {
+    const { data, errors } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        name: 'filesFieldFive',
+        label: 'Files Field Five',
+        type: FieldMetadataType.FILES,
+        settings: { maxNumberOfValues: 5 },
+      },
+      gqlFields: `
+        id
+        type
+        name
+        label
+        settings
+      `,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data).not.toBeNull();
+    expect(data.createOneField).toBeDefined();
+    expect(data.createOneField.type).toBe(FieldMetadataType.FILES);
+    expect(data.createOneField.settings).toEqual({ maxNumberOfValues: 5 });
+  });
+
+  it('should create files field with maxNumberOfValues = 10 (max allowed)', async () => {
+    const { data, errors } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        name: 'filesFieldTen',
+        label: 'Files Field Ten',
+        type: FieldMetadataType.FILES,
+        settings: { maxNumberOfValues: 10 },
+      },
+      gqlFields: `
+        id
+        type
+        name
+        label
+        settings
+      `,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data).not.toBeNull();
+    expect(data.createOneField).toBeDefined();
+    expect(data.createOneField.type).toBe(FieldMetadataType.FILES);
+    expect(data.createOneField.settings).toEqual({ maxNumberOfValues: 10 });
+  });
 });
 
 describe('createOne FILES field metadata - failing', () => {
@@ -236,20 +177,65 @@ describe('createOne FILES field metadata - failing', () => {
     });
   });
 
-  test.each(eachTestingContextFilter(FAILING_TEST_CASES))(
-    'should fail to create $title',
-    async ({ context: { input } }) => {
-      const { errors } = await createOneFieldMetadata({
-        expectToFail: true,
-        input: {
-          objectMetadataId: createdObjectMetadataId,
-          ...input,
-        },
-      });
+  it('should fail to create files field with maxNumberOfValues = 0', async () => {
+    const { errors } = await createOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        name: 'filesFieldInvalid',
+        label: 'Files Field Invalid',
+        type: FieldMetadataType.FILES,
+        settings: { maxNumberOfValues: 0 },
+      },
+    });
 
-      expectOneNotInternalServerErrorSnapshot({ errors });
-    },
-  );
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('should fail to create files field with maxNumberOfValues = 11 (exceeds max)', async () => {
+    const { errors } = await createOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        name: 'filesFieldExceeds',
+        label: 'Files Field Exceeds',
+        type: FieldMetadataType.FILES,
+        settings: { maxNumberOfValues: 11 },
+      },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('should fail to create files field without settings', async () => {
+    const { errors } = await createOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        name: 'filesFieldNoSettings',
+        label: 'Files Field No Settings',
+        type: FieldMetadataType.FILES,
+      },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('should fail to create files field with isUnique = true', async () => {
+    const { errors } = await createOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        name: 'filesFieldUnique',
+        label: 'Files Field Unique',
+        type: FieldMetadataType.FILES,
+        settings: { maxNumberOfValues: 5 },
+        isUnique: true,
+      },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
 });
 
 describe('createOne FILES field metadata - feature flag disabled', () => {

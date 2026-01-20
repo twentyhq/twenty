@@ -32,7 +32,7 @@ export const validateFilesFlatFieldMetadata = ({
   }
 
   if (
-    !isDefined(flatEntityToValidate.settings.maxNumberOfValues) ||
+    !isDefined(flatEntityToValidate?.settings?.maxNumberOfValues) ||
     flatEntityToValidate.settings.maxNumberOfValues < 1 ||
     flatEntityToValidate.settings.maxNumberOfValues >
       FILES_FIELD_MAX_NUMBER_OF_VALUES

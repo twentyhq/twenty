@@ -6,76 +6,9 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import {
-  type EachTestingContext,
-  eachTestingContextFilter,
-} from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
-
-type SuccessfulTestContext = EachTestingContext<{
-  input: Partial<UpdateFieldInput>;
-}>[];
-
-type FailingTestContext = EachTestingContext<{
-  input: Partial<UpdateFieldInput>;
-}>[];
-
-const SUCCESSFUL_TEST_CASES: SuccessfulTestContext = [
-  {
-    title: 'files field basic metadata (label, description, icon)',
-    context: {
-      input: {
-        label: 'Updated Files',
-        description: 'Updated description',
-        icon: 'IconFiles',
-      },
-    },
-  },
-  {
-    title: 'files field settings with maxNumberOfValues = 5',
-    context: {
-      input: {
-        settings: {
-          maxNumberOfValues: 5,
-        },
-      },
-    },
-  },
-];
-
-const FAILING_TEST_CASES: FailingTestContext = [
-  {
-    title: 'files field settings with maxNumberOfValues = 0',
-    context: {
-      input: {
-        settings: {
-          maxNumberOfValues: 0,
-        },
-      },
-    },
-  },
-  {
-    title: 'files field settings with maxNumberOfValues = 11 (exceeds max)',
-    context: {
-      input: {
-        settings: {
-          maxNumberOfValues: 11,
-        },
-      },
-    },
-  },
-  {
-    title: 'files field with isUnique = true',
-    context: {
-      input: {
-        isUnique: true,
-      },
-    },
-  },
-];
 
 describe('updateOne FILES field metadata - successful', () => {
   let createdObjectMetadataId: string;
@@ -160,30 +93,59 @@ describe('updateOne FILES field metadata - successful', () => {
     });
   });
 
-  test.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
-    'should update $title',
-    async ({ context: { input } }) => {
-      const { data, errors } = await updateOneFieldMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: createdFieldMetadataId,
-          updatePayload: input,
-        },
-        gqlFields: `
-          id
-          type
-          name
-          label
-          description
-          icon
-          settings
-        `,
-      });
+  it('should update files field basic metadata (label, description, icon)', async () => {
+    const updatePayload = {
+      label: 'Updated Files',
+      description: 'Updated description',
+      icon: 'IconFiles',
+    };
 
-      expect(errors).toBeUndefined();
-      expect(data.updateOneField).toMatchObject(input);
-    },
-  );
+    const { data, errors } = await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdFieldMetadataId,
+        updatePayload,
+      },
+      gqlFields: `
+        id
+        type
+        name
+        label
+        description
+        icon
+        settings
+      `,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data.updateOneField).toMatchObject(updatePayload);
+  });
+
+  it('should update files field settings with maxNumberOfValues = 5', async () => {
+    const updatePayload = {
+      settings: { maxNumberOfValues: 5 },
+    };
+
+    const { data, errors } = await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdFieldMetadataId,
+        updatePayload,
+      },
+      gqlFields: `
+        id
+        type
+        name
+        label
+        description
+        icon
+        settings
+      `,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data.updateOneField).toMatchObject(updatePayload);
+  });
 });
 
 describe('updateOne FILES field metadata - failing', () => {
@@ -265,18 +227,45 @@ describe('updateOne FILES field metadata - failing', () => {
     });
   });
 
-  test.each(eachTestingContextFilter(FAILING_TEST_CASES))(
-    'should fail to update $title',
-    async ({ context: { input } }) => {
-      const { errors } = await updateOneFieldMetadata({
-        expectToFail: true,
-        input: {
-          idToUpdate: createdFieldMetadataId,
-          updatePayload: input,
+  it('should fail to update files field settings with maxNumberOfValues = 0', async () => {
+    const { errors } = await updateOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        idToUpdate: createdFieldMetadataId,
+        updatePayload: {
+          settings: { maxNumberOfValues: 0 },
         },
-      });
+      },
+    });
 
-      expectOneNotInternalServerErrorSnapshot({ errors });
-    },
-  );
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('should fail to update files field settings with maxNumberOfValues = 11 (exceeds max)', async () => {
+    const { errors } = await updateOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        idToUpdate: createdFieldMetadataId,
+        updatePayload: {
+          settings: { maxNumberOfValues: 11 },
+        },
+      },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('should fail to update files field with isUnique = true', async () => {
+    const { errors } = await updateOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        idToUpdate: createdFieldMetadataId,
+        updatePayload: {
+          isUnique: true,
+        },
+      },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
 });
