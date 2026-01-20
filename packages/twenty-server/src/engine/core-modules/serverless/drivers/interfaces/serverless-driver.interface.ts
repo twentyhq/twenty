@@ -1,5 +1,6 @@
+import { type FlatServerlessFunctionLayer } from 'src/engine/metadata-modules/serverless-function-layer/types/flat-serverless-function-layer.type';
 import { type ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
-import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 
 export type ServerlessExecuteError = {
   errorType: string;
@@ -15,16 +16,17 @@ export type ServerlessExecuteResult = {
   error?: ServerlessExecuteError;
 };
 
-// TODO refactor to be using FlatServerlessFunction
 export interface ServerlessDriver {
-  delete(serverlessFunction: ServerlessFunctionEntity): Promise<void>;
+  delete(flatServerlessFunction: FlatServerlessFunction): Promise<void>;
   execute({
-    serverlessFunction,
+    flatServerlessFunction,
+    flatServerlessFunctionLayer,
     payload,
     version,
     env,
   }: {
-    serverlessFunction: ServerlessFunctionEntity;
+    flatServerlessFunction: FlatServerlessFunction;
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer;
     payload: object;
     version: string;
     env?: Record<string, string>;

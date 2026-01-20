@@ -77,15 +77,19 @@ export const useCreateNewIndexRecord = ({
           buildRecordInputFromRLSPredicates();
         const recordInputFromFilters = buildRecordInputFromFilters();
 
+        const mergedRecordInput = {
+          ...recordInputFromRLSPredicates,
+          ...recordInputFromFilters,
+          ...recordInput,
+        };
+
         const recordIndexOpenRecordIn = snapshot
           .getLoadable(recordIndexOpenRecordInState)
           .getValue();
 
         const createdRecord = await createOneRecord({
           id: recordId,
-          ...recordInputFromRLSPredicates,
-          ...recordInputFromFilters,
-          ...recordInput,
+          ...mergedRecordInput,
         });
 
         if (

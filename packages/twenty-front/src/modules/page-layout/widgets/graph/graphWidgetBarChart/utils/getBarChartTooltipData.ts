@@ -10,7 +10,6 @@ type GetBarChartTooltipDataParameters = {
   slice: BarChartSlice;
   enrichedKeys: BarChartEnrichedKey[];
   formatOptions: GraphValueFormatOptions;
-  layout?: 'vertical' | 'horizontal';
 };
 
 type BarChartTooltipData = {
@@ -22,18 +21,13 @@ export const getBarChartTooltipData = ({
   slice,
   enrichedKeys,
   formatOptions,
-  layout = 'vertical',
 }: GetBarChartTooltipDataParameters): BarChartTooltipData | null => {
   if (slice.bars.length === 0) {
     return null;
   }
 
   const firstBar = slice.bars[0];
-
-  const keysToProcess =
-    layout === 'vertical' ? [...enrichedKeys].reverse() : enrichedKeys;
-
-  const tooltipItems = keysToProcess.map((enrichedKey) => {
+  const tooltipItems = enrichedKeys.map((enrichedKey) => {
     const seriesValue = Number(firstBar.data.data[enrichedKey.key] ?? 0);
     return {
       key: enrichedKey.key,

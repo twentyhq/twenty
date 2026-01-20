@@ -16,6 +16,8 @@ export const RowLevelPermissionPredicateGroupExceptionCode =
       'INVALID_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_DATA',
     ROLE_NOT_FOUND: 'ROLE_NOT_FOUND',
     UNAUTHORIZED_ROLE_MODIFICATION: 'UNAUTHORIZED_ROLE_MODIFICATION',
+    ROW_LEVEL_PERMISSION_FEATURE_DISABLED:
+      'ROW_LEVEL_PERMISSION_FEATURE_DISABLED',
   } as const);
 
 const rowLevelPermissionPredicateGroupExceptionUserFriendlyMessages: Record<
@@ -26,6 +28,7 @@ const rowLevelPermissionPredicateGroupExceptionUserFriendlyMessages: Record<
   INVALID_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_DATA: msg`Invalid row level permission predicate group data.`,
   ROLE_NOT_FOUND: msg`Role not found.`,
   UNAUTHORIZED_ROLE_MODIFICATION: msg`Cannot modify predicate group belonging to a different role.`,
+  ROW_LEVEL_PERMISSION_FEATURE_DISABLED: msg`Row level permission predicate feature is disabled.`,
   INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
 };
 

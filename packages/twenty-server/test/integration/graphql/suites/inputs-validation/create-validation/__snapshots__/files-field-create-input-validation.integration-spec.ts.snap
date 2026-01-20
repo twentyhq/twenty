@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Create input validation - FILES Gql create input - failure FILES - should fail with : {"filesField":"not-a-files-array"} 1`] = `"Expected type "FileInput" to be an object."`;
+
+exports[`Create input validation - FILES Gql create input - failure FILES - should fail with : {"filesField":[{"fileId":"550e8400-e29b-41d4-a716-446655440000","label":"Document.pdf","fileType":"application/pdf"}]} 1`] = `"Field "fileType" is not defined by type "FileInput". Did you mean "fileId"?"`;
+
+exports[`Create input validation - FILES Gql create input - failure FILES - should fail with : {"filesField":[{"fileId":"550e8400-e29b-41d4-a716-446655440000","label":"Document.pdf"},{"fileId":"550e8400-e29b-41d4-a716-446655440001","label":"Document.pdf"},{"fileId":"550e8400-e29b-41d4-a716-446655440002","label":"Document.pdf"},{"fileId":"550e8400-e29b-41d4-a716-446655440003","label":"Document.pdf"},{"fileId":"550e8400-e29b-41d4-a716-446655440004","label":"Document.pdf"},{"fileId":"550e8400-e29b-41d4-a716-446655440005","label":"Document.pdf"}]} 1`] = `"Max number of files is 2"`;
+
+exports[`Create input validation - FILES Gql create input - failure FILES - should fail with : {"filesField":[{"fileId":"550e8400-e29b-41d4-a716-446655440000","label":12345}]} 1`] = `"String cannot represent a non string value: 12345"`;
+
+exports[`Create input validation - FILES Gql create input - failure FILES - should fail with : {"filesField":[{"fileId":"not-a-uuid","label":"Document.pdf"}]} 1`] = `"Invalid UUID"`;
+
+exports[`Create input validation - FILES Gql create input - failure FILES - should fail with : {"filesField":[{"invalidField":"test"}]} 1`] = `"Field "fileId" of required type "UUID!" was not provided."`;
+
+exports[`Create input validation - FILES Rest create input - failure FILES - should fail with : {"filesField":"not-a-files-array"} 1`] = `"["Invalid value \\"'not-a-files-array'\\" for FILES field \\"filesField\\" - It should be an array of objects with \\"fileId\\" and \\"label\\" properties."]"`;
+
+exports[`Create input validation - FILES Rest create input - failure FILES - should fail with : {"filesField":[{"fileId":"550e8400-e29b-41d4-a716-446655440000","label":"Document.pdf","fileType":"application/pdf"}]} 1`] = `"["Invalid value \\"[\\n  {\\n    fileId: '550e8400-e29b-41d4-a716-446655440000',\\n    label: 'Document.pdf',\\n    fileType: 'application/pdf'\\n  }\\n]\\" for FILES field \\"filesField\\" - 0: Unrecognized key: \\"fileType\\""]"`;
+
+exports[`Create input validation - FILES Rest create input - failure FILES - should fail with : {"filesField":[{"fileId":"550e8400-e29b-41d4-a716-446655440000","label":"Document.pdf"},{"fileId":"550e8400-e29b-41d4-a716-446655440001","label":"Document.pdf"},{"fileId":"550e8400-e29b-41d4-a716-446655440002","label":"Document.pdf"},{"fileId":"550e8400-e29b-41d4-a716-446655440003","label":"Document.pdf"},{"fileId":"550e8400-e29b-41d4-a716-446655440004","label":"Document.pdf"},{"fileId":"550e8400-e29b-41d4-a716-446655440005","label":"Document.pdf"}]} 1`] = `"["Max number of files is 2"]"`;
+
+exports[`Create input validation - FILES Rest create input - failure FILES - should fail with : {"filesField":[{"fileId":"550e8400-e29b-41d4-a716-446655440000","label":12345}]} 1`] = `"["Invalid value \\"[ { fileId: '550e8400-e29b-41d4-a716-446655440000', label: 12345 } ]\\" for FILES field \\"filesField\\" - 0.label: Invalid input: expected string, received number"]"`;
+
+exports[`Create input validation - FILES Rest create input - failure FILES - should fail with : {"filesField":[{"fileId":"not-a-uuid","label":"Document.pdf"}]} 1`] = `"["Invalid value \\"[ { fileId: 'not-a-uuid', label: 'Document.pdf' } ]\\" for FILES field \\"filesField\\" - 0.fileId: Invalid UUID"]"`;
+
+exports[`Create input validation - FILES Rest create input - failure FILES - should fail with : {"filesField":[{"invalidField":"test"}]} 1`] = `"["Invalid value \\"[ { invalidField: 'test' } ]\\" for FILES field \\"filesField\\" - 0.fileId: Invalid input: expected string, received undefined, 0.label: Invalid input: expected string, received undefined, 0: Unrecognized key: \\"invalidField\\""]"`;

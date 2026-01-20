@@ -32,6 +32,10 @@ export const copyBaseApplicationProject = async ({
     appDirectory: appFolderPath,
   });
 
+  await createDefaultFrontComponent({
+    appDirectory: appFolderPath,
+  });
+
   await createApplicationConfig({
     displayName: appDisplayName,
     description: appDescription,
@@ -115,6 +119,38 @@ export default defineRole({
   await fs.writeFile(join(appDirectory, 'default-function.role.ts'), content);
 };
 
+const createDefaultFrontComponent = async ({
+  appDirectory,
+}: {
+  appDirectory: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineFrontComponent } from 'twenty-sdk';
+
+export const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello, World!</h1>
+      <p>This is your first front component.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '${universalIdentifier}',
+  name: 'hello-world',
+  description: 'A sample front component',
+  component: HelloWorld,
+});
+`;
+
+  await fs.writeFile(
+    join(appDirectory, 'hello-world.front-component.tsx'),
+    content,
+  );
+};
+
 const createApplicationConfig = async ({
   displayName,
   description,
@@ -159,11 +195,14 @@ const createPackageJson = async ({
       'auth:login': 'twenty auth:login',
       'auth:logout': 'twenty auth:logout',
       'auth:status': 'twenty auth:status',
+      'auth:switch': 'twenty auth:switch',
+      'auth:list': 'twenty auth:list',
       'app:dev': 'twenty app:dev',
       'app:sync': 'twenty app:sync',
-      'app:add': 'twenty app:add',
+      'entity:add': 'twenty entity:add',
       'app:generate': 'twenty app:generate',
-      'app:logs': 'twenty app:logs',
+      'function:logs': 'twenty function:logs',
+      'function:execute': 'twenty function:execute',
       'app:uninstall': 'twenty app:uninstall',
       help: 'twenty help',
       lint: 'eslint',
@@ -175,6 +214,8 @@ const createPackageJson = async ({
     devDependencies: {
       typescript: '^5.9.3',
       '@types/node': '^24.7.2',
+      '@types/react': '^19.0.2',
+      react: '^19.0.2',
       eslint: '^9.32.0',
       'typescript-eslint': '^8.50.0',
     },

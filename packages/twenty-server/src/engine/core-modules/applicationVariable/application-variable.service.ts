@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -5,19 +6,24 @@ import { In, Not, Repository } from 'typeorm';
 import { ApplicationVariables } from 'twenty-shared/application';
 
 import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
+@Injectable()
 export class ApplicationVariableEntityService {
   constructor(
     @InjectRepository(ApplicationVariableEntity)
     private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async update({
     key,
     value,
     applicationId,
+    workspaceId,
   }: Pick<ApplicationVariableEntity, 'key' | 'value'> & {
     applicationId: string;
+    workspaceId: string;
   }) {
     await this.applicationVariableRepository.update(
       { key, applicationId },
@@ -25,14 +31,20 @@ export class ApplicationVariableEntityService {
         value,
       },
     );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'applicationVariableMaps',
+    ]);
   }
 
   async upsertManyApplicationVariableEntities({
     applicationVariables,
     applicationId,
+    workspaceId,
   }: {
     applicationVariables?: ApplicationVariables;
     applicationId: string;
+    workspaceId: string;
   }) {
     if (!isDefined(applicationVariables)) {
       return;
@@ -74,5 +86,9 @@ export class ApplicationVariableEntityService {
       applicationId,
       key: Not(In(Object.keys(applicationVariables))),
     });
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'applicationVariableMaps',
+    ]);
   }
 }

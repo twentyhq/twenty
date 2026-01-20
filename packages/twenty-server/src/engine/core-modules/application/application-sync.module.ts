@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-sync.service';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -20,9 +21,12 @@ import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
+import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([FileEntity]),
     ApplicationModule,
     ApplicationVariableEntityModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
@@ -40,6 +44,7 @@ import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-commo
     ObjectPermissionModule,
     PermissionFlagModule,
     WorkflowCommonModule,
+    FileStorageModule,
   ],
   providers: [
     ApplicationResolver,
