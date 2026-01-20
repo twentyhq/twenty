@@ -1,13 +1,10 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 
 export const useDeleteFavorite = () => {
-  const { deleteOneRecord } = useDeleteOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Favorite,
-  });
+  const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
 
-  const deleteFavorite = (favoriteId: string) => {
-    deleteOneRecord(favoriteId);
+  const deleteFavorite = async (favoriteId: string) => {
+    await deleteNavigationMenuItem(favoriteId);
   };
 
   return { deleteFavorite };
