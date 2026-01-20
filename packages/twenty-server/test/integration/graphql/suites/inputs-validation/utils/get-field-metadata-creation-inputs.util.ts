@@ -5,6 +5,8 @@ import {
 import {
   FieldMetadataType,
   RelationType,
+  type FieldMetadataFilesSettings,
+  type FieldMetadataMultiItemSettings,
   type RelationCreationPayload,
 } from 'twenty-shared/types';
 
@@ -18,6 +20,7 @@ type FieldMetadataCreationInput = {
   options?: FieldMetadataComplexOption[];
   relationCreationPayload?: RelationCreationPayload;
   morphRelationsCreationPayload?: RelationCreationPayload[];
+  settings?: FieldMetadataMultiItemSettings | FieldMetadataFilesSettings;
 };
 
 export const getFieldMetadataCreationInputs = (
@@ -164,6 +167,9 @@ export const getFieldMetadataCreationInputs = (
       label: 'filesField',
       type: FieldMetadataType.FILES,
       objectMetadataId,
+      settings: {
+        maxNumberOfValues: 10,
+      },
     },
     [FieldMetadataType.UUID]: {
       name: 'uuidField',

@@ -47,7 +47,7 @@ export type FieldMetadataAddressSettings = {
 };
 
 export type FieldMetadataFilesSettings = {
-  maxNumberOfValues?: number;
+  maxNumberOfValues: number;
 };
 
 export type FieldMetadataTsVectorSettings = {
@@ -68,7 +68,7 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.EMAILS]: FieldMetadataMultiItemSettings | null;
   [FieldMetadataType.LINKS]: FieldMetadataMultiItemSettings | null;
   [FieldMetadataType.ARRAY]: FieldMetadataMultiItemSettings | null;
-  [FieldMetadataType.FILES]: FieldMetadataFilesSettings | null;
+  [FieldMetadataType.FILES]: FieldMetadataFilesSettings;
 };
 
 export type AllFieldMetadataSettings =

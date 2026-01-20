@@ -9,5 +9,4 @@ export const FILE_CATEGORIES = {
   OTHER: 'OTHER',
 } as const;
 
-export type FileCategory =
-  (typeof FILE_CATEGORIES)[keyof typeof FILE_CATEGORIES];
+export type FileCategory = keyof typeof FILE_CATEGORIES;
