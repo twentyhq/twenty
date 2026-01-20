@@ -51,7 +51,7 @@ export class RowLevelPermissionPredicateGroupService {
     createRowLevelPermissionPredicateGroupInput: CreateRowLevelPermissionPredicateGroupInput;
     workspaceId: string;
   }): Promise<RowLevelPermissionPredicateGroupDTO> {
-    await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
 
     const flatGroupToCreate =
       fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermissionPredicateGroupToCreate(
@@ -89,7 +89,7 @@ export class RowLevelPermissionPredicateGroupService {
     updateRowLevelPermissionPredicateGroupInput: UpdateRowLevelPermissionPredicateGroupInput;
     workspaceId: string;
   }): Promise<RowLevelPermissionPredicateGroupDTO> {
-    await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
 
     const { flatRowLevelPermissionPredicateGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -135,7 +135,7 @@ export class RowLevelPermissionPredicateGroupService {
     deleteRowLevelPermissionPredicateGroupInput: DeleteRowLevelPermissionPredicateGroupInput;
     workspaceId: string;
   }): Promise<RowLevelPermissionPredicateGroupDTO> {
-    await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
 
     const { flatRowLevelPermissionPredicateGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -181,7 +181,7 @@ export class RowLevelPermissionPredicateGroupService {
     destroyRowLevelPermissionPredicateGroupInput: DestroyRowLevelPermissionPredicateGroupInput;
     workspaceId: string;
   }): Promise<RowLevelPermissionPredicateGroupDTO> {
-    await this.ensureRowLevelPermissionEntitlement(workspaceId);
+    await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
 
     const { flatRowLevelPermissionPredicateGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -210,17 +210,10 @@ export class RowLevelPermissionPredicateGroupService {
   async findByWorkspaceId(
     workspaceId: string,
   ): Promise<RowLevelPermissionPredicateGroupDTO[]> {
-    try {
-      await this.ensureRowLevelPermissionEntitlement(workspaceId);
-    } catch (error) {
-      if (
-        error instanceof RowLevelPermissionPredicateGroupException &&
-        error.code ===
-          RowLevelPermissionPredicateGroupExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED
-      ) {
-        return [];
-      }
+    const hasRowLevelPermissionFeature =
+      await this.hasRowLevelPermissionFeature(workspaceId);
 
+    if (!hasRowLevelPermissionFeature) {
       return [];
     }
 
@@ -247,17 +240,10 @@ export class RowLevelPermissionPredicateGroupService {
     workspaceId: string,
     roleId: string,
   ): Promise<RowLevelPermissionPredicateGroupDTO[]> {
-    try {
-      await this.ensureRowLevelPermissionEntitlement(workspaceId);
-    } catch (error) {
-      if (
-        error instanceof RowLevelPermissionPredicateGroupException &&
-        error.code ===
-          RowLevelPermissionPredicateGroupExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED
-      ) {
-        return [];
-      }
+    const hasRowLevelPermissionFeature =
+      await this.hasRowLevelPermissionFeature(workspaceId);
 
+    if (!hasRowLevelPermissionFeature) {
       return [];
     }
 
@@ -284,17 +270,10 @@ export class RowLevelPermissionPredicateGroupService {
     id: string,
     workspaceId: string,
   ): Promise<RowLevelPermissionPredicateGroupDTO | null> {
-    try {
-      await this.ensureRowLevelPermissionEntitlement(workspaceId);
-    } catch (error) {
-      if (
-        error instanceof RowLevelPermissionPredicateGroupException &&
-        error.code ===
-          RowLevelPermissionPredicateGroupExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED
-      ) {
-        return null;
-      }
+    const hasRowLevelPermissionFeature =
+      await this.hasRowLevelPermissionFeature(workspaceId);
 
+    if (!hasRowLevelPermissionFeature) {
       return null;
     }
 
@@ -369,7 +348,9 @@ export class RowLevelPermissionPredicateGroupService {
     ]);
   }
 
-  private async ensureRowLevelPermissionEntitlement(workspaceId: string) {
+  private async hasRowLevelPermissionFeature(
+    workspaceId: string,
+  ): Promise<boolean> {
     const isBillingEnabled = this.configService.get('IS_BILLING_ENABLED');
     const entrepriseKey = this.configService.get('ENTERPRISE_KEY');
 
@@ -380,10 +361,17 @@ export class RowLevelPermissionPredicateGroupService {
       );
 
     if (isDefined(entrepriseKey)) {
-      return;
+      return true;
     }
 
-    if (isBillingEnabled && !isRowLevelPermissionEnabled) {
+    return isBillingEnabled && isRowLevelPermissionEnabled;
+  }
+
+  private async hasRowLevelPermissionFeatureOrThrow(workspaceId: string) {
+    const hasRowLevelPermissionFeature =
+      await this.hasRowLevelPermissionFeature(workspaceId);
+
+    if (!hasRowLevelPermissionFeature) {
       throw new RowLevelPermissionPredicateGroupException(
         'Row level permission predicate feature is disabled',
         RowLevelPermissionPredicateGroupExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED,
