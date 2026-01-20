@@ -27,10 +27,11 @@ export class ManifestWatcher implements RestartableWatcher {
     this.appPath = options.appPath;
     this.callbacks = options.callbacks ?? {};
   }
-  restart(manifest: ApplicationManifest): Promise<void> {
+  restart(_manifest: ApplicationManifest): Promise<void> {
     throw new Error('Method not implemented.');
   }
-  shouldRestart(oldManifest: ApplicationManifest | null, newManifest: ApplicationManifest): boolean {
+
+  shouldRestart(_oldManifest: ApplicationManifest | null, _newManifest: ApplicationManifest): boolean {
     throw new Error('Method not implemented.');
   }
 
