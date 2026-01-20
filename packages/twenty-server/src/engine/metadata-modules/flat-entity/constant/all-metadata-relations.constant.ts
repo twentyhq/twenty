@@ -94,6 +94,7 @@ export const ALL_METADATA_RELATIONS = {
   navigationMenuItem: {
     manyToOne: {
       workspace: null,
+      userWorkspace: null,
       application: null,
       targetObjectMetadata: {
         metadataName: 'objectMetadata',
