@@ -9,6 +9,7 @@ describe('NavigationMenuItem creation should succeed', () => {
   let companyObjectMetadataId: string;
   let personObjectMetadataId: string;
   let validUserWorkspaceId: string | null;
+  let createdFolderId: string | undefined;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -54,6 +55,13 @@ describe('NavigationMenuItem creation should succeed', () => {
       });
       createdNavigationMenuItemId = undefined as unknown as string;
     }
+    if (createdFolderId) {
+      await deleteNavigationMenuItem({
+        expectToFail: false,
+        input: { id: createdFolderId },
+      });
+      createdFolderId = undefined;
+    }
   });
 
   it('should create a basic navigation menu item with minimal input', async () => {
@@ -95,6 +103,7 @@ describe('NavigationMenuItem creation should succeed', () => {
     const folderId = folderData?.createNavigationMenuItem?.id;
 
     jestExpectToBeDefined(folderId);
+    createdFolderId = folderId;
 
     const { data } = await createNavigationMenuItem({
       expectToFail: false,
@@ -116,12 +125,6 @@ describe('NavigationMenuItem creation should succeed', () => {
       userWorkspaceId: validUserWorkspaceId,
       folderId,
       position: 5,
-    });
-
-    // Clean up folder item
-    await deleteNavigationMenuItem({
-      expectToFail: false,
-      input: { id: folderId },
     });
   });
 
