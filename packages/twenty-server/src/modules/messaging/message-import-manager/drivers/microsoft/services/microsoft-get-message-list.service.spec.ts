@@ -146,7 +146,7 @@ describe('MicrosoftGetMessageListService', () => {
         messageChannel: {
           syncCursor: '',
           id: 'channel-1',
-          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
         },
         messageFolders: [syncedFolder, nonSyncedFolder],
       });
@@ -208,7 +208,7 @@ describe('MicrosoftGetMessageListService', () => {
         messageChannel: {
           syncCursor: '',
           id: 'channel-1',
-          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
         },
         messageFolders: [nonSyncedFolder1, nonSyncedFolder2],
       });
