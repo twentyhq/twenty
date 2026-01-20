@@ -78,6 +78,9 @@ const injectRelationWidgetsIntoLayout = (
           };
         }
 
+        // TODO: This note widget repositioning logic is temporary and will be deleted soon.
+        // We need this to ensure the note editor is displayed before record relations,
+        // matching the behavior of the old show page.
         const noteWidgetIndex = tab.widgets.findIndex(
           (widget) => widget.type === WidgetType.NOTES,
         );
