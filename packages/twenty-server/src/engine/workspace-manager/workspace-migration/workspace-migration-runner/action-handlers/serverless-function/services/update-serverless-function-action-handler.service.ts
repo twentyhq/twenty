@@ -69,7 +69,7 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
     flatServerlessFunction: FlatServerlessFunction;
   }) {
     this.serverlessService.delete(
-      flatServerlessFunction as unknown as ServerlessFunctionEntity,
+      flatServerlessFunction,
     );
   }
 
