@@ -101,6 +101,9 @@ export const SettingsMorphRelationMultiSelect = ({
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
+  const [localSelectedObjectMetadataIds, setLocalSelectedObjectMetadataIds] =
+    useState<string[]>(selectedObjectMetadataIds);
+
   const { getIcon } = useIcons();
   const options = activeObjectMetadataItems
     .filter(isObjectMetadataAvailableForRelation)
@@ -114,7 +117,7 @@ export const SettingsMorphRelationMultiSelect = ({
     }));
 
   const selectedOptions = options.filter((option) =>
-    selectedObjectMetadataIds.includes(option.objectMetadataId),
+    localSelectedObjectMetadataIds.includes(option.objectMetadataId),
   );
 
   const filteredOptions = useMemo(
@@ -156,9 +159,6 @@ export const SettingsMorphRelationMultiSelect = ({
   const addOrRemoveFromArray = (array: string[], item: string) => {
     let newArray = new Set(array);
     if (newArray.has(item)) {
-      if (newArray.size <= 1) {
-        return array;
-      }
       newArray.delete(item);
     } else {
       newArray.add(item);
@@ -240,9 +240,12 @@ export const SettingsMorphRelationMultiSelect = ({
                         onEnter={() => {
                           const newSelectedObjectMetadataIds =
                             addOrRemoveFromArray(
-                              selectedObjectMetadataIds,
+                              localSelectedObjectMetadataIds,
                               option.objectMetadataId,
                             );
+                          setLocalSelectedObjectMetadataIds(
+                            newSelectedObjectMetadataIds,
+                          );
                           onChange?.(newSelectedObjectMetadataIds);
                           onBlur?.();
                           closeDropdown(dropdownId);
@@ -261,10 +264,20 @@ export const SettingsMorphRelationMultiSelect = ({
                           onSelectChange={() => {
                             let newSelectedObjectMetadataIds =
                               addOrRemoveFromArray(
-                                selectedObjectMetadataIds,
+                                localSelectedObjectMetadataIds,
                                 option.objectMetadataId,
                               );
 
+                            console.log(
+                              'newSelectedObjectMetadataIds',
+                              newSelectedObjectMetadataIds,
+                              'localSelectedObjectMetadataIds',
+                              localSelectedObjectMetadataIds,
+                            );
+
+                            setLocalSelectedObjectMetadataIds(
+                              newSelectedObjectMetadataIds,
+                            );
                             onChange?.(newSelectedObjectMetadataIds);
                             onBlur?.();
                           }}
