@@ -35,13 +35,43 @@ export const useMorphPersistManyToOne = ({
         recordId: string;
         fieldDefinition: FieldDefinition<FieldMetadata>;
         valueToPersist: string | null | undefined;
-        targetObjectMetadataNameSingular: string;
+        targetObjectMetadataNameSingular?: string;
       }) => {
         assertFieldMetadata(
           FieldMetadataType.MORPH_RELATION,
           isFieldMorphRelation,
           fieldDefinition,
         );
+
+        const fieldName = fieldDefinition.metadata.fieldName;
+
+        if (!isDefined(valueToPersist)) {
+          const allNullRecordInput: Record<string, null> =
+            fieldDefinition.metadata.morphRelations.reduce(
+              (acc, morphRelation) => {
+                const computedFieldName = computeMorphRelationFieldName({
+                  fieldName,
+                  relationType: fieldDefinition.metadata.relationType,
+                  targetObjectMetadataNameSingular:
+                    morphRelation.targetObjectMetadata.nameSingular,
+                  targetObjectMetadataNamePlural:
+                    morphRelation.targetObjectMetadata.namePlural,
+                });
+                acc[`${computedFieldName}Id`] = null;
+                return acc;
+              },
+              {} as Record<string, null>,
+            );
+
+          updateOneRecord?.({
+            objectNameSingular: objectMetadataNameSingular,
+            idToUpdate: recordId,
+            updateOneRecordInput: allNullRecordInput,
+          });
+
+          return;
+        }
+
         const targetObjectMetadataItem = objectMetadataItems.find(
           (objectMetadataItem) =>
             objectMetadataItem.nameSingular ===
@@ -50,13 +80,6 @@ export const useMorphPersistManyToOne = ({
 
         if (!isDefined(targetObjectMetadataItem)) {
           throw new Error('Object metadata item not found');
-        }
-
-        const fieldName = fieldDefinition.metadata.fieldName;
-
-        if (!isDefined(valueToPersist)) {
-          // Handle detach
-          return;
         }
 
         const computedFieldName = computeMorphRelationFieldName({
