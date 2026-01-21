@@ -14,7 +14,6 @@ type GraphBarChartTooltipProps = {
   containerRef: RefObject<HTMLDivElement>;
   enrichedKeys: BarChartEnrichedKey[];
   formatOptions: GraphValueFormatOptions;
-  layout?: 'vertical' | 'horizontal';
   onSliceClick?: (slice: BarChartSlice) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
@@ -24,7 +23,6 @@ export const GraphBarChartTooltip = ({
   containerRef,
   enrichedKeys,
   formatOptions,
-  layout = 'vertical',
   onSliceClick,
   onMouseEnter,
   onMouseLeave,
@@ -52,7 +50,6 @@ export const GraphBarChartTooltip = ({
         slice: tooltipState.slice,
         enrichedKeys,
         formatOptions,
-        layout,
       });
 
   const reference = !isDefined(tooltipState)

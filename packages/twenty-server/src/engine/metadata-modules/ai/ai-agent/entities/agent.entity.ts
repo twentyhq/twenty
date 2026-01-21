@@ -14,7 +14,7 @@ import {
   DEFAULT_SMART_MODEL,
   ModelId,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('agent')
 @Index('IDX_AGENT_ID_DELETED_AT', ['id', 'deletedAt'])
@@ -23,7 +23,7 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   where: '"deletedAt" IS NULL',
 })
 export class AgentEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<AgentEntity>
 {
   @PrimaryGeneratedColumn('uuid')

@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -47,6 +48,7 @@ export class RowLevelPermissionPredicateService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly billingService: BillingService,
     private readonly configService: ConfigService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async createOne({
@@ -58,11 +60,18 @@ export class RowLevelPermissionPredicateService {
   }): Promise<RowLevelPermissionPredicateDTO> {
     await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
     const flatPredicateToCreate =
       fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicateToCreate(
         {
           createRowLevelPermissionPredicateInput,
           workspaceId,
+          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
         },
       );
 
@@ -322,6 +331,12 @@ export class RowLevelPermissionPredicateService {
 
     const { roleId, objectMetadataId, predicates, predicateGroups } = input;
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
     const {
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
@@ -366,6 +381,7 @@ export class RowLevelPermissionPredicateService {
         objectMetadataId,
         workspaceId,
         flatRowLevelPermissionPredicateGroupMaps,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       });
 
     const { predicatesToCreate, predicatesToUpdate, predicatesToDelete } =
@@ -376,6 +392,7 @@ export class RowLevelPermissionPredicateService {
         objectMetadataId,
         workspaceId,
         flatRowLevelPermissionPredicateMaps,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       });
 
     await this.runUpsertMigration({
@@ -435,6 +452,7 @@ export class RowLevelPermissionPredicateService {
     objectMetadataId,
     workspaceId,
     flatRowLevelPermissionPredicateGroupMaps,
+    workspaceCustomApplicationId,
   }: {
     existingGroups: FlatRowLevelPermissionPredicateGroup[];
     inputGroups: RowLevelPermissionPredicateGroupInput[];
@@ -442,6 +460,7 @@ export class RowLevelPermissionPredicateService {
     objectMetadataId: string;
     workspaceId: string;
     flatRowLevelPermissionPredicateGroupMaps: FlatEntityMaps<FlatRowLevelPermissionPredicateGroup>;
+    workspaceCustomApplicationId: string;
   }): {
     groupsToCreate: FlatRowLevelPermissionPredicateGroup[];
     groupsToUpdate: FlatRowLevelPermissionPredicateGroup[];
@@ -488,7 +507,7 @@ export class RowLevelPermissionPredicateService {
           updatedAt: createdAt,
           deletedAt: null,
           universalIdentifier: groupId,
-          applicationId: null,
+          applicationId: workspaceCustomApplicationId,
         });
       }
     }
@@ -515,6 +534,7 @@ export class RowLevelPermissionPredicateService {
     objectMetadataId,
     workspaceId,
     flatRowLevelPermissionPredicateMaps,
+    workspaceCustomApplicationId,
   }: {
     existingPredicates: FlatRowLevelPermissionPredicate[];
     inputPredicates: RowLevelPermissionPredicateInput[];
@@ -522,6 +542,7 @@ export class RowLevelPermissionPredicateService {
     objectMetadataId: string;
     workspaceId: string;
     flatRowLevelPermissionPredicateMaps: FlatEntityMaps<FlatRowLevelPermissionPredicate>;
+    workspaceCustomApplicationId: string;
   }): {
     predicatesToCreate: FlatRowLevelPermissionPredicate[];
     predicatesToUpdate: FlatRowLevelPermissionPredicate[];
@@ -583,7 +604,7 @@ export class RowLevelPermissionPredicateService {
           updatedAt: createdAt,
           deletedAt: null,
           universalIdentifier: predicateId,
-          applicationId: null,
+          applicationId: workspaceCustomApplicationId,
         });
       }
     }

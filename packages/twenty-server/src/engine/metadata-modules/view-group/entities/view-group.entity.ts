@@ -12,13 +12,13 @@ import {
 } from 'typeorm';
 
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'viewGroup', schema: 'core' })
 @Index('IDX_VIEW_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_GROUP_VIEW_ID', ['viewId'])
 export class ViewGroupEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<ViewGroupEntity>
 {
   @PrimaryGeneratedColumn('uuid')

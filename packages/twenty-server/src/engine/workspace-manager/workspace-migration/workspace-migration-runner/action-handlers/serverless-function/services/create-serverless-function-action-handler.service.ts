@@ -8,7 +8,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
-import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { CreateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
@@ -38,8 +38,8 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
       workspaceId,
     });
 
-    const draftFileFolder = getServerlessFolder({
-      serverlessFunction,
+    const draftFileFolder = getServerlessFolderOrThrow({
+      flatServerlessFunction: serverlessFunction,
       version: 'draft',
     });
 
@@ -66,8 +66,8 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
     const { action } = context;
 
     await this.fileStorageService.delete({
-      folderPath: getServerlessFolder({
-        serverlessFunction: action.flatEntity,
+      folderPath: getServerlessFolderOrThrow({
+        flatServerlessFunction: action.flatEntity,
       }),
     });
   }
