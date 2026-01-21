@@ -1,0 +1,150 @@
+import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { createOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/create-one-core-view-sort.util';
+import { destroyOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/destroy-one-core-view-sort.util';
+import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+
+import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+
+describe('View Sort creation should succeed', () => {
+  let companyObjectMetadataId: string;
+  let testFieldMetadataId: string;
+  let createdViewId: string;
+  let createdViewSortId: string;
+
+  beforeAll(async () => {
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: {
+        filter: {},
+        paging: { first: 1000 },
+      },
+      gqlFields: `
+        id
+        nameSingular
+      `,
+    });
+
+    jestExpectToBeDefined(objects);
+
+    const companyObjectMetadata = objects.find(
+      (object: { nameSingular: string }) => object.nameSingular === 'company',
+    );
+
+    jestExpectToBeDefined(companyObjectMetadata);
+    companyObjectMetadataId = companyObjectMetadata.id;
+
+    const { fields } = await findManyFieldsMetadata({
+      expectToFail: false,
+      input: {
+        filter: {
+          objectMetadataId: { eq: companyObjectMetadataId },
+          name: { eq: 'name' },
+        },
+        paging: { first: 1 },
+      },
+      gqlFields: `
+        id
+        name
+      `,
+    });
+
+    jestExpectToBeDefined(fields);
+    jestExpectToBeDefined(fields[0]);
+    testFieldMetadataId = fields[0].node.id;
+
+    const { data: viewData } = await createOneCoreView({
+      expectToFail: false,
+      input: {
+        name: 'Test View For View Sort Creation',
+        objectMetadataId: companyObjectMetadataId,
+        type: ViewType.TABLE,
+        icon: 'IconBuildingSkyscraper',
+      },
+    });
+
+    createdViewId = viewData?.createCoreView?.id;
+    jestExpectToBeDefined(createdViewId);
+  });
+
+  afterAll(async () => {
+    if (createdViewId) {
+      await destroyOneCoreView({
+        expectToFail: false,
+        viewId: createdViewId,
+      });
+    }
+  });
+
+  afterEach(async () => {
+    if (createdViewSortId) {
+      await destroyOneCoreViewSort({
+        expectToFail: false,
+        viewSortId: createdViewSortId,
+      });
+      createdViewSortId = '';
+    }
+  });
+
+  it('should create a view sort with default direction (ASC)', async () => {
+    const { data } = await createOneCoreViewSort({
+      expectToFail: false,
+      input: {
+        viewId: createdViewId,
+        fieldMetadataId: testFieldMetadataId,
+      },
+    });
+
+    createdViewSortId = data?.createCoreViewSort?.id;
+
+    expect(data.createCoreViewSort).toMatchObject({
+      id: expect.any(String),
+      viewId: createdViewId,
+      fieldMetadataId: testFieldMetadataId,
+      direction: ViewSortDirection.ASC,
+    });
+  });
+
+  it('should create a view sort with ASC direction', async () => {
+    const { data } = await createOneCoreViewSort({
+      expectToFail: false,
+      input: {
+        viewId: createdViewId,
+        fieldMetadataId: testFieldMetadataId,
+        direction: ViewSortDirection.ASC,
+      },
+    });
+
+    createdViewSortId = data?.createCoreViewSort?.id;
+
+    expect(data.createCoreViewSort).toMatchObject({
+      id: expect.any(String),
+      viewId: createdViewId,
+      fieldMetadataId: testFieldMetadataId,
+      direction: ViewSortDirection.ASC,
+    });
+  });
+
+  it('should create a view sort with DESC direction', async () => {
+    const { data } = await createOneCoreViewSort({
+      expectToFail: false,
+      input: {
+        viewId: createdViewId,
+        fieldMetadataId: testFieldMetadataId,
+        direction: ViewSortDirection.DESC,
+      },
+    });
+
+    createdViewSortId = data?.createCoreViewSort?.id;
+
+    expect(data.createCoreViewSort).toMatchObject({
+      id: expect.any(String),
+      viewId: createdViewId,
+      fieldMetadataId: testFieldMetadataId,
+      direction: ViewSortDirection.DESC,
+    });
+  });
+});

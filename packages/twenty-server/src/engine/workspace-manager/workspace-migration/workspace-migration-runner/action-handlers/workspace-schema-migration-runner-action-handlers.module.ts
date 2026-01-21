@@ -67,6 +67,9 @@ import { UpdateViewFilterActionHandlerService } from 'src/engine/workspace-manag
 import { CreateViewGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-group/services/create-view-group-action-handler.service';
 import { DeleteViewGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-group/services/delete-view-group-action-handler.service';
 import { UpdateViewGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-group/services/update-view-group-action-handler.service';
+import { CreateViewSortActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-sort/services/create-view-sort-action-handler.service';
+import { DeleteViewSortActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-sort/services/delete-view-sort-action-handler.service';
+import { UpdateViewSortActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-sort/services/update-view-sort-action-handler.service';
 import { CreateViewActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/create-view-action-handler.service';
 import { DeleteViewActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/delete-view-action-handler.service';
 import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/update-view-action-handler.service';
@@ -105,6 +108,10 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     CreateViewGroupActionHandlerService,
     UpdateViewGroupActionHandlerService,
     DeleteViewGroupActionHandlerService,
+
+    CreateViewSortActionHandlerService,
+    UpdateViewSortActionHandlerService,
+    DeleteViewSortActionHandlerService,
 
     CreateServerlessFunctionActionHandlerService,
     DeleteServerlessFunctionActionHandlerService,

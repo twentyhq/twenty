@@ -36,6 +36,7 @@ import { WorkspaceMigrationViewFieldActionsBuilderService } from 'src/engine/wor
 import { WorkspaceMigrationViewFilterGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/workspace-migration-view-filter-group-actions-builder.service';
 import { WorkspaceMigrationViewFilterActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter/workspace-migration-view-filter-actions-builder.service';
 import { WorkspaceMigrationViewGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/workspace-migration-view-group-actions-builder.service';
+import { WorkspaceMigrationViewSortActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/workspace-migration-view-sort-actions-builder.service';
 import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/workspace-migration-view-actions-builder.service';
 
 @Injectable()
@@ -48,6 +49,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationViewFilterActionsBuilderService: WorkspaceMigrationViewFilterActionsBuilderService,
     private readonly workspaceMigrationViewFilterGroupActionsBuilderService: WorkspaceMigrationViewFilterGroupActionsBuilderService,
     private readonly workspaceMigrationViewGroupActionsBuilderService: WorkspaceMigrationViewGroupActionsBuilderService,
+    private readonly workspaceMigrationViewSortActionsBuilderService: WorkspaceMigrationViewSortActionsBuilderService,
     private readonly workspaceMigrationServerlessFunctionActionsBuilderService: WorkspaceMigrationServerlessFunctionActionsBuilderService,
     private readonly workspaceMigrationDatabaseEventTriggerActionsBuilderService: WorkspaceMigrationDatabaseEventTriggerActionsBuilderService,
     private readonly workspaceMigrationCronTriggerActionsBuilderService: WorkspaceMigrationCronTriggerActionsBuilderService,
@@ -165,6 +167,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatPageLayoutWidgetMaps,
       flatPageLayoutTabMaps,
       flatFrontComponentMaps,
+      flatViewSortMaps,
     } = fromToAllFlatEntityMaps;
 
     if (isDefined(flatObjectMetadataMaps)) {
@@ -464,6 +467,40 @@ export class WorkspaceMigrationBuildOrchestratorService {
         orchestratorFailureReport.viewGroup.push(...viewGroupResult.errors);
       } else {
         orchestratorActionsReport.viewGroup = viewGroupResult.actions;
+      }
+    }
+
+    if (isDefined(flatViewSortMaps)) {
+      const { from: fromFlatViewSortMaps, to: toFlatViewSortMaps } =
+        flatViewSortMaps;
+      const viewSortResult =
+        await this.workspaceMigrationViewSortActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatViewSortMaps,
+            to: toFlatViewSortMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatFieldMetadataMaps:
+                optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
+              flatViewMaps: optimisticAllFlatEntityMaps.flatViewMaps,
+            },
+            workspaceId,
+          },
+        );
+
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            viewSortResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
+
+      if (viewSortResult.status === 'fail') {
+        orchestratorFailureReport.viewSort.push(...viewSortResult.errors);
+      } else {
+        orchestratorActionsReport.viewSort = viewSortResult.actions;
       }
     }
 
@@ -1062,6 +1099,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.viewGroup.delete,
           ...aggregatedOrchestratorActionsReport.viewGroup.create,
           ...aggregatedOrchestratorActionsReport.viewGroup.update,
+          ...aggregatedOrchestratorActionsReport.viewSort.delete,
+          ...aggregatedOrchestratorActionsReport.viewSort.create,
+          ...aggregatedOrchestratorActionsReport.viewSort.update,
           ///
 
           // Serverless functions

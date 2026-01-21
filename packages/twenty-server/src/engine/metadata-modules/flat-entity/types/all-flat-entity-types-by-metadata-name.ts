@@ -17,6 +17,7 @@ import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
+import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
@@ -133,6 +134,11 @@ import {
   type UpdateViewGroupAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/types/workspace-migration-view-group-action.type';
 import {
+  type CreateViewSortAction,
+  type DeleteViewSortAction,
+  type UpdateViewSortAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/types/workspace-migration-view-sort-action.type';
+import {
   type CreateViewAction,
   type DeleteViewAction,
   type UpdateViewAction,
@@ -183,6 +189,15 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatViewGroup;
     entity: MetadataEntity<'viewGroup'>;
+  };
+  viewSort: {
+    actions: {
+      create: CreateViewSortAction;
+      update: UpdateViewSortAction;
+      delete: DeleteViewSortAction;
+    };
+    flatEntity: FlatViewSort;
+    entity: MetadataEntity<'viewSort'>;
   };
   rowLevelPermissionPredicate: {
     actions: {

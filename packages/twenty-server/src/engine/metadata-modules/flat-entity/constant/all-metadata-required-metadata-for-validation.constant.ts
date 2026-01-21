@@ -50,6 +50,10 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     fieldMetadata: true,
     view: true,
   },
+  viewSort: {
+    fieldMetadata: true,
+    view: true,
+  },
   viewFilterGroup: {
     view: true,
   },

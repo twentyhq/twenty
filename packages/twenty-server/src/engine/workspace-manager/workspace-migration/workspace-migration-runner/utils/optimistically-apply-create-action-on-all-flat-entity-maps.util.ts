@@ -53,6 +53,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
     case 'view':
     case 'viewField':
     case 'viewGroup':
+    case 'viewSort':
     case 'rowLevelPermissionPredicate':
     case 'rowLevelPermissionPredicateGroup':
     case 'viewFilterGroup':
