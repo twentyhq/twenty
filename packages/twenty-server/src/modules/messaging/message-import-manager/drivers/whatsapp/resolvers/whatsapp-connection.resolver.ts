@@ -48,7 +48,7 @@ export class WhatsappResolver {
 
     if (!isDefined(connectedAccount) || !isDefined(connectedAccount?.handle)) {
       throw new UserInputError(
-        `Connected mail account with ID ${connectedAccountId} not found`,
+        `Connected account with ID ${connectedAccountId} not found`,
       );
     }
 

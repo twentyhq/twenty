@@ -45,7 +45,7 @@ export class WhatsappController {
   // reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/create-webhook-endpoint#get-requests
   // eslint-disable-next-line @nx/workspace-rest-api-methods-should-be-guarded
   @RequireFeatureFlag(FeatureFlagKey.IS_WHATSAPP_INTEGRATION_ENABLED)
-  @Get('')
+  @Get('/webhook')
   public async whatsappVerification(
     @Query('hub.mode') mode: string,
     @Query('hub.challenge') challenge: string,
@@ -74,7 +74,7 @@ export class WhatsappController {
   // TODO: add custom logic guard checking if request is from legitimate IP address (or maybe better to implement mTLS?)
   // eslint-disable-next-line @nx/workspace-rest-api-methods-should-be-guarded
   @RequireFeatureFlag(FeatureFlagKey.IS_WHATSAPP_INTEGRATION_ENABLED)
-  @Post('') // unless integration is done by BSP, all webhooks are sent to the same destination
+  @Post('/webhook') // unless integration is done by BSP, all webhooks are sent to the same destination
   public async getMessages(
     @Req() req: Request,
     @Body() body: WhatsAppWebhookMessage,

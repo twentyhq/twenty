@@ -5,9 +5,7 @@ import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migr
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
-import {
-  MessageChannelCustomData
-} from 'src/modules/messaging/common/standard-objects/message-channel-custom-data.type';
+import { type MessageChannelCustomData } from 'src/modules/messaging/common/standard-objects/message-channel-custom-data.type';
 
 export enum MessageChannelSyncStatus {
   NOT_SYNCED = 'NOT_SYNCED',

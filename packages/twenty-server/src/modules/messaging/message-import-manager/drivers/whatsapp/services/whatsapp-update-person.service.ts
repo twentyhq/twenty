@@ -41,14 +41,15 @@ export class WhatsappUpdatePersonService {
           );
 
         await personRepository.update(
+          // TODO: update primary or additional phone number (to be decided)
           {
-            whatsAppPhoneNumber: {
+            phones: {
               primaryPhoneCallingCode: formattedOldNumber.countryCallingCode,
               primaryPhoneNumber: formattedOldNumber.number,
             },
           },
           {
-            whatsAppPhoneNumber: {
+            phones: {
               primaryPhoneCallingCode: formattedNewNumber.countryCallingCode,
               primaryPhoneNumber: formattedNewNumber.number,
             },

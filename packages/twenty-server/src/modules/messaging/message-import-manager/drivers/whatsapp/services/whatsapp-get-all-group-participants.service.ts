@@ -20,8 +20,12 @@ export class WhatsappGetAllGroupParticipantsService {
       url: preparedWhatsappAPIAddress(group_id),
     };
 
-    const data = await axios.request(options);
+    try {
+      const data = await axios.request(options);
 
-    return data.data.participants.participants as string[]; // array of WhatsApp IDs
+      return data.data.participants.participants as string[]; // array of WhatsApp IDs
+    } catch (error) {
+      throw new Error(error);
+    }
   };
 }

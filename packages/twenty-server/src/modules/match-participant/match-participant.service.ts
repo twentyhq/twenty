@@ -14,7 +14,7 @@ import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-particip
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { findPersonByWhatsAppNumber } from 'src/modules/match-participant/utils/find-person-by-whatsapp-number';
+import { findPersonByPhoneNumber } from 'src/modules/match-participant/utils/find-person-by-phone-number';
 
 type ObjectMetadataName = 'messageParticipant' | 'calendarEventParticipant';
 
@@ -149,7 +149,7 @@ export class MatchParticipantService<
               people,
               email: participant.handle,
             }) ||
-            findPersonByWhatsAppNumber({
+            findPersonByPhoneNumber({
               people,
               phoneNumber: participant.handle,
             });

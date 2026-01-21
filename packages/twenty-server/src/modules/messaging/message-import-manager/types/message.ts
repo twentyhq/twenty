@@ -14,7 +14,7 @@ export type Message = Omit<
   | 'messageThreadId'
   | 'id'
 > & {
-  attachments: WhatsappFile[] | string[];
+  attachments: WhatsappFile[] | string[]; // TODO: fix once mail attachments are done
   externalId: string;
   messageThreadExternalId: string;
   direction: MessageDirection;

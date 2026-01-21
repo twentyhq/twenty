@@ -22,7 +22,9 @@ export class WhatsappRetrieveAppSecretService {
     });
 
     if (workspaceIdByWABAId === null) {
-      throw new Error(); // TODO: fix
+      throw new Error(
+        'WhatsApp connected account not found in integrations entity',
+      );
     }
     const workspaceId = workspaceIdByWABAId.workspace.id;
     const context = buildSystemAuthContext(workspaceId);
@@ -44,7 +46,7 @@ export class WhatsappRetrieveAppSecretService {
       );
 
     if (!whatsappConnectedAccountRecord) {
-      throw new Error(''); // TODO: fix
+      throw new Error('WhatsApp connected account not found');
     }
 
     return whatsappConnectedAccountRecord.refreshToken;

@@ -3,7 +3,7 @@ import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/
 export const extractParticipantName = (
   person: PersonWorkspaceEntity | null,
 ) => {
-  return person !== null
-    ? `${person.name?.firstName} ${person.name?.lastName}`
+  return person !== null && person.name !== null
+    ? `${person.name.firstName} ${person.name.lastName}`
     : null;
 };

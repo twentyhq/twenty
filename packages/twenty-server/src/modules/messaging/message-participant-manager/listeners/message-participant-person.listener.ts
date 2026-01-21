@@ -40,13 +40,11 @@ export class MessageParticipantPersonListener {
     );
     const personWithPhoneNumbers = payload.events.filter(
       (eventPayload) =>
-        isDefined(
-          eventPayload.properties.after.whatsAppPhoneNumber
-            .primaryPhoneCallingCode,
+        (isDefined(
+          eventPayload.properties.after.phones.primaryPhoneCallingCode,
         ) &&
-        isDefined(
-          eventPayload.properties.after.whatsAppPhoneNumber.primaryPhoneNumber,
-        ),
+          isDefined(eventPayload.properties.after.phones.primaryPhoneNumber)) ||
+        isDefined(eventPayload.properties.after.phones.additionalPhones),
     );
 
     const personIds = personWithEmails
@@ -63,9 +61,15 @@ export class MessageParticipantPersonListener {
       .filter(isDefined);
     const personPhoneNumbers = personWithPhoneNumbers.flatMap(
       (eventPayload) => [
-        eventPayload.properties.after.whatsAppPhoneNumber.primaryPhoneCallingCode.concat(
-          eventPayload.properties.after.whatsAppPhoneNumber.primaryPhoneNumber,
+        eventPayload.properties.after.phones.primaryPhoneCallingCode.concat(
+          eventPayload.properties.after.phones.primaryPhoneNumber,
         ),
+        ...((eventPayload.properties.after.phones.additionalPhones
+          ? eventPayload.properties.after.phones.additionalPhones.flatMap(
+              (phoneNumber) =>
+                phoneNumber.callingCode.concat(phoneNumber.number),
+            )
+          : []) as string[]),
       ],
     );
 
@@ -117,9 +121,15 @@ export class MessageParticipantPersonListener {
       .filter(isDefined);
     const personPhoneNumbers = personWithPhoneNumbers.flatMap(
       (eventPayload) => [
-        eventPayload.properties.after.whatsAppPhoneNumber.primaryPhoneCallingCode.concat(
-          eventPayload.properties.after.whatsAppPhoneNumber.primaryPhoneNumber,
+        eventPayload.properties.after.phones.primaryPhoneCallingCode.concat(
+          eventPayload.properties.after.phones.primaryPhoneNumber,
         ),
+        ...((eventPayload.properties.after.phones.additionalPhones
+          ? eventPayload.properties.after.phones.additionalPhones.flatMap(
+              (phoneNumber) =>
+                phoneNumber.callingCode.concat(phoneNumber.number),
+            )
+          : []) as string[]),
       ],
     );
 
@@ -152,12 +162,9 @@ export class MessageParticipantPersonListener {
     const personWithPhoneNumbers = payload.events.filter(
       (eventPayload) =>
         isDefined(
-          eventPayload.properties.before.whatsAppPhoneNumber
-            .primaryPhoneCallingCode,
+          eventPayload.properties.before.phones.primaryPhoneCallingCode,
         ) &&
-        isDefined(
-          eventPayload.properties.before.whatsAppPhoneNumber.primaryPhoneNumber,
-        ),
+        isDefined(eventPayload.properties.before.phones.primaryPhoneNumber),
     );
 
     const personEmails = personWithEmails
@@ -169,9 +176,15 @@ export class MessageParticipantPersonListener {
       .filter(isDefined);
     const personPhoneNumbers = personWithPhoneNumbers.flatMap(
       (eventPayload) => [
-        eventPayload.properties.before.whatsAppPhoneNumber.primaryPhoneCallingCode.concat(
-          eventPayload.properties.before.whatsAppPhoneNumber.primaryPhoneNumber,
+        eventPayload.properties.before.phones.primaryPhoneCallingCode.concat(
+          eventPayload.properties.before.phones.primaryPhoneNumber,
         ),
+        ...((eventPayload.properties.before.phones.additionalPhones
+          ? eventPayload.properties.before.phones.additionalPhones.flatMap(
+              (phoneNumber) =>
+                phoneNumber.callingCode.concat(phoneNumber.number),
+            )
+          : []) as string[]),
       ],
     );
 

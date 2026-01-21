@@ -64,7 +64,7 @@ export class WhatsappConvertHistoricMessagesService {
 
           return await personRepository.findOne({
             where: {
-              whatsAppPhoneNumber: { primaryPhoneNumber: userPhoneNumber },
+              phones: { primaryPhoneNumber: userPhoneNumber }, // TODO: fix if Twenty becomes BSP or delete it
             },
           });
         },

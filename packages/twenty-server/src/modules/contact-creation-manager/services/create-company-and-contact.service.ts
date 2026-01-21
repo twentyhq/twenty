@@ -29,7 +29,6 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
 import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
-import { addPersonWhatsappNumberFilterToQueryBuilder } from 'src/modules/match-participant/utils/add-person-whatsapp-number-filter-to-query-builder';
 
 @Injectable()
 export class CreateCompanyAndPersonService {
@@ -221,24 +220,41 @@ export class CreateCompanyAndPersonService {
     for (const contact of uniqueContacts) {
       if (!contact.handle.includes('@')) {
         const parsedNumber = parsePhoneNumber(contact.handle);
-        const existingPersonOnWhatsAppNumber = alreadyCreatedPeople.find(
+        const existingPersonOnPrimaryPhoneNumber = alreadyCreatedPeople.find(
           (person) => {
             return (
               // country flag is unnecessary as main focus is on phone number
-              person.whatsAppPhoneNumber.primaryPhoneNumber ===
+              person.phones.primaryPhoneNumber ===
                 parsedNumber.nationalNumber &&
-              person.whatsAppPhoneNumber.primaryPhoneCallingCode ===
+              person.phones.primaryPhoneCallingCode ===
                 parsedNumber.countryCallingCode
             );
           },
         );
 
-        if (!isDefined(existingPersonOnWhatsAppNumber)) {
+        if (isDefined(existingPersonOnPrimaryPhoneNumber)) {
+          shouldCreateOrRestorePeopleByHandleMap.set(contact.handle, {
+            existingPerson: existingPersonOnPrimaryPhoneNumber,
+          });
           continue;
         }
 
+        const existingPersonOnAdditionalPhoneNumber = alreadyCreatedPeople.find(
+          (person) => {
+            return person.phones.additionalPhones?.includes({
+              number: parsedNumber.nationalNumber,
+              callingCode: parsedNumber.countryCallingCode,
+              countryCode: getCountryCodesForCallingCode(
+                parsedNumber.countryCallingCode,
+              )[0], // TODO: ^ this will fail if country code isn't matching, how to fix it?
+            });
+          },
+        );
+
+        if (!isDefined(existingPersonOnAdditionalPhoneNumber)) continue;
+
         shouldCreateOrRestorePeopleByHandleMap.set(contact.handle, {
-          existingPerson: existingPersonOnWhatsAppNumber,
+          existingPerson: existingPersonOnAdditionalPhoneNumber,
         });
       } else {
         const existingPersonOnPrimaryEmail = alreadyCreatedPeople.find(
@@ -394,7 +410,7 @@ export class CreateCompanyAndPersonService {
 
         return {
           id,
-          whatsAppPhoneNumber: {
+          phones: {
             primaryPhoneNumber: number,
             primaryPhoneCallingCode: callingCode,
             primaryPhoneCountryCode: countryCode,

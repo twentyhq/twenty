@@ -58,7 +58,7 @@ export class WhatsappParseWebhookMessageJob {
       });
 
       if (workspaceIdByWABAId === null) {
-        throw new Error(); // TODO: check
+        throw new Error('WhatsApp connected account not found');
       }
 
       workspaceId = workspaceIdByWABAId.workspace.id;

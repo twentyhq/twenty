@@ -43,7 +43,7 @@ export class WhatsappFormatGroupParticipantsToMessageParticipantsService {
         });
 
         if (!whatsappRecord || !whatsappRecord.accessToken) {
-          throw new Error(); // TODO: check
+          throw new Error('Connected WhatsApp account does not exist');
         }
 
         let participantsIds =
