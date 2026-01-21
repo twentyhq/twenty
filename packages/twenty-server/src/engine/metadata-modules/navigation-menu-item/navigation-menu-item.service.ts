@@ -149,50 +149,6 @@ export class NavigationMenuItemService {
           : input.targetRecordId,
     };
 
-    const hasViewId = isDefined(normalizedInput.viewId);
-    const hasTargetRecordId = isDefined(normalizedInput.targetRecordId);
-    const hasTargetObjectMetadataId = isDefined(
-      normalizedInput.targetObjectMetadataId,
-    );
-
-    if (hasTargetObjectMetadataId && !hasTargetRecordId) {
-      throw new NavigationMenuItemException(
-        'targetRecordId is required for navigation menu items',
-        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-      );
-    }
-
-    if (hasTargetRecordId && !hasTargetObjectMetadataId) {
-      throw new NavigationMenuItemException(
-        'targetObjectMetadataId is required for navigation menu items',
-        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-      );
-    }
-
-    if (
-      hasViewId &&
-      hasTargetRecordId &&
-      normalizedInput.viewId !== normalizedInput.targetRecordId
-    ) {
-      throw new NavigationMenuItemException(
-        'targetRecordId must match viewId when viewId is provided',
-        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-      );
-    }
-
-    const isFolder =
-      !hasTargetRecordId && !hasTargetObjectMetadataId && !hasViewId;
-
-    if (
-      isFolder &&
-      (!isDefined(normalizedInput.name) || normalizedInput.name.trim() === '')
-    ) {
-      throw new NavigationMenuItemException(
-        'Folder name is required when creating a folder',
-        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-      );
-    }
-
     const flatNavigationMenuItemToCreate =
       fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate({
         createNavigationMenuItemInput: normalizedInput,
@@ -274,22 +230,6 @@ export class NavigationMenuItemService {
           applicationId: authApplicationId,
           existingUserWorkspaceId: existingNavigationMenuItem.userWorkspaceId,
         },
-      );
-    }
-
-    const isFolder =
-      isDefined(existingNavigationMenuItem) &&
-      !isDefined(existingNavigationMenuItem.targetRecordId) &&
-      !isDefined(existingNavigationMenuItem.targetObjectMetadataId);
-
-    if (
-      isFolder &&
-      input.name !== undefined &&
-      (!isDefined(input.name) || input.name.trim() === '')
-    ) {
-      throw new NavigationMenuItemException(
-        'Folder name is required and cannot be empty',
-        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
       );
     }
 
