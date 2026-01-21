@@ -11,7 +11,6 @@ import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
@@ -35,30 +34,26 @@ export const useNavigationMenuItemsByFolder = () => {
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
 
   const navigationMenuItemsByFolder = useMemo(() => {
-    const foldersMap = new Map<string, NavigationMenuItem[]>();
+    const folderItems = navigationMenuItems.filter(
+      (item) =>
+        isDefined((item as any).name) &&
+        !isDefined(item.folderId) &&
+        !isDefined(item.targetRecordId) &&
+        !isDefined(item.targetObjectMetadataId),
+    );
 
-    navigationMenuItems.forEach((item) => {
-      if (isDefined(item.folderId)) {
-        const existing = foldersMap.get(item.folderId) || [];
-        foldersMap.set(item.folderId, [...existing, item]);
-      }
-    });
+    const folderItemsResult: NavigationMenuItemFolder[] = [];
 
-    const folderItems: NavigationMenuItemFolder[] = [];
+    folderItems.forEach((folderItem) => {
+      const folderId = folderItem.id;
+      const folderName = (folderItem as any).name || 'Folder';
 
-    foldersMap.forEach((folderItemsList, folderId) => {
-      const folderNavigationMenuItem = navigationMenuItems.find(
-        (item) => item.id === folderId,
+      const itemsInFolder = navigationMenuItems.filter(
+        (item) => item.folderId === folderId,
       );
 
-      if (!isDefined(folderNavigationMenuItem)) {
-        return;
-      }
-
-      const folderName = (folderNavigationMenuItem as any).name || 'Folder';
-
       const targetRecordsMap = new Map<string, ObjectRecord>();
-      folderItemsList.forEach((item) => {
+      itemsInFolder.forEach((item) => {
         const itemTargetRecordId = item.targetRecordId;
         if (!isDefined(itemTargetRecordId)) {
           return;
@@ -88,7 +83,7 @@ export const useNavigationMenuItemsByFolder = () => {
       });
 
       const sortedItems = sortNavigationMenuItems(
-        folderItemsList,
+        itemsInFolder,
         getObjectRecordIdentifierByNameSingular,
         true,
         coreViews,
@@ -96,14 +91,14 @@ export const useNavigationMenuItemsByFolder = () => {
         targetRecordsMap,
       );
 
-      folderItems.push({
+      folderItemsResult.push({
         folderId,
         folderName,
         navigationMenuItems: sortedItems,
       });
     });
 
-    return folderItems;
+    return folderItemsResult;
   }, [
     navigationMenuItems,
     objectMetadataItemsFromHook,
