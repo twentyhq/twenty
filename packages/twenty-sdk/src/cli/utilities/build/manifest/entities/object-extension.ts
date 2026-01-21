@@ -2,7 +2,7 @@ import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
 import { glob } from 'fast-glob';
 import { type ObjectExtensionManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { extractManifestFromFile } from '../manifest-file-extractor';
+import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
   type EntityIdWithLocation,
@@ -25,10 +25,7 @@ export class ObjectExtensionEntityBuilder
     for (const filepath of extensionFiles) {
       try {
         objectExtensionManifests.push(
-          await extractManifestFromFile<ObjectExtensionManifest>(
-            filepath,
-            appPath,
-          ),
+          await manifestExtractFromFileServer.extractManifestFromFile<ObjectExtensionManifest>(filepath),
         );
       } catch (error) {
         const relPath = toPosixRelative(filepath, appPath);

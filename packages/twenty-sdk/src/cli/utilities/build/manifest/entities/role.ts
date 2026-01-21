@@ -2,7 +2,7 @@ import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
 import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type RoleManifest } from 'twenty-shared/application';
-import { extractManifestFromFile } from '../manifest-file-extractor';
+import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
   type EntityIdWithLocation,
@@ -23,7 +23,7 @@ export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest[]> 
     for (const filepath of roleFiles) {
       try {
         roleManifests.push(
-          await extractManifestFromFile<RoleManifest>(filepath, appPath),
+          await manifestExtractFromFileServer.extractManifestFromFile<RoleManifest>(filepath),
         );
       } catch (error) {
         const relPath = toPosixRelative(filepath, appPath);

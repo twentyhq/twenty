@@ -2,7 +2,7 @@ import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
 import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type FrontComponentManifest } from 'twenty-shared/application';
-import { extractManifestFromFile } from '../manifest-file-extractor';
+import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
   type EntityIdWithLocation,
@@ -25,10 +25,9 @@ export class FrontComponentEntityBuilder
     for (const filepath of componentFiles) {
       try {
         frontComponentManifests.push(
-          await extractManifestFromFile<FrontComponentManifest>(
+          await manifestExtractFromFileServer.extractManifestFromFile<FrontComponentManifest>(
             filepath,
-            appPath,
-            { entryProperty: 'component', jsx: true },
+            { entryProperty: 'component' },
           ),
         );
       } catch (error) {

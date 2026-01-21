@@ -1,26 +1,21 @@
 import chalk from 'chalk';
 import path from 'path';
 import { type Application } from 'twenty-shared/application';
-import { extractManifestFromFile } from '../manifest-file-extractor';
+import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
-  type EntityIdWithLocation,
-  type ManifestEntityBuilder,
-  type ManifestWithoutSources,
+    type EntityIdWithLocation,
+    type ManifestEntityBuilder,
+    type ManifestWithoutSources,
 } from './entity.interface';
 
 export class ApplicationEntityBuilder
   implements ManifestEntityBuilder<Application>
 {
   async build(appPath: string): Promise<Application> {
-    const applicationConfigPath = path.join(
-      appPath,
-      'src',
-      'app',
-      'application.config.ts',
-    );
+    const applicationConfigPath = path.join(appPath, 'src', 'app', 'application.config.ts');
 
-    return extractManifestFromFile<Application>(applicationConfigPath, appPath);
+    return manifestExtractFromFileServer.extractManifestFromFile<Application>(applicationConfigPath);
   }
 
   validate(application: Application, errors: ValidationError[]): void {
