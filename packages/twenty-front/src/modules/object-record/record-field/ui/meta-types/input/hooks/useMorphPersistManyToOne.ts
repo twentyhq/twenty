@@ -9,6 +9,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { buildRecordWithAllMorphObjectIdsToNull } from '@/object-record/record-field/ui/meta-types/input/utils/buildRecordWithAllMorphObjectIdsToNull';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
@@ -46,27 +47,17 @@ export const useMorphPersistManyToOne = ({
         const fieldName = fieldDefinition.metadata.fieldName;
 
         if (!isDefined(valueToPersist)) {
-          const allNullRecordInput: Record<string, null> =
-            fieldDefinition.metadata.morphRelations.reduce(
-              (acc, morphRelation) => {
-                const computedFieldName = computeMorphRelationFieldName({
-                  fieldName,
-                  relationType: fieldDefinition.metadata.relationType,
-                  targetObjectMetadataNameSingular:
-                    morphRelation.targetObjectMetadata.nameSingular,
-                  targetObjectMetadataNamePlural:
-                    morphRelation.targetObjectMetadata.namePlural,
-                });
-                acc[`${computedFieldName}Id`] = null;
-                return acc;
-              },
-              {} as Record<string, null>,
-            );
+          const recordWithAllMorphObjectIdsToNull =
+            buildRecordWithAllMorphObjectIdsToNull({
+              morphRelations: fieldDefinition.metadata.morphRelations,
+              fieldName,
+              relationType: fieldDefinition.metadata.relationType,
+            });
 
           updateOneRecord?.({
             objectNameSingular: objectMetadataNameSingular,
             idToUpdate: recordId,
-            updateOneRecordInput: allNullRecordInput,
+            updateOneRecordInput: recordWithAllMorphObjectIdsToNull,
           });
 
           return;
@@ -106,28 +97,18 @@ export const useMorphPersistManyToOne = ({
           return;
         }
 
-        const allNullRecordInput: Record<string, null> =
-          fieldDefinition.metadata.morphRelations.reduce(
-            (acc, morphRelation) => {
-              const computedFieldName = computeMorphRelationFieldName({
-                fieldName,
-                relationType: fieldDefinition.metadata.relationType,
-                targetObjectMetadataNameSingular:
-                  morphRelation.targetObjectMetadata.nameSingular,
-                targetObjectMetadataNamePlural:
-                  morphRelation.targetObjectMetadata.namePlural,
-              });
-              acc[`${computedFieldName}Id`] = null;
-              return acc;
-            },
-            {} as Record<string, null>,
-          );
+        const recordWithAllMorphObjectIdsToNull =
+          buildRecordWithAllMorphObjectIdsToNull({
+            morphRelations: fieldDefinition.metadata.morphRelations,
+            fieldName,
+            relationType: fieldDefinition.metadata.relationType,
+          });
 
         updateOneRecord?.({
           objectNameSingular: objectMetadataNameSingular,
           idToUpdate: recordId,
           updateOneRecordInput: {
-            ...allNullRecordInput,
+            ...recordWithAllMorphObjectIdsToNull,
             [`${computedFieldName}Id`]: valueToPersist,
           },
         });
