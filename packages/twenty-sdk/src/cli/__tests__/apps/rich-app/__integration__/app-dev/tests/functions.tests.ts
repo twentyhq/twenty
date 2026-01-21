@@ -8,20 +8,18 @@ export const defineFunctionsTests = (appPath: string): void => {
       const files = await fs.readdir(functionsDir, { recursive: true });
       const sortedFiles = files.map((f) => f.toString()).sort();
 
-      expect(sortedFiles).toMatchInlineSnapshot(`
-        [
-          "src",
-          "src/functions",
-          "src/functions/greeting.function.mjs",
-          "src/functions/greeting.function.mjs.map",
-          "src/functions/test-function-2.function.mjs",
-          "src/functions/test-function-2.function.mjs.map",
-          "src/functions/test-function.function.mjs",
-          "src/functions/test-function.function.mjs.map",
-          "src/root.function.mjs",
-          "src/root.function.mjs.map",
-        ]
-      `);
+      expect(sortedFiles).toEqual([
+        'src',
+        'src/functions',
+        'src/functions/greeting.function.mjs',
+        'src/functions/greeting.function.mjs.map',
+        'src/functions/test-function-2.function.mjs',
+        'src/functions/test-function-2.function.mjs.map',
+        'src/functions/test-function.function.mjs',
+        'src/functions/test-function.function.mjs.map',
+        'src/root.function.mjs',
+        'src/root.function.mjs.map',
+      ]);
     });
   });
 };

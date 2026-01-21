@@ -8,12 +8,10 @@ export const defineFrontComponentsTests = (appPath: string): void => {
       const files = await fs.readdir(frontComponentsDir, { recursive: true });
       const sortedFiles = files.map((f) => f.toString()).sort();
 
-      expect(sortedFiles).toMatchInlineSnapshot(`
-        [
-          "my.front-component.mjs",
-          "my.front-component.mjs.map",
-        ]
-      `);
+      expect(sortedFiles).toEqual([
+        'my.front-component.mjs',
+        'my.front-component.mjs.map',
+      ]);
     });
   });
 };

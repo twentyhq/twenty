@@ -8,20 +8,18 @@ export const defineFrontComponentsTests = (appPath: string): void => {
       const files = await fs.readdir(frontComponentsDir, { recursive: true });
       const sortedFiles = files.map((f) => f.toString()).sort();
 
-      expect(sortedFiles).toMatchInlineSnapshot(`
-        [
-          "src",
-          "src/components",
-          "src/components/card.front-component.mjs",
-          "src/components/card.front-component.mjs.map",
-          "src/components/greeting.front-component.mjs",
-          "src/components/greeting.front-component.mjs.map",
-          "src/components/test.front-component.mjs",
-          "src/components/test.front-component.mjs.map",
-          "src/root.front-component.mjs",
-          "src/root.front-component.mjs.map",
-        ]
-      `);
+      expect(sortedFiles).toEqual([
+        'src',
+        'src/components',
+        'src/components/card.front-component.mjs',
+        'src/components/card.front-component.mjs.map',
+        'src/components/greeting.front-component.mjs',
+        'src/components/greeting.front-component.mjs.map',
+        'src/components/test.front-component.mjs',
+        'src/components/test.front-component.mjs.map',
+        'src/root.front-component.mjs',
+        'src/root.front-component.mjs.map',
+      ]);
     });
   });
 };
