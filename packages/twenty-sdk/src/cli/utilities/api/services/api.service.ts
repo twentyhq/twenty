@@ -89,18 +89,22 @@ export class ApiService {
 
   async syncApplication({
     manifest,
+    yarnLock,
   }: {
     manifest: ApplicationManifest;
+    yarnLock: string;
   }): Promise<ApiResponse> {
     try {
       const mutation = `
-        mutation SyncApplication($manifest: JSON!) {
-          syncApplication(manifest: $manifest)
+        mutation SyncApplication($manifest: JSON!, $packageJson: JSON!, $yarnLock: String!) {
+          syncApplication(manifest: $manifest, packageJson: $packageJson, yarnLock: $yarnLock)
         }
       `;
 
       const variables = {
         manifest,
+        packageJson: manifest.packageJson,
+        yarnLock,
       };
 
       const response: AxiosResponse = await this.client.post(

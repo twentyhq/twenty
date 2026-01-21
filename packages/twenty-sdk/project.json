@@ -72,18 +72,17 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nx/vitest:test",
       "outputs": [
         "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "jestConfig": "{projectRoot}/jest.config.mjs"
+        "config": "{projectRoot}/vitest.config.ts"
       },
       "configurations": {
         "ci": {
-          "ci": true,
           "coverage": true,
-          "watchAll": false
+          "watch": false
         }
       }
     },
