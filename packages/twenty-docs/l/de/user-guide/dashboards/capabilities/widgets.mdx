@@ -1,131 +1,149 @@
 ---
 title: Widgets
-description: Explore the widget types and visualization options in Twenty.
+description: Erkunden Sie die Widget-Typen und Visualisierungsoptionen in Twenty.
 ---
 
-## Available Widgets
+import { ChartIcon } from '/snippets/chart-icon.mdx';
 
-Twenty provides various widget types to visualize your CRM data.
+## Verfügbare Widgets
 
-### Bar Charts
+Twenty bietet verschiedene Widget-Typen, um Ihre CRM-Daten zu visualisieren.
 
-Display data as horizontal or vertical bars.
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Bar Charts</span>
 
-**Best for:**
+Stellen Sie Daten als horizontale oder vertikale Balken dar.
 
-* Comparing values across categories
-* Showing rankings
-* Tracking metrics by time period
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Bar chart" />
+</Frame>
 
-**Example uses:**
+**Am besten geeignet für:**
 
-* Deals by stage
-* Revenue by sales rep
-* Contacts added per month
+* Vergleich von Werten über Kategorien hinweg
+* Ranglisten anzeigen
+* Kennzahlen nach Zeitraum verfolgen
 
-<Note>
-  **Display limits**: Bar charts can show a maximum of 100 bars (horizontal) or 50 bars (vertical). If you see the warning "Undisplayed data: max X bars per chart", add filters to narrow down your data or change the grouping (e.g., group by week instead of days).
-</Note>
+**Beispielverwendung:**
 
-### Pie Charts
-
-Show proportions of a whole.
-
-**Best for:**
-
-* Showing composition or distribution
-* Comparing parts to whole
-* Highlighting major segments
-
-**Example uses:**
-
-* Deal distribution by source
-* Contact breakdown by industry
-* Pipeline composition by owner
-
-### Line Charts
-
-Display trends over time.
-
-**Best for:**
-
-* Tracking changes over time
-* Identifying trends
-* Comparing multiple metrics
-
-**Example uses:**
-
-* Monthly deal count trend
-* Revenue growth over quarters
-* Activity levels over time
-
-### Number Metrics
-
-Display single key values prominently.
-
-**Best for:**
-
-* Highlighting KPIs
-* Showing totals or averages
-* Quick status checks
-
-**Example uses:**
-
-* Total pipeline value
-* Number of open opportunities
-* Conversion rate
-
-**Advanced options:**
-
-* **Ratio**: For Select fields, calculate ratios between values. Go to **Data on display** → select your field → enable the **Ratio** option.
-* **Prefix & Suffix**: Add custom text before or after the number (e.g., "$" prefix or "%" suffix) for better readability.
-
-### iFrames
-
-Embed external tools and content directly in your dashboard.
-
-**Best for:**
-
-* Displaying external reports or dashboards
-* Integrating third-party sales tools
-* Showing live content from other systems
-
-**Example uses:**
-
-* Metrics from your Support tool
-* Metrics from your dialer
-* Live content from your Sales sequence tool
+* Deals nach Phase
+* Umsatz nach Vertriebsmitarbeitern
+* Hinzugefügte Kontakte pro Monat
 
 <Note>
-  **Coming soon**: Gauge charts and tables are not yet available but are on our roadmap.
+  **Display limits**: Bar charts can show a maximum of 100 bars, and 50 groups per bar when using Group By. Wenn Sie die Warnung "Nicht angezeigte Daten: max. X Balken pro Diagramm" sehen, fügen Sie Filter hinzu, um Ihre Daten einzugrenzen, oder ändern Sie die Gruppierung (z. B. nach Woche statt nach Tagen).
 </Note>
 
-## Configuring Widgets
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Pie Charts</span>
 
-### Data Source
+Zeigen Sie Anteile eines Ganzen.
 
-1. Select the object to visualize (Opportunities, People, etc.)
-2. Choose the metric to display (count, sum, average)
-3. Apply filters to focus on specific data
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Pie chart" />
+</Frame>
 
-### Grouping
+**Am besten geeignet für:**
 
-Group data by:
+* Zusammensetzung oder Verteilung anzeigen
+* Teile mit dem Ganzen vergleichen
+* Wichtige Segmente hervorheben
 
-* Fields (stage, owner, industry)
-* Time periods (day, week, month, quarter)
-* Custom segments
+**Beispielverwendung:**
 
-### Styling
+* Deal-Verteilung nach Quelle
+* Kontaktaufschlüsselung nach Branche
+* Pipeline-Zusammensetzung nach Eigentümer
 
-Customize your charts with:
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Line Charts</span>
 
-* Colors and themes
-* Labels and legends
-* Size and positioning
+Stellen Sie Trends im Zeitverlauf dar.
 
-### Duplicating Widgets
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Line chart" />
+</Frame>
 
-1. Click on the widget
-2. Open **Options**
-3. Click **Duplicate widget**
+**Am besten geeignet für:**
+
+* Veränderungen im Zeitverlauf verfolgen
+* Trends erkennen
+* Mehrere Kennzahlen vergleichen
+
+**Beispielverwendung:**
+
+* Monatlicher Trend der Anzahl der Deals
+* Umsatzwachstum über Quartale
+* Aktivitätsniveau im Zeitverlauf
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Aggregate Charts</span>
+
+Zeigen Sie einzelne Kennzahlen prominent an.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Aggregate chart" />
+</Frame>
+
+**Am besten geeignet für:**
+
+* KPIs hervorheben
+* Summen oder Durchschnitte anzeigen
+* Schnelle Statusprüfungen
+
+**Beispielverwendung:**
+
+* Gesamtwert der Pipeline
+* Anzahl offener Chancen
+* Konversionsrate
+
+**Erweiterte Optionen:**
+
+* **Verhältnis**: Berechnen Sie für Select-Felder Verhältnisse zwischen Werten. Gehen Sie zu **Angezeigte Daten** → wählen Sie Ihr Feld → aktivieren Sie die Option **Verhältnis**.
+* **Präfix & Suffix**: Fügen Sie benutzerdefinierten Text vor oder nach der Zahl hinzu (z. B. "$"-Präfix oder "%"-Suffix) für eine bessere Lesbarkeit.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
+
+Betten Sie externe Tools und Inhalte direkt in Ihr Dashboard ein.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
+
+**Am besten geeignet für:**
+
+* Externe Berichte oder Dashboards anzeigen
+* Vertriebstools von Drittanbietern integrieren
+* Live-Inhalte aus anderen Systemen anzeigen
+
+**Beispielverwendung:**
+
+* Kennzahlen aus Ihrem Support-Tool
+* Kennzahlen aus Ihrem Dialer
+* Live-Inhalte aus Ihrem Tool für Sales-Sequenzen
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Rich Text</span>
+
+Add formatted text and content directly to your dashboard.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Rich text" />
+</Frame>
+
+**Am besten geeignet für:**
+
+* Adding context or instructions
+* Dashboard descriptions
+* Notes and annotations
+
+**Features:**
+
+* Rich text formatting (bold, italic, lists, etc.)
+* Image and file uploads
+* Markdown-style editing
+
+<Note>
+  **Bald verfügbar**: Tachometerdiagramme und Tabellen sind noch nicht verfügbar, stehen aber auf unserer Roadmap.
+</Note>
+
+### Widgets duplizieren
+
+1. Klicken Sie auf das Widget
+2. Öffnen Sie **Optionen**
+3. Klicken Sie auf **Widget duplizieren**

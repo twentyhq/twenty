@@ -57,8 +57,17 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
           applicationId: workspaceCustomApplicationId,
         },
         workspaceId,
+        skipNameField: createObjectInput.skipNameField,
       });
     const createdAt = new Date().toISOString();
+
+    // Use nameField.id if it exists, otherwise use idField.id (for junction tables without name)
+    const nameField = defaultFlatFieldForCustomObjectMaps.fields.nameField as
+      | FlatFieldMetadata
+      | undefined;
+    const labelIdentifierFieldMetadataId =
+      nameField?.id ?? defaultFlatFieldForCustomObjectMaps.fields.idField.id;
+
     const flatObjectMetadataToCreate: FlatObjectMetadata = {
       fieldMetadataIds: [],
       viewIds: [],
@@ -78,8 +87,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       isSearchable: true,
       isUIReadOnly: false,
       isSystem: false,
-      labelIdentifierFieldMetadataId:
-        defaultFlatFieldForCustomObjectMaps.fields.nameField.id,
+      labelIdentifierFieldMetadataId,
       labelPlural: capitalize(createObjectInput.labelPlural),
       labelSingular: capitalize(createObjectInput.labelSingular),
       namePlural: createObjectInput.namePlural,
@@ -88,7 +96,8 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       standardId: createObjectInput.standardId ?? null,
       standardOverrides: null,
       applicationId: workspaceCustomApplicationId,
-      universalIdentifier: objectMetadataId,
+      universalIdentifier:
+        createObjectInput.universalIdentifier ?? objectMetadataId,
       targetTableName: 'DEPRECATED',
       workspaceId,
     };

@@ -200,4 +200,7 @@ export class ClientConfig {
 
   @Field(() => String, { nullable: true })
   calendarBookingPageId?: string;
+
+  @Field(() => Boolean)
+  isCloudflareIntegrationEnabled: boolean;
 }

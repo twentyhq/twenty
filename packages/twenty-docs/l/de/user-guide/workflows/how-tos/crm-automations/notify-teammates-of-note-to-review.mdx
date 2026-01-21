@@ -1,0 +1,127 @@
+---
+title: Teammitglieder über eine zu prüfende Notiz benachrichtigen
+description: Senden Sie automatische E-Mail-Benachrichtigungen, wenn Sie einem Kollegen die Überprüfung einer Notiz zuweisen.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Note>
+  **Das direkte Taggen von Teammitgliedern in Notizen wird noch nicht unterstützt.** Diese Funktion ist für die zweite Jahreshälfte 2026 geplant. In der Zwischenzeit bietet dieser Workflow einen praktischen Workaround.
+</Note>
+
+## Die Herausforderung
+
+Sie möchten einen Kollegen in einer Notiz taggen, damit er eine Benachrichtigung zur Überprüfung erhält. Derzeit unterstützt Twenty keine @-Erwähnungen in Notizen oder Aufgaben.
+
+## Der Workaround
+
+Anstatt im Notiztext zu taggen, können Sie:
+
+1. Erstellen Sie ein **Reviewer**-Beziehungsfeld im Objekt Notizen
+2. Weisen Sie den Reviewer beim Erstellen oder Bearbeiten der Notiz zu
+3. Ein Workflow sendet automatisch eine E-Mail an den Reviewer mit einem Link zur Notiz
+
+<Warning>
+  **Einschränkung**: Mit diesem Ansatz kann pro Feld nur ein Reviewer zugewiesen werden. Wenn Sie mehrere Personen benachrichtigen müssen, erstellen Sie zusätzliche Beziehungsfelder (z. B. Reviewer 1, Reviewer 2). Das skaliert nicht gut, wenn Sie viele Teammitglieder auf einmal taggen müssen.
+</Warning>
+
+## Schritt-für-Schritt-Einrichtung
+
+### Schritt 1: Reviewer-Feld erstellen
+
+<img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
+
+1. Gehen Sie zu **Einstellungen → Datenmodell → Notizen**
+2. Klicken Sie auf **Feld hinzufügen**
+3. Konfigurieren:
+
+| Einstellung            | Wert                                        |
+| ---------------------- | ------------------------------------------- |
+| **Name**               | Reviewer                                    |
+| **Typ**                | Beziehung                                   |
+| **Verknüpftes Objekt** | Arbeitsbereichsmitglied                     |
+| **Beziehungstyp**      | Viele Notizen → Ein Arbeitsbereichsmitglied |
+
+4. Speichern Sie das Feld
+
+### Schritt 2: Workflow erstellen
+
+<VimeoEmbed videoId="1151897168" title="Video-Demonstration" />
+
+#### Workflow-Trigger erstellen
+
+1. Gehen Sie zur Hauptansicht und erstellen Sie einen neuen Workflow
+2. Wählen Sie **Record Updated** als Auslöser
+3. Wählen Sie **Note** als Objekt und geben Sie das Reviewer-Feld an.
+4. Dadurch wird der Workflow immer dann ausgelöst, wenn der Reviewer einer Notiz aktualisiert wird.
+
+#### Filter hinzufügen, um zu prüfen, ob der Reviewer gerade zugewiesen wurde
+
+Fügen Sie eine **Filter**-Aktion hinzu, damit der Workflow nur fortgesetzt wird, wenn ein Reviewer zugewiesen ist:
+
+| Bedingung    | Wert           |
+| ------------ | -------------- |
+| **Reviewer** | ist nicht leer |
+
+#### Nach dem Arbeitsbereichsmitglied suchen
+
+1. Fügen Sie eine **Datensätze suchen**-Aktion hinzu
+2. Wählen Sie **Arbeitsbereichsmitglied** (unter Erweiterten Objekten)
+3. Fügen Sie einen Filter hinzu:
+
+| Bedingung | Wert                             |
+| --------- | -------------------------------- |
+| **ID**    | entspricht `{{note.reviewerId}}` |
+
+Dadurch wird der vollständige Datensatz des Arbeitsbereichsmitglieds abgerufen, einschließlich der E-Mail-Adresse und des Namens.
+
+#### Benachrichtigungs-E-Mail senden
+
+1. Fügen Sie eine **E-Mail senden**-Aktion hinzu
+2. Konfigurieren:
+
+| Feld        | Wert                                                                |
+| ----------- | ------------------------------------------------------------------- |
+| **An**      | Datensatz suchen → Erstes Arbeitsbereichsmitglied → Benutzer-E-Mail |
+| **Betreff** | Eine Notiz benötigt Ihre Überprüfung                                |
+| **Inhalt**  | Siehe Beispiel unten                                                |
+
+**Beispiel für den E-Mail-Text:**
+
+```text
+Hi {{searchRecord.firstWorkspaceMember.name.firstName}},
+
+You've been assigned to review a note.
+
+View the note here:
+https://yourSubDomain.twenty.com/object/note/{{recordIsUpdated.id}}
+
+Best,
+Twenty
+```
+
+<Note>
+  Ersetzen Sie `yourSubDomain` durch die tatsächliche Subdomain Ihres Twenty-Arbeitsbereichs.
+</Note>
+
+#### Testen und Aktivieren
+
+1. Klicken Sie auf **Test**, um den Workflow manuell auszuführen
+2. Erstellen oder bearbeiten Sie eine Notiz und weisen Sie einen Reviewer zu
+3. Prüfen Sie den Posteingang des Reviewers auf die Benachrichtigungs-E-Mail
+4. Aktivieren Sie den Workflow
+
+## Verwendung
+
+Sobald eingerichtet, kann Ihr Team diesen Workflow wie folgt verwenden:
+
+1. Erstellen einer neuen Notiz (oder Bearbeiten einer bestehenden)
+2. Auswählen eines Kollegen im Feld **Reviewer**
+3. Der Kollege erhält automatisch eine E-Mail mit einem direkten Link zur Notiz
+
+## Verwandt
+
+* [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
+* [E-Mails aus Workflows senden](/l/de/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Benutzerdefinierte Felder erstellen](/l/de/user-guide/data-model/how-tos/create-custom-fields)
+* [Beziehungsfelder erstellen](/l/de/user-guide/data-model/how-tos/create-relation-fields)

@@ -89,7 +89,7 @@ describe('WorkspaceRepository', () => {
       morphId: null,
       standardId: null,
       standardOverrides: null,
-      applicationId: null,
+      applicationId: 'application-id',
       relationTargetFieldMetadataId: null,
       relationTargetObjectMetadataId: null,
       calendarViewIds: [],
@@ -145,6 +145,8 @@ describe('WorkspaceRepository', () => {
         canSoftDeleteObjectRecords: false,
         canDestroyObjectRecords: false,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       },
     };
     mockQueryRunner = {} as QueryRunner;

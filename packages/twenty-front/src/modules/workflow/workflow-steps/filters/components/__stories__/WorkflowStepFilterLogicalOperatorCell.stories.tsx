@@ -1,14 +1,13 @@
+import { WorkflowStepFilterLogicalOperatorCell } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell';
 import { WorkflowStepFilterDecorator } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/decorators/WorkflowStepFilterDecorator';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { type StepFilterGroup, StepLogicalOperator } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { WorkflowStepFilterLogicalOperatorCell } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell';
 
 const AND_STEP_FILTER_GROUP: StepFilterGroup = {
   id: 'filter-group-1',
@@ -38,7 +37,6 @@ const meta: Meta<typeof WorkflowStepFilterLogicalOperatorCell> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     WorkspaceDecorator,
-    I18nFrontDecorator,
     WorkflowStepFilterDecorator,
   ],
 };

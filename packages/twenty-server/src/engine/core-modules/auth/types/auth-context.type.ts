@@ -22,6 +22,14 @@ export type AuthContext = {
   };
 };
 
+export type SerializableAuthContext = {
+  userId?: string;
+  userWorkspaceId?: string;
+  workspaceMemberId?: string;
+  apiKeyId?: string;
+  applicationId?: string;
+};
+
 export enum JwtTokenTypeEnum {
   ACCESS = 'ACCESS',
   REFRESH = 'REFRESH',
@@ -110,10 +118,6 @@ export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.POSTGRES_PROXY;
 };
 
-export type RemoteServerTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: JwtTokenTypeEnum.REMOTE_SERVER;
-};
-
 export type JwtPayload =
   | AccessTokenJwtPayload
   | ApiKeyTokenJwtPayload
@@ -123,5 +127,4 @@ export type JwtPayload =
   | TransientTokenJwtPayload
   | RefreshTokenJwtPayload
   | FileTokenJwtPayload
-  | PostgresProxyTokenJwtPayload
-  | RemoteServerTokenJwtPayload;
+  | PostgresProxyTokenJwtPayload;

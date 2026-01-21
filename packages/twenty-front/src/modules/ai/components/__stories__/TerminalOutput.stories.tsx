@@ -1,15 +1,14 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { TerminalOutput } from '@/ai/components/TerminalOutput';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const meta: Meta<typeof TerminalOutput> = {
   title: 'Modules/AI/TerminalOutput',
   component: TerminalOutput,
-  decorators: [I18nFrontDecorator, SnackBarDecorator, ComponentDecorator],
+  decorators: [SnackBarDecorator, ComponentDecorator],
   parameters: {
     container: { width: 500 },
   },

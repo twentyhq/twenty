@@ -44,7 +44,7 @@ import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
+// eslint-disable-next-line twenty/inject-workspace-repository
 export class SignInUpService {
   constructor(
     @InjectRepository(UserEntity)
@@ -272,6 +272,7 @@ export class SignInUpService {
       await this.activateOnboardingForUser({
         user,
         workspace: params.workspace,
+        shouldShowConnectAccountStep: false,
       });
 
       await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
@@ -301,20 +302,24 @@ export class SignInUpService {
     {
       user,
       workspace,
+      shouldShowConnectAccountStep,
     }: {
       user: UserEntity;
       workspace: WorkspaceEntity;
+      shouldShowConnectAccountStep: boolean;
     },
     queryRunner?: QueryRunner,
   ) {
-    await this.onboardingService.setOnboardingConnectAccountPending(
-      {
-        userId: user.id,
-        workspaceId: workspace.id,
-        value: true,
-      },
-      queryRunner,
-    );
+    if (shouldShowConnectAccountStep) {
+      await this.onboardingService.setOnboardingConnectAccountPending(
+        {
+          userId: user.id,
+          workspaceId: workspace.id,
+          value: true,
+        },
+        queryRunner,
+      );
+    }
 
     if (user.firstName === '' && user.lastName === '') {
       await this.onboardingService.setOnboardingCreateProfilePending(
@@ -515,7 +520,10 @@ export class SignInUpService {
         queryRunner,
       );
 
-      await this.activateOnboardingForUser({ user, workspace }, queryRunner);
+      await this.activateOnboardingForUser(
+        { user, workspace, shouldShowConnectAccountStep: true },
+        queryRunner,
+      );
 
       await this.onboardingService.setOnboardingInviteTeamPending(
         {

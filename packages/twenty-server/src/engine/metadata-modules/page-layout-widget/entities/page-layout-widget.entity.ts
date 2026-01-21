@@ -9,16 +9,17 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  type Relation,
   UpdateDateColumn,
+  type Relation,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
+import { PageLayoutWidgetConfigurationTypeSettings } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configuration.type';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
 @ObjectType('PageLayoutWidget')
@@ -27,7 +28,11 @@ import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widge
   ['workspaceId', 'pageLayoutTabId'],
   { where: '"deletedAt" IS NULL' },
 )
-export class PageLayoutWidgetEntity
+@Index('IDX_PAGE_LAYOUT_WIDGET_OBJECT_METADATA_ID', ['objectMetadataId'])
+export class PageLayoutWidgetEntity<
+    TWidgetConfigurationType extends
+      WidgetConfigurationType = WidgetConfigurationType,
+  >
   extends SyncableEntity
   implements Required<PageLayoutWidgetEntity>
 {
@@ -68,7 +73,7 @@ export class PageLayoutWidgetEntity
   gridPosition: GridPosition;
 
   @Column({ type: 'jsonb', nullable: false })
-  configuration: AllPageLayoutWidgetConfiguration;
+  configuration: PageLayoutWidgetConfigurationTypeSettings<TWidgetConfigurationType>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

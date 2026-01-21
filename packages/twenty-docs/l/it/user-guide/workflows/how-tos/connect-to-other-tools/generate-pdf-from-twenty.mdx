@@ -1,0 +1,228 @@
+---
+title: Genera un PDF da Twenty
+description: Crea un flusso di lavoro per generare e allegare un PDF (ad esempio un preventivo) a un record.
+---
+
+Genera o recupera automaticamente un PDF e allegalo a un record in Twenty. Questo viene comunemente utilizzato per creare preventivi, fatture o report collegati ad Aziende, Opportunità o altri oggetti.
+
+## Panoramica
+
+Questo flusso di lavoro usa un **Attivatore manuale** così gli utenti possono generare un PDF su richiesta per qualsiasi record selezionato. Una **Funzione serverless** gestisce:
+
+1. Scaricare il PDF da un URL (da un servizio di generazione di PDF)
+2. Caricare il file su Twenty
+3. Creare un allegato collegato al record
+
+## Prerequisiti
+
+Prima di configurare il flusso di lavoro:
+
+1. **Crea una chiave API**: vai su **Impostazioni → API** e crea una nuova chiave API. Ti servirà questo token per la funzione serverless.
+2. **Configura un servizio di generazione PDF** (opzionale): se vuoi generare dinamicamente PDF (ad es. preventivi), usa un servizio come Carbone, PDFMonkey o DocuSeal per creare il PDF e ottenere un URL di download.
+
+## Configurazione passo-passo
+
+### Passaggio 1: Configura il trigger
+
+1. Vai su **Flussi di lavoro** e crea un nuovo flusso di lavoro
+2. Seleziona **Attivatore manuale**
+3. Scegli l'oggetto a cui vuoi allegare i PDF (ad es. **Company** o **Opportunity**)
+
+<Tip>
+  Con un **Attivatore manuale**, gli utenti possono eseguire questo flusso di lavoro utilizzando un pulsante che appare in alto a destra una volta selezionato un record, per generare e allegare un PDF.
+</Tip>
+
+### Passaggio 2: aggiungi una Funzione serverless
+
+1. Aggiungi un'azione **Funzione serverless**
+2. Crea una nuova funzione con il codice seguente
+3. Configura i parametri di input
+
+#### Parametri di input
+
+| Parametro   | Valore                  |
+| ----------- | ----------------------- |
+| `companyId` | `{{trigger.object.id}}` |
+
+<Note>
+  Se alleghi a un oggetto diverso (Person, Opportunity, ecc.), rinomina di conseguenza il parametro (ad es. `personId`, `opportunityId`) e aggiorna la funzione serverless.
+</Note>
+
+#### Codice della funzione serverless
+
+```typescript
+export const main = async (
+  params: { companyId: string },
+) => {
+  const { companyId } = params;
+
+  // Replace with your Twenty GraphQL endpoint
+  // Cloud: https://api.twenty.com/graphql
+  // Self-hosted: https://your-domain.com/graphql
+  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  // Replace with your API key from Settings → APIs
+  const authToken = 'YOUR_API_KEY';
+
+  // Replace with your PDF URL
+  // This could be from a PDF generation service or a static URL
+  const pdfUrl = 'https://your-pdf-service.com/generated-quote.pdf';
+  const filename = 'quote.pdf';
+
+  // Step 1: Download the PDF file
+  const pdfResponse = await fetch(pdfUrl);
+
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBlob = await pdfResponse.blob();
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Step 2: Upload the file via GraphQL multipart upload
+  const uploadMutation = `
+    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+      uploadFile(file: $file, fileFolder: $fileFolder) {
+        path
+      }
+    }
+  `;
+
+  const uploadForm = new FormData();
+  uploadForm.append('operations', JSON.stringify({
+    query: uploadMutation,
+    variables: { file: null, fileFolder: 'Attachment' },
+  }));
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
+
+  const uploadResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${authToken}` },
+    body: uploadForm,
+  });
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  }
+
+  const filePath = uploadResult.data?.uploadFile?.path;
+
+  if (!filePath) {
+    throw new Error('No file path returned from upload');
+  }
+
+  // Step 3: Create the attachment linked to the company
+  const attachmentMutation = `
+    mutation CreateAttachment($data: AttachmentCreateInput!) {
+      createAttachment(data: $data) {
+        id
+        name
+      }
+    }
+  `;
+
+  const attachmentResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: attachmentMutation,
+      variables: {
+        data: {
+          name: filename,
+          fullPath: filePath,
+          companyId,
+        },
+      },
+    }),
+  });
+
+  const attachmentResult = await attachmentResponse.json();
+
+  if (attachmentResult.errors?.length) {
+    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+  }
+
+  return attachmentResult.data?.createAttachment;
+};
+```
+
+### Passaggio 3: personalizza per il tuo caso d'uso
+
+#### Per allegare a un oggetto diverso
+
+Sostituisci `companyId` con il campo appropriato:
+
+| Oggetto                | Nome del campo       |
+| ---------------------- | -------------------- |
+| Azienda                | `companyId`          |
+| Persona                | `personId`           |
+| Opportunità            | `opportunityId`      |
+| Oggetto personalizzato | `yourCustomObjectId` |
+
+Aggiorna sia il parametro della funzione sia l'oggetto `variables.data` nella mutation dell'allegato.
+
+#### Per usare un URL PDF dinamico
+
+Se usi un servizio di generazione PDF, puoi:
+
+1. Per prima cosa esegui un'azione HTTP Request per generare il PDF
+2. Passa l'URL PDF restituito alla funzione serverless come parametro
+
+```typescript
+export const main = async (
+  params: { companyId: string; pdfUrl: string; filename: string },
+) => {
+  const { companyId, pdfUrl, filename } = params;
+  // ... rest of the function
+};
+```
+
+### Passaggio 4: Testa e attiva
+
+1. Salva il flusso di lavoro
+2. Vai a un record di Company
+3. Fai clic sul menu **⋮** e seleziona il tuo flusso di lavoro
+4. Controlla la sezione **Attachments** nel record per verificare che il PDF sia stato allegato
+5. Attiva il flusso di lavoro
+
+## Integrazione con servizi di generazione PDF
+
+Per creare preventivi o fatture dinamici:
+
+### Esempio: Genera preventivo → Allega PDF
+
+| Passaggio | Azione                       | Scopo                                                    |
+| --------- | ---------------------------- | -------------------------------------------------------- |
+| 1         | Attivatore manuale (Company) | L'utente avvia l'operazione su un record                 |
+| 2         | Cerca record                 | Ottieni i dettagli di Opportunity o delle righe articolo |
+| 3         | Richiesta HTTP               | Chiama l'API di generazione PDF con i dati del record    |
+| 4         | Funzione serverless          | Scarica e allega il PDF generato                         |
+
+### Servizi di generazione PDF più diffusi
+
+* **Carbone** - Generazione di documenti basata su modelli
+* **PDFMonkey** - Creazione dinamica di PDF da modelli
+* **DocuSeal** - Piattaforma di automazione dei documenti
+* **Documint** - Generazione di documenti API-first
+
+Ogni servizio fornisce un'API che restituisce un URL PDF, che puoi quindi passare alla funzione serverless.
+
+## Risoluzione dei problemi
+
+| Problema                               | Soluzione                                                                                |
+| -------------------------------------- | ---------------------------------------------------------------------------------------- |
+| "Download del PDF non riuscito"        | Verifica che l'URL del PDF sia accessibile e restituisca un PDF valido                   |
+| "Caricamento non riuscito"             | Verifica che la tua chiave API sia valida e abbia i permessi di scrittura                |
+| "Creazione dell'allegato non riuscita" | Assicurati che il nome del campo ID dell'oggetto corrisponda all'oggetto di destinazione |
+
+## Correlati
+
+* [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
+* [Funzioni serverless](/l/it/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Genera un preventivo o una fattura da Twenty](/l/it/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

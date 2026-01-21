@@ -1,4 +1,4 @@
-import { type Meta } from '@storybook/react';
+import { type Meta } from '@storybook/react-vite';
 
 import { mockRsiValues } from '@/spreadsheet-import/__mocks__/mockRsiValues';
 import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
@@ -8,7 +8,6 @@ import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/Spre
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { RecoilRoot } from 'recoil';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof SelectSheetStep> = {
   title: 'Modules/SpreadsheetImport/SelectSheetStep',
@@ -31,7 +30,6 @@ const meta: Meta<typeof SelectSheetStep> = {
         <Story />
       </RecoilRoot>
     ),
-    I18nFrontDecorator,
   ],
 };
 

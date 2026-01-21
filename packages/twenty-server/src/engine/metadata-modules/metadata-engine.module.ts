@@ -3,13 +3,14 @@ import { Module } from '@nestjs/common';
 import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
+import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
 import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { DatabaseEventTriggerModule } from 'src/engine/metadata-modules/database-event-trigger/database-event-trigger.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
+import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RemoteServerModule } from 'src/engine/metadata-modules/remote-server/remote-server.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
@@ -18,24 +19,23 @@ import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
-import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
     DataSourceModule,
     FieldMetadataModule,
+    FrontComponentModule,
     ObjectMetadataModule,
     SearchFieldMetadataModule,
     ServerlessFunctionModule,
     ServerlessFunctionLayerModule,
     SkillModule,
+    CommandMenuItemModule,
     AiAgentModule,
     AiAgentMonitorModule,
     AiChatModule,
     ViewModule,
     WorkspaceMetadataVersionModule,
-    WorkspaceMigrationModule,
-    RemoteServerModule,
     RoleModule,
     PermissionsModule,
     RouteTriggerModule,
@@ -46,14 +46,15 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
   exports: [
     DataSourceModule,
     FieldMetadataModule,
+    FrontComponentModule,
     ObjectMetadataModule,
     SearchFieldMetadataModule,
     ServerlessFunctionModule,
     SkillModule,
+    CommandMenuItemModule,
     AiAgentModule,
     AiChatModule,
     ViewModule,
-    RemoteServerModule,
     RoleModule,
     PermissionsModule,
   ],

@@ -1,16 +1,14 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ComponentProps } from 'react';
 
 import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
 import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof GraphWidgetLineChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetLineChart',
   component: GraphWidgetLineChart,
   decorators: [
-    I18nFrontDecorator,
     (Story) => (
       <GraphWidgetTestWrapper>
         <Story />
@@ -66,6 +64,17 @@ const meta: Meta<typeof GraphWidgetLineChart> = {
     omitNullValues: {
       control: 'boolean',
     },
+    colorMode: {
+      control: 'select',
+      options: [
+        'automaticPalette',
+        'explicitSingleColor',
+        'selectFieldOptionColors',
+      ],
+    },
+  },
+  args: {
+    colorMode: 'automaticPalette',
   },
 };
 
@@ -95,6 +104,7 @@ const renderChart = (args: ChartArgs) => (
       prefix={args.prefix}
       suffix={args.suffix}
       decimals={args.decimals}
+      colorMode={args.colorMode}
     />
   </Container>
 );

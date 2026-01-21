@@ -1,71 +1,71 @@
 ---
 title: Миграция с локального на облако
-description: Step-by-step guide to migrate your Twenty self-hosted instance to Twenty Cloud.
+description: Пошаговое руководство по миграции вашего самостоятельно размещённого экземпляра Twenty в Twenty Cloud.
 ---
 
 ## Обзор
 
-This guide walks you through migrating your data from a Twenty self-hosted instance to Twenty Cloud. The process involves setting up your cloud workspace, exporting your data, and re-importing it.
+В этом руководстве описан процесс переноса ваших данных из самостоятельно размещённого экземпляра Twenty в Twenty Cloud. Процесс включает настройку облачного рабочего пространства, экспорт данных и их повторный импорт.
 
-<Note>Views, workflows, and roles must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>Представления, рабочие процессы и роли необходимо воссоздать вручную после миграции. Запланируйте время на эту настройку.</Note>
 
-## Step 1: Create Your Cloud Workspace
+## Шаг 1: Создайте облачное рабочее пространство
 
-1. Go to [app.twenty.com](https://app.twenty.com) and create a new workspace
-2. Complete the initial setup wizard
-3. Note your new workspace URL
+1. Перейдите на [app.twenty.com](https://app.twenty.com) и создайте новое рабочее пространство
+2. Пройдите начальный мастер настройки
+3. Запишите URL нового рабочего пространства
 
-## Step 2: Recreate Your Data Model
+## Шаг 2: Воссоздайте модель данных
 
-Before importing data, recreate your custom objects and fields:
+Перед импортом данных воссоздайте ваши пользовательские объекты и поля:
 
-1. Go to **Settings → Data Model** in your cloud instance
-2. Create custom objects that match your self-hosted setup
-3. Add custom fields to standard and custom objects
-4. Configure field settings (unique, required, etc.)
+1. Перейдите в **Настройки → Модель данных** в вашем облачном экземпляре
+2. Создайте пользовательские объекты, соответствующие вашей конфигурации в самостоятельно размещённом экземпляре
+3. Добавьте пользовательские поля к стандартным и пользовательским объектам
+4. Настройте параметры полей (уникальность, обязательность и т. д.)
 
-<Note>Take screenshots of your self-hosted data model for reference, or keep both instances open side by side.</Note>
+<Note>Сделайте скриншоты модели данных вашего самостоятельно размещённого экземпляра для справки или держите оба экземпляра открытыми рядом.</Note>
 
-## Step 3: Invite All Users
+## Шаг 3: Пригласите всех пользователей
 
 <Warning>
-  **Critical: Invite users BEFORE importing data.**
+  **Важно: Пригласите пользователей ПЕРЕД импортом данных.**
 
-  Users must accept their invitations before you import any records that reference them (like Account Owner fields). If users don't exist yet, those relations cannot be mapped.
+  Пользователи должны принять приглашения до импорта любых записей, которые на них ссылаются (например, поля владельца аккаунта). Если пользователи ещё не существуют, эти связи нельзя будет сопоставить.
 </Warning>
 
-1. Go to **Settings → Members** in your cloud instance
-2. Invite all team members who had accounts on self-hosted
-3. **Wait for everyone to accept** their invitation
-4. Verify all users appear in your Members list
+1. Перейдите в **Настройки → Участники** в вашем облачном экземпляре
+2. Пригласите всех участников команды, у которых были аккаунты в самостоятельно размещённой версии
+3. **Дождитесь, пока все примут** приглашения
+4. Проверьте, что все пользователи отображаются в списке «Участники»
 
-## Step 4: Export Data from Self-Hosted
+## Шаг 4: Экспортируйте данные из самостоятельно размещённой версии
 
-Export each object from your self-hosted instance:
+Экспортируйте каждый объект из вашего самостоятельно размещённого экземпляра:
 
-1. Navigate to each object (Companies, People, Opportunities, etc.)
-2. Configure the view to show **all columns** you want to migrate
-3. Click **⋮ → Export view**
-4. Save each CSV file with a clear name (e.g., `companies-export.csv`)
+1. Перейдите к каждому объекту (Компании, Люди, Возможности и т. д.)
+2. Настройте представление так, чтобы отображались **все столбцы**, которые вы хотите перенести
+3. Нажмите **⋮ → Экспорт представления**
+4. Сохраните каждый CSV-файл с понятным именем (например, `companies-export.csv`)
 
-**Export in this order** (for reference when importing):
+**Экспортируйте в следующем порядке** (для справки при импорте):
 
 1. Компании
 2. Люди
 3. Возможности
-4. Custom objects (following their dependencies)
-5. Tasks, Notes
+4. Пользовательские объекты (с учётом зависимостей)
+5. Задачи, заметки
 
-## Step 5: Update Workspace Member References
+## Шаг 5: Обновите ссылки на участников рабочего пространства
 
-The exported CSVs contain user IDs from your self-hosted instance. These IDs won't match your cloud instance, so you need to replace them with emails.
+Экспортированные CSV-файлы содержат идентификаторы пользователей из вашего самостоятельно размещённого экземпляра. Эти идентификаторы не совпадут с облачным экземпляром, поэтому их нужно заменить на адреса электронной почты.
 
-**For each CSV file with user references (Owner, Assignee, etc.):**
+**Для каждого CSV-файла со ссылками на пользователей (владелец, исполнитель и т. д.):**
 
-1. Open the CSV in a spreadsheet application
-2. Add a new column next to each user ID column (e.g., `accountOwnerEmail` next to `accountOwnerId`)
-3. Fill in the **email address** of each user
-4. You can delete the old ID column or leave it (it will be skipped during import)
+1. Откройте CSV в табличном редакторе
+2. Добавьте новый столбец рядом с каждым столбцом идентификатора пользователя (например, `accountOwnerEmail` рядом с `accountOwnerId`)
+3. Укажите **адрес электронной почты** каждого пользователя
+4. Вы можете удалить старый столбец с идентификатором или оставить его (при импорте он будет пропущен)
 
 **Пример:**
 
@@ -83,89 +83,89 @@ name,domain,accountOwnerEmail
 Acme Corp,https://acme.com,john@yourcompany.com
 ```
 
-<Note>Use the same email addresses that users used to accept their cloud workspace invitation.</Note>
+<Note>Используйте те же адреса электронной почты, которые пользователи использовали для принятия приглашения в облачное рабочее пространство.</Note>
 
-## Step 6: Plan Your Import Order
+## Шаг 6: Спланируйте порядок импорта
 
-Import files in the correct order to maintain relationships:
+Импортируйте файлы в правильном порядке, чтобы сохранить связи:
 
-1. **Companies** first (no dependencies)
-2. **People** second (link to Companies)
-3. **Opportunities** third (link to Companies and People)
-4. **Custom objects** (following their dependencies)
-5. **Tasks and Notes** last (link to other records)
+1. **Компании** в первую очередь (без зависимостей)
+2. **Люди** во вторую очередь (связь с компаниями)
+3. **Возможности** в третью очередь (связь с компаниями и людьми)
+4. **Пользовательские объекты** (с учётом зависимостей)
+5. **Задачи и заметки** в последнюю очередь (связь с другими записями)
 
-See [How to Import Relations](/l/ru/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for details on maintaining relationships.
+См. [как импортировать связи](/l/ru/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) для подробностей о сохранении связей.
 
-## Step 7: Import to Cloud
+## Шаг 7: Импорт в облако
 
-For each CSV file, in order:
+Для каждого CSV-файла, по порядку:
 
-1. Navigate to the object in your cloud instance
-2. Click **⋮ → Import records**
-3. Upload the CSV file
-4. Map columns to fields:
-   * Map user email columns to the appropriate relation fields
-   * Map other columns as usual
-5. Review and fix any errors
-6. Confirm the import
-7. Verify a few records before proceeding to the next file
+1. Перейдите к объекту в вашем облачном экземпляре
+2. Нажмите **⋮ → Импорт записей**
+3. Загрузите файл CSV
+4. Сопоставьте столбцы с полями:
+   * Сопоставьте столбцы с адресами электронной почты пользователей соответствующим полям связей
+   * Сопоставьте остальные столбцы как обычно
+5. Проверьте и исправьте любые ошибки
+6. Подтвердите импорт
+7. Проверьте несколько записей, прежде чем переходить к следующему файлу
 
-## Step 8: Recreate Configuration
+## Шаг 8: Воссоздайте конфигурацию
 
-After importing data, manually recreate:
+После импорта данных вручную воссоздайте:
 
 ### Представления
 
-* Recreate saved views with filters, sorts, and column configurations
-* Set up any kanban or calendar views
+* Воссоздайте сохранённые представления с фильтрами, сортировками и настройками столбцов
+* Настройте канбан- и календарные представления
 
 ### Рабочие процессы
 
-* Recreate automations in **Settings → Workflows**
-* Test each workflow before relying on it
+* Воссоздайте автоматизации в **Настройки → Рабочие процессы**
+* Протестируйте каждый рабочий процесс, прежде чем полагаться на него
 
-### Roles and Permissions
+### Роли и разрешения
 
-* Configure roles in **Settings → Roles**
-* Assign users to appropriate roles
+* Настройте роли в **Настройки → Роли**
+* Назначьте пользователям соответствующие роли
 
 ### Интеграции
 
-* Reconnect email and calendar sync for each user
-* Reconfigure any API integrations with new API keys
+* Подключите заново синхронизацию почты и календаря для каждого пользователя
+* Перенастройте любые интеграции API с новыми ключами API
 
 ## Послемиграционный контрольный список
 
-<Check>All data imported successfully</Check>
-<Check>Relations between objects working correctly</Check>
-<Check>User assignments (Owner, Assignee) mapped correctly</Check>
-<Check>Views recreated</Check>
-<Check>Workflows recreated and tested</Check>
-<Check>Roles and permissions configured</Check>
-<Check>Email/calendar sync reconnected</Check>
-<Check>API integrations updated with new keys</Check>
+<Check>Все данные успешно импортированы</Check>
+<Check>Связи между объектами работают корректно</Check>
+<Check>Назначения пользователей (владелец, исполнитель) сопоставлены корректно</Check>
+<Check>Представления воссозданы</Check>
+<Check>Рабочие процессы воссозданы и протестированы</Check>
+<Check>Роли и разрешения настроены</Check>
+<Check>Синхронизация почты/календаря восстановлена</Check>
+<Check>Интеграции API обновлены новыми ключами</Check>
 
-## FAQ
+## Часто задаваемые вопросы
 
 <AccordionGroup>
-  <Accordion title="Can I migrate workflows automatically?">
-    Not currently. Workflows must be recreated manually in your cloud instance.
+  <Accordion title="Можно ли автоматически перенести рабочие процессы?">
+    Пока нет. Рабочие процессы необходимо воссоздать вручную в вашем облачном экземпляре.
   </Accordion>
 
-  <Accordion title="What about file attachments and images?">
-    File attachments are not included in CSV exports. You'll need to re-upload any attachments manually, migrate them via API or contact our team for assistance with large migrations.
+  <Accordion title="Что насчёт вложений и изображений?">
+    Вложения не включаются в экспорт CSV. Вам потребуется повторно загрузить все вложения вручную, перенести их через API или связаться с нашей командой для помощи при крупных миграциях.
   </Accordion>
 
-  <Accordion title="Can I keep both instances running during migration?">
-    Yes, we recommend keeping your self-hosted instance running until you've verified the cloud migration is complete. Just be careful not to create new data in both places.
+  <Accordion title="Можно ли держать оба экземпляра запущенными во время миграции?">
+    Да, мы рекомендуем оставлять самостоятельно размещённый экземпляр запущенным, пока вы не убедитесь, что миграция в облако завершена. Просто следите, чтобы не создавать новые данные в обеих системах.
   </Accordion>
 
-  <Accordion title="What if a user hasn't accepted their invitation yet?">
-    Records referencing that user will fail to import or the relation will be empty. Ensure all users accept invitations before importing data.
+  <Accordion title="Что делать, если пользователь ещё не принял приглашение?">
+    Записи, ссылающиеся на этого пользователя, не будут импортированы, либо связь останется пустой. Убедитесь, что все пользователи приняли приглашения перед импортом данных.
   </Accordion>
 </AccordionGroup>
 
 ## Нужна Помощь?
 
-For complex migrations or large datasets, contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/ru/user-guide/getting-started/capabilities/implementation-services).
+Для сложных миграций или больших наборов данных свяжитесь с нами по адресу [contact@twenty.com](mailto:contact@twenty.com) или изучите наши [услуги по внедрению](/l/ru/user-guide/getting-started/capabilities/implementation-services).

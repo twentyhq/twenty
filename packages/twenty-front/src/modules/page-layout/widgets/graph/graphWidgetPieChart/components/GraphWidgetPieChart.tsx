@@ -7,8 +7,9 @@ import { PIE_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWid
 import { PIE_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMargins';
 import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
 import { graphWidgetPieTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetPieChart/states/graphWidgetPieTooltipComponentState';
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { getPieChartFormattedValue } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/getPieChartFormattedValue';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
@@ -26,20 +27,24 @@ import {
   type MouseEvent as ReactMouseEvent,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type PieChartConfiguration } from '~/generated/graphql';
+import {
+  type PieChartConfiguration,
+  type PieChartDataItem,
+} from '~/generated/graphql';
 
 type GraphWidgetPieChartProps = {
-  data: PieChartDataItem[];
+  data: PieChartDataItemWithColor[];
   showLegend?: boolean;
   id: string;
   objectMetadataItemId: string;
   configuration: PieChartConfiguration;
-  onSliceClick?: (datum: PieChartDataItem) => void;
+  colorMode: GraphColorMode;
+  onSliceClick?: (datum: PieChartDataItemWithColor) => void;
   showDataLabels?: boolean;
   showCenterMetric?: boolean;
 } & GraphValueFormatOptions;
 
-const emptyStateData: PieChartDataItem[] = [{ id: 'empty', value: 1 }];
+const emptyStateData: PieChartDataItemWithColor[] = [{ id: 'empty', value: 1 }];
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -72,6 +77,7 @@ export const GraphWidgetPieChart = ({
   id,
   objectMetadataItemId,
   configuration,
+  colorMode,
   displayType,
   decimals,
   prefix,
@@ -99,11 +105,12 @@ export const GraphWidgetPieChart = ({
   const { enrichedData, legendItems } = usePieChartData({
     data,
     colorRegistry,
+    colorMode,
   });
 
   const handleSliceMove = useCallback(
     (
-      datum: ComputedDatum<PieChartDataItem>,
+      datum: ComputedDatum<PieChartDataItemWithColor>,
       event: ReactMouseEvent<SVGPathElement>,
     ) => {
       if (!isDefined(containerRef.current)) return;

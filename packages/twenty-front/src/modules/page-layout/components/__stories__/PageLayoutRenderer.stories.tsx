@@ -4,9 +4,9 @@ import {
   useApolloClient,
 } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
-import type { Meta, StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
+import { expect, within } from 'storybook/test';
 
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
@@ -24,7 +24,6 @@ import {
   type PageLayoutWidget,
   WidgetConfigurationType,
 } from '~/generated/graphql';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -271,7 +270,6 @@ const meta: Meta<typeof PageLayoutRenderer> = {
   title: 'Modules/PageLayout/PageLayoutRenderer',
   component: PageLayoutRenderer,
   decorators: [
-    I18nFrontDecorator,
     (Story) => (
       <MemoryRouter>
         <JestMetadataAndApolloMocksWrapper>

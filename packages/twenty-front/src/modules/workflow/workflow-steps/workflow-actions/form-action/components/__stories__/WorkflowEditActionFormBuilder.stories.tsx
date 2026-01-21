@@ -1,10 +1,9 @@
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowEditActionFormBuilder } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
@@ -61,7 +60,6 @@ const meta: Meta<typeof WorkflowEditActionFormBuilder> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     RouterDecorator,
-    I18nFrontDecorator,
     ObjectMetadataItemsDecorator,
   ],
 };

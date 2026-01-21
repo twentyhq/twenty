@@ -1,16 +1,25 @@
 import { ThemeProvider } from '@emotion/react';
-import { type Preview } from '@storybook/react';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { type Preview } from '@storybook/react-vite';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { useEffect } from 'react';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 //import { useDarkMode } from 'storybook-dark-mode';
 
 // eslint-disable-next-line no-restricted-imports
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
-// eslint-disable-next-line no-restricted-imports
-import { mockedUserJWT } from '../src/testing/mock-data/jwt';
+
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
 import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
+// eslint-disable-next-line no-restricted-imports
+import { messages as enMessages } from '../src/locales/generated/en';
+
+// Initialize i18n globally for all stories
+i18n.load({ [SOURCE_LOCALE]: enMessages });
+i18n.activate(SOURCE_LOCALE);
+import { mockedUserJWT } from '~/testing/mock-data/jwt';
 // eslint-disable-next-line no-restricted-imports
 import { ClickOutsideListenerContext } from '../src/modules/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 
@@ -59,15 +68,17 @@ const preview: Preview = {
       }, [theme]);
 
       return (
-        <ThemeProvider theme={theme}>
-          <ThemeContextProvider theme={theme}>
-            <ClickOutsideListenerContext.Provider
-              value={{ excludedClickOutsideId: undefined }}
-            >
-              <Story />
-            </ClickOutsideListenerContext.Provider>
-          </ThemeContextProvider>
-        </ThemeProvider>
+        <I18nProvider i18n={i18n}>
+          <ThemeProvider theme={theme}>
+            <ThemeContextProvider theme={theme}>
+              <ClickOutsideListenerContext.Provider
+                value={{ excludedClickOutsideId: undefined }}
+              >
+                <Story />
+              </ClickOutsideListenerContext.Provider>
+            </ThemeContextProvider>
+          </ThemeProvider>
+        </I18nProvider>
       );
     },
     RootDecorator,

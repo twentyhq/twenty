@@ -1,0 +1,228 @@
+---
+title: إنشاء ملف PDF من Twenty
+description: أنشئ سير عمل لإنشاء ملف PDF (مثل عرض سعر) وإرفاقه بسجل.
+---
+
+أنشئ أو اجلب ملف PDF تلقائيًا وأرفقه بسجل في Twenty. يُستخدم هذا عادةً لإنشاء عروض أسعار أو فواتير أو تقارير مرتبطة بالشركات أو الفرص أو كائنات أخرى.
+
+## نظرة عامة
+
+يستخدم سير العمل هذا **المحفز اليدوي** بحيث يتمكن المستخدمون من إنشاء ملف PDF عند الطلب لأي سجل محدد. **وظيفة بلا خادم** تتولى ما يلي:
+
+1. تنزيل ملف PDF من عنوان URL (من خدمة إنشاء PDF)
+2. رفع الملف إلى Twenty
+3. إنشاء مرفق مرتبط بالسجل
+
+## المتطلبات الأساسية
+
+قبل إعداد سير العمل:
+
+1. **أنشئ مفتاح API**: انتقل إلى **الإعدادات → واجهات برمجة التطبيقات** ثم أنشئ مفتاح API جديدًا. ستحتاج إلى هذا الرمز المميز للوظيفة بلا خادم.
+2. **قم بإعداد خدمة إنشاء PDF** (اختياري): إذا كنت تريد إنشاء ملفات PDF ديناميكيًا (مثل عروض الأسعار)، فاستخدم خدمة مثل Carbone أو PDFMonkey أو DocuSeal لإنشاء ملف PDF والحصول على رابط تنزيل.
+
+## إعداد خطوة بخطوة
+
+### الخطوة 1: تهيئة المشغّل
+
+1. انتقل إلى **سير العمل** وأنشئ سير عمل جديدًا
+2. اختر **المحفز اليدوي**
+3. اختر الكائن الذي تريد إرفاق ملفات PDF به (مثل **شركة** أو **فرصة**)
+
+<Tip>
+  باستخدام المحفز اليدوي، يمكن للمستخدمين تشغيل سير العمل هذا عبر زر يظهر في أعلى اليمين عند تحديد سجل، وذلك لإنشاء ملف PDF وإرفاقه.
+</Tip>
+
+### الخطوة 2: إضافة وظيفة بلا خادم
+
+1. أضف إجراء **وظيفة بلا خادم**
+2. أنشئ وظيفة جديدة باستخدام الكود أدناه
+3. قم بتهيئة معلمات الإدخال
+
+#### معلمات الإدخال
+
+| المعلمة     | القيمة                  |
+| ----------- | ----------------------- |
+| `companyId` | `{{trigger.object.id}}` |
+
+<Note>
+  إذا كنت تُرفق إلى كائن مختلف (شخص، فرصة، إلخ)، فأعد تسمية المعلمة وفقًا لذلك (مثلًا، `personId`، `opportunityId`) وحدث الوظيفة بلا خادم.
+</Note>
+
+#### كود الوظيفة بلا خادم
+
+```typescript
+export const main = async (
+  params: { companyId: string },
+) => {
+  const { companyId } = params;
+
+  // Replace with your Twenty GraphQL endpoint
+  // Cloud: https://api.twenty.com/graphql
+  // Self-hosted: https://your-domain.com/graphql
+  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  // Replace with your API key from Settings → APIs
+  const authToken = 'YOUR_API_KEY';
+
+  // Replace with your PDF URL
+  // This could be from a PDF generation service or a static URL
+  const pdfUrl = 'https://your-pdf-service.com/generated-quote.pdf';
+  const filename = 'quote.pdf';
+
+  // Step 1: Download the PDF file
+  const pdfResponse = await fetch(pdfUrl);
+
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBlob = await pdfResponse.blob();
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Step 2: Upload the file via GraphQL multipart upload
+  const uploadMutation = `
+    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+      uploadFile(file: $file, fileFolder: $fileFolder) {
+        path
+      }
+    }
+  `;
+
+  const uploadForm = new FormData();
+  uploadForm.append('operations', JSON.stringify({
+    query: uploadMutation,
+    variables: { file: null, fileFolder: 'Attachment' },
+  }));
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
+
+  const uploadResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${authToken}` },
+    body: uploadForm,
+  });
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  }
+
+  const filePath = uploadResult.data?.uploadFile?.path;
+
+  if (!filePath) {
+    throw new Error('No file path returned from upload');
+  }
+
+  // Step 3: Create the attachment linked to the company
+  const attachmentMutation = `
+    mutation CreateAttachment($data: AttachmentCreateInput!) {
+      createAttachment(data: $data) {
+        id
+        name
+      }
+    }
+  `;
+
+  const attachmentResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: attachmentMutation,
+      variables: {
+        data: {
+          name: filename,
+          fullPath: filePath,
+          companyId,
+        },
+      },
+    }),
+  });
+
+  const attachmentResult = await attachmentResponse.json();
+
+  if (attachmentResult.errors?.length) {
+    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+  }
+
+  return attachmentResult.data?.createAttachment;
+};
+```
+
+### الخطوة 3: خصّص وفق حالة الاستخدام الخاصة بك
+
+#### لإرفاقه بكائن مختلف
+
+استبدل `companyId` بالحقل المناسب:
+
+| كائن       | اسم الحقل            |
+| ---------- | -------------------- |
+| الشركة     | `companyId`          |
+| شخص        | `personId`           |
+| الفرصة     | `opportunityId`      |
+| كائن مخصّص | `yourCustomObjectId` |
+
+حدّث كل من معلمة الوظيفة وكائن `variables.data` في عملية الـ mutation الخاصة بالمرفق.
+
+#### لاستخدام رابط PDF ديناميكي
+
+إذا كنت تستخدم خدمة إنشاء PDF، يمكنك:
+
+1. أولًا، أنشئ إجراء طلب HTTP لإنشاء ملف PDF
+2. مرّر رابط ملف PDF المُعاد إلى الوظيفة بلا خادم كمعلمة
+
+```typescript
+export const main = async (
+  params: { companyId: string; pdfUrl: string; filename: string },
+) => {
+  const { companyId, pdfUrl, filename } = params;
+  // ... rest of the function
+};
+```
+
+### الخطوة 4: الاختبار والتفعيل
+
+1. احفظ سير العمل
+2. انتقل إلى سجل شركة
+3. انقر على قائمة **⋮** واختر سير العمل الخاص بك
+4. تحقّق من قسم **المرفقات** في السجل للتأكد من أنه تم إرفاق ملف PDF
+5. فعّل سير العمل
+
+## الدمج مع خدمات إنشاء ملفات PDF
+
+لإنشاء عروض أسعار أو فواتير ديناميكية:
+
+### مثال: إنشاء عرض سعر → إرفاق ملف PDF
+
+| الخطوة | الإجراء                | الغرض                                                      |
+| ------ | ---------------------- | ---------------------------------------------------------- |
+| 1      | المحفز اليدوي (الشركة) | يبدأ المستخدم التنفيذ على سجل                              |
+| 2      | البحث عن سجل           | الحصول على تفاصيل الفرصة أو بنود السطر                     |
+| 3      | طلب HTTP               | استدعِ واجهة برمجة تطبيقات إنشاء PDF باستخدام بيانات السجل |
+| 4      | وظيفة بلا خادم         | تنزيل وإرفاق ملف PDF المُنشأ                               |
+
+### خدمات شائعة لإنشاء ملفات PDF
+
+* **Carbone** - إنشاء مستندات يعتمد على القوالب
+* **PDFMonkey** - إنشاء PDF ديناميكي من القوالب
+* **DocuSeal** - منصة أتمتة المستندات
+* **Documint** - إنشاء مستندات يعتمد على واجهة برمجة التطبيقات أولًا
+
+توفر كل خدمة واجهة برمجة تطبيقات تُرجع رابط ملف PDF، ويمكنك بعدها تمريره إلى الوظيفة بلا خادم.
+
+## استكشاف الأخطاء وإصلاحها
+
+| المشكلة             | الحل                                                     |
+| ------------------- | -------------------------------------------------------- |
+| "فشل تنزيل ملف PDF" | تحقق من أن رابط ملف PDF قابل للوصول ويعيد ملف PDF صالحًا |
+| "فشل الرفع"         | تحقق من أن مفتاح API صالح ولديه أذونات كتابة             |
+| "فشل إنشاء المرفق"  | تأكد من أن اسم حقل معرّف الكائن يطابق الكائن المستهدف    |
+
+## ذات صلة
+
+* [مشغلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
+* [وظائف بلا خادم](/l/ar/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [إنشاء عرض سعر أو فاتورة من Twenty](/l/ar/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

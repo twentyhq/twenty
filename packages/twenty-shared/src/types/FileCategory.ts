@@ -1,0 +1,12 @@
+export const FILE_CATEGORIES = {
+  ARCHIVE: 'ARCHIVE',
+  AUDIO: 'AUDIO',
+  IMAGE: 'IMAGE',
+  PRESENTATION: 'PRESENTATION',
+  SPREADSHEET: 'SPREADSHEET',
+  TEXT_DOCUMENT: 'TEXT_DOCUMENT',
+  VIDEO: 'VIDEO',
+  OTHER: 'OTHER',
+} as const;
+
+export type FileCategory = keyof typeof FILE_CATEGORIES;

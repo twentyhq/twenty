@@ -15,6 +15,8 @@ export type ShouldBeRegisteredFunctionParams = {
   isFavorite?: boolean;
   isRemote?: boolean;
   isNoteOrTask?: boolean;
+  isSelectAll?: boolean;
+  loadedRecords?: ObjectRecord[];
   selectedRecord?: ObjectRecord;
   numberOfSelectedRecords?: number;
   workflowWithCurrentVersion?: WorkflowWithCurrentVersion;
@@ -26,5 +28,4 @@ export type ShouldBeRegisteredFunctionParams = {
     objectMetadataItemNameSingular: string,
   ) => boolean;
   forceRegisteredActionsByKey: Record<string, boolean | undefined>;
-  isWorkflowRunStoppageEnabled: boolean;
 };

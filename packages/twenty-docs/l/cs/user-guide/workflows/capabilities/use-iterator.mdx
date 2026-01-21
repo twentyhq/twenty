@@ -1,92 +1,88 @@
 ---
-title: Use Iterator
-description: Loop through arrays of records to perform actions on each item.
+title: Použijte iterátor
+description: Procházejte pole záznamů a provádějte akce s každou položkou.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Iterator lets you loop through an array of records and perform actions on each one. It's essential for workflows that need to process multiple records returned by Search Records or received via webhooks.
+Iterátor vám umožní procházet pole záznamů a provádět akce na každém z nich. Je zásadní pro pracovní postupy, které potřebují zpracovat více záznamů vrácených akcí Search Records nebo přijatých přes webhooky.
 
-<Note>
-  Iterator is currently in beta. Activate it under **Settings → Releases → Lab**.
-</Note>
+## Kdy použít iterátor
 
-## When to Use Iterator
+| Scénář                         | Příklad                                            |
+| ------------------------------ | -------------------------------------------------- |
+| **Zpracujte výsledky hledání** | Odešlete e-mail každé nalezené osobě               |
+| **Zpracujte pole webhooků**    | Vytvořte záznamy pro každou položku v daném pořadí |
+| **Hromadné aktualizace**       | Aktualizujte více záznamů vypočtenými hodnotami    |
+| **Upozornění**                 | Upozorněte více osob na událost                    |
 
-| Scenario                   | Příklad                                        |
-| -------------------------- | ---------------------------------------------- |
-| **Process search results** | Send email to each person found                |
-| **Handle webhook arrays**  | Create records for each item in order          |
-| **Bulk updates**           | Update multiple records with calculated values |
-| **Notifications**          | Alert multiple people about an event           |
+## Porozumění iterátoru
 
-## Understanding Iterator
+Iterátor jako vstup očekává **pole**. Poté:
 
-Iterator expects an **array** as input. It then:
+1. Vezme první položku z pole
+2. Spustí všechny akce uvnitř iterátoru s touto položkou
+3. Přejde na další položku
+4. Opakuje, dokud nejsou zpracovány všechny položky
 
-1. Takes the first item from the array
-2. Runs all actions inside the iterator with that item
-3. Moves to the next item
-4. Repeats until all items are processed
+## Základní nastavení
 
-## Basic Setup
+### Příklad: Odeslání e-mailu všem ve výsledcích hledání
 
-### Example: Email Everyone in Search Results
+**Cíl**: Najděte všechny kontakty v konkrétní společnosti a každému pošlete personalizovaný e-mail.
 
-**Goal**: Find all contacts in a specific company and send each one a personalized email.
+### Krok 1: Vyhledejte záznamy
 
-### Step 1: Search for Records
+1. Přidejte akci **Vyhledat záznamy**
+2. Objekt: **People**
+3. Filtr: Company se rovná "Acme Inc"
+4. To vrátí pole osob
 
-1. Add **Search Records** action
-2. Object: **People**
-3. Filter: Company equals "Acme Inc"
-4. This returns an array of people
+### Krok 2: Zkontrolujte, že existují výsledky
 
-### Step 2: Check Results Exist
+1. Přidejte akci **Filtr**
+2. Podmínka: `{{searchRecords.length}}` je větší než 0
+3. Tím se zabrání chybám iterátoru při prázdných výsledcích
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. This prevents Iterator errors on empty results
+### Krok 3: Přidejte iterátor
 
-### Step 3: Add Iterator
+1. Přidejte akci **Iterator**
+2. Vstup pole: Vyberte `{{searchRecords}}`
+3. Tím vytvoříte smyčku
 
-1. Add **Iterator** action
-2. Array input: Select `{{searchRecords}}`
-3. This creates a loop
+### Krok 4: Přidejte akce uvnitř iterátoru
 
-### Step 4: Add Actions Inside Iterator
+Akce umístěné za iterátorem se spustí pro každou položku:
 
-Actions placed after Iterator run for each item:
-
-1. Add **Send Email** action (inside iterator)
-2. To: `{{iterator.currentItem.email}}`
-3. Subject: Hello `{{iterator.currentItem.firstName}}`!
-4. Body: Personalized message using current item fields
+1. Přidejte akci **Odeslat e-mail** (uvnitř iterátoru)
+2. Komu: `{{iterator.currentItem.email}}`
+3. Předmět: Dobrý den, `{{iterator.currentItem.firstName}}`!
+4. Tělo: Personalizovaná zpráva využívající pole aktuální položky
 
 ### Výsledek
 
-If Search Records returns 5 people, the Iterator:
+Pokud Search Records vrátí 5 osob, iterátor:
 
-* Sends email to person 1
-* Sends email to person 2
-* ... continues for all 5
+* Odešle e-mail osobě 1
+* Odešle e-mail osobě 2
+* ... pokračuje pro všech 5
 
-## Accessing Current Item Data
+## Přístup k datům aktuální položky
 
-Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
+Uvnitř iterátoru použijte `{{iterator.currentItem}}` pro přístup k aktuálnímu záznamu:
 
-| Variable                                | Popis                               |
-| --------------------------------------- | ----------------------------------- |
-| `{{iterator.currentItem}}`              | The entire current record object    |
-| `{{iterator.currentItem.id}}`           | Record ID                           |
-| `{{iterator.currentItem.email}}`        | Email field                         |
-| `{{iterator.currentItem.company.name}}` | Related company name                |
-| `{{iterator.index}}`                    | Current position in array (0-based) |
+| Proměnná                                | Popis                          |
+| --------------------------------------- | ------------------------------ |
+| `{{iterator.currentItem}}`              | Celý objekt aktuálního záznamu |
+| `{{iterator.currentItem.id}}`           | ID záznamu                     |
+| `{{iterator.currentItem.email}}`        | Pole e-mailu                   |
+| `{{iterator.currentItem.company.name}}` | Název související společnosti  |
+| `{{iterator.index}}`                    | Aktuální pozice v poli (od 0)  |
 
-## Common Patterns
+## Běžné vzory
 
-### Update Multiple Records
+### Aktualizace více záznamů
 
-**Goal**: Mark all overdue tasks as "Late"
+**Cíl**: Označit všechny zpožděné úkoly jako "Late"
 
 ```
 1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
@@ -98,9 +94,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Status: Late
 ```
 
-### Create Records from Array
+### Vytváření záznamů z pole
 
-**Goal**: Webhook receives order with multiple items, create a record for each
+**Cíl**: Webhook přijme objednávku s více položkami, vytvořte záznam pro každou z nich
 
 ```
 1. Webhook Trigger (receives items array)
@@ -113,9 +109,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Related Order: {{trigger.body.orderId}}
 ```
 
-### Conditional Processing Inside Loop
+### Podmíněné zpracování uvnitř smyčky
 
-**Goal**: Only send email to contacts with valid emails
+**Cíl**: Posílat e-mail pouze kontaktům s platnými e-mailovými adresami
 
 ```
 1. Search Records (People)
@@ -127,54 +123,54 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
 
 ## Řešení potíží
 
-### "Iterator expects an array"
+### "Iterátor očekává pole"
 
-**Cause**: You passed a single record instead of an array.
+**Příčina**: Předali jste jeden záznam místo pole.
 
-**Fix**: Make sure you're passing the result of Search Records or an array field, not a single record.
-
-```
-✅ Correct: {{searchRecords}}
-❌ Wrong: {{searchRecords[0]}}
-```
-
-### Iterator Doesn't Run
-
-**Cause**: The array is empty.
-
-**Fix**: Add a Filter before Iterator to check array length:
+**Řešení**: Ujistěte se, že předáváte výsledek akce Search Records nebo pole, nikoli jeden záznam.
 
 ```
-Filter: {{searchRecords.length}} > 0
+✅ Správně: {{searchRecords}}
+❌ Špatně: {{searchRecords[0]}}
 ```
 
-### Actions Run Too Many Times
+### Iterátor se nespouští
 
-**Cause**: Search Records returned more records than expected.
+**Příčina**: Pole je prázdné.
 
-**Fix**:
+**Řešení**: Před iterátor přidejte filtr pro kontrolu délky pole:
 
-* Add more specific filters to Search Records
-* Set a limit on Search Records (max 200)
-* Add Filter inside Iterator for additional conditions
+```
+Filtr: {{searchRecords.length}} > 0
+```
 
-## Performance Considerations
+### Akce se spouštějí příliš mnohokrát
 
-* **Credit usage**: Each iteration consumes credits for its actions
-* **Time**: Large arrays take longer to process
-* **Limits**: Consider batching very large operations
-* **Rate limits**: External API calls may hit rate limits with many iterations
+**Příčina**: Search Records vrátil více záznamů, než se očekávalo.
+
+**Řešení**:
+
+* Přidejte konkrétnější filtry do akce Search Records
+* Nastavte limit v akci Search Records (max. 200)
+* Přidejte filtr uvnitř iterátoru pro doplňující podmínky
+
+## Aspekty výkonu
+
+* **Spotřeba kreditů**: Každá iterace spotřebuje kredity za své akce
+* **Čas**: Zpracování velkých polí trvá déle
+* **Limity**: Zvažte dávkové zpracování velmi velkých operací
+* **Omezení rychlosti**: Volání externích API mohou při mnoha iteracích narazit na limity rychlosti
 
 ## Osvědčené postupy
 
-1. **Always check array length** before Iterator to avoid errors
-2. **Add filters inside loops** when not all items need processing
-3. **Rename your Iterator step** to describe what it's looping through
-4. **Test with small arrays** before processing large datasets
-5. **Monitor workflow runs** to ensure iterations complete as expected
+1. **Před iterátorem vždy zkontrolujte délku pole**, abyste předešli chybám
+2. **Přidávejte filtry uvnitř smyček**, pokud není potřeba zpracovat všechny položky
+3. **Přejmenujte krok iterátoru**, aby popisoval, co prochází
+4. **Testujte s malými poli** před zpracováním velkých datových sad
+5. **Sledujte spuštění pracovních postupů**, abyste zajistili, že iterace proběhnou podle očekávání
 
-## Related
+## Související
 
-* [Workflow Actions](/l/cs/user-guide/workflows/capabilities/workflow-actions)
-* [How to Use Branches](/l/cs/user-guide/workflows/capabilities/use-branches-in-workflows)
-* [Workflows FAQ](/l/cs/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Jak používat větve](/l/cs/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [Často kladené dotazy k pracovním postupům](/l/cs/user-guide/workflows/how-tos/need-more-help/workflows-faq)

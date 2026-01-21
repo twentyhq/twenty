@@ -175,6 +175,22 @@ export class BillingSubscriptionService {
     };
   }
 
+  async getWorkspaceEntitlements(
+    workspaceId: string,
+  ): Promise<BillingEntitlementEntity[]> {
+    const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
+
+    if (!isBillingEnabled) {
+      return [];
+    }
+
+    const entitlements = await this.billingEntitlementRepository.find({
+      where: { workspaceId },
+    });
+
+    return entitlements;
+  }
+
   async getWorkspaceEntitlementByKey(
     workspaceId: string,
     key: BillingEntitlementKey,

@@ -25,6 +25,27 @@ export class ApplicationService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
+  async findApplicationRoleId(
+    applicationId: string,
+    workspaceId: string,
+  ): Promise<string> {
+    const application = await this.applicationRepository.findOne({
+      where: { id: applicationId, workspaceId },
+    });
+
+    if (
+      !isDefined(application) ||
+      !isDefined(application.defaultServerlessFunctionRoleId)
+    ) {
+      throw new ApplicationException(
+        `Could not find application ${applicationId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return application.defaultServerlessFunctionRoleId;
+  }
+
   async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
     workspace: workspaceInput,
     workspaceId,
@@ -33,13 +54,17 @@ export class ApplicationService {
         workspaceId: string;
         workspace?: never;
       }
-    | { workspace: WorkspaceEntity; workspaceId?: never }) {
+    | {
+        workspace: WorkspaceEntity;
+        workspaceId?: never;
+      }) {
     const workspace = isDefined(workspaceInput)
       ? workspaceInput
       : await this.workspaceRepository.findOne({
           where: {
             id: workspaceId,
           },
+          withDeleted: true,
         });
 
     if (!isDefined(workspace)) {

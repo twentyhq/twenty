@@ -1,8 +1,8 @@
 import { type WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, waitFor, within } from '@storybook/test';
+import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, waitFor, within } from 'storybook/test';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -13,7 +13,6 @@ import {
   getWorkflowNodeIdMock,
   MOCKED_STEP_ID,
 } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest';
 
 const DEFAULT_ACTION: WorkflowHttpRequestAction = {
   id: getWorkflowNodeIdMock(),
@@ -84,7 +83,6 @@ const meta: Meta<typeof WorkflowEditActionHttpRequest> = {
     ComponentWithRouterDecorator,
     SnackBarDecorator,
     WorkspaceDecorator,
-    I18nFrontDecorator,
     ObjectMetadataItemsDecorator,
   ],
 };
@@ -253,7 +251,7 @@ export const WithObjectStringBody: Story = {
 
     expect(textboxes[6]).toHaveTextContent('frontend');
     expect(textboxes[8]).toHaveTextContent('backend');
-    expect(textboxes[10]).toHaveTextContent('database Name');
+    expect(textboxes[10]).toHaveTextContent('database');
   },
 };
 

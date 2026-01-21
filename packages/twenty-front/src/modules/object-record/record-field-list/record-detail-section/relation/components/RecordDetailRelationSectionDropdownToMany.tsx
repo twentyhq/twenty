@@ -23,7 +23,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { CustomError } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -181,7 +181,11 @@ export const RecordDetailRelationSectionDropdownToMany = ({
         <MultipleRecordPicker
           focusId={dropdownId}
           componentInstanceId={dropdownId}
-          onCreate={handleCreateNew}
+          onCreate={
+            isDefined(createNewRecordAndOpenRightDrawer)
+              ? handleCreateNew
+              : undefined
+          }
           objectMetadataItemIdForCreate={relationObjectMetadataItem.id}
           onChange={updateRelation}
           onSubmit={() => {

@@ -1,131 +1,149 @@
 ---
 title: الأدوات
-description: Explore the widget types and visualization options in Twenty.
+description: استكشف أنواع الأدوات وخيارات التصوّر في Twenty.
 ---
 
-## Available Widgets
+import { ChartIcon } from '/snippets/chart-icon.mdx';
 
-Twenty provides various widget types to visualize your CRM data.
+## الأدوات المتاحة
 
-### Bar Charts
+يوفّر Twenty أنواعًا متعددة من الأدوات لتصوُّر بيانات إدارة علاقات العملاء (CRM).
 
-Display data as horizontal or vertical bars.
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Bar Charts</span>
 
-**Best for:**
+اعرض البيانات كأعمدة أفقية أو عمودية.
 
-* Comparing values across categories
-* Showing rankings
-* Tracking metrics by time period
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Bar chart" />
+</Frame>
 
-**Example uses:**
+**الأفضل لـ:**
 
-* Deals by stage
-* Revenue by sales rep
-* Contacts added per month
+* مقارنة القيم عبر الفئات
+* عرض التصنيفات
+* تتبّع المقاييس حسب الفترة الزمنية
 
-<Note>
-  **Display limits**: Bar charts can show a maximum of 100 bars (horizontal) or 50 bars (vertical). If you see the warning "Undisplayed data: max X bars per chart", add filters to narrow down your data or change the grouping (e.g., group by week instead of days).
-</Note>
+**أمثلة على الاستخدام:**
 
-### Pie Charts
-
-Show proportions of a whole.
-
-**Best for:**
-
-* Showing composition or distribution
-* Comparing parts to whole
-* Highlighting major segments
-
-**Example uses:**
-
-* Deal distribution by source
-* Contact breakdown by industry
-* Pipeline composition by owner
-
-### Line Charts
-
-Display trends over time.
-
-**Best for:**
-
-* Tracking changes over time
-* Identifying trends
-* Comparing multiple metrics
-
-**Example uses:**
-
-* Monthly deal count trend
-* Revenue growth over quarters
-* Activity levels over time
-
-### Number Metrics
-
-Display single key values prominently.
-
-**Best for:**
-
-* Highlighting KPIs
-* Showing totals or averages
-* Quick status checks
-
-**Example uses:**
-
-* Total pipeline value
-* Number of open opportunities
-* Conversion rate
-
-**Advanced options:**
-
-* **Ratio**: For Select fields, calculate ratios between values. Go to **Data on display** → select your field → enable the **Ratio** option.
-* **Prefix & Suffix**: Add custom text before or after the number (e.g., "$" prefix or "%" suffix) for better readability.
-
-### iFrames
-
-Embed external tools and content directly in your dashboard.
-
-**Best for:**
-
-* Displaying external reports or dashboards
-* Integrating third-party sales tools
-* Showing live content from other systems
-
-**Example uses:**
-
-* Metrics from your Support tool
-* Metrics from your dialer
-* Live content from your Sales sequence tool
+* الصفقات حسب المرحلة
+* الإيرادات حسب مندوب المبيعات
+* جهات الاتصال المضافة شهريًا
 
 <Note>
-  **Coming soon**: Gauge charts and tables are not yet available but are on our roadmap.
+  **Display limits**: Bar charts can show a maximum of 100 bars, and 50 groups per bar when using Group By. إذا ظهرت لك رسالة التحذير "بيانات غير معروضة: الحد الأقصى X عمودًا لكل مخطط"، فأضِف عوامل تصفية لتضييق نطاق بياناتك أو غيّر أسلوب التجميع (على سبيل المثال، اجعل التجميع حسب الأسبوع بدلًا من الأيام).
 </Note>
 
-## Configuring Widgets
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Pie Charts</span>
 
-### Data Source
+اعرض نسب الأجزاء من الكل.
 
-1. Select the object to visualize (Opportunities, People, etc.)
-2. Choose the metric to display (count, sum, average)
-3. Apply filters to focus on specific data
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Pie chart" />
+</Frame>
 
-### Grouping
+**الأفضل لـ:**
 
-Group data by:
+* إظهار التركيب أو التوزيع
+* مقارنة الأجزاء بالكل
+* إبراز الشرائح الرئيسية
 
-* Fields (stage, owner, industry)
-* Time periods (day, week, month, quarter)
-* Custom segments
+**أمثلة على الاستخدام:**
 
-### Styling
+* توزيع الصفقات حسب المصدر
+* تفصيل جهات الاتصال حسب الصناعة
+* تركيب مسار المبيعات حسب المالك
 
-Customize your charts with:
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Line Charts</span>
 
-* Colors and themes
-* Labels and legends
-* Size and positioning
+اعرض الاتجاهات مع مرور الوقت.
 
-### Duplicating Widgets
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Line chart" />
+</Frame>
 
-1. Click on the widget
-2. Open **Options**
-3. Click **Duplicate widget**
+**الأفضل لـ:**
+
+* تتبّع التغيّرات مع مرور الوقت
+* تحديد الاتجاهات
+* مقارنة عدة مقاييس
+
+**أمثلة على الاستخدام:**
+
+* اتجاه عدد الصفقات شهريًا
+* نمو الإيرادات على مدى الأرباع السنوية
+* مستويات النشاط مع مرور الوقت
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Aggregate Charts</span>
+
+اعرض القيم الأساسية المفردة بشكل بارز.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Aggregate chart" />
+</Frame>
+
+**الأفضل لـ:**
+
+* إبراز مؤشرات الأداء الرئيسية
+* عرض الإجماليات أو المتوسطات
+* فحوصات سريعة للحالة
+
+**أمثلة على الاستخدام:**
+
+* القيمة الإجمالية لمسار المبيعات
+* عدد الفرص المفتوحة
+* معدل التحويل
+
+**خيارات متقدمة:**
+
+* **النسبة**: في حقول التحديد، احسب النِّسب بين القيم. اذهب إلى **البيانات المعروضة** → اختر حقلك → فعِّل خيار **النسبة**.
+* **بادئة ولاحقة**: أضف نصًا مخصصًا قبل الرقم أو بعده (على سبيل المثال، "$" كبادئة أو "%" كلاحقة) لتحسين سهولة القراءة.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
+
+ضمّن الأدوات والمحتوى الخارجي مباشرةً في لوحة المعلومات الخاصة بك.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
+
+**الأفضل لـ:**
+
+* عرض تقارير أو لوحات معلومات خارجية
+* دمج أدوات المبيعات من جهات خارجية
+* عرض محتوى مباشر من أنظمة أخرى
+
+**أمثلة على الاستخدام:**
+
+* مقاييس من أداة الدعم الخاصة بك
+* مقاييس من أداة الاتصال الهاتفي لديك
+* محتوى مباشر من أداة تسلسل المبيعات لديك
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Rich Text</span>
+
+Add formatted text and content directly to your dashboard.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Rich text" />
+</Frame>
+
+**الأفضل لـ:**
+
+* Adding context or instructions
+* Dashboard descriptions
+* Notes and annotations
+
+**Features:**
+
+* Rich text formatting (bold, italic, lists, etc.)
+* Image and file uploads
+* Markdown-style editing
+
+<Note>
+  **قريبًا**: مخططات القياس والجداول غير متاحة بعد ولكنها على خريطة الطريق لدينا.
+</Note>
+
+### تكرار الأدوات
+
+1. انقر على الأداة
+2. افتح **الخيارات**
+3. انقر **تكرار الأداة**

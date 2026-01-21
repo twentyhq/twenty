@@ -1,18 +1,21 @@
-import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { RichTextFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { RichTextFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldInput';
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
 
 const targetableObjectId = 'test-id';
@@ -97,7 +100,6 @@ const meta: Meta = {
   decorators: [
     clearMocksDecorator,
     SnackBarDecorator,
-    I18nFrontDecorator,
     ObjectMetadataItemsDecorator,
   ],
   parameters: {

@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -11,12 +11,13 @@ import { getCompaniesMock } from '~/testing/mock-data/companies';
 
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
+import { RecordDetailRelationSection } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection';
+import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { PageLayoutType } from '~/generated/graphql';
 import { RightDrawerDecorator } from '~/testing/decorators/RightDrawerDecorator';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { RecordDetailRelationSection } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection';
 
 const companiesMock = getCompaniesMock();
 
@@ -34,36 +35,48 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
   component: RecordDetailRelationSection,
   decorators: [
     (Story) => (
-      <ContextStoreComponentInstanceContext.Provider
-        value={{ instanceId: 'mock-instance-id' }}
+      <LayoutRenderingProvider
+        value={{
+          targetRecordIdentifier: {
+            id: companiesMock[0].id,
+            targetObjectNameSingular: 'company',
+          },
+          layoutType: PageLayoutType.RECORD_PAGE,
+          isInRightDrawer: false,
+          // TODO: Remove once the traditional record show page is removed.
+          isLegacyRecordShowPage: true,
+        }}
       >
-        <FieldContext.Provider
-          value={{
-            recordId: companiesMock[0].id,
-            isLabelIdentifier: false,
-            fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
-              field: mockedCompanyObjectMetadataItem.fields.find(
-                ({ name }) => name === 'people',
-              )!,
-              objectMetadataItem: mockedCompanyObjectMetadataItem,
-            }),
-            isRecordFieldReadOnly: false,
-          }}
+        <ContextStoreComponentInstanceContext.Provider
+          value={{ instanceId: 'mock-instance-id' }}
         >
-          <RecordFieldsScopeContextProvider
-            value={{ scopeInstanceId: 'mock-instance-id' }}
+          <FieldContext.Provider
+            value={{
+              recordId: companiesMock[0].id,
+              isLabelIdentifier: false,
+              fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
+                field: mockedCompanyObjectMetadataItem.fields.find(
+                  ({ name }) => name === 'people',
+                )!,
+                objectMetadataItem: mockedCompanyObjectMetadataItem,
+              }),
+              isRecordFieldReadOnly: false,
+            }}
           >
-            <Story />
-          </RecordFieldsScopeContextProvider>
-        </FieldContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
+            <RecordFieldsScopeContextProvider
+              value={{ scopeInstanceId: 'mock-instance-id' }}
+            >
+              <Story />
+            </RecordFieldsScopeContextProvider>
+          </FieldContext.Provider>
+        </ContextStoreComponentInstanceContext.Provider>
+      </LayoutRenderingProvider>
     ),
     RightDrawerDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     MemoryRouterDecorator,
-    I18nFrontDecorator,
   ],
   parameters: {
     msw: graphqlMocks,

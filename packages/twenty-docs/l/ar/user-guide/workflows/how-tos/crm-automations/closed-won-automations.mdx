@@ -1,140 +1,140 @@
 ---
-title: Closed Won Automations
-description: Automate post-win activities when opportunities close.
+title: أتمتة الصفقات المغلقة الرابحة
+description: أتمتة الأنشطة بعد الفوز عند إغلاق الفرص.
 ---
 
-When a deal closes, multiple things need to happen: update company status, notify team members, create onboarding tasks. Automate all of this with a single workflow.
+عند إغلاق صفقة، يجب أن تحدث أمور عدة: تحديث حالة الشركة، إشعار أعضاء الفريق، إنشاء مهام الإعداد. قم بأتمتة كل ذلك عبر سير عمل واحد.
 
-## The Problem
+## المشكلة
 
-When an opportunity moves to "Closed Won":
+عند انتقال فرصة إلى "Closed Won":
 
-* Company type needs to change from "Prospect" to "Customer"
-* Onboarding tasks need to be created
-* Customer success team needs to be notified
-* Sales rep needs confirmation
+* يجب تغيير نوع الشركة من "Prospect" إلى "Customer"
+* يجب إنشاء مهام الإعداد
+* يجب إشعار فريق نجاح العملاء
+* يحتاج مندوب المبيعات إلى تأكيد
 
-Doing this manually is time-consuming and error-prone.
+القيام بذلك يدويًا يستغرق وقتًا ومعرّض للأخطاء.
 
-## The Solution
+## الحل
 
-Create a workflow that handles all post-win activities automatically.
+أنشئ سير عمل يتولى تلقائيًا جميع الأنشطة بعد الفوز.
 
-## Complete Workflow Setup
+## إعداد سير العمل الكامل
 
-### Step 1: Create the Workflow
+### الخطوة 1: إنشاء سير العمل
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it "Deal Won - Post-Win Automation"
+1. اذهب إلى **الإعدادات → سير العمل**
+2. انقر **+ سير عمل جديد**
+3. قم بتسميته "تم ربح الصفقة - أتمتة ما بعد الفوز"
 
-### Step 2: Configure the Trigger
+### الخطوة 2: تهيئة المشغّل
 
-1. Select **Record is Updated**
-2. Choose **Opportunities**
-3. Under "Fields to monitor", select **Stage**
+1. اختر **Record is Updated**
+2. اختر **Opportunities**
+3. ضمن "Fields to monitor"، اختر **Stage**
 
-### Step 3: Add Stage Filter
+### الخطوة 3: إضافة عامل تصفية للمرحلة
 
-1. Add **Filter** action
-2. Condition: `{{trigger.object.stage}}` equals "Closed Won"
+1. أضف إجراء **Filter**
+2. الشرط: `{{trigger.object.stage}}` يساوي "Closed Won"
 
-### Step 4: Update Company Type
+### الخطوة 4: تحديث نوع الشركة
 
-1. Add **Update Record** action
-2. Configure:
+1. أضف إجراء **Update Record**
+2. التكوين:
 
-| الحقل               | القيمة                          |
-| ------------------- | ------------------------------- |
-| **Object**          | الشركات                         |
-| **Record**          | `{{trigger.object.company.id}}` |
-| **نوع**             | العميل                          |
-| **First Deal Date** | `{{trigger.object.closedAt}}`   |
-| **مالك الحساب**     | `{{trigger.object.owner.id}}`   |
+| الحقل              | القيمة                          |
+| ------------------ | ------------------------------- |
+| **الكائن**         | الشركات                         |
+| **السجل**          | `{{trigger.object.company.id}}` |
+| **نوع**            | العميل                          |
+| **تاريخ أول صفقة** | `{{trigger.object.closedAt}}`   |
+| **مالك الحساب**    | `{{trigger.object.owner.id}}`   |
 
-### Step 5: Create Onboarding Task
+### الخطوة 5: إنشاء مهمة إعداد
 
-1. Add **Create Record** action
-2. Configure:
+1. أضف إجراء **Create Record**
+2. التكوين:
 
-| الحقل                   | القيمة                                                                                               |
-| ----------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Object**              | المهام                                                                                               |
-| **Title**               | `Onboarding: {{trigger.object.name}}`                                                                |
-| **Assignee**            | Customer Success team member                                                                         |
-| **Due Date**            | 3 days from now                                                                                      |
-| **Priority**            | High                                                                                                 |
-| **Related Company**     | `{{trigger.object.company.id}}`                                                                      |
-| **Related Opportunity** | `{{trigger.object.id}}`                                                                              |
-| **Description**         | `New customer onboarding for {{trigger.object.company.name}}. Deal value: {{trigger.object.amount}}` |
+| الحقل                | القيمة                                                                                          |
+| -------------------- | ----------------------------------------------------------------------------------------------- |
+| **الكائن**           | المهام                                                                                          |
+| **العنوان**          | `Onboarding: {{trigger.object.name}}`                                                           |
+| **المسند إليه**      | عضو فريق نجاح العملاء                                                                           |
+| **تاريخ الاستحقاق**  | بعد 3 أيام                                                                                      |
+| **الأولوية**         | عالية                                                                                           |
+| **الشركة ذات الصلة** | `{{trigger.object.company.id}}`                                                                 |
+| **الفرصة ذات الصلة** | `{{trigger.object.id}}`                                                                         |
+| **الوصف**            | `إعداد عميل جديد لشركة {{trigger.object.company.name}}. قيمة الصفقة: {{trigger.object.amount}}` |
 
-### Step 6: Notify Customer Success
+### الخطوة 6: إشعار فريق نجاح العملاء
 
-1. Add **Send Email** action
-2. Configure:
+1. أضف إجراء **Send Email**
+2. التكوين:
 
-| الحقل       | القيمة                                             |
-| ----------- | -------------------------------------------------- |
-| **To**      | customer-success@yourcompany.com                   |
-| **Subject** | `🎉 New Customer: {{trigger.object.company.name}}` |
-| **Body**    | See example below                                  |
+| الحقل       | القيمة                                          |
+| ----------- | ----------------------------------------------- |
+| **إلى**     | customer-success@yourcompany.com                |
+| **الموضوع** | `🎉 عميل جديد: {{trigger.object.company.name}}` |
+| **المحتوى** | انظر المثال أدناه                               |
 
-**Email body example**:
+**مثال على محتوى البريد الإلكتروني**:
 
 ```
-Hi CS Team,
+مرحبًا فريق نجاح العملاء،
 
-We have a new customer!
+لدينا عميل جديد!
 
-Company: {{trigger.object.company.name}}
-Deal: {{trigger.object.name}}
-Value: {{trigger.object.amount}}
-Sales Rep: {{trigger.object.owner.name}}
-Close Date: {{trigger.object.closedAt}}
+الشركة: {{trigger.object.company.name}}
+الصفقة: {{trigger.object.name}}
+القيمة: {{trigger.object.amount}}
+مندوب المبيعات: {{trigger.object.owner.name}}
+تاريخ الإغلاق: {{trigger.object.closedAt}}
 
-An onboarding task has been created automatically.
+تم إنشاء مهمة الإعداد تلقائيًا.
 
-Let's give them a great start!
+لنمنحهم بداية رائعة!
 ```
 
-### Step 7: Confirm to Sales Rep
+### الخطوة 7: تأكيد لمندوب المبيعات
 
-1. Add another **Send Email** action
-2. Configure:
+1. أضف إجراء **Send Email** آخر
+2. التكوين:
 
-| الحقل       | القيمة                                                                                                               |
-| ----------- | -------------------------------------------------------------------------------------------------------------------- |
-| **To**      | `{{trigger.object.owner.email}}`                                                                                     |
-| **Subject** | `✅ Deal Closed: {{trigger.object.name}}`                                                                             |
-| **Body**    | Congratulations! Your deal has been processed. The customer success team has been notified and onboarding has begun. |
+| الحقل       | القيمة                                                                     |
+| ----------- | -------------------------------------------------------------------------- |
+| **إلى**     | `{{trigger.object.owner.email}}`                                           |
+| **الموضوع** | `✅ تم إغلاق الصفقة: {{trigger.object.name}}`                               |
+| **المحتوى** | تهانينا! تمت معالجة صفقتك. تم إشعار فريق نجاح العملاء وبدأت عملية الإعداد. |
 
-### Step 8: Test and Activate
+### الخطوة 8: الاختبار والتفعيل
 
-1. Test by moving a test opportunity to "Closed Won"
+1. اختبر بنقل فرصة اختبار إلى "Closed Won"
 2. التحقق:
-   * Company type changed to "Customer"
-   * Onboarding task created
-   * CS team received email
-   * Sales rep received confirmation
-3. Activate when ready
+   * تم تغيير نوع الشركة إلى "Customer"
+   * تم إنشاء مهمة الإعداد
+   * تلقى فريق نجاح العملاء بريدًا إلكترونيًا
+   * تلقى مندوب المبيعات تأكيدًا
+3. فعّل عند الجاهزية
 
-## Handling Closed Lost
+## التعامل مع "Closed Lost"
 
-Create a similar workflow for lost deals:
+أنشئ سير عمل مشابهًا للصفقات الخاسرة:
 
-### Trigger
+### المشغّل
 
-* Record is Updated (Opportunities, Stage = "Closed Lost")
+* تم تحديث السجل (Opportunities، Stage = "Closed Lost")
 
 ### الإجراءات
 
-1. **Create Record**: Task for "Lost Deal Analysis"
-2. **Update Record**: Add lost reason to company record
-3. **Send Email**: Notify manager of lost deal
+1. **Create Record**: مهمة "تحليل الصفقة الخاسرة"
+2. **Update Record**: أضِف سبب الخسارة إلى سجل الشركة
+3. **Send Email**: إخطار المدير بالصفقة الخاسرة
 
-## Advanced: Multi-Step Onboarding
+## متقدم: إعداد متعدد الخطوات
 
-For complex onboarding, create multiple tasks:
+لعمليات الإعداد المعقدة، أنشئ مهام متعددة:
 
 ```javascript
 export const main = async (params) => {
@@ -149,31 +149,31 @@ export const main = async (params) => {
 };
 ```
 
-Use **Iterator** to create each task from the array.
+استخدم **Iterator** لإنشاء كل مهمة من المصفوفة.
 
-## Customization Ideas
+## أفكار للتخصيص
 
-### Keep your other tools up-to-date
+### أبقِ أدواتك الأخرى محدثة
 
-* Create customer in billing system with an **HTTP Request**
+* أنشئ عميلًا في نظام الفوترة بواسطة **HTTP Request**
 
-### Conditional Actions
+### إجراءات شرطية
 
-Use **Filter** actions to:
+استخدم إجراءات **Filter** لـ:
 
-* Different onboarding for enterprise vs SMB
-* Different assignees based on region
-* Skip notifications for small deals
+* إعداد مختلف للمؤسسات مقابل الشركات الصغيرة والمتوسطة
+* مُسندون مختلفون حسب المنطقة
+* تخطي الإشعارات للصفقات الصغيرة
 
-### Include Deal Details
+### تضمين تفاصيل الصفقة
 
-Use **Code** action to format:
+استخدم إجراء **Code** للتنسيق:
 
-* Deal summary documents
-* Handoff notes for CS team
-* Custom onboarding checklists
+* مستندات ملخص الصفقة
+* ملاحظات التسليم لفريق نجاح العملاء
+* قوائم تدقيق إعداد مخصصة
 
-## Related
+## ذات صلة
 
-* [Workflow Actions](/l/ar/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/ar/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+* [إرسال رسائل البريد الإلكتروني من سير العمل](/l/ar/user-guide/workflows/capabilities/send-emails-from-workflows)

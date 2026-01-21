@@ -14,9 +14,11 @@ import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permi
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
+import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
-import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatRoleMaps')
@@ -34,6 +36,10 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
     private readonly permissionFlagRepository: Repository<PermissionFlagEntity>,
     @InjectRepository(FieldPermissionEntity)
     private readonly fieldPermissionRepository: Repository<FieldPermissionEntity>,
+    @InjectRepository(RowLevelPermissionPredicateEntity)
+    private readonly rowLevelPermissionPredicateRepository: Repository<RowLevelPermissionPredicateEntity>,
+    @InjectRepository(RowLevelPermissionPredicateGroupEntity)
+    private readonly rowLevelPermissionPredicateGroupRepository: Repository<RowLevelPermissionPredicateGroupEntity>,
   ) {
     super();
   }
@@ -47,6 +53,8 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
       objectPermissions,
       permissionFlags,
       fieldPermissions,
+      rowLevelPermissionPredicates,
+      rowLevelPermissionPredicateGroups,
     ] = await Promise.all([
       this.roleRepository.find({
         where: { workspaceId },
@@ -72,6 +80,16 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
         select: ['id', 'roleId'],
         withDeleted: true,
       }),
+      this.rowLevelPermissionPredicateRepository.find({
+        where: { workspaceId },
+        select: ['id', 'roleId'],
+        withDeleted: true,
+      }),
+      this.rowLevelPermissionPredicateGroupRepository.find({
+        where: { workspaceId },
+        select: ['id', 'roleId'],
+        withDeleted: true,
+      }),
     ]);
 
     const [
@@ -79,6 +97,8 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
       objectPermissionsByRoleId,
       permissionFlagsByRoleId,
       fieldPermissionsByRoleId,
+      rowLevelPermissionPredicatesByRoleId,
+      rowLevelPermissionPredicateGroupsByRoleId,
     ] = (
       [
         {
@@ -97,6 +117,14 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
           entities: fieldPermissions,
           foreignKey: 'roleId',
         },
+        {
+          entities: rowLevelPermissionPredicates,
+          foreignKey: 'roleId',
+        },
+        {
+          entities: rowLevelPermissionPredicateGroups,
+          foreignKey: 'roleId',
+        },
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);
 
@@ -109,6 +137,10 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
         objectPermissions: objectPermissionsByRoleId.get(roleEntity.id) || [],
         permissionFlags: permissionFlagsByRoleId.get(roleEntity.id) || [],
         fieldPermissions: fieldPermissionsByRoleId.get(roleEntity.id) || [],
+        rowLevelPermissionPredicates:
+          rowLevelPermissionPredicatesByRoleId.get(roleEntity.id) || [],
+        rowLevelPermissionPredicateGroups:
+          rowLevelPermissionPredicateGroupsByRoleId.get(roleEntity.id) || [],
       } as RoleEntity);
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

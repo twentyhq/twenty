@@ -12,6 +12,7 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { Temporal } from 'temporal-polyfill';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useProcessCalendarCardDrop = () => {
@@ -104,29 +105,35 @@ export const useProcessCalendarCardDrop = () => {
 
         const currentFieldValue = record[calendarFieldMetadata.name];
 
-        const currentZonedDateTime = isDefined(currentFieldValue)
-          ? Temporal.Instant.from(currentFieldValue).toZonedDateTimeISO(
-              userTimezone,
-            )
-          : null;
+        if (calendarFieldMetadata.type === FieldMetadataType.DATE) {
+          await updateOneRecord({
+            idToUpdate: recordId,
+            updateOneRecordInput: {
+              [calendarFieldMetadata.name]: destinationPlainDate.toString(),
+              position: newPosition,
+            },
+          });
+        } else if (calendarFieldMetadata.type === FieldMetadataType.DATE_TIME) {
+          const newDate = isDefined(currentFieldValue)
+            ? Temporal.Instant.from(currentFieldValue)
+                .toZonedDateTimeISO(userTimezone)
+                .with({
+                  day: destinationPlainDate.day,
+                  month: destinationPlainDate.month,
+                  year: destinationPlainDate.year,
+                })
+            : Temporal.PlainDate.from(destinationPlainDate).toZonedDateTime(
+                userTimezone,
+              );
 
-        const newDate = isDefined(currentZonedDateTime)
-          ? currentZonedDateTime.with({
-              day: destinationPlainDate.day,
-              month: destinationPlainDate.month,
-              year: destinationPlainDate.year,
-            })
-          : Temporal.PlainDate.from(destinationPlainDate).toZonedDateTime(
-              userTimezone,
-            );
-
-        await updateOneRecord({
-          idToUpdate: recordId,
-          updateOneRecordInput: {
-            [calendarFieldMetadata.name]: newDate.toInstant().toString(),
-            position: newPosition,
-          },
-        });
+          await updateOneRecord({
+            idToUpdate: recordId,
+            updateOneRecordInput: {
+              [calendarFieldMetadata.name]: newDate.toInstant().toString(),
+              position: newPosition,
+            },
+          });
+        }
       },
     [
       currentView,

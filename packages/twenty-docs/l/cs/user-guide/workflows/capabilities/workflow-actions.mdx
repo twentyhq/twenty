@@ -96,216 +96,216 @@ Vytvoří nový záznam nebo aktualizuje existující na základě kritérií sh
 
 * Použijte data z předchozích kroků k vyplnění polí
 
-**How it works**:
+**Jak to funguje**:
 
-1. Searches for a record matching your criteria
-2. If found → updates the existing record
-3. If not found → creates a new record
+1. Vyhledá záznam odpovídající vašim kritériím
+2. Pokud nalezeno → aktualizuje existující záznam
+3. Pokud nenalezeno → vytvoří nový záznam
 
-**Output**: The created or updated record data is available for use in subsequent steps.
+**Výstup**: Data vytvořeného nebo aktualizovaného záznamu jsou k dispozici pro použití v následujících krocích.
 
-## Flow Actions
+## Akce toku
 
 ### Iterátor
 
-**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
+**Prochází polem záznamů** vrácených z předchozího kroku, což umožňuje provádět akce na každém záznamu jednotlivě.
 
 **Konfigurace**:
 
-* Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
+* Vyberte pole záznamů z předchozího kroku (např. výsledky z vyhledávání záznamů, z ručního spouštěče s hromadnou dostupností, z uzlu kódu)
 * Definujte akce, které budou provedeny na každém záznamu v cyklu.
 
 <Note>
-  - You can add several actions within an iterator.
-  - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
+  - V rámci iterátoru můžete přidat několik akcí.
+  - Při používání větví uvnitř iterátoru se ujistěte, že poslední krok každé větve se vrací zpět do iterátoru, aby se smyčka uzavřela.
 </Note>
 
-* Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
+* Přístup k polím `Current Item`: chcete-li použít pole ze záznamu, který se právě zpracovává, klikněte na krok **Iterator** a vyberte **Current item**. Zobrazí se seznam dostupných polí z daného záznamu a můžete je vybrat k použití v následujících akcích.
 
-<VimeoEmbed videoId="1146577247" title="Video demonstration" />
+<VimeoEmbed videoId="1146577247" title="Ukázka videa" />
 
 ### Filtr
 
-Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
+Filtruje záznamy na základě zadaných podmínek a propustí pouze záznamy, které splňují kritéria.
 
 **Konfigurace**:
 
-* Select the record to filter
+* Vyberte záznam k filtrování
 * Definujte filtrační podmínky a kritéria
 * Nakonfigurujte, které záznamy by měly projít do následujících kroků
 
 <Note>
-  1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
-  2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
+  1. **Výstup**: Uzly filtru nevracejí data — fungují jako brány. Pokud jsou podmínky splněny, pracovní postup pokračuje. Pokud ne, pracovní postup se v dané větvi zastaví.
+  2. Operátor `IS` lze použít s číselnými poli. Chová se jako `EQUAL`.
 </Note>
 
-### Delay
+### Zpoždění
 
-Pauses workflow execution for a specified duration or until a specific date/time.
+Pozastaví provádění pracovního postupu na zadanou dobu nebo do konkrétního data/času.
 
-**Delay Types**:
+**Typy zpoždění**:
 
-| Typ                | Popis                                                              |
-| ------------------ | ------------------------------------------------------------------ |
-| **Duration**       | Wait for a specific amount of time (days, hours, minutes, seconds) |
-| **Scheduled Date** | Wait until a specific date and time                                |
+| Typ                   | Popis                                                  |
+| --------------------- | ------------------------------------------------------ |
+| **Doba trvání**       | Čekat po konkrétní dobu (dny, hodiny, minuty, sekundy) |
+| **Naplánované datum** | Čekat do konkrétního data a času                       |
 
-**Configuration for Duration**:
+**Konfigurace pro dobu trvání**:
 
-* Set days, hours, minutes, and/or seconds
-* Combine multiple units (e.g., 2 days and 4 hours)
+* Nastavte dny, hodiny, minuty a/nebo sekundy
+* Kombinujte více jednotek (např. 2 dny a 4 hodiny)
 
-**Configuration for Scheduled Date**:
+**Konfigurace pro naplánované datum**:
 
-* Select a date and time
-* Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
+* Vyberte datum a čas
+* Může odkazovat na datumové pole z předchozího kroku (např. navázání kontaktu 3 dny po schůzce)
 
 **Případy použití**:
 
-* Wait 24 hours before sending a follow-up email
-* Pause until an opportunity's close date
-* Schedule actions for business hours
+* Počkejte 24 hodin před odesláním navazujícího e-mailu
+* Pozastavte až do data uzavření příležitosti
+* Naplánujte akce na pracovní hodiny
 
 <Note>
-  The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
+  Naplánované datum nesmí být v minulosti. Pokud je použito datumové pole z předchozího kroku a datum již uplynulo, pracovní postup selže.
 </Note>
 
-**Limits & Credits**:
+**Limity a kredity**:
 
-* **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
-* **1 credit consumed** when the Delay node executes, regardless of duration
-* **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
+* **Žádný maximální limit délky** — můžete nastavit zpoždění v minutách, dnech, týdnech nebo i delší období
+* **Spotřebován 1 kredit** při spuštění uzlu Zpoždění, bez ohledu na délku
+* **Žádné kredity se nespotřebovávají** během čekání — 5minutové zpoždění stojí stejně jako 5denní zpoždění
 
-## Communication Actions
+## Komunikační akce
 
 ### Odeslat e-mail
 
-Odesílá e-mail z vašeho pracovního postupu. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
-Not suited for newsletters (which require richer formatting) or automated email sequences.
+Odesílá e-mail z vašeho pracovního postupu. Skvělé pro šablonované hromadné e-maily. E-maily budou vypadat jako ty, které posíláte ze své schránky.
+Nevhodné pro newslettery (které vyžadují bohatší formátování) ani pro automatizované e-mailové sekvence.
 
-**Prerequisites**: Add an email account in Settings → Accounts
+**Předpoklady**: Přidejte e-mailový účet v Nastavení → Účty
 
 **Konfigurace**:
 
-* Select the sender email account
+* Vyberte e-mailový účet odesílatele
 
 <Note>
-  You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
+  E-maily můžete odesílat pouze z poštovních schránek synchronizovaných s vaším vlastním účtem Twenty. Odesílání z poštovních schránek ostatních členů týmu (např. e-mail vlastníka účtu) je v plánu.
 </Note>
 
-For all the following steps, you can reference variables from previous steps for personalization.
+Ve všech následujících krocích můžete pro personalizaci odkazovat na proměnné z předchozích kroků.
 
 * Zadejte e-mailovou adresu příjemce.
 
 <Note>
-  Only one recipient is possible at the moment.
+  V tuto chvíli je možný pouze jeden příjemce.
 </Note>
 
 * Nastavte předmět.
-* Sestavte tělo zprávy. You can format links, create numbered list, bullet point lists, add attachments.
+* Sestavte tělo zprávy. Můžete formátovat odkazy, vytvářet číslované i odrážkové seznamy, přidávat přílohy.
 
 <Note>
-  Adding HTML signatures is not possible at the moment.
+  Přidávání HTML podpisů momentálně není možné.
 </Note>
 
 ### Formulář
 
-Vyvolá formulář během provádění pracovního postupu pro sběr uživatelských vstupů. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+Vyvolá formulář během provádění pracovního postupu pro sběr uživatelských vstupů. Odpovědi lze poté použít v následujících krocích k vytváření záznamů, odesílání e-mailů nebo provádění jiných akcí na základě zadaných údajů.
 
 <Warning>
-  **Forms are designed for manual triggers only**. U workflow s jinými spouštěči (vytvoření záznamu, aktualizace atd.) jsou formuláře přístupné pouze přes rozhraní běžů workflow, což neodpovídá očekávané uživatelské zkušenosti. V roce 2026 bude uvedeno centrum oznámení pro správnou podporu formulářů v automatizovaných pracovních postupech.
+  **Formuláře jsou navrženy pouze pro ruční spuštění**. U workflow s jinými spouštěči (vytvoření záznamu, aktualizace atd.) jsou formuláře přístupné pouze přes rozhraní běžů workflow, což neodpovídá očekávané uživatelské zkušenosti. V roce 2026 bude uvedeno centrum oznámení pro správnou podporu formulářů v automatizovaných pracovních postupech.
 </Warning>
 
 **Konfigurace**:
 
-* Configure the fields that users will be asked to fill. For each field, choose
-  * a type among text, number, date, a given record, a select field. Select fields from all objects are available.
-  * a label
-  * a default value under `Placeholder` (optional)
-* Edit the form title
+* Nakonfigurujte pole, která budou uživatelé vyplňovat. Pro každé pole zvolte
+  * typ z možností: text, číslo, datum, daný záznam, výběrové pole. Výběrová pole ze všech objektů jsou k dispozici.
+  * štítek
+  * výchozí hodnotu pod `Placeholder` (volitelné)
+* Upravte název formuláře
 
 **Výstup**: Odpovědi z formuláře jsou k dispozici pro použití v následujících krocích.
 
-**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+**Příklad**: Pracovní postup "Quick Lead" je ve výchozím nastavení dostupný ve všech pracovních prostorech a je dostupný odkudkoli v nabídce Command `Cmd + K`.
 
-**How to fill the form**:
+**Jak vyplnit formulář**:
 
-* Trigger your manual workflow from the command menu `Cmd K`
-* Fill the form that is displayed in the side panel and click `Submit`.
+* Spusťte svůj ruční pracovní postup z příkazové nabídky `Cmd K`
+* Vyplňte formulář zobrazený v postranním panelu a klikněte na `Submit`.
 
 <Note>
-  The fields cannot be made mandatory.
+  Pole nelze nastavit jako povinná.
 </Note>
 
-<VimeoEmbed videoId="1147277989" title="Video demonstration" />
+<VimeoEmbed videoId="1147277989" title="Ukázka videa" />
 
-## Integration Actions
+## Integrační akce
 
 ### Kód
 
-Runs custom JavaScript within your workflow.
+Spouští vlastní JavaScript ve vašem pracovním postupu.
 
 **Konfigurace**:
 
-* Přístup k proměnným z předchozích kroků. You can edit the variables names dynamically.
+* Přístup k proměnným z předchozích kroků. Názvy proměnných můžete upravovat dynamicky.
 
-<VimeoEmbed videoId="1147281795" title="Video demonstration" />
+<VimeoEmbed videoId="1147281795" title="Ukázka videa" />
 
 * Zapište JavaScriptový kód v editoru
 * Vrátit proměnné pro použití v následujících krocích
 * Testovat kód přímo ve kroku
 
 <Note>
-  If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
+  Pokud potřebujete ve svém kódu použít externí klíče API, musíte je zadat přímo do těla funkce. Klíče API nelze nakonfigurovat jinde a odkazovat na ně v bezserverové funkci.
 </Note>
 
 <Tip>
-  **Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/l/cs/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
+  **Pracujete s poli?** Pole z externích systémů nebo předchozích kroků mohou přijít jako řetězce. Řešení viz [Jak pracovat s poli v akcích Code](/l/cs/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
 </Tip>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  Klikněte na čtvercovou ikonu vpravo nahoře v editoru kódu a zobrazte jej na celou obrazovku — hodí se to, protože výchozí šířka editoru je omezená.
 </Tip>
 
 ### HTTP požadavek
 
-Sends a request to an external API as part of your workflow.
+Odešle požadavek na externí API v rámci vašeho pracovního postupu.
 
 <img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
 
 **Konfigurace**:
 
-* Zadejte URL endpointu API. Using parameters from previous steps is possible.
+* Zadejte URL endpointu API. Je možné použít parametry z předchozích kroků.
 * Vyberte metodu HTTP (GET, POST, PUT, PATCH, DELETE)
 * Přidejte potřebné hlavičky a hodnoty
 * Poskytněte ukázku odpovědi pro zobrazení struktury
 
-## AI Actions
+## Akce AI
 
-### AI Agent - Coming Soon
+### Agent AI – již brzy
 
-Runs an AI agent within your workflow to perform intelligent tasks.
+Spouští agenta AI ve vašem pracovním postupu k provádění inteligentních úloh.
 
 **Konfigurace**:
 
-* **Agent**: Select an existing AI agent or use the default agent
-* **Prompt**: Write the instruction for the AI agent
-* Reference variables from previous steps in the prompt
+* **Agent**: Vyberte existujícího agenta AI nebo použijte výchozího agenta
+* **Prompt**: Napište instrukci pro agenta AI
+* Odkazujte v promptu na proměnné z předchozích kroků
 
-**What AI Agents can do**:
+**Co agenti AI dokážou**:
 
-* Analyze and summarize data
-* Classify or categorize records
-* Generate text content
-* Make decisions based on data
-* Interact with your CRM data using tools
+* Analyzovat a shrnovat data
+* Klasifikovat nebo kategorizovat záznamy
+* Generovat textový obsah
+* Rozhodovat se na základě dat
+* Pracovat s vašimi daty CRM pomocí nástrojů
 
-**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
+**Výstup**: Odpověď agenta AI je k dispozici pro použití v následujících krocích. Pokud má agent strukturované schéma výstupu, bude odpověď tento formát dodržovat.
 
 <Note>
-  AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/l/cs/user-guide/workflows/capabilities/workflow-credits) for details.
+  Akce agenta AI spotřebovávají kredity pracovního postupu podle použitého modelu AI. Podrobnosti viz [Kredity pracovního postupu](/l/cs/user-guide/workflows/capabilities/workflow-credits).
 </Note>
 
 <Note>
-  AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/l/cs/user-guide/permissions-access/capabilities/permissions) for details.
+  Agenti AI respektují oprávnění založená na rolích. V části **Nastavení → Role** můžete agentům přiřadit konkrétní role, abyste řídili, k jakým datům mají přístup. Podrobnosti viz [Oprávnění](/l/cs/user-guide/permissions-access/capabilities/permissions).
 </Note>

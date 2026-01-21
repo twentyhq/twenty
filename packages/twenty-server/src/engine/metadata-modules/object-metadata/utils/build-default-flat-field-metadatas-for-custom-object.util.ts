@@ -1,17 +1,23 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type NonNullableRequired,
+} from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+} from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 
 type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
   workspaceId: string;
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'applicationId'>;
+  flatObjectMetadata: NonNullableRequired<
+    Pick<FlatObjectMetadata, 'id' | 'applicationId'>
+  >;
+  skipNameField?: boolean;
 };
 
 export type DefaultFlatFieldForCustomObjectMaps = ReturnType<
@@ -21,6 +27,7 @@ export type DefaultFlatFieldForCustomObjectMaps = ReturnType<
 export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   workspaceId,
   flatObjectMetadata: { id: objectMetadataId, applicationId },
+  skipNameField = false,
 }: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
   const createdAt = new Date().toISOString();
   const idFieldId = v4();
@@ -57,45 +64,48 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
-    applicationId: applicationId ?? null,
+    applicationId,
   };
 
-  const nameFieldId = v4();
-  const nameField: FlatFieldMetadata<FieldMetadataType.TEXT> = {
-    type: FieldMetadataType.TEXT,
-    id: nameFieldId,
-    viewFieldIds: [],
-    mainGroupByFieldMetadataViewIds: [],
-    kanbanAggregateOperationViewIds: [],
-    calendarViewIds: [],
-    isLabelSyncedWithName: false,
-    isUnique: false,
-    objectMetadataId,
-    universalIdentifier: nameFieldId,
-    workspaceId,
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
-    name: 'name',
-    label: 'Name',
-    icon: 'IconAbc',
-    description: 'Name',
-    isNullable: true,
-    isActive: true,
-    isCustom: false,
-    isSystem: false,
-    isUIReadOnly: false,
-    defaultValue: null,
-    viewFilterIds: [],
+  const nameFieldId = skipNameField ? null : v4();
+  const nameField: FlatFieldMetadata<FieldMetadataType.TEXT> | null =
+    skipNameField
+      ? null
+      : {
+          type: FieldMetadataType.TEXT,
+          id: nameFieldId!,
+          viewFieldIds: [],
+          mainGroupByFieldMetadataViewIds: [],
+          kanbanAggregateOperationViewIds: [],
+          calendarViewIds: [],
+          isLabelSyncedWithName: false,
+          isUnique: false,
+          objectMetadataId,
+          universalIdentifier: nameFieldId!,
+          workspaceId,
+          standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
+          name: 'name',
+          label: 'Name',
+          icon: 'IconAbc',
+          description: 'Name',
+          isNullable: true,
+          isActive: true,
+          isCustom: false,
+          isSystem: false,
+          isUIReadOnly: false,
+          defaultValue: null,
+          viewFilterIds: [],
 
-    createdAt,
-    updatedAt: createdAt,
-    options: null,
-    standardOverrides: null,
-    relationTargetFieldMetadataId: null,
-    relationTargetObjectMetadataId: null,
-    settings: null,
-    morphId: null,
-    applicationId: applicationId ?? null,
-  };
+          createdAt,
+          updatedAt: createdAt,
+          options: null,
+          standardOverrides: null,
+          relationTargetFieldMetadataId: null,
+          relationTargetObjectMetadataId: null,
+          settings: null,
+          morphId: null,
+          applicationId,
+        };
 
   const createdAtFieldId = v4();
   const createdAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
@@ -131,7 +141,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
-    applicationId: applicationId ?? null,
+    applicationId,
   };
 
   const updatedAtFieldId = v4();
@@ -168,7 +178,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
-    applicationId: applicationId ?? null,
+    applicationId,
   };
 
   const deletedAtFieldId = v4();
@@ -205,7 +215,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
-    applicationId: applicationId ?? null,
+    applicationId,
   };
 
   const createdByFieldId = v4();
@@ -241,7 +251,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
-    applicationId: applicationId ?? null,
+    applicationId,
   };
 
   const updatedByFieldId = v4();
@@ -277,7 +287,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
-    applicationId: applicationId ?? null,
+    applicationId,
   };
 
   const positionFieldId = v4();
@@ -314,7 +324,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
-    applicationId: applicationId ?? null,
+    applicationId,
   };
 
   const searchVectorFieldId = v4();
@@ -350,17 +360,19 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: {
-      asExpression: getTsVectorColumnExpressionFromFields([nameField]),
+      asExpression: getTsVectorColumnExpressionFromFields(
+        nameField ? [nameField] : [],
+      ),
       generatedType: 'STORED',
     },
     morphId: null,
-    applicationId: applicationId ?? null,
+    applicationId,
   };
 
   return {
     fields: {
       idField,
-      nameField,
+      ...(nameField && { nameField }),
       createdAtField,
       updatedAtField,
       updatedByField,

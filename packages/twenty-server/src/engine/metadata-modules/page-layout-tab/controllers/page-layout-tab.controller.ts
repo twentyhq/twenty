@@ -11,9 +11,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/create-page-layout-tab.input';
 import { UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab.input';
 import { type PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
@@ -25,11 +30,6 @@ import {
 } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
 import { PageLayoutTabRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout-tab/filters/page-layout-tab-rest-api-exception.filter';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Controller('rest/metadata/pageLayoutTabs')
 @UseGuards(WorkspaceAuthGuard)
@@ -52,10 +52,10 @@ export class PageLayoutTabController {
       );
     }
 
-    return this.pageLayoutTabService.findByPageLayoutId(
-      workspace.id,
+    return this.pageLayoutTabService.findByPageLayoutId({
+      workspaceId: workspace.id,
       pageLayoutId,
-    );
+    });
   }
 
   @Get(':id')
@@ -64,7 +64,10 @@ export class PageLayoutTabController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO | null> {
-    return this.pageLayoutTabService.findByIdOrThrow(id, workspace.id);
+    return this.pageLayoutTabService.findByIdOrThrow({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 
   @Post()
@@ -73,7 +76,10 @@ export class PageLayoutTabController {
     @Body() input: CreatePageLayoutTabInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO> {
-    return this.pageLayoutTabService.create(input, workspace.id);
+    return this.pageLayoutTabService.create({
+      createPageLayoutTabInput: input,
+      workspaceId: workspace.id,
+    });
   }
 
   @Patch(':id')
@@ -83,15 +89,22 @@ export class PageLayoutTabController {
     @Body() input: UpdatePageLayoutTabInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO> {
-    return this.pageLayoutTabService.update(id, workspace.id, input);
+    return this.pageLayoutTabService.update({
+      id,
+      workspaceId: workspace.id,
+      updateData: input,
+    });
   }
 
   @Delete(':id')
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
-  async delete(
+  async destroy(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<PageLayoutTabDTO> {
-    return this.pageLayoutTabService.delete(id, workspace.id);
+  ): Promise<boolean> {
+    return this.pageLayoutTabService.destroy({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 }

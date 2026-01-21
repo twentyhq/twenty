@@ -1,10 +1,9 @@
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { WorkflowEditActionServerlessFunction } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
+import { fn } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -134,7 +133,6 @@ const meta: Meta<typeof WorkflowEditActionServerlessFunction> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
-    I18nFrontDecorator,
   ],
 };
 

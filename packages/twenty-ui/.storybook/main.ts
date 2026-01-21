@@ -1,47 +1,46 @@
-import { type StorybookConfig } from '@storybook/react-vite';
-import * as path from 'path';
-import { dirname, join } from 'path';
+import type { StorybookConfig } from '@storybook/react-vite';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import checker from 'vite-plugin-checker';
 
+const dirname =
+  typeof __dirname !== 'undefined'
+    ? __dirname
+    : path.dirname(fileURLToPath(import.meta.url));
 
-const getAbsolutePath = (value: string): any => {
-  return dirname(require.resolve(join(value, "package.json")));
-};
+const isVitest = Boolean(process.env.VITEST);
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
 
   addons: [
-    getAbsolutePath("@storybook/addon-links"),
-    getAbsolutePath("@storybook/addon-essentials"),
-    getAbsolutePath("@storybook/addon-interactions"),
-    getAbsolutePath("@storybook/addon-coverage"),
-    getAbsolutePath("storybook-addon-cookie"),
-    getAbsolutePath("storybook-addon-pseudo-states"),
+    '@storybook-community/storybook-addon-cookie',
+    '@storybook/addon-links',
+    '@storybook/addon-coverage',
+    'storybook-addon-pseudo-states',
+    '@storybook/addon-vitest',
   ],
 
-  framework: {
-    name: getAbsolutePath("@storybook/react-vite"),
-    options: {},
-  },
+  framework: '@storybook/react-vite',
 
-  viteFinal: (config) => {
-    return {
-      ...config,
-      plugins: [
-        ...(config.plugins ?? []),
+  viteFinal: async (viteConfig) => {
+    const plugins = [...(viteConfig.plugins ?? [])];
+
+    if (!isVitest) {
+      plugins.push(
         checker({
           typescript: {
-            tsconfigPath: path.resolve(__dirname, '../tsconfig.dev.json'),
+            tsconfigPath: path.resolve(dirname, '../tsconfig.dev.json'),
           },
         }),
-      ],
+      );
+    }
+
+    return {
+      ...viteConfig,
+      plugins,
     };
   },
-
-  docs: {
-    autodocs: true
-  }
 };
 
 export default config;

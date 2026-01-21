@@ -80,6 +80,13 @@ export class RunWorkflowJob {
         workspaceId,
       });
 
+    if (
+      workflowRun.status !== WorkflowRunStatus.ENQUEUED &&
+      workflowRun.status !== WorkflowRunStatus.NOT_STARTED
+    ) {
+      return;
+    }
+
     const workflowVersion =
       await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
         workspaceId,
@@ -142,13 +149,13 @@ export class RunWorkflowJob {
       );
     }
 
-    const lastExecutedStepResult =
-      workflowRun.state?.stepInfos[lastExecutedStepId]?.result;
+    const lastExecutedStepOutput =
+      workflowRun.state?.stepInfos[lastExecutedStepId];
 
     const nextStepIdsToExecute =
       await this.workflowExecutorWorkspaceService.getNextStepIdsToExecute({
         executedStep: lastExecutedStep,
-        executedStepResult: lastExecutedStepResult,
+        executedStepOutput: lastExecutedStepOutput,
       });
 
     if (!isDefined(nextStepIdsToExecute) || nextStepIdsToExecute.length === 0) {

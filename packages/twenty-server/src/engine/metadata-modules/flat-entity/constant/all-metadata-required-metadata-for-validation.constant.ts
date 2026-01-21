@@ -62,6 +62,9 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     role: true,
   },
   skill: {},
+  commandMenuItem: {
+    objectMetadata: true,
+  },
   pageLayout: {
     objectMetadata: true,
   },
@@ -80,5 +83,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   },
   rowLevelPermissionPredicateGroup: {
     role: true,
+    objectMetadata: true,
   },
+  frontComponent: {},
 } as const satisfies MetadataRequiredForValidation;

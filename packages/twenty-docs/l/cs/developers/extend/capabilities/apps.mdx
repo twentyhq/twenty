@@ -1,34 +1,34 @@
 ---
-title: Twenty Apps
-description: Build and manage Twenty customizations as code.
+title: Aplikace Twenty
+description: Vytvářejte a spravujte přizpůsobení Twenty jako kód.
 ---
 
 <Warning>
-  Apps are currently in alpha testing. The feature is functional but still evolving.
+  Aplikace jsou aktuálně v alfa testování. Tato funkce je funkční, ale stále se vyvíjí.
 </Warning>
 
-## What Are Apps?
+## Co jsou aplikace?
 
-Apps let you build and manage Twenty customizations **as code**. Instead of configuring everything through the UI, you define your data model and serverless functions in code — making it faster to build, maintain, and roll out to multiple workspaces.
+Aplikace vám umožňují vytvářet a spravovat přizpůsobení Twenty **jako kód**. Místo konfigurace všeho přes uživatelské rozhraní definujete v kódu svůj datový model a serverless funkce — což zrychluje vývoj, údržbu i nasazování do více pracovních prostorů.
 
-**What you can do today:**
+**Co můžete dělat už dnes:**
 
-* Define custom objects and fields as code (managed data model)
-* Build serverless functions with custom triggers
-* Deploy the same app across multiple workspaces
+* Definujte vlastní objekty a pole jako kód (spravovaný datový model)
+* Vytvářejte serverless funkce s vlastními spouštěči
+* Nasazujte stejnou aplikaci do více pracovních prostorů
 
-**Coming soon:**
+**Již brzy:**
 
-* Custom UI layouts and components
+* Vlastní rozvržení a komponenty uživatelského rozhraní
 
 ## Předpoklady
 
-* Node.js 24+ and Yarn 4
-* A Twenty workspace and an API key (create one at https://app.twenty.com/settings/api-webhooks)
+* Node.js 24+ a Yarn 4
+* Pracovní prostor Twenty a klíč API (vytvořte si jej na https://app.twenty.com/settings/api-webhooks)
 
-## Getting Started
+## Začínáme
 
-Create a new app using the official scaffolder, then authenticate and start developing:
+Vytvořte novou aplikaci pomocí oficiálního scaffolderu, poté se ověřte a začněte vyvíjet:
 
 ```bash filename="Terminal"
 # Scaffold a new app
@@ -36,46 +36,49 @@ npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Authenticate using your API key (you'll be prompted)
-yarn auth
+yarn auth:login
 
 # Start dev mode: automatically syncs local changes to your workspace
-yarn dev
+yarn app:dev
 ```
 
 Odtud můžete:
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn create-entity
+yarn app:create-entity
 
 # Generate a typed Twenty client and workspace entity types
-yarn generate
+yarn app:generate
 
 # Run a one‑time sync (instead of watch mode)
-yarn sync
+yarn app:sync
 
 # Watch your application's functions logs
-yarn logs
+yarn function:logs
+
+# Execute a function by name
+yarn function:execute -n my-function -p '{"name": "test"}'
 
 # Uninstall the application from the current workspace
-yarn uninstall
+yarn app:uninstall
 
 # Display commands' help
-yarn help
+yarn app:help
 ```
 
-See also: the CLI reference pages for [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) and [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
+Viz také: referenční stránky CLI pro [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) a [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
 
-## Project structure (scaffolded)
+## Struktura projektu (vytvořená scaffolderem)
 
-When you run `npx create-twenty-app@latest my-twenty-app`, the scaffolder:
+Když spustíte `npx create-twenty-app@latest my-twenty-app`, scaffolder:
 
-* Copies a minimal base application into `my-twenty-app/`
-* Adds a local `twenty-sdk` dependency and Yarn 4 configuration
-* Creates config files and scripts wired to the `twenty` CLI
-* Generates a default application config and a default function role
+* Zkopíruje minimální základní aplikaci do `my-twenty-app/`
+* Přidá lokální závislost `twenty-sdk` a konfiguraci pro Yarn 4
+* Vytvoří konfigurační soubory a skripty napojené na `twenty` CLI
+* Vygeneruje výchozí konfiguraci aplikace a výchozí roli funkcí
 
-A freshly scaffolded app looks like this:
+Čerstvě vytvořená aplikace vypadá takto:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -92,72 +95,125 @@ my-twenty-app/
   tsconfig.json
   README.md
   src/
-    application.config.ts
-    role.config.ts
-    // your entities, actions, and other app files
+    app/
+      application.config.ts     # Required - main application configuration
+      default-function.role.ts  # Default role for serverless functions
+      // your entities (*.object.ts, *.function.ts, *.role.ts)
+    utils/                      # Optional - handler implementations & utilities
 ```
 
-At a high level:
+### Konvence před konfigurací
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall`, and `auth` that delegate to the local `twenty` CLI.
-* **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `generated/` (typed client), `dist/`, `build/`, coverage folders, log files, and `.env*` files.
-* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Lock and configure the Yarn 4 toolchain used by the project.
-* **.nvmrc**: Pins the Node.js version expected by the project.
-* **eslint.config.mjs** and **tsconfig.json**: Provide linting and TypeScript configuration for your app’s TypeScript sources.
-* **README.md**: A short README in the app root with basic instructions.
-* **src/**: The main place where you define your application-as-code:
-  * `application.config.ts`: Global configuration for your app (metadata and runtime wiring). See “Application config” below.
-  * `role.config.ts`: Default function role used by your serverless functions. See “Default function role” below.
-  * Future entities, actions/functions, and any supporting code you add.
+Aplikace používají přístup **konvence před konfigurací**, kde jsou entity detekovány podle přípony souboru. To umožňuje flexibilní organizaci ve složce `src/app/`:
 
-Later commands will add more files and folders:
+| Přípona souboru | Typ entity                 |
+| --------------- | -------------------------- |
+| `*.object.ts`   | Definice vlastních objektů |
+| `*.function.ts` | Definice serverless funkcí |
+| `*.role.ts`     | Definice rolí              |
 
-* `yarn generate` will create a `generated/` folder (typed Twenty client + workspace types).
-* `yarn create-entity` will add entity definition files under `src/` for your custom objects.
+### Podporované uspořádání složek
+
+Entity můžete uspořádat podle některého z těchto vzorů:
+
+**Tradiční (podle typu):**
+
+```text
+src/app/
+├── application.config.ts
+├── objects/
+│   └── postCard.object.ts
+├── functions/
+│   └── createPostCard.function.ts
+└── roles/
+    └── admin.role.ts
+```
+
+**Podle funkcí:**
+
+```text
+src/app/
+├── application.config.ts
+└── post-card/
+    ├── postCard.object.ts
+    ├── createPostCard.function.ts
+    └── postCardAdmin.role.ts
+```
+
+**Plochá:**
+
+```text
+src/app/
+├── application.config.ts
+├── postCard.object.ts
+├── createPostCard.function.ts
+└── admin.role.ts
+```
+
+V kostce:
+
+* **package.json**: Deklaruje název aplikace, verzi, engines (Node 24+, Yarn 4) a přidává `twenty-sdk` plus skripty jako `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall` a `auth`, které delegují na lokální `twenty` CLI.
+* **.gitignore**: Ignoruje běžné artefakty jako `node_modules`, `.yarn`, `generated/` (typovaný klient), `dist/`, `build/`, složky s coverage, logy a soubory `.env*`.
+* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Zamykají a konfigurují nástrojový řetězec Yarn 4 používaný projektem.
+* **.nvmrc**: Fixuje verzi Node.js požadovanou projektem.
+* **eslint.config.mjs** a **tsconfig.json**: Poskytují lintování a konfiguraci TypeScriptu pro zdrojové soubory vaší aplikace v TypeScriptu.
+* **README.md**: Krátké README v kořeni aplikace se základními pokyny.
+* **src/app/**: Hlavní místo, kde definujete svou aplikaci jako kód:
+  * `application.config.ts`: Globální konfigurace vaší aplikace (metadata a napojení za běhu). Viz „Konfigurace aplikace“ níže.
+  * `*.role.ts`: Definice rolí používané vašimi serverless funkcemi. Viz „Výchozí role funkce“ níže.
+  * `*.object.ts`: Definice vlastních objektů.
+  * `*.function.ts`: Definice serverless funkcí.
+* **src/utils/**: Volitelná složka pro implementace obslužných funkcí a pomocné nástroje.
+
+Pozdější příkazy přidají další soubory a složky:
+
+* `yarn app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
+* `yarn app:create-entity` will add entity definition files under `src/app/` for your custom objects, functions, or roles.
+  l
 
 ## Ověření
 
-The first time you run `yarn auth`, you'll be prompted for:
+The first time you run `yarn auth:login`, you'll be prompted for:
 
-* API URL (defaults to http://localhost:3000 or your current workspace profile)
-* API key
+* URL API (výchozí je http://localhost:3000 nebo váš aktuální profil pracovního prostoru)
+* Klíč API
 
-Your credentials are stored per-user in `~/.twenty/config.json`. You can maintain multiple profiles and switch using `--workspace <name>`.
+Vaše přihlašovací údaje se ukládají pro jednotlivé uživatele do `~/.twenty/config.json`. Můžete spravovat více profilů a přepínat pomocí `--workspace <name>`.
 
 Příklady:
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
-yarn auth
+yarn auth:login
 
 # Use a specific workspace profile
-yarn auth --workspace my-custom-workspace
+yarn auth:login --workspace my-custom-workspace
 ```
 
-## Use the SDK resources (types & config)
+## Používejte zdroje SDK (typy a konfiguraci)
 
-The twenty-sdk provides typed building blocks you use inside your app. Below are the key pieces you'll touch most often.
+twenty-sdk poskytuje typované stavební bloky a pomocné funkce, které používáte ve své aplikaci. Níže jsou klíčové části, se kterými budete nejčastěji pracovat.
 
-### Defining objects
+### Pomocné funkce
 
-Custom objects are regular TypeScript classes annotated with decorators from `twenty-sdk`. They live under `src/objects/` in your app and describe both schema and behavior for records in your workspace.
+SDK poskytuje čtyři pomocné funkce s vestavěnou validací pro definování entit vaší aplikace:
 
-Here is an example `postCard` object from the Hello World app:
+| Funkce             | Účel                                             |
+| ------------------ | ------------------------------------------------ |
+| `defineApp()`      | Konfigurace metadat aplikace                     |
+| `defineObject()`   | Definice vlastních objektů s poli                |
+| `defineFunction()` | Definice serverless funkcí s obslužnými funkcemi |
+| `defineRole()`     | Konfigurace oprávnění rolí a přístupu k objektům |
+
+Tyto funkce validují vaši konfiguraci za běhu a poskytují lepší automatické doplňování v IDE a lepší typovou bezpečnost.
+
+### Definování objektů
+
+Vlastní objekty popisují jak schéma, tak chování záznamů ve vašem pracovním prostoru. K definování objektů s vestavěnou validací použijte `defineObject()`:
 
 ```typescript
-import { type Note } from '../../generated';
-
-import {
-  type AddressField,
-  Field,
-  FieldType,
-  type FullNameField,
-  Object,
-  OnDeleteAction,
-  Relation,
-  RelationType,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk';
+// src/app/postCard.object.ts
+import { defineObject, FieldType } from 'twenty-sdk';
 
 enum PostCardStatus {
   DRAFT = 'DRAFT',
@@ -166,176 +222,186 @@ enum PostCardStatus {
   RETURNED = 'RETURNED',
 }
 
-@Object({
+export default defineObject({
   universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
   nameSingular: 'postCard',
   namePlural: 'postCards',
-  labelSingular: 'Post card',
-  labelPlural: 'Post cards',
-  description: ' A post card object',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
   icon: 'IconMail',
-})
-export class PostCard {
-  @Field({
-    universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-    type: FieldType.TEXT,
-    label: 'Content',
-    description: "Postcard's content",
-    icon: 'IconAbc',
-  })
-  content: string;
-
-  @Field({
-    universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
-    type: FieldType.FULL_NAME,
-    label: 'Recipient name',
-    icon: 'IconUser',
-  })
-  recipientName: FullNameField;
-
-  @Field({
-    universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
-    type: FieldType.ADDRESS,
-    label: 'Recipient address',
-    icon: 'IconHome',
-  })
-  recipientAddress: AddressField;
-
-  @Field({
-    universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
-    type: FieldType.SELECT,
-    label: 'Status',
-    icon: 'IconSend',
-    defaultValue: `'${PostCardStatus.DRAFT}'`,
-    options: [
-      { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
-      { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
-      { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
-      { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
-    ],
-  })
-  status: PostCardStatus;
-
-  @Relation({
-    universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
-    type: RelationType.ONE_TO_MANY,
-    label: 'Notes',
-    icon: 'IconComment',
-    inverseSideTargetUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
-    onDelete: OnDeleteAction.CASCADE,
-  })
-  notes: Note[];
-
-  @Field({
-    universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
-    type: FieldType.DATE_TIME,
-    label: 'Delivered at',
-    icon: 'IconCheck',
-    isNullable: true,
-    defaultValue: null,
-  })
-  deliveredAt?: Date;
-}
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
 ```
 
-Key points:
+Hlavní body:
 
-* The `@Object` decorator defines the object identity and labels used across the workspace; its `universalIdentifier` must be unique and stable across deployments.
-* Each `@Field` decorator defines a field on the object with a type, label, and its own stable `universalIdentifier`.
-* `@Relation` wires this object to other objects (standard or custom) and controls cascade behavior with `onDelete`.
-* You can scaffold new objects using `yarn create-entity`, which guides you through naming, fields, and relationships, then generates object files similar to the `postCard` example.
+* Použijte `defineObject()` pro vestavěnou validaci a lepší podporu v IDE.
+* Hodnota `universalIdentifier` musí být jedinečná a stabilní napříč nasazeními.
+* Každé pole vyžaduje `name`, `type`, `label` a svůj vlastní stabilní `universalIdentifier`.
+* Pole `fields` je volitelné — objekty můžete definovat i bez vlastních polí.
+* You can scaffold new objects using `yarn app:create-entity`, which guides you through naming, fields, and relationships.
 
-### Application config (application.config.ts)
+<Note>
+  **Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole jako `name`, `createdAt`, `updatedAt`, `createdBy`, `position` a `deletedAt`. Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
+</Note>
 
-Every app has a single `application.config.ts` file that describes:
+<Accordion title="Alternativa: Syntaxe založená na dekorátorech">
+  Objekty můžete definovat také pomocí dekorátorů TypeScriptu. Tento přístup používá třídovou syntaxi s dekorátory `@Object`, `@Field` a `@Relation`:
 
-* **Who the app is**: identifiers, display name, and description.
-* **How its functions run**: which role they use for permissions.
-* **(Optional) variables**: key–value pairs exposed to your functions as environment variables.
+  ```typescript
+  import {
+    type AddressField,
+    Field,
+    FieldType,
+    type FullNameField,
+    Object,
+    OnDeleteAction,
+    Relation,
+    RelationType,
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  } from 'twenty-sdk';
+  import { type Note } from '../../generated';
 
-When you scaffold a new app, you start with a minimal config:
+  @Object({
+    universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+    nameSingular: 'postCard',
+    namePlural: 'postCards',
+    labelSingular: 'Post card',
+    labelPlural: 'Post cards',
+    description: 'A post card object',
+    icon: 'IconMail',
+  })
+  export class PostCard {
+    @Field({
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    })
+    content: string;
+
+    @Relation({
+      universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
+      type: RelationType.ONE_TO_MANY,
+      label: 'Notes',
+      icon: 'IconComment',
+      inverseSideTargetUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
+      onDelete: OnDeleteAction.CASCADE,
+    })
+    notes: Note[];
+  }
+  ```
+
+  Poznámka: Přístup s dekorátory vyžaduje `experimentalDecorators` v konfiguraci TypeScriptu.
+</Accordion>
+
+### Konfigurace aplikace (application.config.ts)
+
+Každá aplikace má jeden soubor `application.config.ts`, který popisuje:
+
+* **Identitu aplikace**: identifikátory, zobrazovaný název a popis.
+* **Jak běží její funkce**: kterou roli používají pro oprávnění.
+* **(Volitelné) proměnné**: dvojice klíč–hodnota zpřístupněné vašim funkcím jako proměnné prostředí.
+
+K definování konfigurace aplikace použijte `defineApp()`:
 
 ```typescript
-import { type ApplicationConfig } from 'twenty-sdk';
+// src/app/application.config.ts
+import { defineApp } from 'twenty-sdk';
+import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-const config: ApplicationConfig = {
-  universalIdentifier: '<generated-app-uuid>',
+export default defineApp({
+  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
-  functionRoleUniversalIdentifier: '<generated-role-uuid>',
-};
-
-export default config;
-```
-
-You can gradually extend this file as your app grows. For example, you can add an icon and application-scoped variables:
-
-```typescript
-import { type ApplicationConfig } from 'twenty-sdk';
-
-const config: ApplicationConfig = {
-  universalIdentifier: '<your-app-uuid>',
-  displayName: 'My App',
-  description: 'What your app does',
-  icon: 'IconWorld', // Choose an icon by name
+  icon: 'IconWorld',
   applicationVariables: {
     DEFAULT_RECIPIENT_NAME: {
-      universalIdentifier: '<uuid>',
-      description: 'Default recipient used by functions',
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
       value: 'Jane Doe',
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: '<your-role-uuid>',
-};
-
-export default config;
+  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+});
 ```
 
-Notes:
+Poznámky:
 
-* `universalIdentifier` fields are deterministic IDs you own; generate them once and keep them stable across syncs.
-* `applicationVariables` become environment variables for your functions (for example, `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` must match the role you define in `role.config.ts` (see below).
+* Pole `universalIdentifier` jsou deterministická ID, která vlastníte; vygenerujte je jednou a udržujte je stabilní napříč synchronizacemi.
+* `applicationVariables` se stanou proměnnými prostředí pro vaše funkce (například `DEFAULT_RECIPIENT_NAME` je dostupné jako `process.env.DEFAULT_RECIPIENT_NAME`).
+* `functionRoleUniversalIdentifier` se musí shodovat s rolí, kterou definujete ve svém souboru `*.role.ts` (viz níže).
 
-#### Roles and permissions
+#### Role a oprávnění
 
-Applications can define roles that encapsulate permissions on your workspace’s objects and actions. The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app’s serverless functions.
+Aplikace mohou definovat role, které zapouzdřují oprávnění k objektům a akcím ve vašem pracovním prostoru. Pole `functionRoleUniversalIdentifier` v `application.config.ts` určuje výchozí roli používanou serverless funkcemi vaší aplikace.
 
-* The runtime API key injected as `TWENTY_API_KEY` is derived from this default function role.
-* The typed client will be restricted to the permissions granted to that role.
-* Follow least‑privilege: create a dedicated role with only the permissions your functions need, then reference its universal identifier.
+* Běhový klíč API vložený jako `TWENTY_API_KEY` je odvozen z této výchozí role funkcí.
+* Typovaný klient bude omezen oprávněními udělenými této roli.
+* Dodržujte princip nejmenších oprávnění: vytvořte vyhrazenou roli pouze s oprávněními, která vaše funkce potřebují, a poté odkazujte na její univerzální identifikátor.
 
-##### Default function role (role.config.ts)
+##### Výchozí role funkce (\*.role.ts)
 
-When you scaffold a new app, the CLI also creates `src/role.config.ts`. This file exports the default role your serverless functions will use at runtime:
-
-```typescript
-import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
-
-export const functionRole: RoleConfig = {
-  universalIdentifier: '<generated-role-uuid>',
-  label: 'My Twenty App default function role',
-  description: 'My Twenty App default function role',
-  canReadAllObjectRecords: true,
-  canUpdateAllObjectRecords: true,
-  canSoftDeleteAllObjectRecords: true,
-  canDestroyAllObjectRecords: false,
-};
-```
-
-The `universalIdentifier` of this role is automatically wired into `application.config.ts` as `functionRoleUniversalIdentifier`. In other words:
-
-* **role.config.ts** defines what the default function role can do.
-* **application.config.ts** points to that role so your functions inherit its permissions.
-
-As you move beyond the initial scaffold, you should tighten this role and make it explicit about what it can access. A more production-ready role might look closer to:
+Když vygenerujete novou aplikaci, CLI také vytvoří výchozí soubor role. K definování rolí s vestavěnou validací použijte `defineRole()`:
 
 ```typescript
-import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
+// src/app/default-function.role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const functionRole: RoleConfig = {
-  universalIdentifier: '<your-role-uuid>',
+export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -363,41 +429,41 @@ export const functionRole: RoleConfig = {
       canUpdateFieldValue: false,
     },
   ],
-  permissionFlags: ['APPLICATIONS'],
-};
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
 ```
 
-Notes:
+Na `universalIdentifier` této role se poté odkazuje v `application.config.ts` jako na `functionRoleUniversalIdentifier`. Jinými slovy:
 
-* Start from the scaffolded role, then progressively restrict it following least‑privilege.
-* Replace the `objectPermissions` and `fieldPermissions` with the objects/fields your functions need.
-* `permissionFlags` control access to platform-level capabilities. Keep them minimal; add only what you need.
-* See a working example in the Hello World app: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+* **\*.role.ts** definuje, co může výchozí role funkce dělat.
+* **application.config.ts** ukazuje na tuto roli, aby vaše funkce zdědily její oprávnění.
 
-### Serverless function config and entrypoint
+Poznámky:
 
-Each function exports a main handler and a config describing its triggers. You can mix multiple trigger types.
+* Začněte rolí vytvořenou scaffolderem a postupně ji omezujte podle principu nejmenších oprávnění.
+* Nahraďte `objectPermissions` a `fieldPermissions` objekty/poli, která vaše funkce potřebují.
+* `permissionFlags` řídí přístup k schopnostem na úrovni platformy. Držte je na minimu; přidávejte pouze to, co potřebujete.
+* Podívejte se na funkční příklad v aplikaci Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+### Konfigurace serverless funkcí a vstupní bod
+
+Každý soubor funkce používá `defineFunction()` k exportu konfigurace s obslužnou funkcí (handlerem) a volitelnými spouštěči. Pro automatickou detekci použijte příponu souboru `*.function.ts`.
 
 ```typescript
-// src/actions/create-new-post-card.ts
-import type {
-  FunctionConfig,
-  DatabaseEventPayload,
-  ObjectRecordCreateEvent,
-  CronPayload,
-} from 'twenty-sdk';
-import Twenty, { type Person } from '../generated';
+// src/app/createPostCard.function.ts
+import { defineFunction } from 'twenty-sdk';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
+import Twenty, { type Person } from '../../generated';
 
-// main handler can accept parameters from route, cron, or database events
-export const main = async (
+const handler = async (
   params:
-    | { name?: string }
+    | RoutePayload
     | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
     | CronPayload,
 ) => {
   const client = new Twenty(); // generated typed client
-  const name = 'name' in params
-    ? params.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
     : 'Hello world';
 
   const result = await client.mutation({
@@ -410,14 +476,15 @@ export const main = async (
   return result;
 };
 
-export const config: FunctionConfig = {
-  universalIdentifier: '<function-uuid>',
+export default defineFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'create-new-post-card',
   timeoutSeconds: 2,
+  handler,
   triggers: [
     // Public HTTP route trigger '/s/post-card/create'
     {
-      universalIdentifier: '<route-trigger-uuid>',
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
       type: 'route',
       path: '/post-card/create',
       httpMethod: 'GET',
@@ -425,39 +492,137 @@ export const config: FunctionConfig = {
     },
     // Cron trigger (CRON pattern)
     {
-      universalIdentifier: '<cron-trigger-uuid>',
+      universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
       type: 'cron',
       pattern: '0 0 1 1 *',
     },
     // Database event trigger
     {
-      universalIdentifier: '<db-trigger-uuid>',
+      universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
       type: 'databaseEvent',
-      eventName: 'person.created',
+      eventName: 'person.updated',
+      updatedFields: ['name'],
     },
   ],
+});
+```
+
+Běžné typy spouštěčů:
+
+* **route**: Zpřístupní vaši funkci na HTTP cestě a metodě **pod koncovým bodem `/s/`**:
+
+> např. `path: '/post-card/create',` -> volání na `<APP_URL>/s/post-card/create`
+
+* **cron**: Spouští vaši funkci podle plánu pomocí výrazu CRON.
+* **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
+
+> e.g. `person.updated`
+
+Poznámky:
+
+* Pole `triggers` je volitelné. Funkce bez spouštěčů lze použít jako pomocné funkce volané jinými funkcemi.
+* V jedné funkci můžete kombinovat více typů spouštěčů.
+
+### Route trigger payload
+
+<Warning>
+  **Breaking change (v1.16, January 2026):** The route trigger payload format has changed. Prior to v1.16, query parameters, path parameters, and body were sent directly as the payload. Starting with v1.16, they are nested inside a structured `RoutePayload` object.
+
+  **Before v1.16:**
+
+  ```typescript
+  const handler = async (params) => {
+    const { param1, param2 } = params; // Direct access
+  };
+  ```
+
+  **After v1.16:**
+
+  ```typescript
+  const handler = async (event: RoutePayload) => {
+    const { param1, param2 } = event.body; // Access via .body
+    const { queryParam } = event.queryStringParameters;
+    const { id } = event.pathParameters;
+  };
+  ```
+
+  **To migrate existing functions:** Update your handler to destructure from `event.body`, `event.queryStringParameters`, or `event.pathParameters` instead of directly from the params object.
+</Warning>
+
+When a route trigger invokes your function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Import the type from `twenty-sdk`:
+
+```typescript
+import { defineFunction, type RoutePayload } from 'twenty-sdk';
+
+const handler = async (event: RoutePayload) => {
+  // Access request data
+  const { headers, queryStringParameters, pathParameters, body } = event;
+
+  // HTTP method and path are available in requestContext
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
 };
 ```
 
-Common trigger types:
+The `RoutePayload` type has the following structure:
 
-* route: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
+| Property                     | Typ                                   | Popis                                                                                   |
+| ---------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`)                           |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)                            |
+| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern (e.g., `/users/:id` → `{ id: '123' }`) |
+| `text zprávy`                | `object \| null`                      | Parsed request body (JSON)                                                              |
+| `isBase64Encoded`            | `booleovská hodnota`                  | Whether the body is base64 encoded                                                      |
+| `requestContext.http.method` | `string`                              | HTTP method (GET, POST, PUT, PATCH, DELETE)                                             |
+| `requestContext.http.path`   | `string`                              | Raw request path                                                                        |
 
-> e.g. `path: '/post-card/create',` -> call on `<APP_URL>/s/post-card/create`
+### Forwarding HTTP headers
 
-* cron: Runs your function on a schedule using a CRON expression.
-* databaseEvent: Runs on workspace object lifecycle events
+By default, HTTP headers from incoming requests are **not** passed to your serverless function for security reasons. To access specific headers, explicitly list them in the `forwardedRequestHeaders` array:
 
-> e.g. `person.created`
+```typescript
+export default defineFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  triggers: [
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/webhook',
+      httpMethod: 'POST',
+      isAuthRequired: false,
+      forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+    },
+  ],
+});
+```
 
-You can create new functions in two ways:
+In your handler, you can then access these headers:
 
-* **Scaffolded**: Run `yarn create-entity --path <custom-path>` and choose the option to add a new function. This generates a starter file under `<custom-path>` with a `main` handler and a `config` block similar to the example above.
-* **Manual**: Create a new file and export `main` and `config` yourself, following the same pattern.
+```typescript
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
 
-### Generated typed client
+  // Validate webhook signature...
+  return { received: true };
+};
+```
 
-Run yarn generate to create a local typed client in generated/ based on your workspace schema. Use it in your functions:
+<Note>
+  Header names are normalized to lowercase. Access them using lowercase keys (for example, `event.headers['content-type']`).
+</Note>
+
+Nové funkce můžete vytvářet dvěma způsoby:
+
+* **Scaffolded**: Run `yarn app:create-entity` and choose the option to add a new function. Tím se vygeneruje startovací soubor s obslužnou funkcí a konfigurací.
+* **Ruční**: Vytvořte nový soubor `*.function.ts` a použijte `defineFunction()` podle stejného vzoru.
+
+### Generovaný typovaný klient
+
+Run yarn app:generate to create a local typed client in generated/ based on your workspace schema. Použijte jej ve svých funkcích:
 
 ```typescript
 import Twenty from './generated';
@@ -466,34 +631,34 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated by `yarn generate`. Re-run after changing your objects and `yarn sync` or when onboarding to a new workspace.
+The client is re-generated by `yarn app:generate`. Re-run after changing your objects and `yarn app:sync` or when onboarding to a new workspace.
 
-#### Runtime credentials in serverless functions
+#### Běhové přihlašovací údaje v serverless funkcích
 
-When your function runs on Twenty, the platform injects credentials as environment variables before your code executes:
+Když vaše funkce běží na Twenty, platforma před spuštěním kódu vloží přihlašovací údaje jako proměnné prostředí:
 
-* `TWENTY_API_URL`: Base URL of the Twenty API your app targets.
-* `TWENTY_API_KEY`: Short‑lived key scoped to your application’s default function role.
+* `TWENTY_API_URL`: Základní URL Twenty API, na které vaše aplikace cílí.
+* `TWENTY_API_KEY`: Krátkodobý klíč s rozsahem omezeným na výchozí roli funkce vaší aplikace.
 
-Notes:
+Poznámky:
 
-* You do not need to pass URL or API key to the generated client. It reads `TWENTY_API_URL` and `TWENTY_API_KEY` from process.env at runtime.
-* The API key’s permissions are determined by the role referenced in your `application.config.ts` via `functionRoleUniversalIdentifier`. This is the default role used by serverless functions of your application.
-* Applications can define roles to follow least‑privilege. Grant only the permissions your functions need, then point `functionRoleUniversalIdentifier` to that role’s universal identifier.
+* Není nutné předávat URL ani klíč API vygenerovanému klientovi. Za běhu čte `TWENTY_API_URL` a `TWENTY_API_KEY` z process.env.
+* Oprávnění API klíče jsou určena rolí odkazovanou v `application.config.ts` prostřednictvím `functionRoleUniversalIdentifier`. Toto je výchozí role používaná serverless funkcemi vaší aplikace.
+* Aplikace mohou definovat role podle principu nejmenších oprávnění. Udělte pouze oprávnění, která vaše funkce potřebují, a poté nastavte `functionRoleUniversalIdentifier` na univerzální identifikátor této role.
 
-### Hello World example
+### Příklad Hello World
 
-Explore a minimal, end-to-end example that demonstrates objects, functions, and multiple triggers [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+Prozkoumejte minimalistický end-to-end příklad, který demonstruje objekty, funkce a více spouštěčů [zde](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
-## Manual setup (without the scaffolder)
+## Ruční nastavení (bez scaffolderu)
 
-While we recommend using `create-twenty-app` for the best getting-started experience, you can also set up a project manually. Do not install the CLI globally. Instead, add `twenty-sdk` as a local dependency and wire scripts in your package.json:
+Ačkoli pro nejlepší začátky doporučujeme použít `create-twenty-app`, projekt můžete nastavit i ručně. Neinstalujte CLI globálně. Místo toho přidejte `twenty-sdk` jako lokální závislost a propojte skripty v souboru package.json:
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-Then add scripts like these:
+Poté přidejte skripty jako tyto:
 
 ```json filename="package.json"
 {
@@ -510,13 +675,13 @@ Then add scripts like these:
 }
 ```
 
-Now you can run the same commands via Yarn, e.g. `yarn dev`, `yarn sync`, etc.
+Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:sync`, etc.
 
 ## Řešení potíží
 
-* Authentication errors: run `yarn auth` and ensure your API key has the required permissions.
-* Cannot connect to server: verify the API URL and that the Twenty server is reachable.
-* Types or client missing/outdated: run `yarn generate` and then `yarn dev`.
-* Dev mode not syncing: ensure `yarn dev` is running and that changes are not ignored by your environment.
+* Authentication errors: run `yarn auth:login` and ensure your API key has the required permissions.
+* Nelze se připojit k serveru: ověřte URL API a že je server Twenty dosažitelný.
+* Types or client missing/outdated: run `yarn app:generate` and then `yarn app:dev`.
+* Dev mode not syncing: ensure `yarn app:dev` is running and that changes are not ignored by your environment.
 
-Discord Help Channel: https://discord.com/channels/1130383047699738754/1130386664812982322
+Kanál podpory na Discordu: https://discord.com/channels/1130383047699738754/1130386664812982322

@@ -64,6 +64,14 @@ export class CreateObjectInput {
   @HideField()
   standardId?: string;
 
+  @HideField()
+  universalIdentifier?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  skipNameField?: boolean;
+
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })

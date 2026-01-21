@@ -1,10 +1,6 @@
 name: CI Front and E2E
 
 on:
-  push:
-    branches:
-      - main
-
   pull_request:
 
   merge_group:
@@ -60,8 +56,6 @@ jobs:
         run: df -h
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
-      - name: Front / Clean storybook-static
-        run: rm -rf packages/twenty-front/storybook-static
       - name: Front / Build storybook
         run: npx nx storybook:build twenty-front
       - name: Save storybook build cache
@@ -87,18 +81,27 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
+      - name: Build dependencies
+        run: |
+          npx nx build twenty-shared
+          npx nx build twenty-ui
       - name: Install Playwright
-        run: cd packages/twenty-front && npx playwright install
-      - name: Restore storybook build cache
-        uses: ./.github/actions/restore-cache
-        with:
-          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION }}
+        run: |
+          cd packages/twenty-front
+          npx playwright install
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
-        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }} --checkCoverage=false
+        run: npx nx storybook:test twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
       - name: Rename coverage file
-        run: mv packages/twenty-front/coverage/storybook/coverage-storybook.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
+        run: |
+          if [ -f "packages/twenty-front/coverage/storybook/coverage-final.json" ]; then
+            mv packages/twenty-front/coverage/storybook/coverage-final.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
+          else
+            echo "Error: coverage-final.json not found"
+            ls -la packages/twenty-front/coverage/storybook/ || echo "Coverage directory does not exist"
+            exit 1
+          fi
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
@@ -351,20 +354,9 @@ jobs:
         if: contains(needs.*.result, 'failure')
         run: exit 1
   ci-e2e-status-check:
-    if: always() && !cancelled() && github.event_name != 'merge_group'
+    if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: [changed-files-check-e2e, e2e-test]
-    steps:
-      - name: Fail job if any needs failed
-        if: contains(needs.*.result, 'failure')
-        run: exit 1
-  ci-e2e-merge-queue-check:
-    if: |
-      always() && !cancelled() && github.event_name == 'merge_group'
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    name: ${{ github.event_name == 'merge_group' && 'ci-e2e-merge-queue-check' || 'ci-e2e-status-check' }}
     needs: [changed-files-check-e2e, e2e-test]
     steps:
       - name: Fail job if any needs failed

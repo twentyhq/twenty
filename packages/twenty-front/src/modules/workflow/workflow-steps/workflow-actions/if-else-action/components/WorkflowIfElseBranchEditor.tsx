@@ -8,8 +8,8 @@ import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/Fil
 import { isStepFilterGroupChildAStepFilterGroup } from '@/workflow/workflow-steps/filters/utils/isStepFilterGroupChildAStepFilterGroup';
 import styled from '@emotion/styled';
 import { i18n, type MessageDescriptor } from '@lingui/core';
-import { type StepFilterGroup } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
 
 const StyledBranchContainer = styled.div`
@@ -58,11 +58,29 @@ export const WorkflowIfElseBranchEditor = ({
 
   const isIfBranch = branchIndex === 0;
 
+  const isLastFilterInIfBranch = (stepFilter: StepFilter): boolean => {
+    const childStepFilters = childStepFiltersAndChildStepFilterGroups.filter(
+      (child) => !isStepFilterGroupChildAStepFilterGroup(child),
+    );
+    const childStepFilterGroups =
+      childStepFiltersAndChildStepFilterGroups.filter(
+        isStepFilterGroupChildAStepFilterGroup,
+      );
+
+    return (
+      isIfBranch &&
+      isDefined(branchFilterGroup) &&
+      stepFilter.stepFilterGroupId === branchFilterGroup.id &&
+      childStepFilters.length === 1 &&
+      childStepFilterGroups.length === 0
+    );
+  };
+
   return (
     <WorkflowStepFilterContext.Provider
       value={{
         stepId: action.id,
-        readonly,
+        readonly: readonly,
         onFilterSettingsUpdate,
       }}
     >
@@ -70,8 +88,14 @@ export const WorkflowIfElseBranchEditor = ({
         <StyledFiltersContainer>
           {isDefined(branchFilterGroup) &&
             childStepFiltersAndChildStepFilterGroups.map(
-              (stepFilterGroupChild, stepFilterGroupChildIndex) =>
-                isStepFilterGroupChildAStepFilterGroup(stepFilterGroupChild) ? (
+              (stepFilterGroupChild, stepFilterGroupChildIndex) => {
+                const isFilterGroup =
+                  isStepFilterGroupChildAStepFilterGroup(stepFilterGroupChild);
+                const preventDeletion =
+                  !isFilterGroup &&
+                  isLastFilterInIfBranch(stepFilterGroupChild);
+
+                return isFilterGroup ? (
                   <WorkflowStepFilterGroupColumn
                     key={stepFilterGroupChild.id}
                     parentStepFilterGroup={branchFilterGroup}
@@ -84,10 +108,13 @@ export const WorkflowIfElseBranchEditor = ({
                     stepFilterGroup={branchFilterGroup}
                     stepFilter={stepFilterGroupChild}
                     stepFilterIndex={stepFilterGroupChildIndex}
-                    isIfBranch={isIfBranch}
-                    firstFilterLabel={i18n._(branchLabel)}
+                    firstFilterLabel={capitalize(
+                      i18n._(branchLabel).toLowerCase(),
+                    )}
+                    preventDeletion={preventDeletion}
                   />
-                ),
+                );
+              },
             )}
         </StyledFiltersContainer>
 

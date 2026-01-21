@@ -1,74 +1,92 @@
 ---
 title: Панели управления
-description: Create and organize dashboards with tabs to visualize your CRM data.
+description: Создавайте и организуйте панели мониторинга с вкладками, чтобы визуализировать данные вашей CRM.
 ---
 
 ## Обзор
 
-Dashboards in Twenty are organized in a hierarchy: **Dashboards → Tabs → Widgets**. Each dashboard can contain multiple tabs, and each tab contains widgets (charts, numbers, iFrames).
+Панели мониторинга в Twenty организованы иерархически: **Панели мониторинга → Вкладки → Виджеты**. Каждая панель мониторинга может содержать несколько вкладок, и каждая вкладка включает виджеты (диаграммы, числа, iFrames).
 
-## Creating a Dashboard
+## Создание панели мониторинга
 
-1. Go to **Dashboards** in the navigation
-2. Click **+ New Dashboard**
-3. Give your dashboard a name
-4. Start adding tabs and widgets
+1. Перейдите в раздел **Панели мониторинга** в меню навигации
+2. Нажмите **+ Новая запись**
 
-## Working with Tabs
+<img src="/images/user-guide/dashboard/dashboard-create-new.png" alt="Create a new dashboard" />
 
-Tabs help you organize your dashboard into logical sections.
+3. Назовите панель мониторинга
+4. Начните добавлять вкладки и виджеты
 
-### Creating Tabs
+## Работа со вкладками
 
-1. In edit mode, click **+ Add Tab**
-2. Name your tab (e.g., "Pipeline Overview", "Team Performance")
-3. Add widgets to the tab
+Вкладки помогают организовать панель мониторинга на логические разделы.
 
-### Duplicating Tabs
+### Создание вкладок
 
-1. Click on the tab you want to duplicate
-2. Click the **Duplicate** button in the side panel
+1. In edit mode, click **+** in the tab bar, side panel will open on the right
+2. Назовите вкладку (например, "Обзор воронки", "Результативность команды")
+3. Добавьте виджеты на вкладку
 
-## Dashboard Layout
+### Reordering Tabs
 
-### Arranging Widgets
+1. In edit mode, click and hold on the tab you want to move
+2. Drag and drop to the new position
+3. You can also click on the tab and use the command menu to move the tab to left or right
 
-* Drag and drop to position
-* Resize for emphasis
-* Group related charts together
+### Deleting Tabs
 
-### Duplicating a Dashboard
+1. In edit mode, click on the tab you want to delete
+2. Click the **Delete** button in the command menu
 
-1. Exit edit mode (view mode only)
-2. Open the command bar with **Cmd + K** (or **Ctrl + K** on Windows)
-3. Select **Duplicate dashboard**
+### Дублирование вкладок
+
+1. Нажмите на вкладку, которую хотите дублировать
+2. Нажмите кнопку **Дублировать** на боковой панели
+
+<img src="/images/user-guide/dashboard/dashboard-tabs.png" alt="Dashboard tab" />
+
+## Макет панели мониторинга
+
+### Расположение виджетов
+
+* Перетаскивайте, чтобы расположить
+* Изменяйте размер, чтобы выделить
+* Группируйте связанные диаграммы вместе
+
+### Дублирование панели мониторинга
+
+1. Select the dashboard you want to duplicate
+2. Откройте командную палитру с помощью **Cmd + K** (или **Ctrl + K** в Windows)
+3. Выберите **Дублировать панель мониторинга**
+
+<img src="/images/user-guide/dashboard/dashboard-duplicate.png" alt="Duplicate a dashboard" />
 
 ### Лучшие практики
 
-* **Logical flow**: Arrange from overview to detail
-* **Visual hierarchy**: Larger charts for key metrics
-* **Consistent styling**: Use matching colors and fonts
+* **Логическая последовательность**: располагайте от общего к частному
+* **Визуальная иерархия**: используйте более крупные диаграммы для ключевых метрик
+* **Единый стиль**: используйте согласованные цвета и шрифты
 
-## Visibility & Access
+## Видимость и доступ
 
-### Dashboard Visibility
+### Видимость панели мониторинга
 
-Dashboards are visible to everyone who has access to your Twenty workspace. There is no private dashboard option at the moment.
+Панели мониторинга видны всем, у кого есть доступ к вашему рабочему пространству Twenty. В настоящее время опции приватной панели мониторинга нет.
 
 ### Избранное
 
-You can add dashboards to your favorites for quick access. This is a personal setting—your favorites are not visible to other users.
+Вы можете добавлять панели мониторинга в избранное для быстрого доступа. Это персональная настройка — ваше избранное не видно другим пользователям.
 
-To add a dashboard to favorites, open the dashboard and click the star icon.
+Чтобы добавить панель мониторинга в избранное, откройте панель мониторинга и нажмите значок звезды.
 
-### Timezone Behavior
+### Работа с часовыми поясами
 
-Dashboards currently display data based on the timezone of the user viewing them. This means the same dashboard may show different metrics for team members in different regions (e.g., APAC vs. US).
+Панели мониторинга сейчас отображают данные в соответствии с часовым поясом пользователя, который их просматривает. Это означает, что одна и та же панель мониторинга может отображать разные метрики для участников команды в разных регионах (например, APAC и США).
 
 <Note>
-  **Coming soon**: We will add the ability to set a specific timezone for a dashboard, so all users see consistent data regardless of their location.
+  **Скоро**: мы добавим возможность задавать конкретный часовой пояс для панели мониторинга, чтобы все пользователи видели согласованные данные независимо от их местоположения.
 </Note>
 
 <Note>
-  **Coming soon**: Dashboard-level filters will allow you to apply filters across all widgets at once, making it faster to explore your data.
+  **Скоро**: фильтры на уровне панели мониторинга позволят применять фильтры ко всем виджетам сразу, что ускорит изучение ваших данных.
 </Note>

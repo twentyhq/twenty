@@ -28,29 +28,29 @@ Create Twenty App is the official scaffolding CLI for building apps on top of [T
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
+# Get Help
+yarn run help
+
 # Authenticate using your API key (you'll be prompted)
-yarn auth
+yarn auth:login
 
 # Add a new entity to your application (guided)
-yarn create-entity
+yarn entity:add
 
 # Generate a typed Twenty client and workspace entity types
-yarn generate
+yarn app:generate
 
 # Start dev mode: automatically syncs local changes to your workspace
-yarn dev
+yarn app:dev
 
 # Or run a one‑time sync
-yarn sync
+yarn app:sync
 
 # Watch your application's functions logs
-yarn logs
+yarn function:logs
 
 # Uninstall the application from the current workspace
-yarn uninstall
-
-# Display commands' help
-yarn help
+yarn app:uninstall
 ```
 
 ## What gets scaffolded
@@ -60,9 +60,9 @@ yarn help
 - Example placeholders to help you add entities, actions, and sync logic
 
 ## Next steps
-- Explore the generated project and add your first entity with `yarn create-entity`.
-- Keep your types up‑to‑date using `yarn generate`.
-- Use `yarn dev` while you iterate to see changes instantly in your workspace.
+- Explore the generated project and add your first entity with `yarn entity:add`.
+- Keep your types up‑to‑date using `yarn app:generate`.
+- Use `yarn app:dev` while you iterate to see changes instantly in your workspace.
 
 
 ## Publish your application
@@ -90,8 +90,8 @@ git push
 Our team reviews contributions for quality, security, and reusability before merging.
 
 ## Troubleshooting
-- Auth prompts not appearing: run `yarn auth` again and verify the API key permissions.
-- Types not generated: ensure `yarn generate` runs without errors, then re‑start `yarn dev`.
+- Auth prompts not appearing: run `yarn auth:login` again and verify the API key permissions.
+- Types not generated: ensure `yarn app:generate` runs without errors, then re‑start `yarn app:dev`.
 
 ## Contributing
 - See our [GitHub](https://github.com/twentyhq/twenty)

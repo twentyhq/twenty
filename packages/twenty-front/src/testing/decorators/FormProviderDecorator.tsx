@@ -1,5 +1,5 @@
+import { type Decorator } from '@storybook/react-vite';
 import { FormProvider, useForm } from 'react-hook-form';
-import { type Decorator } from '@storybook/react';
 
 export const FormProviderDecorator: Decorator = (Story) => {
   const formConfig = useForm();

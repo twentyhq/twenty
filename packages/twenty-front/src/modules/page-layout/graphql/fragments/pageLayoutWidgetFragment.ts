@@ -85,6 +85,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         displayDataLabel
         showCenterMetric
         displayLegend
+        hideEmptyCategory
         color
         description
         filter
@@ -130,6 +131,45 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
           blocknote
           markdown
         }
+      }
+      ... on CalendarConfiguration {
+        configurationType
+      }
+      ... on EmailsConfiguration {
+        configurationType
+      }
+      ... on FieldConfiguration {
+        configurationType
+      }
+      ... on FieldRichTextConfiguration {
+        configurationType
+      }
+      ... on FieldsConfiguration {
+        configurationType
+      }
+      ... on FilesConfiguration {
+        configurationType
+      }
+      ... on NotesConfiguration {
+        configurationType
+      }
+      ... on TasksConfiguration {
+        configurationType
+      }
+      ... on TimelineConfiguration {
+        configurationType
+      }
+      ... on ViewConfiguration {
+        configurationType
+      }
+      ... on WorkflowConfiguration {
+        configurationType
+      }
+      ... on WorkflowRunConfiguration {
+        configurationType
+      }
+      ... on WorkflowVersionConfiguration {
+        configurationType
       }
     }
     pageLayoutTabId

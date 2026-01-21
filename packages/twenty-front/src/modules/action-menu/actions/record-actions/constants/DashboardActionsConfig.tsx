@@ -31,11 +31,12 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconPencil,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ selectedRecord }) =>
+      shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
-        isDefined(selectedRecord?.pageLayoutId),
+        isDefined(selectedRecord?.pageLayoutId) &&
+        objectPermissions.canUpdateObjectRecords,
       availableOn: [ActionViewType.SHOW_PAGE],
       component: <EditDashboardSingleRecordAction />,
     },
@@ -49,11 +50,12 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconDeviceFloppy,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ selectedRecord }) =>
+      shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
-        isDefined(selectedRecord?.pageLayoutId),
+        isDefined(selectedRecord?.pageLayoutId) &&
+        objectPermissions.canUpdateObjectRecords,
       availableOn: [ActionViewType.PAGE_EDIT_MODE],
       component: <SaveDashboardSingleRecordAction />,
     },
@@ -66,11 +68,12 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconCancel,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ selectedRecord }) =>
+      shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
-        isDefined(selectedRecord?.pageLayoutId),
+        isDefined(selectedRecord?.pageLayoutId) &&
+        objectPermissions.canUpdateObjectRecords,
       availableOn: [ActionViewType.PAGE_EDIT_MODE],
       component: <CancelDashboardSingleRecordAction />,
     },
@@ -83,11 +86,12 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconCopyPlus,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ selectedRecord }) =>
+      shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
-        isDefined(selectedRecord?.pageLayoutId),
+        isDefined(selectedRecord?.pageLayoutId) &&
+        objectPermissions.canUpdateObjectRecords,
       availableOn: [
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
         ActionViewType.SHOW_PAGE,
@@ -104,6 +108,9 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     SingleRecordActionKeys.RESTORE,
     MultipleRecordsActionKeys.DELETE,
     MultipleRecordsActionKeys.DESTROY,
+    MultipleRecordsActionKeys.RESTORE,
+    NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
+    NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
     SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW,
     SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
@@ -160,26 +167,38 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       position: 14,
       label: msg`Restore dashboard`,
     },
-    [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
+    [MultipleRecordsActionKeys.RESTORE]: {
       position: 15,
+      label: msg`Restore dashboards`,
+    },
+    [NoSelectionRecordActionKeys.SEE_DELETED_RECORDS]: {
+      position: 22,
+      label: msg`See deleted dashboards`,
+    },
+    [NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS]: {
+      position: 23,
+      label: msg`Hide deleted dashboards`,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
+      position: 24,
     },
     [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
-      position: 16,
+      position: 25,
     },
     [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
-      position: 17,
+      position: 26,
     },
     [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
-      position: 18,
+      position: 27,
     },
     [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
-      position: 19,
+      position: 28,
     },
     [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
-      position: 20,
+      position: 29,
     },
     [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
-      position: 21,
+      position: 30,
     },
   },
 });

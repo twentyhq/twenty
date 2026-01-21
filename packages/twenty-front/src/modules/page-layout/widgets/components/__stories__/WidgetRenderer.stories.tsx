@@ -4,9 +4,10 @@ import {
   type NormalizedCacheObject,
 } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot } from 'recoil';
+import { expect, within } from 'storybook/test';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -45,7 +46,6 @@ import {
   WidgetConfigurationType,
 } from '~/generated/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
@@ -232,7 +232,6 @@ const meta: Meta<typeof WidgetRenderer> = {
   title: 'Modules/PageLayout/Widgets/WidgetRenderer',
   component: WidgetRenderer,
   decorators: [
-    I18nFrontDecorator,
     ChipGeneratorsDecorator,
     (Story) => (
       <MemoryRouter>
@@ -1199,6 +1198,135 @@ export const WithOneToManyRelationFieldWidget: Story = {
   },
 };
 
+export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A ONE_TO_MANY relation field widget with visible "See all" button and a well-formed link.',
+      },
+    },
+  },
+  render: () => {
+    const widget: PageLayoutWidget = {
+      __typename: 'PageLayoutWidget',
+      id: WIDGET_ID_ONE_TO_MANY_RELATION,
+      pageLayoutTabId: TAB_ID_OVERVIEW,
+      type: WidgetType.FIELD,
+      title: 'People',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 0,
+        column: 0,
+        rowSpan: 1,
+        columnSpan: 2,
+      },
+      configuration: {
+        __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
+        fieldMetadataId: companyPeopleField.id,
+        layout: 'FIELD',
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        PageLayoutType.RECORD_PAGE,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        isPageLayoutInEditModeComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        false,
+      );
+      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      snapshot.set(
+        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
+        mockPersonRecord,
+      );
+      // Set hover state to make the "See all" button visible
+      snapshot.set(
+        widgetCardHoveredComponentFamilyState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          familyKey: WIDGET_ID_ONE_TO_MANY_RELATION,
+        }),
+        true,
+      );
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: TAB_ID_OVERVIEW,
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: WIDGET_ID_ONE_TO_MANY_RELATION,
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Find the "See all" link button by its test id
+    const seeAllLink = await canvas.findByTestId('widget-see-all-link');
+
+    // Verify the button is visible
+    expect(seeAllLink).toBeVisible();
+
+    // Verify it has a well-formed link (should contain the filter query params)
+    expect(seeAllLink).toHaveAttribute('href');
+    const href = seeAllLink.getAttribute('href');
+    expect(href).toContain('/objects/people');
+    expect(href).toContain('filter');
+  },
+};
+
 export const OnMobile: Story = {
   parameters: {
     viewport: {
@@ -1537,6 +1665,8 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
               canSoftDeleteObjectRecords: false,
               canDestroyObjectRecords: false,
               restrictedFields: {},
+              rowLevelPermissionPredicates: [],
+              rowLevelPermissionPredicateGroups: [],
             },
           ],
         });
@@ -1552,6 +1682,8 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
               canSoftDeleteObjectRecords: true,
               canDestroyObjectRecords: true,
               restrictedFields: {},
+              rowLevelPermissionPredicates: [],
+              rowLevelPermissionPredicateGroups: [],
             },
           ],
         });

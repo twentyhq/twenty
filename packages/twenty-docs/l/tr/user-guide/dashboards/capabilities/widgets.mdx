@@ -1,131 +1,149 @@
 ---
 title: Widget'lar
-description: Explore the widget types and visualization options in Twenty.
+description: Twenty'deki widget türlerini ve görselleştirme seçeneklerini keşfedin.
 ---
 
-## Available Widgets
+import { ChartIcon } from '/snippets/chart-icon.mdx';
 
-Twenty provides various widget types to visualize your CRM data.
+## Kullanılabilir widget'lar
 
-### Bar Charts
+Twenty, Müşteri İlişkileri Yönetimi (CRM) verilerinizi görselleştirmek için çeşitli widget türleri sunar.
 
-Display data as horizontal or vertical bars.
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Bar Charts</span>
 
-**Best for:**
+Verileri yatay veya dikey çubuklar olarak görüntüleyin.
 
-* Comparing values across categories
-* Showing rankings
-* Tracking metrics by time period
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Bar chart" />
+</Frame>
 
-**Example uses:**
+**En uygun:**
 
-* Deals by stage
-* Revenue by sales rep
-* Contacts added per month
+* Kategoriler arasında değerleri karşılaştırma
+* Sıralamaları gösterme
+* Metrikleri zaman dönemine göre izleme
 
-<Note>
-  **Display limits**: Bar charts can show a maximum of 100 bars (horizontal) or 50 bars (vertical). If you see the warning "Undisplayed data: max X bars per chart", add filters to narrow down your data or change the grouping (e.g., group by week instead of days).
-</Note>
+**Örnek kullanımlar:**
 
-### Pie Charts
-
-Show proportions of a whole.
-
-**Best for:**
-
-* Showing composition or distribution
-* Comparing parts to whole
-* Highlighting major segments
-
-**Example uses:**
-
-* Deal distribution by source
-* Contact breakdown by industry
-* Pipeline composition by owner
-
-### Line Charts
-
-Display trends over time.
-
-**Best for:**
-
-* Tracking changes over time
-* Identifying trends
-* Comparing multiple metrics
-
-**Example uses:**
-
-* Monthly deal count trend
-* Revenue growth over quarters
-* Activity levels over time
-
-### Number Metrics
-
-Display single key values prominently.
-
-**Best for:**
-
-* Highlighting KPIs
-* Showing totals or averages
-* Quick status checks
-
-**Example uses:**
-
-* Total pipeline value
-* Number of open opportunities
-* Conversion rate
-
-**Advanced options:**
-
-* **Ratio**: For Select fields, calculate ratios between values. Go to **Data on display** → select your field → enable the **Ratio** option.
-* **Prefix & Suffix**: Add custom text before or after the number (e.g., "$" prefix or "%" suffix) for better readability.
-
-### iFrames
-
-Embed external tools and content directly in your dashboard.
-
-**Best for:**
-
-* Displaying external reports or dashboards
-* Integrating third-party sales tools
-* Showing live content from other systems
-
-**Example uses:**
-
-* Metrics from your Support tool
-* Metrics from your dialer
-* Live content from your Sales sequence tool
+* Aşamaya göre fırsatlar
+* Satış temsilcisine göre gelir
+* Ay başına eklenen kişi sayısı
 
 <Note>
-  **Coming soon**: Gauge charts and tables are not yet available but are on our roadmap.
+  **Display limits**: Bar charts can show a maximum of 100 bars, and 50 groups per bar when using Group By. "Undisplayed data: max X bars per chart" uyarısını görürseniz, verilerinizi daraltmak için filtreler ekleyin veya gruplamayı değiştirin (ör. güne yerine haftaya göre gruplayın).
 </Note>
 
-## Configuring Widgets
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Pie Charts</span>
 
-### Data Source
+Bir bütünün oranlarını gösterin.
 
-1. Select the object to visualize (Opportunities, People, etc.)
-2. Choose the metric to display (count, sum, average)
-3. Apply filters to focus on specific data
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Pie chart" />
+</Frame>
 
-### Grouping
+**En uygun:**
 
-Group data by:
+* Bileşimi veya dağılımı gösterme
+* Parçaları bütüne göre karşılaştırma
+* Başlıca segmentleri vurgulama
 
-* Fields (stage, owner, industry)
-* Time periods (day, week, month, quarter)
-* Custom segments
+**Örnek kullanımlar:**
 
-### Şekil Verme
+* Kaynağa göre fırsat dağılımı
+* Sektöre göre kişi dağılımı
+* Sahip bazında satış boru hattı bileşimi
 
-Customize your charts with:
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Line Charts</span>
 
-* Colors and themes
-* Labels and legends
-* Size and positioning
+Zaman içindeki eğilimleri gösterin.
 
-### Duplicating Widgets
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Line chart" />
+</Frame>
 
-1. Click on the widget
-2. Open **Options**
-3. Click **Duplicate widget**
+**En uygun:**
+
+* Zaman içindeki değişiklikleri izleme
+* Eğilimleri belirleme
+* Birden çok metriği karşılaştırma
+
+**Örnek kullanımlar:**
+
+* Aylık fırsat sayısı eğilimi
+* Çeyrekler bazında gelir artışı
+* Zaman içindeki etkinlik düzeyleri
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Aggregate Charts</span>
+
+Tekil kilit değerleri belirgin şekilde görüntüleyin.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Aggregate chart" />
+</Frame>
+
+**En uygun:**
+
+* KPI'leri vurgulama
+* Toplamları veya ortalamaları gösterme
+* Hızlı durum kontrolleri
+
+**Örnek kullanımlar:**
+
+* Toplam satış boru hattı değeri
+* Açık fırsat sayısı
+* Dönüşüm oranı
+
+**Gelişmiş seçenekler:**
+
+* **Oran**: Select alanları için değerler arasındaki oranları hesaplayın. **Görüntüdeki veriler**'e gidin → alanınızı seçin → **Oran** seçeneğini etkinleştirin.
+* **Ön Ek ve Son Ek**: Daha iyi okunabilirlik için sayının önüne veya sonuna özel metin ekleyin (ör. "$" öneki veya "%" soneki).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
+
+Harici araçları ve içerikleri doğrudan panonuza gömün.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
+
+**En uygun:**
+
+* Harici raporları veya panoları görüntüleme
+* Üçüncü taraf satış araçlarını entegre etme
+* Diğer sistemlerden canlı içerik gösterme
+
+**Örnek kullanımlar:**
+
+* Destek aracınızdan metrikler
+* Arama aracınızdan metrikler
+* Satış sekans aracınızdan canlı içerik
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Rich Text</span>
+
+Add formatted text and content directly to your dashboard.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Rich text" />
+</Frame>
+
+**En uygun:**
+
+* Adding context or instructions
+* Dashboard descriptions
+* Notes and annotations
+
+**Features:**
+
+* Rich text formatting (bold, italic, lists, etc.)
+* Image and file uploads
+* Markdown-style editing
+
+<Note>
+  **Yakında**: Gösterge grafikleri ve tablolar henüz mevcut değil, ancak yol haritamızda yer alıyor.
+</Note>
+
+### Widget'ları çoğaltma
+
+1. Widget'a tıklayın
+2. **Seçenekler**'i açın
+3. **Widget'ı çoğalt**'a tıklayın

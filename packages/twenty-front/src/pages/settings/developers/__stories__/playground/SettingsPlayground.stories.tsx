@@ -1,21 +1,16 @@
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { SettingsRestPlayground } from '~/pages/settings/developers/playground/SettingsRestPlayground';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { graphqlMocks } from '~/testing/graphqlMocks';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { action } from 'storybook/actions';
 import {
   ComponentDecorator,
   ComponentWithRouterDecorator,
 } from 'twenty-ui/testing';
+import { SettingsRestPlayground } from '~/pages/settings/developers/playground/SettingsRestPlayground';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<typeof SettingsRestPlayground> = {
   title: 'Pages/Settings/Playground/RestPlayground',
   component: SettingsRestPlayground,
-  decorators: [
-    ComponentDecorator,
-    I18nFrontDecorator,
-    ComponentWithRouterDecorator,
-  ],
+  decorators: [ComponentDecorator, ComponentWithRouterDecorator],
   parameters: {
     docs: {
       description: {

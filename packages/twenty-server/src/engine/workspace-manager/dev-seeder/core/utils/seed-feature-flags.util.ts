@@ -22,21 +22,6 @@ export const seedFeatureFlags = async ({
     .orIgnore()
     .values([
       {
-        key: FeatureFlagKey.IS_AIRTABLE_INTEGRATION_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_STRIPE_INTEGRATION_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
         workspaceId: workspaceId,
         value: false,
@@ -88,6 +73,21 @@ export const seedFeatureFlags = async ({
       },
       {
         key: FeatureFlagKey.IS_IF_ELSE_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_SSE_DB_EVENTS_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },

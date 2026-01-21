@@ -50,6 +50,7 @@ export {
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
+export { CrudOperationType } from './CrudOperationType';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export type { ExcludeFunctions } from './ExcludeFunctions';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
@@ -100,6 +101,7 @@ export type {
   FieldMetadataDateTimeSettings,
   FieldMetadataRelationSettings,
   FieldMetadataAddressSettings,
+  FieldMetadataFilesSettings,
   FieldMetadataTsVectorSettings,
   AllFieldMetadataSettings,
   FieldMetadataSettings,
@@ -107,6 +109,9 @@ export type {
 export { NumberDataType, DateDisplayFormat } from './FieldMetadataSettings';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldRatingValue } from './FieldRatingValue';
+export type { FileCategory } from './FileCategory';
+export { FILE_CATEGORIES } from './FileCategory';
+export { FileFolder } from './FileFolder';
 export type {
   FilterableFieldType,
   FilterableAndTSVectorFieldType,
@@ -136,10 +141,13 @@ export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
+export type { OrderBy } from './OrderBy';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
+export type { QueryCursorDirection } from './QueryCursorDirection';
 export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
+export type { RecordGqlFieldsDeprecated } from './RecordGqlFieldsDeprecated';
 export type {
   UUIDFilterValue,
   IsFilter,
@@ -173,6 +181,10 @@ export type {
   LeafObjectRecordFilter,
   RecordGqlOperationFilter,
 } from './RecordGqlOperationFilter';
+export type { RecordGqlOperationGqlRecordFields } from './RecordGqlOperationGqlRecordFields';
+export type { RecordGqlOperationOrderBy } from './RecordGqlOperationOrderBy';
+export type { RecordGqlOperationSignature } from './RecordGqlOperationSignature';
+export type { RecordGqlOperationVariables } from './RecordGqlOperationVariables';
 export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMorphRelationFieldMetadataType';
 export type { RelationCreationPayload } from './RelationCreationPayload';
 export { RelationOnDeleteAction } from './RelationOnDeleteAction.type';
@@ -180,6 +192,15 @@ export { RelationType } from './RelationType';
 export type { RelationUpdatePayload } from './RelationUpdatePayload';
 export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
+export type { RowLevelPermissionPredicate } from './RowLevelPermissionPredicate';
+export type { RowLevelPermissionPredicateGroup } from './RowLevelPermissionPredicateGroup';
+export { RowLevelPermissionPredicateGroupLogicalOperator } from './RowLevelPermissionPredicateGroupLogicalOperator';
+export { RowLevelPermissionPredicateOperand } from './RowLevelPermissionPredicateOperand';
+export type {
+  RelationPredicateValue,
+  RowLevelPermissionPredicateValue,
+} from './RowLevelPermissionPredicateValue';
+export type { ServerlessFunctionEvent } from './ServerlessFunctionEvent';
 export { SettingsPath } from './SettingsPath';
 export type { Sources } from './SourcesType';
 export type {

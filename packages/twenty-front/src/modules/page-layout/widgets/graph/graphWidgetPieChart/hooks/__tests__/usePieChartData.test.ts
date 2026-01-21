@@ -1,7 +1,8 @@
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
+import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { renderHook } from '@testing-library/react';
-import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
+import { type PieChartDataItem } from '~/generated/graphql';
 
 const mockUseRecoilComponentValue = jest.fn();
 jest.mock(
@@ -56,7 +57,7 @@ describe('usePieChartData', () => {
     },
   };
 
-  const mockData: PieChartDataItem[] = [
+  const mockData: PieChartDataItemWithColor[] = [
     { id: 'item1', value: 30 },
     { id: 'item2', value: 50 },
     { id: 'item3', value: 20 },
@@ -67,6 +68,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -86,6 +88,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: [],
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -99,6 +102,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: singleData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -110,6 +114,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -122,6 +127,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -140,6 +146,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -157,6 +164,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -170,6 +178,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -184,6 +193,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -199,6 +209,7 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
       }),
     );
 

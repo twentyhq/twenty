@@ -47,6 +47,7 @@ export { IllustrationIconArray } from './icon/components/IllustrationIconArray';
 export { IllustrationIconCalendarEvent } from './icon/components/IllustrationIconCalendarEvent';
 export { IllustrationIconCalendarTime } from './icon/components/IllustrationIconCalendarTime';
 export { IllustrationIconCurrency } from './icon/components/IllustrationIconCurrency';
+export { IllustrationIconFile } from './icon/components/IllustrationIconFile';
 export { IllustrationIconJson } from './icon/components/IllustrationIconJson';
 export { IllustrationIconLink } from './icon/components/IllustrationIconLink';
 export { IllustrationIconMail } from './icon/components/IllustrationIconMail';
@@ -223,6 +224,7 @@ export {
   IconDownload,
   IconEdit,
   IconEditCircle,
+  IconEraser,
   IconExclamationCircle,
   IconExternalLink,
   IconEye,

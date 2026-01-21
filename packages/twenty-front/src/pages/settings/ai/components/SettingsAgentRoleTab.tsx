@@ -128,6 +128,8 @@ export const SettingsAgentRoleTab = ({
           objectPermissions: [],
           fieldPermissions: [],
           permissionFlags: [],
+          rowLevelPermissionPredicateGroups: [],
+          rowLevelPermissionPredicates: [],
         });
       }
     } finally {

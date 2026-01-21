@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
+import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -35,13 +36,28 @@ export class ImapGetMessageListService {
   async getMessageLists({
     connectedAccount,
     messageFolders,
+    messageChannel,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
+    const foldersToProcess =
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.SELECTED_FOLDERS
+        ? messageFolders.filter((folder) => folder.isSynced)
+        : messageFolders;
+
+    if (foldersToProcess.length === 0) {
+      this.logger.warn(
+        `Connected account ${connectedAccount.id}: No folders to process`,
+      );
+
+      return [];
+    }
+
     const client = await this.imapClientProvider.getClient(connectedAccount);
 
     try {
       const results: GetMessageListsResponse = [];
 
-      for (const folder of messageFolders) {
+      for (const folder of foldersToProcess) {
         const response = await this.getMessageList(client, folder);
 
         results.push({ ...response, folderId: folder.id });
@@ -110,7 +126,7 @@ export class ImapGetMessageListService {
       );
 
       const nextCursor = createSyncCursor(
-        messageUids.map((uid) => ({ uid })),
+        messageUids,
         previousCursor,
         mailboxState,
       );

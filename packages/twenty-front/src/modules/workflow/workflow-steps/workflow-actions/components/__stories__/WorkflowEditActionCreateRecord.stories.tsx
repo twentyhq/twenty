@@ -1,7 +1,7 @@
-import { expect, fn, userEvent, within } from '@storybook/test';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -9,7 +9,6 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 
 const meta: Meta<typeof WorkflowEditActionCreateRecord> = {
   title: 'Modules/Workflow/Actions/CreateRecord/EditAction',
@@ -44,10 +43,10 @@ const meta: Meta<typeof WorkflowEditActionCreateRecord> = {
     WorkflowStepActionDrawerDecorator,
     WorkflowStepDecorator,
     ComponentDecorator,
+    RouterDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     WorkspaceDecorator,
-    I18nFrontDecorator,
   ],
 };
 

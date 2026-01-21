@@ -1,5 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import {
   PageDecorator,
@@ -40,8 +40,8 @@ export const CustomObject: Story = {
 };
 
 export const ObjectTabs: Story = {
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
     const fieldsTab = await canvas.findByTestId('tab-fields');
     const settingsTab = await canvas.findByTestId('tab-settings');

@@ -1,8 +1,7 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { fn } from 'storybook/test';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   SnackBar,
   SnackBarVariant,
@@ -36,7 +35,7 @@ export default meta;
 type Story = StoryObj<typeof SnackBar>;
 
 export const Default: Story = {
-  decorators: [ComponentDecorator, I18nFrontDecorator],
+  decorators: [ComponentDecorator],
   parameters: {
     chromatic: { disableSnapshot: true },
   },
@@ -46,7 +45,7 @@ export const Catalog: CatalogStory<Story, typeof SnackBar> = {
   args: {
     onCancel: fn(),
   },
-  decorators: [CatalogDecorator, I18nFrontDecorator],
+  decorators: [CatalogDecorator],
   parameters: {
     catalog: {
       dimensions: [

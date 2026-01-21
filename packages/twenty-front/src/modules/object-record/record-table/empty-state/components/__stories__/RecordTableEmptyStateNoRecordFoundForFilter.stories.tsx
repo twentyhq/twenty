@@ -1,11 +1,10 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ScrollWrapperDecorator } from '~/testing/decorators/ScrollWrapperDecorator';
 
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { RecordTableEmptyStateNoRecordFoundForFilter } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator';
@@ -32,7 +31,6 @@ const meta: Meta = {
     ContextStoreDecorator,
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
-    I18nFrontDecorator,
     ScrollWrapperDecorator,
   ],
   parameters: {

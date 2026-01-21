@@ -1,7 +1,11 @@
-import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -21,10 +25,8 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
 import { RelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
 
 const RelationWorkspaceSetterEffect = () => {
@@ -141,7 +143,6 @@ const meta: Meta = {
     clearMocksDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
-    I18nFrontDecorator,
   ],
   parameters: {
     clearMocks: true,
@@ -156,8 +157,8 @@ type Story = StoryObj<typeof RelationManyToOneFieldInputWithContext>;
 export const Default: Story = {};
 
 export const Submit: Story = {
-  play: async () => {
-    const canvas = within(getCanvasElementForDropdownTesting());
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
     expect(handleSubmitMocked).toHaveBeenCalledTimes(0);
 
@@ -174,8 +175,8 @@ export const Submit: Story = {
 };
 
 export const Cancel: Story = {
-  play: async () => {
-    const canvas = within(getCanvasElementForDropdownTesting());
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
     expect(handleCancelMocked).toHaveBeenCalledTimes(0);
     await canvas.findByText('Linkedin', undefined, { timeout: 3000 });

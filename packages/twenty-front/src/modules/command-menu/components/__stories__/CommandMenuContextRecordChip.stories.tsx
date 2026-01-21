@@ -1,5 +1,9 @@
 import { gql } from '@apollo/client';
-import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 
 import { CommandMenuContextRecordsChip } from '@/command-menu/components/CommandMenuContextRecordsChip';
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';

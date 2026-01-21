@@ -1,18 +1,16 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
-import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
 
 const meta: Meta<typeof FormArrayFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormArrayFieldInput',
   component: FormArrayFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;
@@ -45,7 +43,7 @@ export const AddTwoItems: Story = {
     });
 
     const addItemButton = await within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).findByText('Add item');
 
     await userEvent.click(addItemButton);
@@ -55,7 +53,7 @@ export const AddTwoItems: Story = {
     });
 
     const newItemInput = await within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).findByRole('textbox');
 
     await userEvent.type(newItemInput, 'Second item{enter}');
@@ -70,7 +68,7 @@ export const AddTwoItems: Story = {
 
     const secondItemMenuItem = await waitFor(() => {
       const allSecondItems = within(
-        getCanvasElementForDropdownTesting(),
+        canvasElement.ownerDocument.body,
       ).getAllByText('Second item');
 
       expect(allSecondItems).toHaveLength(2);
@@ -96,7 +94,7 @@ export const EditExistingItem: Story = {
     await userEvent.click(firstItemChip);
 
     const openSecondItemMenuButton = await waitFor(() => {
-      const button = getCanvasElementForDropdownTesting().querySelector(
+      const button = canvasElement.ownerDocument.body.querySelector(
         '[aria-controls$="-1-options"] > button',
       );
 
@@ -110,13 +108,13 @@ export const EditExistingItem: Story = {
     await userEvent.click(openSecondItemMenuButton);
 
     const editSecondItemButton = await within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).findByText('Edit');
 
     await userEvent.click(editSecondItemButton);
 
     const editSecondItemInput = await within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).findByRole('textbox');
 
     expect(editSecondItemInput).toHaveValue('Second item');
@@ -153,7 +151,7 @@ export const DeleteExistingItem: Story = {
     await userEvent.click(firstItemChip);
 
     const openSecondItemMenuButton = await waitFor(() => {
-      const button = getCanvasElementForDropdownTesting().querySelector(
+      const button = canvasElement.ownerDocument.body.querySelector(
         '[aria-controls$="-1-options"] > button',
       );
 
@@ -167,7 +165,7 @@ export const DeleteExistingItem: Story = {
     await userEvent.click(openSecondItemMenuButton);
 
     const deleteSecondItemButton = await within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).findByText('Delete');
 
     await userEvent.click(deleteSecondItemButton);

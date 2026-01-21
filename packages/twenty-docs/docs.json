@@ -25,6 +25,11 @@
   "styling": {
     "eyebrows": "breadcrumbs"
   },
+  "seo": {
+    "metatags": {
+      "canonical": "https://docs.twenty.com"
+    }
+  },
   "navigation": {
     "languages": [
       {
@@ -164,6 +169,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -177,7 +183,8 @@
                           "user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
@@ -258,13 +265,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "user-guide/dashboards/capabilities/dashboards",
-                      "user-guide/dashboards/capabilities/widgets"
+                      "user-guide/dashboards/capabilities/widgets",
+                      "user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "user-guide/dashboards/how-tos/dashboards-faq"
+                      "user-guide/dashboards/how-tos/dashboards-faq",
+                      "user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -322,7 +331,7 @@
                       "user-guide/settings/capabilities/profile-settings",
                       "user-guide/settings/capabilities/experience-settings",
                       "user-guide/settings/capabilities/domains-settings",
-                      "user-guide/settings/capabilities/releases-settings"
+                      "user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -604,6 +613,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/fr/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/fr/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/fr/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/fr/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/fr/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -617,7 +627,8 @@
                           "l/fr/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/fr/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "l/fr/user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "l/fr/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "l/fr/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "l/fr/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
@@ -698,13 +709,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/fr/user-guide/dashboards/capabilities/dashboards",
-                      "l/fr/user-guide/dashboards/capabilities/widgets"
+                      "l/fr/user-guide/dashboards/capabilities/widgets",
+                      "l/fr/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/fr/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/fr/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/fr/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -762,7 +775,7 @@
                       "l/fr/user-guide/settings/capabilities/profile-settings",
                       "l/fr/user-guide/settings/capabilities/experience-settings",
                       "l/fr/user-guide/settings/capabilities/domains-settings",
-                      "l/fr/user-guide/settings/capabilities/releases-settings"
+                      "l/fr/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -911,15 +924,15 @@
         "language": "ar",
         "tabs": [
           {
-            "tab": "User Guide",
+            "tab": "دليل المستخدم",
             "groups": [
               {
-                "group": "Discover Twenty",
+                "group": "اكتشف Twenty",
                 "icon": "rocket",
                 "pages": [
                   "l/ar/user-guide/introduction",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/user-guide/getting-started/capabilities/what-is-twenty",
                       "l/ar/user-guide/getting-started/capabilities/implementation-services",
@@ -927,7 +940,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "الإرشادات",
                     "pages": [
                       "l/ar/user-guide/getting-started/how-tos/create-workspace",
                       "l/ar/user-guide/getting-started/how-tos/navigate-around-twenty",
@@ -942,7 +955,7 @@
                 "pages": [
                   "l/ar/user-guide/data-model/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/user-guide/data-model/capabilities/objects",
                       "l/ar/user-guide/data-model/capabilities/fields",
@@ -950,7 +963,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "الإرشادات",
                     "pages": [
                       "l/ar/user-guide/data-model/how-tos/create-custom-objects",
                       "l/ar/user-guide/data-model/how-tos/create-custom-fields",
@@ -962,12 +975,12 @@
                 ]
               },
               {
-                "group": "Data Migration",
+                "group": "ترحيل البيانات",
                 "icon": "cloud-arrow-up",
                 "pages": [
                   "l/ar/user-guide/data-migration/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/user-guide/data-migration/capabilities/file-formats",
                       "l/ar/user-guide/data-migration/capabilities/field-mapping",
@@ -977,7 +990,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "الإرشادات",
                     "pages": [
                       "l/ar/user-guide/data-migration/how-tos/prepare-your-csv-files",
                       "l/ar/user-guide/data-migration/how-tos/import-companies-via-csv",
@@ -994,19 +1007,19 @@
                 ]
               },
               {
-                "group": "Calendar & Emails",
+                "group": "التقويم والبريد الإلكتروني",
                 "icon": "envelope",
                 "pages": [
                   "l/ar/user-guide/calendar-emails/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/user-guide/calendar-emails/capabilities/mailbox",
                       "l/ar/user-guide/calendar-emails/capabilities/calendar"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "الإرشادات",
                     "pages": [
                       "l/ar/user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user",
                       "l/ar/user-guide/calendar-emails/how-tos/limit-emails-imported",
@@ -1024,7 +1037,7 @@
                 "pages": [
                   "l/ar/user-guide/workflows/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/user-guide/workflows/capabilities/workflow-triggers",
                       "l/ar/user-guide/workflows/capabilities/workflow-actions",
@@ -1038,12 +1051,13 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "الإرشادات",
                     "pages": [
                       {
-                        "group": "CRM Automations",
+                        "group": "أتمتة إدارة علاقات العملاء",
                         "pages": [
                           "l/ar/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ar/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/ar/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ar/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ar/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -1052,22 +1066,23 @@
                         ]
                       },
                       {
-                        "group": "Connect to Other Tools",
+                        "group": "الاتصال بأدوات أخرى",
                         "pages": [
                           "l/ar/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/ar/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "l/ar/user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "l/ar/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "l/ar/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "l/ar/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
-                        "group": "Advanced Configurations",
+                        "group": "التكوينات المتقدمة",
                         "pages": [
                           "l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions"
                         ]
                       },
                       {
-                        "group": "Need More Help",
+                        "group": "المزيد من المساعدة",
                         "pages": [
                           "l/ar/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
                           "l/ar/user-guide/workflows/how-tos/need-more-help/workflows-faq",
@@ -1084,7 +1099,7 @@
                 "pages": [
                   "l/ar/user-guide/ai/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/user-guide/ai/capabilities/ai-chatbot",
                       "l/ar/user-guide/ai/capabilities/ai-agents",
@@ -1092,7 +1107,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "الإرشادات",
                     "pages": [
                       "l/ar/user-guide/ai/how-tos/ai-faq"
                     ]
@@ -1100,12 +1115,12 @@
                 ]
               },
               {
-                "group": "Views & Pipelines",
+                "group": "طرق العرض والمسارات",
                 "icon": "table",
                 "pages": [
                   "l/ar/user-guide/views-pipelines/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/user-guide/views-pipelines/capabilities/table-views",
                       "l/ar/user-guide/views-pipelines/capabilities/kanban-views",
@@ -1116,7 +1131,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "الإرشادات",
                     "pages": [
                       "l/ar/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/ar/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -1135,34 +1150,36 @@
                 "pages": [
                   "l/ar/user-guide/dashboards/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/user-guide/dashboards/capabilities/dashboards",
-                      "l/ar/user-guide/dashboards/capabilities/widgets"
+                      "l/ar/user-guide/dashboards/capabilities/widgets",
+                      "l/ar/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "الإرشادات",
                     "pages": [
-                      "l/ar/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/ar/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/ar/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
               },
               {
-                "group": "Permissions & Access",
+                "group": "الصلاحيات والوصول",
                 "icon": "lock",
                 "pages": [
                   "l/ar/user-guide/permissions-access/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/user-guide/permissions-access/capabilities/permissions",
                       "l/ar/user-guide/permissions-access/capabilities/sso-configuration"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "الإرشادات",
                     "pages": [
                       "l/ar/user-guide/permissions-access/how-tos/permissions-faq"
                     ]
@@ -1175,14 +1192,14 @@
                 "pages": [
                   "l/ar/user-guide/billing/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/user-guide/billing/capabilities/pricing-plans",
                       "l/ar/user-guide/billing/capabilities/workflow-credits"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "الإرشادات",
                     "pages": [
                       "l/ar/user-guide/billing/how-tos/billing-faq"
                     ]
@@ -1195,18 +1212,18 @@
                 "pages": [
                   "l/ar/user-guide/settings/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/user-guide/settings/capabilities/workspace-settings",
                       "l/ar/user-guide/settings/capabilities/member-management",
                       "l/ar/user-guide/settings/capabilities/profile-settings",
                       "l/ar/user-guide/settings/capabilities/experience-settings",
                       "l/ar/user-guide/settings/capabilities/domains-settings",
-                      "l/ar/user-guide/settings/capabilities/releases-settings"
+                      "l/ar/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "الإرشادات",
                     "pages": [
                       "l/ar/user-guide/settings/how-tos/settings-faq"
                     ]
@@ -1225,12 +1242,12 @@
                 ]
               },
               {
-                "group": "Extend",
+                "group": "التوسيع",
                 "icon": "plug",
                 "pages": [
                   "l/ar/developers/extend/extend",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/developers/extend/capabilities/apis",
                       "l/ar/developers/extend/capabilities/webhooks",
@@ -1240,12 +1257,12 @@
                 ]
               },
               {
-                "group": "Self-Host",
+                "group": "الاستضافة الذاتية",
                 "icon": "desktop",
                 "pages": [
                   "l/ar/developers/self-host/self-host",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/developers/self-host/capabilities/docker-compose",
                       "l/ar/developers/self-host/capabilities/setup",
@@ -1257,12 +1274,12 @@
                 ]
               },
               {
-                "group": "Contribute",
+                "group": "المساهمة",
                 "icon": "github",
                 "pages": [
                   "l/ar/developers/contribute/contribute",
                   {
-                    "group": "Capabilities",
+                    "group": "القدرات",
                     "pages": [
                       "l/ar/developers/contribute/capabilities/local-setup",
                       "l/ar/developers/contribute/capabilities/bug-and-requests",
@@ -1307,7 +1324,7 @@
                                 ]
                               },
                               {
-                                "group": "Navigation",
+                                "group": "التنقل",
                                 "pages": [
                                   "l/ar/twenty-ui/navigation",
                                   "l/ar/twenty-ui/navigation/breadcrumb",
@@ -1351,15 +1368,15 @@
         "language": "cs",
         "tabs": [
           {
-            "tab": "User Guide",
+            "tab": "Uživatelská příručka",
             "groups": [
               {
-                "group": "Discover Twenty",
+                "group": "Objevte Twenty",
                 "icon": "rocket",
                 "pages": [
                   "l/cs/user-guide/introduction",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/user-guide/getting-started/capabilities/what-is-twenty",
                       "l/cs/user-guide/getting-started/capabilities/implementation-services",
@@ -1367,7 +1384,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Návody",
                     "pages": [
                       "l/cs/user-guide/getting-started/how-tos/create-workspace",
                       "l/cs/user-guide/getting-started/how-tos/navigate-around-twenty",
@@ -1382,7 +1399,7 @@
                 "pages": [
                   "l/cs/user-guide/data-model/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/user-guide/data-model/capabilities/objects",
                       "l/cs/user-guide/data-model/capabilities/fields",
@@ -1390,7 +1407,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Návody",
                     "pages": [
                       "l/cs/user-guide/data-model/how-tos/create-custom-objects",
                       "l/cs/user-guide/data-model/how-tos/create-custom-fields",
@@ -1402,12 +1419,12 @@
                 ]
               },
               {
-                "group": "Data Migration",
+                "group": "Migrace dat",
                 "icon": "cloud-arrow-up",
                 "pages": [
                   "l/cs/user-guide/data-migration/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/user-guide/data-migration/capabilities/file-formats",
                       "l/cs/user-guide/data-migration/capabilities/field-mapping",
@@ -1417,7 +1434,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Návody",
                     "pages": [
                       "l/cs/user-guide/data-migration/how-tos/prepare-your-csv-files",
                       "l/cs/user-guide/data-migration/how-tos/import-companies-via-csv",
@@ -1434,19 +1451,19 @@
                 ]
               },
               {
-                "group": "Calendar & Emails",
+                "group": "Kalendář a e-maily",
                 "icon": "envelope",
                 "pages": [
                   "l/cs/user-guide/calendar-emails/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/user-guide/calendar-emails/capabilities/mailbox",
                       "l/cs/user-guide/calendar-emails/capabilities/calendar"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Návody",
                     "pages": [
                       "l/cs/user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user",
                       "l/cs/user-guide/calendar-emails/how-tos/limit-emails-imported",
@@ -1464,7 +1481,7 @@
                 "pages": [
                   "l/cs/user-guide/workflows/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/user-guide/workflows/capabilities/workflow-triggers",
                       "l/cs/user-guide/workflows/capabilities/workflow-actions",
@@ -1478,12 +1495,13 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Návody",
                     "pages": [
                       {
-                        "group": "CRM Automations",
+                        "group": "Automatizace CRM",
                         "pages": [
                           "l/cs/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/cs/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/cs/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/cs/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/cs/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -1492,16 +1510,17 @@
                         ]
                       },
                       {
-                        "group": "Connect to Other Tools",
+                        "group": "Propojení s dalšími nástroji",
                         "pages": [
                           "l/cs/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/cs/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "l/cs/user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "l/cs/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "l/cs/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "l/cs/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
-                        "group": "Advanced Configurations",
+                        "group": "Pokročilá nastavení",
                         "pages": [
                           "l/cs/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions"
                         ]
@@ -1524,7 +1543,7 @@
                 "pages": [
                   "l/cs/user-guide/ai/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/user-guide/ai/capabilities/ai-chatbot",
                       "l/cs/user-guide/ai/capabilities/ai-agents",
@@ -1532,7 +1551,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Návody",
                     "pages": [
                       "l/cs/user-guide/ai/how-tos/ai-faq"
                     ]
@@ -1540,12 +1559,12 @@
                 ]
               },
               {
-                "group": "Views & Pipelines",
+                "group": "Zobrazení a pipeline",
                 "icon": "table",
                 "pages": [
                   "l/cs/user-guide/views-pipelines/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/user-guide/views-pipelines/capabilities/table-views",
                       "l/cs/user-guide/views-pipelines/capabilities/kanban-views",
@@ -1556,7 +1575,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Návody",
                     "pages": [
                       "l/cs/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/cs/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -1575,34 +1594,36 @@
                 "pages": [
                   "l/cs/user-guide/dashboards/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/user-guide/dashboards/capabilities/dashboards",
-                      "l/cs/user-guide/dashboards/capabilities/widgets"
+                      "l/cs/user-guide/dashboards/capabilities/widgets",
+                      "l/cs/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Návody",
                     "pages": [
-                      "l/cs/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/cs/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/cs/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
               },
               {
-                "group": "Permissions & Access",
+                "group": "Oprávnění a přístup",
                 "icon": "lock",
                 "pages": [
                   "l/cs/user-guide/permissions-access/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/user-guide/permissions-access/capabilities/permissions",
                       "l/cs/user-guide/permissions-access/capabilities/sso-configuration"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Návody",
                     "pages": [
                       "l/cs/user-guide/permissions-access/how-tos/permissions-faq"
                     ]
@@ -1615,14 +1636,14 @@
                 "pages": [
                   "l/cs/user-guide/billing/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/user-guide/billing/capabilities/pricing-plans",
                       "l/cs/user-guide/billing/capabilities/workflow-credits"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Návody",
                     "pages": [
                       "l/cs/user-guide/billing/how-tos/billing-faq"
                     ]
@@ -1635,18 +1656,18 @@
                 "pages": [
                   "l/cs/user-guide/settings/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/user-guide/settings/capabilities/workspace-settings",
                       "l/cs/user-guide/settings/capabilities/member-management",
                       "l/cs/user-guide/settings/capabilities/profile-settings",
                       "l/cs/user-guide/settings/capabilities/experience-settings",
                       "l/cs/user-guide/settings/capabilities/domains-settings",
-                      "l/cs/user-guide/settings/capabilities/releases-settings"
+                      "l/cs/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Návody",
                     "pages": [
                       "l/cs/user-guide/settings/how-tos/settings-faq"
                     ]
@@ -1665,12 +1686,12 @@
                 ]
               },
               {
-                "group": "Extend",
+                "group": "Rozšíření",
                 "icon": "plug",
                 "pages": [
                   "l/cs/developers/extend/extend",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/developers/extend/capabilities/apis",
                       "l/cs/developers/extend/capabilities/webhooks",
@@ -1680,12 +1701,12 @@
                 ]
               },
               {
-                "group": "Self-Host",
+                "group": "Vlastní hosting",
                 "icon": "desktop",
                 "pages": [
                   "l/cs/developers/self-host/self-host",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/developers/self-host/capabilities/docker-compose",
                       "l/cs/developers/self-host/capabilities/setup",
@@ -1697,12 +1718,12 @@
                 ]
               },
               {
-                "group": "Contribute",
+                "group": "Přispět",
                 "icon": "github",
                 "pages": [
                   "l/cs/developers/contribute/contribute",
                   {
-                    "group": "Capabilities",
+                    "group": "Možnosti",
                     "pages": [
                       "l/cs/developers/contribute/capabilities/local-setup",
                       "l/cs/developers/contribute/capabilities/bug-and-requests",
@@ -1791,15 +1812,15 @@
         "language": "de",
         "tabs": [
           {
-            "tab": "User Guide",
+            "tab": "Benutzerhandbuch",
             "groups": [
               {
-                "group": "Discover Twenty",
+                "group": "Entdecken Sie Twenty",
                 "icon": "rocket",
                 "pages": [
                   "l/de/user-guide/introduction",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/user-guide/getting-started/capabilities/what-is-twenty",
                       "l/de/user-guide/getting-started/capabilities/implementation-services",
@@ -1807,7 +1828,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Anleitungen",
                     "pages": [
                       "l/de/user-guide/getting-started/how-tos/create-workspace",
                       "l/de/user-guide/getting-started/how-tos/navigate-around-twenty",
@@ -1822,7 +1843,7 @@
                 "pages": [
                   "l/de/user-guide/data-model/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/user-guide/data-model/capabilities/objects",
                       "l/de/user-guide/data-model/capabilities/fields",
@@ -1830,7 +1851,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Anleitungen",
                     "pages": [
                       "l/de/user-guide/data-model/how-tos/create-custom-objects",
                       "l/de/user-guide/data-model/how-tos/create-custom-fields",
@@ -1842,12 +1863,12 @@
                 ]
               },
               {
-                "group": "Data Migration",
+                "group": "Datenmigration",
                 "icon": "cloud-arrow-up",
                 "pages": [
                   "l/de/user-guide/data-migration/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/user-guide/data-migration/capabilities/file-formats",
                       "l/de/user-guide/data-migration/capabilities/field-mapping",
@@ -1857,7 +1878,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Anleitungen",
                     "pages": [
                       "l/de/user-guide/data-migration/how-tos/prepare-your-csv-files",
                       "l/de/user-guide/data-migration/how-tos/import-companies-via-csv",
@@ -1874,19 +1895,19 @@
                 ]
               },
               {
-                "group": "Calendar & Emails",
+                "group": "Kalender & E-Mails",
                 "icon": "envelope",
                 "pages": [
                   "l/de/user-guide/calendar-emails/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/user-guide/calendar-emails/capabilities/mailbox",
                       "l/de/user-guide/calendar-emails/capabilities/calendar"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Anleitungen",
                     "pages": [
                       "l/de/user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user",
                       "l/de/user-guide/calendar-emails/how-tos/limit-emails-imported",
@@ -1904,7 +1925,7 @@
                 "pages": [
                   "l/de/user-guide/workflows/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/user-guide/workflows/capabilities/workflow-triggers",
                       "l/de/user-guide/workflows/capabilities/workflow-actions",
@@ -1918,12 +1939,13 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Anleitungen",
                     "pages": [
                       {
-                        "group": "CRM Automations",
+                        "group": "CRM-Automatisierungen",
                         "pages": [
                           "l/de/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/de/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/de/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/de/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/de/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -1932,16 +1954,17 @@
                         ]
                       },
                       {
-                        "group": "Connect to Other Tools",
+                        "group": "Verbindung zu anderen Tools",
                         "pages": [
                           "l/de/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/de/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "l/de/user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "l/de/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "l/de/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "l/de/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
-                        "group": "Advanced Configurations",
+                        "group": "Erweiterte Konfigurationen",
                         "pages": [
                           "l/de/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions"
                         ]
@@ -1964,7 +1987,7 @@
                 "pages": [
                   "l/de/user-guide/ai/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/user-guide/ai/capabilities/ai-chatbot",
                       "l/de/user-guide/ai/capabilities/ai-agents",
@@ -1972,7 +1995,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Anleitungen",
                     "pages": [
                       "l/de/user-guide/ai/how-tos/ai-faq"
                     ]
@@ -1980,12 +2003,12 @@
                 ]
               },
               {
-                "group": "Views & Pipelines",
+                "group": "Ansichten & Pipelines",
                 "icon": "table",
                 "pages": [
                   "l/de/user-guide/views-pipelines/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/user-guide/views-pipelines/capabilities/table-views",
                       "l/de/user-guide/views-pipelines/capabilities/kanban-views",
@@ -1996,7 +2019,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Anleitungen",
                     "pages": [
                       "l/de/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/de/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -2015,34 +2038,36 @@
                 "pages": [
                   "l/de/user-guide/dashboards/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/user-guide/dashboards/capabilities/dashboards",
-                      "l/de/user-guide/dashboards/capabilities/widgets"
+                      "l/de/user-guide/dashboards/capabilities/widgets",
+                      "l/de/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Anleitungen",
                     "pages": [
-                      "l/de/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/de/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/de/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
               },
               {
-                "group": "Permissions & Access",
+                "group": "Berechtigungen & Zugriff",
                 "icon": "lock",
                 "pages": [
                   "l/de/user-guide/permissions-access/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/user-guide/permissions-access/capabilities/permissions",
                       "l/de/user-guide/permissions-access/capabilities/sso-configuration"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Anleitungen",
                     "pages": [
                       "l/de/user-guide/permissions-access/how-tos/permissions-faq"
                     ]
@@ -2055,14 +2080,14 @@
                 "pages": [
                   "l/de/user-guide/billing/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/user-guide/billing/capabilities/pricing-plans",
                       "l/de/user-guide/billing/capabilities/workflow-credits"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Anleitungen",
                     "pages": [
                       "l/de/user-guide/billing/how-tos/billing-faq"
                     ]
@@ -2075,18 +2100,18 @@
                 "pages": [
                   "l/de/user-guide/settings/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/user-guide/settings/capabilities/workspace-settings",
                       "l/de/user-guide/settings/capabilities/member-management",
                       "l/de/user-guide/settings/capabilities/profile-settings",
                       "l/de/user-guide/settings/capabilities/experience-settings",
                       "l/de/user-guide/settings/capabilities/domains-settings",
-                      "l/de/user-guide/settings/capabilities/releases-settings"
+                      "l/de/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Anleitungen",
                     "pages": [
                       "l/de/user-guide/settings/how-tos/settings-faq"
                     ]
@@ -2105,12 +2130,12 @@
                 ]
               },
               {
-                "group": "Extend",
+                "group": "Erweitern",
                 "icon": "plug",
                 "pages": [
                   "l/de/developers/extend/extend",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/developers/extend/capabilities/apis",
                       "l/de/developers/extend/capabilities/webhooks",
@@ -2120,12 +2145,12 @@
                 ]
               },
               {
-                "group": "Self-Host",
+                "group": "Selbsthosting",
                 "icon": "desktop",
                 "pages": [
                   "l/de/developers/self-host/self-host",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/developers/self-host/capabilities/docker-compose",
                       "l/de/developers/self-host/capabilities/setup",
@@ -2137,12 +2162,12 @@
                 ]
               },
               {
-                "group": "Contribute",
+                "group": "Mitwirken",
                 "icon": "github",
                 "pages": [
                   "l/de/developers/contribute/contribute",
                   {
-                    "group": "Capabilities",
+                    "group": "Funktionen",
                     "pages": [
                       "l/de/developers/contribute/capabilities/local-setup",
                       "l/de/developers/contribute/capabilities/bug-and-requests",
@@ -2364,6 +2389,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/es/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/es/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/es/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/es/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/es/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -2377,7 +2403,8 @@
                           "l/es/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/es/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "l/es/user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "l/es/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "l/es/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "l/es/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
@@ -2458,13 +2485,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/es/user-guide/dashboards/capabilities/dashboards",
-                      "l/es/user-guide/dashboards/capabilities/widgets"
+                      "l/es/user-guide/dashboards/capabilities/widgets",
+                      "l/es/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/es/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/es/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/es/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -2522,7 +2551,7 @@
                       "l/es/user-guide/settings/capabilities/profile-settings",
                       "l/es/user-guide/settings/capabilities/experience-settings",
                       "l/es/user-guide/settings/capabilities/domains-settings",
-                      "l/es/user-guide/settings/capabilities/releases-settings"
+                      "l/es/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -2671,15 +2700,15 @@
         "language": "it",
         "tabs": [
           {
-            "tab": "User Guide",
+            "tab": "Guida utente",
             "groups": [
               {
-                "group": "Discover Twenty",
+                "group": "Scopri Twenty",
                 "icon": "rocket",
                 "pages": [
                   "l/it/user-guide/introduction",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/user-guide/getting-started/capabilities/what-is-twenty",
                       "l/it/user-guide/getting-started/capabilities/implementation-services",
@@ -2687,7 +2716,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guide pratiche",
                     "pages": [
                       "l/it/user-guide/getting-started/how-tos/create-workspace",
                       "l/it/user-guide/getting-started/how-tos/navigate-around-twenty",
@@ -2702,7 +2731,7 @@
                 "pages": [
                   "l/it/user-guide/data-model/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/user-guide/data-model/capabilities/objects",
                       "l/it/user-guide/data-model/capabilities/fields",
@@ -2710,7 +2739,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guide pratiche",
                     "pages": [
                       "l/it/user-guide/data-model/how-tos/create-custom-objects",
                       "l/it/user-guide/data-model/how-tos/create-custom-fields",
@@ -2722,12 +2751,12 @@
                 ]
               },
               {
-                "group": "Data Migration",
+                "group": "Migrazione dei dati",
                 "icon": "cloud-arrow-up",
                 "pages": [
                   "l/it/user-guide/data-migration/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/user-guide/data-migration/capabilities/file-formats",
                       "l/it/user-guide/data-migration/capabilities/field-mapping",
@@ -2737,7 +2766,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guide pratiche",
                     "pages": [
                       "l/it/user-guide/data-migration/how-tos/prepare-your-csv-files",
                       "l/it/user-guide/data-migration/how-tos/import-companies-via-csv",
@@ -2754,19 +2783,19 @@
                 ]
               },
               {
-                "group": "Calendar & Emails",
+                "group": "Calendario & Email",
                 "icon": "envelope",
                 "pages": [
                   "l/it/user-guide/calendar-emails/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/user-guide/calendar-emails/capabilities/mailbox",
                       "l/it/user-guide/calendar-emails/capabilities/calendar"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guide pratiche",
                     "pages": [
                       "l/it/user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user",
                       "l/it/user-guide/calendar-emails/how-tos/limit-emails-imported",
@@ -2784,7 +2813,7 @@
                 "pages": [
                   "l/it/user-guide/workflows/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/user-guide/workflows/capabilities/workflow-triggers",
                       "l/it/user-guide/workflows/capabilities/workflow-actions",
@@ -2798,12 +2827,13 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guide pratiche",
                     "pages": [
                       {
-                        "group": "CRM Automations",
+                        "group": "Automazioni CRM",
                         "pages": [
                           "l/it/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/it/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/it/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/it/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/it/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -2812,22 +2842,23 @@
                         ]
                       },
                       {
-                        "group": "Connect to Other Tools",
+                        "group": "Connessione ad altri strumenti",
                         "pages": [
                           "l/it/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/it/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "l/it/user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "l/it/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "l/it/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "l/it/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
-                        "group": "Advanced Configurations",
+                        "group": "Configurazioni avanzate",
                         "pages": [
                           "l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions"
                         ]
                       },
                       {
-                        "group": "Need More Help",
+                        "group": "Hai bisogno di ulteriore aiuto",
                         "pages": [
                           "l/it/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
                           "l/it/user-guide/workflows/how-tos/need-more-help/workflows-faq",
@@ -2844,7 +2875,7 @@
                 "pages": [
                   "l/it/user-guide/ai/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/user-guide/ai/capabilities/ai-chatbot",
                       "l/it/user-guide/ai/capabilities/ai-agents",
@@ -2852,7 +2883,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guide pratiche",
                     "pages": [
                       "l/it/user-guide/ai/how-tos/ai-faq"
                     ]
@@ -2860,12 +2891,12 @@
                 ]
               },
               {
-                "group": "Views & Pipelines",
+                "group": "Viste & Pipeline",
                 "icon": "table",
                 "pages": [
                   "l/it/user-guide/views-pipelines/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/user-guide/views-pipelines/capabilities/table-views",
                       "l/it/user-guide/views-pipelines/capabilities/kanban-views",
@@ -2876,7 +2907,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guide pratiche",
                     "pages": [
                       "l/it/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/it/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -2895,34 +2926,36 @@
                 "pages": [
                   "l/it/user-guide/dashboards/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/user-guide/dashboards/capabilities/dashboards",
-                      "l/it/user-guide/dashboards/capabilities/widgets"
+                      "l/it/user-guide/dashboards/capabilities/widgets",
+                      "l/it/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guide pratiche",
                     "pages": [
-                      "l/it/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/it/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/it/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
               },
               {
-                "group": "Permissions & Access",
+                "group": "Autorizzazioni & Accesso",
                 "icon": "lock",
                 "pages": [
                   "l/it/user-guide/permissions-access/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/user-guide/permissions-access/capabilities/permissions",
                       "l/it/user-guide/permissions-access/capabilities/sso-configuration"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guide pratiche",
                     "pages": [
                       "l/it/user-guide/permissions-access/how-tos/permissions-faq"
                     ]
@@ -2935,14 +2968,14 @@
                 "pages": [
                   "l/it/user-guide/billing/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/user-guide/billing/capabilities/pricing-plans",
                       "l/it/user-guide/billing/capabilities/workflow-credits"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guide pratiche",
                     "pages": [
                       "l/it/user-guide/billing/how-tos/billing-faq"
                     ]
@@ -2955,18 +2988,18 @@
                 "pages": [
                   "l/it/user-guide/settings/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/user-guide/settings/capabilities/workspace-settings",
                       "l/it/user-guide/settings/capabilities/member-management",
                       "l/it/user-guide/settings/capabilities/profile-settings",
                       "l/it/user-guide/settings/capabilities/experience-settings",
                       "l/it/user-guide/settings/capabilities/domains-settings",
-                      "l/it/user-guide/settings/capabilities/releases-settings"
+                      "l/it/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guide pratiche",
                     "pages": [
                       "l/it/user-guide/settings/how-tos/settings-faq"
                     ]
@@ -2985,12 +3018,12 @@
                 ]
               },
               {
-                "group": "Extend",
+                "group": "Estendi",
                 "icon": "plug",
                 "pages": [
                   "l/it/developers/extend/extend",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/developers/extend/capabilities/apis",
                       "l/it/developers/extend/capabilities/webhooks",
@@ -3000,12 +3033,12 @@
                 ]
               },
               {
-                "group": "Self-Host",
+                "group": "Auto-ospitazione",
                 "icon": "desktop",
                 "pages": [
                   "l/it/developers/self-host/self-host",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/developers/self-host/capabilities/docker-compose",
                       "l/it/developers/self-host/capabilities/setup",
@@ -3017,12 +3050,12 @@
                 ]
               },
               {
-                "group": "Contribute",
+                "group": "Contribuire",
                 "icon": "github",
                 "pages": [
                   "l/it/developers/contribute/contribute",
                   {
-                    "group": "Capabilities",
+                    "group": "Funzionalità",
                     "pages": [
                       "l/it/developers/contribute/capabilities/local-setup",
                       "l/it/developers/contribute/capabilities/bug-and-requests",
@@ -3244,6 +3277,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ja/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ja/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -3257,7 +3291,8 @@
                           "l/ja/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/ja/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "l/ja/user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "l/ja/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "l/ja/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "l/ja/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
@@ -3338,13 +3373,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/ja/user-guide/dashboards/capabilities/dashboards",
-                      "l/ja/user-guide/dashboards/capabilities/widgets"
+                      "l/ja/user-guide/dashboards/capabilities/widgets",
+                      "l/ja/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/ja/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/ja/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/ja/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -3402,7 +3439,7 @@
                       "l/ja/user-guide/settings/capabilities/profile-settings",
                       "l/ja/user-guide/settings/capabilities/experience-settings",
                       "l/ja/user-guide/settings/capabilities/domains-settings",
-                      "l/ja/user-guide/settings/capabilities/releases-settings"
+                      "l/ja/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -3684,6 +3721,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ko/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ko/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/ko/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ko/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ko/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -3697,7 +3735,8 @@
                           "l/ko/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/ko/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "l/ko/user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "l/ko/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "l/ko/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "l/ko/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
@@ -3778,13 +3817,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/ko/user-guide/dashboards/capabilities/dashboards",
-                      "l/ko/user-guide/dashboards/capabilities/widgets"
+                      "l/ko/user-guide/dashboards/capabilities/widgets",
+                      "l/ko/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/ko/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/ko/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/ko/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -3842,7 +3883,7 @@
                       "l/ko/user-guide/settings/capabilities/profile-settings",
                       "l/ko/user-guide/settings/capabilities/experience-settings",
                       "l/ko/user-guide/settings/capabilities/domains-settings",
-                      "l/ko/user-guide/settings/capabilities/releases-settings"
+                      "l/ko/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -4124,6 +4165,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/pt/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/pt/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/pt/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/pt/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -4137,7 +4179,8 @@
                           "l/pt/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/pt/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "l/pt/user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "l/pt/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "l/pt/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "l/pt/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
@@ -4218,13 +4261,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/pt/user-guide/dashboards/capabilities/dashboards",
-                      "l/pt/user-guide/dashboards/capabilities/widgets"
+                      "l/pt/user-guide/dashboards/capabilities/widgets",
+                      "l/pt/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/pt/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/pt/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/pt/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -4282,7 +4327,7 @@
                       "l/pt/user-guide/settings/capabilities/profile-settings",
                       "l/pt/user-guide/settings/capabilities/experience-settings",
                       "l/pt/user-guide/settings/capabilities/domains-settings",
-                      "l/pt/user-guide/settings/capabilities/releases-settings"
+                      "l/pt/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -4564,6 +4609,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ro/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ro/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/ro/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ro/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ro/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -4577,7 +4623,8 @@
                           "l/ro/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/ro/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "l/ro/user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "l/ro/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "l/ro/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "l/ro/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
@@ -4658,13 +4705,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/ro/user-guide/dashboards/capabilities/dashboards",
-                      "l/ro/user-guide/dashboards/capabilities/widgets"
+                      "l/ro/user-guide/dashboards/capabilities/widgets",
+                      "l/ro/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/ro/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/ro/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/ro/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -4722,7 +4771,7 @@
                       "l/ro/user-guide/settings/capabilities/profile-settings",
                       "l/ro/user-guide/settings/capabilities/experience-settings",
                       "l/ro/user-guide/settings/capabilities/domains-settings",
-                      "l/ro/user-guide/settings/capabilities/releases-settings"
+                      "l/ro/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -5004,6 +5053,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ru/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ru/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/ru/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ru/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ru/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -5017,7 +5067,8 @@
                           "l/ru/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/ru/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "l/ru/user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "l/ru/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "l/ru/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "l/ru/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
@@ -5098,13 +5149,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/ru/user-guide/dashboards/capabilities/dashboards",
-                      "l/ru/user-guide/dashboards/capabilities/widgets"
+                      "l/ru/user-guide/dashboards/capabilities/widgets",
+                      "l/ru/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/ru/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/ru/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/ru/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -5162,7 +5215,7 @@
                       "l/ru/user-guide/settings/capabilities/profile-settings",
                       "l/ru/user-guide/settings/capabilities/experience-settings",
                       "l/ru/user-guide/settings/capabilities/domains-settings",
-                      "l/ru/user-guide/settings/capabilities/releases-settings"
+                      "l/ru/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -5444,6 +5497,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/tr/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/tr/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/tr/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/tr/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/tr/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -5457,7 +5511,8 @@
                           "l/tr/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/tr/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "l/tr/user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "l/tr/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "l/tr/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "l/tr/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
@@ -5538,13 +5593,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/tr/user-guide/dashboards/capabilities/dashboards",
-                      "l/tr/user-guide/dashboards/capabilities/widgets"
+                      "l/tr/user-guide/dashboards/capabilities/widgets",
+                      "l/tr/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/tr/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/tr/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/tr/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -5602,7 +5659,7 @@
                       "l/tr/user-guide/settings/capabilities/profile-settings",
                       "l/tr/user-guide/settings/capabilities/experience-settings",
                       "l/tr/user-guide/settings/capabilities/domains-settings",
-                      "l/tr/user-guide/settings/capabilities/releases-settings"
+                      "l/tr/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -5884,6 +5941,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/zh/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/zh/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/zh/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/zh/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -5897,7 +5955,8 @@
                           "l/zh/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/zh/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "l/zh/user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                          "l/zh/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                          "l/zh/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                          "l/zh/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                         ]
                       },
                       {
@@ -5978,13 +6037,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/zh/user-guide/dashboards/capabilities/dashboards",
-                      "l/zh/user-guide/dashboards/capabilities/widgets"
+                      "l/zh/user-guide/dashboards/capabilities/widgets",
+                      "l/zh/user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "l/zh/user-guide/dashboards/how-tos/dashboards-faq"
+                      "l/zh/user-guide/dashboards/how-tos/dashboards-faq",
+                      "l/zh/user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]
@@ -6042,7 +6103,7 @@
                       "l/zh/user-guide/settings/capabilities/profile-settings",
                       "l/zh/user-guide/settings/capabilities/experience-settings",
                       "l/zh/user-guide/settings/capabilities/domains-settings",
-                      "l/zh/user-guide/settings/capabilities/releases-settings"
+                      "l/zh/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -6639,7 +6700,7 @@
     },
     {
       "source": "/user-guide/settings/releases-settings",
-      "destination": "/user-guide/settings/capabilities/releases-settings"
+      "destination": "/user-guide/settings/capabilities/updates-settings"
     },
     {
       "source": "/user-guide/settings/settings-faq",

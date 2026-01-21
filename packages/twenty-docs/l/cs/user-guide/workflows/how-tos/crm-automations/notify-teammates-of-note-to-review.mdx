@@ -1,0 +1,127 @@
+---
+title: Upozorněte kolegy na poznámku ke kontrole
+description: Odesílejte automatická e-mailová upozornění při přiřazení kolegy ke kontrole poznámky.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Note>
+  **Přímé označování členů týmu v poznámkách zatím není podporováno.** Tato funkce je plánována na druhou polovinu roku 2026. Mezitím tento pracovní postup poskytuje praktické náhradní řešení.
+</Note>
+
+## Problém
+
+Chcete v poznámce označit kolegu, aby obdržel upozornění na její kontrolu. V současnosti Twenty nepodporuje @zmínky v poznámkách ani úkolech.
+
+## Náhradní řešení
+
+Místo označování v textu poznámky můžete:
+
+1. Vytvořte relační pole **Reviewer** u objektu Poznámky
+2. Při vytváření nebo úpravě poznámky přiřaďte recenzenta
+3. Pracovní postup automaticky odešle recenzentovi e-mail s odkazem na poznámku
+
+<Warning>
+  **Omezení**: Tento přístup umožňuje přiřadit na jedno pole pouze jednoho recenzenta. Pokud potřebujete upozornit více osob, vytvořte další relační pole (např. Reviewer 1, Reviewer 2). Toto nebude dobře škálovat, pokud potřebujete najednou označit mnoho spolupracovníků.
+</Warning>
+
+## Nastavení krok za krokem
+
+### Krok 1: Vytvořte pole Reviewer
+
+<img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
+
+1. Přejděte do **Nastavení → Datový model → Poznámky**
+2. Klikněte na **Add Field**
+3. Nakonfigurujte:
+
+| Nastavení              | Hodnota                                         |
+| ---------------------- | ----------------------------------------------- |
+| **Name**               | Reviewer                                        |
+| **Typ**                | Vztah                                           |
+| **Související objekt** | Člen pracovního prostoru                        |
+| **Typ vztahu**         | Mnoho poznámek → Jeden člen pracovního prostoru |
+
+4. Uložte pole
+
+### Krok 2: Vytvořte pracovní postup
+
+<VimeoEmbed videoId="1151897168" title="Ukázka videa" />
+
+#### Vytvořte spouštěč pracovního postupu
+
+1. Přejděte do hlavního zobrazení a vytvořte nový pracovní postup
+2. Vyberte jako spouštěč **Record Updated**
+3. Jako objekt vyberte **Note** a určete pole Reviewer.
+4. Spouštěč se aktivuje kdykoli je u poznámky aktualizován recenzent.
+
+#### Přidejte filtr, který ověří, že byl recenzent právě přiřazen
+
+Přidejte akci **Filtr**, aby pracovní postup pokračoval pouze tehdy, když je přiřazen recenzent:
+
+| Podmínka     | Hodnota      |
+| ------------ | ------------ |
+| **Reviewer** | není prázdné |
+
+#### Vyhledejte člena pracovního prostoru
+
+1. Přidejte akci **Vyhledat záznamy**
+2. Vyberte **Člen pracovního prostoru** (v části pokročilé objekty)
+3. Přidejte filtr:
+
+| Podmínka | Hodnota                        |
+| -------- | ------------------------------ |
+| **ID**   | se rovná `{{note.reviewerId}}` |
+
+Tím získáte celý záznam člena pracovního prostoru včetně jeho e-mailové adresy a jména.
+
+#### Odešlete upozorňovací e-mail
+
+1. Přidejte akci **Odeslat e-mail**
+2. Nakonfigurujte:
+
+| Pole            | Hodnota                                             |
+| --------------- | --------------------------------------------------- |
+| **Komu**        | Search Record → First Workspace Member → User Email |
+| **Předmět**     | Poznámka vyžaduje vaši kontrolu                     |
+| **Text zprávy** | Viz příklad níže                                    |
+
+**Příklad textu e-mailu:**
+
+```text
+Hi {{searchRecord.firstWorkspaceMember.name.firstName}},
+
+You've been assigned to review a note.
+
+View the note here:
+https://yourSubDomain.twenty.com/object/note/{{recordIsUpdated.id}}
+
+Best,
+Twenty
+```
+
+<Note>
+  Nahraďte `yourSubDomain` skutečnou subdoménou vašeho pracovního prostoru Twenty.
+</Note>
+
+#### Otestujte a aktivujte
+
+1. Klikněte na **Test** a spusťte pracovní postup ručně
+2. Vytvořte nebo upravte poznámku a přiřaďte recenzenta
+3. Zkontrolujte doručenou poštu recenzenta, zda dorazil upozorňovací e-mail
+4. Aktivujte pracovní postup
+
+## Použití
+
+Po nastavení může váš tým tento pracovní postup používat takto:
+
+1. Vytvořením nové poznámky (nebo úpravou existující)
+2. Výběrem kolegy v poli **Reviewer**
+3. Kolega automaticky obdrží e-mail s přímým odkazem na poznámku
+
+## Související
+
+* [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
+* [Odesílání e-mailů z pracovních postupů](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Vytvořit vlastní pole](/l/cs/user-guide/data-model/how-tos/create-custom-fields)
+* [Vytvořit relační pole](/l/cs/user-guide/data-model/how-tos/create-relation-fields)

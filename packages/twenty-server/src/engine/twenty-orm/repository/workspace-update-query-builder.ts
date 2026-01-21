@@ -37,6 +37,7 @@ import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 export class WorkspaceUpdateQueryBuilder<
@@ -174,6 +175,21 @@ export class WorkspaceUpdateQueryBuilder<
       );
 
       this.applyRowLevelPermissionPredicates();
+
+      const valuesSet = this.expressionMap.valuesSet ?? {};
+      const updatedRecords: T[] = before.map(
+        (record, index) =>
+          ({
+            ...record,
+            ...(Array.isArray(valuesSet)
+              ? (valuesSet[index] ?? valuesSet[0] ?? {})
+              : valuesSet),
+          }) as T,
+      );
+
+      this.validateRLSPredicatesForUpdate({
+        updatedRecords,
+      });
 
       const result = await super.execute();
 
@@ -323,11 +339,33 @@ export class WorkspaceUpdateQueryBuilder<
         }));
       }
 
+      const beforeRecordById = new Map<string, T>();
+
+      for (const beforeRecord of formattedBefore) {
+        if (isDefined(beforeRecord.id)) {
+          beforeRecordById.set(beforeRecord.id, beforeRecord);
+        }
+      }
+
       for (const input of this.manyInputs) {
         this.expressionMap.valuesSet = input.partialEntity;
         this.where({ id: input.criteria });
 
         this.applyRowLevelPermissionPredicates();
+
+        const beforeRecord = beforeRecordById.get(input.criteria);
+        const updatedRecords = beforeRecord
+          ? [
+              {
+                ...beforeRecord,
+                ...input.partialEntity,
+              } as T,
+            ]
+          : [];
+
+        this.validateRLSPredicatesForUpdate({
+          updatedRecords,
+        });
 
         const result = await super.execute();
 
@@ -519,6 +557,35 @@ export class WorkspaceUpdateQueryBuilder<
       internalContext: this.internalContext,
       authContext: this.authContext,
       featureFlagMap: this.featureFlagMap,
+    });
+  }
+
+  private validateRLSPredicatesForUpdate({
+    updatedRecords,
+  }: {
+    updatedRecords: T[];
+  }): void {
+    const mainAliasTarget = this.getMainAliasTarget();
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const updatedRecordsFormatted = formatResult<T[]>(
+      updatedRecords,
+      objectMetadata,
+      this.internalContext.flatObjectMetadataMaps,
+      this.internalContext.flatFieldMetadataMaps,
+    );
+
+    validateRLSPredicatesForRecords({
+      records: updatedRecordsFormatted,
+      objectMetadata,
+      internalContext: this.internalContext,
+      authContext: this.authContext,
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      errorMessage:
+        'Updated record does not satisfy row-level security constraints of your current role',
     });
   }
 }
