@@ -67,9 +67,50 @@ const injectRelationWidgetsIntoLayout = (
     ...layout,
     tabs: layout.tabs.map((tab) => {
       if (tab.id === firstTab.id) {
+        const firstFieldsWidgetIndex = tab.widgets.findIndex(
+          (widget) => widget.type === WidgetType.FIELDS,
+        );
+
+        if (firstFieldsWidgetIndex === -1) {
+          return {
+            ...tab,
+            widgets: [...tab.widgets, ...relationWidgets],
+          };
+        }
+
+        // TODO: This note widget repositioning logic is temporary and will be deleted soon.
+        // We need this to ensure the note editor is displayed before record relations,
+        // matching the behavior of the old show page.
+        const noteWidgetIndex = tab.widgets.findIndex(
+          (widget) => widget.type === WidgetType.NOTES,
+        );
+
+        const widgetsBeforeRelation = tab.widgets.slice(
+          0,
+          firstFieldsWidgetIndex + 1,
+        );
+        const widgetsAfterRelation =
+          noteWidgetIndex === -1
+            ? tab.widgets.slice(firstFieldsWidgetIndex + 1)
+            : [
+                ...tab.widgets.slice(
+                  firstFieldsWidgetIndex + 1,
+                  noteWidgetIndex,
+                ),
+                ...tab.widgets.slice(noteWidgetIndex + 1),
+              ];
+
+        const noteWidget =
+          noteWidgetIndex !== -1 ? [tab.widgets[noteWidgetIndex]] : [];
+
         return {
           ...tab,
-          widgets: [...tab.widgets, ...relationWidgets],
+          widgets: [
+            ...widgetsBeforeRelation,
+            ...relationWidgets,
+            ...noteWidget,
+            ...widgetsAfterRelation,
+          ],
         };
       }
       return tab;
