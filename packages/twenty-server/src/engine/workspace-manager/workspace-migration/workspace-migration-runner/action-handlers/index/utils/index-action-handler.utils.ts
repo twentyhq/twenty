@@ -2,10 +2,6 @@ import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
-import {
-  WorkspaceQueryRunnerException,
-  WorkspaceQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import {
@@ -24,6 +20,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { WorkspaceMigrationRunnerException, WorkspaceMigrationRunnerExceptionCode } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
 export const computeFlatIndexFieldColumnNames = ({
@@ -104,9 +101,9 @@ export const insertIndexMetadata = async ({
   );
 
   if (indexInsertResult.identifiers.length !== 1) {
-    throw new WorkspaceQueryRunnerException(
+    throw new WorkspaceMigrationRunnerException(
       'Failed to create index metadata',
-      WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+      WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
     );
   }
   const indexMetadataId = indexInsertResult.identifiers[0].id;

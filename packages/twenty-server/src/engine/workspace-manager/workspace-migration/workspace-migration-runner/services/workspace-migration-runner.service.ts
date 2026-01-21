@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { AllMetadataName } from 'twenty-shared/metadata';
 import { DataSource } from 'typeorm';
 
-import {
-  WorkspaceQueryRunnerException,
-  WorkspaceQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -18,8 +15,12 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration';
 import { WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { WorkspaceMigrationExecutionException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-execution.exception';
+import {
+  WorkspaceMigrationRunnerException,
+  WorkspaceMigrationRunnerExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
-import { AllMetadataName } from 'twenty-shared/metadata';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -186,13 +187,13 @@ export class WorkspaceMigrationRunnerService {
     this.logger.timeEnd('Runner', 'Initial cache retrieval');
     this.logger.time('Runner', 'Transaction execution');
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
     let impactedMetadataNames: AllMetadataName[] = [];
 
-    const successfullyExecutedActions: WorkspaceMigrationAction[] = [];
+    let successfullyExecutedActions: WorkspaceMigrationAction[] = [];
+
     try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
       for (const action of actions) {
         const result =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
@@ -207,42 +208,11 @@ export class WorkspaceMigrationRunnerService {
             },
           );
 
-        if (result.status === 'failure') {
-          if (queryRunner.isTransactionActive) {
-            // TODO before merge shouldn't we throw ?
-            await queryRunner
-              .rollbackTransaction()
-              .catch((error) =>
-                console.trace(
-                  `Failed to rollback transaction: ${error.message}`,
-                ),
-              );
-          }
-
-          const invertedActions = successfullyExecutedActions.reverse();
-
-          for (const invertedAction of invertedActions) {
-            await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionRollbackHandler(
-              {
-                action: invertedAction,
-                context: {
-                  action: invertedAction,
-                  allFlatEntityMaps: allFlatEntityMaps,
-                  queryRunner,
-                  workspaceId,
-                },
-              },
-            );
-          }
-
-          return; // TODO before merge prastoin return failure record
-        }
-
-        const { partialOptimisticCache } = result;
+        successfullyExecutedActions = [...successfullyExecutedActions, action];
 
         allFlatEntityMaps = {
           ...allFlatEntityMaps,
-          ...partialOptimisticCache,
+          ...result,
         };
 
         impactedMetadataNames = [
@@ -264,9 +234,38 @@ export class WorkspaceMigrationRunnerService {
 
       return allFlatEntityMaps;
     } catch (error) {
-      throw new WorkspaceQueryRunnerException(
+      if (queryRunner.isTransactionActive) {
+        // TODO before merge shouldn't we throw ?
+        await queryRunner.rollbackTransaction().catch((error) =>
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`),
+        );
+      }
+
+      const invertedActions = successfullyExecutedActions.reverse();
+
+      for (const invertedAction of invertedActions) {
+        // TODO handle rollback error too
+        await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionRollbackHandler(
+          {
+            action: invertedAction,
+            context: {
+              action: invertedAction,
+              allFlatEntityMaps: allFlatEntityMaps,
+              queryRunner,
+              workspaceId,
+            },
+          },
+        );
+      }
+
+      if (error instanceof WorkspaceMigrationExecutionException) {
+        throw error;
+      }
+
+      throw new WorkspaceMigrationRunnerException(
         error.message,
-        WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+        WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
       );
     } finally {
       await queryRunner.release();
