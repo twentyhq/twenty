@@ -30,11 +30,6 @@ export class UpdateNavigationMenuItemInput {
   @IsString()
   @Field(() => String, { nullable: true })
   name?: string | null;
-
-  @IsUUID()
-  @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  viewId?: string | null;
 }
 
 @InputType()
