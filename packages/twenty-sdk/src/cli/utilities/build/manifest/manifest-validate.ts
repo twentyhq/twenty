@@ -34,7 +34,10 @@ export const validateManifest = (
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
-  applicationEntityBuilder.validate(manifest.application, errors);
+  applicationEntityBuilder.validate(
+    manifest.application ? [manifest.application] : [],
+    errors,
+  );
   objectEntityBuilder.validate(manifest.objects ?? [], errors);
   objectExtensionEntityBuilder.validate(manifest.objectExtensions ?? [], errors);
   functionEntityBuilder.validate(manifest.serverlessFunctions ?? [], errors);

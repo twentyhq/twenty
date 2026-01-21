@@ -1,39 +1,39 @@
-import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
 import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type RoleManifest } from 'twenty-shared/application';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
-    type EntityIdWithLocation,
-    type ManifestEntityBuilder,
-    type ManifestWithoutSources,
+  type EntityBuildResult,
+  type EntityIdWithLocation,
+  type ManifestEntityBuilder,
+  type ManifestWithoutSources,
 } from './entity.interface';
 
-export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest[]> {
-  async build(appPath: string): Promise<RoleManifest[]> {
+export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
+  async build(appPath: string): Promise<EntityBuildResult<RoleManifest>> {
     const roleFiles = await glob(['**/*.role.ts'], {
       cwd: appPath,
-      absolute: true,
       ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
     });
 
-    const roleManifests: RoleManifest[] = [];
+    const manifests: RoleManifest[] = [];
 
-    for (const filepath of roleFiles) {
+    for (const filePath of roleFiles) {
       try {
-        roleManifests.push(
-          await manifestExtractFromFileServer.extractManifestFromFile<RoleManifest>(filepath),
+        const absolutePath = `${appPath}/${filePath}`;
+
+        manifests.push(
+          await manifestExtractFromFileServer.extractManifestFromFile<RoleManifest>(absolutePath),
         );
       } catch (error) {
-        const relPath = toPosixRelative(filepath, appPath);
         throw new Error(
-          `Failed to load role from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
+          `Failed to load role from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
 
-    return roleManifests;
+    return { manifests, filePaths: roleFiles };
   }
 
   validate(roles: RoleManifest[], errors: ValidationError[]): void {

@@ -18,6 +18,15 @@ import { manifestExtractFromFileServer } from './manifest-extract-from-file-serv
 import { validateManifest } from './manifest-validate';
 import { ManifestValidationError } from './manifest.types';
 
+export type EntityFilePaths = {
+  application: string[];
+  objects: string[];
+  objectExtensions: string[];
+  functions: string[];
+  frontComponents: string[];
+  roles: string[];
+};
+
 const findApplicationConfigPath = async (appPath: string): Promise<string> => {
   const srcConfigFile = path.join(appPath, 'src', 'application.config.ts');
   const rootConfigFile = path.join(appPath, 'application.config.ts');
@@ -100,10 +109,15 @@ export type RunManifestBuildOptions = {
   writeOutput?: boolean;
 };
 
+export type ManifestBuildResult = {
+  manifest: ApplicationManifest;
+  filePaths: EntityFilePaths;
+};
+
 export const runManifestBuild = async (
   appPath: string,
   options: RunManifestBuildOptions = {},
-): Promise<ApplicationManifest | null> => {
+): Promise<ManifestBuildResult | null> => {
   const { display = true, writeOutput = true } = options;
 
   if (display) {
@@ -119,12 +133,12 @@ export const runManifestBuild = async (
     );
 
     const [
-      application,
-      objectManifests,
-      objectExtensionManifests,
-      functionManifests,
-      frontComponentManifests,
-      roleManifests,
+      applicationBuildResult,
+      objectBuildResult,
+      objectExtensionBuildResult,
+      functionBuildResult,
+      frontComponentBuildResult,
+      roleBuildResult,
       sources,
     ] = await Promise.all([
       applicationEntityBuilder.build(appPath),
@@ -135,6 +149,22 @@ export const runManifestBuild = async (
       roleEntityBuilder.build(appPath),
       loadSources(appPath),
     ]);
+
+    const application = applicationBuildResult.manifests[0];
+    const objectManifests = objectBuildResult.manifests;
+    const objectExtensionManifests = objectExtensionBuildResult.manifests;
+    const functionManifests = functionBuildResult.manifests;
+    const frontComponentManifests = frontComponentBuildResult.manifests;
+    const roleManifests = roleBuildResult.manifests;
+
+    const filePaths: EntityFilePaths = {
+      application: applicationBuildResult.filePaths,
+      objects: objectBuildResult.filePaths,
+      objectExtensions: objectExtensionBuildResult.filePaths,
+      functions: functionBuildResult.filePaths,
+      frontComponents: frontComponentBuildResult.filePaths,
+      roles: roleBuildResult.filePaths,
+    };
 
     const manifest: ApplicationManifest = {
       application,
@@ -173,7 +203,7 @@ export const runManifestBuild = async (
       await writeManifestToOutput(appPath, manifest);
     }
 
-    return manifest;
+    return { manifest, filePaths };
   } catch (error) {
     if (display) {
       if (error instanceof ManifestValidationError) {

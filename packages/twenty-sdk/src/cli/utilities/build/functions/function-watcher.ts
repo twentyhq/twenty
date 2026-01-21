@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import path from 'path';
-import type { ApplicationManifest, ServerlessFunctionManifest } from 'twenty-shared/application';
 import { build, type InlineConfig, type Rollup } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { OUTPUT_DIR } from '../common/constants';
@@ -10,23 +9,8 @@ import {
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '../common/restartable-watcher.interface';
+import { type ManifestBuildResult } from '../manifest/manifest-build';
 import { FUNCTIONS_DIR } from './constants';
-
-const buildFunctionEntries = (
-  appPath: string,
-  functions: ServerlessFunctionManifest[],
-): Record<string, string> => {
-  const entries: Record<string, string> = {};
-
-  for (const fn of functions) {
-    const inputPath = path.join(appPath, fn.handlerPath);
-    const outputPath = fn.handlerPath.replace(/\.tsx?$/, '');
-
-    entries[outputPath] = inputPath;
-  }
-
-  return entries;
-};
 
 export const FUNCTION_EXTERNAL_MODULES: (string | RegExp)[] = [
   'path', 'fs', 'crypto', 'stream', 'util', 'os', 'url', 'http', 'https',
@@ -37,44 +21,27 @@ export const FUNCTION_EXTERNAL_MODULES: (string | RegExp)[] = [
 
 export class FunctionsWatcher implements RestartableWatcher {
   private appPath: string;
-  private entries: Record<string, string>;
+  private functionPaths: string[];
   private innerWatcher: Rollup.RollupWatcher | null = null;
   private isRestarting = false;
 
   constructor(options: RestartableWatcherOptions) {
     this.appPath = options.appPath;
-    this.entries = buildFunctionEntries(
-      options.appPath,
-      options.manifest?.serverlessFunctions ?? [],
-    );
+    this.functionPaths = options.buildResult?.filePaths.functions ?? [];
   }
 
-  shouldRestart(manifest: ApplicationManifest): boolean {
-    const newEntries = buildFunctionEntries(
-      this.appPath,
-      manifest.serverlessFunctions ?? [],
-    );
-    const currentKeys = Object.keys(this.entries).sort();
-    const newKeys = Object.keys(newEntries).sort();
+  shouldRestart(result: ManifestBuildResult): boolean {
+    const currentPaths = this.functionPaths.sort().join(',');
+    const newPaths = result.filePaths.functions.sort().join(',');
 
-    if (currentKeys.length !== newKeys.length) {
-      return true;
-    }
-
-    for (let i = 0; i < currentKeys.length; i++) {
-      if (currentKeys[i] !== newKeys[i]) {
-        return true;
-      }
-    }
-
-    return false;
+    return currentPaths !== newPaths;
   }
 
   async start(): Promise<void> {
     const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
     await fs.ensureDir(outputDir);
 
-    if (this.hasEntries()) {
+    if (this.functionPaths.length > 0) {
       console.log(chalk.blue('  📦 Building functions...'));
       this.innerWatcher = await this.createWatcher();
     } else {
@@ -87,7 +54,7 @@ export class FunctionsWatcher implements RestartableWatcher {
     await this.innerWatcher?.close();
   }
 
-  async restart(manifest: ApplicationManifest): Promise<void> {
+  async restart(result: ManifestBuildResult): Promise<void> {
     if (this.isRestarting) {
       return;
     }
@@ -99,12 +66,9 @@ export class FunctionsWatcher implements RestartableWatcher {
       await this.innerWatcher?.close();
       this.innerWatcher = null;
 
-      this.entries = buildFunctionEntries(
-        this.appPath,
-        manifest.serverlessFunctions ?? [],
-      );
+      this.functionPaths = result.filePaths.functions;
 
-      if (this.hasEntries()) {
+      if (this.functionPaths.length > 0) {
         console.log(chalk.blue('  📦 Building functions...'));
         this.innerWatcher = await this.createWatcher();
       } else {
@@ -116,10 +80,6 @@ export class FunctionsWatcher implements RestartableWatcher {
     } finally {
       this.isRestarting = false;
     }
-  }
-
-  private hasEntries(): boolean {
-    return Object.keys(this.entries).length > 0;
   }
 
   private async createWatcher(): Promise<Rollup.RollupWatcher> {
@@ -141,6 +101,13 @@ export class FunctionsWatcher implements RestartableWatcher {
   private createConfig(): InlineConfig {
     const functionsOutputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
 
+    const entries = Object.fromEntries(
+      this.functionPaths.map((filePath) => [
+        filePath.replace(/\.tsx?$/, ''),
+        path.join(this.appPath, filePath),
+      ]),
+    );
+
     return {
       root: this.appPath,
       plugins: [
@@ -154,7 +121,7 @@ export class FunctionsWatcher implements RestartableWatcher {
           exclude: ['node_modules/**', '.twenty/**', 'dist/**'],
         },
         lib: {
-          entry: this.entries,
+          entry: entries,
           formats: ['es'],
           fileName: (_, entryName) => `${entryName}.mjs`,
         },

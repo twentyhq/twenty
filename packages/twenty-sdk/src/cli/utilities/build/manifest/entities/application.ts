@@ -5,6 +5,7 @@ import { type Application } from 'twenty-shared/application';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
+  type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
@@ -30,13 +31,20 @@ const findApplicationConfigPath = async (appPath: string): Promise<string> => {
 export class ApplicationEntityBuilder
   implements ManifestEntityBuilder<Application>
 {
-  async build(appPath: string): Promise<Application> {
+  async build(appPath: string): Promise<EntityBuildResult<Application>> {
     const applicationConfigPath = await findApplicationConfigPath(appPath);
+    const application =
+      await manifestExtractFromFileServer.extractManifestFromFile<Application>(
+        applicationConfigPath,
+      );
+    const relativePath = path.relative(appPath, applicationConfigPath);
 
-    return manifestExtractFromFileServer.extractManifestFromFile<Application>(applicationConfigPath);
+    return { manifests: [application], filePaths: [relativePath] };
   }
 
-  validate(application: Application, errors: ValidationError[]): void {
+  validate(applications: Application[], errors: ValidationError[]): void {
+    const application = applications[0];
+
     if (!application) {
       errors.push({
         path: 'application',
@@ -53,8 +61,9 @@ export class ApplicationEntityBuilder
     }
   }
 
-  display(application: Application): void {
-    const appName = application.displayName ?? 'Application';
+  display(applications: Application[]): void {
+    const application = applications[0];
+    const appName = application?.displayName ?? 'Application';
     console.log(chalk.green(`  ✓ Loaded "${appName}"`));
   }
 

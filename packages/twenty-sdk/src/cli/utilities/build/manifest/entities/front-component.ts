@@ -1,10 +1,10 @@
-import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
 import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type FrontComponentManifest } from 'twenty-shared/application';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
+  type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
@@ -15,41 +15,39 @@ type FrontComponentConfig = Omit<FrontComponentManifest, 'componentPath' | 'comp
 };
 
 export class FrontComponentEntityBuilder
-  implements ManifestEntityBuilder<FrontComponentManifest[]>
+  implements ManifestEntityBuilder<FrontComponentManifest>
 {
-  async build(appPath: string): Promise<FrontComponentManifest[]> {
+  async build(appPath: string): Promise<EntityBuildResult<FrontComponentManifest>> {
     const componentFiles = await glob(['**/*.front-component.tsx'], {
       cwd: appPath,
-      absolute: true,
       ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
     });
 
-    const frontComponentManifests: FrontComponentManifest[] = [];
+    const manifests: FrontComponentManifest[] = [];
 
-    for (const filepath of componentFiles) {
+    for (const filePath of componentFiles) {
       try {
+        const absolutePath = `${appPath}/${filePath}`;
         const config =
           await manifestExtractFromFileServer.extractManifestFromFile<FrontComponentConfig>(
-            filepath,
+            absolutePath,
           );
 
         const { component, ...rest } = config;
-        const componentPath = toPosixRelative(filepath, appPath);
 
-        frontComponentManifests.push({
+        manifests.push({
           ...rest,
           componentName: component.name,
-          componentPath,
+          componentPath: filePath,
         });
       } catch (error) {
-        const relPath = toPosixRelative(filepath, appPath);
         throw new Error(
-          `Failed to load front component from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
+          `Failed to load front component from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
 
-    return frontComponentManifests;
+    return { manifests, filePaths: componentFiles };
   }
 
   validate(

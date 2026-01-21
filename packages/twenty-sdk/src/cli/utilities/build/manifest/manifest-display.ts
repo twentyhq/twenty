@@ -8,9 +8,11 @@ import { roleEntityBuilder } from './entities/role';
 import { type ManifestValidationError, type ValidationWarning } from './manifest.types';
 
 export const displayEntitySummary = (manifest: ApplicationManifest): void => {
-  applicationEntityBuilder.display(manifest.application);
-  objectEntityBuilder.display(manifest.objects);
-  functionEntityBuilder.display(manifest.serverlessFunctions);
+  applicationEntityBuilder.display(
+    manifest.application ? [manifest.application] : [],
+  );
+  objectEntityBuilder.display(manifest.objects ?? []);
+  functionEntityBuilder.display(manifest.serverlessFunctions ?? []);
   frontComponentEntityBuilder.display(manifest.frontComponents ?? []);
   roleEntityBuilder.display(manifest.roles ?? []);
 };

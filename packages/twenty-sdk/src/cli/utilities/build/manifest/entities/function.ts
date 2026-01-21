@@ -1,44 +1,44 @@
-import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
 import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type ServerlessFunctionManifest } from 'twenty-shared/application';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
+  type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from './entity.interface';
 
 export class FunctionEntityBuilder
-  implements ManifestEntityBuilder<ServerlessFunctionManifest[]>
+  implements ManifestEntityBuilder<ServerlessFunctionManifest>
 {
-  async build(appPath: string): Promise<ServerlessFunctionManifest[]> {
+  async build(appPath: string): Promise<EntityBuildResult<ServerlessFunctionManifest>> {
     const functionFiles = await glob(['**/*.function.ts'], {
       cwd: appPath,
-      absolute: true,
       ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
     });
 
-    const functionManifests: ServerlessFunctionManifest[] = [];
+    const manifests: ServerlessFunctionManifest[] = [];
 
-    for (const filepath of functionFiles) {
+    for (const filePath of functionFiles) {
       try {
-        functionManifests.push(
+        const absolutePath = `${appPath}/${filePath}`;
+
+        manifests.push(
           await manifestExtractFromFileServer.extractManifestFromFile<ServerlessFunctionManifest>(
-            filepath,
+            absolutePath,
             { entryProperty: 'handler' },
           ),
         );
       } catch (error) {
-        const relPath = toPosixRelative(filepath, appPath);
         throw new Error(
-          `Failed to load function from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
+          `Failed to load function from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
 
-    return functionManifests;
+    return { manifests, filePaths: functionFiles };
   }
 
   validate(

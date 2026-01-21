@@ -2,12 +2,11 @@ import chalk from 'chalk';
 import chokidar, { type FSWatcher } from 'chokidar';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { type ApplicationManifest } from 'twenty-shared/application';
 import { printWatchingMessage } from '../common/display';
-import { runManifestBuild } from './manifest-build';
+import { runManifestBuild, type ManifestBuildResult } from './manifest-build';
 
 export type ManifestWatcherCallbacks = {
-  onBuildSuccess?: (manifest: ApplicationManifest) => void;
+  onBuildSuccess?: (result: ManifestBuildResult) => void;
 };
 
 export type ManifestWatcherOptions = {
@@ -46,11 +45,11 @@ export class ManifestWatcher {
 
       console.log(chalk.gray(`  File ${event}: ${path.relative(this.appPath, filePath)}`));
 
-      const manifest = await runManifestBuild(this.appPath);
+      const result = await runManifestBuild(this.appPath);
 
-      if (manifest) {
+      if (result) {
         printWatchingMessage();
-        this.callbacks.onBuildSuccess?.(manifest);
+        this.callbacks.onBuildSuccess?.(result);
       }
     });
 
