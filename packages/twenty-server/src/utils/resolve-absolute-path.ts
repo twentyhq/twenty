@@ -25,6 +25,7 @@ export const resolveAbsolutePath = (filePath: string): string => {
   // Use path.relative() instead of startsWith() to prevent prefix matching issues
   // (e.g., /app2 would incorrectly pass for cwd /app)
   const relative = path.relative(cwd, resolved);
+
   if (relative.startsWith('..') || path.isAbsolute(relative)) {
     throw new Error(
       `Path traversal detected: ${filePath} resolves outside working directory`,
