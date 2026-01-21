@@ -230,7 +230,7 @@ export class WorkspaceMigrationRunnerService {
       const invertedActions = actions.reverse();
 
       for (const invertedAction of invertedActions) {
-        await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
+        await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionRollbackHandler(
           {
             action: invertedAction,
             context: {
@@ -239,7 +239,6 @@ export class WorkspaceMigrationRunnerService {
               queryRunner,
               workspaceId,
             },
-            rollback: true,
           },
         );
       }

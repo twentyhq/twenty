@@ -1,15 +1,12 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { BaseWorkspaceMigrationRunnerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import {
   buildActionHandlerKey,
-  type WorkspaceMigrationActionHandlerKey,
   type WorkspaceMigrationAction,
+  type WorkspaceMigrationActionHandlerKey,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
@@ -56,15 +53,7 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
     });
   }
 
-  async executeActionHandler<T extends WorkspaceMigrationAction>({
-    action,
-    context,
-    rollback,
-  }: {
-    action: T;
-    context: WorkspaceMigrationActionRunnerArgs<T>;
-    rollback?: boolean;
-  }): Promise<Partial<AllFlatEntityMaps>> {
+  private getActionHandler<T extends WorkspaceMigrationAction>(action: T) {
     const actionHandlerKey = buildActionHandlerKey(
       action.type,
       action.metadataName,
@@ -78,12 +67,31 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
       );
     }
 
-    if (isDefined(rollback) && rollback) {
-      await handler.rollback(context);
+    return handler;
+  }
 
-      return {};
-    }
+  async executeActionHandler<T extends WorkspaceMigrationAction>({
+    action,
+    context,
+  }: {
+    action: T;
+    context: WorkspaceMigrationActionRunnerArgs<T>;
+  }) {
+    const handler = this.getActionHandler(action);
 
     return await handler.execute(context);
+  }
+
+  async executeActionRollbackHandler<T extends WorkspaceMigrationAction>({
+    action,
+    context,
+  }: {
+    action: T;
+    context: WorkspaceMigrationActionRunnerArgs<T>;
+  }) {
+    const handler = this.getActionHandler(action);
+
+    // TODO: handle rollback error
+    await handler.rollback(context);
   }
 }
