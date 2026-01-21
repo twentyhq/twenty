@@ -30,10 +30,10 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       const existingItems =
         flatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[
           userWorkspaceIdKey
-        ]?.[folderIdKey]?.filter((item) => isDefined(item)) ?? [];
+        ]?.[folderIdKey] ?? [];
 
       const maxPosition = existingItems.reduce(
-        (max, item) => Math.max(max, item?.position ?? 0),
+        (max, item) => Math.max(max, item.position),
         0,
       );
 
