@@ -17,7 +17,7 @@ export const fromCreateCronTriggerInputToFlatCronTrigger = ({
 
   return {
     id,
-    universalIdentifier: createCronTriggerInput.universalIdentifier ?? id,
+    universalIdentifier: createCronTriggerInput.universalIdentifier ?? v4(),
     settings: createCronTriggerInput.settings,
     serverlessFunctionId: createCronTriggerInput.serverlessFunctionId,
     applicationId: workspaceCustomApplicationId,

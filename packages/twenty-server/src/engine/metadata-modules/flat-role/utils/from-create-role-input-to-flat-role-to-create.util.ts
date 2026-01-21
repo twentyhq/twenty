@@ -48,7 +48,7 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     workspaceId,
     createdAt: now,
     updatedAt: now,
-    universalIdentifier: createRoleInput.universalIdentifier ?? id,
+    universalIdentifier: createRoleInput.universalIdentifier ?? v4(),
     applicationId,
     roleTargetIds: [],
     objectPermissionIds: [],
