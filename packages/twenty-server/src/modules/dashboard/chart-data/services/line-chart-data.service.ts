@@ -36,6 +36,7 @@ import { processOneDimensionalResults } from 'src/modules/dashboard/chart-data/u
 import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-two-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
 import { sortSecondaryAxisData } from 'src/modules/dashboard/chart-data/utils/sort-secondary-axis-data.util';
+import { buildLineChartSeriesIdPrefix } from 'src/modules/dashboard/chart-data/utils/build-line-chart-series-id-prefix.util';
 
 type GetLineChartDataParams = {
   workspaceId: string;
@@ -164,6 +165,11 @@ export class LineChartDataService {
         secondaryAxisOrderBy: configuration.secondaryAxisOrderBy,
       });
 
+      const seriesIdPrefix = buildLineChartSeriesIdPrefix(
+        objectMetadataId,
+        configuration,
+      );
+
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
         return this.transformToTwoDimensionalLineChartData({
           rawResults,
@@ -173,6 +179,7 @@ export class LineChartDataService {
           configuration,
           userTimezone,
           firstDayOfTheWeek,
+          seriesIdPrefix,
         });
       }
 
@@ -183,6 +190,7 @@ export class LineChartDataService {
         configuration,
         userTimezone,
         firstDayOfTheWeek,
+        seriesIdPrefix,
       });
     } catch (error) {
       if (error instanceof ChartDataException) {
@@ -206,6 +214,7 @@ export class LineChartDataService {
     configuration,
     userTimezone,
     firstDayOfTheWeek,
+    seriesIdPrefix,
   }: {
     rawResults: GroupByRawResult[];
     primaryAxisGroupByField: FlatFieldMetadata;
@@ -213,6 +222,7 @@ export class LineChartDataService {
     configuration: LineChartConfigurationDTO;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
+    seriesIdPrefix: string;
   }): LineChartDataOutputDTO {
     const filteredResults = configuration.omitNullValues
       ? rawResults.filter(
@@ -299,7 +309,7 @@ export class LineChartDataService {
 
     const series = [
       {
-        id: aggregateField.name,
+        id: `${seriesIdPrefix}${aggregateField.name}`,
         label: aggregateField.label,
         data: dataPoints,
       },
@@ -329,6 +339,7 @@ export class LineChartDataService {
     configuration,
     userTimezone,
     firstDayOfTheWeek,
+    seriesIdPrefix,
   }: {
     rawResults: GroupByRawResult[];
     primaryAxisGroupByField: FlatFieldMetadata;
@@ -337,6 +348,7 @@ export class LineChartDataService {
     configuration: LineChartConfigurationDTO;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
+    seriesIdPrefix: string;
   }): LineChartDataOutputDTO {
     const filteredResults = configuration.omitNullValues
       ? rawResults.filter(
@@ -491,6 +503,7 @@ export class LineChartDataService {
 
     const series = limitedSeriesIds.map((seriesId) => {
       const xToYMap = seriesMap.get(seriesId) ?? new Map();
+      const prefixedSeriesId = `${seriesIdPrefix}${seriesId}`;
 
       let dataPoints = filteredXValues.map((xValue) => ({
         x: xValue,
@@ -502,7 +515,7 @@ export class LineChartDataService {
       }
 
       return {
-        id: seriesId,
+        id: prefixedSeriesId,
         label: seriesId,
         data: dataPoints,
       };
@@ -521,6 +534,14 @@ export class LineChartDataService {
       ...formattedToRawLookup,
       ...secondaryFormattedToRawLookup,
     ]);
+
+    for (const seriesId of limitedSeriesIds) {
+      const rawValue = secondaryFormattedToRawLookup.get(seriesId);
+
+      if (isDefined(rawValue)) {
+        mergedLookup.set(`${seriesIdPrefix}${seriesId}`, rawValue);
+      }
+    }
 
     return {
       series,

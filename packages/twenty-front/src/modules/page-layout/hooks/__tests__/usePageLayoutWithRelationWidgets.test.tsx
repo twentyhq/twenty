@@ -5,6 +5,9 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { renderHook } from '@testing-library/react';
 import {
+  AggregateOperations,
+  BarChartLayout,
+  GraphOrderBy,
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
@@ -100,11 +103,11 @@ describe('usePageLayoutWithRelationWidgets', () => {
             configuration: {
               __typename: 'BarChartConfiguration',
               configurationType: WidgetConfigurationType.BAR_CHART,
-              layout: 'VERTICAL',
-              aggregateOperation: 'COUNT',
+              layout: BarChartLayout.VERTICAL,
+              aggregateOperation: AggregateOperations.COUNT,
               aggregateFieldMetadataId: 'id',
               primaryAxisGroupByFieldMetadataId: 'createdAt',
-              primaryAxisOrderBy: 'FIELD_ASC',
+              primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
               displayDataLabel: false,
             },
             createdAt: new Date().toISOString(),
@@ -222,11 +225,11 @@ describe('usePageLayoutWithRelationWidgets', () => {
               configuration: {
                 __typename: 'BarChartConfiguration',
                 configurationType: WidgetConfigurationType.BAR_CHART,
-                layout: 'VERTICAL',
-                aggregateOperation: 'COUNT',
+                layout: BarChartLayout.VERTICAL,
+                aggregateOperation: AggregateOperations.COUNT,
                 aggregateFieldMetadataId: 'id',
                 primaryAxisGroupByFieldMetadataId: 'createdAt',
-                primaryAxisOrderBy: 'FIELD_ASC',
+                primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
                 displayDataLabel: false,
               },
               createdAt: new Date().toISOString(),
