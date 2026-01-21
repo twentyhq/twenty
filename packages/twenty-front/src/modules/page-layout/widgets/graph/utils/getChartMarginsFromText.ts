@@ -2,6 +2,7 @@ import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/Co
 import { TEXT_MARGIN_EXTRAS } from '@/page-layout/widgets/graph/constants/TextMarginExtras';
 import { TEXT_MARGIN_LIMITS } from '@/page-layout/widgets/graph/constants/TextMarginLimits';
 import { measureTextDimensions } from '@/page-layout/widgets/graph/utils/measureText';
+import { isNumber } from '@sniptt/guards';
 
 export type ChartMargins = {
   top: number;
@@ -132,17 +133,16 @@ export const getChartMarginsFromText = ({
   tickRotation: number;
   bottomLegendOffset?: number;
 }): ChartMargins => {
-  const normalizedTickFontSize = tickFontSize;
   const normalizedLegendFontSize = legendFontSize ?? tickFontSize;
 
   const bottomTickDimensions = getMaxLabelDimensions({
     labels: bottomTickLabels,
-    fontSize: normalizedTickFontSize,
+    fontSize: tickFontSize,
     fontFamily,
   });
   const leftTickDimensions = getMaxLabelDimensions({
     labels: leftTickLabels,
-    fontSize: normalizedTickFontSize,
+    fontSize: tickFontSize,
     fontFamily,
   });
 
@@ -180,7 +180,7 @@ export const getChartMarginsFromText = ({
     : 0;
   const bottomFromTicksAndLabel = bottomTicksBlock + bottomLabelBlock;
   const bottomFromLegendOffset =
-    xAxisLabel && typeof bottomLegendOffset === 'number'
+    xAxisLabel && isNumber(bottomLegendOffset)
       ? bottomLegendOffset +
         bottomAxisLabelDimensions.height +
         TEXT_MARGIN_EXTRAS.tickPaddingExtra
@@ -207,7 +207,7 @@ export const getChartMarginsFromText = ({
     TEXT_MARGIN_LIMITS.max.left,
   );
 
-  const topRightBase = Math.ceil(normalizedTickFontSize * 1.5);
+  const topRightBase = Math.ceil(tickFontSize * 1.5);
 
   return {
     top: clamp(
