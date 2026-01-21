@@ -122,18 +122,6 @@ export class FlatNavigationMenuItemValidatorService {
       });
     }
 
-    if (
-      hasViewId &&
-      hasTargetRecordId &&
-      flatNavigationMenuItem.viewId !== flatNavigationMenuItem.targetRecordId
-    ) {
-      validationResult.errors.push({
-        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        message: t`targetRecordId must match viewId when viewId is provided`,
-        userFriendlyMessage: msg`targetRecordId must match viewId when viewId is provided`,
-      });
-    }
-
     const isFolder =
       !hasTargetRecordId && !hasTargetObjectMetadataId && !hasViewId;
 

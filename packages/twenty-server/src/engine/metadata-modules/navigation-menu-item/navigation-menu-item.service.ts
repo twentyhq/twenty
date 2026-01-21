@@ -143,10 +143,6 @@ export class NavigationMenuItemService {
         isDefined(input.userWorkspaceId) && isDefined(authUserWorkspaceId)
           ? authUserWorkspaceId
           : input.userWorkspaceId,
-      targetRecordId:
-        isDefined(input.viewId) && !isDefined(input.targetRecordId)
-          ? input.viewId
-          : input.targetRecordId,
     };
 
     const flatNavigationMenuItemToCreate =
