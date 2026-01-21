@@ -1,3 +1,7 @@
+import { useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -8,11 +12,8 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
-
 import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
+
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
 
 type NavigationMenuItemFolder = {
@@ -36,7 +37,7 @@ export const useNavigationMenuItemsByFolder = () => {
   const navigationMenuItemsByFolder = useMemo(() => {
     const folderItems = navigationMenuItems.filter(
       (item) =>
-        isDefined((item as any).name) &&
+        isDefined(item.name) &&
         !isDefined(item.folderId) &&
         !isDefined(item.targetRecordId) &&
         !isDefined(item.targetObjectMetadataId),
@@ -46,7 +47,7 @@ export const useNavigationMenuItemsByFolder = () => {
 
     folderItems.forEach((folderItem) => {
       const folderId = folderItem.id;
-      const folderName = (folderItem as any).name || 'Folder';
+      const folderName = folderItem.name || 'Folder';
 
       const itemsInFolder = navigationMenuItems.filter(
         (item) => item.folderId === folderId,

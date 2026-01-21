@@ -1,3 +1,10 @@
+import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { IconHeartOff } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+
 import { NavigationMenuItemDroppable } from '@/navigation-menu-item/components/NavigationMenuItemDroppable';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
@@ -9,12 +16,6 @@ import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/uti
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import styled from '@emotion/styled';
-import { useContext } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-import { IconHeartOff } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
 
 const StyledEmptyContainer = styled.div`
   width: 100%;

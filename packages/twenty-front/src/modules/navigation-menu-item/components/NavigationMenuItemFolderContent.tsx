@@ -1,3 +1,8 @@
+import { Droppable } from '@hello-pangea/dnd';
+import { useRecoilValue } from 'recoil';
+import { IconHeartOff } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+
 import { NavigationMenuItemBackButton } from '@/navigation-menu-item/components/NavigationMenuItemBackButton';
 import { NavigationMenuItemDragProvider } from '@/navigation-menu-item/components/NavigationMenuItemDragProvider';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
@@ -7,10 +12,6 @@ import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/s
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { Droppable } from '@hello-pangea/dnd';
-import { useRecoilValue } from 'recoil';
-import { IconHeartOff } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
 
 type NavigationMenuItemFolderContentProps = {
   folderId: string;

@@ -1,7 +1,8 @@
+import { FeatureFlagKey } from '~/generated/graphql';
+
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { WorkspaceNavigationMenuItems } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItems';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const WorkspaceNavigationMenuItemsDispatcher = () => {
   const isNavigationMenuItemEnabled = useIsFeatureEnabled(

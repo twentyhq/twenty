@@ -1,3 +1,6 @@
+import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -5,8 +8,6 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
-import { useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { useSortedNavigationMenuItems } from './useSortedNavigationMenuItems';
 

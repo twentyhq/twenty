@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
+import styled from '@emotion/styled';
 
 type NavigationMenuItemDroppableProps = {
   droppableId: string;

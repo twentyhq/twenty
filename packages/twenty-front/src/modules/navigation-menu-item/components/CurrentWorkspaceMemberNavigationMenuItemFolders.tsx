@@ -1,3 +1,9 @@
+import { useLingui } from '@lingui/react/macro';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { IconFolderPlus } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { CurrentWorkspaceMemberOrphanNavigationMenuItems } from '@/navigation-menu-item/components/CurrentWorkspaceMemberOrphanNavigationMenuItems';
@@ -11,11 +17,6 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import { useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
-import { IconFolderPlus } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
 
 export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);

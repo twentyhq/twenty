@@ -1,10 +1,11 @@
+import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
+
 import { FavoritesFolderContent } from '@/favorites/components/FavoritesFolderContent';
 import { type ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { NavigationMenuItemFolderContent } from '@/navigation-menu-item/components/NavigationMenuItemFolderContent';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 type NavigationMenuItemFolderContentDispatcherEffectProps = {
   folderName: string;

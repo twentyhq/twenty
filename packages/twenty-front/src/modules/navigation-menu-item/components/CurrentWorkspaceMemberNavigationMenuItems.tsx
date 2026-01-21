@@ -1,3 +1,14 @@
+import { Droppable } from '@hello-pangea/dnd';
+import { useLingui } from '@lingui/react/macro';
+import { useContext, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useLocation } from 'react-router-dom';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { IconFolder, IconFolderOpen, IconHeartOff } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { useIsMobile } from 'twenty-ui/utilities';
+
 import { NavigationMenuItemDroppable } from '@/navigation-menu-item/components/NavigationMenuItemDroppable';
 import { NavigationMenuItemFolderNavigationDrawerItemDropdown } from '@/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
@@ -24,16 +35,6 @@ import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/compo
 import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { Droppable } from '@hello-pangea/dnd';
-import { useLingui } from '@lingui/react/macro';
-import { useContext, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { useLocation } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconFolder, IconFolderOpen, IconHeartOff } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { useIsMobile } from 'twenty-ui/utilities';
 
 type CurrentWorkspaceMemberNavigationMenuItemsProps = {
   folder: {
@@ -125,7 +126,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
   };
 
   const handleClickOutside = async (
-    event: MouseEvent | TouchEvent,
+    _event: MouseEvent | TouchEvent,
     value: string,
   ) => {
     if (!value) {

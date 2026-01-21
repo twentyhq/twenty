@@ -1,5 +1,7 @@
-import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
+import { isDefined } from 'twenty-shared/utils';
 import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphql';
+
+import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
 
 export const useCreateNavigationMenuItemFolder = () => {
   const { navigationMenuItems, currentWorkspaceMemberId } =
@@ -19,7 +21,11 @@ export const useCreateNavigationMenuItemFolder = () => {
 
     const folderNavigationMenuItems = navigationMenuItems.filter(
       (item) =>
-        !item.folderId && item.userWorkspaceId === currentWorkspaceMemberId,
+        isDefined(item.name) &&
+        !item.folderId &&
+        !item.targetRecordId &&
+        !item.targetObjectMetadataId &&
+        item.userWorkspaceId === currentWorkspaceMemberId,
     );
 
     const maxPosition = Math.max(

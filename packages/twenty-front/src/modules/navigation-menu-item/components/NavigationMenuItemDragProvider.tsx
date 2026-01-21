@@ -1,5 +1,3 @@
-import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
-import { useHandleNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/hooks/useHandleNavigationMenuItemDragAndDrop';
 import {
   DragDropContext,
   type DragStart,
@@ -7,6 +5,9 @@ import {
   type ResponderProvided,
 } from '@hello-pangea/dnd';
 import { type ReactNode, useState } from 'react';
+
+import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
+import { useHandleNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/hooks/useHandleNavigationMenuItemDragAndDrop';
 
 type NavigationMenuItemDragProviderProps = {
   children: ReactNode;

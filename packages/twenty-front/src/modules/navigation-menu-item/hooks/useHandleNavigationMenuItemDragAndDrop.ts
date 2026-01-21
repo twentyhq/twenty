@@ -1,3 +1,6 @@
+import { type OnDragEndResponder } from '@hello-pangea/dnd';
+import { useSetRecoilState } from 'recoil';
+
 import { ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSortedNavigationMenuItems';
 import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
@@ -5,8 +8,7 @@ import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/sta
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { FOLDER_DROPPABLE_IDS } from '@/ui/layout/draggable-list/utils/folderDroppableIds';
 import { validateAndExtractFolderId } from '@/ui/layout/draggable-list/utils/validateAndExtractFolderId';
-import { type OnDragEndResponder } from '@hello-pangea/dnd';
-import { useSetRecoilState } from 'recoil';
+
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
 
 export const useHandleNavigationMenuItemDragAndDrop = () => {
