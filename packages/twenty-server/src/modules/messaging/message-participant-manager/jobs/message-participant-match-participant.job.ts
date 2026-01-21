@@ -11,6 +11,7 @@ export type MessageParticipantMatchParticipantJobData = {
   participantMatching: {
     personIds: string[];
     personEmails: string[];
+    personPhoneNumbers: string[];
     workspaceMemberIds: string[];
   };
 };

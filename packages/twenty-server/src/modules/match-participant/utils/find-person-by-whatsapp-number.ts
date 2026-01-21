@@ -18,4 +18,5 @@ export const findPersonByWhatsAppNumber = ({
       person.whatsAppPhoneNumber.primaryPhoneCallingCode ===
         parsedPhoneNumber.countryCallingCode,
   );
+  // TODO: fix (use standard phone number instead of whatsappPhoneNumber
 };

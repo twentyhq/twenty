@@ -133,8 +133,11 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         {
           workspaceId,
           connectedAccount,
-          contactsToCreate, // this is a comment
-          source: FieldActorSource.EMAIL, // TODO: change to what? SMS? WhatsApp?
+          contactsToCreate,
+          source:
+            messageChannel.customData?.whatsappBusinessName !== undefined
+              ? FieldActorSource.WHATSAPP
+              : FieldActorSource.EMAIL,
         },
       );
     }

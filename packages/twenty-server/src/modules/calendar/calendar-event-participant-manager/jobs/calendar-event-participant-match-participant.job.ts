@@ -15,6 +15,7 @@ export type CalendarEventParticipantMatchParticipantJobData = {
   participantMatching: {
     personIds: string[];
     personEmails: string[];
+    personPhoneNumbers: string[];
     workspaceMemberIds: string[];
   };
 };

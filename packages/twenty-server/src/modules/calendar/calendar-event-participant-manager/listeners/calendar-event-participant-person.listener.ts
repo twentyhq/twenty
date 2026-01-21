@@ -57,6 +57,7 @@ export class CalendarEventParticipantPersonListener {
         participantMatching: {
           personIds,
           personEmails,
+          personPhoneNumbers: [],
           workspaceMemberIds: [],
         },
       },
@@ -94,6 +95,7 @@ export class CalendarEventParticipantPersonListener {
         participantMatching: {
           personIds,
           personEmails,
+          personPhoneNumbers: [],
           workspaceMemberIds: [],
         },
       },
@@ -127,6 +129,7 @@ export class CalendarEventParticipantPersonListener {
         participantMatching: {
           personIds: [],
           personEmails,
+          personPhoneNumbers: [],
           workspaceMemberIds: [],
         },
       },

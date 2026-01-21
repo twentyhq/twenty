@@ -38,10 +38,22 @@ export class MessageParticipantPersonListener {
         isDefined(eventPayload.properties.after.emails?.primaryEmail) ||
         isDefined(eventPayload.properties.after.emails?.additionalEmails),
     );
-
-    const personIds = personWithEmails.map(
-      (eventPayload) => eventPayload.recordId,
+    const personWithPhoneNumbers = payload.events.filter(
+      (eventPayload) =>
+        isDefined(
+          eventPayload.properties.after.whatsAppPhoneNumber
+            .primaryPhoneCallingCode,
+        ) &&
+        isDefined(
+          eventPayload.properties.after.whatsAppPhoneNumber.primaryPhoneNumber,
+        ),
     );
+
+    const personIds = personWithEmails
+      .map((eventPayload) => eventPayload.recordId)
+      .concat(
+        personWithPhoneNumbers.map((eventPayload) => eventPayload.recordId),
+      );
     const personEmails = personWithEmails
       .flatMap((eventPayload) => [
         eventPayload.properties.after.emails.primaryEmail,
@@ -49,6 +61,13 @@ export class MessageParticipantPersonListener {
           []) as string[]),
       ])
       .filter(isDefined);
+    const personPhoneNumbers = personWithPhoneNumbers.flatMap(
+      (eventPayload) => [
+        eventPayload.properties.after.whatsAppPhoneNumber.primaryPhoneCallingCode.concat(
+          eventPayload.properties.after.whatsAppPhoneNumber.primaryPhoneNumber,
+        ),
+      ],
+    );
 
     await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
       MessageParticipantMatchParticipantJob.name,
@@ -57,6 +76,7 @@ export class MessageParticipantPersonListener {
         participantMatching: {
           personIds,
           personEmails,
+          personPhoneNumbers,
           workspaceMemberIds: [],
         },
       },
@@ -76,9 +96,18 @@ export class MessageParticipantPersonListener {
       ).includes('emails'),
     );
 
-    const personIds = personWithEmails.map(
-      (eventPayload) => eventPayload.recordId,
+    const personWithPhoneNumbers = payload.events.filter((eventPayload) =>
+      objectRecordUpdateEventChangedProperties(
+        eventPayload.properties.before,
+        eventPayload.properties.after,
+      ).includes('phones'),
     );
+
+    const personIds = personWithEmails
+      .map((eventPayload) => eventPayload.recordId)
+      .concat(
+        personWithPhoneNumbers.map((eventPayload) => eventPayload.recordId),
+      );
     const personEmails = personWithEmails
       .flatMap((eventPayload) => [
         eventPayload.properties.after.emails.primaryEmail,
@@ -86,6 +115,13 @@ export class MessageParticipantPersonListener {
           []) as string[]),
       ])
       .filter(isDefined);
+    const personPhoneNumbers = personWithPhoneNumbers.flatMap(
+      (eventPayload) => [
+        eventPayload.properties.after.whatsAppPhoneNumber.primaryPhoneCallingCode.concat(
+          eventPayload.properties.after.whatsAppPhoneNumber.primaryPhoneNumber,
+        ),
+      ],
+    );
 
     await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
       MessageParticipantMatchParticipantJob.name,
@@ -94,6 +130,7 @@ export class MessageParticipantPersonListener {
         participantMatching: {
           personIds,
           personEmails,
+          personPhoneNumbers,
           workspaceMemberIds: [],
         },
       },
@@ -112,19 +149,40 @@ export class MessageParticipantPersonListener {
         isDefined(eventPayload.properties.before.emails?.additionalEmails),
     );
 
+    const personWithPhoneNumbers = payload.events.filter(
+      (eventPayload) =>
+        isDefined(
+          eventPayload.properties.before.whatsAppPhoneNumber
+            .primaryPhoneCallingCode,
+        ) &&
+        isDefined(
+          eventPayload.properties.before.whatsAppPhoneNumber.primaryPhoneNumber,
+        ),
+    );
+
+    const personEmails = personWithEmails
+      .flatMap((eventPayload) => [
+        eventPayload.properties.before.emails.primaryEmail,
+        ...((eventPayload.properties.before.emails?.additionalEmails ??
+          []) as string[]),
+      ])
+      .filter(isDefined);
+    const personPhoneNumbers = personWithPhoneNumbers.flatMap(
+      (eventPayload) => [
+        eventPayload.properties.before.whatsAppPhoneNumber.primaryPhoneCallingCode.concat(
+          eventPayload.properties.before.whatsAppPhoneNumber.primaryPhoneNumber,
+        ),
+      ],
+    );
+
     await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
       MessageParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
           personIds: [],
-          personEmails: personWithEmails
-            .flatMap((eventPayload) => [
-              eventPayload.properties.before.emails.primaryEmail,
-              ...((eventPayload.properties.before.emails?.additionalEmails ??
-                []) as string[]),
-            ])
-            .filter(isDefined),
+          personEmails,
+          personPhoneNumbers,
           workspaceMemberIds: [],
         },
       },

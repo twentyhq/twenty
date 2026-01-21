@@ -16,6 +16,7 @@ export enum FieldActorSource {
   SYSTEM = 'SYSTEM',
   WEBHOOK = 'WEBHOOK',
   APPLICATION = 'APPLICATION',
+  WHATSAPP = 'WHATSAPP',
 }
 
 export const actorCompositeType: CompositeType = {

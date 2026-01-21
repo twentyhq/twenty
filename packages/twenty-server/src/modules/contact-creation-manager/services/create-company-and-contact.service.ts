@@ -24,7 +24,7 @@ import { filterOutContactsThatBelongToSelfOrWorkspaceMembers } from 'src/modules
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/contact-creation-manager/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
-import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
+import { addPersonEmailAndPhoneNumberFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-and-phone-number-filters-to-query-builder';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
@@ -87,16 +87,10 @@ export class CreateCompanyAndPersonService {
           return [];
         }
 
-        const queryBuilder =
-          connectedAccount.provider !== ConnectedAccountProvider.WHATSAPP
-            ? addPersonEmailFiltersToQueryBuilder({
-                queryBuilder: personRepository.createQueryBuilder('person'),
-                emails: uniqueHandles,
-              })
-            : addPersonWhatsappNumberFilterToQueryBuilder({
-                queryBuilder: personRepository.createQueryBuilder('person'),
-                phoneNumbers: uniqueHandles,
-              });
+        const queryBuilder = addPersonEmailAndPhoneNumberFiltersToQueryBuilder({
+          queryBuilder: personRepository.createQueryBuilder('person'),
+          emailsOrPhoneNumbers: uniqueHandles,
+        });
 
         const alreadyCreatedPeople = await queryBuilder
           .orderBy('person.createdAt', 'ASC')

@@ -9,11 +9,12 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
+import { addPersonEmailAndPhoneNumberFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-and-phone-number-filters-to-query-builder';
 import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { findPersonByWhatsAppNumber } from 'src/modules/match-participant/utils/find-person-by-whatsapp-number';
 
 type ObjectMetadataName = 'messageParticipant' | 'calendarEventParticipant';
 
@@ -29,6 +30,7 @@ type MatchParticipantsForPeopleArgs = {
   participantMatching: {
     personIds: string[];
     personEmails: string[];
+    personPhoneNumbers: string[];
   };
   objectMetadataName: ObjectMetadataName;
   workspaceId: string;
@@ -118,10 +120,10 @@ export class MatchParticipantService<
         ...new Set(participants.map((participant) => participant.handle)),
       ].filter(isDefined);
 
-      const queryBuilder = addPersonEmailFiltersToQueryBuilder({
+      const queryBuilder = addPersonEmailAndPhoneNumberFiltersToQueryBuilder({
         queryBuilder: personRepository.createQueryBuilder('person'),
-        emails: uniqueParticipantsHandles,
-      }); // TODO: plug the other query builder
+        emailsOrPhoneNumbers: uniqueParticipantsHandles,
+      });
 
       const people = await queryBuilder
         .orderBy('person.createdAt', 'ASC')
@@ -142,10 +144,15 @@ export class MatchParticipantService<
           handle: participant.handle ?? '',
         }))
         .map((participant) => {
-          const person = findPersonByPrimaryOrAdditionalEmail({
-            people,
-            email: participant.handle,
-          });
+          const person =
+            findPersonByPrimaryOrAdditionalEmail({
+              people,
+              email: participant.handle,
+            }) ||
+            findPersonByWhatsAppNumber({
+              people,
+              phoneNumber: participant.handle,
+            });
 
           const workspaceMember = workspaceMembers.find(
             (workspaceMember) =>
@@ -258,6 +265,8 @@ export class MatchParticipantService<
         );
 
         let participantsMatchingPersonEmails: ParticipantWorkspaceEntity[] = [];
+        let participantsMatchingPersonPhoneNumbers: ParticipantWorkspaceEntity[] =
+          [];
         let participantsMatchingPersonId: ParticipantWorkspaceEntity[] = [];
 
         if (participantMatching.personIds.length > 0) {
@@ -276,10 +285,20 @@ export class MatchParticipantService<
           })) as ParticipantWorkspaceEntity[];
         }
 
+        if (participantMatching.personPhoneNumbers.length > 0) {
+          participantsMatchingPersonPhoneNumbers =
+            (await participantRepository.find({
+              where: {
+                handle: In(participantMatching.personPhoneNumbers),
+              },
+            })) as ParticipantWorkspaceEntity[];
+        }
+
         const uniqueParticipants = [
           ...new Set([
             ...participantsMatchingPersonId,
             ...participantsMatchingPersonEmails,
+            ...participantsMatchingPersonPhoneNumbers,
           ]),
         ];
 

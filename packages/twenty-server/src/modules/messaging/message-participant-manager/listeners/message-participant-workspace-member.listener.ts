@@ -60,6 +60,7 @@ export class MessageParticipantWorkspaceMemberListener {
           participantMatching: {
             personIds: [],
             personEmails: [],
+            personPhoneNumbers: [],
             workspaceMemberIds: [eventPayload.recordId],
           },
         },
@@ -87,6 +88,7 @@ export class MessageParticipantWorkspaceMemberListener {
             participantMatching: {
               personIds: [],
               personEmails: [],
+              personPhoneNumbers: [],
               workspaceMemberIds: [eventPayload.recordId],
             },
           },
