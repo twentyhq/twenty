@@ -2,7 +2,7 @@ import { lastFieldMetadataItemUpdateState } from '@/object-metadata/states/lastF
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizationBecauseDataChanged';
-import { lastProcessedFieldMetadataUpdateComponentState } from '@/object-record/record-table/virtualization/states/lastProcessedFieldMetadataUpdateComponentState';
+import { lastProcessedFieldMetadataUpdateIdComponentState } from '@/object-record/record-table/virtualization/states/lastProcessedFieldMetadataUpdateIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useEffect } from 'react';
@@ -23,9 +23,9 @@ export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
   );
 
   const [
-    lastProcessedFieldMetadataUpdate,
-    setLastProcessedFieldMetadataUpdate,
-  ] = useRecoilComponentState(lastProcessedFieldMetadataUpdateComponentState);
+    lastProcessedFieldMetadataUpdateId,
+    setLastProcessedFieldMetadataUpdateId,
+  ] = useRecoilComponentState(lastProcessedFieldMetadataUpdateIdComponentState);
 
   useEffect(() => {
     if (!lastFieldMetadataItemUpdate) {
@@ -33,7 +33,7 @@ export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
     }
 
     if (
-      lastFieldMetadataItemUpdate.eventId === lastProcessedFieldMetadataUpdate
+      lastFieldMetadataItemUpdate.eventId === lastProcessedFieldMetadataUpdateId
     ) {
       return;
     }
@@ -45,13 +45,15 @@ export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
     );
 
     if (isFieldInCurrentView) {
-      setLastProcessedFieldMetadataUpdate(lastFieldMetadataItemUpdate.eventId);
+      setLastProcessedFieldMetadataUpdateId(
+        lastFieldMetadataItemUpdate.eventId,
+      );
       resetVirtualizationBecauseDataChanged();
     }
   }, [
     lastFieldMetadataItemUpdate,
-    lastProcessedFieldMetadataUpdate,
-    setLastProcessedFieldMetadataUpdate,
+    lastProcessedFieldMetadataUpdateId,
+    setLastProcessedFieldMetadataUpdateId,
     visibleRecordFields,
     resetVirtualizationBecauseDataChanged,
   ]);
