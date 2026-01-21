@@ -2,6 +2,10 @@ import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/Co
 import { measureTextDimensions } from '@/page-layout/widgets/graph/utils/measureTextDimensions';
 
 describe('measureTextDimensions', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('returns zero dimensions for undefined text', () => {
     const result = measureTextDimensions({
       text: undefined as unknown as string,
@@ -37,8 +41,7 @@ describe('measureTextDimensions', () => {
   });
 
   it('uses fallback calculation when canvas context unavailable', () => {
-    const originalGetContext = HTMLCanvasElement.prototype.getContext;
-    HTMLCanvasElement.prototype.getContext = jest.fn().mockReturnValue(null);
+    jest.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
 
     const text = 'FallbackTest';
     const fontSize = 10;
@@ -51,16 +54,29 @@ describe('measureTextDimensions', () => {
       COMMON_CHART_CONSTANTS.HORIZONTAL_LABEL_CHARACTER_WIDTH_RATIO;
 
     expect(result.width).toBeCloseTo(expectedFallbackWidth, 0);
-
-    HTMLCanvasElement.prototype.getContext = originalGetContext;
   });
 
   it('returns cached result for identical inputs', () => {
+    const measureText = jest.fn().mockReturnValue({
+      width: 42,
+      actualBoundingBoxAscent: 10,
+      actualBoundingBoxDescent: 2,
+    });
+    const context = {
+      measureText,
+      font: '',
+    } as unknown as CanvasRenderingContext2D;
+
+    jest
+      .spyOn(HTMLCanvasElement.prototype, 'getContext')
+      .mockReturnValue(context);
+
     const params = { text: 'CacheTest', fontSize: 16 };
 
     const first = measureTextDimensions(params);
     const second = measureTextDimensions(params);
 
-    expect(first).toBe(second);
+    expect(measureText).toHaveBeenCalledTimes(1);
+    expect(second).toEqual(first);
   });
 });
