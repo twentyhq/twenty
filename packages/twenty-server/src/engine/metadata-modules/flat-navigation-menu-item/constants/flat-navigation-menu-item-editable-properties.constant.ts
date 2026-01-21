@@ -4,4 +4,5 @@ export const FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES = [
   'position',
   'folderId',
   'name',
+  'viewId',
 ] as const satisfies (keyof FlatNavigationMenuItem)[];
