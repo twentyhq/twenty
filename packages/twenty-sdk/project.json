@@ -86,6 +86,27 @@
         }
       }
     },
+    "test:unit": {
+      "executor": "@nx/vitest:test",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "config": "{projectRoot}/vitest.unit.config.ts"
+      },
+      "configurations": {
+        "ci": {
+          "coverage": true,
+          "watch": false
+        }
+      }
+    },
+    "test:integration": {
+      "executor": "@nx/vitest:test",
+      "options": {
+        "config": "{projectRoot}/vitest.integration.config.ts"
+      }
+    },
     "test:e2e": {
       "executor": "nx:run-commands",
       "options": {
