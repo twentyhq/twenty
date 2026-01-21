@@ -12,7 +12,7 @@ import {
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'navigationMenuItem', schema: 'core' })
 @Index('IDX_NAVIGATION_MENU_ITEM_USER_WORKSPACE_ID_WORKSPACE_ID', [
@@ -33,7 +33,7 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   'workspaceId',
 ])
 export class NavigationMenuItemEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<NavigationMenuItemEntity>
 {
   @PrimaryGeneratedColumn('uuid')
