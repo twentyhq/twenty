@@ -29,7 +29,9 @@ export const useHandleNavigationMenuItemDragAndDrop = () => {
     });
   };
 
-  const handleNavigationMenuItemDragAndDrop: OnDragEndResponder = (result) => {
+  const handleNavigationMenuItemDragAndDrop: OnDragEndResponder = async (
+    result,
+  ) => {
     const { destination, source, draggableId } = result;
 
     if (!destination) {
@@ -73,7 +75,7 @@ export const useHandleNavigationMenuItemDragAndDrop = () => {
           : folderNavigationMenuItems[folderNavigationMenuItems.length - 1]
               .position + 1;
 
-      updateNavigationMenuItem({
+      await updateNavigationMenuItem({
         id: draggableId,
         folderId: destinationFolderId,
         position: newPosition,
@@ -106,7 +108,7 @@ export const useHandleNavigationMenuItemDragAndDrop = () => {
         });
       }
 
-      updateNavigationMenuItem({
+      await updateNavigationMenuItem({
         id: draggableId,
         folderId: destinationFolderId ?? null,
         position: newPosition,
@@ -124,7 +126,7 @@ export const useHandleNavigationMenuItemDragAndDrop = () => {
       items: navigationMenuItemsInSameList,
     });
 
-    updateNavigationMenuItem({
+    await updateNavigationMenuItem({
       id: draggableId,
       position: newPosition,
     });
