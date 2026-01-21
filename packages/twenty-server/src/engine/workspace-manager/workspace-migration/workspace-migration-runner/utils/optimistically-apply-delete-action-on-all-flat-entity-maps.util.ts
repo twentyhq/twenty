@@ -8,7 +8,6 @@ import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThro
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { deleteFlatNavigationMenuItemFromMapsAndIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/delete-flat-navigation-menu-item-from-maps-and-index.util';
-import { type DeleteNavigationMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
 
 type DeleteAction<TMetadataName extends AllMetadataName> =
   AllFlatEntityTypesByMetadataName[TMetadataName]['actions']['delete'];
