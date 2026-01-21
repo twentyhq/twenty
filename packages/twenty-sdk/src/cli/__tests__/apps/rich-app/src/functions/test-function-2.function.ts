@@ -10,7 +10,7 @@ export const config = defineFunction({
     {
       universalIdentifier: '9fd0dda9-4664-4fbc-9656-509f4477b9ff',
       type: 'cron',
-      pattern: '0 0 1 1 *', // Every year 1st of January
+      pattern: '0 0 1 1 *',
     },
   ],
 });

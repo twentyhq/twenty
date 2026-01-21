@@ -10,7 +10,6 @@ describe('invalid-app manifest', () => {
       writeOutput: false,
     });
 
-    // Manifest should be null because validation fails
     expect(manifest).toBeNull();
   });
 });

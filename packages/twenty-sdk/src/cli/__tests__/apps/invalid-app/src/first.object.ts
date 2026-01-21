@@ -1,7 +1,6 @@
 import { defineObject } from '@/application/objects/define-object';
 import { FieldType } from '@/application/fields/field-type';
 
-// This object has the SAME universalIdentifier as second.object.ts
 const DUPLICATE_ID = 'duplicate-id-0000-0000-000000000001';
 
 export default defineObject({

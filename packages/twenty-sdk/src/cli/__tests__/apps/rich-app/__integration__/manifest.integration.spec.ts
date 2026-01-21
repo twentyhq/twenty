@@ -12,14 +12,11 @@ describe('rich-app manifest', () => {
 
     expect(manifest).not.toBeNull();
 
-    // Remove dynamic parts that change between runs
     const sanitizedManifest = {
       ...manifest,
-      // Keep packageJson but remove version if it changes
       packageJson: {
         name: manifest!.packageJson.name,
       },
-      // Remove sources as they contain full file contents
       sources: undefined,
     };
 
@@ -42,19 +39,10 @@ describe('rich-app manifest', () => {
       writeOutput: false,
     });
 
-    // Objects: root.object.ts + objects/postCard.object.ts
     expect(manifest?.objects).toHaveLength(2);
-
-    // Functions: root.function.ts + functions/*.function.ts (3)
     expect(manifest?.serverlessFunctions).toHaveLength(4);
-
-    // Front components: root.front-component.tsx + components/*.front-component.tsx (3)
     expect(manifest?.frontComponents).toHaveLength(4);
-
-    // Roles: root.role.ts + roles/default-function.role.ts
     expect(manifest?.roles).toHaveLength(2);
-
-    // Object extensions: objects/postCard.object-extension.ts
     expect(manifest?.objectExtensions).toHaveLength(1);
   });
 });
