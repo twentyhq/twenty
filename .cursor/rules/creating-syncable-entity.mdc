@@ -53,7 +53,7 @@ Input DTO → Transform Utils → Flat Entity → Builder/Validator → Runner �
                               Cache Service
 ```
 
-- **TypeORM Entity**: Database model extending `SyncableEntityRequired` (new) or `SyncableEntity` (legacy)
+- **TypeORM Entity**: Database model extending `SyncableEntity`
 - **Flat Entity**: Denormalized type derived from the entity (no relations, dates as strings)
 - **Transform Utils**: Convert input DTOs to flat entities (sanitization, defaults, ID generation) - **all transformations happen here**
 - **Cache Service**: Computes and caches flat entity maps per workspace
@@ -155,11 +155,7 @@ export const ALL_METADATA_NAME = {
 
 **File:** `src/engine/metadata-modules/my-entity/entities/my-entity.entity.ts`
 
-Your entity **must extend `SyncableEntityRequired`** (for new entities) or `SyncableEntity` (for migrated entities) to participate in the workspace migration system.
-
-#### For New Entities (Recommended): Use `SyncableEntityRequired`
-
-For brand new entities with no legacy data to migrate, use `SyncableEntityRequired` which enforces that `universalIdentifier` and `applicationId` are always set:
+Your entity **must extend `SyncableEntity`** to participate in the workspace migration system.
 
 ```typescript
 import {
@@ -170,11 +166,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('myEntity')
 export class MyEntityEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<MyEntityEntity>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -206,51 +202,20 @@ export class MyEntityEntity
 }
 ```
 
-#### For Migrated Entities: Use `SyncableEntity`
-
-Only use `SyncableEntity` when you need to support legacy data where `universalIdentifier` might not be set yet:
+**What the base class provides:**
 
 ```typescript
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-
-@Entity('myEntity')
-export class MyEntityEntity
-  extends SyncableEntity
-  implements Required<MyEntityEntity>
-{
-  // ...
-}
-```
-
-**What the base classes provide:**
-
-```typescript
-// SyncableEntityRequired - For new entities (recommended)
-// File: src/engine/workspace-manager/types/syncable-entity-required.interface.ts
-@Index(['workspaceId', 'universalIdentifier'], { unique: true })
-export abstract class SyncableEntityRequired extends WorkspaceRelatedEntity {
-  @Column({ nullable: false, type: 'uuid' })  // NOT nullable
-  universalIdentifier: string;
-
-  @Column({ nullable: false, type: 'uuid' })  // NOT nullable
-  applicationId: string;
-
-  @ManyToOne('ApplicationEntity', { onDelete: 'CASCADE', nullable: false })
-  @JoinColumn({ name: 'applicationId' })
-  application: Relation<ApplicationEntity>;
-}
-
-// SyncableEntity - For entities with legacy data migration needs
+// SyncableEntity - Base class for all syncable entities
 // File: src/engine/workspace-manager/types/syncable-entity.interface.ts
 @Index(['workspaceId', 'universalIdentifier'], { unique: true })
 export abstract class SyncableEntity extends WorkspaceRelatedEntity {
-  @Column({ nullable: true, type: 'uuid' })  // nullable for migration
+  @Column({ nullable: false, type: 'uuid' })
   universalIdentifier: string;
 
-  @Column({ nullable: true, type: 'uuid' })  // nullable for migration
-  applicationId: string | null;
+  @Column({ nullable: false, type: 'uuid' })
+  applicationId: string;
 
-  @ManyToOne('ApplicationEntity', { onDelete: 'CASCADE', nullable: true })
+  @ManyToOne('ApplicationEntity', { onDelete: 'CASCADE', nullable: false })
   @JoinColumn({ name: 'applicationId' })
   application: Relation<ApplicationEntity>;
 }
@@ -263,12 +228,12 @@ export abstract class WorkspaceRelatedEntity {
 }
 ```
 
-**Key differences:**
-| Property | `SyncableEntityRequired` | `SyncableEntity` |
-|----------|-------------------------|------------------|
-| `universalIdentifier` | Required (`string`) | Nullable (`string`) |
-| `applicationId` | Required (`string`) | Nullable (`string \| null`) |
-| Use case | New entities | Legacy migration |
+**Properties provided by `SyncableEntity`:**
+| Property | Type | Description |
+|----------|------|-------------|
+| `universalIdentifier` | `string` (required) | Unique identifier for syncing across workspaces/applications |
+| `applicationId` | `string` (required) | Links the entity to an application (Twenty Standard or Custom) |
+| `workspaceId` | `string` (required) | Links the entity to a workspace (from `WorkspaceRelatedEntity`) |
 
 ---
 
@@ -287,7 +252,7 @@ The `FlatEntityFrom<T>` utility type automatically:
 - Removes relation properties (ManyToOne, OneToMany)
 - Converts Date properties to string (ISO format)
 - Adds `{relationName}Ids` arrays for OneToMany relations
-- Preserves nullability from the base class (`SyncableEntityRequired` → non-nullable `universalIdentifier`/`applicationId`)
+- Preserves non-nullable `universalIdentifier` and `applicationId` from `SyncableEntity`
 
 **File:** `src/engine/metadata-modules/flat-my-entity/types/flat-my-entity-maps.type.ts`
 
@@ -1173,7 +1138,7 @@ Tests should cover:
 Before considering your syncable entity complete, verify:
 
 ### Syncable Entity Requirements
-- [ ] TypeORM entity **extends `SyncableEntityRequired`** (new entities) or `SyncableEntity` (legacy migration)
+- [ ] TypeORM entity **extends `SyncableEntity`**
 - [ ] Entity has `standardId` column (nullable, for standard entities)
 - [ ] Entity has `isCustom` boolean column
 - [ ] Entity-to-flat transform sets `universalIdentifier` correctly (`standardId || id`)
