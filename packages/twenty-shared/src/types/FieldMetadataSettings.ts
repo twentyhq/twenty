@@ -41,6 +41,9 @@ export type FieldMetadataRelationSettings = {
   relationType: RelationType;
   onDelete?: RelationOnDeleteAction;
   joinColumnName?: string | null;
+  // Points to the target field on the junction object
+  // For MORPH_RELATION fields, morphRelations already contains all targets
+  junctionTargetFieldId?: string;
 };
 export type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];
