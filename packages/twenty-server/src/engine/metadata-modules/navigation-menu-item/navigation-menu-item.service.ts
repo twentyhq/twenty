@@ -260,6 +260,22 @@ export class NavigationMenuItemService {
       );
     }
 
+    const isFolder =
+      isDefined(existingNavigationMenuItem) &&
+      !isDefined(existingNavigationMenuItem.targetRecordId) &&
+      !isDefined(existingNavigationMenuItem.targetObjectMetadataId);
+
+    if (
+      isFolder &&
+      input.name !== undefined &&
+      (!isDefined(input.name) || input.name.trim() === '')
+    ) {
+      throw new NavigationMenuItemException(
+        'Folder name is required and cannot be empty',
+        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+      );
+    }
+
     const flatNavigationMenuItemToUpdate =
       fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOrThrow({
         flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
