@@ -89,34 +89,8 @@ export class AppDevCommand {
   }
 
   private setupGracefulShutdown(): void {
-    let isShuttingDown = false;
-
-    const shutdown = async () => {
-      if (isShuttingDown) {
-        console.log(chalk.red('\n⚡ Force stopping...'));
-        process.exit(1);
-      }
-
-      isShuttingDown = true;
-      console.log(chalk.yellow('\n🛑 Stopping development mode...'));
-
-      // Force exit after 2 seconds if graceful shutdown hangs
-      const forceExitTimeout = setTimeout(() => {
-        console.log(chalk.red('  ⚡ Force exit (timeout)'));
-        process.exit(1);
-      }, 2000);
-
-      try {
-        await Promise.all([
-          this.manifestWatcher?.close(),
-          this.functionsWatcher?.close(),
-          this.frontComponentsWatcher?.close(),
-        ]);
-      } catch {
-        // Ignore errors during shutdown
-      }
-
-      clearTimeout(forceExitTimeout);
+    const shutdown = () => {
+      console.log(chalk.yellow('\n🛑 Stopping...'));
       process.exit(0);
     };
 
