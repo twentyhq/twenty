@@ -43,12 +43,14 @@ export const RecordCalendarCardDraggableContainer = ({
     (field) => field.id === recordIndexCalendarFieldMetadataId,
   );
 
-  const isCalendarFieldReadOnly = calendarFieldMetadataItem
-    ? isFieldMetadataReadOnlyByPermissions({
-        objectPermissions,
-        fieldMetadataId: calendarFieldMetadataItem.id,
-      })
-    : false;
+  const isCalendarFieldReadOnly =
+    (calendarFieldMetadataItem?.isUIReadOnly ?? false) ||
+    (calendarFieldMetadataItem
+      ? isFieldMetadataReadOnlyByPermissions({
+          objectPermissions,
+          fieldMetadataId: calendarFieldMetadataItem.id,
+        })
+      : false);
 
   const isDragDisabled = isRecordReadOnly || isCalendarFieldReadOnly;
 
