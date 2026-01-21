@@ -89,19 +89,40 @@ describe('getTickRotationConfig', () => {
 
     it('should handle different font sizes', () => {
       const smallFontResult: TickRotationConfig = getTickRotationConfig({
-        widthPerTick: 50,
+        widthPerTick: 200,
         axisFontSize: 8,
         maxLabelHeight: defaultMaxLabelHeight,
       });
 
       const largeFontResult: TickRotationConfig = getTickRotationConfig({
-        widthPerTick: 50,
+        widthPerTick: 200,
         axisFontSize: 16,
         maxLabelHeight: defaultMaxLabelHeight,
       });
 
       expect(smallFontResult.maxLabelLength).toBeGreaterThan(
         largeFontResult.maxLabelLength,
+      );
+    });
+
+    it('should allow longer labels when maxLabelHeight increases', () => {
+      const baseParams = {
+        widthPerTick: 0,
+        axisFontSize: defaultAxisFontSize,
+      };
+
+      const smallHeightResult: TickRotationConfig = getTickRotationConfig({
+        ...baseParams,
+        maxLabelHeight: 20,
+      });
+
+      const largeHeightResult: TickRotationConfig = getTickRotationConfig({
+        ...baseParams,
+        maxLabelHeight: 120,
+      });
+
+      expect(largeHeightResult.maxLabelLength).toBeGreaterThanOrEqual(
+        smallHeightResult.maxLabelLength,
       );
     });
   });
