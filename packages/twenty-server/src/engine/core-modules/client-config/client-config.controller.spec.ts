@@ -99,6 +99,7 @@ describe('ClientConfigController', () => {
         calendarBookingPageId: undefined,
         isTwoFactorAuthenticationEnabled: false,
         isCloudflareIntegrationEnabled: false,
+        isWhatsappIntegrationEnabled: false,
       };
 
       jest

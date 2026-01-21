@@ -216,7 +216,7 @@ export class WhatsappConvertMessage {
       receivedAt: receivedAt,
       subject: null,
       text: text,
-      attachments: attachments,
+      attachments: [],
       externalId: externalId,
       messageThreadExternalId: message.group_id || message.from, // TODO: find a way to create arbitrary external message thread id
       direction: MessageDirection.INCOMING,

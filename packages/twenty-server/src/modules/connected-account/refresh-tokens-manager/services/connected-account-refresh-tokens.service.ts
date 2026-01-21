@@ -121,6 +121,8 @@ export class ConnectedAccountRefreshTokensService {
       }
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         return true;
+      case ConnectedAccountProvider.WHATSAPP:
+        return true;
       default:
         return assertUnreachable(
           connectedAccount.provider,
@@ -147,6 +149,11 @@ export class ConnectedAccountRefreshTokensService {
         case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
           throw new ConnectedAccountRefreshAccessTokenException(
             `Token refresh is not supported for IMAP provider for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
+            ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED,
+          );
+        case ConnectedAccountProvider.WHATSAPP:
+          throw new ConnectedAccountRefreshAccessTokenException(
+            `Token refresh is not supported for WhatsApp connected account ${connectedAccount.id} in workspace ${workspaceId}`,
             ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED,
           );
         default:

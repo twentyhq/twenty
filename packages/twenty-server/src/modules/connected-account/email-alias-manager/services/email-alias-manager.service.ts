@@ -40,6 +40,10 @@ export class EmailAliasManagerService {
         // IMAP Protocol does not support email aliases
         handleAliases = [];
         break;
+      case ConnectedAccountProvider.WHATSAPP:
+        // WhatsApp gets aliases in different place
+        handleAliases = [];
+        break;
       default:
         assertUnreachable(
           connectedAccount.provider,

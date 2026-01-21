@@ -195,9 +195,6 @@ export class ClientConfig {
   @Field(() => Boolean)
   isImapSmtpCaldavEnabled: boolean;
 
-  @Field(() => Boolean)
-  isWhatsappIntegrationEnabled: boolean;
-
   @Field(() => String, { nullable: true })
   calendarBookingPageId?: string;
 
