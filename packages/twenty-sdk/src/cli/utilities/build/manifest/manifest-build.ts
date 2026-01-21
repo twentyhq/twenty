@@ -18,28 +18,22 @@ import { manifestExtractFromFileServer } from './manifest-extract-from-file-serv
 import { validateManifest } from './manifest-validate';
 import { ManifestValidationError } from './manifest.types';
 
-const validateFolderStructure = async (appPath: string): Promise<void> => {
-  const srcFolder = path.join(appPath, 'src');
-
-  if (!(await fs.pathExists(srcFolder))) {
-    throw new Error(
-      `Missing src/ folder in ${appPath}.\n` + 'Create it with: mkdir -p src',
-    );
-  }
-
-  const configFile = path.join(appPath, 'src', 'application.config.ts');
-  if (!(await fs.pathExists(configFile))) {
-    throw new Error('Missing src/application.config.ts');
-  }
+export type EntityFilePaths = {
+  application: string[];
+  objects: string[];
+  objectExtensions: string[];
+  functions: string[];
+  frontComponents: string[];
+  roles: string[];
 };
 
 const loadSources = async (appPath: string): Promise<Sources> => {
   const sources: Sources = {};
 
-  const tsFiles = await glob(['src/**/*.ts', 'src/**/*.tsx', 'generated/**/*.ts'], {
+  const tsFiles = await glob(['**/*.ts', '**/*.tsx'], {
     cwd: appPath,
     absolute: true,
-    ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+    ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
   });
 
   for (const filepath of tsFiles) {
@@ -87,10 +81,24 @@ export type RunManifestBuildOptions = {
   writeOutput?: boolean;
 };
 
+const EMPTY_FILE_PATHS: EntityFilePaths = {
+  application: [],
+  objects: [],
+  objectExtensions: [],
+  functions: [],
+  frontComponents: [],
+  roles: [],
+};
+
+export type ManifestBuildResult = {
+  manifest: ApplicationManifest | null;
+  filePaths: EntityFilePaths;
+};
+
 export const runManifestBuild = async (
   appPath: string,
   options: RunManifestBuildOptions = {},
-): Promise<ApplicationManifest | null> => {
+): Promise<ManifestBuildResult> => {
   const { display = true, writeOutput = true } = options;
 
   if (display) {
@@ -98,7 +106,6 @@ export const runManifestBuild = async (
   }
 
   try {
-    await validateFolderStructure(appPath);
     manifestExtractFromFileServer.init(appPath);
 
     const packageJson = await parseJsoncFile(
@@ -106,12 +113,12 @@ export const runManifestBuild = async (
     );
 
     const [
-      application,
-      objectManifests,
-      objectExtensionManifests,
-      functionManifests,
-      frontComponentManifests,
-      roleManifests,
+      applicationBuildResult,
+      objectBuildResult,
+      objectExtensionBuildResult,
+      functionBuildResult,
+      frontComponentBuildResult,
+      roleBuildResult,
       sources,
     ] = await Promise.all([
       applicationEntityBuilder.build(appPath),
@@ -122,6 +129,22 @@ export const runManifestBuild = async (
       roleEntityBuilder.build(appPath),
       loadSources(appPath),
     ]);
+
+    const application = applicationBuildResult.manifests[0];
+    const objectManifests = objectBuildResult.manifests;
+    const objectExtensionManifests = objectExtensionBuildResult.manifests;
+    const functionManifests = functionBuildResult.manifests;
+    const frontComponentManifests = frontComponentBuildResult.manifests;
+    const roleManifests = roleBuildResult.manifests;
+
+    const filePaths: EntityFilePaths = {
+      application: applicationBuildResult.filePaths,
+      objects: objectBuildResult.filePaths,
+      objectExtensions: objectExtensionBuildResult.filePaths,
+      functions: functionBuildResult.filePaths,
+      frontComponents: frontComponentBuildResult.filePaths,
+      roles: roleBuildResult.filePaths,
+    };
 
     const manifest: ApplicationManifest = {
       application,
@@ -160,7 +183,7 @@ export const runManifestBuild = async (
       await writeManifestToOutput(appPath, manifest);
     }
 
-    return manifest;
+    return { manifest, filePaths };
   } catch (error) {
     if (display) {
       if (error instanceof ManifestValidationError) {
@@ -172,6 +195,6 @@ export const runManifestBuild = async (
         );
       }
     }
-    return null;
+    return { manifest: null, filePaths: EMPTY_FILE_PATHS };
   }
 };

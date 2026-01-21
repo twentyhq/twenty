@@ -1,17 +1,13 @@
-import { type ApplicationManifest } from 'twenty-shared/application';
-
+import { type ManifestBuildResult } from '../manifest/manifest-build';
 
 export interface RestartableWatcher {
-  restart(manifest: ApplicationManifest): Promise<void>;
+  restart(result: ManifestBuildResult): Promise<void>;
   start(): Promise<void>;
   close(): Promise<void>;
-  shouldRestart(
-    oldManifest: ApplicationManifest | null,
-    newManifest: ApplicationManifest,
-  ): boolean;
+  shouldRestart(result: ManifestBuildResult): boolean;
 }
 
 export type RestartableWatcherOptions = {
   appPath: string;
-  manifest: ApplicationManifest | null;
+  buildResult: ManifestBuildResult | null;
 };

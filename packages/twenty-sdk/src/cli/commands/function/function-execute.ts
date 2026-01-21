@@ -30,7 +30,7 @@ export class FunctionExecuteCommand {
         process.exit(1);
       }
 
-      const manifest = await runManifestBuild(appPath);
+      const { manifest } = await runManifestBuild(appPath);
 
       if (!manifest) {
         console.error(chalk.red('Failed to build manifest.'));

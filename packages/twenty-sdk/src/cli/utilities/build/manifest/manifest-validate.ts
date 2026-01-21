@@ -34,7 +34,10 @@ export const validateManifest = (
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
-  applicationEntityBuilder.validate(manifest.application, errors);
+  applicationEntityBuilder.validate(
+    manifest.application ? [manifest.application] : [],
+    errors,
+  );
   objectEntityBuilder.validate(manifest.objects ?? [], errors);
   objectExtensionEntityBuilder.validate(manifest.objectExtensions ?? [], errors);
   functionEntityBuilder.validate(manifest.serverlessFunctions ?? [], errors);
@@ -51,13 +54,13 @@ export const validateManifest = (
 
   if (!isNonEmptyArray(manifest.objects)) {
     warnings.push({
-      message: 'No objects defined in src/',
+      message: 'No objects defined',
     });
   }
 
   if (!isNonEmptyArray(manifest.serverlessFunctions)) {
     warnings.push({
-      message: 'No functions defined in src/',
+      message: 'No functions defined',
     });
   }
 

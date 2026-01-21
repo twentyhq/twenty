@@ -1,24 +1,43 @@
 import chalk from 'chalk';
+import * as fs from 'fs-extra';
 import path from 'path';
 import { type Application } from 'twenty-shared/application';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
-    type EntityIdWithLocation,
-    type ManifestEntityBuilder,
-    type ManifestWithoutSources,
+  type EntityBuildResult,
+  type EntityIdWithLocation,
+  type ManifestEntityBuilder,
+  type ManifestWithoutSources,
 } from './entity.interface';
+
+const findApplicationConfigPath = async (appPath: string): Promise<string> => {
+  const configFile = path.join(appPath, 'application.config.ts');
+
+  if (await fs.pathExists(configFile)) {
+    return configFile;
+  }
+
+  throw new Error('Missing application.config.ts in your app root');
+};
 
 export class ApplicationEntityBuilder
   implements ManifestEntityBuilder<Application>
 {
-  async build(appPath: string): Promise<Application> {
-    const applicationConfigPath = path.join(appPath, 'src', 'application.config.ts');
+  async build(appPath: string): Promise<EntityBuildResult<Application>> {
+    const applicationConfigPath = await findApplicationConfigPath(appPath);
+    const application =
+      await manifestExtractFromFileServer.extractManifestFromFile<Application>(
+        applicationConfigPath,
+      );
+    const relativePath = path.relative(appPath, applicationConfigPath);
 
-    return manifestExtractFromFileServer.extractManifestFromFile<Application>(applicationConfigPath);
+    return { manifests: [application], filePaths: [relativePath] };
   }
 
-  validate(application: Application, errors: ValidationError[]): void {
+  validate(applications: Application[], errors: ValidationError[]): void {
+    const application = applications[0];
+
     if (!application) {
       errors.push({
         path: 'application',
@@ -35,8 +54,9 @@ export class ApplicationEntityBuilder
     }
   }
 
-  display(application: Application): void {
-    const appName = application.displayName ?? 'Application';
+  display(applications: Application[]): void {
+    const application = applications[0];
+    const appName = application?.displayName ?? 'Application';
     console.log(chalk.green(`  ✓ Loaded "${appName}"`));
   }
 
