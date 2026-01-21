@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { removeFlatNavigationMenuItemFromIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/remove-flat-navigation-menu-item-from-index.util';
@@ -19,10 +21,11 @@ export const replaceFlatNavigationMenuItemInMapsAndUpdateIndex = ({
     toFlatNavigationMenuItem.userWorkspaceId ?? 'null';
   const newFolderIdKey = toFlatNavigationMenuItem.folderId ?? 'null';
 
-  if (
+  const groupChanged =
     oldUserWorkspaceIdKey !== newUserWorkspaceIdKey ||
-    oldFolderIdKey !== newFolderIdKey
-  ) {
+    oldFolderIdKey !== newFolderIdKey;
+
+  if (groupChanged) {
     removeFlatNavigationMenuItemFromIndex({
       flatNavigationMenuItem: fromFlatNavigationMenuItem,
       flatNavigationMenuItemMaps,
@@ -34,10 +37,7 @@ export const replaceFlatNavigationMenuItemInMapsAndUpdateIndex = ({
     flatEntityMapsToMutate: flatNavigationMenuItemMaps,
   });
 
-  if (
-    oldUserWorkspaceIdKey !== newUserWorkspaceIdKey ||
-    oldFolderIdKey !== newFolderIdKey
-  ) {
+  if (groupChanged) {
     if (
       !flatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[
         newUserWorkspaceIdKey
@@ -61,5 +61,31 @@ export const replaceFlatNavigationMenuItemInMapsAndUpdateIndex = ({
     flatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[
       newUserWorkspaceIdKey
     ][newFolderIdKey].push(toFlatNavigationMenuItem);
+  } else {
+    const itemsArray =
+      flatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[
+        newUserWorkspaceIdKey
+      ]?.[newFolderIdKey];
+
+    if (!itemsArray) {
+      return;
+    }
+
+    const index = itemsArray.findIndex(
+      (item) => item.id === toFlatNavigationMenuItem.id,
+    );
+
+    if (index === -1) {
+      return;
+    }
+
+    const updatedItem =
+      flatNavigationMenuItemMaps.byId[toFlatNavigationMenuItem.id];
+
+    if (!isDefined(updatedItem)) {
+      return;
+    }
+
+    itemsArray[index] = updatedItem;
   }
 };
