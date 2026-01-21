@@ -1,7 +1,8 @@
 import { defineFunction } from '@/application/functions/define-function';
+import { formatFarewell } from '../utils/greeting.util';
 
 const handler = () => {
-  return 'test-result';
+  return formatFarewell('test');
 };
 
 export default defineFunction({

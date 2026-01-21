@@ -23,7 +23,7 @@ export const FUNCTION_EXTERNAL_MODULES: (string | RegExp)[] = [
 export class FunctionsWatcher implements RestartableWatcher {
   private appPath: string;
   private functionPaths: string[];
-  private innerWatcher: Rollup.RollupWatcher | null = null;
+  private innerWatchers: Rollup.RollupWatcher[] = [];
   private isRestarting = false;
 
   constructor(options: RestartableWatcherOptions) {
@@ -40,11 +40,11 @@ export class FunctionsWatcher implements RestartableWatcher {
 
   async start(): Promise<void> {
     const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
-    await fs.ensureDir(outputDir);
+    await fs.emptyDir(outputDir);
 
     if (this.functionPaths.length > 0) {
       console.log(chalk.blue('  📦 Building functions...'));
-      this.innerWatcher = await this.createWatcher();
+      this.innerWatchers = await this.createWatchers();
     } else {
       console.log(chalk.gray('  No functions to build'));
       printWatchingMessage();
@@ -52,20 +52,17 @@ export class FunctionsWatcher implements RestartableWatcher {
   }
 
   async close(): Promise<void> {
-    await this.innerWatcher?.close();
+    await Promise.all(this.innerWatchers.map((w) => w.close()));
+    this.innerWatchers = [];
   }
 
   async restart(result: ManifestBuildResult): Promise<void> {
-    if (this.isRestarting) {
-      return;
-    }
+    if (this.isRestarting) return;
 
     this.isRestarting = true;
-
     try {
       console.log(chalk.yellow('🔄 Restarting functions watcher...'));
-      await this.innerWatcher?.close();
-      this.innerWatcher = null;
+      await this.close();
 
       const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
       const newPaths = result.filePaths.functions;
@@ -74,7 +71,7 @@ export class FunctionsWatcher implements RestartableWatcher {
 
       if (this.functionPaths.length > 0) {
         console.log(chalk.blue('  📦 Building functions...'));
-        this.innerWatcher = await this.createWatcher();
+        this.innerWatchers = await this.createWatchers();
       } else {
         console.log(chalk.gray('  No functions to build'));
         printWatchingMessage();
@@ -86,37 +83,46 @@ export class FunctionsWatcher implements RestartableWatcher {
     }
   }
 
-  private async createWatcher(): Promise<Rollup.RollupWatcher> {
-    const config = this.createConfig();
-    const watcher = await build(config) as Rollup.RollupWatcher;
+  // Build each function separately to ensure self-contained bundles (no shared chunks)
+  private async createWatchers(): Promise<Rollup.RollupWatcher[]> {
+    let completedCount = 0;
+    const totalCount = this.functionPaths.length;
 
-    watcher.on('event', (event) => {
-      if (event.code === 'END') {
-        console.log(chalk.green('  ✓ Functions built'));
-        printWatchingMessage();
-      } else if (event.code === 'ERROR') {
-        console.error(chalk.red('  ✗ Function build error:'), event.error?.message);
-      }
-    });
+    const watchers = await Promise.all(
+      this.functionPaths.map(async (functionPath) => {
+        const config = this.createConfig(functionPath);
+        const watcher = (await build(config)) as Rollup.RollupWatcher;
 
-    return watcher;
+        watcher.on('event', (event) => {
+          if (event.code === 'END') {
+            completedCount++;
+            if (completedCount >= totalCount) {
+              console.log(chalk.green('  ✓ Functions built'));
+              printWatchingMessage();
+              completedCount = 0;
+            }
+          } else if (event.code === 'ERROR') {
+            console.error(
+              chalk.red('  ✗ Function build error:'),
+              event.error?.message,
+            );
+          }
+        });
+
+        return watcher;
+      }),
+    );
+
+    return watchers;
   }
 
-  private createConfig(): InlineConfig {
+  private createConfig(functionPath: string): InlineConfig {
     const functionsOutputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
-
-    const entries = Object.fromEntries(
-      this.functionPaths.map((filePath) => [
-        filePath.replace(/\.tsx?$/, ''),
-        path.join(this.appPath, filePath),
-      ]),
-    );
+    const entryName = functionPath.replace(/\.tsx?$/, '');
 
     return {
       root: this.appPath,
-      plugins: [
-        tsconfigPaths({ root: this.appPath }),
-      ],
+      plugins: [tsconfigPaths({ root: this.appPath })],
       build: {
         outDir: functionsOutputDir,
         emptyOutDir: false,
@@ -125,9 +131,9 @@ export class FunctionsWatcher implements RestartableWatcher {
           exclude: ['node_modules/**', '.twenty/**', 'dist/**'],
         },
         lib: {
-          entry: entries,
+          entry: path.join(this.appPath, functionPath),
           formats: ['es'],
-          fileName: (_, entryName) => `${entryName}.mjs`,
+          fileName: () => `${entryName}.mjs`,
         },
         rollupOptions: {
           external: FUNCTION_EXTERNAL_MODULES,
