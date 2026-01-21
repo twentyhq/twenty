@@ -23,19 +23,16 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     let position = createNavigationMenuItemInput.position;
 
     if (!isDefined(position)) {
-      const normalizedUserWorkspaceId =
-        createNavigationMenuItemInput.userWorkspaceId ?? null;
-      const normalizedFolderId = createNavigationMenuItemInput.folderId ?? null;
+      const userWorkspaceIdKey =
+        createNavigationMenuItemInput.userWorkspaceId ?? 'null';
+      const folderIdKey = createNavigationMenuItemInput.folderId ?? 'null';
 
-      const existingItems = Object.values(
-        flatNavigationMenuItemMaps.byId,
-      ).filter(
-        (item) =>
-          isDefined(item) &&
-          item.workspaceId === workspaceId &&
-          (item.userWorkspaceId ?? null) === normalizedUserWorkspaceId &&
-          (item.folderId ?? null) === normalizedFolderId,
-      );
+      const existingItems =
+        flatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[
+          userWorkspaceIdKey
+        ]?.[folderIdKey]?.filter(
+          (item) => isDefined(item) && item.workspaceId === workspaceId,
+        ) ?? [];
 
       const maxPosition = existingItems.reduce(
         (max, item) => Math.max(max, item?.position ?? 0),
