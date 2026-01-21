@@ -7,7 +7,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
-import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
@@ -43,7 +43,7 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
       fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     );
 
-    const serverlessFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const flatServerlessFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: entityId,
       flatEntityMaps: context.allFlatEntityMaps.flatServerlessFunctionMaps,
     });
@@ -51,37 +51,35 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
     for (const update of action.updates) {
       if (update.property === 'checksum' && isDefined(code)) {
         await this.handleChecksumUpdate({
-          serverlessFunction,
+          flatServerlessFunction,
           code,
         });
       }
       if (update.property === 'deletedAt' && isDefined(update.to)) {
         await this.handleDeletedAtUpdate({
-          serverlessFunction,
+          flatServerlessFunction,
         });
       }
     }
   }
 
   async handleDeletedAtUpdate({
-    serverlessFunction,
+    flatServerlessFunction,
   }: {
-    serverlessFunction: FlatServerlessFunction;
+    flatServerlessFunction: FlatServerlessFunction;
   }) {
-    this.serverlessService.delete(
-      serverlessFunction as unknown as ServerlessFunctionEntity,
-    );
+    this.serverlessService.delete(flatServerlessFunction);
   }
 
   async handleChecksumUpdate({
-    serverlessFunction,
+    flatServerlessFunction,
     code,
   }: {
-    serverlessFunction: FlatServerlessFunction;
+    flatServerlessFunction: FlatServerlessFunction;
     code: Sources;
   }) {
-    const fileFolder = getServerlessFolder({
-      serverlessFunction,
+    const fileFolder = getServerlessFolderOrThrow({
+      flatServerlessFunction,
       version: 'draft',
     });
 

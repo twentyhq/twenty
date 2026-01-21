@@ -177,6 +177,7 @@ export class ApplicationSyncService {
           packageJson,
           yarnLock,
         },
+        workspaceId,
       );
     }
 
@@ -184,6 +185,7 @@ export class ApplicationSyncService {
       {
         applicationVariables: manifest.application.applicationVariables,
         applicationId: application.id,
+        workspaceId,
       },
     );
 
@@ -1115,6 +1117,7 @@ export class ApplicationSyncService {
         update: {
           settings: {
             eventName: triggerToSync.eventName,
+            updatedFields: triggerToSync.updatedFields,
           },
         },
       };
@@ -1133,6 +1136,7 @@ export class ApplicationSyncService {
       const createDatabaseEventTriggerInput = {
         settings: {
           eventName: triggerToCreate.eventName,
+          updatedFields: triggerToCreate.updatedFields,
         },
         universalIdentifier: triggerToCreate.universalIdentifier,
         serverlessFunctionId,

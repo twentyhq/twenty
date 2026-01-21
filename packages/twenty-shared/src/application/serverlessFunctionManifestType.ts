@@ -33,6 +33,7 @@ export type ServerlessFunctionManifest = SyncableEntityOptions & {
 export type DatabaseEventTrigger = {
   type: 'databaseEvent';
   eventName: string;
+  updatedFields?: string[];
 };
 
 export type CronTrigger = {

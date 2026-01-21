@@ -1,4 +1,4 @@
-import { type Axios, type AxiosError } from 'axios';
+import { type AxiosError, type AxiosInstance } from 'axios';
 
 const cropRegex = /([w|h])([0-9]+)/;
 
@@ -24,7 +24,7 @@ export const getCropSize = (value: ShortCropSize): CropSize | null => {
 
 export const getImageBufferFromUrl = async (
   url: string,
-  axiosInstance: Axios,
+  axiosInstance: AxiosInstance,
 ): Promise<Buffer> => {
   if (!url || typeof url !== 'string' || url.trim().length === 0) {
     throw new Error('Invalid URL provided: URL must be a non-empty string');

@@ -24,6 +24,10 @@ import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
 import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input';
 import { RemoveQueryFromEventStreamInput } from 'src/engine/subscriptions/dtos/remove-query-subscription.input';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
+import {
+  EventStreamException,
+  EventStreamExceptionCode,
+} from 'src/engine/subscriptions/event-stream.exception';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { wrapAsyncIteratorWithCleanup } from 'src/engine/workspace-event-emitter/utils/wrap-async-iterator-with-cleanup';
@@ -131,8 +135,26 @@ export class WorkspaceEventEmitterResolver {
   async addQueryToEventStream(
     @Args('input') input: AddQuerySubscriptionInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
+
+    const isAuthorized = await this.eventStreamService.isAuthorized({
+      workspaceId: workspace.id,
+      eventStreamChannelId,
+      authContext: {
+        userWorkspaceId,
+        apiKeyId: apiKey?.id,
+      },
+    });
+
+    if (!isAuthorized) {
+      throw new EventStreamException(
+        'You are not authorized to add a query to this event stream',
+        EventStreamExceptionCode.NOT_AUTHORIZED,
+      );
+    }
 
     await this.eventStreamService.addQuery({
       workspaceId: workspace.id,
@@ -148,8 +170,26 @@ export class WorkspaceEventEmitterResolver {
   async removeQueryFromEventStream(
     @Args('input') input: RemoveQueryFromEventStreamInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
+
+    const isAuthorized = await this.eventStreamService.isAuthorized({
+      workspaceId: workspace.id,
+      eventStreamChannelId,
+      authContext: {
+        userWorkspaceId,
+        apiKeyId: apiKey?.id,
+      },
+    });
+
+    if (!isAuthorized) {
+      throw new EventStreamException(
+        'You are not authorized to remove a query from this event stream',
+        EventStreamExceptionCode.NOT_AUTHORIZED,
+      );
+    }
 
     await this.eventStreamService.removeQuery({
       workspaceId: workspace.id,

@@ -3,6 +3,7 @@
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
+    "jsx": "react-jsx",
     "strictNullChecks": true,
     "alwaysStrict": true,
     "noImplicitAny": true,

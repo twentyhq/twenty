@@ -420,4 +420,30 @@ export const failingFilterInputByFieldMetadataType: {
       restErrorMessage: 'array value expected',
     },
   ],
+  [FieldMetadataType.FILES]: [
+    {
+      gqlFilterInput: { filesField: { containsIlike: {} } },
+      gqlErrorMessage: 'is not defined by type',
+      restFilterInput: 'filesField[containsAny]:"{}"',
+      restErrorMessage: 'array value expected',
+    },
+    {
+      gqlFilterInput: { filesField: { containsIlike: [] } },
+      gqlErrorMessage: 'is not defined by type',
+      restFilterInput: 'filesField[containsAny]:"[]"',
+      restErrorMessage: 'array value expected',
+    },
+    {
+      gqlFilterInput: { filesField: { containsIlike: true } },
+      gqlErrorMessage: 'is not defined by type',
+      restFilterInput: 'filesField[containsAny]:"true"',
+      restErrorMessage: 'array value expected',
+    },
+    {
+      gqlFilterInput: { filesField: { containsIlike: 2 } },
+      gqlErrorMessage: 'is not defined by type',
+      restFilterInput: 'filesField[containsAny]:2',
+      restErrorMessage: 'array value expected',
+    },
+  ],
 };

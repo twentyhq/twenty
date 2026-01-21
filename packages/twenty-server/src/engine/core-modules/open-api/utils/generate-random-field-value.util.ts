@@ -141,6 +141,10 @@ export const generateRandomFieldValue = ({
       return [];
     }
 
+    case FieldMetadataType.FILES: {
+      return null;
+    }
+
     case FieldMetadataType.TS_VECTOR: {
       throw new Error(
         `We should not generate fake version for ${field.type} field`,

@@ -36,32 +36,35 @@ npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Authenticate using your API key (you'll be prompted)
-yarn auth
+yarn auth:login
 
 # Start dev mode: automatically syncs local changes to your workspace
-yarn dev
+yarn app:dev
 ```
 
 Da qui puoi:
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn create-entity
+yarn app:create-entity
 
 # Generate a typed Twenty client and workspace entity types
-yarn generate
+yarn app:generate
 
 # Run a one‑time sync (instead of watch mode)
-yarn sync
+yarn app:sync
 
 # Watch your application's functions logs
-yarn logs
+yarn function:logs
+
+# Execute a function by name
+yarn function:execute -n my-function -p '{"name": "test"}'
 
 # Uninstall the application from the current workspace
-yarn uninstall
+yarn app:uninstall
 
 # Display commands' help
-yarn help
+yarn app:help
 ```
 
 Vedi anche: le pagine di riferimento della CLI per [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) e [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -164,12 +167,13 @@ A livello generale:
 
 Comandi successivi aggiungeranno altri file e cartelle:
 
-* `yarn generate` creerà una cartella `generated/` (client Twenty tipizzato + tipi dello spazio di lavoro).
-* `yarn create-entity` aggiungerà file di definizione delle entità sotto `src/app/` per i tuoi oggetti, funzioni o ruoli personalizzati.
+* `yarn app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
+* `yarn app:create-entity` will add entity definition files under `src/app/` for your custom objects, functions, or roles.
+  l
 
 ## Autenticazione
 
-La prima volta che esegui `yarn auth`, ti verranno richiesti:
+The first time you run `yarn auth:login`, you'll be prompted for:
 
 * URL dell'API (predefinito a http://localhost:3000 o al profilo dello spazio di lavoro corrente)
 * Chiave API
@@ -180,10 +184,10 @@ Esempi:
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
-yarn auth
+yarn auth:login
 
 # Use a specific workspace profile
-yarn auth --workspace my-custom-workspace
+yarn auth:login --workspace my-custom-workspace
 ```
 
 ## Usa le risorse dell'SDK (tipi e configurazione)
@@ -282,7 +286,7 @@ Punti chiave:
 * Il `universalIdentifier` deve essere univoco e stabile tra i deployment.
 * Ogni campo richiede un `name`, `type`, `label` e il proprio `universalIdentifier` stabile.
 * L'array `fields` è facoltativo: puoi definire oggetti senza campi personalizzati.
-* Puoi generare nuovi oggetti con `yarn create-entity`, che ti guida nella denominazione, nei campi e nelle relazioni.
+* You can scaffold new objects using `yarn app:create-entity`, which guides you through naming, fields, and relationships.
 
 <Note>
   **I campi base vengono creati automaticamente.** Quando definisci un oggetto personalizzato, Twenty aggiunge automaticamente i campi standard come `name`, `createdAt`, `updatedAt`, `createdBy`, `position` e `deletedAt`. Non è necessario definirli nel tuo array `fields` — aggiungi solo i tuoi campi personalizzati.
@@ -496,7 +500,8 @@ export default defineFunction({
     {
       universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
       type: 'databaseEvent',
-      eventName: 'person.created',
+      eventName: 'person.updated',
+      updatedFields: ['name'],
     },
   ],
 });
@@ -509,9 +514,9 @@ Tipi di trigger comuni:
 > es. `path: '/post-card/create',` -> chiamata su `<APP_URL>/s/post-card/create`
 
 * **cron**: Esegue la tua funzione secondo una pianificazione utilizzando un'espressione CRON.
-* **databaseEvent**: Viene eseguito sugli eventi del ciclo di vita degli oggetti dello spazio di lavoro
+* **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
 
-> es. `person.created`
+> e.g. `person.updated`
 
 Note:
 
@@ -612,12 +617,12 @@ const handler = async (event: RoutePayload) => {
 
 Puoi creare nuove funzioni in due modi:
 
-* **Generata dallo scaffolder**: Esegui `yarn create-entity` e scegli l'opzione per aggiungere una nuova funzione. Questo genera un file iniziale con un handler e una configurazione.
+* **Scaffolded**: Run `yarn app:create-entity` and choose the option to add a new function. Questo genera un file iniziale con un handler e una configurazione.
 * **Manuale**: Crea un nuovo file `*.function.ts` e usa `defineFunction()`, seguendo lo stesso schema.
 
 ### Client tipizzato generato
 
-Esegui yarn generate per creare un client tipizzato locale in generated/ basato sullo schema del tuo spazio di lavoro. Usalo nelle tue funzioni:
+Run yarn app:generate to create a local typed client in generated/ based on your workspace schema. Usalo nelle tue funzioni:
 
 ```typescript
 import Twenty from './generated';
@@ -626,7 +631,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Il client viene rigenerato da `yarn generate`. Eseguilo nuovamente dopo aver modificato i tuoi oggetti e aver eseguito `yarn sync`, oppure quando effettui l'onboarding su un nuovo spazio di lavoro.
+The client is re-generated by `yarn app:generate`. Re-run after changing your objects and `yarn app:sync` or when onboarding to a new workspace.
 
 #### Credenziali di runtime nelle funzioni serverless
 
@@ -670,13 +675,13 @@ Quindi aggiungi script come questi:
 }
 ```
 
-Ora puoi eseguire gli stessi comandi tramite Yarn, ad esempio `yarn dev`, `yarn sync`, ecc.
+Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:sync`, etc.
 
 ## Risoluzione dei problemi
 
-* Errori di autenticazione: esegui `yarn auth` e assicurati che la tua chiave API abbia i permessi richiesti.
+* Authentication errors: run `yarn auth:login` and ensure your API key has the required permissions.
 * Impossibile connettersi al server: verifica l'URL dell'API e che il server Twenty sia raggiungibile.
-* Tipi o client mancanti/obsoleti: esegui `yarn generate` e poi `yarn dev`.
-* Modalità di sviluppo non in sincronizzazione: assicurati che `yarn dev` sia in esecuzione e che le modifiche non vengano ignorate dal tuo ambiente.
+* Types or client missing/outdated: run `yarn app:generate` and then `yarn app:dev`.
+* Dev mode not syncing: ensure `yarn app:dev` is running and that changes are not ignored by your environment.
 
 Canale di supporto su Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

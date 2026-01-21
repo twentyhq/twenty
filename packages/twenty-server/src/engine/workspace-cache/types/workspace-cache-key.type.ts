@@ -2,12 +2,15 @@ import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { type EntityMetadata } from 'typeorm';
 
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/applicationVariable/types/application-variable-cache-maps.type';
 import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/services/workspace-user-workspace-role-map-cache.service';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+import { type ServerlessFunctionLayerCacheMaps } from 'src/engine/metadata-modules/serverless-function-layer/types/serverless-function-layer-cache-maps.type';
 
 export const WORKSPACE_CACHE_KEYS_V2 = {
   flatObjectMetadataMaps: 'flat-maps:object-metadata',
@@ -42,6 +45,9 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatRowLevelPermissionPredicateGroupMaps:
     'flat-maps:row-level-permission-predicate-group',
   flatFrontComponentMaps: 'flat-maps:front-component',
+  flatWorkspaceMemberMaps: 'flat-maps:workspace-member',
+  serverlessFunctionLayerMaps: 'cache:serverless-function-layer',
+  applicationVariableMaps: 'cache:application-variable',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
 export type AdditionalCacheDataMaps = {
@@ -54,6 +60,9 @@ export type AdditionalCacheDataMaps = {
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
+  flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  serverlessFunctionLayerMaps: ServerlessFunctionLayerCacheMaps;
+  applicationVariableMaps: ApplicationVariableCacheMaps;
 };
 
 export type WorkspaceCacheDataMap = AllFlatEntityMaps & AdditionalCacheDataMaps;
