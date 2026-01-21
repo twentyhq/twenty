@@ -91,7 +91,6 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
   }) {
     const handler = this.getActionHandler(action);
 
-    // TODO: handle rollback error
     await handler.rollback(context);
   }
 }

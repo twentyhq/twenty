@@ -196,15 +196,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return;
     }
 
-    await this.workspaceMigrationRunnerService
-      .run(validateAndBuildResult.workspaceMigration)
-      .catch((error) => {
-        this.logger.error(error);
-        throw new WorkspaceMigrationV2Exception(
-          WorkspaceMigrationV2ExceptionCode.RUNNER_INTERNAL_SERVER_ERROR,
-          error.message,
-        );
-      });
+    await this.workspaceMigrationRunnerService.run(
+      validateAndBuildResult.workspaceMigration,
+    );
   }
 
   public async validateBuildAndRunWorkspaceMigration({

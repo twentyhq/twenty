@@ -245,7 +245,6 @@ export class WorkspaceMigrationRunnerService {
       const invertedActions = successfullyExecutedActions.reverse();
 
       for (const invertedAction of invertedActions) {
-        // TODO handle rollback error too
         await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionRollbackHandler(
           {
             action: invertedAction,
@@ -259,7 +258,9 @@ export class WorkspaceMigrationRunnerService {
         );
       }
 
-      if (error instanceof WorkspaceMigrationExecutionException) {
+      if (
+        error instanceof WorkspaceMigrationExecutionException
+      ) {
         throw error;
       }
 

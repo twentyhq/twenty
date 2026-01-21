@@ -7,24 +7,23 @@ export const WorkspaceMigrationExecutionExceptionCode = {
   EXECUTION_FAILED: 'EXECUTION_FAILED',
 } as const;
 
+export type WorkspaceMigrationExecutionErrors = {
+  metadata?: Error;
+  workspaceSchema?: Error;
+};
+
 export class WorkspaceMigrationExecutionException extends CustomError {
   code: keyof typeof WorkspaceMigrationExecutionExceptionCode;
   userFriendlyMessage = msg`Migration action execution failed.`;
   action: WorkspaceMigrationAction;
-  errors: {
-    metadata?: Error;
-    workspaceSchema?: Error;
-  };
+  errors: WorkspaceMigrationExecutionErrors;
 
   constructor({
     action,
     errors,
   }: {
     action: WorkspaceMigrationAction;
-    errors: {
-      metadata?: Error;
-      workspaceSchema?: Error;
-    };
+    errors: WorkspaceMigrationExecutionErrors;
   }) {
     const errorMessages: string[] = [];
 
