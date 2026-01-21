@@ -7,6 +7,7 @@ import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { deleteFlatNavigationMenuItemFromMapsAndIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/delete-flat-navigation-menu-item-from-maps-and-index.util';
 
 type DeleteAction<TMetadataName extends AllMetadataName> =
@@ -67,7 +68,7 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = <
     }
     case 'navigationMenuItem': {
       const flatNavigationMenuItemToDelete =
-        findFlatEntityByIdInFlatEntityMapsOrThrow({
+        findFlatEntityByIdInFlatEntityMapsOrThrow<FlatNavigationMenuItem>({
           flatEntityId: action.entityId,
           flatEntityMaps: allFlatEntityMaps.flatNavigationMenuItemMaps,
         });
