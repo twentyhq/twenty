@@ -246,7 +246,7 @@ export class NavigationMenuItemService {
     authApiKeyId,
     authApplicationId,
   }: {
-    input: UpdateNavigationMenuItemInput;
+    input: UpdateNavigationMenuItemInput & { id: string };
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;

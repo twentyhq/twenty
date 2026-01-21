@@ -12,7 +12,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
 import { NavigationMenuItemDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/navigation-menu-item.dto';
-import { UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
+import { UpdateOneNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 import { NavigationMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/navigation-menu-item/interceptors/navigation-menu-item-graphql-api-exception.interceptor';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
@@ -73,14 +73,14 @@ export class NavigationMenuItemResolver {
   @Mutation(() => NavigationMenuItemDTO)
   @UseGuards(NoPermissionGuard)
   async updateNavigationMenuItem(
-    @Args('input') input: UpdateNavigationMenuItemInput,
+    @Args('input') input: UpdateOneNavigationMenuItemInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Context() context: { req: { application?: ApplicationEntity } },
   ): Promise<NavigationMenuItemDTO> {
     return await this.navigationMenuItemService.update({
-      input,
+      input: { ...input.update, id: input.id },
       workspaceId: workspace.id,
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,

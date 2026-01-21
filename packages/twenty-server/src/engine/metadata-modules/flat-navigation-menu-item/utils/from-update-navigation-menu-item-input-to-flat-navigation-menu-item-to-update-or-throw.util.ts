@@ -17,7 +17,9 @@ export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOr
     updateNavigationMenuItemInput,
   }: {
     flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
-    updateNavigationMenuItemInput: UpdateNavigationMenuItemInput;
+    updateNavigationMenuItemInput: UpdateNavigationMenuItemInput & {
+      id: string;
+    };
   }): FlatNavigationMenuItem => {
     const existingFlatNavigationMenuItem = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updateNavigationMenuItemInput.id,
