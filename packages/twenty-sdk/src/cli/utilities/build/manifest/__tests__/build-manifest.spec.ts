@@ -1,11 +1,11 @@
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/test-app/src/app/default-function.role';
 import {
-  POST_CARD_EXTENSION_CATEGORY_FIELD_ID,
-  POST_CARD_EXTENSION_PRIORITY_FIELD_ID,
+    POST_CARD_EXTENSION_CATEGORY_FIELD_ID,
+    POST_CARD_EXTENSION_PRIORITY_FIELD_ID,
 } from '@/cli/__tests__/test-app/src/app/postCard.object-extension';
 import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
-import { type ApplicationManifest } from 'twenty-shared/application';
 import { join } from 'path';
+import { type ApplicationManifest } from 'twenty-shared/application';
 
 const TEST_APP_PATH = join(__dirname, '../../../../__tests__/test-app');
 

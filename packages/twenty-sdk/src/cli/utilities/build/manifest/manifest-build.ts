@@ -7,13 +7,14 @@ import path, { relative, sep } from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
 import { OUTPUT_DIR } from '../common/constants';
-import { buildApplication } from './entities/application';
-import { buildFrontComponents } from './entities/front-component';
-import { buildFunctions } from './entities/function';
-import { buildObjects } from './entities/object';
-import { buildObjectExtensions } from './entities/object-extension';
-import { buildRoles } from './entities/role';
+import { applicationEntityBuilder } from './entities/application';
+import { frontComponentEntityBuilder } from './entities/front-component';
+import { functionEntityBuilder } from './entities/function';
+import { objectEntityBuilder } from './entities/object';
+import { objectExtensionEntityBuilder } from './entities/object-extension';
+import { roleEntityBuilder } from './entities/role';
 import { displayEntitySummary, displayErrors, displayWarnings } from './manifest-display';
+import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
 import { validateManifest } from './manifest-validate';
 import { ManifestValidationError } from './manifest.types';
 
@@ -99,6 +100,7 @@ export const runManifestBuild = async (
 
   try {
     await validateFolderStructure(appPath);
+    manifestExtractFromFileServer.init(appPath);
 
     const packageJson = await parseJsoncFile(
       await findPathFile(appPath, 'package.json'),
@@ -113,12 +115,12 @@ export const runManifestBuild = async (
       roleManifests,
       sources,
     ] = await Promise.all([
-      buildApplication(appPath),
-      buildObjects(appPath),
-      buildObjectExtensions(appPath),
-      buildFunctions(appPath),
-      buildFrontComponents(appPath),
-      buildRoles(appPath),
+      applicationEntityBuilder.build(appPath),
+      objectEntityBuilder.build(appPath),
+      objectExtensionEntityBuilder.build(appPath),
+      functionEntityBuilder.build(appPath),
+      frontComponentEntityBuilder.build(appPath),
+      roleEntityBuilder.build(appPath),
       loadSources(appPath),
     ]);
 
@@ -142,7 +144,6 @@ export const runManifestBuild = async (
       serverlessFunctions: functionManifests,
       frontComponents: frontComponentManifests,
       roles: roleManifests,
-      packageJson,
     });
 
     if (!validation.isValid) {

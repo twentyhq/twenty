@@ -9,9 +9,24 @@ import { printWatchingMessage } from '../common/display';
 import {
   type RestartableWatcher,
   type RestartableWatcherOptions,
-} from '../common/watcher';
+} from '../common/restartable-watcher.interface';
 import { FUNCTIONS_DIR } from './constants';
-import { buildFunctionEntries } from './function-paths';
+import { computeFunctionOutputPath } from './function-paths';
+
+const buildFunctionEntries = (
+  appPath: string,
+  handlerPaths: Array<{ handlerPath: string }>,
+): Record<string, string> => {
+  const entries: Record<string, string> = {};
+
+  for (const fn of handlerPaths) {
+    const relativePath = computeFunctionOutputPath(fn.handlerPath);
+    const chunkName = relativePath.replace(/\.js$/, '');
+    entries[chunkName] = path.join(appPath, fn.handlerPath);
+  }
+
+  return entries;
+};
 
 export const FUNCTION_EXTERNAL_MODULES: (string | RegExp)[] = [
   'path', 'fs', 'crypto', 'stream', 'util', 'os', 'url', 'http', 'https',
@@ -35,7 +50,7 @@ export class FunctionsWatcher implements RestartableWatcher {
   }
 
   shouldRestart(manifest: ApplicationManifest): boolean {
-    const newEntries = buildFunctionEntries(this.appPath, manifest.serverlessFunctions);
+    const newEntries = buildFunctionEntries(this.appPath, manifest.serverlessFunctions ?? []);
     const currentKeys = Object.keys(this.entries).sort();
     const newKeys = Object.keys(newEntries).sort();
 
@@ -81,7 +96,7 @@ export class FunctionsWatcher implements RestartableWatcher {
       await this.innerWatcher?.close();
       this.innerWatcher = null;
 
-      this.entries = buildFunctionEntries(this.appPath, manifest.serverlessFunctions);
+      this.entries = buildFunctionEntries(this.appPath, manifest.serverlessFunctions ?? []);
 
       if (this.hasEntries()) {
         console.log(chalk.blue('  📦 Building functions...'));
@@ -129,7 +144,7 @@ export class FunctionsWatcher implements RestartableWatcher {
         outDir: functionsOutputDir,
         emptyOutDir: false,
         watch: {
-          include: ['src/**/*.ts', 'src/**/*.json'],
+          include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.json'],
           exclude: ['node_modules/**', '.twenty/**', 'dist/**'],
         },
         lib: {

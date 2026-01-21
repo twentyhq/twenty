@@ -1,9 +1,9 @@
 import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
-import { FieldMetadataType } from 'twenty-shared/types';
 import {
   type Application,
   type ObjectExtensionManifest,
 } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('validateManifest - objectExtensions', () => {
   const validApplication: Application = {

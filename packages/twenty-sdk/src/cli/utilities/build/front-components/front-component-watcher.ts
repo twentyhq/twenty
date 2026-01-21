@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import path from 'path';
-import type { ApplicationManifest, FrontComponentManifest } from 'twenty-shared/application';
+import type { ApplicationManifest } from 'twenty-shared/application';
 import { build, type InlineConfig, type Rollup } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { OUTPUT_DIR } from '../common/constants';
@@ -9,8 +9,24 @@ import { printWatchingMessage } from '../common/display';
 import {
   type RestartableWatcher,
   type RestartableWatcherOptions,
-} from '../common/watcher';
+} from '../common/restartable-watcher.interface';
 import { FRONT_COMPONENTS_DIR } from './constants';
+import { computeFrontComponentOutputPath } from './front-component-paths';
+
+const buildFrontComponentEntries = (
+  appPath: string,
+  componentPaths: Array<{ componentPath: string }>,
+): Record<string, string> => {
+  const entries: Record<string, string> = {};
+
+  for (const component of componentPaths) {
+    const relativePath = computeFrontComponentOutputPath(component.componentPath);
+    const chunkName = relativePath.replace(/\.js$/, '');
+    entries[chunkName] = path.join(appPath, component.componentPath);
+  }
+
+  return entries;
+};
 
 export const FRONT_COMPONENT_EXTERNAL_MODULES: (string | RegExp)[] = [
   'react',
@@ -18,34 +34,6 @@ export const FRONT_COMPONENT_EXTERNAL_MODULES: (string | RegExp)[] = [
   'react/jsx-runtime',
   'react/jsx-dev-runtime',
 ];
-
-const computeOutputPath = (sourcePath: string): string => {
-  const normalizedPath = sourcePath.replace(/\\/g, '/');
-
-  let relativePath = normalizedPath;
-  if (relativePath.startsWith('src/app/')) {
-    relativePath = relativePath.slice('src/app/'.length);
-  } else if (relativePath.startsWith('src/')) {
-    relativePath = relativePath.slice('src/'.length);
-  }
-
-  return relativePath.replace(/\.tsx?$/, '.js');
-};
-
-const buildFrontComponentEntries = (
-  appPath: string,
-  components: FrontComponentManifest[],
-): Record<string, string> => {
-  const entries: Record<string, string> = {};
-
-  for (const component of components) {
-    const relativePath = computeOutputPath(component.componentPath);
-    const chunkName = relativePath.replace(/\.js$/, '');
-    entries[chunkName] = path.join(appPath, component.componentPath);
-  }
-
-  return entries;
-};
 
 export class FrontComponentsWatcher implements RestartableWatcher {
   private appPath: string;
@@ -159,7 +147,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
         outDir: frontComponentsOutputDir,
         emptyOutDir: false,
         watch: {
-          include: ['src/**/*.tsx', 'src/**/*.ts', 'src/**/*.json'],
+          include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.json'],
           exclude: ['node_modules/**', '.twenty/**', 'dist/**'],
         },
         lib: {
