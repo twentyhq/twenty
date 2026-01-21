@@ -242,17 +242,26 @@ export class FrontComponentService {
     _workspaceId: string,
   ): Promise<FrontComponentCodeDTO> {
     const sourceCode = `
-const { createElement, useState } = React;
+const { createElement, useState, useEffect } = React;
 const { createRoot } = ReactDOM;
 
 const FrontComponent = () => {
   const [clickCount, setClickCount] = useState(0);
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return createElement('div', null,
     createElement('h3', null, 'Remote DOM front component'),
     createElement('p', null, 'Rendered in a web worker and mirrored on the host.'),
     createElement('button', { onClick: () => setClickCount(clickCount + 1) }, 'Click me'),
-    createElement('p', null, 'Clicked ' + clickCount + ' time' + (clickCount === 1 ? '' : 's'))
+    createElement('p', null, 'Clicked ' + clickCount + ' time' + (clickCount === 1 ? '' : 's')),
+    createElement('p', null, 'Current time: ' + currentTime)
   );
 };
 
