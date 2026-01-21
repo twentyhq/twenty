@@ -77,6 +77,9 @@ export const useDuplicatePageLayoutWidget = (
           ...sourceWidget,
           id: newWidgetId,
           title: appendCopySuffix(sourceWidget.title),
+          configuration: isDefined(sourceWidget.configuration)
+            ? structuredClone(sourceWidget.configuration)
+            : sourceWidget.configuration,
           ...generateDuplicatedTimestamps(),
         };
 
