@@ -64,7 +64,7 @@ yarn function:execute -n my-function -p '{"name": "test"}'
 yarn app:uninstall
 
 # Display commands' help
-yarn app:help
+yarn app:help},{
 ```
 
 Consultați și: paginile de referință CLI pentru [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) și [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -178,9 +178,9 @@ Prima dată când rulați `yarn auth:login`, vi se vor solicita:
 * URL-ul API (implicit http://localhost:3000 sau profilul spațiului de lucru curent)
 * Cheie API
 
-Acreditările dvs. sunt stocate per utilizator în `~/.twenty/config.json`. You can maintain multiple profiles and switch between them.
+Acreditările dvs. sunt stocate per utilizator în `~/.twenty/config.json`. Puteți menține mai multe profiluri și comuta între ele.
 
-### Managing workspaces
+### Gestionarea spațiilor de lucru
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
@@ -202,7 +202,7 @@ yarn auth:switch production
 yarn auth:status
 ```
 
-Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
+După ce ați schimbat spațiul de lucru cu `auth:switch`, toate comenzile ulterioare vor folosi implicit acel spațiu de lucru. Îl puteți totuși suprascrie temporar cu `--workspace <name>`.
 
 ## Utilizați resursele SDK (tipuri și configurare)
 

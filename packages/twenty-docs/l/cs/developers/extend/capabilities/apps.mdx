@@ -178,9 +178,9 @@ Při prvním spuštění `yarn auth:login` budete vyzváni k zadání:
 * URL API (výchozí je http://localhost:3000 nebo váš aktuální profil pracovního prostoru)
 * Klíč API
 
-Vaše přihlašovací údaje se ukládají pro jednotlivé uživatele do `~/.twenty/config.json`. You can maintain multiple profiles and switch between them.
+Vaše přihlašovací údaje se ukládají pro jednotlivé uživatele do `~/.twenty/config.json`. Můžete spravovat více profilů a přepínat mezi nimi.
 
-### Managing workspaces
+### Správa pracovních prostorů
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
@@ -202,7 +202,7 @@ yarn auth:switch production
 yarn auth:status
 ```
 
-Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
+Jakmile přepnete pracovní prostor pomocí `auth:switch`, všechny následující příkazy budou tento pracovní prostor používat jako výchozí. Můžete jej stále dočasně přepsat pomocí `--workspace <name>`.
 
 ## Používejte zdroje SDK (typy a konfiguraci)
 

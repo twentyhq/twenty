@@ -178,9 +178,9 @@ Wenn Sie `yarn auth:login` zum ersten Mal ausführen, werden Sie nach Folgendem 
 * API-URL (standardmäßig http://localhost:3000 oder Ihr aktuelles Workspace-Profil)
 * API-Schlüssel
 
-Ihre Anmeldedaten werden pro Benutzer in `~/.twenty/config.json` gespeichert. You can maintain multiple profiles and switch between them.
+Ihre Anmeldedaten werden pro Benutzer in `~/.twenty/config.json` gespeichert. Sie können mehrere Profile verwalten und zwischen ihnen wechseln.
 
-### Managing workspaces
+### Arbeitsbereiche verwalten
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
@@ -202,7 +202,7 @@ yarn auth:switch production
 yarn auth:status
 ```
 
-Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
+Sobald Sie mit `auth:switch` den Arbeitsbereich gewechselt haben, verwenden alle nachfolgenden Befehle standardmäßig diesen Arbeitsbereich. Sie können es weiterhin vorübergehend mit `--workspace <name>` überschreiben.
 
 ## SDK-Ressourcen verwenden (Typen & Konfiguration)
 
