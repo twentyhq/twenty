@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -42,6 +43,7 @@ export class RowLevelPermissionPredicateGroupService {
     @InjectRepository(RowLevelPermissionPredicateGroupEntity)
     private readonly rowLevelPermissionPredicateGroupRepository: Repository<RowLevelPermissionPredicateGroupEntity>,
     private readonly configService: ConfigService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async createOne({
@@ -52,12 +54,19 @@ export class RowLevelPermissionPredicateGroupService {
     workspaceId: string;
   }): Promise<RowLevelPermissionPredicateGroupDTO> {
     await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
 
     const flatGroupToCreate =
       fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermissionPredicateGroupToCreate(
         {
           createRowLevelPermissionPredicateGroupInput,
           workspaceId,
+          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
         },
       );
 
