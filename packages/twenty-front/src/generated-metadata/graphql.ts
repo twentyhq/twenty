@@ -4793,7 +4793,6 @@ export type UpdateNavigationMenuItemInput = {
   folderId?: InputMaybe<Scalars['UUID']>;
   name?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['Int']>;
-  viewId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateObjectPayload = {
