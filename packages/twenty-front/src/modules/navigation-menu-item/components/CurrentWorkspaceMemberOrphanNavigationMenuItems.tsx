@@ -1,5 +1,6 @@
 import { NavigationMenuItemDroppable } from '@/navigation-menu-item/components/NavigationMenuItemDroppable';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
+import { ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSortedNavigationMenuItems';
@@ -36,7 +37,9 @@ export const CurrentWorkspaceMemberOrphanNavigationMenuItems = () => {
   );
 
   return (
-    <NavigationMenuItemDroppable droppableId="orphan-navigation-menu-items">
+    <NavigationMenuItemDroppable
+      droppableId={ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID}
+    >
       {orphanNavigationMenuItems.length > 0 ? (
         orphanNavigationMenuItems.map((navigationMenuItem, index) => (
           <DraggableItem

@@ -1,10 +1,14 @@
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
+import { ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { CustomError } from 'twenty-shared/utils';
 
 export const validateAndExtractFolderId = (
   droppableId: string,
 ): string | null => {
-  if (droppableId === FAVORITE_DROPPABLE_IDS.ORPHAN_FAVORITES) {
+  if (
+    droppableId === FAVORITE_DROPPABLE_IDS.ORPHAN_FAVORITES ||
+    droppableId === ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID
+  ) {
     return null;
   }
 
