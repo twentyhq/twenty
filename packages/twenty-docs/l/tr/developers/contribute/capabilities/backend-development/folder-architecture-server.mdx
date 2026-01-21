@@ -1,9 +1,9 @@
 ---
 title: Klasör Mimarisi
-info: A detailed look into our server folder architecture
+info: Sunucu klasör mimarimize detaylı bir bakış},{
 ---
 
-The backend directory structure is as follows:
+Arka uç dizin yapısı aşağıdaki gibidir:
 
 ```
 server
@@ -21,37 +21,37 @@ server
   └───utils
 ```
 
-## Ability
+## Yetkiler
 
-Defines permissions and includes handlers for each entity.
+İzinleri tanımlar ve her bir varlık için işleyiciler içerir.
 
-## Decorators
+## Dekoratörler
 
-Defines custom decorators in NestJS for added functionality.
+Ek işlevsellik için NestJS'te özel dekoratörleri tanımlar.
 
-See [custom decorators](https://docs.nestjs.com/custom-decorators) for more details.
+Daha fazla bilgi için [özel dekoratörler](https://docs.nestjs.com/custom-decorators) sayfasına bakın.
 
 ## Filtreler
 
-Includes exception filters to handle exceptions that might occur in GraphQL endpoints.
+GraphQL uç noktalarında oluşabilecek istisnaları ele almak için istisna filtreleri içerir.
 
-## Guards
+## Guard'lar
 
-See [guards](https://docs.nestjs.com/guards) for more details.
+Daha fazla bilgi için [guard'lar](https://docs.nestjs.com/guards) sayfasına bakın.
 
-## Health
+## Sağlık
 
-Includes a publicly available REST API (healthz) that returns a JSON to confirm whether the database is working as expected.
+Veritabanının beklendiği gibi çalışıp çalışmadığını doğrulamak için JSON döndüren, herkese açık bir REST API'si (healthz) içerir.
 
 ## Meta Veriler
 
-Defines custom objects and makes available a GraphQL API (graphql/metadata).
+Özel nesneleri tanımlar ve bir GraphQL API'sini (graphql/metadata) kullanıma sunar.
 
 ## İş Alanı
 
-Generates and serves custom GraphQL schema based on the metadata.
+Meta verilere dayalı özel GraphQL şeması oluşturur ve sunar.
 
-### Workspace Directory Structure
+### Çalışma Alanı Dizin Yapısı
 
 ```
 workspace
@@ -83,42 +83,42 @@ workspace
   └───workspace.factory.ts
 ```
 
-The root of the workspace directory includes the `workspace.factory.ts`, a file containing the `createGraphQLSchema` function. This function generates workspace-specific schema by using the metadata to tailor a schema for individual workspaces. By separating the schema and resolver construction, we use the `makeExecutableSchema` function, which combines these discrete elements.
+Çalışma alanı dizininin kökünde, `createGraphQLSchema` fonksiyonunu içeren `workspace.factory.ts` dosyası bulunur. Bu fonksiyon, meta verileri kullanarak her bir çalışma alanına özgü bir şema üretir. Şema ve resolver oluşturmayı ayırarak, bu ayrık bileşenleri birleştiren `makeExecutableSchema` fonksiyonunu kullanırız.
 
-This strategy is not just about organization, but also helps with optimization, such as caching generated type definitions to enhance performance and scalability.
+Bu strateji sadece düzenle ilgili değildir; aynı zamanda performans ve ölçeklenebilirliği artırmak için oluşturulan tür tanımlarının önbelleğe alınması gibi optimizasyonlara da yardımcı olur.
 
-### Workspace Schema builder
+### Çalışma Alanı Şema Oluşturucu
 
-Generates the GraphQL schema, and includes:
+GraphQL şemasını oluşturur ve şunları içerir:
 
-#### Factories:
+#### Factory'ler:
 
-Specialised constructors to generate GraphQL-related constructs.
+GraphQL ile ilgili yapıları oluşturmak için özelleşmiş kurucular.
 
-* The type.factory translates field metadata into GraphQL types using `TypeMapperService`.
-* The type-definition.factory creates GraphQL input or output objects derived from `objectMetadata`.
+* type.factory, alan meta verilerini `TypeMapperService` kullanarak GraphQL türlerine dönüştürür.
+* type-definition.factory, `objectMetadata` temel alınarak GraphQL girdi veya çıktı nesneleri oluşturur.
 
-#### GraphQL Types
+#### GraphQL Türleri
 
-Includes enumerations, inputs, objects, and scalars, and serves as the building blocks for the schema construction.
+Numaralandırmalar, girdiler, nesneler ve skalerleri içerir ve şema oluşturmanın yapı taşları olarak hizmet eder.
 
-#### Interfaces and Object Definitions
+#### Arayüzler ve Nesne Tanımları
 
-Contains the blueprints for GraphQL entities, and includes both predefined and custom types like `MONEY` or `URL`.
+GraphQL varlıkları için şablonları içerir ve `MONEY` veya `URL` gibi hem önceden tanımlı hem de özel türleri kapsar.
 
-#### Services
+#### Servisler
 
-Contains the service responsible for associating FieldMetadataType with its appropriate GraphQL scalar or query modifiers.
+FieldMetadataType ile uygun GraphQL skalerini veya sorgu değiştiricilerini ilişkilendirmekten sorumlu servisi içerir.
 
-#### Storage
+#### Depolama
 
-Includes the `TypeDefinitionsStorage` class that contains reusable type definitions, preventing duplication of GraphQL types.
+Yeniden kullanılabilir tür tanımlarını barındıran ve GraphQL türlerinin yinelenmesini önleyen `TypeDefinitionsStorage` sınıfını içerir.
 
-### Workspace Resolver Builder
+### Çalışma Alanı Resolver Oluşturucu
 
-Creates resolver functions for querying and mutating the GraphQL schema.
+GraphQL şemasında sorgulama ve mutasyon için resolver fonksiyonları oluşturur.
 
-Each factory in this directory is responsible for producing a distinct resolver type, such as the `FindManyResolverFactory`, designed for adaptable application across various tables.
+Bu dizindeki her bir factory, çeşitli tablolar genelinde uyarlanabilir kullanım için tasarlanmış `FindManyResolverFactory` gibi, farklı bir resolver türü üretmekten sorumludur.
 
 ### Çalışma Alanı Sorgu Çalıştırıcı
 
