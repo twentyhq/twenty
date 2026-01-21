@@ -28,18 +28,6 @@ export class WorkflowRunEnqueueWorkspaceService {
     private readonly metricsService: MetricsService,
   ) {}
 
-  async enqueueRuns({
-    workspaceIds,
-    isCacheMode,
-  }: {
-    workspaceIds: string[];
-    isCacheMode: boolean;
-  }) {
-    for (const workspaceId of workspaceIds) {
-      await this.enqueueRunsForWorkspace({ workspaceId, isCacheMode });
-    }
-  }
-
   async enqueueRunsForWorkspace({
     workspaceId,
     isCacheMode,

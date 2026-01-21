@@ -21,52 +21,71 @@ export class WorkflowHandleStaledRunsWorkspaceService {
   ) {}
 
   async handleStaledRuns({ workspaceIds }: { workspaceIds: string[] }) {
-    for (const workspaceId of workspaceIds) {
-      try {
-        const authContext = buildSystemAuthContext(workspaceId);
+    this.logger.log('Starting handleStaledRuns');
 
-        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          authContext,
-          async () => {
-            const workflowRunRepository =
-              await this.globalWorkspaceOrmManager.getRepository(
-                workspaceId,
-                WorkflowRunWorkspaceEntity,
-                { shouldBypassPermissionChecks: true },
-              );
+    try {
+      for (let i = 0; i < workspaceIds.length; i++) {
+        const workspaceId = workspaceIds[i];
 
-            const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+        this.logger.log(
+          `Processing workspace ${workspaceId} (${i + 1}/${workspaceIds.length})`,
+        );
 
-            const staledWorkflowRuns = await workflowRunRepository.find({
-              where: {
-                status: WorkflowRunStatus.ENQUEUED,
-                enqueuedAt: Or(LessThan(oneHourAgo), IsNull()),
-              },
-            });
+        try {
+          await this.handleStaledRunsForWorkspace(workspaceId);
+        } catch (error) {
+          this.logger.error(
+            `Failed to handle staled runs for workspace ${workspaceId}`,
+            error,
+          );
+        }
+      }
 
-            if (staledWorkflowRuns.length <= 0) {
-              return;
-            }
+      this.logger.log('Completed handleStaledRuns');
+    } catch (error) {
+      this.logger.error('handleStaledRuns failed', error);
+      throw error;
+    }
+  }
 
-            await workflowRunRepository.update(
-              staledWorkflowRuns.map((workflowRun) => workflowRun.id),
-              {
-                enqueuedAt: null,
-                status: WorkflowRunStatus.NOT_STARTED,
-              },
-            );
+  private async handleStaledRunsForWorkspace(workspaceId: string) {
+    const authContext = buildSystemAuthContext(workspaceId);
 
-            await this.workflowThrottlingWorkspaceService.recomputeWorkflowRunNotStartedCount(
-              workspaceId,
-            );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workflowRunRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            WorkflowRunWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
+        const staledWorkflowRuns = await workflowRunRepository.find({
+          where: {
+            status: WorkflowRunStatus.ENQUEUED,
+            enqueuedAt: Or(LessThan(oneHourAgo), IsNull()),
+          },
+        });
+
+        if (staledWorkflowRuns.length <= 0) {
+          return;
+        }
+
+        await workflowRunRepository.update(
+          staledWorkflowRuns.map((workflowRun) => workflowRun.id),
+          {
+            enqueuedAt: null,
+            status: WorkflowRunStatus.NOT_STARTED,
           },
         );
-      } catch (error) {
-        this.logger.error(
-          `Failed to handle staled runs for workspace: ${workspaceId}`,
-          error,
+
+        await this.workflowThrottlingWorkspaceService.recomputeWorkflowRunNotStartedCount(
+          workspaceId,
         );
-      }
-    }
+      },
+    );
   }
 }

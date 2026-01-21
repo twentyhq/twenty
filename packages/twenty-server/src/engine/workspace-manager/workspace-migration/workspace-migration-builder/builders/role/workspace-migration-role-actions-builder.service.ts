@@ -64,7 +64,7 @@ export class WorkspaceMigrationRoleActionsBuilderService extends WorkspaceEntity
       action: {
         type: 'delete',
         metadataName: 'role',
-        entityId: flatRoleToValidate.id,
+        universalIdentifier: flatRoleToValidate.universalIdentifier,
       },
     };
   }

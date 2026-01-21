@@ -38,8 +38,7 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
     createdAt: createdAt,
     updatedAt: createdAt,
     deletedAt: null,
-    universalIdentifier:
-      createViewFilterInput.universalIdentifier ?? viewFilterId,
+    universalIdentifier: createViewFilterInput.universalIdentifier ?? v4(),
     operand: createViewFilterInput.operand ?? ViewFilterOperand.CONTAINS,
     value: value,
     viewFilterGroupId: createViewFilterInput.viewFilterGroupId ?? null,

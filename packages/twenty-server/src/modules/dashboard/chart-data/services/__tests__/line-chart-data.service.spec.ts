@@ -316,14 +316,14 @@ describe('LineChartDataService', () => {
         authContext: mockAuthContext,
       });
 
-      const stageA = result.series.find((s) => s.id === 'Stage A');
+      const stageA = result.series.find((s) => s.label === 'Stage A');
 
       expect(stageA?.data).toHaveLength(3);
       expect(stageA?.data[0].y).toBe(100);
       expect(stageA?.data[1].y).toBe(200);
       expect(stageA?.data[2].y).toBe(0);
 
-      const stageB = result.series.find((s) => s.id === 'Stage B');
+      const stageB = result.series.find((s) => s.label === 'Stage B');
 
       expect(stageB?.data).toHaveLength(3);
       expect(stageB?.data[0].y).toBe(150);
@@ -349,8 +349,8 @@ describe('LineChartDataService', () => {
         authContext: mockAuthContext,
       });
 
-      const seriesA = result.series.find((s) => s.id === 'A');
-      const seriesB = result.series.find((s) => s.id === 'B');
+      const seriesA = result.series.find((s) => s.label === 'A');
+      const seriesB = result.series.find((s) => s.label === 'B');
 
       expect(seriesA?.data[0].y).toBe(10);
       expect(seriesA?.data[1].y).toBe(30);
@@ -380,8 +380,8 @@ describe('LineChartDataService', () => {
         authContext: mockAuthContext,
       });
 
-      const seriesA = result.series.find((s) => s.id === 'A');
-      const seriesB = result.series.find((s) => s.id === 'B');
+      const seriesA = result.series.find((s) => s.label === 'A');
+      const seriesB = result.series.find((s) => s.label === 'B');
 
       expect(seriesA).toBeDefined();
       expect(seriesB).toBeDefined();

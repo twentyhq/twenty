@@ -64,7 +64,7 @@ export class WorkspaceMigrationAgentActionsBuilderService extends WorkspaceEntit
       action: {
         type: 'delete',
         metadataName: 'agent',
-        entityId: flatAgentToValidate.id,
+        universalIdentifier: flatAgentToValidate.universalIdentifier,
       },
     };
   }
