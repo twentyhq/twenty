@@ -11,7 +11,7 @@ const CLI_PATH = path.resolve(CLI_DIR, 'cli/cli.ts');
 export type RunCliCommandOptions = {
   command: string;
   args?: string[];
-  waitForOutput?: string;
+  waitForOutput?: string | string[];
   timeout?: number;
 };
 
@@ -48,9 +48,18 @@ export const runCliCommand = (
       resolve({ success: false, output });
     }, timeout);
 
+    const waitForOutputs = Array.isArray(waitForOutput)
+      ? waitForOutput
+      : waitForOutput
+        ? [waitForOutput]
+        : [];
+
     child.stdout?.on('data', (data: Buffer) => {
       output += data.toString();
-      if (waitForOutput && output.includes(waitForOutput)) {
+      if (
+        waitForOutputs.length > 0 &&
+        waitForOutputs.every((w) => output.includes(w))
+      ) {
         clearTimeout(timeoutId);
         child.kill();
         resolve({ success: true, output });
@@ -63,7 +72,7 @@ export const runCliCommand = (
 
     child.on('close', (code) => {
       clearTimeout(timeoutId);
-      if (!waitForOutput) {
+      if (waitForOutputs.length === 0) {
         resolve({ success: code === 0, output });
       } else {
         resolve({ success: false, output });
