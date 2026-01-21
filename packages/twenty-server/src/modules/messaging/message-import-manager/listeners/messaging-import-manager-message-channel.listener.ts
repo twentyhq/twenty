@@ -53,7 +53,8 @@ export class MessagingMessageImportManagerMessageChannelListener {
             {
               workspaceId: payload.workspaceId,
               messageChannelId: eventPayload.recordId,
-              connectedAccountId: eventPayload.properties.before.connectedAccountId,
+              connectedAccountId:
+                eventPayload.properties.before.connectedAccountId,
             },
           ),
         );

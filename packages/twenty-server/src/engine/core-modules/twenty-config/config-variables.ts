@@ -2,13 +2,13 @@ import { type LogLevel, Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
-    IsDefined,
-    IsOptional,
-    IsString,
-    IsUrl,
-    ValidateIf,
-    type ValidationError,
-    validateSync,
+  IsDefined,
+  IsOptional,
+  IsString,
+  IsUrl,
+  ValidateIf,
+  type ValidationError,
+  validateSync,
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -37,8 +37,8 @@ import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import {
-    ConfigVariableException,
-    ConfigVariableExceptionCode,
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 
 export class ConfigVariables {
@@ -168,7 +168,9 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.MESSAGING_GMAIL_PUBSUB_ENABLED && env.MESSAGING_PROVIDER_GMAIL_ENABLED,
+    (env) =>
+      env.MESSAGING_GMAIL_PUBSUB_ENABLED &&
+      env.MESSAGING_PROVIDER_GMAIL_ENABLED,
   )
   @IsString()
   MESSAGING_GMAIL_PUBSUB_PROJECT_ID: string;
@@ -180,7 +182,9 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.MESSAGING_GMAIL_PUBSUB_ENABLED && env.MESSAGING_PROVIDER_GMAIL_ENABLED,
+    (env) =>
+      env.MESSAGING_GMAIL_PUBSUB_ENABLED &&
+      env.MESSAGING_PROVIDER_GMAIL_ENABLED,
   )
   @IsString()
   MESSAGING_GMAIL_PUBSUB_TOPIC_NAME: string;
@@ -188,11 +192,14 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GOOGLE_AUTH,
     isSensitive: false,
-    description: 'Google Cloud Pub/Sub subscription name for Gmail notifications',
+    description:
+      'Google Cloud Pub/Sub subscription name for Gmail notifications',
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.MESSAGING_GMAIL_PUBSUB_ENABLED && env.MESSAGING_PROVIDER_GMAIL_ENABLED,
+    (env) =>
+      env.MESSAGING_GMAIL_PUBSUB_ENABLED &&
+      env.MESSAGING_PROVIDER_GMAIL_ENABLED,
   )
   @IsString()
   MESSAGING_GMAIL_PUBSUB_SUBSCRIPTION_NAME: string;
@@ -205,7 +212,9 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.MESSAGING_GMAIL_PUBSUB_ENABLED && env.MESSAGING_PROVIDER_GMAIL_ENABLED,
+    (env) =>
+      env.MESSAGING_GMAIL_PUBSUB_ENABLED &&
+      env.MESSAGING_PROVIDER_GMAIL_ENABLED,
   )
   @IsString()
   MESSAGING_GMAIL_PUBSUB_SERVICE_ACCOUNT_KEY: string;

@@ -4,9 +4,9 @@ import { LessThan } from 'typeorm';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import {
-    MessageChannelSubscriptionProvider,
-    MessageChannelSubscriptionStatus,
-    MessageChannelSubscriptionWorkspaceEntity,
+  MessageChannelSubscriptionProvider,
+  MessageChannelSubscriptionStatus,
+  MessageChannelSubscriptionWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel-subscription.workspace-entity';
 
 @Injectable()
@@ -156,10 +156,7 @@ export class MessageChannelSubscriptionService {
     );
   }
 
-  async delete(
-    messageChannelId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  async delete(messageChannelId: string, workspaceId: string): Promise<void> {
     const subscriptionRepository =
       await this.globalWorkspaceOrmManager.getRepository<MessageChannelSubscriptionWorkspaceEntity>(
         workspaceId,

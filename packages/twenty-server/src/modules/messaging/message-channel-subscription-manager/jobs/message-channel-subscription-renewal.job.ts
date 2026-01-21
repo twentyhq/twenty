@@ -43,11 +43,10 @@ export class MessageChannelSubscriptionRenewalJob {
       `Renewing subscription ${subscriptionId} (workspace: ${workspaceId})`,
     );
 
-    const subscription =
-      await this.subscriptionService.findByMessageChannelId(
-        subscriptionId,
-        workspaceId,
-      );
+    const subscription = await this.subscriptionService.findByMessageChannelId(
+      subscriptionId,
+      workspaceId,
+    );
 
     if (!subscription) {
       const messageChannelSubscriptionRepository =
@@ -56,11 +55,10 @@ export class MessageChannelSubscriptionRenewalJob {
           'messageChannelSubscription',
         );
 
-      const subscriptionById = await messageChannelSubscriptionRepository.findOne(
-        {
+      const subscriptionById =
+        await messageChannelSubscriptionRepository.findOne({
           where: { id: subscriptionId },
-        },
-      );
+        });
 
       if (!subscriptionById) {
         this.logger.error(

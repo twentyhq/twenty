@@ -49,8 +49,7 @@ export class MessageChannelSubscriptionMappingService {
 
   async getMappings(email: string): Promise<MessagingPubSubMapping[]> {
     const key = this.getMappingKey(email);
-    const mappings =
-      await this.cacheStorage.get<MessagingPubSubMapping[]>(key);
+    const mappings = await this.cacheStorage.get<MessagingPubSubMapping[]>(key);
 
     return mappings ?? [];
   }
@@ -66,11 +65,7 @@ export class MessageChannelSubscriptionMappingService {
     if (filteredMappings.length === 0) {
       await this.cacheStorage.del(key);
     } else {
-      await this.cacheStorage.set(
-        key,
-        filteredMappings,
-        PUBSUB_MAPPING_TTL_MS,
-      );
+      await this.cacheStorage.set(key, filteredMappings, PUBSUB_MAPPING_TTL_MS);
     }
   }
 
@@ -93,11 +88,7 @@ export class MessageChannelSubscriptionMappingService {
     if (filteredMappings.length === 0) {
       await this.cacheStorage.del(key);
     } else {
-      await this.cacheStorage.set(
-        key,
-        filteredMappings,
-        PUBSUB_MAPPING_TTL_MS,
-      );
+      await this.cacheStorage.set(key, filteredMappings, PUBSUB_MAPPING_TTL_MS);
     }
   }
 

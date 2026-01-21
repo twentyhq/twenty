@@ -42,11 +42,10 @@ export class MessageChannelSubscriptionCleanupJob {
       `Cleaning up subscription for message channel ${messageChannelId} (workspace: ${workspaceId})`,
     );
 
-    const subscription =
-      await this.subscriptionService.findByMessageChannelId(
-        messageChannelId,
-        workspaceId,
-      );
+    const subscription = await this.subscriptionService.findByMessageChannelId(
+      messageChannelId,
+      workspaceId,
+    );
 
     if (!subscription) {
       this.logger.log(
@@ -86,11 +85,7 @@ export class MessageChannelSubscriptionCleanupJob {
     }
 
     if (connectedAccount) {
-      await this.stopWithDriver(
-        subscription,
-        connectedAccount,
-        workspaceId,
-      );
+      await this.stopWithDriver(subscription, connectedAccount, workspaceId);
     } else {
       this.logger.warn(
         `Could not find connected account for message channel ${messageChannelId}, skipping provider cleanup`,

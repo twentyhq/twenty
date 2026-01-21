@@ -2,8 +2,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import {
-    type CreateStandardObjectArgs,
-    createStandardObjectFlatMetadata,
+  type CreateStandardObjectArgs,
+  createStandardObjectFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-object-flat-metadata.util';
 
 export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
