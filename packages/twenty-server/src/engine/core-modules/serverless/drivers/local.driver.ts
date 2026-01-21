@@ -9,7 +9,7 @@ import {
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
-import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
+import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-and-upload-serverless-function';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
 import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';

@@ -7,7 +7,7 @@ export class AddBuiltHandlerPathToServerlessFunctions1769016869438
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" ADD "builtHandlerPath" character varying NOT NULL DEFAULT 'dist/index.mjs'`,
+      `ALTER TABLE "core"."serverlessFunction" ADD "builtHandlerPath" character varying NOT NULL DEFAULT 'index.mjs'`,
     );
   }
 

@@ -27,7 +27,7 @@ import {
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
+import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-and-upload-serverless-function';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/serverless/drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/serverless/drivers/utils/create-zip-file';
