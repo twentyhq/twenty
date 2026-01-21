@@ -1,10 +1,10 @@
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
 import { useSortedFavorites } from '@/favorites/hooks/useSortedFavorites';
 import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
-import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
-import { validateAndExtractFolderId } from '@/favorites/utils/validateAndExtractFolderId';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
+import { validateAndExtractFolderId } from '@/ui/layout/draggable-list/utils/validateAndExtractFolderId';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useSetRecoilState } from 'recoil';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
@@ -45,10 +45,14 @@ export const useHandleFavoriteDragAndDrop = () => {
     const draggedFavorite = favorites.find((f) => f.id === draggableId);
     if (!draggedFavorite) return;
 
-    const destinationFolderId = validateAndExtractFolderId(
-      destination.droppableId,
-    );
-    const sourceFolderId = validateAndExtractFolderId(source.droppableId);
+    const destinationFolderId = validateAndExtractFolderId({
+      droppableId: destination.droppableId,
+      orphanDroppableId: FAVORITE_DROPPABLE_IDS.ORPHAN_FAVORITES,
+    });
+    const sourceFolderId = validateAndExtractFolderId({
+      droppableId: source.droppableId,
+      orphanDroppableId: FAVORITE_DROPPABLE_IDS.ORPHAN_FAVORITES,
+    });
 
     if (
       destination.droppableId.startsWith(

@@ -1,9 +1,10 @@
-import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
-import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
-import { validateAndExtractFolderId } from '@/favorites/utils/validateAndExtractFolderId';
+import { ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSortedNavigationMenuItems';
 import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
+import { FOLDER_DROPPABLE_IDS } from '@/ui/layout/draggable-list/utils/folderDroppableIds';
+import { validateAndExtractFolderId } from '@/ui/layout/draggable-list/utils/validateAndExtractFolderId';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useSetRecoilState } from 'recoil';
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
@@ -52,14 +53,18 @@ export const useHandleNavigationMenuItemDragAndDrop = () => {
       return;
     }
 
-    const destinationFolderId = validateAndExtractFolderId(
-      destination.droppableId,
-    );
-    const sourceFolderId = validateAndExtractFolderId(source.droppableId);
+    const destinationFolderId = validateAndExtractFolderId({
+      droppableId: destination.droppableId,
+      orphanDroppableId: ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID,
+    });
+    const sourceFolderId = validateAndExtractFolderId({
+      droppableId: source.droppableId,
+      orphanDroppableId: ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID,
+    });
 
     if (
       destination.droppableId.startsWith(
-        FAVORITE_DROPPABLE_IDS.FOLDER_HEADER_PREFIX,
+        FOLDER_DROPPABLE_IDS.FOLDER_HEADER_PREFIX,
       )
     ) {
       if (destinationFolderId === null)
