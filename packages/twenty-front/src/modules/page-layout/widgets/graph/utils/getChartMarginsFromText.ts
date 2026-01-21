@@ -2,57 +2,13 @@ import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/Co
 import { TEXT_MARGIN_EXTRAS } from '@/page-layout/widgets/graph/constants/TextMarginExtras';
 import { TEXT_MARGIN_LIMITS } from '@/page-layout/widgets/graph/constants/TextMarginLimits';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
+import { estimateRotatedLabelHeight } from '@/page-layout/widgets/graph/utils/estimateRotatedLabelHeight';
+import { getMaxLabelDimensions } from '@/page-layout/widgets/graph/utils/getMaxLabelDimensions';
 import { measureTextDimensions } from '@/page-layout/widgets/graph/utils/measureTextDimensions';
 import { isNumber } from '@sniptt/guards';
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
-
-const getMaxLabelDimensions = ({
-  labels,
-  fontSize,
-  fontFamily,
-}: {
-  labels?: string[];
-  fontSize: number;
-  fontFamily?: string;
-}) =>
-  (labels ?? []).reduce(
-    (maxDimensions, label) => {
-      const { width, height } = measureTextDimensions({
-        text: label,
-        fontSize,
-        fontFamily,
-      });
-
-      return {
-        width: Math.max(maxDimensions.width, width),
-        height: Math.max(maxDimensions.height, height),
-      };
-    },
-    { width: 0, height: 0 },
-  );
-
-const estimateRotatedLabelHeight = ({
-  width,
-  height,
-  rotationDegrees,
-}: {
-  width: number;
-  height: number;
-  rotationDegrees: number;
-}) => {
-  if (rotationDegrees === 0 || width === 0) {
-    return 0;
-  }
-
-  const rotationRadians = (Math.abs(rotationDegrees) * Math.PI) / 180;
-  const projectedHeight =
-    Math.abs(width * Math.sin(rotationRadians)) +
-    Math.abs(height * Math.cos(rotationRadians));
-
-  return Math.max(height, projectedHeight);
-};
 
 export const getChartMarginsFromText = ({
   tickFontSize,
