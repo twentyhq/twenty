@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { parsePhoneNumber } from 'libphonenumber-js/max';
+import { getCountryCodesForCallingCode } from 'twenty-shared/utils';
 
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -40,22 +41,34 @@ export class WhatsappUpdatePersonService {
             'person',
           );
 
-        await personRepository.update(
-          // TODO: update primary or additional phone number (to be decided)
-          {
+        if (
+          await personRepository.findOneBy({
             phones: {
+              primaryPhoneNumber: formattedOldNumber.nationalNumber,
               primaryPhoneCallingCode: formattedOldNumber.countryCallingCode,
-              primaryPhoneNumber: formattedOldNumber.number,
             },
-          },
-          {
-            phones: {
-              primaryPhoneCallingCode: formattedNewNumber.countryCallingCode,
-              primaryPhoneNumber: formattedNewNumber.number,
+          })
+        ) {
+          await personRepository.update(
+            {
+              phones: {
+                primaryPhoneCallingCode: formattedOldNumber.countryCallingCode,
+                primaryPhoneNumber: formattedOldNumber.nationalNumber,
+              },
             },
-            whatsAppId: wa_id,
-          },
-        );
+            {
+              phones: {
+                primaryPhoneCallingCode: formattedNewNumber.countryCallingCode,
+                primaryPhoneNumber: formattedNewNumber.nationalNumber,
+                primaryPhoneCountryCode: getCountryCodesForCallingCode(
+                  formattedNewNumber.countryCallingCode,
+                )[0], // possible discrepancies
+              },
+              whatsAppId: wa_id,
+            },
+          );
+        }
+        // TODO: add case where old phone number is in additionalPhones array
       },
     );
   }
