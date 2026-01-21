@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -32,6 +33,10 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'viewId',
   'workspaceId',
 ])
+@Check(
+  'CHK_navigation_menu_item_target_fields',
+  '("targetRecordId" IS NULL AND "targetObjectMetadataId" IS NULL) OR ("targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)',
+)
 export class NavigationMenuItemEntity
   extends SyncableEntity
   implements Required<NavigationMenuItemEntity>
