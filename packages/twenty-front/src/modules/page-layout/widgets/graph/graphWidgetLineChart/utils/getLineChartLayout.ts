@@ -103,14 +103,14 @@ export const getLineChartLayout = ({
     yAxisLabel,
     initialTickRotation: LINE_CHART_CONSTANTS.NO_ROTATION_ANGLE,
     computeTickConfig: (currentMargins) =>
-      getLineChartAxisBottomConfig(
+      getLineChartAxisBottomConfig({
         xAxisLabel,
-        chartWidth,
+        width: chartWidth,
         data,
-        currentMargins.left,
-        currentMargins.right,
-        tickFontSize,
-      ),
+        marginLeft: currentMargins.left,
+        marginRight: currentMargins.right,
+        axisFontSize: tickFontSize,
+      }),
     computeValueTickValues: () =>
       computeValueTickValues({
         minimum: effectiveMinimumValue,
@@ -144,12 +144,12 @@ export const getLineChartLayout = ({
 
   const { tickValues: valueTickValues, domain: valueDomain } = valueTickResult;
 
-  const axisLeftConfiguration = getLineChartAxisLeftConfig(
+  const axisLeftConfiguration = getLineChartAxisLeftConfig({
     yAxisLabel,
     formatOptions,
-    valueTickValues,
-    margins.left,
-  );
+    tickValues: valueTickValues,
+    marginLeft: margins.left,
+  });
 
   return {
     margins,

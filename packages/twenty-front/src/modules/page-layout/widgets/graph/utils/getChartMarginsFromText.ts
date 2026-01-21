@@ -12,11 +12,7 @@ export type ChartMargins = {
 const PADDING_EXTRA = 4;
 const NON_ROTATED_TICK_EXTRA = 20;
 const ROTATED_TICK_EXTRA = 8;
-
-const MARGIN_LIMITS = {
-  min: { top: 10, right: 10, bottom: 30, left: 40 },
-  max: { top: 30, right: 30, bottom: 140, left: 160 },
-} as const;
+const MARGIN_LIMITS = COMMON_CHART_CONSTANTS.MARGIN_LIMITS;
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);

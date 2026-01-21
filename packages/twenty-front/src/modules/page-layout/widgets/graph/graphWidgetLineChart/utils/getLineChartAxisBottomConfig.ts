@@ -18,34 +18,34 @@ export type LineChartAxisBottomResult = {
   };
 };
 
-export const getLineChartAxisBottomConfig = (
-  xAxisLabel?: string,
-  width?: number,
-  data?: LineChartSeriesWithColor[],
-  marginLeft?: number,
-  marginRight?: number,
-  axisFontSize?: number,
-): LineChartAxisBottomResult => {
-  const effectiveMarginLeft =
-    marginLeft ?? COMMON_CHART_CONSTANTS.MARGIN_LEFT_WITH_LABEL;
-  const effectiveMarginRight =
-    marginRight ?? COMMON_CHART_CONSTANTS.MARGIN_RIGHT;
-  const effectiveAxisFontSize =
-    axisFontSize ?? COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE;
+type LineChartAxisBottomConfigParams = {
+  xAxisLabel?: string;
+  width: number;
+  data: LineChartSeriesWithColor[];
+  marginLeft: number;
+  marginRight: number;
+  axisFontSize: number;
+};
 
+export const getLineChartAxisBottomConfig = ({
+  xAxisLabel,
+  width,
+  data,
+  marginLeft,
+  marginRight,
+  axisFontSize,
+}: LineChartAxisBottomConfigParams): LineChartAxisBottomResult => {
   const tickValues =
-    width && data
+    width > 0 && data.length > 0
       ? computeLineChartCategoryTickValues({
           width,
           data,
-          marginLeft: effectiveMarginLeft,
-          marginRight: effectiveMarginRight,
+          marginLeft,
+          marginRight,
         })
       : undefined;
 
-  const availableWidth = width
-    ? width - (effectiveMarginLeft + effectiveMarginRight)
-    : 0;
+  const availableWidth = width - (marginLeft + marginRight);
 
   const actualDataPointCount = isNonEmptyArray(data?.[0]?.data)
     ? data[0].data.length
@@ -58,7 +58,8 @@ export const getLineChartAxisBottomConfig = (
 
   const { tickRotation, maxLabelLength } = getTickRotationConfig({
     widthPerTick: widthPerDataPoint,
-    axisFontSize: effectiveAxisFontSize,
+    axisFontSize,
+    maxLabelHeight: COMMON_CHART_CONSTANTS.MARGIN_LIMITS.max.bottom,
   });
 
   return {

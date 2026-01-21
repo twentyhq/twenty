@@ -1,3 +1,4 @@
+import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import {
@@ -5,7 +6,6 @@ import {
   type BarChartTickConfig,
 } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
-import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { type ChartAxisTheme } from '@/page-layout/widgets/graph/types/ChartAxisTheme';
 import { computeChartMargins } from '@/page-layout/widgets/graph/utils/computeChartMargins';
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
@@ -147,51 +147,47 @@ export const getBarChartLayout = ({
 }: GetBarChartLayoutParams): BarChartLayoutResult => {
   const { tickFontSize, legendFontSize } = resolveAxisFontSizes(axisTheme);
 
-  const {
-    margins,
-    tickConfiguration,
-    valueTickResult,
-    bottomLegendOffset,
-  } = computeChartMargins({
-    tickFontSize,
-    legendFontSize,
-    fontFamily,
-    xAxisLabel,
-    yAxisLabel,
-    initialTickRotation: BAR_CHART_CONSTANTS.NO_ROTATION_ANGLE,
-    computeTickConfig: (currentMargins) =>
-      getBarChartTickConfig({
-        width: chartWidth,
-        height: chartHeight,
-        data,
-        indexBy,
-        axisFontSize: tickFontSize,
-        layout,
-        margins: currentMargins,
-      }),
-    computeValueTickValues: (currentTickConfiguration) =>
-      computeValueTickValues({
-        minimum: effectiveMinimumValue,
-        maximum: effectiveMaximumValue,
-        tickCount: currentTickConfiguration.numberOfValueTicks,
-      }),
-    getTickRotation: (currentTickConfiguration) =>
-      currentTickConfiguration.bottomAxisTickRotation,
-    getBottomLegendOffset: (parameters) =>
-      computeBottomLegendOffsetFromText({
-        tickLabels: parameters.marginInputs.bottomTickLabels,
-        tickFontSize,
-        fontFamily,
-        tickRotation: parameters.tickConfiguration.bottomAxisTickRotation,
-      }),
-    resolveMarginInputs: (currentTickConfiguration, tickResult) =>
-      resolveMarginInputs({
-        tickConfiguration: currentTickConfiguration,
-        tickResult,
-        layout,
-        formatOptions,
-      }),
-  });
+  const { margins, tickConfiguration, valueTickResult, bottomLegendOffset } =
+    computeChartMargins({
+      tickFontSize,
+      legendFontSize,
+      fontFamily,
+      xAxisLabel,
+      yAxisLabel,
+      initialTickRotation: BAR_CHART_CONSTANTS.NO_ROTATION_ANGLE,
+      computeTickConfig: (currentMargins) =>
+        getBarChartTickConfig({
+          width: chartWidth,
+          height: chartHeight,
+          data,
+          indexBy,
+          axisFontSize: tickFontSize,
+          layout,
+          margins: currentMargins,
+        }),
+      computeValueTickValues: (currentTickConfiguration) =>
+        computeValueTickValues({
+          minimum: effectiveMinimumValue,
+          maximum: effectiveMaximumValue,
+          tickCount: currentTickConfiguration.numberOfValueTicks,
+        }),
+      getTickRotation: (currentTickConfiguration) =>
+        currentTickConfiguration.bottomAxisTickRotation,
+      getBottomLegendOffset: (parameters) =>
+        computeBottomLegendOffsetFromText({
+          tickLabels: parameters.marginInputs.bottomTickLabels,
+          tickFontSize,
+          fontFamily,
+          tickRotation: parameters.tickConfiguration.bottomAxisTickRotation,
+        }),
+      resolveMarginInputs: (currentTickConfiguration, tickResult) =>
+        resolveMarginInputs({
+          tickConfiguration: currentTickConfiguration,
+          tickResult,
+          layout,
+          formatOptions,
+        }),
+    });
 
   const { tickValues: valueTickValues, domain: valueDomain } = valueTickResult;
 
