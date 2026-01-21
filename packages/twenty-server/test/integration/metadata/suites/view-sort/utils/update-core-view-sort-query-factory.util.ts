@@ -6,18 +6,16 @@ import { type UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/
 
 export const updateCoreViewSortQueryFactory = ({
   gqlFields = VIEW_SORT_GQL_FIELDS,
-  viewSortId,
   input,
-}: PerformMetadataQueryParams<UpdateViewSortInput> & { viewSortId: string }) => ({
+}: PerformMetadataQueryParams<UpdateViewSortInput>) => ({
   query: gql`
-    mutation UpdateCoreViewSort($id: String!, $input: UpdateViewSortInput!) {
-      updateCoreViewSort(id: $id, input: $input) {
+    mutation UpdateCoreViewSort($input: UpdateViewSortInput!) {
+      updateCoreViewSort(input: $input) {
         ${gqlFields}
       }
     }
   `,
   variables: {
-    id: viewSortId,
     input,
   },
 });

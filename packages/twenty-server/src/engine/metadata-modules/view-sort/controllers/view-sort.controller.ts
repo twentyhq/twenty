@@ -21,7 +21,6 @@ import { CreateViewSortPermissionGuard } from 'src/engine/metadata-modules/view-
 import { DeleteViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-sort-permission.guard';
 import { UpdateViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-sort-permission.guard';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
-import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/update-view-sort.input';
 import { type ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import {
   ViewSortException,
@@ -32,6 +31,7 @@ import {
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { ViewSortRestApiExceptionFilter } from 'src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
+import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 
 @Controller('rest/metadata/viewSorts')
 @UseGuards(WorkspaceAuthGuard)
@@ -82,11 +82,11 @@ export class ViewSortController {
   @UseGuards(CreateViewSortPermissionGuard)
   async create(
     @Body() input: CreateViewSortInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    return this.viewSortService.create({
-      ...input,
-      workspaceId: workspace.id,
+    return this.viewSortService.createOne({
+      createViewSortInput: input,
+      workspaceId,
     });
   }
 
@@ -94,25 +94,28 @@ export class ViewSortController {
   @UseGuards(UpdateViewSortPermissionGuard)
   async update(
     @Param('id') id: string,
-    @Body() input: UpdateViewSortInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Body() input: { direction?: ViewSortDirection },
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    const updatedViewSort = await this.viewSortService.update(
-      id,
-      workspace.id,
-      input,
-    );
-
-    return updatedViewSort;
+    return await this.viewSortService.updateOne({
+      updateViewSortInput: {
+        id,
+        update: input,
+      },
+      workspaceId,
+    });
   }
 
   @Delete(':id')
   @UseGuards(DeleteViewSortPermissionGuard)
   async delete(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<{ success: boolean }> {
-    const deletedViewSort = await this.viewSortService.delete(id, workspace.id);
+    const deletedViewSort = await this.viewSortService.deleteOne({
+      deleteViewSortInput: { id },
+      workspaceId,
+    });
 
     return { success: isDefined(deletedViewSort) };
   }

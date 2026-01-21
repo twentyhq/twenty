@@ -180,8 +180,7 @@ export class FlatViewSortValidatorService {
     const equivalentExistingFlatViewSortExists = otherFlatViewSorts.some(
       (flatViewSort) =>
         flatViewSort.viewId === flatViewSortToValidate.viewId &&
-        flatViewSort.fieldMetadataId ===
-          flatViewSortToValidate.fieldMetadataId,
+        flatViewSort.fieldMetadataId === flatViewSortToValidate.fieldMetadataId,
     );
 
     if (equivalentExistingFlatViewSortExists) {

@@ -9,17 +9,13 @@ import { type UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/
 import { type ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 
 export const updateOneCoreViewSort = async ({
-  viewSortId,
   input,
   gqlFields,
   expectToFail,
-}: PerformMetadataQueryParams<UpdateViewSortInput> & {
-  viewSortId: string;
-}): CommonResponseBody<{
+}: PerformMetadataQueryParams<UpdateViewSortInput>): CommonResponseBody<{
   updateCoreViewSort: ViewSortDTO;
 }> => {
   const graphqlOperation = updateCoreViewSortQueryFactory({
-    viewSortId,
     input,
     gqlFields,
   });

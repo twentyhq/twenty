@@ -1,59 +1,62 @@
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/create-one-core-view-sort.util';
 import { destroyOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/destroy-one-core-view-sort.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 describe('View Sort creation should succeed', () => {
-  let companyObjectMetadataId: string;
+  let testObjectMetadataId: string;
   let testFieldMetadataId: string;
   let createdViewId: string;
   let createdViewSortId: string;
 
   beforeAll(async () => {
-    const { objects } = await findManyObjectMetadata({
-      expectToFail: false,
-      input: {
-        filter: {},
-        paging: { first: 1000 },
+    const {
+      data: {
+        createOneObject: { id: objectMetadataId },
       },
-      gqlFields: `
-        id
-        nameSingular
-        fieldsList: fields {
-          edges {
-            node {
-              id
-              name
-            }
-          }
-        }
-      `,
+    } = await createOneObjectMetadata({
+      input: {
+        nameSingular: 'testViewSortCreationObject',
+        namePlural: 'testViewSortCreationObjects',
+        labelSingular: 'Test View Sort Creation Object',
+        labelPlural: 'Test View Sort Creation Objects',
+        icon: 'IconSort',
+      },
     });
 
-    jestExpectToBeDefined(objects);
+    testObjectMetadataId = objectMetadataId;
 
-    const companyObjectMetadata = objects.find(
-      (object: { nameSingular: string }) => object.nameSingular === 'company',
-    );
+    const {
+      data: {
+        createOneField: { id: fieldMetadataId },
+      },
+    } = await createOneFieldMetadata({
+      input: {
+        name: 'testSortField',
+        label: 'Test Sort Field',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId: testObjectMetadataId,
+        isLabelSyncedWithName: true,
+      },
+      gqlFields: 'id name label',
+    });
 
-    jestExpectToBeDefined(companyObjectMetadata);
-    companyObjectMetadataId = companyObjectMetadata.id;
-
-    const firstField = companyObjectMetadata.fieldsList.edges[0];
-
-    jestExpectToBeDefined(firstField);
-    testFieldMetadataId = firstField.node.id;
+    testFieldMetadataId = fieldMetadataId;
 
     const { data: viewData } = await createOneCoreView({
       expectToFail: false,
       input: {
         name: 'Test View For View Sort Creation',
-        objectMetadataId: companyObjectMetadataId,
+        objectMetadataId: testObjectMetadataId,
         type: ViewType.TABLE,
         icon: 'IconBuildingSkyscraper',
       },
@@ -70,6 +73,17 @@ describe('View Sort creation should succeed', () => {
         viewId: createdViewId,
       });
     }
+
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: { isActive: false },
+      },
+    });
+    await deleteOneObjectMetadata({
+      input: { idToDelete: testObjectMetadataId },
+    });
   });
 
   afterEach(async () => {

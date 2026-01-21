@@ -10,7 +10,6 @@ import { type UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 
 type TestContext = {
-  viewSortId: string;
   input: UpdateViewSortInput;
 };
 
@@ -18,9 +17,11 @@ const failingViewSortUpdateTestCases: EachTestingContext<TestContext>[] = [
   {
     title: 'when viewSortId does not exist',
     context: {
-      viewSortId: v4(),
       input: {
-        direction: ViewSortDirection.DESC,
+        id: v4(),
+        update: {
+          direction: ViewSortDirection.DESC,
+        },
       },
     },
   },
@@ -32,7 +33,6 @@ describe('View Sort update should fail', () => {
     async ({ context }) => {
       const { errors } = await updateOneCoreViewSort({
         expectToFail: true,
-        viewSortId: context.viewSortId,
         input: context.input,
       });
 

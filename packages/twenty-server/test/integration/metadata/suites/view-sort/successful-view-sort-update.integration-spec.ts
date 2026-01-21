@@ -1,60 +1,63 @@
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/create-one-core-view-sort.util';
 import { destroyOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/destroy-one-core-view-sort.util';
 import { updateOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/update-one-core-view-sort.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 describe('View Sort update should succeed', () => {
-  let companyObjectMetadataId: string;
+  let testObjectMetadataId: string;
   let testFieldMetadataId: string;
   let createdViewId: string;
   let createdViewSortId: string;
 
   beforeAll(async () => {
-    const { objects } = await findManyObjectMetadata({
-      expectToFail: false,
-      input: {
-        filter: {},
-        paging: { first: 1000 },
+    const {
+      data: {
+        createOneObject: { id: objectMetadataId },
       },
-      gqlFields: `
-        id
-        nameSingular
-        fieldsList: fields {
-          edges {
-            node {
-              id
-              name
-            }
-          }
-        }
-      `,
+    } = await createOneObjectMetadata({
+      input: {
+        nameSingular: 'testViewSortUpdateObject',
+        namePlural: 'testViewSortUpdateObjects',
+        labelSingular: 'Test View Sort Update Object',
+        labelPlural: 'Test View Sort Update Objects',
+        icon: 'IconSort',
+      },
     });
 
-    jestExpectToBeDefined(objects);
+    testObjectMetadataId = objectMetadataId;
 
-    const companyObjectMetadata = objects.find(
-      (object: { nameSingular: string }) => object.nameSingular === 'company',
-    );
+    const {
+      data: {
+        createOneField: { id: fieldMetadataId },
+      },
+    } = await createOneFieldMetadata({
+      input: {
+        name: 'testSortUpdateField',
+        label: 'Test Sort Update Field',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId: testObjectMetadataId,
+        isLabelSyncedWithName: true,
+      },
+      gqlFields: 'id name label',
+    });
 
-    jestExpectToBeDefined(companyObjectMetadata);
-    companyObjectMetadataId = companyObjectMetadata.id;
-
-    const firstField = companyObjectMetadata.fieldsList.edges[0];
-
-    jestExpectToBeDefined(firstField);
-    testFieldMetadataId = firstField.node.id;
+    testFieldMetadataId = fieldMetadataId;
 
     const { data: viewData } = await createOneCoreView({
       expectToFail: false,
       input: {
         name: 'Test View For View Sort Update',
-        objectMetadataId: companyObjectMetadataId,
+        objectMetadataId: testObjectMetadataId,
         type: ViewType.TABLE,
         icon: 'IconBuildingSkyscraper',
       },
@@ -71,6 +74,17 @@ describe('View Sort update should succeed', () => {
         viewId: createdViewId,
       });
     }
+
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: { isActive: false },
+      },
+    });
+    await deleteOneObjectMetadata({
+      input: { idToDelete: testObjectMetadataId },
+    });
   });
 
   beforeEach(async () => {
@@ -100,9 +114,11 @@ describe('View Sort update should succeed', () => {
   it('should update direction from ASC to DESC', async () => {
     const { data } = await updateOneCoreViewSort({
       expectToFail: false,
-      viewSortId: createdViewSortId,
       input: {
-        direction: ViewSortDirection.DESC,
+        id: createdViewSortId,
+        update: {
+          direction: ViewSortDirection.DESC,
+        },
       },
     });
 
@@ -115,17 +131,21 @@ describe('View Sort update should succeed', () => {
   it('should update direction from DESC to ASC', async () => {
     await updateOneCoreViewSort({
       expectToFail: false,
-      viewSortId: createdViewSortId,
       input: {
-        direction: ViewSortDirection.DESC,
+        id: createdViewSortId,
+        update: {
+          direction: ViewSortDirection.DESC,
+        },
       },
     });
 
     const { data } = await updateOneCoreViewSort({
       expectToFail: false,
-      viewSortId: createdViewSortId,
       input: {
-        direction: ViewSortDirection.ASC,
+        id: createdViewSortId,
+        update: {
+          direction: ViewSortDirection.ASC,
+        },
       },
     });
 
