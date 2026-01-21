@@ -1,7 +1,9 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
+import { isNumber, isString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 const getRootFontSize = () => {
-  if (typeof document === 'undefined') {
+  if (!isDefined(document)) {
     return COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE;
   }
 
@@ -17,11 +19,11 @@ export const parseFontSizeToPx = (
   fontSize: number | string | undefined,
   fallback: number,
 ) => {
-  if (typeof fontSize === 'number') {
+  if (isNumber(fontSize)) {
     return Number.isFinite(fontSize) && fontSize > 0 ? fontSize : fallback;
   }
 
-  if (typeof fontSize === 'string') {
+  if (isString(fontSize)) {
     const trimmed = fontSize.trim();
     const parsed = Number.parseFloat(trimmed);
 
