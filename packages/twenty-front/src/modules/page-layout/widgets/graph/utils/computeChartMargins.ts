@@ -16,21 +16,21 @@ export type ComputeChartMarginsParams<TTickConfig, TValueTickResult> = {
   yAxisLabel?: string;
   initialTickRotation: number;
   computeTickConfig: (margins: ChartMargins) => TTickConfig;
-  computeValueTickValues: (tickConfig: TTickConfig) => TValueTickResult;
-  getTickRotation: (tickConfig: TTickConfig) => number;
+  computeValueTickValues: (tickConfiguration: TTickConfig) => TValueTickResult;
+  getTickRotation: (tickConfiguration: TTickConfig) => number;
   getBottomLegendOffset?: (params: {
-    tickConfig: TTickConfig;
+    tickConfiguration: TTickConfig;
     marginInputs: ChartMarginInputs;
   }) => number;
   resolveMarginInputs: (
-    tickConfig: TTickConfig,
+    tickConfiguration: TTickConfig,
     valueTickResult: TValueTickResult,
   ) => ChartMarginInputs;
 };
 
 export type ComputeChartMarginsResult<TTickConfig, TValueTickResult> = {
   margins: ChartMargins;
-  tickConfig: TTickConfig;
+  tickConfiguration: TTickConfig;
   valueTickResult: TValueTickResult;
   bottomLegendOffset?: number;
 };
@@ -60,18 +60,18 @@ export const computeChartMargins = <TTickConfig, TValueTickResult>({
     tickRotation: initialTickRotation,
   });
 
-  const provisionalTickConfig = computeTickConfig(provisionalMargins);
+  const provisionalTickConfiguration = computeTickConfig(provisionalMargins);
   const provisionalValueTickResult = computeValueTickValues(
-    provisionalTickConfig,
+    provisionalTickConfiguration,
   );
   const provisionalMarginInputs = resolveMarginInputs(
-    provisionalTickConfig,
+    provisionalTickConfiguration,
     provisionalValueTickResult,
   );
 
   const computedBottomLegendOffset = getBottomLegendOffset
     ? getBottomLegendOffset({
-        tickConfig: provisionalTickConfig,
+        tickConfiguration: provisionalTickConfiguration,
         marginInputs: provisionalMarginInputs,
       })
     : undefined;
@@ -84,17 +84,17 @@ export const computeChartMargins = <TTickConfig, TValueTickResult>({
     leftTickLabels: provisionalMarginInputs.leftTickLabels,
     xAxisLabel,
     yAxisLabel,
-    tickRotation: getTickRotation(provisionalTickConfig),
+    tickRotation: getTickRotation(provisionalTickConfiguration),
     bottomLegendOffset: computedBottomLegendOffset,
   });
 
-  const tickConfig = computeTickConfig(computedMargins);
-  const valueTickResult = computeValueTickValues(tickConfig);
-  const marginInputs = resolveMarginInputs(tickConfig, valueTickResult);
+  const tickConfiguration = computeTickConfig(computedMargins);
+  const valueTickResult = computeValueTickValues(tickConfiguration);
+  const marginInputs = resolveMarginInputs(tickConfiguration, valueTickResult);
 
   const bottomLegendOffset = getBottomLegendOffset
     ? getBottomLegendOffset({
-        tickConfig,
+        tickConfiguration,
         marginInputs,
       })
     : undefined;
@@ -107,9 +107,9 @@ export const computeChartMargins = <TTickConfig, TValueTickResult>({
     leftTickLabels: marginInputs.leftTickLabels,
     xAxisLabel,
     yAxisLabel,
-    tickRotation: getTickRotation(tickConfig),
+    tickRotation: getTickRotation(tickConfiguration),
     bottomLegendOffset,
   });
 
-  return { margins, tickConfig, valueTickResult, bottomLegendOffset };
+  return { margins, tickConfiguration, valueTickResult, bottomLegendOffset };
 };

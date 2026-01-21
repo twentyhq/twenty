@@ -1,7 +1,9 @@
+import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeriesWithColor';
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
+import { type ChartAxisTheme } from '@/page-layout/widgets/graph/types/ChartAxisTheme';
 import { computeChartMargins } from '@/page-layout/widgets/graph/utils/computeChartMargins';
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
 import {
@@ -13,11 +15,6 @@ import {
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { parseFontSizeToPx } from '@/page-layout/widgets/graph/utils/parseFontSize';
-
-type ChartAxisTheme = {
-  ticks: { text: { fontSize: number | string } };
-  legend: { text: { fontSize: number | string } };
-};
 
 export type GetLineChartLayoutParams = {
   axisTheme: ChartAxisTheme;
@@ -72,7 +69,10 @@ const resolveAxisBottomConfiguration = ({
     ...axisBottomConfigurationResult.config,
     legendOffset: Math.min(
       resolvedLegendOffset,
-      Math.max(margins.bottom - 4, 0),
+      Math.max(
+        margins.bottom - COMMON_CHART_CONSTANTS.LEGEND_OFFSET_MARGIN_BUFFER,
+        0,
+      ),
     ),
   };
 };
@@ -92,7 +92,7 @@ export const getLineChartLayout = ({
 
   const {
     margins,
-    tickConfig: axisBottomConfigurationResult,
+    tickConfiguration: axisBottomConfigurationResult,
     valueTickResult,
     bottomLegendOffset,
   } = computeChartMargins({
@@ -124,7 +124,7 @@ export const getLineChartLayout = ({
         tickLabels: parameters.marginInputs.bottomTickLabels,
         tickFontSize,
         fontFamily,
-        tickRotation: parameters.tickConfig.config.tickRotation,
+        tickRotation: parameters.tickConfiguration.config.tickRotation,
       }),
     resolveMarginInputs: (tickConfiguration, tickResult) => ({
       bottomTickLabels: (tickConfiguration.config.tickValues ?? []).map(

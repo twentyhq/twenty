@@ -5,6 +5,8 @@ import {
   type BarChartTickConfig,
 } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
+import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
+import { type ChartAxisTheme } from '@/page-layout/widgets/graph/types/ChartAxisTheme';
 import { computeChartMargins } from '@/page-layout/widgets/graph/utils/computeChartMargins';
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
 import {
@@ -18,11 +20,6 @@ import {
 import { parseFontSizeToPx } from '@/page-layout/widgets/graph/utils/parseFontSize';
 import { type BarDatum } from '@nivo/bar';
 import { BarChartLayout } from '~/generated/graphql';
-
-type ChartAxisTheme = {
-  ticks: { text: { fontSize: number | string } };
-  legend: { text: { fontSize: number | string } };
-};
 
 export type GetBarChartLayoutParams = {
   axisTheme: ChartAxisTheme;
@@ -126,7 +123,10 @@ const resolveAxisBottomConfiguration = ({
     ...axisBottomConfigurationBase,
     legendOffset: Math.min(
       resolvedLegendOffset,
-      Math.max(margins.bottom - 4, 0),
+      Math.max(
+        margins.bottom - COMMON_CHART_CONSTANTS.LEGEND_OFFSET_MARGIN_BUFFER,
+        0,
+      ),
     ),
   };
 };
@@ -149,7 +149,7 @@ export const getBarChartLayout = ({
 
   const {
     margins,
-    tickConfig: tickConfiguration,
+    tickConfiguration,
     valueTickResult,
     bottomLegendOffset,
   } = computeChartMargins({
@@ -182,7 +182,7 @@ export const getBarChartLayout = ({
         tickLabels: parameters.marginInputs.bottomTickLabels,
         tickFontSize,
         fontFamily,
-        tickRotation: parameters.tickConfig.bottomAxisTickRotation,
+        tickRotation: parameters.tickConfiguration.bottomAxisTickRotation,
       }),
     resolveMarginInputs: (currentTickConfiguration, tickResult) =>
       resolveMarginInputs({
@@ -204,7 +204,7 @@ export const getBarChartLayout = ({
     yAxisLabel,
     formatOptions,
     valueTickValues,
-    tickConfig: tickConfiguration,
+    tickConfiguration,
     margins,
   });
 

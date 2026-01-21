@@ -16,7 +16,7 @@ type GetBarChartAxisConfigsProps = {
   yAxisLabel?: string;
   formatOptions?: GraphValueFormatOptions;
   valueTickValues?: number[];
-  tickConfig: BarChartTickConfig;
+  tickConfiguration: BarChartTickConfig;
   margins: ChartMargins;
 };
 
@@ -26,7 +26,7 @@ export const getBarChartAxisConfigs = ({
   yAxisLabel,
   formatOptions,
   valueTickValues,
-  tickConfig,
+  tickConfiguration,
   margins,
 }: GetBarChartAxisConfigsProps) => {
   const {
@@ -35,7 +35,7 @@ export const getBarChartAxisConfigs = ({
     maxBottomAxisTickLabelLength,
     maxLeftAxisTickLabelLength,
     bottomAxisTickRotation,
-  } = tickConfig;
+  } = tickConfiguration;
 
   const resolvedValueTickValues =
     valueTickValues && valueTickValues.length > 0
@@ -48,7 +48,10 @@ export const getBarChartAxisConfigs = ({
     (hasRotation ? BAR_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN : 0);
   const bottomLegendOffset = Math.min(
     baseBottomLegendOffset,
-    Math.max(margins.bottom - 4, 0),
+    Math.max(
+      margins.bottom - COMMON_CHART_CONSTANTS.LEGEND_OFFSET_MARGIN_BUFFER,
+      0,
+    ),
   );
 
   if (layout === BarChartLayout.VERTICAL) {
@@ -93,7 +96,10 @@ export const getBarChartAxisConfigs = ({
       legend: xAxisLabel,
       legendOffset: Math.min(
         BAR_CHART_CONSTANTS.BOTTOM_AXIS_LEGEND_OFFSET,
-        Math.max(margins.bottom - 4, 0),
+        Math.max(
+          margins.bottom - COMMON_CHART_CONSTANTS.LEGEND_OFFSET_MARGIN_BUFFER,
+          0,
+        ),
       ),
       format: (value: number) =>
         truncateTickLabel(
