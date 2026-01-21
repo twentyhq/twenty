@@ -28,6 +28,10 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   'folderId',
   'workspaceId',
 ])
+@Index('IDX_NAVIGATION_MENU_ITEM_VIEW_ID_WORKSPACE_ID', [
+  'viewId',
+  'workspaceId',
+])
 export class NavigationMenuItemEntity
   extends SyncableEntityRequired
   implements Required<NavigationMenuItemEntity>
@@ -50,6 +54,9 @@ export class NavigationMenuItemEntity
 
   @Column({ nullable: true, type: 'uuid' })
   targetObjectMetadataId: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  viewId: string | null;
 
   @ManyToOne(() => ObjectMetadataEntity, {
     onDelete: 'CASCADE',

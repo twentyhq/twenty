@@ -9,6 +9,7 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemDto = (
   targetRecordId: flatNavigationMenuItem.targetRecordId ?? undefined,
   targetObjectMetadataId:
     flatNavigationMenuItem.targetObjectMetadataId ?? undefined,
+  viewId: flatNavigationMenuItem.viewId ?? undefined,
   folderId: flatNavigationMenuItem.folderId ?? undefined,
   name: flatNavigationMenuItem.name ?? undefined,
   position: flatNavigationMenuItem.position,

@@ -52,6 +52,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       targetRecordId: createNavigationMenuItemInput.targetRecordId ?? null,
       targetObjectMetadataId:
         createNavigationMenuItemInput.targetObjectMetadataId ?? null,
+      viewId: createNavigationMenuItemInput.viewId ?? null,
       folderId: createNavigationMenuItemInput.folderId ?? null,
       name: createNavigationMenuItemInput.name ?? null,
       position,

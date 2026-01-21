@@ -143,8 +143,13 @@ export class NavigationMenuItemService {
         isDefined(input.userWorkspaceId) && isDefined(authUserWorkspaceId)
           ? authUserWorkspaceId
           : input.userWorkspaceId,
+      targetRecordId:
+        isDefined(input.viewId) && !isDefined(input.targetRecordId)
+          ? input.viewId
+          : input.targetRecordId,
     };
 
+    const hasViewId = isDefined(normalizedInput.viewId);
     const hasTargetRecordId = isDefined(normalizedInput.targetRecordId);
     const hasTargetObjectMetadataId = isDefined(
       normalizedInput.targetObjectMetadataId,
@@ -164,7 +169,19 @@ export class NavigationMenuItemService {
       );
     }
 
-    const isFolder = !hasTargetRecordId && !hasTargetObjectMetadataId;
+    if (
+      hasViewId &&
+      hasTargetRecordId &&
+      normalizedInput.viewId !== normalizedInput.targetRecordId
+    ) {
+      throw new NavigationMenuItemException(
+        'targetRecordId must match viewId when viewId is provided',
+        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+      );
+    }
+
+    const isFolder =
+      !hasTargetRecordId && !hasTargetObjectMetadataId && !hasViewId;
 
     if (
       isFolder &&

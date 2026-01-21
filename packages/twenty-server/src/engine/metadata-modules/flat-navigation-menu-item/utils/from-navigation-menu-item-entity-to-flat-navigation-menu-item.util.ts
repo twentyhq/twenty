@@ -9,6 +9,7 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = (
     userWorkspaceId: navigationMenuItemEntity.userWorkspaceId,
     targetRecordId: navigationMenuItemEntity.targetRecordId,
     targetObjectMetadataId: navigationMenuItemEntity.targetObjectMetadataId,
+    viewId: navigationMenuItemEntity.viewId,
     folderId: navigationMenuItemEntity.folderId,
     name: navigationMenuItemEntity.name,
     position: navigationMenuItemEntity.position,
