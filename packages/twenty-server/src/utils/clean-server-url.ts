@@ -1,12 +1,12 @@
-export const cleanServerUrl = (serverUrlEnv?: string): string => {
+export const cleanServerUrl = (serverUrlEnv?: string): string | undefined => {
   if (!serverUrlEnv || typeof serverUrlEnv !== 'string') {
-    return '';
+    return undefined;
   }
 
   const trimmed = serverUrlEnv.trim();
 
   if (!trimmed) {
-    return '';
+    return undefined;
   }
 
   return trimmed.endsWith('/')
