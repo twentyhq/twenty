@@ -59,7 +59,8 @@ export const getDefaultFlatFieldMetadata = ({
     isUIReadOnly: createFieldInput.isUIReadOnly ?? false,
     morphId: null,
     applicationId:
-      createFieldInput.applicationId ?? workspaceCustomApplicationId,    viewFilterIds: [],
+      createFieldInput.applicationId ?? workspaceCustomApplicationId,
+    viewFilterIds: [],
     kanbanAggregateOperationViewIds: [],
   } as const satisfies FlatFieldMetadata;
 };

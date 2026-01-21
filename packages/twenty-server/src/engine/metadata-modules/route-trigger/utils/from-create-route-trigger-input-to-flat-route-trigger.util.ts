@@ -17,7 +17,8 @@ export const fromCreateRouteTriggerInputToFlatRouteTrigger = ({
 
   return {
     id,
-    universalIdentifier: createRouteTriggerInput.universalIdentifier ?? uuidV4(),
+    universalIdentifier:
+      createRouteTriggerInput.universalIdentifier ?? uuidV4(),
     path: createRouteTriggerInput.path,
     isAuthRequired: createRouteTriggerInput.isAuthRequired,
     httpMethod: createRouteTriggerInput.httpMethod,
