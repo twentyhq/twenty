@@ -169,12 +169,17 @@ export class WorkspaceMigrationRunnerService {
   run = async ({
     actions,
     workspaceId,
-    relatedFlatEntityMapsKeys,
   }: WorkspaceMigration): Promise<AllFlatEntityMaps> => {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
 
     const queryRunner = this.coreDataSource.createQueryRunner();
+    const impactedMetadataNames = [
+      ...new Set(actions.flatMap((action) => action.metadataName)),
+    ];
+    const relatedFlatEntityMapsKeys = impactedMetadataNames.map(
+      getMetadataFlatEntityMapsKey,
+    );
 
     let allFlatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -186,8 +191,6 @@ export class WorkspaceMigrationRunnerService {
 
     this.logger.timeEnd('Runner', 'Initial cache retrieval');
     this.logger.time('Runner', 'Transaction execution');
-
-    let impactedMetadataNames: AllMetadataName[] = [];
 
     let successfullyExecutedActions: WorkspaceMigrationAction[] = [];
 
@@ -214,10 +217,6 @@ export class WorkspaceMigrationRunnerService {
           ...allFlatEntityMaps,
           ...result,
         };
-
-        impactedMetadataNames = [
-          ...new Set([action.metadataName, ...impactedMetadataNames]),
-        ];
       }
 
       await queryRunner.commitTransaction();
@@ -258,9 +257,7 @@ export class WorkspaceMigrationRunnerService {
         );
       }
 
-      if (
-        error instanceof WorkspaceMigrationExecutionException
-      ) {
+      if (error instanceof WorkspaceMigrationExecutionException) {
         throw error;
       }
 
