@@ -346,6 +346,7 @@ export const GraphWidgetLineChart = ({
         containerRef={containerRef}
         enrichedSeries={enrichedSeries}
         formatOptions={formatOptions}
+        isStacked={groupMode === 'stacked'}
         onSliceClick={onSliceClick}
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}

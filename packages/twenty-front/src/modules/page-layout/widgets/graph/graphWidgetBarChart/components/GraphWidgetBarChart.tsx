@@ -143,6 +143,11 @@ export const GraphWidgetBarChart = ({
       colorMode,
     });
 
+  const orderedKeys =
+    groupMode === 'stacked' && layout === BarChartLayout.VERTICAL
+      ? visibleKeys.toReversed()
+      : visibleKeys;
+
   const calculatedValueRange =
     groupMode === 'stacked'
       ? calculateStackedBarChartValueRange(data, visibleKeys)
@@ -223,7 +228,7 @@ export const GraphWidgetBarChart = ({
       <CustomBarItem
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
-        keys={visibleKeys}
+        keys={orderedKeys}
         groupMode={groupMode}
         data={data}
         indexBy={indexBy}
@@ -231,7 +236,7 @@ export const GraphWidgetBarChart = ({
         chartId={id}
       />
     ),
-    [visibleKeys, groupMode, data, indexBy, layout, id],
+    [orderedKeys, groupMode, data, indexBy, layout, id],
   );
 
   const TotalsLayer = ({
@@ -309,7 +314,7 @@ export const GraphWidgetBarChart = ({
         <ResponsiveBar
           barComponent={BarItemWithContext}
           data={data}
-          keys={visibleKeys}
+          keys={orderedKeys}
           indexBy={indexBy}
           margin={margins}
           padding={BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO}
@@ -377,7 +382,6 @@ export const GraphWidgetBarChart = ({
         containerRef={containerRef}
         enrichedKeys={enrichedKeys}
         formatOptions={formatOptions}
-        layout={layout === BarChartLayout.VERTICAL ? 'vertical' : 'horizontal'}
         onSliceClick={onSliceClick}
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}

@@ -143,6 +143,15 @@ export type FieldPositionMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
+export type FieldRelationMetadataSettings = {
+  relationType?: RelationType;
+  // Join column name for the foreign key (e.g., "petId" for a "pet" relation)
+  joinColumnName?: string | null;
+  // Points to the target field on the junction object
+  // For MORPH_RELATION fields, morphRelations already contains all targets
+  junctionTargetFieldId?: string;
+} | null;
+
 // for later: refactor this in order to directly use relation without mapping
 export type FieldRelationMetadata = BaseFieldMetadata & {
   relationFieldMetadataId: string;
@@ -152,14 +161,14 @@ export type FieldRelationMetadata = BaseFieldMetadata & {
   relationType?: RelationType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
-  settings?: null;
+  settings?: FieldRelationMetadataSettings;
 };
 
 export type FieldMorphRelationMetadata = BaseFieldMetadata & {
   morphRelations: FieldMetadataItemRelation[];
   relationType: RelationType;
   useEditButton?: boolean;
-  settings?: null;
+  settings?: FieldRelationMetadataSettings;
 };
 
 export type FieldSelectMetadata = BaseFieldMetadata & {
