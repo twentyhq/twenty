@@ -1,4 +1,5 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
+import { FONT_COMMON } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 const FALLBACK_LINE_HEIGHT_RATIO = 1.4;
@@ -13,11 +14,11 @@ const textCache = new Map<string, TextDimensions>();
 let cachedCanvas: HTMLCanvasElement | null = null;
 
 const getCanvasContext = () => {
-  if (typeof document === 'undefined') {
+  if (!isDefined(document)) {
     return null;
   }
 
-  if (!cachedCanvas) {
+  if (!isDefined(cachedCanvas)) {
     cachedCanvas = document.createElement('canvas');
   }
 
@@ -25,7 +26,7 @@ const getCanvasContext = () => {
 };
 
 const getCacheKey = (text: string, fontSize: number, fontFamily?: string) =>
-  `${fontSize}px:${fontFamily ?? 'sans-serif'}:${text}`;
+  `${fontSize}px:${fontFamily ?? FONT_COMMON.family}:${text}`;
 
 export const measureTextDimensions = ({
   text,
@@ -36,7 +37,7 @@ export const measureTextDimensions = ({
   fontSize: number;
   fontFamily?: string;
 }): TextDimensions => {
-  if (!text) {
+  if (!isDefined(text)) {
     return { width: 0, height: 0 };
   }
 
@@ -47,7 +48,7 @@ export const measureTextDimensions = ({
   }
 
   const context = getCanvasContext();
-  if (!context) {
+  if (!isDefined(context)) {
     const fallbackWidth =
       text.length *
       fontSize *
@@ -58,7 +59,7 @@ export const measureTextDimensions = ({
     return fallback;
   }
 
-  context.font = `${fontSize}px ${fontFamily ?? 'sans-serif'}`;
+  context.font = `${fontSize}px ${fontFamily ?? FONT_COMMON.family}`;
   const metrics = context.measureText(text);
   const ascent = metrics.actualBoundingBoxAscent ?? fontSize;
   const descent =
