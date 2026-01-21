@@ -9,15 +9,14 @@ import {
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
-import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-and-upload-serverless-function';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
-import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
 import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
 import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { type FlatServerlessFunctionLayer } from 'src/engine/metadata-modules/serverless-function-layer/types/flat-serverless-function-layer.type';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { DEFAULT_BUILT_HANDLER_PATH } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -88,21 +87,21 @@ export class LocalDriver implements ServerlessDriver {
     try {
       const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
+      const builtBundleFilePath = join(
+        sourceTemporaryDir,
+        DEFAULT_BUILT_HANDLER_PATH,
+      );
+
       await this.fileStorageService.download({
-        from: { folderPath },
-        to: { folderPath: sourceTemporaryDir },
+        from: {
+          folderPath,
+          filename: DEFAULT_BUILT_HANDLER_PATH,
+        },
+        to: {
+          folderPath: sourceTemporaryDir,
+          filename: DEFAULT_BUILT_HANDLER_PATH,
+        },
       });
-
-      let builtBundleFilePath = '';
-
-      try {
-        builtBundleFilePath = await buildServerlessFunctionInMemory({
-          sourceTemporaryDir,
-          handlerPath: flatServerlessFunction.handlerPath,
-        });
-      } catch (error) {
-        return formatBuildError(error, startTime);
-      }
 
       try {
         await fs.symlink(
