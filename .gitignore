@@ -25,7 +25,6 @@
 
 coverage
 dist
-.output
 storybook-static
 *.tsbuildinfo
 .eslintcache

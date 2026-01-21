@@ -1,10 +1,12 @@
 import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
 import { join } from 'path';
 
+import expectedManifest from './manifest.expected.json';
+
 const APP_PATH = join(__dirname, '..');
 
 describe('rich-app manifest', () => {
-  it('should build manifest matching snapshot', async () => {
+  it('should build manifest matching expected JSON', async () => {
     const manifest = await runManifestBuild(APP_PATH, {
       display: false,
       writeOutput: false,
@@ -12,15 +14,14 @@ describe('rich-app manifest', () => {
 
     expect(manifest).not.toBeNull();
 
-    const sanitizedManifest = {
+    const { sources: _sources, ...sanitizedManifest } = {
       ...manifest,
       packageJson: {
         name: manifest!.packageJson.name,
       },
-      sources: undefined,
     };
 
-    expect(sanitizedManifest).toMatchSnapshot();
+    expect(sanitizedManifest).toEqual(expectedManifest);
   });
 
   it('should have correct application config', async () => {

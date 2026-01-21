@@ -87,24 +87,17 @@
       }
     },
     "test:unit": {
-      "executor": "@nx/vitest:test",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "executor": "nx:run-commands",
       "options": {
-        "config": "{projectRoot}/vitest.unit.config.ts"
-      },
-      "configurations": {
-        "ci": {
-          "coverage": true,
-          "watch": false
-        }
+        "cwd": "packages/twenty-sdk",
+        "command": "npx vitest run --config vitest.unit.config.ts"
       }
     },
     "test:integration": {
-      "executor": "@nx/vitest:test",
+      "executor": "nx:run-commands",
       "options": {
-        "config": "{projectRoot}/vitest.integration.config.ts"
+        "cwd": "packages/twenty-sdk",
+        "command": "npx vitest run --config vitest.integration.config.ts"
       }
     },
     "test:e2e": {

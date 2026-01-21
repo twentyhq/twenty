@@ -14,5 +14,8 @@ export default defineConfig({
     include: ['src/**/__integration__/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/.git/**'],
     globals: true,
+    diff: {
+      truncateThreshold: 0,
+    },
   },
 });
