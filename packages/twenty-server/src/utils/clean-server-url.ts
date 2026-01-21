@@ -1,6 +1,15 @@
-export const cleanServerUrl = (serverUrlEnv?: string) => {
-  if (serverUrlEnv?.endsWith('/'))
-    return serverUrlEnv.substring(0, serverUrlEnv.length - 1);
+export const cleanServerUrl = (serverUrlEnv?: string): string => {
+  if (!serverUrlEnv || typeof serverUrlEnv !== 'string') {
+    return '';
+  }
 
-  return serverUrlEnv;
+  const trimmed = serverUrlEnv.trim();
+
+  if (!trimmed) {
+    return '';
+  }
+
+  return trimmed.endsWith('/')
+    ? trimmed.substring(0, trimmed.length - 1)
+    : trimmed;
 };
