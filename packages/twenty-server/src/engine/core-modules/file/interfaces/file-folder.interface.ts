@@ -36,16 +36,16 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.AgentChat]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.Functions]: {
+  [FileFolder.BuiltFunction]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.FrontComponents]: {
+  [FileFolder.BuiltFrontComponent]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.Assets]: {
+  [FileFolder.Asset]: {
     ignoreExpirationToken: true,
   },
-  [FileFolder.SourceCode]: {
+  [FileFolder.Source]: {
     ignoreExpirationToken: false,
   },
 };
