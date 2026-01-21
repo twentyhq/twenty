@@ -13,7 +13,7 @@ export class ApplicationEntityBuilder
   implements ManifestEntityBuilder<Application>
 {
   async build(appPath: string): Promise<Application> {
-    const applicationConfigPath = path.join(appPath, 'src', 'app', 'application.config.ts');
+    const applicationConfigPath = path.join(appPath, 'src', 'application.config.ts');
 
     return manifestExtractFromFileServer.extractManifestFromFile<Application>(applicationConfigPath);
   }

@@ -5,14 +5,14 @@ import { type RoleManifest } from 'twenty-shared/application';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
-  type EntityIdWithLocation,
-  type ManifestEntityBuilder,
-  type ManifestWithoutSources,
+    type EntityIdWithLocation,
+    type ManifestEntityBuilder,
+    type ManifestWithoutSources,
 } from './entity.interface';
 
 export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest[]> {
   async build(appPath: string): Promise<RoleManifest[]> {
-    const roleFiles = await glob(['src/app/**/*.role.ts'], {
+    const roleFiles = await glob(['src/**/*.role.ts'], {
       cwd: appPath,
       absolute: true,
       ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],

@@ -51,13 +51,13 @@ export const validateManifest = (
 
   if (!isNonEmptyArray(manifest.objects)) {
     warnings.push({
-      message: 'No objects defined in src/app/objects/',
+      message: 'No objects defined in src/',
     });
   }
 
   if (!isNonEmptyArray(manifest.serverlessFunctions)) {
     warnings.push({
-      message: 'No functions defined in src/app/functions/',
+      message: 'No functions defined in src/',
     });
   }
 
