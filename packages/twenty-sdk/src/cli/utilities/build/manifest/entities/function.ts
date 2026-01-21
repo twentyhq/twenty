@@ -5,8 +5,9 @@ import { type ServerlessFunctionManifest } from 'twenty-shared/application';
 import { extractManifestFromFile } from '../manifest-file-extractor';
 import { type ValidationError } from '../manifest.types';
 import {
-  type DuplicateId,
+  type EntityIdWithLocation,
   type ManifestEntityBuilder,
+  type ManifestWithoutSources,
 } from './entity.interface';
 
 export class FunctionEntityBuilder
@@ -123,8 +124,9 @@ export class FunctionEntityBuilder
     }
   }
 
-  findDuplicates(functions: ServerlessFunctionManifest[]): DuplicateId[] {
+  findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const seen = new Map<string, string[]>();
+    const functions = manifest.serverlessFunctions ?? [];
 
     for (const fn of functions) {
       if (fn.universalIdentifier) {
@@ -140,7 +142,6 @@ export class FunctionEntityBuilder
           locations.push(location);
           seen.set(trigger.universalIdentifier, locations);
         }
-
       }
     }
 

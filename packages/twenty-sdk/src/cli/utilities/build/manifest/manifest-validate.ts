@@ -1,6 +1,8 @@
-import { type ApplicationManifest } from 'twenty-shared/application';
 import { applicationEntityBuilder } from './entities/application';
-import { type DuplicateId } from './entities/entity.interface';
+import {
+  type EntityIdWithLocation,
+  type ManifestWithoutSources,
+} from './entities/entity.interface';
 import { frontComponentEntityBuilder } from './entities/front-component';
 import { functionEntityBuilder } from './entities/function';
 import { objectEntityBuilder } from './entities/object';
@@ -13,20 +15,20 @@ import {
 } from './manifest.types';
 
 const collectAllDuplicates = (
-  manifest: Omit<ApplicationManifest, 'sources'>,
-): DuplicateId[] => {
+  manifest: ManifestWithoutSources,
+): EntityIdWithLocation[] => {
   return [
-    ...applicationEntityBuilder.findDuplicates(manifest.application),
-    ...objectEntityBuilder.findDuplicates(manifest.objects ?? []),
-    ...objectExtensionEntityBuilder.findDuplicates(manifest.objectExtensions ?? []),
-    ...functionEntityBuilder.findDuplicates(manifest.serverlessFunctions ?? []),
-    ...roleEntityBuilder.findDuplicates(manifest.roles ?? []),
-    ...frontComponentEntityBuilder.findDuplicates(manifest.frontComponents ?? []),
+    ...applicationEntityBuilder.findDuplicates(manifest),
+    ...objectEntityBuilder.findDuplicates(manifest),
+    ...objectExtensionEntityBuilder.findDuplicates(manifest),
+    ...functionEntityBuilder.findDuplicates(manifest),
+    ...roleEntityBuilder.findDuplicates(manifest),
+    ...frontComponentEntityBuilder.findDuplicates(manifest),
   ];
 };
 
 export const validateManifest = (
-  manifest: Omit<ApplicationManifest, 'sources'>,
+  manifest: ManifestWithoutSources,
 ): ValidationResult => {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];

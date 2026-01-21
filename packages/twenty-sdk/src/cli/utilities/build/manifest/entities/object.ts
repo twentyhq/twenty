@@ -6,8 +6,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { extractManifestFromFile } from '../manifest-file-extractor';
 import { type ValidationError } from '../manifest.types';
 import {
-  type DuplicateId,
+  type EntityIdWithLocation,
   type ManifestEntityBuilder,
+  type ManifestWithoutSources,
 } from './entity.interface';
 
 export class ObjectEntityBuilder
@@ -105,8 +106,9 @@ export class ObjectEntityBuilder
     console.log(chalk.green(`  ✓ Found ${objects.length} object(s)`));
   }
 
-  findDuplicates(objects: ObjectManifest[]): DuplicateId[] {
+  findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const seen = new Map<string, string[]>();
+    const objects = manifest.objects ?? [];
 
     for (const obj of objects) {
       if (obj.universalIdentifier) {
@@ -122,7 +124,6 @@ export class ObjectEntityBuilder
           locations.push(location);
           seen.set(field.universalIdentifier, locations);
         }
-
       }
     }
 

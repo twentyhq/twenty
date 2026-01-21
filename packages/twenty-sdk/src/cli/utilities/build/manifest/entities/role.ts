@@ -5,8 +5,9 @@ import { type RoleManifest } from 'twenty-shared/application';
 import { extractManifestFromFile } from '../manifest-file-extractor';
 import { type ValidationError } from '../manifest.types';
 import {
-  type DuplicateId,
+  type EntityIdWithLocation,
   type ManifestEntityBuilder,
+  type ManifestWithoutSources,
 } from './entity.interface';
 
 export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest[]> {
@@ -59,8 +60,9 @@ export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest[]> 
     console.log(chalk.green(`  ✓ Found ${roles?.length ?? 'no'} role(s)`));
   }
 
-  findDuplicates(roles: RoleManifest[]): DuplicateId[] {
+  findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const seen = new Map<string, string[]>();
+    const roles = manifest.roles ?? [];
 
     for (const role of roles) {
       if (role.universalIdentifier) {

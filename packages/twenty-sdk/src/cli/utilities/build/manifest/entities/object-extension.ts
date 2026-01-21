@@ -5,8 +5,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { extractManifestFromFile } from '../manifest-file-extractor';
 import { type ValidationError } from '../manifest.types';
 import {
-  type DuplicateId,
+  type EntityIdWithLocation,
   type ManifestEntityBuilder,
+  type ManifestWithoutSources,
 } from './entity.interface';
 
 export class ObjectExtensionEntityBuilder
@@ -126,9 +127,21 @@ export class ObjectExtensionEntityBuilder
     // Object extensions don't have a dedicated display - they're part of the manifest
   }
 
-  findDuplicates(extensions: ObjectExtensionManifest[]): DuplicateId[] {
-    const seen = new Map<string, string[]>();
+  findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
+    const extensions = manifest.objectExtensions ?? [];
+    const objects = manifest.objects ?? [];
 
+    const objectFieldIds = new Map<string, string>();
+    for (const obj of objects) {
+      for (const field of obj.fields ?? []) {
+        if (field.universalIdentifier) {
+          const location = `objects/${obj.nameSingular}.fields.${field.label}`;
+          objectFieldIds.set(field.universalIdentifier, location);
+        }
+      }
+    }
+
+    const extensionFieldLocations = new Map<string, string[]>();
     for (const ext of extensions) {
       const targetName =
         ext.targetObject?.nameSingular ??
@@ -137,17 +150,28 @@ export class ObjectExtensionEntityBuilder
       for (const field of ext.fields ?? []) {
         if (field.universalIdentifier) {
           const location = `object-extensions/${targetName}.fields.${field.label}`;
-          const locations = seen.get(field.universalIdentifier) ?? [];
+          const locations =
+            extensionFieldLocations.get(field.universalIdentifier) ?? [];
           locations.push(location);
-          seen.set(field.universalIdentifier, locations);
+          extensionFieldLocations.set(field.universalIdentifier, locations);
         }
-
       }
     }
 
-    return Array.from(seen.entries())
-      .filter(([_, locations]) => locations.length > 1)
-      .map(([id, locations]) => ({ id, locations }));
+    const duplicates: EntityIdWithLocation[] = [];
+
+    for (const [id, extLocations] of extensionFieldLocations.entries()) {
+      const objectLocation = objectFieldIds.get(id);
+
+      if (extLocations.length > 1 || objectLocation) {
+        const allLocations = objectLocation
+          ? [objectLocation, ...extLocations]
+          : extLocations;
+        duplicates.push({ id, locations: allLocations });
+      }
+    }
+
+    return duplicates;
   }
 }
 

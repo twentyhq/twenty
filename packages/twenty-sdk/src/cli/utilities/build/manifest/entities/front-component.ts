@@ -5,8 +5,9 @@ import { type FrontComponentManifest } from 'twenty-shared/application';
 import { extractManifestFromFile } from '../manifest-file-extractor';
 import { type ValidationError } from '../manifest.types';
 import {
-  type DuplicateId,
+  type EntityIdWithLocation,
   type ManifestEntityBuilder,
+  type ManifestWithoutSources,
 } from './entity.interface';
 
 export class FrontComponentEntityBuilder
@@ -69,8 +70,9 @@ export class FrontComponentEntityBuilder
     }
   }
 
-  findDuplicates(components: FrontComponentManifest[]): DuplicateId[] {
+  findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const seen = new Map<string, string[]>();
+    const components = manifest.frontComponents ?? [];
 
     for (const component of components) {
       if (component.universalIdentifier) {
