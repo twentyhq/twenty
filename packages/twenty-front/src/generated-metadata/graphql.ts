@@ -955,6 +955,7 @@ export type CreateNavigationMenuItemInput = {
   targetObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   targetRecordId?: InputMaybe<Scalars['UUID']>;
   userWorkspaceId?: InputMaybe<Scalars['UUID']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateObjectInput = {
@@ -2954,7 +2955,7 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
 
 
 export type MutationUpdateNavigationMenuItemArgs = {
-  input: UpdateNavigationMenuItemInput;
+  input: UpdateOneNavigationMenuItemInput;
 };
 
 
@@ -3196,6 +3197,7 @@ export type NavigationMenuItem = {
   targetRecordId?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
   userWorkspaceId?: Maybe<Scalars['UUID']>;
+  viewId?: Maybe<Scalars['UUID']>;
 };
 
 export type NotesConfiguration = {
@@ -4789,9 +4791,9 @@ export type UpdateLabPublicFeatureFlagInput = {
 
 export type UpdateNavigationMenuItemInput = {
   folderId?: InputMaybe<Scalars['UUID']>;
-  id: Scalars['UUID'];
   name?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['Int']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateObjectPayload = {
@@ -4813,6 +4815,13 @@ export type UpdateOneFieldMetadataInput = {
   id: Scalars['UUID'];
   /** The record to update */
   update: UpdateFieldInput;
+};
+
+export type UpdateOneNavigationMenuItemInput = {
+  /** The id of the record to update */
+  id: Scalars['UUID'];
+  /** The record to update */
+  update: UpdateNavigationMenuItemInput;
 };
 
 export type UpdateOneObjectInput = {

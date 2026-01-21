@@ -3079,6 +3079,7 @@ export type NavigationMenuItem = {
   targetRecordId?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
   userWorkspaceId?: Maybe<Scalars['UUID']>;
+  viewId?: Maybe<Scalars['UUID']>;
 };
 
 export type NotesConfiguration = {
