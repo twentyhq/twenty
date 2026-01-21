@@ -12,20 +12,13 @@ import {
 } from './entity.interface';
 
 const findApplicationConfigPath = async (appPath: string): Promise<string> => {
-  const srcConfigFile = path.join(appPath, 'src', 'application.config.ts');
-  const rootConfigFile = path.join(appPath, 'application.config.ts');
+  const configFile = path.join(appPath, 'application.config.ts');
 
-  if (await fs.pathExists(srcConfigFile)) {
-    return srcConfigFile;
+  if (await fs.pathExists(configFile)) {
+    return configFile;
   }
 
-  if (await fs.pathExists(rootConfigFile)) {
-    return rootConfigFile;
-  }
-
-  throw new Error(
-    'Missing application.config.ts. Create it in your app root or in src/',
-  );
+  throw new Error('Missing application.config.ts in your app root');
 };
 
 export class ApplicationEntityBuilder

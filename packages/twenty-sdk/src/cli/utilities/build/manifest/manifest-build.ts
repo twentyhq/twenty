@@ -27,38 +27,10 @@ export type EntityFilePaths = {
   roles: string[];
 };
 
-const findApplicationConfigPath = async (appPath: string): Promise<string> => {
-  const srcConfigFile = path.join(appPath, 'src', 'application.config.ts');
-  const rootConfigFile = path.join(appPath, 'application.config.ts');
-
-  if (await fs.pathExists(srcConfigFile)) {
-    return srcConfigFile;
-  }
-
-  if (await fs.pathExists(rootConfigFile)) {
-    return rootConfigFile;
-  }
-
-  throw new Error(
-    'Missing application.config.ts. Create it in your app root or in src/',
-  );
-};
-
-export const hasSrcFolder = async (appPath: string): Promise<boolean> => {
-  const srcFolder = path.join(appPath, 'src');
-
-  return fs.pathExists(srcFolder);
-};
-
 const loadSources = async (appPath: string): Promise<Sources> => {
   const sources: Sources = {};
 
-  const hasSrc = await hasSrcFolder(appPath);
-  const patterns = hasSrc
-    ? ['src/**/*.ts', 'src/**/*.tsx', 'generated/**/*.ts']
-    : ['**/*.ts', '**/*.tsx', 'generated/**/*.ts'];
-
-  const tsFiles = await glob(patterns, {
+  const tsFiles = await glob(['**/*.ts', '**/*.tsx'], {
     cwd: appPath,
     absolute: true,
     ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
@@ -134,7 +106,6 @@ export const runManifestBuild = async (
   }
 
   try {
-    await findApplicationConfigPath(appPath);
     manifestExtractFromFileServer.init(appPath);
 
     const packageJson = await parseJsoncFile(
