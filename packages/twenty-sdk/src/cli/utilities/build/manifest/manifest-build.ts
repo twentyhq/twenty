@@ -142,7 +142,6 @@ export const runManifestBuild = async (
       serverlessFunctions: functionManifests,
       frontComponents: frontComponentManifests,
       roles: roleManifests,
-      packageJson,
     });
 
     if (!validation.isValid) {
