@@ -16,7 +16,6 @@ import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-ma
 export enum MessageChannelSubscriptionProvider {
   GMAIL_PUBSUB = 'GMAIL_PUBSUB',
   MICROSOFT_GRAPH = 'MICROSOFT_GRAPH',
-  IMAP_IDLE = 'IMAP_IDLE',
 }
 
 export enum MessageChannelSubscriptionStatus {
@@ -139,12 +138,6 @@ export const buildMessageChannelSubscriptionStandardFlatFieldMetadatas = ({
           label: 'Microsoft Graph',
           position: 1,
           color: 'blue',
-        },
-        {
-          value: MessageChannelSubscriptionProvider.IMAP_IDLE,
-          label: 'IMAP IDLE',
-          position: 2,
-          color: 'gray',
         },
       ],
     },

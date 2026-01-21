@@ -5,12 +5,9 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
 const PUBSUB_MAPPING_PREFIX = 'pubsub:email';
-const PUBSUB_MAPPING_TTL_MS = 8 * 24 * 60 * 60 * 1000; // 8 days (Gmail watch expires in 7 days)
+const PUBSUB_MAPPING_TTL_MS = 8 * 24 * 60 * 60 * 1000;
 
-export type MessagingPubSubMapping = {
-  workspaceId: string;
-  messageChannelId: string;
-};
+export type WorkspaceChannelMapping = Record<string, string>;
 
 @Injectable()
 export class MessageChannelSubscriptionMappingService {
@@ -27,77 +24,44 @@ export class MessageChannelSubscriptionMappingService {
     return `${PUBSUB_MAPPING_PREFIX}:${this.normalizeEmail(email)}`;
   }
 
-  async addMapping(
-    email: string,
-    mapping: MessagingPubSubMapping,
-  ): Promise<void> {
-    const key = this.getMappingKey(email);
-    const existingMappings = await this.getMappings(email);
-
-    // Check if mapping already exists
-    const exists = existingMappings.some(
-      (m) =>
-        m.workspaceId === mapping.workspaceId &&
-        m.messageChannelId === mapping.messageChannelId,
-    );
-
-    if (!exists) {
-      existingMappings.push(mapping);
-      await this.cacheStorage.set(key, existingMappings, PUBSUB_MAPPING_TTL_MS);
-    }
-  }
-
-  async getMappings(email: string): Promise<MessagingPubSubMapping[]> {
-    const key = this.getMappingKey(email);
-    const mappings = await this.cacheStorage.get<MessagingPubSubMapping[]>(key);
-
-    return mappings ?? [];
-  }
-
-  async removeMapping(email: string, workspaceId: string): Promise<void> {
-    const key = this.getMappingKey(email);
-    const existingMappings = await this.getMappings(email);
-
-    const filteredMappings = existingMappings.filter(
-      (m) => m.workspaceId !== workspaceId,
-    );
-
-    if (filteredMappings.length === 0) {
-      await this.cacheStorage.del(key);
-    } else {
-      await this.cacheStorage.set(key, filteredMappings, PUBSUB_MAPPING_TTL_MS);
-    }
-  }
-
-  async removeMappingByChannel(
+  async setMapping(
     email: string,
     workspaceId: string,
     messageChannelId: string,
   ): Promise<void> {
     const key = this.getMappingKey(email);
-    const existingMappings = await this.getMappings(email);
+    const existing = await this.getMapping(email);
 
-    const filteredMappings = existingMappings.filter(
-      (m) =>
-        !(
-          m.workspaceId === workspaceId &&
-          m.messageChannelId === messageChannelId
-        ),
-    );
+    existing[workspaceId] = messageChannelId;
 
-    if (filteredMappings.length === 0) {
+    await this.cacheStorage.set(key, existing, PUBSUB_MAPPING_TTL_MS);
+  }
+
+  async getMapping(email: string): Promise<WorkspaceChannelMapping> {
+    const key = this.getMappingKey(email);
+
+    return (await this.cacheStorage.get<WorkspaceChannelMapping>(key)) ?? {};
+  }
+
+  async removeMapping(email: string, workspaceId: string): Promise<void> {
+    const key = this.getMappingKey(email);
+    const existing = await this.getMapping(email);
+
+    delete existing[workspaceId];
+
+    if (Object.keys(existing).length === 0) {
       await this.cacheStorage.del(key);
     } else {
-      await this.cacheStorage.set(key, filteredMappings, PUBSUB_MAPPING_TTL_MS);
+      await this.cacheStorage.set(key, existing, PUBSUB_MAPPING_TTL_MS);
     }
   }
 
   async refreshMappingTTL(email: string): Promise<void> {
     const key = this.getMappingKey(email);
-    const existingMappings = await this.getMappings(email);
+    const existing = await this.getMapping(email);
 
-    if (existingMappings.length > 0) {
-      await this.cacheStorage.set(key, existingMappings, PUBSUB_MAPPING_TTL_MS);
+    if (Object.keys(existing).length > 0) {
+      await this.cacheStorage.set(key, existing, PUBSUB_MAPPING_TTL_MS);
     }
   }
 }

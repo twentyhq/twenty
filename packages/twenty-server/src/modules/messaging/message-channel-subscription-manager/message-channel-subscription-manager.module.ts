@@ -6,8 +6,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
+import { MessagingWebhookController } from 'src/modules/messaging/message-channel-subscription-manager/controllers/messaging-webhook.controller';
 import { MessageChannelSubscriptionRenewalCronJob } from 'src/modules/messaging/message-channel-subscription-manager/crons/message-channel-subscription-renewal.cron.job';
-import { GmailPubSubSubscriberService } from 'src/modules/messaging/message-channel-subscription-manager/drivers/gmail/gmail-pubsub-subscriber.service';
 import { GmailSubscriptionDriverService } from 'src/modules/messaging/message-channel-subscription-manager/drivers/gmail/gmail-subscription-driver.service';
 import { MessageChannelSubscriptionCleanupJob } from 'src/modules/messaging/message-channel-subscription-manager/jobs/message-channel-subscription-cleanup.job';
 import { MessageChannelSubscriptionRenewalJob } from 'src/modules/messaging/message-channel-subscription-manager/jobs/message-channel-subscription-renewal.job';
@@ -24,12 +24,12 @@ import { MessageChannelSubscriptionService } from 'src/modules/messaging/message
     OAuth2ClientManagerModule,
     MessagingCommonModule,
   ],
+  controllers: [MessagingWebhookController],
   providers: [
     MessageChannelSubscriptionService,
     MessageChannelSubscriptionMappingService,
     MessageChannelSubscriptionHealthService,
     GmailSubscriptionDriverService,
-    GmailPubSubSubscriberService,
     MessageChannelSubscriptionSetupJob,
     MessageChannelSubscriptionCleanupJob,
     MessageChannelSubscriptionRenewalJob,

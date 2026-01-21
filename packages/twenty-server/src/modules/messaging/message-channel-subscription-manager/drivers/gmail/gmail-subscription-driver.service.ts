@@ -76,10 +76,11 @@ export class GmailSubscriptionDriverService
       );
     }
 
-    await this.mappingService.addMapping(connectedAccount.handle, {
+    await this.mappingService.setMapping(
+      connectedAccount.handle,
       workspaceId,
-      messageChannelId: messageChannel.id,
-    });
+      messageChannel.id,
+    );
 
     this.logger.log(
       `Gmail watch set up successfully for ${connectedAccount.handle}, expires at ${expiresAt.toISOString()}`,

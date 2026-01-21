@@ -7,7 +7,6 @@ import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common
 export enum MessageChannelSubscriptionProvider {
   GMAIL_PUBSUB = 'GMAIL_PUBSUB',
   MICROSOFT_GRAPH = 'MICROSOFT_GRAPH',
-  IMAP_IDLE = 'IMAP_IDLE',
 }
 
 export enum MessageChannelSubscriptionStatus {
