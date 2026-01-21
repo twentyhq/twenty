@@ -5,17 +5,74 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
-import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { validateFlatEntityCircularDependency } from 'src/engine/workspace-manager/workspace-migration/utils/validate-flat-entity-circular-dependency.util';
+import {
+  type FailedFlatEntityValidation,
+  type FlatEntityValidationError,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
 
 @Injectable()
 export class FlatNavigationMenuItemValidatorService {
+  private getCircularDependencyValidationErrors({
+    navigationMenuItemId,
+    folderId,
+    flatNavigationMenuItemMaps,
+  }: {
+    navigationMenuItemId: string;
+    folderId: string;
+    flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
+  }): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] {
+    const circularDependencyResult = validateFlatEntityCircularDependency({
+      flatEntityId: navigationMenuItemId,
+      flatEntityParentId: folderId,
+      parentIdKey: 'folderId',
+      flatEntityMaps: flatNavigationMenuItemMaps,
+    });
+
+    if (circularDependencyResult.status === 'success') {
+      return [];
+    }
+
+    switch (circularDependencyResult.reason) {
+      case 'self_reference':
+        return [
+          {
+            code: NavigationMenuItemExceptionCode.CIRCULAR_DEPENDENCY,
+            message: t`Navigation menu item cannot be its own parent`,
+            userFriendlyMessage: msg`Navigation menu item cannot be its own parent`,
+          },
+        ];
+      case 'circular_dependency':
+        return [
+          {
+            code: NavigationMenuItemExceptionCode.CIRCULAR_DEPENDENCY,
+            message: t`Circular dependency detected in navigation menu item hierarchy`,
+            userFriendlyMessage: msg`Circular dependency detected in navigation menu item hierarchy`,
+          },
+        ];
+      case 'max_depth_exceeded':
+        return [
+          {
+            code: NavigationMenuItemExceptionCode.MAX_DEPTH_EXCEEDED,
+            message: t`Navigation menu item hierarchy exceeds maximum depth`,
+            userFriendlyMessage: msg`Navigation menu item hierarchy exceeds maximum depth`,
+          },
+        ];
+    }
+  }
+
   public validateFlatNavigationMenuItemCreation({
     flatEntityToValidate: flatNavigationMenuItem,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
+    },
+    remainingFlatEntityMapsToValidate,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.navigationMenuItem
   >): FailedFlatEntityValidation<'navigationMenuItem', 'create'> {
@@ -38,6 +95,40 @@ export class FlatNavigationMenuItemValidatorService {
         message: t`Position must be a non-negative integer`,
         userFriendlyMessage: msg`Position must be a non-negative integer`,
       });
+    }
+
+    if (isDefined(flatNavigationMenuItem.folderId)) {
+      const circularDependencyErrors =
+        this.getCircularDependencyValidationErrors({
+          navigationMenuItemId: flatNavigationMenuItem.id,
+          folderId: flatNavigationMenuItem.folderId,
+          flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
+        });
+
+      if (circularDependencyErrors.length > 0) {
+        validationResult.errors.push(...circularDependencyErrors);
+      }
+
+      const referencedParentInOptimistic = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatNavigationMenuItem.folderId,
+        flatEntityMaps: optimisticFlatNavigationMenuItemMaps,
+      });
+
+      const referencedParentInRemaining = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatNavigationMenuItem.folderId,
+        flatEntityMaps: remainingFlatEntityMapsToValidate,
+      });
+
+      if (
+        !isDefined(referencedParentInOptimistic) &&
+        !isDefined(referencedParentInRemaining)
+      ) {
+        validationResult.errors.push({
+          code: NavigationMenuItemExceptionCode.NAVIGATION_MENU_ITEM_NOT_FOUND,
+          message: t`Parent navigation menu item not found`,
+          userFriendlyMessage: msg`Parent navigation menu item not found`,
+        });
+      }
     }
 
     return validationResult;
@@ -122,6 +213,47 @@ export class FlatNavigationMenuItemValidatorService {
         code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
         message: t`Position must be a non-negative integer`,
         userFriendlyMessage: msg`Position must be a non-negative integer`,
+      });
+    }
+
+    const folderIdUpdate = findFlatEntityPropertyUpdate({
+      flatEntityUpdates,
+      property: 'folderId',
+    });
+
+    if (!isDefined(folderIdUpdate)) {
+      return validationResult;
+    }
+
+    const newFolderId = folderIdUpdate.to;
+
+    if (!isDefined(newFolderId)) {
+      return validationResult;
+    }
+
+    const circularDependencyErrors = this.getCircularDependencyValidationErrors(
+      {
+        navigationMenuItemId: flatEntityId,
+        folderId: newFolderId,
+        flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
+      },
+    );
+
+    if (circularDependencyErrors.length > 0) {
+      validationResult.errors.push(...circularDependencyErrors);
+    }
+
+    const referencedParentNavigationMenuItem =
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: newFolderId,
+        flatEntityMaps: optimisticFlatNavigationMenuItemMaps,
+      });
+
+    if (!isDefined(referencedParentNavigationMenuItem)) {
+      validationResult.errors.push({
+        code: NavigationMenuItemExceptionCode.NAVIGATION_MENU_ITEM_NOT_FOUND,
+        message: t`Parent navigation menu item not found`,
+        userFriendlyMessage: msg`Parent navigation menu item not found`,
       });
     }
 

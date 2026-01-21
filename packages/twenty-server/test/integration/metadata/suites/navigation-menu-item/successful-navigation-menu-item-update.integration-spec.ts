@@ -71,7 +71,9 @@ describe('NavigationMenuItem update should succeed', () => {
       expectToFail: false,
       input: {
         id: createdNavigationMenuItemId,
-        position: 10,
+        update: {
+          position: 10,
+        },
       },
     });
 
@@ -101,7 +103,9 @@ describe('NavigationMenuItem update should succeed', () => {
       expectToFail: false,
       input: {
         id: createdNavigationMenuItemId,
-        folderId,
+        update: {
+          folderId,
+        },
       },
     });
 
@@ -131,7 +135,9 @@ describe('NavigationMenuItem update should succeed', () => {
       expectToFail: false,
       input: {
         id: createdNavigationMenuItemId,
-        folderId,
+        update: {
+          folderId,
+        },
       },
     });
 
@@ -139,7 +145,9 @@ describe('NavigationMenuItem update should succeed', () => {
       expectToFail: false,
       input: {
         id: createdNavigationMenuItemId,
-        folderId: null,
+        update: {
+          folderId: null,
+        },
       },
     });
 
@@ -169,8 +177,10 @@ describe('NavigationMenuItem update should succeed', () => {
       expectToFail: false,
       input: {
         id: createdNavigationMenuItemId,
-        folderId,
-        position: 99,
+        update: {
+          folderId,
+          position: 99,
+        },
       },
     });
 
