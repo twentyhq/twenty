@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useRef } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -108,11 +109,33 @@ export const SettingsDataModelFieldRelationForm = ({
       relationType: initialRelationType,
     });
 
-  const initialMorphRelationsObjectMetadataIds =
-    initialRelationObjectMetadataItems.map(
-      (relationObjectMetadataItem) => relationObjectMetadataItem.id,
-    );
+  const initialMorphRelationsObjectMetadataIds = useMemo(
+    () =>
+      initialRelationObjectMetadataItems.map(
+        (relationObjectMetadataItem) => relationObjectMetadataItem.id,
+      ),
+    [initialRelationObjectMetadataItems],
+  );
   const isMobile = useIsMobile();
+  const hasInitializedRef = useRef(false);
+
+  useEffect(() => {
+    if (!disableRelationEdition && !hasInitializedRef.current) {
+      const currentValue = watch('morphRelationObjectMetadataIds');
+      if (
+        !isDefined(currentValue) ||
+        (Array.isArray(currentValue) && currentValue.length === 0)
+      ) {
+        setValue('morphRelationObjectMetadataIds', initialMorphRelationsObjectMetadataIds, {
+          shouldDirty: false,
+        });
+        hasInitializedRef.current = true;
+      } else if (isDefined(currentValue) && Array.isArray(currentValue) && currentValue.length > 0) {
+        hasInitializedRef.current = true;
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <StyledContainer>
