@@ -1,9 +1,8 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { isNumber, isString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 
 const getRootFontSize = () => {
-  if (!isDefined(document)) {
+  if (typeof document === 'undefined') {
     return COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE;
   }
 

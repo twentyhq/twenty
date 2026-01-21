@@ -1,6 +1,6 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
-import { FONT_COMMON } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
+import { FONT_COMMON } from 'twenty-ui/theme';
 
 const FALLBACK_LINE_HEIGHT_RATIO = 1.4;
 const FALLBACK_DESCENT_RATIO = 0.2;
@@ -14,7 +14,7 @@ const textCache = new Map<string, TextDimensions>();
 let cachedCanvas: HTMLCanvasElement | null = null;
 
 const getCanvasContext = () => {
-  if (!isDefined(document)) {
+  if (typeof document === 'undefined') {
     return null;
   }
 
