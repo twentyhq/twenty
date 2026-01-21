@@ -1,4 +1,3 @@
-import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { createOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/create-one-core-view-sort.util';
 import { destroyOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/destroy-one-core-view-sort.util';
@@ -25,6 +24,14 @@ describe('View Sort creation should succeed', () => {
       gqlFields: `
         id
         nameSingular
+        fieldsList: fields {
+          edges {
+            node {
+              id
+              name
+            }
+          }
+        }
       `,
     });
 
@@ -37,24 +44,10 @@ describe('View Sort creation should succeed', () => {
     jestExpectToBeDefined(companyObjectMetadata);
     companyObjectMetadataId = companyObjectMetadata.id;
 
-    const { fields } = await findManyFieldsMetadata({
-      expectToFail: false,
-      input: {
-        filter: {
-          objectMetadataId: { eq: companyObjectMetadataId },
-          name: { eq: 'name' },
-        },
-        paging: { first: 1 },
-      },
-      gqlFields: `
-        id
-        name
-      `,
-    });
+    const firstField = companyObjectMetadata.fieldsList.edges[0];
 
-    jestExpectToBeDefined(fields);
-    jestExpectToBeDefined(fields[0]);
-    testFieldMetadataId = fields[0].node.id;
+    jestExpectToBeDefined(firstField);
+    testFieldMetadataId = firstField.node.id;
 
     const { data: viewData } = await createOneCoreView({
       expectToFail: false,

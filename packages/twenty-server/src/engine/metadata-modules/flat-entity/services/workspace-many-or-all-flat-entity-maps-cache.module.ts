@@ -15,6 +15,7 @@ import { WorkspaceFlatViewFieldMapCacheService } from 'src/engine/metadata-modul
 import { WorkspaceFlatViewFilterGroupMapCacheService } from 'src/engine/metadata-modules/flat-view-filter-group/services/workspace-flat-view-filter-group-map-cache.service';
 import { WorkspaceFlatViewFilterMapCacheService } from 'src/engine/metadata-modules/flat-view-filter/services/workspace-flat-view-filter-map-cache.service';
 import { WorkspaceFlatViewGroupMapCacheService } from 'src/engine/metadata-modules/flat-view-group/services/workspace-flat-view-group-map-cache.service';
+import { WorkspaceFlatViewSortMapCacheService } from 'src/engine/metadata-modules/flat-view-sort/services/workspace-flat-view-sort-map-cache.service';
 import { WorkspaceFlatViewMapCacheService } from 'src/engine/metadata-modules/flat-view/services/workspace-flat-view-map-cache.service';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -28,6 +29,7 @@ import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
+import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -40,6 +42,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       ViewFilterEntity,
       ViewFilterGroupEntity,
       ViewGroupEntity,
+      ViewSortEntity,
       IndexMetadataEntity,
       IndexFieldMetadataEntity,
       FieldMetadataEntity,
@@ -61,6 +64,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatIndexMapCacheService,
     WorkspaceFlatFieldMetadataMapCacheService,
     WorkspaceFlatViewGroupMapCacheService,
+    WorkspaceFlatViewSortMapCacheService,
     WorkspaceFlatPageLayoutMapCacheService,
     WorkspaceFlatPageLayoutTabMapCacheService,
     WorkspaceFlatPageLayoutWidgetMapCacheService,
@@ -77,6 +81,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatIndexMapCacheService,
     WorkspaceFlatFieldMetadataMapCacheService,
     WorkspaceFlatViewGroupMapCacheService,
+    WorkspaceFlatViewSortMapCacheService,
     WorkspaceFlatPageLayoutMapCacheService,
     WorkspaceFlatPageLayoutTabMapCacheService,
     WorkspaceFlatPageLayoutWidgetMapCacheService,

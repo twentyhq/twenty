@@ -6,11 +6,11 @@ export const deleteCoreViewSortQueryFactory = ({
   viewSortId: string;
 }) => ({
   query: gql`
-    mutation DeleteCoreViewSort($viewSortId: UUID!) {
-      deleteCoreViewSort(viewSortId: $viewSortId)
+    mutation DeleteCoreViewSort($id: String!) {
+      deleteCoreViewSort(id: $id)
     }
   `,
   variables: {
-    viewSortId,
+    id: viewSortId,
   },
 });

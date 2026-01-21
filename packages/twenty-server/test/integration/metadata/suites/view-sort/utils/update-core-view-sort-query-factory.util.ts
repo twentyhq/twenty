@@ -10,14 +10,14 @@ export const updateCoreViewSortQueryFactory = ({
   input,
 }: PerformMetadataQueryParams<UpdateViewSortInput> & { viewSortId: string }) => ({
   query: gql`
-    mutation UpdateCoreViewSort($viewSortId: UUID!, $input: UpdateViewSortInput!) {
-      updateCoreViewSort(viewSortId: $viewSortId, input: $input) {
+    mutation UpdateCoreViewSort($id: String!, $input: UpdateViewSortInput!) {
+      updateCoreViewSort(id: $id, input: $input) {
         ${gqlFields}
       }
     }
   `,
   variables: {
-    viewSortId,
+    id: viewSortId,
     input,
   },
 });
