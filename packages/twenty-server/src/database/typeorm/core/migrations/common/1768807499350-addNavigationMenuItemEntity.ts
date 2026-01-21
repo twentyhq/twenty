@@ -7,10 +7,13 @@ export class AddNavigationMenuItemEntity1768807499350
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "core"."navigationMenuItem" ("workspaceId" uuid NOT NULL, "universalIdentifier" uuid NOT NULL, "applicationId" uuid NOT NULL, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "userWorkspaceId" uuid, "targetRecordId" uuid, "targetObjectMetadataId" uuid, "name" text, "folderId" uuid, "position" integer NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_d8689756f55769faea7dc0ae968" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "core"."navigationMenuItem" ("workspaceId" uuid NOT NULL, "universalIdentifier" uuid NOT NULL, "applicationId" uuid NOT NULL, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "userWorkspaceId" uuid, "targetRecordId" uuid, "targetObjectMetadataId" uuid, "viewId" uuid, "name" text, "folderId" uuid, "position" integer NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_d8689756f55769faea7dc0ae968" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_4d8beaebdfcd5d82ebe6e8b58f" ON "core"."navigationMenuItem" ("workspaceId", "universalIdentifier") `,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_NAVIGATION_MENU_ITEM_VIEW_ID_WORKSPACE_ID" ON "core"."navigationMenuItem" ("viewId", "workspaceId") `,
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_NAVIGATION_MENU_ITEM_FOLDER_ID_WORKSPACE_ID" ON "core"."navigationMenuItem" ("folderId", "workspaceId") `,
@@ -62,6 +65,9 @@ export class AddNavigationMenuItemEntity1768807499350
     );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_NAVIGATION_MENU_ITEM_FOLDER_ID_WORKSPACE_ID"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX "core"."IDX_NAVIGATION_MENU_ITEM_VIEW_ID_WORKSPACE_ID"`,
     );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_4d8beaebdfcd5d82ebe6e8b58f"`,
