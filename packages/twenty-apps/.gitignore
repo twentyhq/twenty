@@ -1,1 +1,9 @@
+# dependencies
+node_modules
+.yarn
+
+# codegen
 generated
+
+# env files
+.env*
