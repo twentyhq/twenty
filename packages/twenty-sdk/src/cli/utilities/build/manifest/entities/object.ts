@@ -16,7 +16,7 @@ export class ObjectEntityBuilder
   implements ManifestEntityBuilder<ObjectManifest[]>
 {
   async build(appPath: string): Promise<ObjectManifest[]> {
-    const objectFiles = await glob(['src/app/**/*.object.ts'], {
+    const objectFiles = await glob(['src/**/*.object.ts'], {
       cwd: appPath,
       absolute: true,
       ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],

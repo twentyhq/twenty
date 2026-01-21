@@ -14,7 +14,7 @@ export class FunctionEntityBuilder
   implements ManifestEntityBuilder<ServerlessFunctionManifest[]>
 {
   async build(appPath: string): Promise<ServerlessFunctionManifest[]> {
-    const functionFiles = await glob(['src/app/**/*.function.ts'], {
+    const functionFiles = await glob(['src/**/*.function.ts'], {
       cwd: appPath,
       absolute: true,
       ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],

@@ -19,25 +19,24 @@ import { validateManifest } from './manifest-validate';
 import { ManifestValidationError } from './manifest.types';
 
 const validateFolderStructure = async (appPath: string): Promise<void> => {
-  const appFolder = path.join(appPath, 'src', 'app');
+  const srcFolder = path.join(appPath, 'src');
 
-  if (!(await fs.pathExists(appFolder))) {
+  if (!(await fs.pathExists(srcFolder))) {
     throw new Error(
-      `Missing src/app/ folder in ${appPath}.\n` +
-        'Create it with: mkdir -p src/app',
+      `Missing src/ folder in ${appPath}.\n` + 'Create it with: mkdir -p src',
     );
   }
 
-  const configFile = path.join(appPath, 'src', 'app', 'application.config.ts');
+  const configFile = path.join(appPath, 'src', 'application.config.ts');
   if (!(await fs.pathExists(configFile))) {
-    throw new Error('Missing src/app/application.config.ts');
+    throw new Error('Missing src/application.config.ts');
   }
 };
 
 const loadSources = async (appPath: string): Promise<Sources> => {
   const sources: Sources = {};
 
-  const tsFiles = await glob(['src/**/*.ts', 'generated/**/*.ts'], {
+  const tsFiles = await glob(['src/**/*.ts', 'src/**/*.tsx', 'generated/**/*.ts'], {
     cwd: appPath,
     absolute: true,
     ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],

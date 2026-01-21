@@ -1,5 +1,5 @@
 import { defineApp } from '@/application/define-app';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './roles/default-function.role';
 
 export default defineApp({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',

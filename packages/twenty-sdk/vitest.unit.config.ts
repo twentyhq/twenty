@@ -9,17 +9,17 @@ export default defineConfig({
     }),
   ],
   test: {
-    name: 'twenty-sdk',
+    name: 'twenty-sdk-unit',
     environment: 'node',
     include: [
       'src/**/__tests__/**/*.{test,spec}.{ts,tsx}',
-      'src/**/__integration__/**/*.{test,spec}.{ts,tsx}',
       'src/**/*.{test,spec}.{ts,tsx}',
     ],
     exclude: [
       '**/node_modules/**',
       '**/.git/**',
       '**/__e2e__/**',
+      '**/__integration__/**',
     ],
     coverage: {
       provider: 'v8',

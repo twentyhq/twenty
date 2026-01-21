@@ -15,7 +15,7 @@ export class ObjectExtensionEntityBuilder
   implements ManifestEntityBuilder<ObjectExtensionManifest[]>
 {
   async build(appPath: string): Promise<ObjectExtensionManifest[]> {
-    const extensionFiles = await glob(['src/app/**/*.object-extension.ts'], {
+    const extensionFiles = await glob(['src/**/*.object-extension.ts'], {
       cwd: appPath,
       absolute: true,
       ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],

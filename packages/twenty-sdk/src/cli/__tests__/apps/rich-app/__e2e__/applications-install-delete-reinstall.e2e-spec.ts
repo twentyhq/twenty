@@ -6,8 +6,8 @@ import { inspect } from 'util';
 
 inspect.defaultOptions.depth = 10;
 
-describe('Application: install delete and reinstall test-app', () => {
-  const applicationName = 'test-app';
+describe('Application: install delete and reinstall rich-app', () => {
+  const applicationName = 'rich-app';
   const syncCommand = new AppSyncCommand();
   const deleteCommand = new AppUninstallCommand();
   const appPath = getTestedApplicationPath(applicationName);
