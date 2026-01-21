@@ -2,6 +2,7 @@ import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
 import { glob } from 'fast-glob';
 import { type ObjectExtensionManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
@@ -75,7 +76,7 @@ export class ObjectExtensionEntityBuilder
         });
       }
 
-      if (!ext.fields || ext.fields.length === 0) {
+      if (!isNonEmptyArray(ext.fields)) {
         errors.push({
           path: extPath,
           message: 'Object extension must have at least one field',
@@ -109,7 +110,7 @@ export class ObjectExtensionEntityBuilder
         if (
           (field.type === FieldMetadataType.SELECT ||
             field.type === FieldMetadataType.MULTI_SELECT) &&
-          (!Array.isArray(field.options) || field.options.length === 0)
+          !isNonEmptyArray(field.options)
         ) {
           errors.push({
             path: fieldPath,

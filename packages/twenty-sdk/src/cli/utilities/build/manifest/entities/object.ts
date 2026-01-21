@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type ObjectManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
@@ -91,7 +92,7 @@ export class ObjectEntityBuilder
         if (
           (field.type === FieldMetadataType.SELECT ||
             field.type === FieldMetadataType.MULTI_SELECT) &&
-          (!Array.isArray(field.options) || field.options.length === 0)
+          !isNonEmptyArray(field.options)
         ) {
           errors.push({
             path: fieldPath,

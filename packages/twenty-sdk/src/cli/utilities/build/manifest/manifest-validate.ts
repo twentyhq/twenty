@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { applicationEntityBuilder } from './entities/application';
 import {
   type EntityIdWithLocation,
@@ -48,16 +49,13 @@ export const validateManifest = (
     });
   }
 
-  if (!manifest.objects || manifest.objects.length === 0) {
+  if (!isNonEmptyArray(manifest.objects)) {
     warnings.push({
       message: 'No objects defined in src/app/objects/',
     });
   }
 
-  if (
-    !manifest.serverlessFunctions ||
-    manifest.serverlessFunctions.length === 0
-  ) {
+  if (!isNonEmptyArray(manifest.serverlessFunctions)) {
     warnings.push({
       message: 'No functions defined in src/app/functions/',
     });
