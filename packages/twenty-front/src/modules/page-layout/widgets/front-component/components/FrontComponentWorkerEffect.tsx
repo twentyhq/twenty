@@ -4,7 +4,7 @@ import { type RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-type SandboxAPI = {
+type FrontComponentWorkerApi = {
   render: (connection: RemoteConnection, sourceCode: string) => Promise<void>;
 };
 
@@ -21,7 +21,6 @@ export const FrontComponentWorkerEffect = ({
 }: FrontComponentWorkerEffectProps) => {
   useEffect(() => {
     let worker: Worker | null = null;
-    let blobUrl: string | null = null;
 
     const runWorker = async () => {
       try {
@@ -30,11 +29,12 @@ export const FrontComponentWorkerEffect = ({
           { type: 'module' },
         );
 
-        const workerSandbox = new ThreadWebWorker<SandboxAPI>(worker);
+        const workerSandbox = new ThreadWebWorker<FrontComponentWorkerApi>(
+          worker,
+        );
 
         await workerSandbox.imports.render(receiver.connection, sourceCode);
-      } catch (error) {
-        console.error(error);
+      } catch {
         onError();
       }
     };
@@ -44,9 +44,6 @@ export const FrontComponentWorkerEffect = ({
     return () => {
       if (isDefined(worker)) {
         worker.terminate();
-      }
-      if (isDefined(blobUrl)) {
-        URL.revokeObjectURL(blobUrl);
       }
     };
   }, [sourceCode, receiver, onError]);
