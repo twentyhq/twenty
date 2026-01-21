@@ -74,7 +74,9 @@ export class WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderSer
     }
 
     const {
-      flatEntityToValidate: { id: predicateGroupId },
+      flatEntityToValidate: {
+        universalIdentifier: predicateGroupUniversalIdentifier,
+      },
     } = args;
 
     return {
@@ -82,7 +84,7 @@ export class WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderSer
       action: {
         type: 'delete',
         metadataName: 'rowLevelPermissionPredicateGroup',
-        entityId: predicateGroupId,
+        universalIdentifier: predicateGroupUniversalIdentifier,
       },
     };
   }

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { DeleteFrontComponentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
@@ -18,15 +19,23 @@ export class DeleteFrontComponentActionHandlerService extends WorkspaceMigration
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<DeleteFrontComponentAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { entityId } = action;
+    const { action, queryRunner, workspaceId, allFlatEntityMaps } = context;
+    const { universalIdentifier } = action;
+
+    const flatFrontComponent = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatFrontComponentMaps,
+      universalIdentifier,
+    });
 
     const frontComponentRepository =
       queryRunner.manager.getRepository<FrontComponentEntity>(
         FrontComponentEntity,
       );
 
-    await frontComponentRepository.delete({ id: entityId, workspaceId });
+    await frontComponentRepository.delete({
+      id: flatFrontComponent.id,
+      workspaceId,
+    });
   }
 
   async executeForWorkspaceSchema(
