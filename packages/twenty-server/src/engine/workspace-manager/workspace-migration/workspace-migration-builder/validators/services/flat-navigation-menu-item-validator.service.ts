@@ -8,6 +8,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 import { validateFlatEntityCircularDependency } from 'src/engine/workspace-manager/workspace-migration/utils/validate-flat-entity-circular-dependency.util';
 import {
   type FailedFlatEntityValidation,
@@ -256,18 +257,42 @@ export class FlatNavigationMenuItemValidatorService {
       });
     }
 
+    const toFlatNavigationMenuItem = {
+      ...fromFlatNavigationMenuItem,
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
+        updates: flatEntityUpdates,
+      }),
+    };
+
+    const hasTargetRecordId = isDefined(
+      toFlatNavigationMenuItem.targetRecordId,
+    );
+    const hasTargetObjectMetadataId = isDefined(
+      toFlatNavigationMenuItem.targetObjectMetadataId,
+    );
+    const hasViewId = isDefined(toFlatNavigationMenuItem.viewId);
+
+    if (hasTargetObjectMetadataId && !hasTargetRecordId) {
+      validationResult.errors.push({
+        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+        message: t`targetRecordId is required when targetObjectMetadataId is provided`,
+        userFriendlyMessage: msg`targetRecordId is required when targetObjectMetadataId is provided`,
+      });
+    }
+
+    if (hasTargetRecordId && !hasTargetObjectMetadataId) {
+      validationResult.errors.push({
+        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+        message: t`targetObjectMetadataId is required when targetRecordId is provided`,
+        userFriendlyMessage: msg`targetObjectMetadataId is required when targetRecordId is provided`,
+      });
+    }
+
     const nameUpdate = findFlatEntityPropertyUpdate({
       flatEntityUpdates,
       property: 'name',
     });
 
-    const hasTargetRecordId = isDefined(
-      fromFlatNavigationMenuItem.targetRecordId,
-    );
-    const hasTargetObjectMetadataId = isDefined(
-      fromFlatNavigationMenuItem.targetObjectMetadataId,
-    );
-    const hasViewId = isDefined(fromFlatNavigationMenuItem.viewId);
     const isFolder =
       !hasTargetRecordId && !hasTargetObjectMetadataId && !hasViewId;
 
