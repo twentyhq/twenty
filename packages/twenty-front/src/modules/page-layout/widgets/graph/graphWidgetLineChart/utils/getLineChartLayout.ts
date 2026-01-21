@@ -4,18 +4,16 @@ import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
 import { type ChartAxisTheme } from '@/page-layout/widgets/graph/types/ChartAxisTheme';
+import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
+import { computeBottomLegendOffsetFromText } from '@/page-layout/widgets/graph/utils/computeBottomLegendOffsetFromText';
 import { computeChartMargins } from '@/page-layout/widgets/graph/utils/computeChartMargins';
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
-import {
-  computeBottomLegendOffsetFromText,
-  type ChartMargins,
-} from '@/page-layout/widgets/graph/utils/getChartMarginsFromText';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 
-export type GetLineChartLayoutParams = {
+type GetLineChartLayoutParams = {
   axisTheme: ChartAxisTheme;
   fontFamily?: string;
   chartWidth: number;
@@ -27,7 +25,7 @@ export type GetLineChartLayoutParams = {
   effectiveMaximumValue: number;
 };
 
-export type LineChartLayout = {
+type LineChartLayout = {
   margins: ChartMargins;
   axisBottomConfiguration: ReturnType<
     typeof getLineChartAxisBottomConfig

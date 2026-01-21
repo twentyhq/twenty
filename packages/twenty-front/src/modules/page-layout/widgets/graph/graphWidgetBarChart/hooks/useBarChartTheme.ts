@@ -1,4 +1,4 @@
-import { parseFontSizeToPx } from '@/page-layout/widgets/graph/utils/parseFontSize';
+import { parseFontSizeToPx } from '@/page-layout/widgets/graph/utils/parseFontSizeToPx';
 import { useTheme } from '@emotion/react';
 
 export const useBarChartTheme = () => {

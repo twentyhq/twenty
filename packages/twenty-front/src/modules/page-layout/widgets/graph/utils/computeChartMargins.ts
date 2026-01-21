@@ -1,14 +1,12 @@
-import {
-  getChartMarginsFromText,
-  type ChartMargins,
-} from '@/page-layout/widgets/graph/utils/getChartMarginsFromText';
+import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
+import { getChartMarginsFromText } from '@/page-layout/widgets/graph/utils/getChartMarginsFromText';
 
-export type ChartMarginInputs = {
+type ChartMarginInputs = {
   bottomTickLabels?: string[];
   leftTickLabels?: string[];
 };
 
-export type ComputeChartMarginsParams<TTickConfig, TValueTickResult> = {
+type ComputeChartMarginsParams<TTickConfig, TValueTickResult> = {
   tickFontSize: number;
   legendFontSize?: number;
   fontFamily?: string;
@@ -28,7 +26,7 @@ export type ComputeChartMarginsParams<TTickConfig, TValueTickResult> = {
   ) => ChartMarginInputs;
 };
 
-export type ComputeChartMarginsResult<TTickConfig, TValueTickResult> = {
+type ComputeChartMarginsResult<TTickConfig, TValueTickResult> = {
   margins: ChartMargins;
   tickConfiguration: TTickConfig;
   valueTickResult: TValueTickResult;

@@ -1,7 +1,7 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { computeMinHeightPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeMinHeightPerTick';
 import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
-import { type ChartMargins } from '@/page-layout/widgets/graph/utils/getChartMarginsFromText';
+import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { type BarDatum } from '@nivo/bar';
 import { BarChartLayout } from '~/generated/graphql';
 

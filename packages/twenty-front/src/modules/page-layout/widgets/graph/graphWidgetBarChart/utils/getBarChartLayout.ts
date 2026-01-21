@@ -7,12 +7,10 @@ import {
 } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import { type ChartAxisTheme } from '@/page-layout/widgets/graph/types/ChartAxisTheme';
+import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
+import { computeBottomLegendOffsetFromText } from '@/page-layout/widgets/graph/utils/computeBottomLegendOffsetFromText';
 import { computeChartMargins } from '@/page-layout/widgets/graph/utils/computeChartMargins';
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
-import {
-  computeBottomLegendOffsetFromText,
-  type ChartMargins,
-} from '@/page-layout/widgets/graph/utils/getChartMarginsFromText';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
@@ -20,7 +18,7 @@ import {
 import { type BarDatum } from '@nivo/bar';
 import { BarChartLayout } from '~/generated/graphql';
 
-export type GetBarChartLayoutParams = {
+type GetBarChartLayoutParams = {
   axisTheme: ChartAxisTheme;
   fontFamily?: string;
   chartWidth: number;
@@ -35,7 +33,7 @@ export type GetBarChartLayoutParams = {
   effectiveMaximumValue: number;
 };
 
-export type BarChartLayoutResult = {
+type BarChartLayoutResult = {
   margins: ChartMargins;
   axisBottomConfiguration: ReturnType<
     typeof getBarChartAxisConfigs

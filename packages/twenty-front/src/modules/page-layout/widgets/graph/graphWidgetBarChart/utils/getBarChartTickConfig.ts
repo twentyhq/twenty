@@ -3,7 +3,7 @@ import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBa
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
 import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
 import { computeMaxLabelLengthForMargin } from '@/page-layout/widgets/graph/utils/computeMaxLabelLengthForMargin';
-import { type ChartMargins } from '@/page-layout/widgets/graph/utils/getChartMarginsFromText';
+import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
 import { type BarDatum } from '@nivo/bar';
 import { BarChartLayout } from '~/generated/graphql';
