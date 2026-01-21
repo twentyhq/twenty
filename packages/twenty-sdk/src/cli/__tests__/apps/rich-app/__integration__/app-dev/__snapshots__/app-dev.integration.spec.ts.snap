@@ -18,8 +18,10 @@ exports[`rich-app app:dev > console output > should match expected output 1`] = 
   📂 Manifest watcher started
   📦 Building functions...
   🎨 Building front components...
-  ✓ Functions built
+  ✓ Front components built
 
 👀 Watching for changes... (Press Ctrl+C to stop)
-  ✓ Front components built"
+  ✓ Functions built
+
+👀 Watching for changes... (Press Ctrl+C to stop)"
 `;

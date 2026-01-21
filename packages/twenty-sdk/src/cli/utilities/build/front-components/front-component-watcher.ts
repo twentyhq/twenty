@@ -3,6 +3,7 @@ import * as fs from 'fs-extra';
 import path from 'path';
 import { build, type InlineConfig, type Rollup } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
 import { OUTPUT_DIR } from '../common/constants';
 import { printWatchingMessage } from '../common/display';
 import {
@@ -69,7 +70,10 @@ export class FrontComponentsWatcher implements RestartableWatcher {
       await this.innerWatcher?.close();
       this.innerWatcher = null;
 
-      this.componentPaths = result.filePaths.frontComponents;
+      const outputDir = path.join(this.appPath, OUTPUT_DIR, FRONT_COMPONENTS_DIR);
+      const newPaths = result.filePaths.frontComponents;
+      await cleanupRemovedFiles(outputDir, this.componentPaths, newPaths);
+      this.componentPaths = newPaths;
 
       if (this.componentPaths.length > 0) {
         console.log(chalk.blue('  🎨 Building front components...'));

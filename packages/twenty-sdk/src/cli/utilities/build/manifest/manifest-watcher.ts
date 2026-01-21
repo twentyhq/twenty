@@ -25,7 +25,12 @@ export class ManifestWatcher {
 
   async start(): Promise<void> {
     this.watcher = chokidar.watch(this.appPath, {
-      ignored: ['**/node_modules/**', '**/.twenty/**', '**/dist/**'],
+      ignored: [
+        '**/node_modules/**',
+        '**/.twenty/**',
+        '**/dist/**',
+        (filePath: string) => filePath.includes('/.twenty/') || filePath.includes('\\.twenty\\'),
+      ],
       ignoreInitial: true,
       awaitWriteFinish: {
         stabilityThreshold: 100,
@@ -35,6 +40,11 @@ export class ManifestWatcher {
 
     this.watcher.on('all', async (event, filePath) => {
       if (!filePath.match(/\.(ts|tsx|json)$/)) {
+        return;
+      }
+
+      // Double-check to prevent watching our own output
+      if (filePath.includes('.twenty')) {
         return;
       }
 

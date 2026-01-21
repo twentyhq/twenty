@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import * as fs from 'fs-extra';
+import { glob } from 'fast-glob';
 import path from 'path';
 import { type Application } from 'twenty-shared/application';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
@@ -12,13 +12,22 @@ import {
 } from './entity.interface';
 
 const findApplicationConfigPath = async (appPath: string): Promise<string> => {
-  const configFile = path.join(appPath, 'application.config.ts');
+  const files = await glob('**/application.config.ts', {
+    cwd: appPath,
+    ignore: ['**/node_modules/**', '**/.twenty/**', '**/dist/**'],
+  });
 
-  if (await fs.pathExists(configFile)) {
-    return configFile;
+  if (files.length === 0) {
+    throw new Error('Missing application.config.ts in your app');
   }
 
-  throw new Error('Missing application.config.ts in your app root');
+  if (files.length > 1) {
+    throw new Error(
+      `Multiple application.config.ts files found: ${files.join(', ')}. Only one is allowed.`,
+    );
+  }
+
+  return path.join(appPath, files[0]);
 };
 
 export class ApplicationEntityBuilder

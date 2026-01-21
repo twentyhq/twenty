@@ -3,6 +3,7 @@ import * as fs from 'fs-extra';
 import path from 'path';
 import { build, type InlineConfig, type Rollup } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
 import { OUTPUT_DIR } from '../common/constants';
 import { printWatchingMessage } from '../common/display';
 import {
@@ -66,7 +67,10 @@ export class FunctionsWatcher implements RestartableWatcher {
       await this.innerWatcher?.close();
       this.innerWatcher = null;
 
-      this.functionPaths = result.filePaths.functions;
+      const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
+      const newPaths = result.filePaths.functions;
+      await cleanupRemovedFiles(outputDir, this.functionPaths, newPaths);
+      this.functionPaths = newPaths;
 
       if (this.functionPaths.length > 0) {
         console.log(chalk.blue('  📦 Building functions...'));
