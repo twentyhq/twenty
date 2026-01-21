@@ -23686,15 +23686,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.capitalize@npm:^4":
-  version: 4.2.9
-  resolution: "@types/lodash.capitalize@npm:4.2.9"
-  dependencies:
-    "@types/lodash": "npm:*"
-  checksum: 10c0/4a4bc23bc82a8a0952bf75712cea34cd9e6eb15ef77a58352d19f387be50cdea0b6f2b21e7f0d87c1623bfd42b8d4fd2384478901702b146f016f4c7c11e1abb
-  languageName: node
-  linkType: hard
-
 "@types/lodash.chunk@npm:^4.2.9":
   version: 4.2.9
   resolution: "@types/lodash.chunk@npm:4.2.9"
@@ -29687,7 +29678,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:4.0.3, chokidar@npm:^4.0.1, chokidar@npm:^4.0.3":
+"chokidar@npm:4.0.3, chokidar@npm:^4.0.0, chokidar@npm:^4.0.1, chokidar@npm:^4.0.3":
   version: 4.0.3
   resolution: "chokidar@npm:4.0.3"
   dependencies:
@@ -42985,13 +42976,6 @@ __metadata:
   version: 4.3.0
   resolution: "lodash.camelcase@npm:4.3.0"
   checksum: 10c0/fcba15d21a458076dd309fce6b1b4bf611d84a0ec252cb92447c948c533ac250b95d2e00955801ebc367e5af5ed288b996d75d37d2035260a937008e14eaf432
-  languageName: node
-  linkType: hard
-
-"lodash.capitalize@npm:^4.2.1":
-  version: 4.2.1
-  resolution: "lodash.capitalize@npm:4.2.1"
-  checksum: 10c0/b289326497c2e24d6b8afa2af2ca4e068ef6ef007ade36bfb6f70af77ce10ea3f090eeee947d5fdcf2db4bcfa4703c8c10a5857a2b39e308bddfd1d11ad35970
   languageName: node
   linkType: hard
 
@@ -56983,14 +56967,13 @@ __metadata:
     "@types/fs-extra": "npm:^11.0.0"
     "@types/inquirer": "npm:^9.0.0"
     "@types/lodash.camelcase": "npm:^4.3.7"
-    "@types/lodash.capitalize": "npm:^4"
     "@types/lodash.kebabcase": "npm:^4.1.7"
-    "@types/lodash.startcase": "npm:^4"
     "@types/node": "npm:^24.0.0"
     "@types/react": "npm:^19.0.2"
     archiver: "npm:^7.0.1"
     axios: "npm:^1.6.0"
     chalk: "npm:^5.3.0"
+    chokidar: "npm:^4.0.0"
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.4.0"
     fast-glob: "npm:^3.3.0"
@@ -57000,9 +56983,7 @@ __metadata:
     inquirer: "npm:^10.0.0"
     jsonc-parser: "npm:^3.2.0"
     lodash.camelcase: "npm:^4.3.0"
-    lodash.capitalize: "npm:^4.2.1"
     lodash.kebabcase: "npm:^4.1.1"
-    lodash.startcase: "npm:^4.4.0"
     tsx: "npm:^4.7.0"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
