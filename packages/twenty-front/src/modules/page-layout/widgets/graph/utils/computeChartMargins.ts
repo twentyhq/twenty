@@ -9,8 +9,8 @@ export type ChartMarginInputs = {
 };
 
 export type ComputeChartMarginsParams<TTickConfig, TValueTickResult> = {
-  tickFontSize: number | string;
-  legendFontSize?: number | string;
+  tickFontSize: number;
+  legendFontSize?: number;
   fontFamily?: string;
   xAxisLabel?: string;
   yAxisLabel?: string;

@@ -5,7 +5,6 @@ import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graph
 import { computeMaxLabelLengthForMargin } from '@/page-layout/widgets/graph/utils/computeMaxLabelLengthForMargin';
 import { type ChartMargins } from '@/page-layout/widgets/graph/utils/getChartMarginsFromText';
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
-import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { type BarDatum } from '@nivo/bar';
 import { BarChartLayout } from '~/generated/graphql';
 
@@ -79,7 +78,7 @@ export const getBarChartTickConfig = ({
   const tickRotationConfig = getTickRotationConfig({
     widthPerTick: widthPerDataPoint,
     axisFontSize,
-    maxLabelHeight: COMMON_CHART_CONSTANTS.MARGIN_LIMITS.max.bottom,
+    maxLabelHeight: margins.bottom,
   });
 
   const maxLeftAxisTickLabelLength = computeMaxLabelLengthForMargin({

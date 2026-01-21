@@ -1,4 +1,5 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
+import { TEXT_MARGIN_LIMITS } from '@/page-layout/widgets/graph/constants/TextMarginLimits';
 import {
   getTickRotationConfig,
   type TickRotationConfig,
@@ -6,7 +7,7 @@ import {
 
 describe('getTickRotationConfig', () => {
   const defaultAxisFontSize = COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE;
-  const defaultMaxLabelHeight = COMMON_CHART_CONSTANTS.MARGIN_LIMITS.max.bottom;
+  const defaultMaxLabelHeight = TEXT_MARGIN_LIMITS.max.bottom;
 
   describe('when width per tick is large enough for horizontal labels', () => {
     it('should return no rotation when width per tick is large', () => {

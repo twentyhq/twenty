@@ -1,4 +1,4 @@
 export type ChartAxisTheme = {
-  ticks: { text: { fontSize: number | string } };
-  legend: { text: { fontSize: number | string } };
+  ticks: { text: { fontSize: number } };
+  legend: { text: { fontSize: number } };
 };

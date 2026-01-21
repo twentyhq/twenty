@@ -24,6 +24,7 @@ type LineChartAxisBottomConfigParams = {
   data: LineChartSeriesWithColor[];
   marginLeft: number;
   marginRight: number;
+  marginBottom: number;
   axisFontSize: number;
 };
 
@@ -33,6 +34,7 @@ export const getLineChartAxisBottomConfig = ({
   data,
   marginLeft,
   marginRight,
+  marginBottom,
   axisFontSize,
 }: LineChartAxisBottomConfigParams): LineChartAxisBottomResult => {
   const tickValues =
@@ -59,7 +61,7 @@ export const getLineChartAxisBottomConfig = ({
   const { tickRotation, maxLabelLength } = getTickRotationConfig({
     widthPerTick: widthPerDataPoint,
     axisFontSize,
-    maxLabelHeight: COMMON_CHART_CONSTANTS.MARGIN_LIMITS.max.bottom,
+    maxLabelHeight: marginBottom,
   });
 
   return {

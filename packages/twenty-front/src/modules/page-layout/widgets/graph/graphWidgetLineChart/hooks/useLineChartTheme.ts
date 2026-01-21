@@ -1,7 +1,10 @@
+import { parseFontSizeToPx } from '@/page-layout/widgets/graph/utils/parseFontSize';
 import { useTheme } from '@emotion/react';
 
 export const useLineChartTheme = () => {
   const theme = useTheme();
+  const tickFontSize = 12;
+  const legendFontSize = parseFontSizeToPx(theme.font.size.sm, tickFontSize);
 
   return {
     axis: {
@@ -18,13 +21,13 @@ export const useLineChartTheme = () => {
         },
         text: {
           fill: theme.font.color.secondary,
-          fontSize: 12,
+          fontSize: tickFontSize,
         },
       },
       legend: {
         text: {
           fill: theme.font.color.primary,
-          fontSize: theme.font.size.sm,
+          fontSize: legendFontSize,
           fontWeight: theme.font.weight.medium,
         },
       },

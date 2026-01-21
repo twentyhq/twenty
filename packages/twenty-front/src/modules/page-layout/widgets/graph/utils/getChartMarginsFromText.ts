@@ -1,6 +1,7 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
+import { TEXT_MARGIN_EXTRAS } from '@/page-layout/widgets/graph/constants/TextMarginExtras';
+import { TEXT_MARGIN_LIMITS } from '@/page-layout/widgets/graph/constants/TextMarginLimits';
 import { measureTextDimensions } from '@/page-layout/widgets/graph/utils/measureText';
-import { parseFontSizeToPx } from '@/page-layout/widgets/graph/utils/parseFontSize';
 
 export type ChartMargins = {
   top: number;
@@ -8,11 +9,6 @@ export type ChartMargins = {
   bottom: number;
   left: number;
 };
-
-const PADDING_EXTRA = 4;
-const NON_ROTATED_TICK_EXTRA = 20;
-const ROTATED_TICK_EXTRA = 8;
-const MARGIN_LIMITS = COMMON_CHART_CONSTANTS.MARGIN_LIMITS;
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
@@ -70,29 +66,26 @@ export const computeBottomLegendOffsetFromText = ({
   tickRotation,
 }: {
   tickLabels?: string[];
-  tickFontSize: number | string;
+  tickFontSize: number;
   fontFamily?: string;
   tickRotation: number;
 }) => {
-  const normalizedTickFontSize = parseFontSizeToPx(
-    tickFontSize,
-    COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE,
-  );
-
   if (!tickLabels || tickLabels.length === 0) {
     const extraSpacing =
-      tickRotation === 0 ? NON_ROTATED_TICK_EXTRA : ROTATED_TICK_EXTRA;
+      tickRotation === 0
+        ? TEXT_MARGIN_EXTRAS.bottomTickExtraNonRotated
+        : TEXT_MARGIN_EXTRAS.bottomTickExtraRotated;
     return Math.ceil(
-      normalizedTickFontSize +
+      tickFontSize +
         COMMON_CHART_CONSTANTS.TICK_PADDING +
-        PADDING_EXTRA +
+        TEXT_MARGIN_EXTRAS.tickPaddingExtra +
         extraSpacing,
     );
   }
 
   const bottomTickDimensions = getMaxLabelDimensions({
     labels: tickLabels,
-    fontSize: normalizedTickFontSize,
+    fontSize: tickFontSize,
     fontFamily,
   });
   const bottomTickHeight =
@@ -104,14 +97,16 @@ export const computeBottomLegendOffsetFromText = ({
         })
       : bottomTickDimensions.height;
   const effectiveTickHeight =
-    bottomTickHeight > 0 ? bottomTickHeight : normalizedTickFontSize;
+    bottomTickHeight > 0 ? bottomTickHeight : tickFontSize;
   const extraSpacing =
-    tickRotation === 0 ? NON_ROTATED_TICK_EXTRA : ROTATED_TICK_EXTRA;
+    tickRotation === 0
+      ? TEXT_MARGIN_EXTRAS.bottomTickExtraNonRotated
+      : TEXT_MARGIN_EXTRAS.bottomTickExtraRotated;
 
   return Math.ceil(
     effectiveTickHeight +
       COMMON_CHART_CONSTANTS.TICK_PADDING +
-      PADDING_EXTRA +
+      TEXT_MARGIN_EXTRAS.tickPaddingExtra +
       extraSpacing,
   );
 };
@@ -127,8 +122,8 @@ export const getChartMarginsFromText = ({
   tickRotation,
   bottomLegendOffset,
 }: {
-  tickFontSize: number | string;
-  legendFontSize?: number | string;
+  tickFontSize: number;
+  legendFontSize?: number;
   fontFamily?: string;
   bottomTickLabels?: string[];
   leftTickLabels?: string[];
@@ -137,14 +132,8 @@ export const getChartMarginsFromText = ({
   tickRotation: number;
   bottomLegendOffset?: number;
 }): ChartMargins => {
-  const normalizedTickFontSize = parseFontSizeToPx(
-    tickFontSize,
-    COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE,
-  );
-  const normalizedLegendFontSize = parseFontSizeToPx(
-    legendFontSize ?? tickFontSize,
-    normalizedTickFontSize,
-  );
+  const normalizedTickFontSize = tickFontSize;
+  const normalizedLegendFontSize = legendFontSize ?? tickFontSize;
 
   const bottomTickDimensions = getMaxLabelDimensions({
     labels: bottomTickLabels,
@@ -182,46 +171,54 @@ export const getChartMarginsFromText = ({
         })
       : bottomTickDimensions.height;
   const bottomTicksBlock = hasBottomTicks
-    ? bottomTickHeight + COMMON_CHART_CONSTANTS.TICK_PADDING + PADDING_EXTRA
+    ? bottomTickHeight +
+      COMMON_CHART_CONSTANTS.TICK_PADDING +
+      TEXT_MARGIN_EXTRAS.tickPaddingExtra
     : 0;
   const bottomLabelBlock = bottomAxisLabelDimensions.height
-    ? bottomAxisLabelDimensions.height + PADDING_EXTRA
+    ? bottomAxisLabelDimensions.height + TEXT_MARGIN_EXTRAS.tickPaddingExtra
     : 0;
   const bottomFromTicksAndLabel = bottomTicksBlock + bottomLabelBlock;
   const bottomFromLegendOffset =
     xAxisLabel && typeof bottomLegendOffset === 'number'
-      ? bottomLegendOffset + bottomAxisLabelDimensions.height + PADDING_EXTRA
+      ? bottomLegendOffset +
+        bottomAxisLabelDimensions.height +
+        TEXT_MARGIN_EXTRAS.tickPaddingExtra
       : 0;
 
   const bottom = clamp(
     Math.ceil(Math.max(bottomFromTicksAndLabel, bottomFromLegendOffset)),
-    MARGIN_LIMITS.min.bottom,
-    MARGIN_LIMITS.max.bottom,
+    TEXT_MARGIN_LIMITS.min.bottom,
+    TEXT_MARGIN_LIMITS.max.bottom,
   );
 
   const hasLeftTicks = leftTickDimensions.width > 0;
   const leftTicksBlock = hasLeftTicks
     ? leftTickDimensions.width +
       COMMON_CHART_CONSTANTS.TICK_PADDING +
-      PADDING_EXTRA
+      TEXT_MARGIN_EXTRAS.tickPaddingExtra
     : 0;
   const leftLabelBlock = leftAxisLabelDimensions.height
-    ? leftAxisLabelDimensions.height + PADDING_EXTRA
+    ? leftAxisLabelDimensions.height + TEXT_MARGIN_EXTRAS.tickPaddingExtra
     : 0;
   const left = clamp(
     Math.ceil(leftTicksBlock + leftLabelBlock),
-    MARGIN_LIMITS.min.left,
-    MARGIN_LIMITS.max.left,
+    TEXT_MARGIN_LIMITS.min.left,
+    TEXT_MARGIN_LIMITS.max.left,
   );
 
   const topRightBase = Math.ceil(normalizedTickFontSize * 1.5);
 
   return {
-    top: clamp(topRightBase, MARGIN_LIMITS.min.top, MARGIN_LIMITS.max.top),
+    top: clamp(
+      topRightBase,
+      TEXT_MARGIN_LIMITS.min.top,
+      TEXT_MARGIN_LIMITS.max.top,
+    ),
     right: clamp(
       topRightBase,
-      MARGIN_LIMITS.min.right,
-      MARGIN_LIMITS.max.right,
+      TEXT_MARGIN_LIMITS.min.right,
+      TEXT_MARGIN_LIMITS.max.right,
     ),
     bottom,
     left,

@@ -1,10 +1,6 @@
 export const COMMON_CHART_CONSTANTS = {
   MINIMUM_WIDTH_PER_TICK_ROTATED: 20,
   ROTATED_LABELS_EXTRA_BOTTOM_MARGIN: 20,
-  MARGIN_LIMITS: {
-    min: { top: 10, right: 10, bottom: 30, left: 40 },
-    max: { top: 30, right: 30, bottom: 140, left: 160 },
-  },
   TICK_PADDING: 5,
   TICK_SIZE: 0,
   AXIS_FONT_SIZE: 11,
