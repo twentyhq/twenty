@@ -1,7 +1,7 @@
 import { ApiService } from '@/cli/utilities/api/services/api.service';
 import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import path from 'path';
