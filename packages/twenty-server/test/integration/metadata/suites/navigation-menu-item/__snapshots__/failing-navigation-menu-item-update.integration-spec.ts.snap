@@ -60,14 +60,15 @@ exports[`NavigationMenuItem update should fail when updating with invalid id (no
 exports[`NavigationMenuItem update should fail when updating with missing id 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "GRAPHQL_VALIDATION_FAILED",
     "http": {
       "status": 400,
     },
     "userFriendlyMessage": "An error occurred.",
+    "value": "",
   },
-  "message": "Field "id" of required type "UUID!" was not provided.",
-  "name": "GraphQLError",
+  "message": "Invalid UUID",
+  "name": "ValidationError",
 }
 `;
 
