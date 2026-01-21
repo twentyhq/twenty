@@ -5,12 +5,15 @@ import {
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { lastFieldMetadataItemUpdateState } from '@/object-metadata/states/lastFieldMetadataItemUpdateState';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { useSetRecoilState } from 'recoil';
 import { CrudOperationType } from 'twenty-shared/types';
+import { v4 as uuidv4 } from 'uuid';
 
 export const useUpdateOneFieldMetadataItem = () => {
   const { refreshObjectMetadataItems } =
@@ -25,6 +28,10 @@ export const useUpdateOneFieldMetadataItem = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
 
   const { enqueueErrorSnackBar } = useSnackBar();
+
+  const setLastFieldMetadataItemUpdate = useSetRecoilState(
+    lastFieldMetadataItemUpdateState,
+  );
 
   const updateOneFieldMetadataItem = async ({
     objectMetadataId,
@@ -59,6 +66,12 @@ export const useUpdateOneFieldMetadataItem = () => {
 
       await refreshObjectMetadataItems();
       await refreshCoreViewsByObjectMetadataId(objectMetadataId);
+
+      setLastFieldMetadataItemUpdate({
+        fieldMetadataItemId: fieldMetadataIdToUpdate,
+        objectMetadataId,
+        eventId: uuidv4(),
+      });
 
       return {
         status: 'successful',
