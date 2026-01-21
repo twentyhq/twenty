@@ -232,6 +232,18 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   syncStage: '20202020-7979-4b08-89fe-99cb5e698767',
   syncStageStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
   throttleFailureCount: '20202020-0291-42be-9ad0-d578a51684ab',
+  subscriptions: '20202020-6c9d-4e0f-7a1b-8b2c3d4e5f6a',
+} as const;
+
+export const MESSAGE_CHANNEL_SUBSCRIPTION_STANDARD_FIELD_IDS = {
+  provider: '20202020-8b1a-4c3d-9e2f-5a6b7c8d9e0f',
+  status: '20202020-9c2b-4d4e-0f3a-6b7c8d9e0f1a',
+  expiresAt: '20202020-0d3c-4e5f-1a4b-7c8d9e0f1a2b',
+  providerSubscriptionId: '20202020-1e4d-4f6a-2b5c-8d9e0f1a2b3c',
+  lastNotificationAt: '20202020-2f5e-4a7b-3c6d-9e0f1a2b3c4d',
+  failureCount: '20202020-3a6f-4b8c-4d7e-0f1a2b3c4d5e',
+  lastError: '20202020-4b7a-4c9d-5e8f-1a2b3c4d5e6f',
+  messageChannel: '20202020-5c8b-4d0e-6f9a-2b3c4d5e6f7a',
 } as const;
 
 export const MESSAGE_FOLDER_STANDARD_FIELD_IDS = {
@@ -565,6 +577,7 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   messageChannelMessageAssociation:
     MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS,
   messageChannel: MESSAGE_CHANNEL_STANDARD_FIELD_IDS,
+  messageChannelSubscription: MESSAGE_CHANNEL_SUBSCRIPTION_STANDARD_FIELD_IDS,
   messageParticipant: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS,
   messageThread: MESSAGE_THREAD_STANDARD_FIELD_IDS,
   messageThreadSubscriber: MESSAGE_THREAD_SUBSCRIBER_STANDARD_FIELD_IDS,

@@ -12,6 +12,7 @@ import { EmailAliasManagerModule } from 'src/modules/connected-account/email-ali
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
+import { MessageChannelSubscriptionManagerModule } from 'src/modules/messaging/message-channel-subscription-manager/message-channel-subscription-manager.module';
 import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cleaner/messaging-message-cleaner.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
 import { MessagingSingleMessageImportCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-single-message-import.command';
@@ -74,6 +75,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessageCleanerModule,
     WorkspaceEventEmitterModule,
     ConnectedAccountModule,
+    MessageChannelSubscriptionManagerModule,
   ],
   providers: [
     MessagingMessageListFetchCronCommand,

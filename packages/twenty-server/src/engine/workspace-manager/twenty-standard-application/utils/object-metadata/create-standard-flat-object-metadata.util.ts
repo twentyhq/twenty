@@ -2,8 +2,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import {
-  type CreateStandardObjectArgs,
-  createStandardObjectFlatMetadata,
+    type CreateStandardObjectArgs,
+    createStandardObjectFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-object-flat-metadata.util';
 
 export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
@@ -379,6 +379,37 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         labelIdentifierFieldMetadataName: 'handle',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  messageChannelSubscription: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'messageChannelSubscription'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'messageChannelSubscription',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.messageChannelSubscription.universalIdentifier,
+        nameSingular: 'messageChannelSubscription',
+        namePlural: 'messageChannelSubscriptions',
+        labelSingular: 'Message Channel Subscription',
+        labelPlural: 'Message Channel Subscriptions',
+        description: 'Push notification subscriptions for message channels',
+        icon: 'IconBell',
+        isSystem: true,
+        isAuditLogged: false,
+        labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
       standardObjectMetadataRelatedEntityIds,

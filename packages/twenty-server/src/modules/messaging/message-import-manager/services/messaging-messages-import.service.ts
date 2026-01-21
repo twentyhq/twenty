@@ -5,6 +5,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -17,6 +21,11 @@ import {
   MessageChannelSyncStage,
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageChannelSubscriptionSetupJob,
+  MessageChannelSubscriptionSetupJobData,
+} from 'src/modules/messaging/message-channel-subscription-manager/jobs/message-channel-subscription-setup.job';
+import { MessageChannelSubscriptionService } from 'src/modules/messaging/message-channel-subscription-manager/services/message-channel-subscription.service';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -49,6 +58,10 @@ export class MessagingMessagesImportService {
     private readonly messagingGetMessagesService: MessagingGetMessagesService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly subscriptionService: MessageChannelSubscriptionService,
+    @InjectMessageQueue(MessageQueue.messagingQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async processMessageBatchImport(
@@ -114,6 +127,11 @@ export class MessagingMessagesImportService {
               workspaceId,
             );
 
+            await this.triggerSubscriptionSetupIfNeeded(
+              messageChannel.id,
+              workspaceId,
+            );
+
             return await this.trackMessageImportCompleted(
               messageChannel,
               workspaceId,
@@ -171,6 +189,11 @@ export class MessagingMessagesImportService {
           ) {
             await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
               [messageChannel.id],
+              workspaceId,
+            );
+
+            await this.triggerSubscriptionSetupIfNeeded(
+              messageChannel.id,
               workspaceId,
             );
           } else {
@@ -235,5 +258,36 @@ export class MessagingMessagesImportService {
       connectedAccountId: messageChannel.connectedAccountId,
       messageChannelId: messageChannel.id,
     });
+  }
+
+  private async triggerSubscriptionSetupIfNeeded(
+    messageChannelId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    if (!this.twentyConfigService.get('MESSAGING_GMAIL_PUBSUB_ENABLED')) {
+      return;
+    }
+
+    const existingSubscription =
+      await this.subscriptionService.existsForChannel(
+        messageChannelId,
+        workspaceId,
+      );
+
+    if (existingSubscription) {
+      return;
+    }
+
+    this.logger.log(
+      `Queueing subscription setup for message channel ${messageChannelId}`,
+    );
+
+    await this.messageQueueService.add<MessageChannelSubscriptionSetupJobData>(
+      MessageChannelSubscriptionSetupJob.name,
+      {
+        workspaceId,
+        messageChannelId,
+      },
+    );
   }
 }

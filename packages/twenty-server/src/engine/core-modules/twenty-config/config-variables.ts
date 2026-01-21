@@ -2,12 +2,13 @@ import { type LogLevel, Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
-  IsDefined,
-  IsOptional,
-  IsUrl,
-  ValidateIf,
-  type ValidationError,
-  validateSync,
+    IsDefined,
+    IsOptional,
+    IsString,
+    IsUrl,
+    ValidateIf,
+    type ValidationError,
+    validateSync,
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -36,8 +37,8 @@ import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import {
-  ConfigVariableException,
-  ConfigVariableExceptionCode,
+    ConfigVariableException,
+    ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 
 export class ConfigVariables {
@@ -151,6 +152,63 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
+    description:
+      'Enable real-time push notifications for Gmail messaging via Pub/Sub',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  MESSAGING_GMAIL_PUBSUB_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
+    isSensitive: false,
+    description: 'Google Cloud project ID for Gmail Pub/Sub notifications',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf(
+    (env) => env.MESSAGING_GMAIL_PUBSUB_ENABLED && env.MESSAGING_PROVIDER_GMAIL_ENABLED,
+  )
+  @IsString()
+  MESSAGING_GMAIL_PUBSUB_PROJECT_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
+    isSensitive: false,
+    description: 'Google Cloud Pub/Sub topic name for Gmail notifications',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf(
+    (env) => env.MESSAGING_GMAIL_PUBSUB_ENABLED && env.MESSAGING_PROVIDER_GMAIL_ENABLED,
+  )
+  @IsString()
+  MESSAGING_GMAIL_PUBSUB_TOPIC_NAME: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
+    isSensitive: false,
+    description: 'Google Cloud Pub/Sub subscription name for Gmail notifications',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf(
+    (env) => env.MESSAGING_GMAIL_PUBSUB_ENABLED && env.MESSAGING_PROVIDER_GMAIL_ENABLED,
+  )
+  @IsString()
+  MESSAGING_GMAIL_PUBSUB_SUBSCRIPTION_NAME: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
+    isSensitive: true,
+    description:
+      'Base64-encoded Google Cloud service account JSON key for Pub/Sub',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf(
+    (env) => env.MESSAGING_GMAIL_PUBSUB_ENABLED && env.MESSAGING_PROVIDER_GMAIL_ENABLED,
+  )
+  @IsString()
+  MESSAGING_GMAIL_PUBSUB_SERVICE_ACCOUNT_KEY: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,

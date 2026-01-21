@@ -35,6 +35,7 @@
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@eslint/js": "9.32.0",
     "@faker-js/faker": "9.8.0",
+    "@google-cloud/pubsub": "^5.2.2",
     "@graphql-tools/schema": "10.0.4",
     "@graphql-tools/utils": "9.2.1",
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch",
