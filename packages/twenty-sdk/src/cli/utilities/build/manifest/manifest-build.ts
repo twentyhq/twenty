@@ -14,6 +14,7 @@ import { objectEntityBuilder } from './entities/object';
 import { objectExtensionEntityBuilder } from './entities/object-extension';
 import { roleEntityBuilder } from './entities/role';
 import { displayEntitySummary, displayErrors, displayWarnings } from './manifest-display';
+import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
 import { validateManifest } from './manifest-validate';
 import { ManifestValidationError } from './manifest.types';
 
@@ -99,6 +100,7 @@ export const runManifestBuild = async (
 
   try {
     await validateFolderStructure(appPath);
+    manifestExtractFromFileServer.init(appPath);
 
     const packageJson = await parseJsoncFile(
       await findPathFile(appPath, 'package.json'),

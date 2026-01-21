@@ -1,7 +1,7 @@
-export const computeFunctionOutputPath = (
-  handlerPath: string,
+export const computeFrontComponentOutputPath = (
+  componentPath: string,
 ): string => {
-  const normalizedPath = handlerPath.replace(/\\/g, '/');
+  const normalizedPath = componentPath.replace(/\\/g, '/');
 
   let relativePath = normalizedPath;
   if (relativePath.startsWith('src/app/')) {
@@ -10,5 +10,5 @@ export const computeFunctionOutputPath = (
     relativePath = relativePath.slice('src/'.length);
   }
 
-  return relativePath.replace(/\.ts$/, '.js');
+  return relativePath.replace(/\.tsx?$/, '.js');
 };

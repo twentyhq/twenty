@@ -2,7 +2,7 @@ import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
 import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type ServerlessFunctionManifest } from 'twenty-shared/application';
-import { extractManifestFromFile } from '../manifest-file-extractor';
+import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
   type EntityIdWithLocation,
@@ -25,9 +25,8 @@ export class FunctionEntityBuilder
     for (const filepath of functionFiles) {
       try {
         functionManifests.push(
-          await extractManifestFromFile<ServerlessFunctionManifest>(
+          await manifestExtractFromFileServer.extractManifestFromFile<ServerlessFunctionManifest>(
             filepath,
-            appPath,
             { entryProperty: 'handler' },
           ),
         );
