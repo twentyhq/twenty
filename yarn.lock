@@ -15650,6 +15650,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@preact/signals-core@npm:^1.8.0":
+  version: 1.12.2
+  resolution: "@preact/signals-core@npm:1.12.2"
+  checksum: 10c0/25ccf7639522179452ee4636290cd70573048c613bc1fffaa5f5deecd0a750611c170c954769ba3c71fca97aa4b951edcdd3a2b2c96b172c87e4ba3bc81ddccd
+  languageName: node
+  linkType: hard
+
 "@prettier/sync@npm:^0.5.2":
   version: 0.5.3
   resolution: "@prettier/sync@npm:0.5.3"
@@ -15865,6 +15872,29 @@ __metadata:
   bin:
     browsers: lib/cjs/main-cli.js
   checksum: 10c0/8665a7d5be5e1489855780b7684bf94a55647b54a8391474cbdc1defdb2e4e6642722ef1d20bfabe49d3aed3eec2c8db41d6eabc24440f4a16d071effc5a1049
+  languageName: node
+  linkType: hard
+
+"@quilted/events@npm:^2.1.3":
+  version: 2.1.3
+  resolution: "@quilted/events@npm:2.1.3"
+  dependencies:
+    "@preact/signals-core": "npm:^1.8.0"
+  checksum: 10c0/7f0906c7f15d956f0e9aaa7e736c97b0a130e7cf651efb3b64ffc5868b352197d029acfd55787a36abf41064608421c5653de958b1490e6fb00948a942ee829d
+  languageName: node
+  linkType: hard
+
+"@quilted/threads@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@quilted/threads@npm:4.0.1"
+  dependencies:
+    "@quilted/events": "npm:^2.1.3"
+  peerDependencies:
+    "@preact/signals-core": ^1.8.0
+  peerDependenciesMeta:
+    "@preact/signals-core":
+      optional: true
+  checksum: 10c0/6156b008e82aeb41aac101777f61da17911e75380acb11fa823155828fa51f4d1f7563b801ffdbb72acff64915be9204e404d5fd8c739a03d90f6593ae75caed
   languageName: node
   linkType: hard
 
@@ -56951,6 +56981,7 @@ __metadata:
     "@nivo/pie": "npm:^0.99.0"
     "@nivo/radial-bar": "npm:^0.99.0"
     "@playwright/test": "npm:^1.56.1"
+    "@quilted/threads": "npm:^4.0.1"
     "@react-email/components": "npm:^0.5.3"
     "@react-pdf/renderer": "npm:^4.1.6"
     "@remote-dom/core": "npm:^1.10.1"

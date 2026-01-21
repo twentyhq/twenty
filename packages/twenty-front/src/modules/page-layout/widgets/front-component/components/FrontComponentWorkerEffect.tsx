@@ -1,6 +1,12 @@
+import { ThreadWebWorker } from '@quilted/threads';
+import { type RemoteConnection } from '@remote-dom/core/elements';
 import { type RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+
+type SandboxAPI = {
+  render: (connection: RemoteConnection, sourceCode: string) => Promise<void>;
+};
 
 type FrontComponentWorkerEffectProps = {
   sourceCode: string;
@@ -17,32 +23,23 @@ export const FrontComponentWorkerEffect = ({
     let worker: Worker | null = null;
     let blobUrl: string | null = null;
 
-    try {
-      const blob = new Blob([sourceCode], { type: 'application/javascript' });
-      blobUrl = URL.createObjectURL(blob);
-      worker = new Worker(blobUrl, { type: 'module' });
+    const runWorker = async () => {
+      try {
+        worker = new Worker(
+          new URL('./front-component.worker.ts', import.meta.url),
+          { type: 'module' },
+        );
 
-      const { port1, port2 } = new MessageChannel();
+        const workerSandbox = new ThreadWebWorker<SandboxAPI>(worker);
 
-      port1.onmessage = (event) => {
-        const message = event.data;
-
-        if (message.type === 'mutate') {
-          receiver.connection.mutate(message.records);
-        } else if (message.type === 'call') {
-          receiver.connection.call(message.id, message.method, ...message.args);
-        }
-      };
-      port1.start();
-
-      worker.postMessage({ type: 'connect', port: port2 }, [port2]);
-
-      worker.onerror = () => {
+        await workerSandbox.imports.render(receiver.connection, sourceCode);
+      } catch (error) {
+        console.error(error);
         onError();
-      };
-    } catch {
-      onError();
-    }
+      }
+    };
+
+    runWorker();
 
     return () => {
       if (isDefined(worker)) {

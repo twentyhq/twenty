@@ -1,32 +1,13 @@
 import { useQuery } from '@apollo/client';
-import { RemoteReceiver } from '@remote-dom/core/receivers';
-import {
-  createRemoteComponentRenderer,
-  RemoteFragmentRenderer,
-  RemoteRootRenderer,
-} from '@remote-dom/react/host';
-import { createElement, useMemo, useState } from 'react';
+import { RemoteReceiver, RemoteRootRenderer } from '@remote-dom/react/host';
+import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { FrontComponentWorkerEffect } from '@/page-layout/widgets/front-component/components/FrontComponentWorkerEffect';
 import { GET_FRONT_COMPONENT_CODE } from '@/page-layout/widgets/front-component/graphql/queries/getFrontComponentCode';
-
-type RemoteElementProps = {
-  type?: string;
-  children?: React.ReactNode;
-};
-
-const RemoteElementRenderer = createRemoteComponentRenderer(
-  ({ type = 'div', children }: RemoteElementProps) =>
-    createElement(type, null, children),
-);
-
-const components = new Map([
-  ['remote-element', RemoteElementRenderer],
-  ['remote-fragment', RemoteFragmentRenderer],
-]);
+import { frontComponentRemoteDomComponents } from './front-component-remote-dom-components';
 
 type FrontComponentContentProps = {
   frontComponentId: string;
@@ -60,7 +41,10 @@ export const FrontComponentContent = ({
         receiver={receiver}
         onError={() => setHasError(true)}
       />
-      <RemoteRootRenderer receiver={receiver} components={components} />
+      <RemoteRootRenderer
+        receiver={receiver}
+        components={frontComponentRemoteDomComponents}
+      />
     </>
   );
 };
