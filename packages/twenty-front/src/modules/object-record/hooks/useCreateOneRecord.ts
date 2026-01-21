@@ -18,13 +18,18 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import {
+  type ObjectRecord as ObjectRecordShared,
+  type RecordGqlOperationGqlRecordFields,
+} from 'twenty-shared/types';
+
+import { type BaseObjectRecord } from '@/object-record/types/BaseObjectRecord';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useRecoilValue } from 'recoil';
-import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 type useCreateOneRecordProps = {
@@ -135,7 +140,7 @@ export const useCreateOneRecord = <
       getCreateOneRecordMutationResponseField(objectNameSingular);
 
     const createdObject = await apolloCoreClient
-      .mutate({
+      .mutate<ObjectRecord>({
         mutation: createOneRecordMutation,
         variables: {
           input: sanitizedInput,
@@ -186,17 +191,31 @@ export const useCreateOneRecord = <
 
     await refetchAggregateQueries();
 
+    const positionToUse =
+      recordInput.position === 'first'
+        ? 'first'
+        : recordInput.position === 'last'
+          ? 'last'
+          : null;
+
+    const createdRecord = createdObject.data?.[
+      mutationResponseField
+    ] as ObjectRecordShared & BaseObjectRecord;
+
     dispatchObjectRecordOperationBrowserEvent({
       objectMetadataItem,
-      operation: { type: 'create-one' },
+      operation: {
+        type: 'create-one',
+        createdRecord: { ...createdRecord, position: positionToUse },
+      },
     });
 
-    if (!isDefined(createdObject.data?.[mutationResponseField])) {
+    if (!isDefined(createdRecord)) {
       throw new CustomError('Failed to create record');
     }
 
     return getRecordFromRecordNode({
-      recordNode: createdObject.data?.[mutationResponseField],
+      recordNode: createdRecord,
     });
   };
 

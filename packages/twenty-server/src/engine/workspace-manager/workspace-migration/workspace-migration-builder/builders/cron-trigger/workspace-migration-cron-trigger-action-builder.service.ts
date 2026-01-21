@@ -74,7 +74,7 @@ export class WorkspaceMigrationCronTriggerActionsBuilderService extends Workspac
       action: {
         type: 'delete',
         metadataName: 'cronTrigger',
-        entityId: flatCronTriggerToValidate.id,
+        universalIdentifier: flatCronTriggerToValidate.universalIdentifier,
       },
     };
   }

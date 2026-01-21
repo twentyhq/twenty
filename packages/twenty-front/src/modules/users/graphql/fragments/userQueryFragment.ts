@@ -78,6 +78,10 @@ export const USER_QUERY_FRAGMENT = gql`
       billingSubscriptions {
         ...BillingSubscriptionFragment
       }
+      billingEntitlements {
+        key
+        value
+      }
       workspaceMembersCount
       defaultRole {
         ...RoleFragment

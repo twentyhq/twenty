@@ -9,6 +9,7 @@ export type TwentyConfig = {
 
 type PersistedConfig = TwentyConfig & {
   profiles?: Record<string, TwentyConfig>;
+  defaultWorkspace?: string;
 };
 
 const DEFAULT_WORKSPACE_NAME = 'default';
@@ -40,16 +41,19 @@ export class ConfigService {
   }
 
   async getConfig(): Promise<TwentyConfig> {
+    return this.getConfigForWorkspace(this.getActiveWorkspaceName());
+  }
+
+  async getConfigForWorkspace(workspaceName: string): Promise<TwentyConfig> {
     const defaultConfig = this.getDefaultConfig();
     try {
       const raw = await this.readRawConfig();
-      const profile = this.getActiveWorkspaceName();
 
       const profileConfig =
-        profile === DEFAULT_WORKSPACE_NAME &&
+        workspaceName === DEFAULT_WORKSPACE_NAME &&
         !raw.profiles?.[DEFAULT_WORKSPACE_NAME]
           ? raw
-          : raw.profiles?.[profile];
+          : raw.profiles?.[workspaceName];
 
       // Fallback to legacy top-level values if profile value is missing
       const apiUrl = profileConfig?.apiUrl ?? defaultConfig.apiUrl;
@@ -109,5 +113,40 @@ export class ConfigService {
     return {
       apiUrl: 'http://localhost:3000',
     };
+  }
+
+  async getAvailableWorkspaces(): Promise<string[]> {
+    try {
+      const raw = await this.readRawConfig();
+      const workspaces = new Set<string>();
+
+      // Always include the default workspace
+      workspaces.add(DEFAULT_WORKSPACE_NAME);
+
+      // Add all profiles
+      if (raw.profiles) {
+        Object.keys(raw.profiles).forEach((name) => workspaces.add(name));
+      }
+
+      return Array.from(workspaces).sort();
+    } catch {
+      return [DEFAULT_WORKSPACE_NAME];
+    }
+  }
+
+  async getDefaultWorkspace(): Promise<string> {
+    try {
+      const raw = await this.readRawConfig();
+      return raw.defaultWorkspace ?? DEFAULT_WORKSPACE_NAME;
+    } catch {
+      return DEFAULT_WORKSPACE_NAME;
+    }
+  }
+
+  async setDefaultWorkspace(name: string): Promise<void> {
+    const raw = await this.readRawConfig();
+    raw.defaultWorkspace = name;
+    await fs.ensureDir(path.dirname(this.configPath));
+    await fs.writeFile(this.configPath, JSON.stringify(raw, null, 2));
   }
 }

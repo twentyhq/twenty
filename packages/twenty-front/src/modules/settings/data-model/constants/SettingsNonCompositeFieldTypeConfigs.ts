@@ -3,6 +3,7 @@ import {
   type FieldBooleanValue,
   type FieldDateTimeValue,
   type FieldDateValue,
+  type FieldFilesValue,
   type FieldJsonValue,
   type FieldMultiSelectValue,
   type FieldNumberValue,
@@ -14,11 +15,12 @@ import {
 import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
 import { type SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
 import { type SettingsNonCompositeFieldType } from '@/settings/data-model/types/SettingsNonCompositeFieldType';
-import { type FieldRatingValue } from 'twenty-shared/types';
+import { FILE_CATEGORIES, type FieldRatingValue } from 'twenty-shared/types';
 import {
   IllustrationIconArray,
   IllustrationIconCalendarEvent,
   IllustrationIconCalendarTime,
+  IllustrationIconFile,
   IllustrationIconJson,
   IllustrationIconNumbers,
   IllustrationIconOneToMany,
@@ -139,4 +141,31 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
       category: 'Advanced',
       exampleValues: [['value1', 'value2'], ['value3'], []],
     } as const satisfies SettingsFieldTypeConfig<FieldArrayValue>,
+    [FieldMetadataType.FILES]: {
+      label: 'Files',
+      Icon: IllustrationIconFile,
+      category: 'Advanced',
+      exampleValues: [
+        [
+          {
+            fileId: 'file-1',
+            label: 'Document.pdf',
+            fileCategory: FILE_CATEGORIES.TEXT_DOCUMENT,
+          },
+          {
+            fileId: 'file-2',
+            label: 'Image.png',
+            fileCategory: FILE_CATEGORIES.IMAGE,
+          },
+        ],
+        [
+          {
+            fileId: 'file-3',
+            label: 'Report.xlsx',
+            fileCategory: FILE_CATEGORIES.SPREADSHEET,
+          },
+        ],
+        [],
+      ],
+    } as const satisfies SettingsFieldTypeConfig<FieldFilesValue>,
   };

@@ -126,6 +126,7 @@ export const mockCurrentWorkspace = {
       },
     ],
   },
+  billingEntitlements: [],
   billingSubscriptions: [
     {
       __typename: 'BillingSubscription',

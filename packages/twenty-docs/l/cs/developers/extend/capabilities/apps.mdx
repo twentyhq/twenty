@@ -36,32 +36,35 @@ npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Authenticate using your API key (you'll be prompted)
-yarn auth
+yarn auth:login
 
 # Start dev mode: automatically syncs local changes to your workspace
-yarn dev
+yarn app:dev
 ```
 
 Odtud můžete:
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn create-entity
+yarn app:create-entity
 
 # Generate a typed Twenty client and workspace entity types
-yarn generate
+yarn app:generate
 
 # Run a one‑time sync (instead of watch mode)
-yarn sync
+yarn app:sync
 
 # Watch your application's functions logs
-yarn logs
+yarn function:logs
+
+# Execute a function by name
+yarn function:execute -n my-function -p '{"name": "test"}'
 
 # Uninstall the application from the current workspace
-yarn uninstall
+yarn app:uninstall
 
 # Display commands' help
-yarn help
+yarn app:help
 ```
 
 Viz také: referenční stránky CLI pro [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) a [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -164,12 +167,13 @@ V kostce:
 
 Pozdější příkazy přidají další soubory a složky:
 
-* `yarn generate` vytvoří složku `generated/` (typovaný klient Twenty + typy pracovního prostoru).
-* `yarn create-entity` přidá soubory s definicemi entit do `src/app/` pro vaše vlastní objekty, funkce nebo role.
+* `yarn app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
+* `yarn app:create-entity` will add entity definition files under `src/app/` for your custom objects, functions, or roles.
+  l
 
 ## Ověření
 
-Při prvním spuštění `yarn auth` budete vyzváni k zadání:
+The first time you run `yarn auth:login`, you'll be prompted for:
 
 * URL API (výchozí je http://localhost:3000 nebo váš aktuální profil pracovního prostoru)
 * Klíč API
@@ -180,10 +184,10 @@ Příklady:
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
-yarn auth
+yarn auth:login
 
 # Use a specific workspace profile
-yarn auth --workspace my-custom-workspace
+yarn auth:login --workspace my-custom-workspace
 ```
 
 ## Používejte zdroje SDK (typy a konfiguraci)
@@ -282,7 +286,7 @@ Hlavní body:
 * Hodnota `universalIdentifier` musí být jedinečná a stabilní napříč nasazeními.
 * Každé pole vyžaduje `name`, `type`, `label` a svůj vlastní stabilní `universalIdentifier`.
 * Pole `fields` je volitelné — objekty můžete definovat i bez vlastních polí.
-* Nové objekty můžete vygenerovat pomocí `yarn create-entity`, který vás provede pojmenováním, poli a vztahy.
+* You can scaffold new objects using `yarn app:create-entity`, which guides you through naming, fields, and relationships.
 
 <Note>
   **Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole jako `name`, `createdAt`, `updatedAt`, `createdBy`, `position` a `deletedAt`. Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
@@ -496,7 +500,8 @@ export default defineFunction({
     {
       universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
       type: 'databaseEvent',
-      eventName: 'person.created',
+      eventName: 'person.updated',
+      updatedFields: ['name'],
     },
   ],
 });
@@ -509,9 +514,9 @@ Běžné typy spouštěčů:
 > např. `path: '/post-card/create',` -> volání na `<APP_URL>/s/post-card/create`
 
 * **cron**: Spouští vaši funkci podle plánu pomocí výrazu CRON.
-* **databaseEvent**: Spouští se při událostech životního cyklu objektů v pracovním prostoru
+* **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
 
-> např. `person.created`
+> e.g. `person.updated`
 
 Poznámky:
 
@@ -612,12 +617,12 @@ const handler = async (event: RoutePayload) => {
 
 Nové funkce můžete vytvářet dvěma způsoby:
 
-* **Vygenerované**: Spusťte `yarn create-entity` a zvolte možnost přidat novou funkci. Tím se vygeneruje startovací soubor s obslužnou funkcí a konfigurací.
+* **Scaffolded**: Run `yarn app:create-entity` and choose the option to add a new function. Tím se vygeneruje startovací soubor s obslužnou funkcí a konfigurací.
 * **Ruční**: Vytvořte nový soubor `*.function.ts` a použijte `defineFunction()` podle stejného vzoru.
 
 ### Generovaný typovaný klient
 
-Spusťte yarn generate a vytvořte lokální typovaný klient v generated/ na základě schématu vašeho pracovního prostoru. Použijte jej ve svých funkcích:
+Run yarn app:generate to create a local typed client in generated/ based on your workspace schema. Použijte jej ve svých funkcích:
 
 ```typescript
 import Twenty from './generated';
@@ -626,7 +631,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Klient je znovu generován příkazem `yarn generate`. Spusťte jej znovu po změně objektů a po `yarn sync`, případně při připojení k novému pracovnímu prostoru.
+The client is re-generated by `yarn app:generate`. Re-run after changing your objects and `yarn app:sync` or when onboarding to a new workspace.
 
 #### Běhové přihlašovací údaje v serverless funkcích
 
@@ -670,13 +675,13 @@ Poté přidejte skripty jako tyto:
 }
 ```
 
-Nyní můžete spouštět stejné příkazy přes Yarn, např. `yarn dev`, `yarn sync` atd.
+Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:sync`, etc.
 
 ## Řešení potíží
 
-* Chyby ověření: spusťte `yarn auth` a ujistěte se, že váš klíč API má požadovaná oprávnění.
+* Authentication errors: run `yarn auth:login` and ensure your API key has the required permissions.
 * Nelze se připojit k serveru: ověřte URL API a že je server Twenty dosažitelný.
-* Typy nebo klient chybí/jsou zastaralé: spusťte `yarn generate` a poté `yarn dev`.
-* Režim vývoje nesynchronizuje: ujistěte se, že běží `yarn dev` a že vaše prostředí změny neignoruje.
+* Types or client missing/outdated: run `yarn app:generate` and then `yarn app:dev`.
+* Dev mode not syncing: ensure `yarn app:dev` is running and that changes are not ignored by your environment.
 
 Kanál podpory na Discordu: https://discord.com/channels/1130383047699738754/1130386664812982322

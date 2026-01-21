@@ -1,112 +1,114 @@
-import { ApiService } from '@/cli/utilities/api/services/api.service';
+import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
+import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
+import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
+import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import { ManifestValidationError } from '@/cli/utilities/manifest/types/manifest.types';
-import {
-  displayEntitySummary,
-  displayErrors,
-  displayWarnings,
-} from '@/cli/utilities/manifest/utils/manifest-display';
-import { loadManifest } from '@/cli/utilities/manifest/utils/manifest-load';
 import chalk from 'chalk';
-import * as chokidar from 'chokidar';
+import { type ApplicationManifest } from 'twenty-shared/application';
+
+export type AppDevOptions = {
+  appPath?: string;
+};
+
+type AppDevState = {
+  manifest: ApplicationManifest | null;
+};
 
 export class AppDevCommand {
-  private apiService = new ApiService();
+  private manifestWatcher: ManifestWatcher | null = null;
+  private functionsWatcher: FunctionsWatcher | null = null;
+  private frontComponentsWatcher: FrontComponentsWatcher | null = null;
 
-  async execute(options: {
-    appPath?: string;
-    debounce: string;
-  }): Promise<void> {
-    const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
+  private appPath: string = '';
+  private state: AppDevState = {
+    manifest: null,
+  };
 
-    const debounceMs = parseInt(options.debounce, 10);
+  async execute(options: AppDevOptions): Promise<void> {
+    this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
-    this.logStartupInfo(appPath, debounceMs);
-
-    await this.synchronize(appPath);
-
-    const watcher = this.setupFileWatcher(appPath, debounceMs);
-
-    this.setupGracefulShutdown(watcher);
-  }
-
-  private async synchronize(appPath: string) {
-    try {
-      const { manifest, packageJson, yarnLock, warnings } =
-        await loadManifest(appPath);
-
-      displayEntitySummary(manifest);
-
-      displayWarnings(warnings);
-
-      await this.apiService.syncApplication({
-        manifest,
-        packageJson,
-        yarnLock,
-      });
-
-      console.log(chalk.green('  ✓ Synced with server'));
-    } catch (error) {
-      if (error instanceof ManifestValidationError) {
-        displayErrors(error);
-      } else {
-        console.error(
-          chalk.red('  ✗ Sync failed:'),
-          error instanceof Error ? error.message : error,
-        );
-      }
-    }
-  }
-
-  private logStartupInfo(appPath: string, debounceMs: number): void {
     console.log(chalk.blue('🚀 Starting Twenty Application Development Mode'));
-    console.log(chalk.gray(`📁 App Path: ${appPath}`));
-    console.log(chalk.gray(`⏱️  Debounce: ${debounceMs}ms`));
+    console.log(chalk.gray(`📁 App Path: ${this.appPath}`));
     console.log('');
+
+    await this.startWatchers();
+
+    this.setupGracefulShutdown();
   }
 
-  private setupFileWatcher(
-    appPath: string,
-    debounceMs: number,
-  ): chokidar.FSWatcher {
-    const watcher = chokidar.watch(appPath, {
-      ignored: /node_modules|\.git/,
-      persistent: true,
+  private async startWatchers(): Promise<void> {
+    const manifest = await runManifestBuild(this.appPath);
+
+    if (!manifest) {
+      return;
+    }
+
+    this.state.manifest = manifest;
+
+    await this.startManifestWatcher();
+    await this.startFunctionsWatcher(manifest);
+    await this.startFrontComponentsWatcher(manifest);
+  }
+
+  private async startManifestWatcher(): Promise<void> {
+    this.manifestWatcher = new ManifestWatcher({
+      appPath: this.appPath,
+      callbacks: {
+        onBuildSuccess: (manifest) => {
+          this.state.manifest = manifest;
+
+          if (this.functionsWatcher?.shouldRestart(manifest)) {
+            this.functionsWatcher.restart(manifest);
+          }
+
+          if (this.frontComponentsWatcher?.shouldRestart(manifest)) {
+            this.frontComponentsWatcher.restart(manifest);
+          }
+        },
+      },
     });
 
-    let timeout: NodeJS.Timeout | null = null;
+    await this.manifestWatcher.start();
+  }
 
-    const debouncedSync = () => {
-      if (timeout) {
-        clearTimeout(timeout);
+  private async startFunctionsWatcher(manifest: ApplicationManifest): Promise<void> {
+    this.functionsWatcher = new FunctionsWatcher({
+      appPath: this.appPath,
+      manifest,
+    });
+
+    await this.functionsWatcher.start();
+  }
+
+  private async startFrontComponentsWatcher(manifest: ApplicationManifest): Promise<void> {
+    this.frontComponentsWatcher = new FrontComponentsWatcher({
+      appPath: this.appPath,
+      manifest,
+    });
+
+    await this.frontComponentsWatcher.start();
+  }
+
+  private setupGracefulShutdown(): void {
+    process.on('SIGINT', async () => {
+      console.log(chalk.yellow('\n🛑 Stopping development mode...'));
+
+      const closePromises: Promise<void>[] = [];
+
+      if (this.manifestWatcher) {
+        closePromises.push(this.manifestWatcher.close());
       }
 
-      timeout = setTimeout(async () => {
-        console.log(chalk.blue('🔄 Changes detected, syncing...'));
+      if (this.functionsWatcher) {
+        closePromises.push(this.functionsWatcher.close());
+      }
 
-        await this.synchronize(appPath);
+      if (this.frontComponentsWatcher) {
+        closePromises.push(this.frontComponentsWatcher.close());
+      }
 
-        console.log(
-          chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
-        );
-      }, debounceMs);
-    };
+      await Promise.all(closePromises);
 
-    watcher.on('change', () => {
-      debouncedSync();
-    });
-
-    console.log(
-      chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
-    );
-
-    return watcher;
-  }
-
-  private setupGracefulShutdown(watcher: chokidar.FSWatcher): void {
-    process.on('SIGINT', () => {
-      console.log(chalk.yellow('\n🛑 Stopping development mode...'));
-      watcher.close();
       process.exit(0);
     });
   }

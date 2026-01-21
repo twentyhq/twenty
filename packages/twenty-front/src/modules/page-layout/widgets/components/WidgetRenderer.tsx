@@ -161,15 +161,14 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
           />
         )}
 
-        <WidgetCardContent variant={variant}>
-          {hasAccess && (
+        <WidgetCardContent variant={variant} hasHeader={showHeader}>
+          {hasAccess ? (
             <ErrorBoundary
               FallbackComponent={PageLayoutWidgetInvalidConfigDisplay}
             >
               <WidgetContentRenderer widget={widget} />
             </ErrorBoundary>
-          )}
-          {!hasAccess && (
+          ) : (
             <StyledNoAccessContainer>
               <IconLock
                 color={theme.font.color.tertiary}

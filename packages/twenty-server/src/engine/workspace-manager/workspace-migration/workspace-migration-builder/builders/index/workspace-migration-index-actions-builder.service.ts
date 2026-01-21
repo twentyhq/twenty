@@ -70,7 +70,7 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
       action: {
         type: 'delete',
         metadataName: 'index',
-        entityId: flatIndexToValidate.id,
+        universalIdentifier: flatIndexToValidate.universalIdentifier,
       },
     };
   }

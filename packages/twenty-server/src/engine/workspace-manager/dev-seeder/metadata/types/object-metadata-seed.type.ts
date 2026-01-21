@@ -3,4 +3,6 @@ import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metad
 export type ObjectMetadataSeed = Omit<
   CreateObjectInput,
   'workspaceId' | 'dataSourceId' | 'fields'
->;
+> & {
+  skipNameField?: boolean;
+};

@@ -177,6 +177,7 @@ export class ApplicationSyncService {
           packageJson,
           yarnLock,
         },
+        workspaceId,
       );
     }
 
@@ -184,6 +185,7 @@ export class ApplicationSyncService {
       {
         applicationVariables: manifest.application.applicationVariables,
         applicationId: application.id,
+        workspaceId,
       },
     );
 
