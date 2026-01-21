@@ -39,54 +39,75 @@ export class WorkflowCleanWorkflowRunsJob {
     CLEAN_WORKFLOW_RUN_CRON_PATTERN,
   )
   async handle() {
-    const activeWorkspaces = await this.workspaceRepository.find({
-      where: {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-    });
+    this.logger.log('Starting WorkflowCleanWorkflowRunsJob cron');
 
-    for (const activeWorkspace of activeWorkspaces) {
-      const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
-
-      const authContext = buildSystemAuthContext(activeWorkspace.id);
-
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
-        async () => {
-          const workflowRunsToDelete = await this.coreDataSource.query(
-            `
-            WITH ranked_runs AS (
-              SELECT id,
-                     ROW_NUMBER() OVER (
-                        PARTITION BY "workflowId"
-                        ORDER BY "createdAt" DESC
-                     ) AS rn,
-                     "createdAt"
-              FROM ${schemaName}."workflowRun"
-              WHERE status IN ('${WorkflowRunStatus.COMPLETED}', '${WorkflowRunStatus.FAILED}')
-            )
-            SELECT id, rn FROM ranked_runs
-            WHERE rn > ${NUMBER_OF_WORKFLOW_RUNS_TO_KEEP}
-               OR "createdAt" < NOW() - INTERVAL '14 days';
-          `,
-          );
-
-          const workflowRunRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              activeWorkspace.id,
-              WorkflowRunWorkspaceEntity,
-              { shouldBypassPermissionChecks: true },
-            );
-
-          for (const workflowRunToDelete of workflowRunsToDelete) {
-            await workflowRunRepository.delete(workflowRunToDelete.id);
-          }
-
-          this.logger.log(
-            `Deleted ${workflowRunsToDelete.length} workflow runs for workspace ${activeWorkspace.id} (schema ${schemaName})`,
-          );
+    try {
+      const activeWorkspaces = await this.workspaceRepository.find({
+        where: {
+          activationStatus: WorkspaceActivationStatus.ACTIVE,
         },
-      );
+      });
+
+      for (let i = 0; i < activeWorkspaces.length; i++) {
+        const activeWorkspace = activeWorkspaces[i];
+        const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
+
+        this.logger.log(
+          `Processing workspace ${activeWorkspace.id} (${i + 1}/${activeWorkspaces.length})`,
+        );
+
+        try {
+          const authContext = buildSystemAuthContext(activeWorkspace.id);
+
+          await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+            authContext,
+            async () => {
+              const workflowRunsToDelete = await this.coreDataSource.query(
+                `
+                WITH ranked_runs AS (
+                  SELECT id,
+                         ROW_NUMBER() OVER (
+                            PARTITION BY "workflowId"
+                            ORDER BY "createdAt" DESC
+                         ) AS rn,
+                         "createdAt"
+                  FROM ${schemaName}."workflowRun"
+                  WHERE status IN ('${WorkflowRunStatus.COMPLETED}', '${WorkflowRunStatus.FAILED}')
+                )
+                SELECT id, rn FROM ranked_runs
+                WHERE rn > ${NUMBER_OF_WORKFLOW_RUNS_TO_KEEP}
+                   OR "createdAt" < NOW() - INTERVAL '14 days';
+              `,
+              );
+
+              const workflowRunRepository =
+                await this.globalWorkspaceOrmManager.getRepository(
+                  activeWorkspace.id,
+                  WorkflowRunWorkspaceEntity,
+                  { shouldBypassPermissionChecks: true },
+                );
+
+              for (const workflowRunToDelete of workflowRunsToDelete) {
+                await workflowRunRepository.delete(workflowRunToDelete.id);
+              }
+
+              this.logger.log(
+                `Deleted ${workflowRunsToDelete.length} workflow runs for workspace ${activeWorkspace.id}`,
+              );
+            },
+          );
+        } catch (error) {
+          this.logger.error(
+            `Failed to clean workflow runs for workspace ${activeWorkspace.id}`,
+            error,
+          );
+        }
+      }
+
+      this.logger.log('Completed WorkflowCleanWorkflowRunsJob cron');
+    } catch (error) {
+      this.logger.error('WorkflowCleanWorkflowRunsJob cron failed', error);
+      throw error;
     }
   }
 }
