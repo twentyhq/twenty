@@ -94,17 +94,19 @@ export const useSortedNavigationMenuItems = () => {
   ]);
 
   const workspaceNavigationMenuItemsSorted = useMemo(() => {
+    const filtered = workspaceNavigationMenuItems.filter((item) => {
+      const itemTargetRecordId = item.targetRecordId;
+      if (!isDefined(itemTargetRecordId)) {
+        return false;
+      }
+      const matchesView = coreViews.some(
+        (view) => view.id === itemTargetRecordId,
+      );
+      const matchesTargetRecord = targetRecords.has(itemTargetRecordId);
+      return matchesView || matchesTargetRecord;
+    });
     return sortNavigationMenuItems(
-      workspaceNavigationMenuItems.filter((item) => {
-        const itemTargetRecordId = item.targetRecordId;
-        if (!isDefined(itemTargetRecordId)) {
-          return false;
-        }
-        return (
-          coreViews.some((view) => view.id === itemTargetRecordId) ||
-          targetRecords.has(itemTargetRecordId)
-        );
-      }),
+      filtered,
       getObjectRecordIdentifierByNameSingular,
       false,
       coreViews,

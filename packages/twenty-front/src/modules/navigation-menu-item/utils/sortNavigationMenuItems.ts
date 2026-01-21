@@ -32,31 +32,11 @@ export const sortNavigationMenuItems = (
         return null;
       }
 
-      const targetRecord = targetRecords.get(navigationMenuItem.targetRecordId);
-
-      if (!isDefined(targetRecord)) {
-        return null;
-      }
-
-      const objectMetadataItem = objectMetadataItems.find(
-        (item) => item.id === navigationMenuItem.targetObjectMetadataId,
+      const view = views.find(
+        (view) => view.id === navigationMenuItem.targetRecordId,
       );
 
-      if (!isDefined(objectMetadataItem)) {
-        return null;
-      }
-
-      const objectNameSingular = objectMetadataItem.nameSingular;
-
-      if (objectNameSingular === 'view') {
-        const view = views.find(
-          (view) => view.id === navigationMenuItem.targetRecordId,
-        );
-
-        if (!isDefined(view)) {
-          return null;
-        }
-
+      if (isDefined(view)) {
         const { namePlural } = getObjectMetadataNamePluralFromViewId(
           view,
           objectMetadataItems,
@@ -82,6 +62,22 @@ export const sortNavigationMenuItems = (
           ...displayFields,
         } as ProcessedNavigationMenuItem;
       }
+
+      const objectMetadataItem = objectMetadataItems.find(
+        (item) => item.id === navigationMenuItem.targetObjectMetadataId,
+      );
+
+      if (!isDefined(objectMetadataItem)) {
+        return null;
+      }
+
+      const targetRecord = targetRecords.get(navigationMenuItem.targetRecordId);
+
+      if (!isDefined(targetRecord)) {
+        return null;
+      }
+
+      const objectNameSingular = objectMetadataItem.nameSingular;
 
       const objectRecordIdentifier = getObjectRecordIdentifierByNameSingular(
         targetRecord,
