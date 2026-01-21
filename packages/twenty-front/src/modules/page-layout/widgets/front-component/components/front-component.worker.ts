@@ -1,16 +1,20 @@
-import { createRemoteRoot } from '@/page-layout/widgets/front-component/utils/create-remote-root.utils';
+import '@remote-dom/core/polyfill';
+import '@remote-dom/react/polyfill';
+
+import { createRemoteRoot } from '@/page-layout/widgets/front-component/utils/createRemoteRoot.utils';
 import { ThreadWebWorker } from '@quilted/threads';
 import type { RemoteConnection } from '@remote-dom/core/elements';
-import '@remote-dom/core/polyfill';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom/client';
 
 type SandboxAPI = {
   render: (connection: RemoteConnection, sourceCode: string) => Promise<void>;
 };
 
 const executeFrontComponent = (sourceCode: string, rootElement: Element) => {
-  const run = new Function('root', sourceCode) as (root: Element) => void;
+  const run = new Function('root', 'React', 'ReactDOM', sourceCode);
 
-  run(rootElement);
+  run(rootElement, React, ReactDOM);
 };
 
 ThreadWebWorker.self.export<SandboxAPI>({

@@ -242,21 +242,17 @@ export class FrontComponentService {
     _workspaceId: string,
   ): Promise<FrontComponentCodeDTO> {
     const sourceCode = `
-const container = document.createElement('remote-element');
-container.setAttribute('type', 'div');
+const { createElement } = React;
+const { createRoot } = ReactDOM;
 
-const title = document.createElement('remote-element');
-title.setAttribute('type', 'h3');
-title.textContent = 'Remote DOM front component';
-container.append(title);
+const FrontComponent = () => {
+  return createElement('div', null,
+    createElement('h3', null, 'Remote DOM front component'),
+    createElement('p', null, 'Rendered in a web worker and mirrored on the host.')
+  );
+};
 
-const description = document.createElement('remote-element');
-description.setAttribute('type', 'p');
-description.textContent =
-  'Rendered in a web worker and mirrored on the host.';
-container.append(description);
-
-root.append(container);
+createRoot(root).render(createElement(FrontComponent));
 `.trim();
 
     return { sourceCode };

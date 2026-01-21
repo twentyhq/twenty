@@ -1,15 +1,15 @@
 import type { RemoteRootElement } from '@remote-dom/core/elements';
 
-const rootTagName = 'remote-root';
+const ROOT_TAG_NAME = 'remote-root';
 
 export const createRemoteRoot = async (): Promise<RemoteRootElement> => {
   const { RemoteRootElement } = await import('@remote-dom/core/elements');
 
-  if (!customElements.get(rootTagName)) {
-    customElements.define(rootTagName, RemoteRootElement);
+  if (!customElements.get(ROOT_TAG_NAME)) {
+    customElements.define(ROOT_TAG_NAME, RemoteRootElement);
   }
 
-  const root = document.createElement(rootTagName) as RemoteRootElement;
+  const root = document.createElement(ROOT_TAG_NAME) as RemoteRootElement;
   document.body.append(root);
 
   return root;
