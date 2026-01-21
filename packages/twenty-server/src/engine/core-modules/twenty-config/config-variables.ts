@@ -2,13 +2,13 @@ import { type LogLevel, Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
-    IsDefined,
-    IsOptional,
-    IsString,
-    IsUrl,
-    ValidateIf,
-    type ValidationError,
-    validateSync,
+  IsDefined,
+  IsOptional,
+  IsString,
+  IsUrl,
+  ValidateIf,
+  type ValidationError,
+  validateSync,
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -37,8 +37,8 @@ import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import {
-    ConfigVariableException,
-    ConfigVariableExceptionCode,
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 
 export class ConfigVariables {
