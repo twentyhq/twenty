@@ -29,10 +29,10 @@ const getAllFiles = async (
   return files;
 };
 
-export const getBaseTypescriptProjectFiles = (async () => {
+export const getSeedProjectFiles = (async () => {
   const baseTypescriptProjectPath = join(
     ASSET_PATH,
-    `engine/core-modules/serverless/drivers/constants/base-typescript-project`,
+    `engine/core-modules/serverless/drivers/constants/seed-project`,
   );
 
   return await getAllFiles(baseTypescriptProjectPath);

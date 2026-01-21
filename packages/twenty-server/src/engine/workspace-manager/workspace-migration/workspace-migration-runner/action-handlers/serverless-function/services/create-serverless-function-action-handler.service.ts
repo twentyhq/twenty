@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
+import { getSeedProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-seed-project-files';
 import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { CreateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
@@ -49,7 +49,7 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
         draftFileFolder,
       );
     } else {
-      for (const file of await getBaseTypescriptProjectFiles) {
+      for (const file of await getSeedProjectFiles) {
         await this.fileStorageService.write({
           file: file.content,
           name: file.name,
