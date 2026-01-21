@@ -47,7 +47,7 @@ export class ManifestWatcher {
 
       const result = await runManifestBuild(this.appPath);
 
-      if (result) {
+      if (result.manifest) {
         printWatchingMessage();
         this.callbacks.onBuildSuccess?.(result);
       }

@@ -38,7 +38,7 @@ export class AppDevCommand {
   private async startWatchers(): Promise<void> {
     const buildResult = await runManifestBuild(this.appPath);
 
-    if (!buildResult) {
+    if (!buildResult.manifest) {
       return;
     }
 

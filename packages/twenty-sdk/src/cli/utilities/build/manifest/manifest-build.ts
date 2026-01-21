@@ -109,15 +109,24 @@ export type RunManifestBuildOptions = {
   writeOutput?: boolean;
 };
 
+const EMPTY_FILE_PATHS: EntityFilePaths = {
+  application: [],
+  objects: [],
+  objectExtensions: [],
+  functions: [],
+  frontComponents: [],
+  roles: [],
+};
+
 export type ManifestBuildResult = {
-  manifest: ApplicationManifest;
+  manifest: ApplicationManifest | null;
   filePaths: EntityFilePaths;
 };
 
 export const runManifestBuild = async (
   appPath: string,
   options: RunManifestBuildOptions = {},
-): Promise<ManifestBuildResult | null> => {
+): Promise<ManifestBuildResult> => {
   const { display = true, writeOutput = true } = options;
 
   if (display) {
@@ -215,6 +224,6 @@ export const runManifestBuild = async (
         );
       }
     }
-    return null;
+    return { manifest: null, filePaths: EMPTY_FILE_PATHS };
   }
 };

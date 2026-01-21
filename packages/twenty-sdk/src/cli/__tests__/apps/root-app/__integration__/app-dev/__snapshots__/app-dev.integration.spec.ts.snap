@@ -6,20 +6,8 @@ exports[`root-app app:dev > console output > should match expected output 1`] = 
 📁 App Path: <APP_PATH><APP_PATH>/.twenty/output/manifest.json
   📂 Manifest watcher started
   📦 Building functions...
-  File change: .twenty/output/manifest.json
-🔄 Building manifest...
   🎨 Building front components...
-  ✓ Loaded "Root App"
-  ✓ Found 1 object(s)
-  ✓ Found 1 function(s)
-  📍 Function entry points:
-     - my-function (my.function.ts)
-  ✓ Found 1 front component(s)
-  📍 Front component entry points:
-     - my-component (my.front-component.tsx)
-  ✓ Found 1 role(s)
-  ✓ Manifest written to <APP_PATH>/.twenty/output/manifest.json
+  ✓ Functions built
 
-👀 Watching for changes... (Press Ctrl+C to stop)
-  ✓ Functions built"
+👀 Watching for changes... (Press Ctrl+C to stop)"
 `;

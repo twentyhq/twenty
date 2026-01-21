@@ -16,7 +16,7 @@ export class AppSyncCommand {
     console.log(chalk.gray(`📁 App Path: ${appPath}`));
     console.log('');
 
-    const {manifest} = await runManifestBuild(appPath, { writeOutput: false });
+    const { manifest } = await runManifestBuild(appPath, { writeOutput: false });
 
     if (!manifest) {
       return { success: false, error: 'Build failed' };

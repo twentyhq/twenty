@@ -1,5 +1,5 @@
-import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
 import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
+import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import chalk from 'chalk';
 
@@ -15,7 +15,7 @@ export class AppBuildCommand {
     console.log(chalk.gray(`📁 App Path: ${appPath}`));
     console.log('');
 
-    const manifest = await runManifestBuild(appPath);
+    const { manifest } = await runManifestBuild(appPath);
 
     if (!manifest) {
       return { success: false, error: 'Build failed' };
