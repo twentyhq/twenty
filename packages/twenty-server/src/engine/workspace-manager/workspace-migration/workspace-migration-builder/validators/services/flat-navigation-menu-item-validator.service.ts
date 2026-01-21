@@ -17,6 +17,8 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
 
+const NAVIGATION_MENU_ITEM_MAX_DEPTH = 2;
+
 @Injectable()
 export class FlatNavigationMenuItemValidatorService {
   private getCircularDependencyValidationErrors({
@@ -31,6 +33,7 @@ export class FlatNavigationMenuItemValidatorService {
     const circularDependencyResult = validateFlatEntityCircularDependency({
       flatEntityId: navigationMenuItemId,
       flatEntityParentId: folderId,
+      maxDepth: NAVIGATION_MENU_ITEM_MAX_DEPTH,
       parentIdKey: 'folderId',
       flatEntityMaps: flatNavigationMenuItemMaps,
     });
@@ -60,8 +63,8 @@ export class FlatNavigationMenuItemValidatorService {
         return [
           {
             code: NavigationMenuItemExceptionCode.MAX_DEPTH_EXCEEDED,
-            message: t`Navigation menu item hierarchy exceeds maximum depth`,
-            userFriendlyMessage: msg`Navigation menu item hierarchy exceeds maximum depth`,
+            message: t`Navigation menu item hierarchy exceeds maximum depth of ${NAVIGATION_MENU_ITEM_MAX_DEPTH}`,
+            userFriendlyMessage: msg`Navigation menu item hierarchy exceeds maximum depth of ${NAVIGATION_MENU_ITEM_MAX_DEPTH}`,
           },
         ];
     }
