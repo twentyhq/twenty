@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -15,8 +14,6 @@ export const WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN = '0 * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class WorkflowHandleStaledRunsJob {
-  private readonly logger = new Logger(WorkflowHandleStaledRunsJob.name);
-
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -29,38 +26,14 @@ export class WorkflowHandleStaledRunsJob {
     WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN,
   )
   async handle() {
-    this.logger.log('Starting WorkflowHandleStaledRunsJob cron');
+    const activeWorkspaces = await this.workspaceRepository.find({
+      where: {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      },
+    });
 
-    try {
-      const activeWorkspaces = await this.workspaceRepository.find({
-        where: {
-          activationStatus: WorkspaceActivationStatus.ACTIVE,
-        },
-      });
-
-      for (let i = 0; i < activeWorkspaces.length; i++) {
-        const workspace = activeWorkspaces[i];
-
-        this.logger.log(
-          `Processing workspace ${workspace.id} (${i + 1}/${activeWorkspaces.length})`,
-        );
-
-        try {
-          await this.workflowHandleStaledRunsWorkspaceService.handleStaledRuns({
-            workspaceIds: [workspace.id],
-          });
-        } catch (error) {
-          this.logger.error(
-            `Failed to handle staled runs for workspace ${workspace.id}`,
-            error,
-          );
-        }
-      }
-
-      this.logger.log('Completed WorkflowHandleStaledRunsJob cron');
-    } catch (error) {
-      this.logger.error('WorkflowHandleStaledRunsJob cron failed', error);
-      throw error;
-    }
+    await this.workflowHandleStaledRunsWorkspaceService.handleStaledRuns({
+      workspaceIds: activeWorkspaces.map((workspace) => workspace.id),
+    });
   }
 }

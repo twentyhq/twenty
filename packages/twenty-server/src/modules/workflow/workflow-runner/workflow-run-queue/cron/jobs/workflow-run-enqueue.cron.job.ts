@@ -46,10 +46,12 @@ export class WorkflowRunEnqueueCronJob {
         );
 
         try {
-          await this.workflowRunEnqueueWorkspaceService.enqueueRuns({
-            workspaceIds: [workspace.id],
-            isCacheMode: false,
-          });
+          await this.workflowRunEnqueueWorkspaceService.enqueueRunsForWorkspace(
+            {
+              workspaceId: workspace.id,
+              isCacheMode: false,
+            },
+          );
         } catch (error) {
           this.logger.error(
             `Failed to enqueue runs for workspace ${workspace.id}`,
