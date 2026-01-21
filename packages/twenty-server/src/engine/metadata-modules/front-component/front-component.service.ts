@@ -242,13 +242,17 @@ export class FrontComponentService {
     _workspaceId: string,
   ): Promise<FrontComponentCodeDTO> {
     const sourceCode = `
-const { createElement } = React;
+const { createElement, useState } = React;
 const { createRoot } = ReactDOM;
 
 const FrontComponent = () => {
+  const [clickCount, setClickCount] = useState(0);
+
   return createElement('div', null,
     createElement('h3', null, 'Remote DOM front component'),
-    createElement('p', null, 'Rendered in a web worker and mirrored on the host.')
+    createElement('p', null, 'Rendered in a web worker and mirrored on the host.'),
+    createElement('button', { onClick: () => setClickCount(clickCount + 1) }, 'Click me'),
+    createElement('p', null, 'Clicked ' + clickCount + ' time' + (clickCount === 1 ? '' : 's'))
   );
 };
 
