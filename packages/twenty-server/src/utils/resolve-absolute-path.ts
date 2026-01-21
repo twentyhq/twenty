@@ -16,6 +16,7 @@ export const resolveAbsolutePath = (filePath: string): string => {
 
   // Security: Ensure resolved path is within cwd to prevent path traversal
   const cwd = path.resolve(process.cwd());
+
   if (!resolved.startsWith(cwd)) {
     throw new Error(
       `Path traversal detected: ${filePath} resolves outside working directory`,
