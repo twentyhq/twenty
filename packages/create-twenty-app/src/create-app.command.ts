@@ -125,6 +125,8 @@ export class CreateAppCommand {
     console.log('');
     console.log(chalk.blue('Next steps:'));
     console.log(chalk.gray(`  cd ${dirName}`));
+    console.log(chalk.gray(`  corepack enable  # if you don't use yarn@4`));
+    console.log(chalk.gray(`  yarn install     # if you don't use yarn@4`));
     console.log(chalk.gray('  yarn auth:login  # Authenticate with Twenty'));
     console.log(chalk.gray('  yarn app:dev     # Start dev mode'));
   }

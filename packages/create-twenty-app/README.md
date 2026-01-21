@@ -28,6 +28,10 @@ Create Twenty App is the official scaffolding CLI for building apps on top of [T
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
+# If you don't use yarn@4
+corepack enable
+yarn install
+
 # Get Help
 yarn run help
 
