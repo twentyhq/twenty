@@ -390,7 +390,10 @@ describe('GmailGetMessageListService', () => {
         messageFolders,
       });
 
-      const expectedQuery = computeGmailExcludeSearchFilter(messageFolders);
+      const expectedQuery = computeGmailExcludeSearchFilter(
+        messageFolders,
+        MessageFolderImportPolicy.SELECTED_FOLDERS,
+      );
 
       expect(mockGmailClient.users.messages.list).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -399,7 +402,7 @@ describe('GmailGetMessageListService', () => {
       );
     });
 
-    it('should not include exclusion filter when ALL_FOLDERS policy is set', async () => {
+    it('should only include default exclusions when ALL_FOLDERS policy is set', async () => {
       const mockGmailClient = {
         users: {
           messages: {
@@ -439,9 +442,11 @@ describe('GmailGetMessageListService', () => {
         ],
       });
 
-      expect(mockGmailClient.users.messages.list).toHaveBeenCalledWith(
-        expect.objectContaining({ q: '' }),
-      );
+      const callArgs = mockGmailClient.users.messages.list.mock.calls[0][0];
+
+      expect(callArgs.q).toContain('-label:spam');
+      expect(callArgs.q).toContain('-category:promotions');
+      expect(callArgs.q).not.toContain('label:inbox');
     });
   });
 
