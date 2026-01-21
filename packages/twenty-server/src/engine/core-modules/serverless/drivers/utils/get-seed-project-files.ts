@@ -16,7 +16,7 @@ const getAllFiles = async (
     const fullPath = path.join(dir, entry.name);
 
     if (entry.isDirectory()) {
-      return getAllFiles(rootDir, fullPath, files);
+      files.push(...(await getAllFiles(rootDir, fullPath, files)));
     } else {
       files.push({
         path: path.relative(rootDir, dir),
@@ -30,10 +30,10 @@ const getAllFiles = async (
 };
 
 export const getSeedProjectFiles = (async () => {
-  const baseTypescriptProjectPath = join(
+  const seedProjectPath = join(
     ASSET_PATH,
     `engine/core-modules/serverless/drivers/constants/seed-project`,
   );
 
-  return await getAllFiles(baseTypescriptProjectPath);
+  return await getAllFiles(seedProjectPath);
 })();
