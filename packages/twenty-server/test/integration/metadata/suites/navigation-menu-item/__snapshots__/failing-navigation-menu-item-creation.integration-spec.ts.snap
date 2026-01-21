@@ -94,13 +94,11 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+    "userFriendlyMessage": "Invalid navigation menu item input.",
   },
-  "message": "Field "targetObjectMetadataId" of required type "UUID!" was not provided.",
-  "name": "GraphQLError",
+  "message": "targetObjectMetadataId is required for navigation menu items",
+  "name": "UserInputError",
 }
 `;
 
@@ -108,13 +106,11 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+    "userFriendlyMessage": "Invalid navigation menu item input.",
   },
-  "message": "Field "targetRecordId" of required type "UUID!" was not provided.",
-  "name": "GraphQLError",
+  "message": "targetRecordId is required for navigation menu items",
+  "name": "UserInputError",
 }
 `;
 
