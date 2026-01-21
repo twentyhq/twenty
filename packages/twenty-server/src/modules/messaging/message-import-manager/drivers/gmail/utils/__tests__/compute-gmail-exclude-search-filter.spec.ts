@@ -1,4 +1,3 @@
-import { MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-not-synced-labels';
 import { computeGmailExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-exclude-search-filter.util';
 
 describe('computeGmailExcludeSearchFilter', () => {
@@ -49,7 +48,7 @@ describe('computeGmailExcludeSearchFilter', () => {
     expect(result).not.toContain('-label:sent');
   });
 
-  it('always excludes spam, promotions, and other unwanted categories', () => {
+  it('uses correct Gmail search syntax for labels and categories', () => {
     const result = computeGmailExcludeSearchFilter([
       {
         externalId: 'Label_1',
@@ -59,9 +58,10 @@ describe('computeGmailExcludeSearchFilter', () => {
       },
     ]);
 
-    MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS.forEach((label) => {
-      expect(result).toContain(`-label:${label.toLowerCase()}`);
-    });
+    expect(result).toContain('-label:trash');
+    expect(result).toContain('-label:spam');
+    expect(result).toContain('-category:promotions');
+    expect(result).toContain('-category:social');
   });
 
   it('handles nested folder paths correctly', () => {
