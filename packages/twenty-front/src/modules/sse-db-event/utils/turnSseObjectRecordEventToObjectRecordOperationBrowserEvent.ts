@@ -90,7 +90,11 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
         if (hasSingleEvent) {
           objectRecordOperationBrowserEvents.push({
             objectMetadataItem,
-            operation: { type: 'create-one', createdRecord: objectRecordEventsForThisEventType[0].properties.after },
+            operation: {
+              type: 'create-one',
+              createdRecord:
+                objectRecordEventsForThisEventType[0].properties.after,
+            },
           });
         } else {
           objectRecordOperationBrowserEvents.push({
@@ -103,7 +107,11 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
         if (hasSingleEvent) {
           objectRecordOperationBrowserEvents.push({
             objectMetadataItem,
-            operation: { type: 'create-one', createdRecord: objectRecordEventsForThisEventType[0].properties.after },
+            operation: {
+              type: 'create-one',
+              createdRecord:
+                objectRecordEventsForThisEventType[0].properties.after,
+            },
           });
         } else {
           objectRecordOperationBrowserEvents.push({

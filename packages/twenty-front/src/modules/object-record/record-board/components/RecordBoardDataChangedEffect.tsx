@@ -19,86 +19,126 @@ export const RecordBoardDataChangedEffect = () => {
   const { getShouldInitializeRecordBoardForUpdateInputs } =
     useGetShouldInitializeRecordBoardForUpdateInputs();
 
-  const recordGroupFromGroupValueCallbackState = useRecoilComponentCallbackState(recordGroupFromGroupValueComponentFamilySelector);
-  const recordIndexGroupFieldMetadataItemCallbackState = useRecoilComponentCallbackState(recordIndexGroupFieldMetadataItemComponentState);
-  const recordIndexRecordIdsByGroupCallbackState = useRecoilComponentCallbackState(recordIndexRecordIdsByGroupComponentFamilyState);
+  const recordGroupFromGroupValueCallbackState =
+    useRecoilComponentCallbackState(
+      recordGroupFromGroupValueComponentFamilySelector,
+    );
+  const recordIndexGroupFieldMetadataItemCallbackState =
+    useRecoilComponentCallbackState(
+      recordIndexGroupFieldMetadataItemComponentState,
+    );
+  const recordIndexRecordIdsByGroupCallbackState =
+    useRecoilComponentCallbackState(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+    );
 
   const handleObjectRecordOperation = useRecoilCallback(
-    ({ set , snapshot }) =>
+    ({ snapshot }) =>
       (
-    objectRecordOperationEventDetail: ObjectRecordOperationBrowserEventDetail,
-  ) => {
-    const objectRecordOperation = objectRecordOperationEventDetail.operation;
+        objectRecordOperationEventDetail: ObjectRecordOperationBrowserEventDetail,
+      ) => {
+        const objectRecordOperation =
+          objectRecordOperationEventDetail.operation;
 
-    switch (objectRecordOperation.type) {
-      case 'update-one':
-      case 'update-many': {
-        const updateInputs =
-        objectRecordOperation.type === 'update-one'
-          ? [objectRecordOperation.result.updateInput]
-          : objectRecordOperation.result.updateInputs;
+        switch (objectRecordOperation.type) {
+          case 'update-one':
+          case 'update-many':
+            {
+              const updateInputs =
+                objectRecordOperation.type === 'update-one'
+                  ? [objectRecordOperation.result.updateInput]
+                  : objectRecordOperation.result.updateInputs;
 
-        const shouldInitializeForUpdateOperation =
-          getShouldInitializeRecordBoardForUpdateInputs(updateInputs);
+              const shouldInitializeForUpdateOperation =
+                getShouldInitializeRecordBoardForUpdateInputs(updateInputs);
 
-        if (shouldInitializeForUpdateOperation) {
-          triggerRecordBoardInitialQuery();
-        }
-      }
-        break;
-      case 'create-one': {
-        if(objectRecordOperation.createdRecord.position === 'first') {
-          triggerRecordBoardInitialQuery();
-        } else {
-          const createdRecordPosition = objectRecordOperation.createdRecord.position;
+              if (shouldInitializeForUpdateOperation) {
+                triggerRecordBoardInitialQuery();
+              }
+            }
+            break;
+          case 'create-one': {
+            if (objectRecordOperation.createdRecord.position === 'first') {
+              triggerRecordBoardInitialQuery();
+            } else {
+              const createdRecordPosition =
+                objectRecordOperation.createdRecord.position;
 
-          if(!isDefined(createdRecordPosition)) {
-            return;
+              if (!isDefined(createdRecordPosition)) {
+                return;
+              }
+
+              const recordIndexGroupFieldMetadataItem = getSnapshotValue(
+                snapshot,
+                recordIndexGroupFieldMetadataItemCallbackState,
+              );
+
+              if (!isDefined(recordIndexGroupFieldMetadataItem)) {
+                return;
+              }
+
+              const recordGroupValue =
+                objectRecordOperation.createdRecord[
+                  recordIndexGroupFieldMetadataItem.name
+                ];
+
+              const recordGroupDefinitionFromGroupValue = getSnapshotValue(
+                snapshot,
+                recordGroupFromGroupValueCallbackState({ recordGroupValue }),
+              );
+
+              if (!isDefined(recordGroupDefinitionFromGroupValue)) {
+                return;
+              }
+
+              const recordIdsForGroup = getSnapshotValue(
+                snapshot,
+                recordIndexRecordIdsByGroupCallbackState(
+                  recordGroupDefinitionFromGroupValue.id,
+                ),
+              );
+
+              const recordIdsWithoutCreatedRecord = recordIdsForGroup.filter(
+                (recordId) =>
+                  recordId !== objectRecordOperation.createdRecord.id,
+              );
+
+              const groupIsEmpty = recordIdsWithoutCreatedRecord.length === 0;
+
+              if (groupIsEmpty) {
+                triggerRecordBoardInitialQuery();
+                return;
+              }
+
+              const firstRecordIdInGroup = recordIdsWithoutCreatedRecord[0];
+              const firstExistingRecordInGroup = getSnapshotValue(
+                snapshot,
+                recordStoreFamilyState(firstRecordIdInGroup),
+              );
+
+              if (!isDefined(firstExistingRecordInGroup)) {
+                return;
+              }
+
+              if (createdRecordPosition < firstExistingRecordInGroup.position) {
+                triggerRecordBoardInitialQuery();
+              }
+            }
+            break;
           }
-
-          const recordIndexGroupFieldMetadataItem = getSnapshotValue(snapshot, recordIndexGroupFieldMetadataItemCallbackState);
-
-          if(!isDefined(recordIndexGroupFieldMetadataItem)) {
-            return;
-          }
-
-          const recordGroupValue = objectRecordOperation.createdRecord[recordIndexGroupFieldMetadataItem.name];
-
-          const recordGroupDefinitionFromGroupValue = getSnapshotValue(snapshot, recordGroupFromGroupValueCallbackState({ recordGroupValue }))
-
-          if(!isDefined(recordGroupDefinitionFromGroupValue)) {
-            return;
-          }
-
-          const recordIdsForGroup = getSnapshotValue(snapshot, recordIndexRecordIdsByGroupCallbackState(recordGroupDefinitionFromGroupValue.id));
-
-          const recordIdsWithoutCreatedRecord = recordIdsForGroup.filter(recordId => recordId !== objectRecordOperation.createdRecord.id);
-
-          const groupIsEmpty = recordIdsWithoutCreatedRecord.length === 0;
-
-          if(groupIsEmpty) {
+          default: {
             triggerRecordBoardInitialQuery();
-            return;
-          }
-
-          const firstRecordIdInGroup = recordIdsWithoutCreatedRecord[0];
-          const firstExistingRecordInGroup = getSnapshotValue(snapshot, recordStoreFamilyState(firstRecordIdInGroup));
-
-          if(!isDefined(firstExistingRecordInGroup)) {
-            return;
-          }
-
-          if(createdRecordPosition < firstExistingRecordInGroup.position) {
-            triggerRecordBoardInitialQuery();
           }
         }
-        break;
-      }
-      default: {
-        triggerRecordBoardInitialQuery();
-      }
-    }
-  }, [triggerRecordBoardInitialQuery, getShouldInitializeRecordBoardForUpdateInputs, recordIndexGroupFieldMetadataItemCallbackState, recordGroupFromGroupValueCallbackState, recordIndexRecordIdsByGroupCallbackState]);
+      },
+    [
+      triggerRecordBoardInitialQuery,
+      getShouldInitializeRecordBoardForUpdateInputs,
+      recordIndexGroupFieldMetadataItemCallbackState,
+      recordGroupFromGroupValueCallbackState,
+      recordIndexRecordIdsByGroupCallbackState,
+    ],
+  );
 
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: handleObjectRecordOperation,

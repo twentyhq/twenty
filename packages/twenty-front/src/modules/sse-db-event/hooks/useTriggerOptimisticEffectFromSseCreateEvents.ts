@@ -3,7 +3,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
-import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
+import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record/hooks/useRefetchAggregateQueriesForObjectMetadataItem';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -22,10 +22,8 @@ export const useTriggerOptimisticEffectFromSseCreateEvents = () => {
     useRefetchAggregateQueriesForObjectMetadataItem();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const debouncedRefetchAggregateQueriesForObjectMetadataItem = useDebouncedCallback(
-    refetchAggregateQueriesForObjectMetadataItem,
-    100,
-  );
+  const debouncedRefetchAggregateQueriesForObjectMetadataItem =
+    useDebouncedCallback(refetchAggregateQueriesForObjectMetadataItem, 100);
 
   const triggerOptimisticEffectFromSseCreateEvents = useCallback(
     ({
@@ -68,7 +66,7 @@ export const useTriggerOptimisticEffectFromSseCreateEvents = () => {
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       upsertRecordsInStore,
-      debouncedRefetchAggregateQueriesForObjectMetadataItem
+      debouncedRefetchAggregateQueriesForObjectMetadataItem,
     ],
   );
 

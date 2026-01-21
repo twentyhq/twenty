@@ -1,5 +1,5 @@
 import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
-import { ObjectRecord } from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 
 export type ObjectRecordOperation =
   | {
@@ -15,10 +15,10 @@ export type ObjectRecordOperation =
       };
     }
   | {
-    type: 'create-one';
-    createdRecord: ObjectRecord;
-  } |
-  {
+      type: 'create-one';
+      createdRecord: ObjectRecord;
+    }
+  | {
       type:
         | 'create-many'
         | 'destroy-one'

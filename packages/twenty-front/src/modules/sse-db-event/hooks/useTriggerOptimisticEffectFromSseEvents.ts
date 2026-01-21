@@ -16,8 +16,8 @@ export const useTriggerOptimisticEffectFromSseEvents = () => {
   const { triggerOptimisticEffectFromSseUpdateEvents } =
     useTriggerOptimisticEffectFromSseUpdateEvents();
 
-    const { triggerOptimisticEffectFromSseCreateEvents } =
-      useTriggerOptimisticEffectFromSseCreateEvents();
+  const { triggerOptimisticEffectFromSseCreateEvents } =
+    useTriggerOptimisticEffectFromSseCreateEvents();
 
   const triggerOptimisticEffectFromSseEvents = useCallback(
     ({ objectRecordEvents }: { objectRecordEvents: ObjectRecordEvent[] }) => {
@@ -72,7 +72,11 @@ export const useTriggerOptimisticEffectFromSseEvents = () => {
         }
       }
     },
-    [objectMetadataItems, triggerOptimisticEffectFromSseUpdateEvents, triggerOptimisticEffectFromSseCreateEvents],
+    [
+      objectMetadataItems,
+      triggerOptimisticEffectFromSseUpdateEvents,
+      triggerOptimisticEffectFromSseCreateEvents,
+    ],
   );
 
   return { triggerOptimisticEffectFromSseEvents };
