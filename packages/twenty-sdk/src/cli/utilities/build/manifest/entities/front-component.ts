@@ -10,6 +10,10 @@ import {
   type ManifestWithoutSources,
 } from './entity.interface';
 
+type FrontComponentConfig = Omit<FrontComponentManifest, 'componentPath' | 'componentName'> & {
+  component: { name: string };
+};
+
 export class FrontComponentEntityBuilder
   implements ManifestEntityBuilder<FrontComponentManifest[]>
 {
@@ -24,12 +28,19 @@ export class FrontComponentEntityBuilder
 
     for (const filepath of componentFiles) {
       try {
-        frontComponentManifests.push(
-          await manifestExtractFromFileServer.extractManifestFromFile<FrontComponentManifest>(
+        const config =
+          await manifestExtractFromFileServer.extractManifestFromFile<FrontComponentConfig>(
             filepath,
-            { entryProperty: 'component' },
-          ),
-        );
+          );
+
+        const { component, ...rest } = config;
+        const componentPath = toPosixRelative(filepath, appPath);
+
+        frontComponentManifests.push({
+          ...rest,
+          componentName: component.name,
+          componentPath,
+        });
       } catch (error) {
         const relPath = toPosixRelative(filepath, appPath);
         throw new Error(

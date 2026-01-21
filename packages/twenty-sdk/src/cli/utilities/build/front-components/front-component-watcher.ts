@@ -11,18 +11,29 @@ import {
   type RestartableWatcherOptions,
 } from '../common/restartable-watcher.interface';
 import { FRONT_COMPONENTS_DIR } from './constants';
-import { computeFrontComponentOutputPath } from './front-component-paths';
+
+const computeOutputPath = (inputPath: string): string => {
+  // Convert src/components/greeting.front-component.tsx -> components/greeting.front-component
+  let outputPath = inputPath.replace(/\\/g, '/');
+
+  if (outputPath.startsWith('src/')) {
+    outputPath = outputPath.slice('src/'.length);
+  }
+
+  return outputPath.replace(/\.tsx?$/, '');
+};
 
 const buildFrontComponentEntries = (
   appPath: string,
-  componentPaths: Array<{ componentPath: string }>,
+  components: Array<{ componentPath: string }>,
 ): Record<string, string> => {
   const entries: Record<string, string> = {};
 
-  for (const component of componentPaths) {
-    const relativePath = computeFrontComponentOutputPath(component.componentPath);
-    const chunkName = relativePath.replace(/\.js$/, '');
-    entries[chunkName] = path.join(appPath, component.componentPath);
+  for (const component of components) {
+    const componentInputPath = path.join(appPath, component.componentPath);
+    const componentOutputPath = computeOutputPath(component.componentPath);
+
+    entries[componentOutputPath] = componentInputPath;
   }
 
   return entries;
@@ -33,6 +44,9 @@ export const FRONT_COMPONENT_EXTERNAL_MODULES: (string | RegExp)[] = [
   'react-dom',
   'react/jsx-runtime',
   'react/jsx-dev-runtime',
+  /^twenty-sdk/,
+  /^twenty-shared/,
+  /^@\//,
 ];
 
 export class FrontComponentsWatcher implements RestartableWatcher {
@@ -153,15 +167,11 @@ export class FrontComponentsWatcher implements RestartableWatcher {
         lib: {
           entry: this.entries,
           formats: ['es'],
-          fileName: (_, entryName) => `${entryName}.js`,
+          fileName: (_, entryName) => `${entryName}.mjs`,
         },
         rollupOptions: {
           external: FRONT_COMPONENT_EXTERNAL_MODULES,
           treeshake: true,
-          output: {
-            preserveModules: false,
-            exports: 'named',
-          },
         },
         minify: false,
         sourcemap: true,

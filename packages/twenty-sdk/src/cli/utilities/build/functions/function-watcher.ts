@@ -1,28 +1,39 @@
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import path from 'path';
-import type { ApplicationManifest } from 'twenty-shared/application';
+import type { ApplicationManifest, ServerlessFunctionManifest } from 'twenty-shared/application';
 import { build, type InlineConfig, type Rollup } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
-import { GENERATED_DIR, OUTPUT_DIR } from '../common/constants';
+import { OUTPUT_DIR } from '../common/constants';
 import { printWatchingMessage } from '../common/display';
 import {
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '../common/restartable-watcher.interface';
 import { FUNCTIONS_DIR } from './constants';
-import { computeFunctionOutputPath } from './function-paths';
+
+const computeOutputPath = (inputPath: string): string => {
+  // Convert src/functions/greeting.function.ts -> functions/greeting.function
+  let outputPath = inputPath.replace(/\\/g, '/');
+
+  if (outputPath.startsWith('src/')) {
+    outputPath = outputPath.slice('src/'.length);
+  }
+
+  return outputPath.replace(/\.tsx?$/, '');
+};
 
 const buildFunctionEntries = (
   appPath: string,
-  handlerPaths: Array<{ handlerPath: string }>,
+  functions: ServerlessFunctionManifest[],
 ): Record<string, string> => {
   const entries: Record<string, string> = {};
 
-  for (const fn of handlerPaths) {
-    const relativePath = computeFunctionOutputPath(fn.handlerPath);
-    const chunkName = relativePath.replace(/\.js$/, '');
-    entries[chunkName] = path.join(appPath, fn.handlerPath);
+  for (const fn of functions) {
+    const functionInputPath = path.join(appPath, fn.handlerPath);
+    const functionOutputPath = computeOutputPath(fn.handlerPath);
+
+    entries[functionOutputPath] = functionInputPath;
   }
 
   return entries;
@@ -50,7 +61,10 @@ export class FunctionsWatcher implements RestartableWatcher {
   }
 
   shouldRestart(manifest: ApplicationManifest): boolean {
-    const newEntries = buildFunctionEntries(this.appPath, manifest.serverlessFunctions ?? []);
+    const newEntries = buildFunctionEntries(
+      this.appPath,
+      manifest.serverlessFunctions ?? [],
+    );
     const currentKeys = Object.keys(this.entries).sort();
     const newKeys = Object.keys(newEntries).sort();
 
@@ -96,7 +110,10 @@ export class FunctionsWatcher implements RestartableWatcher {
       await this.innerWatcher?.close();
       this.innerWatcher = null;
 
-      this.entries = buildFunctionEntries(this.appPath, manifest.serverlessFunctions ?? []);
+      this.entries = buildFunctionEntries(
+        this.appPath,
+        manifest.serverlessFunctions ?? [],
+      );
 
       if (this.hasEntries()) {
         console.log(chalk.blue('  📦 Building functions...'));
@@ -150,21 +167,11 @@ export class FunctionsWatcher implements RestartableWatcher {
         lib: {
           entry: this.entries,
           formats: ['es'],
-          fileName: (_, entryName) => `${entryName}.js`,
+          fileName: (_, entryName) => `${entryName}.mjs`,
         },
         rollupOptions: {
           external: FUNCTION_EXTERNAL_MODULES,
           treeshake: true,
-          output: {
-            preserveModules: false,
-            exports: 'named',
-            paths: (id: string) => {
-              if (/(?:^|\/)generated(?:\/|$)/.test(id)) {
-                return `../${GENERATED_DIR}/index.js`;
-              }
-              return id;
-            },
-          },
         },
         minify: false,
         sourcemap: true,
