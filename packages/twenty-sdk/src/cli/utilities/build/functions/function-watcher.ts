@@ -12,17 +12,6 @@ import {
 } from '../common/restartable-watcher.interface';
 import { FUNCTIONS_DIR } from './constants';
 
-const computeOutputPath = (inputPath: string): string => {
-  // Convert src/functions/greeting.function.ts -> functions/greeting.function
-  let outputPath = inputPath.replace(/\\/g, '/');
-
-  if (outputPath.startsWith('src/')) {
-    outputPath = outputPath.slice('src/'.length);
-  }
-
-  return outputPath.replace(/\.tsx?$/, '');
-};
-
 const buildFunctionEntries = (
   appPath: string,
   functions: ServerlessFunctionManifest[],
@@ -30,10 +19,10 @@ const buildFunctionEntries = (
   const entries: Record<string, string> = {};
 
   for (const fn of functions) {
-    const functionInputPath = path.join(appPath, fn.handlerPath);
-    const functionOutputPath = computeOutputPath(fn.handlerPath);
+    const inputPath = path.join(appPath, fn.handlerPath);
+    const outputPath = fn.handlerPath.replace(/\.tsx?$/, '');
 
-    entries[functionOutputPath] = functionInputPath;
+    entries[outputPath] = inputPath;
   }
 
   return entries;
@@ -161,7 +150,7 @@ export class FunctionsWatcher implements RestartableWatcher {
         outDir: functionsOutputDir,
         emptyOutDir: false,
         watch: {
-          include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.json'],
+          include: ['**/*.ts', '**/*.tsx', '**/*.json'],
           exclude: ['node_modules/**', '.twenty/**', 'dist/**'],
         },
         lib: {

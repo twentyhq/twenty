@@ -1,19 +1,37 @@
 import chalk from 'chalk';
+import * as fs from 'fs-extra';
 import path from 'path';
 import { type Application } from 'twenty-shared/application';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
-    type EntityIdWithLocation,
-    type ManifestEntityBuilder,
-    type ManifestWithoutSources,
+  type EntityIdWithLocation,
+  type ManifestEntityBuilder,
+  type ManifestWithoutSources,
 } from './entity.interface';
+
+const findApplicationConfigPath = async (appPath: string): Promise<string> => {
+  const srcConfigFile = path.join(appPath, 'src', 'application.config.ts');
+  const rootConfigFile = path.join(appPath, 'application.config.ts');
+
+  if (await fs.pathExists(srcConfigFile)) {
+    return srcConfigFile;
+  }
+
+  if (await fs.pathExists(rootConfigFile)) {
+    return rootConfigFile;
+  }
+
+  throw new Error(
+    'Missing application.config.ts. Create it in your app root or in src/',
+  );
+};
 
 export class ApplicationEntityBuilder
   implements ManifestEntityBuilder<Application>
 {
   async build(appPath: string): Promise<Application> {
-    const applicationConfigPath = path.join(appPath, 'src', 'application.config.ts');
+    const applicationConfigPath = await findApplicationConfigPath(appPath);
 
     return manifestExtractFromFileServer.extractManifestFromFile<Application>(applicationConfigPath);
   }

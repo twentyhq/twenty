@@ -18,10 +18,10 @@ export class FrontComponentEntityBuilder
   implements ManifestEntityBuilder<FrontComponentManifest[]>
 {
   async build(appPath: string): Promise<FrontComponentManifest[]> {
-    const componentFiles = await glob(['src/**/*.front-component.tsx'], {
+    const componentFiles = await glob(['**/*.front-component.tsx'], {
       cwd: appPath,
       absolute: true,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
     });
 
     const frontComponentManifests: FrontComponentManifest[] = [];

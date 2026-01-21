@@ -1,12 +1,16 @@
 import { spawn, type ChildProcess } from 'child_process';
-import { join } from 'path';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const CLI_PATH = join(__dirname, '../../../cli.ts');
+// CLI path and working directory (twenty-sdk src directory)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const CLI_DIR = path.resolve(__dirname, '../../../..');
+const CLI_PATH = path.resolve(CLI_DIR, 'cli/cli.ts');
 
 export type RunCliCommandOptions = {
   command: string;
   args?: string[];
-  cwd: string;
   waitForOutput?: string;
   timeout?: number;
 };
@@ -22,17 +26,17 @@ export const runCliCommand = (
   const {
     command,
     args = [],
-    cwd,
     waitForOutput,
     timeout = 30000,
   } = options;
 
   return new Promise((resolve) => {
+    // Run from CLI directory to use twenty-sdk's tsconfig paths
     const child: ChildProcess = spawn(
       'npx',
       ['tsx', CLI_PATH, command, ...args],
       {
-        cwd,
+        cwd: CLI_DIR,
         stdio: ['ignore', 'pipe', 'pipe'],
         env: { ...process.env, FORCE_COLOR: '0' },
       },

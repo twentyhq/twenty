@@ -14,10 +14,10 @@ export class FunctionEntityBuilder
   implements ManifestEntityBuilder<ServerlessFunctionManifest[]>
 {
   async build(appPath: string): Promise<ServerlessFunctionManifest[]> {
-    const functionFiles = await glob(['src/**/*.function.ts'], {
+    const functionFiles = await glob(['**/*.function.ts'], {
       cwd: appPath,
       absolute: true,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
     });
 
     const functionManifests: ServerlessFunctionManifest[] = [];

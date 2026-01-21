@@ -18,28 +18,41 @@ import { manifestExtractFromFileServer } from './manifest-extract-from-file-serv
 import { validateManifest } from './manifest-validate';
 import { ManifestValidationError } from './manifest.types';
 
-const validateFolderStructure = async (appPath: string): Promise<void> => {
+const findApplicationConfigPath = async (appPath: string): Promise<string> => {
+  const srcConfigFile = path.join(appPath, 'src', 'application.config.ts');
+  const rootConfigFile = path.join(appPath, 'application.config.ts');
+
+  if (await fs.pathExists(srcConfigFile)) {
+    return srcConfigFile;
+  }
+
+  if (await fs.pathExists(rootConfigFile)) {
+    return rootConfigFile;
+  }
+
+  throw new Error(
+    'Missing application.config.ts. Create it in your app root or in src/',
+  );
+};
+
+export const hasSrcFolder = async (appPath: string): Promise<boolean> => {
   const srcFolder = path.join(appPath, 'src');
 
-  if (!(await fs.pathExists(srcFolder))) {
-    throw new Error(
-      `Missing src/ folder in ${appPath}.\n` + 'Create it with: mkdir -p src',
-    );
-  }
-
-  const configFile = path.join(appPath, 'src', 'application.config.ts');
-  if (!(await fs.pathExists(configFile))) {
-    throw new Error('Missing src/application.config.ts');
-  }
+  return fs.pathExists(srcFolder);
 };
 
 const loadSources = async (appPath: string): Promise<Sources> => {
   const sources: Sources = {};
 
-  const tsFiles = await glob(['src/**/*.ts', 'src/**/*.tsx', 'generated/**/*.ts'], {
+  const hasSrc = await hasSrcFolder(appPath);
+  const patterns = hasSrc
+    ? ['src/**/*.ts', 'src/**/*.tsx', 'generated/**/*.ts']
+    : ['**/*.ts', '**/*.tsx', 'generated/**/*.ts'];
+
+  const tsFiles = await glob(patterns, {
     cwd: appPath,
     absolute: true,
-    ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+    ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
   });
 
   for (const filepath of tsFiles) {
@@ -98,7 +111,7 @@ export const runManifestBuild = async (
   }
 
   try {
-    await validateFolderStructure(appPath);
+    await findApplicationConfigPath(appPath);
     manifestExtractFromFileServer.init(appPath);
 
     const packageJson = await parseJsoncFile(

@@ -10,15 +10,16 @@ export const defineFrontComponentsTests = (appPath: string): void => {
 
       expect(sortedFiles).toMatchInlineSnapshot(`
         [
-          "components",
-          "components/card.front-component.mjs",
-          "components/card.front-component.mjs.map",
-          "components/greeting.front-component.mjs",
-          "components/greeting.front-component.mjs.map",
-          "components/test.front-component.mjs",
-          "components/test.front-component.mjs.map",
-          "root.front-component.mjs",
-          "root.front-component.mjs.map",
+          "src",
+          "src/components",
+          "src/components/card.front-component.mjs",
+          "src/components/card.front-component.mjs.map",
+          "src/components/greeting.front-component.mjs",
+          "src/components/greeting.front-component.mjs.map",
+          "src/components/test.front-component.mjs",
+          "src/components/test.front-component.mjs.map",
+          "src/root.front-component.mjs",
+          "src/root.front-component.mjs.map",
         ]
       `);
     });

@@ -12,17 +12,6 @@ import {
 } from '../common/restartable-watcher.interface';
 import { FRONT_COMPONENTS_DIR } from './constants';
 
-const computeOutputPath = (inputPath: string): string => {
-  // Convert src/components/greeting.front-component.tsx -> components/greeting.front-component
-  let outputPath = inputPath.replace(/\\/g, '/');
-
-  if (outputPath.startsWith('src/')) {
-    outputPath = outputPath.slice('src/'.length);
-  }
-
-  return outputPath.replace(/\.tsx?$/, '');
-};
-
 const buildFrontComponentEntries = (
   appPath: string,
   components: Array<{ componentPath: string }>,
@@ -30,10 +19,10 @@ const buildFrontComponentEntries = (
   const entries: Record<string, string> = {};
 
   for (const component of components) {
-    const componentInputPath = path.join(appPath, component.componentPath);
-    const componentOutputPath = computeOutputPath(component.componentPath);
+    const inputPath = path.join(appPath, component.componentPath);
+    const outputPath = component.componentPath.replace(/\.tsx?$/, '');
 
-    entries[componentOutputPath] = componentInputPath;
+    entries[outputPath] = inputPath;
   }
 
   return entries;
@@ -161,7 +150,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
         outDir: frontComponentsOutputDir,
         emptyOutDir: false,
         watch: {
-          include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.json'],
+          include: ['**/*.ts', '**/*.tsx', '**/*.json'],
           exclude: ['node_modules/**', '.twenty/**', 'dist/**'],
         },
         lib: {

@@ -1,5 +1,5 @@
-import { type RunCliCommandResult } from '@/cli/__tests__/integration/utils/run-cli-command.util';
-import { sanitizeOutput } from '@/cli/__tests__/integration/utils/sanitize-output.util';
+import { type RunCliCommandResult } from '../../../../../integration/utils/run-cli-command.util';
+import { sanitizeOutput } from '../../../../../integration/utils/sanitize-output.util';
 
 export const defineConsoleOutputTests = (
   getResult: () => RunCliCommandResult,

@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import chokidar, { type FSWatcher } from 'chokidar';
+import * as fs from 'fs-extra';
 import path from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { printWatchingMessage } from '../common/display';
@@ -26,8 +27,10 @@ export class ManifestWatcher {
 
   async start(): Promise<void> {
     const srcPath = path.join(this.appPath, 'src');
+    const hasSrcFolder = await fs.pathExists(srcPath);
+    const watchPath = hasSrcFolder ? srcPath : this.appPath;
 
-    this.watcher = chokidar.watch(srcPath, {
+    this.watcher = chokidar.watch(watchPath, {
       ignored: ['**/node_modules/**', '**/.twenty/**', '**/dist/**'],
       ignoreInitial: true,
       awaitWriteFinish: {

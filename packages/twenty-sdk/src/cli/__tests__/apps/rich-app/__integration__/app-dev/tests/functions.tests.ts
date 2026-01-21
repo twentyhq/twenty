@@ -10,16 +10,17 @@ export const defineFunctionsTests = (appPath: string): void => {
 
       expect(sortedFiles).toMatchInlineSnapshot(`
         [
-          "functions",
-          "functions/greeting.function.mjs",
-          "functions/greeting.function.mjs.map",
-          "functions/test-function.function.mjs",
-          "functions/test-function.function.mjs.map",
-          "root.function.mjs",
-          "root.function.mjs.map",
-          "utils",
-          "utils/test-function-2.util.mjs",
-          "utils/test-function-2.util.mjs.map",
+          "src",
+          "src/functions",
+          "src/functions/greeting.function.mjs",
+          "src/functions/greeting.function.mjs.map",
+          "src/functions/test-function.function.mjs",
+          "src/functions/test-function.function.mjs.map",
+          "src/root.function.mjs",
+          "src/root.function.mjs.map",
+          "src/utils",
+          "src/utils/test-function-2.util.mjs",
+          "src/utils/test-function-2.util.mjs.map",
         ]
       `);
     });

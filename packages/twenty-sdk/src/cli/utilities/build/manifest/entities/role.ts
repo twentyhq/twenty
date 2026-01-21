@@ -12,10 +12,10 @@ import {
 
 export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest[]> {
   async build(appPath: string): Promise<RoleManifest[]> {
-    const roleFiles = await glob(['src/**/*.role.ts'], {
+    const roleFiles = await glob(['**/*.role.ts'], {
       cwd: appPath,
       absolute: true,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
     });
 
     const roleManifests: RoleManifest[] = [];
