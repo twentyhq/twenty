@@ -6,7 +6,7 @@ export const useDeleteFavorite = () => {
     objectNameSingular: CoreObjectNameSingular.Favorite,
   });
 
-  const deleteFavorite = async (favoriteId: string) => {
+  const deleteFavorite = (favoriteId: string) => {
     deleteOneRecord(favoriteId);
   };
 

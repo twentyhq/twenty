@@ -9,7 +9,7 @@ export const useCreateFavorite = () => {
     objectNameSingular: CoreObjectNameSingular.Favorite,
   });
 
-  const createFavorite = async (
+  const createFavorite = (
     targetRecord: ObjectRecord,
     targetObjectNameSingular: string,
     favoriteFolderId?: string,
