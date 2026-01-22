@@ -20,14 +20,14 @@ export type FileStatus = {
   isUploaded: boolean;
 };
 
-export type FileUploadStatus = {
+export type FileStatusMaps = {
   functions: Map<string, FileStatus>;
   frontComponents: Map<string, FileStatus>;
 };
 
 type AppDevState = {
   manifest: ApplicationManifest | null;
-  fileUploadStatus: FileUploadStatus;
+  fileStatusMaps: FileStatusMaps;
 };
 
 export class AppDevCommand {
@@ -38,7 +38,7 @@ export class AppDevCommand {
   private appPath: string = '';
   private state: AppDevState = {
     manifest: null,
-    fileUploadStatus: {
+    fileStatusMaps: {
       functions: new Map(),
       frontComponents: new Map(),
     },
@@ -73,10 +73,10 @@ export class AppDevCommand {
   }
 
   private initializeFunctionsFileUploadStatus(manifest: ApplicationManifest): void {
-    this.state.fileUploadStatus.functions.clear();
+    this.state.fileStatusMaps.functions.clear();
 
     for (const fn of manifest.functions ?? []) {
-      this.state.fileUploadStatus.functions.set(fn.universalIdentifier, {
+      this.state.fileStatusMaps.functions.set(fn.universalIdentifier, {
         sourcePath: fn.sourceHandlerPath,
         builtPath: fn.builtHandlerPath,
         checksum: null,
@@ -86,10 +86,10 @@ export class AppDevCommand {
   }
 
   private initializeFrontComponentsFileUploadStatus(manifest: ApplicationManifest): void {
-    this.state.fileUploadStatus.frontComponents.clear();
+    this.state.fileStatusMaps.frontComponents.clear();
 
     for (const component of manifest.frontComponents ?? []) {
-      this.state.fileUploadStatus.frontComponents.set(component.universalIdentifier, {
+      this.state.fileStatusMaps.frontComponents.set(component.universalIdentifier, {
         sourcePath: component.sourceComponentPath,
         builtPath: component.builtComponentPath,
         checksum: null,
@@ -159,8 +159,8 @@ export class AppDevCommand {
     checksum: string,
   ): void {
     const statusMap = entityType === 'function'
-      ? this.state.fileUploadStatus.functions
-      : this.state.fileUploadStatus.frontComponents;
+      ? this.state.fileStatusMaps.functions
+      : this.state.fileStatusMaps.frontComponents;
 
     for (const [_id, status] of statusMap) {
       if (status.builtPath === builtPath) {
