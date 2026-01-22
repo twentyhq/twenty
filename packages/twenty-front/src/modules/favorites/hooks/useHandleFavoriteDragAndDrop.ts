@@ -107,7 +107,7 @@ export const useHandleFavoriteDragAndDrop = () => {
       updateOneFavorite({
         idToUpdate: draggableId,
         updateOneRecordInput: {
-          favoriteFolderId: destinationFolderId ?? null,
+          favoriteFolderId: destinationFolderId,
           position: newPosition,
         },
       });
