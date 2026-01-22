@@ -1,5 +1,5 @@
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useArcsTransition } from '@nivo/arcs';
@@ -8,12 +8,12 @@ import { animated } from '@react-spring/web';
 import { isDefined } from 'twenty-shared/utils';
 
 type CustomArcsLayerProps = Pick<
-  PieCustomLayerProps<PieChartDataItem>,
+  PieCustomLayerProps<PieChartDataItemWithColor>,
   'dataWithArc' | 'arcGenerator' | 'centerX' | 'centerY'
 > & {
-  onMouseMove?: MouseEventHandler<PieChartDataItem, SVGPathElement>;
-  onMouseLeave?: MouseEventHandler<PieChartDataItem, SVGPathElement>;
-  onClick?: MouseEventHandler<PieChartDataItem, SVGPathElement>;
+  onMouseMove?: MouseEventHandler<PieChartDataItemWithColor, SVGPathElement>;
+  onMouseLeave?: MouseEventHandler<PieChartDataItemWithColor, SVGPathElement>;
+  onClick?: MouseEventHandler<PieChartDataItemWithColor, SVGPathElement>;
 };
 
 export const CustomArcsLayer = ({

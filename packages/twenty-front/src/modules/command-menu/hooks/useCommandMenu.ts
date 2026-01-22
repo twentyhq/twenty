@@ -2,10 +2,10 @@ import { useRecoilCallback } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 
-import { COMMAND_MENU_SEARCH_INPUT_FOCUS_ID } from '@/command-menu/constants/CommandMenuSearchInputFocusId';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
@@ -13,7 +13,6 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { IconDotsVertical } from 'twenty-ui/display';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
@@ -33,9 +32,6 @@ export const useCommandMenu = () => {
           set(isCommandMenuOpenedState, false);
           set(isCommandMenuClosingState, true);
           closeAnyOpenDropdown();
-          removeFocusItemFromFocusStackById({
-            focusId: COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
-          });
           removeFocusItemFromFocusStackById({
             focusId: SIDE_PANEL_FOCUS_ID,
           });

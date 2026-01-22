@@ -178,7 +178,7 @@ export class WorkspaceUpdateQueryBuilder<
       this.applyRowLevelPermissionPredicates();
 
       const valuesSet = this.expressionMap.valuesSet ?? {};
-      const updatedRecords: T[] = formattedBefore.map(
+      const updatedRecords: T[] = before.map(
         (record, index) =>
           ({
             ...record,
@@ -588,8 +588,15 @@ export class WorkspaceUpdateQueryBuilder<
       this.internalContext,
     );
 
+    const updatedRecordsFormatted = formatResult<T[]>(
+      updatedRecords,
+      objectMetadata,
+      this.internalContext.flatObjectMetadataMaps,
+      this.internalContext.flatFieldMetadataMaps,
+    );
+
     validateRLSPredicatesForRecords({
-      records: updatedRecords,
+      records: updatedRecordsFormatted,
       objectMetadata,
       internalContext: this.internalContext,
       authContext: this.authContext,

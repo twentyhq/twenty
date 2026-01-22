@@ -124,15 +124,18 @@ export const insertIndexMetadata = async ({
 export const deleteIndexMetadata = async ({
   entityId,
   queryRunner,
+  workspaceId,
 }: {
   entityId: string;
   queryRunner: QueryRunner;
+  workspaceId: string;
 }): Promise<void> => {
   const indexMetadataRepository =
     queryRunner.manager.getRepository<IndexMetadataEntity>(IndexMetadataEntity);
 
   await indexMetadataRepository.delete({
     id: entityId,
+    workspaceId,
   });
 };
 

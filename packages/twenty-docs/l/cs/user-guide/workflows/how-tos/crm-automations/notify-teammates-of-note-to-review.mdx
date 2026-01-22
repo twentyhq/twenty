@@ -1,92 +1,92 @@
 ---
-title: Notify Teammates of a Note to Review
-description: Send automatic email notifications when assigning a colleague to review a note.
+title: Upozorněte kolegy na poznámku ke kontrole
+description: Odesílejte automatická e-mailová upozornění při přiřazení kolegy ke kontrole poznámky.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <Note>
-  **Tagging teammates directly in notes is not yet supported.** This feature is planned for the second half of 2026. In the meantime, this workflow provides a practical workaround.
+  **Přímé označování členů týmu v poznámkách zatím není podporováno.** Tato funkce je plánována na druhou polovinu roku 2026. Mezitím tento pracovní postup poskytuje praktické náhradní řešení.
 </Note>
 
-## The Challenge
+## Problém
 
-You want to tag a colleague in a note so they receive a notification to review it. Today, Twenty doesn't support @mentions in notes or tasks.
+Chcete v poznámce označit kolegu, aby obdržel upozornění na její kontrolu. V současnosti Twenty nepodporuje @zmínky v poznámkách ani úkolech.
 
-## The Workaround
+## Náhradní řešení
 
-Instead of tagging in the note text, you can:
+Místo označování v textu poznámky můžete:
 
-1. Create a **Reviewer** relation field on the Notes object
-2. Assign the reviewer when creating or editing the note
-3. A workflow automatically sends an email to the reviewer with a link to the note
+1. Vytvořte relační pole **Reviewer** u objektu Poznámky
+2. Při vytváření nebo úpravě poznámky přiřaďte recenzenta
+3. Pracovní postup automaticky odešle recenzentovi e-mail s odkazem na poznámku
 
 <Warning>
-  **Limitation**: This approach allows assigning one reviewer per field. If you need to notify multiple people, create additional relation fields (e.g., Reviewer 1, Reviewer 2). This won't scale well if you need to tag many collaborators at once.
+  **Omezení**: Tento přístup umožňuje přiřadit na jedno pole pouze jednoho recenzenta. Pokud potřebujete upozornit více osob, vytvořte další relační pole (např. Reviewer 1, Reviewer 2). Toto nebude dobře škálovat, pokud potřebujete najednou označit mnoho spolupracovníků.
 </Warning>
 
 ## Nastavení krok za krokem
 
-### Step 1: Create the Reviewer Field
+### Krok 1: Vytvořte pole Reviewer
 
 <img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
 
-1. Go to **Settings → Data Model → Notes**
-2. Click **Add Field**
+1. Přejděte do **Nastavení → Datový model → Poznámky**
+2. Klikněte na **Add Field**
 3. Nakonfigurujte:
 
-| Nastavení          | Hodnota                           |
-| ------------------ | --------------------------------- |
-| **Name**           | Reviewer                          |
-| **Typ**            | Vztah                             |
-| **Related Object** | Člen pracovního prostoru          |
-| **Relation Type**  | Many Notes → One Workspace Member |
+| Nastavení              | Hodnota                                         |
+| ---------------------- | ----------------------------------------------- |
+| **Name**               | Reviewer                                        |
+| **Typ**                | Vztah                                           |
+| **Související objekt** | Člen pracovního prostoru                        |
+| **Typ vztahu**         | Mnoho poznámek → Jeden člen pracovního prostoru |
 
-4. Save the field
+4. Uložte pole
 
 ### Krok 2: Vytvořte pracovní postup
 
 <VimeoEmbed videoId="1151897168" title="Ukázka videa" />
 
-#### Create the Workflow Trigger
+#### Vytvořte spouštěč pracovního postupu
 
-1. Go to the main view and create a new workflow
-2. Select **Record Updated** as the trigger
-3. Choose **Note** as the object and specify the Reviewer field.
-4. This will trigger whenever the reviewer of a note is updated.
+1. Přejděte do hlavního zobrazení a vytvořte nový pracovní postup
+2. Vyberte jako spouštěč **Record Updated**
+3. Jako objekt vyberte **Note** a určete pole Reviewer.
+4. Spouštěč se aktivuje kdykoli je u poznámky aktualizován recenzent.
 
-#### Add a Filter to Check Reviewer Was Just Assigned
+#### Přidejte filtr, který ověří, že byl recenzent právě přiřazen
 
-Add a **Filter** action to ensure the workflow only continues when a reviewer is assigned:
+Přidejte akci **Filtr**, aby pracovní postup pokračoval pouze tehdy, když je přiřazen recenzent:
 
-| Condition    | Hodnota      |
+| Podmínka     | Hodnota      |
 | ------------ | ------------ |
 | **Reviewer** | není prázdné |
 
-#### Search for the Workspace Member
+#### Vyhledejte člena pracovního prostoru
 
-1. Add a **Search Records** action
-2. Select **Workspace Member** (under Advanced Objects)
-3. Add a filter:
+1. Přidejte akci **Vyhledat záznamy**
+2. Vyberte **Člen pracovního prostoru** (v části pokročilé objekty)
+3. Přidejte filtr:
 
-| Condition | Hodnota                      |
-| --------- | ---------------------------- |
-| **ID**    | equals `{{note.reviewerId}}` |
+| Podmínka | Hodnota                        |
+| -------- | ------------------------------ |
+| **ID**   | se rovná `{{note.reviewerId}}` |
 
-This retrieves the full workspace member record, including their email address and name.
+Tím získáte celý záznam člena pracovního prostoru včetně jeho e-mailové adresy a jména.
 
-#### Send the Notification Email
+#### Odešlete upozorňovací e-mail
 
-1. Add a **Send Email** action
+1. Přidejte akci **Odeslat e-mail**
 2. Nakonfigurujte:
 
 | Pole            | Hodnota                                             |
 | --------------- | --------------------------------------------------- |
 | **Komu**        | Search Record → First Workspace Member → User Email |
-| **Předmět**     | A note needs your review                            |
-| **Text zprávy** | See example below                                   |
+| **Předmět**     | Poznámka vyžaduje vaši kontrolu                     |
+| **Text zprávy** | Viz příklad níže                                    |
 
-**Email body example:**
+**Příklad textu e-mailu:**
 
 ```text
 Hi {{searchRecord.firstWorkspaceMember.name.firstName}},
@@ -101,27 +101,27 @@ Twenty
 ```
 
 <Note>
-  Replace `yourSubDomain` with your actual Twenty workspace subdomain.
+  Nahraďte `yourSubDomain` skutečnou subdoménou vašeho pracovního prostoru Twenty.
 </Note>
 
-#### Test and Activate
+#### Otestujte a aktivujte
 
-1. Click **Test** to run the workflow manually
-2. Create or edit a note and assign a reviewer
-3. Check the reviewer's inbox for the notification email
-4. Activate the workflow
+1. Klikněte na **Test** a spusťte pracovní postup ručně
+2. Vytvořte nebo upravte poznámku a přiřaďte recenzenta
+3. Zkontrolujte doručenou poštu recenzenta, zda dorazil upozorňovací e-mail
+4. Aktivujte pracovní postup
 
 ## Použití
 
-Once set up, your team can use this workflow by:
+Po nastavení může váš tým tento pracovní postup používat takto:
 
-1. Creating a new note (or editing an existing one)
-2. Selecting a colleague in the **Reviewer** field
-3. The colleague automatically receives an email with a direct link to the note
+1. Vytvořením nové poznámky (nebo úpravou existující)
+2. Výběrem kolegy v poli **Reviewer**
+3. Kolega automaticky obdrží e-mail s přímým odkazem na poznámku
 
 ## Související
 
 * [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
-* [Send Emails from Workflows](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Create Custom Fields](/l/cs/user-guide/data-model/how-tos/create-custom-fields)
-* [Create Relation Fields](/l/cs/user-guide/data-model/how-tos/create-relation-fields)
+* [Odesílání e-mailů z pracovních postupů](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Vytvořit vlastní pole](/l/cs/user-guide/data-model/how-tos/create-custom-fields)
+* [Vytvořit relační pole](/l/cs/user-guide/data-model/how-tos/create-relation-fields)

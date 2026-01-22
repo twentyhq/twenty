@@ -36,7 +36,12 @@ export const MorphRelationManyToOneFieldInput = () => {
     selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
   ) => {
     if (!isDefined(selectedMorphItem)) {
-      // Handle detach
+      await persistMorphManyToOne({
+        recordId: recordId,
+        fieldDefinition,
+        valueToPersist: null,
+      });
+      onCancel?.();
       return;
     }
 

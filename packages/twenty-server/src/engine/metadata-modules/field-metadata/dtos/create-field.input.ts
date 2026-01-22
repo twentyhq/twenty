@@ -17,6 +17,7 @@ export class CreateFieldInput extends OmitType(
     'updatedAt',
     'standardOverrides',
     'applicationId',
+    'morphId',
   ] as const,
   InputType,
 ) {

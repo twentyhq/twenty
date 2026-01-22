@@ -5,10 +5,10 @@ title: Kurulum
 # Konfigürasyon Yönetimi
 
 <Warning>
-  **First time installing?** Follow the [Docker Compose installation guide](/l/tr/developers/self-host/capabilities/docker-compose) to get Twenty running, then return here for configuration.
+  **İlk kez mi kuruyorsunuz?** Twenty'yi çalıştırmak için [Docker Compose kurulum kılavuzunu](/l/tr/developers/self-host/capabilities/docker-compose) izleyin, ardından yapılandırma için buraya dönün.
 </Warning>
 
-Twenty offers **two configuration modes** to suit different deployment needs:
+Twenty, farklı dağıtım ihtiyaçlarına uygun **iki yapılandırma modu** sunar:
 
 **Yönetici paneli erişimi:** Yalnızca yönetici ayrıcalıklarına sahip kullanıcılar (`canAccessFullAdminPanel: true`) konfigürasyon arayüzüne erişebilir.
 
@@ -22,18 +22,18 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # varsayılan
 
 1. Twenty örneğinize erişin (genellikle `http://localhost:3000`)
 2. **Ayarlar / Yönetici Paneli / Konfigürasyon Değişkenleri** yoluna gidin
-3. Configure integrations, email, storage, and more
-4. Changes take effect immediately (within 15 seconds for multi-container deployments)
+3. Entegrasyonları, e-postayı, depolamayı ve daha fazlasını yapılandırın
+4. Değişiklikler hemen yürürlüğe girer (çok konteynerli dağıtımlarda 15 saniye içinde)
 
 <Warning>
-  **Multi-Container Deployments:** When using database configuration (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), both server and worker containers read from the same database. Admin panel changes affect both automatically, eliminating the need to duplicate environment variables between containers (except for infrastructure variables).
+  **Çok Konteynerli Dağıtımlar:** Veritabanı yapılandırması (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) kullanıldığında, hem sunucu hem de worker konteynerleri aynı veritabanından okur. Yönetici panelindeki değişiklikler her ikisini de otomatik olarak etkiler ve konteynerler arasında ortam değişkenlerini çoğaltma ihtiyacını ortadan kaldırır (altyapı değişkenleri hariç).
 </Warning>
 
 **Yönetici paneli aracılığıyla yapılandırabileceğiniz:**
 
 * **Kimlik Doğrulama** - Google/Microsoft OAuth, şifre ayarları
 * **E-posta** - SMTP ayarları, şablonlar, doğrulama
-* **Storage** - S3 configuration, local storage paths
+* **Depolama** - S3 yapılandırması, yerel depolama yolları
 * **Entegrasyonlar** - Gmail, Google Calendar, Microsoft hizmetleri
 * **İş Akışı ve Hız Limiti** - Yürütme sınırları, API daraltma
 * **Ve daha fazlası...**
@@ -47,7 +47,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # varsayılan
   [Tam teknik referans →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
 
-## 2. Environment-Only Configuration
+## 2. Yalnızca Ortam Değişkenleriyle Yapılandırma
 
 ```bash
 IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
@@ -55,66 +55,66 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 
 **Tüm konfigürasyon `.env` dosyaları aracılığıyla yönetilir:**
 
-1. Set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` in your `.env` file
+1. `.env` dosyanızda `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` değerini ayarlayın
 2. Tüm konfigürasyon değişkenlerini `.env` dosyanıza ekleyin
 3. Değişikliklerin etkin olması için kapları yeniden başlatın
-4. Admin panel will show current values but cannot modify them
+4. Yönetici paneli mevcut değerleri gösterir ancak bunları değiştiremez
 
-## Multi-Workspace Mode
+## Çoklu Çalışma Alanı Modu
 
-By default, Twenty runs in **single-workspace mode** — ideal for most self-hosted deployments where you need one CRM instance for your organization.
+Varsayılan olarak, Twenty **tek çalışma alanı modunda** çalışır — kuruluşunuz için tek bir CRM örneğine ihtiyaç duyulan çoğu kendi barındırmalı dağıtım için idealdir.
 
-### Single-Workspace Mode (Default)
+### Tek Çalışma Alanı Modu (Varsayılan)
 
 ```bash
 IS_MULTIWORKSPACE_ENABLED=false  # default
 ```
 
-* One workspace per Twenty instance
-* First user automatically becomes admin with full privileges (`canImpersonate` and `canAccessFullAdminPanel`)
-* New signups are disabled after the first workspace is created
-* Simple URL structure: `https://your-domain.com`
+* Her Twenty örneği başına bir çalışma alanı
+* İlk kullanıcı otomatik olarak tam ayrıcalıklara sahip yönetici olur (`canImpersonate` ve `canAccessFullAdminPanel`)
+* İlk çalışma alanı oluşturulduktan sonra yeni kayıtlar devre dışı bırakılır
+* Basit URL yapısı: `https://your-domain.com`
 
-### Enabling Multi-Workspace Mode
+### Çoklu Çalışma Alanı Modunu Etkinleştirme
 
 ```bash
 IS_MULTIWORKSPACE_ENABLED=true
 DEFAULT_SUBDOMAIN=app  # default value
 ```
 
-Enable multi-workspace mode for SaaS-like deployments where multiple independent teams need their own workspaces on the same Twenty instance.
+Aynı Twenty örneği üzerinde birden fazla bağımsız ekibin kendi çalışma alanlarına ihtiyaç duyduğu SaaS benzeri dağıtımlar için çoklu çalışma alanı modunu etkinleştirin.
 
-**Key differences from single-workspace mode:**
+**Tek çalışma alanı modundan temel farklar:**
 
-* Multiple workspaces can be created on the same instance
-* Each workspace gets its own subdomain (e.g., `sales.your-domain.com`, `marketing.your-domain.com`)
-* Users sign up and log in at `{DEFAULT_SUBDOMAIN}.your-domain.com` (e.g., `app.your-domain.com`)
-* No automatic admin privileges — first user in each workspace is a regular user
-* Workspace-specific settings like subdomain and custom domain become available in workspace settings
+* Aynı örnek üzerinde birden fazla çalışma alanı oluşturulabilir
+* Her çalışma alanı kendi alt alan adını alır (ör. `sales.your-domain.com`, `marketing.your-domain.com`)
+* Kullanıcılar `{DEFAULT_SUBDOMAIN}.your-domain.com` adresinde kaydolur ve oturum açar (ör. `app.your-domain.com`)
+* Otomatik yönetici ayrıcalıkları yoktur — her çalışma alanındaki ilk kullanıcı normal bir kullanıcıdır
+* Alt alan adı ve özel alan adı gibi çalışma alanına özgü ayarlar, çalışma alanı ayarlarında kullanılabilir hale gelir
 
 <Warning>
-  **Environment-only setting:** `IS_MULTIWORKSPACE_ENABLED` can only be configured via `.env` file and requires a restart. It cannot be changed through the admin panel.
+  **Yalnızca ortam üzerinden ayar:** `IS_MULTIWORKSPACE_ENABLED` yalnızca `.env` dosyası üzerinden yapılandırılabilir ve yeniden başlatma gerektirir. Yönetici paneli üzerinden değiştirilemez.
 </Warning>
 
-### DNS Configuration for Multi-Workspace
+### Çoklu Çalışma Alanı için DNS Yapılandırması
 
-When using multi-workspace mode, configure your DNS with a wildcard record to allow dynamic subdomain creation:
+Çoklu çalışma alanı modu kullanılırken, dinamik alt alan adı oluşturmayı sağlamak için DNS'inizi bir wildcard kaydıyla yapılandırın:
 
 ```
 *.your-domain.com -> your-server-ip
 ```
 
-This enables automatic subdomain routing for new workspaces without manual DNS configuration.
+Bu, manuel DNS yapılandırması olmadan yeni çalışma alanları için otomatik alt alan yönlendirmesini etkinleştirir.
 
-### Restricting Workspace Creation
+### Çalışma Alanı Oluşturmayı Kısıtlama
 
-In multi-workspace mode, you may want to limit who can create new workspaces:
+Çoklu çalışma alanı modunda, yeni çalışma alanı oluşturabilecek kişileri sınırlamak isteyebilirsiniz:
 
 ```bash
 IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 ```
 
-When enabled, only users with `canAccessFullAdminPanel` can create additional workspaces. Users can still create their first workspace during initial signup.
+Etkinleştirildiğinde, yalnızca `canAccessFullAdminPanel` yetkisine sahip kullanıcılar ek çalışma alanları oluşturabilir. Kullanıcılar yine de ilk kayıt sırasında ilk çalışma alanlarını oluşturabilir.
 
 ## Gmail ve Google Takvim Entegrasyonu
 
@@ -133,8 +133,8 @@ When enabled, only users with `canAccessFullAdminPanel` can create additional wo
 1. [Kimlik Bilgileri](https://console.cloud.google.com/apis/credentials) sayfasına gidin
 2. OAuth 2.0 İstemci Kimliği Oluştur
 3. Bu yönlendirme URI'lerini ekleyin:
-   * `https://{your-domain}/auth/google/redirect` (for SSO)
-   * `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+   * `https://{your-domain}/auth/google/redirect` (SSO için)
+   * `https://{your-domain}/auth/google-apis/get-access-token` (entegrasyonlar için)
 
 ### Twenty'de Yapılandır
 
@@ -194,7 +194,7 @@ Not: "Mail.ReadWrite" ve "Mail.Send" yalnızca iş akışı eylemleri kullanarak
 
 Projenize aşağıdaki yönlendirme URI'lerini eklemeniz gerekir:
 
-* `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+* `https://{your-domain}/auth/microsoft/redirect` Microsoft SSO kullanmak istiyorsanız
 * `https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 ### Twenty'de Yapılandır
@@ -291,3 +291,47 @@ yarn command:prod cron:workflow:automated-cron-trigger
 <Warning>
   **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
 </Warning>
+
+## Sunucusuz İşlevler
+
+Twenty, iş akışları ve özel mantık için sunucusuz işlevleri destekler. Yürütme ortamı, `SERVERLESS_TYPE` ortam değişkeni aracılığıyla yapılandırılır.
+
+<Warning>
+  **Güvenlik Notu:** Yerel sunucusuz sürücü (`SERVERLESS_TYPE=LOCAL`), herhangi bir sandbox olmadan kodu ana makinede doğrudan bir Node.js sürecinde çalıştırır. Yalnızca geliştirirken güvenilen kod için kullanılmalıdır. Güvenilmeyen kodu işleyen üretim dağıtımları için `SERVERLESS_TYPE=LAMBDA` veya `SERVERLESS_TYPE=DISABLED` kullanmanızı şiddetle öneririz.
+</Warning>
+
+### Kullanılabilir Sürücüler
+
+| Sürücü     | Ortam Değişkeni            | Kullanım alanı                                 | Güvenlik Düzeyi                      |
+| ---------- | -------------------------- | ---------------------------------------------- | ------------------------------------ |
+| Devre dışı | `SERVERLESS_TYPE=DISABLED` | Sunucusuz işlevleri tamamen devre dışı bırakın | Uygulanamaz                          |
+| Yerel      | `SERVERLESS_TYPE=LOCAL`    | Geliştirme ve güvenilir ortamlar               | Düşük (sandbox yok)                  |
+| Lambda     | `SERVERLESS_TYPE=LAMBDA`   | Güvenilmeyen kodla üretim                      | Yüksek (donanım düzeyinde izolasyon) |
+
+### Önerilen Yapılandırma
+
+**Geliştirme için:**
+
+```bash
+SERVERLESS_TYPE=LOCAL  # default
+```
+
+**Üretim için (AWS):**
+
+```bash
+SERVERLESS_TYPE=LAMBDA
+SERVERLESS_LAMBDA_REGION=us-east-1
+SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
+SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+```
+
+**Sunucusuz işlevleri devre dışı bırakmak için:**
+
+```bash
+SERVERLESS_TYPE=DISABLED
+```
+
+<Note>
+  `SERVERLESS_TYPE=DISABLED` kullanıldığında, bir sunucusuz işlevi yürütmeye yönelik herhangi bir girişim bir hata döndürür. Bu, Twenty'yi sunucusuz işlev yetenekleri olmadan çalıştırmak istiyorsanız kullanışlıdır.
+</Note>

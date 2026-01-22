@@ -1,5 +1,5 @@
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'src/engine/metadata-modules/serverless-function/constants/default-tool-input-schema.constant';
 import { type CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
@@ -39,7 +39,7 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
     handlerName:
       rawCreateServerlessFunctionInput.handlerName ?? DEFAULT_HANDLER_NAME,
     universalIdentifier:
-      rawCreateServerlessFunctionInput.universalIdentifier ?? id,
+      rawCreateServerlessFunctionInput.universalIdentifier ?? v4(),
     createdAt: currentDate.toISOString(),
     updatedAt: currentDate.toISOString(),
     deletedAt: null,

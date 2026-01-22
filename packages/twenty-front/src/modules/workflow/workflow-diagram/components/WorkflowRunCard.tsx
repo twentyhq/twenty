@@ -1,15 +1,19 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ListenRecordUpdatesEffect } from '@/sse-db-event/components/ListenRecordUpdatesEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
+import { WorkflowRunSSESubscribeEffect } from '@/workflow/workflow-diagram/components/WorkflowRunSSESubscribeEffect';
 import { WorkflowRunVisualizer } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizer';
 import { WorkflowRunVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizerEffect';
 import { WorkflowRunVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowRunVisualizerComponentInstanceContext';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Suspense, useId } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledLoadingSkeletonContainer = styled.div`
   display: flex;
@@ -41,6 +45,9 @@ const LoadingSkeleton = () => {
 export const WorkflowRunCard = () => {
   const targetRecord = useTargetRecord();
   const componentId = useId();
+  const isSseDbEventsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_SSE_DB_EVENTS_ENABLED,
+  );
 
   return (
     <WorkflowVisualizerComponentInstanceContext.Provider
@@ -56,11 +63,15 @@ export const WorkflowRunCard = () => {
         }}
       >
         <WorkflowRunVisualizerEffect workflowRunId={targetRecord.id} />
-        <ListenRecordUpdatesEffect
-          objectNameSingular={targetRecord.targetObjectNameSingular}
-          recordId={targetRecord.id}
-          listenedFields={['status', 'state']}
-        />
+        {isSseDbEventsEnabled ? (
+          <WorkflowRunSSESubscribeEffect workflowRunId={targetRecord.id} />
+        ) : (
+          <ListenRecordUpdatesEffect
+            objectNameSingular={CoreObjectNameSingular.WorkflowRun}
+            recordId={targetRecord.id}
+            listenedFields={['status', 'state']}
+          />
+        )}
         <Suspense fallback={<LoadingSkeleton />}>
           <WorkflowRunVisualizer workflowRunId={targetRecord.id} />
         </Suspense>

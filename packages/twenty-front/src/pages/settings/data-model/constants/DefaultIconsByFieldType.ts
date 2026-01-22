@@ -6,6 +6,7 @@ export const DEFAULT_ICONS_BY_FIELD_TYPE: Record<FieldMetadataType, string> = {
   [FieldMetadataType.CURRENCY]: 'IconMoneybag',
   [FieldMetadataType.DATE]: 'IconCalendarEvent',
   [FieldMetadataType.DATE_TIME]: 'IconCalendarClock',
+  [FieldMetadataType.FILES]: 'IconFile',
   [FieldMetadataType.FULL_NAME]: 'IconUserCircle',
   [FieldMetadataType.MULTI_SELECT]: 'IconTags',
   [FieldMetadataType.NUMBER]: 'IconNumber9',

@@ -15,10 +15,14 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 
 export type DatabaseEventTriggerSettings = {
   eventName: string;
+  updatedFields?: string[];
 };
 
 @Entity('databaseEventTrigger')
 @Index('IDX_DATABASE_EVENT_TRIGGER_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_DATABASE_EVENT_TRIGGER_SERVERLESS_FUNCTION_ID', [
+  'serverlessFunctionId',
+])
 export class DatabaseEventTriggerEntity
   extends SyncableEntity
   implements Required<DatabaseEventTriggerEntity>

@@ -64,7 +64,7 @@ export class WorkspaceMigrationSkillActionsBuilderService extends WorkspaceEntit
       action: {
         type: 'delete',
         metadataName: 'skill',
-        entityId: flatSkillToValidate.id,
+        universalIdentifier: flatSkillToValidate.universalIdentifier,
       },
     };
   }

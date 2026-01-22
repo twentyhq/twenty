@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
 import {
@@ -9,6 +8,7 @@ import { VariableChipStandalone } from '@/object-record/record-field/ui/form-typ
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 
 const StyledRecordChip = styled(RecordChip)`
   margin: ${({ theme }) => theme.spacing(2)};
@@ -64,7 +64,5 @@ export const FormSingleRecordFieldChip = ({
     );
   }
 
-  return (
-    <StyledPlaceholder>{t`Select a ${objectNameSingular}`}</StyledPlaceholder>
-  );
+  return <StyledPlaceholder>{t`Select`}</StyledPlaceholder>;
 };
