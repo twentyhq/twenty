@@ -192,8 +192,6 @@ export class WorkspaceMigrationRunnerService {
     this.logger.timeEnd('Runner', 'Initial cache retrieval');
     this.logger.time('Runner', 'Transaction execution');
 
-    let successfullyExecutedActions: WorkspaceMigrationAction[] = [];
-
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
@@ -210,8 +208,6 @@ export class WorkspaceMigrationRunnerService {
               },
             },
           );
-
-        successfullyExecutedActions = [...successfullyExecutedActions, action];
 
         allFlatEntityMaps = {
           ...allFlatEntityMaps,
@@ -241,7 +237,7 @@ export class WorkspaceMigrationRunnerService {
         );
       }
 
-      const invertedActions = successfullyExecutedActions.reverse();
+      const invertedActions = actions.reverse();
 
       for (const invertedAction of invertedActions) {
         await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionRollbackHandler(
