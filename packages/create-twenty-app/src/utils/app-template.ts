@@ -144,7 +144,7 @@ export const HelloWorld = () => {
 
 export default defineFrontComponent({
   universalIdentifier: '${universalIdentifier}',
-  name: 'hello-world',
+  name: 'hello-world-front-component',
   description: 'A sample front component',
   component: HelloWorld,
 });
@@ -162,21 +162,29 @@ const createDefaultFunction = async ({
   appDirectory: string;
 }) => {
   const universalIdentifier = v4();
+  const triggerUniversalIdentifier = v4();
 
   const content = `import { defineFunction } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+
+const handler = async (): Promise<{ message: string }> => {
+  return { message: 'Hello, World!' };
+};
 
 export default defineFunction({
   universalIdentifier: '${universalIdentifier}',
-  name: 'hello-world',
+  name: 'hello-world-function',
   description: 'A sample serverless function',
-  roleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
-  trigger: {
-    type: 'http',
-  },
-  handler: async (ctx) => {
-    return { message: 'Hello, World!' };
-  },
+  timeoutSeconds: 5,
+  handler,
+  triggers: [
+    {
+      universalIdentifier: '${triggerUniversalIdentifier}',
+      type: 'route',
+      path: '/hello-world-function',
+      httpMethod: 'GET',
+      isAuthRequired: false,
+    },
+  ],
 });
 `;
 
@@ -193,7 +201,7 @@ const createApplicationConfig = async ({
   appDirectory: string;
 }) => {
   const content = `import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/app/default-function.role';
 
 export default defineApp({
   universalIdentifier: '${v4()}',
