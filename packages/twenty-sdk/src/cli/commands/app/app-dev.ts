@@ -1,7 +1,7 @@
 import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
-import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
+import { runManifestBuild, updateManifestChecksum } from '@/cli/utilities/build/manifest/manifest-build';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
@@ -125,7 +125,7 @@ export class AppDevCommand {
       appPath: this.appPath,
       sourcePaths,
       onFileBuilt: (builtPath, checksum) => {
-        this.updateFunctionFileStatus(builtPath, checksum);
+        this.updateFileStatus('function', builtPath, checksum);
       },
     });
 
@@ -137,15 +137,23 @@ export class AppDevCommand {
       appPath: this.appPath,
       sourcePaths,
       onFileBuilt: (builtPath, checksum) => {
-        this.updateFrontComponentFileStatus(builtPath, checksum);
+        this.updateFileStatus('frontComponent', builtPath, checksum);
       },
     });
 
     await this.frontComponentsWatcher.start();
   }
 
-  private updateFunctionFileStatus(builtPath: string, checksum: string): void {
-    for (const [_id, status] of this.state.fileUploadStatus.functions) {
+  private updateFileStatus(
+    entityType: 'function' | 'frontComponent',
+    builtPath: string,
+    checksum: string,
+  ): void {
+    const statusMap = entityType === 'function'
+      ? this.state.fileUploadStatus.functions
+      : this.state.fileUploadStatus.frontComponents;
+
+    for (const [_id, status] of statusMap) {
       if (status.builtPath === builtPath) {
         status.checksum = checksum;
         status.isUploaded = false;
@@ -155,31 +163,10 @@ export class AppDevCommand {
 
     const manifest = this.state.manifest;
     if (manifest) {
-      const fn = manifest.functions.find((f) => f.builtHandlerPath === builtPath);
-      if (fn) {
-        fn.builtHandlerChecksum = checksum;
-        writeManifestToOutput(this.appPath, manifest);
-      }
-    }
-  }
-
-  private updateFrontComponentFileStatus(builtPath: string, checksum: string): void {
-    for (const [_id, status] of this.state.fileUploadStatus.frontComponents) {
-      if (status.builtPath === builtPath) {
-        status.checksum = checksum;
-        status.isUploaded = false;
-        break;
-      }
-    }
-
-    const manifest = this.state.manifest;
-    if (manifest) {
-      const component = manifest.frontComponents?.find(
-        (c) => c.builtComponentPath === builtPath,
-      );
-      if (component) {
-        component.builtComponentChecksum = checksum;
-        writeManifestToOutput(this.appPath, manifest);
+      const updatedManifest = updateManifestChecksum({ manifest, entityType, builtPath, checksum });
+      if (updatedManifest) {
+        this.state.manifest = updatedManifest;
+        writeManifestToOutput(this.appPath, updatedManifest);
       }
     }
   }

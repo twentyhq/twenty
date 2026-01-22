@@ -2,7 +2,11 @@ import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
 import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
-import { runManifestBuild, type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-build';
+import {
+  runManifestBuild,
+  updateManifestChecksum,
+  type ManifestBuildResult,
+} from '@/cli/utilities/build/manifest/manifest-build';
 import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
@@ -58,7 +62,17 @@ export class AppBuildCommand {
       sourcePaths: buildResult.filePaths.functions,
       watch: false,
       onFileBuilt: (builtPath, checksum) => {
-        this.updateFunctionChecksum(buildResult, builtPath, checksum);
+        if (buildResult.manifest) {
+          const updatedManifest = updateManifestChecksum({
+            manifest: buildResult.manifest,
+            entityType: 'function',
+            builtPath,
+            checksum,
+          });
+          if (updatedManifest) {
+            buildResult.manifest = updatedManifest;
+          }
+        }
       },
     });
 
@@ -71,37 +85,21 @@ export class AppBuildCommand {
       sourcePaths: buildResult.filePaths.frontComponents,
       watch: false,
       onFileBuilt: (builtPath, checksum) => {
-        this.updateFrontComponentChecksum(buildResult, builtPath, checksum);
+        if (buildResult.manifest) {
+          const updatedManifest = updateManifestChecksum({
+            manifest: buildResult.manifest,
+            entityType: 'frontComponent',
+            builtPath,
+            checksum,
+          });
+          if (updatedManifest) {
+            buildResult.manifest = updatedManifest;
+          }
+        }
       },
     });
 
     await this.frontComponentsBuilder.start();
-  }
-
-  private updateFunctionChecksum(
-    buildResult: ManifestBuildResult,
-    builtPath: string,
-    checksum: string,
-  ): void {
-    const fn = buildResult.manifest?.functions.find(
-      (f) => f.builtHandlerPath === builtPath,
-    );
-    if (fn) {
-      fn.builtHandlerChecksum = checksum;
-    }
-  }
-
-  private updateFrontComponentChecksum(
-    buildResult: ManifestBuildResult,
-    builtPath: string,
-    checksum: string,
-  ): void {
-    const component = buildResult.manifest?.frontComponents?.find(
-      (c) => c.builtComponentPath === builtPath,
-    );
-    if (component) {
-      component.builtComponentChecksum = checksum;
-    }
   }
 
   private async cleanup(): Promise<void> {

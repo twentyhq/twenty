@@ -77,6 +77,48 @@ export type ManifestBuildResult = {
   filePaths: EntityFilePaths;
 };
 
+export type ManifestEntityType = 'function' | 'frontComponent';
+
+export type UpdateManifestChecksumParams = {
+  manifest: ApplicationManifest;
+  entityType: ManifestEntityType;
+  builtPath: string;
+  checksum: string;
+};
+
+export const updateManifestChecksum = ({
+  manifest,
+  entityType,
+  builtPath,
+  checksum,
+}: UpdateManifestChecksumParams): ApplicationManifest | null => {
+  if (entityType === 'function') {
+    const fnIndex = manifest.functions.findIndex((f) => f.builtHandlerPath === builtPath);
+    if (fnIndex === -1) {
+      return null;
+    }
+    return {
+      ...manifest,
+      functions: manifest.functions.map((fn, index) =>
+        index === fnIndex ? { ...fn, builtHandlerChecksum: checksum } : fn,
+      ),
+    };
+  }
+
+  const componentIndex = manifest.frontComponents?.findIndex(
+    (c) => c.builtComponentPath === builtPath,
+  ) ?? -1;
+  if (componentIndex === -1) {
+    return null;
+  }
+  return {
+    ...manifest,
+    frontComponents: manifest.frontComponents?.map((component, index) =>
+      index === componentIndex ? { ...component, builtComponentChecksum: checksum } : component,
+    ),
+  };
+};
+
 export const runManifestBuild = async (
   appPath: string,
   options: RunManifestBuildOptions = {},

@@ -32,14 +32,12 @@ export const defineManifestTests = (appPath: string): void => {
         expect(typeof fn.builtHandlerChecksum).toBe('string');
       }
 
-      // Compare front components with checksums normalized to [checksum]
       expect(
         normalizeManifestForComparison({ frontComponents: manifest.frontComponents }).frontComponents,
       ).toEqual(
         normalizeManifestForComparison({ frontComponents: expected.frontComponents }).frontComponents,
       );
 
-      // Verify front component checksums are populated (not null)
       for (const component of manifest.frontComponents ?? []) {
         expect(component.builtComponentChecksum).toBeDefined();
         expect(component.builtComponentChecksum).not.toBeNull();
