@@ -54,7 +54,7 @@ export class CreateServerlessFunctionInput {
   @IsString()
   @Field({ nullable: true })
   @IsOptional()
-  handlerPath?: string;
+  sourceHandlerPath?: string;
 
   @IsString()
   @Field({ nullable: true })

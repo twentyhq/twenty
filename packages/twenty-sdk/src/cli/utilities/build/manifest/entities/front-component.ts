@@ -15,7 +15,7 @@ const logger = createLogger('manifest-watch');
 
 type FrontComponentConfig = Omit<
   FrontComponentManifest,
-  'sourceComponentPath' | 'builtComponentPath' | 'componentName'
+  'sourceComponentPath' | 'builtComponentPath' | 'builtComponentChecksum' | 'componentName'
 > & {
   component: { name: string };
 };
@@ -47,6 +47,7 @@ export class FrontComponentEntityBuilder
           componentName: component.name,
           sourceComponentPath: filePath,
           builtComponentPath,
+          builtComponentChecksum: null,
         });
       } catch (error) {
         throw new Error(

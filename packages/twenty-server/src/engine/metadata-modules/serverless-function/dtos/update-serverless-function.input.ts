@@ -50,7 +50,7 @@ class UpdateServerlessFunctionInputUpdates {
   @IsString()
   @Field({ nullable: true })
   @IsOptional()
-  handlerPath?: string;
+  sourceHandlerPath?: string;
 
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()

@@ -15,7 +15,7 @@ const logger = createLogger('manifest-watch');
 
 type ExtractedFunctionManifest = Omit<
   ServerlessFunctionManifest,
-  'sourceHandlerPath' | 'builtHandlerPath'
+  'sourceHandlerPath' | 'builtHandlerPath' | 'builtHandlerChecksum'
 > & {
   handlerPath: string;
 };
@@ -42,12 +42,15 @@ export class FunctionEntityBuilder
           );
 
         const { handlerPath, ...rest } = extracted;
-        const builtHandlerPath = this.computeBuiltHandlerPath(handlerPath);
+        // builtHandlerPath is computed from filePath (the .function.ts file)
+        // since that's what esbuild actually builds, not handlerPath
+        const builtHandlerPath = this.computeBuiltHandlerPath(filePath);
 
         manifests.push({
           ...rest,
           sourceHandlerPath: handlerPath,
           builtHandlerPath,
+          builtHandlerChecksum: null,
         });
       } catch (error) {
         throw new Error(
@@ -149,7 +152,7 @@ export class FunctionEntityBuilder
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const seen = new Map<string, string[]>();
-    const functions = manifest.serverlessFunctions ?? [];
+    const functions = manifest.functions ?? [];
 
     for (const fn of functions) {
       if (fn.universalIdentifier) {

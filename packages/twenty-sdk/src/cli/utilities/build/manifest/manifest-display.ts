@@ -14,7 +14,7 @@ export const displayEntitySummary = (manifest: ApplicationManifest): void => {
     manifest.application ? [manifest.application] : [],
   );
   objectEntityBuilder.display(manifest.objects ?? []);
-  functionEntityBuilder.display(manifest.serverlessFunctions ?? []);
+  functionEntityBuilder.display(manifest.functions ?? []);
   frontComponentEntityBuilder.display(manifest.frontComponents ?? []);
   roleEntityBuilder.display(manifest.roles ?? []);
 };

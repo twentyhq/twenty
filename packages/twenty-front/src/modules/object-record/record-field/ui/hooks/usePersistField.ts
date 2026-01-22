@@ -33,28 +33,28 @@ import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFie
 import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
 import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
 import { isFieldFilesValue } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
-import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
-import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
-import { isFieldRelationManyToOneValue } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOneValue';
-import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
-import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
-import { isFieldRichTextValue } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValue';
-import { isFieldRichTextV2Value } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValueV2';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '@/object-record/record-field/ui/types/guards/isFieldBooleanValue';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
 import { isFieldDateTime } from '@/object-record/record-field/ui/types/guards/isFieldDateTime';
 import { isFieldDateTimeValue } from '@/object-record/record-field/ui/types/guards/isFieldDateTimeValue';
+import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
 import { isFieldNumberValue } from '@/object-record/record-field/ui/types/guards/isFieldNumberValue';
 import { isFieldRating } from '@/object-record/record-field/ui/types/guards/isFieldRating';
 import { isFieldRatingValue } from '@/object-record/record-field/ui/types/guards/isFieldRatingValue';
+import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
+import { isFieldRelationManyToOneValue } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOneValue';
+import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
+import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
+import { isFieldRichTextValue } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValue';
+import { isFieldRichTextV2Value } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValueV2';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const usePersistField = ({
   objectMetadataItemId,
@@ -65,9 +65,7 @@ export const usePersistField = ({
     objectId: objectMetadataItemId,
   });
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
@@ -200,7 +198,8 @@ export const usePersistField = ({
               return;
             }
 
-            const newRecord = await updateOneRecord?.({
+            const newRecord = await updateOneRecord({
+              objectNameSingular: objectMetadataItem.nameSingular,
               idToUpdate: recordId,
               updateOneRecordInput: {
                 [getForeignKeyNameFromRelationFieldName(fieldName)]:
@@ -226,7 +225,8 @@ export const usePersistField = ({
               return;
             }
 
-            const newRecord = await updateOneRecord?.({
+            const newRecord = await updateOneRecord({
+              objectNameSingular: objectMetadataItem.nameSingular,
               idToUpdate: recordId,
               updateOneRecordInput: {
                 [getForeignKeyNameFromRelationFieldName(fieldName)]:
@@ -241,6 +241,7 @@ export const usePersistField = ({
                 }),
               ],
             });
+
             return;
           }
 
@@ -248,12 +249,14 @@ export const usePersistField = ({
             return;
           }
 
-          updateOneRecord?.({
+          updateOneRecord({
+            objectNameSingular: objectMetadataItem.nameSingular,
             idToUpdate: recordId,
             updateOneRecordInput: {
               [fieldName]: valueToPersist,
             },
           });
+
           set(
             recordStoreFamilySelector({ recordId, fieldName }),
             valueToPersist,
@@ -268,7 +271,7 @@ export const usePersistField = ({
           );
         }
       },
-    [updateOneRecord, upsertRecordsInStore],
+    [objectMetadataItem?.nameSingular, updateOneRecord, upsertRecordsInStore],
   );
 
   return persistField;

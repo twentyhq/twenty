@@ -28,9 +28,7 @@ export const useAttachmentSync = (attachments: Attachment[]) => {
       },
     });
 
-  const { updateOneRecord: updateOneAttachment } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const syncAttachments = async (
     newBody: string,
@@ -78,7 +76,8 @@ export const useAttachmentSync = (attachments: Attachment[]) => {
 
     for (const attachmentToUpdate of attachmentsToUpdate) {
       if (!attachmentToUpdate.id || !attachmentToUpdate.name) continue;
-      await updateOneAttachment({
+      await updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.Attachment,
         idToUpdate: attachmentToUpdate.id,
         updateOneRecordInput: { name: attachmentToUpdate.name },
       });
