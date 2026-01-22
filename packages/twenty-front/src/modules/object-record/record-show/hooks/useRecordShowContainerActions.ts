@@ -7,7 +7,6 @@ import {
   FileFolder,
   useUploadImageMutation,
 } from '~/generated-metadata/graphql';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 interface UseRecordShowContainerActionsProps {
   objectNameSingular: string;
