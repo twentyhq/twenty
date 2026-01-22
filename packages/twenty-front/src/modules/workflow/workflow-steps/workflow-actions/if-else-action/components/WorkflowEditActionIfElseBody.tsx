@@ -285,6 +285,13 @@ export const WorkflowEditActionIfElseBody = ({
                   totalBranches: branches.length,
                   branch,
                 })}
+                elseIfIndex={
+                  branchIndex > 0 &&
+                  branchIndex < branches.length - 1 &&
+                  isDefined(branch.filterGroupId)
+                    ? branchIndex
+                    : undefined
+                }
                 branchFilterGroup={branchFilterGroup}
                 readonly={isReadonly}
                 onFilterSettingsUpdate={onFilterSettingsUpdate}

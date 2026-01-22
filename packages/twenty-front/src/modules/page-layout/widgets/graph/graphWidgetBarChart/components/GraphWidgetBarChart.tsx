@@ -15,14 +15,12 @@ import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
 import { computeShouldRoundFreeEndMap } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeShouldRoundFreeEndMap';
-import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
-import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
+import { getBarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartLayout';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
-import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
@@ -193,23 +191,25 @@ export const GraphWidgetBarChart = ({
       rangeMax,
     });
 
-  const tickConfig = getBarChartTickConfig({
-    width: chartWidth,
-    height: chartHeight,
+  const {
+    margins,
+    axisBottomConfiguration,
+    axisLeftConfiguration,
+    valueTickValues,
+    valueDomain,
+  } = getBarChartLayout({
+    axisTheme: chartTheme.axis,
+    chartWidth,
+    chartHeight,
     data,
     indexBy,
+    layout,
     xAxisLabel,
     yAxisLabel,
-    axisFontSize: chartTheme.axis.ticks.text.fontSize,
-    layout,
+    formatOptions,
+    effectiveMinimumValue,
+    effectiveMaximumValue,
   });
-
-  const { tickValues: valueTickValues, domain: valueDomain } =
-    computeValueTickValues({
-      minimum: effectiveMinimumValue,
-      maximum: effectiveMaximumValue,
-      tickCount: tickConfig.numberOfValueTicks,
-    });
 
   const hasClickableItems = isDefined(onSliceClick);
 
@@ -249,19 +249,6 @@ export const GraphWidgetBarChart = ({
   const handleSliceLeave = () => {
     debouncedHideTooltip();
   };
-
-  const {
-    axisBottom: axisBottomConfig,
-    axisLeft: axisLeftConfig,
-    margins,
-  } = getBarChartAxisConfigs({
-    layout,
-    xAxisLabel,
-    yAxisLabel,
-    formatOptions,
-    valueTickValues,
-    tickConfig,
-  });
 
   const MemoizedBarItem = useMemo(
     () => (props: BarItemProps<BarDatum>) => {
@@ -408,8 +395,8 @@ export const GraphWidgetBarChart = ({
           markers={zeroMarker}
           axisTop={null}
           axisRight={null}
-          axisBottom={axisBottomConfig}
-          axisLeft={axisLeftConfig}
+          axisBottom={axisBottomConfiguration}
+          axisLeft={axisLeftConfiguration}
           enableGridX={layout === BarChartLayout.HORIZONTAL && showGrid}
           enableGridY={layout === BarChartLayout.VERTICAL && showGrid}
           gridXValues={

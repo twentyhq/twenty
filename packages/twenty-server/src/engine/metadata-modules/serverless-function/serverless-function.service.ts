@@ -48,8 +48,7 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
-import { isServerlessFunctionBuilt } from 'src/engine/core-modules/serverless/drivers/utils/is-serverless-function-built';
-import { buildAndUploadServerlessFunction } from 'src/engine/core-modules/serverless/drivers/utils/build-and-upload-serverless-function';
+import { FunctionBuildService } from 'src/engine/metadata-modules/function-build/function-build.service';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
@@ -58,6 +57,7 @@ export class ServerlessFunctionService {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly serverlessService: ServerlessService,
+    private readonly functionBuildService: FunctionBuildService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
     @InjectRepository(ServerlessFunctionEntity)
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
@@ -210,16 +210,14 @@ export class ServerlessFunctionService {
 
     // We keep that check to build functions
     if (
-      !(await isServerlessFunctionBuilt({
+      !(await this.functionBuildService.isBuilt({
         flatServerlessFunction,
         version,
-        fileStorageService: this.fileStorageService,
       }))
     ) {
-      await buildAndUploadServerlessFunction({
+      await this.functionBuildService.buildAndUpload({
         flatServerlessFunction,
         version,
-        fileStorageService: this.fileStorageService,
       });
     }
 

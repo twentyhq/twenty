@@ -13,6 +13,10 @@ import {
   type WorkspaceMigrationAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
+import {
+  WorkspaceMigrationRunnerException,
+  WorkspaceMigrationRunnerExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { optimisticallyApplyCreateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-create-action-on-all-flat-entity-maps.util';
 import { optimisticallyApplyDeleteActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-delete-action-on-all-flat-entity-maps.util';
@@ -24,7 +28,6 @@ type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
   WorkspaceMigrationActionRunnerArgs<TActionType>,
   'allFlatEntityMaps' | 'action'
 >;
-
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionType,
   TMetadataName extends AllMetadataName,
@@ -80,7 +83,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   }
 
   rollbackForMetadata(
-    _context: WorkspaceMigrationActionRunnerArgs<TAction>,
+    _context: Omit<WorkspaceMigrationActionRunnerArgs<TAction>, 'queryRunner'>,
   ): Promise<void> {
     return Promise.resolve();
   }
@@ -94,32 +97,53 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       | MetadataToFlatEntityMapsKey<TMetadataName>
     >
   > {
-    try {
-      await Promise.all([
-        this.asyncMethodPerformanceMetricWrapper({
-          label: 'executeForMetadata',
-          method: async () => this.executeForMetadata(context),
-        }),
-        this.asyncMethodPerformanceMetricWrapper({
-          label: 'executeForWorkspaceSchema',
-          method: async () => this.executeForWorkspaceSchema(context),
-        }),
-      ]);
+    const [metadataResult, workspaceSchemaResult] = await Promise.allSettled([
+      this.asyncMethodPerformanceMetricWrapper({
+        label: 'executeForMetadata',
+        method: async () => this.executeForMetadata(context),
+      }),
+      this.asyncMethodPerformanceMetricWrapper({
+        label: 'executeForWorkspaceSchema',
+        method: async () => this.executeForWorkspaceSchema(context),
+      }),
+    ]);
 
-      return this.optimisticallyApplyActionOnAllFlatEntityMaps({
+    const hasMetadataError = metadataResult.status === 'rejected';
+    const hasWorkspaceSchemaError = workspaceSchemaResult.status === 'rejected';
+
+    if (hasMetadataError || hasWorkspaceSchemaError) {
+      throw new WorkspaceMigrationRunnerException({
+        action: context.action,
+        errors: {
+          ...(hasMetadataError && { metadata: metadataResult.reason }),
+          ...(hasWorkspaceSchemaError && {
+            workspaceSchema: workspaceSchemaResult.reason,
+          }),
+        },
+        code: WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED,
+      });
+    }
+
+    const partialOptimisticCache =
+      this.optimisticallyApplyActionOnAllFlatEntityMaps({
         action: context.action,
         allFlatEntityMaps: context.allFlatEntityMaps,
       });
-    } catch (error) {
-      this.logger.error(`${this.actionType} execution failed`, error);
-      throw error;
-    }
+
+    return partialOptimisticCache;
   }
 
   async rollback(
-    context: WorkspaceMigrationActionRunnerArgs<TAction>,
+    context: Omit<WorkspaceMigrationActionRunnerArgs<TAction>, 'queryRunner'>,
   ): Promise<void> {
-    await this.rollbackForMetadata(context);
+    try {
+      await this.rollbackForMetadata(context);
+    } catch (error) {
+      this.logger.error(
+        `Failed to rollback ${context.action.type} action for ${context.action.metadataName}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'BaseWorkspaceMigrationRunnerActionHandlerService',
+      );
+    }
   }
 
   private async asyncMethodPerformanceMetricWrapper({

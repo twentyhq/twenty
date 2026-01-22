@@ -26,7 +26,7 @@ export enum ServerlessFunctionRuntime {
   NODE22 = 'nodejs22.x',
 }
 
-export const DEFAULT_HANDLER_PATH = 'src/index.ts';
+export const DEFAULT_SOURCE_HANDLER_PATH = 'src/index.ts';
 export const DEFAULT_BUILT_HANDLER_PATH = 'index.mjs';
 export const DEFAULT_HANDLER_NAME = 'main';
 
@@ -43,8 +43,8 @@ export class ServerlessFunctionEntity
   @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: false, default: DEFAULT_HANDLER_PATH })
-  handlerPath: string;
+  @Column({ nullable: false, default: DEFAULT_SOURCE_HANDLER_PATH })
+  sourceHandlerPath: string;
 
   @Column({ nullable: false, default: DEFAULT_BUILT_HANDLER_PATH })
   builtHandlerPath: string;

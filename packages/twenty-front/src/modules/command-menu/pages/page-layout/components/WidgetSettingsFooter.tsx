@@ -1,4 +1,5 @@
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useDuplicatePageLayoutWidget } from '@/page-layout/hooks/useDuplicatePageLayoutWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
@@ -10,7 +11,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCopyPlus } from 'twenty-ui/display';
+import { IconCopyPlus, IconTrash } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 export const WidgetSettingsFooter = () => {
@@ -20,7 +21,7 @@ export const WidgetSettingsFooter = () => {
 
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { duplicateWidget } = useDuplicatePageLayoutWidget(pageLayoutId);
-
+  const { deletePageLayoutWidget } = useDeletePageLayoutWidget(pageLayoutId);
   const editingWidgetId = useRecoilComponentValue(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
@@ -29,6 +30,13 @@ export const WidgetSettingsFooter = () => {
   const handleDuplicateWidget = () => {
     if (isDefined(editingWidgetId)) {
       duplicateWidget(editingWidgetId);
+    }
+    closeDropdown(dropdownId);
+  };
+
+  const handleDeleteWidget = () => {
+    if (isDefined(editingWidgetId)) {
+      deletePageLayoutWidget(editingWidgetId);
     }
     closeDropdown(dropdownId);
   };
@@ -45,7 +53,7 @@ export const WidgetSettingsFooter = () => {
           key="options"
           dropdownId={dropdownId}
           selectableListId={dropdownId}
-          selectableItemIdArray={['duplicate-widget']}
+          selectableItemIdArray={['duplicate-widget', 'delete-widget']}
         >
           <SelectableListItem
             itemId="duplicate-widget"
@@ -56,6 +64,19 @@ export const WidgetSettingsFooter = () => {
               onClick={handleDuplicateWidget}
               text={t`Duplicate widget`}
               LeftIcon={IconCopyPlus}
+            />
+          </SelectableListItem>
+
+          <SelectableListItem
+            itemId="delete-widget"
+            onEnter={handleDeleteWidget}
+          >
+            <MenuItem
+              focused={selectedItemId === 'delete-widget'}
+              onClick={handleDeleteWidget}
+              text={t`Delete widget`}
+              LeftIcon={IconTrash}
+              accent="danger"
             />
           </SelectableListItem>
         </OptionsDropdownMenu>,

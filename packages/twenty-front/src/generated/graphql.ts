@@ -183,6 +183,33 @@ export enum AggregateOperations {
   SUM = 'SUM'
 }
 
+export enum AllMetadataName {
+  agent = 'agent',
+  commandMenuItem = 'commandMenuItem',
+  cronTrigger = 'cronTrigger',
+  databaseEventTrigger = 'databaseEventTrigger',
+  fieldMetadata = 'fieldMetadata',
+  frontComponent = 'frontComponent',
+  index = 'index',
+  navigationMenuItem = 'navigationMenuItem',
+  objectMetadata = 'objectMetadata',
+  pageLayout = 'pageLayout',
+  pageLayoutTab = 'pageLayoutTab',
+  pageLayoutWidget = 'pageLayoutWidget',
+  role = 'role',
+  roleTarget = 'roleTarget',
+  routeTrigger = 'routeTrigger',
+  rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
+  rowLevelPermissionPredicateGroup = 'rowLevelPermissionPredicateGroup',
+  serverlessFunction = 'serverlessFunction',
+  skill = 'skill',
+  view = 'view',
+  viewField = 'viewField',
+  viewFilter = 'viewFilter',
+  viewFilterGroup = 'viewFilterGroup',
+  viewGroup = 'viewGroup'
+}
+
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
@@ -1010,35 +1037,14 @@ export type CreateRouteTriggerInput = {
   serverlessFunctionId: Scalars['String'];
 };
 
-export type CreateRowLevelPermissionPredicateGroupInput = {
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
-  objectMetadataId: Scalars['String'];
-  parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
-  roleId: Scalars['String'];
-};
-
-export type CreateRowLevelPermissionPredicateInput = {
-  fieldMetadataId: Scalars['String'];
-  objectMetadataId: Scalars['String'];
-  operand: RowLevelPermissionPredicateOperand;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
-  roleId: Scalars['String'];
-  rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
-  subFieldName?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['JSON']>;
-  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']>;
-  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']>;
-};
-
 export type CreateServerlessFunctionInput = {
   builtHandlerPath?: InputMaybe<Scalars['String']>;
   code?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
   handlerName?: InputMaybe<Scalars['String']>;
-  handlerPath?: InputMaybe<Scalars['String']>;
   isTool?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
+  sourceHandlerPath?: InputMaybe<Scalars['String']>;
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
   toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
@@ -1216,14 +1222,6 @@ export type DeleteOneFieldInput = {
 export type DeleteOneObjectInput = {
   /** The id of the record to delete. */
   id: Scalars['UUID'];
-};
-
-export type DeleteRowLevelPermissionPredicateGroupInput = {
-  id: Scalars['String'];
-};
-
-export type DeleteRowLevelPermissionPredicateInput = {
-  id: Scalars['String'];
 };
 
 export type DeleteSsoInput = {
@@ -1420,6 +1418,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
+  IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED = 'IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED',
   IS_COMMAND_MENU_ITEM_ENABLED = 'IS_COMMAND_MENU_ITEM_ENABLED',
   IS_DASHBOARD_V2_ENABLED = 'IS_DASHBOARD_V2_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
@@ -1992,8 +1991,6 @@ export type Mutation = {
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
   createPublicDomain: PublicDomain;
-  createRowLevelPermissionPredicate: RowLevelPermissionPredicate;
-  createRowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWebhook: Webhook;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
@@ -2021,8 +2018,6 @@ export type Mutation = {
   deleteOneRouteTrigger: RouteTrigger;
   deleteOneServerlessFunction: ServerlessFunction;
   deletePublicDomain: Scalars['Boolean'];
-  deleteRowLevelPermissionPredicate: RowLevelPermissionPredicate;
-  deleteRowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup;
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
@@ -2059,6 +2054,7 @@ export type Mutation = {
   impersonate: ImpersonateOutput;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
+  installApplication: Scalars['Boolean'];
   publishServerlessFunction: ServerlessFunction;
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
@@ -2110,8 +2106,6 @@ export type Mutation = {
   updatePageLayoutWidget: PageLayoutWidget;
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePasswordOutput;
-  updateRowLevelPermissionPredicate: RowLevelPermissionPredicate;
-  updateRowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup;
   updateUserEmail: Scalars['Boolean'];
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
@@ -2348,16 +2342,6 @@ export type MutationCreatePublicDomainArgs = {
 };
 
 
-export type MutationCreateRowLevelPermissionPredicateArgs = {
-  input: CreateRowLevelPermissionPredicateInput;
-};
-
-
-export type MutationCreateRowLevelPermissionPredicateGroupArgs = {
-  input: CreateRowLevelPermissionPredicateGroupInput;
-};
-
-
 export type MutationCreateSamlIdentityProviderArgs = {
   input: SetupSamlSsoInput;
 };
@@ -2486,16 +2470,6 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 
 export type MutationDeletePublicDomainArgs = {
   domain: Scalars['String'];
-};
-
-
-export type MutationDeleteRowLevelPermissionPredicateArgs = {
-  input: DeleteRowLevelPermissionPredicateInput;
-};
-
-
-export type MutationDeleteRowLevelPermissionPredicateGroupArgs = {
-  input: DeleteRowLevelPermissionPredicateGroupInput;
 };
 
 
@@ -2659,6 +2633,11 @@ export type MutationImpersonateArgs = {
 export type MutationInitiateOtpProvisioningArgs = {
   loginToken: Scalars['String'];
   origin: Scalars['String'];
+};
+
+
+export type MutationInstallApplicationArgs = {
+  workspaceMigration: WorkspaceMigrationInput;
 };
 
 
@@ -2925,16 +2904,6 @@ export type MutationUpdatePageLayoutWithTabsAndWidgetsArgs = {
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
-};
-
-
-export type MutationUpdateRowLevelPermissionPredicateArgs = {
-  input: UpdateRowLevelPermissionPredicateInput;
-};
-
-
-export type MutationUpdateRowLevelPermissionPredicateGroupArgs = {
-  input: UpdateRowLevelPermissionPredicateGroupInput;
 };
 
 
@@ -3532,9 +3501,6 @@ export type Query = {
   getQueueJobs: QueueJobsResponse;
   getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
-  getRowLevelPermissionPredicate?: Maybe<RowLevelPermissionPredicate>;
-  getRowLevelPermissionPredicateGroups: Array<RowLevelPermissionPredicateGroup>;
-  getRowLevelPermissionPredicates: Array<RowLevelPermissionPredicate>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getSystemHealthStatus: SystemHealth;
@@ -3766,22 +3732,6 @@ export type QueryGetQueueJobsArgs = {
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
-};
-
-
-export type QueryGetRowLevelPermissionPredicateArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetRowLevelPermissionPredicateGroupsArgs = {
-  roleId?: InputMaybe<Scalars['String']>;
-};
-
-
-export type QueryGetRowLevelPermissionPredicatesArgs = {
-  objectMetadataId?: InputMaybe<Scalars['String']>;
-  roleId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -4125,6 +4075,7 @@ export type SearchRecord = {
   __typename?: 'SearchRecord';
   imageUrl?: Maybe<Scalars['String']>;
   label: Scalars['String'];
+  objectLabelSingular: Scalars['String'];
   objectNameSingular: Scalars['String'];
   recordId: Scalars['UUID'];
   tsRank: Scalars['Float'];
@@ -4173,7 +4124,6 @@ export type ServerlessFunction = {
   databaseEventTriggers?: Maybe<Array<DatabaseEventTrigger>>;
   description?: Maybe<Scalars['String']>;
   handlerName: Scalars['String'];
-  handlerPath: Scalars['String'];
   id: Scalars['UUID'];
   isTool: Scalars['Boolean'];
   latestVersion?: Maybe<Scalars['String']>;
@@ -4181,6 +4131,7 @@ export type ServerlessFunction = {
   publishedVersions: Array<Scalars['String']>;
   routeTriggers?: Maybe<Array<RouteTrigger>>;
   runtime: Scalars['String'];
+  sourceHandlerPath: Scalars['String'];
   timeoutSeconds: Scalars['Float'];
   toolInputSchema?: Maybe<Scalars['JSON']>;
   universalIdentifier?: Maybe<Scalars['UUID']>;
@@ -4704,25 +4655,6 @@ export type UpdateRouteTriggerInputUpdates = {
   path: Scalars['String'];
 };
 
-export type UpdateRowLevelPermissionPredicateGroupInput = {
-  id: Scalars['String'];
-  logicalOperator?: InputMaybe<RowLevelPermissionPredicateGroupLogicalOperator>;
-  parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
-};
-
-export type UpdateRowLevelPermissionPredicateInput = {
-  fieldMetadataId?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
-  operand?: InputMaybe<RowLevelPermissionPredicateOperand>;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
-  rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
-  subFieldName?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['JSON']>;
-  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']>;
-  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']>;
-};
-
 export type UpdateServerlessFunctionInput = {
   /** Id of the serverless function to update */
   id: Scalars['UUID'];
@@ -4734,9 +4666,9 @@ export type UpdateServerlessFunctionInputUpdates = {
   code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
   handlerName?: InputMaybe<Scalars['String']>;
-  handlerPath?: InputMaybe<Scalars['String']>;
   isTool?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
+  sourceHandlerPath?: InputMaybe<Scalars['String']>;
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
   toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
@@ -5356,6 +5288,22 @@ export enum WorkspaceMemberTimeFormatEnum {
   HOUR_24 = 'HOUR_24',
   SYSTEM = 'SYSTEM'
 }
+
+export enum WorkspaceMigrationActionType {
+  create = 'create',
+  delete = 'delete',
+  update = 'update'
+}
+
+export type WorkspaceMigrationDeleteActionInput = {
+  metadataName: AllMetadataName;
+  type: WorkspaceMigrationActionType;
+  universalIdentifier: Scalars['String'];
+};
+
+export type WorkspaceMigrationInput = {
+  actions: Array<WorkspaceMigrationDeleteActionInput>;
+};
 
 export type WorkspaceNameAndId = {
   __typename?: 'WorkspaceNameAndId';
