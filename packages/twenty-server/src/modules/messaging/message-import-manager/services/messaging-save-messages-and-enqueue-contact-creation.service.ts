@@ -64,6 +64,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
               const participantsWithMessageId: (ParticipantWithMessageId & {
                 shouldCreateContact: boolean;
+                whatsAppId?: string;
               })[] = messagesToSave.flatMap((message) => {
                 const messageId = messageExternalIdsAndIdsMap.get(
                   message.externalId,

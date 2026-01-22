@@ -89,7 +89,7 @@ export class CreateCompanyAndPersonService {
         const queryBuilder = addPersonEmailAndPhoneNumberFiltersToQueryBuilder({
           queryBuilder: personRepository.createQueryBuilder('person'),
           emailsOrPhoneNumbers: uniqueHandles,
-        });
+        }); // TODO: technically it'd be easier to find people with their whatsapp id, add different query builder?
 
         const alreadyCreatedPeople = await queryBuilder
           .orderBy('person.createdAt', 'ASC')
@@ -362,6 +362,7 @@ export class CreateCompanyAndPersonService {
     contactsToCreate: {
       handle: string;
       displayName: string;
+      whatsAppId?: string;
     }[];
     createdBy: {
       source: FieldActorSource;
@@ -426,6 +427,7 @@ export class CreateCompanyAndPersonService {
             name: createdByName,
             context: createdBy.context,
           },
+          whatsAppId: contact.whatsAppId ?? null,
         };
       }
     });

@@ -24,7 +24,7 @@ export type WhatsappApiAssignedUser = {
       }>;
     };
   };
-  no_accounts: {
+  no_accounts?: {
     summary: string;
     value: {
       data: [];

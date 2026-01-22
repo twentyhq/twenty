@@ -114,6 +114,7 @@ export class WhatsappConvertMessage {
       role: MessageParticipantRole.FROM,
       handle: '+'.concat(message.from), // phone number
       displayName: messageSenderContactName,
+      whatsappId: messageSenderId,
     };
 
     participants.push(messageSender);
@@ -218,7 +219,7 @@ export class WhatsappConvertMessage {
       text: text,
       attachments: [],
       externalId: externalId,
-      messageThreadExternalId: message.group_id || message.from, // TODO: find a way to create arbitrary external message thread id
+      messageThreadExternalId: message.group_id || message.from, // TODO: find a way to create arbitrary external message thread id (or maybe way to update thread id?)
       direction: MessageDirection.INCOMING,
       participants: participants,
     };

@@ -12,6 +12,7 @@ export type CreateCompanyAndContactJobData = {
   contactsToCreate: {
     displayName: string;
     handle: string;
+    whatsAppId?: string;
   }[];
   source: FieldActorSource;
 };

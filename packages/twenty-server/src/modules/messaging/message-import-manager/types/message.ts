@@ -37,7 +37,9 @@ export type MessageParticipant = Omit<
   | 'workspaceMember'
   | 'message'
   | 'messageId'
->;
+> & {
+  whatsappId?: string;
+};
 
 export type MessageWithParticipants = Message & {
   participants: MessageParticipant[];
