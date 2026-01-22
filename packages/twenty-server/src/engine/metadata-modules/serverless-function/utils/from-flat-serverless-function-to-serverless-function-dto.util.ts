@@ -43,7 +43,7 @@ export const fromFlatServerlessFunctionToServerlessFunctionDto = ({
     runtime: flatServerlessFunction.runtime,
     timeoutSeconds: flatServerlessFunction.timeoutSeconds,
     latestVersion: flatServerlessFunction.latestVersion ?? undefined,
-    handlerPath: flatServerlessFunction.handlerPath,
+    sourceHandlerPath: flatServerlessFunction.sourceHandlerPath,
     builtHandlerPath: flatServerlessFunction.builtHandlerPath,
     handlerName: flatServerlessFunction.handlerName,
     publishedVersions: flatServerlessFunction.publishedVersions,

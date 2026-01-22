@@ -64,7 +64,7 @@ export class FunctionBuildService {
 
       const builtBundleFilePath = await this.buildInMemory({
         sourceTemporaryDir,
-        handlerPath: flatServerlessFunction.handlerPath,
+        sourceHandlerPath: flatServerlessFunction.sourceHandlerPath,
         builtHandlerPath: flatServerlessFunction.builtHandlerPath,
       });
 
@@ -83,14 +83,14 @@ export class FunctionBuildService {
 
   private async buildInMemory({
     sourceTemporaryDir,
-    handlerPath,
+    sourceHandlerPath,
     builtHandlerPath,
   }: {
     sourceTemporaryDir: string;
-    handlerPath: string;
+    sourceHandlerPath: string;
     builtHandlerPath: string;
   }): Promise<string> {
-    const entryFilePath = join(sourceTemporaryDir, handlerPath);
+    const entryFilePath = join(sourceTemporaryDir, sourceHandlerPath);
     const builtBundleFilePath = join(sourceTemporaryDir, builtHandlerPath);
 
     await build({
