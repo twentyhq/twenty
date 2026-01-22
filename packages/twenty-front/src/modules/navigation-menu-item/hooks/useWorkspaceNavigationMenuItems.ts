@@ -10,6 +10,7 @@ import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 
 import { isDefined } from 'twenty-shared/utils';
+import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
 import { useSortedNavigationMenuItems } from './useSortedNavigationMenuItems';
 
 export const useWorkspaceNavigationMenuItems = (): {
@@ -17,6 +18,8 @@ export const useWorkspaceNavigationMenuItems = (): {
 } => {
   const featureFlags = useFeatureFlagsMap();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
+  const { workspaceNavigationMenuItems: rawWorkspaceNavigationMenuItems } =
+    usePrefetchedNavigationMenuItemsData();
   const coreViews = useRecoilValue(coreViewsState);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -46,12 +49,23 @@ export const useWorkspaceNavigationMenuItems = (): {
     }, []),
   );
 
+  const navigationMenuItemRecordObjectMetadataIds = new Set(
+    rawWorkspaceNavigationMenuItems
+      .map((item) => item.targetObjectMetadataId)
+      .filter((objectMetadataId) => isDefined(objectMetadataId)),
+  );
+
+  const allNavigationMenuItemObjectMetadataIds = new Set([
+    ...navigationMenuItemViewObjectMetadataIds,
+    ...navigationMenuItemRecordObjectMetadataIds,
+  ]);
+
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
   const activeNonSystemObjectMetadataItemsInWorkspaceNavigationMenuItems: ObjectMetadataItem[] =
     activeNonSystemObjectMetadataItems.filter((item: ObjectMetadataItem) =>
-      navigationMenuItemViewObjectMetadataIds.has(item.id),
+      allNavigationMenuItemObjectMetadataIds.has(item.id),
     );
 
   return {
