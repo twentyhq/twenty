@@ -1,8 +1,7 @@
 import chalk from 'chalk';
+import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { build, type InlineConfig, type Rollup } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
 import { OUTPUT_DIR } from '../common/constants';
 import { printWatchingMessage } from '../common/display';
@@ -13,20 +12,21 @@ import {
 import { type ManifestBuildResult } from '../manifest/manifest-build';
 import { FRONT_COMPONENTS_DIR } from './constants';
 
-export const FRONT_COMPONENT_EXTERNAL_MODULES: (string | RegExp)[] = [
+export const FRONT_COMPONENT_EXTERNAL_MODULES: string[] = [
   'react',
   'react-dom',
   'react/jsx-runtime',
   'react/jsx-dev-runtime',
-  /^twenty-sdk/,
-  /^twenty-shared/,
-  /^@\//,
+  'twenty-sdk',
+  'twenty-sdk/*',
+  'twenty-shared',
+  'twenty-shared/*',
 ];
 
 export class FrontComponentsWatcher implements RestartableWatcher {
   private appPath: string;
   private componentPaths: string[];
-  private innerWatchers: Rollup.RollupWatcher[] = [];
+  private esBuildContext: esbuild.BuildContext | null = null;
   private isRestarting = false;
 
   constructor(options: RestartableWatcherOptions) {
@@ -47,7 +47,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
 
     if (this.componentPaths.length > 0) {
       console.log(chalk.blue('  🎨 Building front components...'));
-      this.innerWatchers = await this.createWatchers();
+      await this.createContext();
     } else {
       console.log(chalk.gray('  No front components to build'));
       printWatchingMessage();
@@ -55,8 +55,8 @@ export class FrontComponentsWatcher implements RestartableWatcher {
   }
 
   async close(): Promise<void> {
-    await Promise.all(this.innerWatchers.map((w) => w.close()));
-    this.innerWatchers = [];
+    await this.esBuildContext?.dispose();
+    this.esBuildContext = null;
   }
 
   async restart(result: ManifestBuildResult): Promise<void> {
@@ -74,7 +74,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
 
       if (this.componentPaths.length > 0) {
         console.log(chalk.blue('  🎨 Building front components...'));
-        this.innerWatchers = await this.createWatchers();
+        await this.createContext();
       } else {
         console.log(chalk.gray('  No front components to build'));
         printWatchingMessage();
@@ -86,70 +86,48 @@ export class FrontComponentsWatcher implements RestartableWatcher {
     }
   }
 
-  // Build each component separately to ensure self-contained bundles (no shared chunks)
-  private async createWatchers(): Promise<Rollup.RollupWatcher[]> {
-    let completedCount = 0;
-    const totalCount = this.componentPaths.length;
+  private async createContext(): Promise<void> {
+    const outputDir = path.join(this.appPath, OUTPUT_DIR, FRONT_COMPONENTS_DIR);
 
-    const watchers = await Promise.all(
-      this.componentPaths.map(async (componentPath) => {
-        const config = this.createConfig(componentPath);
-        const watcher = (await build(config)) as Rollup.RollupWatcher;
+    const entryPoints: Record<string, string> = {};
+    for (const componentPath of this.componentPaths) {
+      const entryName = componentPath.replace(/\.tsx?$/, '');
+      entryPoints[entryName] = path.join(this.appPath, componentPath);
+    }
 
-        watcher.on('event', (event) => {
-          if (event.code === 'END') {
-            completedCount++;
-            if (completedCount >= totalCount) {
-              console.log(chalk.green('  ✓ Front components built'));
-              printWatchingMessage();
-              completedCount = 0;
-            }
-          } else if (event.code === 'ERROR') {
-            console.error(
-              chalk.red('  ✗ Front component build error:'),
-              event.error?.message,
-            );
-          }
-        });
-
-        return watcher;
-      }),
-    );
-
-    return watchers;
-  }
-
-  private createConfig(componentPath: string): InlineConfig {
-    const frontComponentsOutputDir = path.join(this.appPath, OUTPUT_DIR, FRONT_COMPONENTS_DIR);
-    const entryName = componentPath.replace(/\.tsx?$/, '');
-
-    return {
-      root: this.appPath,
-      plugins: [tsconfigPaths({ root: this.appPath })],
-      esbuild: {
-        jsx: 'automatic',
-      },
-      build: {
-        outDir: frontComponentsOutputDir,
-        emptyOutDir: false,
-        watch: {
-          include: ['**/*.ts', '**/*.tsx', '**/*.json'],
-          exclude: ['node_modules/**', '.twenty/**', 'dist/**'],
-        },
-        lib: {
-          entry: path.join(this.appPath, componentPath),
-          formats: ['es'],
-          fileName: () => `${entryName}.mjs`,
-        },
-        rollupOptions: {
-          external: FRONT_COMPONENT_EXTERNAL_MODULES,
-          treeshake: true,
-        },
-        minify: false,
-        sourcemap: true,
-      },
+    this.esBuildContext = await esbuild.context({
+      entryPoints,
+      bundle: true,
+      splitting: false,
+      format: 'esm',
+      outdir: outputDir,
+      outExtension: { '.js': '.mjs' },
+      external: FRONT_COMPONENT_EXTERNAL_MODULES,
+      jsx: 'automatic',
+      sourcemap: true,
       logLevel: 'silent',
-      configFile: false,
-    };
+      plugins: [
+        {
+          name: 'build-notifications',
+          setup: (build) => {
+            build.onEnd((result) => {
+              if (result.errors.length > 0) {
+                console.error(chalk.red('  ✗ Front component build error:'));
+                for (const error of result.errors) {
+                  console.error(chalk.red(`    ${error.text}`));
+                }
+              } else {
+                console.log(chalk.green('  ✓ Front components built'));
+                printWatchingMessage();
+              }
+            });
+          },
+        },
+      ],
+    });
+
+    await this.esBuildContext.rebuild();
+
+    await this.esBuildContext.watch();
   }
 }

@@ -1,8 +1,7 @@
 import chalk from 'chalk';
+import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { build, type InlineConfig, type Rollup } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
 import { OUTPUT_DIR } from '../common/constants';
 import { printWatchingMessage } from '../common/display';
@@ -13,17 +12,35 @@ import {
 import { type ManifestBuildResult } from '../manifest/manifest-build';
 import { FUNCTIONS_DIR } from './constants';
 
-export const FUNCTION_EXTERNAL_MODULES: (string | RegExp)[] = [
-  'path', 'fs', 'crypto', 'stream', 'util', 'os', 'url', 'http', 'https',
-  'events', 'buffer', 'querystring', 'assert', 'zlib', 'net', 'tls',
-  'child_process', 'worker_threads',
-  /^twenty-sdk/, /^twenty-shared/, /^@\//, /(?:^|\/)generated(?:\/|$)/,
+export const FUNCTION_EXTERNAL_MODULES: string[] = [
+  'path',
+  'fs',
+  'crypto',
+  'stream',
+  'util',
+  'os',
+  'url',
+  'http',
+  'https',
+  'events',
+  'buffer',
+  'querystring',
+  'assert',
+  'zlib',
+  'net',
+  'tls',
+  'child_process',
+  'worker_threads',
+  'twenty-sdk',
+  'twenty-sdk/*',
+  'twenty-shared',
+  'twenty-shared/*',
 ];
 
 export class FunctionsWatcher implements RestartableWatcher {
   private appPath: string;
   private functionPaths: string[];
-  private innerWatchers: Rollup.RollupWatcher[] = [];
+  private esBuildContext: esbuild.BuildContext | null = null;
   private isRestarting = false;
 
   constructor(options: RestartableWatcherOptions) {
@@ -44,7 +61,7 @@ export class FunctionsWatcher implements RestartableWatcher {
 
     if (this.functionPaths.length > 0) {
       console.log(chalk.blue('  📦 Building functions...'));
-      this.innerWatchers = await this.createWatchers();
+      await this.createContext();
     } else {
       console.log(chalk.gray('  No functions to build'));
       printWatchingMessage();
@@ -52,8 +69,8 @@ export class FunctionsWatcher implements RestartableWatcher {
   }
 
   async close(): Promise<void> {
-    await Promise.all(this.innerWatchers.map((w) => w.close()));
-    this.innerWatchers = [];
+    await this.esBuildContext?.dispose();
+    this.esBuildContext = null;
   }
 
   async restart(result: ManifestBuildResult): Promise<void> {
@@ -71,7 +88,7 @@ export class FunctionsWatcher implements RestartableWatcher {
 
       if (this.functionPaths.length > 0) {
         console.log(chalk.blue('  📦 Building functions...'));
-        this.innerWatchers = await this.createWatchers();
+        await this.createContext();
       } else {
         console.log(chalk.gray('  No functions to build'));
         printWatchingMessage();
@@ -83,67 +100,48 @@ export class FunctionsWatcher implements RestartableWatcher {
     }
   }
 
-  // Build each function separately to ensure self-contained bundles (no shared chunks)
-  private async createWatchers(): Promise<Rollup.RollupWatcher[]> {
-    let completedCount = 0;
-    const totalCount = this.functionPaths.length;
+  private async createContext(): Promise<void> {
+    const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
 
-    const watchers = await Promise.all(
-      this.functionPaths.map(async (functionPath) => {
-        const config = this.createConfig(functionPath);
-        const watcher = (await build(config)) as Rollup.RollupWatcher;
+    const entryPoints: Record<string, string> = {};
+    for (const functionPath of this.functionPaths) {
+      const entryName = functionPath.replace(/\.tsx?$/, '');
+      entryPoints[entryName] = path.join(this.appPath, functionPath);
+    }
 
-        watcher.on('event', (event) => {
-          if (event.code === 'END') {
-            completedCount++;
-            if (completedCount >= totalCount) {
-              console.log(chalk.green('  ✓ Functions built'));
-              printWatchingMessage();
-              completedCount = 0;
-            }
-          } else if (event.code === 'ERROR') {
-            console.error(
-              chalk.red('  ✗ Function build error:'),
-              event.error?.message,
-            );
-          }
-        });
-
-        return watcher;
-      }),
-    );
-
-    return watchers;
-  }
-
-  private createConfig(functionPath: string): InlineConfig {
-    const functionsOutputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
-    const entryName = functionPath.replace(/\.tsx?$/, '');
-
-    return {
-      root: this.appPath,
-      plugins: [tsconfigPaths({ root: this.appPath })],
-      build: {
-        outDir: functionsOutputDir,
-        emptyOutDir: false,
-        watch: {
-          include: ['**/*.ts', '**/*.tsx', '**/*.json'],
-          exclude: ['node_modules/**', '.twenty/**', 'dist/**'],
-        },
-        lib: {
-          entry: path.join(this.appPath, functionPath),
-          formats: ['es'],
-          fileName: () => `${entryName}.mjs`,
-        },
-        rollupOptions: {
-          external: FUNCTION_EXTERNAL_MODULES,
-          treeshake: true,
-        },
-        minify: false,
-        sourcemap: true,
-      },
+    this.esBuildContext = await esbuild.context({
+      entryPoints,
+      bundle: true,
+      splitting: false,
+      format: 'esm',
+      platform: 'node',
+      outdir: outputDir,
+      outExtension: { '.js': '.mjs' },
+      external: FUNCTION_EXTERNAL_MODULES,
+      sourcemap: true,
       logLevel: 'silent',
-      configFile: false,
-    };
+      plugins: [
+        {
+          name: 'build-notifications',
+          setup: (build) => {
+            build.onEnd((result) => {
+              if (result.errors.length > 0) {
+                console.error(chalk.red('  ✗ Function build error:'));
+                for (const error of result.errors) {
+                  console.error(chalk.red(`    ${error.text}`));
+                }
+              } else {
+                console.log(chalk.green('  ✓ Functions built'));
+                printWatchingMessage();
+              }
+            });
+          },
+        },
+      ],
+    });
+
+    await this.esBuildContext.rebuild();
+
+    await this.esBuildContext.watch();
   }
 }
