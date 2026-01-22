@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { FieldActorSource, MessageParticipantRole } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -124,7 +126,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 messagesToSave
                   .filter(
                     (message) =>
-                      message.messageFolderIds &&
+                      isDefined(message.messageFolderIds) &&
                       message.messageFolderIds.length > 0,
                   )
                   .map((message) => ({
@@ -134,9 +136,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                       ) ?? '',
                     messageFolderIds: message.messageFolderIds ?? [],
                   }))
-                  .filter(
-                    (association) =>
-                      association.messageChannelMessageAssociationId !== '',
+                  .filter((association) =>
+                    isNonEmptyString(
+                      association.messageChannelMessageAssociationId,
+                    ),
                   );
 
               await this.messageFolderAssociationService.saveMessageFolderAssociations(
