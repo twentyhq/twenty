@@ -117,6 +117,9 @@ export class FunctionsWatcher implements RestartableWatcher {
 
     const watchMode = this.watchMode;
 
+    // Capture reference for use in plugin callbacks
+    const watcher = this;
+
     this.esBuildContext = await esbuild.context({
       entryPoints,
       bundle: true,
@@ -158,10 +161,10 @@ export class FunctionsWatcher implements RestartableWatcher {
               const inputsSignature = inputs.join(',');
 
               // Skip logging for spurious rebuilds (identical inputs)
-              if (this.lastInputsSignature === inputsSignature) {
+              if (watcher.lastInputsSignature === inputsSignature) {
                 return;
               }
-              this.lastInputsSignature = inputsSignature;
+              watcher.lastInputsSignature = inputsSignature;
 
               const outputs = Object.keys(result.metafile?.outputs ?? {})
                 .filter((file) => file.endsWith('.mjs'))
