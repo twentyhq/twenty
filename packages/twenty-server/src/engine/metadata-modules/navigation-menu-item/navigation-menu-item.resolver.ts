@@ -1,5 +1,16 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
+
+import GraphQLJSON from 'graphql-type-json';
+import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -103,6 +114,25 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
+    });
+  }
+
+  @ResolveField(() => GraphQLJSON, { nullable: true })
+  async targetRecord(
+    @Parent() navigationMenuItem: NavigationMenuItemDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<Record<string, unknown> | null> {
+    if (
+      !isDefined(navigationMenuItem.targetRecordId) ||
+      !isDefined(navigationMenuItem.targetObjectMetadataId)
+    ) {
+      return null;
+    }
+
+    return await this.navigationMenuItemService.findTargetRecord({
+      targetRecordId: navigationMenuItem.targetRecordId,
+      targetObjectMetadataId: navigationMenuItem.targetObjectMetadataId,
+      workspaceId: workspace.id,
     });
   }
 }

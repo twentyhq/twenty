@@ -1563,16 +1563,16 @@ export type File = {
 
 export enum FileFolder {
   AgentChat = 'AgentChat',
-  Asset = 'Asset',
+  Assets = 'Assets',
   Attachment = 'Attachment',
-  BuiltFrontComponent = 'BuiltFrontComponent',
-  BuiltFunction = 'BuiltFunction',
   File = 'File',
+  FrontComponents = 'FrontComponents',
+  Functions = 'Functions',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
   ServerlessFunctionToDelete = 'ServerlessFunctionToDelete',
-  Source = 'Source',
+  SourceCode = 'SourceCode',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
@@ -3078,6 +3078,7 @@ export type NavigationMenuItem = {
   name?: Maybe<Scalars['String']>;
   position: Scalars['Float'];
   targetObjectMetadataId?: Maybe<Scalars['UUID']>;
+  targetRecord?: Maybe<Scalars['JSON']>;
   targetRecordId?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
   userWorkspaceId?: Maybe<Scalars['UUID']>;

@@ -18,6 +18,8 @@ import {
   NavigationMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { NavigationMenuItemAccessService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -28,6 +30,7 @@ export class NavigationMenuItemService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
     private readonly navigationMenuItemAccessService: NavigationMenuItemAccessService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async findAll({
@@ -332,6 +335,51 @@ export class NavigationMenuItemService {
 
     return fromFlatNavigationMenuItemToNavigationMenuItemDto(
       flatNavigationMenuItemToDelete,
+    );
+  }
+
+  async findTargetRecord({
+    targetRecordId,
+    targetObjectMetadataId,
+    workspaceId,
+  }: {
+    targetRecordId: string;
+    targetObjectMetadataId: string;
+    workspaceId: string;
+  }): Promise<Record<string, unknown> | null> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    const objectMetadata = flatObjectMetadataMaps.byId[targetObjectMetadataId];
+
+    if (!isDefined(objectMetadata)) {
+      return null;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const repository = await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          objectMetadata.nameSingular,
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
+
+        const record = await repository.findOneBy({
+          id: targetRecordId,
+        });
+
+        return record;
+      },
     );
   }
 }
