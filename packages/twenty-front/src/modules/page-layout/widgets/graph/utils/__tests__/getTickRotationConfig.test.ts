@@ -1,5 +1,4 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
-import { TEXT_MARGIN_LIMITS } from '@/page-layout/widgets/graph/constants/TextMarginLimits';
 import {
   getTickRotationConfig,
   type TickRotationConfig,
@@ -7,14 +6,12 @@ import {
 
 describe('getTickRotationConfig', () => {
   const defaultAxisFontSize = COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE;
-  const defaultMaxLabelHeight = TEXT_MARGIN_LIMITS.max.bottom;
 
   describe('when width per tick is large enough for horizontal labels', () => {
     it('should return no rotation when width per tick is large', () => {
       const result: TickRotationConfig = getTickRotationConfig({
         widthPerTick: 200,
         axisFontSize: defaultAxisFontSize,
-        maxLabelHeight: defaultMaxLabelHeight,
       });
 
       expect(result.tickRotation).toBe(
@@ -28,7 +25,6 @@ describe('getTickRotationConfig', () => {
       const result: TickRotationConfig = getTickRotationConfig({
         widthPerTick,
         axisFontSize: defaultAxisFontSize,
-        maxLabelHeight: defaultMaxLabelHeight,
       });
 
       const expectedCharacterWidth =
@@ -50,7 +46,6 @@ describe('getTickRotationConfig', () => {
       const result: TickRotationConfig = getTickRotationConfig({
         widthPerTick: 10,
         axisFontSize: defaultAxisFontSize,
-        maxLabelHeight: defaultMaxLabelHeight,
       });
 
       expect(result.tickRotation).toBe(
@@ -63,7 +58,6 @@ describe('getTickRotationConfig', () => {
       const result: TickRotationConfig = getTickRotationConfig({
         widthPerTick: 1,
         axisFontSize: defaultAxisFontSize,
-        maxLabelHeight: defaultMaxLabelHeight,
       });
 
       expect(result.tickRotation).toBe(
@@ -78,7 +72,6 @@ describe('getTickRotationConfig', () => {
       const result: TickRotationConfig = getTickRotationConfig({
         widthPerTick: 0,
         axisFontSize: defaultAxisFontSize,
-        maxLabelHeight: defaultMaxLabelHeight,
       });
 
       expect(result.tickRotation).toBe(
@@ -91,38 +84,15 @@ describe('getTickRotationConfig', () => {
       const smallFontResult: TickRotationConfig = getTickRotationConfig({
         widthPerTick: 200,
         axisFontSize: 8,
-        maxLabelHeight: defaultMaxLabelHeight,
       });
 
       const largeFontResult: TickRotationConfig = getTickRotationConfig({
         widthPerTick: 200,
         axisFontSize: 16,
-        maxLabelHeight: defaultMaxLabelHeight,
       });
 
       expect(smallFontResult.maxLabelLength).toBeGreaterThan(
         largeFontResult.maxLabelLength,
-      );
-    });
-
-    it('should allow longer labels when maxLabelHeight increases', () => {
-      const baseParams = {
-        widthPerTick: 0,
-        axisFontSize: defaultAxisFontSize,
-      };
-
-      const smallHeightResult: TickRotationConfig = getTickRotationConfig({
-        ...baseParams,
-        maxLabelHeight: 20,
-      });
-
-      const largeHeightResult: TickRotationConfig = getTickRotationConfig({
-        ...baseParams,
-        maxLabelHeight: 120,
-      });
-
-      expect(largeHeightResult.maxLabelLength).toBeGreaterThanOrEqual(
-        smallHeightResult.maxLabelLength,
       );
     });
   });

@@ -1,7 +1,5 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 
-const TICK_ROTATION_ANGLE_RAD =
-  (Math.abs(COMMON_CHART_CONSTANTS.TICK_ROTATION_ANGLE) * Math.PI) / 180;
 const MIN_CALCULATED_LENGTH = 1;
 const TICK_MARGIN = 1;
 
@@ -13,11 +11,9 @@ export type TickRotationConfig = {
 export const getTickRotationConfig = ({
   widthPerTick,
   axisFontSize,
-  maxLabelHeight,
 }: {
   widthPerTick: number;
   axisFontSize: number;
-  maxLabelHeight: number;
 }): TickRotationConfig => {
   const shouldRotate =
     widthPerTick <
@@ -29,16 +25,9 @@ export const getTickRotationConfig = ({
   if (shouldRotate) {
     const characterWidth =
       axisFontSize * COMMON_CHART_CONSTANTS.ROTATED_LABEL_CHARACTER_WIDTH_RATIO;
-    const rotatedLabelHeightBudget = Math.max(
-      MIN_CALCULATED_LENGTH,
-      maxLabelHeight - axisFontSize * Math.cos(TICK_ROTATION_ANGLE_RAD),
-    );
     const calculatedLength = Math.max(
-      MIN_CALCULATED_LENGTH,
-      Math.floor(
-        rotatedLabelHeightBudget /
-          (characterWidth * Math.sin(TICK_ROTATION_ANGLE_RAD)),
-      ),
+      COMMON_CHART_CONSTANTS.ROTATED_TICK_MINIMUM_NUMBER_OF_DISPLAYED_CHARACTERS,
+      Math.floor(widthPerTick / characterWidth),
     );
 
     return {

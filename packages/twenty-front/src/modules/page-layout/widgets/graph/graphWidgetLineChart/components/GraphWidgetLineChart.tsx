@@ -168,7 +168,6 @@ export const GraphWidgetLineChart = ({
     valueDomain,
   } = getLineChartLayout({
     axisTheme: chartTheme.axis,
-    fontFamily: theme.font.family,
     chartWidth,
     data,
     xAxisLabel,

@@ -171,7 +171,6 @@ export const GraphWidgetBarChart = ({
     valueDomain,
   } = getBarChartLayout({
     axisTheme: chartTheme.axis,
-    fontFamily: theme.font.family,
     chartWidth,
     chartHeight,
     data,

@@ -20,7 +20,6 @@ import { BarChartLayout } from '~/generated/graphql';
 
 type GetBarChartLayoutParams = {
   axisTheme: ChartAxisTheme;
-  fontFamily?: string;
   chartWidth: number;
   chartHeight: number;
   data: BarDatum[];
@@ -84,14 +83,9 @@ const resolveMarginInputs = ({
   const leftTickLabels =
     layout === BarChartLayout.VERTICAL
       ? tickResult.tickValues.map((value) =>
-          formatValueTick(value, tickConfiguration.maxLeftAxisTickLabelLength),
+          formatGraphValue(value, formatOptions),
         )
-      : tickConfiguration.categoryTickValues.map((value) =>
-          formatCategoryTick(
-            value,
-            tickConfiguration.maxLeftAxisTickLabelLength,
-          ),
-        );
+      : tickConfiguration.categoryTickValues.map((value) => String(value));
 
   return { bottomTickLabels, leftTickLabels };
 };
@@ -124,7 +118,6 @@ const resolveAxisBottomConfiguration = ({
 
 export const getBarChartLayout = ({
   axisTheme,
-  fontFamily,
   chartWidth,
   chartHeight,
   data,
@@ -142,7 +135,6 @@ export const getBarChartLayout = ({
     computeChartMargins({
       tickFontSize,
       legendFontSize,
-      fontFamily,
       xAxisLabel,
       yAxisLabel,
       initialTickRotation: BAR_CHART_CONSTANTS.NO_ROTATION_ANGLE,
@@ -168,7 +160,6 @@ export const getBarChartLayout = ({
         computeBottomLegendOffsetFromText({
           tickLabels: parameters.marginInputs.bottomTickLabels,
           tickFontSize,
-          fontFamily,
           tickRotation: parameters.tickConfiguration.bottomAxisTickRotation,
         }),
       resolveMarginInputs: (currentTickConfiguration, tickResult) =>

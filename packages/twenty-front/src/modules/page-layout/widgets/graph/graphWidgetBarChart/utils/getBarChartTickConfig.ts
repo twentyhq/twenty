@@ -1,9 +1,8 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
-import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateWidthPerTick';
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
 import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
-import { computeMaxLabelLengthForMargin } from '@/page-layout/widgets/graph/utils/computeMaxLabelLengthForMargin';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
+import { computeMaxLabelLengthForMargin } from '@/page-layout/widgets/graph/utils/computeMaxLabelLengthForMargin';
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
 import { type BarDatum } from '@nivo/bar';
 import { BarChartLayout } from '~/generated/graphql';
@@ -60,25 +59,18 @@ export const getBarChartTickConfig = ({
     }),
   );
 
-  const widthPerTick = calculateWidthPerTick({
-    layout,
-    availableWidth,
-    categoryTickCount: categoryTickValues.length,
-    valueTickCount: numberOfValueTicks,
-  });
-
-  const actualDataPointCount = data.length;
-  const widthPerDataPoint =
-    layout === BarChartLayout.VERTICAL &&
-    actualDataPointCount > 0 &&
-    availableWidth > 0
-      ? availableWidth / actualDataPointCount
-      : widthPerTick;
+  const bottomTickCount =
+    layout === BarChartLayout.VERTICAL
+      ? categoryTickValues.length
+      : numberOfValueTicks;
+  const widthPerBottomTick =
+    bottomTickCount > 0 && availableWidth > 0
+      ? availableWidth / bottomTickCount
+      : 0;
 
   const tickRotationConfig = getTickRotationConfig({
-    widthPerTick: widthPerDataPoint,
+    widthPerTick: widthPerBottomTick,
     axisFontSize,
-    maxLabelHeight: margins.bottom,
   });
 
   const maxLeftAxisTickLabelLength = computeMaxLabelLengthForMargin({

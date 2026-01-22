@@ -15,7 +15,6 @@ import {
 
 type GetLineChartLayoutParams = {
   axisTheme: ChartAxisTheme;
-  fontFamily?: string;
   chartWidth: number;
   data: LineChartSeriesWithColor[];
   xAxisLabel?: string;
@@ -70,7 +69,6 @@ const resolveAxisBottomConfiguration = ({
 
 export const getLineChartLayout = ({
   axisTheme,
-  fontFamily,
   chartWidth,
   data,
   xAxisLabel,
@@ -89,7 +87,6 @@ export const getLineChartLayout = ({
   } = computeChartMargins({
     tickFontSize,
     legendFontSize,
-    fontFamily,
     xAxisLabel,
     yAxisLabel,
     initialTickRotation: LINE_CHART_CONSTANTS.NO_ROTATION_ANGLE,
@@ -100,7 +97,6 @@ export const getLineChartLayout = ({
         data,
         marginLeft: currentMargins.left,
         marginRight: currentMargins.right,
-        marginBottom: currentMargins.bottom,
         axisFontSize: tickFontSize,
       }),
     computeValueTickValues: () =>
@@ -115,7 +111,6 @@ export const getLineChartLayout = ({
       computeBottomLegendOffsetFromText({
         tickLabels: parameters.marginInputs.bottomTickLabels,
         tickFontSize,
-        fontFamily,
         tickRotation: parameters.tickConfiguration.config.tickRotation,
       }),
     resolveMarginInputs: (tickConfiguration, tickResult) => ({

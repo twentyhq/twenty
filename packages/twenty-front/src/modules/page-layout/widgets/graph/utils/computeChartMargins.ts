@@ -9,7 +9,6 @@ type ChartMarginInputs = {
 type ComputeChartMarginsParams<TTickConfig, TValueTickResult> = {
   tickFontSize: number;
   legendFontSize?: number;
-  fontFamily?: string;
   xAxisLabel?: string;
   yAxisLabel?: string;
   initialTickRotation: number;
@@ -36,7 +35,6 @@ type ComputeChartMarginsResult<TTickConfig, TValueTickResult> = {
 export const computeChartMargins = <TTickConfig, TValueTickResult>({
   tickFontSize,
   legendFontSize,
-  fontFamily,
   xAxisLabel,
   yAxisLabel,
   initialTickRotation,
@@ -52,7 +50,6 @@ export const computeChartMargins = <TTickConfig, TValueTickResult>({
   const provisionalMargins = getChartMarginsFromText({
     tickFontSize,
     legendFontSize,
-    fontFamily,
     xAxisLabel,
     yAxisLabel,
     tickRotation: initialTickRotation,
@@ -77,7 +74,6 @@ export const computeChartMargins = <TTickConfig, TValueTickResult>({
   const computedMargins = getChartMarginsFromText({
     tickFontSize,
     legendFontSize,
-    fontFamily,
     bottomTickLabels: provisionalMarginInputs.bottomTickLabels,
     leftTickLabels: provisionalMarginInputs.leftTickLabels,
     xAxisLabel,
@@ -100,7 +96,6 @@ export const computeChartMargins = <TTickConfig, TValueTickResult>({
   const margins = getChartMarginsFromText({
     tickFontSize,
     legendFontSize,
-    fontFamily,
     bottomTickLabels: marginInputs.bottomTickLabels,
     leftTickLabels: marginInputs.leftTickLabels,
     xAxisLabel,
