@@ -10,8 +10,11 @@ import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import { type ApplicationManifest } from 'twenty-shared/application';
+import { FileFolder } from 'twenty-shared/types';
 
 const initLogger = createLogger('init');
+const functionsLogger = createLogger('functions-watch');
+const frontComponentsLogger = createLogger('front-components-watch');
 
 export type AppDevOptions = {
   appPath?: string;
@@ -153,16 +156,22 @@ export class AppDevCommand {
       sourcePaths,
       uploadConfig: manifest
         ? {
+            appPath: this.appPath,
             apiService: this.apiService,
             applicationUniversalIdentifier:
               manifest.application.universalIdentifier,
+            fileFolder: FileFolder.BuiltFunction,
+            onFileUploaded: (builtPath, success) => {
+              this.markFileAsUploaded('function', builtPath, success);
+            },
+            onUploadSuccess: (builtPath) =>
+              functionsLogger.success(`☁️ Uploaded ${builtPath}`),
+            onUploadError: (builtPath, error) =>
+              functionsLogger.error(`Failed to upload ${builtPath} -- ${error}`),
           }
         : undefined,
       onFileBuilt: (builtPath, checksum) => {
         this.updateFileStatus('function', builtPath, checksum);
-      },
-      onFileUploaded: (builtPath, success) => {
-        this.markFileAsUploaded('function', builtPath, success);
       },
     });
 
@@ -179,16 +188,24 @@ export class AppDevCommand {
       sourcePaths,
       uploadConfig: manifest
         ? {
+            appPath: this.appPath,
             apiService: this.apiService,
             applicationUniversalIdentifier:
               manifest.application.universalIdentifier,
+            fileFolder: FileFolder.BuiltFrontComponent,
+            onFileUploaded: (builtPath, success) => {
+              this.markFileAsUploaded('frontComponent', builtPath, success);
+            },
+            onUploadSuccess: (builtPath) =>
+              frontComponentsLogger.success(`☁️ Uploaded ${builtPath}`),
+            onUploadError: (builtPath, error) =>
+              frontComponentsLogger.error(
+                `Failed to upload ${builtPath} -- ${error}`,
+              ),
           }
         : undefined,
       onFileBuilt: (builtPath, checksum) => {
         this.updateFileStatus('frontComponent', builtPath, checksum);
-      },
-      onFileUploaded: (builtPath, success) => {
-        this.markFileAsUploaded('frontComponent', builtPath, success);
       },
     });
 

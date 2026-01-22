@@ -1,4 +1,5 @@
 import { type ApiService } from '@/cli/utilities/api/services/api.service';
+import { type FileFolder } from 'twenty-shared/types';
 
 export interface RestartableWatcher {
   restart(sourcePaths: string[]): Promise<void>;
@@ -18,8 +19,13 @@ export type OnFileUploadedCallback = (
 ) => void | Promise<void>;
 
 export type UploadConfig = {
+  appPath: string;
   apiService: ApiService;
   applicationUniversalIdentifier: string;
+  fileFolder: FileFolder;
+  onFileUploaded?: OnFileUploadedCallback;
+  onUploadSuccess?: (builtPath: string) => void;
+  onUploadError?: (builtPath: string, error: unknown) => void;
 };
 
 export type RestartableWatcherOptions = {
@@ -28,5 +34,4 @@ export type RestartableWatcherOptions = {
   watch?: boolean;
   onFileBuilt?: OnFileBuiltCallback;
   uploadConfig?: UploadConfig;
-  onFileUploaded?: OnFileUploadedCallback;
 };

@@ -12,6 +12,8 @@ import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-w
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 
 const initLogger = createLogger('init');
+const functionsLogger = createLogger('functions-watch');
+const frontComponentsLogger = createLogger('front-components-watch');
 
 export type AppBuildOptions = {
   appPath?: string;

@@ -2,20 +2,24 @@ import crypto from 'crypto';
 import type * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { type OnFileBuiltCallback } from './restartable-watcher.interface';
+import { OUTPUT_DIR } from './constants';
+import {
+  type OnFileBuiltCallback,
+  type UploadConfig,
+} from './restartable-watcher.interface';
 
 export type ProcessEsbuildResultParams = {
   result: esbuild.BuildResult;
   outputDir: string;
   builtDir: string;
   lastChecksums: Map<string, string>;
+  uploadConfig?: UploadConfig;
   onFileBuilt?: OnFileBuiltCallback;
   onSuccess: (relativePath: string) => void;
 };
 
 export type ProcessEsbuildResultOutput = {
   hasChanges: boolean;
-  builtFiles: string[];
 };
 
 export const processEsbuildResult = async ({
@@ -23,6 +27,7 @@ export const processEsbuildResult = async ({
   outputDir,
   builtDir,
   lastChecksums,
+  uploadConfig,
   onFileBuilt,
   onSuccess,
 }: ProcessEsbuildResultParams): Promise<ProcessEsbuildResultOutput> => {
@@ -31,7 +36,6 @@ export const processEsbuildResult = async ({
   );
 
   let hasChanges = false;
-  const builtFiles: string[] = [];
 
   for (const outputFile of outputFiles) {
     const absoluteOutputFile = path.resolve(outputFile);
@@ -47,14 +51,31 @@ export const processEsbuildResult = async ({
     }
 
     hasChanges = true;
-    builtFiles.push(builtPath);
     lastChecksums.set(builtPath, checksum);
     onSuccess(relativePath);
 
     if (onFileBuilt) {
       await onFileBuilt(builtPath, checksum);
     }
+
+    if (uploadConfig) {
+      const uploadResult = await uploadConfig.apiService.uploadFile({
+        filePath: path.join(uploadConfig.appPath, OUTPUT_DIR, builtPath),
+        builtHandlerPath: builtPath,
+        fileFolder: uploadConfig.fileFolder,
+        applicationUniversalIdentifier:
+          uploadConfig.applicationUniversalIdentifier,
+      });
+
+      if (uploadResult.success) {
+        uploadConfig.onUploadSuccess?.(builtPath);
+      } else {
+        uploadConfig.onUploadError?.(builtPath, uploadResult.error);
+      }
+
+      await uploadConfig.onFileUploaded?.(builtPath, uploadResult.success);
+    }
   }
 
-  return { hasChanges, builtFiles };
+  return { hasChanges };
 };
