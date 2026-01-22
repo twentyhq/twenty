@@ -63,7 +63,7 @@ export class ServerlessFunctionDTO {
 
   @IsString()
   @Field()
-  handlerPath: string;
+  sourceHandlerPath: string;
 
   @IsString()
   @Field()
