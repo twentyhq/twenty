@@ -162,6 +162,12 @@ export const GraphWidgetBarChart = ({
     [groupMode, orderedKeys, data, indexBy],
   );
 
+  const keyToIndexMap = useMemo(() => {
+    return new Map<string, number>(
+      orderedKeys?.map((key, index) => [key, index]) ?? [],
+    );
+  }, [orderedKeys]);
+
   const calculatedValueRange =
     groupMode === 'stacked'
       ? calculateStackedBarChartValueRange(data, visibleKeys)
@@ -255,7 +261,7 @@ export const GraphWidgetBarChart = ({
 
       const barKey = `${props.bar.data.indexValue}-${props.bar.data.id}`;
       const shouldRoundFreeEnd = shouldRoundFreeEndMap?.get(barKey) ?? true;
-      const seriesIndex = orderedKeys?.indexOf(String(props.bar.data.id)) ?? -1;
+      const seriesIndex = keyToIndexMap.get(String(props.bar.data.id)) ?? -1;
 
       return (
         <CustomBarItem
@@ -268,7 +274,7 @@ export const GraphWidgetBarChart = ({
         />
       );
     },
-    [shouldRoundFreeEndMap, orderedKeys, layout, id],
+    [shouldRoundFreeEndMap, keyToIndexMap, layout, id],
   );
 
   const TotalsLayer = ({
