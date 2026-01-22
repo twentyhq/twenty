@@ -6,7 +6,6 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     userWorkspaceId
     targetRecordId
     targetObjectMetadataId
-    targetRecord
     viewId
     folderId
     name
