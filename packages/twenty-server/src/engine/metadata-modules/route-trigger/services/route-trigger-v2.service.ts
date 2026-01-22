@@ -12,7 +12,7 @@ import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
 } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
-import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
+import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { fromCreateRouteTriggerInputToFlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/utils/from-create-route-trigger-input-to-flat-route-trigger.util';
 import { fromUpdateRouteTriggerInputToFlatRouteTriggerToUpdateOrThrow } from 'src/engine/metadata-modules/route-trigger/utils/from-update-route-trigger-input-to-flat-route-trigger-to-update-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -34,7 +34,7 @@ export class RouteTriggerV2Service {
      * when interacting with another application than workspace custom one
      * */
     applicationId?: string,
-  ) {
+  ): Promise<FlatRouteTrigger> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -89,7 +89,7 @@ export class RouteTriggerV2Service {
   async updateOne(
     routeTriggerInput: UpdateRouteTriggerInput,
     workspaceId: string,
-  ) {
+  ): Promise<FlatRouteTrigger> {
     const { flatRouteTriggerMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {

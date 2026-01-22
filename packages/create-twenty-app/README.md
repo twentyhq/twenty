@@ -28,6 +28,10 @@ Create Twenty App is the official scaffolding CLI for building apps on top of [T
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
+# If you don't use yarn@4
+corepack enable
+yarn install
+
 # Get Help
 yarn run help
 
@@ -35,7 +39,7 @@ yarn run help
 yarn auth:login
 
 # Add a new entity to your application (guided)
-yarn app:add
+yarn entity:add
 
 # Generate a typed Twenty client and workspace entity types
 yarn app:generate
@@ -47,7 +51,7 @@ yarn app:dev
 yarn app:sync
 
 # Watch your application's functions logs
-yarn app:logs
+yarn function:logs
 
 # Uninstall the application from the current workspace
 yarn app:uninstall
@@ -60,7 +64,7 @@ yarn app:uninstall
 - Example placeholders to help you add entities, actions, and sync logic
 
 ## Next steps
-- Explore the generated project and add your first entity with `yarn app:add`.
+- Explore the generated project and add your first entity with `yarn entity:add`.
 - Keep your types up‑to‑date using `yarn app:generate`.
 - Use `yarn app:dev` while you iterate to see changes instantly in your workspace.
 

@@ -11,9 +11,11 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
     createRowLevelPermissionPredicateInput:
       rawCreateRowLevelPermissionPredicateInput,
     workspaceId,
+    workspaceCustomApplicationId,
   }: {
     createRowLevelPermissionPredicateInput: CreateRowLevelPermissionPredicateInput;
     workspaceId: string;
+    workspaceCustomApplicationId: string;
   }): FlatRowLevelPermissionPredicate => {
     const sanitizedInput = (
       trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties as unknown as (
@@ -67,6 +69,6 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
       workspaceMemberSubFieldName:
         createRowLevelPermissionPredicateInput.workspaceMemberSubFieldName ??
         null,
-      applicationId: null,
+      applicationId: workspaceCustomApplicationId,
     };
   };

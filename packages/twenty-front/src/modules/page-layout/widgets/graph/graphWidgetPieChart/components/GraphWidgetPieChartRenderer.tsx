@@ -2,7 +2,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphPieChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/useGraphPieChartWidgetData';
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { assertPieChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertPieChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { isFilteredViewRedirectionSupported } from '@/page-layout/widgets/graph/utils/isFilteredViewRedirectionSupported';
@@ -66,7 +66,7 @@ export const GraphWidgetPieChartRenderer = () => {
   const canRedirectToFilteredView =
     isFilteredViewRedirectionSupported(groupByField);
 
-  const handleSliceClick = (datum: PieChartDataItem) => {
+  const handleSliceClick = (datum: PieChartDataItemWithColor) => {
     const rawValue = formattedToRawLookup.get(datum.id) ?? null;
 
     const drilldownQueryParams = buildChartDrilldownQueryParams({

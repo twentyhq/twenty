@@ -70,7 +70,7 @@ export class WorkspaceMigrationViewFilterActionsBuilderService extends Workspace
       action: {
         type: 'delete',
         metadataName: 'viewFilter',
-        entityId: flatViewFilterToValidate.id,
+        universalIdentifier: flatViewFilterToValidate.universalIdentifier,
       },
     };
   }

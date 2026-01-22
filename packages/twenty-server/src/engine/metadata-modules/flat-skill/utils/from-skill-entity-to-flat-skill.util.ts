@@ -17,7 +17,7 @@ export const fromSkillEntityToFlatSkill = (
     workspaceId: skillEntity.workspaceId,
     isCustom: skillEntity.isCustom,
     isActive: skillEntity.isActive,
-    universalIdentifier: skillEntity.standardId || skillEntity.id,
+    universalIdentifier: skillEntity.universalIdentifier,
     applicationId: skillEntity.applicationId,
   };
 };

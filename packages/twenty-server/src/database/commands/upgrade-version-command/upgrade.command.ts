@@ -26,14 +26,20 @@ import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgr
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
 import { IdentifyAgentMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-agent-metadata.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
+import { IdentifyIndexMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-index-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
+import { IdentifyRoleMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-role-metadata.command';
 import { IdentifyViewFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-field-metadata.command';
 import { IdentifyViewFilterMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-filter-metadata.command';
+import { IdentifyRemainingEntitiesMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-remaining-entities-metadata.command';
 import { IdentifyViewGroupMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-group-metadata.command';
 import { IdentifyViewMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-metadata.command';
 import { MakeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-agent-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
+import { MakeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-index-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-object-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
+import { MakeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-remaining-entities-universal-identifier-and-application-id-not-nullable-migration.command';
+import { MakeRoleUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-role-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-field-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-filter-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewGroupUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-group-universal-identifier-and-application-id-not-nullable-migration.command';
@@ -83,7 +89,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillStandardPageLayoutsCommand: BackfillStandardPageLayoutsCommand,
     protected readonly identifyAgentMetadataCommand: IdentifyAgentMetadataCommand,
     protected readonly identifyFieldMetadataCommand: IdentifyFieldMetadataCommand,
+    protected readonly identifyIndexMetadataCommand: IdentifyIndexMetadataCommand,
     protected readonly identifyObjectMetadataCommand: IdentifyObjectMetadataCommand,
+    protected readonly identifyRoleMetadataCommand: IdentifyRoleMetadataCommand,
     protected readonly identifyViewMetadataCommand: IdentifyViewMetadataCommand,
     protected readonly identifyViewFieldMetadataCommand: IdentifyViewFieldMetadataCommand,
     protected readonly identifyViewFilterMetadataCommand: IdentifyViewFilterMetadataCommand,
@@ -91,10 +99,14 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly identifyViewGroupMetadataCommand: IdentifyViewGroupMetadataCommand,
     protected readonly makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    protected readonly makeRoleUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeRoleUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeViewGroupUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewGroupUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    protected readonly makeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    protected readonly identifyRemainingEntitiesMetadataCommand: IdentifyRemainingEntitiesMetadataCommand,
+    protected readonly makeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ) {
     super(
       workspaceRepository,
@@ -135,16 +147,20 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.identifyAgentMetadataCommand,
       this.identifyFieldMetadataCommand,
       this.identifyObjectMetadataCommand,
+      this.identifyRoleMetadataCommand,
       this.identifyViewMetadataCommand,
       this.identifyViewFieldMetadataCommand,
       this.identifyViewFilterMetadataCommand,
       this.identifyViewGroupMetadataCommand,
+      this.identifyIndexMetadataCommand,
       this
         .makeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this
         .makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this
         .makeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+      this
+        .makeRoleUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this
         .makeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this
@@ -153,6 +169,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         .makeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this
         .makeViewGroupUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+      this
+        .makeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+      this.identifyRemainingEntitiesMetadataCommand,
+      this
+        .makeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     ];
 
     this.allCommands = {

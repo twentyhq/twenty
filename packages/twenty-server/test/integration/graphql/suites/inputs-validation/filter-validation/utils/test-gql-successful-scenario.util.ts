@@ -7,11 +7,19 @@ export const testGqlSuccessfulScenario = async (
   objectMetadataPluralName: string,
   filter: any,
   validateFilter: (record: Record<string, any>) => boolean,
+  withFilesField: boolean = false,
 ) => {
   const graphqlOperation = findManyOperationFactory({
     objectMetadataSingularName: objectMetadataSingularName,
     objectMetadataPluralName: objectMetadataPluralName,
-    gqlFields: TEST_OBJECT_GQL_FIELDS,
+    gqlFields:
+      TEST_OBJECT_GQL_FIELDS +
+      (withFilesField
+        ? ` filesField {
+      fileId
+      label
+  }`
+        : ''),
     filter,
   });
 

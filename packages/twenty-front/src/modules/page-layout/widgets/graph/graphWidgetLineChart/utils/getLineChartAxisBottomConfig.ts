@@ -1,6 +1,6 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
-import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeriesWithColor';
 import { computeLineChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/computeLineChartCategoryTickValues';
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
 import { isNonEmptyArray } from '@sniptt/guards';
@@ -23,7 +23,7 @@ export type LineChartAxisBottomResult = {
 export const getLineChartAxisBottomConfig = (
   xAxisLabel?: string,
   width?: number,
-  data?: LineChartSeries[],
+  data?: LineChartSeriesWithColor[],
   marginLeft?: number,
 ): LineChartAxisBottomResult => {
   const effectiveMarginLeft =

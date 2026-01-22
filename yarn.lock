@@ -23524,16 +23524,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.0":
-  version: 29.5.14
-  resolution: "@types/jest@npm:29.5.14"
-  dependencies:
-    expect: "npm:^29.0.0"
-    pretty-format: "npm:^29.0.0"
-  checksum: 10c0/18e0712d818890db8a8dab3d91e9ea9f7f19e3f83c2e50b312f557017dc81466207a71f3ed79cf4428e813ba939954fa26ffa0a9a7f153181ba174581b1c2aed
-  languageName: node
-  linkType: hard
-
 "@types/jest@npm:^30.0.0":
   version: 30.0.0
   resolution: "@types/jest@npm:30.0.0"
@@ -23693,15 +23683,6 @@ __metadata:
   dependencies:
     "@types/lodash": "npm:*"
   checksum: 10c0/d6c42c800624b75b079ff7862d258d7c8236837f8485a4fe9f92e5e7d3e9ccaef2eb202e24e8f04d209ad5573c85edc7871d0cecc831454a501d594b11f1311b
-  languageName: node
-  linkType: hard
-
-"@types/lodash.capitalize@npm:^4":
-  version: 4.2.9
-  resolution: "@types/lodash.capitalize@npm:4.2.9"
-  dependencies:
-    "@types/lodash": "npm:*"
-  checksum: 10c0/4a4bc23bc82a8a0952bf75712cea34cd9e6eb15ef77a58352d19f387be50cdea0b6f2b21e7f0d87c1623bfd42b8d4fd2384478901702b146f016f4c7c11e1abb
   languageName: node
   linkType: hard
 
@@ -24392,6 +24373,15 @@ __metadata:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/fe455f805c5da13b89964c3d68060cebd43e73ec15001a68b34634604a78140e6fc202f3f61679b9d809dde6d7a7c2cb3ed51e0fd1462557911db09879b55114
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^19.0.2":
+  version: 19.2.8
+  resolution: "@types/react@npm:19.2.8"
+  dependencies:
+    csstype: "npm:^3.2.2"
+  checksum: 10c0/832834998c4ee971fca72ecf1eb95dc924ad3931a2112c687a4dae498aabd115c5fa4db09186853e34a646226b0223808c8f867df03d17601168f9cf119448de
   languageName: node
   linkType: hard
 
@@ -31558,6 +31548,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"csstype@npm:^3.2.2":
+  version: 3.2.3
+  resolution: "csstype@npm:3.2.3"
+  checksum: 10c0/cd29c51e70fa822f1cecd8641a1445bed7063697469d35633b516e60fe8c1bde04b08f6c5b6022136bb669b64c63d4173af54864510fbb4ee23281801841a3ce
+  languageName: node
+  linkType: hard
+
 "cva@npm:1.0.0-beta.2":
   version: 1.0.0-beta.2
   resolution: "cva@npm:1.0.0-beta.2"
@@ -35248,7 +35245,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expect@npm:^29.0.0, expect@npm:^29.7.0":
+"expect@npm:^29.7.0":
   version: 29.7.0
   resolution: "expect@npm:29.7.0"
   dependencies:
@@ -41759,7 +41756,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:29.7.0, jest@npm:^29.5.0":
+"jest@npm:29.7.0":
   version: 29.7.0
   resolution: "jest@npm:29.7.0"
   dependencies:
@@ -41830,15 +41827,6 @@ __metadata:
   bin:
     jiti: bin/jiti.js
   checksum: 10c0/77b61989c758ff32407cdae8ddc77f85e18e1a13fc4977110dbd2e05fc761842f5f71bce684d9a01316e1c4263971315a111385759951080bbfe17cbb5de8f7a
-  languageName: node
-  linkType: hard
-
-"jiti@npm:^2.0.0":
-  version: 2.6.1
-  resolution: "jiti@npm:2.6.1"
-  bin:
-    jiti: lib/jiti-cli.mjs
-  checksum: 10c0/79b2e96a8e623f66c1b703b98ec1b8be4500e1d217e09b09e343471bbb9c105381b83edbb979d01cef18318cc45ce6e153571b6c83122170eefa531c64b6789b
   languageName: node
   linkType: hard
 
@@ -42988,13 +42976,6 @@ __metadata:
   version: 4.3.0
   resolution: "lodash.camelcase@npm:4.3.0"
   checksum: 10c0/fcba15d21a458076dd309fce6b1b4bf611d84a0ec252cb92447c948c533ac250b95d2e00955801ebc367e5af5ed288b996d75d37d2035260a937008e14eaf432
-  languageName: node
-  linkType: hard
-
-"lodash.capitalize@npm:^4.2.1":
-  version: 4.2.1
-  resolution: "lodash.capitalize@npm:4.2.1"
-  checksum: 10c0/b289326497c2e24d6b8afa2af2ca4e068ef6ef007ade36bfb6f70af77ce10ea3f090eeee947d5fdcf2db4bcfa4703c8c10a5857a2b39e308bddfd1d11ad35970
   languageName: node
   linkType: hard
 
@@ -49902,7 +49883,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^29.0.0, pretty-format@npm:^29.7.0":
+"pretty-format@npm:^29.7.0":
   version: 29.7.0
   resolution: "pretty-format@npm:29.7.0"
   dependencies:
@@ -56985,30 +56966,25 @@ __metadata:
     "@types/archiver": "npm:^6.0.0"
     "@types/fs-extra": "npm:^11.0.0"
     "@types/inquirer": "npm:^9.0.0"
-    "@types/jest": "npm:^29.5.0"
     "@types/lodash.camelcase": "npm:^4.3.7"
-    "@types/lodash.capitalize": "npm:^4"
     "@types/lodash.kebabcase": "npm:^4.1.7"
-    "@types/lodash.startcase": "npm:^4"
     "@types/node": "npm:^24.0.0"
+    "@types/react": "npm:^19.0.2"
     archiver: "npm:^7.0.1"
     axios: "npm:^1.6.0"
     chalk: "npm:^5.3.0"
     chokidar: "npm:^4.0.0"
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.4.0"
+    esbuild: "npm:^0.25.0"
     fast-glob: "npm:^3.3.0"
     fs-extra: "npm:^11.2.0"
     graphql: "npm:^16.8.1"
     graphql-sse: "npm:^2.5.4"
     inquirer: "npm:^10.0.0"
-    jest: "npm:^29.5.0"
-    jiti: "npm:^2.0.0"
     jsonc-parser: "npm:^3.2.0"
     lodash.camelcase: "npm:^4.3.0"
-    lodash.capitalize: "npm:^4.2.1"
     lodash.kebabcase: "npm:^4.1.1"
-    lodash.startcase: "npm:^4.4.0"
     tsx: "npm:^4.7.0"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
@@ -57214,6 +57190,7 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:0.32.6"
     stripe: "npm:19.3.1"
+    temporal-polyfill: "npm:^0.3.0"
     transliteration: "npm:2.3.5"
     tsconfig-paths: "npm:^4.2.0"
     tsdav: "npm:^2.1.5"

@@ -4,9 +4,9 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, IsNull, Not, type Repository } from 'typeorm';
+import { FileFolder } from 'twenty-shared/types';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';

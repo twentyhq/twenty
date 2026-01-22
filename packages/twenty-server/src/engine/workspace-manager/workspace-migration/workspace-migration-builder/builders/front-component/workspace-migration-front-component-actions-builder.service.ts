@@ -74,7 +74,7 @@ export class WorkspaceMigrationFrontComponentActionsBuilderService extends Works
       action: {
         type: 'delete',
         metadataName: 'frontComponent',
-        entityId: flatFrontComponentToValidate.id,
+        universalIdentifier: flatFrontComponentToValidate.universalIdentifier,
       },
     };
   }

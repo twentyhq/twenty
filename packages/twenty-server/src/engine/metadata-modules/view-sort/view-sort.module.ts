@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
 import { ViewSortController } from 'src/engine/metadata-modules/view-sort/controllers/view-sort.controller';
@@ -16,6 +17,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     PermissionsModule,
     WorkspaceCacheStorageModule,
     ViewPermissionsModule,
+    ApplicationModule,
   ],
   controllers: [ViewSortController],
   providers: [ViewSortService, ViewSortResolver],

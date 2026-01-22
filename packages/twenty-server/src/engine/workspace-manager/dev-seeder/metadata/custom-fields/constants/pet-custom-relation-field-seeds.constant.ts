@@ -8,14 +8,14 @@ export const PET_CUSTOM_RELATION_FIELD_SEEDS: (FieldMetadataSeed & {
 })[] = [
   {
     type: FieldMetadataType.MORPH_RELATION,
-    label: 'Owner of the Pet (rocket or survey)',
-    name: 'owner',
+    label: 'Polymorphic Owner',
+    name: 'polymorphicOwner',
     icon: 'IconRelationManyToOne',
     morphRelationsCreationPayload: [
       {
         type: RelationType.MANY_TO_ONE,
         targetObjectMetadataId: 'to-be-resolved-later',
-        targetFieldLabel: 'Owned by',
+        targetFieldLabel: 'Owned Pets',
         targetFieldIcon: 'IconRelationOneToMany',
       },
     ],
@@ -26,14 +26,14 @@ export const PET_CUSTOM_RELATION_FIELD_SEEDS: (FieldMetadataSeed & {
   },
   {
     type: FieldMetadataType.MORPH_RELATION,
-    label: 'Helper of the Pet (rocket or survey)',
-    name: 'helper',
+    label: 'Polymorphic Helper',
+    name: 'polymorphicHelper',
     icon: 'IconRelationOneToMany',
     morphRelationsCreationPayload: [
       {
         type: RelationType.ONE_TO_MANY,
         targetObjectMetadataId: 'to-be-resolved-later',
-        targetFieldLabel: 'Helped by',
+        targetFieldLabel: 'Helped Pets',
         targetFieldIcon: 'IconRelationOneToMany',
       },
     ],

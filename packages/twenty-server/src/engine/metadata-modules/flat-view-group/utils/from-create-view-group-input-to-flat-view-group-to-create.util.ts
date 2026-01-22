@@ -29,8 +29,7 @@ export const fromCreateViewGroupInputToFlatViewGroupToCreate = ({
     createdAt: createdAt,
     updatedAt: createdAt,
     deletedAt: null,
-    universalIdentifier:
-      createViewGroupInput.universalIdentifier ?? viewGroupId,
+    universalIdentifier: createViewGroupInput.universalIdentifier ?? v4(),
     isVisible: createViewGroupInput.isVisible ?? true,
     fieldValue: createViewGroupInput.fieldValue,
     position: createViewGroupInput.position ?? 0,

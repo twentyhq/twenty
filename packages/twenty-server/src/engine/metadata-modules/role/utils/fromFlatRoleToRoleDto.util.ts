@@ -35,6 +35,6 @@ export const fromFlatRoleToRoleDto = ({
     description: description ?? undefined,
     icon: icon ?? undefined,
     standardId: standardId ?? undefined,
-    universalIdentifier: universalIdentifier ?? undefined,
+    universalIdentifier,
   };
 };
