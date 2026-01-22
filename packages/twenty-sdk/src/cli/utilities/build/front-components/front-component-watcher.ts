@@ -132,11 +132,9 @@ export class FrontComponentsWatcher implements RestartableWatcher {
                 return;
               }
 
-              // Check if inputs changed to detect spurious rebuilds
               const inputs = Object.keys(result.metafile?.inputs ?? {}).sort();
               const inputsSignature = inputs.join(',');
 
-              // Skip logging for spurious rebuilds (identical inputs)
               if (watcher.lastInputsSignature === inputsSignature) {
                 return;
               }
