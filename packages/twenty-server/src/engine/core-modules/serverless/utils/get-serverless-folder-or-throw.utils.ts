@@ -12,11 +12,14 @@ import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverl
 export const getServerlessFolderOrThrow = ({
   flatServerlessFunction,
   version,
-  toDelete = false,
+  fileFolder = FileFolder.ServerlessFunction,
 }: {
   flatServerlessFunction: FlatServerlessFunction;
   version?: 'draft' | 'latest' | (string & NonNullable<unknown>);
-  toDelete?: boolean;
+  fileFolder?:
+    | FileFolder.ServerlessFunction
+    | FileFolder.ServerlessFunctionToDelete
+    | FileFolder.BuiltFunction;
 }) => {
   if (
     version === 'latest' &&
@@ -33,9 +36,7 @@ export const getServerlessFolderOrThrow = ({
 
   return join(
     'workspace-' + flatServerlessFunction.workspaceId,
-    toDelete
-      ? FileFolder.ServerlessFunctionToDelete
-      : FileFolder.ServerlessFunction,
+    fileFolder,
     flatServerlessFunction.id,
     computedVersion || '',
   );

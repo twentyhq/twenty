@@ -2,6 +2,8 @@ import { promises as fs } from 'fs';
 import { spawn } from 'node:child_process';
 import { join } from 'path';
 
+import { FileFolder } from 'twenty-shared/types';
+
 import {
   type ServerlessDriver,
   type ServerlessExecuteResult,
@@ -12,11 +14,10 @@ import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/dri
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
-import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/get-serverless-folder-or-throw.utils';
 import { type FlatServerlessFunctionLayer } from 'src/engine/metadata-modules/serverless-function-layer/types/flat-serverless-function-layer.type';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { DEFAULT_BUILT_HANDLER_PATH } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -77,9 +78,10 @@ export class LocalDriver implements ServerlessDriver {
 
     const startTime = Date.now();
 
-    const folderPath = getServerlessFolderOrThrow({
+    const builtHandlerFolderPath = getServerlessFolderOrThrow({
       flatServerlessFunction,
       version,
+      fileFolder: FileFolder.BuiltFunction,
     });
 
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
@@ -87,19 +89,14 @@ export class LocalDriver implements ServerlessDriver {
     try {
       const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
-      const builtBundleFilePath = join(
-        sourceTemporaryDir,
-        DEFAULT_BUILT_HANDLER_PATH,
-      );
-
       await this.fileStorageService.download({
         from: {
-          folderPath,
-          filename: DEFAULT_BUILT_HANDLER_PATH,
+          folderPath: builtHandlerFolderPath,
+          filename: flatServerlessFunction.builtHandlerPath,
         },
         to: {
           folderPath: sourceTemporaryDir,
-          filename: DEFAULT_BUILT_HANDLER_PATH,
+          filename: flatServerlessFunction.builtHandlerPath,
         },
       });
 
@@ -152,6 +149,11 @@ export class LocalDriver implements ServerlessDriver {
       });
 
       try {
+        const builtBundleFilePath = join(
+          sourceTemporaryDir,
+          flatServerlessFunction.builtHandlerPath,
+        );
+
         const runnerPath = await this.writeBootstrapRunner({
           dir: sourceTemporaryDir,
           builtFileAbsPath: builtBundleFilePath,

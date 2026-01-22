@@ -8,7 +8,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getSeedProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-seed-project-files';
-import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/get-serverless-folder-or-throw.utils';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { CreateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
@@ -56,21 +56,21 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
         serverlessFunction.code,
         draftFileFolder,
       );
-      await buildAndUploadServerlessFunction({
-        flatServerlessFunction: serverlessFunction,
-        version: 'draft',
-        fileStorageService: this.fileStorageService,
-      });
     } else {
       for (const file of await getSeedProjectFiles) {
         await this.fileStorageService.write({
           file: file.content,
           name: file.name,
-          mimeType: undefined,
+          mimeType: 'application/typescript',
           folder: join(draftFileFolder, file.path),
         });
       }
     }
+    await buildAndUploadServerlessFunction({
+      flatServerlessFunction: serverlessFunction,
+      version: 'draft',
+      fileStorageService: this.fileStorageService,
+    });
   }
 
   async rollbackForMetadata(

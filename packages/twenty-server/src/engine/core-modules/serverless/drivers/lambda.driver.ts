@@ -20,6 +20,7 @@ import {
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { isDefined } from 'twenty-shared/utils';
+import { FileFolder } from 'twenty-shared/types';
 
 import {
   type ServerlessDriver,
@@ -34,13 +35,10 @@ import {
   LambdaBuildDirectoryManager,
   NODE_LAYER_SUBFOLDER,
 } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
-import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/get-serverless-folder-or-throw.utils';
 import { type FlatServerlessFunctionLayer } from 'src/engine/metadata-modules/serverless-function-layer/types/flat-serverless-function-layer.type';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
-import {
-  DEFAULT_BUILT_HANDLER_PATH,
-  ServerlessFunctionRuntime,
-} from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { ServerlessFunctionRuntime } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
@@ -342,16 +340,17 @@ export class LambdaDriver implements ServerlessDriver {
 
     const startTime = Date.now();
 
-    const folderPath = getServerlessFolderOrThrow({
+    const builtHandlerFolderPath = getServerlessFolderOrThrow({
       flatServerlessFunction,
       version,
+      fileFolder: FileFolder.BuiltFunction,
     });
 
     const compiledCode = (
       await streamToBuffer(
         await this.fileStorageService.read({
-          folderPath,
-          filename: DEFAULT_BUILT_HANDLER_PATH,
+          folderPath: builtHandlerFolderPath,
+          filename: flatServerlessFunction.builtHandlerPath,
         }),
       )
     ).toString('utf-8');
