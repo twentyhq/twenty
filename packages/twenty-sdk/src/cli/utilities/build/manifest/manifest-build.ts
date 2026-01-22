@@ -3,9 +3,10 @@ import { parseJsoncFile } from '@/cli/utilities/file/utils/file-jsonc';
 import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';
 import { relative, sep } from 'path';
-import { type ApplicationManifest } from 'twenty-shared/application';
+import { type ApplicationManifest, type FrontComponentAsset } from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
 import { createLogger } from '../common/logger';
+import { type BuiltAsset } from '../common/restartable-watcher.interface';
 import { applicationEntityBuilder } from './entities/application';
 import { frontComponentEntityBuilder } from './entities/front-component';
 import { functionEntityBuilder } from './entities/function';
@@ -115,6 +116,39 @@ export const updateManifestChecksum = ({
     ...manifest,
     frontComponents: manifest.frontComponents?.map((component, index) =>
       index === componentIndex ? { ...component, builtComponentChecksum: checksum } : component,
+    ),
+  };
+};
+
+export type UpdateManifestAssetsParams = {
+  manifest: ApplicationManifest;
+  builtPath: string;
+  assets: BuiltAsset[];
+};
+
+export const updateManifestAssets = ({
+  manifest,
+  builtPath,
+  assets,
+}: UpdateManifestAssetsParams): ApplicationManifest | null => {
+  const componentIndex = manifest.frontComponents?.findIndex(
+    (c) => c.builtComponentPath === builtPath,
+  ) ?? -1;
+
+  if (componentIndex === -1) {
+    return null;
+  }
+
+  const manifestAssets: FrontComponentAsset[] = assets.map((asset) => ({
+    sourceAssetPath: asset.sourceAssetPath,
+    builtAssetPath: asset.builtAssetPath,
+    builtAssetChecksum: asset.builtAssetChecksum,
+  }));
+
+  return {
+    ...manifest,
+    frontComponents: manifest.frontComponents?.map((component, index) =>
+      index === componentIndex ? { ...component, assets: manifestAssets } : component,
     ),
   };
 };

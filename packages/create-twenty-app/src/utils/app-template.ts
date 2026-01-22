@@ -131,11 +131,24 @@ const createDefaultFrontComponent = async ({
 }) => {
   const universalIdentifier = v4();
 
+  // Create assets directory and a sample logo
+  const assetsDir = join(appDirectory, 'assets');
+  await fs.ensureDir(assetsDir);
+
+  // Create a minimal 1x1 transparent PNG as a placeholder
+  const minimalPng = Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+    'base64',
+  );
+  await fs.writeFile(join(assetsDir, 'logo.png'), minimalPng);
+
   const content = `import { defineFrontComponent } from 'twenty-sdk';
+import logo from 'src/assets/logo.png';
 
 export const HelloWorld = () => {
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <img src={logo} alt="Logo" style={{ width: '32px', height: '32px' }} />
       <h1>Hello, World!</h1>
       <p>This is your first front component.</p>
     </div>

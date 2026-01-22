@@ -43,6 +43,13 @@
       "universalIdentifier": "h0h1h2h3-h4h5-4000-8000-000000000001"
     },
     {
+      "assets": [
+        {
+          "builtAssetChecksum": "[checksum]",
+          "builtAssetPath": "[asset-path]",
+          "sourceAssetPath": "src/assets/test-logo.png"
+        }
+      ],
       "builtComponentPath": "front-components/src/components/test.front-component.mjs",
       "builtComponentChecksum": "[checksum]",
       "componentName": "TestComponent",

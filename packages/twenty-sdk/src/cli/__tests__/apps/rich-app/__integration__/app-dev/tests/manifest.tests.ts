@@ -48,5 +48,24 @@ export const defineManifestTests = (appPath: string): void => {
       expect(manifest?.roles).toHaveLength(2);
       expect(manifest?.objectExtensions).toHaveLength(1);
     });
+
+    it('should include assets for front components with static imports', async () => {
+      const manifest = await fs.readJson(manifestOutputPath);
+
+      // Find the test-component which imports a PNG asset
+      const testComponent = manifest.frontComponents?.find(
+        (component: { name: string }) => component.name === 'test-component',
+      );
+
+      expect(testComponent).toBeDefined();
+      expect(testComponent.assets).toBeDefined();
+      expect(testComponent.assets).toHaveLength(1);
+
+      const asset = testComponent.assets[0];
+      expect(asset.sourceAssetPath).toBe('src/assets/test-logo.png');
+      expect(asset.builtAssetPath).toMatch(/^front-components\/.*\.png$/);
+      expect(asset.builtAssetChecksum).toBeDefined();
+      expect(typeof asset.builtAssetChecksum).toBe('string');
+    });
   });
 };

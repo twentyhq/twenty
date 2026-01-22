@@ -1,9 +1,11 @@
 import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
 import { createLogger } from '@/cli/utilities/build/common/logger';
+import { type BuiltAsset } from '@/cli/utilities/build/common/restartable-watcher.interface';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
 import {
   runManifestBuild,
+  updateManifestAssets,
   updateManifestChecksum,
   type ManifestBuildResult,
 } from '@/cli/utilities/build/manifest/manifest-build';
@@ -84,14 +86,23 @@ export class AppBuildCommand {
       appPath: this.appPath,
       sourcePaths: buildResult.filePaths.frontComponents,
       watch: false,
-      onFileBuilt: (builtPath, checksum) => {
+      onFileBuilt: (builtPath: string, checksum: string, assets: BuiltAsset[]) => {
         if (buildResult.manifest) {
-          const updatedManifest = updateManifestChecksum({
+          let updatedManifest = updateManifestChecksum({
             manifest: buildResult.manifest,
             entityType: 'frontComponent',
             builtPath,
             checksum,
           });
+
+          if (updatedManifest && assets.length > 0) {
+            updatedManifest = updateManifestAssets({
+              manifest: updatedManifest,
+              builtPath,
+              assets,
+            });
+          }
+
           if (updatedManifest) {
             buildResult.manifest = updatedManifest;
           }

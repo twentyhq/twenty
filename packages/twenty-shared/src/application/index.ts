@@ -13,7 +13,10 @@ export type { ApplicationVariables } from './applicationVariablesType';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export type { FieldManifest } from './fieldManifestType';
-export type { FrontComponentManifest } from './frontComponentManifestType';
+export type {
+  FrontComponentAsset,
+  FrontComponentManifest,
+} from './frontComponentManifestType';
 export type { ObjectExtensionManifest } from './objectExtensionManifestType';
 export type { ObjectManifest } from './objectManifestType';
 export type { PackageJson } from './packageJsonType';

@@ -1,7 +1,12 @@
+import { type BuiltAsset } from '@/cli/utilities/build/common/restartable-watcher.interface';
 import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
-import { runManifestBuild, updateManifestChecksum } from '@/cli/utilities/build/manifest/manifest-build';
+import {
+  runManifestBuild,
+  updateManifestChecksum,
+  updateManifestAssets,
+} from '@/cli/utilities/build/manifest/manifest-build';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
@@ -145,8 +150,8 @@ export class AppDevCommand {
     this.frontComponentsWatcher = new FrontComponentsWatcher({
       appPath: this.appPath,
       sourcePaths,
-      onFileBuilt: (builtPath, checksum) => {
-        this.updateFileStatus('frontComponent', builtPath, checksum);
+      onFileBuilt: (builtPath, checksum, assets) => {
+        this.updateFrontComponentFileStatus(builtPath, checksum, assets);
       },
     });
 
@@ -173,6 +178,43 @@ export class AppDevCommand {
     const manifest = this.state.manifest;
     if (manifest) {
       const updatedManifest = updateManifestChecksum({ manifest, entityType, builtPath, checksum });
+      if (updatedManifest) {
+        this.state.manifest = updatedManifest;
+        writeManifestToOutput(this.appPath, updatedManifest);
+      }
+    }
+  }
+
+  private updateFrontComponentFileStatus(
+    builtPath: string,
+    checksum: string,
+    assets: BuiltAsset[],
+  ): void {
+    for (const [_id, status] of this.state.fileStatusMaps.frontComponents) {
+      if (status.builtPath === builtPath) {
+        status.checksum = checksum;
+        status.isUploaded = false;
+        break;
+      }
+    }
+
+    const manifest = this.state.manifest;
+    if (manifest) {
+      let updatedManifest = updateManifestChecksum({
+        manifest,
+        entityType: 'frontComponent',
+        builtPath,
+        checksum,
+      });
+
+      if (updatedManifest && assets.length > 0) {
+        updatedManifest = updateManifestAssets({
+          manifest: updatedManifest,
+          builtPath,
+          assets,
+        });
+      }
+
       if (updatedManifest) {
         this.state.manifest = updatedManifest;
         writeManifestToOutput(this.appPath, updatedManifest);

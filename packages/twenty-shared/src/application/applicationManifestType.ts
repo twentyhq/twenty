@@ -1,8 +1,8 @@
-import {
+import type {
+  Application,
+  ObjectManifest,
   PackageJson,
-  type Application,
-  type ObjectManifest,
-  type ServerlessFunctionManifest,
+  ServerlessFunctionManifest,
 } from '@/application';
 import { type FrontComponentManifest } from '@/application/frontComponentManifestType';
 import { type ObjectExtensionManifest } from '@/application/objectExtensionManifestType';

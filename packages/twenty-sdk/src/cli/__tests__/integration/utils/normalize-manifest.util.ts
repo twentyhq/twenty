@@ -1,6 +1,6 @@
 import { type ApplicationManifest } from 'twenty-shared/application';
 
-// Replace dynamic checksum values with a placeholder for consistent comparisons
+// Replace dynamic checksum values and asset paths with placeholders for consistent comparisons
 export const normalizeManifestForComparison = <
   T extends Partial<ApplicationManifest>,
 >(
@@ -16,5 +16,11 @@ export const normalizeManifestForComparison = <
     builtComponentChecksum: component.builtComponentChecksum
       ? '[checksum]'
       : null,
+    assets: component.assets?.map((asset) => ({
+      ...asset,
+      builtAssetChecksum: asset.builtAssetChecksum ? '[checksum]' : null,
+      // Asset paths include a hash, so normalize them
+      builtAssetPath: asset.builtAssetPath ? '[asset-path]' : null,
+    })),
   })),
 });

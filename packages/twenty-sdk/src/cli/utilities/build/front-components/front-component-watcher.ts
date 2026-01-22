@@ -1,14 +1,16 @@
+import crypto from 'crypto';
 import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
 import { OUTPUT_DIR } from '../common/constants';
 import { createLogger } from '../common/logger';
-import { processEsbuildResult } from '../common/esbuild-result-processor';
+import { processEsbuildResultWithAssets } from '../common/esbuild-result-processor';
 import {
-  type OnFileBuiltCallback,
+  type BuiltAsset,
+  type FrontComponentWatcherOptions,
+  type OnFileBuiltWithAssetsCallback,
   type RestartableWatcher,
-  type RestartableWatcherOptions,
 } from '../common/restartable-watcher.interface';
 import { FRONT_COMPONENTS_DIR } from './constants';
 
@@ -25,6 +27,8 @@ export const FRONT_COMPONENT_EXTERNAL_MODULES: string[] = [
   'twenty-shared/*',
 ];
 
+export const STATIC_ASSET_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.ico'];
+
 export class FrontComponentsWatcher implements RestartableWatcher {
   private appPath: string;
   private componentPaths: string[];
@@ -32,11 +36,11 @@ export class FrontComponentsWatcher implements RestartableWatcher {
   private isRestarting = false;
   private watchMode: boolean;
   private lastChecksums: Map<string, string> = new Map();
-  private onFileBuilt?: OnFileBuiltCallback;
+  private onFileBuilt?: OnFileBuiltWithAssetsCallback;
   private buildCompletePromise: Promise<void> = Promise.resolve();
   private resolveBuildComplete: (() => void) | null = null;
 
-  constructor(options: RestartableWatcherOptions) {
+  constructor(options: FrontComponentWatcherOptions) {
     this.appPath = options.appPath;
     this.componentPaths = options.sourcePaths;
     this.watchMode = options.watch ?? true;
@@ -108,6 +112,13 @@ export class FrontComponentsWatcher implements RestartableWatcher {
 
     const watchMode = this.watchMode;
     const watcher = this;
+    const appPath = this.appPath;
+
+    // Build loader config for static assets
+    const assetLoader: Record<string, esbuild.Loader> = {};
+    for (const ext of STATIC_ASSET_EXTENSIONS) {
+      assetLoader[ext] = 'file';
+    }
 
     this.esBuildContext = await esbuild.context({
       entryPoints,
@@ -122,6 +133,8 @@ export class FrontComponentsWatcher implements RestartableWatcher {
       sourcemap: true,
       metafile: true,
       logLevel: 'silent',
+      loader: assetLoader,
+      assetNames: 'assets/[name]-[hash]',
       plugins: [
         {
           name: 'build-notifications',
@@ -136,13 +149,26 @@ export class FrontComponentsWatcher implements RestartableWatcher {
                   return;
                 }
 
-                const { hasChanges } = await processEsbuildResult({
+                // Extract assets from metafile
+                const assetsMap = await watcher.extractAssetsFromMetafile(
+                  result,
+                  outputDir,
+                  appPath,
+                );
+
+                const { hasChanges } = await processEsbuildResultWithAssets({
                   result,
                   outputDir,
                   builtDir: FRONT_COMPONENTS_DIR,
                   lastChecksums: watcher.lastChecksums,
+                  assetsMap,
                   onFileBuilt: watcher.onFileBuilt,
-                  onSuccess: (relativePath) => logger.success(`✓ Built ${relativePath}`),
+                  onSuccess: (relativePath, assets) => {
+                    logger.success(`✓ Built ${relativePath}`);
+                    if (assets.length > 0) {
+                      logger.log(`   📦 ${assets.length} asset(s)`);
+                    }
+                  },
                 });
 
                 if (hasChanges && watchMode) {
@@ -167,5 +193,87 @@ export class FrontComponentsWatcher implements RestartableWatcher {
     if (this.watchMode) {
       await this.esBuildContext.watch();
     }
+  }
+
+  // Extract assets from esbuild metafile and map them to their entry points
+  private async extractAssetsFromMetafile(
+    result: esbuild.BuildResult,
+    outputDir: string,
+    appPath: string,
+  ): Promise<Map<string, BuiltAsset[]>> {
+    const assetsMap = new Map<string, BuiltAsset[]>();
+
+    if (!result.metafile) {
+      return assetsMap;
+    }
+
+    const outputs = result.metafile.outputs;
+
+    // Find all .mjs outputs (entry points) and their associated assets
+    for (const [outputPath, outputMeta] of Object.entries(outputs)) {
+      if (!outputPath.endsWith('.mjs')) {
+        continue;
+      }
+
+      const absoluteOutputPath = path.resolve(outputPath);
+      const relativePath = path.relative(outputDir, absoluteOutputPath);
+      const builtPath = `${FRONT_COMPONENTS_DIR}/${relativePath}`;
+
+      const assets: BuiltAsset[] = [];
+
+      // Check inputs for this entry point to find asset files
+      for (const inputPath of Object.keys(outputMeta.inputs)) {
+        const isAsset = STATIC_ASSET_EXTENSIONS.some((ext) =>
+          inputPath.toLowerCase().endsWith(ext),
+        );
+
+        if (isAsset) {
+          // Find the corresponding output asset file
+          const assetOutputPath = this.findAssetOutputPath(inputPath, outputs);
+
+          if (assetOutputPath) {
+            const absoluteAssetOutput = path.resolve(assetOutputPath);
+            const assetContent = await fs.readFile(absoluteAssetOutput);
+            const checksum = crypto.createHash('md5').update(assetContent).digest('hex');
+
+            const sourceAssetPath = path.relative(appPath, inputPath);
+            const builtAssetPath = `${FRONT_COMPONENTS_DIR}/${path.relative(outputDir, absoluteAssetOutput)}`;
+
+            assets.push({
+              sourceAssetPath,
+              builtAssetPath,
+              builtAssetChecksum: checksum,
+            });
+          }
+        }
+      }
+
+      if (assets.length > 0) {
+        assetsMap.set(builtPath, assets);
+      }
+    }
+
+    return assetsMap;
+  }
+
+  // Find the output path for a given input asset
+  private findAssetOutputPath(
+    inputPath: string,
+    outputs: esbuild.Metafile['outputs'],
+  ): string | null {
+    for (const [outputPath, outputMeta] of Object.entries(outputs)) {
+      // Asset outputs have a single input that matches the source asset
+      const inputKeys = Object.keys(outputMeta.inputs);
+      if (inputKeys.length === 1 && inputKeys[0] === inputPath) {
+        const isAssetOutput = STATIC_ASSET_EXTENSIONS.some((ext) => {
+          const extWithoutDot = ext.slice(1);
+          return outputPath.includes(`.${extWithoutDot}`);
+        });
+        if (isAssetOutput) {
+          return outputPath;
+        }
+      }
+    }
+    return null;
   }
 }
