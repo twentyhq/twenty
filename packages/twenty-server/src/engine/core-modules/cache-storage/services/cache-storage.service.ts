@@ -245,93 +245,23 @@ export class CacheStorageService {
     return newValue;
   }
 
-  async hSet(
-    key: string,
-    fieldValuePairs: Record<string, string>,
-    ttl?: Milliseconds,
-  ): Promise<void> {
-    const entries = Object.entries(fieldValuePairs);
-
-    if (entries.length === 0) {
-      return;
-    }
-
+  async expire(key: string, ttlMs: Milliseconds): Promise<boolean> {
     if (this.isRedisCache()) {
-      const redisClient = (this.cache as RedisCache).store.client;
-
-      await redisClient.hSet(this.getKey(key), fieldValuePairs);
-
-      if (ttl) {
-        await redisClient.expire(this.getKey(key), ttl / 1000);
-      }
-
-      return;
-    }
-
-    const existing = (await this.get<Record<string, string>>(key)) ?? {};
-    const merged = { ...existing, ...fieldValuePairs };
-
-    await this.set(key, merged, ttl);
-  }
-
-  async hGetAll(key: string): Promise<Record<string, string>> {
-    if (this.isRedisCache()) {
-      return (this.cache as RedisCache).store.client.hGetAll(this.getKey(key));
-    }
-
-    return (await this.get<Record<string, string>>(key)) ?? {};
-  }
-
-  async hDel(key: string, fields: string[]): Promise<number> {
-    if (fields.length === 0) {
-      return 0;
-    }
-
-    if (this.isRedisCache()) {
-      return (this.cache as RedisCache).store.client.hDel(
+      return (this.cache as RedisCache).store.client.expire(
         this.getKey(key),
-        fields,
+        ttlMs / 1000,
       );
     }
 
-    const hash = await this.get<Record<string, string>>(key);
+    const existing = await this.get(key);
 
-    if (!hash) {
-      return 0;
+    if (existing !== undefined) {
+      await this.set(key, existing, ttlMs);
+
+      return true;
     }
 
-    let deletedCount = 0;
-
-    for (const field of fields) {
-      if (field in hash) {
-        delete hash[field];
-        deletedCount++;
-      }
-    }
-
-    await this.set(key, hash);
-
-    return deletedCount;
-  }
-
-  async hPop(key: string, count: number): Promise<Record<string, string>> {
-    if (count <= 0) {
-      return {};
-    }
-
-    const allEntries = await this.hGetAll(key);
-    const entries = Object.entries(allEntries).slice(0, count);
-
-    if (entries.length === 0) {
-      return {};
-    }
-
-    await this.hDel(
-      key,
-      entries.map(([field]) => field),
-    );
-
-    return Object.fromEntries(entries);
+    return false;
   }
 
   private isRedisCache() {
