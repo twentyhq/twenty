@@ -4,13 +4,15 @@ import { Injectable } from '@nestjs/common';
 import DOMPurify from 'dompurify';
 import FileType from 'file-type';
 import sharp from 'sharp';
+import { FileFolder } from 'twenty-shared/types';
 import { v4 } from 'uuid';
-import { type FileFolder } from 'twenty-shared/types';
 
 import { settings } from 'src/engine/constants/settings';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
+import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
 import { getCropSize, getImageBufferFromUrl } from 'src/utils/image';
 
 export type SignedFile = { path: string; token: string };
@@ -68,6 +70,9 @@ export class FileUploadService {
     return file;
   }
 
+  /**
+   * @deprecated Use uploadWorkspaceRecordFile if uploading workspace records-scoped files. Or create your dedicated upload file service.
+   */
   async uploadFile({
     file,
     filename,
@@ -205,5 +210,38 @@ export class FileUploadService {
 
   private getWorkspaceFolderName(workspaceId: string, fileFolder: FileFolder) {
     return `workspace-${workspaceId}/${fileFolder}`;
+  }
+
+  async uploadWorkspaceFieldFile({
+    file,
+    filename,
+    declaredMimeType,
+    workspaceId,
+    applicationId,
+  }: {
+    file: Buffer;
+    filename: string;
+    declaredMimeType: string | undefined;
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<FileEntity> {
+    const { mimeType, ext } = await extractFileInfo({
+      file,
+      declaredMimeType,
+      filename,
+    });
+
+    const fileId = v4();
+    const name = `${fileId}${ext ? `.${ext}` : ''}`;
+
+    return await this.fileStorage.write_v2({
+      file,
+      name,
+      mimeType,
+      folder: FileFolder.TemporaryWorkspaceField,
+      applicationId,
+      workspaceId,
+      fileId,
+    });
   }
 }

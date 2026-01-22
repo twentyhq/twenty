@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -1572,6 +1572,9 @@ export enum FileFolder {
   ServerlessFunction = 'ServerlessFunction',
   ServerlessFunctionToDelete = 'ServerlessFunctionToDelete',
   Source = 'Source',
+  SourceCode = 'SourceCode',
+  TemporaryWorkspaceField = 'TemporaryWorkspaceField',
+  WorkspaceField = 'WorkspaceField',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
@@ -2119,8 +2122,10 @@ export type Mutation = {
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
   uploadApplicationFile: File;
+  /** @deprecated Use uploadWorkspaceFieldFile instead */
   uploadFile: SignedFile;
   uploadImage: SignedFile;
+  uploadWorkspaceFieldFile: File;
   uploadWorkspaceLogo: SignedFile;
   uploadWorkspaceMemberProfilePicture: SignedFile;
   upsertFieldPermissions: Array<FieldPermission>;
@@ -2995,6 +3000,11 @@ export type MutationUploadFileArgs = {
 export type MutationUploadImageArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
+};
+
+
+export type MutationUploadWorkspaceFieldFileArgs = {
+  file: Scalars['Upload'];
 };
 
 

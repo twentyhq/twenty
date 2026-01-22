@@ -1,7 +1,7 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { type KebabCase } from 'type-fest';
 import { FileFolder } from 'twenty-shared/types';
+import { type KebabCase } from 'type-fest';
 
 registerEnumType(FileFolder, {
   name: 'FileFolder',
@@ -46,6 +46,12 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     ignoreExpirationToken: true,
   },
   [FileFolder.Source]: {
+    ignoreExpirationToken: false,
+  },
+  [FileFolder.TemporaryWorkspaceField]: {
+    ignoreExpirationToken: false,
+  },
+  [FileFolder.WorkspaceField]: {
     ignoreExpirationToken: false,
   },
 };
