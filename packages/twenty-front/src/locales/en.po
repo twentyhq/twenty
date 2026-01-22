@@ -10266,6 +10266,11 @@ msgstr "See {objectLabelPlural}"
 msgid "See active version"
 msgstr "See active version"
 
+#. js-lingui-id: R+sqCn
+#: src/modules/page-layout/widgets/components/WidgetActionFieldSeeAll.tsx
+msgid "See all {relationLabelPlural} linked to this record"
+msgstr "See all {relationLabelPlural} linked to this record"
+
 #. js-lingui-id: f4Lu+X
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "See deleted dashboards"

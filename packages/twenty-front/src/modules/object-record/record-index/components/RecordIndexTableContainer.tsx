@@ -22,12 +22,11 @@ export const RecordIndexTableContainer = ({
     RECORD_INDEX_REMOVE_SORTING_MODAL_ID,
   );
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const updateEntity = ({ variables }: RecordUpdateHookParams) => {
-    updateOneRecord?.({
+    updateOneRecord({
+      objectNameSingular,
       idToUpdate: variables.where.id as string,
       updateOneRecordInput: variables.updateOneRecordInput,
     });

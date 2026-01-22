@@ -48,9 +48,7 @@ export const useMergeManyRecords = <
     recordGqlFields: computedRecordGqlFields,
   });
 
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
   const { findOneRecordQuery } = useFindOneRecordQuery({
     objectNameSingular,
@@ -101,7 +99,9 @@ export const useMergeManyRecords = <
         setLoading(false);
 
         if (!preview) {
-          await refetchAggregateQueries();
+          await refetchAggregateQueries({
+            objectMetadataNamePlural: objectMetadataItem.namePlural,
+          });
           dispatchObjectRecordOperationBrowserEvent({
             objectMetadataItem,
             operation: {

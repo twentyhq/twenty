@@ -164,7 +164,7 @@ export class FunctionExecuteCommand {
     fn: { universalIdentifier: string; applicationId: string | null },
     manifest: ApplicationManifest,
   ): boolean {
-    return manifest.serverlessFunctions.some(
+    return manifest.functions.some(
       (manifestFn) => manifestFn.universalIdentifier === fn.universalIdentifier,
     );
   }
