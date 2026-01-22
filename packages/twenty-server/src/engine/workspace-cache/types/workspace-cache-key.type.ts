@@ -36,6 +36,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatAgentMaps: 'flat-maps:agent',
   flatSkillMaps: 'flat-maps:skill',
   flatCommandMenuItemMaps: 'flat-maps:command-menu-item',
+  flatNavigationMenuItemMaps: 'flat-maps:navigation-menu-item',
   flatRoleTargetByAgentIdMaps: 'flat-maps:flatRoleTargetByAgentId',
   flatPageLayoutMaps: 'flat-maps:page-layout',
   flatPageLayoutWidgetMaps: 'flat-maps:page-layout-widget',
