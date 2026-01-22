@@ -43,10 +43,12 @@ export class FunctionsWatcher implements RestartableWatcher {
   private functionPaths: string[];
   private esBuildContext: esbuild.BuildContext | null = null;
   private isRestarting = false;
+  private watchMode: boolean;
 
   constructor(options: RestartableWatcherOptions) {
     this.appPath = options.appPath;
     this.functionPaths = options.buildResult?.filePaths.functions ?? [];
+    this.watchMode = options.watch ?? true;
   }
 
   shouldRestart(result: ManifestBuildResult): boolean {
@@ -65,7 +67,9 @@ export class FunctionsWatcher implements RestartableWatcher {
       await this.createContext();
     } else {
       logger.log('No functions to build');
-      logger.log('👀 Watching for changes...');
+      if (this.watchMode) {
+        logger.log('👀 Watching for changes...');
+      }
     }
   }
 
@@ -110,6 +114,8 @@ export class FunctionsWatcher implements RestartableWatcher {
       entryPoints[entryName] = path.join(this.appPath, functionPath);
     }
 
+    const watchMode = this.watchMode;
+
     this.esBuildContext = await esbuild.context({
       entryPoints,
       bundle: true,
@@ -151,7 +157,9 @@ export class FunctionsWatcher implements RestartableWatcher {
                 for (const output of outputs) {
                   logger.success(`✓ Built ${output}`);
                 }
-                logger.log('👀 Watching for changes...');
+                if (watchMode) {
+                  logger.log('👀 Watching for changes...');
+                }
               }
             });
           },
@@ -161,6 +169,8 @@ export class FunctionsWatcher implements RestartableWatcher {
 
     await this.esBuildContext.rebuild();
 
-    await this.esBuildContext.watch();
+    if (this.watchMode) {
+      await this.esBuildContext.watch();
+    }
   }
 }

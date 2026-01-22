@@ -10,4 +10,5 @@ export interface RestartableWatcher {
 export type RestartableWatcherOptions = {
   appPath: string;
   buildResult: ManifestBuildResult | null;
+  watch?: boolean;
 };

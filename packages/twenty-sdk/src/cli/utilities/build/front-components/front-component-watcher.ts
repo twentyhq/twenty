@@ -29,10 +29,12 @@ export class FrontComponentsWatcher implements RestartableWatcher {
   private componentPaths: string[];
   private esBuildContext: esbuild.BuildContext | null = null;
   private isRestarting = false;
+  private watchMode: boolean;
 
   constructor(options: RestartableWatcherOptions) {
     this.appPath = options.appPath;
     this.componentPaths = options.buildResult?.filePaths.frontComponents ?? [];
+    this.watchMode = options.watch ?? true;
   }
 
   shouldRestart(result: ManifestBuildResult): boolean {
@@ -51,7 +53,9 @@ export class FrontComponentsWatcher implements RestartableWatcher {
       await this.createContext();
     } else {
       logger.log('No front components to build');
-      logger.log('👀 Watching for changes...');
+      if (this.watchMode) {
+        logger.log('👀 Watching for changes...');
+      }
     }
   }
 
@@ -96,6 +100,8 @@ export class FrontComponentsWatcher implements RestartableWatcher {
       entryPoints[entryName] = path.join(this.appPath, componentPath);
     }
 
+    const watchMode = this.watchMode;
+
     this.esBuildContext = await esbuild.context({
       entryPoints,
       bundle: true,
@@ -127,7 +133,9 @@ export class FrontComponentsWatcher implements RestartableWatcher {
                 for (const output of outputs) {
                   logger.success(`✓ Built ${output}`);
                 }
-                logger.log('👀 Watching for changes...');
+                if (watchMode) {
+                  logger.log('👀 Watching for changes...');
+                }
               }
             });
           },
@@ -137,6 +145,8 @@ export class FrontComponentsWatcher implements RestartableWatcher {
 
     await this.esBuildContext.rebuild();
 
-    await this.esBuildContext.watch();
+    if (this.watchMode) {
+      await this.esBuildContext.watch();
+    }
   }
 }

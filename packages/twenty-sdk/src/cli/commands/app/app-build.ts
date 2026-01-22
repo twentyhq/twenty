@@ -1,28 +1,70 @@
 import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
-import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
+import { createLogger } from '@/cli/utilities/build/common/logger';
+import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
+import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
+import { runManifestBuild, type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-build';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import chalk from 'chalk';
 
-export type BuildCommandOptions = {
+const initLogger = createLogger('init');
+
+export type AppBuildOptions = {
   appPath?: string;
 };
 
 export class AppBuildCommand {
-  async execute(options: BuildCommandOptions): Promise<ApiResponse<null>> {
-    const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
+  private functionsBuilder: FunctionsWatcher | null = null;
+  private frontComponentsBuilder: FrontComponentsWatcher | null = null;
 
-    console.log(chalk.blue('🚀 Building Twenty Application'));
-    console.log(chalk.gray(`📁 App Path: ${appPath}`));
+  private appPath: string = '';
+
+  async execute(options: AppBuildOptions): Promise<ApiResponse<null>> {
+    this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
+
+    initLogger.log('🚀 Building Twenty Application');
+    initLogger.log(`📁 App Path: ${this.appPath}`);
     console.log('');
 
-    const { manifest } = await runManifestBuild(appPath);
+    const buildResult = await this.runBuild();
 
-    if (!manifest) {
+    if (!buildResult) {
       return { success: false, error: 'Build failed' };
     }
 
-    console.log(chalk.green('✅ Build completed successfully'));
+    initLogger.success('✅ Build completed successfully');
 
     return { success: true, data: null };
+  }
+
+  private async runBuild(): Promise<ManifestBuildResult | null> {
+    const buildResult = await runManifestBuild(this.appPath);
+
+    if (!buildResult.manifest) {
+      return null;
+    }
+
+    await this.buildFunctions(buildResult);
+    await this.buildFrontComponents(buildResult);
+
+    return buildResult;
+  }
+
+  private async buildFunctions(buildResult: ManifestBuildResult): Promise<void> {
+    this.functionsBuilder = new FunctionsWatcher({
+      appPath: this.appPath,
+      buildResult,
+      watch: false,
+    });
+
+    await this.functionsBuilder.start();
+  }
+
+  private async buildFrontComponents(buildResult: ManifestBuildResult): Promise<void> {
+    this.frontComponentsBuilder = new FrontComponentsWatcher({
+      appPath: this.appPath,
+      buildResult,
+      watch: false,
+    });
+
+    await this.frontComponentsBuilder.start();
   }
 }
