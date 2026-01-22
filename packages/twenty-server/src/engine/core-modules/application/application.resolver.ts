@@ -148,7 +148,7 @@ export class ApplicationResolver {
     {
       applicationUniversalIdentifier,
       fileFolder,
-      filePath,
+      builtHandlerPath,
     }: UploadApplicationFileInput,
   ): Promise<FileDTO> {
     const allowedApplicationFileFolders: FileFolder[] = [
@@ -168,9 +168,9 @@ export class ApplicationResolver {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
 
-    const dirname = path.dirname(filePath);
+    const dirname = path.dirname(builtHandlerPath);
 
-    const filename = path.basename(filePath);
+    const filename = path.basename(builtHandlerPath);
 
     const folderPath = join(
       `workspace-${workspaceId}`,

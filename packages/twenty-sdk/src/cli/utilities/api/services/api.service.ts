@@ -417,10 +417,12 @@ export class ApiService {
 
   async uploadFile({
     filePath,
+    builtHandlerPath,
     fileFolder,
     applicationUniversalIdentifier,
   }: {
     filePath: string;
+    builtHandlerPath: string;
     fileFolder: FileFolder;
     applicationUniversalIdentifier: string;
   }): Promise<ApiResponse<boolean>> {
@@ -439,8 +441,8 @@ export class ApiService {
       const mimeType = this.getMimeType(filename);
 
       const mutation = `
-      mutation UploadApplicationFile($file: Upload!, $applicationUniversalIdentifier: String!, $fileFolder: FileFolder!, $filePath: String!) {
-        uploadApplicationFile(file: $file, applicationUniversalIdentifier: $applicationUniversalIdentifier, fileFolder: $fileFolder, filePath: $filePath)
+      mutation UploadApplicationFile($file: Upload!, $applicationUniversalIdentifier: String!, $fileFolder: FileFolder!, $builtHandlerPath: String!) {
+        uploadApplicationFile(file: $file, applicationUniversalIdentifier: $applicationUniversalIdentifier, fileFolder: $fileFolder, builtHandlerPath: $builtHandlerPath)
         { path }
       }
     `;
@@ -452,7 +454,7 @@ export class ApiService {
         variables: {
           file: null,
           applicationUniversalIdentifier,
-          filePath,
+          builtHandlerPath,
           fileFolder: graphqlEnumFileFolder,
         },
       });

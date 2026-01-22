@@ -11,5 +11,5 @@ export class UploadApplicationFileInput {
   fileFolder: FileFolder;
 
   @Field(() => String)
-  filePath: string;
+  builtHandlerPath: string;
 }

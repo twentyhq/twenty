@@ -16,6 +16,7 @@ import { join } from 'path';
 import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 
 const initLogger = createLogger('init');
+const functionLogger = createLogger('functions-watch');
 
 export type AppBuildOptions = {
   appPath?: string;
@@ -83,15 +84,18 @@ export class AppBuildCommand {
 
           const uploadResult = await this.apiService.uploadFile({
             filePath: join(this.appPath, OUTPUT_DIR, builtPath),
+            builtHandlerPath: builtPath,
             fileFolder: FileFolder.BuiltFunction,
             applicationUniversalIdentifier:
               buildResult.manifest.application.universalIdentifier,
           });
 
           if (uploadResult.success) {
-            initLogger.success(`✅ Successfully uploaded ${builtPath}`);
+            functionLogger.success(`☁️ Successfully uploaded ${builtPath}`);
           } else {
-            initLogger.error(`❌ Failed to upload ${builtPath}`);
+            functionLogger.error(
+              `Failed to upload ${builtPath} -- ${uploadResult.error}`,
+            );
           }
         }
       },
