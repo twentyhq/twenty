@@ -12,16 +12,16 @@ exports[`Install application should fail when entity does not exist should fail 
     "code": "APPLICATION_INSTALLATION_FAILED",
     "errors": {
       "metadata": {
-        "message": "Could not find flat entity with universal identifier non-existent-field-id",
+        "message": "Could not find flat entity with universal identifier non-existent-field-universal-identifier",
       },
       "workspaceSchema": {
-        "message": "Cannot read properties of undefined (reading 'byId')",
+        "message": "Could not find flat entity in maps",
       },
     },
     "exceptionEventId": Any<String>,
     "userFriendlyMessage": "Application installation failed",
   },
-  "message": "Migration action 'delete' for 'fieldMetadata' failed. Metadata: Could not find flat entity with universal identifier non-existent-field-id, WorkspaceSchema: Cannot read properties of undefined (reading 'byId')",
+  "message": "Migration action 'delete' for 'fieldMetadata' failed. Metadata: Could not find flat entity with universal identifier non-existent-field-universal-identifier, WorkspaceSchema: Could not find flat entity in maps",
   "name": "GraphQLError",
 }
 `;
