@@ -245,6 +245,25 @@ export class CacheStorageService {
     return newValue;
   }
 
+  async expire(key: string, ttlMs: Milliseconds): Promise<boolean> {
+    if (this.isRedisCache()) {
+      return (this.cache as RedisCache).store.client.expire(
+        this.getKey(key),
+        ttlMs / 1000,
+      );
+    }
+
+    const existing = await this.get(key);
+
+    if (existing !== undefined) {
+      await this.set(key, existing, ttlMs);
+
+      return true;
+    }
+
+    return false;
+  }
+
   private isRedisCache() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (this.cache.store as any)?.name === 'redis';

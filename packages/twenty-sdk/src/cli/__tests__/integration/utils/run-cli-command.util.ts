@@ -54,15 +54,21 @@ export const runCliCommand = (
         ? [waitForOutput]
         : [];
 
+    let isResolved = false;
     child.stdout?.on('data', (data: Buffer) => {
       output += data.toString();
       if (
+        !isResolved &&
         waitForOutputs.length > 0 &&
         waitForOutputs.every((w) => output.includes(w))
       ) {
+        isResolved = true;
         clearTimeout(timeoutId);
-        child.kill();
-        resolve({ success: true, output });
+        // Wait a bit before killing to allow any in-progress file writes to complete
+        setTimeout(() => {
+          child.kill();
+          resolve({ success: true, output });
+        }, 500);
       }
     });
 

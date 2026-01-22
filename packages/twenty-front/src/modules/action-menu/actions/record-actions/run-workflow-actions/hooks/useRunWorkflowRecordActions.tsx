@@ -2,6 +2,7 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { isBulkRecordsManualTrigger } from '@/action-menu/actions/record-actions/utils/isBulkRecordsManualTrigger';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
+import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -29,6 +30,10 @@ export const useRunWorkflowRecordActions = ({
   const { enqueueWarningSnackBar } = useSnackBar();
   const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
+  );
+
+  const isPageInEditMode = useRecoilComponentValue(
+    contextStoreIsPageInEditModeComponentState,
   );
 
   const selectedRecordIds =
@@ -130,7 +135,9 @@ export const useRunWorkflowRecordActions = ({
         shortLabel: name,
         position: index,
         Icon,
-        isPinned: activeWorkflowVersion.trigger?.settings?.isPinned,
+        isPinned:
+          !isPageInEditMode &&
+          activeWorkflowVersion.trigger?.settings?.isPinned,
         shouldBeRegistered: () => true,
         component: (
           <Action

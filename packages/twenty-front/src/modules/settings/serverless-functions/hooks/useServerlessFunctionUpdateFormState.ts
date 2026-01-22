@@ -79,7 +79,8 @@ export const useServerlessFunctionUpdateFormState = ({
           const flattenedCode = flattenSources(code);
 
           const sourceCode = flattenedCode.find(
-            (flatCode) => flatCode.path === serverlessFunction?.handlerPath,
+            (flatCode) =>
+              flatCode.path === serverlessFunction?.sourceHandlerPath,
           );
 
           if (isDefined(sourceCode)) {
