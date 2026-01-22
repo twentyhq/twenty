@@ -235,20 +235,23 @@ export const GraphWidgetBarChart = ({
     tickConfig,
   });
 
+  const dataToRender = data.filter((datum) => datum.value !== 0);
+
   const BarItemWithContext = useMemo(
-    () => (props: BarItemProps<BarDatum>) => (
-      <CustomBarItem
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...props}
-        keys={orderedKeys}
-        groupMode={groupMode}
-        data={data}
-        indexBy={indexBy}
-        layout={layout}
-        chartId={id}
-      />
-    ),
-    [orderedKeys, groupMode, data, indexBy, layout, id],
+    () => (props: BarItemProps<BarDatum>) =>
+      props.bar.data.value !== 0 && (
+        <CustomBarItem
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...props}
+          keys={orderedKeys}
+          groupMode={groupMode}
+          data={dataToRender}
+          indexBy={indexBy}
+          layout={layout}
+          chartId={id}
+        />
+      ),
+    [orderedKeys, groupMode, dataToRender, indexBy, layout, id],
   );
 
   const TotalsLayer = ({
