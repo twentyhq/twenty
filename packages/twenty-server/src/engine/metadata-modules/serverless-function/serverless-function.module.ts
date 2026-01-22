@@ -16,7 +16,6 @@ import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
-import { ServerlessFunctionBuildModule } from 'src/engine/metadata-modules/serverless-function-build/serverless-function-build.module';
 import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 import { ServerlessFunctionTriggerJob } from 'src/engine/metadata-modules/serverless-function/jobs/serverless-function-trigger.job';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -27,6 +26,7 @@ import { WorkspaceFlatServerlessFunctionMapCacheService } from 'src/engine/metad
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { FunctionBuildModule } from 'src/engine/metadata-modules/function-build/function-build.module';
 
 @Module({
   imports: [
@@ -46,7 +46,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     PermissionsModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
-    ServerlessFunctionBuildModule,
+    FunctionBuildModule,
     ServerlessFunctionLayerModule,
     SubscriptionsModule,
     WorkspaceCacheModule,

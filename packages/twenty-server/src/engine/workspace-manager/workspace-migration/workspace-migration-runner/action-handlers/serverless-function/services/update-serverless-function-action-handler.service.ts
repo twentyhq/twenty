@@ -8,13 +8,13 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/get-serverless-folder-or-throw.utils';
-import { ServerlessFunctionBuildService } from 'src/engine/metadata-modules/serverless-function-build/serverless-function-build.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { UpdateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
+import { FunctionBuildService } from 'src/engine/metadata-modules/function-build/function-build.service';
 
 @Injectable()
 export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -24,7 +24,7 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly serverlessService: ServerlessService,
-    private readonly serverlessFunctionBuildService: ServerlessFunctionBuildService,
+    private readonly functionBuildService: FunctionBuildService,
   ) {
     super();
   }
@@ -87,7 +87,7 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
 
     await this.fileStorageService.writeFolder(code, fileFolder);
 
-    await this.serverlessFunctionBuildService.buildAndUpload({
+    await this.functionBuildService.buildAndUpload({
       flatServerlessFunction,
       version: 'draft',
     });

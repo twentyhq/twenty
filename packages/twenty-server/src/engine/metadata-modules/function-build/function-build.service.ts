@@ -12,7 +12,7 @@ import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/u
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 
 @Injectable()
-export class ServerlessFunctionBuildService {
+export class FunctionBuildService {
   constructor(private readonly fileStorageService: FileStorageService) {}
 
   async isBuilt({
