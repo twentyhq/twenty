@@ -11,6 +11,11 @@ export type AssetTrackingResult = {
   assetImports: Map<string, AssetImport[]>;
 };
 
+// Escape special regex characters in a string
+const escapeRegExp = (str: string): string => {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
 // Creates an esbuild plugin that tracks asset imports and resolves them to the assets output
 export const createAssetTrackingPlugin = (
   appPath: string,
@@ -24,6 +29,10 @@ export const createAssetTrackingPlugin = (
   // Track current entry point during resolution
   let currentEntryPoint = '';
 
+  // Build filter regex with properly escaped extensions
+  const escapedExtensions = STATIC_ASSET_EXTENSIONS.map(escapeRegExp).join('|');
+  const assetFilter = new RegExp(`(${escapedExtensions})$`, 'i');
+
   const plugin: esbuild.Plugin = {
     name: 'asset-tracking',
     setup: (build) => {
@@ -33,9 +42,7 @@ export const createAssetTrackingPlugin = (
       });
 
       // Intercept asset imports
-      build.onResolve(
-        { filter: new RegExp(`(${STATIC_ASSET_EXTENSIONS.join('|').replace(/\./g, '\\.')})$`, 'i') },
-        (args) => {
+      build.onResolve({ filter: assetFilter }, (args) => {
           // Determine which entry point this import belongs to
           const importer = args.importer || args.resolveDir;
           const entryPoint = findEntryPoint(importer, build.initialOptions.entryPoints);
