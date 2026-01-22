@@ -15,7 +15,6 @@ import {
   EventStreamExceptionCode,
 } from 'src/engine/subscriptions/event-stream.exception';
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
-import { type ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
 
 @Injectable()
 export class EventStreamService {
@@ -131,15 +130,6 @@ export class EventStreamService {
     return result;
   }
 
-  async getStreamData(
-    workspaceId: string,
-    eventStreamChannelId: string,
-  ): Promise<EventStreamData | undefined> {
-    const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
-
-    return this.cacheStorageService.get<EventStreamData>(key);
-  }
-
   async isAuthorized({
     workspaceId,
     eventStreamChannelId,
@@ -214,40 +204,22 @@ export class EventStreamService {
     }
   }
 
-  async getQueries(
-    workspaceId: string,
-    eventStreamId: string,
-  ): Promise<Map<string, RecordGqlOperationSignature>> {
-    const streamData = await this.getStreamData(workspaceId, eventStreamId);
+  async refreshEventStreamTTL({
+    workspaceId,
+    eventStreamChannelId,
+  }: {
+    workspaceId: string;
+    eventStreamChannelId: string;
+  }): Promise<boolean> {
+    const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
+    const activeStreamsKey = this.getActiveStreamsKey(workspaceId);
 
-    if (!isDefined(streamData)) {
-      return new Map();
-    }
+    const [streamRefreshed] = await Promise.all([
+      this.cacheStorageService.expire(key, EVENT_STREAM_TTL_MS),
+      this.cacheStorageService.expire(activeStreamsKey, EVENT_STREAM_TTL_MS),
+    ]);
 
-    return new Map(Object.entries(streamData.queries));
-  }
-
-  matchQueriesWithEvent(
-    queries: Record<string, RecordGqlOperationSignature>,
-    event: ObjectRecordSubscriptionEvent,
-  ): string[] {
-    const matchedQueryIds: string[] = [];
-
-    for (const [queryId, operationSignature] of Object.entries(queries)) {
-      if (this.isQueryMatchingEvent(operationSignature, event)) {
-        matchedQueryIds.push(queryId);
-      }
-    }
-
-    return matchedQueryIds;
-  }
-
-  private isQueryMatchingEvent(
-    operationSignature: RecordGqlOperationSignature,
-    event: ObjectRecordSubscriptionEvent,
-  ): boolean {
-    // to be improved
-    return operationSignature.objectNameSingular === event.objectNameSingular;
+    return streamRefreshed;
   }
 
   private getEventStreamKey(
@@ -259,5 +231,14 @@ export class EventStreamService {
 
   private getActiveStreamsKey(workspaceId: string): string {
     return `workspace:${workspaceId}:activeStreams`;
+  }
+
+  private async getStreamData(
+    workspaceId: string,
+    eventStreamChannelId: string,
+  ): Promise<EventStreamData | undefined> {
+    const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
+
+    return this.cacheStorageService.get<EventStreamData>(key);
   }
 }
