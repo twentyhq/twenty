@@ -4779,6 +4779,11 @@ msgstr "نسخة التطبيق الخاصة بك قديمة. يرجى تحدي�
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "اشتراك الفواتير تالفة. يُرجى التواصل مع الدعم."
 
+#. js-lingui-id: hDEOuv
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Your CalDAV server does not support incremental sync (RFC 6578). Please use a compatible provider such as Nextcloud, iCloud, or Fastmail."
+msgstr ""
+
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Your Password Has Been Successfully Changed"
