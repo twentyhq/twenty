@@ -15,6 +15,8 @@ export const navigationMenuItemGraphqlApiExceptionHandler = (error: Error) => {
       case NavigationMenuItemExceptionCode.NAVIGATION_MENU_ITEM_NOT_FOUND:
         throw new NotFoundError(error);
       case NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT:
+      case NavigationMenuItemExceptionCode.CIRCULAR_DEPENDENCY:
+      case NavigationMenuItemExceptionCode.MAX_DEPTH_EXCEEDED:
         throw new UserInputError(error);
       default: {
         return assertUnreachable(error.code);

@@ -70,6 +70,11 @@ export class CreateObjectInput {
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
+  skipNameField?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
   isRemote?: boolean;
 
   @IsOptional()

@@ -1,5 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   IsInt,
   IsNotEmpty,
@@ -7,17 +8,13 @@ import {
   IsString,
   IsUUID,
   Min,
+  ValidateNested,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
 export class UpdateNavigationMenuItemInput {
-  @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  id: string;
-
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
@@ -33,4 +30,21 @@ export class UpdateNavigationMenuItemInput {
   @IsString()
   @Field(() => String, { nullable: true })
   name?: string | null;
+}
+
+@InputType()
+export class UpdateOneNavigationMenuItemInput {
+  @IsUUID()
+  @IsNotEmpty()
+  @Field(() => UUIDScalarType, {
+    description: 'The id of the record to update',
+  })
+  id!: string;
+
+  @Type(() => UpdateNavigationMenuItemInput)
+  @ValidateNested()
+  @Field(() => UpdateNavigationMenuItemInput, {
+    description: 'The record to update',
+  })
+  update!: UpdateNavigationMenuItemInput;
 }

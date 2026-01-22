@@ -7,10 +7,10 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
+import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/add-flat-navigation-menu-item-to-maps-and-update-index.util';
 import { fromNavigationMenuItemEntityToFlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-navigation-menu-item-entity-to-flat-navigation-menu-item.util';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatNavigationMenuItemMaps')
@@ -30,7 +30,10 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCac
       withDeleted: true,
     });
 
-    const flatNavigationMenuItemMaps = createEmptyFlatEntityMaps();
+    const flatNavigationMenuItemMaps = {
+      ...createEmptyFlatEntityMaps(),
+      byUserWorkspaceIdAndFolderId: {},
+    };
 
     for (const navigationMenuItemEntity of navigationMenuItems) {
       const flatNavigationMenuItem =
@@ -38,9 +41,9 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCac
           navigationMenuItemEntity,
         );
 
-      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: flatNavigationMenuItem,
-        flatEntityMapsToMutate: flatNavigationMenuItemMaps,
+      addFlatNavigationMenuItemToMapsAndUpdateIndex({
+        flatNavigationMenuItem,
+        flatNavigationMenuItemMaps,
       });
     }
 

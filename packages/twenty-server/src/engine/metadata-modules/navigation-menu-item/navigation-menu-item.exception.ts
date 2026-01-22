@@ -7,6 +7,8 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum NavigationMenuItemExceptionCode {
   NAVIGATION_MENU_ITEM_NOT_FOUND = 'NAVIGATION_MENU_ITEM_NOT_FOUND',
   INVALID_NAVIGATION_MENU_ITEM_INPUT = 'INVALID_NAVIGATION_MENU_ITEM_INPUT',
+  CIRCULAR_DEPENDENCY = 'CIRCULAR_DEPENDENCY',
+  MAX_DEPTH_EXCEEDED = 'MAX_DEPTH_EXCEEDED',
 }
 
 const getNavigationMenuItemExceptionUserFriendlyMessage = (
@@ -17,6 +19,10 @@ const getNavigationMenuItemExceptionUserFriendlyMessage = (
       return msg`Navigation menu item not found.`;
     case NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT:
       return msg`Invalid navigation menu item input.`;
+    case NavigationMenuItemExceptionCode.CIRCULAR_DEPENDENCY:
+      return msg`Circular dependency detected in navigation menu item hierarchy.`;
+    case NavigationMenuItemExceptionCode.MAX_DEPTH_EXCEEDED:
+      return msg`Navigation menu item hierarchy exceeds maximum depth.`;
     default:
       assertUnreachable(code);
   }

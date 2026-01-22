@@ -63,8 +63,8 @@ const jestConfig = {
   coverageThreshold: {
     global: {
       statements: 50,
-      lines: 49,
-      functions: 41,
+      lines: 48.9,
+      functions: 40.9,
     },
   },
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],

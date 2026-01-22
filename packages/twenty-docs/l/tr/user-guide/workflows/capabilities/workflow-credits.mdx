@@ -1,21 +1,21 @@
 ---
 title: İş Akışı Kredileri
-description: Understand workflow credit consumption and management.
+description: İş akışı kredi tüketimini ve yönetimini anlayın.
 ---
 
 İş akışı kredileri, Twenty'deki otomasyonlarınızın gücüdür. Nasıl çalıştıklarını anlamak, maliyetleri optimize etmenize ve otomasyon bütçenizi etkili bir şekilde yönetmenize yardımcı olur.
 
-## Credit Allocation
+## Kredi Tahsisi
 
-Workflow credits are allocated based on your billing cycle, not your plan tier:
+İş akışı kredileri plan seviyenize göre değil, faturalandırma döngünüze göre tahsis edilir:
 
-| Billing Cycle            | Credits                     |
-| ------------------------ | --------------------------- |
-| **Monthly subscription** | 5 million credits per month |
-| **Yearly subscription**  | 50 million credits per year |
+| Faturalandırma Döngüsü | Krediler              |
+| ---------------------- | --------------------- |
+| **Aylık abonelik**     | Ayda 5 milyon kredi   |
+| **Yıllık abonelik**    | Yılda 50 milyon kredi |
 
 <Note>
-  5 million monthly credits are generous for standard automations. Most teams won't exceed this limit with typical workflow usage. Additional credits are primarily needed for advanced Code actions and AI-powered workflows.
+  Aylık 5 milyon kredi, standart otomasyonlar için oldukça cömerttir. Çoğu ekip, tipik iş akışı kullanımıyla bu sınırı aşmayacaktır. Ek krediler, ağırlıklı olarak ileri düzey Code eylemleri ve yapay zeka destekli iş akışları için gereklidir.
 </Note>
 
 ## Kredi Tüketiminin Çalışma Prensibi
@@ -35,14 +35,14 @@ Krediler, iş akışları çalıştığında tüketilir, oluşturulduğunda değ
   * Kod eylemleri (JavaScript yürütme)
   * Harici hizmetlere HTTP İstekleri
 
-* **AI features**: Higher credit consumption
-  * AI Agent actions consume credits based on the AI model used
-  * More complex prompts and longer outputs use more credits
+* **Yapay zeka özellikleri**: Daha yüksek kredi tüketimi
+  * Yapay Zeka Aracı eylemleri, kullanılan yapay zeka modeline bağlı olarak kredi tüketir
+  * Daha karmaşık istemler ve daha uzun çıktılar daha fazla kredi kullanır
 
-* **Delay actions**: Minimal credit consumption
-  * The Delay node consumes **1 credit** when it executes
-  * **No credits are consumed** during the wait period
-  * A 5-minute delay costs the same as a 5-day delay
+* **Gecikme eylemleri**: Minimum kredi tüketimi
+  * Gecikme düğümü çalıştığında **1 kredi** tüketir
+  * Bekleme süresi boyunca **hiç kredi tüketilmez**
+  * 5 dakikalık bir gecikme, 5 günlük bir gecikmeyle aynı maliyete sahiptir
 
 ### Gerçek Zamanlı Düşüm
 
@@ -71,6 +71,6 @@ Plan tahsisinizin ötesinde daha fazla krediye ihtiyacınız varsa:
 ## En İyi Uygulamalar
 
 * **Toplu İşleme**: Toplu işlemler ve Iterator eylemlerini verimli bir şekilde kullanın
-* **Manual Trigger Optimization**: For manual triggers, choose `Bulk` availability to process multiple records in a single workflow run
+* **Manuel Tetikleme Optimizasyonu**: Manuel tetikleyiciler için, tek bir iş akışı çalıştırmasında birden fazla kaydı işlemek üzere `Bulk` kullanılabilirliğini seçin
 * Verimlilik için Kod eylemlerini optimize edin
 * Bireysel eylem çağrılarını azaltmak için toplu işlemler yapın

@@ -8,10 +8,7 @@ import {
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import {
-  isSearchableFieldType,
-  type SearchableFieldType,
-} from 'src/engine/workspace-manager/utils/is-searchable-field.util';
+import { type SearchableFieldType } from 'src/engine/workspace-manager/utils/is-searchable-field.util';
 import { isSearchableSubfield } from 'src/engine/workspace-manager/utils/is-searchable-subfield.util';
 
 export type FieldTypeAndNameMetadata = {
@@ -22,18 +19,13 @@ export type FieldTypeAndNameMetadata = {
 export const getTsVectorColumnExpressionFromFields = (
   fieldsUsedForSearch: FieldTypeAndNameMetadata[],
 ): string => {
-  const filteredFieldsUsedForSearch = fieldsUsedForSearch.filter((field) =>
-    isSearchableFieldType(field.type),
-  );
-
-  if (filteredFieldsUsedForSearch.length < 1) {
-    throw new Error('No searchable fields found');
-  }
-
   const columnExpressions = fieldsUsedForSearch.flatMap(
     getColumnExpressionsFromField,
   );
-  const concatenatedExpression = columnExpressions.join(" || ' ' || ");
+  const concatenatedExpression =
+    columnExpressions.length > 0
+      ? columnExpressions.join(" || ' ' || ")
+      : 'NULL';
 
   // Note: changing this expression requires reindexing/backfilling existing searchVector values.
   return `to_tsvector('simple', ${concatenatedExpression})`;

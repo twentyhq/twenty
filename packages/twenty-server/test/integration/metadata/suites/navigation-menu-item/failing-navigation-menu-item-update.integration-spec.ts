@@ -10,10 +10,10 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 
-import { type UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
+import { type UpdateOneNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 
 type TestContext = {
-  input: (testSetup: TestSetup) => UpdateNavigationMenuItemInput;
+  input: (testSetup: TestSetup) => UpdateOneNavigationMenuItemInput;
 };
 
 type TestSetup = {
@@ -79,8 +79,11 @@ describe('NavigationMenuItem update should fail', () => {
         context: {
           input: () =>
             ({
-              position: 10,
-            }) as UpdateNavigationMenuItemInput,
+              id: '',
+              update: {
+                position: 10,
+              },
+            }) as UpdateOneNavigationMenuItemInput,
         },
       },
       {
@@ -88,7 +91,9 @@ describe('NavigationMenuItem update should fail', () => {
         context: {
           input: () => ({
             id: '',
-            position: 10,
+            update: {
+              position: 10,
+            },
           }),
         },
       },
@@ -97,7 +102,9 @@ describe('NavigationMenuItem update should fail', () => {
         context: {
           input: () => ({
             id: 'not-a-valid-uuid',
-            position: 10,
+            update: {
+              position: 10,
+            },
           }),
         },
       },
@@ -106,7 +113,9 @@ describe('NavigationMenuItem update should fail', () => {
         context: {
           input: () => ({
             id: faker.string.uuid(),
-            position: 10,
+            update: {
+              position: 10,
+            },
           }),
         },
       },
@@ -115,7 +124,9 @@ describe('NavigationMenuItem update should fail', () => {
         context: {
           input: (testSetup) => ({
             id: testSetup.testNavigationMenuItemId,
-            folderId: 'not-a-valid-uuid',
+            update: {
+              folderId: 'not-a-valid-uuid',
+            },
           }),
         },
       },
@@ -124,7 +135,9 @@ describe('NavigationMenuItem update should fail', () => {
         context: {
           input: (testSetup) => ({
             id: testSetup.testNavigationMenuItemId,
-            position: -1,
+            update: {
+              position: -1,
+            },
           }),
         },
       },

@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -12,7 +13,7 @@ import {
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'navigationMenuItem', schema: 'core' })
 @Index('IDX_NAVIGATION_MENU_ITEM_USER_WORKSPACE_ID_WORKSPACE_ID', [
@@ -28,8 +29,16 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   'folderId',
   'workspaceId',
 ])
+@Index('IDX_NAVIGATION_MENU_ITEM_VIEW_ID_WORKSPACE_ID', [
+  'viewId',
+  'workspaceId',
+])
+@Check(
+  'CHK_navigation_menu_item_target_fields',
+  '("targetRecordId" IS NULL AND "targetObjectMetadataId" IS NULL) OR ("targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)',
+)
 export class NavigationMenuItemEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<NavigationMenuItemEntity>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -50,6 +59,9 @@ export class NavigationMenuItemEntity
 
   @Column({ nullable: true, type: 'uuid' })
   targetObjectMetadataId: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  viewId: string | null;
 
   @ManyToOne(() => ObjectMetadataEntity, {
     onDelete: 'CASCADE',

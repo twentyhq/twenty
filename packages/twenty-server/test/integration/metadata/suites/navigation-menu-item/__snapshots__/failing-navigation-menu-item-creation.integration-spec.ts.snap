@@ -93,24 +93,72 @@ exports[`NavigationMenuItem creation should fail when creating with invalid targ
 exports[`NavigationMenuItem creation should fail when creating with missing targetObjectMetadataId 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
-    "userFriendlyMessage": "Invalid navigation menu item input.",
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "targetObjectMetadataId is required when targetRecordId is provided",
+              "userFriendlyMessage": "targetObjectMetadataId is required when targetRecordId is provided",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
   },
-  "message": "targetObjectMetadataId is required for navigation menu items",
-  "name": "UserInputError",
+  "message": "Multiple validation errors occurred while creating navigation menu item",
+  "name": "GraphQLError",
 }
 `;
 
 exports[`NavigationMenuItem creation should fail when creating with missing targetRecordId 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
-    "userFriendlyMessage": "Invalid navigation menu item input.",
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "targetRecordId is required when targetObjectMetadataId is provided",
+              "userFriendlyMessage": "targetRecordId is required when targetObjectMetadataId is provided",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
   },
-  "message": "targetRecordId is required for navigation menu items",
-  "name": "UserInputError",
+  "message": "Multiple validation errors occurred while creating navigation menu item",
+  "name": "GraphQLError",
 }
 `;
 

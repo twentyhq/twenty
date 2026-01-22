@@ -375,6 +375,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
         viewId: flatDefaultViewToCreate.id,
         workspaceId,
+        labelIdentifierFieldMetadataId:
+          flatObjectMetadataToCreate.labelIdentifierFieldMetadataId,
       });
 
     const validateAndBuildResult =
@@ -483,14 +485,21 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     viewId,
     workspaceId,
     workspaceCustomApplicationId,
+    labelIdentifierFieldMetadataId,
   }: {
     workspaceCustomApplicationId: string;
     objectFlatFieldMetadatas: FlatFieldMetadata[];
     viewId: string;
     workspaceId: string;
+    labelIdentifierFieldMetadataId: string | null;
   }) {
     const defaultViewFields = objectFlatFieldMetadatas
-      .filter((field) => field.name !== 'id' && field.name !== 'deletedAt')
+      .filter(
+        (field) =>
+          field.name !== 'deletedAt' &&
+          // Include 'id' only if it's the label identifier (e.g., for junction tables)
+          (field.name !== 'id' || field.id === labelIdentifierFieldMetadataId),
+      )
       .map((field, index) =>
         fromCreateViewFieldInputToFlatViewFieldToCreate({
           createViewFieldInput: {

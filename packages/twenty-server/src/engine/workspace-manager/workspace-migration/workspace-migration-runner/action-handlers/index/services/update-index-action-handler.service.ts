@@ -28,12 +28,13 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<UpdateIndexAction>,
   ): Promise<void> {
-    const { action, queryRunner } = context;
+    const { action, queryRunner, workspaceId } = context;
 
     // Delete old index metadata
     await deleteIndexMetadata({
       entityId: action.entityId,
       queryRunner,
+      workspaceId,
     });
 
     // Create new index metadata

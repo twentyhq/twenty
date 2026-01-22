@@ -74,7 +74,8 @@ export class WorkspaceMigrationNavigationMenuItemActionsBuilderService extends W
       action: {
         type: 'delete',
         metadataName: 'navigationMenuItem',
-        entityId: flatNavigationMenuItemToValidate.id,
+        universalIdentifier:
+          flatNavigationMenuItemToValidate.universalIdentifier,
       },
     };
   }
