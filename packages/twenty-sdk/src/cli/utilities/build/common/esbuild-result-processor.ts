@@ -25,8 +25,9 @@ export const processEsbuildResult = async ({
   onFileBuilt,
   onSuccess,
 }: ProcessEsbuildResultParams): Promise<ProcessEsbuildResultOutput> => {
-  const outputFiles = Object.keys(result.metafile?.outputs ?? {})
-    .filter((file) => file.endsWith('.mjs'));
+  const outputFiles = Object.keys(result.metafile?.outputs ?? {}).filter(
+    (file) => file.endsWith('.mjs'),
+  );
 
   let hasChanges = false;
 
@@ -48,7 +49,7 @@ export const processEsbuildResult = async ({
     onSuccess(relativePath);
 
     if (onFileBuilt) {
-      onFileBuilt(builtPath, checksum);
+      await onFileBuilt(builtPath, checksum);
     }
   }
 

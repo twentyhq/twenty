@@ -5,7 +5,10 @@ export interface RestartableWatcher {
   shouldRestart(sourcePaths: string[]): boolean;
 }
 
-export type OnFileBuiltCallback = (builtPath: string, checksum: string) => void;
+export type OnFileBuiltCallback = (
+  builtPath: string,
+  checksum: string,
+) => void | Promise<void>;
 
 export type RestartableWatcherOptions = {
   appPath: string;

@@ -12,6 +12,7 @@ import * as path from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
 import { type ApiResponse } from '../types/api-response.types';
+import { pascalCase } from 'twenty-shared/utils';
 
 export class ApiService {
   private client: AxiosInstance;
@@ -271,7 +272,8 @@ export class ApiService {
       if (response.data.errors) {
         return {
           success: false,
-          error: response.data.errors[0]?.message || 'Failed to fetch functions',
+          error:
+            response.data.errors[0]?.message || 'Failed to fetch functions',
         };
       }
 
@@ -443,13 +445,15 @@ export class ApiService {
       }
     `;
 
+      const graphqlEnumFileFolder = pascalCase(fileFolder);
+
       const operations = JSON.stringify({
         query: mutation,
         variables: {
           file: null,
           applicationUniversalIdentifier,
           filePath,
-          fileFolder,
+          fileFolder: graphqlEnumFileFolder,
         },
       });
 

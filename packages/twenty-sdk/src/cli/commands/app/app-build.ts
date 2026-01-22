@@ -3,13 +3,17 @@ import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
 import {
+  type ManifestBuildResult,
   runManifestBuild,
   updateManifestChecksum,
-  type ManifestBuildResult,
 } from '@/cli/utilities/build/manifest/manifest-build';
 import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { ApiService } from '@/cli/utilities/api/services/api.service';
+import { FileFolder } from 'twenty-shared/types';
+import { join } from 'path';
+import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 
 const initLogger = createLogger('init');
 
@@ -20,6 +24,7 @@ export type AppBuildOptions = {
 export class AppBuildCommand {
   private functionsBuilder: FunctionsWatcher | null = null;
   private frontComponentsBuilder: FrontComponentsWatcher | null = null;
+  private apiService = new ApiService();
 
   private appPath: string = '';
 
@@ -56,12 +61,14 @@ export class AppBuildCommand {
     return buildResult;
   }
 
-  private async buildFunctions(buildResult: ManifestBuildResult): Promise<void> {
+  private async buildFunctions(
+    buildResult: ManifestBuildResult,
+  ): Promise<void> {
     this.functionsBuilder = new FunctionsWatcher({
       appPath: this.appPath,
       sourcePaths: buildResult.filePaths.functions,
       watch: false,
-      onFileBuilt: (builtPath, checksum) => {
+      onFileBuilt: async (builtPath, checksum) => {
         if (buildResult.manifest) {
           const updatedManifest = updateManifestChecksum({
             manifest: buildResult.manifest,
@@ -69,8 +76,22 @@ export class AppBuildCommand {
             builtPath,
             checksum,
           });
+
           if (updatedManifest) {
             buildResult.manifest = updatedManifest;
+          }
+
+          const uploadResult = await this.apiService.uploadFile({
+            filePath: join(this.appPath, OUTPUT_DIR, builtPath),
+            fileFolder: FileFolder.BuiltFunction,
+            applicationUniversalIdentifier:
+              buildResult.manifest.application.universalIdentifier,
+          });
+
+          if (uploadResult.success) {
+            initLogger.success(`✅ Successfully uploaded ${builtPath}`);
+          } else {
+            initLogger.error(`❌ Failed to upload ${builtPath}`);
           }
         }
       },
@@ -79,7 +100,9 @@ export class AppBuildCommand {
     await this.functionsBuilder.start();
   }
 
-  private async buildFrontComponents(buildResult: ManifestBuildResult): Promise<void> {
+  private async buildFrontComponents(
+    buildResult: ManifestBuildResult,
+  ): Promise<void> {
     this.frontComponentsBuilder = new FrontComponentsWatcher({
       appPath: this.appPath,
       sourcePaths: buildResult.filePaths.frontComponents,
