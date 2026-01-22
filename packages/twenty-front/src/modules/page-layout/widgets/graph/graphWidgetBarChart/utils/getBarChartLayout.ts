@@ -15,6 +15,7 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { resolveAxisFontSizes } from '@/page-layout/widgets/graph/utils/resolveAxisFontSizes';
 import { type BarDatum } from '@nivo/bar';
 import { BarChartLayout } from '~/generated/graphql';
 
@@ -40,13 +41,6 @@ type BarChartLayoutResult = {
   axisLeftConfiguration: ReturnType<typeof getBarChartAxisConfigs>['axisLeft'];
   valueTickValues: number[];
   valueDomain: { min: number; max: number };
-};
-
-const resolveAxisFontSizes = (axisTheme: ChartAxisTheme) => {
-  const tickFontSize = axisTheme.ticks.text.fontSize;
-  const legendFontSize = axisTheme.legend.text.fontSize ?? tickFontSize;
-
-  return { tickFontSize, legendFontSize };
 };
 
 const resolveMarginInputs = ({

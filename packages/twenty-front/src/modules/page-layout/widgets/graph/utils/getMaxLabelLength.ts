@@ -4,7 +4,7 @@ export const getMaxLabelLength = (labels?: string[]) => {
   }
 
   return labels.reduce(
-    (maxLength, label) => Math.max(maxLength, label.length),
+    (maxLength, label) => Math.max(maxLength, label?.length ?? 0),
     0,
   );
 };
