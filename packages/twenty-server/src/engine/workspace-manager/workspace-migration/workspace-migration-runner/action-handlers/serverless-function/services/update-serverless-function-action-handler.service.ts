@@ -14,7 +14,7 @@ import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-f
 import { UpdateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
-import { buildAndUploadServerlessFunction } from 'src/engine/core-modules/serverless/drivers/utils/build-and-upload-serverless-function';
+import { FunctionBuildService } from 'src/engine/metadata-modules/function-build/function-build.service';
 
 @Injectable()
 export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -24,6 +24,7 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly serverlessService: ServerlessService,
+    private readonly functionBuildService: FunctionBuildService,
   ) {
     super();
   }
@@ -86,10 +87,9 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
 
     await this.fileStorageService.writeFolder(code, fileFolder);
 
-    await buildAndUploadServerlessFunction({
+    await this.functionBuildService.buildAndUpload({
       flatServerlessFunction,
       version: 'draft',
-      fileStorageService: this.fileStorageService,
     });
   }
 }
