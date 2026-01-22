@@ -56531,9 +56531,9 @@ __metadata:
   linkType: hard
 
 "ts-key-enum@npm:^2.0.12":
-  version: 2.0.12
-  resolution: "ts-key-enum@npm:2.0.12"
-  checksum: 10c0/1d9cf8085785bdc324827c5c38f6359b09d9438deab81dfab7fa6d8315c618280ba7527e98d06b68c11066a5a81b06ef84eb378a48bf80ca5772ab0e4c6683d5
+  version: 2.0.13
+  resolution: "ts-key-enum@npm:2.0.13"
+  checksum: 10c0/29f6520aa9f98d114154de9c23c8144a6ba3d6c9f426159c64e070036ab2165975060611cc033249fdded0e5f670f9e1501fd6b2ad2b2cb5408d99a68bc206d4
   languageName: node
   linkType: hard
 
