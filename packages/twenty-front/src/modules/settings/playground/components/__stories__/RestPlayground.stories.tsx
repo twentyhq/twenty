@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { action } from 'storybook/actions';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const PlaygroundApiKeySetterEffect = () => {
   const setPlaygroundApiKey = useSetRecoilState(playgroundApiKeyState);
@@ -87,7 +86,7 @@ const openApiSpec = {
 const meta: Meta<typeof RestPlayground> = {
   title: 'Modules/Settings/Playground/RestPlayground',
   component: RestPlayground,
-  decorators: [ComponentDecorator, I18nFrontDecorator],
+  decorators: [ComponentDecorator],
   parameters: {
     docs: {
       description: {

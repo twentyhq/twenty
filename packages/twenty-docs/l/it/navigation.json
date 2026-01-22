@@ -1,16 +1,16 @@
 {
   "tabs": {
     "userGuide": {
-      "label": "User Guide",
+      "label": "Guida utente",
       "groups": {
         "discoverTwenty": {
-          "label": "Discover Twenty",
+          "label": "Scopri Twenty",
           "groups": {
             "gettingStartedCapabilities": {
-              "label": "Capabilities"
+              "label": "Funzionalità"
             },
             "gettingStartedHowTos": {
-              "label": "How-Tos"
+              "label": "Guide pratiche"
             }
           }
         },
@@ -18,32 +18,32 @@
           "label": "Modello dati",
           "groups": {
             "dataModelCapabilities": {
-              "label": "Capabilities"
+              "label": "Funzionalità"
             },
             "dataModelHowTos": {
-              "label": "How-Tos"
+              "label": "Guide pratiche"
             }
           }
         },
         "dataMigration": {
-          "label": "Data Migration",
+          "label": "Migrazione dei dati",
           "groups": {
             "dataMigrationCapabilities": {
-              "label": "Capabilities"
+              "label": "Funzionalità"
             },
             "dataMigrationHowTos": {
-              "label": "How-Tos"
+              "label": "Guide pratiche"
             }
           }
         },
         "calendarEmails": {
-          "label": "Calendar & Emails",
+          "label": "Calendario & Email",
           "groups": {
             "calendarEmailsCapabilities": {
-              "label": "Capabilities"
+              "label": "Funzionalità"
             },
             "calendarEmailsHowTos": {
-              "label": "How-Tos"
+              "label": "Guide pratiche"
             }
           }
         },
@@ -51,22 +51,22 @@
           "label": "Flussi di Lavoro",
           "groups": {
             "workflowsCapabilities": {
-              "label": "Capabilities"
+              "label": "Funzionalità"
             },
             "workflowsHowTos": {
-              "label": "How-Tos",
+              "label": "Guide pratiche",
               "groups": {
                 "crmAutomations": {
-                  "label": "CRM Automations"
+                  "label": "Automazioni CRM"
                 },
                 "connectToOtherTools": {
-                  "label": "Connect to Other Tools"
+                  "label": "Connessione ad altri strumenti"
                 },
                 "advancedConfigurations": {
-                  "label": "Advanced Configurations"
+                  "label": "Configurazioni avanzate"
                 },
                 "needMoreHelp": {
-                  "label": "Need More Help"
+                  "label": "Hai bisogno di ulteriore aiuto"
                 }
               }
             }
@@ -76,21 +76,21 @@
           "label": "AI",
           "groups": {
             "aiCapabilities": {
-              "label": "Capabilities"
+              "label": "Funzionalità"
             },
             "aiHowTos": {
-              "label": "How-Tos"
+              "label": "Guide pratiche"
             }
           }
         },
         "viewsPipelines": {
-          "label": "Views & Pipelines",
+          "label": "Viste & Pipeline",
           "groups": {
             "viewsPipelinesCapabilities": {
-              "label": "Capabilities"
+              "label": "Funzionalità"
             },
             "viewsPipelinesHowTos": {
-              "label": "How-Tos"
+              "label": "Guide pratiche"
             }
           }
         },
@@ -98,21 +98,21 @@
           "label": "Cruscotti",
           "groups": {
             "dashboardsCapabilities": {
-              "label": "Capabilities"
+              "label": "Funzionalità"
             },
             "dashboardsHowTos": {
-              "label": "How-Tos"
+              "label": "Guide pratiche"
             }
           }
         },
         "permissionsAccess": {
-          "label": "Permissions & Access",
+          "label": "Autorizzazioni & Accesso",
           "groups": {
             "permissionsAccessCapabilities": {
-              "label": "Capabilities"
+              "label": "Funzionalità"
             },
             "permissionsAccessHowTos": {
-              "label": "How-Tos"
+              "label": "Guide pratiche"
             }
           }
         },
@@ -120,10 +120,10 @@
           "label": "Fatturazione",
           "groups": {
             "billingCapabilities": {
-              "label": "Capabilities"
+              "label": "Funzionalità"
             },
             "billingHowTos": {
-              "label": "How-Tos"
+              "label": "Guide pratiche"
             }
           }
         },
@@ -131,10 +131,10 @@
           "label": "Impostazioni",
           "groups": {
             "settingsCapabilities": {
-              "label": "Capabilities"
+              "label": "Funzionalità"
             },
             "settingsHowTos": {
-              "label": "How-Tos"
+              "label": "Guide pratiche"
             }
           }
         }
@@ -147,26 +147,26 @@
           "label": "Sviluppatori"
         },
         "extend": {
-          "label": "Extend",
+          "label": "Estendi",
           "groups": {
             "extendCapabilities": {
-              "label": "Capabilities"
+              "label": "Funzionalità"
             }
           }
         },
         "selfHost": {
-          "label": "Self-Host",
+          "label": "Auto-ospitazione",
           "groups": {
             "selfHostCapabilities": {
-              "label": "Capabilities"
+              "label": "Funzionalità"
             }
           }
         },
         "contribute": {
-          "label": "Contribute",
+          "label": "Contribuire",
           "groups": {
             "contributeCapabilities": {
-              "label": "Capabilities",
+              "label": "Funzionalità",
               "groups": {
                 "frontendDevelopment": {
                   "label": "Sviluppo Frontend",

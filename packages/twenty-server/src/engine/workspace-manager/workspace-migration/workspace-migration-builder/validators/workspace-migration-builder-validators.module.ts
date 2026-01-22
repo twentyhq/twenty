@@ -4,10 +4,13 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { FlatPageLayoutWidgetTypeValidatorService } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
 import { FlatAgentValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-validator.service';
+import { FlatCommandMenuItemValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service';
 import { FlatCronTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service';
 import { FlatDatabaseEventTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service';
 import { FlatFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service';
+import { FlatFrontComponentValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service';
 import { FlatIndexValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service';
+import { FlatNavigationMenuItemValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service';
 import { FlatObjectMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service';
 import { FlatPageLayoutTabValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-tab-validator.service';
 import { FlatPageLayoutValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service';
@@ -46,11 +49,14 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatRoleTargetValidatorService,
     FlatAgentValidatorService,
     FlatSkillValidatorService,
+    FlatCommandMenuItemValidatorService,
+    FlatNavigationMenuItemValidatorService,
     FlatPageLayoutValidatorService,
     FlatPageLayoutWidgetValidatorService,
     FlatPageLayoutTabValidatorService,
     FlatRowLevelPermissionPredicateValidatorService,
     FlatRowLevelPermissionPredicateGroupValidatorService,
+    FlatFrontComponentValidatorService,
   ],
   exports: [
     FlatViewValidatorService,
@@ -70,11 +76,14 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatRoleTargetValidatorService,
     FlatAgentValidatorService,
     FlatSkillValidatorService,
+    FlatCommandMenuItemValidatorService,
+    FlatNavigationMenuItemValidatorService,
     FlatPageLayoutValidatorService,
     FlatPageLayoutWidgetValidatorService,
     FlatPageLayoutTabValidatorService,
     FlatRowLevelPermissionPredicateValidatorService,
     FlatRowLevelPermissionPredicateGroupValidatorService,
+    FlatFrontComponentValidatorService,
   ],
 })
 export class WorkspaceMigrationBuilderValidatorsModule {}

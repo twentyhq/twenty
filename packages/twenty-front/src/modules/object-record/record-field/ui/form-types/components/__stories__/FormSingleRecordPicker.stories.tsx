@@ -3,7 +3,6 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
@@ -20,7 +19,6 @@ const meta: Meta<typeof FormSingleRecordPicker> = {
   args: {},
   argTypes: {},
   decorators: [
-    I18nFrontDecorator,
     ObjectMetadataItemsDecorator,
     ComponentDecorator,
     WorkspaceDecorator,

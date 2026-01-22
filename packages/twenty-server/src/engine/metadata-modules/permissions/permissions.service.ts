@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
   PermissionsException,
@@ -27,6 +28,7 @@ export class PermissionsService {
     private readonly apiKeyRoleService: ApiKeyRoleService,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   private isToolPermission(feature: string) {
@@ -126,11 +128,13 @@ export class PermissionsService {
     workspaceId,
     setting,
     apiKeyId,
+    applicationId,
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
     setting: PermissionFlagType;
     apiKeyId?: string;
+    applicationId?: string;
   }): Promise<boolean> {
     if (isDefined(apiKeyId)) {
       const roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
@@ -175,6 +179,31 @@ export class PermissionsService {
       }
 
       return this.checkRolePermissions(roleOfUserWorkspace, setting);
+    }
+
+    if (applicationId) {
+      const applicationRoleId =
+        await this.applicationService.findApplicationRoleId(
+          applicationId,
+          workspaceId,
+        );
+
+      const role = await this.roleRepository.findOne({
+        where: { id: applicationRoleId, workspaceId },
+        relations: ['permissionFlags'],
+      });
+
+      if (!isDefined(role)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.APPLICATION_ROLE_NOT_FOUND,
+          PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND,
+          {
+            userFriendlyMessage: msg`The application does not have a valid role assigned. Please check your application configuration.`,
+          },
+        );
+      }
+
+      return this.checkRolePermissions(role, setting);
     }
 
     throw new PermissionsException(

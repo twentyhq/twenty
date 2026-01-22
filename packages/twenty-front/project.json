@@ -192,9 +192,6 @@
       }
     },
     "storybook:test": {
-      "options": {
-        "port": 6006
-      },
       "configurations": {
         "docs": {
           "env": {
@@ -218,22 +215,27 @@
         }
       }
     },
-    "storybook:serve-and-test:static": {
-      "options": {
-        "port": 6006
-      },
+    "storybook:test:no-coverage": {
       "configurations": {
         "docs": {
-          "scope": "ui-docs"
+          "env": {
+            "STORYBOOK_SCOPE": "ui-docs"
+          }
         },
         "modules": {
-          "scope": "modules"
+          "env": {
+            "STORYBOOK_SCOPE": "modules"
+          }
         },
         "pages": {
-          "scope": "pages"
+          "env": {
+            "STORYBOOK_SCOPE": "pages"
+          }
         },
         "performance": {
-          "scope": "performance"
+          "env": {
+            "STORYBOOK_SCOPE": "performance"
+          }
         }
       }
     },

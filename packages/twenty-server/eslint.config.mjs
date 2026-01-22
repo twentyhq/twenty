@@ -16,6 +16,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const twentyRules = await nxPlugin.loadWorkspaceRules('packages/twenty-eslint-rules');
+
 export default [
   // Base JavaScript configuration
   js.configs.recommended,
@@ -34,7 +36,7 @@ export default [
       'src/engine/workspace-manager/dev-seeder/data/seeds/**',
       'src/utils/email-providers.ts',
       'src/engine/core-modules/i18n/locales/generated/**',
-      'src/engine/core-modules/serverless/drivers/constants/base-typescript-project/src/index.ts',
+      'src/engine/core-modules/serverless/drivers/constants/seed-project/src/index.ts',
       'packages/twenty-server/src/engine/core-modules/i18n/locales/**'
     ],
   },
@@ -51,6 +53,7 @@ export default [
       'unused-imports': unusedImportsPlugin,
       'unicorn': unicornPlugin,
       '@stylistic': stylisticPlugin,
+      'twenty': { rules: twentyRules },
     },
     rules: {
       'prettier/prettier': 'error',
@@ -239,12 +242,12 @@ export default [
       'simple-import-sort/imports': 'off',
       'unicorn/filename-case': 'off',
       'prefer-arrow/prefer-arrow-functions': 'off',
-      '@nx/workspace-max-consts-per-file': 'off',
+      'twenty/max-consts-per-file': 'off',
 
       // Custom workspace rules
-      '@nx/workspace-inject-workspace-repository': 'warn',
-      '@nx/workspace-rest-api-methods-should-be-guarded': 'error',
-      '@nx/workspace-graphql-resolvers-should-be-guarded': 'error',
+      'twenty/inject-workspace-repository': 'warn',
+      'twenty/rest-api-methods-should-be-guarded': 'error',
+      'twenty/graphql-resolvers-should-be-guarded': 'error',
     },
   },
 

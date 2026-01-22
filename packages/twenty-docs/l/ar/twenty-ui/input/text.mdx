@@ -19,29 +19,29 @@ image: /images/user-guide/notes/notes_header.png
 
     export const MyComponent = () => {
       const handleChange = (text) => {
-        console.log("Input changed:", text);
+        console.log("تم تغيير الإدخال:", text);
       };
 
       const handleKeyDown = (event) => {
-        console.log("Key pressed:", event.key);
+        console.log("تم ضغط المفتاح:", event.key);
       };
 
       return (
         <RecoilRoot>
           <TextInput
             className
-            label="Username"
+            label="اسم المستخدم"
             onChange={handleChange}
             fullWidth={false}
             disableHotkeys={false}
-            error="Invalid username"
+            error="اسم مستخدم غير صالح"
             onKeyDown={handleKeyDown}
             RightIcon={null}
           />
         </RecoilRoot>
       );
     };
-
+    },{
     ```
   </Tab>
 
@@ -75,17 +75,17 @@ image: /images/user-guide/notes/notes_header.png
       return (
         <RecoilRoot>
           <AutosizeTextInput
-            onValidate={() => console.log("onValidate function fired")}
+            onValidate={() => console.log("تم تشغيل الدالة onValidate")}
             minRows={1}
-            placeholder="Write a comment"
-            onFocus={() => console.log("onFocus function fired")}
+            placeholder="اكتب تعليقًا"
+            onFocus={() => console.log("تم تشغيل الدالة onFocus")}
             variant="icon"
             buttonTitle
-            value="Task: "
+            value="المهمة: "
           />
         </RecoilRoot>
       );
-    };
+    };},{
     ```
   </Tab>
 
@@ -116,8 +116,8 @@ image: /images/user-guide/notes/notes_header.png
         <TextArea
         disabled={false}
         minRows={4}
-        onChange={()=>console.log('On change function fired')}
-        placeholder="Enter text here"
+        onChange={()=>console.log('تم تشغيل الدالة onChange')}
+        placeholder="أدخل النص هنا"
         value=""
         />
       );

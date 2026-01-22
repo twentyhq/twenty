@@ -51,7 +51,7 @@ type DashboardFormattingToolbarProps = {
 export const DashboardFormattingToolbar = ({
   boundaryElement,
 }: DashboardFormattingToolbarProps) => {
-  // eslint-disable-next-line @nx/workspace-no-state-useref
+  // eslint-disable-next-line twenty/no-state-useref
   const toolbarContainerRef = useRef<HTMLDivElement | null>(null);
   const editor = useBlockNoteEditor();
   const theme = useTheme();

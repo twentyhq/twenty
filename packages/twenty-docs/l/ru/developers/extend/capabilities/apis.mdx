@@ -1,147 +1,147 @@
 ---
 title: API
-description: Query and modify your CRM data programmatically using REST or GraphQL.
+description: Запрашивайте и изменяйте данные CRM программно с помощью REST или GraphQL.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 Twenty разработан для удобства разработчиков и предлагает мощные API, которые адаптируются к вашей пользовательской модели данных. Мы предоставляем четыре различных типа API, чтобы удовлетворить различные интеграционные потребности.
 
-## Developer-First Approach
+## Подход, ориентированный на разработчиков
 
-Twenty generates APIs specifically for your data model:
+Twenty генерирует API специально для вашей модели данных:
 
 * **Длинные ID не требуются**: используйте названия объектов и полей прямо в конечных точках.
-* **Standard and custom objects treated equally**: Your custom objects get the same API treatment as built-in ones
+* **Стандартные и пользовательские объекты обрабатываются одинаково**: ваши пользовательские объекты получают такой же доступ к API, как и встроенные.
 * **Выделенные конечные точки**: каждый объект и поле получают свою собственную конечную точку API.
 * **Пользовательская документация**: генерируется специально для модели данных вашего рабочего пространства.
 
 <Note>
-  Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
+  Персонализированная документация по вашему API доступна в разделе **Настройки → API и вебхуки** после создания ключа API. Поскольку Twenty генерирует API, соответствующие вашей пользовательской модели данных, документация уникальна для вашего рабочего пространства.
 </Note>
 
-## The Two API Types
+## Два типа API
 
 ### Основной API
 
 Доступен на `/rest/` или `/graphql/`
 
-Work with your actual **records** (the data):
+Работайте с реальными **записями** (данными):
 
-* Create, read, update, delete People, Companies, Opportunities, etc.
-* Query and filter data
+* Создавайте, читайте, обновляйте и удаляйте People, Companies, Opportunities и т. д.
+* Запрашивайте и фильтруйте данные
 * Управление отношениями записей.
 
 ### API метаданных
 
 Доступен на `/rest/metadata/` или `/metadata/`
 
-Manage your **workspace and data model**:
+Управляйте своим **рабочим пространством и моделью данных**:
 
 * Создание, изменение или удаление объектов и полей.
 * Настройка параметров рабочего пространства.
-* Define relationships between objects
+* Определяйте связи между объектами
 
-## REST vs GraphQL
+## REST против GraphQL
 
-Both Core and Metadata APIs are available in REST and GraphQL formats:
+И Core, и Metadata API доступны в форматах REST и GraphQL:
 
-| Формат      | Available Operations                                       |
-| ----------- | ---------------------------------------------------------- |
-| **REST**    | CRUD, batch operations, upserts                            |
-| **GraphQL** | Same + **batch upserts**, relationship queries in one call |
+| Формат      | Доступные операции                                                       |
+| ----------- | ------------------------------------------------------------------------ |
+| **REST**    | CRUD, пакетные операции, upsert-операции                                 |
+| **GraphQL** | То же самое + **пакетные upsert-операции**, запросы связей за один вызов |
 
-Choose based on your needs — both formats access the same data.
+Выбирайте по своим потребностям — оба формата обращаются к одним и тем же данным.
 
 ## Конечные точки API
 
-| Environment     | Base URL                  |
-| --------------- | ------------------------- |
-| **Cloud**       | `https://api.twenty.com/` |
-| **Self-Hosted** | `https://{your-domain}/`  |
+| Среда                       | Базовый URL               |
+| --------------------------- | ------------------------- |
+| **Облако**                  | `https://api.twenty.com/` |
+| **Самостоятельный хостинг** | `https://{your-domain}/`  |
 
 ## Аутентификация
 
-Every API request requires an API key in the header:
+Каждый запрос к API требует ключ API в заголовке:
 
 ```
 Authorization: Bearer YOUR_API_KEY
 ```
 
-### Create an API Key
+### Создать ключ API
 
 1. Перейдите в **Настройки → API и Вебхуки**
-2. Click **+ Create key**
+2. Нажмите **+ Создать ключ**
 3. Настроить:
-   * **Name**: Descriptive name for the key
-   * **Expiration Date**: When the key expires
+   * **Имя**: описательное название для ключа
+   * **Дата истечения**: когда истекает срок действия ключа
 4. Нажмите **Сохранить**
-5. **Copy immediately** — the key is only shown once
+5. **Скопируйте сразу** — ключ показывается только один раз
 
-<VimeoEmbed videoId="928786722" title="Creating API key" />
+<VimeoEmbed videoId="928786722" title="Создание ключа API" />
 
 <Warning>
-  Your API key grants access to sensitive data. Don't share it with untrusted services. If compromised, disable it immediately and generate a new one.
+  Ваш ключ API предоставляет доступ к конфиденциальным данным. Не делитесь им с ненадежными сервисами. Если он скомпрометирован, немедленно отключите его и создайте новый.
 </Warning>
 
-### Assign a Role to an API Key
+### Назначить роль ключу API
 
-For better security, assign a specific role to limit access:
+Для повышения безопасности назначьте конкретную роль, чтобы ограничить доступ:
 
 1. Перейдите в **Настройки → Роли**
-2. Click on the role to assign
+2. Нажмите на роль, которую хотите назначить
 3. Откройте вкладку **Назначение**
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key
+4. В разделе **Ключи API** нажмите **+ Назначить ключу API**
+5. Выберите ключ API
 
-The key will inherit that role's permissions. See [Permissions](/l/ru/user-guide/permissions-access/capabilities/permissions) for details.
+Ключ унаследует разрешения этой роли. См. [Разрешения](/l/ru/user-guide/permissions-access/capabilities/permissions) для подробностей.
 
 ### Управление API-ключами
 
-**Regenerate**: Settings → APIs & Webhooks → Click key → **Regenerate**
+**Сгенерировать заново**: Настройки → API и вебхуки → Нажмите ключ → **Сгенерировать заново**
 
-**Delete**: Settings → APIs & Webhooks → Click key → **Delete**
+**Удалить**: Настройки → API и вебхуки → Нажмите ключ → **Удалить**
 
-## API Playground
+## Песочница API
 
-Test your APIs directly in the browser with our built-in playground — available for both **REST** and **GraphQL**.
+Тестируйте свои API прямо в браузере с нашей встроенной песочницей — доступной как для **REST**, так и для **GraphQL**.
 
-### Access the Playground
+### Доступ к песочнице
 
 1. Перейдите в **Настройки → API и Вебхуки**
-2. Create an API key (required)
-3. Click on **REST API** or **GraphQL API** to open the playground
+2. Создайте ключ API (обязательно)
+3. Нажмите на **REST API** или **GraphQL API**, чтобы открыть песочницу
 
-### What You Get
+### Что вы получаете
 
-* **Interactive documentation**: Generated for your specific data model
-* **Live testing**: Execute real API calls against your workspace
-* **Schema explorer**: Browse available objects, fields, and relationships
-* **Request builder**: Construct queries with autocomplete
+* **Интерактивная документация**: генерируется для вашей конкретной модели данных
+* **Тестирование в реальном времени**: выполняйте реальные вызовы API к вашему рабочему пространству
+* **Обозреватель схемы**: просматривайте доступные объекты, поля и связи
+* **Конструктор запросов**: создавайте запросы с автодополнением
 
-The playground reflects your custom objects and fields, so documentation is always accurate for your workspace.
+Песочница отражает ваши пользовательские объекты и поля, поэтому документация всегда точна для вашего рабочего пространства.
 
 ## Пакетные операции
 
-Both REST and GraphQL support batch operations:
+И REST, и GraphQL поддерживают пакетные операции:
 
 * **Размер пакета**: до 60 записей на запрос.
-* **Operations**: Create, update, delete multiple records
+* **Операции**: создание, обновление, удаление нескольких записей
 
-**GraphQL-only features:**
+**Функции только для GraphQL:**
 
-* **Batch Upsert**: Create or update in one call
-* Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
+* **Пакетный upsert**: создание или обновление за один вызов
+* Используйте имена объектов во множественном числе (например, `CreateCompanies` вместо `CreateCompany`)
 
-## Rate Limits
+## Лимиты скорости
 
-API requests are throttled to ensure platform stability:
+Запросы к API ограничиваются для обеспечения стабильности платформы:
 
-| Лимит          | Значение             |
-| -------------- | -------------------- |
-| **Requests**   | 100 calls per minute |
-| **Batch size** | 60 records per call  |
+| Лимит             | Значение                  |
+| ----------------- | ------------------------- |
+| **Запросы**       | 100 запросов в минуту     |
+| **Размер пакета** | 60 записей за один запрос |
 
 <Tip>
-  Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
+  Используйте пакетные операции, чтобы максимизировать пропускную способность — обрабатывайте до 60 записей за один запрос API вместо выполнения отдельных запросов.
 </Tip>

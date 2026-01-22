@@ -18,7 +18,7 @@ Ein visuelles Element, das Sie als klickbaren oder nicht klickbaren Container mi
       return (
         <Chip
           size="large"
-          label="Clickable Chip"
+          label="Anklickbarer Chip"
           clickable={true}
           variant="highlighted"
           accent="text-primary"
@@ -39,7 +39,7 @@ Ein visuelles Element, das Sie als klickbaren oder nicht klickbaren Container mi
     | linkToEntity    | Zeichenkette              | Der Link zur Entität                                                                                   |
     | entityId        | Zeichenkette              | Der eindeutige Identifikator für die Entität                                                           |
     | name            | string                    | Der Name der Entität                                                                                   |
-    | pictureUrl      | Zeichenkette              | s picture",                                                                                            |
+    | pictureUrl      | Zeichenkette              | s Bild",                                                                                               |
     | avatarType      | Avatar-Typ                | Der Typ des Avatars, den Sie anzeigen möchten. Hat zwei Optionen: `abgerundet` und `quadratisch`       |
     | Variante        | `EntityChipVariante` enum | Variante des Entity-Chips, die Sie anzeigen möchten. Hat zwei Optionen: `regelmäßig` und `transparent` |
     | LeftIcon        | Icon-Komponente           | Eine React-Komponente, die ein Symbol darstellt. Wird auf der linken Seite des Chips angezeigt         |
@@ -57,7 +57,7 @@ export const MyComponent = () => {
   return (
       <Chip 
       size="large"
-      label="Transparent Disabled Chip"
+      label="Transparenter deaktivierter Chip"
       clickable={false}
       variant="rounded"
       accent="text-secondary"
@@ -82,7 +82,7 @@ export const MyComponent = () => {
   return (
       <Chip 
       size="large"
-      label="Disabled chip that triggers a tooltip when overflowing."
+      label="Deaktivierter Chip, der bei Überlauf einen Tooltip auslöst."
       clickable={false}
       variant="regular"
       accent="text-primary"
@@ -112,7 +112,7 @@ Ein Chip-ähnliches Element, um Informationen über eine Entität anzuzeigen.
           <Chip
             linkToEntity="/entity-link"
             entityId="entityTest"
-            name="Entity name"
+            name="Entitätsname"
             pictureUrl=""
             avatarType="rounded"
             variant="regular"
@@ -130,7 +130,7 @@ Ein Chip-ähnliches Element, um Informationen über eine Entität anzuzeigen.
     | linkToEntity  | string                    | Der Link zur Entität                                                                                   |
     | entityId      | string                    | Der eindeutige Identifikator für die Entität                                                           |
     | name          | string                    | Der Name der Entität                                                                                   |
-    | pictureUrl    | Zeichenfolge              | s picture",                                                                                            |
+    | pictureUrl    | Zeichenfolge              | s Bild",                                                                                               |
     | avatarType    | Avatar-Typ                | Der Typ des Avatars, den Sie anzeigen möchten. Hat zwei Optionen: `abgerundet` und `quadratisch`       |
     | Variante      | `EntityChipVariante` enum | Variante des Entity-Chips, die Sie anzeigen möchten. Hat zwei Optionen: `regelmäßig` und `transparent` |
     | LeftIcon      | Icon-Komponente           | Eine React-Komponente, die ein Symbol darstellt. Wird auf der linken Seite des Chips angezeigt         |

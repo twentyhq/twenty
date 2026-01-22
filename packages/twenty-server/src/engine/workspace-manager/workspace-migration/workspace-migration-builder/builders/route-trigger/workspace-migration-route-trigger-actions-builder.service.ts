@@ -74,7 +74,7 @@ export class WorkspaceMigrationRouteTriggerActionsBuilderService extends Workspa
       action: {
         type: 'delete',
         metadataName: 'routeTrigger',
-        entityId: flatRouteTriggerToValidate.id,
+        universalIdentifier: flatRouteTriggerToValidate.universalIdentifier,
       },
     };
   }

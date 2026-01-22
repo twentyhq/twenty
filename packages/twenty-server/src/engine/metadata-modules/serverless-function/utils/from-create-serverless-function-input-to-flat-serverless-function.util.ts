@@ -1,9 +1,10 @@
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'src/engine/metadata-modules/serverless-function/constants/default-tool-input-schema.constant';
 import { type CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import {
+  DEFAULT_BUILT_HANDLER_PATH,
   DEFAULT_HANDLER_NAME,
   DEFAULT_HANDLER_PATH,
   ServerlessFunctionRuntime,
@@ -38,8 +39,11 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
       rawCreateServerlessFunctionInput.handlerPath ?? DEFAULT_HANDLER_PATH,
     handlerName:
       rawCreateServerlessFunctionInput.handlerName ?? DEFAULT_HANDLER_NAME,
+    builtHandlerPath:
+      rawCreateServerlessFunctionInput.builtHandlerPath ??
+      DEFAULT_BUILT_HANDLER_PATH,
     universalIdentifier:
-      rawCreateServerlessFunctionInput.universalIdentifier ?? id,
+      rawCreateServerlessFunctionInput.universalIdentifier ?? v4(),
     createdAt: currentDate.toISOString(),
     updatedAt: currentDate.toISOString(),
     deletedAt: null,

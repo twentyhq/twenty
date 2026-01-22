@@ -24,7 +24,7 @@ on:
   pull_request:
     paths:
       - 'packages/twenty-docs/**'
-      - 'crowdin-docs.yml'
+      - '.github/crowdin-docs.yml'
       - '.github/workflows/docs-i18n-pull.yaml'
 
 concurrency:
@@ -78,7 +78,7 @@ jobs:
           for lang in $LANGUAGES; do
             echo "=== Pulling translations for $lang ==="
             crowdin download \
-              --config crowdin-docs.yml \
+              --config .github/crowdin-docs.yml \
               --token "$CROWDIN_PERSONAL_TOKEN" \
               --base-url "https://twenty.api.crowdin.com" \
               --language "$lang" \

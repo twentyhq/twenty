@@ -5,7 +5,7 @@ title: Backend Befehle
 ## Nützliche Befehle
 
 Diese Befehle sollten aus dem Verzeichnis packages/twenty-server ausgeführt werden.
-From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+Von jedem anderen Verzeichnis aus können Sie `npx nx {command} twenty-server` (oder `npx nx run twenty-server:{command}`) verwenden.
 
 ### Erstmalige Einrichtung
 
@@ -36,7 +36,7 @@ Hinweis: Sie können `npx nx run twenty-server:test:integration:with-db-reset` a
 
 ### Datenbank zurücksetzen
 
-If you want to reset and seed the database, you can run the following command:
+Wenn Sie die Datenbank zurücksetzen und seeden möchten, können Sie den folgenden Befehl ausführen:
 
 ```bash
 npx nx run twenty-server:database:reset
@@ -60,7 +60,7 @@ npx nx run twenty-server:command workspace:sync-metadata -f
 ```
 
 <Warning>
-  This will drop the database and re-run the migrations and seed.
+  Dadurch wird die Datenbank gelöscht und die Migrationen sowie das Seeding erneut ausgeführt.
 
   Stellen Sie sicher, dass Sie alle Daten sichern, die Sie aufbewahren möchten, bevor Sie diesen Befehl ausführen.
 </Warning>
@@ -71,7 +71,7 @@ Twenty verwendet in erster Linie NestJS für das Backend.
 
 Prisma war das erste ORM, das wir verwendeten. Um Benutzern die Möglichkeit zu geben, benutzerdefinierte Felder und Objekte zu erstellen, war eine niedrigere Ebene sinnvoller, da wir eine feinkörnige Kontrolle benötigen. Das Projekt verwendet jetzt TypeORM.
 
-Here's what the tech stack now looks like.
+So sieht der Tech-Stack jetzt aus.
 
 **Kern**
 

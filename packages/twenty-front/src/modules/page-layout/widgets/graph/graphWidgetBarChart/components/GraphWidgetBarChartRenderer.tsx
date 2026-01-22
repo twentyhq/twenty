@@ -3,10 +3,10 @@ import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/Char
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
-import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
 import { assertBarChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertBarChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { isFilteredViewRedirectionSupported } from '@/page-layout/widgets/graph/utils/isFilteredViewRedirectionSupported';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -16,7 +16,8 @@ import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { getAppPath } from 'twenty-shared/utils';
+import { AxisNameDisplay } from '~/generated/graphql';
 
 const GraphWidgetBarChart = lazy(() =>
   import(
@@ -44,6 +45,7 @@ export const GraphWidgetBarChartRenderer = () => {
     showDataLabels,
     showLegend,
     layout,
+    groupMode,
     loading,
     hasTooManyGroups,
     formattedToRawLookup,
@@ -60,13 +62,19 @@ export const GraphWidgetBarChartRenderer = () => {
     isPageLayoutInEditModeComponentState,
   );
 
-  const hasGroupByOnSecondaryAxis = isDefined(
-    configuration.secondaryAxisGroupByFieldMetadataId,
-  );
-  const groupMode = getEffectiveGroupMode(
-    configuration.groupMode,
-    hasGroupByOnSecondaryAxis,
-  );
+  const axisNameDisplay = configuration.axisNameDisplay;
+
+  const showXLabel =
+    axisNameDisplay === AxisNameDisplay.X ||
+    axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const showYLabel =
+    axisNameDisplay === AxisNameDisplay.Y ||
+    axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const xAxisLabelToDisplay = showXLabel ? xAxisLabel : undefined;
+  const yAxisLabelToDisplay = showYLabel ? yAxisLabel : undefined;
+
   const chartFilterKey = generateChartAggregateFilterKey(
     configuration.rangeMin,
     configuration.rangeMax,
@@ -78,6 +86,12 @@ export const GraphWidgetBarChartRenderer = () => {
       objectMetadataItemId: objectMetadataItem.id,
     }),
   );
+
+  const primaryGroupByField = objectMetadataItem.fields.find(
+    (field) => field.id === configuration.primaryAxisGroupByFieldMetadataId,
+  );
+  const canRedirectToFilteredView =
+    isFilteredViewRedirectionSupported(primaryGroupByField);
 
   const handleSliceClick = (slice: BarChartSlice) => {
     const displayValue = slice.indexValue;
@@ -118,8 +132,8 @@ export const GraphWidgetBarChartRenderer = () => {
         series={series}
         indexBy={indexBy}
         keys={keys}
-        xAxisLabel={xAxisLabel}
-        yAxisLabel={yAxisLabel}
+        xAxisLabel={xAxisLabelToDisplay}
+        yAxisLabel={yAxisLabelToDisplay}
         showValues={showDataLabels}
         showLegend={showLegend}
         layout={layout}
@@ -130,7 +144,11 @@ export const GraphWidgetBarChartRenderer = () => {
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
-        onSliceClick={isPageLayoutInEditMode ? undefined : handleSliceClick}
+        onSliceClick={
+          isPageLayoutInEditMode || !canRedirectToFilteredView
+            ? undefined
+            : handleSliceClick
+        }
       />
     </Suspense>
   );

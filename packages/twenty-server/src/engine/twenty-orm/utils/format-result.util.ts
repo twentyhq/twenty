@@ -1,6 +1,6 @@
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
-import { isNull } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 import {
   FieldActorSource,
   FieldMetadataType,
@@ -155,7 +155,7 @@ export function formatResult<T>(
           compositeProperty.name,
           fieldMetadata,
         )
-      : value;
+      : formatCompositeFieldValue(value, compositeProperty.name, fieldMetadata);
   }
 
   // After assembling composite fields, handle those with missing required subfields
@@ -257,6 +257,26 @@ function transformCompositeFieldNullValue(
       compositePropertyName
     ] ?? value
   );
+}
+
+function formatCompositeFieldValue(
+  value: unknown,
+  compositePropertyName: string,
+  fieldMetadata: FlatFieldMetadata,
+) {
+  switch (fieldMetadata.type) {
+    case FieldMetadataType.CURRENCY: {
+      if (compositePropertyName === 'amountMicros') {
+        if (isNonEmptyString(value)) {
+          return parseInt(value);
+        }
+
+        return value;
+      }
+    }
+  }
+
+  return value;
 }
 
 /**

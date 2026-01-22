@@ -8,18 +8,18 @@ title: 1-Klick mit Docker Compose
 
 ## Überblick
 
-This guide provides step-by-step instructions to install and configure the Twenty application using Docker Compose. Das Ziel ist, den Prozess übersichtlich zu gestalten und häufige Fallstricke zu vermeiden, die Ihre Einrichtung unterbrechen könnten.
+Diese Anleitung enthält Schritt-für-Schritt-Anweisungen, um die Twenty-Anwendung mit Docker Compose zu installieren und zu konfigurieren. Das Ziel ist, den Prozess übersichtlich zu gestalten und häufige Fallstricke zu vermeiden, die Ihre Einrichtung unterbrechen könnten.
 
 **Wichtig:** Ändern Sie nur die in dieser Anleitung explizit erwähnten Einstellungen. Andere Konfigurationen zu ändern, kann zu Problemen führen.
 
-See docs [Setup Environment Variables](/l/de/developers/self-host/capabilities/setup) for advanced configuration. All environment variables must be declared in the docker-compose.yml file at the server and / or worker level depending on the variable.
+Siehe die Dokumentation [Umgebungsvariablen einrichten](/l/de/developers/self-host/capabilities/setup) zur erweiterten Konfiguration. Alle Umgebungsvariablen müssen in der Datei docker-compose.yml auf Server- und/oder Worker-Ebene deklariert werden, je nach Variable.
 
 ## Systemanforderungen
 
 * RAM: Stellen Sie sicher, dass Ihre Umgebung mindestens 2 GB RAM hat. Unzureichender Speicher kann dazu führen, dass Prozesse abstürzen.
 * Docker & Docker Compose: Stellen Sie sicher, dass beide installiert und aktuell sind.
 
-## Option 1: One-line script
+## Option 1: Einzeiliges Skript
 
 Installieren Sie die neueste stabile Version von Twenty mit einem einzigen Befehl:
 
@@ -38,7 +38,7 @@ VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.
 
 ## Option 2: Manuelle Schritte
 
-Follow these steps for a manual setup.
+Befolgen Sie diese Schritte für eine manuelle Einrichtung.
 
 ### Schritt 1: Einrichten der Umgebungsdatei
 
@@ -92,11 +92,11 @@ Starten Sie die Docker-Container:
 docker compose up -d
 ```
 
-### Step 4: Access the Application
+### Schritt 4: Auf die Anwendung zugreifen
 
-If you host twentyCRM on your own computer, open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+Wenn Sie twentyCRM auf Ihrem eigenen Computer hosten, öffnen Sie Ihren Browser und navigieren Sie zu [http://localhost:3000](http://localhost:3000).
 
-If you host it on a server, check that the server is running and that everything is ok with
+Wenn Sie es auf einem Server hosten, prüfen Sie, ob der Server läuft und ob alles in Ordnung ist mit
 
 ```bash
 curl http://localhost:3000
@@ -108,13 +108,13 @@ curl http://localhost:3000
 
 Standardmäßig läuft Twenty auf `localhost` an Port `3000`. Um über eine externe Domain oder IP-Adresse darauf zuzugreifen, müssen Sie die `SERVER_URL` in Ihrer `.env`-Datei konfigurieren.
 
-#### Understanding `SERVER_URL`
+#### Erläuterung von `SERVER_URL`
 
 * **Protokoll:** Verwenden Sie `http` oder `https` je nach Konfiguration.
   * Verwenden Sie `http`, wenn Sie kein SSL eingerichtet haben.
   * Verwenden Sie `https`, wenn Sie SSL konfiguriert haben.
 * **Domain/IP:** Dies ist der Domainname oder die IP-Adresse, unter der Ihre Anwendung zugänglich ist.
-* **Port:** Include the port number if you're not using the default ports (`80` for `http`, `443` for `https`).
+* **Port:** Geben Sie die Portnummer an, wenn Sie nicht die Standardports verwenden (`80` für `http`, `443` für `https`).
 
 ### SSL-Anforderungen
 
@@ -183,7 +183,7 @@ Wir empfehlen dringend, Twenty hinter einem Reverse-Proxy mit SSL-Beendigung fü
 
 * **Reverse Proxy-Konfiguration:**
 
-  Stellen Sie sicher, dass Ihr Reverse-Proxy Anfragen an den richtigen internen Port weiterleitet (`3000` standardmäßig). Configure SSL termination and any necessary headers.
+  Stellen Sie sicher, dass Ihr Reverse-Proxy Anfragen an den richtigen internen Port weiterleitet (`3000` standardmäßig). Konfigurieren Sie die SSL-Terminierung und alle erforderlichen Header.
 
 * **Firewall-Einstellungen:**
 
@@ -195,58 +195,58 @@ Wir empfehlen dringend, Twenty hinter einem Reverse-Proxy mit SSL-Beendigung fü
 
 #### Persistenz
 
-* **Data Volumes:**
+* **Daten-Volumes:**
 
-  The Docker Compose configuration uses volumes to persist data for the database and server storage.
+  Die Docker-Compose-Konfiguration verwendet Volumes, um Daten für die Datenbank und den Serverspeicher persistent zu speichern.
 
 * **Zustandslose Umgebungen:**
 
-  If deploying to a stateless environment (e.g., certain cloud services), configure external storage to persist data.
+  Wenn Sie in einer zustandslosen Umgebung bereitstellen (z. B. bei bestimmten Cloud-Diensten), konfigurieren Sie externen Speicher, um Daten persistent zu speichern.
 
-## Backup and Restore
+## Sicherung und Wiederherstellung
 
-Regular backups protect your CRM data from loss.
+Regelmäßige Sicherungen schützen Ihre CRM-Daten vor Verlust.
 
-### Create a Database Backup
+### Datenbanksicherung erstellen
 
 ```bash
 docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
 ```
 
-### Automate Daily Backups
+### Tägliche Sicherungen automatisieren
 
-Add to your crontab (`crontab -e`):
+Zu Ihrer Crontab hinzufügen (`crontab -e`):
 
 ```bash
 0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
 ```
 
-### Restore from Backup
+### Aus Sicherung wiederherstellen
 
-1. Stop the application:
+1. Anwendung stoppen:
 
 ```bash
 docker compose stop twenty-server twenty-front
 ```
 
-2. Restore the database:
+2. Datenbank wiederherstellen:
 
 ```bash
 docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
 ```
 
-3. Restart services:
+3. Dienste neu starten:
 
 ```bash
 docker compose up -d
 ```
 
-### Backup Best Practices
+### Best Practices für Sicherungen
 
-* **Test restores regularly** — verify backups actually work
-* **Store backups off-site** — use cloud storage (S3, GCS, etc.)
-* **Encrypt sensitive data** — protect backups with encryption
-* **Retain multiple copies** — keep daily, weekly, and monthly backups
+* **Wiederherstellungen regelmäßig testen** — überprüfen Sie, dass die Sicherungen tatsächlich funktionieren
+* **Sicherungen extern aufbewahren** — Cloud-Speicher verwenden (S3, GCS usw.)
+* **Sensible Daten verschlüsseln** — Sicherungen mit Verschlüsselung schützen
+* **Mehrere Kopien aufbewahren** — tägliche, wöchentliche und monatliche Sicherungen vorhalten
 
 ## Fehlerbehebung
 

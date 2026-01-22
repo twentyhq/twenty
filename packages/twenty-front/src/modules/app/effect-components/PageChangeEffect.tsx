@@ -151,6 +151,10 @@ export const PageChangeEffect = () => {
       }
     }
 
+    if (location.pathname === previousLocation) {
+      return;
+    }
+
     switch (true) {
       case isMatchingLocation(location, AppPath.RecordIndexPage): {
         resetFocusStackToRecordIndex();

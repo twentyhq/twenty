@@ -27,10 +27,12 @@ export enum ServerlessFunctionRuntime {
 }
 
 export const DEFAULT_HANDLER_PATH = 'src/index.ts';
+export const DEFAULT_BUILT_HANDLER_PATH = 'index.mjs';
 export const DEFAULT_HANDLER_NAME = 'main';
 
 @Entity('serverlessFunction')
 @Index('IDX_SERVERLESS_FUNCTION_ID_DELETED_AT', ['id', 'deletedAt'])
+@Index('IDX_SERVERLESS_FUNCTION_LAYER_ID', ['serverlessFunctionLayerId'])
 export class ServerlessFunctionEntity
   extends SyncableEntity
   implements Required<ServerlessFunctionEntity>
@@ -43,6 +45,9 @@ export class ServerlessFunctionEntity
 
   @Column({ nullable: false, default: DEFAULT_HANDLER_PATH })
   handlerPath: string;
+
+  @Column({ nullable: false, default: DEFAULT_BUILT_HANDLER_PATH })
+  builtHandlerPath: string;
 
   @Column({ nullable: false, default: DEFAULT_HANDLER_NAME })
   handlerName: string;

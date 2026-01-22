@@ -16,7 +16,7 @@ image: /images/user-guide/table-views/table.png
       return (
         <Toggle
         value = {true}
-        onChange = {()=>console.log('On Change event')}
+        onChange = {()=>console.log('تم تشغيل حدث onChange')}
         color="green"
         toggleSize = "medium"
         />
@@ -28,8 +28,8 @@ image: /images/user-guide/table-views/table.png
   <Tab title="الخصائص">
     | الخصائص     | النوع       | الوصف                                                                       | الإعداد الافتراضي |
     | ----------- | ----------- | --------------------------------------------------------------------------- | ----------------- |
-    | القيمة      | قيمة منطقية | The current state of the toggle                                             | `خاطئ`            |
-    | عند التغيير | دالة        | Callback function triggered when the toggle state changes                   |                   |
+    | القيمة      | قيمة منطقية | الحالة الحالية لمفتاح التبديل                                               | `خاطئ`            |
+    | عند التغيير | دالة        | دالة الاستدعاء التي يتم تحفيزها عند تغيير حالة مفتاح التبديل                |                   |
     | اللون       | string      | لون التبديل عند كونه                                                        | لون أزرق          |
     | حجم التبديل | نص          | حجم التبديل الذي يؤثر على كل من الطول والوزن. لديها خياران: `صغير` و`متوسط` | متوسط             |
   </Tab>

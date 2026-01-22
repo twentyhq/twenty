@@ -79,6 +79,36 @@ export const ALL_METADATA_RELATIONS = {
     },
     oneToMany: {},
   },
+  commandMenuItem: {
+    manyToOne: {
+      workspace: null,
+      application: null,
+      availabilityObjectMetadata: {
+        metadataName: 'objectMetadata',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'availabilityObjectMetadataId',
+      },
+    },
+    oneToMany: {},
+  },
+  navigationMenuItem: {
+    manyToOne: {
+      workspace: null,
+      userWorkspace: null,
+      application: null,
+      targetObjectMetadata: {
+        metadataName: 'objectMetadata',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'targetObjectMetadataId',
+      },
+      folder: {
+        metadataName: 'navigationMenuItem',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'folderId',
+      },
+    },
+    oneToMany: {},
+  },
   fieldMetadata: {
     manyToOne: {
       object: {
@@ -284,6 +314,12 @@ export const ALL_METADATA_RELATIONS = {
       objectPermissions: null,
       permissionFlags: null,
       fieldPermissions: null,
+      rowLevelPermissionPredicates: {
+        metadataName: 'rowLevelPermissionPredicate',
+      },
+      rowLevelPermissionPredicateGroups: {
+        metadataName: 'rowLevelPermissionPredicateGroup',
+      },
     },
   },
   roleTarget: {
@@ -429,6 +465,13 @@ export const ALL_METADATA_RELATIONS = {
         metadataName: 'viewFilter',
       },
     },
+  },
+  frontComponent: {
+    manyToOne: {
+      workspace: null,
+      application: null,
+    },
+    oneToMany: {},
   },
 } as const satisfies MetadataRelationsProperties;
 

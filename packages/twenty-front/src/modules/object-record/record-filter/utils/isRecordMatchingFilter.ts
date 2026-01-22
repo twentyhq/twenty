@@ -1,20 +1,8 @@
 import { isObject } from '@sniptt/guards';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isMatchingArrayFilter } from '@/object-record/record-filter/utils/isMatchingArrayFilter';
-import { isMatchingBooleanFilter } from '@/object-record/record-filter/utils/isMatchingBooleanFilter';
-import { isMatchingCurrencyFilter } from '@/object-record/record-filter/utils/isMatchingCurrencyFilter';
-import { isMatchingDateFilter } from '@/object-record/record-filter/utils/isMatchingDateFilter';
-import { isMatchingFloatFilter } from '@/object-record/record-filter/utils/isMatchingFloatFilter';
-import { isMatchingMultiSelectFilter } from '@/object-record/record-filter/utils/isMatchingMultiSelectFilter';
-import { isMatchingRatingFilter } from '@/object-record/record-filter/utils/isMatchingRatingFilter';
-import { isMatchingRawJsonFilter } from '@/object-record/record-filter/utils/isMatchingRawJsonFilter';
-import { isMatchingRichTextV2Filter } from '@/object-record/record-filter/utils/isMatchingRichTextV2Filter';
-import { isMatchingSelectFilter } from '@/object-record/record-filter/utils/isMatchingSelectFilter';
-import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
-import { isMatchingTSVectorFilter } from '@/object-record/record-filter/utils/isMatchingTSVectorFilter';
-import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
 import {
+  FieldMetadataType,
   type ActorFilter,
   type AddressFilter,
   type AndObjectRecordFilter,
@@ -40,8 +28,23 @@ import {
   type TSVectorFilter,
   type UUIDFilter,
 } from 'twenty-shared/types';
-import { isDefined, isEmptyObject } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  isDefined,
+  isEmptyObject,
+  isMatchingArrayFilter,
+  isMatchingBooleanFilter,
+  isMatchingCurrencyFilter,
+  isMatchingDateFilter,
+  isMatchingFloatFilter,
+  isMatchingMultiSelectFilter,
+  isMatchingRatingFilter,
+  isMatchingRawJsonFilter,
+  isMatchingRichTextV2Filter,
+  isMatchingSelectFilter,
+  isMatchingStringFilter,
+  isMatchingTSVectorFilter,
+  isMatchingUUIDFilter,
+} from 'twenty-shared/utils';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,

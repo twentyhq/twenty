@@ -1,143 +1,228 @@
+import { formatPath } from '@/cli/utilities/file/utils/file-path';
 import chalk from 'chalk';
-import { Command } from 'commander';
+import type { Command } from 'commander';
+import { AppBuildCommand } from './app/app-build';
+import { AppDevCommand } from './app/app-dev';
+import { AppGenerateCommand } from './app/app-generate';
+import { AppSyncCommand } from './app/app-sync';
+import { AppUninstallCommand } from './app/app-uninstall';
+import { AuthListCommand } from './auth/auth-list';
+import { AuthLoginCommand } from './auth/auth-login';
+import { AuthLogoutCommand } from './auth/auth-logout';
+import { AuthStatusCommand } from './auth/auth-status';
+import { FunctionExecuteCommand } from './function/function-execute';
+import { FunctionLogsCommand } from './function/function-logs';
+import { AuthSwitchCommand } from './auth/auth-switch';
 import {
-  AppAddCommand,
+  EntityAddCommand,
   isSyncableEntity,
   SyncableEntity,
-} from './app-add.command';
-import { AppUninstallCommand } from '@/cli/commands/app-uninstall.command';
-import { AppDevCommand } from '@/cli/commands/app-dev.command';
-import { AppSyncCommand } from '@/cli/commands/app-sync.command';
-import { formatPath } from '@/cli/utils/format-path';
-import { AppGenerateCommand } from '@/cli/commands/app-generate.command';
-import { AppLogsCommand } from '@/cli/commands/app-logs.command';
+} from './entity/entity-add';
 
-export class AppCommand {
-  private devCommand = new AppDevCommand();
-  private syncCommand = new AppSyncCommand();
-  private uninstallCommand = new AppUninstallCommand();
-  private addCommand = new AppAddCommand();
-  private generateCommand = new AppGenerateCommand();
-  private logsCommand = new AppLogsCommand();
+export const registerCommands = (program: Command): void => {
+  // Auth commands
+  const listCommand = new AuthListCommand();
+  const loginCommand = new AuthLoginCommand();
+  const logoutCommand = new AuthLogoutCommand();
+  const statusCommand = new AuthStatusCommand();
+  const switchCommand = new AuthSwitchCommand();
 
-  getCommand(): Command {
-    const appCommand = new Command('app');
-    appCommand.description('Application development commands');
+  program
+    .command('auth:login')
+    .description('Authenticate with Twenty')
+    .option('--api-key <key>', 'API key for authentication')
+    .option('--api-url <url>', 'Twenty API URL')
+    .action(async (options) => {
+      await loginCommand.execute(options);
+    });
 
-    appCommand
-      .command('dev [appPath]')
-      .description('Watch and sync local application changes')
-      .option('-d, --debounce <ms>', 'Debounce delay in milliseconds', '1000')
-      .action(async (appPath, options) => {
-        await this.devCommand.execute({
+  program
+    .command('auth:logout')
+    .description('Remove authentication credentials')
+    .action(async () => {
+      await logoutCommand.execute();
+    });
+
+  program
+    .command('auth:status')
+    .description('Check authentication status')
+    .action(async () => {
+      await statusCommand.execute();
+    });
+
+  program
+    .command('auth:switch [workspace]')
+    .description('Switch the default workspace for authentication')
+    .action(async (workspace?: string) => {
+      await switchCommand.execute({ workspace });
+    });
+
+  program
+    .command('auth:list')
+    .description('List all configured workspaces')
+    .action(async () => {
+      await listCommand.execute();
+    });
+
+  // App commands
+  const devCommand = new AppDevCommand();
+  const syncCommand = new AppSyncCommand();
+  const uninstallCommand = new AppUninstallCommand();
+  const addCommand = new EntityAddCommand();
+  const generateCommand = new AppGenerateCommand();
+  const logsCommand = new FunctionLogsCommand();
+  const executeCommand = new FunctionExecuteCommand();
+  const buildCommand = new AppBuildCommand();
+
+  program
+    .command('app:dev [appPath]')
+    .description('Watch and sync local application changes')
+    .action(async (appPath) => {
+      await devCommand.execute({
+        appPath: formatPath(appPath),
+      });
+    });
+
+  program
+    .command('app:build [appPath]')
+    .description('Build application for deployment')
+    .option('-w, --watch', 'Watch for changes and rebuild')
+    .option('-t, --tarball', 'Create a tarball after build')
+    .action(async (appPath, options) => {
+      try {
+        const result = await buildCommand.execute({
           ...options,
           appPath: formatPath(appPath),
         });
-      });
-
-    appCommand
-      .command('sync [appPath]')
-      .description('Sync application to Twenty')
-      .action(async (appPath?: string) => {
-        try {
-          const result = await this.syncCommand.execute(formatPath(appPath));
-          if (!result.success) {
-            process.exit(1);
-          }
-        } catch {
+        if (!result.success) {
           process.exit(1);
         }
-      });
+      } catch {
+        process.exit(1);
+      }
+    });
 
-    appCommand
-      .command('uninstall [appPath]')
-      .description('Uninstall application from Twenty')
-      .action(async (appPath?: string) => {
-        try {
-          const result = await this.uninstallCommand.execute({
-            appPath: formatPath(appPath),
-            askForConfirmation: true,
-          });
-          if (!result.success) {
-            process.exit(1);
-          }
-        } catch {
+  program
+    .command('app:sync [appPath]')
+    .description('Sync application to Twenty')
+    .action(async (appPath?: string) => {
+      try {
+        const result = await syncCommand.execute(formatPath(appPath));
+        if (!result.success) {
           process.exit(1);
         }
-      });
+      } catch {
+        process.exit(1);
+      }
+    });
 
-    // Keeping to avoid breaking changes
-    appCommand
-      .command('delete [appPath]', { hidden: true })
-      .description('Delete application from Twenty')
-      .action(async (appPath?: string) => {
-        try {
-          const result = await this.uninstallCommand.execute({
-            appPath: formatPath(appPath),
-            askForConfirmation: true,
-          });
-          if (!result.success) {
-            process.exit(1);
-          }
-        } catch {
+  program
+    .command('app:uninstall [appPath]')
+    .description('Uninstall application from Twenty')
+    .action(async (appPath?: string) => {
+      try {
+        const result = await uninstallCommand.execute({
+          appPath: formatPath(appPath),
+          askForConfirmation: true,
+        });
+        if (!result.success) {
           process.exit(1);
         }
-      });
+      } catch {
+        process.exit(1);
+      }
+    });
 
-    appCommand
-      .command('add [entityType]')
-      .option('--path <path>', 'Path in which the entity should be created.')
-      .description(
-        `Add a new entity to your application (${Object.values(SyncableEntity).join('|')})`,
-      )
-      .action(async (entityType?: string, options?: { path?: string }) => {
-        if (entityType && !isSyncableEntity(entityType)) {
+  program
+    .command('entity:add [entityType]')
+    .option('--path <path>', 'Path in which the entity should be created.')
+    .description(
+      `Add a new entity to your application (${Object.values(SyncableEntity).join('|')})`,
+    )
+    .action(async (entityType?: string, options?: { path?: string }) => {
+      if (entityType && !isSyncableEntity(entityType)) {
+        console.error(
+          chalk.red(
+            `Invalid entity type "${entityType}". Must be one of: ${Object.values(SyncableEntity).join('|')}`,
+          ),
+        );
+        process.exit(1);
+      }
+      await addCommand.execute(entityType as SyncableEntity, options?.path);
+    });
+
+  program
+    .command('app:generate [appPath]')
+    .description('Generate Twenty client')
+    .action(async (appPath?: string) => {
+      await generateCommand.execute(formatPath(appPath));
+    });
+
+  // Function commands
+  program
+    .command('function:logs [appPath]')
+    .option(
+      '-u, --functionUniversalIdentifier <functionUniversalIdentifier>',
+      'Only show logs for the function with this universal ID',
+    )
+    .option(
+      '-n, --functionName <functionName>',
+      'Only show logs for the function with this name',
+    )
+    .description('Watch application function logs')
+    .action(
+      async (
+        appPath?: string,
+        options?: {
+          functionUniversalIdentifier?: string;
+          functionName?: string;
+        },
+      ) => {
+        await logsCommand.execute({
+          ...options,
+          appPath: formatPath(appPath),
+        });
+      },
+    );
+
+  program
+    .command('function:execute [appPath]')
+    .option(
+      '-p, --payload <payload>',
+      'JSON payload to send to the function',
+      '{}',
+    )
+    .option(
+      '-u, --functionUniversalIdentifier <functionUniversalIdentifier>',
+      'Universal ID of the function to execute',
+    )
+    .option(
+      '-n, --functionName <functionName>',
+      'Name of the function to execute',
+    )
+    .description('Execute a serverless function with a JSON payload')
+    .action(
+      async (
+        appPath?: string,
+        options?: {
+          payload?: string;
+          functionUniversalIdentifier?: string;
+          functionName?: string;
+        },
+      ) => {
+        if (!options?.functionUniversalIdentifier && !options?.functionName) {
           console.error(
             chalk.red(
-              `Invalid entity type "${entityType}". Must be one of: ${Object.values(SyncableEntity).join('|')}`,
+              'Error: Either --functionName (-n) or --functionUniversalIdentifier (-u) is required.',
             ),
           );
           process.exit(1);
         }
-        await this.addCommand.execute(
-          entityType as SyncableEntity,
-          options?.path,
-        );
-      });
-
-    appCommand
-      .command('generate [appPath]')
-      .description('Generate Twenty client')
-      .action(async (appPath?: string) => {
-        await this.generateCommand.execute(formatPath(appPath));
-      });
-
-    appCommand
-      .command('logs [appPath]')
-      .option(
-        '-u, --functionUniversalIdentifier <functionUniversalIdentifier>',
-        'Only show logs for the function with this universal ID',
-      )
-      .option(
-        '-n, --functionName <functionName>',
-        'Only show logs for the function with this name',
-      )
-      .description('Watch application function logs')
-      .action(
-        async (
-          appPath?: string,
-          options?: {
-            functionUniversalIdentifier?: string;
-            functionName?: string;
-          },
-        ) => {
-          await this.logsCommand.execute({
-            ...options,
-            appPath: formatPath(appPath),
-          });
-        },
-      );
-
-    return appCommand;
-  }
-}
+        await executeCommand.execute({
+          ...options,
+          payload: options?.payload ?? '{}',
+          appPath: formatPath(appPath),
+        });
+      },
+    );
+};

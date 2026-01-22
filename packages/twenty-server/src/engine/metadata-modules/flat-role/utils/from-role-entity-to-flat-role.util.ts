@@ -21,11 +21,16 @@ export const fromRoleEntityToFlatRole = (role: RoleEntity): FlatRole => {
     workspaceId: role.workspaceId,
     createdAt: role.createdAt.toISOString(),
     updatedAt: role.updatedAt.toISOString(),
-    universalIdentifier: role.universalIdentifier ?? role.standardId ?? role.id,
-    applicationId: role.applicationId ?? null,
+    universalIdentifier: role.universalIdentifier,
+    applicationId: role.applicationId,
     roleTargetIds: role.roleTargets.map((rt) => rt.id),
     objectPermissionIds: role.objectPermissions.map((op) => op.id),
     permissionFlagIds: role.permissionFlags.map((pf) => pf.id),
     fieldPermissionIds: role.fieldPermissions.map((fp) => fp.id),
+    rowLevelPermissionPredicateIds: role.rowLevelPermissionPredicates.map(
+      (rp) => rp.id,
+    ),
+    rowLevelPermissionPredicateGroupIds:
+      role.rowLevelPermissionPredicateGroups.map((rp) => rp.id),
   };
 };
