@@ -61,8 +61,8 @@ export const CustomBarItem = <D extends BarDatum>({
     seriesIndex >= 0 ? seriesIndex : 'x'
   }`;
 
-  const clipPathX = !isHorizontal ? 0 : isNegativeValue ? 0 : -borderRadius;
-  const clipPathY = isHorizontal ? 0 : isNegativeValue ? -borderRadius : 0;
+  const clipPathX = !isHorizontal || isNegativeValue ? 0 : -borderRadius;
+  const clipPathY = isHorizontal || !isNegativeValue ? 0 : -borderRadius;
 
   const barInterpolations = useMemo(() => {
     const unconstrainedThicknessDimension = isHorizontal ? height : width;
