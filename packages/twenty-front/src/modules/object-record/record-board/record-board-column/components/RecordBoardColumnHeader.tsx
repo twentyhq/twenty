@@ -71,6 +71,11 @@ const StyledTag = styled(Tag)`
   overflow: hidden;
 `;
 
+const StyledDropdownContainer = styled.div`
+  min-width: 0;
+  overflow: hidden;
+`;
+
 export const RecordBoardColumnHeader = () => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
@@ -122,35 +127,37 @@ export const RecordBoardColumnHeader = () => {
       >
         <StyledHeaderContainer>
           <StyledLeftContainer>
-            <Dropdown
-              dropdownId={dropdownId}
-              dropdownPlacement="bottom-start"
-              dropdownOffset={{
-                x: 0,
-                y: 10,
-              }}
-              clickableComponent={
-                <StyledTag
-                  variant={
-                    columnDefinition.type === RecordGroupDefinitionType.Value
-                      ? 'solid'
-                      : 'outline'
-                  }
-                  color={
-                    columnDefinition.type === RecordGroupDefinitionType.Value
-                      ? columnDefinition.color
-                      : 'transparent'
-                  }
-                  text={columnDefinition.title}
-                  weight={
-                    columnDefinition.type === RecordGroupDefinitionType.Value
-                      ? 'regular'
-                      : 'medium'
-                  }
-                />
-              }
-              dropdownComponents={<RecordBoardColumnDropdownMenu />}
-            />
+            <StyledDropdownContainer>
+              <Dropdown
+                dropdownId={dropdownId}
+                dropdownPlacement="bottom-start"
+                dropdownOffset={{
+                  x: 0,
+                  y: 10,
+                }}
+                clickableComponent={
+                  <StyledTag
+                    variant={
+                      columnDefinition.type === RecordGroupDefinitionType.Value
+                        ? 'solid'
+                        : 'outline'
+                    }
+                    color={
+                      columnDefinition.type === RecordGroupDefinitionType.Value
+                        ? columnDefinition.color
+                        : 'transparent'
+                    }
+                    text={columnDefinition.title}
+                    weight={
+                      columnDefinition.type === RecordGroupDefinitionType.Value
+                        ? 'regular'
+                        : 'medium'
+                    }
+                  />
+                }
+                dropdownComponents={<RecordBoardColumnDropdownMenu />}
+              />
+            </StyledDropdownContainer>
 
             <RecordBoardColumnHeaderAggregateDropdown
               aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
