@@ -22,12 +22,10 @@ export const defineManifestTests = (appPath: string): void => {
       expect(manifest.application).toEqual(expected.application);
       expect(manifest.objects).toEqual(expected.objects);
 
-      // Compare functions with checksums normalized to [checksum]
       expect(normalizeManifestForComparison({ functions: manifest.functions }).functions).toEqual(
         normalizeManifestForComparison({ functions: expected.functions }).functions,
       );
 
-      // Verify checksums are populated (not null)
       for (const fn of manifest.functions) {
         expect(fn.builtHandlerChecksum).toBeDefined();
         expect(fn.builtHandlerChecksum).not.toBeNull();

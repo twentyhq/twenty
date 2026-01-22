@@ -15,12 +15,10 @@ export const defineManifestTests = (appPath: string): void => {
 
       const { sources: _sources, ...sanitizedManifest } = manifest;
 
-      // Compare with checksums normalized to [checksum]
       expect(normalizeManifestForComparison(sanitizedManifest)).toEqual(
         normalizeManifestForComparison(expectedManifest),
       );
 
-      // Verify checksums are populated
       for (const fn of manifest.functions) {
         expect(fn.builtHandlerChecksum).toBeDefined();
         expect(fn.builtHandlerChecksum).not.toBeNull();

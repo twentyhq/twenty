@@ -2,10 +2,9 @@ import { findPathFile } from '@/cli/utilities/file/utils/file-find';
 import { parseJsoncFile } from '@/cli/utilities/file/utils/file-jsonc';
 import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';
-import path, { relative, sep } from 'path';
+import { relative, sep } from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
-import { OUTPUT_DIR } from '../common/constants';
 import { createLogger } from '../common/logger';
 import { applicationEntityBuilder } from './entities/application';
 import { frontComponentEntityBuilder } from './entities/front-component';
@@ -16,6 +15,7 @@ import { roleEntityBuilder } from './entities/role';
 import { displayEntitySummary, displayErrors, displayWarnings } from './manifest-display';
 import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
 import { validateManifest } from './manifest-validate';
+import { writeManifestToOutput } from './manifest-writer';
 import { ManifestValidationError } from './manifest.types';
 
 const logger = createLogger('manifest-watch');
@@ -56,25 +56,6 @@ const loadSources = async (appPath: string): Promise<Sources> => {
   }
 
   return sources;
-};
-
-const writeManifestToOutput = async (
-  appPath: string,
-  manifest: ApplicationManifest,
-): Promise<void> => {
-  try {
-    const outputDir = path.join(appPath, OUTPUT_DIR);
-    await fs.ensureDir(outputDir);
-
-    const manifestPath = path.join(outputDir, 'manifest.json');
-    await fs.writeJSON(manifestPath, manifest, { spaces: 2 });
-
-    logger.success(`✓ Written to ${manifestPath}`);
-  } catch (error) {
-    logger.error(
-      `✗ Failed to write: ${error instanceof Error ? error.message : error}`,
-    );
-  }
 };
 
 export type RunManifestBuildOptions = {
@@ -181,7 +162,8 @@ export const runManifestBuild = async (
     }
 
     if (writeOutput) {
-      await writeManifestToOutput(appPath, manifest);
+      const manifestPath = await writeManifestToOutput(appPath, manifest);
+      logger.success(`✓ Written to ${manifestPath}`);
     }
 
     return { manifest, filePaths };
