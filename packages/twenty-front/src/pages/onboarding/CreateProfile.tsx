@@ -19,7 +19,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { ApolloError } from '@apollo/client';
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
@@ -73,9 +72,7 @@ export const CreateProfile = () => {
     currentWorkspaceMemberState,
   );
   const setCurrentUser = useSetRecoilState(currentUserState);
-  const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   // Form
   const {
@@ -103,6 +100,7 @@ export const CreateProfile = () => {
         }
 
         await updateOneRecord({
+          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
           idToUpdate: currentWorkspaceMember?.id,
           updateOneRecordInput: {
             name: {

@@ -72,9 +72,7 @@ export const FieldWidgetRelationCard = ({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const useUpdateOneObjectRecordMutation = () => {
     const updateEntity = ({
@@ -85,7 +83,8 @@ export const FieldWidgetRelationCard = ({
         updateOneRecordInput: Record<string, unknown>;
       };
     }) => {
-      updateOneRecord?.({
+      updateOneRecord({
+        objectNameSingular: targetRecord.targetObjectNameSingular,
         idToUpdate: variables.where.id,
         updateOneRecordInput: variables.updateOneRecordInput,
       });

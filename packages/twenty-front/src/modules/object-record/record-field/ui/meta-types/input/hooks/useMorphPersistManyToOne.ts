@@ -6,7 +6,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
-import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -22,7 +22,7 @@ export const useMorphPersistManyToOne = ({
 }: MorphPersistManyToOneProps) => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const { updateOneRecord } = useUpdateOneRecordV2();
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const persistMorphManyToOne = useRecoilCallback(
     ({ snapshot }) =>
@@ -100,7 +100,7 @@ export const useMorphPersistManyToOne = ({
             {} as Record<string, null>,
           );
 
-        updateOneRecord?.({
+        updateOneRecord({
           objectNameSingular: objectMetadataNameSingular,
           idToUpdate: recordId,
           updateOneRecordInput: {

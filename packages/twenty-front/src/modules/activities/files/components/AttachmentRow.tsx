@@ -100,9 +100,7 @@ export const AttachmentRow = ({
     destroyOneAttachment(attachment.id);
   };
 
-  const { updateOneRecord: updateOneAttachment } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const handleRename = () => {
     setIsEditing(true);
@@ -113,7 +111,8 @@ export const AttachmentRow = ({
 
     const newFileName = `${attachmentFileName}${attachmentFileExtension}`;
 
-    updateOneAttachment({
+    updateOneRecord({
+      objectNameSingular: CoreObjectNameSingular.Attachment,
       idToUpdate: attachment.id,
       updateOneRecordInput: { name: newFileName },
     });

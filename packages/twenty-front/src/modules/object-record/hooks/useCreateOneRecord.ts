@@ -74,9 +74,7 @@ export const useCreateOneRecord = <
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
   const createOneRecord = async (recordInput: Partial<CreatedObjectRecord>) => {
     setLoading(true);
@@ -184,7 +182,9 @@ export const useCreateOneRecord = <
         throw error;
       });
 
-    await refetchAggregateQueries();
+    await refetchAggregateQueries({
+      objectMetadataNamePlural: objectMetadataItem.namePlural,
+    });
 
     dispatchObjectRecordOperationBrowserEvent({
       objectMetadataItem,

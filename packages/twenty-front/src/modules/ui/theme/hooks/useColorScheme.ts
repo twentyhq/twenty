@@ -18,9 +18,7 @@ export const useColorScheme = () => {
     currentWorkspaceMemberState,
   );
 
-  const { updateOneRecord: updateOneWorkspaceMember } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
   const setPersistedColorScheme = useSetRecoilState(persistedColorSchemeState);
 
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
@@ -40,7 +38,8 @@ export const useColorScheme = () => {
           colorScheme: value,
         };
       });
-      await updateOneWorkspaceMember?.({
+      await updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
         idToUpdate: currentWorkspaceMember?.id,
         updateOneRecordInput: {
           colorScheme: value,
@@ -51,7 +50,7 @@ export const useColorScheme = () => {
       currentWorkspaceMember,
       setCurrentWorkspaceMember,
       setPersistedColorScheme,
-      updateOneWorkspaceMember,
+      updateOneRecord,
     ],
   );
 

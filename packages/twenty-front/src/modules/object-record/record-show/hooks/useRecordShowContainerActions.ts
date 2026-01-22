@@ -19,11 +19,12 @@ export const useRecordShowContainerActions = ({
   objectRecordId,
 }: UseRecordShowContainerActionsProps) => {
   const [uploadImage] = useUploadImageMutation();
-  const { updateOneRecord } = useUpdateOneRecord({ objectNameSingular });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const useUpdateOneObjectRecordMutation: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
-      updateOneRecord?.({
+      updateOneRecord({
+        objectNameSingular,
         idToUpdate: variables.where.id as string,
         updateOneRecordInput: variables.updateOneRecordInput,
       });
@@ -46,11 +47,12 @@ export const useRecordShowContainerActions = ({
 
     const avatarSignedFile = result?.data?.uploadImage;
 
-    if (!avatarSignedFile || isUndefinedOrNull(updateOneRecord)) {
+    if (!avatarSignedFile) {
       return;
     }
 
     await updateOneRecord({
+      objectNameSingular,
       idToUpdate: objectRecordId,
       updateOneRecordInput: {
         avatarUrl: avatarSignedFile.path,

@@ -9,7 +9,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 
-import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { getOperationName } from '@apollo/client/utilities';
@@ -42,7 +42,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 
-  const { updateOneRecord } = useUpdateOneRecordV2();
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
