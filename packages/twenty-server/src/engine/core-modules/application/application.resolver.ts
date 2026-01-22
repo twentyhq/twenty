@@ -110,10 +110,10 @@ export class ApplicationResolver {
     }: UploadApplicationFileInput,
   ): Promise<FileDTO> {
     const allowedApplicationFileFolders: FileFolder[] = [
-      FileFolder.Functions,
-      FileFolder.FrontComponents,
-      FileFolder.Assets,
-      FileFolder.SourceCode,
+      FileFolder.BuiltFunction,
+      FileFolder.BuiltFrontComponent,
+      FileFolder.Asset,
+      FileFolder.Source,
     ];
 
     if (!allowedApplicationFileFolders.includes(fileFolder)) {

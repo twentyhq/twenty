@@ -948,6 +948,16 @@ export type CreateFrontComponentInput = {
   name: Scalars['String'];
 };
 
+export type CreateNavigationMenuItemInput = {
+  folderId?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
+  position?: InputMaybe<Scalars['Int']>;
+  targetObjectMetadataId?: InputMaybe<Scalars['UUID']>;
+  targetRecordId?: InputMaybe<Scalars['UUID']>;
+  userWorkspaceId?: InputMaybe<Scalars['UUID']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
+};
+
 export type CreateObjectInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
@@ -1046,6 +1056,7 @@ export type CreateRowLevelPermissionPredicateInput = {
 };
 
 export type CreateServerlessFunctionInput = {
+  builtHandlerPath?: InputMaybe<Scalars['String']>;
   code?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
   handlerName?: InputMaybe<Scalars['String']>;
@@ -1584,16 +1595,16 @@ export type File = {
 
 export enum FileFolder {
   AgentChat = 'AgentChat',
-  Assets = 'Assets',
+  Asset = 'Asset',
   Attachment = 'Attachment',
+  BuiltFrontComponent = 'BuiltFrontComponent',
+  BuiltFunction = 'BuiltFunction',
   File = 'File',
-  FrontComponents = 'FrontComponents',
-  Functions = 'Functions',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
   ServerlessFunctionToDelete = 'ServerlessFunctionToDelete',
-  SourceCode = 'SourceCode',
+  Source = 'Source',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
@@ -1999,6 +2010,7 @@ export type Mutation = {
   createFrontComponent: FrontComponent;
   createManyCoreViewFields: Array<CoreViewField>;
   createManyCoreViewGroups: Array<CoreViewGroup>;
+  createNavigationMenuItem: NavigationMenuItem;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
   createOneAgent: Agent;
@@ -2038,6 +2050,7 @@ export type Mutation = {
   deleteFile: File;
   deleteFrontComponent: FrontComponent;
   deleteJobs: DeleteJobsResponse;
+  deleteNavigationMenuItem: NavigationMenuItem;
   deleteOneAgent: Agent;
   deleteOneCronTrigger: CronTrigger;
   deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
@@ -2126,6 +2139,7 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlagDto;
+  updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
   updateOneCronTrigger: CronTrigger;
@@ -2305,6 +2319,11 @@ export type MutationCreateManyCoreViewFieldsArgs = {
 
 export type MutationCreateManyCoreViewGroupsArgs = {
   inputs: Array<CreateViewGroupInput>;
+};
+
+
+export type MutationCreateNavigationMenuItemArgs = {
+  input: CreateNavigationMenuItemInput;
 };
 
 
@@ -2500,6 +2519,11 @@ export type MutationDeleteFrontComponentArgs = {
 export type MutationDeleteJobsArgs = {
   jobIds: Array<Scalars['String']>;
   queueName: Scalars['String'];
+};
+
+
+export type MutationDeleteNavigationMenuItemArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -2931,6 +2955,11 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
 };
 
 
+export type MutationUpdateNavigationMenuItemArgs = {
+  input: UpdateOneNavigationMenuItemInput;
+};
+
+
 export type MutationUpdateOneAgentArgs = {
   input: UpdateAgentInput;
 };
@@ -3155,6 +3184,21 @@ export type NativeModelCapabilities = {
   __typename?: 'NativeModelCapabilities';
   twitterSearch?: Maybe<Scalars['Boolean']>;
   webSearch?: Maybe<Scalars['Boolean']>;
+};
+
+export type NavigationMenuItem = {
+  __typename?: 'NavigationMenuItem';
+  applicationId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  folderId?: Maybe<Scalars['UUID']>;
+  id: Scalars['UUID'];
+  name?: Maybe<Scalars['String']>;
+  position: Scalars['Float'];
+  targetObjectMetadataId?: Maybe<Scalars['UUID']>;
+  targetRecordId?: Maybe<Scalars['UUID']>;
+  updatedAt: Scalars['DateTime'];
+  userWorkspaceId?: Maybe<Scalars['UUID']>;
+  viewId?: Maybe<Scalars['UUID']>;
 };
 
 export type NotesConfiguration = {
@@ -3620,6 +3664,8 @@ export type Query = {
   indexMetadatas: IndexConnection;
   lineChartData: LineChartDataOutput;
   listPlans: Array<BillingPlanOutput>;
+  navigationMenuItem?: Maybe<NavigationMenuItem>;
+  navigationMenuItems: Array<NavigationMenuItem>;
   object: Object;
   objects: ObjectConnection;
   pieChartData: PieChartDataOutput;
@@ -3949,6 +3995,11 @@ export type QueryIndexMetadatasArgs = {
 
 export type QueryLineChartDataArgs = {
   input: LineChartDataInput;
+};
+
+
+export type QueryNavigationMenuItemArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -4298,6 +4349,7 @@ export type Sentry = {
 export type ServerlessFunction = {
   __typename?: 'ServerlessFunction';
   applicationId?: Maybe<Scalars['UUID']>;
+  builtHandlerPath: Scalars['String'];
   createdAt: Scalars['DateTime'];
   cronTriggers?: Maybe<Array<CronTrigger>>;
   databaseEventTriggers?: Maybe<Array<DatabaseEventTrigger>>;
@@ -4739,6 +4791,12 @@ export type UpdateLabPublicFeatureFlagInput = {
   value: Scalars['Boolean'];
 };
 
+export type UpdateNavigationMenuItemInput = {
+  folderId?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
+  position?: InputMaybe<Scalars['Int']>;
+};
+
 export type UpdateObjectPayload = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
@@ -4758,6 +4816,13 @@ export type UpdateOneFieldMetadataInput = {
   id: Scalars['UUID'];
   /** The record to update */
   update: UpdateFieldInput;
+};
+
+export type UpdateOneNavigationMenuItemInput = {
+  /** The id of the record to update */
+  id: Scalars['UUID'];
+  /** The record to update */
+  update: UpdateNavigationMenuItemInput;
 };
 
 export type UpdateOneObjectInput = {
