@@ -50,8 +50,8 @@ export class FrontComponentsWatcher implements RestartableWatcher {
       logger.log('🎨 Building...');
       await this.createContext();
     } else {
-      logger.gray('No front components to build');
-      logger.watching();
+      logger.log('No front components to build');
+      logger.log('👀 Watching for changes...');
     }
   }
 
@@ -77,8 +77,8 @@ export class FrontComponentsWatcher implements RestartableWatcher {
         logger.log('🎨 Building...');
         await this.createContext();
       } else {
-        logger.gray('No front components to build');
-        logger.watching();
+        logger.log('No front components to build');
+        logger.log('👀 Watching for changes...');
       }
 
       logger.success('✓ Restarted');
@@ -120,7 +120,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
                 }
               } else {
                 logger.success('✓ Built');
-                logger.watching();
+                logger.log('👀 Watching for changes...');
               }
             });
           },

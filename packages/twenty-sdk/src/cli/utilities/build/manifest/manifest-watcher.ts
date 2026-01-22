@@ -49,17 +49,17 @@ export class ManifestWatcher {
         return;
       }
 
-      logger.gray(`File ${event}: ${path.relative(this.appPath, filePath)}`);
+      logger.log(`File ${event}: ${path.relative(this.appPath, filePath)}`);
 
       const result = await runManifestBuild(this.appPath);
 
       if (result.manifest) {
-        logger.watching();
+        logger.log('👀 Watching for changes...');
         this.callbacks.onBuildSuccess?.(result);
       }
     });
 
-    logger.gray('📂 Watcher started');
+    logger.log('📂 Watcher started');
   }
 
   async close(): Promise<void> {

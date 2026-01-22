@@ -72,10 +72,10 @@ export class FrontComponentEntityBuilder
     logger.success(`✓ Found ${components.length} front component(s)`);
 
     if (components.length > 0) {
-      logger.gray('📍 Entry points:');
+      logger.log('📍 Entry points:');
       for (const component of components) {
         const name = component.name || component.universalIdentifier;
-        logger.gray(`   - ${name} (${component.componentPath})`);
+        logger.log(`   - ${name} (${component.componentPath})`);
       }
     }
   }

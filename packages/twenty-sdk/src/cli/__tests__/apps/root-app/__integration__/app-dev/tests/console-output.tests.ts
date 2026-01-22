@@ -1,50 +1,36 @@
-import { type RunCliCommandResult } from '../../../../../integration/utils/run-cli-command.util';
+import { getOutputByPrefix } from '@/cli/__tests__/integration/utils/get-output-by-prefix.util';
+import { type RunCliCommandResult } from '@/cli/__tests__/integration/utils/run-cli-command.util';
 
 export const defineConsoleOutputTests = (
   getResult: () => RunCliCommandResult,
 ): void => {
   describe('console output', () => {
-    it('should contain init messages', () => {
+    it('should match init output snapshot', () => {
       const result = getResult();
-      const output = result.output;
+      const initOutput = getOutputByPrefix(result.output, 'init');
 
-      expect(output).toContain('[init] 🚀 Starting Twenty Application Development Mode');
+      expect(initOutput).toMatchSnapshot();
     });
 
-    it('should contain manifest-build messages', () => {
+    it('should match manifest-watch output snapshot', () => {
       const result = getResult();
-      const output = result.output;
+      const manifestOutput = getOutputByPrefix(result.output, 'manifest-watch');
 
-      expect(output).toContain('[manifest-build] 🔄 Building...');
-      expect(output).toContain('[manifest-build] ✓ Loaded "Root App"');
-      expect(output).toContain('[manifest-build] ✓ Found 1 object(s)');
-      expect(output).toContain('[manifest-build] ✓ Found 1 function(s)');
-      expect(output).toContain('[manifest-build] ✓ Found 1 front component(s)');
-      expect(output).toContain('[manifest-build] ✓ Found 1 role(s)');
-      expect(output).toContain('[manifest-build] ✓ Written to');
+      expect(manifestOutput).toMatchSnapshot();
     });
 
-    it('should contain manifest-watch messages', () => {
+    it('should match functions-watch output snapshot', () => {
       const result = getResult();
-      const output = result.output;
+      const functionsOutput = getOutputByPrefix(result.output, 'functions-watch');
 
-      expect(output).toContain('[manifest-watch] 📂 Watcher started');
+      expect(functionsOutput).toMatchSnapshot();
     });
 
-    it('should contain functions-watch messages', () => {
+    it('should match front-components-watch output snapshot', () => {
       const result = getResult();
-      const output = result.output;
+      const frontComponentsOutput = getOutputByPrefix(result.output, 'front-components-watch');
 
-      expect(output).toContain('[functions-watch] 📦 Building...');
-      expect(output).toContain('[functions-watch] ✓ Built');
-    });
-
-    it('should contain front-components-watch messages', () => {
-      const result = getResult();
-      const output = result.output;
-
-      expect(output).toContain('[front-components-watch] 🎨 Building...');
-      expect(output).toContain('[front-components-watch] ✓ Built');
+      expect(frontComponentsOutput).toMatchSnapshot();
     });
   });
 };

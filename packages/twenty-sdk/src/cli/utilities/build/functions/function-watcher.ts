@@ -64,8 +64,8 @@ export class FunctionsWatcher implements RestartableWatcher {
       logger.log('📦 Building...');
       await this.createContext();
     } else {
-      logger.gray('No functions to build');
-      logger.watching();
+      logger.log('No functions to build');
+      logger.log('👀 Watching for changes...');
     }
   }
 
@@ -91,8 +91,8 @@ export class FunctionsWatcher implements RestartableWatcher {
         logger.log('📦 Building...');
         await this.createContext();
       } else {
-        logger.gray('No functions to build');
-        logger.watching();
+        logger.log('No functions to build');
+        logger.log('👀 Watching for changes...');
       }
 
       logger.success('✓ Restarted');
@@ -144,7 +144,7 @@ export class FunctionsWatcher implements RestartableWatcher {
                 }
               } else {
                 logger.success('✓ Built');
-                logger.watching();
+                logger.log('👀 Watching for changes...');
               }
             });
           },

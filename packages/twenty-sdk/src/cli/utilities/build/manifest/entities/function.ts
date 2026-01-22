@@ -117,10 +117,10 @@ export class FunctionEntityBuilder
     logger.success(`✓ Found ${functions.length} function(s)`);
 
     if (functions.length > 0) {
-      logger.gray('📍 Entry points:');
+      logger.log('📍 Entry points:');
       for (const fn of functions) {
         const name = fn.name || fn.universalIdentifier;
-        logger.gray(`   - ${name} (${fn.handlerPath})`);
+        logger.log(`   - ${name} (${fn.handlerPath})`);
       }
     }
   }

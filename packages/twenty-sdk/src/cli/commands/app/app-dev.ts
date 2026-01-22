@@ -29,7 +29,7 @@ export class AppDevCommand {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
     initLogger.log('🚀 Starting Twenty Application Development Mode');
-    initLogger.gray(`📁 App Path: ${this.appPath}`);
+    initLogger.log(`📁 App Path: ${this.appPath}`);
     console.log('');
 
     await this.startWatchers();

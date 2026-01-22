@@ -35,8 +35,6 @@ export type Logger = {
   success: (message: string) => void;
   error: (message: string) => void;
   warn: (message: string) => void;
-  gray: (message: string) => void;
-  watching: () => void;
 };
 
 export const createLogger = (context: LoggerContext): Logger => {
@@ -48,7 +46,5 @@ export const createLogger = (context: LoggerContext): Logger => {
     success: (message: string) => console.log(`${prefix} ${chalk.green(message)}`),
     error: (message: string) => console.error(`${prefix} ${chalk.red(message)}`),
     warn: (message: string) => console.log(`${prefix} ${chalk.yellow(message)}`),
-    gray: (message: string) => console.log(`${prefix} ${chalk.gray(message)}`),
-    watching: () => console.log(`${prefix} ${chalk.gray('👀 Watching for changes...')}`),
   };
 };
