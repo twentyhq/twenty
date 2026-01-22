@@ -212,7 +212,7 @@ export class FileUploadService {
     return `workspace-${workspaceId}/${fileFolder}`;
   }
 
-  async uploadWorkspaceFieldFile({
+  async uploadFilesFieldFile({
     file,
     filename,
     declaredMimeType,
@@ -237,10 +237,10 @@ export class FileUploadService {
     const name = `${fileId}${ext ? `.${ext}` : ''}`;
 
     return await this.fileStorage.write_v2({
-      file: sanitizedFile,
-      name,
+      sourceFile: sanitizedFile,
+      destinationPath: name,
       mimeType,
-      folder: FileFolder.TemporaryWorkspaceField,
+      fileFolder: FileFolder.FilesField,
       applicationId,
       workspaceId,
       fileId,

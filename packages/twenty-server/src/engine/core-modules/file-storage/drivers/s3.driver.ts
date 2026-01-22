@@ -20,8 +20,8 @@ import {
   S3,
   type S3ClientConfig,
 } from '@aws-sdk/client-s3';
-import { isDefined } from 'twenty-shared/utils';
 import { isObject } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
@@ -61,14 +61,13 @@ export class S3Driver implements StorageDriver {
   }
 
   async write(params: {
-    file: Buffer | Uint8Array | string;
-    name: string;
-    folder: string;
+    filePath: string;
+    sourceFile: Buffer | Uint8Array | string;
     mimeType: string | undefined;
   }): Promise<void> {
     const command = new PutObjectCommand({
-      Key: `${params.folder}/${params.name}`,
-      Body: params.file,
+      Key: params.filePath,
+      Body: params.sourceFile,
       ContentType: params.mimeType,
       Bucket: this.bucketName,
     });
@@ -83,10 +82,9 @@ export class S3Driver implements StorageDriver {
         continue;
       }
       await this.write({
-        file: sources[key],
-        name: key,
+        filePath: join(folderPath, key),
+        sourceFile: sources[key],
         mimeType: undefined,
-        folder: folderPath,
       });
     }
   }

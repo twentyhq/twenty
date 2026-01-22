@@ -1567,14 +1567,16 @@ export enum FileFolder {
   BuiltFrontComponent = 'BuiltFrontComponent',
   BuiltFunction = 'BuiltFunction',
   File = 'File',
+  FilesField = 'FilesField',
+  FrontComponents = 'FrontComponents',
+  Functions = 'Functions',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
   ServerlessFunctionToDelete = 'ServerlessFunctionToDelete',
   Source = 'Source',
   SourceCode = 'SourceCode',
-  TemporaryWorkspaceField = 'TemporaryWorkspaceField',
-  WorkspaceField = 'WorkspaceField',
+  TemporaryFilesField = 'TemporaryFilesField',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 

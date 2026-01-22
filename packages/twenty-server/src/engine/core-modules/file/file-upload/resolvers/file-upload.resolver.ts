@@ -65,7 +65,7 @@ export class FileUploadResolver {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
 
-    const fileEntity = await this.fileUploadService.uploadWorkspaceFieldFile({
+    const fileEntity = await this.fileUploadService.uploadFilesFieldFile({
       file: buffer,
       filename,
       declaredMimeType: mimetype,

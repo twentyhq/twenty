@@ -5,14 +5,15 @@ import { type Readable } from 'stream';
 
 import { FileFolder, Sources } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
-
-import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { file } from 'zod';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 
 @Injectable()
-export class FileStorageService implements StorageDriver {
+//TODO: Implement storage driver interface when removing v1
+//export class FileStorageService implements StorageDriver {
+export class FileStorageService {
   constructor(
     private readonly fileStorageDriverFactory: FileStorageDriverFactory,
     @InjectRepository(FileEntity)
@@ -28,24 +29,30 @@ export class FileStorageService implements StorageDriver {
     folder: string;
     mimeType: string | undefined;
   }): Promise<void> {
+    const { file, name, folder, mimeType } = params;
+
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    return driver.write(params);
+    return driver.write({
+      filePath: `${folder}/${name}`,
+      sourceFile: file,
+      mimeType,
+    });
   }
 
   async write_v2({
-    file,
-    name,
+    sourceFile,
+    destinationPath,
     mimeType,
-    folder,
+    fileFolder,
     applicationId,
     workspaceId,
     fileId,
   }: {
-    file: string | Buffer | Uint8Array;
-    name: string;
+    sourceFile: string | Buffer | Uint8Array;
+    destinationPath: string;
     mimeType: string | undefined;
-    folder: FileFolder;
+    fileFolder: FileFolder;
     applicationId: string;
     workspaceId: string;
     fileId?: string;
@@ -53,16 +60,15 @@ export class FileStorageService implements StorageDriver {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     const driverParams = {
-      folder: `${workspaceId}/${applicationId}/${folder}`,
-      name,
+      filePath: `${workspaceId}/${applicationId}/${fileFolder}/${destinationPath}`,
       mimeType,
-      file,
+      sourceFile,
     };
 
     await driver.write(driverParams);
 
     const fileEntity = await this.fileRepository.save({
-      path: `${folder}/${name}`,
+      path: `${fileFolder}/${destinationPath}`,
       workspaceId,
       applicationId,
       id: fileId,

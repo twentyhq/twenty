@@ -28,21 +28,16 @@ export class LocalDriver implements StorageDriver {
   }
 
   async write(params: {
-    file: Buffer | Uint8Array | string;
-    name: string;
-    folder: string;
+    filePath: string;
+    sourceFile: Buffer | Uint8Array | string;
     mimeType: string | undefined;
   }): Promise<void> {
-    const filePath = join(
-      `${this.options.storagePath}/`,
-      params.folder,
-      params.name,
-    );
+    const filePath = join(`${this.options.storagePath}/`, params.filePath);
     const folderPath = dirname(filePath);
 
     await this.createFolder(folderPath);
 
-    await fs.writeFile(filePath, params.file);
+    await fs.writeFile(filePath, params.sourceFile);
   }
 
   async writeFolder(sources: Sources, folderPath: string) {
@@ -52,10 +47,9 @@ export class LocalDriver implements StorageDriver {
         continue;
       }
       await this.write({
-        file: sources[key],
-        name: key,
+        filePath: join(folderPath, key),
+        sourceFile: sources[key],
         mimeType: undefined,
-        folder: folderPath,
       });
     }
   }
