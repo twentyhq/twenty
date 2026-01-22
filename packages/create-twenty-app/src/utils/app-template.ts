@@ -36,6 +36,10 @@ export const copyBaseApplicationProject = async ({
     appDirectory: appFolderPath,
   });
 
+  await createDefaultFunction({
+    appDirectory: appFolderPath,
+  });
+
   await createApplicationConfig({
     displayName: appDisplayName,
     description: appDescription,
@@ -67,6 +71,7 @@ generated
 
 # dev
 /dist/
+.twenty
 
 # production
 /build
@@ -149,6 +154,33 @@ export default defineFrontComponent({
     join(appDirectory, 'hello-world.front-component.tsx'),
     content,
   );
+};
+
+const createDefaultFunction = async ({
+  appDirectory,
+}: {
+  appDirectory: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineFunction } from 'twenty-sdk';
+import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+
+export default defineFunction({
+  universalIdentifier: '${universalIdentifier}',
+  name: 'hello-world',
+  description: 'A sample serverless function',
+  roleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  trigger: {
+    type: 'http',
+  },
+  handler: async (ctx) => {
+    return { message: 'Hello, World!' };
+  },
+});
+`;
+
+  await fs.writeFile(join(appDirectory, 'hello-world.function.ts'), content);
 };
 
 const createApplicationConfig = async ({
