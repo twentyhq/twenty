@@ -4,7 +4,7 @@ import { type Sources } from 'twenty-shared/types';
 
 export interface StorageDriver {
   delete(params: { folderPath: string; filename?: string }): Promise<void>;
-  read(params: { folderPath: string; filename: string }): Promise<Readable>;
+  read(params: { filePath: string }): Promise<Readable>;
   readFolder(folderPath: string): Promise<Sources>;
   write(params: {
     filePath: string;

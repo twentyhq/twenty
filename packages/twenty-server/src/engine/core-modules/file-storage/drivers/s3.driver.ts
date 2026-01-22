@@ -167,12 +167,9 @@ export class S3Driver implements StorageDriver {
     }
   }
 
-  async read(params: {
-    folderPath: string;
-    filename: string;
-  }): Promise<Readable> {
+  async read(params: { filePath: string }): Promise<Readable> {
     const command = new GetObjectCommand({
-      Key: `${params.folderPath}/${params.filename}`,
+      Key: params.filePath,
       Bucket: this.bucketName,
     });
 
@@ -220,7 +217,7 @@ export class S3Driver implements StorageDriver {
           const { fromFolderPath, filename } = folderAndFilePaths;
 
           const fileContent = await readFileContent(
-            await this.read({ folderPath: fromFolderPath, filename }),
+            await this.read({ filePath: `${fromFolderPath}/${filename}` }),
           );
 
           const formattedObjectKey = object.Key.replace(
@@ -439,8 +436,7 @@ export class S3Driver implements StorageDriver {
         await mkdir(dir, { recursive: true });
 
         const fileStream = await this.read({
-          folderPath: params.from.folderPath,
-          filename: params.from.filename,
+          filePath: `${params.from.folderPath}/${params.from.filename}`,
         });
 
         const toPath = join(

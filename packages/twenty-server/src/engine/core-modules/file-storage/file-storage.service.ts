@@ -83,26 +83,27 @@ export class FileStorageService {
    */
   read(params: { folderPath: string; filename: string }): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const { folderPath, filename } = params;
 
-    return driver.read(params);
+    return driver.read({ filePath: `${folderPath}/${filename}` });
   }
 
   read_v2({
-    filename,
-    folder,
+    destinationPath,
+    fileFolder,
     applicationId,
     workspaceId,
   }: {
-    filename: string;
-    folder: FileFolder;
+    destinationPath: string;
+    fileFolder: FileFolder;
     applicationId: string;
     workspaceId: string;
   }): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const folderPath = `${workspaceId}/${applicationId}/${folder}`;
+    const folderPath = `${workspaceId}/${applicationId}/${fileFolder}/${destinationPath}`;
 
-    return driver.read({ folderPath, filename });
+    return driver.read({ filePath: folderPath });
   }
 
   writeFolder(sources: Sources, folderPath: string): Promise<void> {

@@ -67,15 +67,8 @@ export class LocalDriver implements StorageDriver {
     await fs.rm(filePath, { recursive: true });
   }
 
-  async read(params: {
-    folderPath: string;
-    filename: string;
-  }): Promise<Readable> {
-    const joinedPath = join(
-      `${this.options.storagePath}/`,
-      params.folderPath,
-      params.filename,
-    );
+  async read(params: { filePath: string }): Promise<Readable> {
+    const joinedPath = join(`${this.options.storagePath}/`, params.filePath);
     let filePath: string;
 
     try {
