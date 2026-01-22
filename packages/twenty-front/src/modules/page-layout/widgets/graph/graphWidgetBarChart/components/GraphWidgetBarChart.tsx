@@ -256,7 +256,10 @@ export const GraphWidgetBarChart = ({
         return null;
       }
 
-      const barKey = `${props.bar.data.indexValue}-${props.bar.data.id}`;
+      const barKey = JSON.stringify([
+        props.bar.data.indexValue,
+        props.bar.data.id,
+      ]);
       const shouldRoundFreeEnd = shouldRoundFreeEndMap?.get(barKey) ?? true;
       const seriesIndex = keyToIndexMap.get(String(props.bar.data.id)) ?? -1;
 

@@ -46,7 +46,7 @@ export const computeShouldRoundFreeEndMap = ({
         );
       });
 
-      map.set(`${indexValue}-${key}`, !hasSameSignBarAfter);
+      map.set(JSON.stringify([indexValue, key]), !hasSameSignBarAfter);
     }
   }
 
