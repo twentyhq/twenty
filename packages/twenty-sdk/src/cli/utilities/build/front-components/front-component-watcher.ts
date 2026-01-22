@@ -135,7 +135,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
                   return;
                 }
 
-                const { newInputsSignature, skipped } = await processEsbuildResult({
+                const { newInputsSignature, alreadyProcessed } = await processEsbuildResult({
                   result,
                   outputDir,
                   builtDir: FRONT_COMPONENTS_DIR,
@@ -146,7 +146,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
 
                 watcher.lastInputsSignature = newInputsSignature;
 
-                if (!skipped && watchMode) {
+                if (!alreadyProcessed && watchMode) {
                   logger.log('👀 Watching for changes...');
                 }
               } finally {

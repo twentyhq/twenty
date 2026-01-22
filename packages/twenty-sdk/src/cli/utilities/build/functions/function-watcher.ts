@@ -158,7 +158,7 @@ export class FunctionsWatcher implements RestartableWatcher {
                   return;
                 }
 
-                const { newInputsSignature, skipped } = await processEsbuildResult({
+                const { newInputsSignature, alreadyProcessed } = await processEsbuildResult({
                   result,
                   outputDir,
                   builtDir: FUNCTIONS_DIR,
@@ -169,7 +169,7 @@ export class FunctionsWatcher implements RestartableWatcher {
 
                 watcher.lastInputsSignature = newInputsSignature;
 
-                if (!skipped && watchMode) {
+                if (!alreadyProcessed && watchMode) {
                   logger.log('👀 Watching for changes...');
                 }
               } finally {

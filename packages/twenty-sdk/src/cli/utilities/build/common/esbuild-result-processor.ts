@@ -15,7 +15,7 @@ export type ProcessEsbuildResultParams = {
 
 export type ProcessEsbuildResultOutput = {
   newInputsSignature: string | null;
-  skipped: boolean;
+  alreadyProcessed: boolean;
 };
 
 export const processEsbuildResult = async ({
@@ -30,7 +30,7 @@ export const processEsbuildResult = async ({
   const inputsSignature = inputs.join(',');
 
   if (lastInputsSignature === inputsSignature) {
-    return { newInputsSignature: inputsSignature, skipped: true };
+    return { newInputsSignature: inputsSignature, alreadyProcessed: true };
   }
 
   const outputFiles = Object.keys(result.metafile?.outputs ?? {})
@@ -49,5 +49,5 @@ export const processEsbuildResult = async ({
     }
   }
 
-  return { newInputsSignature: inputsSignature, skipped: false };
+  return { newInputsSignature: inputsSignature, alreadyProcessed: false };
 };
