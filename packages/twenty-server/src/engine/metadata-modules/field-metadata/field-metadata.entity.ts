@@ -33,8 +33,6 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 // This entity is used as a reference test case for type utilities in:
-// - flat-entity/types/__tests__/
-// - universal-flat-entity/types/__tests__/
 // Modifying relations or properties may require updating type test expectations for Typecheck to pass.
 @Entity('fieldMetadata')
 @Check(
