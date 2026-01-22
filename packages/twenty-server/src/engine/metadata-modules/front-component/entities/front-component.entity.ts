@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 @Entity('frontComponent')
 export class FrontComponentEntity
@@ -24,4 +25,10 @@ export class FrontComponentEntity
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  /**
+   * @deprecated /!\ Do not use /!\
+   * Temporarily discriminated union on this entity which is included by others
+   */
+  declare readonly __metadataName: typeof ALL_METADATA_NAME.frontComponent;
 }
