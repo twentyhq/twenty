@@ -21,6 +21,7 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
+import { InstallApplicationInput } from 'src/engine/core-modules/application/dtos/install-application.input';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/dtos/uninstallApplicationInput';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/dtos/uploadApplicationFileInput';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -87,6 +88,7 @@ export class ApplicationResolver {
 
   @Mutation(() => Boolean)
   async installApplication(
+    @Args() { workspaceMigration }: InstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
@@ -105,7 +107,7 @@ export class ApplicationResolver {
       );
     }
 
-    // TODO: implement
+    // TODO: implement - run the migration with workspaceMigration
     return true;
   }
 
