@@ -10,7 +10,6 @@ import {
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '../common/restartable-watcher.interface';
-import { type ManifestBuildResult } from '../manifest/manifest-build';
 import { FRONT_COMPONENTS_DIR } from './constants';
 
 const logger = createLogger('front-components-watch');
@@ -39,14 +38,14 @@ export class FrontComponentsWatcher implements RestartableWatcher {
 
   constructor(options: RestartableWatcherOptions) {
     this.appPath = options.appPath;
-    this.componentPaths = options.buildResult?.filePaths.frontComponents ?? [];
+    this.componentPaths = options.sourcePaths;
     this.watchMode = options.watch ?? true;
     this.onFileBuilt = options.onFileBuilt;
   }
 
-  shouldRestart(result: ManifestBuildResult): boolean {
+  shouldRestart(sourcePaths: string[]): boolean {
     const currentPaths = this.componentPaths.sort().join(',');
-    const newPaths = result.filePaths.frontComponents.sort().join(',');
+    const newPaths = [...sourcePaths].sort().join(',');
 
     return currentPaths !== newPaths;
   }
@@ -71,7 +70,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
     this.esBuildContext = null;
   }
 
-  async restart(result: ManifestBuildResult): Promise<void> {
+  async restart(sourcePaths: string[]): Promise<void> {
     if (this.isRestarting) return;
 
     this.isRestarting = true;
@@ -80,9 +79,8 @@ export class FrontComponentsWatcher implements RestartableWatcher {
       await this.close();
 
       const outputDir = path.join(this.appPath, OUTPUT_DIR, FRONT_COMPONENTS_DIR);
-      const newPaths = result.filePaths.frontComponents;
-      await cleanupRemovedFiles(outputDir, this.componentPaths, newPaths);
-      this.componentPaths = newPaths;
+      await cleanupRemovedFiles(outputDir, this.componentPaths, sourcePaths);
+      this.componentPaths = sourcePaths;
 
       if (this.componentPaths.length > 0) {
         logger.log('🎨 Building...');
@@ -108,8 +106,6 @@ export class FrontComponentsWatcher implements RestartableWatcher {
     }
 
     const watchMode = this.watchMode;
-
-    // Capture reference for use in plugin callbacks
     const watcher = this;
 
     this.esBuildContext = await esbuild.context({
@@ -151,8 +147,6 @@ export class FrontComponentsWatcher implements RestartableWatcher {
                   .filter((file) => file.endsWith('.mjs'));
 
                 for (const outputFile of outputFiles) {
-                  // Make outputFile absolute before computing relative path
-                  // (esbuild metafile keys are relative to process.cwd())
                   const absoluteOutputFile = path.resolve(outputFile);
                   const relativePath = path.relative(outputDir, absoluteOutputFile);
                   const builtPath = `${FRONT_COMPONENTS_DIR}/${relativePath}`;
@@ -169,7 +163,6 @@ export class FrontComponentsWatcher implements RestartableWatcher {
                   logger.log('👀 Watching for changes...');
                 }
               } finally {
-                // Signal that onEnd processing is complete
                 watcher.resolveBuildComplete?.();
               }
             });
@@ -178,14 +171,11 @@ export class FrontComponentsWatcher implements RestartableWatcher {
       ],
     });
 
-    // Create a promise that will be resolved when onEnd completes
     this.buildCompletePromise = new Promise<void>((resolve) => {
       this.resolveBuildComplete = resolve;
     });
 
     await this.esBuildContext.rebuild();
-
-    // Wait for the onEnd callback to finish processing checksums
     await this.buildCompletePromise;
 
     if (this.watchMode) {

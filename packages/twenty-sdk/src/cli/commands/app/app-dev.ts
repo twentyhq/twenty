@@ -1,7 +1,7 @@
 import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
-import { runManifestBuild, type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-build';
+import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
@@ -67,8 +67,8 @@ export class AppDevCommand {
     this.initializeFileUploadStatus(buildResult.manifest);
 
     await this.startManifestWatcher();
-    await this.startFunctionsWatcher(buildResult);
-    await this.startFrontComponentsWatcher(buildResult);
+    await this.startFunctionsWatcher(buildResult.filePaths.functions);
+    await this.startFrontComponentsWatcher(buildResult.filePaths.frontComponents);
   }
 
   private initializeFileUploadStatus(manifest: ApplicationManifest): void {
@@ -104,12 +104,14 @@ export class AppDevCommand {
             this.initializeFileUploadStatus(result.manifest);
           }
 
-          if (this.functionsWatcher?.shouldRestart(result)) {
-            this.functionsWatcher.restart(result);
+          const functionSourcePaths = result.filePaths.functions;
+          if (this.functionsWatcher?.shouldRestart(functionSourcePaths)) {
+            this.functionsWatcher.restart(functionSourcePaths);
           }
 
-          if (this.frontComponentsWatcher?.shouldRestart(result)) {
-            this.frontComponentsWatcher.restart(result);
+          const componentSourcePaths = result.filePaths.frontComponents;
+          if (this.frontComponentsWatcher?.shouldRestart(componentSourcePaths)) {
+            this.frontComponentsWatcher.restart(componentSourcePaths);
           }
         },
       },
@@ -118,10 +120,10 @@ export class AppDevCommand {
     await this.manifestWatcher.start();
   }
 
-  private async startFunctionsWatcher(buildResult: ManifestBuildResult): Promise<void> {
+  private async startFunctionsWatcher(sourcePaths: string[]): Promise<void> {
     this.functionsWatcher = new FunctionsWatcher({
       appPath: this.appPath,
-      buildResult,
+      sourcePaths,
       onFileBuilt: (builtPath, checksum) => {
         this.updateFunctionFileStatus(builtPath, checksum);
       },
@@ -130,10 +132,10 @@ export class AppDevCommand {
     await this.functionsWatcher.start();
   }
 
-  private async startFrontComponentsWatcher(buildResult: ManifestBuildResult): Promise<void> {
+  private async startFrontComponentsWatcher(sourcePaths: string[]): Promise<void> {
     this.frontComponentsWatcher = new FrontComponentsWatcher({
       appPath: this.appPath,
-      buildResult,
+      sourcePaths,
       onFileBuilt: (builtPath, checksum) => {
         this.updateFrontComponentFileStatus(builtPath, checksum);
       },

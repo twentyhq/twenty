@@ -55,7 +55,7 @@ export class AppBuildCommand {
   private async buildFunctions(buildResult: ManifestBuildResult): Promise<void> {
     this.functionsBuilder = new FunctionsWatcher({
       appPath: this.appPath,
-      buildResult,
+      sourcePaths: buildResult.filePaths.functions,
       watch: false,
       onFileBuilt: (builtPath, checksum) => {
         this.updateFunctionChecksum(buildResult, builtPath, checksum);
@@ -68,7 +68,7 @@ export class AppBuildCommand {
   private async buildFrontComponents(buildResult: ManifestBuildResult): Promise<void> {
     this.frontComponentsBuilder = new FrontComponentsWatcher({
       appPath: this.appPath,
-      buildResult,
+      sourcePaths: buildResult.filePaths.frontComponents,
       watch: false,
       onFileBuilt: (builtPath, checksum) => {
         this.updateFrontComponentChecksum(buildResult, builtPath, checksum);
