@@ -16,9 +16,9 @@ describe('getFrontComponentBaseFile', () => {
       "universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4'",
     );
     expect(result).toContain("name: 'my-component'");
-    expect(result).toContain('component: HelloWorld,');
+    expect(result).toContain('component: Component,');
 
-    expect(result).toContain('export const HelloWorld = () => {');
+    expect(result).toContain('const Component = () => {');
 
     expect(result).toContain(
       "description: 'Add a description for your front component'",
@@ -49,7 +49,7 @@ describe('getFrontComponentBaseFile', () => {
     });
 
     expect(result).toContain('<div');
-    expect(result).toContain('<h1>Hello, World!</h1>');
+    expect(result).toContain('<h1>My new component!</h1>');
     expect(result).toContain('</div>');
   });
 });

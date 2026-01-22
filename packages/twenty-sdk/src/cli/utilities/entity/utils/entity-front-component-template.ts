@@ -13,10 +13,10 @@ export const getFrontComponentBaseFile = ({
   return `import { defineFrontComponent } from 'twenty-sdk';
 
 // React component - implement your UI here
-export const HelloWorld = () => {
+const Component = () => {
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1>Hello, World!</h1>
+      <h1>My new component!</h1>
       <p>This is your front component: ${kebabCaseName}</p>
     </div>
   );
@@ -26,7 +26,7 @@ export default defineFrontComponent({
   universalIdentifier: '${universalIdentifier}',
   name: '${kebabCaseName}',
   description: 'Add a description for your front component',
-  component: HelloWorld,
+  component: Component,
 });
 `;
 };
