@@ -13,7 +13,7 @@ import {
   type WorkspaceMigrationAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
-import { WorkspaceMigrationExecutionException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-execution.exception';
+import { WorkspaceMigrationActionExecutionException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { optimisticallyApplyCreateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-create-action-on-all-flat-entity-maps.util';
 import { optimisticallyApplyDeleteActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-delete-action-on-all-flat-entity-maps.util';
@@ -109,7 +109,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     const hasWorkspaceSchemaError = workspaceSchemaResult.status === 'rejected';
 
     if (hasMetadataError || hasWorkspaceSchemaError) {
-      throw new WorkspaceMigrationExecutionException({
+      throw new WorkspaceMigrationActionExecutionException({
         action: context.action,
         errors: {
           ...(hasMetadataError && { metadata: metadataResult.reason }),

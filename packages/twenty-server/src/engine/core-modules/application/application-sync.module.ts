@@ -48,7 +48,7 @@ import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-commo
     WorkflowCommonModule,
     FileStorageModule,
     WorkspaceCacheModule,
-    WorkspaceMigrationRunnerModule
+    WorkspaceMigrationRunnerModule,
   ],
   providers: [
     ApplicationResolver,

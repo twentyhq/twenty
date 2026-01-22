@@ -5,19 +5,19 @@ import {
   ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  WorkspaceMigrationExecutionException,
-  WorkspaceMigrationExecutionExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-execution.exception';
-import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+  type WorkspaceMigrationActionExecutionException,
+  WorkspaceMigrationActionExecutionExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
+import { type WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
-export const workspaceMigrationExecutionExceptionFormatter = (
-  error: WorkspaceMigrationExecutionException,
+export const workspaceMigrationActionExecutionExceptionFormatter = (
+  error: WorkspaceMigrationActionExecutionException,
 ) => {
   throw new BaseGraphQLError(
     error.message,
     ErrorCode.APPLICATION_INSTALLATION_FAILED,
     {
-      code: WorkspaceMigrationExecutionExceptionCode.EXECUTION_FAILED,
+      code: WorkspaceMigrationActionExecutionExceptionCode.EXECUTION_FAILED,
       action: error.action,
       errors: {
         ...(error.errors.metadata && {

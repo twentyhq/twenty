@@ -1,29 +1,29 @@
 import { msg } from '@lingui/core/macro';
 import { CustomError } from 'twenty-shared/utils';
 
-import { WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { type WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
-export const WorkspaceMigrationExecutionExceptionCode = {
+export const WorkspaceMigrationActionExecutionExceptionCode = {
   EXECUTION_FAILED: 'EXECUTION_FAILED',
 } as const;
 
-export type WorkspaceMigrationExecutionErrors = {
+export type WorkspaceMigrationActionExecutionErrors = {
   metadata?: Error;
   workspaceSchema?: Error;
 };
 
-export class WorkspaceMigrationExecutionException extends CustomError {
-  code: keyof typeof WorkspaceMigrationExecutionExceptionCode;
+export class WorkspaceMigrationActionExecutionException extends CustomError {
+  code: keyof typeof WorkspaceMigrationActionExecutionExceptionCode;
   userFriendlyMessage = msg`Migration action execution failed.`;
   action: WorkspaceMigrationAction;
-  errors: WorkspaceMigrationExecutionErrors;
+  errors: WorkspaceMigrationActionExecutionErrors;
 
   constructor({
     action,
     errors,
   }: {
     action: WorkspaceMigrationAction;
-    errors: WorkspaceMigrationExecutionErrors;
+    errors: WorkspaceMigrationActionExecutionErrors;
   }) {
     const errorMessages: string[] = [];
 
@@ -38,7 +38,7 @@ export class WorkspaceMigrationExecutionException extends CustomError {
       `Migration action '${action.type}' for '${action.metadataName}' failed. ${errorMessages.join(', ')}`,
     );
 
-    this.code = WorkspaceMigrationExecutionExceptionCode.EXECUTION_FAILED;
+    this.code = WorkspaceMigrationActionExecutionExceptionCode.EXECUTION_FAILED;
     this.action = action;
     this.errors = errors;
   }

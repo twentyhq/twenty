@@ -15,7 +15,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration';
 import { WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
-import { WorkspaceMigrationExecutionException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-execution.exception';
+import { WorkspaceMigrationActionExecutionException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
@@ -257,7 +257,7 @@ export class WorkspaceMigrationRunnerService {
         );
       }
 
-      if (error instanceof WorkspaceMigrationExecutionException) {
+      if (error instanceof WorkspaceMigrationActionExecutionException) {
         throw error;
       }
 

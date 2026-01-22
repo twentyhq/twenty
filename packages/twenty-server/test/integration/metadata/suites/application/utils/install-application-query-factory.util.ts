@@ -16,9 +16,7 @@ export const installApplicationQueryFactory = ({
   input: InstallApplicationFactoryInput;
 }) => ({
   query: gql`
-    mutation InstallApplication(
-      $workspaceMigration: WorkspaceMigrationInput!
-    ) {
+    mutation InstallApplication($workspaceMigration: WorkspaceMigrationInput!) {
       installApplication(workspaceMigration: $workspaceMigration)
     }
   `,
