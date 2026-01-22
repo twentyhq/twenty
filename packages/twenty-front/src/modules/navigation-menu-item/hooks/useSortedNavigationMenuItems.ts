@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
+import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -12,7 +13,6 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
 
@@ -32,6 +32,10 @@ export const useSortedNavigationMenuItems = () => {
 
     [...navigationMenuItems, ...workspaceNavigationMenuItems].forEach(
       (navigationMenuItem) => {
+        if (isDefined(navigationMenuItem.viewId)) {
+          return;
+        }
+
         const objectMetadataItem = objectMetadataItemsFromHook.find(
           (item) => item.id === navigationMenuItem.targetObjectMetadataId,
         );
@@ -96,15 +100,16 @@ export const useSortedNavigationMenuItems = () => {
 
   const workspaceNavigationMenuItemsSorted = useMemo(() => {
     const filtered = workspaceNavigationMenuItems.filter((item) => {
+      if (isDefined(item.viewId)) {
+        return coreViews.some((view) => view.id === item.viewId);
+      }
+
       const itemTargetRecordId = item.targetRecordId;
       if (!isDefined(itemTargetRecordId)) {
         return false;
       }
-      const matchesView = coreViews.some(
-        (view) => view.id === itemTargetRecordId,
-      );
       const matchesTargetRecord = targetRecords.has(itemTargetRecordId);
-      return matchesView || matchesTargetRecord;
+      return matchesTargetRecord;
     });
     return sortNavigationMenuItems(
       filtered,

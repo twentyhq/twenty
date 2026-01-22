@@ -9,6 +9,7 @@ import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 
+import { isDefined } from 'twenty-shared/utils';
 import { useSortedNavigationMenuItems } from './useSortedNavigationMenuItems';
 
 export const useWorkspaceNavigationMenuItems = (): {
@@ -30,13 +31,15 @@ export const useWorkspaceNavigationMenuItems = (): {
           )?.id,
     );
 
-  const workspaceNavigationMenuItemIds = new Set(
-    workspaceNavigationMenuItemsSorted.map((item) => item.targetRecordId),
+  const workspaceNavigationMenuItemViewIds = new Set(
+    workspaceNavigationMenuItemsSorted
+      .map((item) => item.viewId)
+      .filter((viewId) => isDefined(viewId)),
   );
 
   const navigationMenuItemViewObjectMetadataIds = new Set(
     views.reduce<string[]>((acc, view) => {
-      if (workspaceNavigationMenuItemIds.has(view.id)) {
+      if (workspaceNavigationMenuItemViewIds.has(view.id)) {
         acc.push(view.objectMetadataId);
       }
       return acc;

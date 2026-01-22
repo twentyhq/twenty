@@ -25,6 +25,7 @@ export const useCreateNavigationMenuItemFolder = () => {
         !item.folderId &&
         !item.targetRecordId &&
         !item.targetObjectMetadataId &&
+        !item.viewId &&
         item.userWorkspaceId === currentWorkspaceMemberId,
     );
 

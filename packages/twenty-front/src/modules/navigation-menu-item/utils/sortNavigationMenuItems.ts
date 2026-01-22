@@ -28,39 +28,41 @@ export const sortNavigationMenuItems = (
 ): ProcessedNavigationMenuItem[] => {
   return navigationMenuItems
     .map((navigationMenuItem) => {
-      if (!isDefined(navigationMenuItem.targetRecordId)) {
+      if (isDefined(navigationMenuItem.viewId)) {
+        const view = views.find(
+          (view) => view.id === navigationMenuItem.viewId,
+        );
+
+        if (isDefined(view)) {
+          const { namePlural } = getObjectMetadataNamePluralFromViewId(
+            view,
+            objectMetadataItems,
+          );
+
+          const displayFields: NavigationMenuItemDisplayFields = {
+            labelIdentifier: view.name,
+            avatarUrl: '',
+            avatarType: 'icon',
+            link: getAppPath(
+              AppPath.RecordIndexPage,
+              { objectNamePlural: namePlural },
+              { viewId: navigationMenuItem.viewId },
+            ),
+            objectNameSingular: 'view',
+            Icon: view.icon,
+          };
+
+          return {
+            ...navigationMenuItem,
+            ...displayFields,
+          };
+        }
+
         return null;
       }
 
-      const view = views.find(
-        (view) => view.id === navigationMenuItem.targetRecordId,
-      );
-
-      if (isDefined(view)) {
-        const { namePlural } = getObjectMetadataNamePluralFromViewId(
-          view,
-          objectMetadataItems,
-        );
-
-        const displayFields: NavigationMenuItemDisplayFields = {
-          labelIdentifier: view.name,
-          avatarUrl: '',
-          avatarType: 'icon',
-          link: getAppPath(
-            AppPath.RecordIndexPage,
-            { objectNamePlural: namePlural },
-            navigationMenuItem.targetRecordId
-              ? { viewId: navigationMenuItem.targetRecordId }
-              : undefined,
-          ),
-          objectNameSingular: 'view',
-          Icon: view.icon,
-        };
-
-        return {
-          ...navigationMenuItem,
-          ...displayFields,
-        } as ProcessedNavigationMenuItem;
+      if (!isDefined(navigationMenuItem.targetRecordId)) {
+        return null;
       }
 
       const objectMetadataItem = objectMetadataItems.find(
@@ -98,7 +100,7 @@ export const sortNavigationMenuItems = (
         ...navigationMenuItem,
         ...displayFields,
         link: hasLinkToShowPage ? displayFields.link : '',
-      } as ProcessedNavigationMenuItem;
+      };
     })
     .filter(isDefined)
     .sort((a, b) => a.position - b.position);
