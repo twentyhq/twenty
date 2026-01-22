@@ -20,9 +20,7 @@ export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
   );
 
   const workspaceFavorites = prefetchFavorites.filter(
-    (favorite) =>
-      favorite.forWorkspaceMemberId === null ||
-      favorite.forWorkspaceMemberId === '',
+    (favorite) => favorite.forWorkspaceMemberId === null,
   );
 
   return {
