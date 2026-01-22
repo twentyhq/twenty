@@ -231,11 +231,13 @@ export class FileUploadService {
       filename,
     });
 
+    const sanitizedFile = this._sanitizeFile({ file, ext, mimeType });
+
     const fileId = v4();
     const name = `${fileId}${ext ? `.${ext}` : ''}`;
 
     return await this.fileStorage.write_v2({
-      file,
+      file: sanitizedFile,
       name,
       mimeType,
       folder: FileFolder.TemporaryWorkspaceField,
