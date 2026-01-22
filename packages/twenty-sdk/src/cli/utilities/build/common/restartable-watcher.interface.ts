@@ -7,8 +7,11 @@ export interface RestartableWatcher {
   shouldRestart(result: ManifestBuildResult): boolean;
 }
 
+export type OnFileBuiltCallback = (builtPath: string, checksum: string) => void;
+
 export type RestartableWatcherOptions = {
   appPath: string;
   buildResult: ManifestBuildResult | null;
   watch?: boolean;
+  onFileBuilt?: OnFileBuiltCallback;
 };

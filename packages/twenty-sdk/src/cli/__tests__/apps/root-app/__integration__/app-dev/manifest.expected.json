@@ -41,7 +41,8 @@
       ],
       "handlerName": "myHandler",
       "sourceHandlerPath": "my.function.ts",
-      "builtHandlerPath": "functions/my.function.mjs"
+      "builtHandlerPath": "functions/my.function.mjs",
+      "builtHandlerChecksum": null
     }
   ],
   "frontComponents": [
@@ -51,7 +52,8 @@
       "description": "A root-level front component",
       "componentName": "MyComponent",
       "sourceComponentPath": "my.front-component.tsx",
-      "builtComponentPath": "front-components/my.front-component.mjs"
+      "builtComponentPath": "front-components/my.front-component.mjs",
+      "builtComponentChecksum": null
     }
   ],
   "roles": [

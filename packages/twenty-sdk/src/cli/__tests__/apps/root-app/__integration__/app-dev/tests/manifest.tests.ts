@@ -19,8 +19,38 @@ export const defineManifestTests = (appPath: string): void => {
 
       expect(manifest.application).toEqual(expected.application);
       expect(manifest.objects).toEqual(expected.objects);
-      expect(manifest.serverlessFunctions).toEqual(expected.serverlessFunctions);
-      expect(manifest.frontComponents).toEqual(expected.frontComponents);
+
+      // Compare serverless functions without checksums (populated dynamically)
+      const manifestFunctionsWithoutChecksums = manifest.serverlessFunctions.map(
+        ({ builtHandlerChecksum: _checksum, ...rest }) => rest,
+      );
+      const expectedFunctionsWithoutChecksums = expected.serverlessFunctions.map(
+        ({ builtHandlerChecksum: _checksum, ...rest }) => rest,
+      );
+      expect(manifestFunctionsWithoutChecksums).toEqual(expectedFunctionsWithoutChecksums);
+
+      // Verify checksums are populated (not null)
+      for (const fn of manifest.serverlessFunctions) {
+        expect(fn.builtHandlerChecksum).toBeDefined();
+        expect(fn.builtHandlerChecksum).not.toBeNull();
+        expect(typeof fn.builtHandlerChecksum).toBe('string');
+      }
+
+      // Compare front components without checksums (populated dynamically)
+      const manifestComponentsWithoutChecksums = manifest.frontComponents?.map(
+        ({ builtComponentChecksum: _checksum, ...rest }) => rest,
+      );
+      const expectedComponentsWithoutChecksums = expected.frontComponents?.map(
+        ({ builtComponentChecksum: _checksum, ...rest }) => rest,
+      );
+      expect(manifestComponentsWithoutChecksums).toEqual(expectedComponentsWithoutChecksums);
+
+      // Verify front component checksums are populated (not null)
+      for (const component of manifest.frontComponents ?? []) {
+        expect(component.builtComponentChecksum).toBeDefined();
+        expect(component.builtComponentChecksum).not.toBeNull();
+        expect(typeof component.builtComponentChecksum).toBe('string');
+      }
       expect(manifest.roles).toEqual(expected.roles);
     });
   });

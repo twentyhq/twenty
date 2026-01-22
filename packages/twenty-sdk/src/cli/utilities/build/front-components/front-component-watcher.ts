@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
@@ -5,6 +6,7 @@ import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
 import { OUTPUT_DIR } from '../common/constants';
 import { createLogger } from '../common/logger';
 import {
+  type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '../common/restartable-watcher.interface';
@@ -31,11 +33,13 @@ export class FrontComponentsWatcher implements RestartableWatcher {
   private isRestarting = false;
   private watchMode: boolean;
   private lastInputsSignature: string | null = null;
+  private onFileBuilt?: OnFileBuiltCallback;
 
   constructor(options: RestartableWatcherOptions) {
     this.appPath = options.appPath;
     this.componentPaths = options.buildResult?.filePaths.frontComponents ?? [];
     this.watchMode = options.watch ?? true;
+    this.onFileBuilt = options.onFileBuilt;
   }
 
   shouldRestart(result: ManifestBuildResult): boolean {
@@ -123,7 +127,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
         {
           name: 'build-notifications',
           setup: (build) => {
-            build.onEnd((result) => {
+            build.onEnd(async (result) => {
               if (result.errors.length > 0) {
                 logger.error('✗ Build error:');
                 for (const error of result.errors) {
@@ -140,13 +144,24 @@ export class FrontComponentsWatcher implements RestartableWatcher {
               }
               watcher.lastInputsSignature = inputsSignature;
 
-              const outputs = Object.keys(result.metafile?.outputs ?? {})
-                .filter((file) => file.endsWith('.mjs'))
-                .map((file) => path.relative(outputDir, file));
+              const outputFiles = Object.keys(result.metafile?.outputs ?? {})
+                .filter((file) => file.endsWith('.mjs'));
 
-              for (const output of outputs) {
-                logger.success(`✓ Built ${output}`);
+              for (const outputFile of outputFiles) {
+                // Make outputFile absolute before computing relative path
+                // (esbuild metafile keys are relative to process.cwd())
+                const absoluteOutputFile = path.resolve(outputFile);
+                const relativePath = path.relative(outputDir, absoluteOutputFile);
+                const builtPath = `${FRONT_COMPONENTS_DIR}/${relativePath}`;
+                logger.success(`✓ Built ${relativePath}`);
+
+                if (watcher.onFileBuilt) {
+                  const content = await fs.readFile(absoluteOutputFile);
+                  const checksum = crypto.createHash('md5').update(content).digest('hex');
+                  watcher.onFileBuilt(builtPath, checksum);
+                }
               }
+
               if (watchMode) {
                 logger.log('👀 Watching for changes...');
               }

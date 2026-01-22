@@ -15,7 +15,7 @@ const logger = createLogger('manifest-watch');
 
 type ExtractedFunctionManifest = Omit<
   ServerlessFunctionManifest,
-  'sourceHandlerPath' | 'builtHandlerPath'
+  'sourceHandlerPath' | 'builtHandlerPath' | 'builtHandlerChecksum'
 > & {
   handlerPath: string;
 };
@@ -48,6 +48,7 @@ export class FunctionEntityBuilder
           ...rest,
           sourceHandlerPath: handlerPath,
           builtHandlerPath,
+          builtHandlerChecksum: null,
         });
       } catch (error) {
         throw new Error(
