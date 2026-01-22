@@ -3,7 +3,6 @@ import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguratio
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useTemporaryFieldsConfiguration = (
   objectNameSingular: string,
@@ -18,11 +17,7 @@ export const useTemporaryFieldsConfiguration = (
       throw new Error('Object metadata item is not defined');
     }
 
-    const fieldsToDisplay = objectMetadataItem.fields.filter(
-      (field) =>
-        field.type !== FieldMetadataType.MORPH_RELATION &&
-        field.type !== FieldMetadataType.RICH_TEXT_V2,
-    );
+    const fieldsToDisplay = objectMetadataItem.fields;
 
     if (fieldsToDisplay.length === 0) {
       throw new Error('No fields to display');
