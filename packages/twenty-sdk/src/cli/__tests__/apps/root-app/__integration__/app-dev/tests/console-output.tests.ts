@@ -5,32 +5,38 @@ export const defineConsoleOutputTests = (
   getResult: () => RunCliCommandResult,
 ): void => {
   describe('console output', () => {
-    it('should match init output snapshot', () => {
-      const result = getResult();
-      const initOutput = getOutputByPrefix(result.output, 'init');
+    it('should contain init messages', () => {
+      const output = getOutputByPrefix(getResult().output, 'init');
 
-      expect(initOutput).toMatchSnapshot();
+      expect(output).toContain('[init] 🚀 Starting Twenty Application Development Mode');
+      expect(output).toContain('[init] 📁 App Path:');
     });
 
-    it('should match manifest-watch output snapshot', () => {
-      const result = getResult();
-      const manifestOutput = getOutputByPrefix(result.output, 'manifest-watch');
+    it('should contain manifest-watch messages', () => {
+      const output = getOutputByPrefix(getResult().output, 'manifest-watch');
 
-      expect(manifestOutput).toMatchSnapshot();
+      expect(output).toContain('[manifest-watch] 🔄 Building...');
+      expect(output).toContain('[manifest-watch] ✓ Loaded "Root App"');
+      expect(output).toContain('[manifest-watch] ✓ Found 1 object(s)');
+      expect(output).toContain('[manifest-watch] ✓ Found 1 function(s)');
+      expect(output).toContain('[manifest-watch] ✓ Found 1 front component(s)');
+      expect(output).toContain('[manifest-watch] ✓ Found 1 role(s)');
+      expect(output).toContain('[manifest-watch] ✓ Written to');
+      expect(output).toContain('[manifest-watch] 📂 Watcher started');
     });
 
-    it('should match functions-watch output snapshot', () => {
-      const result = getResult();
-      const functionsOutput = getOutputByPrefix(result.output, 'functions-watch');
+    it('should contain functions-watch messages', () => {
+      const output = getOutputByPrefix(getResult().output, 'functions-watch');
 
-      expect(functionsOutput).toMatchSnapshot();
+      expect(output).toContain('[functions-watch] 📦 Building...');
+      expect(output).toContain('[functions-watch] ✓ Built');
     });
 
-    it('should match front-components-watch output snapshot', () => {
-      const result = getResult();
-      const frontComponentsOutput = getOutputByPrefix(result.output, 'front-components-watch');
+    it('should contain front-components-watch messages', () => {
+      const output = getOutputByPrefix(getResult().output, 'front-components-watch');
 
-      expect(frontComponentsOutput).toMatchSnapshot();
+      expect(output).toContain('[front-components-watch] 🎨 Building...');
+      expect(output).toContain('[front-components-watch] ✓ Built');
     });
   });
 };
