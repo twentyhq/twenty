@@ -11,9 +11,9 @@ import {
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
 import {
-  WorkspaceMigrationRunnerException,
-  WorkspaceMigrationRunnerExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+  WorkspaceMigrationActionExecutionException,
+  WorkspaceMigrationActionExecutionExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
@@ -61,10 +61,10 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
     const handler = this.actionHandlers.get(actionHandlerKey);
 
     if (!handler) {
-      throw new WorkspaceMigrationRunnerException(
-        `No migration runner action handler found for action: ${actionHandlerKey}`,
-        WorkspaceMigrationRunnerExceptionCode.INVALID_ACTION_TYPE,
-      );
+      throw new WorkspaceMigrationActionExecutionException({
+        message: `No migration runner action handler found for action: ${actionHandlerKey}`,
+        code: WorkspaceMigrationActionExecutionExceptionCode.INVALID_ACTION_TYPE,
+      });
     }
 
     return handler;

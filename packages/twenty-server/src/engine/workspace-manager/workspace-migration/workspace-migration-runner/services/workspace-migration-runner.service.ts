@@ -15,7 +15,6 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration';
 import { WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
-import { WorkspaceMigrationActionExecutionException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
@@ -247,14 +246,14 @@ export class WorkspaceMigrationRunnerService {
         );
       }
 
-      if (error instanceof WorkspaceMigrationActionExecutionException) {
+      if (error instanceof WorkspaceMigrationRunnerException) {
         throw error;
       }
 
-      throw new WorkspaceMigrationRunnerException(
-        error.message,
-        WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
-      );
+      throw new WorkspaceMigrationRunnerException({
+        message: error.message,
+        code: WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+      });
     } finally {
       await queryRunner.release();
     }

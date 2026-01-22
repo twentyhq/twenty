@@ -21,9 +21,9 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import {
-  WorkspaceMigrationRunnerException,
-  WorkspaceMigrationRunnerExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+  WorkspaceMigrationActionExecutionException,
+  WorkspaceMigrationActionExecutionExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
 export const computeFlatIndexFieldColumnNames = ({
@@ -104,10 +104,10 @@ export const insertIndexMetadata = async ({
   );
 
   if (indexInsertResult.identifiers.length !== 1) {
-    throw new WorkspaceMigrationRunnerException(
-      'Failed to create index metadata',
-      WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
-    );
+    throw new WorkspaceMigrationActionExecutionException({
+      message: 'Failed to create index metadata',
+      code: WorkspaceMigrationActionExecutionExceptionCode.INTERNAL_SERVER_ERROR,
+    });
   }
   const indexMetadataId = indexInsertResult.identifiers[0].id;
 

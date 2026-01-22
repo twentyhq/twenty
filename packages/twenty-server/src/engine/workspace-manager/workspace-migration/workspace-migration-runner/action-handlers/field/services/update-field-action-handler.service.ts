@@ -27,9 +27,9 @@ import { isPropertyUpdate } from 'src/engine/workspace-manager/workspace-migrati
 import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
 import {
-  WorkspaceMigrationRunnerException,
-  WorkspaceMigrationRunnerExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+  WorkspaceMigrationActionExecutionException,
+  WorkspaceMigrationActionExecutionExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
@@ -243,10 +243,10 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           );
 
         if (!isDefined(foreignKeyName)) {
-          throw new WorkspaceMigrationRunnerException(
-            'Foreign key not found',
-            WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
-          );
+          throw new WorkspaceMigrationActionExecutionException({
+            message: 'Foreign key not found',
+            code: WorkspaceMigrationActionExecutionExceptionCode.NOT_SUPPORTED,
+          });
         }
 
         await this.workspaceSchemaManagerService.foreignKeyManager.dropForeignKey(
@@ -300,10 +300,10 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
       for (const property of compositeType.properties) {
         if (isMorphOrRelationFieldMetadataType(property.type)) {
-          throw new WorkspaceMigrationRunnerException(
-            'Relation field metadata in composite type is not supported yet',
-            WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
-          );
+          throw new WorkspaceMigrationActionExecutionException({
+            message: 'Relation field metadata in composite type is not supported yet',
+            code: WorkspaceMigrationActionExecutionExceptionCode.NOT_SUPPORTED,
+          });
         }
 
         const fromCompositeColumnName = computeCompositeColumnName(
@@ -366,10 +366,10 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         ) as ColumnType;
 
         if (isMorphOrRelationFieldMetadataType(property.type)) {
-          throw new WorkspaceMigrationRunnerException(
-            'Relation field metadata in composite type is not supported yet',
-            WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
-          );
+          throw new WorkspaceMigrationActionExecutionException({
+            message: 'Relation field metadata in composite type is not supported yet',
+            code: WorkspaceMigrationActionExecutionExceptionCode.NOT_SUPPORTED,
+          });
         }
 
         const compositeColumnName = computeCompositeColumnName(

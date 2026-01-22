@@ -13,7 +13,10 @@ import {
   type WorkspaceMigrationAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
-import { WorkspaceMigrationActionExecutionException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
+import {
+  WorkspaceMigrationRunnerException,
+  WorkspaceMigrationRunnerExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { optimisticallyApplyCreateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-create-action-on-all-flat-entity-maps.util';
 import { optimisticallyApplyDeleteActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-delete-action-on-all-flat-entity-maps.util';
@@ -109,7 +112,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     const hasWorkspaceSchemaError = workspaceSchemaResult.status === 'rejected';
 
     if (hasMetadataError || hasWorkspaceSchemaError) {
-      throw new WorkspaceMigrationActionExecutionException({
+      throw new WorkspaceMigrationRunnerException({
         action: context.action,
         errors: {
           ...(hasMetadataError && { metadata: metadataResult.reason }),
@@ -117,6 +120,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
             workspaceSchema: workspaceSchemaResult.reason,
           }),
         },
+        code: WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED,
       });
     }
 
