@@ -37,7 +37,7 @@ type SettingsObjectFieldItemTableRowProps = {
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
-  grid-template-columns: 1fr 148px 148px 36px;
+  grid-template-columns: minmax(0, 1fr) 148px 148px 36px;
 `;
 
 const StyledNameTableCell = styled(TableCell)`
