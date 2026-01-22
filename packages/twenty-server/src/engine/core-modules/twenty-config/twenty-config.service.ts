@@ -202,7 +202,7 @@ export class TwentyConfigService {
   getLoggingConfig(): LoggerOptions {
     switch (this.get('NODE_ENV')) {
       case NodeEnvironment.DEVELOPMENT:
-        return ['query', 'error'];
+        return this.get('TYPEORM_LOGGING');
       case NodeEnvironment.TEST:
         return [];
       default:
