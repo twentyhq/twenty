@@ -34,8 +34,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const fromAgentId = searchParams.get('fromAgent');
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const hasValidEnterpriseKey =
-    currentWorkspace?.hasValidEnterpriseKey === true;
+
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
   );
@@ -63,8 +62,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const isRowLevelPermissionPredicatesEnabled =
     featureFlagsMap[
       FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-    ] &&
-    (hasValidEnterpriseKey || isRLSBillingEntitlementEnabled);
+    ] && isRLSBillingEntitlementEnabled;
 
   const objectMetadataItem = objectMetadata.objectMetadataItem;
 

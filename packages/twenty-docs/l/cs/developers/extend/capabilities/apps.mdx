@@ -31,18 +31,18 @@ Aplikace vám umožňují vytvářet a spravovat přizpůsobení Twenty **jako k
 Vytvořte novou aplikaci pomocí oficiálního scaffolderu, poté se ověřte a začněte vyvíjet:
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# Vygenerujte kostru nové aplikace
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# If you don't use yarn@4
+# Pokud nepoužíváte yarn@4
 corepack enable
 yarn install
 
-# Authenticate using your API key (you'll be prompted)
+# Přihlaste se pomocí svého API klíče (budete vyzváni)
 yarn auth:login
 
-# Start dev mode: automatically syncs local changes to your workspace
+# Spusťte vývojový režim: automaticky synchronizuje místní změny s vaším pracovním prostorem
 yarn app:dev
 ```
 
@@ -98,10 +98,10 @@ my-twenty-app/
   README.md
   src/
     app/
-      application.config.ts     # Required - main application configuration
-      default-function.role.ts  # Default role for serverless functions
-      // your entities (*.object.ts, *.function.ts, *.role.ts)
-    utils/                      # Optional - handler implementations & utilities
+      application.config.ts     # Povinné - hlavní konfigurace aplikace
+      default-function.role.ts  # Výchozí role pro serverless funkce
+      // vaše entity (*.object.ts, *.function.ts, *.role.ts)
+    utils/                      # Volitelné - implementace handlerů a nástroje
 ```
 
 ### Konvence před konfigurací

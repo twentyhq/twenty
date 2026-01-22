@@ -63,11 +63,10 @@ export class GmailGetMessageListService {
 
     const messageExternalIds: string[] = [];
 
-    const excludedSearchFilter =
-      messageChannel.messageFolderImportPolicy ===
-      MessageFolderImportPolicy.SELECTED_FOLDERS
-        ? computeGmailExcludeSearchFilter(messageFolders)
-        : '';
+    const excludedSearchFilter = computeGmailExcludeSearchFilter(
+      messageFolders,
+      messageChannel.messageFolderImportPolicy,
+    );
 
     while (hasMoreMessages) {
       const messageList = await gmailClient.users.messages

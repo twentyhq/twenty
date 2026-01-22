@@ -1,8 +1,9 @@
-import chalk from 'chalk';
 import chokidar, { type FSWatcher } from 'chokidar';
 import path from 'path';
-import { printWatchingMessage } from '../common/display';
+import { createLogger } from '../common/logger';
 import { runManifestBuild, type ManifestBuildResult } from './manifest-build';
+
+const logger = createLogger('manifest-watch');
 
 export type ManifestWatcherCallbacks = {
   onBuildSuccess?: (result: ManifestBuildResult) => void;
@@ -25,7 +26,12 @@ export class ManifestWatcher {
 
   async start(): Promise<void> {
     this.watcher = chokidar.watch(this.appPath, {
-      ignored: ['**/node_modules/**', '**/.twenty/**', '**/dist/**'],
+      ignored: [
+        '**/node_modules/**',
+        '**/.twenty/**',
+        '**/dist/**',
+        (filePath: string) => filePath.includes('/.twenty/') || filePath.includes('\\.twenty\\'),
+      ],
       ignoreInitial: true,
       awaitWriteFinish: {
         stabilityThreshold: 100,
@@ -38,17 +44,22 @@ export class ManifestWatcher {
         return;
       }
 
-      console.log(chalk.gray(`  File ${event}: ${path.relative(this.appPath, filePath)}`));
+      // Double-check to prevent watching our own output
+      if (filePath.includes('.twenty')) {
+        return;
+      }
+
+      logger.log(`File ${event}: ${path.relative(this.appPath, filePath)}`);
 
       const result = await runManifestBuild(this.appPath);
 
       if (result.manifest) {
-        printWatchingMessage();
+        logger.log('👀 Watching for changes...');
         this.callbacks.onBuildSuccess?.(result);
       }
     });
 
-    console.log(chalk.gray('  📂 Manifest watcher started'));
+    logger.log('📂 Watcher started');
   }
 
   async close(): Promise<void> {

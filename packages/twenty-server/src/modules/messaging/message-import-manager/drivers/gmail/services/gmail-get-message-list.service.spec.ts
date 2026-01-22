@@ -338,7 +338,7 @@ describe('GmailGetMessageListService', () => {
   });
 
   describe('initial sync folder filtering', () => {
-    it('should build Gmail query with -label exclusions for non-synced folders', async () => {
+    it('should build Gmail query with positive OR filter for synced folders', async () => {
       const mockGmailClient = {
         users: {
           messages: {
@@ -357,6 +357,29 @@ describe('GmailGetMessageListService', () => {
         oAuth2ClientManagerService.getGoogleOAuth2Client as jest.Mock
       ).mockResolvedValue({});
 
+      const messageFolders = [
+        createMockFolder({
+          name: 'INBOX',
+          externalId: 'INBOX',
+          isSynced: true,
+        }),
+        createMockFolder({
+          name: 'Work',
+          externalId: 'Label_work',
+          isSynced: true,
+        }),
+        createMockFolder({
+          name: 'Personal',
+          externalId: 'Label_personal',
+          isSynced: false,
+        }),
+        createMockFolder({
+          name: 'Newsletters',
+          externalId: 'Label_newsletters',
+          isSynced: false,
+        }),
+      ];
+
       await service.getMessageLists({
         messageChannel: {
           syncCursor: '',
@@ -364,44 +387,13 @@ describe('GmailGetMessageListService', () => {
           messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
         },
         connectedAccount: mockConnectedAccount,
-        messageFolders: [
-          createMockFolder({
-            name: 'INBOX',
-            externalId: 'INBOX',
-            isSynced: true,
-          }),
-          createMockFolder({
-            name: 'Work',
-            externalId: 'Label_work',
-            isSynced: true,
-          }),
-          createMockFolder({
-            name: 'Personal',
-            externalId: 'Label_personal',
-            isSynced: false,
-          }),
-          createMockFolder({
-            name: 'Newsletters',
-            externalId: 'Label_newsletters',
-            isSynced: false,
-          }),
-        ],
+        messageFolders,
       });
 
-      const expectedQuery = computeGmailExcludeSearchFilter([
-        {
-          externalId: 'Label_personal',
-          name: 'Personal',
-          isSynced: false,
-          parentFolderId: null,
-        },
-        {
-          externalId: 'Label_newsletters',
-          name: 'Newsletters',
-          isSynced: false,
-          parentFolderId: null,
-        },
-      ]);
+      const expectedQuery = computeGmailExcludeSearchFilter(
+        messageFolders,
+        MessageFolderImportPolicy.SELECTED_FOLDERS,
+      );
 
       expect(mockGmailClient.users.messages.list).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -410,7 +402,7 @@ describe('GmailGetMessageListService', () => {
       );
     });
 
-    it('should not include exclusion filter when ALL_FOLDERS policy is set', async () => {
+    it('should only include default exclusions when ALL_FOLDERS policy is set', async () => {
       const mockGmailClient = {
         users: {
           messages: {
@@ -450,9 +442,11 @@ describe('GmailGetMessageListService', () => {
         ],
       });
 
-      expect(mockGmailClient.users.messages.list).toHaveBeenCalledWith(
-        expect.objectContaining({ q: '' }),
-      );
+      const callArgs = mockGmailClient.users.messages.list.mock.calls[0][0];
+
+      expect(callArgs.q).toContain('-label:spam');
+      expect(callArgs.q).toContain('-category:promotions');
+      expect(callArgs.q).not.toContain('label:inbox');
     });
   });
 

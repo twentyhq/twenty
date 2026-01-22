@@ -36,7 +36,7 @@ export default [
       'src/engine/workspace-manager/dev-seeder/data/seeds/**',
       'src/utils/email-providers.ts',
       'src/engine/core-modules/i18n/locales/generated/**',
-      'src/engine/core-modules/serverless/drivers/constants/base-typescript-project/src/index.ts',
+      'src/engine/core-modules/serverless/drivers/constants/seed-project/src/index.ts',
       'packages/twenty-server/src/engine/core-modules/i18n/locales/**'
     ],
   },
