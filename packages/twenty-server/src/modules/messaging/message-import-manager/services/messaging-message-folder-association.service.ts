@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { In } from 'typeorm';
+
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -44,18 +46,41 @@ export class MessagingMessageFolderAssociationService {
           })),
         );
 
-        if (records.length > 0) {
-          await repository.upsert(
-            records,
-            {
-              conflictPaths: [
-                'messageChannelMessageAssociationId',
-                'messageFolderId',
-              ],
-              skipUpdateIfNoValuesChanged: true,
+        if (records.length === 0) {
+          return;
+        }
+
+        const associationIds = [
+          ...new Set(
+            records.map((record) => record.messageChannelMessageAssociationId),
+          ),
+        ];
+
+        const existingRecords = await repository.find(
+          {
+            where: {
+              messageChannelMessageAssociationId: In(associationIds),
             },
-            transactionManager,
-          );
+          },
+          transactionManager,
+        );
+
+        const existingKeys = new Set(
+          existingRecords.map(
+            (record) =>
+              `${record.messageChannelMessageAssociationId}:${record.messageFolderId}`,
+          ),
+        );
+
+        const recordsToInsert = records.filter(
+          (record) =>
+            !existingKeys.has(
+              `${record.messageChannelMessageAssociationId}:${record.messageFolderId}`,
+            ),
+        );
+
+        if (recordsToInsert.length > 0) {
+          await repository.insert(recordsToInsert, transactionManager);
         }
       },
     );
