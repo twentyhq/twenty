@@ -19,6 +19,7 @@ import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetB
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
 import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
+import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
@@ -28,6 +29,7 @@ import {
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -122,6 +124,14 @@ export const GraphWidgetBarChart = ({
   );
 
   const setHoveredSliceIndex = useSetRecoilComponentState(
+    graphWidgetHoveredSliceIndexComponentState,
+  );
+
+  const highlightedLegendId = useRecoilComponentValue(
+    graphWidgetHighlightedLegendIdComponentState,
+  );
+
+  const hoveredSliceIndex = useRecoilComponentValue(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
@@ -253,7 +263,7 @@ export const GraphWidgetBarChart = ({
     tickConfig,
   });
 
-  const BarItemWithContext = useMemo(
+  const MemoizedBarItem = useMemo(
     () => (props: BarItemProps<BarDatum>) => {
       if (props.bar.data.value === 0) {
         return null;
@@ -263,18 +273,35 @@ export const GraphWidgetBarChart = ({
       const shouldRoundFreeEnd = shouldRoundFreeEndMap?.get(barKey) ?? true;
       const seriesIndex = keyToIndexMap.get(String(props.bar.data.id)) ?? -1;
 
+      const isDimmed =
+        isDefined(highlightedLegendId) &&
+        String(highlightedLegendId) !== String(props.bar.data.id);
+
+      const isSliceHovered =
+        isDefined(hoveredSliceIndex) &&
+        String(hoveredSliceIndex) === String(props.bar.data.indexValue);
+
       return (
         <CustomBarItem
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...props}
           shouldRoundFreeEnd={shouldRoundFreeEnd}
           seriesIndex={seriesIndex}
+          isDimmed={isDimmed}
+          isSliceHovered={isSliceHovered}
           layout={layout}
           chartId={id}
         />
       );
     },
-    [shouldRoundFreeEndMap, keyToIndexMap, layout, id],
+    [
+      shouldRoundFreeEndMap,
+      keyToIndexMap,
+      highlightedLegendId,
+      hoveredSliceIndex,
+      layout,
+      id,
+    ],
   );
 
   const TotalsLayer = ({
@@ -350,7 +377,7 @@ export const GraphWidgetBarChart = ({
           }}
         />
         <ResponsiveBar
-          barComponent={BarItemWithContext}
+          barComponent={MemoizedBarItem}
           data={data}
           keys={orderedKeys}
           indexBy={indexBy}

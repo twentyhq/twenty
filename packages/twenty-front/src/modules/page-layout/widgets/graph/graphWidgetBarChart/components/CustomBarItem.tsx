@@ -1,20 +1,17 @@
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
-import { graphWidgetIsSliceHoveredComponentFamilySelector } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetIsSliceHoveredComponentFamilySelector';
-import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { animated, to } from '@react-spring/web';
 import { isNumber } from '@sniptt/guards';
 import { useMemo } from 'react';
 import styled from 'styled-components';
-import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
 
 type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   shouldRoundFreeEnd: boolean;
   seriesIndex: number;
+  isDimmed: boolean;
+  isSliceHovered: boolean;
   layout?: BarChartLayout;
   chartId?: string;
 };
@@ -52,22 +49,11 @@ export const CustomBarItem = <D extends BarDatum>({
   ariaHidden,
   shouldRoundFreeEnd,
   seriesIndex,
+  isDimmed,
+  isSliceHovered,
   layout = BarChartLayout.VERTICAL,
   chartId,
 }: CustomBarItemProps<D>) => {
-  const highlightedLegendId = useRecoilComponentValue(
-    graphWidgetHighlightedLegendIdComponentState,
-  );
-
-  const isSliceHovered = useRecoilComponentFamilyValue(
-    graphWidgetIsSliceHoveredComponentFamilySelector,
-    String(barData.indexValue),
-  );
-
-  const isDimmed =
-    isDefined(highlightedLegendId) &&
-    String(highlightedLegendId) !== String(barData.id);
-
   const isNegativeValue = isNumber(barData.value) && barData.value < 0;
 
   const isHorizontal = layout === BarChartLayout.HORIZONTAL;
@@ -78,7 +64,7 @@ export const CustomBarItem = <D extends BarDatum>({
   const clipPathX = !isHorizontal ? 0 : isNegativeValue ? 0 : -borderRadius;
   const clipPathY = isHorizontal ? 0 : isNegativeValue ? -borderRadius : 0;
 
-  const springInterpolations = useMemo(() => {
+  const barInterpolations = useMemo(() => {
     const unconstrainedThicknessDimension = isHorizontal ? height : width;
     const unconstrainedValueDimension = isHorizontal ? width : height;
 
@@ -105,18 +91,32 @@ export const CustomBarItem = <D extends BarDatum>({
       ? constrainedThicknessDimension
       : unconstrainedValueDimension;
 
-    const widthWithOffset = (value: number) =>
-      Math.max(value + (isHorizontal ? borderRadius : 0), 0);
-    const heightWithOffset = (value: number) =>
-      Math.max(value + (isHorizontal ? 0 : borderRadius), 0);
-    const clampRadius = (value: number) => Math.min(borderRadius, value / 2);
-
     const clampToZero = (value: number) => Math.max(value, 0);
 
     return {
       centeringTransform,
       finalBarWidth: to(finalBarWidthDimension, clampToZero),
       finalBarHeight: to(finalBarHeightDimension, clampToZero),
+      finalBarWidthDimension,
+      finalBarHeightDimension,
+    };
+  }, [width, height, isHorizontal]);
+
+  const clipInterpolations = useMemo(() => {
+    if (!shouldRoundFreeEnd) {
+      return null;
+    }
+
+    const { finalBarWidthDimension, finalBarHeightDimension } =
+      barInterpolations;
+
+    const widthWithOffset = (value: number) =>
+      Math.max(value + (isHorizontal ? borderRadius : 0), 0);
+    const heightWithOffset = (value: number) =>
+      Math.max(value + (isHorizontal ? 0 : borderRadius), 0);
+    const clampRadius = (value: number) => Math.min(borderRadius, value / 2);
+
+    return {
       clipRectWidth: to(finalBarWidthDimension, widthWithOffset),
       clipRectHeight: to(finalBarHeightDimension, heightWithOffset),
       clipBorderRadiusX: to(finalBarWidthDimension, (value) =>
@@ -126,21 +126,21 @@ export const CustomBarItem = <D extends BarDatum>({
         clampRadius(heightWithOffset(value)),
       ),
     };
-  }, [width, height, isHorizontal, borderRadius]);
+  }, [barInterpolations, shouldRoundFreeEnd, isHorizontal, borderRadius]);
 
   return (
     <animated.g transform={transform}>
-      <animated.g transform={springInterpolations.centeringTransform}>
-        {shouldRoundFreeEnd && (
+      <animated.g transform={barInterpolations.centeringTransform}>
+        {clipInterpolations && (
           <defs>
             <clipPath id={clipPathId}>
               <animated.rect
                 x={clipPathX}
                 y={clipPathY}
-                rx={springInterpolations.clipBorderRadiusX}
-                ry={springInterpolations.clipBorderRadiusY}
-                width={springInterpolations.clipRectWidth}
-                height={springInterpolations.clipRectHeight}
+                rx={clipInterpolations.clipBorderRadiusX}
+                ry={clipInterpolations.clipBorderRadiusY}
+                width={clipInterpolations.clipRectWidth}
+                height={clipInterpolations.clipRectHeight}
               />
             </clipPath>
           </defs>
@@ -150,9 +150,9 @@ export const CustomBarItem = <D extends BarDatum>({
           $isInteractive={isInteractive}
           $isDimmed={isDimmed}
           $isSliceHovered={isSliceHovered}
-          clipPath={shouldRoundFreeEnd ? `url(#${clipPathId})` : undefined}
-          width={springInterpolations.finalBarWidth}
-          height={springInterpolations.finalBarHeight}
+          clipPath={clipInterpolations ? `url(#${clipPathId})` : undefined}
+          width={barInterpolations.finalBarWidth}
+          height={barInterpolations.finalBarHeight}
           fill={color}
           strokeWidth={borderWidth}
           stroke={borderColor}
