@@ -121,6 +121,7 @@ export class FunctionsWatcher implements RestartableWatcher {
       external: FUNCTION_EXTERNAL_MODULES,
       tsconfig: path.join(this.appPath, 'tsconfig.json'),
       sourcemap: true,
+      metafile: true,
       logLevel: 'silent',
       plugins: [
         {
@@ -143,7 +144,13 @@ export class FunctionsWatcher implements RestartableWatcher {
                   logger.error(`  ${error.text}`);
                 }
               } else {
-                logger.success('✓ Built');
+                const outputs = Object.keys(result.metafile?.outputs ?? {})
+                  .filter((file) => file.endsWith('.mjs'))
+                  .map((file) => path.relative(outputDir, file));
+
+                for (const output of outputs) {
+                  logger.success(`✓ Built ${output}`);
+                }
                 logger.log('👀 Watching for changes...');
               }
             });

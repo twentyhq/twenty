@@ -2,14 +2,24 @@
 
 exports[`rich-app app:dev > console output > should match front-components-watch output snapshot 1`] = `
 "[front-components-watch] 🎨 Building...
-[front-components-watch] ✓ Built"
+[front-components-watch] ✓ Built src/root.front-component.mjs
+[front-components-watch] ✓ Built src/components/card.front-component.mjs
+[front-components-watch] ✓ Built src/components/greeting.front-component.mjs
+[front-components-watch] ✓ Built src/components/test.front-component.mjs
+[front-components-watch] 👀 Watching for changes..."
 `;
 
 exports[`rich-app app:dev > console output > should match functions-watch output snapshot 1`] = `
 "[functions-watch] 📦 Building...
-[functions-watch] ✓ Built
+[functions-watch] ✓ Built src/root.function.mjs
+[functions-watch] ✓ Built src/functions/greeting.function.mjs
+[functions-watch] ✓ Built src/functions/test-function-2.function.mjs
+[functions-watch] ✓ Built src/functions/test-function.function.mjs
 [functions-watch] 👀 Watching for changes...
-[functions-watch] ✓ Built
+[functions-watch] ✓ Built src/root.function.mjs
+[functions-watch] ✓ Built src/functions/greeting.function.mjs
+[functions-watch] ✓ Built src/functions/test-function-2.function.mjs
+[functions-watch] ✓ Built src/functions/test-function.function.mjs
 [functions-watch] 👀 Watching for changes..."
 `;
 

@@ -2,14 +2,15 @@
 
 exports[`root-app app:dev > console output > should match front-components-watch output snapshot 1`] = `
 "[front-components-watch] 🎨 Building...
-[front-components-watch] ✓ Built"
+[front-components-watch] ✓ Built my.front-component.mjs
+[front-components-watch] 👀 Watching for changes..."
 `;
 
 exports[`root-app app:dev > console output > should match functions-watch output snapshot 1`] = `
 "[functions-watch] 📦 Building...
-[functions-watch] ✓ Built
+[functions-watch] ✓ Built my.function.mjs
 [functions-watch] 👀 Watching for changes...
-[functions-watch] ✓ Built
+[functions-watch] ✓ Built my.function.mjs
 [functions-watch] 👀 Watching for changes..."
 `;
 
