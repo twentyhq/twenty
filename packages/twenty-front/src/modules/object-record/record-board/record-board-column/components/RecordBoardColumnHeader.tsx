@@ -67,7 +67,8 @@ const StyledColumn = styled.div`
 `;
 
 const StyledTag = styled(Tag)`
-  flex-shrink: 0;
+  min-width: 0;
+  overflow: hidden;
 `;
 
 export const RecordBoardColumnHeader = () => {
