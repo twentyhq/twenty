@@ -15,6 +15,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { EVENT_STREAM_TTL_MS } from 'src/engine/subscriptions/constants/event-stream-ttl.constant';
 import { AddQuerySubscriptionInput } from 'src/engine/subscriptions/dtos/add-query-subscription.input';
 import {
   EventSubscriptionDTO,
@@ -30,7 +31,7 @@ import {
 } from 'src/engine/subscriptions/event-stream.exception';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
-import { wrapAsyncIteratorWithCleanup } from 'src/engine/workspace-event-emitter/utils/wrap-async-iterator-with-cleanup';
+import { wrapAsyncIteratorWithLifecycle } from 'src/engine/workspace-event-emitter/utils/wrap-async-iterator-with-lifecycle';
 
 import { eventStreamIdToChannelId } from './utils/get-channel-id-from-event-stream-id';
 
@@ -123,11 +124,18 @@ export class WorkspaceEventEmitterResolver {
       throw error;
     }
 
-    return wrapAsyncIteratorWithCleanup(iterator, async () => {
-      await this.eventStreamService.destroyEventStream({
-        workspaceId: workspace.id,
-        eventStreamChannelId,
-      });
+    return wrapAsyncIteratorWithLifecycle(iterator, {
+      onHeartbeat: () =>
+        this.eventStreamService.refreshEventStreamTTL({
+          workspaceId: workspace.id,
+          eventStreamChannelId,
+        }),
+      heartbeatIntervalMs: EVENT_STREAM_TTL_MS / 5,
+      onCleanup: () =>
+        this.eventStreamService.destroyEventStream({
+          workspaceId: workspace.id,
+          eventStreamChannelId,
+        }),
     });
   }
 
