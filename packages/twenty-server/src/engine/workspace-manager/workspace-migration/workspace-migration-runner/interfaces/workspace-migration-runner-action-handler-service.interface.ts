@@ -136,7 +136,14 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   async rollback(
     context: Omit<WorkspaceMigrationActionRunnerArgs<TAction>, 'queryRunner'>,
   ): Promise<void> {
-    await this.rollbackForMetadata(context);
+    try {
+      await this.rollbackForMetadata(context);
+    } catch (error) {
+      this.logger.error(
+        `Failed to rollback ${context.action.type} action for ${context.action.metadataName}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'BaseWorkspaceMigrationRunnerActionHandlerService',
+      );
+    }
   }
 
   private async asyncMethodPerformanceMetricWrapper({

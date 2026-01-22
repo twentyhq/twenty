@@ -231,7 +231,7 @@ export class WorkspaceMigrationRunnerService {
         );
       }
 
-      const invertedActions = actions.reverse();
+      const invertedActions = [...actions].reverse();
 
       for (const invertedAction of invertedActions) {
         await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionRollbackHandler(

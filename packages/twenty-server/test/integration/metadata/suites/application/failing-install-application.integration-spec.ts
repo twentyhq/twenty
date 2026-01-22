@@ -32,7 +32,7 @@ describe('Install application should fail when entity does not exist', () => {
             {
               type: 'delete',
               metadataName: 'fieldMetadata',
-              universalIdentifier: 'non-existent-field-universal-identifier',
+              universalIdentifier: '20202020-6110-4547-9fd0-2525257a2c3f',
             },
           ],
         },

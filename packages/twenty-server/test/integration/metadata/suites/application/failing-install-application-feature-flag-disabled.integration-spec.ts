@@ -11,7 +11,7 @@ describe('Install application should fail when feature flag is disabled', () => 
             {
               type: 'delete',
               metadataName: 'fieldMetadata',
-              universalIdentifier: 'non-existent-field-universal-identifier',
+              universalIdentifier: '20202020-784f-4042-b58f-ae8dbf718f6e',
             },
           ],
         },
