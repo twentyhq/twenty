@@ -103,10 +103,10 @@ export class MessagingMessagesImportService {
             workspaceId,
           );
 
-          messageExternalIdsToFetch = (await this.cacheStorage.setPop(
+          messageExternalIdsToFetch = await this.cacheStorage.setPop(
             `messages-to-import:${workspaceId}:${messageChannel.id}`,
             MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
-          )) as string[];
+          );
 
           if (messageExternalIdsToFetch.length === 0) {
             await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
