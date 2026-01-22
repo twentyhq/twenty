@@ -301,7 +301,8 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       for (const property of compositeType.properties) {
         if (isMorphOrRelationFieldMetadataType(property.type)) {
           throw new WorkspaceMigrationActionExecutionException({
-            message: 'Relation field metadata in composite type is not supported yet',
+            message:
+              'Relation field metadata in composite type is not supported yet',
             code: WorkspaceMigrationActionExecutionExceptionCode.NOT_SUPPORTED,
           });
         }
@@ -367,7 +368,8 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
         if (isMorphOrRelationFieldMetadataType(property.type)) {
           throw new WorkspaceMigrationActionExecutionException({
-            message: 'Relation field metadata in composite type is not supported yet',
+            message:
+              'Relation field metadata in composite type is not supported yet',
             code: WorkspaceMigrationActionExecutionExceptionCode.NOT_SUPPORTED,
           });
         }
