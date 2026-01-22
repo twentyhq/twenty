@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const tsConfigPath = resolve(__dirname, './tsconfig.spec.json');
+const tsConfigPath = resolve(__dirname, './tsconfig.json');
 const tsConfig = JSON.parse(readFileSync(tsConfigPath, 'utf8'));
 
 // eslint-disable-next-line no-undef
