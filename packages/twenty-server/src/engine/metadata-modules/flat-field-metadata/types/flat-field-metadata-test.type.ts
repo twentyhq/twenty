@@ -1,5 +1,8 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
-import { type FieldMetadataType, type NullablePartial } from 'twenty-shared/types';
+import {
+  type FieldMetadataType,
+  type NullablePartial,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
@@ -56,7 +59,10 @@ type RelationIdAssertions = [
 
   // Abstract type has nullable partial relation IDs
   Expect<
-    HasAllProperties<FlatFieldMetadata, NullablePartial<DefinedRelationIdRecord>>
+    HasAllProperties<
+      FlatFieldMetadata,
+      NullablePartial<DefinedRelationIdRecord>
+    >
   >,
 ];
 

@@ -1,10 +1,10 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { type Expect } from 'twenty-shared/testing';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-import { Expect } from 'twenty-shared/testing';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export type FromMetadataEntityToMetadataName<T extends SyncableEntity> = {
   [P in AllMetadataName]: AllFlatEntityTypesByMetadataName[P] extends {
