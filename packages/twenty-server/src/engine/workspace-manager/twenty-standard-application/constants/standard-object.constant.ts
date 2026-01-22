@@ -12,6 +12,7 @@ import {
   DASHBOARD_STANDARD_FIELD_IDS,
   FAVORITE_FOLDER_STANDARD_FIELD_IDS,
   FAVORITE_STANDARD_FIELD_IDS,
+  MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_MESSAGE_FOLDER_STANDARD_FIELD_IDS,
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS,
   MESSAGE_CHANNEL_STANDARD_FIELD_IDS,
   MESSAGE_FOLDER_STANDARD_FIELD_IDS,
@@ -728,6 +729,10 @@ export const STANDARD_OBJECTS = {
       direction: {
         universalIdentifier: '75c9b0f7-9e76-44d4-a2f9-47051e61eec7',
       },
+      messageFolders: {
+        universalIdentifier:
+          MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageFolders,
+      },
     },
     indexes: {
       messageChannelIdIndex: {
@@ -738,6 +743,43 @@ export const STANDARD_OBJECTS = {
       },
       messageChannelIdMessageIdUniqueIndex: {
         universalIdentifier: '1a16b1c5-2447-4a9d-1b8c-45f6a47989a6',
+      },
+    },
+  },
+  messageChannelMessageAssociationMessageFolder: {
+    universalIdentifier:
+      STANDARD_OBJECT_IDS.messageChannelMessageAssociationMessageFolder,
+    fields: {
+      id: {
+        universalIdentifier: '20202020-a1b2-40b1-8ab1-6b7c8d9e0f1a',
+      },
+      createdAt: {
+        universalIdentifier: '20202020-a1b3-40b2-9bb2-7c8d9e0f1a2b',
+      },
+      updatedAt: {
+        universalIdentifier: '20202020-a1b4-40b3-8cb3-8d9e0f1a2b3c',
+      },
+      deletedAt: {
+        universalIdentifier: '20202020-a1b5-40b4-9db4-9e0f1a2b3c4d',
+      },
+      messageChannelMessageAssociation: {
+        universalIdentifier:
+          MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_MESSAGE_FOLDER_STANDARD_FIELD_IDS.messageChannelMessageAssociation,
+      },
+      messageFolder: {
+        universalIdentifier:
+          MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_MESSAGE_FOLDER_STANDARD_FIELD_IDS.messageFolder,
+      },
+    },
+    indexes: {
+      messageChannelMessageAssociationIdIndex: {
+        universalIdentifier: '2b38d3e7-5779-4c1f-4e0f-78c9d70d1de9',
+      },
+      messageFolderIdIndex: {
+        universalIdentifier: '3c49e4f8-6880-4d2a-5f1a-89d0e81e2ef0',
+      },
+      messageChannelMessageAssociationIdMessageFolderIdUniqueIndex: {
+        universalIdentifier: '4d50f5a9-7991-4e3b-6a2b-90e1f92f3f01',
       },
     },
   },
@@ -861,6 +903,10 @@ export const STANDARD_OBJECTS = {
       pendingSyncAction: {
         universalIdentifier:
           MESSAGE_FOLDER_STANDARD_FIELD_IDS.pendingSyncAction,
+      },
+      messageChannelMessageAssociationMessageFolders: {
+        universalIdentifier:
+          MESSAGE_FOLDER_STANDARD_FIELD_IDS.messageChannelMessageAssociationMessageFolders,
       },
     },
     indexes: {

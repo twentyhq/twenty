@@ -61,7 +61,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
-import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
+import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
@@ -102,6 +102,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     OnboardingModule,
     WorkspaceDataSourceModule,
     ConnectedAccountModule,
+    MessagingCommonModule,
     MessagingFolderSyncManagerModule,
     WorkspaceSSOModule,
     FeatureFlagModule,
@@ -143,7 +144,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     // So far, it's not possible to have controllers in business modules
     // which forces us to have these services in the auth module
     // TODO: Move these calendar, message, and connected account services to the business modules once possible
-    MessageChannelSyncStatusService,
     CalendarChannelSyncStatusService,
     CreateMessageChannelService,
     CreateCalendarChannelService,

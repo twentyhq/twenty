@@ -24,6 +24,8 @@ export const STANDARD_OBJECT_IDS = {
   favoriteFolder: '20202020-7cf8-401f-8211-a9587d27fd2d',
   auditLog: '20202020-0566-476a-b4c4-a0f9781bd80a',
   messageChannelMessageAssociation: '20202020-ad1e-4127-bccb-d83ae04d2ccb',
+  messageChannelMessageAssociationMessageFolder:
+    '20202020-8f3a-4b2c-9d1e-5a6b7c8d9e0f',
   messageChannel: '20202020-fe8c-40bc-a681-b80b771449b7',
   messageFolder: '20202020-4955-4fd9-8e59-2dbd373f2a46',
   messageParticipant: '20202020-a433-4456-aa2d-fd9cb26b774a',

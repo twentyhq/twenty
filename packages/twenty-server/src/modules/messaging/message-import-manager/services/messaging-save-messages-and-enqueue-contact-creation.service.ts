@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { FieldActorSource, MessageParticipantRole } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -21,6 +23,10 @@ import {
   type Participant,
   type ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
+import {
+  type MessageChannelMessageAssociationFolderAssociation,
+  MessagingMessageFolderAssociationService,
+} from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
@@ -33,6 +39,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageQueueService: MessageQueueService,
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
+    private readonly messageFolderAssociationService: MessagingMessageFolderAssociationService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
@@ -54,13 +61,15 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
           return workspaceDataSource?.transaction(
             async (transactionManager: WorkspaceEntityManager) => {
-              const { messageExternalIdsAndIdsMap } =
-                await this.messageService.saveMessagesWithinTransaction(
-                  messagesToSave,
-                  messageChannel.id,
-                  transactionManager,
-                  workspaceId,
-                );
+              const {
+                messageExternalIdsAndIdsMap,
+                messageExternalIdToMessageChannelMessageAssociationIdMap,
+              } = await this.messageService.saveMessagesWithinTransaction(
+                messagesToSave,
+                messageChannel.id,
+                transactionManager,
+                workspaceId,
+              );
 
               const participantsWithMessageId: (ParticipantWithMessageId & {
                 shouldCreateContact: boolean;
@@ -109,6 +118,32 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
               await this.messageParticipantService.saveMessageParticipants(
                 participantsWithMessageId,
+                workspaceId,
+                transactionManager,
+              );
+
+              const folderAssociations: MessageChannelMessageAssociationFolderAssociation[] =
+                messagesToSave
+                  .filter(
+                    (message) =>
+                      isDefined(message.messageFolderIds) &&
+                      message.messageFolderIds.length > 0,
+                  )
+                  .map((message) => ({
+                    messageChannelMessageAssociationId:
+                      messageExternalIdToMessageChannelMessageAssociationIdMap.get(
+                        message.externalId,
+                      ) ?? '',
+                    messageFolderIds: message.messageFolderIds ?? [],
+                  }))
+                  .filter((association) =>
+                    isNonEmptyString(
+                      association.messageChannelMessageAssociationId,
+                    ),
+                  );
+
+              await this.messageFolderAssociationService.saveMessageFolderAssociations(
+                folderAssociations,
                 workspaceId,
                 transactionManager,
               );
