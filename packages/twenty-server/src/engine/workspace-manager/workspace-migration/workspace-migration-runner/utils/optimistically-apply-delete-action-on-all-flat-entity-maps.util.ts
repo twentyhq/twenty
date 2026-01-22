@@ -67,8 +67,8 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = <
     }
     case 'navigationMenuItem': {
       const flatNavigationMenuItemToDelete =
-        findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: action.entityId,
+        findFlatEntityByUniversalIdentifierOrThrow({
+          universalIdentifier: action.universalIdentifier,
           flatEntityMaps: allFlatEntityMaps.flatNavigationMenuItemMaps,
         });
 
