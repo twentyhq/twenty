@@ -1,10 +1,10 @@
-import crypto from 'crypto';
 import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
 import { OUTPUT_DIR } from '../common/constants';
 import { createLogger } from '../common/logger';
+import { processEsbuildResult } from '../common/esbuild-result-processor';
 import {
   type OnFileBuiltCallback,
   type RestartableWatcher,
@@ -158,31 +158,18 @@ export class FunctionsWatcher implements RestartableWatcher {
                   return;
                 }
 
-                const inputs = Object.keys(result.metafile?.inputs ?? {}).sort();
-                const inputsSignature = inputs.join(',');
+                const { newInputsSignature, skipped } = await processEsbuildResult({
+                  result,
+                  outputDir,
+                  builtDir: FUNCTIONS_DIR,
+                  lastInputsSignature: watcher.lastInputsSignature,
+                  onFileBuilt: watcher.onFileBuilt,
+                  onSuccess: (relativePath) => logger.success(`✓ Built ${relativePath}`),
+                });
 
-                if (watcher.lastInputsSignature === inputsSignature) {
-                  return;
-                }
-                watcher.lastInputsSignature = inputsSignature;
+                watcher.lastInputsSignature = newInputsSignature;
 
-                const outputFiles = Object.keys(result.metafile?.outputs ?? {})
-                  .filter((file) => file.endsWith('.mjs'));
-
-                for (const outputFile of outputFiles) {
-                  const absoluteOutputFile = path.resolve(outputFile);
-                  const relativePath = path.relative(outputDir, absoluteOutputFile);
-                  const builtPath = `${FUNCTIONS_DIR}/${relativePath}`;
-                  logger.success(`✓ Built ${relativePath}`);
-
-                  if (watcher.onFileBuilt) {
-                    const content = await fs.readFile(absoluteOutputFile);
-                    const checksum = crypto.createHash('md5').update(content).digest('hex');
-                    watcher.onFileBuilt(builtPath, checksum);
-                  }
-                }
-
-                if (watchMode) {
+                if (!skipped && watchMode) {
                   logger.log('👀 Watching for changes...');
                 }
               } finally {

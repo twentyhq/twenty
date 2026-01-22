@@ -64,16 +64,16 @@ export class AppDevCommand {
     }
 
     this.state.manifest = buildResult.manifest;
-    this.initializeFileUploadStatus(buildResult.manifest);
+    this.initializeFunctionsFileUploadStatus(buildResult.manifest);
+    this.initializeFrontComponentsFileUploadStatus(buildResult.manifest);
 
     await this.startManifestWatcher();
     await this.startFunctionsWatcher(buildResult.filePaths.functions);
     await this.startFrontComponentsWatcher(buildResult.filePaths.frontComponents);
   }
 
-  private initializeFileUploadStatus(manifest: ApplicationManifest): void {
+  private initializeFunctionsFileUploadStatus(manifest: ApplicationManifest): void {
     this.state.fileUploadStatus.functions.clear();
-    this.state.fileUploadStatus.frontComponents.clear();
 
     for (const fn of manifest.functions ?? []) {
       this.state.fileUploadStatus.functions.set(fn.universalIdentifier, {
@@ -83,6 +83,10 @@ export class AppDevCommand {
         isUploaded: false,
       });
     }
+  }
+
+  private initializeFrontComponentsFileUploadStatus(manifest: ApplicationManifest): void {
+    this.state.fileUploadStatus.frontComponents.clear();
 
     for (const component of manifest.frontComponents ?? []) {
       this.state.fileUploadStatus.frontComponents.set(component.universalIdentifier, {
@@ -100,18 +104,23 @@ export class AppDevCommand {
       callbacks: {
         onBuildSuccess: (result) => {
           this.state.manifest = result.manifest;
-          if (result.manifest) {
-            this.initializeFileUploadStatus(result.manifest);
-          }
 
           const functionSourcePaths = result.filePaths.functions;
-          if (this.functionsWatcher?.shouldRestart(functionSourcePaths)) {
-            this.functionsWatcher.restart(functionSourcePaths);
+          const shouldRestartFunctions = this.functionsWatcher?.shouldRestart(functionSourcePaths);
+          if (shouldRestartFunctions) {
+            if (result.manifest) {
+              this.initializeFunctionsFileUploadStatus(result.manifest);
+            }
+            this.functionsWatcher?.restart(functionSourcePaths);
           }
 
           const componentSourcePaths = result.filePaths.frontComponents;
-          if (this.frontComponentsWatcher?.shouldRestart(componentSourcePaths)) {
-            this.frontComponentsWatcher.restart(componentSourcePaths);
+          const shouldRestartFrontComponents = this.frontComponentsWatcher?.shouldRestart(componentSourcePaths);
+          if (shouldRestartFrontComponents) {
+            if (result.manifest) {
+              this.initializeFrontComponentsFileUploadStatus(result.manifest);
+            }
+            this.frontComponentsWatcher?.restart(componentSourcePaths);
           }
         },
       },
