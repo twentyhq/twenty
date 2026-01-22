@@ -108,15 +108,6 @@ export const GraphWidgetBarChart = ({
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const debouncedSetChartDimensions = useDebouncedCallback(
-    (width: number, height: number) => {
-      setChartWidth(width);
-      setChartHeight(height);
-    },
-
-    300,
-  );
-
   const setActiveBarTooltip = useSetRecoilComponentState(
     graphWidgetBarTooltipComponentState,
   );
@@ -363,7 +354,8 @@ export const GraphWidgetBarChart = ({
         <NodeDimensionEffect
           elementRef={containerRef}
           onDimensionChange={({ width, height }) => {
-            debouncedSetChartDimensions(width, height);
+            setChartWidth(width);
+            setChartHeight(height);
           }}
         />
         <ResponsiveBar
