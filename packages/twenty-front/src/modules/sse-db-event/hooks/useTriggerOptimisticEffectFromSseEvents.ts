@@ -1,6 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useTriggerOptimisticEffectFromSseCreateEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseCreateEvents';
 import { useTriggerOptimisticEffectFromSseDeleteEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseDeleteEvents';
+import { useTriggerOptimisticEffectFromSseRestoreEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseRestoreEvents';
 import { useTriggerOptimisticEffectFromSseUpdateEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseUpdateEvents';
 import { groupObjectRecordSseEventsByEventType } from '@/sse-db-event/utils/groupObjectRecordSseEventsByEventType';
 import { groupObjectRecordSseEventsByObjectMetadataItemNameSingular } from '@/sse-db-event/utils/groupObjectRecordSseEventsByObjectMetadataItemNameSingular';
@@ -22,6 +23,9 @@ export const useTriggerOptimisticEffectFromSseEvents = () => {
 
   const { triggerOptimisticEffectFromSseDeleteEvents } =
     useTriggerOptimisticEffectFromSseDeleteEvents();
+
+  const { triggerOptimisticEffectFromSseRestoreEvents } =
+    useTriggerOptimisticEffectFromSseRestoreEvents();
 
   const triggerOptimisticEffectFromSseEvents = useCallback(
     ({ objectRecordEvents }: { objectRecordEvents: ObjectRecordEvent[] }) => {
@@ -78,6 +82,12 @@ export const useTriggerOptimisticEffectFromSseEvents = () => {
                 objectMetadataItem,
               });
               break;
+            case DatabaseEventAction.RESTORED:
+              triggerOptimisticEffectFromSseRestoreEvents({
+                objectRecordEvents: objectRecordEventsForThisEventType,
+                objectMetadataItem,
+              });
+              break;
           }
         }
       }
@@ -87,6 +97,7 @@ export const useTriggerOptimisticEffectFromSseEvents = () => {
       triggerOptimisticEffectFromSseUpdateEvents,
       triggerOptimisticEffectFromSseCreateEvents,
       triggerOptimisticEffectFromSseDeleteEvents,
+      triggerOptimisticEffectFromSseRestoreEvents,
     ],
   );
 

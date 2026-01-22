@@ -133,7 +133,8 @@ export class WorkspaceSoftDeleteQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedBefore,
+          entities: formattedAfter,
+          beforeEntities: formattedBefore,
           authContext: this.authContext,
         }),
       );

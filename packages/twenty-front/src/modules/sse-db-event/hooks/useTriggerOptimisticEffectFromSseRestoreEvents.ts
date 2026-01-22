@@ -15,7 +15,7 @@ import {
   type ObjectRecordEvent,
 } from '~/generated/graphql';
 
-export const useTriggerOptimisticEffectFromSseDeleteEvents = () => {
+export const useTriggerOptimisticEffectFromSseRestoreEvents = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -26,7 +26,7 @@ export const useTriggerOptimisticEffectFromSseDeleteEvents = () => {
   const debouncedRefetchAggregateQueriesForObjectMetadataItem =
     useDebouncedCallback(refetchAggregateQueriesForObjectMetadataItem, 100);
 
-  const triggerOptimisticEffectFromSseDeleteEvents = useCallback(
+  const triggerOptimisticEffectFromSseRestoreEvents = useCallback(
     ({
       objectRecordEvents,
       objectMetadataItem,
@@ -34,39 +34,33 @@ export const useTriggerOptimisticEffectFromSseDeleteEvents = () => {
       objectRecordEvents: ObjectRecordEvent[];
       objectMetadataItem: ObjectMetadataItem;
     }) => {
-      const deleteEvents = objectRecordEvents.filter((objectRecordEvent) => {
-        return objectRecordEvent.action === DatabaseEventAction.DELETED;
+      const restoreEvents = objectRecordEvents.filter((objectRecordEvent) => {
+        return objectRecordEvent.action === DatabaseEventAction.RESTORED;
       });
 
       const cache = apolloCoreClient.cache;
 
-      console.log({
-        deleteEvents,
-      });
-
-      const recordsBeforeDelete = deleteEvents.map((deleteEvent) => {
-        const recordBeforeDelete = deleteEvent.properties.before;
-
+      const recordsBeforeRestore = restoreEvents.map((restoreEvent) => {
+        const recordBeforeRestore = restoreEvent.properties.before;
         return {
-          ...recordBeforeDelete,
+          ...recordBeforeRestore,
           __typename: getObjectTypename(objectMetadataItem.nameSingular),
         } as RecordGqlNode;
       });
 
-      const recordsAfterDelete = deleteEvents.map((deleteEvent) => {
-        const recordAfterDelete = deleteEvent.properties.after;
-
+      const recordsAfterRestore = restoreEvents.map((restoreEvent) => {
+        const recordAfterRestore = restoreEvent.properties.after;
         return {
-          ...recordAfterDelete,
+          ...recordAfterRestore,
           __typename: getObjectTypename(objectMetadataItem.nameSingular),
         } as RecordGqlNode;
       });
 
-      if (recordsAfterDelete.length === 0) {
+      if (recordsAfterRestore.length === 0) {
         return;
       }
 
-      for (const recordAfterDelete of recordsAfterDelete) {
+      for (const recordAfterRestore of recordsAfterRestore) {
         const recordGqlFields = {
           deletedAt: true,
         };
@@ -75,7 +69,7 @@ export const useTriggerOptimisticEffectFromSseDeleteEvents = () => {
           objectMetadataItems,
           objectMetadataItem,
           cache: apolloCoreClient.cache,
-          record: recordAfterDelete,
+          record: recordAfterRestore,
           recordGqlFields,
           objectPermissionsByObjectMetadataId,
         });
@@ -85,8 +79,8 @@ export const useTriggerOptimisticEffectFromSseDeleteEvents = () => {
         cache,
         objectMetadataItem,
         objectMetadataItems,
-        currentRecords: recordsBeforeDelete,
-        updatedRecords: recordsAfterDelete,
+        currentRecords: recordsBeforeRestore,
+        updatedRecords: recordsAfterRestore,
         upsertRecordsInStore,
         objectPermissionsByObjectMetadataId,
       });
@@ -104,5 +98,5 @@ export const useTriggerOptimisticEffectFromSseDeleteEvents = () => {
     ],
   );
 
-  return { triggerOptimisticEffectFromSseDeleteEvents };
+  return { triggerOptimisticEffectFromSseRestoreEvents };
 };

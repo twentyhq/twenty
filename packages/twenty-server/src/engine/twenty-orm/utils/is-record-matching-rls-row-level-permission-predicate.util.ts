@@ -334,27 +334,29 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           });
         });
       }
-      case FieldMetadataType.DATE:
-      case FieldMetadataType.DATE_TIME: {
-        let dateIsoString = recordFieldValue;
-
-        console.log({ dateIsoString });
-
-        if (recordFieldValue instanceof Date) {
-          dateIsoString = recordFieldValue.toISOString();
-        } else if (
-          isDefined(recordFieldValue) &&
-          typeof recordFieldValue !== 'string'
-        ) {
-          throw new Error(
-            `Unexpected value for date/time field "${filterKey}": ${recordFieldValue}, it should be a string or a Date instance`,
-          );
-        }
+      case FieldMetadataType.DATE: {
+        const plainDateString = recordFieldValue;
 
         return isMatchingDateFilter({
           dateFilter: filterValue as DateFilter,
+          value: plainDateString,
+        });
+      }
+      case FieldMetadataType.DATE_TIME: {
+        let dateIsoString = recordFieldValue;
+
+        const matching = isMatchingDateFilter({
+          dateFilter: filterValue as DateFilter,
           value: dateIsoString,
         });
+
+        console.log({
+          recordFieldValue,
+          dateIsoString,
+          matching,
+        });
+
+        return matching;
       }
       case FieldMetadataType.NUMBER:
       case FieldMetadataType.NUMERIC: {

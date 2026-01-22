@@ -1,5 +1,3 @@
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
 import {
   ObjectRecordCreateEvent,
   ObjectRecordDeleteEvent,
@@ -8,6 +6,8 @@ import {
   ObjectRecordUpsertEvent,
   type ObjectRecordDiff,
 } from 'twenty-shared/database-events';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectLiteral } from 'typeorm';
 
@@ -120,13 +120,13 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         .filter(isDefined);
       break;
     case DatabaseEventAction.DELETED:
-      events = entityArray.map((before) => {
+      events = entityArray.map((entityAfter) => {
         const event = new ObjectRecordDeleteEvent<T>();
 
         event.userId = authContext?.user?.id;
         event.workspaceMemberId = authContext?.workspaceMemberId;
-        event.recordId = before.id;
-        event.properties = { before };
+        event.recordId = entityAfter.id;
+        event.properties = {};
 
         return event;
       });
