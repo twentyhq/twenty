@@ -38,9 +38,7 @@ export const assignFolderIdsToMessages = (
       message.externalId,
     );
 
-    const validCachedFolderIds = cachedFolderIds?.filter(
-      (id) => id !== '',
-    );
+    const validCachedFolderIds = cachedFolderIds?.filter((id) => id !== '');
 
     if (validCachedFolderIds?.length) {
       message.messageFolderIds = validCachedFolderIds;
