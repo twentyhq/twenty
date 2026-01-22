@@ -111,7 +111,7 @@ export const GraphWidgetPieChart = ({
   const handleSliceMove = useCallback(
     (
       datum: ComputedDatum<PieChartDataItemWithColor>,
-      event: ReactMouseEvent<SVGPathElement>,
+      event: ReactMouseEvent<SVGElement>,
     ) => {
       if (!isDefined(containerRef.current)) return;
 
@@ -140,14 +140,16 @@ export const GraphWidgetPieChart = ({
   const chartColors = hasNoData
     ? [theme.background.tertiary]
     : enrichedData.map((item) => item.colorScheme.solid);
+  const pieChartPadAngle = hasNoData ? 0 : 0.4;
 
   const ArcsLayer = useCallback(
-    (props: PieCustomLayerProps<PieChartDataItem>) => (
+    (props: PieCustomLayerProps<PieChartDataItemWithColor>) => (
       <CustomArcsLayer
         dataWithArc={props.dataWithArc}
         arcGenerator={props.arcGenerator}
         centerX={props.centerX}
         centerY={props.centerY}
+        padAngle={pieChartPadAngle}
         onMouseMove={hasNoData ? undefined : handleSliceMove}
         onMouseLeave={hasNoData ? undefined : handleSliceLeave}
         onClick={
@@ -161,7 +163,13 @@ export const GraphWidgetPieChart = ({
         }
       />
     ),
-    [hasNoData, handleSliceMove, handleSliceLeave, onSliceClick],
+    [
+      hasNoData,
+      handleSliceMove,
+      handleSliceLeave,
+      onSliceClick,
+      pieChartPadAngle,
+    ],
   );
 
   return (
@@ -177,7 +185,6 @@ export const GraphWidgetPieChart = ({
             data={chartData}
             margin={showDataLabels && !hasNoData ? PIE_CHART_MARGINS : {}}
             innerRadius={0.8}
-            padAngle={hasNoData ? 0 : 0.4}
             colors={chartColors}
             enableArcLinkLabels={showDataLabels && !hasNoData}
             enableArcLabels={false}

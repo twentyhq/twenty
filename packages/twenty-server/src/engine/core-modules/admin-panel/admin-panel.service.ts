@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import axios from 'axios';
 import semver from 'semver';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import * as z from 'zod';
 
@@ -91,12 +92,14 @@ export class AdminPanelService {
           customDomain: userWorkspace.workspace.customDomain,
           isCustomDomainEnabled: userWorkspace.workspace.isCustomDomainEnabled,
         }),
-        users: userWorkspace.workspace.workspaceUsers.map((workspaceUser) => ({
-          id: workspaceUser.user.id,
-          email: workspaceUser.user.email,
-          firstName: workspaceUser.user.firstName,
-          lastName: workspaceUser.user.lastName,
-        })),
+        users: userWorkspace.workspace.workspaceUsers
+          .filter((workspaceUser) => isDefined(workspaceUser.user))
+          .map((workspaceUser) => ({
+            id: workspaceUser.user.id,
+            email: workspaceUser.user.email,
+            firstName: workspaceUser.user.firstName,
+            lastName: workspaceUser.user.lastName,
+          })),
         featureFlags: allFeatureFlagKeys.map((key) => ({
           key,
           value:

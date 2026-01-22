@@ -13,9 +13,9 @@ export const runAppDev = (options: RunAppDevOptions): Promise<RunCliCommandResul
     command: 'app:dev',
     args: [appPath],
     waitForOutput: [
-      '✓ Manifest written to',
-      '✓ Functions built',
-      '✓ Front components built',
+      '[manifest-watch] ✓ Written to',
+      '[functions-watch] ✓ Built',
+      '[front-components-watch] ✓ Built',
     ],
     timeout,
   });

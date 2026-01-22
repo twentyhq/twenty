@@ -1,6 +1,6 @@
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type ServerlessFunctionManifest } from 'twenty-shared/application';
+import { createLogger } from '../../common/logger';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
@@ -9,6 +9,8 @@ import {
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from './entity.interface';
+
+const logger = createLogger('manifest-watch');
 
 export class FunctionEntityBuilder
   implements ManifestEntityBuilder<ServerlessFunctionManifest>
@@ -112,13 +114,13 @@ export class FunctionEntityBuilder
   }
 
   display(functions: ServerlessFunctionManifest[]): void {
-    console.log(chalk.green(`  ✓ Found ${functions.length} function(s)`));
+    logger.success(`✓ Found ${functions.length} function(s)`);
 
     if (functions.length > 0) {
-      console.log(chalk.gray(`  📍 Function entry points:`));
+      logger.log('📍 Entry points:');
       for (const fn of functions) {
         const name = fn.name || fn.universalIdentifier;
-        console.log(chalk.gray(`     - ${name} (${fn.handlerPath})`));
+        logger.log(`   - ${name} (${fn.handlerPath})`);
       }
     }
   }
