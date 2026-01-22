@@ -20,11 +20,7 @@ export const useUpsertActivity = ({
 }) => {
   const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
 
-  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<
-    Task | Note
-  >({
-    objectNameSingular: activityObjectNameSingular,
-  });
+  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord();
 
   const { createActivityInDB } = useCreateActivityInDB({
     activityObjectNameSingular,
@@ -64,6 +60,7 @@ export const useUpsertActivity = ({
       await createActivityInDB(activityToCreate);
     } else {
       await updateOneActivity?.({
+        objectNameSingular: activityObjectNameSingular,
         idToUpdate: activity.id,
         updateOneRecordInput: input,
       });
