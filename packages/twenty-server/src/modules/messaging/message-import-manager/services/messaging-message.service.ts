@@ -247,14 +247,16 @@ export class MessagingMessageService {
             );
           }
 
-          const messageChannelMessageAssociationId =
-            accumulator.messageChannelMessageAssociationToCreate?.id ??
+          const createdAssociationId =
+            accumulator.messageChannelMessageAssociationToCreate?.id;
+          const existingAssociationId =
             accumulator.existingMessageChannelMessageAssociationInDB?.id;
+          const associationId = createdAssociationId ?? existingAssociationId;
 
-          if (isDefined(messageChannelMessageAssociationId)) {
+          if (isDefined(associationId)) {
             messageExternalIdToMessageChannelMessageAssociationIdMap.set(
               externalId,
-              messageChannelMessageAssociationId,
+              associationId,
             );
           }
         }
