@@ -122,7 +122,7 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
     "message": "Validation failed for 1 navigationMenuItem",
     "summary": {
       "navigationMenuItem": 1,
-      "totalErrors": 2,
+      "totalErrors": 1,
     },
     "userFriendlyMessage": "Metadata validation failed",
   },
@@ -163,7 +163,7 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
     "message": "Validation failed for 1 navigationMenuItem",
     "summary": {
       "navigationMenuItem": 1,
-      "totalErrors": 2,
+      "totalErrors": 1,
     },
     "userFriendlyMessage": "Metadata validation failed",
   },
