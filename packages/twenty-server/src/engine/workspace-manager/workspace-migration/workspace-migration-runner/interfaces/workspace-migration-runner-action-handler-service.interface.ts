@@ -80,7 +80,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   }
 
   rollbackForMetadata(
-    _context: WorkspaceMigrationActionRunnerArgs<TAction>,
+    _context: Omit<WorkspaceMigrationActionRunnerArgs<TAction>, 'queryRunner'>,
   ): Promise<void> {
     return Promise.resolve();
   }
@@ -130,7 +130,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   }
 
   async rollback(
-    context: WorkspaceMigrationActionRunnerArgs<TAction>,
+    context: Omit<WorkspaceMigrationActionRunnerArgs<TAction>, 'queryRunner'>,
   ): Promise<void> {
     await this.rollbackForMetadata(context);
   }

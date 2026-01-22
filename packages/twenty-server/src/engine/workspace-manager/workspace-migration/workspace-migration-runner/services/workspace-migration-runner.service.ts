@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { AllMetadataName } from 'twenty-shared/metadata';
 import { DataSource } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
@@ -20,7 +21,6 @@ import {
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
-import { AllMetadataName } from 'twenty-shared/metadata';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -226,7 +226,6 @@ export class WorkspaceMigrationRunnerService {
       return allFlatEntityMaps;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        // TODO before merge shouldn't we throw ?
         await queryRunner.rollbackTransaction().catch((error) =>
           // eslint-disable-next-line no-console
           console.trace(`Failed to rollback transaction: ${error.message}`),
@@ -242,7 +241,6 @@ export class WorkspaceMigrationRunnerService {
             context: {
               action: invertedAction,
               allFlatEntityMaps: allFlatEntityMaps,
-              queryRunner,
               workspaceId,
             },
           },

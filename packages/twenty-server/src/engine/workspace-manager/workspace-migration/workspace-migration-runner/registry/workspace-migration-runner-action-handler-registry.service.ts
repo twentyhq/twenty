@@ -87,7 +87,7 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
     context,
   }: {
     action: T;
-    context: WorkspaceMigrationActionRunnerArgs<T>;
+    context: Omit<WorkspaceMigrationActionRunnerArgs<T>, 'queryRunner'>;
   }) {
     const handler = this.getActionHandler(action);
 
