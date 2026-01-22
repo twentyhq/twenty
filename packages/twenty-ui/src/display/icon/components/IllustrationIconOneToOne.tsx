@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 
 import IllustrationIconOneToOneRaw from '@assets/icons/illustration-one-to-one.svg?react';
-import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { type IconComponentProps } from 'twenty-ui/display';
 
 type IllustrationIconOneToOneProps = Pick<IconComponentProps, 'size'>;
 

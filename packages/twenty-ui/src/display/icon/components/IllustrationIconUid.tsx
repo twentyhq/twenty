@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 
 import IllustrationIconUidRaw from '@assets/icons/illustration-uid.svg?react';
-import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { type IconComponentProps } from 'twenty-ui/display';
 
 type IllustrationIconUidProps = Pick<IconComponentProps, 'size'>;
 

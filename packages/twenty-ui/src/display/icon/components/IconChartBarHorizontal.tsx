@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconChartBar } from '@ui/display/icon/components/TablerIcons';
-import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { type IconComponentProps } from 'twenty-ui/display';
 
 const StyledRotatedIconWrapper = styled.div`
   display: inline-flex;

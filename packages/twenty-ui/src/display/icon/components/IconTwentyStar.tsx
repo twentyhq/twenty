@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 
 import IconTwentyStarRaw from '@assets/icons/twenty-star.svg?react';
-import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { type IconComponentProps } from 'twenty-ui/display';
 
 type IconTwentyStarProps = Pick<IconComponentProps, 'size' | 'stroke'>;
 

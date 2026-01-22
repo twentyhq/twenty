@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 
 import IconGoogleCalendarRaw from '@assets/icons/google-calendar.svg?react';
-import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { type IconComponentProps } from 'twenty-ui/display';
 
 type IconGoogleCalendarProps = Pick<IconComponentProps, 'size'>;
 

@@ -1,7 +1,7 @@
 import IllustrationIconMapRaw from '@assets/icons/illustration-map.svg?react';
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
-import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { type IconComponentProps } from 'twenty-ui/display';
 
 type IllustrationIconMapProps = Pick<IconComponentProps, 'size'>;
 

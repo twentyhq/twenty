@@ -1,7 +1,7 @@
 import IllustrationIconCalendarTimeRaw from '@assets/icons/illustration-calendar-time.svg?react';
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
-import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { type IconComponentProps } from 'twenty-ui/display';
 
 type IllustrationIconCalendarTimeProps = Pick<IconComponentProps, 'size'>;
 

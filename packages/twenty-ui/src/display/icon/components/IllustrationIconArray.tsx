@@ -1,7 +1,7 @@
 import IllustrationIconArrayRaw from '@assets/icons/illustration-array.svg?react';
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
-import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { type IconComponentProps } from 'twenty-ui/display';
 type IllustrationIconArrayProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconArray = (props: IllustrationIconArrayProps) => {

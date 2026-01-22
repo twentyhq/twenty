@@ -1,7 +1,7 @@
 import IllustrationIconNumbersRaw from '@assets/icons/illustration-numbers.svg?react';
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
-import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { type IconComponentProps } from 'twenty-ui/display';
 
 type IllustrationIconNumbersProps = Pick<IconComponentProps, 'size'>;
 

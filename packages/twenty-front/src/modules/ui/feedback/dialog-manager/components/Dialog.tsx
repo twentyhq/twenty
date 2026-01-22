@@ -155,7 +155,7 @@ export const Dialog = ({
         {children}
         {buttons.map(({ accent, onClick, role, title: key, variant }) => (
           <StyledDialogButton
-            onClick={(event) => {
+            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
               onClose?.();
               onClick?.(event);
             }}

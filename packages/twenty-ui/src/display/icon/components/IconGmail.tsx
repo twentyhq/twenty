@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 
 import IconGmailRaw from '@assets/icons/gmail.svg?react';
-import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { type IconComponentProps } from 'twenty-ui/display';
 
 type IconGmailProps = Pick<IconComponentProps, 'size'>;
 

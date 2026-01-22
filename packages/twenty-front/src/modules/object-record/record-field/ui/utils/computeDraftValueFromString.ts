@@ -54,7 +54,7 @@ export const computeDraftValueFromString = <FieldValue>({
   if (isFieldAddress(fieldDefinition)) {
     return {
       addressStreet1: value,
-    } as FieldInputDraftValue<FieldValue>;
+    } as unknown as FieldInputDraftValue<FieldValue>;
   }
 
   if (isFieldLinks(fieldDefinition)) {
