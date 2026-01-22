@@ -1,6 +1,6 @@
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type FrontComponentManifest } from 'twenty-shared/application';
+import { createLogger } from '../../common/logger';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
@@ -9,6 +9,8 @@ import {
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from './entity.interface';
+
+const logger = createLogger('manifest-watch');
 
 type FrontComponentConfig = Omit<FrontComponentManifest, 'componentPath' | 'componentName'> & {
   component: { name: string };
@@ -67,13 +69,13 @@ export class FrontComponentEntityBuilder
   }
 
   display(components: FrontComponentManifest[]): void {
-    console.log(chalk.green(`  ✓ Found ${components.length} front component(s)`));
+    logger.success(`✓ Found ${components.length} front component(s)`);
 
     if (components.length > 0) {
-      console.log(chalk.gray(`  📍 Front component entry points:`));
+      logger.gray('📍 Entry points:');
       for (const component of components) {
         const name = component.name || component.universalIdentifier;
-        console.log(chalk.gray(`     - ${name} (${component.componentPath})`));
+        logger.gray(`   - ${name} (${component.componentPath})`);
       }
     }
   }

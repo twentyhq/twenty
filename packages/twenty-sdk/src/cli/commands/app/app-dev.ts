@@ -1,9 +1,11 @@
+import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
 import { runManifestBuild, type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-build';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import chalk from 'chalk';
+
+const initLogger = createLogger('init');
 
 export type AppDevOptions = {
   appPath?: string;
@@ -26,8 +28,8 @@ export class AppDevCommand {
   async execute(options: AppDevOptions): Promise<void> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
-    console.log(chalk.blue('🚀 Starting Twenty Application Development Mode'));
-    console.log(chalk.gray(`📁 App Path: ${this.appPath}`));
+    initLogger.log('🚀 Starting Twenty Application Development Mode');
+    initLogger.gray(`📁 App Path: ${this.appPath}`);
     console.log('');
 
     await this.startWatchers();
@@ -90,7 +92,8 @@ export class AppDevCommand {
 
   private setupGracefulShutdown(): void {
     const shutdown = () => {
-      console.log(chalk.yellow('\n🛑 Stopping...'));
+      console.log('');
+      initLogger.warn('🛑 Stopping...');
       process.exit(0);
     };
 

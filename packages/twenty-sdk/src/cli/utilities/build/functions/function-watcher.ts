@@ -1,16 +1,17 @@
-import chalk from 'chalk';
 import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
 import { OUTPUT_DIR } from '../common/constants';
-import { printWatchingMessage } from '../common/display';
+import { createLogger } from '../common/logger';
 import {
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '../common/restartable-watcher.interface';
 import { type ManifestBuildResult } from '../manifest/manifest-build';
 import { FUNCTIONS_DIR } from './constants';
+
+const logger = createLogger('functions-watch');
 
 export const FUNCTION_EXTERNAL_MODULES: string[] = [
   'path',
@@ -60,11 +61,11 @@ export class FunctionsWatcher implements RestartableWatcher {
     await fs.emptyDir(outputDir);
 
     if (this.functionPaths.length > 0) {
-      console.log(chalk.blue('  📦 Building functions...'));
+      logger.log('📦 Building...');
       await this.createContext();
     } else {
-      console.log(chalk.gray('  No functions to build'));
-      printWatchingMessage();
+      logger.gray('No functions to build');
+      logger.watching();
     }
   }
 
@@ -78,7 +79,7 @@ export class FunctionsWatcher implements RestartableWatcher {
 
     this.isRestarting = true;
     try {
-      console.log(chalk.yellow('🔄 Restarting functions watcher...'));
+      logger.warn('🔄 Restarting...');
       await this.close();
 
       const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
@@ -87,14 +88,14 @@ export class FunctionsWatcher implements RestartableWatcher {
       this.functionPaths = newPaths;
 
       if (this.functionPaths.length > 0) {
-        console.log(chalk.blue('  📦 Building functions...'));
+        logger.log('📦 Building...');
         await this.createContext();
       } else {
-        console.log(chalk.gray('  No functions to build'));
-        printWatchingMessage();
+        logger.gray('No functions to build');
+        logger.watching();
       }
 
-      console.log(chalk.green('✓ Functions watcher restarted'));
+      logger.success('✓ Restarted');
     } finally {
       this.isRestarting = false;
     }
@@ -137,13 +138,13 @@ export class FunctionsWatcher implements RestartableWatcher {
           setup: (build) => {
             build.onEnd((result) => {
               if (result.errors.length > 0) {
-                console.error(chalk.red('  ✗ Function build error:'));
+                logger.error('✗ Build error:');
                 for (const error of result.errors) {
-                  console.error(chalk.red(`    ${error.text}`));
+                  logger.error(`  ${error.text}`);
                 }
               } else {
-                console.log(chalk.green('  ✓ Functions built'));
-                printWatchingMessage();
+                logger.success('✓ Built');
+                logger.watching();
               }
             });
           },

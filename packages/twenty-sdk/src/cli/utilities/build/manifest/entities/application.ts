@@ -1,7 +1,7 @@
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import path from 'path';
 import { type Application } from 'twenty-shared/application';
+import { createLogger } from '../../common/logger';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
@@ -10,6 +10,8 @@ import {
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from './entity.interface';
+
+const logger = createLogger('manifest-watch');
 
 const findApplicationConfigPath = async (appPath: string): Promise<string> => {
   const files = await glob('**/application.config.ts', {
@@ -66,7 +68,7 @@ export class ApplicationEntityBuilder
   display(applications: Application[]): void {
     const application = applications[0];
     const appName = application?.displayName ?? 'Application';
-    console.log(chalk.green(`  ✓ Loaded "${appName}"`));
+    logger.success(`✓ Loaded "${appName}"`);
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {

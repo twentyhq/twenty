@@ -1,8 +1,9 @@
-import chalk from 'chalk';
 import chokidar, { type FSWatcher } from 'chokidar';
 import path from 'path';
-import { printWatchingMessage } from '../common/display';
+import { createLogger } from '../common/logger';
 import { runManifestBuild, type ManifestBuildResult } from './manifest-build';
+
+const logger = createLogger('manifest-watch');
 
 export type ManifestWatcherCallbacks = {
   onBuildSuccess?: (result: ManifestBuildResult) => void;
@@ -48,17 +49,17 @@ export class ManifestWatcher {
         return;
       }
 
-      console.log(chalk.gray(`  File ${event}: ${path.relative(this.appPath, filePath)}`));
+      logger.gray(`File ${event}: ${path.relative(this.appPath, filePath)}`);
 
       const result = await runManifestBuild(this.appPath);
 
       if (result.manifest) {
-        printWatchingMessage();
+        logger.watching();
         this.callbacks.onBuildSuccess?.(result);
       }
     });
 
-    console.log(chalk.gray('  📂 Manifest watcher started'));
+    logger.gray('📂 Watcher started');
   }
 
   async close(): Promise<void> {

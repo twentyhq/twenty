@@ -1,23 +1,36 @@
+import { getOutputByPrefix } from '@/cli/__tests__/integration/utils/get-output-by-prefix.util';
 import { type RunCliCommandResult } from '@/cli/__tests__/integration/utils/run-cli-command.util';
 
 export const defineConsoleOutputTests = (
   getResult: () => RunCliCommandResult,
 ): void => {
   describe('console output', () => {
-    it('should contain key messages', () => {
+    it('should match init output snapshot', () => {
       const result = getResult();
-      const output = result.output;
+      const initOutput = getOutputByPrefix(result.output, 'init');
 
-      expect(output).toContain('Starting Twenty Application Development Mode');
-      expect(output).toContain('Building manifest');
-      expect(output).toContain('Loaded "Hello World"');
-      expect(output).toContain('Found 2 object(s)');
-      expect(output).toContain('Found 4 function(s)');
-      expect(output).toContain('Found 4 front component(s)');
-      expect(output).toContain('Found 2 role(s)');
-      expect(output).toContain('Manifest written to');
-      expect(output).toContain('Functions built');
-      expect(output).toContain('Front components built');
+      expect(initOutput).toMatchSnapshot();
+    });
+
+    it('should match manifest-watch output snapshot', () => {
+      const result = getResult();
+      const manifestOutput = getOutputByPrefix(result.output, 'manifest-watch');
+
+      expect(manifestOutput).toMatchSnapshot();
+    });
+
+    it('should match functions-watch output snapshot', () => {
+      const result = getResult();
+      const functionsOutput = getOutputByPrefix(result.output, 'functions-watch');
+
+      expect(functionsOutput).toMatchSnapshot();
+    });
+
+    it('should match front-components-watch output snapshot', () => {
+      const result = getResult();
+      const frontComponentsOutput = getOutputByPrefix(result.output, 'front-components-watch');
+
+      expect(frontComponentsOutput).toMatchSnapshot();
     });
   });
 };

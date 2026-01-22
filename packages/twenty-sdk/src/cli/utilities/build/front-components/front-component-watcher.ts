@@ -1,16 +1,17 @@
-import chalk from 'chalk';
 import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
 import { OUTPUT_DIR } from '../common/constants';
-import { printWatchingMessage } from '../common/display';
+import { createLogger } from '../common/logger';
 import {
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '../common/restartable-watcher.interface';
 import { type ManifestBuildResult } from '../manifest/manifest-build';
 import { FRONT_COMPONENTS_DIR } from './constants';
+
+const logger = createLogger('front-components-watch');
 
 export const FRONT_COMPONENT_EXTERNAL_MODULES: string[] = [
   'react',
@@ -46,11 +47,11 @@ export class FrontComponentsWatcher implements RestartableWatcher {
     await fs.emptyDir(outputDir);
 
     if (this.componentPaths.length > 0) {
-      console.log(chalk.blue('  🎨 Building front components...'));
+      logger.log('🎨 Building...');
       await this.createContext();
     } else {
-      console.log(chalk.gray('  No front components to build'));
-      printWatchingMessage();
+      logger.gray('No front components to build');
+      logger.watching();
     }
   }
 
@@ -64,7 +65,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
 
     this.isRestarting = true;
     try {
-      console.log(chalk.yellow('🔄 Restarting front components watcher...'));
+      logger.warn('🔄 Restarting...');
       await this.close();
 
       const outputDir = path.join(this.appPath, OUTPUT_DIR, FRONT_COMPONENTS_DIR);
@@ -73,14 +74,14 @@ export class FrontComponentsWatcher implements RestartableWatcher {
       this.componentPaths = newPaths;
 
       if (this.componentPaths.length > 0) {
-        console.log(chalk.blue('  🎨 Building front components...'));
+        logger.log('🎨 Building...');
         await this.createContext();
       } else {
-        console.log(chalk.gray('  No front components to build'));
-        printWatchingMessage();
+        logger.gray('No front components to build');
+        logger.watching();
       }
 
-      console.log(chalk.green('✓ Front components watcher restarted'));
+      logger.success('✓ Restarted');
     } finally {
       this.isRestarting = false;
     }
@@ -113,13 +114,13 @@ export class FrontComponentsWatcher implements RestartableWatcher {
           setup: (build) => {
             build.onEnd((result) => {
               if (result.errors.length > 0) {
-                console.error(chalk.red('  ✗ Front component build error:'));
+                logger.error('✗ Build error:');
                 for (const error of result.errors) {
-                  console.error(chalk.red(`    ${error.text}`));
+                  logger.error(`  ${error.text}`);
                 }
               } else {
-                console.log(chalk.green('  ✓ Front components built'));
-                printWatchingMessage();
+                logger.success('✓ Built');
+                logger.watching();
               }
             });
           },
