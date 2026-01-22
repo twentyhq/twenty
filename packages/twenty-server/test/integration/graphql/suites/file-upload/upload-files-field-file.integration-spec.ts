@@ -3,9 +3,9 @@ import { makeGraphqlAPIRequestWithFileUpload } from 'test/integration/graphql/ut
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { FileFolder } from 'twenty-shared/types';
 
-const uploadWorkspaceFieldFileMutation = gql`
-  mutation UploadWorkspaceFieldFile($file: Upload!) {
-    uploadWorkspaceFieldFile(file: $file) {
+const uploadFilesFieldFileMutation = gql`
+  mutation uploadFilesFieldFile($file: Upload!) {
+    uploadFilesFieldFile(file: $file) {
       id
       path
       size
@@ -22,7 +22,7 @@ const deleteFileMutation = gql`
   }
 `;
 
-describe('uploadWorkspaceFieldFile', () => {
+describe('uploadFilesFieldFile', () => {
   let uploadedFileId: string | null = null;
 
   beforeAll(() => {
@@ -46,7 +46,7 @@ describe('uploadWorkspaceFieldFile', () => {
 
     const response = await makeGraphqlAPIRequestWithFileUpload(
       {
-        query: uploadWorkspaceFieldFileMutation,
+        query: uploadFilesFieldFileMutation,
         variables: { file: null },
       },
       {
@@ -61,7 +61,7 @@ describe('uploadWorkspaceFieldFile', () => {
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data).toBeDefined();
 
-    const fileResult = response.body.data.uploadWorkspaceFieldFile;
+    const fileResult = response.body.data.uploadFilesFieldFile;
 
     expect(fileResult).toBeDefined();
     expect(fileResult.id).toBeDefined();

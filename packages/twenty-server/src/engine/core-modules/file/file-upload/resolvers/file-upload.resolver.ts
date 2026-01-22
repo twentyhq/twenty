@@ -26,7 +26,7 @@ export class FileUploadResolver {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
   @Mutation(() => SignedFileDTO, {
-    deprecationReason: 'Use uploadWorkspaceFieldFile instead',
+    deprecationReason: 'Use uploadFilesFieldFile instead',
   })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async uploadFile(
@@ -56,7 +56,7 @@ export class FileUploadResolver {
 
   @Mutation(() => FileDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
-  async uploadWorkspaceFieldFile(
+  async uploadFilesFieldFile(
     @AuthWorkspace()
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })

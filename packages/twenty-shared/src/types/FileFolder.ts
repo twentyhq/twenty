@@ -11,10 +11,6 @@ export enum FileFolder {
   BuiltFrontComponent = 'built-front-component',
   Asset = 'asset',
   Source = 'source',
-  Functions = 'functions',
-  FrontComponents = 'front-components',
-  Assets = 'assets',
-  SourceCode = 'source-code',
   TemporaryFilesField = 'temporary-files-field',
   FilesField = 'files-field',
 }
