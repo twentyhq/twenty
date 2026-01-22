@@ -20,6 +20,7 @@ import {
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
+import { AllMetadataName } from 'twenty-shared/metadata';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -166,10 +167,10 @@ export class WorkspaceMigrationRunnerService {
     const actionMetadataNames = [
       ...new Set(actions.flatMap((action) => action.metadataName)),
     ];
-    const actionsMetadataAndRelatedMetadataNames = [
+    const actionsMetadataAndRelatedMetadataNames: AllMetadataName[] = [
       ...new Set([
         ...actionMetadataNames,
-        actionMetadataNames.flatMap(getMetadataRelatedMetadataNames),
+        ...actionMetadataNames.flatMap(getMetadataRelatedMetadataNames),
       ]),
     ];
     const allFlatEntityMapsKeys = actionsMetadataAndRelatedMetadataNames.map(

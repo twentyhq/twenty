@@ -1,24 +1,27 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Install application should fail should return true when feature flag is enabled 1`] = `
+exports[`Install application should fail when entity does not exist should fail with execution error when deleting non-existent field metadata 1`] = `
 {
   "eventId": Any<String>,
   "extensions": {
     "action": {
-      "metadataName": "skill",
+      "metadataName": "fieldMetadata",
       "type": "delete",
       "universalIdentifier": Any<String>,
     },
     "code": "APPLICATION_INSTALLATION_FAILED",
     "errors": {
       "metadata": {
-        "message": "Could not find flat entity with universal identifier test-skill-id",
+        "message": "Could not find flat entity with universal identifier non-existent-field-id",
+      },
+      "workspaceSchema": {
+        "message": "Cannot read properties of undefined (reading 'byId')",
       },
     },
     "exceptionEventId": Any<String>,
     "userFriendlyMessage": "Application installation failed",
   },
-  "message": "Migration action 'delete' for 'skill' failed. Metadata: Could not find flat entity with universal identifier test-skill-id",
+  "message": "Migration action 'delete' for 'fieldMetadata' failed. Metadata: Could not find flat entity with universal identifier non-existent-field-id, WorkspaceSchema: Cannot read properties of undefined (reading 'byId')",
   "name": "GraphQLError",
 }
 `;

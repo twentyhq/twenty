@@ -4,7 +4,7 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
-describe('Install application should fail', () => {
+describe('Install application should fail when entity does not exist', () => {
   beforeAll(async () => {
     await updateFeatureFlag({
       featureFlag:
@@ -23,16 +23,16 @@ describe('Install application should fail', () => {
     });
   });
 
-  it('should return true when feature flag is enabled', async () => {
-    const { data, errors } = await installApplication({
+  it('should fail with execution error when deleting non-existent field metadata', async () => {
+    const { errors } = await installApplication({
       expectToFail: true,
       input: {
         workspaceMigration: {
           actions: [
             {
               type: 'delete',
-              metadataName: 'skill',
-              universalIdentifier: 'test-skill-id',
+              metadataName: 'fieldMetadata',
+              universalIdentifier: 'non-existent-field-universal-identifier',
             },
           ],
         },

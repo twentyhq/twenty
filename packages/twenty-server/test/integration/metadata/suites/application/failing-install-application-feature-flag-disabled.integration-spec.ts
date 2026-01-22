@@ -10,8 +10,8 @@ describe('Install application should fail when feature flag is disabled', () => 
           actions: [
             {
               type: 'delete',
-              metadataName: 'skill',
-              universalIdentifier: 'test-skill-id',
+              metadataName: 'fieldMetadata',
+              universalIdentifier: 'non-existent-field-universal-identifier',
             },
           ],
         },
