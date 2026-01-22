@@ -37,8 +37,8 @@ export const PropertyBox = ({
   const layoutRenderingContext = useLayoutRenderingContext();
 
   const isInRecordPageLayout =
-    layoutRenderingContext?.layoutType === PageLayoutType.RECORD_PAGE &&
-    !layoutRenderingContext?.isLegacyRecordShowPage;
+    layoutRenderingContext.layoutType === PageLayoutType.RECORD_PAGE &&
+    !layoutRenderingContext.isLegacyRecordShowPage;
 
   return (
     <StyledPropertyBoxContainer

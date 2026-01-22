@@ -5,21 +5,20 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 export const useCompleteTask = (task: Task) => {
-  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Task>({
-    objectNameSingular: CoreObjectNameSingular.Task,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const completeTask = useCallback(
     async (value: boolean) => {
       const status = value ? 'DONE' : 'TODO';
-      await updateOneActivity?.({
+      await updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.Task,
         idToUpdate: task.id,
         updateOneRecordInput: {
           status,
         },
       });
     },
-    [task.id, updateOneActivity],
+    [task.id, updateOneRecord],
   );
 
   return {

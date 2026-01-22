@@ -4,13 +4,13 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
-import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { CustomError } from 'twenty-shared/utils';
 
 export const useRecordOneToManyFieldDetachTargetRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { updateOneRecord } = useUpdateOneRecordV2();
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const recordOneToManyFieldDetachTargetRecord = async ({
     sourceObjectNameSingular,

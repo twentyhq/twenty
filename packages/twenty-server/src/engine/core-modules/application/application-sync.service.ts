@@ -105,7 +105,7 @@ export class ApplicationSyncService {
       });
     }
 
-    if (manifest.serverlessFunctions.length > 0) {
+    if (manifest.functions.length > 0) {
       if (!isDefined(application.serverlessFunctionLayerId)) {
         throw new ApplicationException(
           `Failed to sync serverless function, could not find a serverless function layer.`,
@@ -114,7 +114,7 @@ export class ApplicationSyncService {
       }
 
       await this.syncServerlessFunctions({
-        serverlessFunctionsToSync: manifest.serverlessFunctions,
+        serverlessFunctionsToSync: manifest.functions,
         code: manifest.sources,
         workspaceId,
         applicationId: application.id,
@@ -158,7 +158,7 @@ export class ApplicationSyncService {
 
     let serverlessFunctionLayerId = application.serverlessFunctionLayerId;
 
-    if (manifest.serverlessFunctions.length > 0) {
+    if (manifest.functions.length > 0) {
       if (!isDefined(serverlessFunctionLayerId)) {
         serverlessFunctionLayerId = (
           await this.serverlessFunctionLayerService.create(
