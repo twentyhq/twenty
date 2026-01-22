@@ -508,6 +508,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       : userWorkspaces.length > 0;
 
     if (!hasOtherUserWorkspaces) {
+      await this.userWorkspaceRepository.softDelete({ userId });
       await this.userRepository.softDelete(userId);
     }
   }
