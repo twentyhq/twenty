@@ -1299,6 +1299,9 @@ export const STANDARD_OBJECTS = {
       searchVector: {
         universalIdentifier: PERSON_STANDARD_FIELD_IDS.searchVector,
       },
+      whatsAppId: {
+        universalIdentifier: PERSON_STANDARD_FIELD_IDS.whatsappId,
+      },
     },
     indexes: {
       companyIdIndex: {
