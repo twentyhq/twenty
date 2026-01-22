@@ -5,10 +5,10 @@ import { IconFolderPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { CurrentWorkspaceMemberOrphanNavigationMenuItems } from '@/navigation-menu-item/components/CurrentWorkspaceMemberOrphanNavigationMenuItems';
 import { NavigationMenuItemDragProvider } from '@/navigation-menu-item/components/NavigationMenuItemDragProvider';
 import { NavigationMenuItemFolders } from '@/navigation-menu-item/components/NavigationMenuItemFolders';
+import { NavigationMenuItemSkeletonLoader } from '@/navigation-menu-item/components/NavigationMenuItemSkeletonLoader';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/hooks/useNavigationMenuItemsByFolder';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSortedNavigationMenuItems';
 import { isNavigationMenuItemFolderCreatingState } from '@/navigation-menu-item/states/isNavigationMenuItemFolderCreatingState';
@@ -45,7 +45,7 @@ export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
   };
 
   if (loading && isDefined(currentWorkspaceMember)) {
-    return <FavoritesSkeletonLoader />;
+    return <NavigationMenuItemSkeletonLoader />;
   }
 
   if (
