@@ -1,62 +1,89 @@
 import chalk from 'chalk';
+import * as fs from 'fs-extra';
 import path from 'path';
-import { type Application, type ApplicationManifest } from 'twenty-shared/application';
-import { extractManifestFromFile } from '../manifest-file-extractor';
+import { type Application } from 'twenty-shared/application';
+import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
+import {
+  type EntityBuildResult,
+  type EntityIdWithLocation,
+  type ManifestEntityBuilder,
+  type ManifestWithoutSources,
+} from './entity.interface';
 
-export const buildApplication = async (appPath: string): Promise<Application> => {
-  const applicationConfigPath = path.join(appPath, 'src', 'app', 'application.config.ts');
+const findApplicationConfigPath = async (appPath: string): Promise<string> => {
+  const configFile = path.join(appPath, 'application.config.ts');
 
-  return extractManifestFromFile<Application>(applicationConfigPath, appPath);
-};
-
-export const validateApplication = (
-  application: Application | undefined,
-  errors: ValidationError[],
-): void => {
-  if (!application) {
-    errors.push({
-      path: 'application',
-      message: 'Application config is required',
-    });
-    return;
+  if (await fs.pathExists(configFile)) {
+    return configFile;
   }
 
-  if (!application.universalIdentifier) {
-    errors.push({
-      path: 'application',
-      message: 'Application must have a universalIdentifier',
-    });
-  }
+  throw new Error('Missing application.config.ts in your app root');
 };
 
-export const displayApplication = (manifest: ApplicationManifest): void => {
-  const appName = manifest.application.displayName ?? 'Application';
-  console.log(chalk.green(`  ✓ Loaded "${appName}"`));
-};
+export class ApplicationEntityBuilder
+  implements ManifestEntityBuilder<Application>
+{
+  async build(appPath: string): Promise<EntityBuildResult<Application>> {
+    const applicationConfigPath = await findApplicationConfigPath(appPath);
+    const application =
+      await manifestExtractFromFileServer.extractManifestFromFile<Application>(
+        applicationConfigPath,
+      );
+    const relativePath = path.relative(appPath, applicationConfigPath);
 
-export const collectApplicationIds = (
-  application: Application | undefined,
-): Array<{ id: string; location: string }> => {
-  const ids: Array<{ id: string; location: string }> = [];
-
-  if (application?.universalIdentifier) {
-    ids.push({
-      id: application.universalIdentifier,
-      location: 'application',
-    });
+    return { manifests: [application], filePaths: [relativePath] };
   }
 
-  if (application?.applicationVariables) {
-    for (const [name, variable] of Object.entries(application.applicationVariables)) {
-      if (variable.universalIdentifier) {
-        ids.push({
-          id: variable.universalIdentifier,
-          location: `application.variables.${name}`,
-        });
-      }
+  validate(applications: Application[], errors: ValidationError[]): void {
+    const application = applications[0];
+
+    if (!application) {
+      errors.push({
+        path: 'application',
+        message: 'Application config is required',
+      });
+      return;
+    }
+
+    if (!application.universalIdentifier) {
+      errors.push({
+        path: 'application',
+        message: 'Application must have a universalIdentifier',
+      });
     }
   }
 
-  return ids;
-};
+  display(applications: Application[]): void {
+    const application = applications[0];
+    const appName = application?.displayName ?? 'Application';
+    console.log(chalk.green(`  ✓ Loaded "${appName}"`));
+  }
+
+  findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
+    const seen = new Map<string, string[]>();
+    const application = manifest.application;
+
+    if (application?.universalIdentifier) {
+      seen.set(application.universalIdentifier, ['application']);
+    }
+
+    if (application?.applicationVariables) {
+      for (const [name, variable] of Object.entries(
+        application.applicationVariables,
+      )) {
+        if (variable.universalIdentifier) {
+          const locations = seen.get(variable.universalIdentifier) ?? [];
+          locations.push(`application.variables.${name}`);
+          seen.set(variable.universalIdentifier, locations);
+        }
+      }
+    }
+
+    return Array.from(seen.entries())
+      .filter(([_, locations]) => locations.length > 1)
+      .map(([id, locations]) => ({ id, locations }));
+  }
+}
+
+export const applicationEntityBuilder = new ApplicationEntityBuilder();

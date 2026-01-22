@@ -18,8 +18,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
     updatedAt: pageLayoutWidgetEntity.updatedAt.toISOString(),
     deletedAt: pageLayoutWidgetEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier:
-      pageLayoutWidgetEntityWithoutRelations.universalIdentifier ??
-      pageLayoutWidgetEntityWithoutRelations.id,
-    applicationId: pageLayoutWidgetEntityWithoutRelations.applicationId ?? null,
+      pageLayoutWidgetEntityWithoutRelations.universalIdentifier,
+    applicationId: pageLayoutWidgetEntityWithoutRelations.applicationId,
   };
 };

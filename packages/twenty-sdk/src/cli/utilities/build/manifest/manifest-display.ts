@@ -1,18 +1,20 @@
 import chalk from 'chalk';
 import { type ApplicationManifest } from 'twenty-shared/application';
-import { displayApplication } from './entities/application';
-import { displayFrontComponents } from './entities/front-component';
-import { displayFunctions } from './entities/function';
-import { displayObjects } from './entities/object';
-import { displayRoles } from './entities/role';
+import { applicationEntityBuilder } from './entities/application';
+import { frontComponentEntityBuilder } from './entities/front-component';
+import { functionEntityBuilder } from './entities/function';
+import { objectEntityBuilder } from './entities/object';
+import { roleEntityBuilder } from './entities/role';
 import { type ManifestValidationError, type ValidationWarning } from './manifest.types';
 
 export const displayEntitySummary = (manifest: ApplicationManifest): void => {
-  displayApplication(manifest);
-  displayObjects(manifest.objects);
-  displayFunctions(manifest.serverlessFunctions);
-  displayFrontComponents(manifest.frontComponents ?? []);
-  displayRoles(manifest.roles ?? []);
+  applicationEntityBuilder.display(
+    manifest.application ? [manifest.application] : [],
+  );
+  objectEntityBuilder.display(manifest.objects ?? []);
+  functionEntityBuilder.display(manifest.serverlessFunctions ?? []);
+  frontComponentEntityBuilder.display(manifest.frontComponents ?? []);
+  roleEntityBuilder.display(manifest.roles ?? []);
 };
 
 export const displayErrors = (error: ManifestValidationError): void => {

@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`rich-app app:dev > console output > should match expected output 1`] = `
+"👩‍💻 Workspace - default
+🚀 Starting Twenty Application Development Mode
+📁 App Path: <APP_PATH>/root.function.ts)
+     - greeting-function (src/functions/greeting.function.ts)
+     - test-function-2 (src/utils/test-function-2.util.ts)
+     - test-function (src/functions/test-function.function.ts)
+  ✓ Found 4 front component(s)
+  📍 Front component entry points:
+     - root-component (src/root.front-component.tsx)
+     - card-component (src/components/card.front-component.tsx)
+     - greeting-component (src/components/greeting.front-component.tsx)
+     - test-component (src/components/test.front-component.tsx)
+  ✓ Found 2 role(s)
+  ✓ Manifest written to <APP_PATH>/.twenty/output/manifest.json
+  📂 Manifest watcher started
+  📦 Building functions...
+  🎨 Building front components...
+  ✓ Functions built
+
+👀 Watching for changes... (Press Ctrl+C to stop)
+  ✓ Front components built"
+`;

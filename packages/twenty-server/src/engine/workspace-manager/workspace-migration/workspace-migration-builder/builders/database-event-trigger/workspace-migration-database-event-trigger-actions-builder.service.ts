@@ -78,7 +78,8 @@ export class WorkspaceMigrationDatabaseEventTriggerActionsBuilderService extends
       action: {
         type: 'delete',
         metadataName: 'databaseEventTrigger',
-        entityId: flatDatabaseEventTriggerToValidate.id,
+        universalIdentifier:
+          flatDatabaseEventTriggerToValidate.universalIdentifier,
       },
     };
   }

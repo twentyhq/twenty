@@ -4,7 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { DeleteServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
@@ -21,8 +21,13 @@ export class DeleteServerlessFunctionActionHandlerService extends WorkspaceMigra
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<DeleteServerlessFunctionAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { entityId } = action;
+    const { action, queryRunner, workspaceId, allFlatEntityMaps } = context;
+    const { universalIdentifier } = action;
+
+    const flatServerlessFunction = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatServerlessFunctionMaps,
+      universalIdentifier,
+    });
 
     const serverlessFunctionRepository =
       queryRunner.manager.getRepository<ServerlessFunctionEntity>(
@@ -30,26 +35,20 @@ export class DeleteServerlessFunctionActionHandlerService extends WorkspaceMigra
       );
 
     await serverlessFunctionRepository.delete({
-      id: entityId,
+      id: flatServerlessFunction.id,
       workspaceId,
     });
-
-    const existingServerlessFunction =
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: entityId,
-        flatEntityMaps: context.allFlatEntityMaps.flatServerlessFunctionMaps,
-      });
 
     // TODO: Should implement a cron task or a job to delete the files after a certain period of time
     await this.fileStorageService.move({
       from: {
         folderPath: getServerlessFolderOrThrow({
-          flatServerlessFunction: existingServerlessFunction,
+          flatServerlessFunction,
         }),
       },
       to: {
         folderPath: getServerlessFolderOrThrow({
-          flatServerlessFunction: existingServerlessFunction,
+          flatServerlessFunction,
           toDelete: true,
         }),
       },
@@ -59,25 +58,24 @@ export class DeleteServerlessFunctionActionHandlerService extends WorkspaceMigra
   async rollbackForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<DeleteServerlessFunctionAction>,
   ): Promise<void> {
-    const { action } = context;
-    const { entityId } = action;
+    const { action, allFlatEntityMaps } = context;
+    const { universalIdentifier } = action;
 
-    const existingServerlessFunction =
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: entityId,
-        flatEntityMaps: context.allFlatEntityMaps.flatServerlessFunctionMaps,
-      });
+    const flatServerlessFunction = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatServerlessFunctionMaps,
+      universalIdentifier,
+    });
 
     await this.fileStorageService.move({
       from: {
         folderPath: getServerlessFolderOrThrow({
-          flatServerlessFunction: existingServerlessFunction,
+          flatServerlessFunction,
           toDelete: true,
         }),
       },
       to: {
         folderPath: getServerlessFolderOrThrow({
-          flatServerlessFunction: existingServerlessFunction,
+          flatServerlessFunction,
           toDelete: false,
         }),
       },

@@ -7,39 +7,33 @@ import path, { relative, sep } from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
 import { OUTPUT_DIR } from '../common/constants';
-import { buildApplication } from './entities/application';
-import { buildFrontComponents } from './entities/front-component';
-import { buildFunctions } from './entities/function';
-import { buildObjects } from './entities/object';
-import { buildObjectExtensions } from './entities/object-extension';
-import { buildRoles } from './entities/role';
+import { applicationEntityBuilder } from './entities/application';
+import { frontComponentEntityBuilder } from './entities/front-component';
+import { functionEntityBuilder } from './entities/function';
+import { objectEntityBuilder } from './entities/object';
+import { objectExtensionEntityBuilder } from './entities/object-extension';
+import { roleEntityBuilder } from './entities/role';
 import { displayEntitySummary, displayErrors, displayWarnings } from './manifest-display';
+import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
 import { validateManifest } from './manifest-validate';
 import { ManifestValidationError } from './manifest.types';
 
-const validateFolderStructure = async (appPath: string): Promise<void> => {
-  const appFolder = path.join(appPath, 'src', 'app');
-
-  if (!(await fs.pathExists(appFolder))) {
-    throw new Error(
-      `Missing src/app/ folder in ${appPath}.\n` +
-        'Create it with: mkdir -p src/app',
-    );
-  }
-
-  const configFile = path.join(appPath, 'src', 'app', 'application.config.ts');
-  if (!(await fs.pathExists(configFile))) {
-    throw new Error('Missing src/app/application.config.ts');
-  }
+export type EntityFilePaths = {
+  application: string[];
+  objects: string[];
+  objectExtensions: string[];
+  functions: string[];
+  frontComponents: string[];
+  roles: string[];
 };
 
 const loadSources = async (appPath: string): Promise<Sources> => {
   const sources: Sources = {};
 
-  const tsFiles = await glob(['src/**/*.ts', 'generated/**/*.ts'], {
+  const tsFiles = await glob(['**/*.ts', '**/*.tsx'], {
     cwd: appPath,
     absolute: true,
-    ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+    ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
   });
 
   for (const filepath of tsFiles) {
@@ -87,10 +81,24 @@ export type RunManifestBuildOptions = {
   writeOutput?: boolean;
 };
 
+const EMPTY_FILE_PATHS: EntityFilePaths = {
+  application: [],
+  objects: [],
+  objectExtensions: [],
+  functions: [],
+  frontComponents: [],
+  roles: [],
+};
+
+export type ManifestBuildResult = {
+  manifest: ApplicationManifest | null;
+  filePaths: EntityFilePaths;
+};
+
 export const runManifestBuild = async (
   appPath: string,
   options: RunManifestBuildOptions = {},
-): Promise<ApplicationManifest | null> => {
+): Promise<ManifestBuildResult> => {
   const { display = true, writeOutput = true } = options;
 
   if (display) {
@@ -98,29 +106,45 @@ export const runManifestBuild = async (
   }
 
   try {
-    await validateFolderStructure(appPath);
+    manifestExtractFromFileServer.init(appPath);
 
     const packageJson = await parseJsoncFile(
       await findPathFile(appPath, 'package.json'),
     );
 
     const [
-      application,
-      objectManifests,
-      objectExtensionManifests,
-      functionManifests,
-      frontComponentManifests,
-      roleManifests,
+      applicationBuildResult,
+      objectBuildResult,
+      objectExtensionBuildResult,
+      functionBuildResult,
+      frontComponentBuildResult,
+      roleBuildResult,
       sources,
     ] = await Promise.all([
-      buildApplication(appPath),
-      buildObjects(appPath),
-      buildObjectExtensions(appPath),
-      buildFunctions(appPath),
-      buildFrontComponents(appPath),
-      buildRoles(appPath),
+      applicationEntityBuilder.build(appPath),
+      objectEntityBuilder.build(appPath),
+      objectExtensionEntityBuilder.build(appPath),
+      functionEntityBuilder.build(appPath),
+      frontComponentEntityBuilder.build(appPath),
+      roleEntityBuilder.build(appPath),
       loadSources(appPath),
     ]);
+
+    const application = applicationBuildResult.manifests[0];
+    const objectManifests = objectBuildResult.manifests;
+    const objectExtensionManifests = objectExtensionBuildResult.manifests;
+    const functionManifests = functionBuildResult.manifests;
+    const frontComponentManifests = frontComponentBuildResult.manifests;
+    const roleManifests = roleBuildResult.manifests;
+
+    const filePaths: EntityFilePaths = {
+      application: applicationBuildResult.filePaths,
+      objects: objectBuildResult.filePaths,
+      objectExtensions: objectExtensionBuildResult.filePaths,
+      functions: functionBuildResult.filePaths,
+      frontComponents: frontComponentBuildResult.filePaths,
+      roles: roleBuildResult.filePaths,
+    };
 
     const manifest: ApplicationManifest = {
       application,
@@ -142,7 +166,6 @@ export const runManifestBuild = async (
       serverlessFunctions: functionManifests,
       frontComponents: frontComponentManifests,
       roles: roleManifests,
-      packageJson,
     });
 
     if (!validation.isValid) {
@@ -160,7 +183,7 @@ export const runManifestBuild = async (
       await writeManifestToOutput(appPath, manifest);
     }
 
-    return manifest;
+    return { manifest, filePaths };
   } catch (error) {
     if (display) {
       if (error instanceof ManifestValidationError) {
@@ -172,6 +195,6 @@ export const runManifestBuild = async (
         );
       }
     }
-    return null;
+    return { manifest: null, filePaths: EMPTY_FILE_PATHS };
   }
 };

@@ -74,7 +74,7 @@ export class WorkspaceMigrationPageLayoutTabActionsBuilderService extends Worksp
       action: {
         type: 'delete',
         metadataName: 'pageLayoutTab',
-        entityId: flatPageLayoutTabToValidate.id,
+        universalIdentifier: flatPageLayoutTabToValidate.universalIdentifier,
       },
     };
   }
