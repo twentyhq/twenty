@@ -97,11 +97,6 @@ export const GraphWidgetLineChart = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(0);
 
-  const debouncedSetChartWidth = useDebouncedCallback(
-    (width: number) => setChartWidth(width),
-    300,
-  );
-
   const formatOptions: GraphValueFormatOptions = {
     displayType,
     decimals,
@@ -291,7 +286,7 @@ export const GraphWidgetLineChart = ({
       >
         <NodeDimensionEffect
           elementRef={containerRef}
-          onDimensionChange={({ width }) => debouncedSetChartWidth(width)}
+          onDimensionChange={({ width }) => setChartWidth(width)}
         />
         <ResponsiveLine
           data={nivoData}
