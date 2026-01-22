@@ -184,9 +184,11 @@ export class BillingSubscriptionService {
       this.twentyConfigService.get('ENTERPRISE_KEY'),
     );
 
-    const entitlements = await this.billingEntitlementRepository.find({
-      where: { workspaceId },
-    });
+    const entitlements = isBillingEnabled
+      ? await this.billingEntitlementRepository.find({
+          where: { workspaceId },
+        })
+      : [];
 
     const entitlementsByKey = entitlements.reduce(
       (acc, entitlement) => {

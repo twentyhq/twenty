@@ -4,6 +4,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
 import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/workspace-migration-command-menu-item-actions-builder.service';
+import { WorkspaceMigrationNavigationMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/workspace-migration-navigation-menu-item-actions-builder.service';
 import { WorkspaceMigrationCronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/cron-trigger/workspace-migration-cron-trigger-action-builder.service';
 import { WorkspaceMigrationDatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/database-event-trigger/workspace-migration-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-field-actions-builder.service';
@@ -48,6 +49,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationAgentActionsBuilderService,
     WorkspaceMigrationSkillActionsBuilderService,
     WorkspaceMigrationCommandMenuItemActionsBuilderService,
+    WorkspaceMigrationNavigationMenuItemActionsBuilderService,
     WorkspaceMigrationPageLayoutActionsBuilderService,
     WorkspaceMigrationPageLayoutWidgetActionsBuilderService,
     WorkspaceMigrationPageLayoutTabActionsBuilderService,
@@ -73,6 +75,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationAgentActionsBuilderService,
     WorkspaceMigrationSkillActionsBuilderService,
     WorkspaceMigrationCommandMenuItemActionsBuilderService,
+    WorkspaceMigrationNavigationMenuItemActionsBuilderService,
     WorkspaceMigrationPageLayoutActionsBuilderService,
     WorkspaceMigrationPageLayoutWidgetActionsBuilderService,
     WorkspaceMigrationPageLayoutTabActionsBuilderService,

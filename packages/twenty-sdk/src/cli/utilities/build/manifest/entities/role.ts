@@ -1,6 +1,6 @@
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type RoleManifest } from 'twenty-shared/application';
+import { createLogger } from '../../common/logger';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
@@ -9,6 +9,8 @@ import {
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from './entity.interface';
+
+const logger = createLogger('manifest-watch');
 
 export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
   async build(appPath: string): Promise<EntityBuildResult<RoleManifest>> {
@@ -57,7 +59,7 @@ export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
   }
 
   display(roles: RoleManifest[]): void {
-    console.log(chalk.green(`  ✓ Found ${roles?.length ?? 'no'} role(s)`));
+    logger.success(`✓ Found ${roles?.length ?? 'no'} role(s)`);
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {

@@ -1,9 +1,11 @@
+import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
 import { runManifestBuild, type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-build';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import chalk from 'chalk';
+
+const initLogger = createLogger('init');
 
 export type AppDevOptions = {
   appPath?: string;
@@ -26,8 +28,8 @@ export class AppDevCommand {
   async execute(options: AppDevOptions): Promise<void> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
-    console.log(chalk.blue('🚀 Starting Twenty Application Development Mode'));
-    console.log(chalk.gray(`📁 App Path: ${this.appPath}`));
+    initLogger.log('🚀 Starting Twenty Application Development Mode');
+    initLogger.log(`📁 App Path: ${this.appPath}`);
     console.log('');
 
     await this.startWatchers();
@@ -89,26 +91,13 @@ export class AppDevCommand {
   }
 
   private setupGracefulShutdown(): void {
-    process.on('SIGINT', async () => {
-      console.log(chalk.yellow('\n🛑 Stopping development mode...'));
-
-      const closePromises: Promise<void>[] = [];
-
-      if (this.manifestWatcher) {
-        closePromises.push(this.manifestWatcher.close());
-      }
-
-      if (this.functionsWatcher) {
-        closePromises.push(this.functionsWatcher.close());
-      }
-
-      if (this.frontComponentsWatcher) {
-        closePromises.push(this.frontComponentsWatcher.close());
-      }
-
-      await Promise.all(closePromises);
-
+    const shutdown = () => {
+      console.log('');
+      initLogger.warn('🛑 Stopping...');
       process.exit(0);
-    });
+    };
+
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
   }
 }

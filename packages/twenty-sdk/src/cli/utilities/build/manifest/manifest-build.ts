@@ -1,12 +1,12 @@
 import { findPathFile } from '@/cli/utilities/file/utils/file-find';
 import { parseJsoncFile } from '@/cli/utilities/file/utils/file-jsonc';
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';
 import path, { relative, sep } from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
 import { OUTPUT_DIR } from '../common/constants';
+import { createLogger } from '../common/logger';
 import { applicationEntityBuilder } from './entities/application';
 import { frontComponentEntityBuilder } from './entities/front-component';
 import { functionEntityBuilder } from './entities/function';
@@ -17,6 +17,8 @@ import { displayEntitySummary, displayErrors, displayWarnings } from './manifest
 import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
 import { validateManifest } from './manifest-validate';
 import { ManifestValidationError } from './manifest.types';
+
+const logger = createLogger('manifest-watch');
 
 export type EntityFilePaths = {
   application: string[];
@@ -67,11 +69,10 @@ const writeManifestToOutput = async (
     const manifestPath = path.join(outputDir, 'manifest.json');
     await fs.writeJSON(manifestPath, manifest, { spaces: 2 });
 
-    console.log(chalk.green(`  ✓ Manifest written to ${manifestPath}`));
+    logger.success(`✓ Written to ${manifestPath}`);
   } catch (error) {
-    console.error(
-      chalk.red('  ✗ Failed to write manifest:'),
-      error instanceof Error ? error.message : error,
+    logger.error(
+      `✗ Failed to write: ${error instanceof Error ? error.message : error}`,
     );
   }
 };
@@ -102,7 +103,7 @@ export const runManifestBuild = async (
   const { display = true, writeOutput = true } = options;
 
   if (display) {
-    console.log(chalk.blue('🔄 Building manifest...'));
+    logger.log('🔄 Building...');
   }
 
   try {
@@ -189,9 +190,8 @@ export const runManifestBuild = async (
       if (error instanceof ManifestValidationError) {
         displayErrors(error);
       } else {
-        console.error(
-          chalk.red('  ✗ Build failed:'),
-          error instanceof Error ? error.message : error,
+        logger.error(
+          `✗ Build failed: ${error instanceof Error ? error.message : error}`,
         );
       }
     }

@@ -1,10 +1,9 @@
-import chalk from 'chalk';
+import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { build, type InlineConfig, type Rollup } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
 import { OUTPUT_DIR } from '../common/constants';
-import { printWatchingMessage } from '../common/display';
+import { createLogger } from '../common/logger';
 import {
   type RestartableWatcher,
   type RestartableWatcherOptions,
@@ -12,17 +11,37 @@ import {
 import { type ManifestBuildResult } from '../manifest/manifest-build';
 import { FUNCTIONS_DIR } from './constants';
 
-export const FUNCTION_EXTERNAL_MODULES: (string | RegExp)[] = [
-  'path', 'fs', 'crypto', 'stream', 'util', 'os', 'url', 'http', 'https',
-  'events', 'buffer', 'querystring', 'assert', 'zlib', 'net', 'tls',
-  'child_process', 'worker_threads',
-  /^twenty-sdk/, /^twenty-shared/, /^@\//, /(?:^|\/)generated(?:\/|$)/,
+const logger = createLogger('functions-watch');
+
+export const FUNCTION_EXTERNAL_MODULES: string[] = [
+  'path',
+  'fs',
+  'crypto',
+  'stream',
+  'util',
+  'os',
+  'url',
+  'http',
+  'https',
+  'events',
+  'buffer',
+  'querystring',
+  'assert',
+  'zlib',
+  'net',
+  'tls',
+  'child_process',
+  'worker_threads',
+  'twenty-sdk',
+  'twenty-sdk/*',
+  'twenty-shared',
+  'twenty-shared/*',
 ];
 
 export class FunctionsWatcher implements RestartableWatcher {
   private appPath: string;
   private functionPaths: string[];
-  private innerWatcher: Rollup.RollupWatcher | null = null;
+  private esBuildContext: esbuild.BuildContext | null = null;
   private isRestarting = false;
 
   constructor(options: RestartableWatcherOptions) {
@@ -39,101 +58,109 @@ export class FunctionsWatcher implements RestartableWatcher {
 
   async start(): Promise<void> {
     const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
-    await fs.ensureDir(outputDir);
+    await fs.emptyDir(outputDir);
 
     if (this.functionPaths.length > 0) {
-      console.log(chalk.blue('  📦 Building functions...'));
-      this.innerWatcher = await this.createWatcher();
+      logger.log('📦 Building...');
+      await this.createContext();
     } else {
-      console.log(chalk.gray('  No functions to build'));
-      printWatchingMessage();
+      logger.log('No functions to build');
+      logger.log('👀 Watching for changes...');
     }
   }
 
   async close(): Promise<void> {
-    await this.innerWatcher?.close();
+    await this.esBuildContext?.dispose();
+    this.esBuildContext = null;
   }
 
   async restart(result: ManifestBuildResult): Promise<void> {
-    if (this.isRestarting) {
-      return;
-    }
+    if (this.isRestarting) return;
 
     this.isRestarting = true;
-
     try {
-      console.log(chalk.yellow('🔄 Restarting functions watcher...'));
-      await this.innerWatcher?.close();
-      this.innerWatcher = null;
+      logger.warn('🔄 Restarting...');
+      await this.close();
 
-      this.functionPaths = result.filePaths.functions;
+      const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
+      const newPaths = result.filePaths.functions;
+      await cleanupRemovedFiles(outputDir, this.functionPaths, newPaths);
+      this.functionPaths = newPaths;
 
       if (this.functionPaths.length > 0) {
-        console.log(chalk.blue('  📦 Building functions...'));
-        this.innerWatcher = await this.createWatcher();
+        logger.log('📦 Building...');
+        await this.createContext();
       } else {
-        console.log(chalk.gray('  No functions to build'));
-        printWatchingMessage();
+        logger.log('No functions to build');
+        logger.log('👀 Watching for changes...');
       }
 
-      console.log(chalk.green('✓ Functions watcher restarted'));
+      logger.success('✓ Restarted');
     } finally {
       this.isRestarting = false;
     }
   }
 
-  private async createWatcher(): Promise<Rollup.RollupWatcher> {
-    const config = this.createConfig();
-    const watcher = await build(config) as Rollup.RollupWatcher;
+  private async createContext(): Promise<void> {
+    const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
 
-    watcher.on('event', (event) => {
-      if (event.code === 'END') {
-        console.log(chalk.green('  ✓ Functions built'));
-        printWatchingMessage();
-      } else if (event.code === 'ERROR') {
-        console.error(chalk.red('  ✗ Function build error:'), event.error?.message);
-      }
+    const entryPoints: Record<string, string> = {};
+    for (const functionPath of this.functionPaths) {
+      const entryName = functionPath.replace(/\.tsx?$/, '');
+      entryPoints[entryName] = path.join(this.appPath, functionPath);
+    }
+
+    this.esBuildContext = await esbuild.context({
+      entryPoints,
+      bundle: true,
+      splitting: false,
+      format: 'esm',
+      platform: 'node',
+      outdir: outputDir,
+      outExtension: { '.js': '.mjs' },
+      external: FUNCTION_EXTERNAL_MODULES,
+      tsconfig: path.join(this.appPath, 'tsconfig.json'),
+      sourcemap: true,
+      metafile: true,
+      logLevel: 'silent',
+      plugins: [
+        {
+          name: 'external-patterns',
+          setup: (build) => {
+            // Externalize paths containing "generated" (matches /(?:^|\/)generated(?:\/|$)/)
+            build.onResolve({ filter: /(?:^|\/)generated(?:\/|$)/ }, (args) => ({
+              path: args.path,
+              external: true,
+            }));
+          },
+        },
+        {
+          name: 'build-notifications',
+          setup: (build) => {
+            build.onEnd((result) => {
+              if (result.errors.length > 0) {
+                logger.error('✗ Build error:');
+                for (const error of result.errors) {
+                  logger.error(`  ${error.text}`);
+                }
+              } else {
+                const outputs = Object.keys(result.metafile?.outputs ?? {})
+                  .filter((file) => file.endsWith('.mjs'))
+                  .map((file) => path.relative(outputDir, file));
+
+                for (const output of outputs) {
+                  logger.success(`✓ Built ${output}`);
+                }
+                logger.log('👀 Watching for changes...');
+              }
+            });
+          },
+        },
+      ],
     });
 
-    return watcher;
-  }
+    await this.esBuildContext.rebuild();
 
-  private createConfig(): InlineConfig {
-    const functionsOutputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
-
-    const entries = Object.fromEntries(
-      this.functionPaths.map((filePath) => [
-        filePath.replace(/\.tsx?$/, ''),
-        path.join(this.appPath, filePath),
-      ]),
-    );
-
-    return {
-      root: this.appPath,
-      plugins: [
-        tsconfigPaths({ root: this.appPath }),
-      ],
-      build: {
-        outDir: functionsOutputDir,
-        emptyOutDir: false,
-        watch: {
-          include: ['**/*.ts', '**/*.tsx', '**/*.json'],
-          exclude: ['node_modules/**', '.twenty/**', 'dist/**'],
-        },
-        lib: {
-          entry: entries,
-          formats: ['es'],
-          fileName: (_, entryName) => `${entryName}.mjs`,
-        },
-        rollupOptions: {
-          external: FUNCTION_EXTERNAL_MODULES,
-          treeshake: true,
-        },
-        minify: false,
-        sourcemap: true,
-      },
-      logLevel: 'silent',
-      configFile: false,
-    };
+    await this.esBuildContext.watch();
   }
 }

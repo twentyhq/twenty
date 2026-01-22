@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { FileFolder } from 'twenty-shared/types';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/get-serverless-folder-or-throw.utils';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { DeleteServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
@@ -44,14 +46,23 @@ export class DeleteServerlessFunctionActionHandlerService extends WorkspaceMigra
       from: {
         folderPath: getServerlessFolderOrThrow({
           flatServerlessFunction,
+          fileFolder: FileFolder.ServerlessFunction,
         }),
       },
       to: {
         folderPath: getServerlessFolderOrThrow({
           flatServerlessFunction,
-          toDelete: true,
+          fileFolder: FileFolder.ServerlessFunctionToDelete,
         }),
       },
+    });
+
+    // We can delete built code as it can be computed from source code if rollback occurs
+    await this.fileStorageService.delete({
+      folderPath: getServerlessFolderOrThrow({
+        flatServerlessFunction,
+        fileFolder: FileFolder.BuiltFunction,
+      }),
     });
   }
 
@@ -70,13 +81,13 @@ export class DeleteServerlessFunctionActionHandlerService extends WorkspaceMigra
       from: {
         folderPath: getServerlessFolderOrThrow({
           flatServerlessFunction,
-          toDelete: true,
+          fileFolder: FileFolder.ServerlessFunctionToDelete,
         }),
       },
       to: {
         folderPath: getServerlessFolderOrThrow({
           flatServerlessFunction,
-          toDelete: false,
+          fileFolder: FileFolder.ServerlessFunction,
         }),
       },
     });
