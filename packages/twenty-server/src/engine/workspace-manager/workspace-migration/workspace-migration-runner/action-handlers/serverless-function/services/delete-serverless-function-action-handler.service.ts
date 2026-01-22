@@ -67,7 +67,10 @@ export class DeleteServerlessFunctionActionHandlerService extends WorkspaceMigra
   }
 
   async rollbackForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<DeleteServerlessFunctionAction>,
+    context: Omit<
+      WorkspaceMigrationActionRunnerArgs<DeleteServerlessFunctionAction>,
+      'queryRunner'
+    >,
   ): Promise<void> {
     const { action, allFlatEntityMaps } = context;
     const { universalIdentifier } = action;

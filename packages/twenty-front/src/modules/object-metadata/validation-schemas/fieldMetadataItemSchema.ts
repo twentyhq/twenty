@@ -16,6 +16,7 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
       .nullable()
       .optional(),
     id: z.uuid(),
+    applicationId: z.uuid(),
     isActive: z.boolean(),
     isCustom: z.boolean(),
     isNullable: z.boolean(),

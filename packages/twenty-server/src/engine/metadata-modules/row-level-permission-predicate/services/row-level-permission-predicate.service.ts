@@ -11,18 +11,9 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { fromFlatRowLevelPermissionPredicateGroupToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-flat-row-level-permission-predicate-group-to-dto.util';
-import { fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicateToCreate } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-create-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-to-create.util';
-import { fromDeleteRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicateOrThrow } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-delete-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-or-throw.util';
-import { fromDestroyRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicateOrThrow } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-destroy-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-or-throw.util';
+import { fromFlatRowLevelPermissionPredicateGroupToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-group-to-dto.util';
 import { fromFlatRowLevelPermissionPredicateToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-to-dto.util';
-import { fromUpdateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicateToUpdateOrThrow } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-update-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-to-update-or-throw.util';
-import { type CreateRowLevelPermissionPredicateInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/create-row-level-permission-predicate.input';
-import { type DeleteRowLevelPermissionPredicateInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/delete-row-level-permission-predicate.input';
-import { type DestroyRowLevelPermissionPredicateInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/destroy-row-level-permission-predicate.input';
-import { type UpdateRowLevelPermissionPredicateInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/update-row-level-permission-predicate.input';
 import {
   type RowLevelPermissionPredicateGroupInput,
   type RowLevelPermissionPredicateInput,
@@ -50,176 +41,6 @@ export class RowLevelPermissionPredicateService {
     private readonly configService: ConfigService,
     private readonly applicationService: ApplicationService,
   ) {}
-
-  async createOne({
-    createRowLevelPermissionPredicateInput,
-    workspaceId,
-  }: {
-    createRowLevelPermissionPredicateInput: CreateRowLevelPermissionPredicateInput;
-    workspaceId: string;
-  }): Promise<RowLevelPermissionPredicateDTO> {
-    await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-    const flatPredicateToCreate =
-      fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicateToCreate(
-        {
-          createRowLevelPermissionPredicateInput,
-          workspaceId,
-          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-        },
-      );
-
-    await this.runMigration({
-      workspaceId,
-      flatEntityToCreate: [flatPredicateToCreate],
-    });
-
-    const { flatRowLevelPermissionPredicateMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRowLevelPermissionPredicateMaps'],
-        },
-      );
-
-    return fromFlatRowLevelPermissionPredicateToDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatPredicateToCreate.id,
-        flatEntityMaps: flatRowLevelPermissionPredicateMaps,
-      }),
-    );
-  }
-
-  async updateOne({
-    updateRowLevelPermissionPredicateInput,
-    workspaceId,
-  }: {
-    updateRowLevelPermissionPredicateInput: UpdateRowLevelPermissionPredicateInput;
-    workspaceId: string;
-  }): Promise<RowLevelPermissionPredicateDTO> {
-    await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
-
-    const { flatRowLevelPermissionPredicateMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRowLevelPermissionPredicateMaps'],
-        },
-      );
-
-    const flatPredicateToUpdate =
-      fromUpdateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicateToUpdateOrThrow(
-        {
-          flatRowLevelPermissionPredicateMaps,
-          updateRowLevelPermissionPredicateInput,
-        },
-      );
-
-    await this.runMigration({
-      workspaceId,
-      flatEntityToUpdate: [flatPredicateToUpdate],
-    });
-
-    const { flatRowLevelPermissionPredicateMaps: recomputedFlatMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRowLevelPermissionPredicateMaps'],
-        },
-      );
-
-    return fromFlatRowLevelPermissionPredicateToDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatPredicateToUpdate.id,
-        flatEntityMaps: recomputedFlatMaps,
-      }),
-    );
-  }
-
-  async deleteOne({
-    deleteRowLevelPermissionPredicateInput,
-    workspaceId,
-  }: {
-    deleteRowLevelPermissionPredicateInput: DeleteRowLevelPermissionPredicateInput;
-    workspaceId: string;
-  }): Promise<RowLevelPermissionPredicateDTO> {
-    await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
-
-    const { flatRowLevelPermissionPredicateMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRowLevelPermissionPredicateMaps'],
-        },
-      );
-
-    const flatPredicateWithDeletedAt =
-      fromDeleteRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicateOrThrow(
-        {
-          deleteRowLevelPermissionPredicateInput,
-          flatRowLevelPermissionPredicateMaps,
-        },
-      );
-
-    await this.runMigration({
-      workspaceId,
-      flatEntityToUpdate: [flatPredicateWithDeletedAt],
-    });
-
-    const { flatRowLevelPermissionPredicateMaps: recomputedFlatMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRowLevelPermissionPredicateMaps'],
-        },
-      );
-
-    return fromFlatRowLevelPermissionPredicateToDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatPredicateWithDeletedAt.id,
-        flatEntityMaps: recomputedFlatMaps,
-      }),
-    );
-  }
-
-  async destroyOne({
-    destroyRowLevelPermissionPredicateInput,
-    workspaceId,
-  }: {
-    destroyRowLevelPermissionPredicateInput: DestroyRowLevelPermissionPredicateInput;
-    workspaceId: string;
-  }): Promise<RowLevelPermissionPredicateDTO> {
-    await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
-
-    const { flatRowLevelPermissionPredicateMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRowLevelPermissionPredicateMaps'],
-        },
-      );
-
-    const flatPredicateToDelete =
-      fromDestroyRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicateOrThrow(
-        {
-          destroyRowLevelPermissionPredicateInput,
-          flatRowLevelPermissionPredicateMaps,
-        },
-      );
-
-    await this.runMigration({
-      workspaceId,
-      flatEntityToDelete: [flatPredicateToDelete],
-    });
-
-    return fromFlatRowLevelPermissionPredicateToDto(flatPredicateToDelete);
-  }
 
   async findByWorkspaceId(
     workspaceId: string,
@@ -378,7 +199,6 @@ export class RowLevelPermissionPredicateService {
         existingGroups,
         inputGroups: predicateGroups,
         roleId,
-        objectMetadataId,
         workspaceId,
         flatRowLevelPermissionPredicateGroupMaps,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
@@ -449,7 +269,6 @@ export class RowLevelPermissionPredicateService {
     existingGroups,
     inputGroups,
     roleId,
-    objectMetadataId,
     workspaceId,
     flatRowLevelPermissionPredicateGroupMaps,
     workspaceCustomApplicationId,
@@ -457,7 +276,6 @@ export class RowLevelPermissionPredicateService {
     existingGroups: FlatRowLevelPermissionPredicateGroup[];
     inputGroups: RowLevelPermissionPredicateGroupInput[];
     roleId: string;
-    objectMetadataId: string;
     workspaceId: string;
     flatRowLevelPermissionPredicateGroupMaps: FlatEntityMaps<FlatRowLevelPermissionPredicateGroup>;
     workspaceCustomApplicationId: string;
@@ -495,7 +313,7 @@ export class RowLevelPermissionPredicateService {
           id: groupId,
           workspaceId,
           roleId,
-          objectMetadataId,
+          objectMetadataId: inputGroup.objectMetadataId,
           logicalOperator: inputGroup.logicalOperator,
           parentRowLevelPermissionPredicateGroupId:
             inputGroup.parentRowLevelPermissionPredicateGroupId ?? null,
@@ -673,45 +491,6 @@ export class RowLevelPermissionPredicateService {
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'rolesPermissions',
-    ]);
-  }
-
-  private async runMigration({
-    workspaceId,
-    flatEntityToCreate = [],
-    flatEntityToUpdate = [],
-    flatEntityToDelete = [],
-  }: {
-    workspaceId: string;
-    flatEntityToCreate?: FlatRowLevelPermissionPredicate[];
-    flatEntityToUpdate?: FlatRowLevelPermissionPredicate[];
-    flatEntityToDelete?: FlatRowLevelPermissionPredicate[];
-  }): Promise<void> {
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            rowLevelPermissionPredicate: {
-              flatEntityToCreate,
-              flatEntityToDelete,
-              flatEntityToUpdate,
-            },
-          },
-          workspaceId,
-          isSystemBuild: false,
-        },
-      );
-
-    if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Validation errors occurred while applying row level permission predicate mutation',
-      );
-    }
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'rolesPermissions',
-      'flatRowLevelPermissionPredicateGroupMaps',
     ]);
   }
 
