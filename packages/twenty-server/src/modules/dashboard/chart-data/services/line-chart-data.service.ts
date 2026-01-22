@@ -36,6 +36,7 @@ import { processOneDimensionalResults } from 'src/modules/dashboard/chart-data/u
 import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-two-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
 import { sortSecondaryAxisData } from 'src/modules/dashboard/chart-data/utils/sort-secondary-axis-data.util';
+import { buildLineChartSeriesIdPrefix } from 'src/modules/dashboard/chart-data/utils/build-line-chart-series-id-prefix.util';
 
 type GetLineChartDataParams = {
   workspaceId: string;
@@ -164,6 +165,11 @@ export class LineChartDataService {
         secondaryAxisOrderBy: configuration.secondaryAxisOrderBy,
       });
 
+      const seriesIdPrefix = buildLineChartSeriesIdPrefix(
+        objectMetadataId,
+        configuration,
+      );
+
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
         return this.transformToTwoDimensionalLineChartData({
           rawResults,
@@ -173,6 +179,7 @@ export class LineChartDataService {
           configuration,
           userTimezone,
           firstDayOfTheWeek,
+          seriesIdPrefix,
         });
       }
 
@@ -183,6 +190,7 @@ export class LineChartDataService {
         configuration,
         userTimezone,
         firstDayOfTheWeek,
+        seriesIdPrefix,
       });
     } catch (error) {
       if (error instanceof ChartDataException) {
@@ -206,6 +214,7 @@ export class LineChartDataService {
     configuration,
     userTimezone,
     firstDayOfTheWeek,
+    seriesIdPrefix,
   }: {
     rawResults: GroupByRawResult[];
     primaryAxisGroupByField: FlatFieldMetadata;
@@ -213,6 +222,7 @@ export class LineChartDataService {
     configuration: LineChartConfigurationDTO;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
+    seriesIdPrefix: string;
   }): LineChartDataOutputDTO {
     const filteredResults = configuration.omitNullValues
       ? rawResults.filter(
@@ -223,8 +233,7 @@ export class LineChartDataService {
       : rawResults;
 
     const rangeFilteredResults =
-      !configuration.isCumulative &&
-      (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
+      isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax)
         ? filterByRange(
             filteredResults,
             configuration.rangeMin,
@@ -290,11 +299,7 @@ export class LineChartDataService {
     );
 
     const transformedData = configuration.isCumulative
-      ? this.applyCumulativeTransform(
-          limitedSortedData,
-          configuration.rangeMin,
-          configuration.rangeMax,
-        )
+      ? this.applyCumulativeTransform(limitedSortedData)
       : limitedSortedData;
 
     const dataPoints = transformedData.map(({ x, y }) => ({
@@ -304,7 +309,7 @@ export class LineChartDataService {
 
     const series = [
       {
-        id: aggregateField.name,
+        id: `${seriesIdPrefix}${aggregateField.name}`,
         label: aggregateField.label,
         data: dataPoints,
       },
@@ -334,6 +339,7 @@ export class LineChartDataService {
     configuration,
     userTimezone,
     firstDayOfTheWeek,
+    seriesIdPrefix,
   }: {
     rawResults: GroupByRawResult[];
     primaryAxisGroupByField: FlatFieldMetadata;
@@ -342,6 +348,7 @@ export class LineChartDataService {
     configuration: LineChartConfigurationDTO;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
+    seriesIdPrefix: string;
   }): LineChartDataOutputDTO {
     const filteredResults = configuration.omitNullValues
       ? rawResults.filter(
@@ -354,7 +361,6 @@ export class LineChartDataService {
     const isStacked = configuration.isStacked ?? false;
 
     const rangeFilteredResults =
-      !configuration.isCumulative &&
       !isStacked &&
       (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
         ? filterByRange(
@@ -484,7 +490,6 @@ export class LineChartDataService {
     const limitedSeriesIds = sortedSeriesIds.slice(0, maxSeries);
 
     const filteredXValues =
-      !configuration.isCumulative &&
       isStacked &&
       (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
         ? filterLineChartXValuesByRange(
@@ -498,6 +503,7 @@ export class LineChartDataService {
 
     const series = limitedSeriesIds.map((seriesId) => {
       const xToYMap = seriesMap.get(seriesId) ?? new Map();
+      const prefixedSeriesId = `${seriesIdPrefix}${seriesId}`;
 
       let dataPoints = filteredXValues.map((xValue) => ({
         x: xValue,
@@ -505,15 +511,11 @@ export class LineChartDataService {
       }));
 
       if (configuration.isCumulative) {
-        dataPoints = this.applyCumulativeTransform(
-          dataPoints,
-          configuration.rangeMin,
-          configuration.rangeMax,
-        );
+        dataPoints = this.applyCumulativeTransform(dataPoints);
       }
 
       return {
-        id: seriesId,
+        id: prefixedSeriesId,
         label: seriesId,
         data: dataPoints,
       };
@@ -532,6 +534,14 @@ export class LineChartDataService {
       ...formattedToRawLookup,
       ...secondaryFormattedToRawLookup,
     ]);
+
+    for (const seriesId of limitedSeriesIds) {
+      const rawValue = secondaryFormattedToRawLookup.get(seriesId);
+
+      if (isDefined(rawValue)) {
+        mergedLookup.set(`${seriesIdPrefix}${seriesId}`, rawValue);
+      }
+    }
 
     return {
       series,
@@ -595,8 +605,6 @@ export class LineChartDataService {
 
   private applyCumulativeTransform<T extends { y: number | null }>(
     data: T[],
-    rangeMin?: number | null,
-    rangeMax?: number | null,
   ): T[] {
     const result: T[] = [];
     let runningTotal = 0;
@@ -608,13 +616,7 @@ export class LineChartDataService {
 
       const cumulativeValue = runningTotal;
 
-      const isOutOfRange =
-        (isDefined(rangeMin) && cumulativeValue < rangeMin) ||
-        (isDefined(rangeMax) && cumulativeValue > rangeMax);
-
-      if (!isOutOfRange) {
-        result.push({ ...point, y: cumulativeValue });
-      }
+      result.push({ ...point, y: cumulativeValue });
     }
 
     return result;

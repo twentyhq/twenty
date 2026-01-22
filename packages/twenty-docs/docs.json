@@ -5364,15 +5364,15 @@
         "language": "tr",
         "tabs": [
           {
-            "tab": "User Guide",
+            "tab": "Kullanıcı Rehberi",
             "groups": [
               {
-                "group": "Discover Twenty",
+                "group": "Twenty'yi Keşfedin",
                 "icon": "rocket",
                 "pages": [
                   "l/tr/user-guide/introduction",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/user-guide/getting-started/capabilities/what-is-twenty",
                       "l/tr/user-guide/getting-started/capabilities/implementation-services",
@@ -5380,7 +5380,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Nasıl Yapılırlar",
                     "pages": [
                       "l/tr/user-guide/getting-started/how-tos/create-workspace",
                       "l/tr/user-guide/getting-started/how-tos/navigate-around-twenty",
@@ -5395,7 +5395,7 @@
                 "pages": [
                   "l/tr/user-guide/data-model/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/user-guide/data-model/capabilities/objects",
                       "l/tr/user-guide/data-model/capabilities/fields",
@@ -5403,7 +5403,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Nasıl Yapılırlar",
                     "pages": [
                       "l/tr/user-guide/data-model/how-tos/create-custom-objects",
                       "l/tr/user-guide/data-model/how-tos/create-custom-fields",
@@ -5415,12 +5415,12 @@
                 ]
               },
               {
-                "group": "Data Migration",
+                "group": "Veri Geçişi",
                 "icon": "cloud-arrow-up",
                 "pages": [
                   "l/tr/user-guide/data-migration/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/user-guide/data-migration/capabilities/file-formats",
                       "l/tr/user-guide/data-migration/capabilities/field-mapping",
@@ -5430,7 +5430,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Nasıl Yapılırlar",
                     "pages": [
                       "l/tr/user-guide/data-migration/how-tos/prepare-your-csv-files",
                       "l/tr/user-guide/data-migration/how-tos/import-companies-via-csv",
@@ -5447,19 +5447,19 @@
                 ]
               },
               {
-                "group": "Calendar & Emails",
+                "group": "Takvim ve E-postalar",
                 "icon": "envelope",
                 "pages": [
                   "l/tr/user-guide/calendar-emails/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/user-guide/calendar-emails/capabilities/mailbox",
                       "l/tr/user-guide/calendar-emails/capabilities/calendar"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Nasıl Yapılırlar",
                     "pages": [
                       "l/tr/user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user",
                       "l/tr/user-guide/calendar-emails/how-tos/limit-emails-imported",
@@ -5477,7 +5477,7 @@
                 "pages": [
                   "l/tr/user-guide/workflows/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/user-guide/workflows/capabilities/workflow-triggers",
                       "l/tr/user-guide/workflows/capabilities/workflow-actions",
@@ -5491,10 +5491,10 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Nasıl Yapılırlar",
                     "pages": [
                       {
-                        "group": "CRM Automations",
+                        "group": "CRM Otomasyonları",
                         "pages": [
                           "l/tr/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
                           "l/tr/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
@@ -5506,7 +5506,7 @@
                         ]
                       },
                       {
-                        "group": "Connect to Other Tools",
+                        "group": "Diğer Araçlara Bağlan",
                         "pages": [
                           "l/tr/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                           "l/tr/user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
@@ -5516,7 +5516,7 @@
                         ]
                       },
                       {
-                        "group": "Advanced Configurations",
+                        "group": "Gelişmiş Yapılandırmalar",
                         "pages": [
                           "l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions"
                         ]
@@ -5539,7 +5539,7 @@
                 "pages": [
                   "l/tr/user-guide/ai/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/user-guide/ai/capabilities/ai-chatbot",
                       "l/tr/user-guide/ai/capabilities/ai-agents",
@@ -5547,7 +5547,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Nasıl Yapılırlar",
                     "pages": [
                       "l/tr/user-guide/ai/how-tos/ai-faq"
                     ]
@@ -5555,12 +5555,12 @@
                 ]
               },
               {
-                "group": "Views & Pipelines",
+                "group": "Görünümler ve Boru Hatları",
                 "icon": "table",
                 "pages": [
                   "l/tr/user-guide/views-pipelines/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/user-guide/views-pipelines/capabilities/table-views",
                       "l/tr/user-guide/views-pipelines/capabilities/kanban-views",
@@ -5571,7 +5571,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Nasıl Yapılırlar",
                     "pages": [
                       "l/tr/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/tr/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -5590,7 +5590,7 @@
                 "pages": [
                   "l/tr/user-guide/dashboards/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/user-guide/dashboards/capabilities/dashboards",
                       "l/tr/user-guide/dashboards/capabilities/widgets",
@@ -5598,7 +5598,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Nasıl Yapılırlar",
                     "pages": [
                       "l/tr/user-guide/dashboards/how-tos/dashboards-faq",
                       "l/tr/user-guide/dashboards/how-tos/widget-faq"
@@ -5607,19 +5607,19 @@
                 ]
               },
               {
-                "group": "Permissions & Access",
+                "group": "İzinler ve Erişim",
                 "icon": "lock",
                 "pages": [
                   "l/tr/user-guide/permissions-access/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/user-guide/permissions-access/capabilities/permissions",
                       "l/tr/user-guide/permissions-access/capabilities/sso-configuration"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Nasıl Yapılırlar",
                     "pages": [
                       "l/tr/user-guide/permissions-access/how-tos/permissions-faq"
                     ]
@@ -5632,14 +5632,14 @@
                 "pages": [
                   "l/tr/user-guide/billing/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/user-guide/billing/capabilities/pricing-plans",
                       "l/tr/user-guide/billing/capabilities/workflow-credits"
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Nasıl Yapılırlar",
                     "pages": [
                       "l/tr/user-guide/billing/how-tos/billing-faq"
                     ]
@@ -5652,7 +5652,7 @@
                 "pages": [
                   "l/tr/user-guide/settings/overview",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/user-guide/settings/capabilities/workspace-settings",
                       "l/tr/user-guide/settings/capabilities/member-management",
@@ -5663,7 +5663,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Nasıl Yapılırlar",
                     "pages": [
                       "l/tr/user-guide/settings/how-tos/settings-faq"
                     ]
@@ -5682,12 +5682,12 @@
                 ]
               },
               {
-                "group": "Extend",
+                "group": "Genişlet",
                 "icon": "plug",
                 "pages": [
                   "l/tr/developers/extend/extend",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/developers/extend/capabilities/apis",
                       "l/tr/developers/extend/capabilities/webhooks",
@@ -5697,12 +5697,12 @@
                 ]
               },
               {
-                "group": "Self-Host",
+                "group": "Kendi Kendine Barındırma",
                 "icon": "desktop",
                 "pages": [
                   "l/tr/developers/self-host/self-host",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/developers/self-host/capabilities/docker-compose",
                       "l/tr/developers/self-host/capabilities/setup",
@@ -5714,12 +5714,12 @@
                 ]
               },
               {
-                "group": "Contribute",
+                "group": "Katkıda Bulunun",
                 "icon": "github",
                 "pages": [
                   "l/tr/developers/contribute/contribute",
                   {
-                    "group": "Capabilities",
+                    "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/developers/contribute/capabilities/local-setup",
                       "l/tr/developers/contribute/capabilities/bug-and-requests",

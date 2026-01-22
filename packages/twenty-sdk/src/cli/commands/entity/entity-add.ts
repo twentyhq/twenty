@@ -11,7 +11,7 @@ import camelcase from 'lodash.camelcase';
 import kebabcase from 'lodash.kebabcase';
 import { join } from 'path';
 
-const APP_FOLDER = 'src/app';
+const APP_FOLDER = 'src';
 
 export enum SyncableEntity {
   AGENT = 'agent',
@@ -28,7 +28,7 @@ export const isSyncableEntity = (value: string): value is SyncableEntity => {
 export class EntityAddCommand {
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
-      // Default to src/app/ folder, allow override with path parameter
+      // Default to src/ folder, allow override with path parameter
       const appPath = path
         ? join(CURRENT_EXECUTION_DIRECTORY, path)
         : join(CURRENT_EXECUTION_DIRECTORY, APP_FOLDER);

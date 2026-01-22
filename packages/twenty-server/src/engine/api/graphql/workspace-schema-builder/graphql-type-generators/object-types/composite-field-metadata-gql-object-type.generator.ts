@@ -71,7 +71,10 @@ export class CompositeFieldMetadataGqlObjectTypeGenerator {
 
       const type = isEnumFieldMetadataType(property.type)
         ? this.gqlTypesStorage.getGqlTypeByKey(key)
-        : this.typeMapperService.mapToScalarType(property.type, typeOptions);
+        : this.typeMapperService.mapToPreBuiltGraphQLOutputType({
+            fieldMetadataType: property.type,
+            typeOptions,
+          });
 
       if (!isDefined(type) || isInputObjectType(type)) {
         const message = `Could not find a GraphQL object type for ${compositeType.type} ${property.name}`;

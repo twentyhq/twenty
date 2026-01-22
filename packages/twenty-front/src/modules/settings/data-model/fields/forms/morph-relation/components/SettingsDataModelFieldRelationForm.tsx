@@ -88,8 +88,7 @@ export const SettingsDataModelFieldRelationForm = ({
     });
 
   const initialRelationType =
-    existingFieldMetadataItem?.settings?.relationType ??
-    RelationType.ONE_TO_MANY;
+    existingFieldMetadataItem?.relation?.type ?? RelationType.ONE_TO_MANY;
 
   const { label: defaultLabelOnDestination, icon: defaultIconOnDestination } =
     useRelationSettingsFormDefaultValuesTargetFieldMetadata({

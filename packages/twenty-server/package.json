@@ -166,6 +166,7 @@
     "semver": "7.6.3",
     "sharp": "0.32.6",
     "stripe": "19.3.1",
+    "temporal-polyfill": "^0.3.0",
     "transliteration": "2.3.5",
     "tsconfig-paths": "^4.2.0",
     "tsdav": "^2.1.5",

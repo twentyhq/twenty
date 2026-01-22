@@ -9,9 +9,5 @@ export const filterAvailableTableColumns = (
     return false;
   }
 
-  if (columnDefinition.type === 'UUID') {
-    return false;
-  }
-
   return true;
 };

@@ -77,7 +77,17 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
+        key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
         key: FeatureFlagKey.IS_SSE_DB_EVENTS_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },

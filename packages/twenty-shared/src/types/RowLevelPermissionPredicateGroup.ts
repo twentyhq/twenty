@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { type RowLevelPermissionPredicateGroupLogicalOperator } from '@/types/RowLevelPermissionPredicateGroupLogicalOperator';
 
 export type RowLevelPermissionPredicateGroup = {

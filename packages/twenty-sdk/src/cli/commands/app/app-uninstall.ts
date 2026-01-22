@@ -1,9 +1,9 @@
-import chalk from 'chalk';
-import inquirer from 'inquirer';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
 import { ApiService } from '@/cli/utilities/api/services/api.service';
 import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
-import { buildManifest } from '@/cli/utilities/manifest/utils/manifest-build';
+import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import chalk from 'chalk';
+import inquirer from 'inquirer';
 
 export class AppUninstallCommand {
   private apiService = new ApiService();
@@ -25,7 +25,11 @@ export class AppUninstallCommand {
         process.exit(1);
       }
 
-      const { manifest } = await buildManifest(appPath);
+      const { manifest } = await runManifestBuild(appPath, { display: false, writeOutput: false });
+
+      if (!manifest) {
+        return { success: false, error: 'Build failed' };
+      }
 
       const result = await this.apiService.uninstallApplication(
         manifest.application.universalIdentifier,

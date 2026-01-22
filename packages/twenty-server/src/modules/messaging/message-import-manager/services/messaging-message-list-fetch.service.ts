@@ -16,7 +16,6 @@ import {
   MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
-  MessageFolderImportPolicy,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderPendingSyncAction } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
@@ -129,12 +128,7 @@ export class MessagingMessageListFetchService {
               workspaceId,
             });
 
-          const messageFoldersToSync = (
-            messageChannelWithFreshTokens.messageFolderImportPolicy ===
-            MessageFolderImportPolicy.ALL_FOLDERS
-              ? messageFolders
-              : messageFolders.filter((folder) => folder.isSynced)
-          ).filter(
+          const messageFoldersToSync = messageFolders.filter(
             (folder) =>
               folder.pendingSyncAction === MessageFolderPendingSyncAction.NONE,
           );

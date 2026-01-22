@@ -121,60 +121,60 @@ Bir `Products` nesnesi oluşturun ve kayıtlarla ilişkilendirin. Bu, modelinizi
 
 ### 5. Önce Basit Tutun
 
-Alanlarla başlayın. Move to new objects only when you feel the limits:
+Alanlarla başlayın. Sınırları hissettiğinizde yalnızca yeni nesnelere geçin:
 
-* Too many fields on one object
-* Repeated records that should be separate
-* Relationships that don't fit neatly
+* Tek bir nesnede çok fazla alan
+* Ayrı olması gereken tekrarlanan kayıtlar
+* Düzgün uymayan ilişkiler
 
-## Special Note on People, Companies, and Opportunities
+## İnsanlar, Şirketler ve Fırsatlar hakkında özel not
 
 <Warning>
-  **Email and calendar sync only works with People, Companies, and Opportunities.**
+  **E-posta ve takvim eşzamanlaması yalnızca İnsanlar, Şirketler ve Fırsatlar ile çalışır.**
 
-  These are the only objects where you can access synchronized emails and meetings from your mailbox/calendar. We recommend using them as much as possible.
+  Bunlar, posta kutunuz/takviminizden eşzamanlanan e-postalara ve toplantılara erişebileceğiniz tek nesnelerdir. Bunları mümkün olduğunca kullanmanızı öneririz.
 </Warning>
 
-**Best practices:**
+**En İyi Uygulamalar:**
 
-* If you need categories of People, use fields (not new objects)
-* Example: Use a `Person Type` field with values "Prospect" and "Partner" instead of creating separate objects
-* Create different **views** to filter: one showing partners, another showing prospects
+* İnsanlar için kategorilere ihtiyacınız varsa, alanları kullanın (yeni nesneler değil)
+* Örnek: Ayrı nesneler oluşturmak yerine, değerleri "Prospect" ve "Partner" olan bir `Person Type` alanı kullanın
+* Filtrelemek için farklı **görünümler** oluşturun: biri iş ortaklarını, diğeri potansiyel müşterileri gösterir
 
-**It's okay to have fields that don't apply to every record.** For example, a `Referral Link` field on People that only applies when `Person Type = Partner`. Hide this field from views where it's not relevant.
+**Her kayıt için geçerli olmayan alanlara sahip olmak sorun değildir.** Örneğin, İnsanlar üzerinde yalnızca `Person Type = Partner` olduğunda geçerli olan bir `Referral Link` alanı. İlgili olmadığı görünümlerden bu alanı gizleyin.
 
-## Questions to Guide Your Choice
+## Tercihinizi yönlendirecek sorular
 
 Kendinize şunu sorun:
 
-<Check>Is this just a property of something I already have, or does it need its own properties?</Check>
-<Check>Will I ever need to track multiple of these per record, without knowing how many?</Check>
-<Check>Does this concept connect to several different objects, not just one?</Check>
-<Check>Will it have its own lifecycle (stages, start/end dates)?</Check>
+<Check>Bu, zaten sahip olduğum bir şeyin sadece bir özelliği mi, yoksa kendi özelliklerine mi ihtiyaç duyuyor?</Check>
+<Check>Bunlardan bir kayıtta kaç tane olacağını bilmeden birden fazlasını takip etmem gerekecek mi?</Check>
+<Check>Bu kavram sadece tek bir nesneye değil, birkaç farklı nesneye mi bağlanıyor?</Check>
+<Check>Kendi yaşam döngüsüne mi sahip olacak (aşamalar, başlangıç/bitiş tarihleri)?</Check>
 
-If the answer is "yes" to one or more, it's probably time for a new object.
+Bu sorulardan birine veya daha fazlasına "evet" yanıtı veriyorsanız, muhtemelen yeni bir nesne zamanı gelmiştir.
 
-## Accessing Your Data Model
+## Veri modelinize erişim
 
-1. Go to **Settings** in the left sidebar
-2. Click **Data Model**
-3. View all your objects (standard and custom)
-4. Click any object to see and edit its fields
+1. Sol kenar çubuğunda **Ayarlar**'a gidin
+2. **Veri Modeli**'ne tıklayın
+3. Tüm nesnelerinizi görüntüleyin (standart ve özel)
+4. Alanlarını görmek ve düzenlemek için herhangi bir nesneye tıklayın
 
 <Note>
-  **Don't see Data Model in Settings?**
+  **Ayarlar'da Veri Modeli'ni görmüyor musunuz?**
 
-  Access to the data model is usually restricted to administrators. Contact your workspace admin if you need access.
+  Veri modeline erişim genellikle yöneticilerle sınırlıdır. Erişime ihtiyacınız varsa çalışma alanı yöneticinizle iletişime geçin.
 </Note>
 
 ## Sonraki Adımlar
 
-Once you've planned your data model:
+Veri modelinizi planladıktan sonra:
 
-* [How to Create Custom Objects](/l/tr/user-guide/data-model/how-tos/create-custom-objects)
-* [How to Create Custom Fields](/l/tr/user-guide/data-model/how-tos/create-custom-fields)
-* [How to Create Relation Fields](/l/tr/user-guide/data-model/how-tos/create-relation-fields)
+* [Özel Nesneler Nasıl Oluşturulur](/l/tr/user-guide/data-model/how-tos/create-custom-objects)
+* [Özel Alanlar Nasıl Oluşturulur](/l/tr/user-guide/data-model/how-tos/create-custom-fields)
+* [İlişki Alanları Nasıl Oluşturulur](/l/tr/user-guide/data-model/how-tos/create-relation-fields)
 
 ## Yardıma mı ihtiyacınız var?
 
-Our team can help you design and create the data model you need. Discover our [Implementation Services](/l/tr/user-guide/getting-started/capabilities/implementation-services).
+Ekibimiz, ihtiyacınız olan veri modelini tasarlayıp oluşturmanıza yardımcı olabilir. [Uygulama Hizmetlerimizi](/l/tr/user-guide/getting-started/capabilities/implementation-services) keşfedin.

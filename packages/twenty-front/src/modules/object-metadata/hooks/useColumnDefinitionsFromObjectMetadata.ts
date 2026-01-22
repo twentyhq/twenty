@@ -12,7 +12,10 @@ export const useColumnDefinitionsFromObjectMetadata = (
   objectMetadataItem: ObjectMetadataItem,
 ) => {
   const activeFieldMetadataItems = objectMetadataItem.readableFields.filter(
-    ({ isActive, isSystem }) => isActive && !isSystem,
+    ({ id, isActive, isSystem }) =>
+      isActive &&
+      // Allow label identifier field (e.g. id for junction tables) even if it's a system field
+      (!isSystem || id === objectMetadataItem.labelIdentifierFieldMetadataId),
   );
 
   const filterableFieldMetadataItems = useRecoilValue(

@@ -74,7 +74,7 @@ export class WorkspaceMigrationViewFilterGroupActionsBuilderService extends Work
       action: {
         type: 'delete',
         metadataName: 'viewFilterGroup',
-        entityId: flatViewFilterGroupToValidate.id,
+        universalIdentifier: flatViewFilterGroupToValidate.universalIdentifier,
       },
     };
   }

@@ -13,6 +13,7 @@ import {
   type EmailsFilter,
   type FloatFilter,
   type FullNameFilter,
+  type IsFilter,
   type LeafObjectRecordFilter,
   type LinksFilter,
   type MultiSelectFilter,
@@ -210,6 +211,10 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
     const recordFieldValue = record[filterKey];
 
     if (!isDefined(recordFieldValue)) {
+      if (isObject(filterValue)) {
+        return (filterValue as { is?: IsFilter })?.is === 'NULL';
+      }
+
       return false;
     }
 

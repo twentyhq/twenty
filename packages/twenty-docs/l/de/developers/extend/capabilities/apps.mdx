@@ -35,6 +35,10 @@ Erstellen Sie mit dem offiziellen Scaffolder eine neue App, authentifizieren Sie
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
+# If you don't use yarn@4
+corepack enable
+yarn install
+
 # Authenticate using your API key (you'll be prompted)
 yarn auth:login
 
@@ -55,7 +59,10 @@ yarn app:generate
 yarn app:sync
 
 # Watch your application's functions logs
-yarn app:logs
+yarn function:logs
+
+# Execute a function by name
+yarn function:execute -n my-function -p '{"name": "test"}'
 
 # Uninstall the application from the current workspace
 yarn app:uninstall
@@ -85,8 +92,6 @@ my-twenty-app/
   .nvmrc
   .yarnrc.yml
   .yarn/
-    releases/
-      yarn-4.9.2.cjs
     install-state.gz
   eslint.config.mjs
   tsconfig.json
@@ -164,28 +169,42 @@ Auf hoher Ebene:
 
 Spätere Befehle fügen weitere Dateien und Ordner hinzu:
 
-* `yarn app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
-* `yarn app:create-entity` will add entity definition files under `src/app/` for your custom objects, functions, or roles.
+* `yarn app:generate` erstellt einen `generated/`-Ordner (typisierter Twenty-Client + Workspace-Typen).
+* `yarn app:create-entity` fügt unter `src/app/` Entitätsdefinitionsdateien für Ihre benutzerdefinierten Objekte, Funktionen oder Rollen hinzu.
   l
 
 ## Authentifizierung
 
-The first time you run `yarn auth:login`, you'll be prompted for:
+Wenn Sie `yarn auth:login` zum ersten Mal ausführen, werden Sie nach Folgendem gefragt:
 
 * API-URL (standardmäßig http://localhost:3000 oder Ihr aktuelles Workspace-Profil)
 * API-Schlüssel
 
-Ihre Anmeldedaten werden pro Benutzer in `~/.twenty/config.json` gespeichert. Sie können mehrere Profile verwalten und mit `--workspace <name>` wechseln.
+Ihre Anmeldedaten werden pro Benutzer in `~/.twenty/config.json` gespeichert. Sie können mehrere Profile verwalten und zwischen ihnen wechseln.
 
-Beispiele:
+### Arbeitsbereiche verwalten
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
 yarn auth:login
 
-# Use a specific workspace profile
+# Login to a specific workspace profile
 yarn auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn auth:list
+
+# Switch the default workspace (interactive)
+yarn auth:switch
+
+# Switch to a specific workspace
+yarn auth:switch production
+
+# Check current authentication status
+yarn auth:status
 ```
+
+Sobald Sie mit `auth:switch` den Arbeitsbereich gewechselt haben, verwenden alle nachfolgenden Befehle standardmäßig diesen Arbeitsbereich. Sie können es weiterhin vorübergehend mit `--workspace <name>` überschreiben.
 
 ## SDK-Ressourcen verwenden (Typen & Konfiguration)
 
@@ -283,7 +302,7 @@ Hauptpunkte:
 * Der `universalIdentifier` muss eindeutig und über Deployments hinweg stabil sein.
 * Jedes Feld benötigt `name`, `type`, `label` und einen eigenen stabilen `universalIdentifier`.
 * Das Array `fields` ist optional — Sie können Objekte ohne benutzerdefinierte Felder definieren.
-* You can scaffold new objects using `yarn app:create-entity`, which guides you through naming, fields, and relationships.
+* Sie können mit `yarn app:create-entity` neue Objekte erzeugen; der Assistent führt Sie durch Benennung, Felder und Beziehungen.
 
 <Note>
   **Basisfelder werden automatisch erstellt.** Wenn Sie ein benutzerdefiniertes Objekt definieren, fügt Twenty automatisch Standardfelder wie `name`, `createdAt`, `updatedAt`, `createdBy`, `position` und `deletedAt` hinzu. Sie müssen diese nicht in Ihrem `fields`-Array definieren — fügen Sie nur Ihre benutzerdefinierten Felder hinzu.
@@ -511,21 +530,21 @@ Häufige Trigger-Typen:
 > z. B. `path: '/post-card/create',` -> Aufruf unter `<APP_URL>/s/post-card/create`
 
 * **cron**: Führt Ihre Funktion nach Zeitplan mithilfe eines CRON-Ausdrucks aus.
-* **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
+* **databaseEvent**: Wird bei Lebenszyklusereignissen von Workspace-Objekten ausgeführt. Wenn die Ereignisoperation `updated` ist, können bestimmte zu überwachende Felder im Array `updatedFields` angegeben werden. Wenn das Array undefiniert oder leer ist, löst jede Aktualisierung die Funktion aus.
 
-> e.g. `person.updated`
+> z. B. `person.updated`
 
 Notizen:
 
 * Das Array `triggers` ist optional. Funktionen ohne Trigger können als von anderen Funktionen aufgerufene Utility-Funktionen verwendet werden.
 * Sie können mehrere Trigger-Typen in einer Funktion kombinieren.
 
-### Route trigger payload
+### Routen-Trigger-Payload
 
 <Warning>
-  **Breaking change (v1.16, January 2026):** The route trigger payload format has changed. Prior to v1.16, query parameters, path parameters, and body were sent directly as the payload. Starting with v1.16, they are nested inside a structured `RoutePayload` object.
+  **Breaking Change (v1.16, Januar 2026):** Das Format der Routen-Trigger-Payload hat sich geändert. Vor v1.16 wurden Query-Parameter, Pfadparameter und der Body direkt als Payload gesendet. Ab v1.16 sind sie innerhalb eines strukturierten `RoutePayload`-Objekts verschachtelt.
 
-  **Before v1.16:**
+  **Vor v1.16:**
 
   ```typescript
   const handler = async (params) => {
@@ -533,7 +552,7 @@ Notizen:
   };
   ```
 
-  **After v1.16:**
+  **Nach v1.16:**
 
   ```typescript
   const handler = async (event: RoutePayload) => {
@@ -543,10 +562,10 @@ Notizen:
   };
   ```
 
-  **To migrate existing functions:** Update your handler to destructure from `event.body`, `event.queryStringParameters`, or `event.pathParameters` instead of directly from the params object.
+  **So migrieren Sie bestehende Funktionen:** Aktualisieren Sie Ihren Handler, sodass er nicht mehr direkt aus dem params-Objekt destrukturiert, sondern aus `event.body`, `event.queryStringParameters` oder `event.pathParameters`.
 </Warning>
 
-When a route trigger invokes your function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Import the type from `twenty-sdk`:
+Wenn ein Routen-Trigger Ihre Funktion aufruft, erhält sie ein `RoutePayload`-Objekt, das dem AWS-HTTP-API-v2-Format entspricht. Importieren Sie den Typ aus `twenty-sdk`:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -562,21 +581,21 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-The `RoutePayload` type has the following structure:
+Der Typ `RoutePayload` hat die folgende Struktur:
 
-| Property                     | Typ                                   | Beschreibung                                                                            |
-| ---------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------- |
-| `headers`                    | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`)                           |
-| `queryStringParameters`      | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)                            |
-| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern (e.g., `/users/:id` → `{ id: '123' }`) |
-| `inhalt`                     | `object \| null`                      | Parsed request body (JSON)                                                              |
-| `isBase64Encoded`            | `boolesch`                            | Whether the body is base64 encoded                                                      |
-| `requestContext.http.method` | `string`                              | HTTP method (GET, POST, PUT, PATCH, DELETE)                                             |
-| `requestContext.http.path`   | `string`                              | Raw request path                                                                        |
+| Eigenschaft                  | Typ                                   | Beschreibung                                                                          |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP-Header (nur die in `forwardedRequestHeaders` aufgelisteten)                      |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Query-String-Parameter (mehrere Werte mit Kommas verbunden)                           |
+| `pathParameters`             | `Record<string, string \| undefined>` | Aus dem Routenmuster extrahierte Pfadparameter (z. B. `/users/:id` → `{ id: '123' }`) |
+| `inhalt`                     | `object \| null`                      | Geparster Request-Body (JSON)                                                         |
+| `isBase64Encoded`            | `boolesch`                            | Gibt an, ob der Body Base64-codiert ist                                               |
+| `requestContext.http.method` | `string`                              | HTTP-Methode (GET, POST, PUT, PATCH, DELETE)                                          |
+| `requestContext.http.path`   | `string`                              | Rohpfad der Anfrage                                                                   |
 
-### Forwarding HTTP headers
+### Weiterleiten von HTTP-Headern
 
-By default, HTTP headers from incoming requests are **not** passed to your serverless function for security reasons. To access specific headers, explicitly list them in the `forwardedRequestHeaders` array:
+Standardmäßig werden HTTP-Header von eingehenden Anfragen aus Sicherheitsgründen nicht an Ihre serverlose Funktion weitergegeben. Um auf bestimmte Header zuzugreifen, listen Sie diese explizit im Array `forwardedRequestHeaders` auf:
 
 ```typescript
 export default defineFunction({
@@ -596,7 +615,7 @@ export default defineFunction({
 });
 ```
 
-In your handler, you can then access these headers:
+In Ihrem Handler können Sie anschließend auf diese Header zugreifen:
 
 ```typescript
 const handler = async (event: RoutePayload) => {
@@ -609,17 +628,17 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-  Header names are normalized to lowercase. Access them using lowercase keys (for example, `event.headers['content-type']`).
+  Header-Namen werden in Kleinbuchstaben normalisiert. Greifen Sie mit Schlüsseln in Kleinbuchstaben darauf zu (zum Beispiel `event.headers['content-type']`).
 </Note>
 
 Sie können neue Funktionen auf zwei Arten erstellen:
 
-* **Scaffolded**: Run `yarn app:create-entity` and choose the option to add a new function. Dadurch wird eine Starterdatei mit Handler und Konfiguration erzeugt.
+* **Generiert**: Führen Sie `yarn app:create-entity` aus und wählen Sie die Option zum Hinzufügen einer neuen Funktion. Dadurch wird eine Starterdatei mit Handler und Konfiguration erzeugt.
 * **Manuell**: Erstellen Sie eine neue `*.function.ts`-Datei und verwenden Sie `defineFunction()` nach demselben Muster.
 
 ### Generierter typisierter Client
 
-Run yarn app:generate to create a local typed client in generated/ based on your workspace schema. Verwenden Sie ihn in Ihren Funktionen:
+Führen Sie yarn app:generate aus, um einen lokalen typisierten Client in generated/ basierend auf Ihrem Workspace-Schema zu erstellen. Verwenden Sie ihn in Ihren Funktionen:
 
 ```typescript
 import Twenty from './generated';
@@ -628,7 +647,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated by `yarn app:generate`. Re-run after changing your objects and `yarn app:sync` or when onboarding to a new workspace.
+Der Client wird durch `yarn app:generate` erneut generiert. Führen Sie ihn nach Änderungen an Ihren Objekten und nach `yarn app:sync` bzw. beim Onboarding in einen neuen Workspace erneut aus.
 
 #### Laufzeit-Anmeldedaten in serverlosen Funktionen
 
@@ -672,13 +691,13 @@ Fügen Sie dann Skripte wie diese hinzu:
 }
 ```
 
-Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:sync`, etc.
+Jetzt können Sie dieselben Befehle über Yarn ausführen, z. B. `yarn app:dev`, `yarn app:sync` usw.
 
 ## Fehlerbehebung
 
-* Authentication errors: run `yarn auth:login` and ensure your API key has the required permissions.
+* Authentifizierungsfehler: Führen Sie `yarn auth:login` aus und stellen Sie sicher, dass Ihr API-Schlüssel die erforderlichen Berechtigungen hat.
 * Verbindung zum Server nicht möglich: Überprüfen Sie die API-URL und dass der Twenty-Server erreichbar ist.
-* Types or client missing/outdated: run `yarn app:generate` and then `yarn app:dev`.
-* Dev mode not syncing: ensure `yarn app:dev` is running and that changes are not ignored by your environment.
+* Typen oder Client fehlen/veraltet: Führen Sie `yarn app:generate` und anschließend `yarn app:dev` aus.
+* Dev-Modus synchronisiert nicht: Stellen Sie sicher, dass `yarn app:dev` läuft und dass Änderungen von Ihrer Umgebung nicht ignoriert werden.
 
 Discord-Hilfekanal: https://discord.com/channels/1130383047699738754/1130386664812982322
