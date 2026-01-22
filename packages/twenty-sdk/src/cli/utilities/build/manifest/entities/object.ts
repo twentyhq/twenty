@@ -1,8 +1,8 @@
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type ObjectManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
+import { createLogger } from '../../common/logger';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
@@ -11,6 +11,8 @@ import {
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from './entity.interface';
+
+const logger = createLogger('manifest-watch');
 
 export class ObjectEntityBuilder
   implements ManifestEntityBuilder<ObjectManifest>
@@ -104,7 +106,7 @@ export class ObjectEntityBuilder
   }
 
   display(objects: ObjectManifest[]): void {
-    console.log(chalk.green(`  ✓ Found ${objects.length} object(s)`));
+    logger.success(`✓ Found ${objects.length} object(s)`);
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
