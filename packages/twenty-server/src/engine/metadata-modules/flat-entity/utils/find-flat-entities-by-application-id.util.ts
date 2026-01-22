@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 
 export const findFlatEntitiesByApplicationId = <T extends SyncableFlatEntity>({
   applicationId,
