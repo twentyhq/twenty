@@ -70,7 +70,7 @@ export const useUpdateOneFieldMetadataItem = () => {
       setLastFieldMetadataItemUpdate({
         fieldMetadataItemId: fieldMetadataIdToUpdate,
         objectMetadataId,
-        eventId: uuidv4(),
+        id: uuidv4(),
       });
 
       return {

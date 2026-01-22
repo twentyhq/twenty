@@ -32,9 +32,7 @@ export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
       return;
     }
 
-    if (
-      lastFieldMetadataItemUpdate.eventId === lastProcessedFieldMetadataUpdateId
-    ) {
+    if (lastFieldMetadataItemUpdate.id === lastProcessedFieldMetadataUpdateId) {
       return;
     }
 
@@ -45,9 +43,7 @@ export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
     );
 
     if (isFieldInCurrentView) {
-      setLastProcessedFieldMetadataUpdateId(
-        lastFieldMetadataItemUpdate.eventId,
-      );
+      setLastProcessedFieldMetadataUpdateId(lastFieldMetadataItemUpdate.id);
       resetVirtualizationBecauseDataChanged();
     }
   }, [

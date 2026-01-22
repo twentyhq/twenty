@@ -1,8 +1,8 @@
-import type { LastFieldMetadataItemUpdate } from '@/object-metadata/types/LastFieldMetadataItemUpdate';
+import type { FieldMetadataItemUpdate } from '@/object-metadata/types/FieldMetadataItemUpdate';
 import { createState } from 'twenty-ui/utilities';
 
 export const lastFieldMetadataItemUpdateState =
-  createState<LastFieldMetadataItemUpdate>({
+  createState<FieldMetadataItemUpdate | null>({
     key: 'lastFieldMetadataItemUpdateState',
     defaultValue: null,
   });
