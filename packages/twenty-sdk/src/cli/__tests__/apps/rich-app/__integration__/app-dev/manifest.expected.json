@@ -16,31 +16,35 @@
   },
   "frontComponents": [
     {
+      "builtComponentPath": "front-components/src/root.front-component.mjs",
       "componentName": "RootComponent",
-      "componentPath": "src/root.front-component.tsx",
       "description": "A root-level front component",
       "name": "root-component",
+      "sourceComponentPath": "src/root.front-component.tsx",
       "universalIdentifier": "a0a1a2a3-a4a5-4000-8000-000000000001"
     },
     {
+      "builtComponentPath": "front-components/src/components/card.front-component.mjs",
       "componentName": "CardDisplay",
-      "componentPath": "src/components/card.front-component.tsx",
       "description": "A component using an external component file",
       "name": "card-component",
+      "sourceComponentPath": "src/components/card.front-component.tsx",
       "universalIdentifier": "i0i1i2i3-i4i5-4000-8000-000000000001"
     },
     {
+      "builtComponentPath": "front-components/src/components/greeting.front-component.mjs",
       "componentName": "GreetingComponent",
-      "componentPath": "src/components/greeting.front-component.tsx",
       "description": "A component that uses greeting utility",
       "name": "greeting-component",
+      "sourceComponentPath": "src/components/greeting.front-component.tsx",
       "universalIdentifier": "h0h1h2h3-h4h5-4000-8000-000000000001"
     },
     {
+      "builtComponentPath": "front-components/src/components/test.front-component.mjs",
       "componentName": "TestComponent",
-      "componentPath": "src/components/test.front-component.tsx",
       "description": "A test front component",
       "name": "test-component",
+      "sourceComponentPath": "src/components/test.front-component.tsx",
       "universalIdentifier": "f1234567-abcd-4000-8000-000000000001"
     }
   ],
@@ -190,7 +194,7 @@
   ],
   "packageJson": {
     "name": "rich-app",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "license": "MIT",
     "engines": {
       "node": "^24.5.0",
@@ -199,18 +203,33 @@
     },
     "packageManager": "yarn@4.9.2",
     "scripts": {
-      "create-entity": "twenty app add",
-      "dev": "twenty app dev",
-      "generate": "twenty app generate",
-      "sync": "twenty app sync",
-      "uninstall": "twenty app uninstall",
-      "auth": "twenty auth login"
+      "auth:login": "twenty auth:login",
+      "auth:logout": "twenty auth:logout",
+      "auth:status": "twenty auth:status",
+      "auth:switch": "twenty auth:switch",
+      "auth:list": "twenty auth:list",
+      "app:dev": "twenty app:dev",
+      "app:build": "twenty app:build",
+      "app:sync": "twenty app:sync",
+      "entity:add": "twenty entity:add",
+      "app:generate": "twenty app:generate",
+      "function:logs": "twenty function:logs",
+      "function:execute": "twenty function:execute",
+      "app:uninstall": "twenty app:uninstall",
+      "help": "twenty help",
+      "lint": "eslint",
+      "lint:fix": "eslint --fix"
     },
     "dependencies": {
       "twenty-sdk": "latest"
     },
     "devDependencies": {
-      "@types/node": "^24.7.2"
+      "typescript": "^5.9.3",
+      "@types/node": "^24.7.2",
+      "@types/react": "^19.0.2",
+      "react": "^19.0.2",
+      "eslint": "^9.32.0",
+      "typescript-eslint": "^8.50.0"
     }
   },
   "roles": [
@@ -263,9 +282,10 @@
   ],
   "serverlessFunctions": [
     {
+      "builtHandlerPath": "functions/src/root.function.mjs",
       "handlerName": "rootHandler",
-      "handlerPath": "src/root.function.ts",
       "name": "root-function",
+      "sourceHandlerPath": "src/root.function.ts",
       "timeoutSeconds": 5,
       "triggers": [
         {
@@ -279,9 +299,10 @@
       "universalIdentifier": "f0f1f2f3-f4f5-4000-8000-000000000001"
     },
     {
+      "builtHandlerPath": "functions/src/functions/greeting.function.mjs",
       "handlerName": "greetingHandler",
-      "handlerPath": "src/functions/greeting.function.ts",
       "name": "greeting-function",
+      "sourceHandlerPath": "src/functions/greeting.function.ts",
       "timeoutSeconds": 5,
       "triggers": [
         {
@@ -295,9 +316,10 @@
       "universalIdentifier": "g0g1g2g3-g4g5-4000-8000-000000000001"
     },
     {
+      "builtHandlerPath": "functions/src/utils/test-function-2.util.mjs",
       "handlerName": "testFunction2",
-      "handlerPath": "src/utils/test-function-2.util.ts",
       "name": "test-function-2",
+      "sourceHandlerPath": "src/utils/test-function-2.util.ts",
       "timeoutSeconds": 2,
       "triggers": [
         {
@@ -309,9 +331,10 @@
       "universalIdentifier": "eb3ffc98-88ec-45d4-9b4a-56833b219ccb"
     },
     {
+      "builtHandlerPath": "functions/src/functions/test-function.function.mjs",
       "handlerName": "handler",
-      "handlerPath": "src/functions/test-function.function.ts",
       "name": "test-function",
+      "sourceHandlerPath": "src/functions/test-function.function.ts",
       "timeoutSeconds": 2,
       "triggers": [
         {
