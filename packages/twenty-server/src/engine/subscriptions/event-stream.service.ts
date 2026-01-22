@@ -211,15 +211,18 @@ export class EventStreamService {
     workspaceId: string;
     eventStreamChannelId: string;
   }): Promise<boolean> {
-    const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
+    const eventStreamKey = this.getEventStreamKey(
+      workspaceId,
+      eventStreamChannelId,
+    );
     const activeStreamsKey = this.getActiveStreamsKey(workspaceId);
 
-    const [streamRefreshed] = await Promise.all([
-      this.cacheStorageService.expire(key, EVENT_STREAM_TTL_MS),
+    const [eventStreamRefreshed, activeStreamsRefreshed] = await Promise.all([
+      this.cacheStorageService.expire(eventStreamKey, EVENT_STREAM_TTL_MS),
       this.cacheStorageService.expire(activeStreamsKey, EVENT_STREAM_TTL_MS),
     ]);
 
-    return streamRefreshed;
+    return eventStreamRefreshed && activeStreamsRefreshed;
   }
 
   private getEventStreamKey(

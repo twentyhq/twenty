@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 type AsyncIteratorLifecycleOptions = {
   onHeartbeat?: () => Promise<boolean>;
   heartbeatIntervalMs?: number;
@@ -11,15 +13,17 @@ export function wrapAsyncIteratorWithLifecycle<T>(
   const { onHeartbeat, heartbeatIntervalMs, onCleanup } = options;
   let heartbeatInterval: NodeJS.Timeout | null = null;
 
-  if (onHeartbeat && heartbeatIntervalMs) {
-    heartbeatInterval = setInterval(async () => {
-      try {
-        await onHeartbeat();
-      } catch {
-        // Heartbeat failure shouldn't crash the stream
-      }
-    }, heartbeatIntervalMs);
-  }
+  const startHeartbeat = () => {
+    if (onHeartbeat && heartbeatIntervalMs) {
+      heartbeatInterval = setInterval(async () => {
+        try {
+          await onHeartbeat();
+        } catch {
+          // Heartbeat failure shouldn't crash the stream
+        }
+      }, heartbeatIntervalMs);
+    }
+  };
 
   const cleanup = async () => {
     if (heartbeatInterval) {
@@ -32,7 +36,19 @@ export function wrapAsyncIteratorWithLifecycle<T>(
   };
 
   return {
-    next: () => iterator.next(),
+    next: async () => {
+      if (!isDefined(heartbeatInterval)) {
+        startHeartbeat();
+      }
+
+      const result = await iterator.next();
+
+      if (result.done) {
+        await cleanup();
+      }
+
+      return result;
+    },
     return: async () => {
       let result: IteratorResult<T>;
 
