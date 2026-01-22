@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
 
-import { normalizeManifestForComparison } from '../../../../../integration/utils/normalize-manifest.util';
+import { normalizeManifestForComparison } from '@/cli/__tests__/integration/utils/normalize-manifest.util';
 import expectedManifest from '../manifest.expected.json';
 
 export const defineManifestTests = (appPath: string): void => {

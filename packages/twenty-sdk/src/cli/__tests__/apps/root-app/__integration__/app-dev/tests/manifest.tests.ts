@@ -2,7 +2,7 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 
-import { normalizeManifestForComparison } from '../../../../../integration/utils/normalize-manifest.util';
+import { normalizeManifestForComparison } from '@/cli/__tests__/integration/utils/normalize-manifest.util';
 
 export const defineManifestTests = (appPath: string): void => {
   describe('manifest', () => {

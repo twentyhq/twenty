@@ -8,46 +8,49 @@ export type ProcessEsbuildResultParams = {
   result: esbuild.BuildResult;
   outputDir: string;
   builtDir: string;
-  lastInputsSignature: string | null;
+  lastChecksums: Map<string, string>;
   onFileBuilt?: OnFileBuiltCallback;
   onSuccess: (relativePath: string) => void;
 };
 
 export type ProcessEsbuildResultOutput = {
-  newInputsSignature: string | null;
-  alreadyProcessed: boolean;
+  hasChanges: boolean;
 };
 
 export const processEsbuildResult = async ({
   result,
   outputDir,
   builtDir,
-  lastInputsSignature,
+  lastChecksums,
   onFileBuilt,
   onSuccess,
 }: ProcessEsbuildResultParams): Promise<ProcessEsbuildResultOutput> => {
-  const inputs = Object.keys(result.metafile?.inputs ?? {}).sort();
-  const inputsSignature = inputs.join(',');
-
-  if (lastInputsSignature === inputsSignature) {
-    return { newInputsSignature: inputsSignature, alreadyProcessed: true };
-  }
-
   const outputFiles = Object.keys(result.metafile?.outputs ?? {})
     .filter((file) => file.endsWith('.mjs'));
+
+  let hasChanges = false;
 
   for (const outputFile of outputFiles) {
     const absoluteOutputFile = path.resolve(outputFile);
     const relativePath = path.relative(outputDir, absoluteOutputFile);
     const builtPath = `${builtDir}/${relativePath}`;
+
+    const content = await fs.readFile(absoluteOutputFile);
+    const checksum = crypto.createHash('md5').update(content).digest('hex');
+
+    const lastChecksum = lastChecksums.get(builtPath);
+    if (lastChecksum === checksum) {
+      continue;
+    }
+
+    hasChanges = true;
+    lastChecksums.set(builtPath, checksum);
     onSuccess(relativePath);
 
     if (onFileBuilt) {
-      const content = await fs.readFile(absoluteOutputFile);
-      const checksum = crypto.createHash('md5').update(content).digest('hex');
       onFileBuilt(builtPath, checksum);
     }
   }
 
-  return { newInputsSignature: inputsSignature, alreadyProcessed: false };
+  return { hasChanges };
 };

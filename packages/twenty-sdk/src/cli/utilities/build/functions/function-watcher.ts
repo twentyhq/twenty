@@ -45,7 +45,7 @@ export class FunctionsWatcher implements RestartableWatcher {
   private esBuildContext: esbuild.BuildContext | null = null;
   private isRestarting = false;
   private watchMode: boolean;
-  private lastInputsSignature: string | null = null;
+  private lastChecksums: Map<string, string> = new Map();
   private onFileBuilt?: OnFileBuiltCallback;
   private buildCompletePromise: Promise<void> = Promise.resolve();
   private resolveBuildComplete: (() => void) | null = null;
@@ -95,6 +95,7 @@ export class FunctionsWatcher implements RestartableWatcher {
       const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
       await cleanupRemovedFiles(outputDir, this.functionPaths, sourcePaths);
       this.functionPaths = sourcePaths;
+      this.lastChecksums.clear();
 
       if (this.functionPaths.length > 0) {
         logger.log('📦 Building...');
@@ -158,18 +159,16 @@ export class FunctionsWatcher implements RestartableWatcher {
                   return;
                 }
 
-                const { newInputsSignature, alreadyProcessed } = await processEsbuildResult({
+                const { hasChanges } = await processEsbuildResult({
                   result,
                   outputDir,
                   builtDir: FUNCTIONS_DIR,
-                  lastInputsSignature: watcher.lastInputsSignature,
+                  lastChecksums: watcher.lastChecksums,
                   onFileBuilt: watcher.onFileBuilt,
                   onSuccess: (relativePath) => logger.success(`✓ Built ${relativePath}`),
                 });
 
-                watcher.lastInputsSignature = newInputsSignature;
-
-                if (!alreadyProcessed && watchMode) {
+                if (hasChanges && watchMode) {
                   logger.log('👀 Watching for changes...');
                 }
               } finally {
