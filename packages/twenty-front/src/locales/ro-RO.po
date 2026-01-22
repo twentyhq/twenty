@@ -3936,6 +3936,11 @@ msgstr "Șterge vizualizarea"
 msgid "Delete webhook"
 msgstr "Șterge webhook"
 
+#. js-lingui-id: tWD0z0
+#: src/modules/command-menu/pages/page-layout/components/WidgetSettingsFooter.tsx
+msgid "Delete widget"
+msgstr ""
+
 #. js-lingui-id: UA2IpC
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Delete workflow"
