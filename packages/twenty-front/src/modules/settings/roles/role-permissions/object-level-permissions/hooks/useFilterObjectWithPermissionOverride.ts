@@ -17,12 +17,10 @@ export const useFilterObjectMetadataItemsWithPermissionOverride = ({
       const {
         objectHasOverrideOnObjectPermissions,
         objectHasNoOverrideButFieldPermissionsShouldBeTakenIntoAccount,
-        objectHasNoOverrideButRowLevelPermissionPredicatesShouldBeTakenIntoAccount,
       } = getObjectPermissionDerivedStates(objectMetadataItem.id);
 
       const hasOverride =
         objectHasNoOverrideButFieldPermissionsShouldBeTakenIntoAccount ||
-        objectHasNoOverrideButRowLevelPermissionPredicatesShouldBeTakenIntoAccount ||
         objectHasOverrideOnObjectPermissions;
 
       return hasOverride;
