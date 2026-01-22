@@ -12,7 +12,6 @@ type PrefetchedFavoritesData = {
 export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const currentWorkspaceMemberId = currentWorkspaceMember?.id;
-
   const prefetchFavorites = useRecoilValue(prefetchFavoritesState);
 
   const favorites = prefetchFavorites.filter(
