@@ -127,7 +127,7 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it imports the role identifier
     expect(appConfigContent).toContain(
-      "import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role'",
+      "import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/app/default-function.role'",
     );
 
     // Verify display name and description

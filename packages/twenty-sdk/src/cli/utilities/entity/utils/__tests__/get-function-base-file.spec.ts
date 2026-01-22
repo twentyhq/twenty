@@ -18,7 +18,7 @@ describe('getFunctionBaseFile', () => {
     expect(result).toContain('handler,');
     expect(result).toContain('triggers: [');
 
-    expect(result).toContain('export const handler = async');
+    expect(result).toContain('const handler = async');
 
     expect(result).toContain(
       "description: 'Add a description for your function'",
