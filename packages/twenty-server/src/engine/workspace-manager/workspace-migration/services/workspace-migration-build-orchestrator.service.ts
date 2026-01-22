@@ -1058,13 +1058,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
       };
     }
 
-    const relatedFlatEntityMapsKeys = [
-      ...new Set([
-        ...Object.keys(fromToAllFlatEntityMaps),
-        ...Object.keys(dependencyAllFlatEntityMaps ?? {}),
-      ]),
-    ] as (keyof AllFlatEntityMaps)[];
-
     const { aggregatedOrchestratorActionsReport } =
       aggregateOrchestratorActionsReport({
         orchestratorActionsReport,
@@ -1075,7 +1068,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
     return {
       status: 'success',
       workspaceMigration: {
-        relatedFlatEntityMapsKeys,
         actions: [
           // Object and fields and indexes
           ...aggregatedOrchestratorActionsReport.index.delete,

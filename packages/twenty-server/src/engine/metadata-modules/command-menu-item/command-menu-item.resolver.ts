@@ -16,11 +16,11 @@ import { CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-ite
 import { CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
 import { UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
 import { CommandMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/command-menu-item/interceptors/command-menu-item-graphql-api-exception.interceptor';
-import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
 @UseInterceptors(
-  WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
+  WorkspaceMigrationGraphqlApiExceptionInterceptor,
   CommandMenuItemGraphqlApiExceptionInterceptor,
 )
 @Resolver(() => CommandMenuItemDTO)

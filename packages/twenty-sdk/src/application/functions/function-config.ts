@@ -7,7 +7,7 @@ export type FunctionHandler = (...args: any[]) => any | Promise<any>;
 
 export type FunctionConfig = Omit<
   ServerlessFunctionManifest,
-  'handlerPath' | 'handlerName'
+  'sourceHandlerPath' | 'builtHandlerPath' | 'handlerName'
 > & {
   name?: string;
   description?: string;

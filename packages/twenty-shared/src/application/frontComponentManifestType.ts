@@ -2,6 +2,7 @@ export type FrontComponentManifest = {
   universalIdentifier: string;
   name?: string;
   description?: string;
-  componentPath: string;
+  sourceComponentPath: string;
+  builtComponentPath: string;
   componentName: string;
 };

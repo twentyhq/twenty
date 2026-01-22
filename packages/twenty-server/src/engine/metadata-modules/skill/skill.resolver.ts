@@ -13,11 +13,11 @@ import { SkillDTO } from 'src/engine/metadata-modules/skill/dtos/skill.dto';
 import { UpdateSkillInput } from 'src/engine/metadata-modules/skill/dtos/update-skill.input';
 import { SkillGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/skill/interceptors/skill-graphql-api-exception.interceptor';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
-import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(
-  WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
+  WorkspaceMigrationGraphqlApiExceptionInterceptor,
   SkillGraphqlApiExceptionInterceptor,
 )
 @Resolver(() => SkillDTO)

@@ -75,6 +75,12 @@ export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts'
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
 export { parseBooleanFromStringValue } from './utils/parseBooleanFromStringValue';
 export { parseDataFromContentType } from './utils/parseDataFromContentType';
+export {
+  needsEscaping,
+  escapePathSegment,
+  joinVariablePath,
+  parseVariablePath,
+} from './utils/variable-path.util';
 export type {
   LeafType,
   NodeType,
