@@ -18,6 +18,7 @@ export type UniversalFlatEntityFrom<
   | 'applicationId'
   | 'workspaceId'
   | 'standardId'
+  | 'id'
   | ExtractEntityRelatedEntityProperties<TEntity>
   | Extract<MetadataManyToOneJoinColumn<TMetadataName>, keyof TEntity>
   | keyof CastRecordTypeOrmDatePropertiesToString<TEntity>
