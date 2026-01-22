@@ -108,6 +108,7 @@ export function addPersonEmailAndPhoneNumberFiltersToQueryBuilder({
         [phoneParamName]: JSON.stringify([phoneNumber]), // TODO: check if this will create '[{"number": "...", "callingCode": "..."}]
       });
     } // TODO: is there a way to optimize this query?
+    // Ideally it'd something like select ... from ... where ((phoneNumber in ...) OR (email in ...)) (AND personId not in exclude)[optional] WITH DELETED (non-sql part)
   }
 
   queryBuilder = queryBuilder.withDeleted();
