@@ -43,10 +43,13 @@ export class FunctionsWatcher implements RestartableWatcher {
   private functionPaths: string[];
   private esBuildContext: esbuild.BuildContext | null = null;
   private isRestarting = false;
+  private watchMode: boolean;
+  private lastInputsSignature: string | null = null;
 
   constructor(options: RestartableWatcherOptions) {
     this.appPath = options.appPath;
     this.functionPaths = options.buildResult?.filePaths.functions ?? [];
+    this.watchMode = options.watch ?? true;
   }
 
   shouldRestart(result: ManifestBuildResult): boolean {
@@ -65,7 +68,9 @@ export class FunctionsWatcher implements RestartableWatcher {
       await this.createContext();
     } else {
       logger.log('No functions to build');
-      logger.log('👀 Watching for changes...');
+      if (this.watchMode) {
+        logger.log('👀 Watching for changes...');
+      }
     }
   }
 
@@ -110,6 +115,11 @@ export class FunctionsWatcher implements RestartableWatcher {
       entryPoints[entryName] = path.join(this.appPath, functionPath);
     }
 
+    const watchMode = this.watchMode;
+
+    // Capture reference for use in plugin callbacks
+    const watcher = this;
+
     this.esBuildContext = await esbuild.context({
       entryPoints,
       bundle: true,
@@ -143,14 +153,25 @@ export class FunctionsWatcher implements RestartableWatcher {
                 for (const error of result.errors) {
                   logger.error(`  ${error.text}`);
                 }
-              } else {
-                const outputs = Object.keys(result.metafile?.outputs ?? {})
-                  .filter((file) => file.endsWith('.mjs'))
-                  .map((file) => path.relative(outputDir, file));
+                return;
+              }
 
-                for (const output of outputs) {
-                  logger.success(`✓ Built ${output}`);
-                }
+              const inputs = Object.keys(result.metafile?.inputs ?? {}).sort();
+              const inputsSignature = inputs.join(',');
+
+              if (watcher.lastInputsSignature === inputsSignature) {
+                return;
+              }
+              watcher.lastInputsSignature = inputsSignature;
+
+              const outputs = Object.keys(result.metafile?.outputs ?? {})
+                .filter((file) => file.endsWith('.mjs'))
+                .map((file) => path.relative(outputDir, file));
+
+              for (const output of outputs) {
+                logger.success(`✓ Built ${output}`);
+              }
+              if (watchMode) {
                 logger.log('👀 Watching for changes...');
               }
             });
@@ -161,6 +182,8 @@ export class FunctionsWatcher implements RestartableWatcher {
 
     await this.esBuildContext.rebuild();
 
-    await this.esBuildContext.watch();
+    if (this.watchMode) {
+      await this.esBuildContext.watch();
+    }
   }
 }

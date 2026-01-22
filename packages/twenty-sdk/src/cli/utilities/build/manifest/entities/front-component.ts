@@ -1,6 +1,7 @@
 import { glob } from 'fast-glob';
 import { type FrontComponentManifest } from 'twenty-shared/application';
 import { createLogger } from '../../common/logger';
+import { FRONT_COMPONENTS_DIR } from '../../front-components/constants';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
@@ -12,7 +13,10 @@ import {
 
 const logger = createLogger('manifest-watch');
 
-type FrontComponentConfig = Omit<FrontComponentManifest, 'componentPath' | 'componentName'> & {
+type FrontComponentConfig = Omit<
+  FrontComponentManifest,
+  'sourceComponentPath' | 'builtComponentPath' | 'componentName'
+> & {
   component: { name: string };
 };
 
@@ -36,11 +40,13 @@ export class FrontComponentEntityBuilder
           );
 
         const { component, ...rest } = config;
+        const builtComponentPath = this.computeBuiltComponentPath(filePath);
 
         manifests.push({
           ...rest,
           componentName: component.name,
-          componentPath: filePath,
+          sourceComponentPath: filePath,
+          builtComponentPath,
         });
       } catch (error) {
         throw new Error(
@@ -50,6 +56,12 @@ export class FrontComponentEntityBuilder
     }
 
     return { manifests, filePaths: componentFiles };
+  }
+
+  private computeBuiltComponentPath(sourceComponentPath: string): string {
+    const builtPath = sourceComponentPath.replace(/\.tsx?$/, '.mjs');
+
+    return `${FRONT_COMPONENTS_DIR}/${builtPath}`;
   }
 
   validate(
@@ -75,7 +87,7 @@ export class FrontComponentEntityBuilder
       logger.log('📍 Entry points:');
       for (const component of components) {
         const name = component.name || component.universalIdentifier;
-        logger.log(`   - ${name} (${component.componentPath})`);
+        logger.log(`   - ${name} (${component.sourceComponentPath})`);
       }
     }
   }
