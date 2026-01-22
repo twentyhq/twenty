@@ -9,16 +9,22 @@ import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
+import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { IconArrowUpRight } from 'twenty-ui/display';
+import {
+  AppTooltip,
+  IconArrowUpRight,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { RelationType } from '~/generated-metadata/graphql';
-import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
-import { Link } from 'react-router-dom';
 
 const StyledLink = styled(Link)`
   display: flex;
@@ -120,13 +126,30 @@ export const WidgetActionFieldSeeAll = () => {
     filterQueryParams,
   );
 
+  const tooltipId = `widget-see-all-${widget.id}`;
+  const relationLabelPlural =
+    relationObjectMetadataItem.labelPlural.toLowerCase();
+  const tooltipContent = t`See all ${relationLabelPlural} linked to this record`;
+
   return (
-    <StyledLink to={filterLinkHref} data-testid="widget-see-all-link">
-      <StyledSeeAllButton
-        Icon={IconArrowUpRight}
-        accent="secondary"
-        isMobile={isMobile}
+    <>
+      <div id={tooltipId}>
+        <StyledLink to={filterLinkHref} data-testid="widget-see-all-link">
+          <StyledSeeAllButton
+            Icon={IconArrowUpRight}
+            accent="secondary"
+            isMobile={isMobile}
+          />
+        </StyledLink>
+      </div>
+      <AppTooltip
+        anchorSelect={`#${tooltipId}`}
+        content={tooltipContent}
+        place={TooltipPosition.Top}
+        delay={TooltipDelay.mediumDelay}
+        offset={5}
+        noArrow
       />
-    </StyledLink>
+    </>
   );
 };
