@@ -123,4 +123,68 @@ describe('computeNavigationMenuItemDisplayFields', () => {
 
     expect(result?.objectNameSingular).toBe('company');
   });
+
+  it('should handle objectRecordIdentifier with null avatarType', () => {
+    const identifierWithNullAvatarType: ObjectRecordIdentifier = {
+      id: 'record-id',
+      name: 'Test User',
+      avatarType: null,
+    };
+
+    const result = computeNavigationMenuItemDisplayFields(
+      mockObjectRecord,
+      mockObjectMetadataItem,
+      identifierWithNullAvatarType,
+    );
+
+    expect(result?.avatarType).toBe('icon');
+  });
+
+  it('should handle objectRecordIdentifier with undefined linkToShowPage', () => {
+    const identifierWithoutLink: ObjectRecordIdentifier = {
+      id: 'record-id',
+      name: 'Test User',
+      linkToShowPage: undefined,
+    };
+
+    const result = computeNavigationMenuItemDisplayFields(
+      mockObjectRecord,
+      mockObjectMetadataItem,
+      identifierWithoutLink,
+    );
+
+    expect(result?.link).toBe('');
+  });
+
+  it('should handle objectRecordIdentifier with undefined avatarUrl', () => {
+    const identifierWithoutAvatarUrl: ObjectRecordIdentifier = {
+      id: 'record-id',
+      name: 'Test User',
+      avatarUrl: undefined,
+    };
+
+    const result = computeNavigationMenuItemDisplayFields(
+      mockObjectRecord,
+      mockObjectMetadataItem,
+      identifierWithoutAvatarUrl,
+    );
+
+    expect(result?.avatarUrl).toBe('');
+  });
+
+  it('should handle objectRecordIdentifier with undefined avatarType', () => {
+    const identifierWithoutAvatarType: ObjectRecordIdentifier = {
+      id: 'record-id',
+      name: 'Test User',
+      avatarType: undefined,
+    };
+
+    const result = computeNavigationMenuItemDisplayFields(
+      mockObjectRecord,
+      mockObjectMetadataItem,
+      identifierWithoutAvatarType,
+    );
+
+    expect(result?.avatarType).toBe('icon');
+  });
 });

@@ -331,4 +331,67 @@ describe('sortNavigationMenuItems', () => {
     expect(result[1].id).toBe('record-item');
     expect(result[1].objectNameSingular).toBe('person');
   });
+
+  it('should handle empty targetRecords map', () => {
+    const navigationMenuItem: NavigationMenuItem = {
+      id: 'item-id',
+      targetRecordId: 'non-existent-record-id',
+      targetObjectMetadataId: 'metadata-id',
+      position: 1,
+    } as NavigationMenuItem;
+
+    const result = sortNavigationMenuItems(
+      [navigationMenuItem],
+      getObjectRecordIdentifierByNameSingular,
+      true,
+      [],
+      [mockObjectMetadataItem],
+      new Map(),
+    );
+
+    expect(result).toHaveLength(0);
+  });
+
+  it('should handle navigationMenuItem with both viewId and targetRecordId (viewId takes precedence)', () => {
+    const navigationMenuItem: NavigationMenuItem = {
+      id: 'item-id',
+      viewId: 'view-id',
+      targetRecordId: 'record-id',
+      targetObjectMetadataId: 'metadata-id',
+      position: 1,
+    } as NavigationMenuItem;
+
+    const result = sortNavigationMenuItems(
+      [navigationMenuItem],
+      getObjectRecordIdentifierByNameSingular,
+      true,
+      [mockView],
+      [mockObjectMetadataItem],
+      new Map(),
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].objectNameSingular).toBe('view');
+    expect(result[0].viewId).toBe('view-id');
+  });
+
+  it('should handle navigationMenuItem with undefined targetRecordId', () => {
+    const navigationMenuItem: NavigationMenuItem = {
+      id: 'item-id',
+      targetRecordId: undefined,
+      targetObjectMetadataId: 'metadata-id',
+      position: 1,
+    } as NavigationMenuItem;
+
+    const result = sortNavigationMenuItems(
+      [navigationMenuItem],
+      getObjectRecordIdentifierByNameSingular,
+      true,
+      [],
+      [mockObjectMetadataItem],
+      new Map(),
+    );
+
+    expect(result).toHaveLength(0);
+  });
 });
