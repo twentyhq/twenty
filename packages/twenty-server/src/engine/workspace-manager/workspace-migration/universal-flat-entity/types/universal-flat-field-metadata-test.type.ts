@@ -4,7 +4,7 @@ import {
   type NullablePartial,
 } from 'twenty-shared/types';
 
-import { type UniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/universal-flat-field-metadata.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 // Relation field types have defined relation universal identifiers
 type DefinedRelationUniversalIdentifierRecord = {
