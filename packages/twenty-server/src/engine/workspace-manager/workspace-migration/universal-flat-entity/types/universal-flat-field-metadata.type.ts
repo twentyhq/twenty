@@ -5,6 +5,4 @@ import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/works
 
 export type UniversalFlatFieldMetadata<
   T extends FieldMetadataType = FieldMetadataType,
-> = UniversalFlatEntityFrom<FieldMetadataEntity<T>, 'fieldMetadata'> & {
-  universalIdentifier: string; // TODO remove once universalIdentifier is required on entity directly
-};
+> = UniversalFlatEntityFrom<FieldMetadataEntity<T>, 'fieldMetadata'>
