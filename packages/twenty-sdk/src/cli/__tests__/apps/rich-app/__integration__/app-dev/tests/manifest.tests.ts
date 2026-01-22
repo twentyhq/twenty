@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
 
+import { normalizeManifestForComparison } from '@/cli/__tests__/integration/utils/normalize-manifest.util';
 import expectedManifest from '../manifest.expected.json';
 
 export const defineManifestTests = (appPath: string): void => {
@@ -14,7 +15,21 @@ export const defineManifestTests = (appPath: string): void => {
 
       const { sources: _sources, ...sanitizedManifest } = manifest;
 
-      expect(sanitizedManifest).toEqual(expectedManifest);
+      expect(normalizeManifestForComparison(sanitizedManifest)).toEqual(
+        normalizeManifestForComparison(expectedManifest),
+      );
+
+      for (const fn of manifest.functions) {
+        expect(fn.builtHandlerChecksum).toBeDefined();
+        expect(fn.builtHandlerChecksum).not.toBeNull();
+        expect(typeof fn.builtHandlerChecksum).toBe('string');
+      }
+
+      for (const component of manifest.frontComponents ?? []) {
+        expect(component.builtComponentChecksum).toBeDefined();
+        expect(component.builtComponentChecksum).not.toBeNull();
+        expect(typeof component.builtComponentChecksum).toBe('string');
+      }
     });
 
     it('should have correct application config', async () => {
@@ -28,7 +43,7 @@ export const defineManifestTests = (appPath: string): void => {
       const manifest = await fs.readJson(manifestOutputPath);
 
       expect(manifest?.objects).toHaveLength(2);
-      expect(manifest?.serverlessFunctions).toHaveLength(4);
+      expect(manifest?.functions).toHaveLength(4);
       expect(manifest?.frontComponents).toHaveLength(4);
       expect(manifest?.roles).toHaveLength(2);
       expect(manifest?.objectExtensions).toHaveLength(1);

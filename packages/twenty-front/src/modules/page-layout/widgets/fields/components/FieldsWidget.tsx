@@ -1,4 +1,6 @@
+import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
@@ -6,6 +8,7 @@ import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordF
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
+import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
@@ -90,7 +93,9 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     targetRecord.targetObjectNameSingular,
   );
 
-  if (sectionsWithFieldIndices.length === 0) {
+  const hasFieldsToDisplay = sectionsWithFieldIndices.length > 0;
+
+  if (!hasFieldsToDisplay) {
     return (
       <RightDrawerProvider value={{ isInRightDrawer }}>
         <StyledContainer>
@@ -133,6 +138,11 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                   <>
                     {section.fields.map(
                       ({ field: fieldMetadataItem, globalIndex }) => {
+                        const isActivityTarget = isActivityTargetField(
+                          fieldMetadataItem.name,
+                          targetRecord.targetObjectNameSingular,
+                        );
+
                         return (
                           <FieldContext.Provider
                             key={targetRecord.id + fieldMetadataItem.id}
@@ -174,17 +184,37 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                               })}`,
                             }}
                           >
-                            <RecordFieldComponentInstanceContext.Provider
-                              value={{
-                                instanceId: getRecordFieldInputInstanceId({
-                                  recordId: targetRecord.id,
-                                  fieldName: fieldMetadataItem.name,
-                                  prefix: instanceId,
-                                }),
-                              }}
-                            >
-                              <RecordInlineCell loading={recordLoading} />
-                            </RecordFieldComponentInstanceContext.Provider>
+                            {isActivityTarget ? (
+                              <ActivityTargetsInlineCell
+                                componentInstanceId={getRecordFieldInputInstanceId(
+                                  {
+                                    recordId: targetRecord.id,
+                                    fieldName: fieldMetadataItem.name,
+                                    prefix: instanceId,
+                                  },
+                                )}
+                                activityObjectNameSingular={
+                                  targetRecord.targetObjectNameSingular as
+                                    | CoreObjectNameSingular.Note
+                                    | CoreObjectNameSingular.Task
+                                }
+                                activityRecordId={targetRecord.id}
+                                showLabel={true}
+                                maxWidth={200}
+                              />
+                            ) : (
+                              <RecordFieldComponentInstanceContext.Provider
+                                value={{
+                                  instanceId: getRecordFieldInputInstanceId({
+                                    recordId: targetRecord.id,
+                                    fieldName: fieldMetadataItem.name,
+                                    prefix: instanceId,
+                                  }),
+                                }}
+                              >
+                                <RecordInlineCell loading={recordLoading} />
+                              </RecordFieldComponentInstanceContext.Provider>
+                            )}
                           </FieldContext.Provider>
                         );
                       },

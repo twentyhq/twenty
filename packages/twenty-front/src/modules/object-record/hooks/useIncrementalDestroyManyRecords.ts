@@ -55,9 +55,7 @@ export const useIncrementalDestroyManyRecords = <T>({
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
   const mutationResponseField = getDestroyManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
@@ -162,7 +160,9 @@ export const useIncrementalDestroyManyRecords = <T>({
       },
     );
 
-    await refetchAggregateQueries();
+    await refetchAggregateQueries({
+      objectMetadataNamePlural: objectMetadataItem.namePlural,
+    });
 
     dispatchObjectRecordOperationBrowserEvent({
       objectMetadataItem,

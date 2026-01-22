@@ -10271,6 +10271,11 @@ msgstr "{objectLabelPlural}を表示"
 msgid "See active version"
 msgstr "アクティブバージョンを見る"
 
+#. js-lingui-id: R+sqCn
+#: src/modules/page-layout/widgets/components/WidgetActionFieldSeeAll.tsx
+msgid "See all {relationLabelPlural} linked to this record"
+msgstr ""
+
 #. js-lingui-id: f4Lu+X
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "See deleted dashboards"
