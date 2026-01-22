@@ -2358,21 +2358,6 @@ msgstr "لا يمكن أن يكون معرّف النموذج فارغًا"
 msgid "Monday"
 msgstr "الإثنين"
 
-#. js-lingui-id: FqzlX4
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must have the same relation type"
-msgstr "البيانات المستخدمة لإنشاء علاقة مورف يجب أن تكون من نفس نوع العلاقة"
-
-#. js-lingui-id: nU54nm
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to other object metadata"
-msgstr "يجب أن تحتوي حزم بيانات إنشاء علاقة مورف على علاقة مع بيانات الميتا الخاصة بالكائن الآخر فقط"
-
-#. js-lingui-id: Z/Awgf
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to the same object metadata"
-msgstr "البيانات المستخدمة لإنشاء علاقة مورف يجب أن تحتوي فقط على علاقة لبيانات ميتا نفس الكائن"
-
 #. js-lingui-id: Lcqv5g
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Morph relation field must have a morph id"

@@ -2358,21 +2358,6 @@ msgstr "מזהה המודל לא יכול להיות ריק"
 msgid "Monday"
 msgstr "יום שני"
 
-#. js-lingui-id: FqzlX4
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must have the same relation type"
-msgstr "מטען יצירת קשרים מורפיים חייב להיות בעל אותו סוג קשר"
-
-#. js-lingui-id: nU54nm
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to other object metadata"
-msgstr "מטעני יצירת קשר מסוג Morph חייבים להכיל רק קשרים למטא-נתוני אובייקטים אחרים"
-
-#. js-lingui-id: Z/Awgf
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to the same object metadata"
-msgstr "מטען יצירת קשרים מורפיים חייב להכיל קשר רק עם אותו מטא-נתון של עצם"
-
 #. js-lingui-id: Lcqv5g
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Morph relation field must have a morph id"

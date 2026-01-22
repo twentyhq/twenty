@@ -2358,21 +2358,6 @@ msgstr "모델 ID는 비워 둘 수 없습니다."
 msgid "Monday"
 msgstr "월요일"
 
-#. js-lingui-id: FqzlX4
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must have the same relation type"
-msgstr "형태 관계 생성 페이로드에는 동일한 관계 유형이 있어야 합니다."
-
-#. js-lingui-id: nU54nm
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to other object metadata"
-msgstr "형태 관계 생성 페이로드는 다른 객체 메타데이터에 대한 관계만 포함해야 합니다."
-
-#. js-lingui-id: Z/Awgf
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to the same object metadata"
-msgstr "형태 관계 생성 페이로드는 동일한 객체 메타데이터에 대한 관계만 포함해야 합니다."
-
 #. js-lingui-id: Lcqv5g
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Morph relation field must have a morph id"
