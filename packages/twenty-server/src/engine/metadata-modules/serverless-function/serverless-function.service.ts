@@ -21,6 +21,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/get-serverless-folder-or-throw.utils';
+import { ServerlessFunctionBuildService } from 'src/engine/metadata-modules/serverless-function-build/serverless-function-build.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -48,8 +49,6 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
-import { isServerlessFunctionBuilt } from 'src/engine/core-modules/serverless/drivers/utils/is-serverless-function-built';
-import { buildAndUploadServerlessFunction } from 'src/engine/core-modules/serverless/drivers/utils/build-and-upload-serverless-function';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
@@ -58,6 +57,7 @@ export class ServerlessFunctionService {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly serverlessService: ServerlessService,
+    private readonly serverlessFunctionBuildService: ServerlessFunctionBuildService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
     @InjectRepository(ServerlessFunctionEntity)
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
@@ -210,16 +210,14 @@ export class ServerlessFunctionService {
 
     // We keep that check to build functions
     if (
-      !(await isServerlessFunctionBuilt({
+      !(await this.serverlessFunctionBuildService.isBuilt({
         flatServerlessFunction,
         version,
-        fileStorageService: this.fileStorageService,
       }))
     ) {
-      await buildAndUploadServerlessFunction({
+      await this.serverlessFunctionBuildService.buildAndUpload({
         flatServerlessFunction,
         version,
-        fileStorageService: this.fileStorageService,
       });
     }
 

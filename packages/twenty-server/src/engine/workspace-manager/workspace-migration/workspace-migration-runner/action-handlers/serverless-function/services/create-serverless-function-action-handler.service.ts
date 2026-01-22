@@ -9,18 +9,21 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getSeedProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-seed-project-files';
 import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/get-serverless-folder-or-throw.utils';
+import { ServerlessFunctionBuildService } from 'src/engine/metadata-modules/serverless-function-build/serverless-function-build.service';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { CreateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { buildAndUploadServerlessFunction } from 'src/engine/core-modules/serverless/drivers/utils/build-and-upload-serverless-function';
 
 @Injectable()
 export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'create',
   'serverlessFunction',
 ) {
-  constructor(private readonly fileStorageService: FileStorageService) {
+  constructor(
+    private readonly fileStorageService: FileStorageService,
+    private readonly serverlessFunctionBuildService: ServerlessFunctionBuildService,
+  ) {
     super();
   }
 
@@ -66,10 +69,9 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
         });
       }
     }
-    await buildAndUploadServerlessFunction({
+    await this.serverlessFunctionBuildService.buildAndUpload({
       flatServerlessFunction: serverlessFunction,
       version: 'draft',
-      fileStorageService: this.fileStorageService,
     });
   }
 
