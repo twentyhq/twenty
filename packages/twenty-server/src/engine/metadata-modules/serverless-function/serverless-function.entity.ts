@@ -46,6 +46,9 @@ export class ServerlessFunctionEntity
   @Column({ nullable: false, default: DEFAULT_HANDLER_PATH })
   handlerPath: string;
 
+  @Column({ nullable: false, default: DEFAULT_BUILT_HANDLER_PATH })
+  builtHandlerPath: string;
+
   @Column({ nullable: false, default: DEFAULT_HANDLER_NAME })
   handlerName: string;
 
