@@ -32,6 +32,10 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
+// This entity is used as a reference test case for type utilities in:
+// - flat-entity/types/__tests__/
+// - universal-flat-entity/types/__tests__/
+// Modifying relations or properties may require updating type test expectations for Typecheck to pass.
 @Entity('fieldMetadata')
 @Check(
   'CHK_FIELD_METADATA_MORPH_RELATION_REQUIRES_MORPH_ID',
