@@ -101,6 +101,7 @@ export type {
   FieldMetadataDateTimeSettings,
   FieldMetadataRelationSettings,
   FieldMetadataAddressSettings,
+  FieldMetadataFilesSettings,
   FieldMetadataTsVectorSettings,
   AllFieldMetadataSettings,
   FieldMetadataSettings,
@@ -108,6 +109,9 @@ export type {
 export { NumberDataType, DateDisplayFormat } from './FieldMetadataSettings';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldRatingValue } from './FieldRatingValue';
+export type { FileCategory } from './FileCategory';
+export { FILE_CATEGORIES } from './FileCategory';
+export { FileFolder } from './FileFolder';
 export type {
   FilterableFieldType,
   FilterableAndTSVectorFieldType,
@@ -188,6 +192,15 @@ export { RelationType } from './RelationType';
 export type { RelationUpdatePayload } from './RelationUpdatePayload';
 export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
+export type { RowLevelPermissionPredicate } from './RowLevelPermissionPredicate';
+export type { RowLevelPermissionPredicateGroup } from './RowLevelPermissionPredicateGroup';
+export { RowLevelPermissionPredicateGroupLogicalOperator } from './RowLevelPermissionPredicateGroupLogicalOperator';
+export { RowLevelPermissionPredicateOperand } from './RowLevelPermissionPredicateOperand';
+export type {
+  RelationPredicateValue,
+  RowLevelPermissionPredicateValue,
+} from './RowLevelPermissionPredicateValue';
+export type { ServerlessFunctionEvent } from './ServerlessFunctionEvent';
 export { SettingsPath } from './SettingsPath';
 export type { Sources } from './SourcesType';
 export type {

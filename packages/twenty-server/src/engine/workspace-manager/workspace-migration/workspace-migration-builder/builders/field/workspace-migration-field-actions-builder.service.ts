@@ -72,7 +72,7 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
       action: {
         type: 'delete',
         metadataName: 'fieldMetadata',
-        entityId: flatFieldMetadataToValidate.id,
+        universalIdentifier: flatFieldMetadataToValidate.universalIdentifier,
         objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
       },
     };

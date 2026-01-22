@@ -7,7 +7,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageChannelWorkspaceEntity,
+  MessageFolderImportPolicy,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import {
   MessageImportDriverException,
@@ -39,9 +42,12 @@ export class GmailGetMessageListService {
     >,
     messageFolders: Pick<
       MessageFolderWorkspaceEntity,
-      'name' | 'externalId' | 'isSynced'
+      'name' | 'externalId' | 'isSynced' | 'parentFolderId'
     >[],
-    messageFolderImportPolicy: MessageFolderImportPolicy,
+    messageChannel: Pick<
+      MessageChannelWorkspaceEntity,
+      'messageFolderImportPolicy'
+    >,
   ): Promise<GetMessageListsResponse> {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
@@ -57,10 +63,10 @@ export class GmailGetMessageListService {
 
     const messageExternalIds: string[] = [];
 
-    const excludedSearchFilter =
-      messageFolderImportPolicy === MessageFolderImportPolicy.SELECTED_FOLDERS
-        ? computeGmailExcludeSearchFilter(messageFolders)
-        : '';
+    const excludedSearchFilter = computeGmailExcludeSearchFilter(
+      messageFolders,
+      messageChannel.messageFolderImportPolicy,
+    );
 
     while (hasMoreMessages) {
       const messageList = await gmailClient.users.messages
@@ -150,6 +156,21 @@ export class GmailGetMessageListService {
     messageFolders,
     messageFolderImportPolicy,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
+    if (
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.SELECTED_FOLDERS
+    ) {
+      const foldersToSync = messageFolders.filter((folder) => folder.isSynced);
+
+      if (foldersToSync.length === 0) {
+        this.logger.warn(
+          `Connected account ${connectedAccount.id} Message Channel: ${messageChannel.id}: No folders to process`,
+        );
+
+        return [];
+      }
+    }
+
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
         connectedAccount,
@@ -163,7 +184,7 @@ export class GmailGetMessageListService {
       return this.getMessageListWithoutCursor(
         connectedAccount,
         messageFolders,
-        messageFolderImportPolicy,
+        messageChannel,
       );
     }
 
@@ -176,12 +197,15 @@ export class GmailGetMessageListService {
     const { messagesAdded, messagesDeleted } =
       await this.gmailGetHistoryService.getMessageIdsFromHistory(history);
 
-    const messageIdsToFilter = await this.getEmailIdsFromExcludedFolders(
-      connectedAccount,
-      messageChannel.syncCursor,
-      messageFolders,
-      messageFolderImportPolicy,
-    );
+    const messageIdsToFilter =
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.SELECTED_FOLDERS
+        ? await this.getEmailIdsFromExcludedFolders(
+            connectedAccount,
+            messageChannel.syncCursor,
+            messageFolders,
+          )
+        : [];
 
     const messagesAddedFiltered = messagesAdded.filter(
       (messageId) => !messageIdsToFilter.includes(messageId),
@@ -215,12 +239,7 @@ export class GmailGetMessageListService {
       MessageFolderWorkspaceEntity,
       'name' | 'externalId' | 'isSynced'
     >[],
-    messageFolderImportPolicy: MessageFolderImportPolicy,
   ): Promise<string[]> {
-    if (messageFolderImportPolicy === MessageFolderImportPolicy.ALL_FOLDERS) {
-      return [];
-    }
-
     const toBeExcludedFolders = messageFolders.filter(
       (folder) => !folder.isSynced && isDefined(folder.externalId),
     );

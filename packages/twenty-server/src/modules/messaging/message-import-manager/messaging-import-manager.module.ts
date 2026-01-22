@@ -112,6 +112,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
   ],
   exports: [
     MessagingSendMessageService,
+    MessagingAccountAuthenticationService,
     MessagingMessageListFetchCronCommand,
     MessagingMessagesImportCronCommand,
     MessagingOngoingStaleCronCommand,

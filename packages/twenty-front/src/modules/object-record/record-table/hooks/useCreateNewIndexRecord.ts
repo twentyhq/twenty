@@ -2,6 +2,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -63,11 +64,24 @@ export const useCreateNewIndexRecord = ({
     objectMetadataItem,
   });
 
+  const { buildRecordInputFromRLSPredicates } =
+    useBuildRecordInputFromRLSPredicates({
+      objectMetadataItem,
+    });
+
   const createNewIndexRecord = useRecoilCallback(
     ({ snapshot, set }) =>
       async (recordInput?: Partial<ObjectRecord>) => {
         const recordId = v4();
+        const recordInputFromRLSPredicates =
+          buildRecordInputFromRLSPredicates();
         const recordInputFromFilters = buildRecordInputFromFilters();
+
+        const mergedRecordInput = {
+          ...recordInputFromRLSPredicates,
+          ...recordInputFromFilters,
+          ...recordInput,
+        };
 
         const recordIndexOpenRecordIn = snapshot
           .getLoadable(recordIndexOpenRecordInState)
@@ -75,8 +89,7 @@ export const useCreateNewIndexRecord = ({
 
         const createdRecord = await createOneRecord({
           id: recordId,
-          ...recordInputFromFilters,
-          ...recordInput,
+          ...mergedRecordInput,
         });
 
         if (
@@ -163,6 +176,7 @@ export const useCreateNewIndexRecord = ({
         return createdRecord;
       },
     [
+      buildRecordInputFromRLSPredicates,
       buildRecordInputFromFilters,
       createOneRecord,
       navigate,

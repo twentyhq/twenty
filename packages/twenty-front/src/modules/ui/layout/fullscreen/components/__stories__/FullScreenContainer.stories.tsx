@@ -5,16 +5,11 @@ import {
   ComponentDecorator,
   ComponentWithRouterDecorator,
 } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof FullScreenContainer> = {
   title: 'UI/Layout/FullScreenContainer',
   component: FullScreenContainer,
-  decorators: [
-    ComponentDecorator,
-    I18nFrontDecorator,
-    ComponentWithRouterDecorator,
-  ],
+  decorators: [ComponentDecorator, ComponentWithRouterDecorator],
 };
 export default meta;
 

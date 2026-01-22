@@ -12,10 +12,6 @@ import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
-import {
-  MessageImportDriverException,
-  MessageImportDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
@@ -44,15 +40,17 @@ export class MicrosoftGetMessageListService {
     messageFolderImportPolicy,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
     const foldersToProcess =
-      messageFolderImportPolicy === MessageFolderImportPolicy.SELECTED_FOLDERS
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.SELECTED_FOLDERS
         ? messageFolders.filter((folder) => folder.isSynced)
         : messageFolders;
 
     if (foldersToProcess.length === 0) {
-      throw new MessageImportDriverException(
-        `Message channel ${messageChannel.id} has no message folders`,
-        MessageImportDriverExceptionCode.NOT_FOUND,
+      this.logger.warn(
+        `Connected account ${connectedAccount.id}: Message Channel: ${messageChannel.id}: No folders to process`,
       );
+
+      return [];
     }
 
     const limit = pLimit(FOLDER_PROCESSING_CONCURRENCY);

@@ -43,8 +43,7 @@ export class WorkspaceFlatCronTriggerMapCacheService extends WorkspaceCacheProvi
           cronTriggerEntity,
           getMetadataEntityRelationProperties('cronTrigger'),
         ),
-        universalIdentifier:
-          cronTriggerEntity.universalIdentifier ?? cronTriggerEntity.id,
+        universalIdentifier: cronTriggerEntity.universalIdentifier,
         createdAt: cronTriggerEntity.createdAt.toISOString(),
         updatedAt: cronTriggerEntity.updatedAt.toISOString(),
       } satisfies FlatCronTrigger;

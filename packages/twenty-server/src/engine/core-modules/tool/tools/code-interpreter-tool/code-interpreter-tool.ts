@@ -9,12 +9,12 @@ import {
   type CodeExecutionState,
 } from 'twenty-shared/ai';
 import { v4 } from 'uuid';
+import { FileFolder } from 'twenty-shared/types';
 
 import {
   type InputFile,
   type OutputFile,
 } from 'src/engine/core-modules/code-interpreter/drivers/interfaces/code-interpreter-driver.interface';
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import {
   type AccessTokenJwtPayload,

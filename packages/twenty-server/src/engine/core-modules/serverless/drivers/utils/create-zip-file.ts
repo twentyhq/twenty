@@ -1,7 +1,6 @@
 import fs from 'fs';
 import { pipeline } from 'stream/promises';
 
-// @ts-expect-error legacy noImplicitAny
 import archiver from 'archiver';
 
 export const createZipFile = async (

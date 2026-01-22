@@ -220,8 +220,11 @@ describe('WorkspaceEntityManager', () => {
         IS_TIMELINE_ACTIVITY_MIGRATED: false,
         IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
         IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED: false,
+        IS_JUNCTION_RELATIONS_ENABLED: false,
         IS_IF_ELSE_ENABLED: false,
         IS_SSE_DB_EVENTS_ENABLED: false,
+        IS_COMMAND_MENU_ITEM_ENABLED: false,
+        IS_FILES_FIELD_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
@@ -257,6 +260,8 @@ describe('WorkspaceEntityManager', () => {
           canSoftDeleteObjectRecords: false,
           canDestroyObjectRecords: false,
           restrictedFields: {},
+          rowLevelPermissionPredicates: [],
+          rowLevelPermissionPredicateGroups: [],
         },
       },
     };

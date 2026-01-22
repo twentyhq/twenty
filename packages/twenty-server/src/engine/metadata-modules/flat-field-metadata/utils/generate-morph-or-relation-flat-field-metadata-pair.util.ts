@@ -10,6 +10,7 @@ import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadat
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { extractJunctionTargetSettingsFromSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-junction-target-settings-from-settings.util';
 import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -20,10 +21,12 @@ import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/me
 type ComputeFieldMetadataRelationSettingsForRelationTypeArgs = {
   relationType: RelationType;
   joinColumnName: string;
+  junctionTargetFieldId?: string;
 };
 const computeFieldMetadataRelationSettingsForRelationType = ({
   relationType,
   joinColumnName,
+  junctionTargetFieldId,
 }: ComputeFieldMetadataRelationSettingsForRelationTypeArgs) => {
   if (relationType === RelationType.MANY_TO_ONE) {
     return {
@@ -35,6 +38,7 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
 
   return {
     relationType: RelationType.ONE_TO_MANY,
+    ...(junctionTargetFieldId && { junctionTargetFieldId }),
   };
 };
 
@@ -73,10 +77,15 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
 
   const { relationCreationPayload } = createFieldInput;
 
+  const { junctionTargetFieldId } = extractJunctionTargetSettingsFromSettings(
+    createFieldInput.settings,
+  );
+
   const sourceFlatFieldMetadataSettings =
     computeFieldMetadataRelationSettingsForRelationType({
       joinColumnName: sourceFlatObjectMetadataJoinColumnName,
       relationType: relationCreationPayload.type,
+      junctionTargetFieldId,
     });
   const targetRelationTargetFieldMetadataId = v4();
   const sourceRelationTargetFieldMetadataId = v4();

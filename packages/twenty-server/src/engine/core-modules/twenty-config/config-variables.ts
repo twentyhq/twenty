@@ -10,6 +10,7 @@ import {
   validateSync,
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
+import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 
 import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -24,6 +25,7 @@ import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
 import { type MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
 import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
 import { CastToLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-log-level-array.decorator';
+import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-typeorm-log-level-array.decorator';
 import { CastToMeterDriverArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-meter-driver.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/twenty-config/decorators/cast-to-positive-number.decorator';
 import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
@@ -375,7 +377,7 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = false;
+  IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
@@ -588,6 +590,17 @@ export class ConfigVariables {
   })
   @IsOptional()
   TELEMETRY_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
+    description:
+      'TypeORM logging options for development mode. Accepts comma-separated values: query, schema, error, warn, info, log, migration',
+    type: ConfigVariableType.ARRAY,
+    options: ['query', 'schema', 'error', 'warn', 'info', 'log', 'migration'],
+  })
+  @CastToTypeORMLogLevelArray()
+  @IsOptional()
+  TYPEORM_LOGGING: LoggerOptions = ['error'];
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,

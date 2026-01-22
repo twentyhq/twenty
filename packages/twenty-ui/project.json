@@ -101,16 +101,8 @@
         "test": {}
       }
     },
-    "storybook:coverage": {},
-    "storybook:test": {
-      "options": {
-        "port": 6007
-      }
-    },
-    "storybook:serve-and-test:static": {
-      "options": {
-        "port": 6007
-      }
-    }
+    "storybook:test": {},
+    "storybook:test:no-coverage": {},
+    "storybook:coverage": {}
   }
 }

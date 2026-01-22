@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
@@ -31,15 +31,20 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<DeleteObjectAction>,
   ): Promise<void> {
-    const { action, queryRunner } = context;
-    const { entityId } = action;
+    const { action, queryRunner, allFlatEntityMaps } = context;
+    const { universalIdentifier } = action;
+
+    const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatObjectMetadataMaps,
+      universalIdentifier,
+    });
 
     const objectMetadataRepository =
       queryRunner.manager.getRepository<ObjectMetadataEntity>(
         ObjectMetadataEntity,
       );
 
-    await objectMetadataRepository.delete(entityId);
+    await objectMetadataRepository.delete(flatObjectMetadata.id);
   }
 
   async executeForWorkspaceSchema(
@@ -51,11 +56,11 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
-    const { entityId } = action;
+    const { universalIdentifier } = action;
 
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: entityId,
+      universalIdentifier,
     });
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({

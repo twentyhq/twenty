@@ -1,32 +1,32 @@
 ---
 title: Workflow-Guthaben
-description: Understand workflow credit consumption and management.
+description: Verstehen Sie den Verbrauch und die Verwaltung von Workflow-Guthaben.
 ---
 
 Workflow-Guthaben treiben Ihre Automatisierungen in Twenty an. Das Verständnis ihrer Funktionsweise hilft Ihnen, die Kosten zu optimieren und Ihr Automatisierungsbudget effektiv zu verwalten.
 
-## Credit Allocation
+## Guthabenverteilung
 
-Workflow credits are allocated based on your billing cycle, not your plan tier:
+Workflow-Guthaben werden basierend auf Ihrem Abrechnungszeitraum zugeteilt, nicht nach Ihrer Tarifstufe:
 
-| Billing Cycle            | Credits                     |
-| ------------------------ | --------------------------- |
-| **Monthly subscription** | 5 million credits per month |
-| **Yearly subscription**  | 50 million credits per year |
+| Abrechnungszeitraum        | Guthaben                       |
+| -------------------------- | ------------------------------ |
+| **Monatliches Abonnement** | 5 Millionen Guthaben pro Monat |
+| **Jährliches Abonnement**  | 50 Millionen Guthaben pro Jahr |
 
 <Note>
-  5 million monthly credits are generous for standard automations. Most teams won't exceed this limit with typical workflow usage. Additional credits are primarily needed for advanced Code actions and AI-powered workflows.
+  5 Millionen Guthaben pro Monat sind für Standardautomatisierungen großzügig bemessen. Die meisten Teams überschreiten dieses Limit bei typischer Nutzung von Workflows nicht. Zusätzliche Guthaben werden vor allem für erweiterte Code-Aktionen und KI-gestützte Workflows benötigt.
 </Note>
 
 ## Wie der Verbrauch von Guthaben funktioniert
 
-Credits are consumed when workflows execute, not when you create them. Jede Workflow-Aktion verbraucht Credits basierend auf ihrer Komplexität:
+Guthaben werden verbraucht, wenn Workflows ausgeführt werden, nicht, wenn Sie sie erstellen. Jede Workflow-Aktion verbraucht Credits basierend auf ihrer Komplexität:
 
 ### Guthabenverbrauch nach Aktionstyp
 
 * **Einfache interne Vorgänge**: Sehr niedriger Guthabenverbrauch
   * Datensätze durchsuchen
-  * Create Record
+  * Datensatz erstellen
   * Datensatz aktualisieren
   * Datensatz löschen
   * Formularaktionen
@@ -35,20 +35,20 @@ Credits are consumed when workflows execute, not when you create them. Jede Work
   * Code-Aktionen (JavaScript-Ausführung)
   * HTTP-Anfragen an externe Dienste
 
-* **AI features**: Higher credit consumption
-  * AI Agent actions consume credits based on the AI model used
-  * More complex prompts and longer outputs use more credits
+* **KI-Funktionen**: Höherer Guthabenverbrauch
+  * KI-Agent-Aktionen verbrauchen Guthaben abhängig vom verwendeten KI-Modell
+  * Komplexere Prompts und längere Ausgaben verbrauchen mehr Guthaben
 
-* **Delay actions**: Minimal credit consumption
-  * The Delay node consumes **1 credit** when it executes
-  * **No credits are consumed** during the wait period
-  * A 5-minute delay costs the same as a 5-day delay
+* **Delay-Aktionen**: Minimaler Guthabenverbrauch
+  * Der Delay-Knoten verbraucht **1 Guthaben**, wenn er ausgeführt wird
+  * **Es werden keine Guthaben verbraucht** während der Wartezeit
+  * Eine Verzögerung von 5 Minuten kostet dasselbe wie eine Verzögerung von 5 Tagen
 
 ### Echtzeitabzug
 
 Guthaben werden in Echtzeit abgezogen, sobald Workflows ausgeführt werden. Das bedeutet:
 
-* Draft workflows don't consume credits
+* Entwurfs-Workflows verbrauchen keine Guthaben
 * Nur aktive, laufende Workflows nutzen Ihre Guthabenzuteilung
 * Fehlgeschlagene Workflows verbrauchen dennoch Guthaben für abgeschlossene Schritte
 
@@ -71,6 +71,6 @@ Wenn Sie mehr Guthaben über Ihre Plan-Zuteilung hinaus benötigen:
 ## Beste Praktiken
 
 * **Stapelverarbeitung**: Verwenden Sie Massenoperationen und Iterator-Aktionen effizient
-* **Manual Trigger Optimization**: For manual triggers, choose `Bulk` availability to process multiple records in a single workflow run
+* **Optimierung manueller Auslöser**: Wählen Sie bei manuellen Auslösern die Verfügbarkeit `Bulk`, um mehrere Datensätze in einem einzelnen Workflow-Durchlauf zu verarbeiten
 * Optimieren Sie Code-Aktionen für Effizienz
-* Batch operations to reduce individual action calls
+* Operationen bündeln, um einzelne Aktionsaufrufe zu reduzieren

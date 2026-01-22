@@ -1,7 +1,7 @@
 import { type GraphWidgetLegendItem } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { type BarChartConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartConfig';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
-import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
@@ -16,7 +16,7 @@ type UseBarChartDataProps = {
   data: BarDatum[];
   indexBy: string;
   keys: string[];
-  series?: BarChartSeries[];
+  series?: BarChartSeriesWithColor[];
   colorRegistry: GraphColorRegistry;
   seriesLabels?: Record<string, string>;
   groupMode?: 'grouped' | 'stacked';
@@ -37,7 +37,10 @@ export const useBarChartData = ({
   );
 
   const seriesConfigMap = useMemo(
-    () => new Map<string, BarChartSeries>(series?.map((s) => [s.key, s]) || []),
+    () =>
+      new Map<string, BarChartSeriesWithColor>(
+        series?.map((s) => [s.key, s]) || [],
+      ),
     [series],
   );
 

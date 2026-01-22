@@ -84,7 +84,11 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const isRichTextWidget = widget.type === WidgetType.STANDALONE_RICH_TEXT;
   const hideRichTextHeader = isRichTextWidget && !isPageLayoutInEditMode;
 
-  const showHeader = layoutMode !== 'canvas' && !hideRichTextHeader;
+  const showHeader =
+    layoutMode !== 'canvas' &&
+    !hideRichTextHeader &&
+    // TODO: use a more generic approach after record page layout v1 release
+    widget.type !== WidgetType.FIELDS;
 
   const handleClick = () => {
     handleEditWidget({
@@ -140,6 +144,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         {showHeader && (
           <WidgetCardHeader
             widgetId={widget.id}
+            variant={variant}
             isInEditMode={isPageLayoutInEditMode}
             isResizing={isResizing}
             title={widget.title}
@@ -156,15 +161,14 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
           />
         )}
 
-        <WidgetCardContent variant={variant}>
-          {hasAccess && (
+        <WidgetCardContent variant={variant} hasHeader={showHeader}>
+          {hasAccess ? (
             <ErrorBoundary
               FallbackComponent={PageLayoutWidgetInvalidConfigDisplay}
             >
               <WidgetContentRenderer widget={widget} />
             </ErrorBoundary>
-          )}
-          {!hasAccess && (
+          ) : (
             <StyledNoAccessContainer>
               <IconLock
                 color={theme.font.color.tertiary}

@@ -67,6 +67,10 @@ export class ServerlessFunctionDTO {
 
   @IsString()
   @Field()
+  builtHandlerPath: string;
+
+  @IsString()
+  @Field()
   handlerName: string;
 
   @IsArray()
@@ -95,6 +99,11 @@ export class ServerlessFunctionDTO {
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   applicationId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  universalIdentifier?: string;
 
   @HideField()
   workspaceId: string;

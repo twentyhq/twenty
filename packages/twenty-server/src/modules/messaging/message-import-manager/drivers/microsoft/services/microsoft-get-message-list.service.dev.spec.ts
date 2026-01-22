@@ -44,10 +44,11 @@ const mockConnectedAccount: Pick<
 
 const mockMessageChannel: Pick<
   MessageChannelWorkspaceEntity,
-  'id' | 'syncCursor'
+  'id' | 'syncCursor' | 'messageFolderImportPolicy'
 > = {
   id: 'message-channel-id',
   syncCursor: '', // Should be empty for Microsoft as cursors are stored at the folder level
+  messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
 };
 
 xdescribe('Microsoft dev tests : get message list service', () => {
@@ -155,6 +156,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
         messageChannel: {
           id: 'message-channel-id',
           syncCursor: '',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
         },
         connectedAccount: mockConnectedAccount,
         messageFolders: [
@@ -209,18 +211,24 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
   messageChannelNoFolders.id = 'message-channel-0';
   messageChannelNoFolders.messageFolders = [];
   messageChannelNoFolders.syncCursor = '';
+  messageChannelNoFolders.messageFolderImportPolicy =
+    MessageFolderImportPolicy.SELECTED_FOLDERS;
 
   const messageChannelMicrosoftOneFolder = new MessageChannelWorkspaceEntity();
 
   messageChannelMicrosoftOneFolder.id = 'message-channel-1';
   messageChannelMicrosoftOneFolder.messageFolders = [inboxFolder];
   messageChannelMicrosoftOneFolder.syncCursor = '';
+  messageChannelMicrosoftOneFolder.messageFolderImportPolicy =
+    MessageFolderImportPolicy.SELECTED_FOLDERS;
 
   const messageChannelMicrosoft = new MessageChannelWorkspaceEntity();
 
   messageChannelMicrosoft.id = 'message-channel-2';
   messageChannelMicrosoft.messageFolders = [inboxFolder, sentFolder];
   messageChannelMicrosoft.syncCursor = '';
+  messageChannelMicrosoft.messageFolderImportPolicy =
+    MessageFolderImportPolicy.SELECTED_FOLDERS;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

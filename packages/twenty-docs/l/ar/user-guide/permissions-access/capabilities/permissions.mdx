@@ -1,13 +1,13 @@
 ---
 title: الصلاحيات
-description: Control access to objects, fields, and settings with role-based permissions.
+description: تحكّم في الوصول إلى الكائنات والحقول والإعدادات باستخدام أذونات مستندة إلى الأدوار.
 image: /images/user-guide/permissions/permissions.png
 ---
 
 نظام أذونات Twenty يمكنك من التحكم في الوصول إلى ثلاثة مجالات رئيسية:
 
 * **الكائنات والحقول**: التحكم بمن يمكنه عرض أو تعديل أو حذف السجلات والحقول الفردية
-* **Settings**: Manage access to workspace configuration and administrative functions
+* **الإعدادات**: إدارة الوصول إلى تكوين مساحة العمل والوظائف الإدارية
 * **الإجراءات**: التحكم في الإجراءات العامة لمساحة العمل مثل استيراد البيانات أو إرسال رسائل البريد الإلكتروني
 
 ## إنشاء دور
@@ -17,8 +17,8 @@ image: /images/user-guide/permissions/permissions.png
 1. اذهب إلى **الإعدادات → الأدوار**
 2. تحت **كل الأدوار**، انقر على **+ إنشاء دور**
 3. أدخل اسم الدور
-4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
-5. Click **Save** to finish
+4. في علامة التبويب الافتراضية **الأذونات**، [كوّن الأذونات](#customize-permissions)
+5. انقر على **حفظ** للإنهاء
 
 ## حذف دور
 
@@ -30,7 +30,7 @@ image: /images/user-guide/permissions/permissions.png
 4. انقر على **تأكيد** في النافذة المنبثقة
 
 <Note>
-  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. يجب دائمًا أن يكون هناك عضو واحد على الأقل معين على دور **المشرف**.
+  إذا تم حذف دور ما، فسيُعاد تعيين أي عضو في مساحة العمل مُعيَّن إلى ذلك الدور تلقائيًا إلى الدور الافتراضي. يمكن حذف جميع الأدوار باستثناء دور **المشرف**. يجب دائمًا أن يكون هناك عضو واحد على الأقل معين على دور **المشرف**.
 </Note>
 
 ## تخصيص الأدوار للأعضاء
@@ -58,82 +58,82 @@ image: /images/user-guide/permissions/permissions.png
 4. سيتم تعيين أعضاء مساحة العمل الجدد هذا الدور عند انضمامهم
 
 <Note>
-  You can only assign roles to existing workspace members. لدعوة أعضاء جدد، استخدم [إدارة الأعضاء](/l/ar/user-guide/settings/capabilities/member-management).
+  يمكنك فقط تعيين الأدوار لأعضاء مساحة العمل الحاليين. لدعوة أعضاء جدد، استخدم [إدارة الأعضاء](/l/ar/user-guide/settings/capabilities/member-management).
 </Note>
 
 ## تخصيص الأذونات
 
-Permissions determine what each role can access or modify within your workspace, including workspace objects records, settings, and actions.
+تحدد الأذونات ما يمكن لكل دور الوصول إليه أو تعديله ضمن مساحة عملك، بما في ذلك سجلات كائنات مساحة العمل، والإعدادات، والإجراءات.
 
-### Object Permissions
+### أذونات الكائنات
 
-The **Objects** section controls what this role can do with records across your workspace.
+يحدّد قسم **الكائنات** ما يمكن لهذا الدور فعله بالسجلات في مساحة عملك.
 
-#### Set Default Permissions (All Objects)
+#### تعيين الأذونات الافتراضية (جميع الكائنات)
 
-First, configure the baseline permissions that apply to **all objects** by default:
+أولًا، كوّن أذونات الأساس التي تنطبق افتراضيًا على **جميع الكائنات**:
 
-| Permission                        | الوصف                                  |
-| --------------------------------- | -------------------------------------- |
-| **عرض السجلات في جميع العناصر**   | View records in lists and detail pages |
-| **تحرير السجلات في جميع العناصر** | Modify existing records                |
-| **حذف السجلات من جميع العناصر**   | Soft-delete records (can be restored)  |
-| **إتلاف السجلات في جميع العناصر** | Permanently delete records             |
+| الإذن                             | الوصف                                        |
+| --------------------------------- | -------------------------------------------- |
+| **عرض السجلات في جميع العناصر**   | عرض السجلات في القوائم وصفحات التفاصيل       |
+| **تحرير السجلات في جميع العناصر** | تعديل السجلات الموجودة                       |
+| **حذف السجلات من جميع العناصر**   | حذف السجلات حذفًا غير نهائي (يمكن استعادتها) |
+| **إتلاف السجلات في جميع العناصر** | حذف السجلات نهائيًا                          |
 
-Select or unselect based on what should be the default behavior for this role.
+حدّد أو أزل التحديد استنادًا إلى ما ينبغي أن يكون السلوك الافتراضي لهذا الدور.
 
 <Note>
-  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+  **مثال — دور المتدرب**: ينبغي للمتدرب أن يتمكن من رؤية جميع الكائنات ولكن دون تحريرها افتراضيًا. فعّل "عرض السجلات على جميع الكائنات" لكن اترك "تحرير السجلات على جميع الكائنات" غير محددة.
 </Note>
 
-#### Add Object-Level Exceptions
+#### إضافة استثناءات على مستوى الكائن
 
-After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+بعد تعيين القيم الافتراضية، استخدم القسم الفرعي **على مستوى الكائن** لإضافة قواعد تتجاوز القيم الافتراضية لكائنات محددة.
 
-Click **+ Add rule** and select an object to create an exception.
+انقر على **+ إضافة قاعدة** ثم اختر كائنًا لإنشاء استثناء.
 
-**Example rules for an Intern role:**
+**أمثلة على قواعد لدور المتدرب:**
 
-| Rule                                  | Effect                                                 |
-| ------------------------------------- | ------------------------------------------------------ |
-| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
-| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+| قاعدة                           | النتيجة                                                     |
+| ------------------------------- | ----------------------------------------------------------- |
+| الفرص → تعطيل "عرض السجلات"     | لا يمكن للمتدرب رؤية كائن الفرص إطلاقًا                     |
+| الأشخاص → تفعيل "تحرير السجلات" | يمكن للمتدرب تحرير سجلات الأشخاص (ولكن ليس الكائنات الأخرى) |
 
-### Field Permissions
+### أذونات الحقول
 
-Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+داخل كل قاعدة على مستوى الكائن، يمكنك المتابعة أبعد من ذلك وتكوين **أذونات على مستوى الحقل** للتحكم في الوصول إلى حقول محددة.
 
-| Permission     | الوصف                      |
-| -------------- | -------------------------- |
-| **See Field**  | View the field value       |
-| **Edit Field** | Modify the field value     |
-| **No Access**  | Field is completely hidden |
+| الإذن           | الوصف              |
+| --------------- | ------------------ |
+| **عرض الحقل**   | عرض قيمة الحقل     |
+| **تحرير الحقل** | تعديل قيمة الحقل   |
+| **لا وصول**     | الحقل مخفي بالكامل |
 
-**Example — Restrict sensitive fields:**
+**مثال — تقييد الحقول الحساسة:**
 
-For the Intern role with People edit access, you might want to restrict certain fields:
+بالنسبة لدور المتدرب الذي لديه إمكانية تحرير الأشخاص، قد ترغب في تقييد حقول معينة:
 
-* People → Email → **See Field** only (cannot edit)
-* People → Address → **No Access** (completely hidden)
+* الأشخاص → البريد الإلكتروني → **عرض الحقل** فقط (لا يمكن التحرير)
+* الأشخاص → العنوان → **لا وصول** (مخفي بالكامل)
 
-This allows the intern to edit most People fields while protecting sensitive information.
+يسمح هذا للمتدرب بتحرير معظم حقول الأشخاص مع حماية المعلومات الحساسة.
 
-### How Permission Inheritance Works
+### كيفية عمل توريث الأذونات
 
-Permissions cascade from general to specific:
+تتدرج الأذونات من العام إلى المحدّد:
 
-1. **All Objects** → sets the baseline for all objects
-2. **Object-Level rules** → override the baseline for specific objects
-3. **Field-Level rules** → override the object setting for specific fields
+1. **جميع الكائنات** → يحدّد الأساس لجميع الكائنات
+2. **قواعد على مستوى الكائن** → تتجاوز الأساس لكائنات محددة
+3. **قواعد على مستوى الحقل** → تتجاوز إعداد الكائن لحقول محددة
 
-More specific settings always take precedence.
+الإعدادات الأكثر تحديدًا لها الأسبقية دائمًا.
 
 ### إدارة تجاوزات الأذونات
 
-To override inherited permissions:
+لتجاوز الأذونات الموروثة:
 
 1. انقر على **X** لإزالة القاعدة الموروثة
-2. Select the specific permissions you want
+2. حدّد الأذونات المحددة التي تريدها
 3. انقر على أيقونة **تراجع** البرتقالية (السهم الدائري) للتراجع عن التغييرات
 
 عند الانتهاء، انقر على **إنهاء**، ثم **حفظ** عند العودة إلى صفحة الدور.
@@ -146,7 +146,7 @@ To override inherited permissions:
 * أو تمكين أذونات محددة (مثل توليد مفتاح API، تفضيلات مساحة العمل، تعيين الأدوار، تكوين نموذج البيانات، إعدادات الأمان، وإدارة الحركات)
 
 <Note>
-  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+  **قيد حالي**: يلزم الحصول على حق الوصول إلى إدارة سير العمل لبدء تشغيل عمليات سير العمل يدويًا. قد يتغير هذا السلوك في الإصدارات المستقبلية.
 </Note>
 
 ### أذونات الإجراءات في مساحة العمل
@@ -156,43 +156,43 @@ To override inherited permissions:
 * تبديل **الوصول الكامل للتطبيق** لمنح الأذونات الكاملة
 * أو تمكين الإجراءات الفردية مثل **إرسال البريد الإلكتروني**، **استيراد CSV**، و**تصدير CSV**
 
-## Assigning Roles to API Keys and AI Agents
+## تعيين الأدوار لمفاتيح API ووكلاء الذكاء الاصطناعي
 
-Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+إضافةً إلى أعضاء مساحة العمل، يمكن أيضًا تعيين الأدوار إلى **مفاتيح API** و**وكلاء الذكاء الاصطناعي**. يساعد هذا بشكل خاص الفرق التي تريد التحكم بدقة في "من" يمكنه فعل ماذا في مساحة عملها—بما في ذلك العمليات المؤتمتة والتكاملات.
 
-### Why Assign Roles to API Keys and AI Agents?
+### لماذا نعيّن الأدوار لمفاتيح API ووكلاء الذكاء الاصطناعي؟
 
-* **Security**: Limit what automated processes can access or modify
-* **Compliance**: Ensure integrations only touch the data they need
-* **Control**: Prevent accidental data changes from misconfigured automations
-* **Auditability**: Track which actions were performed by which integration or agent
+* **الأمان**: حدّد ما يمكن للعمليات المؤتمتة الوصول إليه أو تعديله
+* **الامتثال**: تأكد من أن التكاملات لا تتعامل إلا مع البيانات التي تحتاجها
+* **التحكم**: منع تغييرات البيانات العرضية الناتجة عن أتمتة مُعدّة بشكل غير صحيح
+* **قابلية التدقيق**: تتبّع الإجراءات التي نفّذها كل تكامل أو وكيل
 
-### Assign a Role to an API Key
+### تعيين دور لمفتاح API
 
 1. اذهب إلى **الإعدادات → الأدوار**
 2. انقر على الدور الذي ترغب في تعيينه
 3. افتح علامة التبويب **التعيين**
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key from the list
+4. ضمن **مفاتيح API**، انقر على **+ تعيين إلى مفتاح API**
+5. اختر مفتاح API من القائمة
 6. أكد التعيين
 
-The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+سيرث مفتاح API الآن جميع الأذونات المحددة بواسطة ذلك الدور. سيتم تقييد أي استدعاءات API تُجرى بهذا المفتاح وفقًا لذلك.
 
 <Note>
-  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+  تستخدم مفاتيح API التي لم يُعيَّن لها دور الأذونات الافتراضية. لأمانٍ أشد، عيّن دائمًا دورًا محددًا لمفاتيح API في بيئة الإنتاج.
 </Note>
 
-### Assign a Role to an AI Agent
+### تعيين دور لوكيل ذكاء اصطناعي
 
 1. اذهب إلى **الإعدادات → الأدوار**
 2. انقر على الدور الذي ترغب في تعيينه
 3. افتح علامة التبويب **التعيين**
-4. Under **AI Agents**, click **+ Assign to AI agent**
-5. Select the AI agent from the list
+4. ضمن **وكلاء الذكاء الاصطناعي**، انقر على **+ تعيين إلى وكيل ذكاء اصطناعي**
+5. اختر وكيل الذكاء الاصطناعي من القائمة
 6. أكد التعيين
 
-The AI agent will only be able to access data and perform actions allowed by its assigned role.
+سيتمكن وكيل الذكاء الاصطناعي فقط من الوصول إلى البيانات وتنفيذ الإجراءات المسموح بها من قِبل دوره المعيّن.
 
 <Note>
-  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+  بالنسبة لوكلاء الذكاء الاصطناعي الذين يعملون ضمن سير العمل، يضمن ذلك أن الوكيل لا يمكنه الوصول إلى البيانات أو تعديلها خارج نطاقه المقصود—حتى إذا كان سير العمل يمتلك أذونات أوسع.
 </Note>

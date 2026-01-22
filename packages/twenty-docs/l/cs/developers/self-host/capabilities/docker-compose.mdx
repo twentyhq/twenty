@@ -1,9 +1,9 @@
 ---
-title: 1-Click w/ Docker Compose
+title: Docker Compose jedním kliknutím
 ---
 
 <Warning>
-  Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](/l/cs/developers/contribute/capabilities/local-setup).
+  Docker kontejnery jsou určeny pro produkční hosting nebo samohostování; pro přispívání si prosím přečtěte [Lokální nastavení](/l/cs/developers/contribute/capabilities/local-setup).
 </Warning>
 
 ## Přehled
@@ -50,7 +50,7 @@ Postupujte podle těchto kroků pro ruční nastavení.
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **Generate Secret Tokens**
+2. **Vygenerujte tajné tokeny**
 
    Spusťte následující příkaz k generování jedinečného náhodného řetězce:
 
@@ -96,7 +96,7 @@ docker compose up -d
 
 Pokud hostujete twentyCRM na svém vlastním počítači, otevřete svůj prohlížeč a přejděte na stránku [http://localhost:3000](http://localhost:3000).
 
-If you host it on a server, check that the server is running and that everything is ok with
+Pokud to hostujete na serveru, zkontrolujte, že server běží a že je vše v pořádku s
 
 ```bash
 curl http://localhost:3000
@@ -183,7 +183,7 @@ Důrazně doporučujeme nastavit Twenty za reverzní proxy se SSL ukončením pr
 
 * **Konfigurace reverzního proxy:**
 
-  Ujistěte se, že váš reverzní proxy přesměruje požadavky na správný interní port (výchozí `3000`). Configure SSL termination and any necessary headers.
+  Ujistěte se, že váš reverzní proxy přesměruje požadavky na správný interní port (výchozí `3000`). Nakonfigurujte terminaci SSL a všechny potřebné hlavičky.
 
 * **Nastavení firewallu:**
 
@@ -203,50 +203,50 @@ Důrazně doporučujeme nastavit Twenty za reverzní proxy se SSL ukončením pr
 
   Pokud nasazujete do bezstavového prostředí (např. některé cloudové služby), nakonfigurujte externí úložiště pro uchování dat.
 
-## Backup and Restore
+## Zálohování a obnovení
 
-Regular backups protect your CRM data from loss.
+Pravidelné zálohy chrání vaše data v CRM před ztrátou.
 
-### Create a Database Backup
+### Vytvořte zálohu databáze
 
 ```bash
 docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
 ```
 
-### Automate Daily Backups
+### Automatizujte denní zálohy
 
-Add to your crontab (`crontab -e`):
+Přidejte do svého crontabu (`crontab -e`):
 
 ```bash
 0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
 ```
 
-### Restore from Backup
+### Obnovte ze zálohy
 
-1. Stop the application:
+1. Zastavte aplikaci:
 
 ```bash
 docker compose stop twenty-server twenty-front
 ```
 
-2. Restore the database:
+2. Obnovte databázi:
 
 ```bash
 docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
 ```
 
-3. Restart services:
+3. Restartujte služby:
 
 ```bash
 docker compose up -d
 ```
 
-### Backup Best Practices
+### Osvědčené postupy pro zálohování
 
-* **Test restores regularly** — verify backups actually work
-* **Store backups off-site** — use cloud storage (S3, GCS, etc.)
-* **Encrypt sensitive data** — protect backups with encryption
-* **Retain multiple copies** — keep daily, weekly, and monthly backups
+* **Pravidelně testujte obnovy** — ověřte, že zálohy skutečně fungují
+* **Ukládejte zálohy mimo lokalitu** — použijte cloudové úložiště (S3, GCS, atd.)
+* **Šifrujte citlivá data** — chraňte zálohy šifrováním
+* **Uchovávejte více kopií** — mějte denní, týdenní a měsíční zálohy
 
 ## Řešení potíží
 

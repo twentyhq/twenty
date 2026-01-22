@@ -126,6 +126,7 @@ export const mockCurrentWorkspace = {
       },
     ],
   },
+  billingEntitlements: [],
   billingSubscriptions: [
     {
       __typename: 'BillingSubscription',
@@ -199,6 +200,8 @@ export const mockedUserData: MockedUser = {
       canSoftDeleteObjectRecords: true,
       canDestroyObjectRecords: true,
       restrictedFields: {},
+      rowLevelPermissionPredicates: [],
+      rowLevelPermissionPredicateGroups: [],
     })),
   },
   locale: 'en',
@@ -229,6 +232,8 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
         canSoftDeleteObjectRecords: true,
         canDestroyObjectRecords: true,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       })),
   },
 };
@@ -259,6 +264,8 @@ export const mockedOnboardingUserData = (
         canSoftDeleteObjectRecords: true,
         canDestroyObjectRecords: true,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       })),
     },
     locale: 'en',
