@@ -31,18 +31,18 @@ Aplicațiile vă permit să construiți și să gestionați personalizările Twe
 Creați o aplicație nouă folosind generatorul oficial, apoi autentificați-vă și începeți să dezvoltați:
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# Creează scheletul unei aplicații noi
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# If you don't use yarn@4
+# Dacă nu folosești yarn@4
 corepack enable
 yarn install
 
-# Authenticate using your API key (you'll be prompted)
+# Autentifică-te folosind cheia ta API (ți se va solicita)
 yarn auth:login
 
-# Start dev mode: automatically syncs local changes to your workspace
+# Pornește modul de dezvoltare: sincronizează automat modificările locale cu spațiul tău de lucru
 yarn app:dev
 ```
 
@@ -98,10 +98,10 @@ my-twenty-app/
   README.md
   src/
     app/
-      application.config.ts     # Required - main application configuration
-      default-function.role.ts  # Default role for serverless functions
-      // your entities (*.object.ts, *.function.ts, *.role.ts)
-    utils/                      # Optional - handler implementations & utilities
+      application.config.ts     # Obligatoriu - configurația principală a aplicației
+      default-function.role.ts  # Rolul implicit pentru funcțiile serverless
+      // entitățile tale (*.object.ts, *.function.ts, *.role.ts)
+    utils/                      # Opțional - implementări de handleri și utilitare
 ```
 
 ### Convenție în locul configurării
