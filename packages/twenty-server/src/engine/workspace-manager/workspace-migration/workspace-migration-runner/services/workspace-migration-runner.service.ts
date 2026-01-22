@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { AllMetadataName } from 'twenty-shared/metadata';
 import { DataSource } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
@@ -34,66 +33,6 @@ export class WorkspaceMigrationRunnerService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly logger: LoggerService,
   ) {}
-
-  private async invalidateCachePostExecution({
-    impactedMetadataNames,
-    workspaceId,
-    actions,
-  }: {
-    impactedMetadataNames: AllMetadataName[];
-    workspaceId: string;
-    actions: WorkspaceMigrationAction[];
-  }): Promise<void> {
-    const metadataAndRelatedMetadataNames = [
-      ...new Set([
-        ...impactedMetadataNames,
-        ...impactedMetadataNames.flatMap(getMetadataRelatedMetadataNames),
-      ]),
-    ];
-    const flatEntitiesCacheToInvalidate = metadataAndRelatedMetadataNames.map(
-      getMetadataFlatEntityMapsKey,
-    );
-
-    this.logger.time(
-      'Runner',
-      `Cache invalidation ${flatEntitiesCacheToInvalidate.join()}`,
-    );
-
-    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-      workspaceId,
-      flatMapsKeys: flatEntitiesCacheToInvalidate,
-    });
-
-    const invalidationResults = await Promise.allSettled(
-      this.getLegacyCacheInvalidationPromises({
-        workspaceMigration: {
-          actions,
-          workspaceId,
-        },
-      }),
-    );
-
-    const invalidationFailures = invalidationResults.filter(
-      (result) => result.status === 'rejected',
-    );
-
-    if (invalidationFailures.length > 0) {
-      invalidationFailures.forEach((err) =>
-        this.logger.error(
-          `Failed to invalidate a legacy cache ${err.reason}`,
-          'Runner',
-        ),
-      );
-      throw new Error(
-        `Failed to invalidate ${invalidationFailures.length} cache operations`,
-      );
-    }
-
-    this.logger.timeEnd(
-      'Runner',
-      `Cache invalidation ${flatEntitiesCacheToInvalidate.join()}`,
-    );
-  }
 
   private getLegacyCacheInvalidationPromises({
     workspaceMigration: { actions, workspaceId },
@@ -166,6 +105,56 @@ export class WorkspaceMigrationRunnerService {
     return asyncOperations;
   }
 
+  private async invalidateCachePostExecution({
+    allFlatEntityMapsKeys,
+    workspaceId,
+    actions,
+  }: {
+    allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
+    workspaceId: string;
+    actions: WorkspaceMigrationAction[];
+  }): Promise<void> {
+    this.logger.time(
+      'Runner',
+      `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
+    );
+
+    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: allFlatEntityMapsKeys,
+    });
+
+    const invalidationResults = await Promise.allSettled(
+      this.getLegacyCacheInvalidationPromises({
+        workspaceMigration: {
+          actions,
+          workspaceId,
+        },
+      }),
+    );
+
+    const invalidationFailures = invalidationResults.filter(
+      (result) => result.status === 'rejected',
+    );
+
+    if (invalidationFailures.length > 0) {
+      invalidationFailures.forEach((err) =>
+        this.logger.error(
+          `Failed to invalidate a legacy cache ${err.reason}`,
+          'Runner',
+        ),
+      );
+      throw new Error(
+        `Failed to invalidate ${invalidationFailures.length} cache operations`,
+      );
+    }
+
+    this.logger.timeEnd(
+      'Runner',
+      `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
+    );
+  }
+
   run = async ({
     actions,
     workspaceId,
@@ -174,10 +163,16 @@ export class WorkspaceMigrationRunnerService {
     this.logger.time('Runner', 'Initial cache retrieval');
 
     const queryRunner = this.coreDataSource.createQueryRunner();
-    const impactedMetadataNames = [
+    const actionMetadataNames = [
       ...new Set(actions.flatMap((action) => action.metadataName)),
     ];
-    const relatedFlatEntityMapsKeys = impactedMetadataNames.map(
+    const actionsMetadataAndRelatedMetadataNames = [
+      ...new Set([
+        ...actionMetadataNames,
+        actionMetadataNames.flatMap(getMetadataRelatedMetadataNames),
+      ]),
+    ];
+    const allFlatEntityMapsKeys = actionsMetadataAndRelatedMetadataNames.map(
       getMetadataFlatEntityMapsKey,
     );
 
@@ -185,7 +180,7 @@ export class WorkspaceMigrationRunnerService {
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: relatedFlatEntityMapsKeys,
+          flatMapsKeys: allFlatEntityMapsKeys,
         },
       );
 
@@ -220,7 +215,7 @@ export class WorkspaceMigrationRunnerService {
       this.logger.timeEnd('Runner', 'Transaction execution');
 
       await this.invalidateCachePostExecution({
-        impactedMetadataNames,
+        allFlatEntityMapsKeys,
         workspaceId,
         actions,
       });
