@@ -66,7 +66,7 @@ export class FileStorageService implements StorageDriver {
       workspaceId,
       applicationId,
       id: fileId,
-      size: file.length,
+      size: typeof file === 'string' ? Buffer.byteLength(file) : file.length,
     });
 
     return fileEntity;
