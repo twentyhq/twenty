@@ -199,7 +199,6 @@ export class RowLevelPermissionPredicateService {
         existingGroups,
         inputGroups: predicateGroups,
         roleId,
-        objectMetadataId,
         workspaceId,
         flatRowLevelPermissionPredicateGroupMaps,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
@@ -270,7 +269,6 @@ export class RowLevelPermissionPredicateService {
     existingGroups,
     inputGroups,
     roleId,
-    objectMetadataId,
     workspaceId,
     flatRowLevelPermissionPredicateGroupMaps,
     workspaceCustomApplicationId,
@@ -278,7 +276,6 @@ export class RowLevelPermissionPredicateService {
     existingGroups: FlatRowLevelPermissionPredicateGroup[];
     inputGroups: RowLevelPermissionPredicateGroupInput[];
     roleId: string;
-    objectMetadataId: string;
     workspaceId: string;
     flatRowLevelPermissionPredicateGroupMaps: FlatEntityMaps<FlatRowLevelPermissionPredicateGroup>;
     workspaceCustomApplicationId: string;
@@ -316,7 +313,7 @@ export class RowLevelPermissionPredicateService {
           id: groupId,
           workspaceId,
           roleId,
-          objectMetadataId,
+          objectMetadataId: inputGroup.objectMetadataId,
           logicalOperator: inputGroup.logicalOperator,
           parentRowLevelPermissionPredicateGroupId:
             inputGroup.parentRowLevelPermissionPredicateGroupId ?? null,
