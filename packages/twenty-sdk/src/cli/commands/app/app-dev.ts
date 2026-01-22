@@ -1,7 +1,11 @@
+import { ApiService } from '@/cli/utilities/api/services/api.service';
 import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
-import { runManifestBuild, updateManifestChecksum } from '@/cli/utilities/build/manifest/manifest-build';
+import {
+  runManifestBuild,
+  updateManifestChecksum,
+} from '@/cli/utilities/build/manifest/manifest-build';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
@@ -34,6 +38,7 @@ export class AppDevCommand {
   private manifestWatcher: ManifestWatcher | null = null;
   private functionsWatcher: FunctionsWatcher | null = null;
   private frontComponentsWatcher: FrontComponentsWatcher | null = null;
+  private apiService = new ApiService();
 
   private appPath: string = '';
   private state: AppDevState = {
@@ -69,10 +74,14 @@ export class AppDevCommand {
 
     await this.startManifestWatcher();
     await this.startFunctionsWatcher(buildResult.filePaths.functions);
-    await this.startFrontComponentsWatcher(buildResult.filePaths.frontComponents);
+    await this.startFrontComponentsWatcher(
+      buildResult.filePaths.frontComponents,
+    );
   }
 
-  private initializeFunctionsFileUploadStatus(manifest: ApplicationManifest): void {
+  private initializeFunctionsFileUploadStatus(
+    manifest: ApplicationManifest,
+  ): void {
     this.state.fileStatusMaps.functions.clear();
 
     for (const fn of manifest.functions ?? []) {
@@ -85,16 +94,21 @@ export class AppDevCommand {
     }
   }
 
-  private initializeFrontComponentsFileUploadStatus(manifest: ApplicationManifest): void {
+  private initializeFrontComponentsFileUploadStatus(
+    manifest: ApplicationManifest,
+  ): void {
     this.state.fileStatusMaps.frontComponents.clear();
 
     for (const component of manifest.frontComponents ?? []) {
-      this.state.fileStatusMaps.frontComponents.set(component.universalIdentifier, {
-        sourcePath: component.sourceComponentPath,
-        builtPath: component.builtComponentPath,
-        checksum: null,
-        isUploaded: false,
-      });
+      this.state.fileStatusMaps.frontComponents.set(
+        component.universalIdentifier,
+        {
+          sourcePath: component.sourceComponentPath,
+          builtPath: component.builtComponentPath,
+          checksum: null,
+          isUploaded: false,
+        },
+      );
     }
   }
 
@@ -106,7 +120,8 @@ export class AppDevCommand {
           this.state.manifest = result.manifest;
 
           const functionSourcePaths = result.filePaths.functions;
-          const shouldRestartFunctions = this.functionsWatcher?.shouldRestart(functionSourcePaths);
+          const shouldRestartFunctions =
+            this.functionsWatcher?.shouldRestart(functionSourcePaths);
           if (shouldRestartFunctions) {
             if (result.manifest) {
               this.initializeFunctionsFileUploadStatus(result.manifest);
@@ -115,7 +130,8 @@ export class AppDevCommand {
           }
 
           const componentSourcePaths = result.filePaths.frontComponents;
-          const shouldRestartFrontComponents = this.frontComponentsWatcher?.shouldRestart(componentSourcePaths);
+          const shouldRestartFrontComponents =
+            this.frontComponentsWatcher?.shouldRestart(componentSourcePaths);
           if (shouldRestartFrontComponents) {
             if (result.manifest) {
               this.initializeFrontComponentsFileUploadStatus(result.manifest);
@@ -130,23 +146,49 @@ export class AppDevCommand {
   }
 
   private async startFunctionsWatcher(sourcePaths: string[]): Promise<void> {
+    const manifest = this.state.manifest;
+
     this.functionsWatcher = new FunctionsWatcher({
       appPath: this.appPath,
       sourcePaths,
+      uploadConfig: manifest
+        ? {
+            apiService: this.apiService,
+            applicationUniversalIdentifier:
+              manifest.application.universalIdentifier,
+          }
+        : undefined,
       onFileBuilt: (builtPath, checksum) => {
         this.updateFileStatus('function', builtPath, checksum);
+      },
+      onFileUploaded: (builtPath, success) => {
+        this.markFileAsUploaded('function', builtPath, success);
       },
     });
 
     await this.functionsWatcher.start();
   }
 
-  private async startFrontComponentsWatcher(sourcePaths: string[]): Promise<void> {
+  private async startFrontComponentsWatcher(
+    sourcePaths: string[],
+  ): Promise<void> {
+    const manifest = this.state.manifest;
+
     this.frontComponentsWatcher = new FrontComponentsWatcher({
       appPath: this.appPath,
       sourcePaths,
+      uploadConfig: manifest
+        ? {
+            apiService: this.apiService,
+            applicationUniversalIdentifier:
+              manifest.application.universalIdentifier,
+          }
+        : undefined,
       onFileBuilt: (builtPath, checksum) => {
         this.updateFileStatus('frontComponent', builtPath, checksum);
+      },
+      onFileUploaded: (builtPath, success) => {
+        this.markFileAsUploaded('frontComponent', builtPath, success);
       },
     });
 
@@ -158,9 +200,10 @@ export class AppDevCommand {
     builtPath: string,
     checksum: string,
   ): void {
-    const statusMap = entityType === 'function'
-      ? this.state.fileStatusMaps.functions
-      : this.state.fileStatusMaps.frontComponents;
+    const statusMap =
+      entityType === 'function'
+        ? this.state.fileStatusMaps.functions
+        : this.state.fileStatusMaps.frontComponents;
 
     for (const [_id, status] of statusMap) {
       if (status.builtPath === builtPath) {
@@ -172,10 +215,33 @@ export class AppDevCommand {
 
     const manifest = this.state.manifest;
     if (manifest) {
-      const updatedManifest = updateManifestChecksum({ manifest, entityType, builtPath, checksum });
+      const updatedManifest = updateManifestChecksum({
+        manifest,
+        entityType,
+        builtPath,
+        checksum,
+      });
       if (updatedManifest) {
         this.state.manifest = updatedManifest;
         writeManifestToOutput(this.appPath, updatedManifest);
+      }
+    }
+  }
+
+  private markFileAsUploaded(
+    entityType: 'function' | 'frontComponent',
+    builtPath: string,
+    success: boolean,
+  ): void {
+    const statusMap =
+      entityType === 'function'
+        ? this.state.fileStatusMaps.functions
+        : this.state.fileStatusMaps.frontComponents;
+
+    for (const [_id, status] of statusMap) {
+      if (status.builtPath === builtPath) {
+        status.isUploaded = success;
+        break;
       }
     }
   }

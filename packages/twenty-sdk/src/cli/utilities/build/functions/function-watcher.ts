@@ -7,10 +7,13 @@ import { createLogger } from '../common/logger';
 import { processEsbuildResult } from '../common/esbuild-result-processor';
 import {
   type OnFileBuiltCallback,
+  type OnFileUploadedCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
+  type UploadConfig,
 } from '../common/restartable-watcher.interface';
 import { FUNCTIONS_DIR } from './constants';
+import { FileFolder } from 'twenty-shared/types';
 
 const logger = createLogger('functions-watch');
 
@@ -47,6 +50,8 @@ export class FunctionsWatcher implements RestartableWatcher {
   private watchMode: boolean;
   private lastChecksums: Map<string, string> = new Map();
   private onFileBuilt?: OnFileBuiltCallback;
+  private uploadConfig?: UploadConfig;
+  private onFileUploaded?: OnFileUploadedCallback;
   private buildCompletePromise: Promise<void> = Promise.resolve();
   private resolveBuildComplete: (() => void) | null = null;
 
@@ -55,6 +60,8 @@ export class FunctionsWatcher implements RestartableWatcher {
     this.functionPaths = options.sourcePaths;
     this.watchMode = options.watch ?? true;
     this.onFileBuilt = options.onFileBuilt;
+    this.uploadConfig = options.uploadConfig;
+    this.onFileUploaded = options.onFileUploaded;
   }
 
   shouldRestart(sourcePaths: string[]): boolean {
@@ -140,10 +147,13 @@ export class FunctionsWatcher implements RestartableWatcher {
         {
           name: 'external-patterns',
           setup: (build) => {
-            build.onResolve({ filter: /(?:^|\/)generated(?:\/|$)/ }, (args) => ({
-              path: args.path,
-              external: true,
-            }));
+            build.onResolve(
+              { filter: /(?:^|\/)generated(?:\/|$)/ },
+              (args) => ({
+                path: args.path,
+                external: true,
+              }),
+            );
           },
         },
         {
@@ -159,14 +169,45 @@ export class FunctionsWatcher implements RestartableWatcher {
                   return;
                 }
 
-                const { hasChanges } = await processEsbuildResult({
+                const { hasChanges, builtFiles } = await processEsbuildResult({
                   result,
                   outputDir,
                   builtDir: FUNCTIONS_DIR,
                   lastChecksums: watcher.lastChecksums,
                   onFileBuilt: watcher.onFileBuilt,
-                  onSuccess: (relativePath) => logger.success(`✓ Built ${relativePath}`),
+                  onSuccess: (relativePath) =>
+                    logger.success(`✓ Built ${relativePath}`),
                 });
+
+                if (watcher.uploadConfig && builtFiles.length > 0) {
+                  for (const builtFile of builtFiles) {
+                    const uploadResult =
+                      await watcher.uploadConfig.apiService.uploadFile({
+                        filePath: path.join(
+                          watcher.appPath,
+                          OUTPUT_DIR,
+                          builtFile,
+                        ),
+                        builtHandlerPath: builtFile,
+                        fileFolder: FileFolder.BuiltFunction,
+                        applicationUniversalIdentifier:
+                          watcher.uploadConfig.applicationUniversalIdentifier,
+                      });
+
+                    if (uploadResult.success) {
+                      logger.success(`☁️ Uploaded ${builtFile}`);
+                    } else {
+                      logger.error(
+                        `Failed to upload ${builtFile} -- ${uploadResult.error}`,
+                      );
+                    }
+
+                    await watcher.onFileUploaded?.(
+                      builtFile,
+                      uploadResult.success,
+                    );
+                  }
+                }
 
                 if (hasChanges && watchMode) {
                   logger.log('👀 Watching for changes...');

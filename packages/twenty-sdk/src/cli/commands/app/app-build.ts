@@ -10,13 +10,8 @@ import {
 import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import { ApiService } from '@/cli/utilities/api/services/api.service';
-import { FileFolder } from 'twenty-shared/types';
-import { join } from 'path';
-import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 
 const initLogger = createLogger('init');
-const functionLogger = createLogger('functions-watch');
 
 export type AppBuildOptions = {
   appPath?: string;
@@ -25,7 +20,6 @@ export type AppBuildOptions = {
 export class AppBuildCommand {
   private functionsBuilder: FunctionsWatcher | null = null;
   private frontComponentsBuilder: FrontComponentsWatcher | null = null;
-  private apiService = new ApiService();
 
   private appPath: string = '';
 
@@ -69,7 +63,7 @@ export class AppBuildCommand {
       appPath: this.appPath,
       sourcePaths: buildResult.filePaths.functions,
       watch: false,
-      onFileBuilt: async (builtPath, checksum) => {
+      onFileBuilt: (builtPath, checksum) => {
         if (buildResult.manifest) {
           const updatedManifest = updateManifestChecksum({
             manifest: buildResult.manifest,
@@ -80,22 +74,6 @@ export class AppBuildCommand {
 
           if (updatedManifest) {
             buildResult.manifest = updatedManifest;
-          }
-
-          const uploadResult = await this.apiService.uploadFile({
-            filePath: join(this.appPath, OUTPUT_DIR, builtPath),
-            builtHandlerPath: builtPath,
-            fileFolder: FileFolder.BuiltFunction,
-            applicationUniversalIdentifier:
-              buildResult.manifest.application.universalIdentifier,
-          });
-
-          if (uploadResult.success) {
-            functionLogger.success(`☁️ Successfully uploaded ${builtPath}`);
-          } else {
-            functionLogger.error(
-              `Failed to upload ${builtPath} -- ${uploadResult.error}`,
-            );
           }
         }
       },

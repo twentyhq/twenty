@@ -1,3 +1,5 @@
+import { type ApiService } from '@/cli/utilities/api/services/api.service';
+
 export interface RestartableWatcher {
   restart(sourcePaths: string[]): Promise<void>;
   start(): Promise<void>;
@@ -10,9 +12,21 @@ export type OnFileBuiltCallback = (
   checksum: string,
 ) => void | Promise<void>;
 
+export type OnFileUploadedCallback = (
+  builtPath: string,
+  success: boolean,
+) => void | Promise<void>;
+
+export type UploadConfig = {
+  apiService: ApiService;
+  applicationUniversalIdentifier: string;
+};
+
 export type RestartableWatcherOptions = {
   appPath: string;
   sourcePaths: string[];
   watch?: boolean;
   onFileBuilt?: OnFileBuiltCallback;
+  uploadConfig?: UploadConfig;
+  onFileUploaded?: OnFileUploadedCallback;
 };

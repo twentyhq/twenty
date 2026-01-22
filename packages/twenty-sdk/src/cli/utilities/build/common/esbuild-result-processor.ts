@@ -15,6 +15,7 @@ export type ProcessEsbuildResultParams = {
 
 export type ProcessEsbuildResultOutput = {
   hasChanges: boolean;
+  builtFiles: string[];
 };
 
 export const processEsbuildResult = async ({
@@ -30,6 +31,7 @@ export const processEsbuildResult = async ({
   );
 
   let hasChanges = false;
+  const builtFiles: string[] = [];
 
   for (const outputFile of outputFiles) {
     const absoluteOutputFile = path.resolve(outputFile);
@@ -45,6 +47,7 @@ export const processEsbuildResult = async ({
     }
 
     hasChanges = true;
+    builtFiles.push(builtPath);
     lastChecksums.set(builtPath, checksum);
     onSuccess(relativePath);
 
@@ -53,5 +56,5 @@ export const processEsbuildResult = async ({
     }
   }
 
-  return { hasChanges };
+  return { hasChanges, builtFiles };
 };
