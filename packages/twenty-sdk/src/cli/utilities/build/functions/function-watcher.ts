@@ -44,6 +44,7 @@ export class FunctionsWatcher implements RestartableWatcher {
   private esBuildContext: esbuild.BuildContext | null = null;
   private isRestarting = false;
   private watchMode: boolean;
+  private lastInputsSignature: string | null = null;
 
   constructor(options: RestartableWatcherOptions) {
     this.appPath = options.appPath;
@@ -149,17 +150,28 @@ export class FunctionsWatcher implements RestartableWatcher {
                 for (const error of result.errors) {
                   logger.error(`  ${error.text}`);
                 }
-              } else {
-                const outputs = Object.keys(result.metafile?.outputs ?? {})
-                  .filter((file) => file.endsWith('.mjs'))
-                  .map((file) => path.relative(outputDir, file));
+                return;
+              }
 
-                for (const output of outputs) {
-                  logger.success(`✓ Built ${output}`);
-                }
-                if (watchMode) {
-                  logger.log('👀 Watching for changes...');
-                }
+              // Check if inputs changed to detect spurious rebuilds
+              const inputs = Object.keys(result.metafile?.inputs ?? {}).sort();
+              const inputsSignature = inputs.join(',');
+
+              // Skip logging for spurious rebuilds (identical inputs)
+              if (this.lastInputsSignature === inputsSignature) {
+                return;
+              }
+              this.lastInputsSignature = inputsSignature;
+
+              const outputs = Object.keys(result.metafile?.outputs ?? {})
+                .filter((file) => file.endsWith('.mjs'))
+                .map((file) => path.relative(outputDir, file));
+
+              for (const output of outputs) {
+                logger.success(`✓ Built ${output}`);
+              }
+              if (watchMode) {
+                logger.log('👀 Watching for changes...');
               }
             });
           },
