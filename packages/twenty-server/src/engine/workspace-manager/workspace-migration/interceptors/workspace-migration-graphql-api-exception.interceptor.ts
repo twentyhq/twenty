@@ -12,11 +12,11 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { workspaceMigrationBuilderExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter';
+import { workspaceMigrationRunnerExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-runner-exception-formatter';
 import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
-import { workspaceMigrationRunnerExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/formatters/workspace-migration-runner-exception-formatter';
 
 @Injectable()
-export class WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor
+export class WorkspaceMigrationGraphqlApiExceptionInterceptor
   implements NestInterceptor
 {
   constructor(private readonly i18nService: I18nService) {}

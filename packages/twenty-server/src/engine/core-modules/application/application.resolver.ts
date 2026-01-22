@@ -34,7 +34,7 @@ import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -43,7 +43,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
 @Resolver()
-@UseInterceptors(WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor)
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @UseFilters(ApplicationExceptionFilter)
 export class ApplicationResolver {
   constructor(
