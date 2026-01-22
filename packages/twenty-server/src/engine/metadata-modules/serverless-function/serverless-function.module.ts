@@ -26,6 +26,7 @@ import { WorkspaceFlatServerlessFunctionMapCacheService } from 'src/engine/metad
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { FunctionBuildModule } from 'src/engine/metadata-modules/function-build/function-build.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     PermissionsModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
+    FunctionBuildModule,
     ServerlessFunctionLayerModule,
     SubscriptionsModule,
     WorkspaceCacheModule,

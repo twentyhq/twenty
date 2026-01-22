@@ -8,7 +8,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       "message": "Morph relation creation payloads must have the same relation type",
       "userFriendlyMessage": {
         "id": Any<String>,
-        "message": "Morph relation creation payloads must have the same relation type",
+        "message": "An error occurred.",
       },
     },
   ],
@@ -46,7 +46,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       "message": "Morph relation creation payloads must have only relation to the same object metadata",
       "userFriendlyMessage": {
         "id": Any<String>,
-        "message": "Morph relation creation payloads must only contain relation to the same object metadata",
+        "message": "An error occurred.",
       },
     },
   ],

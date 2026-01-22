@@ -40,7 +40,8 @@
         }
       ],
       "handlerName": "myHandler",
-      "handlerPath": "my.function.ts"
+      "sourceHandlerPath": "my.function.ts",
+      "builtHandlerPath": "functions/my.function.mjs"
     }
   ],
   "frontComponents": [
@@ -49,7 +50,8 @@
       "name": "my-component",
       "description": "A root-level front component",
       "componentName": "MyComponent",
-      "componentPath": "my.front-component.tsx"
+      "sourceComponentPath": "my.front-component.tsx",
+      "builtComponentPath": "front-components/my.front-component.mjs"
     }
   ],
   "roles": [

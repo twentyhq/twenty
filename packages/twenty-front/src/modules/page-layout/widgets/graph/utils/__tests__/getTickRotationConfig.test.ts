@@ -82,12 +82,12 @@ describe('getTickRotationConfig', () => {
 
     it('should handle different font sizes', () => {
       const smallFontResult: TickRotationConfig = getTickRotationConfig({
-        widthPerTick: 50,
+        widthPerTick: 200,
         axisFontSize: 8,
       });
 
       const largeFontResult: TickRotationConfig = getTickRotationConfig({
-        widthPerTick: 50,
+        widthPerTick: 200,
         axisFontSize: 16,
       });
 
