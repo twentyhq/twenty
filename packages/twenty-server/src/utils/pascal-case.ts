@@ -1,5 +1,6 @@
 import isObject from 'lodash.isobject';
 import { type PascalCasedPropertiesDeep } from 'type-fest';
+import { pascalCase } from 'twenty-shared/utils';
 
 export const pascalCaseDeep = <T>(value: T): PascalCasedPropertiesDeep<T> => {
   // Check if it's an array
