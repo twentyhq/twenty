@@ -11,9 +11,14 @@ export type ManifestWithoutSources = Omit<
   'sources' | 'packageJson'
 >;
 
+export type EntityBuildResult<TManifest> = {
+  manifests: TManifest[];
+  filePaths: string[];
+};
+
 export type ManifestEntityBuilder<EntityManifest> = {
-  build(appPath: string): Promise<EntityManifest>;
-  validate(data: EntityManifest, errors: ValidationError[]): void;
-  display(data: EntityManifest): void;
+  build(appPath: string): Promise<EntityBuildResult<EntityManifest>>;
+  validate(data: EntityManifest[], errors: ValidationError[]): void;
+  display(data: EntityManifest[]): void;
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[];
 };

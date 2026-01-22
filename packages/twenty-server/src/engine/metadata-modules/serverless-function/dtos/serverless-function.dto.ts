@@ -67,6 +67,10 @@ export class ServerlessFunctionDTO {
 
   @IsString()
   @Field()
+  builtHandlerPath: string;
+
+  @IsString()
+  @Field()
   handlerName: string;
 
   @IsArray()

@@ -16,7 +16,7 @@ image: /images/user-guide/table-views/table.png
       return (
         <Toggle
         value = {true}
-        onChange = {()=>console.log('On Change event')}
+        onChange = {()=>console.log('onChange olayı')}
         color="green"
         toggleSize = "medium"
         />
@@ -29,8 +29,8 @@ image: /images/user-guide/table-views/table.png
     | Özellikler | Tür       | Açıklama                                                                                                | Varsayılan   |
     | ---------- | --------- | ------------------------------------------------------------------------------------------------------- | ------------ |
     | değer      | boolean   | Geçiş butonunun mevcut durumu                                                                           | `yanlış`     |
-    | onChange   | fonksiyon | Callback function triggered when the toggle state changes                                               |              |
-    | renk       | metin     | Color of the toggle when it\                                                                            | mavi renktir |
+    | onChange   | fonksiyon | Açma/kapatma anahtarı durumu değiştiğinde tetiklenen geri çağırma işlevi                                |              |
+    | renk       | metin     | Açma/kapatma anahtarının rengi                                                                          | mavi renktir |
     | toggleSize | metin     | Geçiş butonunun boyutu, hem yüksekliği hem de genişliği etkiler. İki seçeneği vardır: `küçük` ve `orta` | orta         |
   </Tab>
 </Tabs>

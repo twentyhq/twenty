@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { FileFolder } from 'twenty-shared/types';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
@@ -19,7 +20,7 @@ import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/serv
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
-import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/get-serverless-folder-or-throw.utils';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -47,6 +48,8 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
+import { isServerlessFunctionBuilt } from 'src/engine/core-modules/serverless/drivers/utils/is-serverless-function-built';
+import { buildAndUploadServerlessFunction } from 'src/engine/core-modules/serverless/drivers/utils/build-and-upload-serverless-function';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
@@ -205,6 +208,21 @@ export class ServerlessFunctionService {
       ...buildEnvVar(flatApplicationVariables),
     };
 
+    // We keep that check to build functions
+    if (
+      !(await isServerlessFunctionBuilt({
+        flatServerlessFunction,
+        version,
+        fileStorageService: this.fileStorageService,
+      }))
+    ) {
+      await buildAndUploadServerlessFunction({
+        flatServerlessFunction,
+        version,
+        fileStorageService: this.fileStorageService,
+      });
+    }
+
     const resultServerlessFunction = await this.callWithTimeout({
       callback: () =>
         this.serverlessService.execute({
@@ -299,19 +317,38 @@ export class ServerlessFunctionService {
       ? `${parseInt(existingFlatServerlessFunction.latestVersion, 10) + 1}`
       : '1';
 
-    const draftFolderPath = getServerlessFolderOrThrow({
+    const draftSourceFolderPath = getServerlessFolderOrThrow({
       flatServerlessFunction: existingFlatServerlessFunction,
       version: 'draft',
+      fileFolder: FileFolder.ServerlessFunction,
     });
 
-    const newFolderPath = getServerlessFolderOrThrow({
+    const newSourceFolderPath = getServerlessFolderOrThrow({
       flatServerlessFunction: existingFlatServerlessFunction,
       version: newVersion,
+      fileFolder: FileFolder.ServerlessFunction,
     });
 
     await this.fileStorageService.copy({
-      from: { folderPath: draftFolderPath },
-      to: { folderPath: newFolderPath },
+      from: { folderPath: draftSourceFolderPath },
+      to: { folderPath: newSourceFolderPath },
+    });
+
+    const draftBuiltFolderPath = getServerlessFolderOrThrow({
+      flatServerlessFunction: existingFlatServerlessFunction,
+      version: 'draft',
+      fileFolder: FileFolder.BuiltFunction,
+    });
+
+    const newBuiltFolderPath = getServerlessFolderOrThrow({
+      flatServerlessFunction: existingFlatServerlessFunction,
+      version: newVersion,
+      fileFolder: FileFolder.BuiltFunction,
+    });
+
+    await this.fileStorageService.copy({
+      from: { folderPath: draftBuiltFolderPath },
+      to: { folderPath: newBuiltFolderPath },
     });
 
     const newPublishedVersions = [

@@ -1,44 +1,55 @@
-import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type FrontComponentManifest } from 'twenty-shared/application';
+import { createLogger } from '../../common/logger';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
+  type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from './entity.interface';
 
+const logger = createLogger('manifest-watch');
+
+type FrontComponentConfig = Omit<FrontComponentManifest, 'componentPath' | 'componentName'> & {
+  component: { name: string };
+};
+
 export class FrontComponentEntityBuilder
-  implements ManifestEntityBuilder<FrontComponentManifest[]>
+  implements ManifestEntityBuilder<FrontComponentManifest>
 {
-  async build(appPath: string): Promise<FrontComponentManifest[]> {
-    const componentFiles = await glob(['src/app/**/*.front-component.tsx'], {
+  async build(appPath: string): Promise<EntityBuildResult<FrontComponentManifest>> {
+    const componentFiles = await glob(['**/*.front-component.tsx'], {
       cwd: appPath,
-      absolute: true,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
     });
 
-    const frontComponentManifests: FrontComponentManifest[] = [];
+    const manifests: FrontComponentManifest[] = [];
 
-    for (const filepath of componentFiles) {
+    for (const filePath of componentFiles) {
       try {
-        frontComponentManifests.push(
-          await manifestExtractFromFileServer.extractManifestFromFile<FrontComponentManifest>(
-            filepath,
-            { entryProperty: 'component' },
-          ),
-        );
+        const absolutePath = `${appPath}/${filePath}`;
+        const config =
+          await manifestExtractFromFileServer.extractManifestFromFile<FrontComponentConfig>(
+            absolutePath,
+          );
+
+        const { component, ...rest } = config;
+
+        manifests.push({
+          ...rest,
+          componentName: component.name,
+          componentPath: filePath,
+        });
       } catch (error) {
-        const relPath = toPosixRelative(filepath, appPath);
         throw new Error(
-          `Failed to load front component from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
+          `Failed to load front component from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
 
-    return frontComponentManifests;
+    return { manifests, filePaths: componentFiles };
   }
 
   validate(
@@ -58,13 +69,13 @@ export class FrontComponentEntityBuilder
   }
 
   display(components: FrontComponentManifest[]): void {
-    console.log(chalk.green(`  ✓ Found ${components.length} front component(s)`));
+    logger.success(`✓ Found ${components.length} front component(s)`);
 
     if (components.length > 0) {
-      console.log(chalk.gray(`  📍 Front component entry points:`));
+      logger.log('📍 Entry points:');
       for (const component of components) {
         const name = component.name || component.universalIdentifier;
-        console.log(chalk.gray(`     - ${name} (${component.componentPath})`));
+        logger.log(`   - ${name} (${component.componentPath})`);
       }
     }
   }

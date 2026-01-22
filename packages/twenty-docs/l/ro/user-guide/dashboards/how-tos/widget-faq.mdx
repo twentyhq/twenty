@@ -1,67 +1,67 @@
 ---
-title: Widget FAQ
-description: Common questions and error messages explained.
+title: Întrebări frecvente despre widget
+description: Întrebări comune și mesaje de eroare explicate.
 ---
 
 <AccordionGroup>
-  <Accordion title="How do I show percentages instead of counts?">
-    Three options:
+  <Accordion title="Cum afișez procente în loc de numărări?">
+    Trei opțiuni:
 
-    * **Percent empty/not empty**: Under Data on display, select Percent empty or Percent not empty
-    * **Ratio**: For Select or Checkbox fields, enable Ratio to show a specific option as a percentage of all records
-    * **Suffix**: For aggregate charts, add `%` as a Suffix in Style settings
+    * **Procent gol/completat**: În Date afișate, selectează Procent gol sau Procent completat
+    * **Raport**: Pentru câmpurile Select sau Checkbox, activează Raport pentru a afișa o opțiune specifică drept procent din toate înregistrările
+    * **Sufix**: Pentru diagrame agregate, adaugă `%` ca Sufix în Setările de stil
   </Accordion>
 
-  <Accordion title="What's the difference between grouped and stacked bars?">
-    When using **Group by**, you can display series two ways:
+  <Accordion title="Care este diferența dintre bare grupate și stivuite?">
+    Când folosești **Grupează după**, poți afișa seriile în două moduri:
 
-    * **Grouped**: Bars side by side—best for comparing exact values
-    * **Stacked**: Bars on top of each other—best for showing composition
+    * **Grupate**: Bare alăturate—cel mai bine pentru compararea valorilor exacte
+    * **Stivuite**: Bare una peste alta—cel mai bine pentru a arăta compoziția
 
-    Toggle **Stacked** in Style settings to switch.
+    Comută opțiunea **Stivuite** în Setările de stil.
   </Accordion>
 
-  <Accordion title="Why can't I see Sum or Average options?">
-    Available operations depend on **field type**:
+  <Accordion title="De ce nu văd opțiunile Sumă sau Medie?">
+    Operațiunile disponibile depind de **tipul câmpului**:
 
-    * **Number fields**: Sum, Average, Min, Max
-    * **Date fields**: Earliest, Latest (aggregate charts only)
-    * **Checkbox fields**: Count true, Count false
+    * **Câmpuri numerice**: Sumă, Medie, Minim, Maxim
+    * **Câmpuri de tip dată**: Cel mai devreme, Cel mai târziu (doar pentru diagrame agregate)
+    * **Câmpuri Checkbox**: Număr valori adevărate, Număr valori false
 
-    If you don't see an option, check that you've selected a compatible field type.
+    Dacă nu vezi o opțiune, verifică dacă ai selectat un tip de câmp compatibil.
   </Accordion>
 
-  <Accordion title="Why are some settings grayed out or missing?">
-    Many settings only appear when prerequisites are met:
+  <Accordion title="De ce unele setări sunt dezactivate sau lipsesc?">
+    Multe setări apar doar când sunt îndeplinite cerințele prealabile:
 
-    * **Date granularity**: Select a date field first
-    * **Group by, Legend, Stacked**: Set Source first
-    * **Legend, Stacked toggles**: Set Group by first
+    * **Granularitatea datei**: Selectează mai întâi un câmp de tip dată
+    * **Grupează după, Legendă, Stivuite**: Setează Sursa mai întâi
+    * **Comutatoarele Legendă și Stivuite**: Setează mai întâi Grupează după
 
-    If a setting is missing, configure its prerequisite first.
+    Dacă lipsește o setare, configurează mai întâi cerința ei prealabilă.
   </Accordion>
 
-  <Accordion title="What does 'No data' mean?">
-    The chart found no records matching your configuration.
+  <Accordion title="Ce înseamnă „No data”?">
+    Diagrama nu a găsit înregistrări care să corespundă configurației tale.
 
-    **To fix:** Remove or adjust filters, verify you selected the correct Source object, or check that records exist for your date range.
+    **Pentru remediere:** Elimină sau ajustează filtrele, verifică dacă ai selectat obiectul Sursă corect sau verifică dacă există înregistrări pentru intervalul tău de date.
   </Accordion>
 
-  <Accordion title="What does 'Invalid configuration' mean?">
-    A required setting is missing or incompatible.
+  <Accordion title="Ce înseamnă „Invalid configuration”?">
+    O setare obligatorie lipsește sau este incompatibilă.
 
-    **To fix:** Ensure Source is set, Data on display is configured, and any required grouping fields are selected.
+    **Pentru remediere:** Asigură-te că Sursa este setată, Datele afișate sunt configurate și orice câmpuri de grupare necesare sunt selectate.
   </Accordion>
 
-  <Accordion title="What does 'Undisplayed data' mean?">
-    Your data exceeds display limits (100 bars, 100 data points, or 100 slices).
+  <Accordion title="Ce înseamnă „Undisplayed data”?">
+    Datele tale depășesc limitele de afișare (100 de bare, 100 de puncte de date sau 100 de felii).
 
-    **To fix:** Add filters to narrow your data, or change date granularity from Day to Week or Month.
+    **Pentru remediere:** Adaugă filtre pentru a restrânge datele sau schimbă granularitatea datei din Zi în Săptămână sau Lună.
   </Accordion>
 
-  <Accordion title="Why is one axis showing no data?">
-    The selected field has no values for the records in your filter, or the field type doesn't match the expected data.
+  <Accordion title="De ce una dintre axe nu afișează date?">
+    Câmpul selectat nu are valori pentru înregistrările din filtrul tău sau tipul câmpului nu se potrivește cu datele așteptate.
 
-    **To fix:** Try a different field, or check that records have values for the selected field.
+    **Pentru remediere:** Încearcă un alt câmp sau verifică dacă înregistrările au valori pentru câmpul selectat.
   </Accordion>
 </AccordionGroup>

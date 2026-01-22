@@ -1,44 +1,46 @@
-import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type ServerlessFunctionManifest } from 'twenty-shared/application';
+import { createLogger } from '../../common/logger';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
+  type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from './entity.interface';
 
+const logger = createLogger('manifest-watch');
+
 export class FunctionEntityBuilder
-  implements ManifestEntityBuilder<ServerlessFunctionManifest[]>
+  implements ManifestEntityBuilder<ServerlessFunctionManifest>
 {
-  async build(appPath: string): Promise<ServerlessFunctionManifest[]> {
-    const functionFiles = await glob(['src/app/**/*.function.ts'], {
+  async build(appPath: string): Promise<EntityBuildResult<ServerlessFunctionManifest>> {
+    const functionFiles = await glob(['**/*.function.ts'], {
       cwd: appPath,
-      absolute: true,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
     });
 
-    const functionManifests: ServerlessFunctionManifest[] = [];
+    const manifests: ServerlessFunctionManifest[] = [];
 
-    for (const filepath of functionFiles) {
+    for (const filePath of functionFiles) {
       try {
-        functionManifests.push(
+        const absolutePath = `${appPath}/${filePath}`;
+
+        manifests.push(
           await manifestExtractFromFileServer.extractManifestFromFile<ServerlessFunctionManifest>(
-            filepath,
+            absolutePath,
             { entryProperty: 'handler' },
           ),
         );
       } catch (error) {
-        const relPath = toPosixRelative(filepath, appPath);
         throw new Error(
-          `Failed to load function from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
+          `Failed to load function from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
 
-    return functionManifests;
+    return { manifests, filePaths: functionFiles };
   }
 
   validate(
@@ -112,13 +114,13 @@ export class FunctionEntityBuilder
   }
 
   display(functions: ServerlessFunctionManifest[]): void {
-    console.log(chalk.green(`  ✓ Found ${functions.length} function(s)`));
+    logger.success(`✓ Found ${functions.length} function(s)`);
 
     if (functions.length > 0) {
-      console.log(chalk.gray(`  📍 Function entry points:`));
+      logger.log('📍 Entry points:');
       for (const fn of functions) {
         const name = fn.name || fn.universalIdentifier;
-        console.log(chalk.gray(`     - ${name} (${fn.handlerPath})`));
+        logger.log(`   - ${name} (${fn.handlerPath})`);
       }
     }
   }

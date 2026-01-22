@@ -718,8 +718,9 @@ export class RowLevelPermissionPredicateService {
   private async hasRowLevelPermissionFeature(
     workspaceId: string,
   ): Promise<boolean> {
-    const isBillingEnabled = this.configService.get('IS_BILLING_ENABLED');
-    const entrepriseKey = this.configService.get('ENTERPRISE_KEY');
+    const hasValidEnterpriseKey = isDefined(
+      this.configService.get('ENTERPRISE_KEY'),
+    );
 
     const isRowLevelPermissionEnabled =
       await this.billingService.hasEntitlement(
@@ -727,11 +728,7 @@ export class RowLevelPermissionPredicateService {
         BillingEntitlementKey.RLS,
       );
 
-    if (isDefined(entrepriseKey)) {
-      return true;
-    }
-
-    return isBillingEnabled && isRowLevelPermissionEnabled;
+    return hasValidEnterpriseKey && isRowLevelPermissionEnabled;
   }
 
   private async hasRowLevelPermissionFeatureOrThrow(workspaceId: string) {

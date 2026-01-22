@@ -1,17 +1,18 @@
+import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
-import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
+import { runManifestBuild, type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-build';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import chalk from 'chalk';
-import { type ApplicationManifest } from 'twenty-shared/application';
+
+const initLogger = createLogger('init');
 
 export type AppDevOptions = {
   appPath?: string;
 };
 
 type AppDevState = {
-  manifest: ApplicationManifest | null;
+  buildResult: ManifestBuildResult | null;
 };
 
 export class AppDevCommand {
@@ -21,14 +22,14 @@ export class AppDevCommand {
 
   private appPath: string = '';
   private state: AppDevState = {
-    manifest: null,
+    buildResult: null,
   };
 
   async execute(options: AppDevOptions): Promise<void> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
-    console.log(chalk.blue('🚀 Starting Twenty Application Development Mode'));
-    console.log(chalk.gray(`📁 App Path: ${this.appPath}`));
+    initLogger.log('🚀 Starting Twenty Application Development Mode');
+    initLogger.log(`📁 App Path: ${this.appPath}`);
     console.log('');
 
     await this.startWatchers();
@@ -37,32 +38,32 @@ export class AppDevCommand {
   }
 
   private async startWatchers(): Promise<void> {
-    const manifest = await runManifestBuild(this.appPath);
+    const buildResult = await runManifestBuild(this.appPath);
 
-    if (!manifest) {
+    if (!buildResult.manifest) {
       return;
     }
 
-    this.state.manifest = manifest;
+    this.state.buildResult = buildResult;
 
     await this.startManifestWatcher();
-    await this.startFunctionsWatcher(manifest);
-    await this.startFrontComponentsWatcher(manifest);
+    await this.startFunctionsWatcher(buildResult);
+    await this.startFrontComponentsWatcher(buildResult);
   }
 
   private async startManifestWatcher(): Promise<void> {
     this.manifestWatcher = new ManifestWatcher({
       appPath: this.appPath,
       callbacks: {
-        onBuildSuccess: (manifest) => {
-          this.state.manifest = manifest;
+        onBuildSuccess: (result) => {
+          this.state.buildResult = result;
 
-          if (this.functionsWatcher?.shouldRestart(manifest)) {
-            this.functionsWatcher.restart(manifest);
+          if (this.functionsWatcher?.shouldRestart(result)) {
+            this.functionsWatcher.restart(result);
           }
 
-          if (this.frontComponentsWatcher?.shouldRestart(manifest)) {
-            this.frontComponentsWatcher.restart(manifest);
+          if (this.frontComponentsWatcher?.shouldRestart(result)) {
+            this.frontComponentsWatcher.restart(result);
           }
         },
       },
@@ -71,45 +72,32 @@ export class AppDevCommand {
     await this.manifestWatcher.start();
   }
 
-  private async startFunctionsWatcher(manifest: ApplicationManifest): Promise<void> {
+  private async startFunctionsWatcher(buildResult: ManifestBuildResult): Promise<void> {
     this.functionsWatcher = new FunctionsWatcher({
       appPath: this.appPath,
-      manifest,
+      buildResult,
     });
 
     await this.functionsWatcher.start();
   }
 
-  private async startFrontComponentsWatcher(manifest: ApplicationManifest): Promise<void> {
+  private async startFrontComponentsWatcher(buildResult: ManifestBuildResult): Promise<void> {
     this.frontComponentsWatcher = new FrontComponentsWatcher({
       appPath: this.appPath,
-      manifest,
+      buildResult,
     });
 
     await this.frontComponentsWatcher.start();
   }
 
   private setupGracefulShutdown(): void {
-    process.on('SIGINT', async () => {
-      console.log(chalk.yellow('\n🛑 Stopping development mode...'));
-
-      const closePromises: Promise<void>[] = [];
-
-      if (this.manifestWatcher) {
-        closePromises.push(this.manifestWatcher.close());
-      }
-
-      if (this.functionsWatcher) {
-        closePromises.push(this.functionsWatcher.close());
-      }
-
-      if (this.frontComponentsWatcher) {
-        closePromises.push(this.frontComponentsWatcher.close());
-      }
-
-      await Promise.all(closePromises);
-
+    const shutdown = () => {
+      console.log('');
+      initLogger.warn('🛑 Stopping...');
       process.exit(0);
-    });
+    };
+
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
   }
 }
