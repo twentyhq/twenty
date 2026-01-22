@@ -191,6 +191,7 @@ export enum AllMetadataName {
   fieldMetadata = 'fieldMetadata',
   frontComponent = 'frontComponent',
   index = 'index',
+  navigationMenuItem = 'navigationMenuItem',
   objectMetadata = 'objectMetadata',
   pageLayout = 'pageLayout',
   pageLayoutTab = 'pageLayoutTab',
@@ -5615,9 +5616,15 @@ export enum WorkspaceMemberTimeFormatEnum {
   SYSTEM = 'SYSTEM'
 }
 
+export enum WorkspaceMigrationActionType {
+  create = 'create',
+  delete = 'delete',
+  update = 'update'
+}
+
 export type WorkspaceMigrationDeleteActionInput = {
   metadataName: AllMetadataName;
-  type: Scalars['String'];
+  type: WorkspaceMigrationActionType;
   universalIdentifier: Scalars['String'];
 };
 
