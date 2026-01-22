@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Readable } from 'stream';
 
-import { Sources } from 'twenty-shared/types';
+import { FileFolder, Sources } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
@@ -45,7 +45,7 @@ export class FileStorageService implements StorageDriver {
     file: string | Buffer | Uint8Array;
     name: string;
     mimeType: string | undefined;
-    folder: string;
+    folder: FileFolder;
     applicationId: string;
     workspaceId: string;
     fileId?: string;
@@ -72,16 +72,37 @@ export class FileStorageService implements StorageDriver {
     return fileEntity;
   }
 
-  writeFolder(sources: Sources, folderPath: string): Promise<void> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    return driver.writeFolder(sources, folderPath);
-  }
-
+  /**
+   * @deprecated Use read_v2 instead
+   */
   read(params: { folderPath: string; filename: string }): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     return driver.read(params);
+  }
+
+  read_v2({
+    filename,
+    folder,
+    applicationId,
+    workspaceId,
+  }: {
+    filename: string;
+    folder: FileFolder;
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<Readable> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    const folderPath = `${workspaceId}/${applicationId}/${folder}`;
+
+    return driver.read({ folderPath, filename });
+  }
+
+  writeFolder(sources: Sources, folderPath: string): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.writeFolder(sources, folderPath);
   }
 
   readFolder(folderPath: string): Promise<Sources> {
