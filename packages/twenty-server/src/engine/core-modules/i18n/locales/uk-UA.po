@@ -2358,21 +2358,6 @@ msgstr "Ідентифікатор моделі не може бути поро�
 msgid "Monday"
 msgstr "Понеділок"
 
-#. js-lingui-id: FqzlX4
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must have the same relation type"
-msgstr "Під час створення відношення морфу всі відношення мають бути одного типу"
-
-#. js-lingui-id: nU54nm
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to other object metadata"
-msgstr "Під час створення відношення морфу навантаження повинні містити відношення тільки до іншого об'єкта метаданих"
-
-#. js-lingui-id: Z/Awgf
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to the same object metadata"
-msgstr "Під час створення відношення морфу всі відношення мають стосуватися одного об'єкта метаданих"
-
 #. js-lingui-id: Lcqv5g
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Morph relation field must have a morph id"

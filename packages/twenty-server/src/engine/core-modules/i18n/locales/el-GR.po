@@ -2358,21 +2358,6 @@ msgstr "Το αναγνωριστικό μοντέλου δεν μπορεί ν�
 msgid "Monday"
 msgstr "Δευτέρα"
 
-#. js-lingui-id: FqzlX4
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must have the same relation type"
-msgstr "Τα φορτία δημιουργίας σχέσεων μορφής πρέπει να έχουν τον ίδιο τύπο σχέσης"
-
-#. js-lingui-id: nU54nm
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to other object metadata"
-msgstr "Τα φορτία δημιουργίας σχέσεων μορφής πρέπει να περιέχουν μόνο σχέση με άλλα μεταδεδομένα αντικειμένου"
-
-#. js-lingui-id: Z/Awgf
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to the same object metadata"
-msgstr "Τα φορτία δημιουργίας σχέσεων μορφής πρέπει να περιέχουν μόνο σχέσεις με τα ίδια μεταδεδομένα αντικειμένου"
-
 #. js-lingui-id: Lcqv5g
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Morph relation field must have a morph id"

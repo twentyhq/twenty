@@ -2358,21 +2358,6 @@ msgstr "L'ID del model no pot estar buit"
 msgid "Monday"
 msgstr "Dilluns"
 
-#. js-lingui-id: FqzlX4
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must have the same relation type"
-msgstr "Les càrregues útils de creació de relacions de morfologia han de tenir el mateix tipus de relació"
-
-#. js-lingui-id: nU54nm
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to other object metadata"
-msgstr "Les càrregues útils de creació de relacions de morfologia només han de contenir relacions amb metadades d'objectes externs"
-
-#. js-lingui-id: Z/Awgf
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to the same object metadata"
-msgstr "Les càrregues útils de creació de relacions de morfologia han de contenir només relacions amb el mateix objecte i metadades"
-
 #. js-lingui-id: Lcqv5g
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Morph relation field must have a morph id"

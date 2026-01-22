@@ -9541,6 +9541,11 @@ msgstr "Type de relation"
 msgid "Relations"
 msgstr "Relations"
 
+#. js-lingui-id: ZrUSCK
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
+msgid "Relations cannot include the source object when multiple destinations are selected."
+msgstr ""
+
 #. js-lingui-id: HR+PwH
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 msgid "Relative"

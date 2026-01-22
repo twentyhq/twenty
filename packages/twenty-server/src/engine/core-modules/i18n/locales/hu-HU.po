@@ -2358,21 +2358,6 @@ msgstr "A modellazonosító nem lehet üres"
 msgid "Monday"
 msgstr "Hétfő"
 
-#. js-lingui-id: FqzlX4
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must have the same relation type"
-msgstr "A morf kapcsolat létrehozási fájlnak azonos kapcsolat típusúnak kell lennie"
-
-#. js-lingui-id: nU54nm
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to other object metadata"
-msgstr "A morf kapcsolati teremtési csomagoknak csak más objektum metaadataival kell tartalmazniuk kapcsolatot"
-
-#. js-lingui-id: Z/Awgf
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to the same object metadata"
-msgstr "A morf kapcsolat létrehozási fájlnak csak ugyanahhoz az objektum metaadatához kell tartalmaznia kapcsolatot"
-
 #. js-lingui-id: Lcqv5g
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Morph relation field must have a morph id"
