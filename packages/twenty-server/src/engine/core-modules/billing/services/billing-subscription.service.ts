@@ -23,11 +23,12 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { type BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
@@ -177,18 +178,31 @@ export class BillingSubscriptionService {
 
   async getWorkspaceEntitlements(
     workspaceId: string,
-  ): Promise<BillingEntitlementEntity[]> {
+  ): Promise<BillingEntitlementDTO[]> {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
-
-    if (!isBillingEnabled) {
-      return [];
-    }
+    const hasValidEnterpriseKey = isDefined(
+      this.twentyConfigService.get('ENTERPRISE_KEY'),
+    );
 
     const entitlements = await this.billingEntitlementRepository.find({
       where: { workspaceId },
     });
 
-    return entitlements;
+    const entitlementsByKey = entitlements.reduce(
+      (acc, entitlement) => {
+        acc[entitlement.key] = entitlement;
+
+        return acc;
+      },
+      {} as Record<BillingEntitlementKey, BillingEntitlementEntity>,
+    );
+
+    return Object.values(BillingEntitlementKey).map((key) => ({
+      key,
+      value:
+        hasValidEnterpriseKey &&
+        (!isBillingEnabled || (entitlementsByKey[key]?.value ?? false)),
+    }));
   }
 
   async getWorkspaceEntitlementByKey(
