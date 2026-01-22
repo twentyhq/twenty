@@ -1,3 +1,4 @@
+import { type BuiltAsset } from '@/cli/utilities/build/assets/assets-watcher';
 import { findPathFile } from '@/cli/utilities/file/utils/file-find';
 import { parseJsoncFile } from '@/cli/utilities/file/utils/file-jsonc';
 import { glob } from 'fast-glob';
@@ -6,7 +7,6 @@ import { relative, sep } from 'path';
 import { type ApplicationManifest, type FrontComponentAsset } from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
 import { createLogger } from '../common/logger';
-import { type BuiltAsset } from '../common/restartable-watcher.interface';
 import { applicationEntityBuilder } from './entities/application';
 import { frontComponentEntityBuilder } from './entities/front-component';
 import { functionEntityBuilder } from './entities/function';
@@ -122,15 +122,36 @@ export const updateManifestChecksum = ({
 
 export type UpdateManifestAssetsParams = {
   manifest: ApplicationManifest;
+  entityType: ManifestEntityType;
   builtPath: string;
   assets: BuiltAsset[];
 };
 
 export const updateManifestAssets = ({
   manifest,
+  entityType,
   builtPath,
   assets,
 }: UpdateManifestAssetsParams): ApplicationManifest | null => {
+  const manifestAssets: FrontComponentAsset[] = assets.map((asset) => ({
+    sourceAssetPath: asset.sourceAssetPath,
+    builtAssetPath: asset.builtAssetPath,
+    builtAssetChecksum: asset.builtAssetChecksum,
+  }));
+
+  if (entityType === 'function') {
+    const fnIndex = manifest.functions.findIndex((f) => f.builtHandlerPath === builtPath);
+    if (fnIndex === -1) {
+      return null;
+    }
+    return {
+      ...manifest,
+      functions: manifest.functions.map((fn, index) =>
+        index === fnIndex ? { ...fn, assets: manifestAssets } : fn,
+      ),
+    };
+  }
+
   const componentIndex = manifest.frontComponents?.findIndex(
     (c) => c.builtComponentPath === builtPath,
   ) ?? -1;
@@ -138,12 +159,6 @@ export const updateManifestAssets = ({
   if (componentIndex === -1) {
     return null;
   }
-
-  const manifestAssets: FrontComponentAsset[] = assets.map((asset) => ({
-    sourceAssetPath: asset.sourceAssetPath,
-    builtAssetPath: asset.builtAssetPath,
-    builtAssetChecksum: asset.builtAssetChecksum,
-  }));
 
   return {
     ...manifest,

@@ -5,18 +5,13 @@ export interface RestartableWatcher {
   shouldRestart(sourcePaths: string[]): boolean;
 }
 
-export type BuiltAsset = {
-  sourceAssetPath: string;
-  builtAssetPath: string;
-  builtAssetChecksum: string;
-};
-
 export type OnFileBuiltCallback = (builtPath: string, checksum: string) => void;
 
-export type OnFileBuiltWithAssetsCallback = (
+// Callback that includes source asset paths (resolved to built assets by app-dev)
+export type OnFileBuiltWithAssetPathsCallback = (
   builtPath: string,
   checksum: string,
-  assets: BuiltAsset[],
+  sourceAssetPaths: string[],
 ) => void;
 
 export type RestartableWatcherOptions = {
@@ -26,9 +21,9 @@ export type RestartableWatcherOptions = {
   onFileBuilt?: OnFileBuiltCallback;
 };
 
-export type FrontComponentWatcherOptions = {
+export type WatcherWithAssetTrackingOptions = {
   appPath: string;
   sourcePaths: string[];
   watch?: boolean;
-  onFileBuilt?: OnFileBuiltWithAssetsCallback;
+  onFileBuilt?: OnFileBuiltWithAssetPathsCallback;
 };

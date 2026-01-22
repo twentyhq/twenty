@@ -4,7 +4,8 @@ export type LoggerContext =
   | 'init'
   | 'manifest-watch'
   | 'functions-watch'
-  | 'front-components-watch';
+  | 'front-components-watch'
+  | 'assets-watch';
 
 type LoggerConfig = {
   prefix: string;
@@ -27,6 +28,10 @@ const LOGGER_CONFIGS: Record<LoggerContext, LoggerConfig> = {
   'front-components-watch': {
     prefix: '[front-components-watch]',
     color: chalk.green,
+  },
+  'assets-watch': {
+    prefix: '[assets-watch]',
+    color: chalk.blue,
   },
 };
 

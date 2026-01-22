@@ -3,9 +3,8 @@ import type * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
 import {
-  type BuiltAsset,
   type OnFileBuiltCallback,
-  type OnFileBuiltWithAssetsCallback,
+  type OnFileBuiltWithAssetPathsCallback,
 } from './restartable-watcher.interface';
 
 export type ProcessEsbuildResultParams = {
@@ -17,14 +16,14 @@ export type ProcessEsbuildResultParams = {
   onSuccess: (relativePath: string) => void;
 };
 
-export type ProcessEsbuildResultWithAssetsParams = {
+export type ProcessEsbuildResultWithAssetPathsParams = {
   result: esbuild.BuildResult;
   outputDir: string;
   builtDir: string;
   lastChecksums: Map<string, string>;
-  assetsMap: Map<string, BuiltAsset[]>;
-  onFileBuilt?: OnFileBuiltWithAssetsCallback;
-  onSuccess: (relativePath: string, assets: BuiltAsset[]) => void;
+  assetPathsMap: Map<string, string[]>;
+  onFileBuilt?: OnFileBuiltWithAssetPathsCallback;
+  onSuccess: (relativePath: string, assetPaths: string[]) => void;
 };
 
 export type ProcessEsbuildResultOutput = {
@@ -69,15 +68,15 @@ export const processEsbuildResult = async ({
   return { hasChanges };
 };
 
-export const processEsbuildResultWithAssets = async ({
+export const processEsbuildResultWithAssetPaths = async ({
   result,
   outputDir,
   builtDir,
   lastChecksums,
-  assetsMap,
+  assetPathsMap,
   onFileBuilt,
   onSuccess,
-}: ProcessEsbuildResultWithAssetsParams): Promise<ProcessEsbuildResultOutput> => {
+}: ProcessEsbuildResultWithAssetPathsParams): Promise<ProcessEsbuildResultOutput> => {
   const outputFiles = Object.keys(result.metafile?.outputs ?? {})
     .filter((file) => file.endsWith('.mjs'));
 
@@ -99,11 +98,11 @@ export const processEsbuildResultWithAssets = async ({
     hasChanges = true;
     lastChecksums.set(builtPath, checksum);
 
-    const assets = assetsMap.get(builtPath) ?? [];
-    onSuccess(relativePath, assets);
+    const assetPaths = assetPathsMap.get(builtPath) ?? [];
+    onSuccess(relativePath, assetPaths);
 
     if (onFileBuilt) {
-      onFileBuilt(builtPath, checksum, assets);
+      onFileBuilt(builtPath, checksum, assetPaths);
     }
   }
 

@@ -63,7 +63,7 @@ export const defineManifestTests = (appPath: string): void => {
 
       const asset = testComponent.assets[0];
       expect(asset.sourceAssetPath).toBe('src/assets/test-logo.png');
-      expect(asset.builtAssetPath).toMatch(/^front-components\/.*\.png$/);
+      expect(asset.builtAssetPath).toMatch(/^assets\/.*\.png$/);
       expect(asset.builtAssetChecksum).toBeDefined();
       expect(typeof asset.builtAssetChecksum).toBe('string');
     });

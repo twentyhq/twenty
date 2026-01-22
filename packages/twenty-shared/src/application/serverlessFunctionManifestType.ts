@@ -1,3 +1,4 @@
+import { type FrontComponentAsset } from '@/application/frontComponentManifestType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type HTTPMethod } from '@/types';
 
@@ -30,6 +31,7 @@ export type ServerlessFunctionManifest = SyncableEntityOptions & {
   handlerName: string;
   toolInputSchema?: InputJsonSchema;
   isTool?: boolean;
+  assets?: FrontComponentAsset[];
 };
 
 export type DatabaseEventTrigger = {

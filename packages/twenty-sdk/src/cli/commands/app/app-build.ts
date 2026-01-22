@@ -1,6 +1,6 @@
 import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
+import { AssetsWatcher, type BuiltAsset } from '@/cli/utilities/build/assets/assets-watcher';
 import { createLogger } from '@/cli/utilities/build/common/logger';
-import { type BuiltAsset } from '@/cli/utilities/build/common/restartable-watcher.interface';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
 import {
@@ -20,6 +20,7 @@ export type AppBuildOptions = {
 };
 
 export class AppBuildCommand {
+  private assetsBuilder: AssetsWatcher | null = null;
   private functionsBuilder: FunctionsWatcher | null = null;
   private frontComponentsBuilder: FrontComponentsWatcher | null = null;
 
@@ -50,6 +51,8 @@ export class AppBuildCommand {
       return null;
     }
 
+    // Build assets first so they're available for functions and front components
+    await this.buildAssets();
     await this.buildFunctions(buildResult);
     await this.buildFrontComponents(buildResult);
     await writeManifestToOutput(this.appPath, buildResult.manifest);
@@ -58,19 +61,41 @@ export class AppBuildCommand {
     return buildResult;
   }
 
+  private async buildAssets(): Promise<void> {
+    this.assetsBuilder = new AssetsWatcher({
+      appPath: this.appPath,
+      watch: false,
+    });
+
+    await this.assetsBuilder.start();
+  }
+
   private async buildFunctions(buildResult: ManifestBuildResult): Promise<void> {
+    const assetsWatcher = this.assetsBuilder;
+
     this.functionsBuilder = new FunctionsWatcher({
       appPath: this.appPath,
       sourcePaths: buildResult.filePaths.functions,
       watch: false,
-      onFileBuilt: (builtPath, checksum) => {
+      onFileBuilt: (builtPath: string, checksum: string, sourceAssetPaths: string[]) => {
         if (buildResult.manifest) {
-          const updatedManifest = updateManifestChecksum({
+          let updatedManifest = updateManifestChecksum({
             manifest: buildResult.manifest,
             entityType: 'function',
             builtPath,
             checksum,
           });
+
+          if (updatedManifest && sourceAssetPaths.length > 0 && assetsWatcher) {
+            const builtAssets = this.resolveBuiltAssets(assetsWatcher, sourceAssetPaths);
+            updatedManifest = updateManifestAssets({
+              manifest: updatedManifest,
+              entityType: 'function',
+              builtPath,
+              assets: builtAssets,
+            });
+          }
+
           if (updatedManifest) {
             buildResult.manifest = updatedManifest;
           }
@@ -82,11 +107,13 @@ export class AppBuildCommand {
   }
 
   private async buildFrontComponents(buildResult: ManifestBuildResult): Promise<void> {
+    const assetsWatcher = this.assetsBuilder;
+
     this.frontComponentsBuilder = new FrontComponentsWatcher({
       appPath: this.appPath,
       sourcePaths: buildResult.filePaths.frontComponents,
       watch: false,
-      onFileBuilt: (builtPath: string, checksum: string, assets: BuiltAsset[]) => {
+      onFileBuilt: (builtPath: string, checksum: string, sourceAssetPaths: string[]) => {
         if (buildResult.manifest) {
           let updatedManifest = updateManifestChecksum({
             manifest: buildResult.manifest,
@@ -95,11 +122,13 @@ export class AppBuildCommand {
             checksum,
           });
 
-          if (updatedManifest && assets.length > 0) {
+          if (updatedManifest && sourceAssetPaths.length > 0 && assetsWatcher) {
+            const builtAssets = this.resolveBuiltAssets(assetsWatcher, sourceAssetPaths);
             updatedManifest = updateManifestAssets({
               manifest: updatedManifest,
+              entityType: 'frontComponent',
               builtPath,
-              assets,
+              assets: builtAssets,
             });
           }
 
@@ -113,7 +142,21 @@ export class AppBuildCommand {
     await this.frontComponentsBuilder.start();
   }
 
+  private resolveBuiltAssets(assetsWatcher: AssetsWatcher, sourceAssetPaths: string[]): BuiltAsset[] {
+    const builtAssets: BuiltAsset[] = [];
+
+    for (const sourceAssetPath of sourceAssetPaths) {
+      const builtAsset = assetsWatcher.getBuiltAsset(sourceAssetPath);
+      if (builtAsset) {
+        builtAssets.push(builtAsset);
+      }
+    }
+
+    return builtAssets;
+  }
+
   private async cleanup(): Promise<void> {
+    await this.assetsBuilder?.close();
     await this.functionsBuilder?.close();
     await this.frontComponentsBuilder?.close();
     await manifestExtractFromFileServer.closeViteServer();

@@ -1,14 +1,16 @@
 import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
+import { createAssetTrackingPlugin } from '../assets/asset-tracking-plugin';
+import { ASSETS_DIR } from '../assets/constants';
 import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
 import { OUTPUT_DIR } from '../common/constants';
 import { createLogger } from '../common/logger';
-import { processEsbuildResult } from '../common/esbuild-result-processor';
+import { processEsbuildResultWithAssetPaths } from '../common/esbuild-result-processor';
 import {
-  type OnFileBuiltCallback,
+  type OnFileBuiltWithAssetPathsCallback,
   type RestartableWatcher,
-  type RestartableWatcherOptions,
+  type WatcherWithAssetTrackingOptions,
 } from '../common/restartable-watcher.interface';
 import { FUNCTIONS_DIR } from './constants';
 
@@ -46,11 +48,11 @@ export class FunctionsWatcher implements RestartableWatcher {
   private isRestarting = false;
   private watchMode: boolean;
   private lastChecksums: Map<string, string> = new Map();
-  private onFileBuilt?: OnFileBuiltCallback;
+  private onFileBuilt?: OnFileBuiltWithAssetPathsCallback;
   private buildCompletePromise: Promise<void> = Promise.resolve();
   private resolveBuildComplete: (() => void) | null = null;
 
-  constructor(options: RestartableWatcherOptions) {
+  constructor(options: WatcherWithAssetTrackingOptions) {
     this.appPath = options.appPath;
     this.functionPaths = options.sourcePaths;
     this.watchMode = options.watch ?? true;
@@ -113,6 +115,7 @@ export class FunctionsWatcher implements RestartableWatcher {
 
   private async createContext(): Promise<void> {
     const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
+    const assetsOutputDir = path.join(this.appPath, OUTPUT_DIR, ASSETS_DIR);
 
     const entryPoints: Record<string, string> = {};
     for (const functionPath of this.functionPaths) {
@@ -122,6 +125,13 @@ export class FunctionsWatcher implements RestartableWatcher {
 
     const watchMode = this.watchMode;
     const watcher = this;
+    const appPath = this.appPath;
+
+    // Create asset tracking plugin
+    const { plugin: assetTrackingPlugin, getAssetImports } = createAssetTrackingPlugin(
+      appPath,
+      assetsOutputDir,
+    );
 
     this.esBuildContext = await esbuild.context({
       entryPoints,
@@ -137,6 +147,7 @@ export class FunctionsWatcher implements RestartableWatcher {
       metafile: true,
       logLevel: 'silent',
       plugins: [
+        assetTrackingPlugin,
         {
           name: 'external-patterns',
           setup: (build) => {
@@ -159,13 +170,29 @@ export class FunctionsWatcher implements RestartableWatcher {
                   return;
                 }
 
-                const { hasChanges } = await processEsbuildResult({
+                // Get asset imports from the tracking plugin
+                const assetImports = getAssetImports();
+
+                // Build asset paths map: builtPath -> sourceAssetPaths[]
+                const assetPathsMap = watcher.buildAssetPathsMap(
+                  result,
+                  outputDir,
+                  assetImports,
+                );
+
+                const { hasChanges } = await processEsbuildResultWithAssetPaths({
                   result,
                   outputDir,
                   builtDir: FUNCTIONS_DIR,
                   lastChecksums: watcher.lastChecksums,
+                  assetPathsMap,
                   onFileBuilt: watcher.onFileBuilt,
-                  onSuccess: (relativePath) => logger.success(`✓ Built ${relativePath}`),
+                  onSuccess: (relativePath, assetPaths) => {
+                    logger.success(`✓ Built ${relativePath}`);
+                    if (assetPaths.length > 0) {
+                      logger.log(`   📦 ${assetPaths.length} asset(s)`);
+                    }
+                  },
                 });
 
                 if (hasChanges && watchMode) {
@@ -190,5 +217,47 @@ export class FunctionsWatcher implements RestartableWatcher {
     if (this.watchMode) {
       await this.esBuildContext.watch();
     }
+  }
+
+  // Build a map of builtPath -> sourceAssetPaths[]
+  private buildAssetPathsMap(
+    result: esbuild.BuildResult,
+    outputDir: string,
+    assetImports: Map<string, { sourceAssetPath: string; entryPoint: string }[]>,
+  ): Map<string, string[]> {
+    const assetPathsMap = new Map<string, string[]>();
+
+    if (!result.metafile) {
+      return assetPathsMap;
+    }
+
+    const outputs = result.metafile.outputs;
+
+    // Find all .mjs outputs (entry points)
+    for (const [outputPath] of Object.entries(outputs)) {
+      if (!outputPath.endsWith('.mjs')) {
+        continue;
+      }
+
+      const absoluteOutputPath = path.resolve(outputPath);
+      const relativePath = path.relative(outputDir, absoluteOutputPath);
+      const builtPath = `${FUNCTIONS_DIR}/${relativePath}`;
+
+      // Find the entry point for this output
+      const outputMeta = outputs[outputPath];
+      const entryPoint = outputMeta.entryPoint;
+
+      if (entryPoint) {
+        const absoluteEntryPoint = path.resolve(entryPoint);
+        const imports = assetImports.get(absoluteEntryPoint);
+
+        if (imports && imports.length > 0) {
+          const sourceAssetPaths = imports.map((i) => i.sourceAssetPath);
+          assetPathsMap.set(builtPath, sourceAssetPaths);
+        }
+      }
+    }
+
+    return assetPathsMap;
   }
 }

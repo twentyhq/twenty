@@ -8,12 +8,7 @@ export const defineFrontComponentsTests = (appPath: string): void => {
       const files = await fs.readdir(frontComponentsDir, { recursive: true });
       const sortedFiles = files.map((f) => f.toString()).sort();
 
-      // Filter out asset files (they have hashes in their names) for deterministic comparison
-      const componentFiles = sortedFiles.filter(
-        (f) => !f.startsWith('assets/') && f !== 'assets',
-      );
-
-      expect(componentFiles).toEqual([
+      expect(sortedFiles).toEqual([
         'src',
         'src/components',
         'src/components/card.front-component.mjs',
@@ -25,11 +20,16 @@ export const defineFrontComponentsTests = (appPath: string): void => {
         'src/root.front-component.mjs',
         'src/root.front-component.mjs.map',
       ]);
+    });
 
-      // Verify assets folder exists and contains the expected asset
-      const assetFiles = sortedFiles.filter((f) => f.startsWith('assets/'));
-      expect(assetFiles.length).toBeGreaterThanOrEqual(1);
-      expect(assetFiles.some((f) => f.includes('test-logo'))).toBe(true);
+    it('should have built assets in separate assets directory', async () => {
+      const assetsDir = join(appPath, '.twenty/output/assets');
+      const files = await fs.readdir(assetsDir);
+      const sortedFiles = files.map((f) => f.toString()).sort();
+
+      // Verify assets folder contains the expected asset (with hash in filename)
+      expect(sortedFiles.length).toBeGreaterThanOrEqual(1);
+      expect(sortedFiles.some((f) => f.includes('test-logo'))).toBe(true);
     });
   });
 };
