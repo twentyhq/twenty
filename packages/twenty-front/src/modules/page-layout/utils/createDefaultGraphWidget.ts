@@ -1,4 +1,3 @@
-import { type ThemeColor } from 'twenty-ui/theme';
 import {
   AggregateOperations,
   AxisNameDisplay,
@@ -12,6 +11,7 @@ import {
 } from '~/generated/graphql';
 
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
+import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 
 const createDefaultGraphConfiguration = (
   fieldSelection?: GraphWidgetFieldSelection,
@@ -22,12 +22,13 @@ const createDefaultGraphConfiguration = (
     __typename: 'BarChartConfiguration',
     configurationType: WidgetConfigurationType.BAR_CHART,
     layout: BarChartLayout.VERTICAL,
-    displayDataLabel: false,
-    color: 'blue' satisfies ThemeColor,
+    displayDataLabel: true,
+    displayLegend: true,
+    color: 'auto' satisfies GraphColor,
     primaryAxisGroupByFieldMetadataId: fieldSelection?.groupByFieldMetadataIdX,
     aggregateFieldMetadataId: fieldSelection?.aggregateFieldMetadataId,
     aggregateOperation: AggregateOperations.SUM,
-    primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+    primaryAxisOrderBy: GraphOrderBy.FIELD_POSITION_ASC,
     axisNameDisplay: AxisNameDisplay.NONE,
     timezone,
     firstDayOfTheWeek,
