@@ -90,7 +90,6 @@ xdescribe('Microsoft dev tests : get message list service', () => {
           pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
-      messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
     });
 
     expect(result[0].messageExternalIds.length).toBeGreaterThan(0);
@@ -122,7 +121,6 @@ xdescribe('Microsoft dev tests : get message list service', () => {
             pendingSyncAction: MessageFolderPendingSyncAction.NONE,
           },
         ],
-        messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
       }),
     ).rejects.toThrowError('Access token is undefined or empty');
   });
@@ -144,7 +142,6 @@ xdescribe('Microsoft dev tests : get message list service', () => {
           pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
-      messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
     });
 
     expect(result[0].nextSyncCursor).toBeTruthy();
@@ -171,7 +168,6 @@ xdescribe('Microsoft dev tests : get message list service', () => {
             pendingSyncAction: MessageFolderPendingSyncAction.NONE,
           },
         ],
-        messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
       }),
     ).rejects.toThrowError(
       /Resource not found for the segment|Badly formed content/g,
@@ -266,7 +262,6 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
       messageChannel: messageChannelNoFolders,
       connectedAccount: mockConnectedAccount,
       messageFolders: [],
-      messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
     });
 
     expect(result.length).toBe(0);
@@ -277,7 +272,6 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
       messageChannel: messageChannelMicrosoftOneFolder,
       connectedAccount: mockConnectedAccount,
       messageFolders: [inboxFolder],
-      messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
     });
 
     expect(result.length).toBe(1);
@@ -290,7 +284,6 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
       messageChannel: messageChannelMicrosoft,
       connectedAccount: mockConnectedAccount,
       messageFolders: [inboxFolder, sentFolder],
-      messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
     });
 
     expect(result.length).toBe(2);

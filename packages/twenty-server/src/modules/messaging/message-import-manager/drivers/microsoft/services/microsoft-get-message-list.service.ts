@@ -37,7 +37,6 @@ export class MicrosoftGetMessageListService {
     messageChannel,
     connectedAccount,
     messageFolders,
-    messageFolderImportPolicy,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
     const foldersToProcess =
       messageChannel.messageFolderImportPolicy ===

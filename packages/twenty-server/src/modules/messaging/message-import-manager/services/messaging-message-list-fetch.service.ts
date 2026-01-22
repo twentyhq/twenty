@@ -5,15 +5,17 @@ import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThanOrEqual } from 'typeorm';
 
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import { MessagingImportCacheService } from 'src/modules/messaging/common/services/messaging-import-cache.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import {
-  MessageChannelPendingGroupEmailsAction,
-  MessageChannelSyncStage,
-  MessageChannelWorkspaceEntity,
+    MessageChannelPendingGroupEmailsAction,
+    MessageChannelSyncStage,
+    MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderPendingSyncAction } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
@@ -22,18 +24,21 @@ import { MessagingAccountAuthenticationService } from 'src/modules/messaging/mes
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import {
-  MessageImportExceptionHandlerService,
-  MessageImportSyncStep,
+    MessageImportExceptionHandlerService,
+    MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 
+const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
+
 @Injectable()
 export class MessagingMessageListFetchService {
   private readonly logger = new Logger(MessagingMessageListFetchService.name);
   constructor(
-    private readonly messagingImportCacheService: MessagingImportCacheService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
+    private readonly cacheStorage: CacheStorageService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messagingGetMessageListService: MessagingGetMessageListService,
@@ -132,12 +137,10 @@ export class MessagingMessageListFetchService {
             await this.messagingGetMessageListService.getMessageLists(
               messageChannelWithFreshTokens,
               messageFoldersToSync,
-              messageChannelWithFreshTokens.messageFolderImportPolicy,
             );
 
-          await this.messagingImportCacheService.clearQueue(
-            workspaceId,
-            freshMessageChannel.id,
+          await this.cacheStorage.del(
+            `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
           );
 
           const messageExternalIds = messageLists.flatMap(
@@ -169,17 +172,6 @@ export class MessagingMessageListFetchService {
               workspaceId,
               'messageChannelMessageAssociation',
             );
-
-          const messageExternalIdToFolderIdMap = new Map<string, string>();
-
-          for (const messageList of messageLists) {
-            for (const messageExternalId of messageList.messageExternalIds) {
-              messageExternalIdToFolderIdMap.set(
-                messageExternalId,
-                messageList.folderId ?? '',
-              );
-            }
-          }
 
           const messageExternalIdsChunks = chunk(messageExternalIds, 200);
 
@@ -215,25 +207,10 @@ export class MessagingMessageListFetchService {
 
               totalMessagesToImportCount += messageExternalIdsToImport.length;
 
-              const messagesToCache = messageExternalIdsToImport.map(
-                (messageExternalId) => ({
-                  messageExternalId,
-                  folderId:
-                    messageExternalIdToFolderIdMap.get(messageExternalId) ?? '',
-                }),
-              );
-
-              this.logger.log(
-                `[Gmail Debug] messageExternalIdsToImport: ${messageExternalIdsToImport.length}, messagesToCache: ${messagesToCache.length}`,
-              );
-              this.logger.log(
-                `[Gmail Debug] Sample messagesToCache: ${JSON.stringify(messagesToCache.slice(0, 3))}`,
-              );
-
-              await this.messagingImportCacheService.addMessages(
-                workspaceId,
-                messageChannelWithFreshTokens.id,
-                messagesToCache,
+              await this.cacheStorage.setAdd(
+                `messages-to-import:${workspaceId}:${messageChannelWithFreshTokens.id}`,
+                messageExternalIdsToImport,
+                ONE_WEEK_IN_MILLISECONDS,
               );
             }
           }

@@ -1,6 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
-
-import { In } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -14,10 +12,6 @@ export type MessageChannelMessageAssociationFolderAssociation = {
 
 @Injectable()
 export class MessagingMessageFolderAssociationService {
-  private readonly logger = new Logger(
-    MessagingMessageFolderAssociationService.name,
-  );
-
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
@@ -42,58 +36,26 @@ export class MessagingMessageFolderAssociationService {
             'messageChannelMessageAssociationMessageFolder',
           );
 
-        const messageChannelMessageAssociationIds = associations.map(
-          (association) => association.messageChannelMessageAssociationId,
+        const records = associations.flatMap((association) =>
+          association.messageFolderIds.map((folderId) => ({
+            messageChannelMessageAssociationId:
+              association.messageChannelMessageAssociationId,
+            messageFolderId: folderId,
+          })),
         );
 
-        const existingAssociations = await repository.find(
-          {
-            where: {
-              messageChannelMessageAssociationId: In(
-                messageChannelMessageAssociationIds,
-              ),
+        if (records.length > 0) {
+          await repository.upsert(
+            records,
+            {
+              conflictPaths: [
+                'messageChannelMessageAssociationId',
+                'messageFolderId',
+              ],
+              skipUpdateIfNoValuesChanged: true,
             },
-          },
-          transactionManager,
-        );
-
-        const existingSet = new Set(
-          existingAssociations.map(
-            (association) =>
-              `${association.messageChannelMessageAssociationId}:${association.messageFolderId}`,
-          ),
-        );
-
-        const associationsToCreate = associations
-          .flatMap((association) =>
-            association.messageFolderIds.map((folderId) => ({
-              messageChannelMessageAssociationId:
-                association.messageChannelMessageAssociationId,
-              messageFolderId: folderId,
-            })),
-          )
-          .filter(
-            (association) =>
-              !existingSet.has(
-                `${association.messageChannelMessageAssociationId}:${association.messageFolderId}`,
-              ),
+            transactionManager,
           );
-
-        if (associationsToCreate.length > 0) {
-          try {
-            await repository.insert(associationsToCreate, transactionManager);
-          } catch (error) {
-            if (
-              error instanceof Error &&
-              error.message.includes('duplicate key')
-            ) {
-              this.logger.debug(
-                'Duplicate key encountered during insert, records already exist',
-              );
-            } else {
-              throw error;
-            }
-          }
         }
       },
     );

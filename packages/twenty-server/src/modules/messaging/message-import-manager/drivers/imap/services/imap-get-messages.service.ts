@@ -179,6 +179,7 @@ export class ImapGetMessagesService {
       direction: computeMessageDirection(senderAddress, connectedAccount),
       attachments: this.extractAttachments(parsed),
       participants: this.extractParticipants(parsed),
+      messageFolderExternalIds: [folderPath],
     };
   }
 

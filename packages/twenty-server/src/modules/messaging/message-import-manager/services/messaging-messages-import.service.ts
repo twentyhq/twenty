@@ -2,6 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -11,26 +14,21 @@ import { EmailAliasManagerService } from 'src/modules/connected-account/email-al
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
-  MessageToImport,
-  MessagingImportCacheService,
-} from 'src/modules/messaging/common/services/messaging-import-cache.service';
-import {
-  MessageChannelSyncStage,
-  type MessageChannelWorkspaceEntity,
+    MessageChannelSyncStage,
+    type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-  MessageImportDriverException,
-  MessageImportDriverExceptionCode,
+    MessageImportDriverException,
+    MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import {
-  MessageImportExceptionHandlerService,
-  MessageImportSyncStep,
+    MessageImportExceptionHandlerService,
+    MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
-import { assignFolderIdsToMessages } from 'src/modules/messaging/message-import-manager/utils/assign-folder-ids-to-messages.util';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 
@@ -39,7 +37,8 @@ export class MessagingMessagesImportService {
   private readonly logger = new Logger(MessagingMessagesImportService.name);
 
   constructor(
-    private readonly messagingImportCacheService: MessagingImportCacheService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
+    private readonly cacheStorage: CacheStorageService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
     private readonly messagingMonitoringService: MessagingMonitoringService,
@@ -57,7 +56,7 @@ export class MessagingMessagesImportService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
-    let messagesWithFoldersToImport: MessageToImport[] = [];
+    let messageExternalIdsToFetch: string[] = [];
 
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -104,23 +103,10 @@ export class MessagingMessagesImportService {
             workspaceId,
           );
 
-          messagesWithFoldersToImport =
-            await this.messagingImportCacheService.popMessages(
-              workspaceId,
-              messageChannel.id,
-              MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
-            );
-
-          this.logger.log(
-            `[Gmail Debug] Popped ${messagesWithFoldersToImport.length} messages from cache`,
-          );
-          this.logger.log(
-            `[Gmail Debug] Messages with folders: ${JSON.stringify(messagesWithFoldersToImport.slice(0, 3))}`,
-          );
-
-          const messageExternalIdsToFetch = messagesWithFoldersToImport.map(
-            (messageWithFolder) => messageWithFolder.messageExternalId,
-          );
+          messageExternalIdsToFetch = (await this.cacheStorage.setPop(
+            `messages-to-import:${workspaceId}:${messageChannel.id}`,
+            MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
+          )) as string[];
 
           if (messageExternalIdsToFetch.length === 0) {
             await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
@@ -140,19 +126,19 @@ export class MessagingMessagesImportService {
               connectedAccountWithFreshTokens,
             );
 
-          this.logger.log(
-            `[Gmail Debug] Message channel messageFolders: ${JSON.stringify(messageChannel.messageFolders?.map((f) => ({ id: f.id, externalId: f.externalId, name: f.name })))}`,
+          // Build folder external ID to internal ID mapping
+          const folderExternalToInternalMap = new Map(
+            (messageChannel.messageFolders ?? [])
+              .filter((folder) => isDefined(folder.externalId))
+              .map((folder) => [folder.externalId!, folder.id]),
           );
 
-          assignFolderIdsToMessages(
-            fetchedMessages,
-            messagesWithFoldersToImport,
-            messageChannel.messageFolders,
-          );
-
-          this.logger.log(
-            `[Gmail Debug] After assignFolderIdsToMessages - sample messages: ${JSON.stringify(fetchedMessages.slice(0, 3).map((m) => ({ externalId: m.externalId, messageFolderIds: m.messageFolderIds, messageFolderExternalIds: m.messageFolderExternalIds })))}`,
-          );
+          // Convert external folder IDs to internal IDs for each message
+          for (const message of fetchedMessages) {
+            message.messageFolderIds = (message.messageFolderExternalIds ?? [])
+              .map((externalId) => folderExternalToInternalMap.get(externalId))
+              .filter(isDefined);
+          }
 
           const blocklist =
             await this.blocklistRepository.getByWorkspaceMemberId(
@@ -233,11 +219,10 @@ export class MessagingMessagesImportService {
             `Error (${error.code}) importing messages for workspace ${workspaceId.slice(0, 8)} and account ${connectedAccount.id.slice(0, 8)}: ${error.message} - ${error.body}`,
           );
 
-          if (messagesWithFoldersToImport.length > 0) {
-            await this.messagingImportCacheService.addMessages(
-              workspaceId,
-              messageChannel.id,
-              messagesWithFoldersToImport,
+          if (messageExternalIdsToFetch.length > 0) {
+            await this.cacheStorage.setAdd(
+              `messages-to-import:${workspaceId}:${messageChannel.id}`,
+              messageExternalIdsToFetch,
             );
           }
 

@@ -12,9 +12,10 @@ import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-acco
 import { CreateCompanyAndContactJob } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import {
-  MessageChannelContactAutoCreationPolicy,
-  type MessageChannelWorkspaceEntity,
+    MessageChannelContactAutoCreationPolicy,
+    type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
@@ -149,6 +150,12 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
           provide: MessagingMessageParticipantService,
           useValue: {
             saveMessageParticipants: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+        {
+          provide: MessagingMessageFolderAssociationService,
+          useValue: {
+            saveMessageFolderAssociations: jest.fn().mockResolvedValue(undefined),
           },
         },
         {
