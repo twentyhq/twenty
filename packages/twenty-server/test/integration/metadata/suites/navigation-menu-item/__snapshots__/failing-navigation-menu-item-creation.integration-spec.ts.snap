@@ -103,11 +103,6 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
               "message": "targetObjectMetadataId is required when targetRecordId is provided",
               "userFriendlyMessage": "targetObjectMetadataId is required when targetRecordId is provided",
             },
-            {
-              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
-              "message": "Navigation menu item must be either a folder (with name), a view link (with viewId), or a record link (with targetRecordId and targetObjectMetadataId)",
-              "userFriendlyMessage": "Navigation menu item must be either a folder (with name), a view link (with viewId), or a record link (with targetRecordId and targetObjectMetadataId)",
-            },
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
@@ -122,7 +117,7 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
     "message": "Validation failed for 1 navigationMenuItem",
     "summary": {
       "navigationMenuItem": 1,
-      "totalErrors": 2,
+      "totalErrors": 1,
     },
     "userFriendlyMessage": "Metadata validation failed",
   },
@@ -144,11 +139,6 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
               "message": "targetRecordId is required when targetObjectMetadataId is provided",
               "userFriendlyMessage": "targetRecordId is required when targetObjectMetadataId is provided",
             },
-            {
-              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
-              "message": "Navigation menu item must be either a folder (with name), a view link (with viewId), or a record link (with targetRecordId and targetObjectMetadataId)",
-              "userFriendlyMessage": "Navigation menu item must be either a folder (with name), a view link (with viewId), or a record link (with targetRecordId and targetObjectMetadataId)",
-            },
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
@@ -163,7 +153,7 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
     "message": "Validation failed for 1 navigationMenuItem",
     "summary": {
       "navigationMenuItem": 1,
-      "totalErrors": 2,
+      "totalErrors": 1,
     },
     "userFriendlyMessage": "Metadata validation failed",
   },
