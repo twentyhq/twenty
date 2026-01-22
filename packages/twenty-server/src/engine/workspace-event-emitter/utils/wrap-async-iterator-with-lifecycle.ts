@@ -41,7 +41,15 @@ export function wrapAsyncIteratorWithLifecycle<T>(
         startHeartbeat();
       }
 
-      const result = await iterator.next();
+      let result: IteratorResult<T>;
+
+      try {
+        result = await iterator.next();
+      } catch (error) {
+        await cleanup();
+
+        throw error;
+      }
 
       if (result.done) {
         await cleanup();
