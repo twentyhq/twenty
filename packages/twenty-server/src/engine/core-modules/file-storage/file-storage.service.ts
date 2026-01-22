@@ -65,7 +65,6 @@ export class FileStorageService implements StorageDriver {
       path: `${folder}/${name}`,
       workspaceId,
       applicationId,
-      mimeType,
       id: fileId,
       size: file.length,
     });
