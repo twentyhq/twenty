@@ -68,7 +68,7 @@ describe('uploadWorkspaceFieldFile', () => {
     expect(typeof fileResult.id).toBe('string');
     expect(fileResult.path).toBeDefined();
     expect(typeof fileResult.path).toBe('string');
-    expect(fileResult.path).toContain(FileFolder.TemporaryWorkspaceField);
+    expect(fileResult.path).toContain(FileFolder.FilesField);
     expect(fileResult.size).toBe(testFileContent.length);
     expect(fileResult.createdAt).toBeDefined();
 

@@ -32,7 +32,7 @@ export class LocalDriver implements StorageDriver {
     sourceFile: Buffer | Uint8Array | string;
     mimeType: string | undefined;
   }): Promise<void> {
-    const filePath = join(`${this.options.storagePath}/`, params.filePath);
+    const filePath = `${this.options.storagePath}/${params.filePath}`;
     const folderPath = dirname(filePath);
 
     await this.createFolder(folderPath);

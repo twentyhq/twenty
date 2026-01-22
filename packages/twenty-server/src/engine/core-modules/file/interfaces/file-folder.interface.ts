@@ -48,10 +48,10 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.Source]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.TemporaryWorkspaceField]: {
+  [FileFolder.FilesField]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.WorkspaceField]: {
+  [FileFolder.TemporaryFilesField]: {
     ignoreExpirationToken: false,
   },
 };

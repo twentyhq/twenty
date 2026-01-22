@@ -5,7 +5,6 @@ import { type Readable } from 'stream';
 
 import { FileFolder, Sources } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
-import { file } from 'zod';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -72,7 +71,10 @@ export class FileStorageService {
       workspaceId,
       applicationId,
       id: fileId,
-      size: typeof file === 'string' ? Buffer.byteLength(file) : file.length,
+      size:
+        typeof sourceFile === 'string'
+          ? Buffer.byteLength(sourceFile)
+          : sourceFile.length,
     });
 
     return fileEntity;

@@ -82,7 +82,7 @@ export class S3Driver implements StorageDriver {
         continue;
       }
       await this.write({
-        filePath: join(folderPath, key),
+        filePath: `${folderPath}/${key}`,
         sourceFile: sources[key],
         mimeType: undefined,
       });
