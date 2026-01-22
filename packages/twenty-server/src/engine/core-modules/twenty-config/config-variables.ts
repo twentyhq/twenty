@@ -600,7 +600,7 @@ export class ConfigVariables {
   })
   @CastToTypeORMLogLevelArray()
   @IsOptional()
-  TYPEORM_LOGGING: LoggerOptions = ['query', 'error'];
+  TYPEORM_LOGGING: LoggerOptions = ['error'];
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
