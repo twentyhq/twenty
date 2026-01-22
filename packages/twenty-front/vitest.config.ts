@@ -14,7 +14,7 @@ const dirname =
 export default defineConfig({
   test: {
     coverage: {
-      provider: 'istanbul',
+      provider: 'v8',
       reporter: ['json', 'text'],
       reportsDirectory: './coverage/storybook',
     },
