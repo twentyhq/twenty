@@ -35,6 +35,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @UseGuards(
@@ -46,6 +47,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 @UseFilters(ApplicationExceptionFilter)
 export class ApplicationResolver {
   constructor(
+    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationService: ApplicationService,
     private readonly fileStorageService: FileStorageService,
@@ -88,7 +90,7 @@ export class ApplicationResolver {
 
   @Mutation(() => Boolean)
   async installApplication(
-    @Args() { workspaceMigration }: InstallApplicationInput,
+    @Args() { workspaceMigration: { actions } }: InstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
@@ -107,7 +109,12 @@ export class ApplicationResolver {
       );
     }
 
-    // TODO: implement - run the migration with workspaceMigration
+    await this.workspaceMigrationRunnerService.run({
+      // @ts-expect-error
+      actions,
+      workspaceId,
+    });
+
     return true;
   }
 
