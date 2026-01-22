@@ -2,7 +2,7 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { v4 } from 'uuid';
 
-const APP_FOLDER = 'src/app';
+const APP_FOLDER = 'src';
 
 export const copyBaseApplicationProject = async ({
   appName,
@@ -201,7 +201,7 @@ const createApplicationConfig = async ({
   appDirectory: string;
 }) => {
   const content = `import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/app/default-function.role';
+import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default-function.role';
 
 export default defineApp({
   universalIdentifier: '${v4()}',
