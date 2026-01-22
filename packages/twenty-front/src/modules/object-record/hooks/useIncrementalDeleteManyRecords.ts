@@ -60,9 +60,7 @@ export const useIncrementalDeleteManyRecords = <T>({
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
   const { incrementalFetchAndMutate, progress, isProcessing, updateProgress } =
     useIncrementalFetchAndMutateRecords<T>({
@@ -232,7 +230,9 @@ export const useIncrementalDeleteManyRecords = <T>({
       },
     );
 
-    await refetchAggregateQueries();
+    await refetchAggregateQueries({
+      objectMetadataNamePlural: objectMetadataItem.namePlural,
+    });
 
     dispatchObjectRecordOperationBrowserEvent({
       objectMetadataItem,

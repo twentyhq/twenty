@@ -9,8 +9,8 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 const mockUpdateOneRecord = jest.fn();
 
-jest.mock('@/object-record/hooks/useUpdateOneRecordV2', () => ({
-  useUpdateOneRecordV2: () => ({
+jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
+  useUpdateOneRecord: () => ({
     updateOneRecord: mockUpdateOneRecord,
   }),
 }));
