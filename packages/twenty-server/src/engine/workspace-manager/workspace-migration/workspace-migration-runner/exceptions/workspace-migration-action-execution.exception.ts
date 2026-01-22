@@ -25,17 +25,8 @@ export class WorkspaceMigrationActionExecutionException extends CustomError {
     action: WorkspaceMigrationAction;
     errors: WorkspaceMigrationActionExecutionErrors;
   }) {
-    const errorMessages: string[] = [];
-
-    if (errors.metadata) {
-      errorMessages.push(`Metadata: ${errors.metadata.message}`);
-    }
-    if (errors.workspaceSchema) {
-      errorMessages.push(`WorkspaceSchema: ${errors.workspaceSchema.message}`);
-    }
-
     super(
-      `Migration action '${action.type}' for '${action.metadataName}' failed. ${errorMessages.join(', ')}`,
+      `Migration action '${action.type}' for '${action.metadataName}' failed`,
     );
 
     this.code = WorkspaceMigrationActionExecutionExceptionCode.EXECUTION_FAILED;

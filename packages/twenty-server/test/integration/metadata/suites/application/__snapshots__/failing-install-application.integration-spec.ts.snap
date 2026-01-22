@@ -21,7 +21,7 @@ exports[`Install application should fail when entity does not exist should fail 
     "exceptionEventId": Any<String>,
     "userFriendlyMessage": "Application installation failed",
   },
-  "message": "Migration action 'delete' for 'fieldMetadata' failed. Metadata: Could not find flat entity with universal identifier non-existent-field-universal-identifier, WorkspaceSchema: Could not find flat entity in maps",
+  "message": "Migration action 'delete' for 'fieldMetadata' failed",
   "name": "GraphQLError",
 }
 `;

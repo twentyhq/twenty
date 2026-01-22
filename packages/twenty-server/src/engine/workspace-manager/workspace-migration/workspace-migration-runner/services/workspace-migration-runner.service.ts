@@ -240,7 +240,7 @@ export class WorkspaceMigrationRunnerService {
             action: invertedAction,
             context: {
               action: invertedAction,
-              allFlatEntityMaps: allFlatEntityMaps,
+              allFlatEntityMaps,
               workspaceId,
             },
           },
