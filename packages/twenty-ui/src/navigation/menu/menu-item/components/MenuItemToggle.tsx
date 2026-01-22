@@ -38,11 +38,18 @@ export const MenuItemToggle = ({
   toggleSize,
   disabled = false,
 }: MenuItemToggleProps) => {
+  const handleClick = () => {
+    if (!disabled) {
+      onToggleChange?.(!toggled);
+    }
+  };
+
   return (
     <StyledMenuItemBase
       className={className}
       focused={focused}
       disabled={disabled}
+      onClick={handleClick}
     >
       <StyledToggleContainer>
         <MenuItemLeftContent
@@ -51,7 +58,7 @@ export const MenuItemToggle = ({
           withIconContainer={withIconContainer}
           disabled={disabled}
         />
-        <StyledMenuItemRightContent>
+        <StyledMenuItemRightContent onClick={(e) => e.stopPropagation()}>
           <Toggle
             value={toggled}
             onChange={disabled ? undefined : onToggleChange}
