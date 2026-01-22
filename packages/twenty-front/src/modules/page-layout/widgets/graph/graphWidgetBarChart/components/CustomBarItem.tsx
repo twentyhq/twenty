@@ -7,6 +7,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { animated, to } from '@react-spring/web';
 import { isNumber } from '@sniptt/guards';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
@@ -74,67 +75,72 @@ export const CustomBarItem = <D extends BarDatum>({
     seriesIndex >= 0 ? seriesIndex : 'x'
   }`;
 
-  const unconstrainedThicknessDimension = isHorizontal ? height : width;
-  const unconstrainedValueDimension = isHorizontal ? width : height;
-
-  const constrainedThicknessDimension = to(
-    unconstrainedThicknessDimension,
-    (dimension) => Math.min(dimension, BAR_CHART_CONSTANTS.MAXIMUM_WIDTH),
-  );
-
-  const centeringOffset = to(unconstrainedThicknessDimension, (dimension) =>
-    dimension > BAR_CHART_CONSTANTS.MAXIMUM_WIDTH
-      ? (dimension - BAR_CHART_CONSTANTS.MAXIMUM_WIDTH) / 2
-      : 0,
-  );
-
-  const centeringTransform = to(centeringOffset, (offset) =>
-    isHorizontal ? `translate(0, ${offset})` : `translate(${offset}, 0)`,
-  );
-
-  const finalBarWidthDimension = isHorizontal
-    ? unconstrainedValueDimension
-    : constrainedThicknessDimension;
-
-  const finalBarHeightDimension = isHorizontal
-    ? constrainedThicknessDimension
-    : unconstrainedValueDimension;
-
   const clipPathX = !isHorizontal ? 0 : isNegativeValue ? 0 : -borderRadius;
   const clipPathY = isHorizontal ? 0 : isNegativeValue ? -borderRadius : 0;
 
-  const widthWithOffset = (value: number) =>
-    Math.max(value + (isHorizontal ? borderRadius : 0), 0);
-  const heightWithOffset = (value: number) =>
-    Math.max(value + (isHorizontal ? 0 : borderRadius), 0);
-  const clampRadius = (value: number) => Math.min(borderRadius, value / 2);
+  const springInterpolations = useMemo(() => {
+    const unconstrainedThicknessDimension = isHorizontal ? height : width;
+    const unconstrainedValueDimension = isHorizontal ? width : height;
 
-  const clipRectWidth = to(finalBarWidthDimension, (value) =>
-    widthWithOffset(value),
-  );
-  const clipRectHeight = to(finalBarHeightDimension, (value) =>
-    heightWithOffset(value),
-  );
-  const clipBorderRadiusX = to(finalBarWidthDimension, (value) =>
-    clampRadius(widthWithOffset(value)),
-  );
-  const clipBorderRadiusY = to(finalBarHeightDimension, (value) =>
-    clampRadius(heightWithOffset(value)),
-  );
+    const constrainedThicknessDimension = to(
+      unconstrainedThicknessDimension,
+      (dimension) => Math.min(dimension, BAR_CHART_CONSTANTS.MAXIMUM_WIDTH),
+    );
+
+    const centeringOffset = to(unconstrainedThicknessDimension, (dimension) =>
+      dimension > BAR_CHART_CONSTANTS.MAXIMUM_WIDTH
+        ? (dimension - BAR_CHART_CONSTANTS.MAXIMUM_WIDTH) / 2
+        : 0,
+    );
+
+    const centeringTransform = to(centeringOffset, (offset) =>
+      isHorizontal ? `translate(0, ${offset})` : `translate(${offset}, 0)`,
+    );
+
+    const finalBarWidthDimension = isHorizontal
+      ? unconstrainedValueDimension
+      : constrainedThicknessDimension;
+
+    const finalBarHeightDimension = isHorizontal
+      ? constrainedThicknessDimension
+      : unconstrainedValueDimension;
+
+    const widthWithOffset = (value: number) =>
+      Math.max(value + (isHorizontal ? borderRadius : 0), 0);
+    const heightWithOffset = (value: number) =>
+      Math.max(value + (isHorizontal ? 0 : borderRadius), 0);
+    const clampRadius = (value: number) => Math.min(borderRadius, value / 2);
+
+    const clampToZero = (value: number) => Math.max(value, 0);
+
+    return {
+      centeringTransform,
+      finalBarWidth: to(finalBarWidthDimension, clampToZero),
+      finalBarHeight: to(finalBarHeightDimension, clampToZero),
+      clipRectWidth: to(finalBarWidthDimension, widthWithOffset),
+      clipRectHeight: to(finalBarHeightDimension, heightWithOffset),
+      clipBorderRadiusX: to(finalBarWidthDimension, (value) =>
+        clampRadius(widthWithOffset(value)),
+      ),
+      clipBorderRadiusY: to(finalBarHeightDimension, (value) =>
+        clampRadius(heightWithOffset(value)),
+      ),
+    };
+  }, [width, height, isHorizontal, borderRadius]);
 
   return (
     <animated.g transform={transform}>
-      <animated.g transform={centeringTransform}>
+      <animated.g transform={springInterpolations.centeringTransform}>
         {shouldRoundFreeEnd && (
           <defs>
             <clipPath id={clipPathId}>
               <animated.rect
                 x={clipPathX}
                 y={clipPathY}
-                rx={clipBorderRadiusX}
-                ry={clipBorderRadiusY}
-                width={clipRectWidth}
-                height={clipRectHeight}
+                rx={springInterpolations.clipBorderRadiusX}
+                ry={springInterpolations.clipBorderRadiusY}
+                width={springInterpolations.clipRectWidth}
+                height={springInterpolations.clipRectHeight}
               />
             </clipPath>
           </defs>
@@ -145,8 +151,8 @@ export const CustomBarItem = <D extends BarDatum>({
           $isDimmed={isDimmed}
           $isSliceHovered={isSliceHovered}
           clipPath={shouldRoundFreeEnd ? `url(#${clipPathId})` : undefined}
-          width={to(finalBarWidthDimension, (value) => Math.max(value, 0))}
-          height={to(finalBarHeightDimension, (value) => Math.max(value, 0))}
+          width={springInterpolations.finalBarWidth}
+          height={springInterpolations.finalBarHeight}
           fill={color}
           strokeWidth={borderWidth}
           stroke={borderColor}
