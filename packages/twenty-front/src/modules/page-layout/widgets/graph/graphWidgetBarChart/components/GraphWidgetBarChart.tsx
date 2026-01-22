@@ -14,6 +14,7 @@ import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphW
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
+import { computeShouldRoundFreeEndMap } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeShouldRoundFreeEndMap';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
@@ -150,6 +151,17 @@ export const GraphWidgetBarChart = ({
       ? visibleKeys.toReversed()
       : visibleKeys;
 
+  const shouldRoundFreeEndMap = useMemo(
+    () =>
+      computeShouldRoundFreeEndMap({
+        data,
+        orderedKeys,
+        indexBy,
+        groupMode,
+      }),
+    [groupMode, orderedKeys, data, indexBy],
+  );
+
   const calculatedValueRange =
     groupMode === 'stacked'
       ? calculateStackedBarChartValueRange(data, visibleKeys)
@@ -235,23 +247,28 @@ export const GraphWidgetBarChart = ({
     tickConfig,
   });
 
-  const dataToRender = data.filter((datum) => datum.value !== 0);
-
   const BarItemWithContext = useMemo(
-    () => (props: BarItemProps<BarDatum>) =>
-      props.bar.data.value !== 0 && (
+    () => (props: BarItemProps<BarDatum>) => {
+      if (props.bar.data.value === 0) {
+        return null;
+      }
+
+      const barKey = `${props.bar.data.indexValue}-${props.bar.data.id}`;
+      const shouldRoundFreeEnd = shouldRoundFreeEndMap?.get(barKey) ?? true;
+      const seriesIndex = orderedKeys?.indexOf(String(props.bar.data.id)) ?? -1;
+
+      return (
         <CustomBarItem
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...props}
-          keys={orderedKeys}
-          groupMode={groupMode}
-          data={dataToRender}
-          indexBy={indexBy}
+          shouldRoundFreeEnd={shouldRoundFreeEnd}
+          seriesIndex={seriesIndex}
           layout={layout}
           chartId={id}
         />
-      ),
-    [orderedKeys, groupMode, dataToRender, indexBy, layout, id],
+      );
+    },
+    [shouldRoundFreeEndMap, orderedKeys, layout, id],
   );
 
   const TotalsLayer = ({

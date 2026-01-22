@@ -7,16 +7,13 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { animated, to } from '@react-spring/web';
 import { isNumber } from '@sniptt/guards';
-import { useMemo } from 'react';
 import styled from 'styled-components';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
 
 type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
-  keys?: string[];
-  groupMode?: 'grouped' | 'stacked';
-  data?: readonly D[];
-  indexBy?: string;
+  shouldRoundFreeEnd: boolean;
+  seriesIndex: number;
   layout?: BarChartLayout;
   chartId?: string;
 };
@@ -52,10 +49,8 @@ export const CustomBarItem = <D extends BarDatum>({
   ariaDescribedBy,
   ariaDisabled,
   ariaHidden,
-  keys,
-  groupMode = 'grouped',
-  data: chartData,
-  indexBy,
+  shouldRoundFreeEnd,
+  seriesIndex,
   layout = BarChartLayout.VERTICAL,
   chartId,
 }: CustomBarItemProps<D>) => {
@@ -72,58 +67,7 @@ export const CustomBarItem = <D extends BarDatum>({
     isDefined(highlightedLegendId) &&
     String(highlightedLegendId) !== String(barData.id);
 
-  const isNegativeValue = useMemo(
-    () => isNumber(barData.value) && barData.value < 0,
-    [barData.value],
-  );
-
-  const seriesIndex = useMemo(
-    () =>
-      isDefined(keys)
-        ? keys.findIndex((currentKey) => currentKey === barData.id)
-        : -1,
-    [keys, barData.id],
-  );
-
-  const shouldRoundFreeEnd = useMemo(() => {
-    const isStackedAndValid =
-      groupMode === 'stacked' &&
-      isDefined(keys) &&
-      keys.length > 0 &&
-      isDefined(chartData) &&
-      isDefined(indexBy);
-
-    if (!isStackedAndValid) {
-      return true;
-    }
-
-    const dataPoint = chartData.find(
-      (chartDataItem) => chartDataItem[indexBy] === barData.indexValue,
-    );
-
-    if (!isDefined(dataPoint)) {
-      return true;
-    }
-
-    if (seriesIndex === -1) {
-      return true;
-    }
-
-    const keysAfterCurrentKey = keys.slice(seriesIndex + 1);
-    const hasSameSignBarAfter = keysAfterCurrentKey.some((key) => {
-      const value = dataPoint[key];
-      return isNumber(value) && (isNegativeValue ? value < 0 : value > 0);
-    });
-    return !hasSameSignBarAfter;
-  }, [
-    groupMode,
-    keys,
-    chartData,
-    indexBy,
-    isNegativeValue,
-    seriesIndex,
-    barData.indexValue,
-  ]);
+  const isNegativeValue = isNumber(barData.value) && barData.value < 0;
 
   const isHorizontal = layout === BarChartLayout.HORIZONTAL;
   const clipPathId = `round-corner-${chartId ?? 'chart'}-${barData.index}-${
