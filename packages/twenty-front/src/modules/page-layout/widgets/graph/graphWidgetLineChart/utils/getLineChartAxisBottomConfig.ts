@@ -4,7 +4,6 @@ import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph
 import { computeLineChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/computeLineChartCategoryTickValues';
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 
 export type LineChartAxisBottomResult = {
   config: {
@@ -17,54 +16,49 @@ export type LineChartAxisBottomResult = {
     legendOffset: number;
     format: (value: string | number) => string;
   };
-  marginBottom: number;
 };
 
-export const getLineChartAxisBottomConfig = (
-  xAxisLabel?: string,
-  width?: number,
-  data?: LineChartSeriesWithColor[],
-  marginLeft?: number,
-): LineChartAxisBottomResult => {
-  const effectiveMarginLeft =
-    marginLeft ?? COMMON_CHART_CONSTANTS.MARGIN_LEFT_WITH_LABEL;
+type LineChartAxisBottomConfigParams = {
+  xAxisLabel?: string;
+  width: number;
+  data: LineChartSeriesWithColor[];
+  marginLeft: number;
+  marginRight: number;
+  axisFontSize: number;
+};
 
+export const getLineChartAxisBottomConfig = ({
+  xAxisLabel,
+  width,
+  data,
+  marginLeft,
+  marginRight,
+  axisFontSize,
+}: LineChartAxisBottomConfigParams): LineChartAxisBottomResult => {
   const tickValues =
-    width && data
+    width > 0 && data.length > 0
       ? computeLineChartCategoryTickValues({
           width,
           data,
-          marginLeft: effectiveMarginLeft,
-          marginRight: COMMON_CHART_CONSTANTS.MARGIN_RIGHT,
+          marginLeft,
+          marginRight,
         })
       : undefined;
 
-  const availableWidth = width
-    ? width - (effectiveMarginLeft + COMMON_CHART_CONSTANTS.MARGIN_RIGHT)
-    : 0;
+  const availableWidth = width - (marginLeft + marginRight);
 
   const actualDataPointCount = isNonEmptyArray(data?.[0]?.data)
     ? data[0].data.length
     : 1;
 
-  const widthPerDataPoint =
-    actualDataPointCount > 0 && availableWidth > 0
-      ? availableWidth / actualDataPointCount
-      : 0;
+  const tickCount = tickValues?.length ?? actualDataPointCount;
+  const widthPerTick =
+    tickCount > 0 && availableWidth > 0 ? availableWidth / tickCount : 0;
 
   const { tickRotation, maxLabelLength } = getTickRotationConfig({
-    widthPerTick: widthPerDataPoint,
-    axisFontSize: COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE,
+    widthPerTick,
+    axisFontSize,
   });
-
-  const hasRotation = tickRotation !== 0;
-  const baseMarginBottom = isDefined(xAxisLabel)
-    ? COMMON_CHART_CONSTANTS.MARGIN_BOTTOM_WITH_LABEL
-    : COMMON_CHART_CONSTANTS.MARGIN_BOTTOM_WITHOUT_LABEL;
-  const marginBottom = hasRotation
-    ? baseMarginBottom +
-      COMMON_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN
-    : baseMarginBottom;
 
   return {
     config: {
@@ -76,12 +70,11 @@ export const getLineChartAxisBottomConfig = (
       legendPosition: 'middle' as const,
       legendOffset:
         COMMON_CHART_CONSTANTS.BOTTOM_AXIS_LEGEND_OFFSET +
-        (hasRotation
+        (tickRotation !== 0
           ? COMMON_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN
           : 0),
       format: (value: string | number) =>
         truncateTickLabel(String(value), maxLabelLength),
     },
-    marginBottom,
   };
 };

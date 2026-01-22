@@ -8,7 +8,7 @@ import { NavigationMenuItemResolver } from 'src/engine/metadata-modules/navigati
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { NavigationMenuItemAccessService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
@@ -24,7 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     NavigationMenuItemAccessService,
     NavigationMenuItemResolver,
     NavigationMenuItemGraphqlApiExceptionInterceptor,
-    WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
+    WorkspaceMigrationGraphqlApiExceptionInterceptor,
   ],
   exports: [NavigationMenuItemService],
 })

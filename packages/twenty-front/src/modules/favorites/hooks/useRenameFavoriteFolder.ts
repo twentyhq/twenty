@@ -2,9 +2,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 export const useRenameFavoriteFolder = () => {
-  const { updateOneRecord: updateFavoriteFolder } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const renameFavoriteFolder = async (
     folderId: string,
@@ -14,7 +12,8 @@ export const useRenameFavoriteFolder = () => {
       return;
     }
 
-    await updateFavoriteFolder({
+    await updateOneRecord({
+      objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
       idToUpdate: folderId,
       updateOneRecordInput: {
         name: newName,

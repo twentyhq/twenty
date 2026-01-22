@@ -24,8 +24,9 @@ export type ServerlessFunctionManifest = SyncableEntityOptions & {
   description?: string;
   timeoutSeconds?: number;
   triggers: ServerlessFunctionTriggerManifest[];
-  handlerPath: string;
-  builtHandlerPath?: string; // Should be required when build mode implemented
+  sourceHandlerPath: string;
+  builtHandlerPath: string;
+  builtHandlerChecksum: string | null;
   handlerName: string;
   toolInputSchema?: InputJsonSchema;
   isTool?: boolean;

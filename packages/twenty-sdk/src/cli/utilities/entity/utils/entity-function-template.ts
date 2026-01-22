@@ -14,7 +14,7 @@ export const getFunctionBaseFile = ({
   return `import { defineFunction } from 'twenty-sdk';
 
 // Handler function - rename and implement your logic
-export const handler = async (params: {
+const handler = async (params: {
   a: string;
   b: number;
 }): Promise<{ message: string }> => {

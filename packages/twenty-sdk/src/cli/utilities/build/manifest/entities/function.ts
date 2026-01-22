@@ -1,6 +1,7 @@
 import { glob } from 'fast-glob';
 import { type ServerlessFunctionManifest } from 'twenty-shared/application';
 import { createLogger } from '../../common/logger';
+import { FUNCTIONS_DIR } from '../../functions/constants';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
@@ -11,6 +12,13 @@ import {
 } from './entity.interface';
 
 const logger = createLogger('manifest-watch');
+
+type ExtractedFunctionManifest = Omit<
+  ServerlessFunctionManifest,
+  'sourceHandlerPath' | 'builtHandlerPath' | 'builtHandlerChecksum'
+> & {
+  handlerPath: string;
+};
 
 export class FunctionEntityBuilder
   implements ManifestEntityBuilder<ServerlessFunctionManifest>
@@ -27,12 +35,23 @@ export class FunctionEntityBuilder
       try {
         const absolutePath = `${appPath}/${filePath}`;
 
-        manifests.push(
-          await manifestExtractFromFileServer.extractManifestFromFile<ServerlessFunctionManifest>(
+        const extracted =
+          await manifestExtractFromFileServer.extractManifestFromFile<ExtractedFunctionManifest>(
             absolutePath,
             { entryProperty: 'handler' },
-          ),
-        );
+          );
+
+        const { handlerPath, ...rest } = extracted;
+        // builtHandlerPath is computed from filePath (the .function.ts file)
+        // since that's what esbuild actually builds, not handlerPath
+        const builtHandlerPath = this.computeBuiltHandlerPath(filePath);
+
+        manifests.push({
+          ...rest,
+          sourceHandlerPath: handlerPath,
+          builtHandlerPath,
+          builtHandlerChecksum: null,
+        });
       } catch (error) {
         throw new Error(
           `Failed to load function from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
@@ -41,6 +60,12 @@ export class FunctionEntityBuilder
     }
 
     return { manifests, filePaths: functionFiles };
+  }
+
+  private computeBuiltHandlerPath(sourceHandlerPath: string): string {
+    const builtPath = sourceHandlerPath.replace(/\.tsx?$/, '.mjs');
+
+    return `${FUNCTIONS_DIR}/${builtPath}`;
   }
 
   validate(
@@ -120,14 +145,14 @@ export class FunctionEntityBuilder
       logger.log('📍 Entry points:');
       for (const fn of functions) {
         const name = fn.name || fn.universalIdentifier;
-        logger.log(`   - ${name} (${fn.handlerPath})`);
+        logger.log(`   - ${name} (${fn.sourceHandlerPath})`);
       }
     }
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const seen = new Map<string, string[]>();
-    const functions = manifest.serverlessFunctions ?? [];
+    const functions = manifest.functions ?? [];
 
     for (const fn of functions) {
       if (fn.universalIdentifier) {
