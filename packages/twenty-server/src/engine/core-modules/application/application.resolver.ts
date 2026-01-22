@@ -110,7 +110,7 @@ export class ApplicationResolver {
     }
 
     await this.workspaceMigrationRunnerService.run({
-      // @ts-expect-error ignoring until we implement a prod read validation schema for workspaceMigration
+      // @ts-expect-error ignoring until we implement a production ready validation schema for workspaceMigration
       actions,
       workspaceId,
     });
