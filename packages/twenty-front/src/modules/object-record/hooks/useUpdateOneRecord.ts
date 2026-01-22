@@ -62,14 +62,6 @@ export const useUpdateOneRecord = () => {
       );
     }
 
-    const computedRecordGqlFields =
-      recordGqlFields ??
-      generateDepthRecordGqlFieldsFromObject({
-        objectMetadataItem,
-        objectMetadataItems,
-        depth: 1,
-      });
-
     const optimisticRecordInput =
       optimisticRecord ??
       computeOptimisticRecordFromInput({
@@ -79,6 +71,14 @@ export const useUpdateOneRecord = () => {
         cache: apolloCoreClient.cache,
         objectMetadataItems,
         objectPermissionsByObjectMetadataId,
+      });
+
+    const computedRecordGqlFields =
+      recordGqlFields ??
+      generateDepthRecordGqlFieldsFromObject({
+        objectMetadataItem,
+        objectMetadataItems,
+        depth: 1,
       });
 
     const cachedRecord = getRecordFromCache({
@@ -120,7 +120,7 @@ export const useUpdateOneRecord = () => {
       isDefined(cachedRecordWithConnection);
 
     if (shouldHandleOptimisticCache) {
-      const optimisticRecordGqlFields = generateDepthRecordGqlFieldsFromRecord({
+      const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
         objectMetadataItem,
         objectMetadataItems,
         record: optimisticRecordInput,
@@ -132,7 +132,7 @@ export const useUpdateOneRecord = () => {
         objectMetadataItem,
         cache: apolloCoreClient.cache,
         record: computedOptimisticRecord,
-        recordGqlFields: optimisticRecordGqlFields,
+        recordGqlFields,
         objectPermissionsByObjectMetadataId,
       });
 
@@ -201,7 +201,7 @@ export const useUpdateOneRecord = () => {
           optimisticRecordInput,
         ).filter((diffKey) => !cachedRecordKeys.has(diffKey));
 
-        const rollbackRecordGqlFields = {
+        const recordGqlFields = {
           ...generateDepthRecordGqlFieldsFromRecord({
             objectMetadataItem,
             objectMetadataItems,
@@ -225,7 +225,7 @@ export const useUpdateOneRecord = () => {
               null,
             ),
           },
-          recordGqlFields: rollbackRecordGqlFields,
+          recordGqlFields,
           objectPermissionsByObjectMetadataId,
         });
 
