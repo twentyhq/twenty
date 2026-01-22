@@ -23,11 +23,13 @@ export const workspaceMigrationActionExecutionExceptionFormatter = (
         ...(error.errors.metadata && {
           metadata: {
             message: error.errors.metadata.message,
+            code: (error.errors.metadata as { code?: string })?.code,
           },
         }),
         ...(error.errors.workspaceSchema && {
           workspaceSchema: {
             message: error.errors.workspaceSchema.message,
+            code: (error.errors.workspaceSchema as { code?: string })?.code,
           },
         }),
       },
