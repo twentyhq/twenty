@@ -12,12 +12,6 @@ export type MessageChannelMessageAssociationFolderAssociation = {
   messageFolderIds: string[];
 };
 
-/**
- * @deprecated Use MessageChannelMessageAssociationFolderAssociation instead
- */
-export type McmaFolderAssociation =
-  MessageChannelMessageAssociationFolderAssociation;
-
 @Injectable()
 export class MessagingMessageFolderAssociationService {
   private readonly logger = new Logger(
