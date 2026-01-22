@@ -4,7 +4,7 @@ export type FrontComponentType = React.ComponentType<any>;
 
 export type FrontComponentConfig = Omit<
   FrontComponentManifest,
-  'componentPath' | 'componentName'
+  'sourceComponentPath' | 'builtComponentPath' | 'componentName'
 > & {
   name?: string;
   description?: string;
