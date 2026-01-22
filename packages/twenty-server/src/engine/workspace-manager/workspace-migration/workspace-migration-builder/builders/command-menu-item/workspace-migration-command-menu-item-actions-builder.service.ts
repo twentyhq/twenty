@@ -74,7 +74,7 @@ export class WorkspaceMigrationCommandMenuItemActionsBuilderService extends Work
       action: {
         type: 'delete',
         metadataName: 'commandMenuItem',
-        entityId: flatCommandMenuItemToValidate.id,
+        universalIdentifier: flatCommandMenuItemToValidate.universalIdentifier,
       },
     };
   }

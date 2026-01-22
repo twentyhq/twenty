@@ -1,87 +1,100 @@
 import chalk from 'chalk';
 import { glob } from 'fast-glob';
-import { posix, relative, sep } from 'path';
 import { type FrontComponentManifest } from 'twenty-shared/application';
-import { extractManifestFromFile } from '../manifest-file-extractor';
+import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
+import {
+  type EntityBuildResult,
+  type EntityIdWithLocation,
+  type ManifestEntityBuilder,
+  type ManifestWithoutSources,
+} from './entity.interface';
 
-const toPosixRelative = (filepath: string, appPath: string): string => {
-  const rel = relative(appPath, filepath);
-  return rel.split(sep).join(posix.sep);
+type FrontComponentConfig = Omit<FrontComponentManifest, 'componentPath' | 'componentName'> & {
+  component: { name: string };
 };
 
-export const buildFrontComponents = async (
-  appPath: string,
-): Promise<FrontComponentManifest[]> => {
-  const componentFiles = await glob(['src/app/**/*.front-component.tsx'], {
-    cwd: appPath,
-    absolute: true,
-    ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
-  });
+export class FrontComponentEntityBuilder
+  implements ManifestEntityBuilder<FrontComponentManifest>
+{
+  async build(appPath: string): Promise<EntityBuildResult<FrontComponentManifest>> {
+    const componentFiles = await glob(['**/*.front-component.tsx'], {
+      cwd: appPath,
+      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
+    });
 
-  const frontComponentManifests: FrontComponentManifest[] = [];
+    const manifests: FrontComponentManifest[] = [];
 
-  for (const filepath of componentFiles) {
-    try {
-      frontComponentManifests.push(
-        await extractManifestFromFile<FrontComponentManifest>(
-          filepath,
-          appPath,
-          { entryProperty: 'component', jsx: true },
-        ),
-      );
-    } catch (error) {
-      const relPath = toPosixRelative(filepath, appPath);
-      throw new Error(
-        `Failed to load front component from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
-      );
+    for (const filePath of componentFiles) {
+      try {
+        const absolutePath = `${appPath}/${filePath}`;
+        const config =
+          await manifestExtractFromFileServer.extractManifestFromFile<FrontComponentConfig>(
+            absolutePath,
+          );
+
+        const { component, ...rest } = config;
+
+        manifests.push({
+          ...rest,
+          componentName: component.name,
+          componentPath: filePath,
+        });
+      } catch (error) {
+        throw new Error(
+          `Failed to load front component from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
     }
+
+    return { manifests, filePaths: componentFiles };
   }
 
-  return frontComponentManifests;
-};
-
-export const validateFrontComponents = (
-  components: FrontComponentManifest[],
-  errors: ValidationError[],
-): void => {
-  for (const component of components) {
-    const componentPath = `front-components/${component.name ?? component.componentName ?? 'unknown'}`;
-
-    if (!component.universalIdentifier) {
-      errors.push({
-        path: componentPath,
-        message: 'Front component must have a universalIdentifier',
-      });
-    }
-  }
-};
-
-export const displayFrontComponents = (components: FrontComponentManifest[]): void => {
-  console.log(chalk.green(`  ✓ Found ${components.length} front component(s)`));
-
-  if (components.length > 0) {
-    console.log(chalk.gray(`  📍 Front component entry points:`));
+  validate(
+    components: FrontComponentManifest[],
+    errors: ValidationError[],
+  ): void {
     for (const component of components) {
-      const name = component.name || component.universalIdentifier;
-      console.log(chalk.gray(`     - ${name} (${component.componentPath})`));
-    }
-  }
-};
+      const componentPath = `front-components/${component.name ?? component.componentName ?? 'unknown'}`;
 
-export const collectFrontComponentIds = (
-  components: FrontComponentManifest[],
-): Array<{ id: string; location: string }> => {
-  const ids: Array<{ id: string; location: string }> = [];
-
-  for (const component of components) {
-    if (component.universalIdentifier) {
-      ids.push({
-        id: component.universalIdentifier,
-        location: `front-components/${component.name ?? component.componentName}`,
-      });
+      if (!component.universalIdentifier) {
+        errors.push({
+          path: componentPath,
+          message: 'Front component must have a universalIdentifier',
+        });
+      }
     }
   }
 
-  return ids;
-};
+  display(components: FrontComponentManifest[]): void {
+    console.log(chalk.green(`  ✓ Found ${components.length} front component(s)`));
+
+    if (components.length > 0) {
+      console.log(chalk.gray(`  📍 Front component entry points:`));
+      for (const component of components) {
+        const name = component.name || component.universalIdentifier;
+        console.log(chalk.gray(`     - ${name} (${component.componentPath})`));
+      }
+    }
+  }
+
+  findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
+    const seen = new Map<string, string[]>();
+    const components = manifest.frontComponents ?? [];
+
+    for (const component of components) {
+      if (component.universalIdentifier) {
+        const location = `front-components/${component.name ?? component.componentName}`;
+        const locations = seen.get(component.universalIdentifier) ?? [];
+        locations.push(location);
+        seen.set(component.universalIdentifier, locations);
+      }
+    }
+
+    return Array.from(seen.entries())
+      .filter(([_, locations]) => locations.length > 1)
+      .map(([id, locations]) => ({ id, locations }));
+  }
+}
+
+export const frontComponentEntityBuilder = new FrontComponentEntityBuilder();

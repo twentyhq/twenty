@@ -101,6 +101,7 @@ export class IdentifyRemainingEntitiesMetadataCommand extends ActiveOrSuspendedW
         workspaceId,
         applicationId: IsNull(),
       },
+      withDeleted: true,
     });
 
     if (entitiesWithoutApplicationId.length === 0) {
@@ -164,6 +165,7 @@ export class IdentifyRemainingEntitiesMetadataCommand extends ActiveOrSuspendedW
         workspaceId,
         applicationId: IsNull(),
       },
+      withDeleted: true,
     });
 
     if (viewSortsWithoutApplicationId.length === 0) {

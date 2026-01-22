@@ -70,7 +70,7 @@ export class WorkspaceMigrationViewGroupActionsBuilderService extends WorkspaceE
       action: {
         type: 'delete',
         metadataName: 'viewGroup',
-        entityId: flatViewGroupToValidate.id,
+        universalIdentifier: flatViewGroupToValidate.universalIdentifier,
       },
     };
   }

@@ -27,6 +27,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     workspaceId,
     imageIdentifierFieldMetadataId,
     labelIdentifierFieldMetadataId,
+    applicationId,
   } = flatObjectMetadata;
 
   return {
@@ -52,5 +53,6 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     standardOverrides: standardOverrides ?? undefined,
     shortcut: shortcut ?? undefined,
     duplicateCriteria: duplicateCriteria ?? undefined,
+    applicationId,
   };
 };

@@ -313,7 +313,7 @@ export class RoleResolver {
         createdAt: agentEntity.createdAt.toISOString(),
         updatedAt: agentEntity.updatedAt.toISOString(),
         deletedAt: agentEntity.deletedAt?.toISOString() ?? null,
-        universalIdentifier: agentEntity.universalIdentifier ?? agentEntity.id,
+        universalIdentifier: agentEntity.universalIdentifier,
         roleId: role.id,
       }),
     );

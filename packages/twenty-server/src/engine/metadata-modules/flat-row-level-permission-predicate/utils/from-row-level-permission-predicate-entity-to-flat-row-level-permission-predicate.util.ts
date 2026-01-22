@@ -22,7 +22,6 @@ export const fromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredic
       deletedAt:
         rowLevelPermissionPredicateEntity.deletedAt?.toISOString() ?? null,
       universalIdentifier:
-        rowLevelPermissionPredicateEntityWithoutRelations.universalIdentifier ??
-        rowLevelPermissionPredicateEntityWithoutRelations.id,
+        rowLevelPermissionPredicateEntityWithoutRelations.universalIdentifier,
     };
   };

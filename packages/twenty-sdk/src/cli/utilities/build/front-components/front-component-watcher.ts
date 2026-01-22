@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import path from 'path';
-import type { ApplicationManifest, FrontComponentManifest } from 'twenty-shared/application';
 import { build, type InlineConfig, type Rollup } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { OUTPUT_DIR } from '../common/constants';
@@ -9,7 +8,8 @@ import { printWatchingMessage } from '../common/display';
 import {
   type RestartableWatcher,
   type RestartableWatcherOptions,
-} from '../common/watcher';
+} from '../common/restartable-watcher.interface';
+import { type ManifestBuildResult } from '../manifest/manifest-build';
 import { FRONT_COMPONENTS_DIR } from './constants';
 
 export const FRONT_COMPONENT_EXTERNAL_MODULES: (string | RegExp)[] = [
@@ -17,73 +17,34 @@ export const FRONT_COMPONENT_EXTERNAL_MODULES: (string | RegExp)[] = [
   'react-dom',
   'react/jsx-runtime',
   'react/jsx-dev-runtime',
+  /^twenty-sdk/,
+  /^twenty-shared/,
+  /^@\//,
 ];
-
-const computeOutputPath = (sourcePath: string): string => {
-  const normalizedPath = sourcePath.replace(/\\/g, '/');
-
-  let relativePath = normalizedPath;
-  if (relativePath.startsWith('src/app/')) {
-    relativePath = relativePath.slice('src/app/'.length);
-  } else if (relativePath.startsWith('src/')) {
-    relativePath = relativePath.slice('src/'.length);
-  }
-
-  return relativePath.replace(/\.tsx?$/, '.js');
-};
-
-const buildFrontComponentEntries = (
-  appPath: string,
-  components: FrontComponentManifest[],
-): Record<string, string> => {
-  const entries: Record<string, string> = {};
-
-  for (const component of components) {
-    const relativePath = computeOutputPath(component.componentPath);
-    const chunkName = relativePath.replace(/\.js$/, '');
-    entries[chunkName] = path.join(appPath, component.componentPath);
-  }
-
-  return entries;
-};
 
 export class FrontComponentsWatcher implements RestartableWatcher {
   private appPath: string;
-  private entries: Record<string, string>;
+  private componentPaths: string[];
   private innerWatcher: Rollup.RollupWatcher | null = null;
   private isRestarting = false;
 
   constructor(options: RestartableWatcherOptions) {
     this.appPath = options.appPath;
-    this.entries = buildFrontComponentEntries(
-      options.appPath,
-      options.manifest?.frontComponents ?? [],
-    );
+    this.componentPaths = options.buildResult?.filePaths.frontComponents ?? [];
   }
 
-  shouldRestart(manifest: ApplicationManifest): boolean {
-    const newEntries = buildFrontComponentEntries(this.appPath, manifest.frontComponents ?? []);
-    const currentKeys = Object.keys(this.entries).sort();
-    const newKeys = Object.keys(newEntries).sort();
+  shouldRestart(result: ManifestBuildResult): boolean {
+    const currentPaths = this.componentPaths.sort().join(',');
+    const newPaths = result.filePaths.frontComponents.sort().join(',');
 
-    if (currentKeys.length !== newKeys.length) {
-      return true;
-    }
-
-    for (let i = 0; i < currentKeys.length; i++) {
-      if (currentKeys[i] !== newKeys[i]) {
-        return true;
-      }
-    }
-
-    return false;
+    return currentPaths !== newPaths;
   }
 
   async start(): Promise<void> {
     const outputDir = path.join(this.appPath, OUTPUT_DIR, FRONT_COMPONENTS_DIR);
     await fs.ensureDir(outputDir);
 
-    if (this.hasEntries()) {
+    if (this.componentPaths.length > 0) {
       console.log(chalk.blue('  🎨 Building front components...'));
       this.innerWatcher = await this.createWatcher();
     } else {
@@ -96,7 +57,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
     await this.innerWatcher?.close();
   }
 
-  async restart(manifest: ApplicationManifest): Promise<void> {
+  async restart(result: ManifestBuildResult): Promise<void> {
     if (this.isRestarting) {
       return;
     }
@@ -108,9 +69,9 @@ export class FrontComponentsWatcher implements RestartableWatcher {
       await this.innerWatcher?.close();
       this.innerWatcher = null;
 
-      this.entries = buildFrontComponentEntries(this.appPath, manifest.frontComponents ?? []);
+      this.componentPaths = result.filePaths.frontComponents;
 
-      if (this.hasEntries()) {
+      if (this.componentPaths.length > 0) {
         console.log(chalk.blue('  🎨 Building front components...'));
         this.innerWatcher = await this.createWatcher();
       } else {
@@ -122,10 +83,6 @@ export class FrontComponentsWatcher implements RestartableWatcher {
     } finally {
       this.isRestarting = false;
     }
-  }
-
-  private hasEntries(): boolean {
-    return Object.keys(this.entries).length > 0;
   }
 
   private async createWatcher(): Promise<Rollup.RollupWatcher> {
@@ -147,6 +104,13 @@ export class FrontComponentsWatcher implements RestartableWatcher {
   private createConfig(): InlineConfig {
     const frontComponentsOutputDir = path.join(this.appPath, OUTPUT_DIR, FRONT_COMPONENTS_DIR);
 
+    const entries = Object.fromEntries(
+      this.componentPaths.map((filePath) => [
+        filePath.replace(/\.tsx?$/, ''),
+        path.join(this.appPath, filePath),
+      ]),
+    );
+
     return {
       root: this.appPath,
       plugins: [
@@ -159,21 +123,17 @@ export class FrontComponentsWatcher implements RestartableWatcher {
         outDir: frontComponentsOutputDir,
         emptyOutDir: false,
         watch: {
-          include: ['src/**/*.tsx', 'src/**/*.ts', 'src/**/*.json'],
+          include: ['**/*.ts', '**/*.tsx', '**/*.json'],
           exclude: ['node_modules/**', '.twenty/**', 'dist/**'],
         },
         lib: {
-          entry: this.entries,
+          entry: entries,
           formats: ['es'],
-          fileName: (_, entryName) => `${entryName}.js`,
+          fileName: (_, entryName) => `${entryName}.mjs`,
         },
         rollupOptions: {
           external: FRONT_COMPONENT_EXTERNAL_MODULES,
           treeshake: true,
-          output: {
-            preserveModules: false,
-            exports: 'named',
-          },
         },
         minify: false,
         sourcemap: true,

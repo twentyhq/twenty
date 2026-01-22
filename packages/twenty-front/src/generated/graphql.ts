@@ -1437,7 +1437,7 @@ export enum FeatureFlagKey {
 
 export type Field = {
   __typename?: 'Field';
-  applicationId?: Maybe<Scalars['UUID']>;
+  applicationId: Scalars['UUID'];
   createdAt: Scalars['DateTime'];
   defaultValue?: Maybe<Scalars['JSON']>;
   description?: Maybe<Scalars['String']>;
@@ -3089,7 +3089,7 @@ export type NotesConfiguration = {
 
 export type Object = {
   __typename?: 'Object';
-  applicationId?: Maybe<Scalars['UUID']>;
+  applicationId: Scalars['UUID'];
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
   duplicateCriteria?: Maybe<Array<Array<Scalars['String']>>>;
