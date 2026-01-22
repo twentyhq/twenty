@@ -208,7 +208,15 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       );
     }
 
+    console.log({
+      record,
+    });
+
     const recordFieldValue = record[filterKey];
+
+    console.log({
+      recordFieldValue,
+    });
 
     if (!isDefined(recordFieldValue)) {
       if (isObject(filterValue)) {
@@ -328,9 +336,24 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       }
       case FieldMetadataType.DATE:
       case FieldMetadataType.DATE_TIME: {
+        let dateIsoString = recordFieldValue;
+
+        console.log({ dateIsoString });
+
+        if (recordFieldValue instanceof Date) {
+          dateIsoString = recordFieldValue.toISOString();
+        } else if (
+          isDefined(recordFieldValue) &&
+          typeof recordFieldValue !== 'string'
+        ) {
+          throw new Error(
+            `Unexpected value for date/time field "${filterKey}": ${recordFieldValue}, it should be a string or a Date instance`,
+          );
+        }
+
         return isMatchingDateFilter({
           dateFilter: filterValue as DateFilter,
-          value: recordFieldValue,
+          value: dateIsoString,
         });
       }
       case FieldMetadataType.NUMBER:

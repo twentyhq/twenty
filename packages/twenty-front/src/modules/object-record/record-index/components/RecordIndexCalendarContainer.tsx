@@ -3,7 +3,9 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordCalendar } from '@/object-record/record-calendar/components/RecordCalendar';
 import { RecordCalendarSSESubscribeEffect } from '@/object-record/record-calendar/components/RecordCalendarSSESubscribeEffect';
+import { RecordIndexCalendarDataChangedEffect } from '@/object-record/record-calendar/components/RecordIndexCalendarDataChangedEffect';
 import { RecordIndexCalendarDataLoaderEffect } from '@/object-record/record-calendar/components/RecordIndexCalendarDataLoaderEffect';
+import { RecordIndexCalendarOnSSEEventEffect } from '@/object-record/record-calendar/components/RecordIndexCalendarOnSSEEventEffect';
 import { RecordIndexCalendarSelectedDateInitEffect } from '@/object-record/record-calendar/components/RecordIndexCalendarSelectedDateInitEffect';
 import { RecordCalendarContextProvider } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 
@@ -54,7 +56,9 @@ export const RecordIndexCalendarContainer = ({
       >
         <RecordCalendar />
         <RecordCalendarSSESubscribeEffect />
+        <RecordIndexCalendarOnSSEEventEffect />
         <RecordIndexCalendarDataLoaderEffect />
+        <RecordIndexCalendarDataChangedEffect />
         <RecordIndexCalendarSelectedDateInitEffect />
       </RecordCalendarContextProvider>
     </RecordComponentInstanceContextsWrapper>

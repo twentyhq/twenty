@@ -1,5 +1,6 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useTriggerOptimisticEffectFromSseCreateEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseCreateEvents';
+import { useTriggerOptimisticEffectFromSseDeleteEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseDeleteEvents';
 import { useTriggerOptimisticEffectFromSseUpdateEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseUpdateEvents';
 import { groupObjectRecordSseEventsByEventType } from '@/sse-db-event/utils/groupObjectRecordSseEventsByEventType';
 import { groupObjectRecordSseEventsByObjectMetadataItemNameSingular } from '@/sse-db-event/utils/groupObjectRecordSseEventsByObjectMetadataItemNameSingular';
@@ -18,6 +19,9 @@ export const useTriggerOptimisticEffectFromSseEvents = () => {
 
   const { triggerOptimisticEffectFromSseCreateEvents } =
     useTriggerOptimisticEffectFromSseCreateEvents();
+
+  const { triggerOptimisticEffectFromSseDeleteEvents } =
+    useTriggerOptimisticEffectFromSseDeleteEvents();
 
   const triggerOptimisticEffectFromSseEvents = useCallback(
     ({ objectRecordEvents }: { objectRecordEvents: ObjectRecordEvent[] }) => {
@@ -68,6 +72,12 @@ export const useTriggerOptimisticEffectFromSseEvents = () => {
                 objectMetadataItem,
               });
               break;
+            case DatabaseEventAction.DELETED:
+              triggerOptimisticEffectFromSseDeleteEvents({
+                objectRecordEvents: objectRecordEventsForThisEventType,
+                objectMetadataItem,
+              });
+              break;
           }
         }
       }
@@ -76,6 +86,7 @@ export const useTriggerOptimisticEffectFromSseEvents = () => {
       objectMetadataItems,
       triggerOptimisticEffectFromSseUpdateEvents,
       triggerOptimisticEffectFromSseCreateEvents,
+      triggerOptimisticEffectFromSseDeleteEvents,
     ],
   );
 

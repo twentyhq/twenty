@@ -70,7 +70,7 @@ export const useRecordCalendarGroupByRecords = (
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading, error } = useQuery(groupByRecordsQuery, {
+  const { data, loading, error, refetch } = useQuery(groupByRecordsQuery, {
     client: apolloCoreClient,
     skip:
       !isDefined(calendarFieldMetadataItem) ||
@@ -124,5 +124,6 @@ export const useRecordCalendarGroupByRecords = (
     loading,
     error,
     calendarFieldMetadataItem,
+    refetch,
   };
 };

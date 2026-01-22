@@ -126,6 +126,10 @@ export const RecordBoardDataChangedEffect = () => {
             }
             break;
           }
+          case 'delete-one':
+          case 'delete-many': {
+            return;
+          }
           default: {
             triggerRecordBoardInitialQuery();
           }
