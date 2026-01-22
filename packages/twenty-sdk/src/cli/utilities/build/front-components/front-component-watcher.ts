@@ -103,6 +103,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
       outdir: outputDir,
       outExtension: { '.js': '.mjs' },
       external: FRONT_COMPONENT_EXTERNAL_MODULES,
+      tsconfig: path.join(this.appPath, 'tsconfig.json'),
       jsx: 'automatic',
       sourcemap: true,
       logLevel: 'silent',

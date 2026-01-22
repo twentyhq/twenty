@@ -118,9 +118,20 @@ export class FunctionsWatcher implements RestartableWatcher {
       outdir: outputDir,
       outExtension: { '.js': '.mjs' },
       external: FUNCTION_EXTERNAL_MODULES,
+      tsconfig: path.join(this.appPath, 'tsconfig.json'),
       sourcemap: true,
       logLevel: 'silent',
       plugins: [
+        {
+          name: 'external-patterns',
+          setup: (build) => {
+            // Externalize paths containing "generated" (matches /(?:^|\/)generated(?:\/|$)/)
+            build.onResolve({ filter: /(?:^|\/)generated(?:\/|$)/ }, (args) => ({
+              path: args.path,
+              external: true,
+            }));
+          },
+        },
         {
           name: 'build-notifications',
           setup: (build) => {
