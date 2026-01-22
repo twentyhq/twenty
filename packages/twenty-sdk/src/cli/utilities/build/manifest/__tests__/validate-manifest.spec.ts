@@ -32,7 +32,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [validObjectExtension],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -59,7 +59,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [extensionByUuid],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -86,7 +86,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [validObjectExtension, anotherExtension],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -122,7 +122,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [extensionWithSelect],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -141,7 +141,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -163,7 +163,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -189,7 +189,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -216,7 +216,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -246,7 +246,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -276,7 +276,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -306,7 +306,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -337,7 +337,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -369,7 +369,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -410,7 +410,7 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [extensionWithDuplicates],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -457,7 +457,7 @@ describe('validateManifest - objectExtensions', () => {
             ],
           },
         ],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 

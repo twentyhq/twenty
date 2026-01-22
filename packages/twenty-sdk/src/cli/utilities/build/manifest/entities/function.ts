@@ -42,7 +42,9 @@ export class FunctionEntityBuilder
           );
 
         const { handlerPath, ...rest } = extracted;
-        const builtHandlerPath = this.computeBuiltHandlerPath(handlerPath);
+        // builtHandlerPath is computed from filePath (the .function.ts file)
+        // since that's what esbuild actually builds, not handlerPath
+        const builtHandlerPath = this.computeBuiltHandlerPath(filePath);
 
         manifests.push({
           ...rest,
@@ -150,7 +152,7 @@ export class FunctionEntityBuilder
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const seen = new Map<string, string[]>();
-    const functions = manifest.serverlessFunctions ?? [];
+    const functions = manifest.functions ?? [];
 
     for (const fn of functions) {
       if (fn.universalIdentifier) {

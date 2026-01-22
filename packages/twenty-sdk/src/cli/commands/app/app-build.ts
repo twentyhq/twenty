@@ -88,7 +88,7 @@ export class AppBuildCommand {
     builtPath: string,
     checksum: string,
   ): void {
-    const fn = buildResult.manifest?.serverlessFunctions.find(
+    const fn = buildResult.manifest?.functions.find(
       (f) => f.builtHandlerPath === builtPath,
     );
     if (fn) {

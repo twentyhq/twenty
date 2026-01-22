@@ -2,6 +2,8 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 
+import { normalizeManifestForComparison } from '../../../../../integration/utils/normalize-manifest.util';
+
 export const defineManifestTests = (appPath: string): void => {
   describe('manifest', () => {
     it('should have generated manifest.json', async () => {
@@ -20,30 +22,24 @@ export const defineManifestTests = (appPath: string): void => {
       expect(manifest.application).toEqual(expected.application);
       expect(manifest.objects).toEqual(expected.objects);
 
-      // Compare serverless functions without checksums (populated dynamically)
-      const manifestFunctionsWithoutChecksums = manifest.serverlessFunctions.map(
-        ({ builtHandlerChecksum: _checksum, ...rest }) => rest,
+      // Compare functions with checksums normalized to [checksum]
+      expect(normalizeManifestForComparison({ functions: manifest.functions }).functions).toEqual(
+        normalizeManifestForComparison({ functions: expected.functions }).functions,
       );
-      const expectedFunctionsWithoutChecksums = expected.serverlessFunctions.map(
-        ({ builtHandlerChecksum: _checksum, ...rest }) => rest,
-      );
-      expect(manifestFunctionsWithoutChecksums).toEqual(expectedFunctionsWithoutChecksums);
 
       // Verify checksums are populated (not null)
-      for (const fn of manifest.serverlessFunctions) {
+      for (const fn of manifest.functions) {
         expect(fn.builtHandlerChecksum).toBeDefined();
         expect(fn.builtHandlerChecksum).not.toBeNull();
         expect(typeof fn.builtHandlerChecksum).toBe('string');
       }
 
-      // Compare front components without checksums (populated dynamically)
-      const manifestComponentsWithoutChecksums = manifest.frontComponents?.map(
-        ({ builtComponentChecksum: _checksum, ...rest }) => rest,
+      // Compare front components with checksums normalized to [checksum]
+      expect(
+        normalizeManifestForComparison({ frontComponents: manifest.frontComponents }).frontComponents,
+      ).toEqual(
+        normalizeManifestForComparison({ frontComponents: expected.frontComponents }).frontComponents,
       );
-      const expectedComponentsWithoutChecksums = expected.frontComponents?.map(
-        ({ builtComponentChecksum: _checksum, ...rest }) => rest,
-      );
-      expect(manifestComponentsWithoutChecksums).toEqual(expectedComponentsWithoutChecksums);
 
       // Verify front component checksums are populated (not null)
       for (const component of manifest.frontComponents ?? []) {

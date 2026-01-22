@@ -17,7 +17,7 @@
   "frontComponents": [
     {
       "builtComponentPath": "front-components/src/root.front-component.mjs",
-      "builtComponentChecksum": null,
+      "builtComponentChecksum": "[checksum]",
       "componentName": "RootComponent",
       "description": "A root-level front component",
       "name": "root-component",
@@ -26,7 +26,7 @@
     },
     {
       "builtComponentPath": "front-components/src/components/card.front-component.mjs",
-      "builtComponentChecksum": null,
+      "builtComponentChecksum": "[checksum]",
       "componentName": "CardDisplay",
       "description": "A component using an external component file",
       "name": "card-component",
@@ -35,7 +35,7 @@
     },
     {
       "builtComponentPath": "front-components/src/components/greeting.front-component.mjs",
-      "builtComponentChecksum": null,
+      "builtComponentChecksum": "[checksum]",
       "componentName": "GreetingComponent",
       "description": "A component that uses greeting utility",
       "name": "greeting-component",
@@ -44,7 +44,7 @@
     },
     {
       "builtComponentPath": "front-components/src/components/test.front-component.mjs",
-      "builtComponentChecksum": null,
+      "builtComponentChecksum": "[checksum]",
       "componentName": "TestComponent",
       "description": "A test front component",
       "name": "test-component",
@@ -284,9 +284,9 @@
       "universalIdentifier": "b648f87b-1d26-4961-b974-0908fd991061"
     }
   ],
-  "serverlessFunctions": [
+  "functions": [
     {
-      "builtHandlerChecksum": null,
+      "builtHandlerChecksum": "[checksum]",
       "builtHandlerPath": "functions/src/root.function.mjs",
       "handlerName": "rootHandler",
       "name": "root-function",
@@ -304,7 +304,7 @@
       "universalIdentifier": "f0f1f2f3-f4f5-4000-8000-000000000001"
     },
     {
-      "builtHandlerChecksum": null,
+      "builtHandlerChecksum": "[checksum]",
       "builtHandlerPath": "functions/src/functions/greeting.function.mjs",
       "handlerName": "greetingHandler",
       "name": "greeting-function",
@@ -322,8 +322,8 @@
       "universalIdentifier": "g0g1g2g3-g4g5-4000-8000-000000000001"
     },
     {
-      "builtHandlerChecksum": null,
-      "builtHandlerPath": "functions/src/utils/test-function-2.util.mjs",
+      "builtHandlerChecksum": "[checksum]",
+      "builtHandlerPath": "functions/src/functions/test-function-2.function.mjs",
       "handlerName": "testFunction2",
       "name": "test-function-2",
       "sourceHandlerPath": "src/utils/test-function-2.util.ts",
@@ -338,7 +338,7 @@
       "universalIdentifier": "eb3ffc98-88ec-45d4-9b4a-56833b219ccb"
     },
     {
-      "builtHandlerChecksum": null,
+      "builtHandlerChecksum": "[checksum]",
       "builtHandlerPath": "functions/src/functions/test-function.function.mjs",
       "handlerName": "handler",
       "name": "test-function",

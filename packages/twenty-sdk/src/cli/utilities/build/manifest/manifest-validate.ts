@@ -40,7 +40,7 @@ export const validateManifest = (
   );
   objectEntityBuilder.validate(manifest.objects ?? [], errors);
   objectExtensionEntityBuilder.validate(manifest.objectExtensions ?? [], errors);
-  functionEntityBuilder.validate(manifest.serverlessFunctions ?? [], errors);
+  functionEntityBuilder.validate(manifest.functions ?? [], errors);
   roleEntityBuilder.validate(manifest.roles ?? [], errors);
   frontComponentEntityBuilder.validate(manifest.frontComponents ?? [], errors);
 
@@ -58,7 +58,7 @@ export const validateManifest = (
     });
   }
 
-  if (!isNonEmptyArray(manifest.serverlessFunctions)) {
+  if (!isNonEmptyArray(manifest.functions)) {
     warnings.push({
       message: 'No functions defined',
     });

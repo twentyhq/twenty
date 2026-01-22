@@ -75,7 +75,7 @@ export class AppDevCommand {
     this.state.fileUploadStatus.functions.clear();
     this.state.fileUploadStatus.frontComponents.clear();
 
-    for (const fn of manifestBuildResult.manifest?.serverlessFunctions ?? []) {
+    for (const fn of manifestBuildResult.manifest?.functions ?? []) {
       this.state.fileUploadStatus.functions.set(fn.universalIdentifier, {
         builtPath: fn.builtHandlerPath,
         checksum: null,
@@ -150,7 +150,7 @@ export class AppDevCommand {
     // Update the manifest with the checksum
     const manifest = this.state.manifestBuildResult?.manifest;
     if (manifest) {
-      const fn = manifest.serverlessFunctions.find(
+      const fn = manifest.functions.find(
         (f) => f.builtHandlerPath === builtPath,
       );
       if (fn) {

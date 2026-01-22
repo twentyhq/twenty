@@ -13,7 +13,7 @@ export type ApplicationManifest = {
   application: Application;
   objects: ObjectManifest[];
   objectExtensions?: ObjectExtensionManifest[];
-  serverlessFunctions: ServerlessFunctionManifest[];
+  functions: ServerlessFunctionManifest[];
   frontComponents?: FrontComponentManifest[];
   roles?: RoleManifest[];
   sources: Sources;

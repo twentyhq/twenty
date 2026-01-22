@@ -1,18 +1,8 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
 
+import { normalizeManifestForComparison } from '../../../../../integration/utils/normalize-manifest.util';
 import expectedManifest from '../manifest.expected.json';
-
-// Strip checksums from manifest for comparison (they are populated dynamically)
-const stripChecksums = (manifest: typeof expectedManifest) => ({
-  ...manifest,
-  serverlessFunctions: manifest.serverlessFunctions.map(
-    ({ builtHandlerChecksum: _hc, ...rest }) => rest,
-  ),
-  frontComponents: manifest.frontComponents?.map(
-    ({ builtComponentChecksum: _cc, ...rest }) => rest,
-  ),
-});
 
 export const defineManifestTests = (appPath: string): void => {
   const manifestOutputPath = join(appPath, '.twenty/output/manifest.json');
@@ -25,11 +15,13 @@ export const defineManifestTests = (appPath: string): void => {
 
       const { sources: _sources, ...sanitizedManifest } = manifest;
 
-      // Compare without checksums (they are dynamically generated)
-      expect(stripChecksums(sanitizedManifest)).toEqual(stripChecksums(expectedManifest));
+      // Compare with checksums normalized to [checksum]
+      expect(normalizeManifestForComparison(sanitizedManifest)).toEqual(
+        normalizeManifestForComparison(expectedManifest),
+      );
 
       // Verify checksums are populated
-      for (const fn of manifest.serverlessFunctions) {
+      for (const fn of manifest.functions) {
         expect(fn.builtHandlerChecksum).toBeDefined();
         expect(fn.builtHandlerChecksum).not.toBeNull();
         expect(typeof fn.builtHandlerChecksum).toBe('string');
@@ -53,7 +45,7 @@ export const defineManifestTests = (appPath: string): void => {
       const manifest = await fs.readJson(manifestOutputPath);
 
       expect(manifest?.objects).toHaveLength(2);
-      expect(manifest?.serverlessFunctions).toHaveLength(4);
+      expect(manifest?.functions).toHaveLength(4);
       expect(manifest?.frontComponents).toHaveLength(4);
       expect(manifest?.roles).toHaveLength(2);
       expect(manifest?.objectExtensions).toHaveLength(1);

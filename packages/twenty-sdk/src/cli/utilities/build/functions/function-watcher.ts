@@ -48,6 +48,8 @@ export class FunctionsWatcher implements RestartableWatcher {
   private watchMode: boolean;
   private lastInputsSignature: string | null = null;
   private onFileBuilt?: OnFileBuiltCallback;
+  private buildCompletePromise: Promise<void> = Promise.resolve();
+  private resolveBuildComplete: (() => void) | null = null;
 
   constructor(options: RestartableWatcherOptions) {
     this.appPath = options.appPath;
@@ -152,42 +154,47 @@ export class FunctionsWatcher implements RestartableWatcher {
           name: 'build-notifications',
           setup: (build) => {
             build.onEnd(async (result) => {
-              if (result.errors.length > 0) {
-                logger.error('✗ Build error:');
-                for (const error of result.errors) {
-                  logger.error(`  ${error.text}`);
+              try {
+                if (result.errors.length > 0) {
+                  logger.error('✗ Build error:');
+                  for (const error of result.errors) {
+                    logger.error(`  ${error.text}`);
+                  }
+                  return;
                 }
-                return;
-              }
 
-              const inputs = Object.keys(result.metafile?.inputs ?? {}).sort();
-              const inputsSignature = inputs.join(',');
+                const inputs = Object.keys(result.metafile?.inputs ?? {}).sort();
+                const inputsSignature = inputs.join(',');
 
-              if (watcher.lastInputsSignature === inputsSignature) {
-                return;
-              }
-              watcher.lastInputsSignature = inputsSignature;
-
-              const outputFiles = Object.keys(result.metafile?.outputs ?? {})
-                .filter((file) => file.endsWith('.mjs'));
-
-              for (const outputFile of outputFiles) {
-                // Make outputFile absolute before computing relative path
-                // (esbuild metafile keys are relative to process.cwd())
-                const absoluteOutputFile = path.resolve(outputFile);
-                const relativePath = path.relative(outputDir, absoluteOutputFile);
-                const builtPath = `${FUNCTIONS_DIR}/${relativePath}`;
-                logger.success(`✓ Built ${relativePath}`);
-
-                if (watcher.onFileBuilt) {
-                  const content = await fs.readFile(absoluteOutputFile);
-                  const checksum = crypto.createHash('md5').update(content).digest('hex');
-                  watcher.onFileBuilt(builtPath, checksum);
+                if (watcher.lastInputsSignature === inputsSignature) {
+                  return;
                 }
-              }
+                watcher.lastInputsSignature = inputsSignature;
 
-              if (watchMode) {
-                logger.log('👀 Watching for changes...');
+                const outputFiles = Object.keys(result.metafile?.outputs ?? {})
+                  .filter((file) => file.endsWith('.mjs'));
+
+                for (const outputFile of outputFiles) {
+                  // Make outputFile absolute before computing relative path
+                  // (esbuild metafile keys are relative to process.cwd())
+                  const absoluteOutputFile = path.resolve(outputFile);
+                  const relativePath = path.relative(outputDir, absoluteOutputFile);
+                  const builtPath = `${FUNCTIONS_DIR}/${relativePath}`;
+                  logger.success(`✓ Built ${relativePath}`);
+
+                  if (watcher.onFileBuilt) {
+                    const content = await fs.readFile(absoluteOutputFile);
+                    const checksum = crypto.createHash('md5').update(content).digest('hex');
+                    watcher.onFileBuilt(builtPath, checksum);
+                  }
+                }
+
+                if (watchMode) {
+                  logger.log('👀 Watching for changes...');
+                }
+              } finally {
+                // Signal that onEnd processing is complete
+                watcher.resolveBuildComplete?.();
               }
             });
           },
@@ -195,7 +202,15 @@ export class FunctionsWatcher implements RestartableWatcher {
       ],
     });
 
+    // Create a promise that will be resolved when onEnd completes
+    this.buildCompletePromise = new Promise<void>((resolve) => {
+      this.resolveBuildComplete = resolve;
+    });
+
     await this.esBuildContext.rebuild();
+
+    // Wait for the onEnd callback to finish processing checksums
+    await this.buildCompletePromise;
 
     if (this.watchMode) {
       await this.esBuildContext.watch();

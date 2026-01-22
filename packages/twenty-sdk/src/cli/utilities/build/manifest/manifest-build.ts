@@ -152,7 +152,7 @@ export const runManifestBuild = async (
       objects: objectManifests,
       objectExtensions:
         objectExtensionManifests.length > 0 ? objectExtensionManifests : undefined,
-      serverlessFunctions: functionManifests,
+      functions: functionManifests,
       frontComponents:
         frontComponentManifests.length > 0 ? frontComponentManifests : undefined,
       roles: roleManifests,
@@ -164,7 +164,7 @@ export const runManifestBuild = async (
       application,
       objects: objectManifests,
       objectExtensions: objectExtensionManifests,
-      serverlessFunctions: functionManifests,
+      functions: functionManifests,
       frontComponents: frontComponentManifests,
       roles: roleManifests,
     });
