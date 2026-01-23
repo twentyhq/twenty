@@ -18,11 +18,11 @@ type AttachmentDataSeed = {
   updatedBySource: string;
   updatedByWorkspaceMemberId: string;
   updatedByName: string;
-  personId: string | null;
-  companyId: string | null;
-  noteId: string | null;
-  taskId: string | null;
-  opportunityId: string | null;
+  targetPersonId: string | null;
+  targetCompanyId: string | null;
+  targetNoteId: string | null;
+  targetTaskId: string | null;
+  targetOpportunityId: string | null;
 };
 
 export const ATTACHMENT_DATA_SEED_COLUMNS: (keyof AttachmentDataSeed)[] = [
@@ -36,11 +36,11 @@ export const ATTACHMENT_DATA_SEED_COLUMNS: (keyof AttachmentDataSeed)[] = [
   'updatedBySource',
   'updatedByWorkspaceMemberId',
   'updatedByName',
-  'personId',
-  'companyId',
-  'noteId',
-  'taskId',
-  'opportunityId',
+  'targetPersonId',
+  'targetCompanyId',
+  'targetNoteId',
+  'targetTaskId',
+  'targetOpportunityId',
 ];
 
 const GENERATE_ATTACHMENT_IDS = (): Record<string, string> => {
@@ -219,33 +219,33 @@ const GENERATE_ATTACHMENT_SEEDS = (): AttachmentDataSeed[] => {
 
     // Determine which entity this attachment belongs to
     // Distribution: ~30% person, ~30% company, ~20% note, ~15% task, ~5% opportunity
-    let personId: string | null = null;
-    let companyId: string | null = null;
-    let noteId: string | null = null;
-    let taskId: string | null = null;
-    let opportunityId: string | null = null;
+    let targetPersonId: string | null = null;
+    let targetCompanyId: string | null = null;
+    let targetNoteId: string | null = null;
+    let targetTaskId: string | null = null;
+    let targetOpportunityId: string | null = null;
 
     const DISTRIBUTION_VALUE = INDEX % 100;
 
     if (DISTRIBUTION_VALUE < 30) {
       // 30% Person attachments
-      personId = PERSON_IDS[entityIndex % PERSON_IDS.length];
+      targetPersonId = PERSON_IDS[entityIndex % PERSON_IDS.length];
       entityIndex++;
     } else if (DISTRIBUTION_VALUE < 60) {
       // 30% Company attachments
-      companyId = COMPANY_IDS[entityIndex % COMPANY_IDS.length];
+      targetCompanyId = COMPANY_IDS[entityIndex % COMPANY_IDS.length];
       entityIndex++;
     } else if (DISTRIBUTION_VALUE < 80) {
       // 20% Note attachments
-      noteId = NOTE_IDS[entityIndex % NOTE_IDS.length];
+      targetNoteId = NOTE_IDS[entityIndex % NOTE_IDS.length];
       entityIndex++;
     } else if (DISTRIBUTION_VALUE < 95) {
       // 15% Task attachments
-      taskId = TASK_IDS[entityIndex % TASK_IDS.length];
+      targetTaskId = TASK_IDS[entityIndex % TASK_IDS.length];
       entityIndex++;
     } else {
       // 5% Opportunity attachments
-      opportunityId = OPPORTUNITY_IDS[entityIndex % OPPORTUNITY_IDS.length];
+      targetOpportunityId = OPPORTUNITY_IDS[entityIndex % OPPORTUNITY_IDS.length];
       entityIndex++;
     }
 
@@ -260,11 +260,11 @@ const GENERATE_ATTACHMENT_SEEDS = (): AttachmentDataSeed[] => {
       updatedBySource: FieldActorSource.MANUAL,
       updatedByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       updatedByName: 'Tim A',
-      personId,
-      companyId,
-      noteId,
-      taskId,
-      opportunityId,
+      targetPersonId,
+      targetCompanyId,
+      targetNoteId,
+      targetTaskId,
+      targetOpportunityId,
     });
   }
 
