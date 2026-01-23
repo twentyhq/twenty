@@ -9,7 +9,7 @@ import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { PrometheusService } from 'src/engine/core-modules/metrics/prometheus.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { EVENT_STREAM_TTL_MS } from 'src/engine/subscriptions/constants/event-stream-ttl.constant';
 import {
   EventStreamException,
@@ -25,23 +25,23 @@ export class EventStreamService implements OnModuleInit {
     @InjectCacheStorage(CacheStorageNamespace.EngineSubscriptions)
     private readonly cacheStorageService: CacheStorageService,
     private readonly cacheLockService: CacheLockService,
-    private readonly prometheusService: PrometheusService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   onModuleInit() {
-    this.prometheusService.createGauge({
-      name: 'twenty_event_streams_live_total',
-      help: 'Current number of live event streams',
-      collect: async (gauge) => {
+    this.metricsService.createObservableGauge(
+      'twenty_event_streams_live_total',
+      { description: 'Current number of live event streams' },
+      async (observableResult) => {
         try {
           const count = await this.getTotalActiveStreamCount();
 
-          gauge.set(count);
+          observableResult.observe(count);
         } catch (error) {
           this.logger.error('Failed to collect event streams metrics', error);
         }
       },
-    });
+    );
   }
 
   async getTotalActiveStreamCount(): Promise<number> {
