@@ -4,9 +4,9 @@ import { IllustrationIconWrapper } from '@ui/display/icon/components/Illustratio
 import IllustrationIconPhoneRaw from '@assets/icons/illustration-phone.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
+type IllustrationIconPhoneProps = IconComponentProps;
 
-
-export const IllustrationIconPhone = ({ size }: IconComponentProps) => {
+export const IllustrationIconPhone = ({ size }: IllustrationIconPhoneProps) => {
   const theme = useTheme();
   const iconSize = size ?? theme.icon.size.lg;
 

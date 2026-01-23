@@ -3,11 +3,11 @@ import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-
+type IllustrationIconCalendarTimeProps = IconComponentProps;
 
 export const IllustrationIconCalendarTime = ({
   size,
-}: IconComponentProps) => {
+}: IllustrationIconCalendarTimeProps) => {
   const theme = useTheme();
   const iconSize = size ?? theme.icon.size.lg;
   return (

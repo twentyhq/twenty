@@ -4,9 +4,11 @@ import { IllustrationIconWrapper } from '@ui/display/icon/components/Illustratio
 import IllustrationIconToggleRaw from '@assets/icons/illustration-toggle.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
+type IllustrationIconToggleProps = IconComponentProps;
 
-
-export const IllustrationIconToggle = ({ size }: IconComponentProps) => {
+export const IllustrationIconToggle = ({
+  size,
+}: IllustrationIconToggleProps) => {
   const theme = useTheme();
   const iconSize = size ?? theme.icon.size.lg;
   return (

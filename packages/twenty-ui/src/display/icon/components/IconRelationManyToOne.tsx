@@ -3,7 +3,12 @@ import { useTheme } from '@emotion/react';
 import IconRelationManyToOneRaw from '@assets/icons/many-to-one.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-export const IconRelationManyToOne = ({ size, stroke }: IconComponentProps) => {
+type IconRelationManyToOneProps = IconComponentProps;
+
+export const IconRelationManyToOne = ({
+  size,
+  stroke,
+}: IconRelationManyToOneProps) => {
   const theme = useTheme();
   const iconSize = size ?? 24;
   const iconStroke = stroke ?? theme.icon.stroke.md;

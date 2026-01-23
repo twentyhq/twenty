@@ -3,9 +3,9 @@ import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
+type IllustrationIconMailProps = IconComponentProps;
 
-
-export const IllustrationIconMail = ({ size }: IconComponentProps) => {
+export const IllustrationIconMail = ({ size }: IllustrationIconMailProps) => {
   const theme = useTheme();
   const iconSize = size ?? theme.icon.size.lg;
   return (

@@ -4,11 +4,11 @@ import { IllustrationIconWrapper } from '@ui/display/icon/components/Illustratio
 import IllustrationIconOneToOneRaw from '@assets/icons/illustration-one-to-one.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-
+type IllustrationIconOneToOneProps = IconComponentProps;
 
 export const IllustrationIconOneToOne = ({
   size,
-}: IconComponentProps) => {
+}: IllustrationIconOneToOneProps) => {
   const theme = useTheme();
   const iconSize = size ?? theme.icon.size.lg;
   return (
