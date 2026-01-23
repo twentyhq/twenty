@@ -1,5 +1,6 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type CastRecordTypeOrmDatePropertiesToString } from 'src/engine/metadata-modules/flat-entity/types/cast-record-typeorm-date-properties-to-string.type';
 import { type ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-one-to-many-entity-relation-properties.type';
 import { type ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-related-entity-properties.type';
@@ -7,6 +8,12 @@ import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modul
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
+import { Equal, Expect } from 'twenty-shared/testing';
+import {
+  ExtractJsonbProperties,
+  ExtractSerializedRelationProperties,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
 // TODO Handle universal settings
 export type UniversalFlatEntityFrom<
@@ -34,4 +41,18 @@ export type UniversalFlatEntityFrom<
       string as `${RemoveSuffix<P, 'Id'>}UniversalIdentifier`]: TEntity[P];
   } & {
     applicationUniversalIdentifier: string;
+  } & {
+    [P in ExtractJsonbProperties<TEntity> & string as `${P}Toto`]: true;
   };
+
+type tmp = FieldMetadataEntity<FieldMetadataType.RELATION>['settings'];
+type tmp2 = FieldMetadataEntity<FieldMetadataType>['settings'];
+type toto = ExtractSerializedRelationProperties<tmp>;
+type toto2 = ExtractSerializedRelationProperties<tmp2>;
+
+type Assertions = [
+  // Success below
+  Expect<Equal<toto, 'junctionTargetFieldId'>>,
+  // Failing below
+  Expect<Equal<toto2, 'junctionTargetFieldId'>>,
+];

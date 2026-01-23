@@ -1,4 +1,5 @@
-export type __SerializedRelationBrand__ = '__SerializedRelationBrand__';
+export const SERIALIZED_RELATION_BRAND = '__SerializedRelationBrand__' as const;
+
 export type SerializedRelation = string & {
-  __SerializedRelationBrand__?: never;
+  [SERIALIZED_RELATION_BRAND]?: never;
 };

@@ -108,10 +108,8 @@ export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
 export type { IsEmptyRecord } from './IsEmptyRecord.type';
 export type { IsExactly } from './IsExactly';
-export type {
-  __JsonbPropertyBrand__,
-  JsonbProperty,
-} from './JsonbProperty.type';
+export type { JsonbProperty } from './JsonbProperty.type';
+export { JSONB_PROPERTY_BRAND } from './JsonbProperty.type';
 export { MessageParticipantRole } from './MessageParticipantRole';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NonNullableRequired } from './NonNullableRequired';
@@ -190,10 +188,8 @@ export type {
   RelationPredicateValue,
   RowLevelPermissionPredicateValue,
 } from './RowLevelPermissionPredicateValue';
-export type {
-  __SerializedRelationBrand__,
-  SerializedRelation,
-} from './SerializedRelation.type';
+export type { SerializedRelation } from './SerializedRelation.type';
+export { SERIALIZED_RELATION_BRAND } from './SerializedRelation.type';
 export type { ServerlessFunctionEvent } from './ServerlessFunctionEvent';
 export { SettingsPath } from './SettingsPath';
 export type { Sources } from './SourcesType';
