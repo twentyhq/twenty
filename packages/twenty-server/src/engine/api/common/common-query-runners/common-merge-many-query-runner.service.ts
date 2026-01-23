@@ -6,10 +6,10 @@ import {
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
 import {
-  FieldMetadataRelationSettings,
+  FieldMetadataSettingsMapping,
   FieldMetadataType,
   ObjectRecord,
-  RelationType,
+  RelationType
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
@@ -248,7 +248,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
         const relationType =
           isDryRun && fieldMetadata.type === FieldMetadataType.RELATION
-            ? (fieldMetadata.settings as FieldMetadataRelationSettings)
+            ? (fieldMetadata.settings as FieldMetadataSettingsMapping['RELATION'])
                 ?.relationType
             : undefined;
 
@@ -368,7 +368,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       }
 
       const relationSettings = field.settings as
-        | FieldMetadataRelationSettings
+        | FieldMetadataSettingsMapping['RELATION']
         | undefined;
 
       if (

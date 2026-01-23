@@ -10,15 +10,18 @@ type TestedRecord = {
   yes3: JsonbProperty<{}> | null;
   yes4: JsonbProperty<{}> | undefined;
   yes5?: JsonbProperty<{}>;
+  yes6: JsonbProperty<{} | null>;
+  yes7: JsonbProperty<{} | undefined>;
 };
 type TestResult = ExtractJsonbProperties<TestedRecord>;
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   // TestResult should only include JsonbProperty fields, not plain objects like no1/no2
-  Expect<Equal<TestResult, 'yes1' | 'yes2' | 'yes3' | 'yes4' | 'yes5'>>,
-  // @ts-expect-error should fail pass null
-  JsonbProperty<{} | null>,
-  // @ts-expect-error should fail pass undefined
-  JsonbProperty<{} | undefined>,
+  Expect<
+    Equal<
+      TestResult,
+      'yes1' | 'yes2' | 'yes3' | 'yes4' | 'yes5' | 'yes6' | 'yes7'
+    >
+  >,
 ];

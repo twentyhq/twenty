@@ -3,8 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isNull, isUndefined } from '@sniptt/guards';
 import {
-  FieldMetadataFilesSettings,
-  FieldMetadataRelationSettings,
+  FieldMetadataSettingsMapping,
   FieldMetadataType,
   ObjectRecord,
   RelationType,
@@ -219,7 +218,7 @@ export class DataArgProcessor {
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
         const fieldMetadataRelationSettings =
-          fieldMetadata.settings as FieldMetadataRelationSettings;
+          fieldMetadata.settings as FieldMetadataSettingsMapping['RELATION'];
 
         if (
           fieldMetadataRelationSettings.relationType ===
@@ -252,7 +251,7 @@ export class DataArgProcessor {
         const validatedValue = validateFilesFieldOrThrow(
           value,
           key,
-          fieldMetadata.settings as FieldMetadataFilesSettings,
+          fieldMetadata.settings as FieldMetadataSettingsMapping['FILES'],
         );
 
         return transformRawJsonField(validatedValue);

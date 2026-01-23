@@ -3,9 +3,9 @@ import {
   type FieldMetadataTypesToTestForFilterInputValidation,
 } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
 import {
+  FieldMetadataSettingsMapping,
   FieldMetadataType,
   RelationType,
-  type FieldMetadataFilesSettings,
   type FieldMetadataMultiItemSettings,
   type RelationCreationPayload,
 } from 'twenty-shared/types';
@@ -20,7 +20,7 @@ type FieldMetadataCreationInput = {
   options?: FieldMetadataComplexOption[];
   relationCreationPayload?: RelationCreationPayload;
   morphRelationsCreationPayload?: RelationCreationPayload[];
-  settings?: FieldMetadataMultiItemSettings | FieldMetadataFilesSettings;
+  settings?: FieldMetadataMultiItemSettings | FieldMetadataSettingsMapping['FILES'];
 };
 
 export const getFieldMetadataCreationInputs = (

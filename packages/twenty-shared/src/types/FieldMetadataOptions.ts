@@ -31,11 +31,15 @@ type FieldMetadataOptionsMapping = {
   [FieldMetadataType.MULTI_SELECT]: JsonbProperty<FieldMetadataComplexOption[]>;
 };
 
+export type FieldMetadataOptionForAnyType =
+  | null
+  | FieldMetadataOptionsMapping[keyof FieldMetadataOptionsMapping];
+
 export type FieldMetadataOptions<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? null | FieldMetadataOptionsMapping[keyof FieldMetadataOptionsMapping]
+    ? FieldMetadataOptionForAnyType
     : T extends keyof FieldMetadataOptionsMapping
       ? FieldMetadataOptionsMapping[T]
       : never | null;

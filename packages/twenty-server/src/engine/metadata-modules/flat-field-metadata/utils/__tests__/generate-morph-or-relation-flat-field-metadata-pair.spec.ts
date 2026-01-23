@@ -1,6 +1,6 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
 import {
-  type FieldMetadataRelationSettings,
+  FieldMetadataSettingsMapping,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -285,9 +285,9 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           input.targetFlatObjectMetadata.id,
         );
         const sourceSettings =
-          sourceFieldMetadata.settings as FieldMetadataRelationSettings;
+          sourceFieldMetadata.settings as FieldMetadataSettingsMapping['RELATION'];
         const targetSettings =
-          targetFieldMetadata.settings as FieldMetadataRelationSettings;
+          targetFieldMetadata.settings as FieldMetadataSettingsMapping['RELATION'];
 
         expect(sourceSettings.relationType).toBe(expectedSourceRelationType);
 

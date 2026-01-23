@@ -1,9 +1,11 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
+  FieldMetadataOptionForAnyType,
+  JsonbProperty,
   type AllFieldMetadataSettings,
   type FieldMetadataSettingsMapping,
   type FieldMetadataType,
-  type NullablePartial,
+  type NullablePartial
 } from 'twenty-shared/types';
 import { type Relation as TypeOrmRelation } from 'typeorm';
 
@@ -188,7 +190,9 @@ type SettingsAssertions = [
   Expect<
     HasAllProperties<
       MorphRelationFieldMetadata,
-      { settings: FieldMetadataSettingsMapping[FieldMetadataType.MORPH_RELATION] }
+      {
+        settings: FieldMetadataSettingsMapping[FieldMetadataType.MORPH_RELATION];
+      }
     >
   >,
 
@@ -344,7 +348,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       LinksFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.LINKS>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.LINKS];
       }
     >
   >,
@@ -373,19 +377,19 @@ type OptionsAssertions = [
   Expect<
     HasAllProperties<
       RatingFieldMetadata,
-      { options: FieldMetadataDefaultOption[] }
+      { options: JsonbProperty<FieldMetadataDefaultOption[]> }
     >
   >,
   Expect<
     HasAllProperties<
       SelectFieldMetadata,
-      { options: FieldMetadataComplexOption[] }
+      { options: JsonbProperty<FieldMetadataComplexOption[]> }
     >
   >,
   Expect<
     HasAllProperties<
       MultiSelectFieldMetadata,
-      { options: FieldMetadataComplexOption[] }
+      { options: JsonbProperty<FieldMetadataComplexOption[]> }
     >
   >,
 
@@ -412,9 +416,7 @@ type OptionsAssertions = [
     HasAllProperties<
       AbstractFieldMetadata,
       {
-        options:
-          | null
-          | (FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]);
+        options: FieldMetadataOptionForAnyType
       }
     >
   >,

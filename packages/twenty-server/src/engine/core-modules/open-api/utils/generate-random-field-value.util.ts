@@ -131,7 +131,6 @@ export const generateRandomFieldValue = ({
     case FieldMetadataType.ACTOR: {
       return {
         source: 'MANUAL',
-        context: {},
         name: faker.person.fullName(),
         workspaceMemberId: null,
       };

@@ -9,7 +9,7 @@ import { FieldMetadataDefaultValueForAnyType } from 'twenty-shared/types';
 
 export const serializeDefaultValue = (
   defaultValue?: FieldMetadataDefaultValueForAnyType,
-) => {
+): string | number | boolean | null => {
   if (defaultValue === undefined || defaultValue === null) {
     return null;
   }
