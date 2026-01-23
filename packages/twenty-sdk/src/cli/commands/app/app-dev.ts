@@ -2,8 +2,8 @@ import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
 import {
+  EMPTY_FILE_PATHS,
   type ManifestBuildResult,
-  runManifestBuild,
   updateManifestChecksum,
 } from '@/cli/utilities/build/manifest/manifest-build';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
@@ -33,8 +33,7 @@ export type FileStatusMaps = {
   frontComponents: Map<string, FileStatus>;
 };
 
-type AppDevState = {
-  manifest: ApplicationManifest | null;
+type AppDevState = ManifestBuildResult & {
   fileStatusMaps: FileStatusMaps;
 };
 
@@ -48,8 +47,10 @@ export class AppDevCommand {
   private apiService = new ApiService();
 
   private appPath: string = '';
+
   private state: AppDevState = {
     manifest: null,
+    filePaths: EMPTY_FILE_PATHS,
     fileStatusMaps: {
       functions: new Map(),
       frontComponents: new Map(),
@@ -69,26 +70,24 @@ export class AppDevCommand {
   }
 
   private async startWatchers(): Promise<void> {
-    const buildResult = await runManifestBuild(this.appPath);
+    await this.startManifestWatcher();
 
-    if (!buildResult.manifest) {
+    if (!this.state.manifest) {
       return;
     }
 
     this.fileUploader = new FileUploader({
       appPath: this.appPath,
       applicationUniversalIdentifier:
-        buildResult.manifest.application.universalIdentifier,
+        this.state.manifest.application.universalIdentifier,
     });
 
-    this.state.manifest = buildResult.manifest;
-    this.initializeFunctionsFileUploadStatus(buildResult.manifest);
-    this.initializeFrontComponentsFileUploadStatus(buildResult.manifest);
+    this.initializeFunctionsFileUploadStatus(this.state.manifest);
+    this.initializeFrontComponentsFileUploadStatus(this.state.manifest);
 
-    await this.startManifestWatcher();
-    await this.startFunctionsWatcher(buildResult.filePaths.functions);
+    await this.startFunctionsWatcher(this.state.filePaths.functions);
     await this.startFrontComponentsWatcher(
-      buildResult.filePaths.frontComponents,
+      this.state.filePaths.frontComponents,
     );
   }
 
@@ -131,6 +130,7 @@ export class AppDevCommand {
       callbacks: {
         onBuildSuccess: async (result: ManifestBuildResult) => {
           this.state.manifest = result.manifest;
+          this.state.filePaths = result.filePaths;
 
           const functionSourcePaths = result.filePaths.functions;
           const shouldRestartFunctions =
