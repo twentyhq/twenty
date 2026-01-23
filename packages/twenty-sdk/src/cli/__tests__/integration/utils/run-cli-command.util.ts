@@ -63,7 +63,7 @@ export const runCliCommand = (
         setTimeout(() => {
           child.kill();
           resolve({ success: true, output });
-        }, 500);
+        }, 1500);
       }
     });
 
