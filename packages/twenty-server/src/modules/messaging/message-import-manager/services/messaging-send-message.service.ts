@@ -82,6 +82,7 @@ export class MessagingSendMessageService {
           to: sendMessageInput.to,
           cc: sendMessageInput.cc,
           bcc: sendMessageInput.bcc,
+          keepBcc: true,
           subject: sendMessageInput.subject,
           text: sendMessageInput.body,
           html: sendMessageInput.html,
