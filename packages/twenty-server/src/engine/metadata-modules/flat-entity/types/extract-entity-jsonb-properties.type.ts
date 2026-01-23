@@ -1,10 +1,10 @@
-import { type JsonbPropertyBrand } from 'src/engine/workspace-manager/types/jsonb-property.type';
+import { __JsonbPropertyBrand__ } from 'src/engine/workspace-manager/types/jsonb-property.type';
 
 export type ExtractEntityJsonbProperties<T> = NonNullable<
   {
-    [P in keyof T]: [NonNullable<T[P]>] extends [never]
+    [P in keyof T]-?: [NonNullable<T[P]>] extends [never]
       ? never
-      : NonNullable<T[P]> extends { [JsonbPropertyBrand]?: true }
+      : typeof __JsonbPropertyBrand__ extends keyof NonNullable<T[P]>
         ? P
         : never;
   }[keyof T]

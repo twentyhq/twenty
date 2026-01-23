@@ -202,7 +202,7 @@ export type {
   RowLevelPermissionPredicateValue,
 } from './RowLevelPermissionPredicateValue';
 export type {
-  SerializedRelationBrand,
+  __SerializedRelationBrand__,
   SerializedRelation,
 } from './SerializedRelation.type';
 export type { ServerlessFunctionEvent } from './ServerlessFunctionEvent';
