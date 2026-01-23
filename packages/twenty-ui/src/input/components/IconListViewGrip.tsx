@@ -1,9 +1,7 @@
 import IconListViewGripRaw from '@assets/misc/list-view-grip.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IconListViewGripProps = Partial<
-  Pick<IconComponentProps, 'size' | 'stroke'>
->;
+type IconListViewGripProps = Pick<IconComponentProps, 'size' | 'stroke'>;
 
 export const IconListViewGrip = (props: IconListViewGripProps) => {
   const width = props.size ?? 8;
