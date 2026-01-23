@@ -30,7 +30,7 @@ import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permis
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { JsonbProperty } from 'src/engine/workspace-manager/types/jsonb-property.type';
+import { JsonbProperty } from 'twenty-shared/types';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 // This entity is used as a reference test case for type utilities in:
@@ -104,7 +104,7 @@ export class FieldMetadataEntity<
   standardOverrides: JsonbProperty<FieldStandardOverridesDTO> | null;
 
   @Column('jsonb', { nullable: true })
-  options: JsonbProperty<FieldMetadataOptions<TFieldMetadataType>>;
+  options: FieldMetadataOptions<TFieldMetadataType>;
 
   @Column('jsonb', { nullable: true })
   settings: JsonbProperty<FieldMetadataSettings<TFieldMetadataType>>;
