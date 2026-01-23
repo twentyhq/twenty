@@ -3,6 +3,7 @@ import { FOLDER_DROPPABLE_IDS } from './folderDroppableIds';
 
 type ValidateAndExtractFolderIdParams = {
   droppableId: string;
+  // TODO: Remove orphanDroppableId prop when deleting all favorites code
   orphanDroppableId: string;
 };
 
