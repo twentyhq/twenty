@@ -119,13 +119,14 @@ export const SignInUp = () => {
       return t`Verify code from the app`;
     }
 
+    // Controlit: Custom welcome message for sales team
     const workspaceName = !isDefined(workspacePublicData?.displayName)
       ? DEFAULT_WORKSPACE_NAME
       : workspacePublicData?.displayName === ''
         ? t`Your Workspace`
         : workspacePublicData?.displayName;
 
-    return t`Welcome to ${workspaceName}`;
+    return t`Welcome back to ${workspaceName}`;
   }, [
     workspaceInviteHash,
     signInUpStep,
