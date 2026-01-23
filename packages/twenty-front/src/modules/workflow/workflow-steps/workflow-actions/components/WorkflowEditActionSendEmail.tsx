@@ -17,6 +17,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
+import { EmailRecipientsInput } from '@/workflow/workflow-steps/workflow-actions/components/EmailRecipientsInput';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -56,9 +57,15 @@ type WorkflowFile = {
   createdAt: string;
 };
 
+type EmailRecipients = {
+  to: string[];
+  cc: string[];
+  bcc: string[];
+};
+
 type SendEmailFormData = {
   connectedAccountId: string;
-  email: string;
+  recipients: EmailRecipients;
   subject: string;
   body: string;
   files: WorkflowFile[];
@@ -82,12 +89,29 @@ export const WorkflowEditActionSendEmail = ({
 
   const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
 
-  const [formData, setFormData] = useState<SendEmailFormData>({
-    connectedAccountId: action.settings.input.connectedAccountId,
-    email: action.settings.input.email,
-    subject: action.settings.input.subject ?? '',
-    body: action.settings.input.body ?? '',
-    files: action.settings.input.files ?? [],
+  const [formData, setFormData] = useState<SendEmailFormData>(() => {
+    const inputRecipients = action.settings.input.recipients;
+    const legacyEmail = action.settings.input.email;
+
+    const recipients: EmailRecipients = inputRecipients
+      ? {
+          to: inputRecipients.to ?? [],
+          cc: inputRecipients.cc ?? [],
+          bcc: inputRecipients.bcc ?? [],
+        }
+      : {
+          to: legacyEmail ? [legacyEmail] : [],
+          cc: [],
+          bcc: [],
+        };
+
+    return {
+      connectedAccountId: action.settings.input.connectedAccountId,
+      recipients,
+      subject: action.settings.input.subject ?? '',
+      body: action.settings.input.body ?? '',
+      files: action.settings.input.files ?? [],
+    };
   });
 
   const checkConnectedAccountScopes = async (
@@ -143,7 +167,7 @@ export const WorkflowEditActionSendEmail = ({
           ...action.settings,
           input: {
             connectedAccountId: formData.connectedAccountId,
-            email: formData.email,
+            recipients: formData.recipients,
             subject: formData.subject,
             body: formData.body,
             files: formData.files,
@@ -286,15 +310,41 @@ export const WorkflowEditActionSendEmail = ({
             dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
-          <FormTextFieldInput
-            label={t`Email`}
-            placeholder={t`Enter receiver email`}
+          <EmailRecipientsInput
+            label={t`To`}
+            placeholder={t`Enter recipient email`}
             readonly={actionOptions.readonly}
-            defaultValue={formData.email}
-            onChange={(email) => {
-              handleFieldChange('email', email);
+            defaultValue={formData.recipients.to}
+            onChange={(emails) => {
+              handleFieldChange('recipients', {
+                ...formData.recipients,
+                to: emails,
+              });
             }}
-            VariablePicker={WorkflowVariablePicker}
+          />
+          <EmailRecipientsInput
+            label={t`CC`}
+            placeholder={t`Enter CC email (optional)`}
+            readonly={actionOptions.readonly}
+            defaultValue={formData.recipients.cc}
+            onChange={(emails) => {
+              handleFieldChange('recipients', {
+                ...formData.recipients,
+                cc: emails,
+              });
+            }}
+          />
+          <EmailRecipientsInput
+            label={t`BCC`}
+            placeholder={t`Enter BCC email (optional)`}
+            readonly={actionOptions.readonly}
+            defaultValue={formData.recipients.bcc}
+            onChange={(emails) => {
+              handleFieldChange('recipients', {
+                ...formData.recipients,
+                bcc: emails,
+              });
+            }}
           />
           <FormTextFieldInput
             label={t`Subject`}

@@ -24,7 +24,11 @@ const DEFAULT_ACTION: WorkflowSendEmailAction = {
   settings: {
     input: {
       connectedAccountId: '',
-      email: '',
+      recipients: {
+        to: [],
+        cc: [],
+        bcc: [],
+      },
       subject: '',
       body: '',
       files: [],
@@ -49,7 +53,11 @@ const CONFIGURED_ACTION: WorkflowSendEmailAction = {
   settings: {
     input: {
       connectedAccountId: mockedConnectedAccounts[0].accountOwnerId,
-      email: 'test@twenty.com',
+      recipients: {
+        to: ['test@twenty.com'],
+        cc: [],
+        bcc: [],
+      },
       subject: 'Welcome to Twenty!',
       body: 'Dear Tim,\n\nWelcome to Twenty! We are excited to have you on board.\n\nBest regards,\nThe Team',
       files: [],
@@ -58,6 +66,31 @@ const CONFIGURED_ACTION: WorkflowSendEmailAction = {
     errorHandlingOptions: {
       retryOnFailure: {
         value: true,
+      },
+      continueOnFailure: {
+        value: false,
+      },
+    },
+  },
+};
+
+const LEGACY_ACTION: WorkflowSendEmailAction = {
+  id: getWorkflowNodeIdMock(),
+  name: 'Legacy Email Action',
+  type: 'SEND_EMAIL',
+  valid: true,
+  settings: {
+    input: {
+      connectedAccountId: mockedConnectedAccounts[0].accountOwnerId,
+      email: 'legacy@twenty.com',
+      subject: 'Legacy Format Test',
+      body: 'Testing backward compatibility with legacy email field.',
+      files: [],
+    },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: {
+        value: false,
       },
       continueOnFailure: {
         value: false,
@@ -111,6 +144,9 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Account')).toBeVisible();
+    expect(await canvas.findByText('To')).toBeVisible();
+    expect(await canvas.findByText('CC')).toBeVisible();
+    expect(await canvas.findByText('BCC')).toBeVisible();
     expect(await canvas.findByText('Subject')).toBeVisible();
     expect(await canvas.findByText('Body')).toBeVisible();
   },
@@ -127,13 +163,29 @@ export const Configured: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Account')).toBeVisible();
-    expect(await canvas.findByText('Subject')).toBeVisible();
-    expect(await canvas.findByText('Body')).toBeVisible();
+    expect(await canvas.findByText('To')).toBeVisible();
 
     const emailInput = await canvas.findByText('tim@twenty.com');
     expect(emailInput).toBeVisible();
 
     const subjectInput = await canvas.findByText('Welcome to Twenty!');
     expect(subjectInput).toBeVisible();
+  },
+};
+
+export const LegacyFormat: Story = {
+  args: {
+    action: LEGACY_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('To')).toBeVisible();
+
+    const emailInput = await canvas.findByText('legacy@twenty.com');
+    expect(emailInput).toBeVisible();
   },
 };
