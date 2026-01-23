@@ -3,6 +3,7 @@ import { join } from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 
 import { normalizeManifestForComparison } from '@/cli/__tests__/integration/utils/normalize-manifest.util';
+import { EXPECTED_MANIFEST } from '@/cli/__tests__/apps/root-app/__integration__/app-dev/expected-manifest';
 
 export const defineManifestTests = (appPath: string): void => {
   describe('manifest', () => {
@@ -16,11 +17,7 @@ export const defineManifestTests = (appPath: string): void => {
     it('should have correct manifest content', async () => {
       const manifestPath = join(appPath, '.twenty/output/manifest.json');
       const manifest: ApplicationManifest = await fs.readJSON(manifestPath);
-      const expectedPath = join(
-        appPath,
-        '__integration__/app-dev/manifest.expected.json',
-      );
-      const expected: ApplicationManifest = await fs.readJSON(expectedPath);
+      const expected = EXPECTED_MANIFEST;
 
       expect(manifest.application).toEqual(expected.application);
       expect(manifest.objects).toEqual(expected.objects);
