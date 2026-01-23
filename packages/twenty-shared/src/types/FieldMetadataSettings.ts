@@ -44,7 +44,7 @@ export type FieldMetadataRelationSettings = {
   joinColumnName?: string | null;
   // Points to the target field on the junction object
   // For MORPH_RELATION fields, morphRelations already contains all targets
-  junctionTargetFieldId?: SerializedRelation<string>;
+  junctionTargetFieldId?: SerializedRelation;
 };
 export type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];

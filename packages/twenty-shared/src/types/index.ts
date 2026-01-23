@@ -55,6 +55,7 @@ export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export type { ExcludeFunctions } from './ExcludeFunctions';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
+export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties.type';
 export type {
   FieldMetadataDefaultValueFunctionNames,
   FieldMetadataClassValidation,
@@ -201,6 +202,7 @@ export type {
   RowLevelPermissionPredicateValue,
 } from './RowLevelPermissionPredicateValue';
 export type { SerializedRelation } from './SerializedRelation.type';
+export { SerializedRelationBrand } from './SerializedRelation.type';
 export type { ServerlessFunctionEvent } from './ServerlessFunctionEvent';
 export { SettingsPath } from './SettingsPath';
 export type { Sources } from './SourcesType';
