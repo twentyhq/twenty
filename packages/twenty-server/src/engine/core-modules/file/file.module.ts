@@ -8,6 +8,7 @@ import { FileDeletionJob } from 'src/engine/core-modules/file/jobs/file-deletion
 import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
 import { FileAttachmentListener } from 'src/engine/core-modules/file/listeners/file-attachment.listener';
 import { FileWorkspaceMemberListener } from 'src/engine/core-modules/file/listeners/file-workspace-member.listener';
+import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -18,6 +19,7 @@ import { FileUploadService } from './file-upload/services/file-upload.service';
 import { FileResolver } from './resolvers/file.resolver';
 import { FileMetadataService } from './services/file-metadata.service';
 import { FileService } from './services/file.service';
+import { FilesFieldService } from './services/files-field.service';
 
 @Module({
   imports: [
@@ -25,10 +27,12 @@ import { FileService } from './services/file.service';
     TypeOrmModule.forFeature([FileEntity, WorkspaceEntity, ApplicationEntity]),
     HttpModule,
     PermissionsModule,
+    FileStorageModule,
   ],
   providers: [
     FileService,
     FileMetadataService,
+    FilesFieldService,
     FileResolver,
     FilePathGuard,
     FileAttachmentListener,
@@ -37,7 +41,7 @@ import { FileService } from './services/file.service';
     FileDeletionJob,
     FileUploadService,
   ],
-  exports: [FileService, FileMetadataService],
+  exports: [FileService, FileMetadataService, FilesFieldService],
   controllers: [FileController],
 })
 export class FileModule {}

@@ -34,7 +34,10 @@ import {
   RawJsonFilterType,
   StringFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
-import { FilesInputType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/files.input-type';
+import {
+  FilesCreateInputType,
+  FilesUpdateInputType,
+} from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/files.input-type';
 import { MultiSelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/multi-select-filter.input-type';
 import { RichTextV2FilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/rich-text.input-type';
 import { SelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/select-filter.input-type';
@@ -104,13 +107,17 @@ export class TypeMapperService {
     return this.baseTypeScalarMapping.get(fieldMetadataType);
   }
 
-  mapToPreBuiltGraphQLInputType({
+  mapToPreBuiltGraphQLCreateInputType({
     fieldMetadataType,
     typeOptions,
   }: {
     fieldMetadataType: FieldMetadataType;
     typeOptions?: TypeOptions;
-  }): GraphQLScalarType | GraphQLList<GraphQLInputType> | undefined {
+  }):
+    | GraphQLScalarType
+    | GraphQLList<GraphQLInputType>
+    | GraphQLInputObjectType
+    | undefined {
     if (this.isIdOrRelationType(fieldMetadataType, typeOptions)) {
       return GraphQLID;
     }
@@ -120,7 +127,33 @@ export class TypeMapperService {
     }
 
     if (fieldMetadataType === FieldMetadataType.FILES) {
-      return FilesInputType;
+      return FilesCreateInputType;
+    }
+
+    return this.baseTypeScalarMapping.get(fieldMetadataType);
+  }
+
+  mapToPreBuiltGraphQLUpdateInputType({
+    fieldMetadataType,
+    typeOptions,
+  }: {
+    fieldMetadataType: FieldMetadataType;
+    typeOptions?: TypeOptions;
+  }):
+    | GraphQLScalarType
+    | GraphQLList<GraphQLInputType>
+    | GraphQLInputObjectType
+    | undefined {
+    if (this.isIdOrRelationType(fieldMetadataType, typeOptions)) {
+      return GraphQLID;
+    }
+
+    if (fieldMetadataType === FieldMetadataType.NUMBER) {
+      return this.getNumberScalarTypeFromOptions(typeOptions);
+    }
+
+    if (fieldMetadataType === FieldMetadataType.FILES) {
+      return FilesUpdateInputType;
     }
 
     return this.baseTypeScalarMapping.get(fieldMetadataType);

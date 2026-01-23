@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'class-validator';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { FilesFieldSyncService } from 'src/engine/api/common/common-args-processors/data-arg-processor/services/files-field-sync.service';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -22,6 +23,8 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -32,12 +35,18 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   UpdateManyQueryArgs,
   ObjectRecord[]
 > {
+  constructor(private readonly filesFieldSyncService: FilesFieldSyncService) {
+    super();
+  }
+
   protected readonly operationName = CommonQueryNames.UPDATE_MANY;
 
   async run(
     args: CommonExtendedInput<UpdateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
+    const originalData = structuredClone(args.data);
+
     const {
       repository,
       authContext,
@@ -67,6 +76,50 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
     });
 
+    if (
+      this.filesFieldSyncService.hasFilesFieldToUpdate(
+        args.data,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      )
+    ) {
+      const restrictedFields =
+        repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+          ?.restrictedFields;
+
+      const selectOptions = getAllSelectableColumnNames({
+        restrictedFields: restrictedFields ?? {},
+        objectMetadata: {
+          objectMetadataMapItem: flatObjectMetadata,
+          flatFieldMetadataMaps,
+        },
+      });
+
+      const existingRecords = (await queryBuilder
+        .clone()
+        .setFindOptions({ select: selectOptions })
+        .getMany()) as (ObjectRecord & { id: string })[];
+
+      if (existingRecords.length > 1) {
+        throw new CommonQueryRunnerException(
+          'File can be associated with only one record',
+          CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+          {
+            userFriendlyMessage: msg`File can be associated with only one record`,
+          },
+        );
+      }
+
+      if (existingRecords.length === 1) {
+        this.filesFieldSyncService.prepareFilesFieldsBeforeUpdateOne({
+          data: args.data,
+          existingRecord: existingRecords[0],
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        });
+      }
+    }
+
     const updatedObjectRecords = await queryBuilder
       .update()
       .set(args.data)
@@ -92,6 +145,13 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         selectedFields: args.selectedFieldsResult.select,
       });
     }
+
+    await this.processFilesFieldSyncOperationsIfNeeded({
+      originalData,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      workspace: authContext.workspace,
+    });
 
     return updatedRecords;
   }
@@ -154,5 +214,25 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
       authContext.workspace.id,
     );
+  }
+
+  private async processFilesFieldSyncOperationsIfNeeded({
+    originalData,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    workspace,
+  }: {
+    originalData: Partial<ObjectRecord>;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    workspace: WorkspaceEntity;
+  }): Promise<void> {
+    await this.filesFieldSyncService.syncFileEntities({
+      data: [originalData],
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      workspaceId: workspace.id,
+      workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+    });
   }
 }
