@@ -140,7 +140,7 @@ export const GraphWidgetPieChart = ({
   const chartColors = hasNoData
     ? [theme.background.tertiary]
     : enrichedData.map((item) => item.colorScheme.solid);
-  const pieChartPadAngle = hasNoData ? 0 : 0.4;
+  const pieChartPadAngle = hasNoData || enrichedData.length <= 1 ? 0 : 0.4;
 
   const ArcsLayer = useCallback(
     (props: PieCustomLayerProps<PieChartDataItemWithColor>) => (
