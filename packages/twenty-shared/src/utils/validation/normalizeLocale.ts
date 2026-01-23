@@ -1,4 +1,5 @@
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { APP_LOCALES } from '@/translations/constants/AppLocales';
+import { SOURCE_LOCALE } from '@/translations/constants/SourceLocale';
 
 /**
  * Maps language codes to full locale keys in APP_LOCALES
