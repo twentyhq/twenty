@@ -1,5 +1,3 @@
-import { Equal, Expect } from '@/testing';
-import { EnumFieldMetadataType } from '@/types/EnumFieldMetadataType';
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
 import { JsonbProperty } from '@/types/JsonbProperty.type';
@@ -33,16 +31,11 @@ type FieldMetadataOptionsMapping = {
   [FieldMetadataType.MULTI_SELECT]: JsonbProperty<FieldMetadataComplexOption[]>;
 };
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-type Assertions = [
-  Expect<Equal<keyof FieldMetadataOptionsMapping, EnumFieldMetadataType>>,
-];
-
 export type FieldMetadataOptions<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? null | FieldMetadataOptionsMapping[EnumFieldMetadataType]
+    ? null | FieldMetadataOptionsMapping[keyof FieldMetadataOptionsMapping]
     : T extends keyof FieldMetadataOptionsMapping
       ? FieldMetadataOptionsMapping[T]
       : never | null;

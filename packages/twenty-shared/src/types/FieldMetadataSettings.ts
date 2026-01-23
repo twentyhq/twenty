@@ -83,7 +83,7 @@ export type FieldMetadataSettings<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? null | AllFieldMetadataSettings // Could be improved to be | unknown
+    ? null | AllFieldMetadataSettings
     : T extends keyof FieldMetadataSettingsMapping
       ? FieldMetadataSettingsMapping[T]
       : never | null;
