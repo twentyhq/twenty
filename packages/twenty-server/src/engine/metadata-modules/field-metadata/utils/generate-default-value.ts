@@ -1,5 +1,4 @@
 import { FieldActorSource, FieldMetadataType } from 'twenty-shared/types';
-
 import { type FieldMetadataDefaultValue } from 'twenty-shared/types';
 
 // No need to refactor as unused in workspace migration v2

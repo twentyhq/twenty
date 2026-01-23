@@ -3,12 +3,12 @@ import { inspect } from 'util';
 import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 import { z } from 'zod';
+import { type FieldMetadataSettingsMapping } from 'twenty-shared/types';
 
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { FieldMetadataSettingsMapping } from 'twenty-shared/types';
 
 export const fileItemSchema = z
   .object({

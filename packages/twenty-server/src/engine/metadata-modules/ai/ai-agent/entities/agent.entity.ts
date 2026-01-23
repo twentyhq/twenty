@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { type JsonbProperty } from 'twenty-shared/types';
 
 import { AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/modelConfiguration';
@@ -14,7 +15,6 @@ import {
   DEFAULT_SMART_MODEL,
   ModelId,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
-import { type JsonbProperty } from 'twenty-shared/types';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('agent')

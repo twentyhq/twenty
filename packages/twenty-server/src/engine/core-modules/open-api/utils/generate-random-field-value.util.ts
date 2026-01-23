@@ -2,7 +2,6 @@ import { faker } from '@faker-js/faker';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-
 import { type FieldMetadataDefaultValue } from 'twenty-shared/types';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';

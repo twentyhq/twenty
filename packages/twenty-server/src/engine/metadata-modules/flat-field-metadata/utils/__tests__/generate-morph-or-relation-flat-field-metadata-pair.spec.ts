@@ -1,6 +1,6 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
 import {
-  FieldMetadataSettingsMapping,
+  type FieldMetadataSettingsMapping,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,

@@ -1,8 +1,8 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
-
 import { type FieldMetadataDefaultValue } from 'twenty-shared/types';
+
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils/generate-random-field-value.util';

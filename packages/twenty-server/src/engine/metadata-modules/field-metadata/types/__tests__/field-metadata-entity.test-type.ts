@@ -1,18 +1,17 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
-  FieldMetadataOptionForAnyType,
-  JsonbProperty,
+  type FieldMetadataOptionForAnyType,
+  type JsonbProperty,
   type AllFieldMetadataSettings,
   type FieldMetadataSettingsMapping,
   type FieldMetadataType,
-  type NullablePartial
-} from 'twenty-shared/types';
-import { type Relation as TypeOrmRelation } from 'typeorm';
-
-import {
+  type NullablePartial,
+,
   type FieldMetadataDefaultValueForAnyType,
   type FieldMetadataDefaultValueMapping,
 } from 'twenty-shared/types';
+import { type Relation as TypeOrmRelation } from 'typeorm';
+
 
 import {
   type FieldMetadataComplexOption,
@@ -416,7 +415,7 @@ type OptionsAssertions = [
     HasAllProperties<
       AbstractFieldMetadata,
       {
-        options: FieldMetadataOptionForAnyType
+        options: FieldMetadataOptionForAnyType;
       }
     >
   >,

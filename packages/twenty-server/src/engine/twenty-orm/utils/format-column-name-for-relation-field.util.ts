@@ -1,5 +1,5 @@
 import {
-  FieldMetadataSettingsMapping,
+  type FieldMetadataSettingsMapping,
   RelationType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';

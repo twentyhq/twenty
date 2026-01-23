@@ -1,8 +1,8 @@
 import {
-  FieldMetadataDefaultValueForAnyType,
+  type FieldMetadataDefaultValueForAnyType,
   type FieldMetadataDefaultValueFunctionNames,
   type FieldMetadataFunctionDefaultValue,
-  fieldMetadataDefaultValueFunctionName
+  fieldMetadataDefaultValueFunctionName,
 } from 'twenty-shared/types';
 
 // TODO prastoin

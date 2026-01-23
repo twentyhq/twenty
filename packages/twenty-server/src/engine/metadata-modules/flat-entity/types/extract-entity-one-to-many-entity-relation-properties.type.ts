@@ -1,4 +1,3 @@
-
 import { type AllNonWorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/all-non-workspace-related-entity.type';
 import { type WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 

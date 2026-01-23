@@ -10,6 +10,7 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
+import { type JsonbProperty } from 'twenty-shared/types';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
@@ -20,7 +21,6 @@ import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permis
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-import { type JsonbProperty } from 'twenty-shared/types';
 
 @Entity('objectMetadata')
 @Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [

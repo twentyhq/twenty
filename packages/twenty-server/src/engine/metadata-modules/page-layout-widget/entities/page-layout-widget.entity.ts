@@ -12,6 +12,7 @@ import {
   UpdateDateColumn,
   type Relation,
 } from 'typeorm';
+import { type JsonbProperty } from 'twenty-shared/types';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
@@ -20,7 +21,6 @@ import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums
 import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
 import { PageLayoutWidgetConfigurationTypeSettings } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configuration.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-import { type JsonbProperty } from 'twenty-shared/types';
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
 @ObjectType('PageLayoutWidget')

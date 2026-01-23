@@ -3,6 +3,7 @@ import {
   FieldMetadataOptions,
   FieldMetadataSettings,
   FieldMetadataType,
+  JsonbProperty,
 } from 'twenty-shared/types';
 import {
   Check,
@@ -30,7 +31,6 @@ import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-import { JsonbProperty } from 'twenty-shared/types';
 
 // This entity is used as a reference test case for type utilities in:
 // Modifying relations or properties may require updating type test expectations for Typecheck to pass.

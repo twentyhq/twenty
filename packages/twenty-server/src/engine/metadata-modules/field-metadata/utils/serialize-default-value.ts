@@ -1,3 +1,4 @@
+import { type FieldMetadataDefaultValueForAnyType } from 'twenty-shared/types';
 
 import {
   FieldMetadataException,
@@ -5,7 +6,6 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/is-function-default-value.util';
 import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';
-import { FieldMetadataDefaultValueForAnyType } from 'twenty-shared/types';
 
 export const serializeDefaultValue = (
   defaultValue?: FieldMetadataDefaultValueForAnyType,

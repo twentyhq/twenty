@@ -1,19 +1,19 @@
 import { HTTPMethod } from 'twenty-shared/types';
 import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    Index,
-    JoinColumn,
-    ManyToOne,
-    PrimaryGeneratedColumn,
-    Relation,
-    Unique,
-    UpdateDateColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Relation,
+  Unique,
+  UpdateDateColumn,
 } from 'typeorm';
+import { type JsonbProperty } from 'twenty-shared/types';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { type JsonbProperty } from 'twenty-shared/types';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'routeTrigger', schema: 'core' })

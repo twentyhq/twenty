@@ -9,7 +9,7 @@ import {
   FieldMetadataSettingsMapping,
   FieldMetadataType,
   ObjectRecord,
-  RelationType
+  RelationType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
@@ -248,8 +248,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
         const relationType =
           isDryRun && fieldMetadata.type === FieldMetadataType.RELATION
-            ? (fieldMetadata.settings as FieldMetadataSettingsMapping['RELATION'])
-                ?.relationType
+            ? (
+                fieldMetadata.settings as FieldMetadataSettingsMapping['RELATION']
+              )?.relationType
             : undefined;
 
         mergedResult[fieldName] = mergeFieldValues(

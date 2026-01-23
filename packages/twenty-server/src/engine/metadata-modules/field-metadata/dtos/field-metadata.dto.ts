@@ -27,9 +27,8 @@ import {
   type FieldMetadataOptions,
   type FieldMetadataSettings,
   FieldMetadataType,
+  type FieldMetadataDefaultValue,
 } from 'twenty-shared/types';
-
-import { type FieldMetadataDefaultValue } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';

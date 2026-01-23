@@ -1,4 +1,4 @@
-import { FieldMetadataDefaultValueForAnyType } from 'twenty-shared/types';
+import { type FieldMetadataDefaultValueForAnyType } from 'twenty-shared/types';
 
 export const unserializeDefaultValue = (
   serializedDefaultValue: FieldMetadataDefaultValueForAnyType,
