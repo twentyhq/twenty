@@ -1,18 +1,18 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsIn,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-  IsTimeZone,
-  IsUUID,
-  Max,
-  Min,
+    IsArray,
+    IsBoolean,
+    IsEnum,
+    IsIn,
+    IsNotEmpty,
+    IsObject,
+    IsOptional,
+    IsString,
+    IsTimeZone,
+    IsUUID,
+    Max,
+    Min,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CalendarStartDay } from 'twenty-shared/constants';
@@ -38,7 +38,7 @@ export class PieChartConfigurationDTO
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  aggregateFieldMetadataId: SerializedRelation<string>;
+  aggregateFieldMetadataId: SerializedRelation;
 
   @Field(() => AggregateOperations)
   @IsEnum(AggregateOperations)
@@ -48,7 +48,7 @@ export class PieChartConfigurationDTO
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  groupByFieldMetadataId: SerializedRelation<string>;
+  groupByFieldMetadataId: SerializedRelation;
 
   @Field(() => String, { nullable: true })
   @IsString()

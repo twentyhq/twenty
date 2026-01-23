@@ -38,7 +38,7 @@ export class AggregateChartConfigurationDTO
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  aggregateFieldMetadataId: SerializedRelation<string>;
+  aggregateFieldMetadataId: SerializedRelation;
 
   @Field(() => AggregateOperations)
   @IsEnum(AggregateOperations)

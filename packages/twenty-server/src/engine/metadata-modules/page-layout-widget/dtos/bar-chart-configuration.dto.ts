@@ -1,19 +1,19 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsIn,
-  IsNotEmpty,
-  IsNumber,
-  IsObject,
-  IsOptional,
-  IsString,
-  IsTimeZone,
-  IsUUID,
-  Max,
-  Min,
+    IsArray,
+    IsBoolean,
+    IsEnum,
+    IsIn,
+    IsNotEmpty,
+    IsNumber,
+    IsObject,
+    IsOptional,
+    IsString,
+    IsTimeZone,
+    IsUUID,
+    Max,
+    Min,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CalendarStartDay } from 'twenty-shared/constants';
@@ -42,7 +42,7 @@ export class BarChartConfigurationDTO
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  aggregateFieldMetadataId: SerializedRelation<string>;
+  aggregateFieldMetadataId: SerializedRelation;
 
   @Field(() => AggregateOperations)
   @IsEnum(AggregateOperations)
@@ -52,7 +52,7 @@ export class BarChartConfigurationDTO
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  primaryAxisGroupByFieldMetadataId: SerializedRelation<string>;
+  primaryAxisGroupByFieldMetadataId: SerializedRelation;
 
   @Field(() => String, { nullable: true })
   @IsString()
@@ -81,7 +81,7 @@ export class BarChartConfigurationDTO
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
   @IsOptional()
-  secondaryAxisGroupByFieldMetadataId?: SerializedRelation<string>;
+  secondaryAxisGroupByFieldMetadataId?: SerializedRelation;
 
   @Field(() => String, { nullable: true })
   @IsString()

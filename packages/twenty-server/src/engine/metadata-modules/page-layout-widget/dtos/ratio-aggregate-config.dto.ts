@@ -10,7 +10,7 @@ export class RatioAggregateConfigDTO {
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  fieldMetadataId: SerializedRelation<string>;
+  fieldMetadataId: SerializedRelation;
 
   @Field(() => String)
   @IsString()
