@@ -57,6 +57,15 @@ const StyledMainContainer = styled.div`
   overflow: hidden;
 `;
 
+// Controlit: Clean dark background for login page
+const StyledAuthBackground = styled.div`
+  background: ${({ theme }) => theme.background.primary};
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+`;
+
 export const DefaultLayout = () => {
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
@@ -98,16 +107,12 @@ export const DefaultLayout = () => {
                 <KeyboardShortcutMenu />
               </>
             )}
-            {showAuthModal ? (
-              <StyledAppNavigationDrawerMock />
-            ) : useShowFullScreen ? null : (
+            {showAuthModal ? null : useShowFullScreen ? null : (
               <StyledAppNavigationDrawer />
             )}
             {showAuthModal ? (
               <>
-                <StyledMainContainer>
-                  <SignInBackgroundMockPage />
-                </StyledMainContainer>
+                <StyledAuthBackground />
                 <AnimatePresence mode="wait">
                   <LayoutGroup>
                     <AuthModal>
