@@ -84,7 +84,7 @@ describe('useBarChartData', () => {
     expect(result.current.seriesConfigMap.get('costs')).toEqual(mockSeries[1]);
   });
 
-  it('should generate bar configs for each data point and key', () => {
+  it('should generate enriched keys map for O(1) color lookup', () => {
     const { result } = renderHook(() =>
       useBarChartData({
         data: mockData,
@@ -96,17 +96,17 @@ describe('useBarChartData', () => {
       }),
     );
 
-    expect(result.current.barConfigs).toHaveLength(6);
-    expect(result.current.barConfigs[0]).toMatchObject({
+    expect(result.current.enrichedKeysMap.size).toBe(2);
+    expect(result.current.enrichedKeysMap.get('sales')).toMatchObject({
       key: 'sales',
-      indexValue: 'Jan',
+      label: 'Sales',
       colorScheme: {
         name: 'green',
       },
     });
-    expect(result.current.barConfigs[1]).toMatchObject({
+    expect(result.current.enrichedKeysMap.get('costs')).toMatchObject({
       key: 'costs',
-      indexValue: 'Jan',
+      label: 'Costs',
       colorScheme: {
         name: 'purple',
       },
@@ -173,7 +173,8 @@ describe('useBarChartData', () => {
       }),
     );
 
-    expect(result.current.barConfigs).toEqual([]);
+    expect(result.current.enrichedKeysMap.size).toBe(2);
+    expect(result.current.visibleKeys).toEqual(['sales', 'costs']);
   });
 
   it('should handle empty keys', () => {
@@ -188,7 +189,7 @@ describe('useBarChartData', () => {
       }),
     );
 
-    expect(result.current.barConfigs).toEqual([]);
+    expect(result.current.enrichedKeysMap.size).toBe(0);
     expect(result.current.enrichedKeys).toEqual([]);
   });
 
@@ -283,7 +284,7 @@ describe('useBarChartData', () => {
     expect(result.current.legendItems).toHaveLength(2);
   });
 
-  it('should filter barConfigs to only include visible keys', () => {
+  it('should filter visible keys based on hidden legend ids while maintaining map', () => {
     mockUseRecoilComponentValue.mockReturnValue(['costs']);
 
     const { result } = renderHook(() =>
@@ -297,10 +298,9 @@ describe('useBarChartData', () => {
       }),
     );
 
-    expect(result.current.barConfigs).toHaveLength(3);
-    result.current.barConfigs.forEach((config) => {
-      expect(config.key).toBe('sales');
-    });
+    expect(result.current.visibleKeys).toHaveLength(1);
+    expect(result.current.visibleKeys[0]).toBe('sales');
+    expect(result.current.enrichedKeysMap.size).toBe(2);
   });
 
   it('should handle hidden ids that do not exist in keys', () => {

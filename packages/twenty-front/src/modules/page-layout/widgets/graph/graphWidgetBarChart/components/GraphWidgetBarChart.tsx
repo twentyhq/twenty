@@ -125,16 +125,8 @@ export const GraphWidgetBarChart = ({
 
   const chartTheme = useBarChartTheme();
 
-  const { barConfigs, enrichedKeys, legendItems, visibleKeys } =
-    useBarChartData({
-      data,
-      indexBy,
-      keys,
-      series,
-      colorRegistry,
-      seriesLabels,
-      colorMode,
-    });
+  const { enrichedKeysMap, enrichedKeys, legendItems, visibleKeys } =
+    useBarChartData({ keys, series, colorRegistry, seriesLabels, colorMode });
 
   const orderedKeys =
     groupMode === 'stacked' && layout === BarChartLayout.VERTICAL
@@ -350,7 +342,7 @@ export const GraphWidgetBarChart = ({
             clamp: true,
           }}
           indexScale={{ type: 'band', round: true }}
-          colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
+          colors={(datum) => getBarChartColor(datum, enrichedKeysMap, theme)}
           animate
           motionConfig={CHART_MOTION_CONFIG}
           layers={[

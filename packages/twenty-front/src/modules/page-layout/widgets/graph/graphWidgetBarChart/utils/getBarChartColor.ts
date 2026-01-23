@@ -1,18 +1,15 @@
-import { type BarChartConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartConfig';
+import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarDatum, type ComputedDatum } from '@nivo/bar';
-import { isDefined } from 'twenty-shared/utils';
 import { type ThemeType } from 'twenty-ui/theme';
 
 export const getBarChartColor = (
   datum: ComputedDatum<BarDatum>,
-  barConfigs: BarChartConfig[],
+  enrichedKeysMap: Map<string, BarChartEnrichedKey>,
   theme: ThemeType,
 ) => {
-  const bar = barConfigs.find(
-    (b) => b.key === datum.id && b.indexValue === datum.indexValue,
-  );
-  if (!isDefined(bar)) {
+  const enrichedKey = enrichedKeysMap.get(String(datum.id));
+  if (!enrichedKey) {
     return theme.border.color.light;
   }
-  return bar.colorScheme.solid;
+  return enrichedKey.colorScheme.solid;
 };
