@@ -272,7 +272,9 @@ export const WorkflowEditActionIfElseBody = ({
                     title={t`Add route`}
                     variant="secondary"
                     size="small"
-                    onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleAddRoute(event)}
+                    onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+                      handleAddRoute(event)
+                    }
                   />
                 </>
               )}
