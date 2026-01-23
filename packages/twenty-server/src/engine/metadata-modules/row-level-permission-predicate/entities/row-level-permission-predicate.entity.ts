@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import {
+  JsonbProperty,
   RowLevelPermissionPredicate,
   RowLevelPermissionPredicateOperand,
   RowLevelPermissionPredicateValue,
@@ -17,7 +18,6 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { type JsonbProperty } from 'twenty-shared/types';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';

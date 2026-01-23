@@ -1,3 +1,4 @@
+import { type JsonbProperty } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -10,7 +11,6 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { type JsonbProperty } from 'twenty-shared/types';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
@@ -159,5 +159,3 @@ export class ObjectMetadataEntity
   })
   views: Relation<ViewEntity[]>;
 }
-
-const tmp: JsonbProperty<ObjectStandardOverridesDTO> | null = null;

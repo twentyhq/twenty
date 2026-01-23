@@ -1,4 +1,4 @@
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { JsonbProperty, ViewFilterOperand } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -11,7 +11,6 @@ import {
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { type JsonbProperty } from 'twenty-shared/types';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';

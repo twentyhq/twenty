@@ -1,14 +1,13 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
-  type FieldMetadataOptionForAnyType,
-  type JsonbProperty,
   type AllFieldMetadataSettings,
-  type FieldMetadataSettingsMapping,
-  type FieldMetadataType,
-  type NullablePartial,
-,
   type FieldMetadataDefaultValueForAnyType,
   type FieldMetadataDefaultValueMapping,
+  type FieldMetadataOptionForAnyType,
+  type FieldMetadataSettingsMapping,
+  type FieldMetadataType,
+  type JsonbProperty,
+  type NullablePartial,
 } from 'twenty-shared/types';
 import { type Relation as TypeOrmRelation } from 'typeorm';
 

@@ -1,4 +1,4 @@
-import { HTTPMethod } from 'twenty-shared/types';
+import { HTTPMethod, JsonbProperty } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -11,7 +11,6 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { type JsonbProperty } from 'twenty-shared/types';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
