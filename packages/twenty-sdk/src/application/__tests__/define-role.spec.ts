@@ -1,4 +1,4 @@
-import { defineRole } from '../roles/define-role';
+import { defineRole } from '@/application';
 
 describe('defineRole', () => {
   const validConfig = {

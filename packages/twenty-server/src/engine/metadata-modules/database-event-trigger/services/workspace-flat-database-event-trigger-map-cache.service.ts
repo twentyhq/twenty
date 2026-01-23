@@ -44,9 +44,7 @@ export class WorkspaceFlatDatabaseEventTriggerMapCacheService extends WorkspaceC
           databaseEventTriggerEntity,
           getMetadataEntityRelationProperties('databaseEventTrigger'),
         ),
-        universalIdentifier:
-          databaseEventTriggerEntity.universalIdentifier ??
-          databaseEventTriggerEntity.id,
+        universalIdentifier: databaseEventTriggerEntity.universalIdentifier,
         createdAt: databaseEventTriggerEntity.createdAt.toISOString(),
         updatedAt: databaseEventTriggerEntity.updatedAt.toISOString(),
       } satisfies FlatDatabaseEventTrigger;

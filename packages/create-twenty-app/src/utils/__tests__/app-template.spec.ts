@@ -41,7 +41,7 @@ describe('copyBaseApplicationProject', () => {
     });
 
     // Verify src/app/ folder exists
-    const srcAppPath = join(testAppDirectory, 'src', 'app');
+    const srcAppPath = join(testAppDirectory, 'src');
     expect(await fs.pathExists(srcAppPath)).toBe(true);
 
     // Verify application.config.ts exists in src/app/
@@ -68,8 +68,8 @@ describe('copyBaseApplicationProject', () => {
     expect(packageJson.name).toBe('my-test-app');
     expect(packageJson.version).toBe('0.1.0');
     expect(packageJson.dependencies['twenty-sdk']).toBe('0.3.1');
-    expect(packageJson.scripts.sync).toBe('twenty app sync');
-    expect(packageJson.scripts.dev).toBe('twenty app dev');
+    expect(packageJson.scripts['app:sync']).toBe('twenty app:sync');
+    expect(packageJson.scripts['app:dev']).toBe('twenty app:dev');
   });
 
   it('should create .gitignore file', async () => {
@@ -114,7 +114,6 @@ describe('copyBaseApplicationProject', () => {
     const appConfigPath = join(
       testAppDirectory,
       'src',
-      'app',
       'application.config.ts',
     );
     const appConfigContent = await fs.readFile(appConfigPath, 'utf8');
@@ -127,7 +126,7 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it imports the role identifier
     expect(appConfigContent).toContain(
-      "import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role'",
+      "import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default-function.role'",
     );
 
     // Verify display name and description
@@ -156,7 +155,6 @@ describe('copyBaseApplicationProject', () => {
     const roleConfigPath = join(
       testAppDirectory,
       'src',
-      'app',
       'default-function.role.ts',
     );
     const roleConfigContent = await fs.readFile(roleConfigPath, 'utf8');
@@ -216,7 +214,6 @@ describe('copyBaseApplicationProject', () => {
     const appConfigPath = join(
       testAppDirectory,
       'src',
-      'app',
       'application.config.ts',
     );
     const appConfigContent = await fs.readFile(appConfigPath, 'utf8');
@@ -247,11 +244,11 @@ describe('copyBaseApplicationProject', () => {
 
     // Read both app configs
     const firstAppConfig = await fs.readFile(
-      join(firstAppDir, 'src', 'app', 'application.config.ts'),
+      join(firstAppDir, 'src', 'application.config.ts'),
       'utf8',
     );
     const secondAppConfig = await fs.readFile(
-      join(secondAppDir, 'src', 'app', 'application.config.ts'),
+      join(secondAppDir, 'src', 'application.config.ts'),
       'utf8',
     );
 
@@ -289,11 +286,11 @@ describe('copyBaseApplicationProject', () => {
 
     // Read both role configs
     const firstRoleConfig = await fs.readFile(
-      join(firstAppDir, 'src', 'app', 'default-function.role.ts'),
+      join(firstAppDir, 'src', 'default-function.role.ts'),
       'utf8',
     );
     const secondRoleConfig = await fs.readFile(
-      join(secondAppDir, 'src', 'app', 'default-function.role.ts'),
+      join(secondAppDir, 'src', 'default-function.role.ts'),
       'utf8',
     );
 

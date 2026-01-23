@@ -30,8 +30,10 @@ import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permis
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
+// This entity is used as a reference test case for type utilities in:
+// Modifying relations or properties may require updating type test expectations for Typecheck to pass.
 @Entity('fieldMetadata')
 @Check(
   'CHK_FIELD_METADATA_MORPH_RELATION_REQUIRES_MORPH_ID',
@@ -56,7 +58,7 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
 export class FieldMetadataEntity<
     TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
   >
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<FieldMetadataEntity>
 {
   @PrimaryGeneratedColumn('uuid')

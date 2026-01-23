@@ -20,8 +20,8 @@ import {
   S3,
   type S3ClientConfig,
 } from '@aws-sdk/client-s3';
-import { isDefined } from 'twenty-shared/utils';
 import { isObject } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
@@ -61,14 +61,13 @@ export class S3Driver implements StorageDriver {
   }
 
   async write(params: {
-    file: Buffer | Uint8Array | string;
-    name: string;
-    folder: string;
+    filePath: string;
+    sourceFile: Buffer | Uint8Array | string;
     mimeType: string | undefined;
   }): Promise<void> {
     const command = new PutObjectCommand({
-      Key: `${params.folder}/${params.name}`,
-      Body: params.file,
+      Key: params.filePath,
+      Body: params.sourceFile,
       ContentType: params.mimeType,
       Bucket: this.bucketName,
     });
@@ -83,10 +82,9 @@ export class S3Driver implements StorageDriver {
         continue;
       }
       await this.write({
-        file: sources[key],
-        name: key,
+        filePath: `${folderPath}/${key}`,
+        sourceFile: sources[key],
         mimeType: undefined,
-        folder: folderPath,
       });
     }
   }
@@ -169,12 +167,9 @@ export class S3Driver implements StorageDriver {
     }
   }
 
-  async read(params: {
-    folderPath: string;
-    filename: string;
-  }): Promise<Readable> {
+  async read(params: { filePath: string }): Promise<Readable> {
     const command = new GetObjectCommand({
-      Key: `${params.folderPath}/${params.filename}`,
+      Key: params.filePath,
       Bucket: this.bucketName,
     });
 
@@ -222,7 +217,7 @@ export class S3Driver implements StorageDriver {
           const { fromFolderPath, filename } = folderAndFilePaths;
 
           const fileContent = await readFileContent(
-            await this.read({ folderPath: fromFolderPath, filename }),
+            await this.read({ filePath: `${fromFolderPath}/${filename}` }),
           );
 
           const formattedObjectKey = object.Key.replace(
@@ -441,8 +436,7 @@ export class S3Driver implements StorageDriver {
         await mkdir(dir, { recursive: true });
 
         const fileStream = await this.read({
-          folderPath: params.from.folderPath,
-          filename: params.from.filename,
+          filePath: `${params.from.folderPath}/${params.from.filename}`,
         });
 
         const toPath = join(

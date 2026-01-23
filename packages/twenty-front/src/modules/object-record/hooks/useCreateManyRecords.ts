@@ -82,9 +82,7 @@ export const useCreateManyRecords = <
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
   type createManyRecordsProps = {
     recordsToCreate: Partial<CreatedObjectRecord>[];
@@ -239,7 +237,9 @@ export const useCreateManyRecords = <
       });
 
     if (shouldRefetchAggregateQueries) {
-      await refetchAggregateQueries();
+      await refetchAggregateQueries({
+        objectMetadataNamePlural: objectMetadataItem.namePlural,
+      });
     }
 
     dispatchObjectRecordOperationBrowserEvent({

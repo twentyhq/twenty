@@ -43,9 +43,7 @@ export const useDeleteOneRecord = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
   const mutationResponseField =
     getDeleteOneRecordMutationResponseField(objectNameSingular);
@@ -162,7 +160,9 @@ export const useDeleteOneRecord = ({
           throw error;
         });
 
-      await refetchAggregateQueries();
+      await refetchAggregateQueries({
+        objectMetadataNamePlural: objectMetadataItem.namePlural,
+      });
 
       dispatchObjectRecordOperationBrowserEvent({
         objectMetadataItem,

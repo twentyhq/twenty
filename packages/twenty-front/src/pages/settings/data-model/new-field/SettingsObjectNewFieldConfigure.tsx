@@ -57,9 +57,12 @@ export const SettingsObjectNewFieldConfigure = () => {
   const formConfig = useForm<SettingsDataModelNewFieldFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(
-      settingsFieldFormSchema(
-        activeObjectMetadataItem?.fields.map((value) => value.name),
-      ),
+      settingsFieldFormSchema({
+        existingOtherLabels: activeObjectMetadataItem?.fields.map(
+          (value) => value.name,
+        ),
+        sourceObjectMetadataId: activeObjectMetadataItem?.id,
+      }),
     ),
     defaultValues: {
       type: fieldType,

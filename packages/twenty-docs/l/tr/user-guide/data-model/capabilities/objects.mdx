@@ -1,11 +1,11 @@
 ---
 title: Nesneler
-description: Learn about standard and custom objects in Twenty.
+description: Twenty'de standart ve özel nesneler hakkında bilgi edinin.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Standard Objects
+## Standart Nesneler
 
 Standart nesneler, işe başlamanıza yardımcı olmak için çalışma alanınızda önceden tanımlanmış varlıklardır. Bunlar, Twenty kullanıcıları tarafından erişilebilen, paylaşılan bir veri modelinin parçasıdır. Onları olduğu gibi kullanabilir, özelleştirebilir veya devre dışı bırakabilirsiniz.
 
@@ -21,71 +21,71 @@ Standart nesneler, işe başlamanıza yardımcı olmak için çalışma alanın�
 
 ### Fırsatlar
 
-`Fırsatlar` nesnesi, işle ilgili verileri saklar. It tracks the progression of potential sales, from prospecting to closure, recording stages, deal sizes, associated account, and expected close date. Satış boru hattınızı kanban düzeninde görüntüleyebilirsiniz.
+`Fırsatlar` nesnesi, işle ilgili verileri saklar. Potansiyel satışların araştırmadan kapanışa kadar olan ilerlemesini izler; aşamaları, fırsat tutarlarını, ilişkili hesabı ve beklenen kapanış tarihini kaydeder. Satış boru hattınızı kanban düzeninde görüntüleyebilirsiniz.
 
 ### Notlar
 
-The `Notes` object stores free-form notes that can be attached to People, Companies, Opportunities, and other records. Use notes to capture meeting summaries, important details, or any contextual information.
+`Notes` nesnesi, Kişiler, Şirketler, Fırsatlar ve diğer kayıtlara eklenebilen serbest biçimli notları saklar. Toplantı özetlerini, önemli ayrıntıları veya bağlamsal bilgileri kaydetmek için notları kullanın.
 
 ### Görevler
 
-The `Tasks` object stores to-dos and action items. Tasks can be linked to People, Companies, Opportunities, and other records. Track due dates, assignees, and completion status to stay on top of your follow-ups.
+`Tasks` nesnesi, yapılacaklar ve eylem öğelerini saklar. Görevler Kişiler, Şirketler, Fırsatlar ve diğer kayıtlara bağlanabilir. Takiplerinizi etkin şekilde sürdürebilmek için son tarihleri, atanan kişileri ve tamamlama durumunu izleyin.
 
 ## Özel Nesneler
 
-Custom objects let you store information that's unique to your organization and that standard objects can't handle. Örneğin, SpaceX iseniz, Roketler ve Fırlatmalar için özel bir nesne oluşturmak isteyebilirsiniz.
+Özel nesneler, standart nesnelerin işleyemediği, kuruluşunuza özgü bilgileri saklamanıza olanak tanır. Örneğin, SpaceX iseniz, Roketler ve Fırlatmalar için özel bir nesne oluşturmak isteyebilirsiniz.
 
 <img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
 
-### Creating a New Custom Object
+### Yeni Bir Özel Nesne Oluşturma
 
 Yeni bir özel nesne oluşturmak için:
 
 1. Soldaki kenar çubuğundan Ayarlar'a gidin.
 2. Çalışma Alanı altında, Veri modeline gidin. Burada mevcut Standart ve Özel nesnelerinizin (aktif ve devre dışı) genel görünümünü görebilirsiniz.
 
-<VimeoEmbed videoId="926288174" title="Video demonstration" />
+<VimeoEmbed videoId="926288174" title="Video gösterimi" />
 
 3. Üstteki `+ Yeni nesne` butonuna tıklayın. Adı (tekil ve çoğul olarak), bir simge seçip özel nesneniz için bir açıklama ekleyin ve Kaydet'e tıklayın (sağ üstte). Özel nesne olarak ilanı kullanarak, tekil "ilan" ve çoğul "ilanlar" olur, "Ev sahiplerinin mülklerini sergilemek için oluşturdukları ilanlar." gibi bir açıklamayla.
 
-4. Your custom object is now created and will appear in your sidebar. You can start adding records to it right away.
+4. Özel nesneniz oluşturuldu ve kenar çubuğunuzda görünecek. Hemen ona kayıt eklemeye başlayabilirsiniz.
 
-## Managing Objects
+## Nesneleri Yönetme
 
-### Deactivating Objects
+### Nesneleri Devre Dışı Bırakma
 
-If you don't need a standard or custom object:
+Standart veya özel bir nesneye ihtiyacınız yoksa:
 
-1. Go to Settings → Data Model
-2. Find the object you want to deactivate
-3. Click the toggle to deactivate it
-4. The object will be hidden from your workspace but data is preserved
+1. Ayarlar → Veri Modeli'ne gidin
+2. Devre dışı bırakmak istediğiniz nesneyi bulun
+3. Devre dışı bırakmak için geçiş düğmesine tıklayın
+4. Nesne çalışma alanınızdan gizlenecek ancak veriler korunur
 
-### Reactivating Objects
+### Nesneleri Yeniden Etkinleştirme
 
-To bring back a deactivated object:
+Devre dışı bırakılmış bir nesneyi geri getirmek için:
 
-1. Go to Settings → Data Model
-2. Look for deactivated objects (they'll be grayed out)
-3. Click the toggle to reactivate it
-4. The object and all its data will be restored
+1. Ayarlar → Veri Modeli'ne gidin
+2. Devre dışı bırakılmış nesneleri arayın (gri renkte görüneceklerdir)
+3. Yeniden etkinleştirmek için geçiş düğmesine tıklayın
+4. Nesne ve tüm verileri geri yüklenecektir
 
 ## En İyi Uygulamalar
 
-### When to Create Custom Objects
+### Özel Nesneleri Ne Zaman Oluşturmalısınız
 
-* **Unique business entities**: Things specific to your industry or process
-* **Complex relationships**: When you need to track connections between multiple entities
-* **Scalable data**: When you might have many instances of something
+* **Benzersiz iş varlıkları**: Sektörünüze veya sürecinize özgü unsurlar
+* **Karmaşık ilişkiler**: Birden çok varlık arasındaki bağlantıları izlemeniz gerektiğinde
+* **Ölçeklenebilir veriler**: Bir şeyin çok sayıda örneğine sahip olabileceğiniz durumlarda
 
-### When to Use Fields Instead
+### Bunun Yerine Alanları Ne Zaman Kullanmalısınız
 
-* **Simple attributes**: Properties that describe existing objects
-* **Categories or labels**: Ways to classify existing records
-* **Single values**: Information that doesn't need its own lifecycle
+* **Basit öznitelikler**: Mevcut nesneleri tanımlayan özellikler
+* **Kategoriler veya etiketler**: Mevcut kayıtları sınıflandırma yöntemleri
+* **Tekil değerler**: Kendi yaşam döngüsüne ihtiyaç duymayan bilgiler
 
-### Object Naming
+### Nesne Adlandırma
 
-* **Use clear, descriptive names**: Make it obvious what the object represents
-* **Follow conventions**: Use singular for the object name, plural for the collection
-* **Consider your team**: Choose names everyone will understand
+* **Açık, açıklayıcı adlar kullanın**: Nesnenin neyi temsil ettiğini açıkça belli edin
+* **Kurallara uyun**: Nesne adı için tekil, koleksiyon için çoğul kullanın
+* **Ekibinizi dikkate alın**: Herkesin anlayacağı adları seçin

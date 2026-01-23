@@ -11,7 +11,7 @@
     "watchAssets": true,
     "assets": [
       {
-        "include": "engine/core-modules/serverless/drivers/constants/base-typescript-project/**",
+        "include": "engine/core-modules/serverless/drivers/constants/seed-project/**",
         "outDir": "dist/assets"
       },
       {

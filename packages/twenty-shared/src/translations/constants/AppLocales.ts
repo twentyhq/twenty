@@ -1,7 +1,7 @@
 import { SOURCE_LOCALE } from '@/translations/constants/SourceLocale';
 
 export const APP_LOCALES = {
-  [SOURCE_LOCALE]: SOURCE_LOCALE,
+  en: SOURCE_LOCALE,
   'pseudo-en': 'pseudo-en',
   'af-ZA': 'af-ZA',
   'ar-SA': 'ar-SA',
@@ -37,3 +37,5 @@ export const APP_LOCALES = {
   'th-TH': 'th-TH',
   'id-ID': 'id-ID',
 } as const;
+
+export type AppLocale = keyof typeof APP_LOCALES;

@@ -4,14 +4,15 @@ import { Injectable } from '@nestjs/common';
 import DOMPurify from 'dompurify';
 import FileType from 'file-type';
 import sharp from 'sharp';
+import { FileFolder } from 'twenty-shared/types';
 import { v4 } from 'uuid';
-
-import { type FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { settings } from 'src/engine/constants/settings';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
+import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
 import { getCropSize, getImageBufferFromUrl } from 'src/utils/image';
 
 export type SignedFile = { path: string; token: string };
@@ -69,6 +70,9 @@ export class FileUploadService {
     return file;
   }
 
+  /**
+   * @deprecated Use uploadWorkspaceRecordFile if uploading workspace records-scoped files. Or create your dedicated upload file service.
+   */
   async uploadFile({
     file,
     filename,
@@ -120,10 +124,22 @@ export class FileUploadService {
 
     const type = await FileType.fromBuffer(buffer);
 
+    if (!type || !type.ext || !type.mime) {
+      throw new Error(
+        'Unable to detect image type from buffer. The file may not be a valid image format.',
+      );
+    }
+
+    if (!type.mime.startsWith('image/')) {
+      throw new Error(
+        `Detected file type is not an image: ${type.mime}. Please provide a valid image URL.`,
+      );
+    }
+
     return await this.uploadImage({
       file: buffer,
-      filename: `${v4()}.${type?.ext}`,
-      mimeType: type?.mime,
+      filename: `${v4()}.${type.ext}`,
+      mimeType: type.mime,
       fileFolder,
       workspaceId,
     });
@@ -194,5 +210,40 @@ export class FileUploadService {
 
   private getWorkspaceFolderName(workspaceId: string, fileFolder: FileFolder) {
     return `workspace-${workspaceId}/${fileFolder}`;
+  }
+
+  async uploadFilesFieldFile({
+    file,
+    filename,
+    declaredMimeType,
+    workspaceId,
+    applicationId,
+  }: {
+    file: Buffer;
+    filename: string;
+    declaredMimeType: string | undefined;
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<FileEntity> {
+    const { mimeType, ext } = await extractFileInfo({
+      file,
+      declaredMimeType,
+      filename,
+    });
+
+    const sanitizedFile = this._sanitizeFile({ file, ext, mimeType });
+
+    const fileId = v4();
+    const name = `${fileId}${ext ? `.${ext}` : ''}`;
+
+    return await this.fileStorage.write_v2({
+      sourceFile: sanitizedFile,
+      destinationPath: name,
+      mimeType,
+      fileFolder: FileFolder.FilesField,
+      applicationId,
+      workspaceId,
+      fileId,
+    });
   }
 }

@@ -38,9 +38,7 @@ export const WorkspaceMemberPictureUploader = ({
 
   const [uploadPicture] = useMutation(UPLOAD_WORKSPACE_MEMBER_PROFILE_PICTURE);
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const { canEdit: canEditProfilePicture } =
     useCanEditProfileField('profilePicture');
@@ -74,6 +72,7 @@ export const WorkspaceMemberPictureUploader = ({
       }
 
       await updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
         idToUpdate: workspaceMemberId,
         updateOneRecordInput: { avatarUrl: signedFile.path },
       });
@@ -113,6 +112,7 @@ export const WorkspaceMemberPictureUploader = ({
 
     try {
       await updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
         idToUpdate: workspaceMemberId,
         updateOneRecordInput: { avatarUrl: '' },
       });

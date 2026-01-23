@@ -7,7 +7,7 @@ import {
   RouteTriggerExceptionCode,
 } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
 
-export const routeTriggerGraphQLApiExceptionHandler = (error: Error): void => {
+export const routeTriggerGraphQLApiExceptionHandler = (error: Error): never => {
   if (error instanceof RouteTriggerException) {
     switch (error.code) {
       case RouteTriggerExceptionCode.ROUTE_NOT_FOUND:

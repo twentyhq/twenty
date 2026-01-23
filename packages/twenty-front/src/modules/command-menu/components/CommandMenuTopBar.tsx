@@ -5,7 +5,7 @@ import { CommandMenuTopBarRightCornerIcon } from '@/command-menu/components/Comm
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE } from '@/command-menu/constants/CommandMenuSearchBarHeightMobile';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
-import { COMMAND_MENU_SEARCH_INPUT_FOCUS_ID } from '@/command-menu/constants/CommandMenuSearchInputFocusId';
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
@@ -110,10 +110,10 @@ export const CommandMenuTopBar = () => {
 
   const handleInputFocus = () => {
     pushFocusItemToFocusStack({
-      focusId: COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+      focusId: SIDE_PANEL_FOCUS_ID,
       component: {
         type: FocusComponentType.TEXT_INPUT,
-        instanceId: COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+        instanceId: SIDE_PANEL_FOCUS_ID,
       },
       globalHotkeysConfig: {
         enableGlobalHotkeysConflictingWithKeyboard: false,
@@ -123,7 +123,7 @@ export const CommandMenuTopBar = () => {
 
   const handleInputBlur = () => {
     removeFocusItemFromFocusStackById({
-      focusId: COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+      focusId: SIDE_PANEL_FOCUS_ID,
     });
   };
 
@@ -175,7 +175,7 @@ export const CommandMenuTopBar = () => {
           commandMenuPage === CommandMenuPages.SearchRecords) && (
           <>
             <StyledInput
-              data-testid={COMMAND_MENU_SEARCH_INPUT_FOCUS_ID}
+              data-testid={SIDE_PANEL_FOCUS_ID}
               ref={inputRef}
               value={commandMenuSearch}
               placeholder={t`Type anything...`}

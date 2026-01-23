@@ -327,6 +327,7 @@ export class WorkflowCommonWorkspaceService {
             case 'restore':
               await this.serverlessFunctionService.restoreOneServerlessFunction(
                 step.settings.input.serverlessFunctionId,
+                workspaceId,
               );
               break;
             case 'destroy':

@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { type Locator, type Page } from '@playwright/test';
 
 export class LoginPage {
   private readonly loginWithGoogleButton: Locator;
@@ -86,9 +86,10 @@ export class LoginPage {
   }
 
   async clickLoginWithEmailIfVisible() {
-    const isVisible = await this.loginWithEmailButton.isVisible();
-    if (isVisible) {
+    try {
       await this.loginWithEmailButton.click();
+    } catch {
+      // Button not found - email field might already be visible (SSO-only or different auth flow)
     }
   }
 
@@ -105,9 +106,7 @@ export class LoginPage {
   }
 
   async typeEmail(email: string) {
-    await expect(this.emailField).toBeVisible();
-
-    await this.emailField.fill(email);
+    await this.emailField.fill(email, { timeout: 10000 });
   }
 
   async typePassword(email: string) {

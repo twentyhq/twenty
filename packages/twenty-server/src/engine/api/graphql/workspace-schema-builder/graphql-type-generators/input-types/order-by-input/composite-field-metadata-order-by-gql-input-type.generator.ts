@@ -5,7 +5,7 @@ import {
   GraphQLInputObjectType,
   isObjectType,
 } from 'graphql';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, pascalCase } from 'twenty-shared/utils';
 import { CompositeType } from 'twenty-shared/types';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
@@ -14,7 +14,6 @@ import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder
 import { computeCompositeFieldTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-composite-field-type-options.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
-import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
 export class CompositeFieldMetadataOrderByGqlInputTypeGenerator {

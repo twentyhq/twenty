@@ -39,7 +39,7 @@ export default defineConfig(({ command, mode }) => {
 
   const tsConfigPath = isBuildCommand
     ? path.resolve(__dirname, './tsconfig.build.json')
-    : path.resolve(__dirname, './tsconfig.dev.json');
+    : path.resolve(__dirname, './tsconfig.json');
 
   const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
   // Please don't increase this limit for main index chunk

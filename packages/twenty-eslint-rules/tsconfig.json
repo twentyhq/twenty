@@ -4,16 +4,8 @@
     "outDir": "../../.cache/tsc",
     "esModuleInterop": true,
     "moduleResolution": "node16",
-    "module": "node16"
+    "module": "node16",
+    "types": ["jest", "node"]
   },
-  "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.lint.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
-  ]
+  "include": ["**/*.ts", "jest.config.mjs"]
 }
