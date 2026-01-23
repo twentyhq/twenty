@@ -1,9 +1,9 @@
 import { type AllowedAddressSubField } from '@/types/AddressFieldsType';
 import { type FieldMetadataMultiItemSettings } from '@/types/FieldMetadataMultiItemSettings';
-import { type RelationType } from '@/types/RelationType';
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
 import { type RelationOnDeleteAction } from '@/types/RelationOnDeleteAction.type';
+import { type RelationType } from '@/types/RelationType';
 
 export enum NumberDataType {
   FLOAT = 'float',
@@ -41,9 +41,16 @@ export type FieldMetadataRelationSettings = {
   relationType: RelationType;
   onDelete?: RelationOnDeleteAction;
   joinColumnName?: string | null;
+  // Points to the target field on the junction object
+  // For MORPH_RELATION fields, morphRelations already contains all targets
+  junctionTargetFieldId?: string;
 };
 export type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];
+};
+
+export type FieldMetadataFilesSettings = {
+  maxNumberOfValues: number;
 };
 
 export type FieldMetadataTsVectorSettings = {
@@ -64,6 +71,7 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.EMAILS]: FieldMetadataMultiItemSettings | null;
   [FieldMetadataType.LINKS]: FieldMetadataMultiItemSettings | null;
   [FieldMetadataType.ARRAY]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.FILES]: FieldMetadataFilesSettings;
 };
 
 export type AllFieldMetadataSettings =

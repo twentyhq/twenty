@@ -183,6 +183,33 @@ export enum AggregateOperations {
   SUM = 'SUM'
 }
 
+export enum AllMetadataName {
+  agent = 'agent',
+  commandMenuItem = 'commandMenuItem',
+  cronTrigger = 'cronTrigger',
+  databaseEventTrigger = 'databaseEventTrigger',
+  fieldMetadata = 'fieldMetadata',
+  frontComponent = 'frontComponent',
+  index = 'index',
+  navigationMenuItem = 'navigationMenuItem',
+  objectMetadata = 'objectMetadata',
+  pageLayout = 'pageLayout',
+  pageLayoutTab = 'pageLayoutTab',
+  pageLayoutWidget = 'pageLayoutWidget',
+  role = 'role',
+  roleTarget = 'roleTarget',
+  routeTrigger = 'routeTrigger',
+  rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
+  rowLevelPermissionPredicateGroup = 'rowLevelPermissionPredicateGroup',
+  serverlessFunction = 'serverlessFunction',
+  skill = 'skill',
+  view = 'view',
+  viewField = 'viewField',
+  viewFilter = 'viewFilter',
+  viewFilterGroup = 'viewFilterGroup',
+  viewGroup = 'viewGroup'
+}
+
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
@@ -435,6 +462,18 @@ export type BillingEndTrialPeriodOutput = {
   /** Updated subscription status */
   status?: Maybe<SubscriptionStatus>;
 };
+
+export type BillingEntitlement = {
+  __typename?: 'BillingEntitlement';
+  key: BillingEntitlementKey;
+  value: Scalars['Boolean'];
+};
+
+export enum BillingEntitlementKey {
+  CUSTOM_DOMAIN = 'CUSTOM_DOMAIN',
+  RLS = 'RLS',
+  SSO = 'SSO'
+}
 
 export type BillingLicensedProduct = BillingProductDto & {
   __typename?: 'BillingLicensedProduct';
@@ -936,6 +975,16 @@ export type CreateFrontComponentInput = {
   name: Scalars['String'];
 };
 
+export type CreateNavigationMenuItemInput = {
+  folderId?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
+  position?: InputMaybe<Scalars['Int']>;
+  targetObjectMetadataId?: InputMaybe<Scalars['UUID']>;
+  targetRecordId?: InputMaybe<Scalars['UUID']>;
+  userWorkspaceId?: InputMaybe<Scalars['UUID']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
+};
+
 export type CreateObjectInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
@@ -948,6 +997,7 @@ export type CreateObjectInput = {
   primaryKeyColumnType?: InputMaybe<Scalars['String']>;
   primaryKeyFieldMetadataSettings?: InputMaybe<Scalars['JSON']>;
   shortcut?: InputMaybe<Scalars['String']>;
+  skipNameField?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type CreateOneAppTokenInput = {
@@ -1011,34 +1061,14 @@ export type CreateRouteTriggerInput = {
   serverlessFunctionId: Scalars['String'];
 };
 
-export type CreateRowLevelPermissionPredicateGroupInput = {
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
-  objectMetadataId: Scalars['String'];
-  parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
-  roleId: Scalars['String'];
-};
-
-export type CreateRowLevelPermissionPredicateInput = {
-  fieldMetadataId: Scalars['String'];
-  objectMetadataId: Scalars['String'];
-  operand: RowLevelPermissionPredicateOperand;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
-  roleId: Scalars['String'];
-  rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
-  subFieldName?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['JSON']>;
-  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']>;
-  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']>;
-};
-
 export type CreateServerlessFunctionInput = {
+  builtHandlerPath?: InputMaybe<Scalars['String']>;
   code?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
   handlerName?: InputMaybe<Scalars['String']>;
-  handlerPath?: InputMaybe<Scalars['String']>;
   isTool?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
+  sourceHandlerPath?: InputMaybe<Scalars['String']>;
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
   toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
@@ -1225,14 +1255,6 @@ export type DeleteOneFieldInput = {
 export type DeleteOneObjectInput = {
   /** The id of the record to delete. */
   id: Scalars['UUID'];
-};
-
-export type DeleteRowLevelPermissionPredicateGroupInput = {
-  id: Scalars['String'];
-};
-
-export type DeleteRowLevelPermissionPredicateInput = {
-  id: Scalars['String'];
 };
 
 export type DeleteSsoInput = {
@@ -1429,12 +1451,13 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
+  IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED = 'IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED',
   IS_COMMAND_MENU_ITEM_ENABLED = 'IS_COMMAND_MENU_ITEM_ENABLED',
   IS_DASHBOARD_V2_ENABLED = 'IS_DASHBOARD_V2_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
-  IS_IF_ELSE_ENABLED = 'IS_IF_ELSE_ENABLED',
+  IS_FILES_FIELD_ENABLED = 'IS_FILES_FIELD_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
-  IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
+  IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
   IS_RECORD_PAGE_LAYOUT_ENABLED = 'IS_RECORD_PAGE_LAYOUT_ENABLED',
   IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED = 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED',
@@ -1445,7 +1468,7 @@ export enum FeatureFlagKey {
 
 export type Field = {
   __typename?: 'Field';
-  applicationId?: Maybe<Scalars['UUID']>;
+  applicationId: Scalars['UUID'];
   createdAt: Scalars['DateTime'];
   defaultValue?: Maybe<Scalars['JSON']>;
   description?: Maybe<Scalars['String']>;
@@ -1459,6 +1482,7 @@ export type Field = {
   isUIReadOnly?: Maybe<Scalars['Boolean']>;
   isUnique?: Maybe<Scalars['Boolean']>;
   label: Scalars['String'];
+  morphId?: Maybe<Scalars['UUID']>;
   morphRelations?: Maybe<Array<Relation>>;
   name: Scalars['String'];
   object?: Maybe<Object>;
@@ -1511,6 +1535,7 @@ export enum FieldMetadataType {
   DATE = 'DATE',
   DATE_TIME = 'DATE_TIME',
   EMAILS = 'EMAILS',
+  FILES = 'FILES',
   FULL_NAME = 'FULL_NAME',
   LINKS = 'LINKS',
   MORPH_RELATION = 'MORPH_RELATION',
@@ -1567,12 +1592,18 @@ export type File = {
 
 export enum FileFolder {
   AgentChat = 'AgentChat',
+  Asset = 'Asset',
   Attachment = 'Attachment',
+  BuiltFrontComponent = 'BuiltFrontComponent',
+  BuiltFunction = 'BuiltFunction',
   File = 'File',
+  FilesField = 'FilesField',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
   ServerlessFunctionToDelete = 'ServerlessFunctionToDelete',
+  Source = 'Source',
+  TemporaryFilesField = 'TemporaryFilesField',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
@@ -1989,6 +2020,7 @@ export type Mutation = {
   createFrontComponent: FrontComponent;
   createManyCoreViewFields: Array<CoreViewField>;
   createManyCoreViewGroups: Array<CoreViewGroup>;
+  createNavigationMenuItem: NavigationMenuItem;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
   createOneAgent: Agent;
@@ -2005,8 +2037,6 @@ export type Mutation = {
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
   createPublicDomain: PublicDomain;
-  createRowLevelPermissionPredicate: RowLevelPermissionPredicate;
-  createRowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup;
   createSAMLIdentityProvider: SetupSsoOutput;
   createSkill: Skill;
   createWebhook: Webhook;
@@ -2028,6 +2058,7 @@ export type Mutation = {
   deleteFile: File;
   deleteFrontComponent: FrontComponent;
   deleteJobs: DeleteJobsResponse;
+  deleteNavigationMenuItem: NavigationMenuItem;
   deleteOneAgent: Agent;
   deleteOneCronTrigger: CronTrigger;
   deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
@@ -2037,8 +2068,6 @@ export type Mutation = {
   deleteOneRouteTrigger: RouteTrigger;
   deleteOneServerlessFunction: ServerlessFunction;
   deletePublicDomain: Scalars['Boolean'];
-  deleteRowLevelPermissionPredicate: RowLevelPermissionPredicate;
-  deleteRowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup;
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteSkill: Skill;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
@@ -2077,6 +2106,7 @@ export type Mutation = {
   impersonate: ImpersonateOutput;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
+  installApplication: Scalars['Boolean'];
   publishServerlessFunction: ServerlessFunction;
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
@@ -2116,6 +2146,7 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlagDto;
+  updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
   updateOneCronTrigger: CronTrigger;
@@ -2130,8 +2161,6 @@ export type Mutation = {
   updatePageLayoutWidget: PageLayoutWidget;
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePasswordOutput;
-  updateRowLevelPermissionPredicate: RowLevelPermissionPredicate;
-  updateRowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup;
   updateSkill: Skill;
   updateUserEmail: Scalars['Boolean'];
   updateWebhook?: Maybe<Webhook>;
@@ -2141,7 +2170,10 @@ export type Mutation = {
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
+  uploadApplicationFile: File;
+  /** @deprecated Use uploadFilesFieldFile instead */
   uploadFile: SignedFile;
+  uploadFilesFieldFile: File;
   uploadImage: SignedFile;
   uploadWorkspaceLogo: SignedFile;
   uploadWorkspaceMemberProfilePicture: SignedFile;
@@ -2297,6 +2329,11 @@ export type MutationCreateManyCoreViewGroupsArgs = {
 };
 
 
+export type MutationCreateNavigationMenuItemArgs = {
+  input: CreateNavigationMenuItemInput;
+};
+
+
 export type MutationCreateOidcIdentityProviderArgs = {
   input: SetupOidcSsoInput;
 };
@@ -2378,16 +2415,6 @@ export type MutationCreatePageLayoutWidgetArgs = {
 
 export type MutationCreatePublicDomainArgs = {
   domain: Scalars['String'];
-};
-
-
-export type MutationCreateRowLevelPermissionPredicateArgs = {
-  input: CreateRowLevelPermissionPredicateInput;
-};
-
-
-export type MutationCreateRowLevelPermissionPredicateGroupArgs = {
-  input: CreateRowLevelPermissionPredicateGroupInput;
 };
 
 
@@ -2492,6 +2519,11 @@ export type MutationDeleteJobsArgs = {
 };
 
 
+export type MutationDeleteNavigationMenuItemArgs = {
+  id: Scalars['UUID'];
+};
+
+
 export type MutationDeleteOneAgentArgs = {
   input: AgentIdInput;
 };
@@ -2534,16 +2566,6 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 
 export type MutationDeletePublicDomainArgs = {
   domain: Scalars['String'];
-};
-
-
-export type MutationDeleteRowLevelPermissionPredicateArgs = {
-  input: DeleteRowLevelPermissionPredicateInput;
-};
-
-
-export type MutationDeleteRowLevelPermissionPredicateGroupArgs = {
-  input: DeleteRowLevelPermissionPredicateGroupInput;
 };
 
 
@@ -2717,6 +2739,11 @@ export type MutationImpersonateArgs = {
 export type MutationInitiateOtpProvisioningArgs = {
   loginToken: Scalars['String'];
   origin: Scalars['String'];
+};
+
+
+export type MutationInstallApplicationArgs = {
+  workspaceMigration: WorkspaceMigrationInput;
 };
 
 
@@ -2920,6 +2947,11 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
 };
 
 
+export type MutationUpdateNavigationMenuItemArgs = {
+  input: UpdateOneNavigationMenuItemInput;
+};
+
+
 export type MutationUpdateOneAgentArgs = {
   input: UpdateAgentInput;
 };
@@ -2997,16 +3029,6 @@ export type MutationUpdatePasswordViaResetTokenArgs = {
 };
 
 
-export type MutationUpdateRowLevelPermissionPredicateArgs = {
-  input: UpdateRowLevelPermissionPredicateInput;
-};
-
-
-export type MutationUpdateRowLevelPermissionPredicateGroupArgs = {
-  input: UpdateRowLevelPermissionPredicateGroupInput;
-};
-
-
 export type MutationUpdateSkillArgs = {
   input: UpdateSkillInput;
 };
@@ -3056,9 +3078,22 @@ export type MutationUpdateWorkspaceMemberRoleArgs = {
 };
 
 
+export type MutationUploadApplicationFileArgs = {
+  applicationUniversalIdentifier: Scalars['String'];
+  file: Scalars['Upload'];
+  fileFolder: FileFolder;
+  filePath: Scalars['String'];
+};
+
+
 export type MutationUploadFileArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
+};
+
+
+export type MutationUploadFilesFieldFileArgs = {
+  file: Scalars['Upload'];
 };
 
 
@@ -3138,6 +3173,21 @@ export type NativeModelCapabilities = {
   webSearch?: Maybe<Scalars['Boolean']>;
 };
 
+export type NavigationMenuItem = {
+  __typename?: 'NavigationMenuItem';
+  applicationId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  folderId?: Maybe<Scalars['UUID']>;
+  id: Scalars['UUID'];
+  name?: Maybe<Scalars['String']>;
+  position: Scalars['Float'];
+  targetObjectMetadataId?: Maybe<Scalars['UUID']>;
+  targetRecordId?: Maybe<Scalars['UUID']>;
+  updatedAt: Scalars['DateTime'];
+  userWorkspaceId?: Maybe<Scalars['UUID']>;
+  viewId?: Maybe<Scalars['UUID']>;
+};
+
 export type NotesConfiguration = {
   __typename?: 'NotesConfiguration';
   configurationType: WidgetConfigurationType;
@@ -3145,7 +3195,7 @@ export type NotesConfiguration = {
 
 export type Object = {
   __typename?: 'Object';
-  applicationId?: Maybe<Scalars['UUID']>;
+  applicationId: Scalars['UUID'];
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
   duplicateCriteria?: Maybe<Array<Array<Scalars['String']>>>;
@@ -3585,9 +3635,6 @@ export type Query = {
   getQueueJobs: QueueJobsResponse;
   getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
-  getRowLevelPermissionPredicate?: Maybe<RowLevelPermissionPredicate>;
-  getRowLevelPermissionPredicateGroups: Array<RowLevelPermissionPredicateGroup>;
-  getRowLevelPermissionPredicates: Array<RowLevelPermissionPredicate>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getSystemHealthStatus: SystemHealth;
@@ -3602,6 +3649,8 @@ export type Query = {
   indexMetadatas: IndexConnection;
   lineChartData: LineChartDataOutput;
   listPlans: Array<BillingPlanOutput>;
+  navigationMenuItem?: Maybe<NavigationMenuItem>;
+  navigationMenuItems: Array<NavigationMenuItem>;
   object: Object;
   objects: ObjectConnection;
   pieChartData: PieChartDataOutput;
@@ -3860,22 +3909,6 @@ export type QueryGetQueueMetricsArgs = {
 };
 
 
-export type QueryGetRowLevelPermissionPredicateArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetRowLevelPermissionPredicateGroupsArgs = {
-  roleId?: InputMaybe<Scalars['String']>;
-};
-
-
-export type QueryGetRowLevelPermissionPredicatesArgs = {
-  objectMetadataId?: InputMaybe<Scalars['String']>;
-  roleId?: InputMaybe<Scalars['String']>;
-};
-
-
 export type QueryGetServerlessFunctionSourceCodeArgs = {
   input: GetServerlessFunctionSourceCodeInput;
 };
@@ -3936,6 +3969,11 @@ export type QueryIndexMetadatasArgs = {
 
 export type QueryLineChartDataArgs = {
   input: LineChartDataInput;
+};
+
+
+export type QueryNavigationMenuItemArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -4243,6 +4281,7 @@ export type SearchRecord = {
   __typename?: 'SearchRecord';
   imageUrl?: Maybe<Scalars['String']>;
   label: Scalars['String'];
+  objectLabelSingular: Scalars['String'];
   objectNameSingular: Scalars['String'];
   recordId: Scalars['UUID'];
   tsRank: Scalars['Float'];
@@ -4285,12 +4324,12 @@ export type Sentry = {
 export type ServerlessFunction = {
   __typename?: 'ServerlessFunction';
   applicationId?: Maybe<Scalars['UUID']>;
+  builtHandlerPath: Scalars['String'];
   createdAt: Scalars['DateTime'];
   cronTriggers?: Maybe<Array<CronTrigger>>;
   databaseEventTriggers?: Maybe<Array<DatabaseEventTrigger>>;
   description?: Maybe<Scalars['String']>;
   handlerName: Scalars['String'];
-  handlerPath: Scalars['String'];
   id: Scalars['UUID'];
   isTool: Scalars['Boolean'];
   latestVersion?: Maybe<Scalars['String']>;
@@ -4298,8 +4337,10 @@ export type ServerlessFunction = {
   publishedVersions: Array<Scalars['String']>;
   routeTriggers?: Maybe<Array<RouteTrigger>>;
   runtime: Scalars['String'];
+  sourceHandlerPath: Scalars['String'];
   timeoutSeconds: Scalars['Float'];
   toolInputSchema?: Maybe<Scalars['JSON']>;
+  universalIdentifier?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -4725,6 +4766,12 @@ export type UpdateLabPublicFeatureFlagInput = {
   value: Scalars['Boolean'];
 };
 
+export type UpdateNavigationMenuItemInput = {
+  folderId?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
+  position?: InputMaybe<Scalars['Int']>;
+};
+
 export type UpdateObjectPayload = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
@@ -4744,6 +4791,13 @@ export type UpdateOneFieldMetadataInput = {
   id: Scalars['UUID'];
   /** The record to update */
   update: UpdateFieldInput;
+};
+
+export type UpdateOneNavigationMenuItemInput = {
+  /** The id of the record to update */
+  id: Scalars['UUID'];
+  /** The record to update */
+  update: UpdateNavigationMenuItemInput;
 };
 
 export type UpdateOneObjectInput = {
@@ -4831,25 +4885,6 @@ export type UpdateRouteTriggerInputUpdates = {
   path: Scalars['String'];
 };
 
-export type UpdateRowLevelPermissionPredicateGroupInput = {
-  id: Scalars['String'];
-  logicalOperator?: InputMaybe<RowLevelPermissionPredicateGroupLogicalOperator>;
-  parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
-};
-
-export type UpdateRowLevelPermissionPredicateInput = {
-  fieldMetadataId?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
-  operand?: InputMaybe<RowLevelPermissionPredicateOperand>;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
-  rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
-  subFieldName?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['JSON']>;
-  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']>;
-  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']>;
-};
-
 export type UpdateServerlessFunctionInput = {
   /** Id of the serverless function to update */
   id: Scalars['UUID'];
@@ -4861,9 +4896,9 @@ export type UpdateServerlessFunctionInputUpdates = {
   code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
   handlerName?: InputMaybe<Scalars['String']>;
-  handlerPath?: InputMaybe<Scalars['String']>;
   isTool?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
+  sourceHandlerPath?: InputMaybe<Scalars['String']>;
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
   toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
@@ -5370,6 +5405,7 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
   allowImpersonation: Scalars['Boolean'];
+  billingEntitlements: Array<BillingEntitlement>;
   billingSubscriptions: Array<BillingSubscription>;
   createdAt: Scalars['DateTime'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
@@ -5494,6 +5530,22 @@ export enum WorkspaceMemberTimeFormatEnum {
   HOUR_24 = 'HOUR_24',
   SYSTEM = 'SYSTEM'
 }
+
+export enum WorkspaceMigrationActionType {
+  create = 'create',
+  delete = 'delete',
+  update = 'update'
+}
+
+export type WorkspaceMigrationDeleteActionInput = {
+  metadataName: AllMetadataName;
+  type: WorkspaceMigrationActionType;
+  universalIdentifier: Scalars['String'];
+};
+
+export type WorkspaceMigrationInput = {
+  actions: Array<WorkspaceMigrationDeleteActionInput>;
+};
 
 export type WorkspaceNameAndId = {
   __typename?: 'WorkspaceNameAndId';
@@ -5675,7 +5727,7 @@ export type UpdateOneApplicationVariableMutationVariables = Exact<{
 
 export type UpdateOneApplicationVariableMutation = { __typename?: 'Mutation', updateOneApplicationVariable: boolean };
 
-export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, applicationId?: string | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, handlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null }> };
+export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null }> };
 
 export type FindManyApplicationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5687,7 +5739,7 @@ export type FindOneApplicationQueryVariables = Exact<{
 }>;
 
 
-export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, applicationId?: string | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, handlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null }> } };
+export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null }> } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -5997,7 +6049,7 @@ export type DeleteFileMutationVariables = Exact<{
 
 export type DeleteFileMutation = { __typename?: 'Mutation', deleteFile: { __typename?: 'File', id: string, path: string, size: number, createdAt: string } };
 
-export type ObjectMetadataFieldsFragment = { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, applicationId?: string | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> };
+export type ObjectMetadataFieldsFragment = { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> };
 
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{
   input: CreateOneObjectInput;
@@ -6011,7 +6063,7 @@ export type CreateOneFieldMetadataItemMutationVariables = Exact<{
 }>;
 
 
-export type CreateOneFieldMetadataItemMutation = { __typename?: 'Mutation', createOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, defaultValue?: any | null, options?: any | null, isLabelSyncedWithName?: boolean | null, applicationId?: string | null, object?: { __typename?: 'Object', id: string } | null } };
+export type CreateOneFieldMetadataItemMutation = { __typename?: 'Mutation', createOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, defaultValue?: any | null, options?: any | null, isLabelSyncedWithName?: boolean | null, applicationId: string, object?: { __typename?: 'Object', id: string } | null } };
 
 export type UpdateOneFieldMetadataItemMutationVariables = Exact<{
   idToUpdate: Scalars['UUID'];
@@ -6019,7 +6071,7 @@ export type UpdateOneFieldMetadataItemMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneFieldMetadataItemMutation = { __typename?: 'Mutation', updateOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, isLabelSyncedWithName?: boolean | null, applicationId?: string | null, object?: { __typename?: 'Object', id: string } | null } };
+export type UpdateOneFieldMetadataItemMutation = { __typename?: 'Mutation', updateOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, isLabelSyncedWithName?: boolean | null, applicationId: string, object?: { __typename?: 'Object', id: string } | null } };
 
 export type UpdateOneObjectMetadataItemMutationVariables = Exact<{
   idToUpdate: Scalars['UUID'];
@@ -6041,12 +6093,12 @@ export type DeleteOneFieldMetadataItemMutationVariables = Exact<{
 }>;
 
 
-export type DeleteOneFieldMetadataItemMutation = { __typename?: 'Mutation', deleteOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, applicationId?: string | null, object?: { __typename?: 'Object', id: string } | null } };
+export type DeleteOneFieldMetadataItemMutation = { __typename?: 'Mutation', deleteOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, applicationId: string, object?: { __typename?: 'Object', id: string } | null } };
 
 export type ObjectMetadataItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', edges: Array<{ __typename?: 'ObjectEdge', node: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, applicationId?: string | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
+export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', edges: Array<{ __typename?: 'ObjectEdge', node: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
 
 export type SkipBookOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -6507,21 +6559,21 @@ export type GetSsoIdentityProvidersQueryVariables = Exact<{ [key: string]: never
 
 export type GetSsoIdentityProvidersQuery = { __typename?: 'Query', getSSOIdentityProviders: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
 
-export type ServerlessFunctionFieldsFragment = { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, handlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null };
+export type ServerlessFunctionFieldsFragment = { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null };
 
 export type CreateOneServerlessFunctionItemMutationVariables = Exact<{
   input: CreateServerlessFunctionInput;
 }>;
 
 
-export type CreateOneServerlessFunctionItemMutation = { __typename?: 'Mutation', createOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, handlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
+export type CreateOneServerlessFunctionItemMutation = { __typename?: 'Mutation', createOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
 
 export type DeleteOneServerlessFunctionMutationVariables = Exact<{
   input: ServerlessFunctionIdInput;
 }>;
 
 
-export type DeleteOneServerlessFunctionMutation = { __typename?: 'Mutation', deleteOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, handlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
+export type DeleteOneServerlessFunctionMutation = { __typename?: 'Mutation', deleteOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
 
 export type ExecuteOneServerlessFunctionMutationVariables = Exact<{
   input: ExecuteServerlessFunctionInput;
@@ -6535,14 +6587,14 @@ export type PublishOneServerlessFunctionMutationVariables = Exact<{
 }>;
 
 
-export type PublishOneServerlessFunctionMutation = { __typename?: 'Mutation', publishServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, handlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
+export type PublishOneServerlessFunctionMutation = { __typename?: 'Mutation', publishServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
 
 export type UpdateOneServerlessFunctionMutationVariables = Exact<{
   input: UpdateServerlessFunctionInput;
 }>;
 
 
-export type UpdateOneServerlessFunctionMutation = { __typename?: 'Mutation', updateOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, handlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
+export type UpdateOneServerlessFunctionMutation = { __typename?: 'Mutation', updateOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
 
 export type FindManyAvailablePackagesQueryVariables = Exact<{
   input: ServerlessFunctionIdInput;
@@ -6554,14 +6606,14 @@ export type FindManyAvailablePackagesQuery = { __typename?: 'Query', getAvailabl
 export type GetManyServerlessFunctionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetManyServerlessFunctionsQuery = { __typename?: 'Query', findManyServerlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, handlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null }> };
+export type GetManyServerlessFunctionsQuery = { __typename?: 'Query', findManyServerlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null }> };
 
 export type GetOneServerlessFunctionQueryVariables = Exact<{
   input: ServerlessFunctionIdInput;
 }>;
 
 
-export type GetOneServerlessFunctionQuery = { __typename?: 'Query', findOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, handlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
+export type GetOneServerlessFunctionQuery = { __typename?: 'Query', findOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
 
 export type FindOneServerlessFunctionSourceCodeQueryVariables = Exact<{
   input: GetServerlessFunctionSourceCodeInput;
@@ -6581,7 +6633,7 @@ export type BillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscri
 
 export type CurrentBillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
 
 export type WorkspaceUrlsFragmentFragment = { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null };
 
@@ -6600,7 +6652,7 @@ export type DeleteUserWorkspaceMutation = { __typename?: 'Mutation', deleteUserF
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
@@ -7171,6 +7223,7 @@ export const ObjectMetadataFieldsFragmentDoc = gql`
     options
     settings
     isLabelSyncedWithName
+    morphId
     applicationId
     relation {
       type
@@ -7226,7 +7279,8 @@ export const ServerlessFunctionFieldsFragmentDoc = gql`
   timeoutSeconds
   latestVersion
   publishedVersions
-  handlerPath
+  sourceHandlerPath
+  builtHandlerPath
   handlerName
   cronTriggers {
     id
@@ -7634,6 +7688,10 @@ export const UserQueryFragmentFragmentDoc = gql`
     }
     billingSubscriptions {
       ...BillingSubscriptionFragment
+    }
+    billingEntitlements {
+      key
+      value
     }
     workspaceMembersCount
     defaultRole {

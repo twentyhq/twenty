@@ -128,11 +128,19 @@ export class ImapSmtpCaldavService {
 
     try {
       await client.listCalendars();
+      await client.validateSyncCollectionSupport();
     } catch (error) {
       this.logger.error(
         `CALDAV connection failed: ${error.message}`,
         error.stack,
       );
+
+      if (error.message?.includes('CALDAV_SYNC_COLLECTION_NOT_SUPPORTED')) {
+        throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
+          userFriendlyMessage: msg`Your CalDAV server does not support incremental sync (RFC 6578). Please use a compatible provider such as Nextcloud, iCloud, or Fastmail.`,
+        });
+      }
+
       if (error.code === 'FailedToOpenSocket') {
         throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
           userFriendlyMessage: msg`We couldn't connect to your CalDAV server. Please check your server settings and try again.`,

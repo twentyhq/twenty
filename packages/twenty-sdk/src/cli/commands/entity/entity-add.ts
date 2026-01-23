@@ -1,9 +1,9 @@
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import { getFrontComponentBaseFile } from '@/cli/utilities/entity/utils/entity-front-component-template';
-import { getFunctionBaseFile } from '@/cli/utilities/entity/utils/entity-function-template';
-import { convertToLabel } from '@/cli/utilities/entity/utils/entity-label';
-import { getNewObjectFileContent } from '@/cli/utilities/entity/utils/entity-object-template';
-import { getRoleBaseFile } from '@/cli/utilities/entity/utils/entity-role-template';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
+import { getFunctionBaseFile } from '@/cli/utilities/entity/entity-function-template';
+import { convertToLabel } from '@/cli/utilities/entity/entity-label';
+import { getNewObjectFileContent } from '@/cli/utilities/entity/entity-object-template';
+import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
@@ -11,7 +11,7 @@ import camelcase from 'lodash.camelcase';
 import kebabcase from 'lodash.kebabcase';
 import { join } from 'path';
 
-const APP_FOLDER = 'src/app';
+const APP_FOLDER = 'src';
 
 export enum SyncableEntity {
   AGENT = 'agent',
@@ -28,7 +28,7 @@ export const isSyncableEntity = (value: string): value is SyncableEntity => {
 export class EntityAddCommand {
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
-      // Default to src/app/ folder, allow override with path parameter
+      // Default to src/ folder, allow override with path parameter
       const appPath = path
         ? join(CURRENT_EXECUTION_DIRECTORY, path)
         : join(CURRENT_EXECUTION_DIRECTORY, APP_FOLDER);

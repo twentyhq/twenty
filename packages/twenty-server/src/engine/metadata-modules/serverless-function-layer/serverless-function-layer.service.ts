@@ -10,12 +10,14 @@ import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serve
 import { CreateServerlessFunctionLayerInput } from 'src/engine/metadata-modules/serverless-function-layer/dtos/create-serverless-function-layer.input';
 import { getLastCommonLayerDependencies } from 'src/engine/core-modules/serverless/drivers/utils/get-last-common-layer-dependencies';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class ServerlessFunctionLayerService {
   constructor(
     @InjectRepository(ServerlessFunctionLayerEntity)
     private readonly serverlessFunctionLayerRepository: Repository<ServerlessFunctionLayerEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async create(
@@ -32,12 +34,21 @@ export class ServerlessFunctionLayerService {
         workspaceId,
       });
 
-    return this.serverlessFunctionLayerRepository.save(serverlessFunctionLayer);
+    const savedLayer = await this.serverlessFunctionLayerRepository.save(
+      serverlessFunctionLayer,
+    );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'serverlessFunctionLayerMaps',
+    ]);
+
+    return savedLayer;
   }
 
   async update(
     id: string,
     data: QueryDeepPartialEntity<ServerlessFunctionLayerEntity>,
+    workspaceId: string,
   ) {
     const checksum = data.yarnLock
       ? serverlessFunctionCreateHash(data.yarnLock as string)
@@ -45,7 +56,16 @@ export class ServerlessFunctionLayerService {
 
     const updateData = { ...data, ...(checksum && { checksum }) };
 
-    return this.serverlessFunctionLayerRepository.update(id, updateData);
+    const result = await this.serverlessFunctionLayerRepository.update(
+      id,
+      updateData,
+    );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'serverlessFunctionLayerMaps',
+    ]);
+
+    return result;
   }
 
   async createCommonLayerIfNotExist(workspaceId: string) {

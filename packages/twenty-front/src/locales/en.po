@@ -3931,6 +3931,11 @@ msgstr "Delete view"
 msgid "Delete webhook"
 msgstr "Delete webhook"
 
+#. js-lingui-id: tWD0z0
+#: src/modules/command-menu/pages/page-layout/components/WidgetSettingsFooter.tsx
+msgid "Delete widget"
+msgstr "Delete widget"
+
 #. js-lingui-id: UA2IpC
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Delete workflow"
@@ -7025,6 +7030,11 @@ msgstr "Limit"
 msgid "Limit cannot exceed {maxRecordsFormatted} records."
 msgstr "Limit cannot exceed {maxRecordsFormatted} records."
 
+#. js-lingui-id: g3YJC1
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Limit how many files can be attached to this field"
+msgstr "Limit how many files can be attached to this field"
+
 #. js-lingui-id: Qds9fe
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Limit how many values can be added to this field"
@@ -7312,6 +7322,11 @@ msgstr "Max range"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Maximum email addresses"
 msgstr "Maximum email addresses"
+
+#. js-lingui-id: PAhTVY
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
+msgid "Maximum files"
+msgstr "Maximum files"
 
 #. js-lingui-id: iwCoSG
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
@@ -7724,6 +7739,11 @@ msgstr "Navigate to previous version"
 msgid "Navigate to previous workflow"
 msgstr "Navigate to previous workflow"
 
+#. js-lingui-id: FpO6v4
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "navigation menu item"
+msgstr "navigation menu item"
+
 #. js-lingui-id: qqeAJM
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Never"
@@ -7907,11 +7927,6 @@ msgstr "No {label}"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter.tsx
 msgid "No {objectLabelSingular} found"
 msgstr "No {objectLabelSingular} found"
-
-#. js-lingui-id: baVNgS
-#: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordPicker.tsx
-msgid "No {objectNames}"
-msgstr "No {objectNames}"
 
 #. js-lingui-id: aXFOuf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -8211,6 +8226,11 @@ msgstr "No permissions have been set for individual objects."
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "No record is required to trigger this workflow"
 msgstr "No record is required to trigger this workflow"
+
+#. js-lingui-id: X8wJTR
+#: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordPicker.tsx
+msgid "No records"
+msgstr "No records"
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -9521,6 +9541,11 @@ msgstr "Relation type"
 msgid "Relations"
 msgstr "Relations"
 
+#. js-lingui-id: ZrUSCK
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
+msgid "Relations cannot include the source object when multiple destinations are selected."
+msgstr "Relations cannot include the source object when multiple destinations are selected."
+
 #. js-lingui-id: HR+PwH
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 msgid "Relative"
@@ -10246,6 +10271,11 @@ msgstr "See {objectLabelPlural}"
 msgid "See active version"
 msgstr "See active version"
 
+#. js-lingui-id: R+sqCn
+#: src/modules/page-layout/widgets/components/WidgetActionFieldSeeAll.tsx
+msgid "See all {relationLabelPlural} linked to this record"
+msgstr "See all {relationLabelPlural} linked to this record"
+
 #. js-lingui-id: f4Lu+X
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "See deleted dashboards"
@@ -10325,6 +10355,7 @@ msgstr "See Workflows"
 #. js-lingui-id: rG3WVm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip.tsx
 msgid "Select"
 msgstr "Select"
 
@@ -10337,11 +10368,6 @@ msgstr "Select 1 {fieldTypeLabelLowercase} field"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 msgid "Select 1 field"
 msgstr "Select 1 field"
-
-#. js-lingui-id: D1pVcW
-#: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip.tsx
-msgid "Select a {objectNameSingular}"
-msgstr "Select a {objectNameSingular}"
 
 #. js-lingui-id: OMoA3j
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -10809,6 +10835,16 @@ msgstr "Skills"
 #: src/pages/onboarding/BookCall.tsx
 msgid "Skip"
 msgstr "Skip"
+
+#. js-lingui-id: TyudBs
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+msgid "Skip creating a Name field "
+msgstr "Skip creating a Name field "
+
+#. js-lingui-id: PlF+NA
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
+msgid "Skip the junction object (similar to many-to-many relations)"
+msgstr "Skip the junction object (similar to many-to-many relations)"
 
 #. js-lingui-id: BIZl8w
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -11362,6 +11398,11 @@ msgstr "Tab Settings"
 msgid "Table"
 msgstr "Table"
 
+#. js-lingui-id: sceIIK
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
+msgid "Target relation on Junction Object"
+msgstr "Target relation on Junction Object"
+
 #. js-lingui-id: R+s8S+
 #: src/modules/activities/tasks/components/TaskRow.tsx
 msgid "Task title"
@@ -11645,6 +11686,11 @@ msgstr "This file cannot be previewed because it is hosted locally."
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "This file type cannot be previewed. Please download the file to view it."
 msgstr "This file type cannot be previewed. Please download the file to view it."
+
+#. js-lingui-id: njWene
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
+msgid "This is a relation to a Junction Object"
+msgstr "This is a relation to a Junction Object"
 
 #. js-lingui-id: E4JJ5C
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -12195,6 +12241,7 @@ msgid "Unordered list with bullets"
 msgstr "Unordered list with bullets"
 
 #. js-lingui-id: wja8aL
+#: src/modules/ui/field/display/components/FilesDisplay.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12368,6 +12415,11 @@ msgstr "Use authenticator apps and browser extensions like 1Password, Authy, Mic
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Use our API or add your first {objectLabel} manually"
+
+#. js-lingui-id: AQVj2A
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+msgid "Useful for pivot/junction tables"
+msgstr "Useful for pivot/junction tables"
 
 #. js-lingui-id: 7PzzBU
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
@@ -12795,6 +12847,11 @@ msgstr "Where"
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "Widget type"
 msgstr "Widget type"
+
+#. js-lingui-id: erVUKK
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
+msgid "Will show linked records directly instead of intermediate junction record"
+msgstr "Will show linked records directly instead of intermediate junction record"
 
 #. js-lingui-id: bB8dFW
 #: src/modules/billing/components/TrialCard.tsx

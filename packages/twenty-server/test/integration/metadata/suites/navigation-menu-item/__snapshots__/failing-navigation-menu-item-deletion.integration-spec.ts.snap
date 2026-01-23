@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`NavigationMenuItem deletion should fail when deleting a non-existent navigation menu item 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "NAVIGATION_MENU_ITEM_NOT_FOUND",
+    "userFriendlyMessage": "Navigation menu item not found.",
+  },
+  "message": "Navigation menu item not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`NavigationMenuItem deletion should fail when deleting with empty id 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`NavigationMenuItem deletion should fail when deleting with invalid id (not a UUID) 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "not-a-valid-uuid",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`NavigationMenuItem deletion should fail when deleting with missing id 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Variable "$id" of required type "UUID!" was not provided.",
+  "name": "GraphQLError",
+}
+`;

@@ -9,10 +9,8 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 
 import { RecordBoardColumnLoadingSkeletonCards } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnLoadingSkeletonCards';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
-import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const StyledColumnCardsContainer = styled.div`
   display: flex;
@@ -40,10 +38,6 @@ export const RecordBoardColumnCardsContainer = ({
     recordBoardColumnId,
   );
 
-  const recordIndexRecordGroupsAreInInitialLoading = useRecoilComponentValue(
-    recordIndexRecordGroupsAreInInitialLoadingComponentState,
-  );
-
   const recordBoardShouldFetchMoreInColumn = useRecoilComponentFamilyValue(
     recordBoardShouldFetchMoreInColumnComponentFamilyState,
     recordBoardColumnId,
@@ -55,17 +49,13 @@ export const RecordBoardColumnCardsContainer = ({
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
-      {recordIndexRecordGroupsAreInInitialLoading ? (
-        <RecordBoardColumnLoadingSkeletonCards />
-      ) : (
-        recordIds.map((recordId, index) => (
-          <RecordBoardCardDraggableContainer
-            key={recordId}
-            recordId={recordId}
-            rowIndex={index}
-          />
-        ))
-      )}
+      {recordIds.map((recordId, index) => (
+        <RecordBoardCardDraggableContainer
+          key={recordId}
+          recordId={recordId}
+          rowIndex={index}
+        />
+      ))}
       {recordBoardShouldFetchMoreInColumn ? (
         <RecordBoardColumnLoadingSkeletonCards />
       ) : null}

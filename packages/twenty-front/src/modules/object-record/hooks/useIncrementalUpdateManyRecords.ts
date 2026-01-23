@@ -37,9 +37,7 @@ export const useIncrementalUpdateManyRecords = <
     objectNameSingular,
   });
 
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
   const {
     incrementalFetchAndMutate,
@@ -80,7 +78,9 @@ export const useIncrementalUpdateManyRecords = <
         },
       );
     } finally {
-      await refetchAggregateQueries();
+      await refetchAggregateQueries({
+        objectMetadataNamePlural: objectMetadataItem.namePlural,
+      });
 
       dispatchObjectRecordOperationBrowserEvent({
         objectMetadataItem,

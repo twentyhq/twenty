@@ -22,8 +22,7 @@ export const fromRowLevelPermissionPredicateGroupEntityToFlatRowLevelPermissionP
       deletedAt:
         rowLevelPermissionPredicateGroupEntity.deletedAt?.toISOString() ?? null,
       universalIdentifier:
-        rowLevelPermissionPredicateGroupEntityWithoutRelations.universalIdentifier ??
-        rowLevelPermissionPredicateGroupEntityWithoutRelations.id,
+        rowLevelPermissionPredicateGroupEntityWithoutRelations.universalIdentifier,
       childRowLevelPermissionPredicateGroupIds: (
         rowLevelPermissionPredicateGroupEntity.childRowLevelPermissionPredicateGroups ??
         []

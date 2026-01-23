@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 export enum CommandMenuItemAvailabilityType {
   GLOBAL = 'GLOBAL',
@@ -28,7 +28,7 @@ export enum CommandMenuItemAvailabilityType {
   'availabilityObjectMetadataId',
 ])
 export class CommandMenuItemEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<CommandMenuItemEntity>
 {
   @PrimaryGeneratedColumn('uuid')

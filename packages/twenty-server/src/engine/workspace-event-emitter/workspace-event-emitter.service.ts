@@ -9,6 +9,7 @@ import {
 import { combineFilters, isDefined } from 'twenty-shared/utils';
 
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { transformEventToWebhookEvent } from 'src/engine/core-modules/webhook/utils/transform-event-to-webhook-event';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -83,6 +84,11 @@ export class WorkspaceEventEmitterService {
 
     const permissionsContext = await this.fetchPermissionsContext(workspaceId);
 
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
     const streamIdsToRemove: string[] = [];
 
     for (const [streamChannelId, streamData] of streamsData) {
@@ -100,6 +106,7 @@ export class WorkspaceEventEmitterService {
         streamData,
         workspaceEventBatch,
         permissionsContext,
+        flatWorkspaceMemberMaps,
       );
     }
 
@@ -120,6 +127,7 @@ export class WorkspaceEventEmitterService {
       userWorkspaceRoleMap: Record<string, string>;
       rolesPermissions: ObjectsPermissionsByRoleId;
     },
+    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps,
   ): Promise<void> {
     const { userWorkspaceId } = streamData.authContext;
 
@@ -154,6 +162,7 @@ export class WorkspaceEventEmitterService {
       roleId,
       workspaceEventBatch.objectMetadata,
       permissionsContext,
+      flatWorkspaceMemberMaps,
     );
 
     const restrictedFields = objectPermissions.restrictedFields;
@@ -220,7 +229,12 @@ export class WorkspaceEventEmitterService {
       flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
       flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     },
+    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps,
   ): RecordGqlOperationFilter | null {
+    const workspaceMember = isDefined(subscriberAuthContext.workspaceMemberId)
+      ? flatWorkspaceMemberMaps.byId[subscriberAuthContext.workspaceMemberId]
+      : undefined;
+
     return buildRowLevelPermissionRecordFilter({
       flatRowLevelPermissionPredicateMaps:
         permissionsContext.flatRowLevelPermissionPredicateMaps,
@@ -229,10 +243,10 @@ export class WorkspaceEventEmitterService {
       flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
       objectMetadata,
       roleId,
-      // TODO(t.trompette): For dynamic predicates, we would need to load workspaceMember data
       authContext: {
         userWorkspaceId: subscriberAuthContext.userWorkspaceId,
         workspaceMemberId: subscriberAuthContext.workspaceMemberId,
+        workspaceMember,
       },
     });
   }

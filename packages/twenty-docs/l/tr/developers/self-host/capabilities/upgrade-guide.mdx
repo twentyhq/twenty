@@ -4,9 +4,9 @@ title: Yükseltme rehberi
 
 ## Genel kılavuzlar
 
-**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+**Yükseltme işlemine başlamadan önce veritabanınızı yedeklediğinizden emin olun**. Bunun için `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql` komutunu çalıştırın.
 
-To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+Yedeği geri yüklemek için `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}` komutunu çalıştırın.
 
 Docker Compose kullandıysanız, aşağıdaki adımları izleyin:
 
@@ -16,11 +16,11 @@ Docker Compose kullandıysanız, aşağıdaki adımları izleyin:
 
 3. Twenty'yi `docker compose up -d` ile tekrar çevrimiçi hale getirin.
 
-If you want to upgrade your instance by few versions, e.g. from v0.33.0 to v0.35.0, you have to upgrade your instance sequentially, in this example from v0.33.0 to v0.34.0, then from v0.34.0 to v0.35.0.
+Örneğin v0.33.0'dan v0.35.0'a birkaç sürüm birden yükseltmek istiyorsanız, önce v0.33.0'dan v0.34.0'a, ardından v0.34.0'dan v0.35.0'a sıralı şekilde yükseltmelisiniz.
 
 **Her bir yükseltme sonrasında bozulmamış bir yedeğiniz olduğundan emin olun.**
 
-## Version-specific upgrade steps
+## Sürüme özel yükseltme adımları
 
 ## v1.0
 
@@ -32,7 +32,7 @@ Merhaba Twenty v1.0! 🎉
 
 Tüm meta veri API etkileşimleri, özellikle nesne meta verisi manipülasyonu ve çalışma alanı oluşturma işlemleri için daha iyi performans sağlanacak şekilde optimize edilmiştir.
 
-We've refactored our caching strategy to prioritize cache hits over database queries when possible, significantly improving the performance of metadata API operations.
+Mümkün olduğunda veritabanı sorgularına kıyasla önbellek isabetlerini önceliklendirecek şekilde önbellekleme stratejimizi yeniden düzenledik; bu, meta veri API işlemlerinin performansını önemli ölçüde iyileştirdi.
 
 Yükseltme sonrasında herhangi bir çalıştırma sorunu yaşarsanız, önbelleğinizi temizlemeniz gerekebilir, böylece en son değişikliklerle senkronize olmuş olur. twenty-server konteynerınızda bu komutu çalıştırın:
 
@@ -46,7 +46,7 @@ Twenty örneğinizi v0.55 görüntüsünü kullanacak şekilde yükseltin
 
 Artık hiçbir komut çalıştırmanız gerekmeyecek, yeni görüntü gerekli tüm migrasyonları otomatik olarak yapacaktır.
 
-### `User does not have permission` error
+### `User does not have permission` hatası
 
 Yükseltme sonrası çoğu istekte yetkilendirme hatalarıyla karşılaşırsanız, en son izinleri yeniden hesaplamak için önbelleğinizi temizlemeniz gerekebilir.
 
@@ -71,7 +71,7 @@ Veri alımını basitleştirmek için `metadata` şemasını `core` şemasına b
 
 `0.53` sürümünden itibaren, yükseltme `DockerFile` içinde programatik olarak yapılmaktadır, bu nedenle artık hiçbir komutu manuel olarak çalıştırmanız gerekmemektedir.
 
-Make sure to keep upgrading your instance sequentially, without skipping any major version (e.g. `0.43.3` to `0.44.0` is allowed, but `0.43.1` to `0.45.0` isn't), else could lead to workspace version desynchronization that could result in runtime error and missing functionality.
+Örneğinizi, hiçbir ana sürümü atlamadan sıralı şekilde yükselttiğinizden emin olun (ör. `0.43.3`'ten `0.44.0`'a izin verilir, ancak `0.43.1`'den `0.45.0`'a izin verilmez); aksi halde bu durum, çalışma alanı sürümünde senkronizasyon kaybına yol açarak çalışma zamanı hatalarına ve işlev eksikliğine neden olabilir.
 
 Bir çalışma alanının doğru şekilde taşınıp taşımadığını kontrol etmek için veritabanındaki `core.workspace` tablosundaki sürümünü inceleyebilirsiniz.
 
@@ -92,7 +92,7 @@ yarn database:migrate:prod
 yarn command:prod upgrade
 ```
 
-#### I have a workspace blocked in version between `0.52.0` and `0.52.6`
+#### Sürümü `0.52.0` ile `0.52.6` arasında takılı kalan bir çalışma alanım var
 
 Maalesef, `0.52.0` ve `0.52.6` tamamen dockerHub'dan kaldırıldı.
 Veritabanında çalışma alanı sürümünüzü manuel olarak `0.51.0` olarak güncelleyip, yukarıdaki yükseltme kılavuzunu takip ederek Twenty sürümü `0.52.11` ile yükseltmeniz gerekecek.
@@ -311,8 +311,8 @@ yarn command:prod upgrade-0.31
 
 Twenty sürümünüzü v0.30.0 görüntüsünü kullanacak şekilde yükseltin
 
-**Breaking change**:
-To enhance performances, Twenty now requires redis cache to be configured. [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) dosyamızı bu durumu yansıtacak şekilde güncelledik.
+**Yıkıcı değişiklik**:
+Performansı artırmak için Twenty artık redis önbelleğinin yapılandırılmasını gerektirir. [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) dosyamızı bu durumu yansıtacak şekilde güncelledik.
 Yapılandırmanızı güncellediğinizden ve ortam değişkenlerinizi uygun şekilde güncellediğinizden emin olun:
 
 ```
@@ -370,5 +370,5 @@ yarn command:prod upgrade-0.22
 ```
 
 `yarn database:migrate:prod` komutu veritabanı yapısına göçleri uygular.
-The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces.
-The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
+`yarn command:prod workspace:sync-metadata -f` komutu, standart nesnelerin tanımını meta veri tablolarıyla eşitleyecek ve mevcut çalışma alanlarına gerekli geçişleri uygulayacaktır.
+`yarn command:prod upgrade-0.22` komutu, yeni nesnenin defaultRequestInstrumentationOptions değerine uyum sağlamak için belirli veri dönüşümlerini uygulayacaktır.

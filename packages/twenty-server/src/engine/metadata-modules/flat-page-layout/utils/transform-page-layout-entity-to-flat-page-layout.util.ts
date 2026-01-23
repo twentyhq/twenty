@@ -13,8 +13,7 @@ export const transformPageLayoutEntityToFlatPageLayout = (
     type: pageLayoutEntity.type,
     objectMetadataId: pageLayoutEntity.objectMetadataId,
     workspaceId: pageLayoutEntity.workspaceId,
-    universalIdentifier:
-      pageLayoutEntity.universalIdentifier ?? pageLayoutEntity.id,
+    universalIdentifier: pageLayoutEntity.universalIdentifier,
     applicationId: pageLayoutEntity.applicationId,
     tabIds: pageLayoutEntity.tabs.map((tab) => tab.id),
   };

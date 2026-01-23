@@ -15,7 +15,7 @@ type ZodTypeSettingsDataModelFormFields = ZodType<
     | 'namePlural'
     | 'nameSingular'
     | 'isLabelSyncedWithName'
-  >
+  > & { skipNameField?: boolean }
 >;
 const settingsDataModelFormFieldsSchema = z.object({
   description: z.string().nullish(),
@@ -25,6 +25,7 @@ const settingsDataModelFormFieldsSchema = z.object({
   namePlural: zodNonEmptyString.and(camelCaseStringSchema),
   nameSingular: zodNonEmptyString.and(camelCaseStringSchema),
   isLabelSyncedWithName: z.boolean(),
+  skipNameField: z.boolean().optional(),
 }) satisfies ZodTypeSettingsDataModelFormFields;
 
 export const settingsDataModelObjectAboutFormSchema =

@@ -80,6 +80,13 @@ export class RunWorkflowJob {
         workspaceId,
       });
 
+    if (
+      workflowRun.status !== WorkflowRunStatus.ENQUEUED &&
+      workflowRun.status !== WorkflowRunStatus.NOT_STARTED
+    ) {
+      return;
+    }
+
     const workflowVersion =
       await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
         workspaceId,

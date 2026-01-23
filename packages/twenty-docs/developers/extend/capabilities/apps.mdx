@@ -33,6 +33,10 @@ Create a new app using the official scaffolder, then authenticate and start deve
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
+# If you don't use yarn@4
+corepack enable
+yarn install
+
 # Authenticate using your API key (you'll be prompted)
 yarn auth:login
 
@@ -53,7 +57,10 @@ yarn app:generate
 yarn app:sync
 
 # Watch your application's functions logs
-yarn app:logs
+yarn function:logs
+
+# Execute a function by name
+yarn function:execute -n my-function -p '{"name": "test"}'
 
 # Uninstall the application from the current workspace
 yarn app:uninstall
@@ -83,8 +90,6 @@ my-twenty-app/
   .nvmrc
   .yarnrc.yml
   .yarn/
-    releases/
-      yarn-4.9.2.cjs
     install-state.gz
   eslint.config.mjs
   tsconfig.json
@@ -170,17 +175,31 @@ The first time you run `yarn auth:login`, you'll be prompted for:
 - API URL (defaults to http://localhost:3000 or your current workspace profile)
 - API key
 
-Your credentials are stored per-user in `~/.twenty/config.json`. You can maintain multiple profiles and switch using `--workspace <name>`.
+Your credentials are stored per-user in `~/.twenty/config.json`. You can maintain multiple profiles and switch between them.
 
-Examples:
+### Managing workspaces
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
 yarn auth:login
 
-# Use a specific workspace profile
+# Login to a specific workspace profile
 yarn auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn auth:list
+
+# Switch the default workspace (interactive)
+yarn auth:switch
+
+# Switch to a specific workspace
+yarn auth:switch production
+
+# Check current authentication status
+yarn auth:status
 ```
+
+Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
 
 ## Use the SDK resources (types & config)
 

@@ -1,80 +1,61 @@
-import { ApiService } from '@/cli/utilities/api/services/api.service';
-import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import { GenerateService } from '@/cli/utilities/generate/services/generate.service';
-import { ManifestValidationError } from '@/cli/utilities/manifest/types/manifest.types';
-import { buildManifest } from '@/cli/utilities/manifest/utils/manifest-build';
-import {
-  displayEntitySummary,
-  displayErrors,
-  displayWarnings,
-} from '@/cli/utilities/manifest/utils/manifest-display';
+import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
+import * as fs from 'fs-extra';
+import path from 'path';
+import { AppBuildCommand } from '@/cli/commands/app/app-build';
+import { FileUploader } from '@/cli/utilities/file/file-uploader';
+import { ApiService } from '@/cli/utilities/api/api-service';
 
 export class AppSyncCommand {
   private apiService = new ApiService();
-  private generateService = new GenerateService();
+  private buildCommand = new AppBuildCommand();
 
   async execute(
     appPath: string = CURRENT_EXECUTION_DIRECTORY,
   ): Promise<ApiResponse<any>> {
-    try {
-      console.log(chalk.blue('🚀 Syncing Twenty Application'));
-      console.log(chalk.gray(`📁 App Path: ${appPath}`));
-      console.log('');
+    console.log(chalk.blue('🚀 Syncing Twenty Application'));
+    console.log('');
 
-      return await this.synchronize({ appPath });
-    } catch (error) {
-      console.error(
-        chalk.red('Sync failed:'),
-        error instanceof Error ? error.message : error,
-      );
-      throw error;
+    const result = await this.buildCommand.execute({
+      appPath,
+    });
+
+    if (!result.success) {
+      return result;
     }
-  }
 
-  private async synchronize({ appPath }: { appPath: string }) {
-    try {
-      const { manifest, packageJson, yarnLock, shouldGenerate, warnings } =
-        await buildManifest(appPath);
+    const manifest = result.data.manifest;
 
-      displayEntitySummary(manifest);
-
-      displayWarnings(warnings);
-
-      let serverlessSyncResult = await this.apiService.syncApplication({
-        manifest,
-        packageJson,
-        yarnLock,
-      });
-
-      if (shouldGenerate) {
-        await this.generateService.generateClient(appPath);
-
-        const { manifest: manifestWithClient } = await buildManifest(appPath);
-
-        serverlessSyncResult = await this.apiService.syncApplication({
-          manifest: manifestWithClient,
-          packageJson,
-          yarnLock,
-        });
-      }
-
-      if (serverlessSyncResult.success === false) {
-        console.error(
-          chalk.red('❌ Application Sync failed:'),
-          serverlessSyncResult.error,
-        );
-      } else {
-        console.log(chalk.green('✅ Application synced successfully'));
-      }
-
-      return serverlessSyncResult;
-    } catch (error) {
-      if (error instanceof ManifestValidationError) {
-        displayErrors(error);
-      }
-      throw error;
+    if (!manifest) {
+      return { success: false, error: 'No manifest found. Build failed?' };
     }
+
+    const uploadService = new FileUploader({
+      applicationUniversalIdentifier: manifest.application.universalIdentifier,
+      appPath,
+    });
+
+    await uploadService.uploadManifestBuiltFiles(manifest);
+
+    const yarnLockPath = path.join(appPath, 'yarn.lock');
+    let yarnLock = '';
+
+    if (await fs.pathExists(yarnLockPath)) {
+      yarnLock = await fs.readFile(yarnLockPath, 'utf8');
+    }
+
+    const syncResult = await this.apiService.syncApplication({
+      manifest,
+      yarnLock,
+    });
+
+    if (!syncResult.success) {
+      console.error(chalk.red('❌ Application Sync failed:'), syncResult.error);
+    } else {
+      console.log(chalk.green('✅ Application synced successfully'));
+    }
+
+    return syncResult;
   }
 }

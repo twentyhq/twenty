@@ -1,67 +1,67 @@
 ---
-title: Widget FAQ
-description: Common questions and error messages explained.
+title: FAQ k widgetu
+description: Vysvětlení častých otázek a chybových hlášení.
 ---
 
 <AccordionGroup>
-  <Accordion title="How do I show percentages instead of counts?">
-    Three options:
+  <Accordion title="Jak zobrazím procenta místo počtů?">
+    Tři možnosti:
 
-    * **Percent empty/not empty**: Under Data on display, select Percent empty or Percent not empty
-    * **Ratio**: For Select or Checkbox fields, enable Ratio to show a specific option as a percentage of all records
-    * **Suffix**: For aggregate charts, add `%` as a Suffix in Style settings
+    * **Procento prázdných/neprázdných**: V části Data k zobrazení vyberte Procento prázdných nebo Procento neprázdných
+    * **Poměr**: U polí typu Výběr nebo Zaškrtávací políčko zapněte Poměr, aby se konkrétní možnost zobrazila jako procento ze všech záznamů
+    * **Přípona**: U souhrnných grafů přidejte `%` jako příponu v nastavení stylu
   </Accordion>
 
-  <Accordion title="What's the difference between grouped and stacked bars?">
-    When using **Group by**, you can display series two ways:
+  <Accordion title="Jaký je rozdíl mezi seskupenými a skládanými sloupci?">
+    Při použití **Seskupit podle** můžete řady zobrazit dvěma způsoby:
 
-    * **Grouped**: Bars side by side—best for comparing exact values
-    * **Stacked**: Bars on top of each other—best for showing composition
+    * **Seskupené**: Sloupce vedle sebe—nejlepší pro porovnání přesných hodnot
+    * **Skládané**: Sloupce na sobě—nejlepší pro zobrazení složení
 
-    Toggle **Stacked** in Style settings to switch.
+    Přepněte přepínač **Skládané** v nastavení stylu.
   </Accordion>
 
-  <Accordion title="Why can't I see Sum or Average options?">
-    Available operations depend on **field type**:
+  <Accordion title="Proč nevidím možnosti Součet nebo Průměr?">
+    Dostupné operace závisejí na **typu pole**:
 
-    * **Number fields**: Sum, Average, Min, Max
-    * **Date fields**: Earliest, Latest (aggregate charts only)
-    * **Checkbox fields**: Count true, Count false
+    * **Číselná pole**: Součet, Průměr, Minimum, Maximum
+    * **Datumová pole**: Nejstarší, Nejnovější (pouze souhrnné grafy)
+    * **Zaškrtávací pole**: Počet true, Počet false
 
-    If you don't see an option, check that you've selected a compatible field type.
+    Pokud nevidíte danou možnost, zkontrolujte, že jste vybrali kompatibilní typ pole.
   </Accordion>
 
-  <Accordion title="Why are some settings grayed out or missing?">
-    Many settings only appear when prerequisites are met:
+  <Accordion title="Proč jsou některá nastavení neaktivní nebo chybí?">
+    Mnoho nastavení se zobrazí pouze po splnění podmínek:
 
-    * **Date granularity**: Select a date field first
-    * **Group by, Legend, Stacked**: Set Source first
-    * **Legend, Stacked toggles**: Set Group by first
+    * **Podrobnost data**: Nejprve vyberte datumové pole
+    * **Seskupit podle, Legenda, Skládané**: Nejprve nastavte Zdroj
+    * **Přepínače Legenda a Skládané**: Nejprve nastavte Seskupit podle
 
-    If a setting is missing, configure its prerequisite first.
+    Pokud nějaké nastavení chybí, nejprve nakonfigurujte jeho předpoklad.
   </Accordion>
 
-  <Accordion title="What does 'No data' mean?">
-    The chart found no records matching your configuration.
+  <Accordion title="Co znamená 'No data'?">
+    Graf nenašel žádné záznamy odpovídající vašemu nastavení.
 
-    **To fix:** Remove or adjust filters, verify you selected the correct Source object, or check that records exist for your date range.
+    **Jak to opravit:** Odeberte nebo upravte filtry, ověřte, že je v části Zdroj nastaven správný objekt, nebo zkontrolujte, že pro zvolené časové období existují záznamy.
   </Accordion>
 
-  <Accordion title="What does 'Invalid configuration' mean?">
-    A required setting is missing or incompatible.
+  <Accordion title="Co znamená 'Invalid configuration'?">
+    Chybí povinné nastavení nebo je nekompatibilní.
 
-    **To fix:** Ensure Source is set, Data on display is configured, and any required grouping fields are selected.
+    **Jak to opravit:** Ujistěte se, že je nastaven Zdroj, nakonfigurována Data k zobrazení a vybrána všechna požadovaná seskupovací pole.
   </Accordion>
 
-  <Accordion title="What does 'Undisplayed data' mean?">
-    Your data exceeds display limits (100 bars, 100 data points, or 100 slices).
+  <Accordion title="Co znamená 'Undisplayed data'?">
+    Vaše data přesahují limity zobrazení (100 sloupců, 100 datových bodů nebo 100 výsečí).
 
-    **To fix:** Add filters to narrow your data, or change date granularity from Day to Week or Month.
+    **Jak to opravit:** Přidejte filtry pro zúžení dat nebo změňte podrobnost data z Dne na Týden či Měsíc.
   </Accordion>
 
-  <Accordion title="Why is one axis showing no data?">
-    The selected field has no values for the records in your filter, or the field type doesn't match the expected data.
+  <Accordion title="Proč jedna osa nezobrazuje žádná data?">
+    Vybrané pole nemá u záznamů ve vašem filtru žádné hodnoty, nebo typ pole neodpovídá očekávanému typu dat.
 
-    **To fix:** Try a different field, or check that records have values for the selected field.
+    **Jak to opravit:** Zkuste jiné pole nebo ověřte, že záznamy mají pro vybrané pole hodnoty.
   </Accordion>
 </AccordionGroup>

@@ -33,9 +33,7 @@ export const useFormatPreferences = () => {
     currentWorkspaceMemberState,
   );
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const updateFormatPreference = useCallback(
     async <K extends FormatPreferenceKey>(
@@ -97,6 +95,7 @@ export const useFormatPreferences = () => {
 
       try {
         await updateOneRecord({
+          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
           idToUpdate: currentWorkspaceMember.id,
           updateOneRecordInput: workspaceMemberUpdate,
         });
@@ -167,6 +166,7 @@ export const useFormatPreferences = () => {
 
       try {
         await updateOneRecord({
+          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
           idToUpdate: currentWorkspaceMember.id,
           updateOneRecordInput: workspaceMemberUpdate,
         });

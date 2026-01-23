@@ -292,31 +292,31 @@ yarn command:prod cron:workflow:automated-cron-trigger
   **Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
 </Warning>
 
-## Serverless Functions
+## Serverless funkce
 
-Twenty supports serverless functions for workflows and custom logic. The execution environment is configured via the `SERVERLESS_TYPE` environment variable.
+Twenty podporuje serverless funkce pro pracovní postupy a vlastní logiku. Běhové prostředí se konfiguruje pomocí proměnné prostředí `SERVERLESS_TYPE`.
 
 <Warning>
-  **Security Notice:** The local serverless driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. It should only be used for trusted code in development. For production deployments handling untrusted code, we highly recommend using `SERVERLESS_TYPE=LAMBDA` or `SERVERLESS_TYPE=DISABLED`.
+  **Upozornění na zabezpečení:** Místní serverless ovladač (`SERVERLESS_TYPE=LOCAL`) spouští kód přímo na hostiteli v procesu Node.js bez sandboxu. Měl by být používán pouze pro důvěryhodný kód při vývoji. Pro produkční nasazení, která pracují s nedůvěryhodným kódem, důrazně doporučujeme použít `SERVERLESS_TYPE=LAMBDA` nebo `SERVERLESS_TYPE=DISABLED`.
 </Warning>
 
-### Available Drivers
+### Dostupné ovladače
 
-| Driver   | Environment Variable       | Případ použití                        | Security Level                  |
-| -------- | -------------------------- | ------------------------------------- | ------------------------------- |
-| Disabled | `SERVERLESS_TYPE=DISABLED` | Disable serverless functions entirely | N/A                             |
-| Local    | `SERVERLESS_TYPE=LOCAL`    | Development and trusted environments  | Low (no sandboxing)             |
-| Lambda   | `SERVERLESS_TYPE=LAMBDA`   | Production with untrusted code        | High (hardware-level isolation) |
+| Ovladač   | Proměnná prostředí         | Případ použití                             | Úroveň zabezpečení                  |
+| --------- | -------------------------- | ------------------------------------------ | ----------------------------------- |
+| Neaktivní | `SERVERLESS_TYPE=DISABLED` | Úplně zakázat serverless funkce            | N/A                                 |
+| Lokální   | `SERVERLESS_TYPE=LOCAL`    | Vývojová a důvěryhodná prostředí           | Nízká (bez sandboxu)                |
+| Lambda    | `SERVERLESS_TYPE=LAMBDA`   | Produkční prostředí s nedůvěryhodným kódem | Vysoká (izolace na úrovni hardwaru) |
 
-### Recommended Configuration
+### Doporučená konfigurace
 
-**For development:**
+**Pro vývoj:**
 
 ```bash
 SERVERLESS_TYPE=LOCAL  # default
 ```
 
-**For production (AWS):**
+**Pro produkci (AWS):**
 
 ```bash
 SERVERLESS_TYPE=LAMBDA
@@ -326,12 +326,12 @@ SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
 SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**To disable serverless functions:**
+**Pro zakázání serverless funkcí:**
 
 ```bash
 SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a serverless function will return an error. This is useful if you want to run Twenty without serverless function capabilities.
+  Při použití `SERVERLESS_TYPE=DISABLED` skončí každý pokus o spuštění serverless funkce chybou. To je užitečné, pokud chcete provozovat Twenty bez podpory serverless funkcí.
 </Note>

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { convertPredicateToRecordFilter } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/recordLevelPermissionPredicateConversion';
 

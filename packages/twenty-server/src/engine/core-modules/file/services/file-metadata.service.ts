@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { extractFolderPathFilenameAndTypeOrThrow } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { FileFolder } from 'twenty-shared/types';
 
 import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';

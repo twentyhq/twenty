@@ -1,4 +1,4 @@
-import { type RoleConfig } from '../role-config';
+import { type RoleConfig } from '@/application/role-config';
 
 /**
  * Define a role configuration with validation.
@@ -36,7 +36,10 @@ export const defineRole = <T extends RoleConfig>(config: T): T => {
   // Validate object permissions if provided
   if (config.objectPermissions) {
     for (const permission of config.objectPermissions) {
-      if (!permission.objectNameSingular && !permission.objectUniversalIdentifier) {
+      if (
+        !permission.objectNameSingular &&
+        !permission.objectUniversalIdentifier
+      ) {
         throw new Error(
           'Object permission must have either objectNameSingular or objectUniversalIdentifier',
         );
@@ -47,7 +50,10 @@ export const defineRole = <T extends RoleConfig>(config: T): T => {
   // Validate field permissions if provided
   if (config.fieldPermissions) {
     for (const permission of config.fieldPermissions) {
-      if (!permission.objectNameSingular && !permission.objectUniversalIdentifier) {
+      if (
+        !permission.objectNameSingular &&
+        !permission.objectUniversalIdentifier
+      ) {
         throw new Error(
           'Field permission must have either objectNameSingular or objectUniversalIdentifier',
         );
