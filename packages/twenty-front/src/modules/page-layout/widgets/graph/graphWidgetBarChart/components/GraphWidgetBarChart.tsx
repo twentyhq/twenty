@@ -1,3 +1,4 @@
+import { DASHBOARD_ANIMATION_DISABLED } from '@/page-layout/constants/DashboardAnimationDisabled';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
@@ -377,6 +378,7 @@ export const GraphWidgetBarChart = ({
           }}
           indexScale={{ type: 'band', round: true }}
           colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
+          animate={!DASHBOARD_ANIMATION_DISABLED}
           layers={[
             'grid',
             'markers',

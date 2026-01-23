@@ -2,6 +2,7 @@ import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageL
 import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
 import { PageLayoutGridResizeHandle } from '@/page-layout/components/PageLayoutGridResizeHandle';
 import { ReactGridLayoutCardWrapper } from '@/page-layout/components/ReactGridLayoutCardWrapper';
+import { DASHBOARD_ANIMATION_DISABLED } from '@/page-layout/constants/DashboardAnimationDisabled';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
@@ -26,6 +27,7 @@ import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceh
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useRef } from 'react';
 import {
@@ -37,7 +39,7 @@ import {
 } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledGridContainer = styled.div`
+const StyledGridContainer = styled.div<{ $disableTransitions: boolean }>`
   box-sizing: border-box;
   flex: 1;
   min-height: 100%;
@@ -67,6 +69,22 @@ const StyledGridContainer = styled.div`
   .react-grid-item:hover .widget-card-resize-handle {
     display: block !important;
   }
+
+  ${({ $disableTransitions }) =>
+    $disableTransitions &&
+    css`
+      .react-grid-layout {
+        transition: none !important;
+      }
+
+      .react-grid-item {
+        transition: none !important;
+      }
+
+      .react-grid-item.cssTransforms {
+        transition-property: none !important;
+      }
+    `}
 `;
 
 type ExtendedResponsiveProps = ResponsiveProps & {
@@ -120,6 +138,9 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
   const pageLayoutDraggedArea = useRecoilComponentValue(
     pageLayoutDraggedAreaComponentState,
   );
+  const draggingWidgetId = useRecoilComponentValue(
+    pageLayoutDraggingWidgetIdComponentState,
+  );
 
   const activeTab = usePageLayoutTabWithVisibleWidgetsOrThrow(tabId);
 
@@ -147,8 +168,14 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     [activeTabWidgets, hasPendingPlaceholder],
   );
 
+  const shouldDisableTransitions =
+    DASHBOARD_ANIMATION_DISABLED && !isDefined(draggingWidgetId);
+
   return (
-    <StyledGridContainer ref={gridContainerRef}>
+    <StyledGridContainer
+      ref={gridContainerRef}
+      $disableTransitions={shouldDisableTransitions}
+    >
       {isPageLayoutInEditMode && (
         <>
           <PageLayoutGridOverlay />

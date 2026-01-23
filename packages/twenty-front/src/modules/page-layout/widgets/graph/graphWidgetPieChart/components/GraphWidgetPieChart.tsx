@@ -1,3 +1,4 @@
+import { DASHBOARD_ANIMATION_DISABLED } from '@/page-layout/constants/DashboardAnimationDisabled';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { CustomArcsLayer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/CustomArcsLayer';
@@ -186,6 +187,7 @@ export const GraphWidgetPieChart = ({
             margin={showDataLabels && !hasNoData ? PIE_CHART_MARGINS : {}}
             innerRadius={0.8}
             colors={chartColors}
+            animate={!DASHBOARD_ANIMATION_DISABLED}
             enableArcLinkLabels={showDataLabels && !hasNoData}
             enableArcLabels={false}
             tooltip={() => null}
