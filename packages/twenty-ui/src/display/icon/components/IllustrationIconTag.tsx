@@ -4,16 +4,16 @@ import { IllustrationIconWrapper } from '@ui/display/icon/components/Illustratio
 import IllustrationIconTagRaw from '@assets/icons/illustration-tag.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IllustrationIconTagProps = IconComponentProps;
+type IllustrationIconTagProps = Pick<IconComponentProps, 'size'>;
 
-export const IllustrationIconTag = ({ size }: IllustrationIconTagProps) => {
+export const IllustrationIconTag = (props: IllustrationIconTagProps) => {
   const theme = useTheme();
-  const iconSize = size ?? theme.icon.size.lg;
+  const size = props.size ?? theme.icon.size.lg;
   return (
     <IllustrationIconWrapper>
       <IllustrationIconTagRaw
-        height={iconSize}
-        width={iconSize}
+        height={size}
+        width={size}
         fill={theme.accent.accent3}
         color={theme.accent.accent8}
       />

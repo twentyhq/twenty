@@ -3,18 +3,12 @@ import { useTheme } from '@emotion/react';
 import IconTwentyStarRaw from '@assets/icons/twenty-star.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IconTwentyStarProps = IconComponentProps;
+type IconTwentyStarProps = Pick<IconComponentProps, 'size' | 'stroke'>;
 
-export const IconTwentyStar = ({ size, stroke }: IconTwentyStarProps) => {
+export const IconTwentyStar = (props: IconTwentyStarProps) => {
   const theme = useTheme();
-  const iconSize = size ?? 24;
-  const iconStroke = stroke ?? theme.icon.stroke.md;
+  const size = props.size ?? 24;
+  const stroke = props.stroke ?? theme.icon.stroke.md;
 
-  return (
-    <IconTwentyStarRaw
-      height={iconSize}
-      width={iconSize}
-      strokeWidth={iconStroke}
-    />
-  );
+  return <IconTwentyStarRaw height={size} width={size} strokeWidth={stroke} />;
 };

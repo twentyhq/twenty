@@ -3,18 +3,18 @@ import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IllustrationIconManyToManyProps = IconComponentProps;
+type IllustrationIconManyToManyProps = Pick<IconComponentProps, 'size'>;
 
-export const IllustrationIconManyToMany = ({
-  size,
-}: IllustrationIconManyToManyProps) => {
+export const IllustrationIconManyToMany = (
+  props: IllustrationIconManyToManyProps,
+) => {
   const theme = useTheme();
-  const iconSize = size ?? theme.icon.size.lg;
+  const size = props.size ?? theme.icon.size.lg;
   return (
     <IllustrationIconWrapper>
       <IllustrationIconManyToManyRaw
-        height={iconSize}
-        width={iconSize}
+        height={size}
+        width={size}
         fill={theme.accent.accent3}
         color={theme.accent.accent8}
       />
