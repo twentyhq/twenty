@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
+
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
@@ -22,8 +25,10 @@ import {
   NavigationMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { NavigationMenuItemAccessService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service';
+import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -36,6 +41,8 @@ export class NavigationMenuItemService {
     private readonly navigationMenuItemAccessService: NavigationMenuItemAccessService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly fileService: FileService,
+    private readonly userRoleService: UserRoleService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
   ) {}
 
   async findAll({
@@ -343,14 +350,48 @@ export class NavigationMenuItemService {
     );
   }
 
+  private async getRoleId(
+    authContext: WorkspaceAuthContext,
+    workspaceId: string,
+  ): Promise<string | undefined> {
+    if (isDefined(authContext.apiKey)) {
+      return this.apiKeyRoleService.getRoleIdForApiKeyId(
+        authContext.apiKey.id,
+        workspaceId,
+      );
+    }
+
+    if (isDefined(authContext.application?.defaultServerlessFunctionRoleId)) {
+      return authContext.application.defaultServerlessFunctionRoleId;
+    }
+
+    if (isDefined(authContext.userWorkspaceId)) {
+      try {
+        return await this.userRoleService.getRoleIdForUserWorkspace({
+          userWorkspaceId: authContext.userWorkspaceId,
+          workspaceId,
+        });
+      } catch (error: unknown) {
+        if (error instanceof PermissionsException) {
+          return undefined;
+        }
+        throw error;
+      }
+    }
+
+    return undefined;
+  }
+
   async findTargetRecord({
     targetRecordId,
     targetObjectMetadataId,
     workspaceId,
+    authContext,
   }: {
     targetRecordId: string;
     targetObjectMetadataId: string;
     workspaceId: string;
+    authContext: WorkspaceAuthContext;
   }): Promise<RecordIdentifierDTO | null> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -366,51 +407,65 @@ export class NavigationMenuItemService {
       return null;
     }
 
-    const authContext = buildSystemAuthContext(workspaceId);
+    try {
+      const roleId = await this.getRoleId(authContext, workspaceId);
 
-    const record =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
-        async () => {
-          const repository = await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            objectMetadata.nameSingular,
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
+      if (!isDefined(roleId)) {
+        return null;
+      }
 
-          return await repository.findOneBy({
-            id: targetRecordId,
-          });
-        },
+      const rolePermissionConfig: RolePermissionConfig = {
+        unionOf: [roleId],
+      };
+
+      const record =
+        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          authContext,
+          async () => {
+            const repository =
+              await this.globalWorkspaceOrmManager.getRepository(
+                workspaceId,
+                objectMetadata.nameSingular,
+                rolePermissionConfig,
+              );
+
+            return await repository.findOneBy({
+              id: targetRecordId,
+            });
+          },
+        );
+
+      if (!isDefined(record)) {
+        return null;
+      }
+
+      const labelIdentifier = getRecordDisplayName(
+        record,
+        objectMetadata,
+        flatFieldMetadataMaps,
       );
 
-    if (!isDefined(record)) {
-      return null;
+      const imageIdentifier = getRecordImageIdentifier({
+        record,
+        flatObjectMetadata: objectMetadata,
+        flatFieldMetadataMaps,
+        signUrl: (url: string) =>
+          this.fileService.signFileUrl({
+            url,
+            workspaceId,
+          }),
+      });
+
+      return {
+        id: record.id,
+        labelIdentifier,
+        imageIdentifier,
+      };
+    } catch (error: unknown) {
+      if (error instanceof PermissionsException) {
+        return null;
+      }
+      throw error;
     }
-
-    const labelIdentifier = getRecordDisplayName(
-      record,
-      objectMetadata,
-      flatFieldMetadataMaps,
-    );
-
-    const imageIdentifier = getRecordImageIdentifier({
-      record,
-      flatObjectMetadata: objectMetadata,
-      flatFieldMetadataMaps,
-      signUrl: (url: string) =>
-        this.fileService.signFileUrl({
-          url,
-          workspaceId,
-        }),
-    });
-
-    return {
-      id: record.id,
-      labelIdentifier,
-      imageIdentifier,
-    };
   }
 }

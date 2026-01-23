@@ -11,6 +11,8 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -121,6 +123,7 @@ export class NavigationMenuItemResolver {
   async targetRecordIdentifier(
     @Parent() navigationMenuItem: NavigationMenuItemDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: { req: WorkspaceAuthContext },
   ): Promise<RecordIdentifierDTO | null> {
     if (
       !isDefined(navigationMenuItem.targetRecordId) ||
@@ -133,6 +136,7 @@ export class NavigationMenuItemResolver {
       targetRecordId: navigationMenuItem.targetRecordId,
       targetObjectMetadataId: navigationMenuItem.targetObjectMetadataId,
       workspaceId: workspace.id,
+      authContext: context.req,
     });
   }
 }
