@@ -1,4 +1,4 @@
-import { LinkMetadata } from '@/types/composite-types/links.composite-type';
+import { type LinkMetadata } from '@/types/composite-types/links.composite-type';
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
 import { type JsonbProperty } from '@/types/JsonbProperty.type';

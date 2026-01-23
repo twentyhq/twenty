@@ -1,5 +1,5 @@
-import { ExtractSerializedRelationProperties } from '@/types/ExtractSerializedRelationProperties.type';
-import { SerializedRelation } from '@/types/SerializedRelation.type';
+import { type ExtractSerializedRelationProperties } from '@/types/ExtractSerializedRelationProperties.type';
+import { type SerializedRelation } from '@/types/SerializedRelation.type';
 import { type Equal, type Expect } from 'twenty-shared/testing';
 
 type TestedRecord = {

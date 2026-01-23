@@ -1,6 +1,6 @@
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
-import { JsonbProperty } from '@/types/JsonbProperty.type';
+import { type JsonbProperty } from '@/types/JsonbProperty.type';
 
 export type TagColor =
   | 'green'

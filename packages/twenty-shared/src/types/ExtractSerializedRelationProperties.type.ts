@@ -1,4 +1,4 @@
-import { __SerializedRelationBrand__ } from './SerializedRelation.type';
+import { type __SerializedRelationBrand__ } from './SerializedRelation.type';
 
 export type ExtractSerializedRelationProperties<T> = NonNullable<
   {

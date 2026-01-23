@@ -2,7 +2,7 @@ import { type AllowedAddressSubField } from '@/types/AddressFieldsType';
 import { type FieldMetadataMultiItemSettings } from '@/types/FieldMetadataMultiItemSettings';
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
-import { JsonbProperty } from '@/types/JsonbProperty.type';
+import { type JsonbProperty } from '@/types/JsonbProperty.type';
 import { type RelationOnDeleteAction } from '@/types/RelationOnDeleteAction.type';
 import { type RelationType } from '@/types/RelationType';
 import { type SerializedRelation } from '@/types/SerializedRelation.type';
