@@ -69,10 +69,12 @@ export class ConfigVariables {
   @IsOptional()
   IS_EMAIL_VERIFICATION_REQUIRED = false;
 
+  // TODO: Consider renaming to OUTBOUND_HTTP_SAFE_MODE_ENABLED as this now
+  // applies to both HTTP workflow actions and webhooks
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,
     description:
-      'Enable safe mode for HTTP requests (prevents private IPs and other security risks)',
+      'Enable safe mode for outbound HTTP requests (prevents private IPs and other security risks). Applies to HTTP workflow actions and webhooks.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()

@@ -1,7 +1,6 @@
-import { HttpService } from '@nestjs/axios';
-
 import crypto from 'crypto';
 
+import axios from 'axios';
 import { getAbsoluteUrl } from 'twenty-shared/utils';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
@@ -11,6 +10,8 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { getSecureAdapter } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type CallWebhookJobData = {
   targetUrl: string;
@@ -30,9 +31,9 @@ export type CallWebhookJobData = {
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJob {
   constructor(
-    private readonly httpService: HttpService,
     private readonly auditService: AuditService,
     private readonly metricsService: MetricsService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   private generateSignature(
@@ -84,7 +85,15 @@ export class CallWebhookJob {
           .toString('hex');
       }
 
-      const response = await this.httpService.axiosRef.post(
+      const isSafeModeEnabled = this.twentyConfigService.get(
+        'HTTP_TOOL_SAFE_MODE_ENABLED',
+      );
+
+      const axiosClient = isSafeModeEnabled
+        ? axios.create({ adapter: getSecureAdapter() })
+        : axios.create();
+
+      const response = await axiosClient.post(
         getAbsoluteUrl(data.targetUrl),
         payloadWithoutSecret,
         {
@@ -106,10 +115,18 @@ export class CallWebhookJob {
         shouldStoreInCache: false,
       });
     } catch (err) {
+      const isSSRFBlocked =
+        err instanceof Error &&
+        err.message.includes('internal IP address') &&
+        err.message.includes('is not allowed');
+
       auditService.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         success: false,
         ...commonPayload,
         ...(err.response && { status: err.response.status }),
+        ...(isSSRFBlocked && {
+          error: 'Webhook URL resolves to a private/internal IP address',
+        }),
       });
     }
   }
