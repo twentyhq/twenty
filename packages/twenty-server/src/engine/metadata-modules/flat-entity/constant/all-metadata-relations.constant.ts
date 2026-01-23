@@ -106,6 +106,11 @@ export const ALL_METADATA_RELATIONS = {
         flatEntityForeignKeyAggregator: null,
         foreignKey: 'folderId',
       },
+      view: {
+        metadataName: 'view',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'viewId',
+      },
     },
     oneToMany: {},
   },
