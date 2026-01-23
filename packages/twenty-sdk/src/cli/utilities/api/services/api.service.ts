@@ -441,8 +441,8 @@ export class ApiService {
       const mimeType = this.getMimeType(filename);
 
       const mutation = `
-      mutation UploadApplicationFile($file: Upload!, $applicationUniversalIdentifier: String!, $fileFolder: FileFolder!, $builtHandlerPath: String!) {
-        uploadApplicationFile(file: $file, applicationUniversalIdentifier: $applicationUniversalIdentifier, fileFolder: $fileFolder, builtHandlerPath: $builtHandlerPath)
+      mutation UploadApplicationFile($file: Upload!, $applicationUniversalIdentifier: String!, $fileFolder: FileFolder!, $filePath: String!) {
+        uploadApplicationFile(file: $file, applicationUniversalIdentifier: $applicationUniversalIdentifier, fileFolder: $fileFolder, filePath: $filePath)
         { path }
       }
     `;
@@ -454,7 +454,7 @@ export class ApiService {
         variables: {
           file: null,
           applicationUniversalIdentifier,
-          builtHandlerPath,
+          filePath: builtHandlerPath,
           fileFolder: graphqlEnumFileFolder,
         },
       });
