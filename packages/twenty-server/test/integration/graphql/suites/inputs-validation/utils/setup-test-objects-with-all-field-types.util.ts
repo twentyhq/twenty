@@ -137,7 +137,7 @@ export const setupTestObjectsWithAllFieldTypes = async (
     uploadedFileId = uploadResponse.body.data.uploadFilesFieldFile.id;
   }
 
-  const createdRecords = await makeGraphqlAPIRequest(
+  await makeGraphqlAPIRequest(
     createManyOperationFactory({
       objectMetadataSingularName: TEST_OBJECT_METADATA_NAME_SINGULAR,
       objectMetadataPluralName: TEST_OBJECT_METADATA_NAME_PLURAL,
