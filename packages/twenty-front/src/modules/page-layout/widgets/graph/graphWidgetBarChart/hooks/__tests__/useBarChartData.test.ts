@@ -1,7 +1,6 @@
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
-import { type BarDatum } from '@nivo/bar';
 import { renderHook } from '@testing-library/react';
 
 const mockUseRecoilComponentValue = jest.fn();
@@ -57,12 +56,6 @@ describe('useBarChartData', () => {
     },
   };
 
-  const mockData: BarDatum[] = [
-    { month: 'Jan', sales: 100, costs: 80 },
-    { month: 'Feb', sales: 120, costs: 90 },
-    { month: 'Mar', sales: 150, costs: 100 },
-  ];
-
   const mockSeries: BarChartSeriesWithColor[] = [
     { key: 'sales', label: 'Sales', color: 'green' },
     { key: 'costs', label: 'Costs', color: 'purple' },
@@ -71,8 +64,6 @@ describe('useBarChartData', () => {
   it('should create series config map', () => {
     const { result } = renderHook(() =>
       useBarChartData({
-        data: mockData,
-        indexBy: 'month',
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
@@ -87,8 +78,6 @@ describe('useBarChartData', () => {
   it('should generate enriched keys map for O(1) color lookup', () => {
     const { result } = renderHook(() =>
       useBarChartData({
-        data: mockData,
-        indexBy: 'month',
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
@@ -116,8 +105,6 @@ describe('useBarChartData', () => {
   it('should create enriched keys with labels', () => {
     const { result } = renderHook(() =>
       useBarChartData({
-        data: mockData,
-        indexBy: 'month',
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
@@ -147,8 +134,6 @@ describe('useBarChartData', () => {
   it('should use series labels when series config is not provided', () => {
     const { result } = renderHook(() =>
       useBarChartData({
-        data: mockData,
-        indexBy: 'month',
         keys: ['sales', 'costs'],
         series: undefined,
         colorRegistry: mockColorRegistry,
@@ -164,8 +149,6 @@ describe('useBarChartData', () => {
   it('should handle empty data', () => {
     const { result } = renderHook(() =>
       useBarChartData({
-        data: [],
-        indexBy: 'month',
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
@@ -180,8 +163,6 @@ describe('useBarChartData', () => {
   it('should handle empty keys', () => {
     const { result } = renderHook(() =>
       useBarChartData({
-        data: mockData,
-        indexBy: 'month',
         keys: [],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
@@ -196,8 +177,6 @@ describe('useBarChartData', () => {
   it('should fall back to key name when no label is provided', () => {
     const { result } = renderHook(() =>
       useBarChartData({
-        data: mockData,
-        indexBy: 'month',
         keys: ['sales', 'costs'],
         series: undefined,
         colorRegistry: mockColorRegistry,
@@ -213,8 +192,6 @@ describe('useBarChartData', () => {
   it('should return legend items from all keys', () => {
     const { result } = renderHook(() =>
       useBarChartData({
-        data: mockData,
-        indexBy: 'month',
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
@@ -235,8 +212,6 @@ describe('useBarChartData', () => {
 
     const { result } = renderHook(() =>
       useBarChartData({
-        data: mockData,
-        indexBy: 'month',
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
@@ -254,8 +229,6 @@ describe('useBarChartData', () => {
 
     const { result } = renderHook(() =>
       useBarChartData({
-        data: mockData,
-        indexBy: 'month',
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
@@ -271,8 +244,6 @@ describe('useBarChartData', () => {
 
     const { result } = renderHook(() =>
       useBarChartData({
-        data: mockData,
-        indexBy: 'month',
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
@@ -289,8 +260,6 @@ describe('useBarChartData', () => {
 
     const { result } = renderHook(() =>
       useBarChartData({
-        data: mockData,
-        indexBy: 'month',
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
@@ -308,8 +277,6 @@ describe('useBarChartData', () => {
 
     const { result } = renderHook(() =>
       useBarChartData({
-        data: mockData,
-        indexBy: 'month',
         keys: ['sales', 'costs'],
         series: mockSeries,
         colorRegistry: mockColorRegistry,
