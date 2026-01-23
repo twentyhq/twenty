@@ -1,11 +1,11 @@
-import { runAppBuild } from '@/cli/__tests__/integration/utils/run-app-build.util';
-import { type RunCliCommandResult } from '@/cli/__tests__/integration/utils/run-cli-command.util';
 import { join } from 'path';
 
+import { runAppBuild } from '@/cli/__tests__/integration/utils/run-app-build.util';
+import { type RunCliCommandResult } from '@/cli/__tests__/integration/utils/run-cli-command.util';
+import { defineConsoleOutputTests } from './tests/console-output.tests';
+import { defineManifestTests } from '../app-dev/tests/manifest.tests';
 import { defineFrontComponentsTests } from '../app-dev/tests/front-components.tests';
 import { defineFunctionsTests } from '../app-dev/tests/functions.tests';
-import { defineManifestTests } from '../app-dev/tests/manifest.tests';
-import { defineConsoleOutputTests } from './tests/console-output.tests';
 
 const APP_PATH = join(__dirname, '../..');
 

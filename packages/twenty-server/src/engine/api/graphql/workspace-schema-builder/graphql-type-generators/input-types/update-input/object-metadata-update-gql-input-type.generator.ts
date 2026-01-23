@@ -11,7 +11,7 @@ import {
   isObjectType,
   type GraphQLInputType,
 } from 'graphql';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-field-metadata-gql-type.generator';
@@ -27,7 +27,6 @@ import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metad
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
 export class ObjectMetadataUpdateGqlInputTypeGenerator {

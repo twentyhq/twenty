@@ -7744,6 +7744,11 @@ msgstr "Перейти до попередньої версії"
 msgid "Navigate to previous workflow"
 msgstr "Перейти до попереднього Workflow"
 
+#. js-lingui-id: FpO6v4
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "navigation menu item"
+msgstr ""
+
 #. js-lingui-id: qqeAJM
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Never"

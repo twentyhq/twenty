@@ -7744,6 +7744,11 @@ msgstr "Zur vorherigen Version navigieren"
 msgid "Navigate to previous workflow"
 msgstr "Zum vorherigen Workflow navigieren"
 
+#. js-lingui-id: FpO6v4
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "navigation menu item"
+msgstr ""
+
 #. js-lingui-id: qqeAJM
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Never"

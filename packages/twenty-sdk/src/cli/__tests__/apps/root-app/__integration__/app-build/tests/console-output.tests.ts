@@ -33,7 +33,10 @@ export const defineConsoleOutputTests = (
     });
 
     it('should contain front-components-watch messages', () => {
-      const output = getOutputByPrefix(getResult().output, 'front-components-watch');
+      const output = getOutputByPrefix(
+        getResult().output,
+        'front-components-watch',
+      );
 
       expect(output).toContain('[front-components-watch] 🎨 Building...');
       expect(output).toContain('[front-components-watch] ✓ Built');

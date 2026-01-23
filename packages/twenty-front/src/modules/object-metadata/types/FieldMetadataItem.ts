@@ -17,9 +17,15 @@ export type FieldMetadataItemOption = PartialFieldMetadataItemOption & {
 
 export type FieldMetadataItem = Omit<
   Field,
-  '__typename' | 'defaultValue' | 'options' | 'relation' | 'morphRelations'
+  | '__typename'
+  | 'applicationId'
+  | 'defaultValue'
+  | 'options'
+  | 'relation'
+  | 'morphRelations'
 > & {
   __typename?: string;
+  applicationId?: string;
   defaultValue?: any;
   options?: FieldMetadataItemOption[] | null;
   relation?: FieldMetadataItemRelation | null;

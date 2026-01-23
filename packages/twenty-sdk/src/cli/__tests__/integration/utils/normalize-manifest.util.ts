@@ -1,9 +1,18 @@
-import { type ApplicationManifest } from 'twenty-shared/application';
+// Loose type for JSON manifest imports where enum values are inferred as strings
+type JsonManifestInput = {
+  functions?: Array<{
+    builtHandlerChecksum?: string | null;
+    [key: string]: unknown;
+  }>;
+  frontComponents?: Array<{
+    builtComponentChecksum?: string | null;
+    [key: string]: unknown;
+  }>;
+  [key: string]: unknown;
+};
 
 // Replace dynamic checksum values with a placeholder for consistent comparisons
-export const normalizeManifestForComparison = <
-  T extends Partial<ApplicationManifest>,
->(
+export const normalizeManifestForComparison = <T extends JsonManifestInput>(
   manifest: T,
 ): T => ({
   ...manifest,
@@ -17,4 +26,5 @@ export const normalizeManifestForComparison = <
       ? '[checksum]'
       : null,
   })),
+  sources: {}, // removing sources for now, waiting compressed file implementation
 });

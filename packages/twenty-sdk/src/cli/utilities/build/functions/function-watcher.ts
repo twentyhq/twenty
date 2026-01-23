@@ -1,16 +1,16 @@
 import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
-import { OUTPUT_DIR } from '../common/constants';
-import { createLogger } from '../common/logger';
-import { processEsbuildResult } from '../common/esbuild-result-processor';
+import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
+import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
+import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
+import { createLogger } from '@/cli/utilities/build/common/logger';
 import {
   type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
-} from '../common/restartable-watcher.interface';
-import { FUNCTIONS_DIR } from './constants';
+} from '@/cli/utilities/build/common/restartable-watcher-interface';
+import { FUNCTIONS_DIR } from '@/cli/utilities/build/functions/constants';
 
 const logger = createLogger('functions-watch');
 
@@ -140,10 +140,13 @@ export class FunctionsWatcher implements RestartableWatcher {
         {
           name: 'external-patterns',
           setup: (build) => {
-            build.onResolve({ filter: /(?:^|\/)generated(?:\/|$)/ }, (args) => ({
-              path: args.path,
-              external: true,
-            }));
+            build.onResolve(
+              { filter: /(?:^|\/)generated(?:\/|$)/ },
+              (args) => ({
+                path: args.path,
+                external: true,
+              }),
+            );
           },
         },
         {
@@ -165,7 +168,8 @@ export class FunctionsWatcher implements RestartableWatcher {
                   builtDir: FUNCTIONS_DIR,
                   lastChecksums: watcher.lastChecksums,
                   onFileBuilt: watcher.onFileBuilt,
-                  onSuccess: (relativePath) => logger.success(`✓ Built ${relativePath}`),
+                  onSuccess: (relativePath) =>
+                    logger.success(`✓ Built ${relativePath}`),
                 });
 
                 if (hasChanges && watchMode) {

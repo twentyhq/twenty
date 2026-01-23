@@ -3,7 +3,7 @@ import { applicationEntityBuilder } from './entities/application';
 import {
   type EntityIdWithLocation,
   type ManifestWithoutSources,
-} from './entities/entity.interface';
+} from '@/cli/utilities/build/manifest/entities/entity-interface';
 import { frontComponentEntityBuilder } from './entities/front-component';
 import { functionEntityBuilder } from './entities/function';
 import { objectEntityBuilder } from './entities/object';
@@ -13,7 +13,7 @@ import {
   type ValidationError,
   type ValidationResult,
   type ValidationWarning,
-} from './manifest.types';
+} from '@/cli/utilities/build/manifest/manifest-types';
 
 const collectAllDuplicates = (
   manifest: ManifestWithoutSources,
@@ -39,7 +39,10 @@ export const validateManifest = (
     errors,
   );
   objectEntityBuilder.validate(manifest.objects ?? [], errors);
-  objectExtensionEntityBuilder.validate(manifest.objectExtensions ?? [], errors);
+  objectExtensionEntityBuilder.validate(
+    manifest.objectExtensions ?? [],
+    errors,
+  );
   functionEntityBuilder.validate(manifest.functions ?? [], errors);
   roleEntityBuilder.validate(manifest.roles ?? [], errors);
   frontComponentEntityBuilder.validate(manifest.frontComponents ?? [], errors);

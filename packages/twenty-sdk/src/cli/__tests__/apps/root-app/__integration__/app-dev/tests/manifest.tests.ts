@@ -16,14 +16,21 @@ export const defineManifestTests = (appPath: string): void => {
     it('should have correct manifest content', async () => {
       const manifestPath = join(appPath, '.twenty/output/manifest.json');
       const manifest: ApplicationManifest = await fs.readJSON(manifestPath);
-      const expectedPath = join(appPath, '__integration__/app-dev/manifest.expected.json');
+      const expectedPath = join(
+        appPath,
+        '__integration__/app-dev/manifest.expected.json',
+      );
       const expected: ApplicationManifest = await fs.readJSON(expectedPath);
 
       expect(manifest.application).toEqual(expected.application);
       expect(manifest.objects).toEqual(expected.objects);
 
-      expect(normalizeManifestForComparison({ functions: manifest.functions }).functions).toEqual(
-        normalizeManifestForComparison({ functions: expected.functions }).functions,
+      expect(
+        normalizeManifestForComparison({ functions: manifest.functions })
+          .functions,
+      ).toEqual(
+        normalizeManifestForComparison({ functions: expected.functions })
+          .functions,
       );
 
       for (const fn of manifest.functions) {
@@ -33,9 +40,13 @@ export const defineManifestTests = (appPath: string): void => {
       }
 
       expect(
-        normalizeManifestForComparison({ frontComponents: manifest.frontComponents }).frontComponents,
+        normalizeManifestForComparison({
+          frontComponents: manifest.frontComponents,
+        }).frontComponents,
       ).toEqual(
-        normalizeManifestForComparison({ frontComponents: expected.frontComponents }).frontComponents,
+        normalizeManifestForComparison({
+          frontComponents: expected.frontComponents,
+        }).frontComponents,
       );
 
       for (const component of manifest.frontComponents ?? []) {
