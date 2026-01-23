@@ -20,6 +20,7 @@ import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums
 import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
 import { PageLayoutWidgetConfigurationTypeSettings } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configuration.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type JsonbEntityProperty } from 'src/types/jsonb-entity-property.type';
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
 @ObjectType('PageLayoutWidget')
@@ -73,7 +74,9 @@ export class PageLayoutWidgetEntity<
   gridPosition: GridPosition;
 
   @Column({ type: 'jsonb', nullable: false })
-  configuration: PageLayoutWidgetConfigurationTypeSettings<TWidgetConfigurationType>;
+  configuration: JsonbEntityProperty<
+    PageLayoutWidgetConfigurationTypeSettings<TWidgetConfigurationType>
+  >;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
