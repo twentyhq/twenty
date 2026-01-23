@@ -8,7 +8,9 @@ import {
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { type ApplicationManifest } from 'twenty-shared/application';
+import { FileFolder } from 'twenty-shared/types';
 
 const initLogger = createLogger('init');
 
@@ -38,6 +40,8 @@ export class AppDevCommand {
   private functionsWatcher: FunctionsWatcher | null = null;
   private frontComponentsWatcher: FrontComponentsWatcher | null = null;
 
+  private fileUploader: FileUploader;
+
   private appPath: string = '';
   private state: AppDevState = {
     manifest: null,
@@ -65,6 +69,12 @@ export class AppDevCommand {
     if (!buildResult.manifest) {
       return;
     }
+
+    this.fileUploader = new FileUploader({
+      appPath: this.appPath,
+      applicationUniversalIdentifier:
+        buildResult.manifest.application.universalIdentifier,
+    });
 
     this.state.manifest = buildResult.manifest;
     this.initializeFunctionsFileUploadStatus(buildResult.manifest);
@@ -149,6 +159,10 @@ export class AppDevCommand {
       sourcePaths,
       onFileBuilt: async (builtPath, checksum) => {
         await this.updateFileStatus('function', builtPath, checksum);
+        await this.fileUploader.uploadFile({
+          builtPath,
+          fileFolder: FileFolder.BuiltFunction,
+        });
       },
     });
 
@@ -163,6 +177,10 @@ export class AppDevCommand {
       sourcePaths,
       onFileBuilt: async (builtPath, checksum) => {
         await this.updateFileStatus('frontComponent', builtPath, checksum);
+        await this.fileUploader.uploadFile({
+          builtPath,
+          fileFolder: FileFolder.BuiltFrontComponent,
+        });
       },
     });
 
