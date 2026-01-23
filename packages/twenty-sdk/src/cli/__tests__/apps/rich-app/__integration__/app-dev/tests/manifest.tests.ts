@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
+import { type ApplicationManifest } from 'twenty-shared/application';
 
 import { normalizeManifestForComparison } from '@/cli/__tests__/integration/utils/normalize-manifest.util';
 import expectedManifest from '../manifest.expected.json';
@@ -16,7 +17,9 @@ export const defineManifestTests = (appPath: string): void => {
       const { sources: _sources, ...sanitizedManifest } = manifest;
 
       expect(normalizeManifestForComparison(sanitizedManifest)).toEqual(
-        normalizeManifestForComparison(expectedManifest as any),
+        normalizeManifestForComparison(
+          expectedManifest as unknown as ApplicationManifest,
+        ),
       );
 
       for (const fn of manifest.functions) {
