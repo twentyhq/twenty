@@ -1,11 +1,11 @@
-import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { AppBuildCommand } from '@/cli/commands/app/app-build';
-import { UploadService } from '@/cli/utilities/file/services/upload.service';
-import { ApiService } from '@/cli/utilities/api/services/api.service';
+import { FileUploader } from '@/cli/utilities/file/file-uploader';
+import { ApiService } from '@/cli/utilities/api/api-service';
 
 export class AppSyncCommand {
   private apiService = new ApiService();
@@ -31,7 +31,7 @@ export class AppSyncCommand {
       return { success: false, error: 'No manifest found. Build failed?' };
     }
 
-    const uploadService = new UploadService({
+    const uploadService = new FileUploader({
       applicationUniversalIdentifier: manifest.application.universalIdentifier,
       appPath,
     });

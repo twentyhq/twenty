@@ -1,5 +1,5 @@
-import { findPathFile } from '@/cli/utilities/file/utils/file-find';
-import { parseJsoncFile } from '@/cli/utilities/file/utils/file-jsonc';
+import { findPathFile } from '@/cli/utilities/file/file-find';
+import { parseJsoncFile } from '@/cli/utilities/file/file-jsonc';
 import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';
 import { relative, sep } from 'path';
@@ -18,7 +18,7 @@ import {
 } from '@/cli/utilities/build/manifest/manifest-display';
 import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
-import { ManifestValidationError } from '@/cli/utilities/build/manifest/manifest.types';
+import { ManifestValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 import { createLogger } from '@/cli/utilities/build/common/logger';
 import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
 

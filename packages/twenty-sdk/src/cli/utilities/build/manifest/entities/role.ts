@@ -1,13 +1,13 @@
 import { glob } from 'fast-glob';
 import { type RoleManifest } from 'twenty-shared/application';
 import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
-import { type ValidationError } from '@/cli/utilities/build/manifest/manifest.types';
+import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 import {
   type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
-} from '@/cli/utilities/build/manifest/entities/entity.interface';
+} from '@/cli/utilities/build/manifest/entities/entity-interface';
 import { createLogger } from '@/cli/utilities/build/common/logger';
 
 const logger = createLogger('manifest-watch');

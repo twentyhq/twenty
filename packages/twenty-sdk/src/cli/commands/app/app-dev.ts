@@ -7,7 +7,7 @@ import {
 } from '@/cli/utilities/build/manifest/manifest-build';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { type ApplicationManifest } from 'twenty-shared/application';
 
 const initLogger = createLogger('init');

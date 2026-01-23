@@ -6,13 +6,13 @@ import {
 } from 'twenty-shared/application';
 import { createLogger } from '../../common/logger';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
-import { type ValidationError } from '../manifest.types';
 import {
   type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
-} from './entity.interface';
+} from '@/cli/utilities/build/manifest/entities/entity-interface';
+import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 
 const logger = createLogger('manifest-watch');
 

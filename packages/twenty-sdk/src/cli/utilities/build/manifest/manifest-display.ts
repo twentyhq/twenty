@@ -7,7 +7,7 @@ import { roleEntityBuilder } from '@/cli/utilities/build/manifest/entities/role'
 import {
   type ManifestValidationError,
   type ValidationWarning,
-} from '@/cli/utilities/build/manifest/manifest.types';
+} from '@/cli/utilities/build/manifest/manifest-types';
 import { applicationEntityBuilder } from '@/cli/utilities/build/manifest/entities/application';
 
 const logger = createLogger('manifest-watch');

@@ -1,4 +1,4 @@
-import { getFrontComponentBaseFile } from '@/cli/utilities/entity/utils/entity-front-component-template';
+import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
 
 describe('getFrontComponentBaseFile', () => {
   it('should render proper file using defineFrontComponent', () => {

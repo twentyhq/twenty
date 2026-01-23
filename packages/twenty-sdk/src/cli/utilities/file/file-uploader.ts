@@ -1,11 +1,11 @@
-import { ApiService } from '@/cli/utilities/api/services/api.service';
+import { ApiService } from '@/cli/utilities/api/api-service';
 import path from 'path';
 import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 import { FileFolder } from 'twenty-shared/types';
 import { createLogger } from '@/cli/utilities/build/common/logger';
 import { type ApplicationManifest } from 'twenty-shared/application';
 
-export class UploadService {
+export class FileUploader {
   private apiService = new ApiService();
   private applicationUniversalIdentifier: string;
   private appPath: string;

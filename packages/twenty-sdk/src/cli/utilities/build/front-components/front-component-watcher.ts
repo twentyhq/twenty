@@ -9,7 +9,7 @@ import {
   type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
-} from '@/cli/utilities/build/common/restartable-watcher.interface';
+} from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { FRONT_COMPONENTS_DIR } from '@/cli/utilities/build/front-components/constants';
 
 const logger = createLogger('front-components-watch');

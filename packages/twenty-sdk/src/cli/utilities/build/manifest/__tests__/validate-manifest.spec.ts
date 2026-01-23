@@ -31,6 +31,7 @@ describe('validateManifest - objectExtensions', () => {
       const result = validateManifest({
         application: validApplication,
         objects: [],
+        frontComponents: [],
         objectExtensions: [validObjectExtension],
         functions: [],
         roles: [],
@@ -60,6 +61,7 @@ describe('validateManifest - objectExtensions', () => {
         objects: [],
         objectExtensions: [extensionByUuid],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -87,6 +89,7 @@ describe('validateManifest - objectExtensions', () => {
         objects: [],
         objectExtensions: [validObjectExtension, anotherExtension],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -123,6 +126,7 @@ describe('validateManifest - objectExtensions', () => {
         objects: [],
         objectExtensions: [extensionWithSelect],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -142,6 +146,7 @@ describe('validateManifest - objectExtensions', () => {
         objects: [],
         objectExtensions: [invalidExtension],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -164,6 +169,7 @@ describe('validateManifest - objectExtensions', () => {
         objects: [],
         objectExtensions: [invalidExtension],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -190,6 +196,7 @@ describe('validateManifest - objectExtensions', () => {
         objects: [],
         objectExtensions: [invalidExtension],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -217,6 +224,7 @@ describe('validateManifest - objectExtensions', () => {
         objects: [],
         objectExtensions: [invalidExtension],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -247,6 +255,7 @@ describe('validateManifest - objectExtensions', () => {
         objects: [],
         objectExtensions: [invalidExtension],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -277,6 +286,7 @@ describe('validateManifest - objectExtensions', () => {
         objects: [],
         objectExtensions: [invalidExtension],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -307,6 +317,7 @@ describe('validateManifest - objectExtensions', () => {
         objects: [],
         objectExtensions: [invalidExtension],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -338,6 +349,7 @@ describe('validateManifest - objectExtensions', () => {
         objects: [],
         objectExtensions: [invalidExtension],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -370,6 +382,7 @@ describe('validateManifest - objectExtensions', () => {
         objects: [],
         objectExtensions: [invalidExtension],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -411,6 +424,7 @@ describe('validateManifest - objectExtensions', () => {
         objects: [],
         objectExtensions: [extensionWithDuplicates],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -458,6 +472,7 @@ describe('validateManifest - objectExtensions', () => {
           },
         ],
         functions: [],
+        frontComponents: [],
         roles: [],
       });
 

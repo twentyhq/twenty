@@ -1,4 +1,4 @@
-import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
+import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
@@ -9,7 +9,7 @@ import {
 } from '@/cli/utilities/build/manifest/manifest-build';
 import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 
 const initLogger = createLogger('init');
 

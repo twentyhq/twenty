@@ -9,7 +9,7 @@ import {
   type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
-} from '@/cli/utilities/build/common/restartable-watcher.interface';
+} from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { FUNCTIONS_DIR } from '@/cli/utilities/build/functions/constants';
 
 const logger = createLogger('functions-watch');

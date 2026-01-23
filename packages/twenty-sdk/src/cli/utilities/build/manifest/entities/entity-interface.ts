@@ -1,5 +1,5 @@
 import { type ApplicationManifest } from 'twenty-shared/application';
-import { type ValidationError } from '@/cli/utilities/build/manifest/manifest.types';
+import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 
 export type EntityIdWithLocation = {
   id: string;

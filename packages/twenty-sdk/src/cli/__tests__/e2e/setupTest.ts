@@ -1,4 +1,4 @@
-import { ConfigService } from '@/cli/utilities/config/services/config.service';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import { testConfig } from '@/cli/__tests__/e2e/constants/testConfig';
 import { vi, beforeAll, afterAll } from 'vitest';
 

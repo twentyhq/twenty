@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import type * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { type OnFileBuiltCallback } from './restartable-watcher.interface';
+import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 
 export type ProcessEsbuildResultParams = {
   result: esbuild.BuildResult;
