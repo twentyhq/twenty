@@ -21,6 +21,10 @@ import { NavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/re
 import { NavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/NavigateToPreviousRecordSingleRecordAction';
 import { RemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/RemoveFromFavoritesSingleRecordAction';
 import { RestoreSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction';
+import { CancelRecordPageLayoutSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/record-page-layout-actions/components/CancelRecordPageLayoutSingleRecordAction';
+import { EditRecordPageLayoutSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/record-page-layout-actions/components/EditRecordPageLayoutSingleRecordAction';
+import { SaveRecordPageLayoutSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/record-page-layout-actions/components/SaveRecordPageLayoutSingleRecordAction';
+import { RecordPageLayoutSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/record-page-layout-actions/types/RecordPageLayoutSingleRecordActionKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
@@ -36,9 +40,11 @@ import { AppPath, SettingsPath } from 'twenty-shared/types';
 import {
   IconArrowMerge,
   IconBuildingSkyscraper,
+  IconCancel,
   IconCheckbox,
   IconChevronDown,
   IconChevronUp,
+  IconDeviceFloppy,
   IconEdit,
   IconEyeOff,
   IconFileExport,
@@ -47,6 +53,7 @@ import {
   IconHeartOff,
   IconLayout,
   IconLayoutDashboard,
+  IconPencil,
   IconPlus,
   IconRefresh,
   IconRotate2,
@@ -64,7 +71,8 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
   | NoSelectionRecordActionKeys
   | SingleRecordActionKeys
-  | MultipleRecordsActionKeys,
+  | MultipleRecordsActionKeys
+  | RecordPageLayoutSingleRecordActionKeys,
   ActionConfig
 > = {
   [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
@@ -740,5 +748,80 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       />
     ),
     hotKeys: ['G', 'N'],
+  },
+
+  // Record Page Layout Actions (for non-Dashboard record pages)
+  [RecordPageLayoutSingleRecordActionKeys.EDIT_RECORD_PAGE_LAYOUT]: {
+    key: RecordPageLayoutSingleRecordActionKeys.EDIT_RECORD_PAGE_LAYOUT,
+    label: msg`Edit Page Layout`,
+    shortLabel: msg`Edit Layout`,
+    isPinned: true,
+    position: 30,
+    Icon: IconPencil,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
+    requiredPermissionFlag: PermissionFlagType.LAYOUTS,
+    shouldBeRegistered: ({
+      selectedRecord,
+      objectPermissions,
+      objectMetadataItem,
+    }) =>
+      isDefined(selectedRecord) &&
+      !selectedRecord?.isRemote &&
+      !isDefined(selectedRecord?.deletedAt) &&
+      objectPermissions.canUpdateObjectRecords &&
+      // Exclude Dashboard since it has its own edit actions
+      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
+    availableOn: [ActionViewType.SHOW_PAGE],
+    component: <EditRecordPageLayoutSingleRecordAction />,
+  },
+  [RecordPageLayoutSingleRecordActionKeys.SAVE_RECORD_PAGE_LAYOUT]: {
+    key: RecordPageLayoutSingleRecordActionKeys.SAVE_RECORD_PAGE_LAYOUT,
+    label: msg`Save Page Layout`,
+    shortLabel: msg`Save`,
+    isPinned: true,
+    isPrimaryCTA: true,
+    position: 31,
+    Icon: IconDeviceFloppy,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
+    requiredPermissionFlag: PermissionFlagType.LAYOUTS,
+    shouldBeRegistered: ({
+      selectedRecord,
+      objectPermissions,
+      objectMetadataItem,
+    }) =>
+      isDefined(selectedRecord) &&
+      !selectedRecord?.isRemote &&
+      !isDefined(selectedRecord?.deletedAt) &&
+      objectPermissions.canUpdateObjectRecords &&
+      // Exclude Dashboard since it has its own save actions
+      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
+    availableOn: [ActionViewType.PAGE_EDIT_MODE],
+    component: <SaveRecordPageLayoutSingleRecordAction />,
+  },
+  [RecordPageLayoutSingleRecordActionKeys.CANCEL_RECORD_PAGE_LAYOUT_EDITION]: {
+    key: RecordPageLayoutSingleRecordActionKeys.CANCEL_RECORD_PAGE_LAYOUT_EDITION,
+    label: msg`Cancel Edition`,
+    shortLabel: msg`Cancel`,
+    isPinned: true,
+    position: 32,
+    Icon: IconCancel,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
+    requiredPermissionFlag: PermissionFlagType.LAYOUTS,
+    shouldBeRegistered: ({
+      selectedRecord,
+      objectPermissions,
+      objectMetadataItem,
+    }) =>
+      isDefined(selectedRecord) &&
+      !selectedRecord?.isRemote &&
+      !isDefined(selectedRecord?.deletedAt) &&
+      objectPermissions.canUpdateObjectRecords &&
+      // Exclude Dashboard since it has its own cancel actions
+      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
+    availableOn: [ActionViewType.PAGE_EDIT_MODE],
+    component: <CancelRecordPageLayoutSingleRecordAction />,
   },
 };
