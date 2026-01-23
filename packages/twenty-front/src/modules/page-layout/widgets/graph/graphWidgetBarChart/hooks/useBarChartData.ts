@@ -44,23 +44,25 @@ export const useBarChartData = ({
     [series],
   );
 
-  const shouldApplyGradient = colorMode === 'explicitSingleColor';
+  const allEnrichedKeys = useMemo((): BarChartEnrichedKey[] => {
+    const shouldApplyGradient = colorMode === 'explicitSingleColor';
 
-  const allEnrichedKeys: BarChartEnrichedKey[] = keys.map((key, index) => {
-    const seriesConfig = seriesConfigMap.get(key);
-    const colorScheme = getColorScheme({
-      registry: colorRegistry,
-      colorName: seriesConfig?.color,
-      fallbackIndex: index,
-      totalGroups: shouldApplyGradient ? keys.length : undefined,
+    return keys.map((key, index) => {
+      const seriesConfig = seriesConfigMap.get(key);
+      const colorScheme = getColorScheme({
+        registry: colorRegistry,
+        colorName: seriesConfig?.color,
+        fallbackIndex: index,
+        totalGroups: shouldApplyGradient ? keys.length : undefined,
+      });
+
+      return {
+        key,
+        colorScheme,
+        label: seriesConfig?.label ?? seriesLabels?.[key] ?? key,
+      };
     });
-
-    return {
-      key,
-      colorScheme,
-      label: seriesConfig?.label ?? seriesLabels?.[key] ?? key,
-    };
-  });
+  }, [keys, seriesConfigMap, colorRegistry, seriesLabels, colorMode]);
 
   const legendItems: GraphWidgetLegendItem[] = allEnrichedKeys.map((item) => ({
     id: item.key,
@@ -74,13 +76,18 @@ export const useBarChartData = ({
     (item) => !hiddenLegendIds.includes(item.key),
   );
 
+  const enrichedKeysMap = useMemo(
+    () => new Map(allEnrichedKeys.map((ek) => [ek.key, ek])),
+    [allEnrichedKeys],
+  );
+
   const barConfigs = useMemo((): BarChartConfig[] => {
     return data.flatMap((dataPoint) => {
       const indexValue = dataPoint[indexBy];
       const datumColor = parseGraphColor(dataPoint.color as string | undefined);
 
       return visibleKeys.flatMap((key): BarChartConfig[] => {
-        const enrichedKey = allEnrichedKeys.find((ek) => ek.key === key);
+        const enrichedKey = enrichedKeysMap.get(key);
         if (!isDefined(enrichedKey)) {
           return [];
         }
@@ -101,7 +108,7 @@ export const useBarChartData = ({
         ];
       });
     });
-  }, [data, indexBy, visibleKeys, allEnrichedKeys, colorRegistry]);
+  }, [data, indexBy, visibleKeys, enrichedKeysMap, colorRegistry]);
 
   return {
     seriesConfigMap,
