@@ -73,9 +73,7 @@ export const useUpdateManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
   const mutationResponseField = getUpdateManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
@@ -261,7 +259,9 @@ export const useUpdateManyRecords = <T extends ObjectRecord = ObjectRecord>({
     }
 
     if (!skipRefetchAggregateQueries) {
-      await refetchAggregateQueries();
+      await refetchAggregateQueries({
+        objectMetadataNamePlural: objectMetadataItem.namePlural,
+      });
     }
 
     if (!skipRegisterObjectOperation) {

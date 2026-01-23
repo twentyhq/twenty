@@ -30,11 +30,12 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_IF_ELSE_ENABLED,
+    key: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
     metadata: {
-      label: 'If/Else Workflow Node',
-      description: 'Enable if/else conditional branching in workflows',
-      imagePath: 'https://twenty.com/images/lab/is-if-else-enabled.png',
+      label: 'Row Level Permissions',
+      description: 'Enable row level permission',
+      imagePath:
+        'https://twenty.com/images/lab/is-row-level-permission-predicates-enabled.png',
     },
   },
   //{ // TODO: hide it for later

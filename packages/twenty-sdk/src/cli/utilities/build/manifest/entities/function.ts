@@ -1,45 +1,71 @@
-import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type ServerlessFunctionManifest } from 'twenty-shared/application';
-import { extractManifestFromFile } from '../manifest-file-extractor';
+import { createLogger } from '../../common/logger';
+import { FUNCTIONS_DIR } from '../../functions/constants';
+import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
+  type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from './entity.interface';
 
+const logger = createLogger('manifest-watch');
+
+type ExtractedFunctionManifest = Omit<
+  ServerlessFunctionManifest,
+  'sourceHandlerPath' | 'builtHandlerPath' | 'builtHandlerChecksum'
+> & {
+  handlerPath: string;
+};
+
 export class FunctionEntityBuilder
-  implements ManifestEntityBuilder<ServerlessFunctionManifest[]>
+  implements ManifestEntityBuilder<ServerlessFunctionManifest>
 {
-  async build(appPath: string): Promise<ServerlessFunctionManifest[]> {
-    const functionFiles = await glob(['src/app/**/*.function.ts'], {
+  async build(appPath: string): Promise<EntityBuildResult<ServerlessFunctionManifest>> {
+    const functionFiles = await glob(['**/*.function.ts'], {
       cwd: appPath,
-      absolute: true,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
     });
 
-    const functionManifests: ServerlessFunctionManifest[] = [];
+    const manifests: ServerlessFunctionManifest[] = [];
 
-    for (const filepath of functionFiles) {
+    for (const filePath of functionFiles) {
       try {
-        functionManifests.push(
-          await extractManifestFromFile<ServerlessFunctionManifest>(
-            filepath,
-            appPath,
+        const absolutePath = `${appPath}/${filePath}`;
+
+        const extracted =
+          await manifestExtractFromFileServer.extractManifestFromFile<ExtractedFunctionManifest>(
+            absolutePath,
             { entryProperty: 'handler' },
-          ),
-        );
+          );
+
+        const { handlerPath, ...rest } = extracted;
+        // builtHandlerPath is computed from filePath (the .function.ts file)
+        // since that's what esbuild actually builds, not handlerPath
+        const builtHandlerPath = this.computeBuiltHandlerPath(filePath);
+
+        manifests.push({
+          ...rest,
+          sourceHandlerPath: handlerPath,
+          builtHandlerPath,
+          builtHandlerChecksum: null,
+        });
       } catch (error) {
-        const relPath = toPosixRelative(filepath, appPath);
         throw new Error(
-          `Failed to load function from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
+          `Failed to load function from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
 
-    return functionManifests;
+    return { manifests, filePaths: functionFiles };
+  }
+
+  private computeBuiltHandlerPath(sourceHandlerPath: string): string {
+    const builtPath = sourceHandlerPath.replace(/\.tsx?$/, '.mjs');
+
+    return `${FUNCTIONS_DIR}/${builtPath}`;
   }
 
   validate(
@@ -113,20 +139,20 @@ export class FunctionEntityBuilder
   }
 
   display(functions: ServerlessFunctionManifest[]): void {
-    console.log(chalk.green(`  ✓ Found ${functions.length} function(s)`));
+    logger.success(`✓ Found ${functions.length} function(s)`);
 
     if (functions.length > 0) {
-      console.log(chalk.gray(`  📍 Function entry points:`));
+      logger.log('📍 Entry points:');
       for (const fn of functions) {
         const name = fn.name || fn.universalIdentifier;
-        console.log(chalk.gray(`     - ${name} (${fn.handlerPath})`));
+        logger.log(`   - ${name} (${fn.sourceHandlerPath})`);
       }
     }
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const seen = new Map<string, string[]>();
-    const functions = manifest.serverlessFunctions ?? [];
+    const functions = manifest.functions ?? [];
 
     for (const fn of functions) {
       if (fn.universalIdentifier) {

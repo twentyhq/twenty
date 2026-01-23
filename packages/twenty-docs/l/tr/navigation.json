@@ -1,16 +1,16 @@
 {
   "tabs": {
     "userGuide": {
-      "label": "User Guide",
+      "label": "Kullanıcı Rehberi",
       "groups": {
         "discoverTwenty": {
-          "label": "Discover Twenty",
+          "label": "Twenty'yi Keşfedin",
           "groups": {
             "gettingStartedCapabilities": {
-              "label": "Capabilities"
+              "label": "Yetkinlikler"
             },
             "gettingStartedHowTos": {
-              "label": "How-Tos"
+              "label": "Nasıl Yapılırlar"
             }
           }
         },
@@ -18,32 +18,32 @@
           "label": "Veri modeli",
           "groups": {
             "dataModelCapabilities": {
-              "label": "Capabilities"
+              "label": "Yetkinlikler"
             },
             "dataModelHowTos": {
-              "label": "How-Tos"
+              "label": "Nasıl Yapılırlar"
             }
           }
         },
         "dataMigration": {
-          "label": "Data Migration",
+          "label": "Veri Geçişi",
           "groups": {
             "dataMigrationCapabilities": {
-              "label": "Capabilities"
+              "label": "Yetkinlikler"
             },
             "dataMigrationHowTos": {
-              "label": "How-Tos"
+              "label": "Nasıl Yapılırlar"
             }
           }
         },
         "calendarEmails": {
-          "label": "Calendar & Emails",
+          "label": "Takvim ve E-postalar",
           "groups": {
             "calendarEmailsCapabilities": {
-              "label": "Capabilities"
+              "label": "Yetkinlikler"
             },
             "calendarEmailsHowTos": {
-              "label": "How-Tos"
+              "label": "Nasıl Yapılırlar"
             }
           }
         },
@@ -51,19 +51,19 @@
           "label": "İş Akışları",
           "groups": {
             "workflowsCapabilities": {
-              "label": "Capabilities"
+              "label": "Yetkinlikler"
             },
             "workflowsHowTos": {
-              "label": "How-Tos",
+              "label": "Nasıl Yapılırlar",
               "groups": {
                 "crmAutomations": {
-                  "label": "CRM Automations"
+                  "label": "CRM Otomasyonları"
                 },
                 "connectToOtherTools": {
-                  "label": "Connect to Other Tools"
+                  "label": "Diğer Araçlara Bağlan"
                 },
                 "advancedConfigurations": {
-                  "label": "Advanced Configurations"
+                  "label": "Gelişmiş Yapılandırmalar"
                 },
                 "needMoreHelp": {
                   "label": "Daha Fazla Yardım mı İhtiyacınız Var"
@@ -76,21 +76,21 @@
           "label": "AI",
           "groups": {
             "aiCapabilities": {
-              "label": "Capabilities"
+              "label": "Yetkinlikler"
             },
             "aiHowTos": {
-              "label": "How-Tos"
+              "label": "Nasıl Yapılırlar"
             }
           }
         },
         "viewsPipelines": {
-          "label": "Views & Pipelines",
+          "label": "Görünümler ve Boru Hatları",
           "groups": {
             "viewsPipelinesCapabilities": {
-              "label": "Capabilities"
+              "label": "Yetkinlikler"
             },
             "viewsPipelinesHowTos": {
-              "label": "How-Tos"
+              "label": "Nasıl Yapılırlar"
             }
           }
         },
@@ -98,21 +98,21 @@
           "label": "Gösterge Panelleri",
           "groups": {
             "dashboardsCapabilities": {
-              "label": "Capabilities"
+              "label": "Yetkinlikler"
             },
             "dashboardsHowTos": {
-              "label": "How-Tos"
+              "label": "Nasıl Yapılırlar"
             }
           }
         },
         "permissionsAccess": {
-          "label": "Permissions & Access",
+          "label": "İzinler ve Erişim",
           "groups": {
             "permissionsAccessCapabilities": {
-              "label": "Capabilities"
+              "label": "Yetkinlikler"
             },
             "permissionsAccessHowTos": {
-              "label": "How-Tos"
+              "label": "Nasıl Yapılırlar"
             }
           }
         },
@@ -120,10 +120,10 @@
           "label": "Faturalandırma",
           "groups": {
             "billingCapabilities": {
-              "label": "Capabilities"
+              "label": "Yetkinlikler"
             },
             "billingHowTos": {
-              "label": "How-Tos"
+              "label": "Nasıl Yapılırlar"
             }
           }
         },
@@ -131,10 +131,10 @@
           "label": "Ayarlar",
           "groups": {
             "settingsCapabilities": {
-              "label": "Capabilities"
+              "label": "Yetkinlikler"
             },
             "settingsHowTos": {
-              "label": "How-Tos"
+              "label": "Nasıl Yapılırlar"
             }
           }
         }
@@ -147,26 +147,26 @@
           "label": "Geliştiriciler"
         },
         "extend": {
-          "label": "Extend",
+          "label": "Genişlet",
           "groups": {
             "extendCapabilities": {
-              "label": "Capabilities"
+              "label": "Yetkinlikler"
             }
           }
         },
         "selfHost": {
-          "label": "Self-Host",
+          "label": "Kendi Kendine Barındırma",
           "groups": {
             "selfHostCapabilities": {
-              "label": "Capabilities"
+              "label": "Yetkinlikler"
             }
           }
         },
         "contribute": {
-          "label": "Contribute",
+          "label": "Katkıda Bulunun",
           "groups": {
             "contributeCapabilities": {
-              "label": "Capabilities",
+              "label": "Yetkinlikler",
               "groups": {
                 "frontendDevelopment": {
                   "label": "Frontend Geliştirme",

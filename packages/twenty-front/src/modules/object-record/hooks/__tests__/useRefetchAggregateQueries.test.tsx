@@ -28,10 +28,8 @@ describe('useRefetchAggregateQueries', () => {
     });
 
     // Act
-    const { result } = renderHook(() =>
-      useRefetchAggregateQueries({ objectMetadataNamePlural }),
-    );
-    await result.current.refetchAggregateQueries();
+    const { result } = renderHook(() => useRefetchAggregateQueries());
+    await result.current.refetchAggregateQueries({ objectMetadataNamePlural });
 
     // Assert
     expect(mockRefetchQueries).toHaveBeenCalledTimes(1);
@@ -47,13 +45,11 @@ describe('useRefetchAggregateQueries', () => {
     const objectMetadataNamePlural = 'opportunities';
 
     // Act
-    const { result } = renderHook(() =>
-      useRefetchAggregateQueries({ objectMetadataNamePlural }),
-    );
+    const { result } = renderHook(() => useRefetchAggregateQueries());
 
     // Assert
-    await expect(result.current.refetchAggregateQueries()).rejects.toThrow(
-      'Refetch failed',
-    );
+    await expect(
+      result.current.refetchAggregateQueries({ objectMetadataNamePlural }),
+    ).rejects.toThrow('Refetch failed');
   });
 });

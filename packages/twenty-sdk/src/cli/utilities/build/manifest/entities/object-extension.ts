@@ -1,44 +1,44 @@
-import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
 import { glob } from 'fast-glob';
 import { type ObjectExtensionManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { extractManifestFromFile } from '../manifest-file-extractor';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
+  type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from './entity.interface';
 
 export class ObjectExtensionEntityBuilder
-  implements ManifestEntityBuilder<ObjectExtensionManifest[]>
+  implements ManifestEntityBuilder<ObjectExtensionManifest>
 {
-  async build(appPath: string): Promise<ObjectExtensionManifest[]> {
-    const extensionFiles = await glob(['src/app/**/*.object-extension.ts'], {
+  async build(appPath: string): Promise<EntityBuildResult<ObjectExtensionManifest>> {
+    const extensionFiles = await glob(['**/*.object-extension.ts'], {
       cwd: appPath,
-      absolute: true,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
     });
 
-    const objectExtensionManifests: ObjectExtensionManifest[] = [];
+    const manifests: ObjectExtensionManifest[] = [];
 
-    for (const filepath of extensionFiles) {
+    for (const filePath of extensionFiles) {
       try {
-        objectExtensionManifests.push(
-          await extractManifestFromFile<ObjectExtensionManifest>(
-            filepath,
-            appPath,
+        const absolutePath = `${appPath}/${filePath}`;
+
+        manifests.push(
+          await manifestExtractFromFileServer.extractManifestFromFile<ObjectExtensionManifest>(
+            absolutePath,
           ),
         );
       } catch (error) {
-        const relPath = toPosixRelative(filepath, appPath);
         throw new Error(
-          `Failed to load object extension from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
+          `Failed to load object extension from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
 
-    return objectExtensionManifests;
+    return { manifests, filePaths: extensionFiles };
   }
 
   validate(
@@ -78,7 +78,7 @@ export class ObjectExtensionEntityBuilder
         });
       }
 
-      if (!ext.fields || ext.fields.length === 0) {
+      if (!isNonEmptyArray(ext.fields)) {
         errors.push({
           path: extPath,
           message: 'Object extension must have at least one field',
@@ -112,7 +112,7 @@ export class ObjectExtensionEntityBuilder
         if (
           (field.type === FieldMetadataType.SELECT ||
             field.type === FieldMetadataType.MULTI_SELECT) &&
-          (!Array.isArray(field.options) || field.options.length === 0)
+          !isNonEmptyArray(field.options)
         ) {
           errors.push({
             path: fieldPath,

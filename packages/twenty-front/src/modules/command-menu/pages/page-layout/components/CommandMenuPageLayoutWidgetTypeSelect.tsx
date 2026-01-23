@@ -6,7 +6,7 @@ import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layo
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { isExistingWidgetMissingOrDifferentType } from '@/command-menu/pages/page-layout/utils/isExistingWidgetMissingOrDifferentType';
-import { useCompanyDefaultChartConfig } from '@/page-layout/hooks/useCompanyDefaultChartConfig';
+import { useOpportunityDefaultChartConfig } from '@/page-layout/hooks/useOpportunityDefaultChartConfig';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
 import { useCreatePageLayoutStandaloneRichTextWidget } from '@/page-layout/hooks/useCreatePageLayoutStandaloneRichTextWidget';
@@ -32,7 +32,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
-  const { buildBarChartFieldSelection } = useCompanyDefaultChartConfig();
+  const { buildBarChartFieldSelection } = useOpportunityDefaultChartConfig();
 
   const { createPageLayoutGraphWidget } =
     useCreatePageLayoutGraphWidget(pageLayoutId);

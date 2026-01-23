@@ -114,7 +114,8 @@ export class WorkspaceMigrationServerlessFunctionActionsBuilderService extends W
       action: {
         type: 'delete',
         metadataName: 'serverlessFunction',
-        entityId: flatServerlessFunctionToValidate.id,
+        universalIdentifier:
+          flatServerlessFunctionToValidate.universalIdentifier,
       },
     };
   }

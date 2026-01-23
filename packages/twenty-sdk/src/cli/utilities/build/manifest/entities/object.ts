@@ -1,42 +1,45 @@
-import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type ObjectManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { extractManifestFromFile } from '../manifest-file-extractor';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { createLogger } from '../../common/logger';
+import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
+  type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from './entity.interface';
 
+const logger = createLogger('manifest-watch');
+
 export class ObjectEntityBuilder
-  implements ManifestEntityBuilder<ObjectManifest[]>
+  implements ManifestEntityBuilder<ObjectManifest>
 {
-  async build(appPath: string): Promise<ObjectManifest[]> {
-    const objectFiles = await glob(['src/app/**/*.object.ts'], {
+  async build(appPath: string): Promise<EntityBuildResult<ObjectManifest>> {
+    const objectFiles = await glob(['**/*.object.ts'], {
       cwd: appPath,
-      absolute: true,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
     });
 
-    const objectManifests: ObjectManifest[] = [];
+    const manifests: ObjectManifest[] = [];
 
-    for (const filepath of objectFiles) {
+    for (const filePath of objectFiles) {
       try {
-        objectManifests.push(
-          await extractManifestFromFile<ObjectManifest>(filepath, appPath),
+        const absolutePath = `${appPath}/${filePath}`;
+
+        manifests.push(
+          await manifestExtractFromFileServer.extractManifestFromFile<ObjectManifest>(absolutePath),
         );
       } catch (error) {
-        const relPath = toPosixRelative(filepath, appPath);
         throw new Error(
-          `Failed to load object from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
+          `Failed to load object from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
 
-    return objectManifests;
+    return { manifests, filePaths: objectFiles };
   }
 
   validate(objects: ObjectManifest[], errors: ValidationError[]): void {
@@ -91,7 +94,7 @@ export class ObjectEntityBuilder
         if (
           (field.type === FieldMetadataType.SELECT ||
             field.type === FieldMetadataType.MULTI_SELECT) &&
-          (!Array.isArray(field.options) || field.options.length === 0)
+          !isNonEmptyArray(field.options)
         ) {
           errors.push({
             path: fieldPath,
@@ -103,7 +106,7 @@ export class ObjectEntityBuilder
   }
 
   display(objects: ObjectManifest[]): void {
-    console.log(chalk.green(`  ✓ Found ${objects.length} object(s)`));
+    logger.success(`✓ Found ${objects.length} object(s)`);
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {

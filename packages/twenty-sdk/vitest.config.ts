@@ -13,7 +13,13 @@ export default defineConfig({
     environment: 'node',
     include: [
       'src/**/__tests__/**/*.{test,spec}.{ts,tsx}',
+      'src/**/__integration__/**/*.{test,spec}.{ts,tsx}',
       'src/**/*.{test,spec}.{ts,tsx}',
+    ],
+    exclude: [
+      '**/node_modules/**',
+      '**/.git/**',
+      '**/__e2e__/**',
     ],
     coverage: {
       provider: 'v8',

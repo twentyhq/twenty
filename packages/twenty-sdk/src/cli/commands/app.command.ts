@@ -94,9 +94,7 @@ export const registerCommands = (program: Command): void => {
           ...options,
           appPath: formatPath(appPath),
         });
-        if (!result.success) {
-          process.exit(1);
-        }
+        process.exit(result.success ? 0 : 1);
       } catch {
         process.exit(1);
       }

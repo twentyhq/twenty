@@ -39,9 +39,7 @@ export const useBatchCreateManyRecords = <
     objectNameSingular,
   });
 
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
   const { enqueueWarningSnackBar } = useSnackBar();
   const { formatNumber } = useNumberFormat();
@@ -96,7 +94,9 @@ export const useBatchCreateManyRecords = <
       }
     }
 
-    await refetchAggregateQueries();
+    await refetchAggregateQueries({
+      objectMetadataNamePlural: objectMetadataItem.namePlural,
+    });
 
     dispatchObjectRecordOperationBrowserEvent({
       objectMetadataItem,

@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { applicationEntityBuilder } from './entities/application';
 import {
   type EntityIdWithLocation,
@@ -33,10 +34,13 @@ export const validateManifest = (
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
-  applicationEntityBuilder.validate(manifest.application, errors);
+  applicationEntityBuilder.validate(
+    manifest.application ? [manifest.application] : [],
+    errors,
+  );
   objectEntityBuilder.validate(manifest.objects ?? [], errors);
   objectExtensionEntityBuilder.validate(manifest.objectExtensions ?? [], errors);
-  functionEntityBuilder.validate(manifest.serverlessFunctions ?? [], errors);
+  functionEntityBuilder.validate(manifest.functions ?? [], errors);
   roleEntityBuilder.validate(manifest.roles ?? [], errors);
   frontComponentEntityBuilder.validate(manifest.frontComponents ?? [], errors);
 
@@ -48,18 +52,15 @@ export const validateManifest = (
     });
   }
 
-  if (!manifest.objects || manifest.objects.length === 0) {
+  if (!isNonEmptyArray(manifest.objects)) {
     warnings.push({
-      message: 'No objects defined in src/app/objects/',
+      message: 'No objects defined',
     });
   }
 
-  if (
-    !manifest.serverlessFunctions ||
-    manifest.serverlessFunctions.length === 0
-  ) {
+  if (!isNonEmptyArray(manifest.functions)) {
     warnings.push({
-      message: 'No functions defined in src/app/functions/',
+      message: 'No functions defined',
     });
   }
 

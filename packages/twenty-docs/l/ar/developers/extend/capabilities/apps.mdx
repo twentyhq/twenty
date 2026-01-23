@@ -31,14 +31,18 @@ description: أنشئ وأدِر تخصيصات Twenty على هيئة كود.
 أنشئ تطبيقًا جديدًا باستخدام المُهيئ الرسمي، ثم قم بالمصادقة وابدأ التطوير:
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# إنشاء تطبيق جديد
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# Authenticate using your API key (you'll be prompted)
+# إذا كنت لا تستخدم yarn@4
+corepack enable
+yarn install
+
+# قم بالمصادقة باستخدام مفتاح واجهة برمجة التطبيقات الخاص بك (سيُطلب منك ذلك)
 yarn auth:login
 
-# Start dev mode: automatically syncs local changes to your workspace
+# ابدأ وضع التطوير: يُزامن التغييرات المحلية تلقائيًا مع مساحة العمل الخاصة بك
 yarn app:dev
 ```
 
@@ -88,18 +92,16 @@ my-twenty-app/
   .nvmrc
   .yarnrc.yml
   .yarn/
-    releases/
-      yarn-4.9.2.cjs
     install-state.gz
   eslint.config.mjs
   tsconfig.json
   README.md
   src/
     app/
-      application.config.ts     # Required - main application configuration
-      default-function.role.ts  # Default role for serverless functions
-      // your entities (*.object.ts, *.function.ts, *.role.ts)
-    utils/                      # Optional - handler implementations & utilities
+      application.config.ts     # مطلوب - التكوين الرئيسي للتطبيق
+      default-function.role.ts  # الدور الافتراضي للوظائف بدون خادم
+      // الكيانات الخاصة بك (*.object.ts, *.function.ts, *.role.ts)
+    utils/                      # اختياري - تنفيذات المُعالِجات والأدوات المساعدة
 ```
 
 ### الاتفاقية فوق التهيئة
@@ -167,28 +169,42 @@ src/app/
 
 ستضيف الأوامر اللاحقة مزيدًا من الملفات والمجلدات:
 
-* `yarn app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
-* `yarn app:create-entity` will add entity definition files under `src/app/` for your custom objects, functions, or roles.
+* `yarn app:generate` سيُنشئ مجلدًا `generated/` (عميل Twenty مضبوط الأنواع + أنواع مساحة العمل).
+* `yarn app:create-entity` سيضيف ملفات تعريف الكيانات تحت `src/app/` لكائناتك المخصصة أو الوظائف أو الأدوار.
   l
 
 ## المصادقة
 
-The first time you run `yarn auth:login`, you'll be prompted for:
+في المرة الأولى التي تشغّل فيها `yarn auth:login`، سيُطلب منك إدخال:
 
 * عنوان URL لواجهة برمجة التطبيقات (الافتراضي http://localhost:3000 أو ملف تعريف مساحة العمل الحالية لديك)
 * مفتاح واجهة برمجة التطبيقات
 
-تُخزَّن بيانات اعتمادك لكل مستخدم في `~/.twenty/config.json`. يمكنك الاحتفاظ بملفات تعريف متعددة والتبديل باستخدام `--workspace <name>`.
+تُخزَّن بيانات اعتمادك لكل مستخدم في `~/.twenty/config.json`. You can maintain multiple profiles and switch between them.
 
-الأمثلة:
+### Managing workspaces
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
 yarn auth:login
 
-# Use a specific workspace profile
+# Login to a specific workspace profile
 yarn auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn auth:list
+
+# Switch the default workspace (interactive)
+yarn auth:switch
+
+# Switch to a specific workspace
+yarn auth:switch production
+
+# Check current authentication status
+yarn auth:status
 ```
+
+Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
 
 ## استخدم موارد SDK (الأنواع والتكوين)
 
@@ -286,7 +302,7 @@ export default defineObject({
 * `universalIdentifier` يجب أن يكون فريدًا وثابتًا عبر عمليات النشر.
 * يتطلب كل حقل `name` و`type` و`label` ومعرّف `universalIdentifier` ثابتًا خاصًا به.
 * المصفوفة `fields` اختيارية — يمكنك تعريف كائنات بدون حقول مخصصة.
-* You can scaffold new objects using `yarn app:create-entity`, which guides you through naming, fields, and relationships.
+* يمكنك إنشاء كائنات جديدة باستخدام `yarn app:create-entity`، والذي يرشدك خلال التسمية والحقول والعلاقات.
 
 <Note>
   **يتم إنشاء الحقول الأساسية تلقائيًا.** عند تعريف كائن مخصص، يضيف Twenty تلقائيًا حقولًا قياسية مثل `name` و`createdAt` و`updatedAt` و`createdBy` و`position` و`deletedAt`. لا تحتاج إلى تعريف هذه في مصفوفة `fields` — أضف فقط حقولك المخصصة.
@@ -514,21 +530,21 @@ export default defineFunction({
 > مثال: `path: '/post-card/create',` -> الاستدعاء على `<APP_URL>/s/post-card/create`
 
 * **cron**: يشغّل وظيفتك على جدول باستخدام تعبير CRON.
-* **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
+* **databaseEvent**: يعمل على أحداث دورة حياة كائنات مساحة العمل. عندما تكون عملية الحدث هي `updated`، يمكن تحديد الحقول المحددة المراد الاستماع إليها في مصفوفة `updatedFields`. إذا تُركت غير معرّفة أو فارغة، فسيؤدي أي تحديث إلى تشغيل الدالة.
 
-> e.g. `person.updated`
+> مثال: `person.updated`
 
 الملاحظات:
 
 * المصفوفة `triggers` اختيارية. يمكن استخدام الوظائف بدون مشغلات كوظائف مساعدة تُستدعى بواسطة وظائف أخرى.
 * يمكنك مزج أنواع متعددة من المشغلات في وظيفة واحدة.
 
-### Route trigger payload
+### حمولة مشغل المسار
 
 <Warning>
-  **Breaking change (v1.16, January 2026):** The route trigger payload format has changed. Prior to v1.16, query parameters, path parameters, and body were sent directly as the payload. Starting with v1.16, they are nested inside a structured `RoutePayload` object.
+  **تغيير غير متوافق (v1.16، يناير 2026):** لقد تغير تنسيق حمولة مشغل المسار. قبل v1.16، كانت معلمات الاستعلام، ومعلمات المسار، وجسم الطلب تُرسل مباشرةً كحمولة. بدءًا من v1.16، أصبحت متداخلة داخل كائن منظَّم `RoutePayload`.
 
-  **Before v1.16:**
+  **قبل v1.16:**
 
   ```typescript
   const handler = async (params) => {
@@ -536,7 +552,7 @@ export default defineFunction({
   };
   ```
 
-  **After v1.16:**
+  **بعد v1.16:**
 
   ```typescript
   const handler = async (event: RoutePayload) => {
@@ -546,10 +562,10 @@ export default defineFunction({
   };
   ```
 
-  **To migrate existing functions:** Update your handler to destructure from `event.body`, `event.queryStringParameters`, or `event.pathParameters` instead of directly from the params object.
+  **لترحيل الدوال الحالية:** حدّث المعالج لديك لفكّ البنية من `event.body` أو `event.queryStringParameters` أو `event.pathParameters` بدلاً من القراءة مباشرةً من كائن params.
 </Warning>
 
-When a route trigger invokes your function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Import the type from `twenty-sdk`:
+عندما يستدعي مشغّل المسار دالتك، فإنه يتلقى كائنًا من النوع `RoutePayload` يتبع تنسيق AWS HTTP API v2. استورد النوع من `twenty-sdk`:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -565,21 +581,21 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-The `RoutePayload` type has the following structure:
+يحتوي نوع `RoutePayload` على البنية التالية:
 
-| Property                     | النوع                                 | الوصف                                                                                   |
+| الخاصية                      | النوع                                 | الوصف                                                                                   |
 | ---------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------- |
-| `headers`                    | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`)                           |
-| `queryStringParameters`      | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)                            |
-| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern (e.g., `/users/:id` → `{ id: '123' }`) |
-| `المحتوى`                    | `object \| null`                      | Parsed request body (JSON)                                                              |
-| `isBase64Encoded`            | `قيمة منطقية`                         | Whether the body is base64 encoded                                                      |
-| `requestContext.http.method` | `string`                              | HTTP method (GET, POST, PUT, PATCH, DELETE)                                             |
-| `requestContext.http.path`   | `string`                              | Raw request path                                                                        |
+| `headers`                    | `Record<string, string \| undefined>` | رؤوس HTTP (فقط تلك المدرجة في `forwardedRequestHeaders`)                                |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | معلمات سلسلة الاستعلام (تُضمّ القيم المتعددة باستخدام فواصل)                            |
+| `pathParameters`             | `Record<string, string \| undefined>` | معلمات المسار المستخرجة من نمط المسار (على سبيل المثال، `/users/:id` → `{ id: '123' }`) |
+| `المحتوى`                    | `object \| null`                      | جسم الطلب المُحلَّل (JSON)                                                              |
+| `isBase64Encoded`            | `قيمة منطقية`                         | ما إذا كان جسم الطلب مُرمَّزًا بترميز base64                                            |
+| `requestContext.http.method` | `string`                              | طريقة HTTP (GET, POST, PUT, PATCH, DELETE)                                              |
+| `requestContext.http.path`   | `string`                              | المسار الخام للطلب                                                                      |
 
-### Forwarding HTTP headers
+### تمرير رؤوس HTTP
 
-By default, HTTP headers from incoming requests are **not** passed to your serverless function for security reasons. To access specific headers, explicitly list them in the `forwardedRequestHeaders` array:
+افتراضيًا، لا يتم تمرير رؤوس HTTP من الطلبات الواردة إلى دالتك بدون خادم لأسباب أمنية. للوصول إلى رؤوس محددة، قم بإدراجها صراحةً في مصفوفة `forwardedRequestHeaders`:
 
 ```typescript
 export default defineFunction({
@@ -599,7 +615,7 @@ export default defineFunction({
 });
 ```
 
-In your handler, you can then access these headers:
+في المعالج الخاص بك، يمكنك حينها الوصول إلى هذه الرؤوس:
 
 ```typescript
 const handler = async (event: RoutePayload) => {
@@ -612,17 +628,17 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-  Header names are normalized to lowercase. Access them using lowercase keys (for example, `event.headers['content-type']`).
+  تُحوَّل أسماء الرؤوس إلى أحرف صغيرة. يمكنك الوصول إليها باستخدام مفاتيح بأحرف صغيرة (على سبيل المثال، `event.headers['content-type']`).
 </Note>
 
 يمكنك إنشاء وظائف جديدة بطريقتين:
 
-* **Scaffolded**: Run `yarn app:create-entity` and choose the option to add a new function. يُولّد هذا ملفًا مبدئيًا مع معالج وتكوين.
+* **مُنشأ بالقالب**: شغّل `yarn app:create-entity` واختر خيار إضافة وظيفة جديدة. يُولّد هذا ملفًا مبدئيًا مع معالج وتكوين.
 * **يدوي**: أنشئ ملفًا جديدًا `*.function.ts` واستخدم `defineFunction()` مع اتباع النمط نفسه.
 
 ### عميل مُولَّد مضبوط الأنواع
 
-Run yarn app:generate to create a local typed client in generated/ based on your workspace schema. استخدمه في وظائفك:
+شغّل yarn app:generate لإنشاء عميل محلي مضبوط الأنواع في generated/ استنادًا إلى مخطط مساحة العمل لديك. استخدمه في وظائفك:
 
 ```typescript
 import Twenty from './generated';
@@ -631,7 +647,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated by `yarn app:generate`. Re-run after changing your objects and `yarn app:sync` or when onboarding to a new workspace.
+يُعاد توليد العميل بواسطة `yarn app:generate`. أعِد تشغيله بعد تغيير كائناتك وتشغيل `yarn app:sync` أو عند الانضمام إلى مساحة عمل جديدة.
 
 #### بيانات الاعتماد في وقت التشغيل في الوظائف بلا خادم
 
@@ -675,13 +691,13 @@ yarn add -D twenty-sdk
 }
 ```
 
-Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:sync`, etc.
+يمكنك الآن تشغيل الأوامر نفسها عبر Yarn، مثل `yarn app:dev` و`yarn app:sync`، إلخ.
 
 ## استكشاف الأخطاء وإصلاحها
 
-* Authentication errors: run `yarn auth:login` and ensure your API key has the required permissions.
+* أخطاء المصادقة: شغّل `yarn auth:login` وتأكد من أن مفتاح واجهة برمجة التطبيقات لديك يمتلك الأذونات المطلوبة.
 * يتعذّر الاتصال بالخادم: تحقق من عنوان URL لواجهة البرمجة وأن خادم Twenty قابل للوصول.
-* Types or client missing/outdated: run `yarn app:generate` and then `yarn app:dev`.
-* Dev mode not syncing: ensure `yarn app:dev` is running and that changes are not ignored by your environment.
+* الأنواع أو العميل مفقود/قديم: شغّل `yarn app:generate` ثم `yarn app:dev`.
+* وضع التطوير لا يزامن: تأكد من أن `yarn app:dev` قيد التشغيل وأن التغييرات ليست متجاهلة من بيئتك.
 
 قناة المساعدة على Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

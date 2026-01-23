@@ -1,39 +1,41 @@
-import { toPosixRelative } from '@/cli/utilities/file/utils/file-path';
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type RoleManifest } from 'twenty-shared/application';
-import { extractManifestFromFile } from '../manifest-file-extractor';
+import { createLogger } from '../../common/logger';
+import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
+  type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from './entity.interface';
 
-export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest[]> {
-  async build(appPath: string): Promise<RoleManifest[]> {
-    const roleFiles = await glob(['src/app/**/*.role.ts'], {
+const logger = createLogger('manifest-watch');
+
+export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
+  async build(appPath: string): Promise<EntityBuildResult<RoleManifest>> {
+    const roleFiles = await glob(['**/*.role.ts'], {
       cwd: appPath,
-      absolute: true,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
     });
 
-    const roleManifests: RoleManifest[] = [];
+    const manifests: RoleManifest[] = [];
 
-    for (const filepath of roleFiles) {
+    for (const filePath of roleFiles) {
       try {
-        roleManifests.push(
-          await extractManifestFromFile<RoleManifest>(filepath, appPath),
+        const absolutePath = `${appPath}/${filePath}`;
+
+        manifests.push(
+          await manifestExtractFromFileServer.extractManifestFromFile<RoleManifest>(absolutePath),
         );
       } catch (error) {
-        const relPath = toPosixRelative(filepath, appPath);
         throw new Error(
-          `Failed to load role from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
+          `Failed to load role from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
 
-    return roleManifests;
+    return { manifests, filePaths: roleFiles };
   }
 
   validate(roles: RoleManifest[], errors: ValidationError[]): void {
@@ -57,7 +59,7 @@ export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest[]> 
   }
 
   display(roles: RoleManifest[]): void {
-    console.log(chalk.green(`  ✓ Found ${roles?.length ?? 'no'} role(s)`));
+    logger.success(`✓ Found ${roles?.length ?? 'no'} role(s)`);
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {

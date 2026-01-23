@@ -86,6 +86,20 @@
         }
       }
     },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-sdk",
+        "command": "npx vitest run --config vitest.unit.config.ts"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-sdk",
+        "command": "npx vitest run --config vitest.integration.config.ts"
+      }
+    },
     "test:e2e": {
       "executor": "nx:run-commands",
       "options": {

@@ -1,29 +1,54 @@
-import chalk from 'chalk';
+import { glob } from 'fast-glob';
 import path from 'path';
 import { type Application } from 'twenty-shared/application';
-import { extractManifestFromFile } from '../manifest-file-extractor';
+import { createLogger } from '../../common/logger';
+import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import { type ValidationError } from '../manifest.types';
 import {
+  type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from './entity.interface';
 
+const logger = createLogger('manifest-watch');
+
+const findApplicationConfigPath = async (appPath: string): Promise<string> => {
+  const files = await glob('**/application.config.ts', {
+    cwd: appPath,
+    ignore: ['**/node_modules/**', '**/.twenty/**', '**/dist/**'],
+  });
+
+  if (files.length === 0) {
+    throw new Error('Missing application.config.ts in your app');
+  }
+
+  if (files.length > 1) {
+    throw new Error(
+      `Multiple application.config.ts files found: ${files.join(', ')}. Only one is allowed.`,
+    );
+  }
+
+  return path.join(appPath, files[0]);
+};
+
 export class ApplicationEntityBuilder
   implements ManifestEntityBuilder<Application>
 {
-  async build(appPath: string): Promise<Application> {
-    const applicationConfigPath = path.join(
-      appPath,
-      'src',
-      'app',
-      'application.config.ts',
-    );
+  async build(appPath: string): Promise<EntityBuildResult<Application>> {
+    const applicationConfigPath = await findApplicationConfigPath(appPath);
+    const application =
+      await manifestExtractFromFileServer.extractManifestFromFile<Application>(
+        applicationConfigPath,
+      );
+    const relativePath = path.relative(appPath, applicationConfigPath);
 
-    return extractManifestFromFile<Application>(applicationConfigPath, appPath);
+    return { manifests: [application], filePaths: [relativePath] };
   }
 
-  validate(application: Application, errors: ValidationError[]): void {
+  validate(applications: Application[], errors: ValidationError[]): void {
+    const application = applications[0];
+
     if (!application) {
       errors.push({
         path: 'application',
@@ -40,9 +65,10 @@ export class ApplicationEntityBuilder
     }
   }
 
-  display(application: Application): void {
-    const appName = application.displayName ?? 'Application';
-    console.log(chalk.green(`  ✓ Loaded "${appName}"`));
+  display(applications: Application[]): void {
+    const application = applications[0];
+    const appName = application?.displayName ?? 'Application';
+    logger.success(`✓ Loaded "${appName}"`);
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {

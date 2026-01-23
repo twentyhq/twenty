@@ -70,7 +70,7 @@ export class WorkspaceMigrationRoleTargetActionsBuilderService extends Workspace
       action: {
         type: 'delete',
         metadataName: 'roleTarget',
-        entityId: flatRoleTargetToValidate.id,
+        universalIdentifier: flatRoleTargetToValidate.universalIdentifier,
       },
     };
   }
