@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import { IsIn, IsNotEmpty, ValidateNested } from 'class-validator';
@@ -7,7 +7,6 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { RichTextV2BodyValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/rich-text-v2-body.validation-schema';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
-@ObjectType('StandaloneRichTextConfiguration')
 export class StandaloneRichTextConfigurationValidationSchema
   implements PageLayoutWidgetConfigurationBase
 {

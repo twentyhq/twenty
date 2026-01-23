@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int } from '@nestjs/graphql';
 
 import {
   IsArray,
@@ -29,7 +29,6 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { ChartFilter } from 'src/engine/metadata-modules/page-layout-widget/types/chart-filter.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
-@ObjectType('BarChartConfiguration')
 export class BarChartConfigurationValidationSchema
   implements PageLayoutWidgetConfigurationBase
 {

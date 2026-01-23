@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
@@ -25,7 +25,6 @@ import { RatioAggregateConfigValidationSchema } from 'src/engine/metadata-module
 import { ChartFilter } from 'src/engine/metadata-modules/page-layout-widget/types/chart-filter.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
-@ObjectType('AggregateChartConfiguration')
 export class AggregateChartConfigurationValidationSchema
   implements PageLayoutWidgetConfigurationBase
 {
