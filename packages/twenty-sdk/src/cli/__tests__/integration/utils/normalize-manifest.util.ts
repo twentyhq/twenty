@@ -26,4 +26,5 @@ export const normalizeManifestForComparison = <T extends JsonManifestInput>(
       ? '[checksum]'
       : null,
   })),
+  sources: {}, // removing sources for now, waiting compressed file implementation
 });
