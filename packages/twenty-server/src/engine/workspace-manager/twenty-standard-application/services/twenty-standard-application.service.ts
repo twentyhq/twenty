@@ -99,8 +99,7 @@ export class TwentyStandardApplicationService {
     const flatNavigationMenuItemsToCreate = flatViews.map((flatView, index) => {
       return fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate({
         createNavigationMenuItemInput: {
-          targetRecordId: flatView.id,
-          targetObjectMetadataId: flatView.objectMetadataId,
+          viewId: flatView.id,
           userWorkspaceId: undefined,
           position: maxPosition + index + 1,
         },
