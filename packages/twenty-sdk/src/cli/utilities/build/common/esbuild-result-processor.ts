@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import type * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { type OnFileBuiltCallback } from './restartable-watcher.interface';
+import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 
 export type ProcessEsbuildResultParams = {
   result: esbuild.BuildResult;
@@ -25,8 +25,9 @@ export const processEsbuildResult = async ({
   onFileBuilt,
   onSuccess,
 }: ProcessEsbuildResultParams): Promise<ProcessEsbuildResultOutput> => {
-  const outputFiles = Object.keys(result.metafile?.outputs ?? {})
-    .filter((file) => file.endsWith('.mjs'));
+  const outputFiles = Object.keys(result.metafile?.outputs ?? {}).filter(
+    (file) => file.endsWith('.mjs'),
+  );
 
   let hasChanges = false;
 
@@ -50,7 +51,7 @@ export const processEsbuildResult = async ({
     onSuccess(relativePath);
 
     if (onFileBuilt) {
-      onFileBuilt(builtPath, checksum);
+      await onFileBuilt(builtPath, checksum);
     }
   }
 

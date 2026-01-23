@@ -8,10 +8,7 @@ export const defineFunctionsTests = (appPath: string): void => {
       const files = await fs.readdir(functionsDir, { recursive: true });
       const sortedFiles = files.map((f) => f.toString()).sort();
 
-      expect(sortedFiles).toEqual([
-        'my.function.mjs',
-        'my.function.mjs.map',
-      ]);
+      expect(sortedFiles).toEqual(['my.function.mjs', 'my.function.mjs.map']);
     });
   });
 };

@@ -1,7 +1,7 @@
 import {
-    type Diagnostic,
-    formatDiagnosticsWithColorAndContext,
-    sys,
+  type Diagnostic,
+  formatDiagnosticsWithColorAndContext,
+  sys,
 } from 'typescript';
 
 export const formatAndWarnTsDiagnostics = ({

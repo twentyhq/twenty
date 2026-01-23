@@ -1,7 +1,10 @@
 import chokidar, { type FSWatcher } from 'chokidar';
 import path from 'path';
-import { createLogger } from '../common/logger';
-import { runManifestBuild, type ManifestBuildResult } from './manifest-build';
+import { createLogger } from '@/cli/utilities/build/common/logger';
+import {
+  type ManifestBuildResult,
+  runManifestBuild,
+} from '@/cli/utilities/build/manifest/manifest-build';
 
 const logger = createLogger('manifest-watch');
 
@@ -30,7 +33,8 @@ export class ManifestWatcher {
         '**/node_modules/**',
         '**/.twenty/**',
         '**/dist/**',
-        (filePath: string) => filePath.includes('/.twenty/') || filePath.includes('\\.twenty\\'),
+        (filePath: string) =>
+          filePath.includes('/.twenty/') || filePath.includes('\\.twenty\\'),
       ],
       ignoreInitial: true,
       awaitWriteFinish: {

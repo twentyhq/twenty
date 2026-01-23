@@ -8,7 +8,9 @@ export const defineConsoleOutputTests = (
     it('should contain init messages', () => {
       const output = getOutputByPrefix(getResult().output, 'init');
 
-      expect(output).toContain('[init] 🚀 Starting Twenty Application Development Mode');
+      expect(output).toContain(
+        '[init] 🚀 Starting Twenty Application Development Mode',
+      );
       expect(output).toContain('[init] 📁 App Path:');
     });
 
@@ -33,7 +35,10 @@ export const defineConsoleOutputTests = (
     });
 
     it('should contain front-components-watch messages', () => {
-      const output = getOutputByPrefix(getResult().output, 'front-components-watch');
+      const output = getOutputByPrefix(
+        getResult().output,
+        'front-components-watch',
+      );
 
       expect(output).toContain('[front-components-watch] 🎨 Building...');
       expect(output).toContain('[front-components-watch] ✓ Built');
