@@ -1,13 +1,7 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
-  JsonbProperty,
   type AllFieldMetadataSettings,
-  type FieldMetadataDateSettings,
-  type FieldMetadataDateTimeSettings,
-  type FieldMetadataMultiItemSettings,
-  type FieldMetadataNumberSettings,
-  type FieldMetadataRelationSettings,
-  type FieldMetadataTextSettings,
+  type FieldMetadataSettingsMapping,
   type FieldMetadataType,
   type NullablePartial,
 } from 'twenty-shared/types';
@@ -139,62 +133,62 @@ type SettingsAssertions = [
   Expect<
     HasAllProperties<
       TextFieldMetadata,
-      { settings: FieldMetadataTextSettings | null }
+      { settings: FieldMetadataSettingsMapping[FieldMetadataType.TEXT] }
     >
   >,
   Expect<
     HasAllProperties<
       NumberFieldMetadata,
-      { settings: FieldMetadataNumberSettings | null }
+      { settings: FieldMetadataSettingsMapping[FieldMetadataType.NUMBER] }
     >
   >,
   Expect<
     HasAllProperties<
       DateFieldMetadata,
-      { settings: FieldMetadataDateSettings | null }
+      { settings: FieldMetadataSettingsMapping[FieldMetadataType.DATE] }
     >
   >,
   Expect<
     HasAllProperties<
       DateTimeFieldMetadata,
-      { settings: FieldMetadataDateTimeSettings | null }
+      { settings: FieldMetadataSettingsMapping[FieldMetadataType.DATE_TIME] }
     >
   >,
   Expect<
     HasAllProperties<
       ArrayFieldMetadata,
-      { settings: FieldMetadataMultiItemSettings | null }
+      { settings: FieldMetadataSettingsMapping[FieldMetadataType.ARRAY] }
     >
   >,
   Expect<
     HasAllProperties<
       PhonesFieldMetadata,
-      { settings: JsonbProperty<FieldMetadataMultiItemSettings> | null }
+      { settings: FieldMetadataSettingsMapping[FieldMetadataType.PHONES] }
     >
   >,
   Expect<
     HasAllProperties<
       EmailsFieldMetadata,
-      { settings: FieldMetadataMultiItemSettings | null }
+      { settings: FieldMetadataSettingsMapping[FieldMetadataType.EMAILS] }
     >
   >,
   Expect<
     HasAllProperties<
       LinksFieldMetadata,
-      { settings: FieldMetadataMultiItemSettings | null }
+      { settings: FieldMetadataSettingsMapping[FieldMetadataType.LINKS] }
     >
   >,
 
   Expect<
     HasAllProperties<
       RelationFieldMetadata,
-      { settings: FieldMetadataRelationSettings }
+      { settings: FieldMetadataSettingsMapping[FieldMetadataType.RELATION] }
     >
   >,
   Expect<
     HasAllProperties<
       MorphRelationFieldMetadata,
-      { settings: FieldMetadataRelationSettings }
+      { settings: FieldMetadataSettingsMapping[FieldMetadataType.MORPH_RELATION] }
     >
   >,
 
@@ -350,7 +344,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       LinksFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.LINKS];
+        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.LINKS>;
       }
     >
   >,

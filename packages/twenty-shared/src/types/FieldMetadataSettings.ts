@@ -21,25 +21,25 @@ export enum DateDisplayFormat {
 
 export type FieldNumberVariant = 'number' | 'percentage';
 
-export type FieldMetadataNumberSettings = {
+type FieldMetadataNumberSettings = {
   dataType?: NumberDataType;
   decimals?: number;
   type?: FieldNumberVariant;
 };
 
-export type FieldMetadataTextSettings = {
+type FieldMetadataTextSettings = {
   displayedMaxRows?: number;
 };
 
-export type FieldMetadataDateSettings = {
+type FieldMetadataDateSettings = {
   displayFormat?: DateDisplayFormat;
 };
 
-export type FieldMetadataDateTimeSettings = {
+type FieldMetadataDateTimeSettings = {
   displayFormat?: DateDisplayFormat;
 };
 
-export type FieldMetadataRelationSettings = {
+type FieldMetadataRelationSettings = {
   relationType: RelationType;
   onDelete?: RelationOnDeleteAction;
   joinColumnName?: string | null;
@@ -47,20 +47,21 @@ export type FieldMetadataRelationSettings = {
   // For MORPH_RELATION fields, morphRelations already contains all targets
   junctionTargetFieldId?: SerializedRelation;
 };
-export type FieldMetadataAddressSettings = {
+
+type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];
 };
 
-export type FieldMetadataFilesSettings = {
+type FieldMetadataFilesSettings = {
   maxNumberOfValues: number;
 };
 
-export type FieldMetadataTsVectorSettings = {
+type FieldMetadataTsVectorSettings = {
   asExpression?: string;
   generatedType?: 'STORED' | 'VIRTUAL';
 };
 
-type FieldMetadataSettingsMapping = {
+export type FieldMetadataSettingsMapping = {
   [FieldMetadataType.NUMBER]: JsonbProperty<FieldMetadataNumberSettings> | null;
   [FieldMetadataType.DATE]: JsonbProperty<FieldMetadataDateSettings> | null;
   [FieldMetadataType.DATE_TIME]: JsonbProperty<FieldMetadataDateTimeSettings> | null;
