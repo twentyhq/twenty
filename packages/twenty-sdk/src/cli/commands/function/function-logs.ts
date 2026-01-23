@@ -16,7 +16,10 @@ export class FunctionLogsCommand {
     functionName?: string;
   }): Promise<void> {
     try {
-      const { manifest } = await runManifestBuild(appPath, { display: false, writeOutput: false });
+      const { manifest } = await runManifestBuild(appPath, {
+        display: false,
+        writeOutput: false,
+      });
 
       if (!manifest) {
         process.exit(1);

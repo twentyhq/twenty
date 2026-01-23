@@ -7,10 +7,7 @@ export class AuthLoginCommand {
   private configService = new ConfigService();
   private apiService = new ApiService();
 
-  async execute(options: {
-    apiKey?: string;
-    apiUrl?: string;
-  }): Promise<void> {
+  async execute(options: { apiKey?: string; apiUrl?: string }): Promise<void> {
     try {
       let { apiKey, apiUrl } = options;
 

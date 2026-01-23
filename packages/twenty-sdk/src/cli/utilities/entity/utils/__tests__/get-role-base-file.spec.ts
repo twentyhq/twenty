@@ -11,11 +11,9 @@ describe('getRoleBaseFile', () => {
     expect(result).toContain('export default defineRole({');
 
     expect(result).toContain(
-      "universalIdentifier: MY_ROLE_ROLE_UNIVERSAL_IDENTIFIER",
+      'universalIdentifier: MY_ROLE_ROLE_UNIVERSAL_IDENTIFIER',
     );
-    expect(result).toContain(
-      "'71e45a58-41da-4ae4-8b73-a543c0a9d3d4'",
-    );
+    expect(result).toContain("'71e45a58-41da-4ae4-8b73-a543c0a9d3d4'");
     expect(result).toContain("label: 'my-role'");
     expect(result).toContain("description: 'Add a description for your role'");
 
@@ -48,7 +46,9 @@ describe('getRoleBaseFile', () => {
       name: 'admin-access',
     });
 
-    expect(result).toContain('export const ADMIN_ACCESS_ROLE_UNIVERSAL_IDENTIFIER');
+    expect(result).toContain(
+      'export const ADMIN_ACCESS_ROLE_UNIVERSAL_IDENTIFIER',
+    );
     expect(result).toContain(
       'universalIdentifier: ADMIN_ACCESS_ROLE_UNIVERSAL_IDENTIFIER',
     );

@@ -24,14 +24,22 @@ export class ManifestExtractFromFileServer {
     options: ExtractManifestOptions = {},
   ): Promise<TManifest> {
     if (!this.appPath) {
-      throw new Error('ManifestExtractFromFileServer not initialized. Call init(appPath) first.');
+      throw new Error(
+        'ManifestExtractFromFileServer not initialized. Call init(appPath) first.',
+      );
     }
 
     const { entryProperty } = options;
     const server = await this.getServer();
-    const module = (await server.ssrLoadModule(filepath)) as Record<string, unknown>;
+    const module = (await server.ssrLoadModule(filepath)) as Record<
+      string,
+      unknown
+    >;
 
-    const config = this.extractConfigFromModule<Record<string, unknown>>(module, entryProperty);
+    const config = this.extractConfigFromModule<Record<string, unknown>>(
+      module,
+      entryProperty,
+    );
 
     if (!config) {
       const expectedExport = entryProperty
@@ -48,11 +56,14 @@ export class ManifestExtractFromFileServer {
     const entryName = entryFunction.name;
 
     if (!entryName) {
-      throw new Error(`${entryProperty} function in ${filepath} must be a named function`);
+      throw new Error(
+        `${entryProperty} function in ${filepath} must be a named function`,
+      );
     }
 
     const importSource = await this.resolveEntryPath(filepath, entryName);
-    const entryPath = importSource ?? path.relative(this.appPath, filepath).replace(/\\/g, '/');
+    const entryPath =
+      importSource ?? path.relative(this.appPath, filepath).replace(/\\/g, '/');
 
     const { [entryProperty]: _, ...configWithoutEntry } = config;
 
@@ -72,7 +83,9 @@ export class ManifestExtractFromFileServer {
 
   private async getServer(): Promise<ViteDevServer> {
     if (!this.appPath) {
-      throw new Error('ManifestExtractFromFileServer not initialized. Call init(appPath) first.');
+      throw new Error(
+        'ManifestExtractFromFileServer not initialized. Call init(appPath) first.',
+      );
     }
 
     if (this.server) {
@@ -100,7 +113,10 @@ export class ManifestExtractFromFileServer {
       isPlainObject(value) &&
       typeof (value as Record<string, unknown>)[entryProperty!] === 'function';
 
-    if (isDefined(module.default) && (!entryProperty || hasValidEntry(module.default))) {
+    if (
+      isDefined(module.default) &&
+      (!entryProperty || hasValidEntry(module.default))
+    ) {
       return module.default as T;
     }
 
@@ -124,7 +140,9 @@ export class ManifestExtractFromFileServer {
     const source = await fs.readFile(filepath, 'utf8');
 
     const patterns = [
-      new RegExp(`import\\s*\\{[^}]*\\b${entryName}\\b[^}]*\\}\\s*from\\s*['"]([^'"]+)['"]`),
+      new RegExp(
+        `import\\s*\\{[^}]*\\b${entryName}\\b[^}]*\\}\\s*from\\s*['"]([^'"]+)['"]`,
+      ),
       new RegExp(`import\\s+${entryName}\\s+from\\s*['"]([^'"]+)['"]`),
     ];
 
@@ -142,19 +160,28 @@ export class ManifestExtractFromFileServer {
     }
 
     const server = await this.getServer();
-    const resolved = await server.pluginContainer.resolveId(importSpecifier, filepath);
+    const resolved = await server.pluginContainer.resolveId(
+      importSpecifier,
+      filepath,
+    );
     if (resolved?.id) {
       return path.relative(this.appPath, resolved.id).replace(/\\/g, '/');
     }
 
     if (importSpecifier.startsWith('.')) {
-      const absolutePath = path.resolve(path.dirname(filepath), importSpecifier);
+      const absolutePath = path.resolve(
+        path.dirname(filepath),
+        importSpecifier,
+      );
       const relativePath = path.relative(this.appPath, absolutePath);
-      return (relativePath.endsWith('.ts') ? relativePath : `${relativePath}.ts`).replace(/\\/g, '/');
+      return (
+        relativePath.endsWith('.ts') ? relativePath : `${relativePath}.ts`
+      ).replace(/\\/g, '/');
     }
 
     return null;
   }
 }
 
-export const manifestExtractFromFileServer = new ManifestExtractFromFileServer();
+export const manifestExtractFromFileServer =
+  new ManifestExtractFromFileServer();

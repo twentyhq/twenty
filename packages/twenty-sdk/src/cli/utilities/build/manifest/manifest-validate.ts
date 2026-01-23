@@ -39,7 +39,10 @@ export const validateManifest = (
     errors,
   );
   objectEntityBuilder.validate(manifest.objects ?? [], errors);
-  objectExtensionEntityBuilder.validate(manifest.objectExtensions ?? [], errors);
+  objectExtensionEntityBuilder.validate(
+    manifest.objectExtensions ?? [],
+    errors,
+  );
   functionEntityBuilder.validate(manifest.functions ?? [], errors);
   roleEntityBuilder.validate(manifest.roles ?? [], errors);
   frontComponentEntityBuilder.validate(manifest.frontComponents ?? [], errors);

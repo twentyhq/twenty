@@ -1,6 +1,13 @@
-export type LogPrefix = 'init' | 'manifest-watch' | 'functions-watch' | 'front-components-watch';
+export type LogPrefix =
+  | 'init'
+  | 'manifest-watch'
+  | 'functions-watch'
+  | 'front-components-watch';
 
-export const getOutputByPrefix = (output: string, prefix: LogPrefix): string => {
+export const getOutputByPrefix = (
+  output: string,
+  prefix: LogPrefix,
+): string => {
   const prefixPattern = `[${prefix}]`;
   const lines = output.split('\n');
 

@@ -25,7 +25,10 @@ export class AppUninstallCommand {
         process.exit(1);
       }
 
-      const { manifest } = await runManifestBuild(appPath, { display: false, writeOutput: false });
+      const { manifest } = await runManifestBuild(appPath, {
+        display: false,
+        writeOutput: false,
+      });
 
       if (!manifest) {
         return { success: false, error: 'Build failed' };
