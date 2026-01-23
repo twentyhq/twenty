@@ -1,4 +1,4 @@
-export declare const __SerializedRelationBrand__: unique symbol;
+export type __SerializedRelationBrand__ = '__SerializedRelationBrand__';
 export type SerializedRelation = string & {
-  [__SerializedRelationBrand__]?: true;
+  __SerializedRelationBrand__?: __SerializedRelationBrand__;
 };

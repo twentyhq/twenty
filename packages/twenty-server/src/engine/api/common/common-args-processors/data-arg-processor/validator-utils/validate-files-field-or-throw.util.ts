@@ -2,13 +2,13 @@ import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
-import { type FieldMetadataFilesSettings } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { FieldMetadataSettingsMapping } from 'twenty-shared/types';
 
 export const fileItemSchema = z
   .object({
@@ -24,7 +24,7 @@ export type FileItem = z.infer<typeof fileItemSchema>;
 export const validateFilesFieldOrThrow = (
   value: unknown,
   fieldName: string,
-  settings: FieldMetadataFilesSettings,
+  settings: FieldMetadataSettingsMapping['FILES'],
 ): FileItem[] | null => {
   if (isNull(value)) return null;
 
