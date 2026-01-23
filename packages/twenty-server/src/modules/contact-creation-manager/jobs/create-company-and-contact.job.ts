@@ -32,6 +32,7 @@ export class CreateCompanyAndContactJob {
       contactsToCreate.map((contact) => ({
         handle: contact.handle,
         displayName: contact.displayName,
+        whatsAppId: contact.whatsAppId,
       })),
       workspaceId,
       source,

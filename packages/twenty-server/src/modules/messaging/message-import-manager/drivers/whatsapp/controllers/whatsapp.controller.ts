@@ -2,12 +2,12 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   HttpStatus,
   Injectable,
   Logger,
   Post,
   Query,
-  Req,
   Res,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -76,7 +76,7 @@ export class WhatsappController {
   @RequireFeatureFlag(FeatureFlagKey.IS_WHATSAPP_INTEGRATION_ENABLED)
   @Post('/webhook') // unless integration is done by BSP, all webhooks are sent to the same destination
   public async getMessages(
-    @Req() req: Request,
+    @Headers('x-hub-signature-256') signature: string,
     @Body() body: WhatsAppWebhookMessage,
     @Res() res: Response,
   ) {
@@ -86,11 +86,7 @@ export class WhatsappController {
 
     if (
       appSecret === null ||
-      !validateWebhookPayload(
-        req.headers.get('X-Hub-Signature-256'),
-        body.toString(),
-        appSecret,
-      )
+      !validateWebhookPayload(signature, JSON.stringify(body), appSecret)
     ) {
       res.status(HttpStatus.BAD_REQUEST).send();
       throw new Error('Invalid WhatsApp webhook message');
@@ -109,7 +105,7 @@ export class WhatsappController {
   @RequireFeatureFlag(FeatureFlagKey.IS_WHATSAPP_INTEGRATION_ENABLED)
   @Post('/history') // unused, in case integration is done by BSP
   public async getHistory(
-    @Req() req: Request,
+    @Headers('x-hub-signature-256') signature: string,
     @Body() body: WhatsappWebhookHistory,
     @Res() res: Response,
   ) {
@@ -119,11 +115,7 @@ export class WhatsappController {
 
     if (
       appSecret === null ||
-      !validateWebhookPayload(
-        req.headers.get('X-Hub-Signature-256'),
-        body.toString(),
-        appSecret,
-      )
+      !validateWebhookPayload(signature, JSON.stringify(body), appSecret)
     ) {
       res.status(HttpStatus.BAD_REQUEST).send();
       throw new Error('Invalid WhatsApp webhook message');
@@ -137,7 +129,4 @@ export class WhatsappController {
       },
     );
   }
-
-  // TODO: how People records are created? Check MessagingSaveMessagesAndEnqueueContactCreationService
-  // Logic would be to find an existing person with matching standard phone number or whatsapp number, if such doesn't exist, create new one
 }

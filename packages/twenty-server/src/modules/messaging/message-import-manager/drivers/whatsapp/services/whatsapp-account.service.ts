@@ -69,7 +69,7 @@ export class WhatsappAccountService {
         businessAccountId,
         bearerToken,
       );
-    const phoneNumberAliases: string = phoneNumbers.join(',').replace('+', '');
+    const phoneNumberAliases = phoneNumbers.join(',').replaceAll('+', '');
     let phoneNumberToMessageChannel: string[] = [];
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
@@ -117,14 +117,16 @@ export class WhatsappAccountService {
           const formattedPhoneNumber =
             formatWhatsappPhoneNumberUtil(phoneNumber);
 
-          (await messageChannelRepository.findOne({
+          const existingChannel = await messageChannelRepository.findOne({
             where: {
               connectedAccountId: existingAccount?.id,
               handle: formattedPhoneNumber,
             },
-          })) === null
-            ? phoneNumberToMessageChannel.push(formattedPhoneNumber)
-            : null;
+          });
+
+          if (existingChannel === null) {
+            phoneNumberToMessageChannel.push(formattedPhoneNumber);
+          }
         }
 
         await workspaceDataSource.transaction(
@@ -143,7 +145,7 @@ export class WhatsappAccountService {
               manager,
             );
 
-            if (existingIntegrationEntry !== null) {
+            if (existingIntegrationEntry === null) {
               await this.integrationsRepository.insert({
                 whatsappBusinessAccountId: input.businessAccountId,
                 workspaceId: input.workspaceId,

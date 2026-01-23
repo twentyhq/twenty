@@ -13,7 +13,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 @Entity({ name: 'integration', schema: 'core' })
 @Index(['whatsappWebhookToken'], { unique: true })
 @Index(['whatsappBusinessAccountId', 'workspaceId'], { unique: true })
-export class IntegrationsEntity implements Required<IntegrationsEntity> {
+export class IntegrationsEntity {
   @Column({ nullable: true })
   whatsappBusinessAccountId: string;
 

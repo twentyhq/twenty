@@ -1,5 +1,5 @@
-import { Brackets, type SelectQueryBuilder } from 'typeorm';
-import { parsePhoneNumber } from 'libphonenumber-js/max';
+import { type SelectQueryBuilder } from 'typeorm';
+import { parsePhoneNumber, type PhoneNumber } from 'libphonenumber-js/max';
 
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
@@ -24,20 +24,25 @@ export function addPersonWhatsappNumberFilterToQueryBuilder({
     'person.whatsappPhoneNumber.primaryPhoneCallingCode',
     'person.deletedAt',
   ]);
-  for (const phoneNumber of phoneNumbers) {
-    const parsedPhoneNumber = parsePhoneNumber(phoneNumber);
 
-    queryBuilder = queryBuilder.orWhere(
-      new Brackets((qb) => {
-        qb.where(
-          'person.whatsappPhoneNumber.primaryPhoneNumber = :nationalNumber',
-          { nationalNumber: parsedPhoneNumber.nationalNumber },
-        ).andWhere(
-          'person.whatsappPhoneNumber.primaryPhoneCallingCode = :callingCode',
-          { callingCode: parsedPhoneNumber.countryCallingCode },
-        );
-      }),
-    );
+  const parsedPhoneNumber: PhoneNumber[] = [];
+
+  for (const phoneNumber of phoneNumbers) {
+    parsedPhoneNumber.push(parsePhoneNumber(phoneNumber));
+  }
+  for (const [index, phoneNumber] of parsedPhoneNumber.entries()) {
+    const callingPhoneParam = `callingCode${index}`;
+    const nationalNumberParam = `nationalNumber${index}`;
+    const orWhereIsPrimaryNumberEqual =
+      excludePersonIds.length > 0
+        ? `person.id NOT IN (:...excludePersonIds) AND person.whatsappPhoneNumberPrimaryPhoneNumber = :${nationalNumberParam} AND person.whatsappPhoneNumberPrimaryPhoneCallingCode = :${callingPhoneParam}`
+        : `person.whatsappPhoneNumberPrimaryPhoneNumber = :${nationalNumberParam} AND person.whatsappPhoneNumberPrimaryPhoneCallingCode = :${callingPhoneParam}`;
+
+    queryBuilder = queryBuilder.orWhere(orWhereIsPrimaryNumberEqual, {
+      ...(excludePersonIds.length > 0 && { excludePersonIds }),
+      [nationalNumberParam]: phoneNumber.nationalNumber,
+      [callingPhoneParam]: phoneNumber.countryCallingCode,
+    });
   }
 
   if (excludePersonIds.length > 0) {

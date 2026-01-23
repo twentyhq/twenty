@@ -42,7 +42,6 @@ export class EmailAliasManagerService {
         break;
       case ConnectedAccountProvider.WHATSAPP:
         // WhatsApp gets aliases in different place
-        handleAliases = [];
         break;
       default:
         assertUnreachable(

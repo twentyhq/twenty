@@ -74,26 +74,26 @@ export class WhatsappConvertMessage {
       },
     );
 
-    change.value.messages?.forEach(async (message) => {
-      message.type === 'system'
-        ? await this.whatsappUpdatePersonService.updatePerson(
-            message.system?.body,
-            message.system?.wa_id,
+    for (const message of change.value.messages || []) {
+      if (message.type === 'system') {
+        await this.whatsappUpdatePersonService.updatePerson(
+          message.system?.body,
+          message.system?.wa_id,
+          workspaceId,
+        );
+      } else if (message.type !== 'unsupported') {
+        parsedMessages.push(
+          await this.readMessage(
+            participants,
+            messageSenderContactName,
+            messageSenderId,
+            whatsappBusinessAccountId,
+            message,
             workspaceId,
-          )
-        : message.type === 'unsupported'
-          ? null // skip unsupported messages
-          : parsedMessages.push(
-              await this.readMessage(
-                participants,
-                messageSenderContactName,
-                messageSenderId,
-                whatsappBusinessAccountId,
-                message,
-                workspaceId,
-              ),
-            );
-    });
+          ),
+        );
+      }
+    }
 
     return parsedMessages;
   }
@@ -106,21 +106,22 @@ export class WhatsappConvertMessage {
     message: WhatsappWebhookMessageContent,
     workspaceId: string,
   ): Promise<MessageWithParticipants> {
-    let attachments: WhatsappFile[] = [];
+    let attachments: WhatsappFile[] = []; // TODO: fix once email attachments are done
     let text: string | null = null;
     const externalId: string = message.id;
-    const receivedAt: Date = new Date(parseInt(message.timestamp));
+    const receivedAt: Date = new Date(parseInt(message.timestamp) * 1000);
     const messageSender: MessageParticipant = {
       role: MessageParticipantRole.FROM,
       handle: '+'.concat(message.from), // phone number
       displayName: messageSenderContactName,
       whatsappId: messageSenderId,
     };
+    let formattedMessageParticipants: MessageParticipant[] = participants;
 
     participants.push(messageSender);
 
     if (message.group_id !== undefined) {
-      const formattedMessageParticipants: MessageParticipant[] =
+      const formattedGroupMessageParticipants =
         await this.whatsappGroupFormatService.formatGroupParticipantsToMessageParticipants(
           workspaceId,
           message.group_id,
@@ -128,8 +129,8 @@ export class WhatsappConvertMessage {
           whatsappBusinessAccountId,
         );
 
-      for (const participant of formattedMessageParticipants) {
-        participants.push(participant);
+      for (const participant of formattedGroupMessageParticipants) {
+        formattedMessageParticipants.push(participant);
       }
     }
 
@@ -172,7 +173,7 @@ export class WhatsappConvertMessage {
           `${message.interactive?.list_reply?.title} - ${message.interactive?.list_reply?.description}`;
         break;
       case 'location':
-        text = `Place: ${message.location?.name}\nAddress: ${message.location?.address}Lat: ${message.location?.latitude}Long: ${message.location?.longitude}URL: <a href='${message.location?.url}'>${message.location?.url}</a>`;
+        text = `Place: ${message.location?.name}\nAddress: ${message.location?.address}\nLat: ${message.location?.latitude}\nLong: ${message.location?.longitude}\nURL: <a href='${message.location?.url}'>${message.location?.url}</a>`;
         break;
       case 'order':
         text = message.order?.text ?? null; // TODO: ???
@@ -221,7 +222,7 @@ export class WhatsappConvertMessage {
       externalId: externalId,
       messageThreadExternalId: message.group_id || message.from, // TODO: find a way to create arbitrary external message thread id (or maybe way to update thread id?)
       direction: MessageDirection.INCOMING,
-      participants: participants,
+      participants: formattedMessageParticipants,
     };
   }
 }

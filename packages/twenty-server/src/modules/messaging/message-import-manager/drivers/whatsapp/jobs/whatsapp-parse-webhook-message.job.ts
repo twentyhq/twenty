@@ -29,12 +29,12 @@ export type WhatsappParseWebhookMessageJobData = {
 };
 
 @Processor({
-  queueName: MessageQueue.messagingQueue,
+  queueName: MessageQueue.parseMessageQueue,
   scope: Scope.REQUEST,
 })
 export class WhatsappParseWebhookMessageJob {
   constructor(
-    @InjectMessageQueue(MessageQueue.messagingQueue)
+    @InjectMessageQueue(MessageQueue.parseMessageQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectRepository(IntegrationsEntity)
     private readonly integrationsRepository: Repository<IntegrationsEntity>,

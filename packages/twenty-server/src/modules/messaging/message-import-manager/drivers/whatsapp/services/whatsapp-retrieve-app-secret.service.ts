@@ -26,7 +26,7 @@ export class WhatsappRetrieveAppSecretService {
         'WhatsApp connected account not found in integrations entity',
       );
     }
-    const workspaceId = workspaceIdByWABAId.workspace.id;
+    const workspaceId = workspaceIdByWABAId.workspaceId;
     const context = buildSystemAuthContext(workspaceId);
 
     const whatsappConnectedAccountRecord =

@@ -27,8 +27,12 @@ export class WhatsappUpdatePersonService {
       .replace('to ', '')
       .trim()
       .split(' ');
-    const formattedOldNumber = parsePhoneNumber(preparedString[1]);
-    const formattedNewNumber = parsePhoneNumber(preparedString[2]);
+    const formattedOldNumber = parsePhoneNumber(
+      preparedString[preparedString.length - 2],
+    );
+    const formattedNewNumber = parsePhoneNumber(
+      preparedString[preparedString.length - 1],
+    );
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(

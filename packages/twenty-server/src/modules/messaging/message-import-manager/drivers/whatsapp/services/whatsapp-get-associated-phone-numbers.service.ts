@@ -61,7 +61,7 @@ export class WhatsappGetAssociatedPhoneNumbersService {
           }
         }
       }
-      for (const userId in userIds) {
+      for (const userId of userIds) {
         const userPhoneNumbers = await this.getPhoneNumberFromUserData(
           userId,
           bearerToken,

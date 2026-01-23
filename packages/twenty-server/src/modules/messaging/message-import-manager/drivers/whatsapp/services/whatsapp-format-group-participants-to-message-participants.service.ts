@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { MessageParticipantRole } from 'twenty-shared/types';
+import { In } from 'typeorm';
 
 import { MessageParticipant } from 'src/modules/messaging/message-import-manager/types/message';
 import { extractParticipantName } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/utils/extract-message-participant-name.util';
@@ -33,7 +34,7 @@ export class WhatsappFormatGroupParticipantsToMessageParticipantsService {
         const connectedAccountRepository =
           await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
             workspaceId,
-            'whatsapp',
+            'connectedAccount',
           );
 
         const whatsappRecord = await connectedAccountRepository.findOne({
@@ -67,18 +68,16 @@ export class WhatsappFormatGroupParticipantsToMessageParticipantsService {
             'person',
           );
 
-        for (const participantId of participantsIds) {
-          const participantName = extractParticipantName(
-            await personRepository.findOneBy({
-              whatsAppId: participantId,
-            }),
-          );
+        const participants = await personRepository.findBy({
+          whatsAppId: In(participantsIds),
+        });
 
-          if (participantName) {
+        for (const foundParticipant of participants) {
+          if (foundParticipant) {
             const participant: MessageParticipant = {
               role: MessageParticipantRole.TO,
-              handle: participantId,
-              displayName: participantName,
+              handle: foundParticipant.id,
+              displayName: extractParticipantName(foundParticipant),
             };
 
             messageParticipants.push(participant);
