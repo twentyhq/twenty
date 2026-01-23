@@ -57,17 +57,27 @@ export const STANDARD_OBJECTS = {
       updatedBy: {
         universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.updatedBy,
       },
-      targetTask: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.targetTask },
-      targetNote: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.targetNote },
-      targetPerson: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.targetPerson },
-      targetCompany: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.targetCompany },
+      targetTask: {
+        universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.targetTask,
+      },
+      targetNote: {
+        universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.targetNote,
+      },
+      targetPerson: {
+        universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.targetPerson,
+      },
+      targetCompany: {
+        universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.targetCompany,
+      },
       targetOpportunity: {
         universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.targetOpportunity,
       },
       targetDashboard: {
         universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.targetDashboard,
       },
-      targetWorkflow: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.targetWorkflow },
+      targetWorkflow: {
+        universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.targetWorkflow,
+      },
     },
     indexes: {
       taskIdIndex: {
