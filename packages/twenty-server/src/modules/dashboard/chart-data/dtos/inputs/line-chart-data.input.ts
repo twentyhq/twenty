@@ -5,7 +5,7 @@ import { IsNotEmpty, IsUUID, ValidateNested } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { LineChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.validation-schema';
+import { LineChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/line-chart-configuration.validation-schema';
 
 @InputType()
 export class LineChartDataInput {

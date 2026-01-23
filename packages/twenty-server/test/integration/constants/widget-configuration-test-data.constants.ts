@@ -1,15 +1,15 @@
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { type AggregateChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.validation-schema';
-import { type BarChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.validation-schema';
-import { type GaugeChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.validation-schema';
-import { type IframeConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.validation-schema';
-import { type LineChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.validation-schema';
-import { type PieChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.validation-schema';
-import { type StandaloneRichTextConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.validation-schema';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { type AggregateChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/aggregate-chart-configuration.validation-schema';
+import { type BarChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/bar-chart-configuration.validation-schema';
+import { type GaugeChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/gauge-chart-configuration.validation-schema';
+import { type IframeConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/iframe-configuration.validation-schema';
+import { type LineChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/line-chart-configuration.validation-schema';
+import { type PieChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/pie-chart-configuration.validation-schema';
+import { type StandaloneRichTextConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/standalone-rich-text-configuration.validation-schema';
 
 export const TEST_FIELD_METADATA_ID_1 = '20202020-1111-4111-a111-111111111111';
 export const TEST_FIELD_METADATA_ID_2 = '20202020-2222-4222-a222-222222222222';

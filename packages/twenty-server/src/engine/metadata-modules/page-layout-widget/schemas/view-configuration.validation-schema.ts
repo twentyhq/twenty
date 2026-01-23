@@ -6,7 +6,9 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('ViewConfiguration')
-export class ViewConfigurationValidationSchema implements PageLayoutWidgetConfigurationBase {
+export class ViewConfigurationValidationSchema
+  implements PageLayoutWidgetConfigurationBase
+{
   @Field(() => WidgetConfigurationType)
   @IsIn([WidgetConfigurationType.VIEW])
   @IsNotEmpty()

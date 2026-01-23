@@ -2,8 +2,8 @@ import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
-import { type LineChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.validation-schema';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { type LineChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/line-chart-configuration.validation-schema';
 
 export const validateLineChartConfiguration = (
   configuration: LineChartConfigurationValidationSchema,

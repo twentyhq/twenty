@@ -13,15 +13,15 @@ import {
   fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow,
   type UpdatePageLayoutWidgetInputWithId,
 } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-update-page-layout-widget-input-to-flat-page-layout-widget-to-update-or-throw.util';
-import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
-import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
   PageLayoutWidgetExceptionMessageKey,
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/schemas/inputs/create-page-layout-widget.input';
+import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/schemas/inputs/update-page-layout-widget.input';
+import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/schemas/page-layout-widget.dto';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
 import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';

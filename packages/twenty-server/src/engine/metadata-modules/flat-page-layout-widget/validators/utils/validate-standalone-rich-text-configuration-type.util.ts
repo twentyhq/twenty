@@ -2,9 +2,9 @@ import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
-import { type StandaloneRichTextConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.validation-schema';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { type StandaloneRichTextConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/standalone-rich-text-configuration.validation-schema';
 
 export const validateStandaloneRichTextConfigurationType = (
   configuration: StandaloneRichTextConfigurationValidationSchema,

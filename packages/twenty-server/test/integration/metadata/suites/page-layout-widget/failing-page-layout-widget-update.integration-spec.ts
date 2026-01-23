@@ -18,9 +18,9 @@ import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 
-import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/schemas/inputs/update-page-layout-widget.input';
 
 const DEFAULT_GRID_POSITION = {
   row: 0,

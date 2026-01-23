@@ -4,7 +4,7 @@ import { type ValidateFlatPageLayoutWidgetTypeSpecificitiesForUpdateArgs } from 
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { validateStandaloneRichTextBody } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util';
 import { validateStandaloneRichTextConfigurationType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util';
-import { type StandaloneRichTextConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.validation-schema';
+import { type StandaloneRichTextConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/standalone-rich-text-configuration.validation-schema';
 
 export const validateStandaloneRichTextFlatPageLayoutWidgetForUpdate = (
   args: ValidateFlatPageLayoutWidgetTypeSpecificitiesForUpdateArgs,

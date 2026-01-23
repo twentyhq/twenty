@@ -2,12 +2,12 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
-    IsEnum,
-    IsObject,
-    IsOptional,
-    IsString,
-    IsUUID,
-    ValidateNested,
+  IsEnum,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID,
+  ValidateNested,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 

@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 
-import type { LineChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.validation-schema';
+import type { LineChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/line-chart-configuration.validation-schema';
 
 export const buildLineChartSeriesIdPrefix = (
   objectMetadataId: string,

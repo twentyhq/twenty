@@ -1,17 +1,17 @@
 import { isNotEmptyObject, type ValidationError } from 'class-validator';
 
-import { AggregateChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.validation-schema';
-import { BarChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.validation-schema';
-import { GaugeChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.validation-schema';
-import { IframeConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.validation-schema';
-import { LineChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.validation-schema';
-import { PieChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.validation-schema';
-import { StandaloneRichTextConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.validation-schema';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { AggregateChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/aggregate-chart-configuration.validation-schema';
+import { BarChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/bar-chart-configuration.validation-schema';
+import { GaugeChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/gauge-chart-configuration.validation-schema';
+import { IframeConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/iframe-configuration.validation-schema';
+import { LineChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/line-chart-configuration.validation-schema';
+import { PieChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/pie-chart-configuration.validation-schema';
+import { StandaloneRichTextConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/schemas/standalone-rich-text-configuration.validation-schema';
 import { validateWidgetConfigurationByValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-by-validation-schema.util';
 
 const formatValidationErrors = (
