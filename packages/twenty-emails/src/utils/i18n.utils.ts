@@ -10,10 +10,13 @@ import { messages as deMessages } from '@/locales/generated/de-DE';
 import { messages as elMessages } from '@/locales/generated/el-GR';
 import { messages as enMessages } from '@/locales/generated/en';
 import { messages as esMessages } from '@/locales/generated/es-ES';
+import { messages as faMessages } from '@/locales/generated/fa-IR';
 import { messages as fiMessages } from '@/locales/generated/fi-FI';
 import { messages as frMessages } from '@/locales/generated/fr-FR';
 import { messages as heMessages } from '@/locales/generated/he-IL';
+import { messages as hiMessages } from '@/locales/generated/hi-IN';
 import { messages as huMessages } from '@/locales/generated/hu-HU';
+import { messages as idMessages } from '@/locales/generated/id-ID';
 import { messages as itMessages } from '@/locales/generated/it-IT';
 import { messages as jaMessages } from '@/locales/generated/ja-JP';
 import { messages as koMessages } from '@/locales/generated/ko-KR';
@@ -27,6 +30,7 @@ import { messages as roMessages } from '@/locales/generated/ro-RO';
 import { messages as ruMessages } from '@/locales/generated/ru-RU';
 import { messages as srMessages } from '@/locales/generated/sr-Cyrl';
 import { messages as svMessages } from '@/locales/generated/sv-SE';
+import { messages as thMessages } from '@/locales/generated/th-TH';
 import { messages as trMessages } from '@/locales/generated/tr-TR';
 import { messages as ukMessages } from '@/locales/generated/uk-UA';
 import { messages as viMessages } from '@/locales/generated/vi-VN';
@@ -44,10 +48,13 @@ const messages: Record<keyof typeof APP_LOCALES, Messages> = {
   'de-DE': deMessages,
   'el-GR': elMessages,
   'es-ES': esMessages,
+  'fa-IR': faMessages,
   'fi-FI': fiMessages,
   'fr-FR': frMessages,
   'he-IL': heMessages,
+  'hi-IN': hiMessages,
   'hu-HU': huMessages,
+  'id-ID': idMessages,
   'it-IT': itMessages,
   'ja-JP': jaMessages,
   'ko-KR': koMessages,
@@ -60,6 +67,7 @@ const messages: Record<keyof typeof APP_LOCALES, Messages> = {
   'ru-RU': ruMessages,
   'sr-Cyrl': srMessages,
   'sv-SE': svMessages,
+  'th-TH': thMessages,
   'tr-TR': trMessages,
   'uk-UA': ukMessages,
   'vi-VN': viMessages,

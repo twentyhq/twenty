@@ -17,10 +17,13 @@ import { messages as deMessages } from 'src/engine/core-modules/i18n/locales/gen
 import { messages as elMessages } from 'src/engine/core-modules/i18n/locales/generated/el-GR';
 import { messages as enMessages } from 'src/engine/core-modules/i18n/locales/generated/en';
 import { messages as esMessages } from 'src/engine/core-modules/i18n/locales/generated/es-ES';
+import { messages as faMessages } from 'src/engine/core-modules/i18n/locales/generated/fa-IR';
 import { messages as fiMessages } from 'src/engine/core-modules/i18n/locales/generated/fi-FI';
 import { messages as frMessages } from 'src/engine/core-modules/i18n/locales/generated/fr-FR';
 import { messages as heMessages } from 'src/engine/core-modules/i18n/locales/generated/he-IL';
+import { messages as hiMessages } from 'src/engine/core-modules/i18n/locales/generated/hi-IN';
 import { messages as huMessages } from 'src/engine/core-modules/i18n/locales/generated/hu-HU';
+import { messages as idMessages } from 'src/engine/core-modules/i18n/locales/generated/id-ID';
 import { messages as itMessages } from 'src/engine/core-modules/i18n/locales/generated/it-IT';
 import { messages as jaMessages } from 'src/engine/core-modules/i18n/locales/generated/ja-JP';
 import { messages as koMessages } from 'src/engine/core-modules/i18n/locales/generated/ko-KR';
@@ -34,6 +37,7 @@ import { messages as roMessages } from 'src/engine/core-modules/i18n/locales/gen
 import { messages as ruMessages } from 'src/engine/core-modules/i18n/locales/generated/ru-RU';
 import { messages as srMessages } from 'src/engine/core-modules/i18n/locales/generated/sr-Cyrl';
 import { messages as svMessages } from 'src/engine/core-modules/i18n/locales/generated/sv-SE';
+import { messages as thMessages } from 'src/engine/core-modules/i18n/locales/generated/th-TH';
 import { messages as trMessages } from 'src/engine/core-modules/i18n/locales/generated/tr-TR';
 import { messages as ukMessages } from 'src/engine/core-modules/i18n/locales/generated/uk-UA';
 import { messages as viMessages } from 'src/engine/core-modules/i18n/locales/generated/vi-VN';
@@ -57,10 +61,13 @@ export class I18nService implements OnModuleInit {
       'de-DE': deMessages,
       'el-GR': elMessages,
       'es-ES': esMessages,
+      'fa-IR': faMessages,
       'fi-FI': fiMessages,
       'fr-FR': frMessages,
       'he-IL': heMessages,
+      'hi-IN': hiMessages,
       'hu-HU': huMessages,
+      'id-ID': idMessages,
       'it-IT': itMessages,
       'ja-JP': jaMessages,
       'ko-KR': koMessages,
@@ -73,6 +80,7 @@ export class I18nService implements OnModuleInit {
       'ru-RU': ruMessages,
       'sr-Cyrl': srMessages,
       'sv-SE': svMessages,
+      'th-TH': thMessages,
       'tr-TR': trMessages,
       'uk-UA': ukMessages,
       'vi-VN': viMessages,
