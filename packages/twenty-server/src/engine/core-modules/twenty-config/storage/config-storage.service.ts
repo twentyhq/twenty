@@ -69,19 +69,9 @@ export class ConfigStorageService implements ConfigStorageInterface {
         return convertedValue;
       }
 
-      try {
-        return isDecrypt
-          ? this.secretEncryptionService.decrypt(convertedValue)
-          : this.secretEncryptionService.encrypt(convertedValue);
-      } catch (error) {
-        this.logger.debug(
-          `${isDecrypt ? 'Decryption' : 'Encryption'} failed for key ${
-            key as string
-          }: ${error.message}. Using original value.`,
-        );
-
-        return convertedValue;
-      }
+      return isDecrypt
+        ? this.secretEncryptionService.decrypt(convertedValue)
+        : this.secretEncryptionService.encrypt(convertedValue);
     } catch (error) {
       throw new ConfigVariableException(
         `Failed to convert value for key ${key as string}: ${error.message}`,
