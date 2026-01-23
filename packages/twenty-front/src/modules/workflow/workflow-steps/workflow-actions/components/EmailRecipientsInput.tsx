@@ -55,7 +55,7 @@ export const EmailRecipientsInput = ({
 
     newEntries[index] = { ...newEntries[index], value: newValue };
 
-    if (index === entries.length - 1 && newValue.trim()) {
+    if (index === entries.length - 1 && newValue.trim().length > 0) {
       newEntries.push({ id: v4(), value: '' });
     }
 
