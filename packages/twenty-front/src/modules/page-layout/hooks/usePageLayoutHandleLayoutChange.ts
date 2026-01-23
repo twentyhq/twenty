@@ -1,14 +1,14 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { convertLayoutsToWidgets } from '@/page-layout/utils/convertLayoutsToWidgets';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { type Layout, type Layouts } from 'react-grid-layout';
+import { type Layout, type ResponsiveLayouts } from 'react-grid-layout';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
-import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { convertLayoutsToWidgets } from '@/page-layout/utils/convertLayoutsToWidgets';
 
 export const usePageLayoutHandleLayoutChange = (
   pageLayoutIdFromProps?: string,
@@ -37,7 +37,7 @@ export const usePageLayoutHandleLayoutChange = (
 
   const handleLayoutChange = useRecoilCallback(
     ({ snapshot, set }) =>
-      (_: Layout[], allLayouts: Layouts) => {
+      (_: Layout, allLayouts: ResponsiveLayouts) => {
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
 
         if (!isDefined(activeTabId)) return;

@@ -1,9 +1,9 @@
-import { type Layouts } from 'react-grid-layout';
 import { updateLayoutItemConstraints } from '@/page-layout/utils/updateLayoutItemConstraints';
+import { type ResponsiveLayouts } from 'react-grid-layout';
 
 describe('updateLayoutItemConstraints', () => {
   it('should update constraints for the specified layout item in desktop layout', () => {
-    const layouts: Layouts = {
+    const layouts: ResponsiveLayouts = {
       desktop: [
         { i: 'widget-1', x: 0, y: 0, w: 4, h: 3, minW: 2, minH: 2 },
         { i: 'widget-2', x: 4, y: 0, w: 4, h: 3, minW: 2, minH: 2 },
@@ -36,7 +36,7 @@ describe('updateLayoutItemConstraints', () => {
   });
 
   it('should update constraints for the specified layout item in mobile layout', () => {
-    const layouts: Layouts = {
+    const layouts: ResponsiveLayouts = {
       mobile: [
         { i: 'widget-1', x: 0, y: 0, w: 2, h: 2, minW: 1, minH: 1 },
         { i: 'widget-2', x: 0, y: 2, w: 2, h: 2, minW: 1, minH: 1 },
@@ -69,7 +69,7 @@ describe('updateLayoutItemConstraints', () => {
   });
 
   it('should update constraints in both desktop and mobile layouts when item exists in both', () => {
-    const layouts: Layouts = {
+    const layouts: ResponsiveLayouts = {
       desktop: [
         { i: 'widget-1', x: 0, y: 0, w: 4, h: 3, minW: 2, minH: 2 },
         { i: 'widget-2', x: 4, y: 0, w: 4, h: 3, minW: 2, minH: 2 },
@@ -92,7 +92,7 @@ describe('updateLayoutItemConstraints', () => {
   });
 
   it('should not modify layouts when layout item does not exist', () => {
-    const layouts: Layouts = {
+    const layouts: ResponsiveLayouts = {
       desktop: [{ i: 'widget-1', x: 0, y: 0, w: 4, h: 3, minW: 2, minH: 2 }],
       mobile: [{ i: 'widget-1', x: 0, y: 0, w: 2, h: 2, minW: 1, minH: 1 }],
     };
@@ -107,7 +107,7 @@ describe('updateLayoutItemConstraints', () => {
   });
 
   it('should handle undefined desktop layout', () => {
-    const layouts: Layouts = {
+    const layouts: ResponsiveLayouts = {
       mobile: [{ i: 'widget-1', x: 0, y: 0, w: 2, h: 2, minW: 1, minH: 1 }],
     };
 
@@ -122,7 +122,7 @@ describe('updateLayoutItemConstraints', () => {
   });
 
   it('should handle undefined mobile layout', () => {
-    const layouts: Layouts = {
+    const layouts: ResponsiveLayouts = {
       desktop: [{ i: 'widget-1', x: 0, y: 0, w: 4, h: 3, minW: 2, minH: 2 }],
     };
 
@@ -137,7 +137,7 @@ describe('updateLayoutItemConstraints', () => {
   });
 
   it('should handle empty layouts object', () => {
-    const layouts: Layouts = {};
+    const layouts: ResponsiveLayouts = {};
 
     const result = updateLayoutItemConstraints(layouts, 'widget-1', {
       minW: 3,
@@ -148,7 +148,7 @@ describe('updateLayoutItemConstraints', () => {
   });
 
   it('should preserve other properties of layout items', () => {
-    const layouts: Layouts = {
+    const layouts: ResponsiveLayouts = {
       desktop: [
         {
           i: 'widget-1',
@@ -183,7 +183,7 @@ describe('updateLayoutItemConstraints', () => {
   });
 
   it('should handle layouts with multiple widgets and only update the target', () => {
-    const layouts: Layouts = {
+    const layouts: ResponsiveLayouts = {
       desktop: [
         { i: 'widget-1', x: 0, y: 0, w: 4, h: 3, minW: 2, minH: 2 },
         { i: 'widget-2', x: 4, y: 0, w: 4, h: 3, minW: 2, minH: 2 },
@@ -205,7 +205,7 @@ describe('updateLayoutItemConstraints', () => {
   });
 
   it('should handle constraints with zero values', () => {
-    const layouts: Layouts = {
+    const layouts: ResponsiveLayouts = {
       desktop: [{ i: 'widget-1', x: 0, y: 0, w: 4, h: 3, minW: 2, minH: 2 }],
     };
 

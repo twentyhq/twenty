@@ -28,13 +28,13 @@ describe('removeWidgetLayoutFromTab', () => {
       'widget-2',
     );
 
-    expect(result['tab-1'].desktop).toHaveLength(2);
-    expect(result['tab-1'].desktop.map((l) => l.i)).toEqual([
+    expect(result['tab-1']!.desktop).toHaveLength(2);
+    expect(result['tab-1']!.desktop!.map((l) => l.i)).toEqual([
       'widget-1',
       'widget-3',
     ]);
-    expect(result['tab-1'].mobile).toHaveLength(2);
-    expect(result['tab-1'].mobile.map((l) => l.i)).toEqual([
+    expect(result['tab-1']!.mobile).toHaveLength(2);
+    expect(result['tab-1']!.mobile!.map((l) => l.i)).toEqual([
       'widget-1',
       'widget-3',
     ]);
@@ -116,8 +116,8 @@ describe('removeWidgetLayoutFromTab', () => {
       'widget-2',
     );
 
-    const desktopIds = result['tab-1'].desktop.map((l) => l.i);
-    const mobileIds = result['tab-1'].mobile.map((l) => l.i);
+    const desktopIds = result['tab-1']!.desktop!.map((l) => l.i);
+    const mobileIds = result['tab-1']!.mobile!.map((l) => l.i);
 
     expect(desktopIds).not.toContain('widget-2');
     expect(mobileIds).not.toContain('widget-2');
