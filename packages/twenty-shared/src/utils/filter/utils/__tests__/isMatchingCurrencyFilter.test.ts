@@ -306,7 +306,7 @@ describe('isMatchingCurrencyFilter', () => {
             currencyCode: 'USD',
           },
         }),
-      ).toThrowError('Unexpected filter for currency : {}');
+      ).toThrow('Unexpected filter for currency : {}');
     });
   });
 
@@ -320,7 +320,7 @@ describe('isMatchingCurrencyFilter', () => {
           currencyFilter,
           value: { amountMicros: 10 },
         }),
-      ).toThrowError(
+      ).toThrow(
         'Unexpected operand for currency amount micros filter : {"unexpected":10}',
       );
     });
