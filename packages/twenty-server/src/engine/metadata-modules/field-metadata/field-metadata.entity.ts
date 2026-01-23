@@ -22,7 +22,6 @@ import {
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
-import { type JsonbEntityProperty } from 'src/types/jsonb-entity-property.type';
 import { AssignIfIsGivenFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-if-is-given-field-metadata-type.type';
 import { AssignTypeIfIsMorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-morph-or-relation-field-metadata-type.type';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
@@ -31,6 +30,7 @@ import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permis
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { JsonbProperty } from 'src/engine/workspace-manager/types/jsonb-property.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 // This entity is used as a reference test case for type utilities in:
@@ -107,7 +107,7 @@ export class FieldMetadataEntity<
   options: FieldMetadataOptions<TFieldMetadataType>;
 
   @Column('jsonb', { nullable: true })
-  settings: JsonbEntityProperty<FieldMetadataSettings<TFieldMetadataType>>;
+  settings: JsonbProperty<FieldMetadataSettings<TFieldMetadataType>>;
 
   @Column({ default: false })
   isCustom: boolean;

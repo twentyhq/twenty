@@ -19,8 +19,8 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
 import { PageLayoutWidgetConfigurationTypeSettings } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configuration.type';
+import { type JsonbProperty } from 'src/engine/workspace-manager/types/jsonb-property.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-import { type JsonbEntityProperty } from 'src/types/jsonb-entity-property.type';
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
 @ObjectType('PageLayoutWidget')
@@ -74,7 +74,7 @@ export class PageLayoutWidgetEntity<
   gridPosition: GridPosition;
 
   @Column({ type: 'jsonb', nullable: false })
-  configuration: JsonbEntityProperty<
+  configuration: JsonbProperty<
     PageLayoutWidgetConfigurationTypeSettings<TWidgetConfigurationType>
   >;
 
