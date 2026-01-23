@@ -63,9 +63,6 @@ export type {
   FieldMetadataFunctionDefaultValue,
   FieldMetadataDefaultValueForAnyType,
   FieldMetadataDefaultValue,
-} from './FieldMetadataDefaultValue';
-export {
-  fieldMetadataDefaultValueFunctionName,
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueRawJson,
   FieldMetadataDefaultValueRichTextV2,
@@ -85,7 +82,10 @@ export {
   FieldMetadataDefaultValueEmails,
   FieldMetadataDefaultValuePhones,
   FieldMetadataDefaultArray,
+  FieldMetadataDefaultSerializableValue,
+  LinkMetadata,
 } from './FieldMetadataDefaultValue';
+export { fieldMetadataDefaultValueFunctionName } from './FieldMetadataDefaultValue';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export { FieldMetadataSettingsOnClickAction } from './FieldMetadataMultiItemSettings';
 export type { TagColor, FieldMetadataOptions } from './FieldMetadataOptions';

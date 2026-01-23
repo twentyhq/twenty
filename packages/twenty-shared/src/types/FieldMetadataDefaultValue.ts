@@ -1,43 +1,6 @@
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
-import { JsonbProperty } from '@/types/JsonbProperty.type';
-
-import {
-  IsArray,
-  IsBoolean,
-  IsDate,
-  IsNotEmpty,
-  IsNumber,
-  IsNumberString,
-  IsObject,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Matches,
-  ValidateIf,
-  type ValidationArguments,
-  type ValidationOptions,
-  registerDecorator,
-} from 'class-validator';
-
-const IsQuotedString = (validationOptions?: ValidationOptions) => {
-  return (object: object, propertyName: string) => {
-    registerDecorator({
-      name: 'isQuotedString',
-      target: object.constructor,
-      propertyName: propertyName,
-      options: validationOptions,
-      validator: {
-        validate: (value: any) => {
-          return typeof value === 'string' && /^'{1}.*'{1}$/.test(value);
-        },
-        defaultMessage: (args: ValidationArguments) => {
-          return `${args.property} must be a quoted string`;
-        },
-      },
-    });
-  };
-};
+import { type JsonbProperty } from '@/types/JsonbProperty.type';
 
 export const fieldMetadataDefaultValueFunctionName = {
   UUID: 'uuid',
@@ -47,201 +10,78 @@ export const fieldMetadataDefaultValueFunctionName = {
 export type FieldMetadataDefaultValueFunctionNames =
   (typeof fieldMetadataDefaultValueFunctionName)[keyof typeof fieldMetadataDefaultValueFunctionName];
 
-export class FieldMetadataDefaultValueString {
-  @ValidateIf((_object, value) => value !== null)
-  @IsQuotedString()
-  value!: string | null;
-}
+// Primitive types (unwrapped - no `value` property)
+export type FieldMetadataDefaultValueString = string | null;
+export type FieldMetadataDefaultValueRawJson = object | null;
+export type FieldMetadataDefaultValueRichText = string | null;
+export type FieldMetadataDefaultValueNumber = number | null;
+export type FieldMetadataDefaultValueBoolean = boolean | null;
+export type FieldMetadataDefaultValueStringArray = string[] | null;
+export type FieldMetadataDefaultValueDateTime = Date | null;
+export type FieldMetadataDefaultValueDate = Date | null;
+export type FieldMetadataDefaultArray = string[] | null;
 
-export class FieldMetadataDefaultValueRawJson {
-  @ValidateIf((_object, value) => value !== null)
-  @IsObject() // TODO: Should this also allow arrays?
-  value!: object | null;
-}
+// Function default values
+export type FieldMetadataDefaultValueUuidFunction =
+  typeof fieldMetadataDefaultValueFunctionName.UUID;
+export type FieldMetadataDefaultValueNowFunction =
+  typeof fieldMetadataDefaultValueFunctionName.NOW;
 
-export class FieldMetadataDefaultValueRichTextV2 {
-  @ValidateIf((_object, value) => value !== null)
-  @IsQuotedString()
-  blocknote!: string | null;
+// Composite types (object shapes)
+export type FieldMetadataDefaultValueRichTextV2 = {
+  blocknote: string | null;
+  markdown: string | null;
+};
 
-  @ValidateIf((_object, value) => value !== null)
-  @IsQuotedString()
-  markdown!: string | null;
-}
+export type FieldMetadataDefaultValueCurrency = {
+  amountMicros: string | null;
+  currencyCode: string | null;
+};
 
-export class FieldMetadataDefaultValueRichText {
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
-  value!: string | null;
-}
+export type FieldMetadataDefaultValueFullName = {
+  firstName: string | null;
+  lastName: string | null;
+};
 
-export class FieldMetadataDefaultValueNumber {
-  @ValidateIf((_object, value) => value !== null)
-  @IsNumber()
-  value!: number | null;
-}
+export type FieldMetadataDefaultValueAddress = {
+  addressStreet1: string | null;
+  addressStreet2: string | null;
+  addressCity: string | null;
+  addressPostcode: string | null;
+  addressState: string | null;
+  addressCountry: string | null;
+  addressLat: number | null;
+  addressLng: number | null;
+};
 
-export class FieldMetadataDefaultValueBoolean {
-  @ValidateIf((_object, value) => value !== null)
-  @IsBoolean()
-  value!: boolean | null;
-}
+export type LinkMetadata = {
+  label: string;
+  url: string;
+};
 
-export class FieldMetadataDefaultValueStringArray {
-  @ValidateIf((_object, value) => value !== null)
-  @IsArray()
-  @IsQuotedString({ each: true })
-  value!: string[] | null;
-}
+export type FieldMetadataDefaultValueLinks = {
+  primaryLinkLabel: string | null;
+  primaryLinkUrl: string | null;
+  secondaryLinks: LinkMetadata[] | null;
+};
 
-export class FieldMetadataDefaultValueDateTime {
-  @ValidateIf((_object, value) => value !== null)
-  @IsDate()
-  value!: Date | null;
-}
-
-export class FieldMetadataDefaultValueDate {
-  @ValidateIf((_object, value) => value !== null)
-  @IsDate()
-  value!: Date | null;
-}
-
-export class FieldMetadataDefaultValueCurrency {
-  @ValidateIf((_object, value) => value !== null)
-  @IsNumberString()
-  amountMicros!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsQuotedString()
-  currencyCode!: string | null;
-}
-
-export class FieldMetadataDefaultValueFullName {
-  @ValidateIf((_object, value) => value !== null)
-  @IsQuotedString()
-  firstName!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsQuotedString()
-  lastName!: string | null;
-}
-
-export class FieldMetadataDefaultValueUuidFunction {
-  @Matches(fieldMetadataDefaultValueFunctionName.UUID)
-  @IsNotEmpty()
-  value!: typeof fieldMetadataDefaultValueFunctionName.UUID;
-}
-
-export class FieldMetadataDefaultValueNowFunction {
-  @Matches(fieldMetadataDefaultValueFunctionName.NOW)
-  @IsNotEmpty()
-  value!: typeof fieldMetadataDefaultValueFunctionName.NOW;
-}
-
-export class FieldMetadataDefaultValueAddress {
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
-  addressStreet1!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
-  addressStreet2!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
-  addressCity!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
-  addressPostcode!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
-  addressState!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
-  addressCountry!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsNumber()
-  addressLat!: number | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsNumber()
-  addressLng!: number | null;
-}
-
-class LinkMetadata {
-  @IsString()
-  label!: string;
-
-  @IsString()
-  url!: string;
-}
-
-export class FieldMetadataDefaultValueLinks {
-  @ValidateIf((_object, value) => value !== null)
-  @IsQuotedString()
-  primaryLinkLabel!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsQuotedString()
-  primaryLinkUrl!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsArray()
-  secondaryLinks!: LinkMetadata[] | null;
-}
-
-export class FieldMetadataDefaultActor {
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
-  source!: string;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsOptional()
-  @IsUUID()
+export type FieldMetadataDefaultActor = {
+  source: string;
   workspaceMemberId?: string | null;
+  name: string;
+};
 
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
-  name!: string;
-}
+export type FieldMetadataDefaultValueEmails = {
+  primaryEmail: string | null;
+  additionalEmails: object | null;
+};
 
-export class FieldMetadataDefaultValueEmails {
-  @ValidateIf((_object, value) => value !== null)
-  @IsQuotedString()
-  primaryEmail!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsObject()
-  additionalEmails!: object | null;
-}
-
-export class FieldMetadataDefaultValuePhones {
-  @ValidateIf((_object, value) => value !== null)
-  @IsQuotedString()
-  primaryPhoneNumber!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsQuotedString()
-  primaryPhoneCountryCode!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsQuotedString()
-  primaryPhoneCallingCode!: string | null;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsObject()
-  additionalPhones!: object | null;
-}
-
-export class FieldMetadataDefaultArray {
-  @ValidateIf((_object, value) => value !== null)
-  @IsArray()
-  value!: string[] | null;
-}
+export type FieldMetadataDefaultValuePhones = {
+  primaryPhoneNumber: string | null;
+  primaryPhoneCountryCode: string | null;
+  primaryPhoneCallingCode: string | null;
+  additionalPhones: object | null;
+};
 
 export type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.UUID]: JsonbProperty<
@@ -289,3 +129,13 @@ export type FieldMetadataDefaultValue<
     : T extends keyof FieldMetadataDefaultValueMapping
       ? FieldMetadataDefaultValueMapping[T]
       : never | null;
+
+// Serializable value union - useful for serialization/deserialization functions
+export type FieldMetadataDefaultSerializableValue =
+  | string
+  | number
+  | boolean
+  | Date
+  | object
+  | string[]
+  | null;
