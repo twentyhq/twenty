@@ -5,12 +5,10 @@ import { IsIn, IsNotEmpty } from 'class-validator';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
-@ObjectType('FieldsConfiguration')
-export class FieldsConfigurationDTO
-  implements PageLayoutWidgetConfigurationBase
-{
+@ObjectType('ViewConfiguration')
+export class ViewConfigurationValidationSchema implements PageLayoutWidgetConfigurationBase {
   @Field(() => WidgetConfigurationType)
-  @IsIn([WidgetConfigurationType.FIELDS])
+  @IsIn([WidgetConfigurationType.VIEW])
   @IsNotEmpty()
-  configurationType: WidgetConfigurationType.FIELDS;
+  configurationType: WidgetConfigurationType.VIEW;
 }

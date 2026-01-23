@@ -1,18 +1,18 @@
 import { isNotEmptyObject, type ValidationError } from 'class-validator';
 
-import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
-import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
-import { GaugeChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.dto';
-import { IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.dto';
-import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
-import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
-import { StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
+import { AggregateChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.validation-schema';
+import { BarChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.validation-schema';
+import { GaugeChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.validation-schema';
+import { IframeConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.validation-schema';
+import { LineChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.validation-schema';
+import { PieChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.validation-schema';
+import { StandaloneRichTextConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.validation-schema';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
-import { validateWidgetConfigurationByDto } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-by-dto.util';
+import { validateWidgetConfigurationByValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-by-validation-schema.util';
 
 const formatValidationErrors = (
   errors: ValidationError[],
@@ -72,44 +72,44 @@ export const validateWidgetConfigurationInput = ({
 
   switch (configurationType) {
     case WidgetConfigurationType.BAR_CHART:
-      errors = validateWidgetConfigurationByDto(
-        BarChartConfigurationDTO,
+      errors = validateWidgetConfigurationByValidationSchema(
+        BarChartConfigurationValidationSchema,
         configuration,
       );
       break;
     case WidgetConfigurationType.LINE_CHART:
-      errors = validateWidgetConfigurationByDto(
-        LineChartConfigurationDTO,
+      errors = validateWidgetConfigurationByValidationSchema(
+        LineChartConfigurationValidationSchema,
         configuration,
       );
       break;
     case WidgetConfigurationType.PIE_CHART:
-      errors = validateWidgetConfigurationByDto(
-        PieChartConfigurationDTO,
+      errors = validateWidgetConfigurationByValidationSchema(
+        PieChartConfigurationValidationSchema,
         configuration,
       );
       break;
     case WidgetConfigurationType.AGGREGATE_CHART:
-      errors = validateWidgetConfigurationByDto(
-        AggregateChartConfigurationDTO,
+      errors = validateWidgetConfigurationByValidationSchema(
+        AggregateChartConfigurationValidationSchema,
         configuration,
       );
       break;
     case WidgetConfigurationType.GAUGE_CHART:
-      errors = validateWidgetConfigurationByDto(
-        GaugeChartConfigurationDTO,
+      errors = validateWidgetConfigurationByValidationSchema(
+        GaugeChartConfigurationValidationSchema,
         configuration,
       );
       break;
     case WidgetConfigurationType.IFRAME:
-      errors = validateWidgetConfigurationByDto(
-        IframeConfigurationDTO,
+      errors = validateWidgetConfigurationByValidationSchema(
+        IframeConfigurationValidationSchema,
         configuration,
       );
       break;
     case WidgetConfigurationType.STANDALONE_RICH_TEXT:
-      errors = validateWidgetConfigurationByDto(
-        StandaloneRichTextConfigurationDTO,
+      errors = validateWidgetConfigurationByValidationSchema(
+        StandaloneRichTextConfigurationValidationSchema,
         configuration,
       );
       break;

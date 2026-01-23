@@ -5,7 +5,7 @@ import { type ValidateFlatPageLayoutWidgetTypeSpecificitiesForCreationArgs } fro
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { validateStandaloneRichTextBody } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util';
 import { validateStandaloneRichTextConfigurationType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util';
-import { type StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
+import { type StandaloneRichTextConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.validation-schema';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 
 export const validateStandaloneRichTextFlatPageLayoutWidgetForCreation = (
@@ -26,7 +26,7 @@ export const validateStandaloneRichTextFlatPageLayoutWidgetForCreation = (
   }
 
   const standaloneRichTextConfiguration =
-    configuration as StandaloneRichTextConfigurationDTO;
+    configuration as StandaloneRichTextConfigurationValidationSchema;
 
   const configurationTypeErrors = validateStandaloneRichTextConfigurationType(
     standaloneRichTextConfiguration,

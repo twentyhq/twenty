@@ -2,12 +2,12 @@ import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
-import { type StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
+import { type StandaloneRichTextConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.validation-schema';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 
 export const validateStandaloneRichTextConfigurationType = (
-  configuration: StandaloneRichTextConfigurationDTO,
+  configuration: StandaloneRichTextConfigurationValidationSchema,
   widgetTitle: string,
 ): FlatPageLayoutWidgetValidationError[] => {
   const errors: FlatPageLayoutWidgetValidationError[] = [];

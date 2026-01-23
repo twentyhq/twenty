@@ -5,7 +5,7 @@ import { IsNotEmpty, IsUUID, ValidateNested } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
+import { BarChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.validation-schema';
 
 @InputType()
 export class BarChartDataInput {
@@ -16,7 +16,7 @@ export class BarChartDataInput {
 
   @Field(() => GraphQLJSON)
   @ValidateNested()
-  @Type(() => BarChartConfigurationDTO)
+  @Type(() => BarChartConfigurationValidationSchema)
   @IsNotEmpty()
-  configuration: BarChartConfigurationDTO;
+  configuration: BarChartConfigurationValidationSchema;
 }

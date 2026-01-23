@@ -5,12 +5,12 @@ import { IsIn, IsNotEmpty } from 'class-validator';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
-@ObjectType('WorkflowVersionConfiguration')
-export class WorkflowVersionConfigurationDTO
+@ObjectType('FilesConfiguration')
+export class FilesConfigurationValidationSchema
   implements PageLayoutWidgetConfigurationBase
 {
   @Field(() => WidgetConfigurationType)
-  @IsIn([WidgetConfigurationType.WORKFLOW_VERSION])
+  @IsIn([WidgetConfigurationType.FILES])
   @IsNotEmpty()
-  configurationType: WidgetConfigurationType.WORKFLOW_VERSION;
+  configurationType: WidgetConfigurationType.FILES;
 }

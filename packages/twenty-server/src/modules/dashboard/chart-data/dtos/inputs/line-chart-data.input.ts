@@ -5,7 +5,7 @@ import { IsNotEmpty, IsUUID, ValidateNested } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
+import { LineChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.validation-schema';
 
 @InputType()
 export class LineChartDataInput {
@@ -16,7 +16,7 @@ export class LineChartDataInput {
 
   @Field(() => GraphQLJSON)
   @ValidateNested()
-  @Type(() => LineChartConfigurationDTO)
+  @Type(() => LineChartConfigurationValidationSchema)
   @IsNotEmpty()
-  configuration: LineChartConfigurationDTO;
+  configuration: LineChartConfigurationValidationSchema;
 }

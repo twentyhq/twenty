@@ -20,13 +20,13 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { RatioAggregateConfigDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/ratio-aggregate-config.dto';
+import { RichTextV2BodyValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/rich-text-v2-body.validation-schema';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { ChartFilter } from 'src/engine/metadata-modules/page-layout-widget/types/chart-filter.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('AggregateChartConfiguration')
-export class AggregateChartConfigurationDTO
+export class AggregateChartConfigurationValidationSchema
   implements PageLayoutWidgetConfigurationBase
 {
   @Field(() => WidgetConfigurationType)
@@ -90,9 +90,9 @@ export class AggregateChartConfigurationDTO
   @IsOptional()
   suffix?: string;
 
-  @Field(() => RatioAggregateConfigDTO, { nullable: true })
+  @Field(() => RichTextV2BodyValidationSchema, { nullable: true })
   @ValidateNested()
-  @Type(() => RatioAggregateConfigDTO)
+  @Type(() => RichTextV2BodyValidationSchema)
   @IsOptional()
-  ratioAggregateConfig?: RatioAggregateConfigDTO;
+  ratioAggregateConfig?: RichTextV2BodyValidationSchema;
 }

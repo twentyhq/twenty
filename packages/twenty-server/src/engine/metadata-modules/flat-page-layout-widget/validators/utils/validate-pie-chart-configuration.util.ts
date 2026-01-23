@@ -2,11 +2,11 @@ import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
-import { type PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
+import { type PieChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.validation-schema';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 
 export const validatePieChartConfiguration = (
-  configuration: PieChartConfigurationDTO,
+  configuration: PieChartConfigurationValidationSchema,
   widgetTitle: string,
 ): FlatPageLayoutWidgetValidationError[] => {
   const errors: FlatPageLayoutWidgetValidationError[] = [];

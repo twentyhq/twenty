@@ -1,11 +1,11 @@
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { type AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
-import { type BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
-import { type GaugeChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.dto';
-import { type IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.dto';
-import { type LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
-import { type PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
-import { type StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
+import { type AggregateChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.validation-schema';
+import { type BarChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.validation-schema';
+import { type GaugeChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.validation-schema';
+import { type IframeConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.validation-schema';
+import { type LineChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.validation-schema';
+import { type PieChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.validation-schema';
+import { type StandaloneRichTextConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.validation-schema';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
@@ -16,12 +16,12 @@ export const TEST_FIELD_METADATA_ID_2 = '20202020-2222-4222-a222-222222222222';
 export const TEST_FIELD_METADATA_ID_3 = '20202020-3333-4333-a333-333333333333';
 export const TEST_FIELD_METADATA_ID_4 = '20202020-4444-4444-a444-444444444444';
 
-export const TEST_IFRAME_CONFIG: IframeConfigurationDTO = {
+export const TEST_IFRAME_CONFIG: IframeConfigurationValidationSchema = {
   configurationType: WidgetConfigurationType.IFRAME,
   url: 'https://example.com/dashboard',
 };
 
-export const TEST_STANDALONE_RICH_TEXT_CONFIG: StandaloneRichTextConfigurationDTO =
+export const TEST_STANDALONE_RICH_TEXT_CONFIG: StandaloneRichTextConfigurationValidationSchema =
   {
     configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
     body: {
@@ -31,7 +31,7 @@ export const TEST_STANDALONE_RICH_TEXT_CONFIG: StandaloneRichTextConfigurationDT
     },
   };
 
-export const TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL: StandaloneRichTextConfigurationDTO =
+export const TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL: StandaloneRichTextConfigurationValidationSchema =
   {
     configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
     body: {
@@ -54,22 +54,24 @@ export const INVALID_STANDALONE_RICH_TEXT_CONFIG_INVALID_SUBFIELDS = {
   },
 };
 
-export const TEST_IFRAME_CONFIG_ALTERNATIVE: IframeConfigurationDTO = {
-  configurationType: WidgetConfigurationType.IFRAME,
-  url: 'https://app.twenty.com/analytics',
-};
+export const TEST_IFRAME_CONFIG_ALTERNATIVE: IframeConfigurationValidationSchema =
+  {
+    configurationType: WidgetConfigurationType.IFRAME,
+    url: 'https://app.twenty.com/analytics',
+  };
 
-export const TEST_NUMBER_CHART_CONFIG: AggregateChartConfigurationDTO = {
-  configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-  aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
-  aggregateOperation: AggregateOperations.COUNT,
-  label: 'Total Records',
-  description: 'Count of all records',
-  format: '0,0',
-  displayDataLabel: true,
-};
+export const TEST_NUMBER_CHART_CONFIG: AggregateChartConfigurationValidationSchema =
+  {
+    configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+    aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
+    aggregateOperation: AggregateOperations.COUNT,
+    label: 'Total Records',
+    description: 'Count of all records',
+    format: '0,0',
+    displayDataLabel: true,
+  };
 
-export const TEST_NUMBER_CHART_CONFIG_MINIMAL: AggregateChartConfigurationDTO =
+export const TEST_NUMBER_CHART_CONFIG_MINIMAL: AggregateChartConfigurationValidationSchema =
   {
     configurationType: WidgetConfigurationType.AGGREGATE_CHART,
     aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
@@ -77,23 +79,24 @@ export const TEST_NUMBER_CHART_CONFIG_MINIMAL: AggregateChartConfigurationDTO =
     displayDataLabel: false,
   };
 
-export const TEST_VERTICAL_BAR_CHART_CONFIG: BarChartConfigurationDTO = {
-  configurationType: WidgetConfigurationType.BAR_CHART,
-  layout: BarChartLayout.VERTICAL,
-  aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
-  aggregateOperation: AggregateOperations.SUM,
-  primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
-  primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-  displayDataLabel: true,
-  axisNameDisplay: AxisNameDisplay.NONE,
-  color: 'red',
-  description: 'Monthly revenue breakdown',
-  omitNullValues: true,
-  rangeMin: 0,
-  rangeMax: 100000,
-};
+export const TEST_VERTICAL_BAR_CHART_CONFIG: BarChartConfigurationValidationSchema =
+  {
+    configurationType: WidgetConfigurationType.BAR_CHART,
+    layout: BarChartLayout.VERTICAL,
+    aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
+    aggregateOperation: AggregateOperations.SUM,
+    primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
+    primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+    displayDataLabel: true,
+    axisNameDisplay: AxisNameDisplay.NONE,
+    color: 'red',
+    description: 'Monthly revenue breakdown',
+    omitNullValues: true,
+    rangeMin: 0,
+    rangeMax: 100000,
+  };
 
-export const TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL: BarChartConfigurationDTO =
+export const TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL: BarChartConfigurationValidationSchema =
   {
     configurationType: WidgetConfigurationType.BAR_CHART,
     layout: BarChartLayout.VERTICAL,
@@ -105,23 +108,24 @@ export const TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL: BarChartConfigurationDTO =
     axisNameDisplay: AxisNameDisplay.NONE,
   };
 
-export const TEST_HORIZONTAL_BAR_CHART_CONFIG: BarChartConfigurationDTO = {
-  configurationType: WidgetConfigurationType.BAR_CHART,
-  layout: BarChartLayout.HORIZONTAL,
-  aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
-  aggregateOperation: AggregateOperations.SUM,
-  primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
-  primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-  displayDataLabel: true,
-  axisNameDisplay: AxisNameDisplay.NONE,
-  color: 'blue',
-  description: 'Horizontal revenue breakdown',
-  omitNullValues: true,
-  rangeMin: 0,
-  rangeMax: 100000,
-};
+export const TEST_HORIZONTAL_BAR_CHART_CONFIG: BarChartConfigurationValidationSchema =
+  {
+    configurationType: WidgetConfigurationType.BAR_CHART,
+    layout: BarChartLayout.HORIZONTAL,
+    aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
+    aggregateOperation: AggregateOperations.SUM,
+    primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
+    primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+    displayDataLabel: true,
+    axisNameDisplay: AxisNameDisplay.NONE,
+    color: 'blue',
+    description: 'Horizontal revenue breakdown',
+    omitNullValues: true,
+    rangeMin: 0,
+    rangeMax: 100000,
+  };
 
-export const TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL: BarChartConfigurationDTO =
+export const TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL: BarChartConfigurationValidationSchema =
   {
     configurationType: WidgetConfigurationType.BAR_CHART,
     layout: BarChartLayout.HORIZONTAL,
@@ -133,7 +137,7 @@ export const TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL: BarChartConfigurationDTO 
     axisNameDisplay: AxisNameDisplay.NONE,
   };
 
-export const TEST_LINE_CHART_CONFIG: LineChartConfigurationDTO = {
+export const TEST_LINE_CHART_CONFIG: LineChartConfigurationValidationSchema = {
   configurationType: WidgetConfigurationType.LINE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.AVG,
@@ -150,17 +154,18 @@ export const TEST_LINE_CHART_CONFIG: LineChartConfigurationDTO = {
   rangeMax: 100,
 };
 
-export const TEST_LINE_CHART_CONFIG_MINIMAL: LineChartConfigurationDTO = {
-  configurationType: WidgetConfigurationType.LINE_CHART,
-  aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
-  aggregateOperation: AggregateOperations.MAX,
-  primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
-  primaryAxisOrderBy: GraphOrderBy.VALUE_ASC,
-  displayDataLabel: false,
-  axisNameDisplay: AxisNameDisplay.NONE,
-};
+export const TEST_LINE_CHART_CONFIG_MINIMAL: LineChartConfigurationValidationSchema =
+  {
+    configurationType: WidgetConfigurationType.LINE_CHART,
+    aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
+    aggregateOperation: AggregateOperations.MAX,
+    primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
+    primaryAxisOrderBy: GraphOrderBy.VALUE_ASC,
+    displayDataLabel: false,
+    axisNameDisplay: AxisNameDisplay.NONE,
+  };
 
-export const TEST_PIE_CHART_CONFIG: PieChartConfigurationDTO = {
+export const TEST_PIE_CHART_CONFIG: PieChartConfigurationValidationSchema = {
   configurationType: WidgetConfigurationType.PIE_CHART,
   groupByFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -173,29 +178,32 @@ export const TEST_PIE_CHART_CONFIG: PieChartConfigurationDTO = {
   description: 'Distribution by category',
 };
 
-export const TEST_PIE_CHART_CONFIG_MINIMAL: PieChartConfigurationDTO = {
-  configurationType: WidgetConfigurationType.PIE_CHART,
-  groupByFieldMetadataId: TEST_FIELD_METADATA_ID_1,
-  aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_2,
-  aggregateOperation: AggregateOperations.COUNT,
-  orderBy: GraphOrderBy.FIELD_ASC,
-  displayDataLabel: false,
-};
+export const TEST_PIE_CHART_CONFIG_MINIMAL: PieChartConfigurationValidationSchema =
+  {
+    configurationType: WidgetConfigurationType.PIE_CHART,
+    groupByFieldMetadataId: TEST_FIELD_METADATA_ID_1,
+    aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_2,
+    aggregateOperation: AggregateOperations.COUNT,
+    orderBy: GraphOrderBy.FIELD_ASC,
+    displayDataLabel: false,
+  };
 
-export const TEST_GAUGE_CHART_CONFIG: GaugeChartConfigurationDTO = {
-  configurationType: WidgetConfigurationType.GAUGE_CHART,
-  aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
-  aggregateOperation: AggregateOperations.SUM,
-  description: 'Completion percentage',
-  displayDataLabel: true,
-};
+export const TEST_GAUGE_CHART_CONFIG: GaugeChartConfigurationValidationSchema =
+  {
+    configurationType: WidgetConfigurationType.GAUGE_CHART,
+    aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
+    aggregateOperation: AggregateOperations.SUM,
+    description: 'Completion percentage',
+    displayDataLabel: true,
+  };
 
-export const TEST_GAUGE_CHART_CONFIG_MINIMAL: GaugeChartConfigurationDTO = {
-  configurationType: WidgetConfigurationType.GAUGE_CHART,
-  aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
-  aggregateOperation: AggregateOperations.COUNT_TRUE,
-  displayDataLabel: false,
-};
+export const TEST_GAUGE_CHART_CONFIG_MINIMAL: GaugeChartConfigurationValidationSchema =
+  {
+    configurationType: WidgetConfigurationType.GAUGE_CHART,
+    aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
+    aggregateOperation: AggregateOperations.COUNT_TRUE,
+    displayDataLabel: false,
+  };
 
 export const INVALID_IFRAME_CONFIG_BAD_URL = {
   url: 'not-a-valid-url',

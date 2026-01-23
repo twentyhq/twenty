@@ -6,7 +6,7 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('WorkflowRunConfiguration')
-export class WorkflowRunConfigurationDTO
+export class WorkflowRunConfigurationValidationSchema
   implements PageLayoutWidgetConfigurationBase
 {
   @Field(() => WidgetConfigurationType)

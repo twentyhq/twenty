@@ -4,7 +4,7 @@ import { validateSync, type ValidationError } from 'class-validator';
 
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 
-export const validateWidgetConfigurationByDto = <
+export const validateWidgetConfigurationByValidationSchema = <
   T extends AllPageLayoutWidgetConfiguration,
 >(
   DtoClass: ClassConstructor<T>,

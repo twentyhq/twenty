@@ -5,7 +5,7 @@ import { IsNotEmpty, IsUUID, ValidateNested } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
+import { PieChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.validation-schema';
 
 @InputType()
 export class PieChartDataInput {
@@ -16,7 +16,7 @@ export class PieChartDataInput {
 
   @Field(() => GraphQLJSON)
   @ValidateNested()
-  @Type(() => PieChartConfigurationDTO)
+  @Type(() => PieChartConfigurationValidationSchema)
   @IsNotEmpty()
-  configuration: PieChartConfigurationDTO;
+  configuration: PieChartConfigurationValidationSchema;
 }

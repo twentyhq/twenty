@@ -5,12 +5,12 @@ import { IsIn, IsNotEmpty } from 'class-validator';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
-@ObjectType('EmailsConfiguration')
-export class EmailsConfigurationDTO
+@ObjectType('TasksConfiguration')
+export class TasksConfigurationValidationSchema
   implements PageLayoutWidgetConfigurationBase
 {
   @Field(() => WidgetConfigurationType)
-  @IsIn([WidgetConfigurationType.EMAILS])
+  @IsIn([WidgetConfigurationType.TASKS])
   @IsNotEmpty()
-  configurationType: WidgetConfigurationType.EMAILS;
+  configurationType: WidgetConfigurationType.TASKS;
 }

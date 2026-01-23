@@ -11,7 +11,7 @@ import {
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
+import { BarChartConfigurationValidationSchema } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.validation-schema';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
@@ -42,7 +42,7 @@ import { sortSecondaryAxisData } from 'src/modules/dashboard/chart-data/utils/so
 type GetBarChartDataParams = {
   workspaceId: string;
   objectMetadataId: string;
-  configuration: BarChartConfigurationDTO;
+  configuration: BarChartConfigurationValidationSchema;
   authContext: AuthContext;
 };
 
@@ -210,7 +210,7 @@ export class BarChartDataService {
     rawResults: GroupByRawResult[];
     primaryAxisGroupByField: FlatFieldMetadata;
     aggregateField: FlatFieldMetadata;
-    configuration: BarChartConfigurationDTO;
+    configuration: BarChartConfigurationValidationSchema;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
   }): BarChartDataOutputDTO {
@@ -345,7 +345,7 @@ export class BarChartDataService {
     primaryAxisGroupByField: FlatFieldMetadata;
     secondaryAxisGroupByField: FlatFieldMetadata;
     aggregateField: FlatFieldMetadata;
-    configuration: BarChartConfigurationDTO;
+    configuration: BarChartConfigurationValidationSchema;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
   }): BarChartDataOutputDTO {
@@ -571,7 +571,7 @@ export class BarChartDataService {
   }: {
     keys: string[];
     data: Record<string, string | number>[];
-    configuration: BarChartConfigurationDTO;
+    configuration: BarChartConfigurationValidationSchema;
     secondaryFormattedToRawLookup: Map<string, RawDimensionValue>;
     secondarySelectOptions: FieldMetadataOption[] | null;
     secondaryAxisGroupByField: FlatFieldMetadata;

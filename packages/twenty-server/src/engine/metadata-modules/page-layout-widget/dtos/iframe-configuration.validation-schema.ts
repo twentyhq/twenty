@@ -1,16 +1,22 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IsIn, IsNotEmpty } from 'class-validator';
+import { IsIn, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
-@ObjectType('CalendarConfiguration')
-export class CalendarConfigurationDTO
+@ObjectType('IframeConfiguration')
+export class IframeConfigurationValidationSchema
   implements PageLayoutWidgetConfigurationBase
 {
   @Field(() => WidgetConfigurationType)
-  @IsIn([WidgetConfigurationType.CALENDAR])
+  @IsIn([WidgetConfigurationType.IFRAME])
   @IsNotEmpty()
-  configurationType: WidgetConfigurationType.CALENDAR;
+  configurationType: WidgetConfigurationType.IFRAME;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  @IsUrl()
+  url?: string;
 }
