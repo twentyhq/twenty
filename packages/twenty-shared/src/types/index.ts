@@ -200,6 +200,7 @@ export type {
   RelationPredicateValue,
   RowLevelPermissionPredicateValue,
 } from './RowLevelPermissionPredicateValue';
+export type { SerializedForeignKey } from './SerializedForeignKey';
 export type { ServerlessFunctionEvent } from './ServerlessFunctionEvent';
 export { SettingsPath } from './SettingsPath';
 export type { Sources } from './SourcesType';

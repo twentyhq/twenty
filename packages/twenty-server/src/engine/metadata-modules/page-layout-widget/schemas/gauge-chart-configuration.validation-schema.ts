@@ -15,6 +15,7 @@ import {
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CalendarStartDay } from 'twenty-shared/constants';
+import { SerializedForeignKey } from 'twenty-shared/types';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -34,7 +35,7 @@ export class GaugeChartConfigurationValidationSchema
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  aggregateFieldMetadataId: string;
+  aggregateFieldMetadataId: SerializedForeignKey<string>;
 
   @Field(() => AggregateOperations)
   @IsEnum(AggregateOperations)

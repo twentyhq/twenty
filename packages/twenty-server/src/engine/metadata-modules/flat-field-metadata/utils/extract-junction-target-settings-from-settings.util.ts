@@ -1,8 +1,11 @@
-import { type AllFieldMetadataSettings } from 'twenty-shared/types';
+import {
+  type AllFieldMetadataSettings,
+  type SerializedForeignKey,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type JunctionTargetSettings = {
-  junctionTargetFieldId?: string;
+  junctionTargetFieldId?: SerializedForeignKey<string>;
 };
 
 // Extracts junction target settings from untyped settings input

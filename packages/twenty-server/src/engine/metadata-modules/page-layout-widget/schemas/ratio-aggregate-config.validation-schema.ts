@@ -9,7 +9,7 @@ export class RatioAggregateConfigValidationSchema {
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  fieldMetadataId: string;
+  fieldMetadataId: SerializedForeignKey<string>;
 
   @Field(() => String)
   @IsString()
