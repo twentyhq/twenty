@@ -16,6 +16,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { type JsonbProperty } from 'src/engine/workspace-manager/types/jsonb-property.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'viewFilter', schema: 'core' })
@@ -47,7 +48,7 @@ export class ViewFilterEntity
   operand: ViewFilterOperand;
 
   @Column({ nullable: false, type: 'jsonb' })
-  value: ViewFilterValue;
+  value: JsonbProperty<ViewFilterValue>;
 
   @Column({ nullable: true, type: 'uuid' })
   viewFilterGroupId: string | null;

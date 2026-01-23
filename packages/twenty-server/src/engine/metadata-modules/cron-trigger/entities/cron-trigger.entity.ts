@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { type JsonbProperty } from 'src/engine/workspace-manager/types/jsonb-property.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 export type CronTriggerSettings = {
@@ -28,7 +29,7 @@ export class CronTriggerEntity
   id: string;
 
   @Column({ nullable: false, type: 'jsonb' })
-  settings: CronTriggerSettings;
+  settings: JsonbProperty<CronTriggerSettings>;
 
   @ManyToOne(
     () => ServerlessFunctionEntity,

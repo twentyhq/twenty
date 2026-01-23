@@ -17,6 +17,7 @@ import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/enti
 import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
+import { type JsonbProperty } from 'src/engine/workspace-manager/types/jsonb-property.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
@@ -59,7 +60,7 @@ export class ServerlessFunctionEntity
   latestVersion: string | null;
 
   @Column({ nullable: false, type: 'jsonb', default: [] })
-  publishedVersions: string[];
+  publishedVersions: JsonbProperty<string[]>;
 
   @Column({ nullable: false, default: ServerlessFunctionRuntime.NODE22 })
   runtime: ServerlessFunctionRuntime;
@@ -72,7 +73,7 @@ export class ServerlessFunctionEntity
   checksum: string | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  toolInputSchema: object | null;
+  toolInputSchema: JsonbProperty<object | null>;
 
   @Column({ nullable: false, default: false })
   isTool: boolean;

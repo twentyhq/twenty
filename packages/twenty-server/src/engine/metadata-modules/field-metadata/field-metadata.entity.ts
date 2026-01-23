@@ -92,7 +92,7 @@ export class FieldMetadataEntity<
   label: string;
 
   @Column({ nullable: true, type: 'jsonb' })
-  defaultValue: FieldMetadataDefaultValue<TFieldMetadataType>;
+  defaultValue: JsonbProperty<FieldMetadataDefaultValue<TFieldMetadataType>>;
 
   @Column({ nullable: true, type: 'text' })
   description: string | null;
@@ -101,10 +101,10 @@ export class FieldMetadataEntity<
   icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides: FieldStandardOverridesDTO | null;
+  standardOverrides: JsonbProperty<FieldStandardOverridesDTO | null>;
 
   @Column('jsonb', { nullable: true })
-  options: FieldMetadataOptions<TFieldMetadataType>;
+  options: JsonbProperty<FieldMetadataOptions<TFieldMetadataType>>;
 
   @Column('jsonb', { nullable: true })
   settings: JsonbProperty<FieldMetadataSettings<TFieldMetadataType>>;

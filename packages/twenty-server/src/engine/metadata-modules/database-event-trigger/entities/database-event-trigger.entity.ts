@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { type JsonbProperty } from 'src/engine/workspace-manager/types/jsonb-property.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 export type DatabaseEventTriggerSettings = {
@@ -31,7 +32,7 @@ export class DatabaseEventTriggerEntity
   id: string;
 
   @Column({ nullable: false, type: 'jsonb' })
-  settings: DatabaseEventTriggerSettings;
+  settings: JsonbProperty<DatabaseEventTriggerSettings>;
 
   @ManyToOne(
     () => ServerlessFunctionEntity,

@@ -71,7 +71,7 @@ export class PageLayoutWidgetEntity<
   objectMetadata: Relation<ObjectMetadataEntity> | null;
 
   @Column({ type: 'jsonb', nullable: false })
-  gridPosition: GridPosition;
+  gridPosition: JsonbProperty<GridPosition>;
 
   @Column({ type: 'jsonb', nullable: false })
   configuration: JsonbProperty<

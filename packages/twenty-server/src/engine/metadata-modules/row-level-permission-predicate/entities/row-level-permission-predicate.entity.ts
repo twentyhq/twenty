@@ -22,6 +22,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
+import { type JsonbProperty } from 'src/engine/workspace-manager/types/jsonb-property.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'rowLevelPermissionPredicate', schema: 'core' })
@@ -71,7 +72,7 @@ export class RowLevelPermissionPredicateEntity
   operand: RowLevelPermissionPredicateOperand;
 
   @Column({ nullable: true, type: 'jsonb' })
-  value: RowLevelPermissionPredicateValue | null;
+  value: JsonbProperty<RowLevelPermissionPredicateValue | null>;
 
   @Column({ nullable: true, type: 'text', default: null })
   subFieldName: string | null;

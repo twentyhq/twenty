@@ -19,6 +19,7 @@ import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/obj
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { type JsonbProperty } from 'src/engine/workspace-manager/types/jsonb-property.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('objectMetadata')
@@ -63,7 +64,7 @@ export class ObjectMetadataEntity
   icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides: ObjectStandardOverridesDTO | null;
+  standardOverrides: JsonbProperty<ObjectStandardOverridesDTO | null>;
 
   /**
    * @deprecated
@@ -93,7 +94,7 @@ export class ObjectMetadataEntity
   isSearchable: boolean;
 
   @Column({ type: 'jsonb', nullable: true })
-  duplicateCriteria: WorkspaceEntityDuplicateCriteria[] | null;
+  duplicateCriteria: JsonbProperty<WorkspaceEntityDuplicateCriteria[] | null>;
 
   @Column({ nullable: true, type: 'varchar' })
   shortcut: string | null;
