@@ -1,7 +1,7 @@
 import { type GraphQLScalarType } from 'graphql';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { type FieldMetadataDefaultValue } from 'twenty-shared/types';
 
 import { type GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 

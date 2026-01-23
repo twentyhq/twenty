@@ -1,4 +1,5 @@
 import {
+  FieldMetadataDefaultValue,
   FieldMetadataOptions,
   FieldMetadataSettings,
   FieldMetadataType,
@@ -18,8 +19,6 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { AssignIfIsGivenFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-if-is-given-field-metadata-type.type';
@@ -92,7 +91,7 @@ export class FieldMetadataEntity<
   label: string;
 
   @Column({ nullable: true, type: 'jsonb' })
-  defaultValue: JsonbProperty<FieldMetadataDefaultValue<TFieldMetadataType>>;
+  defaultValue: FieldMetadataDefaultValue<TFieldMetadataType>;
 
   @Column({ nullable: true, type: 'text' })
   description: string | null;

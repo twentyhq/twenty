@@ -1,4 +1,4 @@
-import { type FieldMetadataDefaultSerializableValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { type FieldMetadataDefaultSerializableValue } from 'twenty-shared/types';
 
 import {
   FieldMetadataException,

@@ -1,6 +1,6 @@
 import { FieldActorSource, FieldMetadataType } from 'twenty-shared/types';
 
-import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { type FieldMetadataDefaultValue } from 'twenty-shared/types';
 
 // No need to refactor as unused in workspace migration v2
 export function generateDefaultValue(

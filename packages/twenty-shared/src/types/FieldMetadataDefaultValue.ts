@@ -1,5 +1,6 @@
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
+import { JsonbProperty } from '@/types/JsonbProperty.type';
 
 import {
   IsArray,
@@ -247,33 +248,33 @@ type ExtractValueType<T> = T extends { value: infer V } ? V : T;
 type UnionOfValues<T> = T[keyof T];
 
 type FieldMetadataDefaultValueMapping = {
-  [FieldMetadataType.UUID]:
-    | FieldMetadataDefaultValueString
-    | FieldMetadataDefaultValueUuidFunction;
-  [FieldMetadataType.TEXT]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.PHONES]: FieldMetadataDefaultValuePhones;
-  [FieldMetadataType.EMAILS]: FieldMetadataDefaultValueEmails;
-  [FieldMetadataType.DATE_TIME]:
-    | FieldMetadataDefaultValueDateTime
-    | FieldMetadataDefaultValueNowFunction;
-  [FieldMetadataType.DATE]:
-    | FieldMetadataDefaultValueDateTime
-    | FieldMetadataDefaultValueNowFunction;
-  [FieldMetadataType.BOOLEAN]: FieldMetadataDefaultValueBoolean;
-  [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
-  [FieldMetadataType.POSITION]: FieldMetadataDefaultValueNumber;
-  [FieldMetadataType.NUMERIC]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.LINKS]: FieldMetadataDefaultValueLinks;
-  [FieldMetadataType.CURRENCY]: FieldMetadataDefaultValueCurrency;
-  [FieldMetadataType.FULL_NAME]: FieldMetadataDefaultValueFullName;
-  [FieldMetadataType.ADDRESS]: FieldMetadataDefaultValueAddress;
-  [FieldMetadataType.RATING]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueStringArray;
-  [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
-  [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText;
-  [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor;
-  [FieldMetadataType.ARRAY]: FieldMetadataDefaultArray;
+  [FieldMetadataType.UUID]: JsonbProperty<
+    FieldMetadataDefaultValueString | FieldMetadataDefaultValueUuidFunction
+  >;
+  [FieldMetadataType.TEXT]: JsonbProperty<FieldMetadataDefaultValueString>;
+  [FieldMetadataType.PHONES]: JsonbProperty<FieldMetadataDefaultValuePhones>;
+  [FieldMetadataType.EMAILS]: JsonbProperty<FieldMetadataDefaultValueEmails>;
+  [FieldMetadataType.DATE_TIME]: JsonbProperty<
+    FieldMetadataDefaultValueDateTime | FieldMetadataDefaultValueNowFunction
+  >;
+  [FieldMetadataType.DATE]: JsonbProperty<
+    FieldMetadataDefaultValueDateTime | FieldMetadataDefaultValueNowFunction
+  >;
+  [FieldMetadataType.BOOLEAN]: JsonbProperty<FieldMetadataDefaultValueBoolean>;
+  [FieldMetadataType.NUMBER]: JsonbProperty<FieldMetadataDefaultValueNumber>;
+  [FieldMetadataType.POSITION]: JsonbProperty<FieldMetadataDefaultValueNumber>;
+  [FieldMetadataType.NUMERIC]: JsonbProperty<FieldMetadataDefaultValueString>;
+  [FieldMetadataType.LINKS]: JsonbProperty<FieldMetadataDefaultValueLinks>;
+  [FieldMetadataType.CURRENCY]: JsonbProperty<FieldMetadataDefaultValueCurrency>;
+  [FieldMetadataType.FULL_NAME]: JsonbProperty<FieldMetadataDefaultValueFullName>;
+  [FieldMetadataType.ADDRESS]: JsonbProperty<FieldMetadataDefaultValueAddress>;
+  [FieldMetadataType.RATING]: JsonbProperty<FieldMetadataDefaultValueString>;
+  [FieldMetadataType.SELECT]: JsonbProperty<FieldMetadataDefaultValueString>;
+  [FieldMetadataType.MULTI_SELECT]: JsonbProperty<FieldMetadataDefaultValueStringArray>;
+  [FieldMetadataType.RAW_JSON]: JsonbProperty<FieldMetadataDefaultValueRawJson>;
+  [FieldMetadataType.RICH_TEXT]: JsonbProperty<FieldMetadataDefaultValueRichText>;
+  [FieldMetadataType.ACTOR]: JsonbProperty<FieldMetadataDefaultActor>;
+  [FieldMetadataType.ARRAY]: JsonbProperty<FieldMetadataDefaultArray>;
 };
 
 export type FieldMetadataClassValidation =
@@ -295,7 +296,9 @@ export type FieldMetadataDefaultValue<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? FieldMetadataDefaultValueForAnyType | null // Could be improved to be | unknown
+    ?
+        | null
+        | FieldMetadataDefaultValueMapping[keyof FieldMetadataDefaultValueMapping]
     : T extends keyof FieldMetadataDefaultValueMapping
       ? FieldMetadataDefaultValueForType<T>
       : never | null;

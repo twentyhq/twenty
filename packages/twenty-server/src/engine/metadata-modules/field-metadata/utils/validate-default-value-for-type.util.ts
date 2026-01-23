@@ -5,7 +5,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import {
   type FieldMetadataClassValidation,
   type FieldMetadataDefaultValue,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+} from 'twenty-shared/types';
 
 import {
   FieldMetadataDefaultActor,

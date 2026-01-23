@@ -1,21 +1,21 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
-  type FieldMetadataMultiItemSettings,
-  type FieldMetadataType,
-  type NullablePartial,
   type AllFieldMetadataSettings,
   type FieldMetadataDateSettings,
   type FieldMetadataDateTimeSettings,
+  type FieldMetadataMultiItemSettings,
   type FieldMetadataNumberSettings,
   type FieldMetadataRelationSettings,
   type FieldMetadataTextSettings,
+  type FieldMetadataType,
+  type NullablePartial,
 } from 'twenty-shared/types';
 import { type Relation as TypeOrmRelation } from 'typeorm';
 
 import {
   type FieldMetadataDefaultValueForAnyType,
   type FieldMetadataDefaultValueForType,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+} from 'twenty-shared/types';
 
 import {
   type FieldMetadataComplexOption,
