@@ -132,18 +132,4 @@ export class FileService {
 
     return [toWorkspaceFolderPath, subFolder, toFilename];
   }
-
-  // async deleteFilesFieldFiles({
-  //   fileIds,
-  //   workspaceId,
-  // }: {
-  //   fileIds: string[];
-  //   workspaceId: string;
-  // }) {
-  //   await this.fileStorageService.deleteFile_v2({
-  //     folderPath: FileFolder.FilesField,
-  //     filename: file.path,
-  //     workspaceId,
-  //   });
-  // }
 }
