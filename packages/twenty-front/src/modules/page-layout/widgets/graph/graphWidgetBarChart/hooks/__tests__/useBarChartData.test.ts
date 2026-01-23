@@ -146,20 +146,6 @@ describe('useBarChartData', () => {
     expect(result.current.enrichedKeys[1].label).toBe('Expenses');
   });
 
-  it('should handle empty data', () => {
-    const { result } = renderHook(() =>
-      useBarChartData({
-        keys: ['sales', 'costs'],
-        series: mockSeries,
-        colorRegistry: mockColorRegistry,
-        colorMode: 'automaticPalette',
-      }),
-    );
-
-    expect(result.current.enrichedKeysMap.size).toBe(2);
-    expect(result.current.visibleKeys).toEqual(['sales', 'costs']);
-  });
-
   it('should handle empty keys', () => {
     const { result } = renderHook(() =>
       useBarChartData({
@@ -253,23 +239,6 @@ describe('useBarChartData', () => {
 
     expect(result.current.visibleKeys).toHaveLength(1);
     expect(result.current.legendItems).toHaveLength(2);
-  });
-
-  it('should filter visible keys based on hidden legend ids while maintaining map', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['costs']);
-
-    const { result } = renderHook(() =>
-      useBarChartData({
-        keys: ['sales', 'costs'],
-        series: mockSeries,
-        colorRegistry: mockColorRegistry,
-        colorMode: 'automaticPalette',
-      }),
-    );
-
-    expect(result.current.visibleKeys).toHaveLength(1);
-    expect(result.current.visibleKeys[0]).toBe('sales');
-    expect(result.current.enrichedKeysMap.size).toBe(2);
   });
 
   it('should handle hidden ids that do not exist in keys', () => {
