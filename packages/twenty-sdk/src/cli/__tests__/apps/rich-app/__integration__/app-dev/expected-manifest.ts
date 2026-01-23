@@ -4,6 +4,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 export const EXPECTED_MANIFEST: ApplicationManifest = {
   sources: {},
+  yarnLock: '',
   application: {
     applicationVariables: {
       DEFAULT_RECIPIENT_NAME: {

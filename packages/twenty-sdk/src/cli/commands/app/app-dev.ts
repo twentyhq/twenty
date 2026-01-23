@@ -41,7 +41,7 @@ export class AppDevCommand {
   private functionsWatcher: FunctionsWatcher | null = null;
   private frontComponentsWatcher: FrontComponentsWatcher | null = null;
 
-  private fileUploader: FileUploader;
+  private fileUploader: FileUploader | null = null;
 
   private appPath: string = '';
   private state: AppDevState = {
@@ -162,7 +162,7 @@ export class AppDevCommand {
       sourcePaths,
       onFileBuilt: async (builtPath, checksum) => {
         await this.updateFileStatus('function', builtPath, checksum);
-        await this.fileUploader.uploadFile({
+        await this.fileUploader?.uploadFile({
           builtPath,
           fileFolder: FileFolder.BuiltFunction,
         });
@@ -180,7 +180,7 @@ export class AppDevCommand {
       sourcePaths,
       onFileBuilt: async (builtPath, checksum) => {
         await this.updateFileStatus('frontComponent', builtPath, checksum);
-        await this.fileUploader.uploadFile({
+        await this.fileUploader?.uploadFile({
           builtPath,
           fileFolder: FileFolder.BuiltFrontComponent,
         });

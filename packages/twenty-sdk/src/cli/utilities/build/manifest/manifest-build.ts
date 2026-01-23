@@ -21,6 +21,7 @@ import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-w
 import { ManifestValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 import { createLogger } from '@/cli/utilities/build/common/logger';
 import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
+import { readFile } from 'fs-extra';
 
 const logger = createLogger('manifest-watch');
 
@@ -145,6 +146,11 @@ export const runManifestBuild = async (
       await findPathFile(appPath, 'package.json'),
     );
 
+    const yarnLock = await readFile(
+      await findPathFile(appPath, 'yarn.lock'),
+      'utf8',
+    );
+
     const [
       applicationBuildResult,
       objectBuildResult,
@@ -188,6 +194,7 @@ export const runManifestBuild = async (
       roles: roleManifests,
       sources,
       packageJson,
+      yarnLock,
     };
 
     const validation = validateManifest({

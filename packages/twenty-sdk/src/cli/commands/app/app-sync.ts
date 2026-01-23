@@ -1,8 +1,6 @@
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
-import * as fs from 'fs-extra';
-import path from 'path';
 import { AppBuildCommand } from '@/cli/commands/app/app-build';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { ApiService } from '@/cli/utilities/api/api-service';
@@ -38,17 +36,7 @@ export class AppSyncCommand {
 
     await uploadService.uploadManifestBuiltFiles(manifest);
 
-    const yarnLockPath = path.join(appPath, 'yarn.lock');
-    let yarnLock = '';
-
-    if (await fs.pathExists(yarnLockPath)) {
-      yarnLock = await fs.readFile(yarnLockPath, 'utf8');
-    }
-
-    const syncResult = await this.apiService.syncApplication({
-      manifest,
-      yarnLock,
-    });
+    const syncResult = await this.apiService.syncApplication(manifest);
 
     if (!syncResult.success) {
       console.error(chalk.red('❌ Application Sync failed:'), syncResult.error);
