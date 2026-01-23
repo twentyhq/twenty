@@ -11,7 +11,6 @@ import {
 } from 'twenty-shared/types';
 import { type Relation as TypeOrmRelation } from 'typeorm';
 
-
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,

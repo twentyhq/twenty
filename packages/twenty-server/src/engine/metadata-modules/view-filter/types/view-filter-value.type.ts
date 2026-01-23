@@ -9,4 +9,4 @@ export type ViewFilterValue =
   | boolean
   | number
   | RelationFilterValue
-  | Record<string, unknown>
+  | Record<string, unknown>;

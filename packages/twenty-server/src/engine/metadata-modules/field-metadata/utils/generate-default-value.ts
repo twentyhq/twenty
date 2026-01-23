@@ -1,4 +1,8 @@
-import { FieldActorSource, FieldMetadataDefaultValue, FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldActorSource,
+  type FieldMetadataDefaultValue,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
 // No need to refactor as unused in workspace migration v2
 export function generateDefaultValue(
