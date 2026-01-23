@@ -28,7 +28,6 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FilesFieldService } from 'src/engine/core-modules/file/services/files-field.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -42,7 +41,6 @@ export class FilesFieldSyncService {
   constructor(
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
-    private readonly fileStorageService: FileStorageService,
     private readonly filesFieldService: FilesFieldService,
   ) {}
 
@@ -67,6 +65,7 @@ export class FilesFieldSyncService {
     }
 
     const toAddFileIds: string[] = [];
+    const toUpdateFileIds: string[] = [];
     const toRemoveFileIds: string[] = [];
 
     for (const record of data) {
@@ -80,6 +79,13 @@ export class FilesFieldSyncService {
         if (isDefined(fieldValue.addFiles)) {
           toAddFileIds.push(...fieldValue.addFiles.map((file) => file.fileId));
         }
+
+        if (isDefined(fieldValue.updateFiles)) {
+          toUpdateFileIds.push(
+            ...fieldValue.updateFiles.map((file) => file.fileId),
+          );
+        }
+
         if (isDefined(fieldValue.removeFiles)) {
           toRemoveFileIds.push(
             ...fieldValue.removeFiles.map((file) => file.fileId),
@@ -88,7 +94,11 @@ export class FilesFieldSyncService {
       }
     }
 
-    if (toAddFileIds.length === 0 && toRemoveFileIds.length === 0) {
+    if (
+      toAddFileIds.length === 0 &&
+      toUpdateFileIds.length === 0 &&
+      toRemoveFileIds.length === 0
+    ) {
       return;
     }
 
@@ -104,16 +114,18 @@ export class FilesFieldSyncService {
 
     const existingFiles = await this.fileRepository.find({
       where: {
-        id: In([...toAddFileIds, ...toRemoveFileIds]),
+        id: In([...toAddFileIds, ...toUpdateFileIds, ...toRemoveFileIds]),
         workspaceId,
       },
       select: ['id', 'path'],
     });
 
     const existingFileIds = existingFiles.map((file) => file.id);
-    const missingFileIds = [...toAddFileIds, ...toRemoveFileIds].filter(
-      (fileId) => !existingFileIds.includes(fileId),
-    );
+    const missingFileIds = [
+      ...toAddFileIds,
+      ...toUpdateFileIds,
+      ...toRemoveFileIds,
+    ].filter((fileId) => !existingFileIds.includes(fileId));
 
     if (missingFileIds.length > 0) {
       const missingFileIdsString = missingFileIds.join(', ');
@@ -224,10 +236,10 @@ export class FilesFieldSyncService {
   }
 
   private validateAndEnrichToUpdateFileItem(
-    toAddFileItem: AddOrUpdateFileItemInput,
+    toUpdateFileItem: AddOrUpdateFileItemInput,
     fileEntities: FileEntity[],
   ): void {
-    const fileId = toAddFileItem.fileId;
+    const fileId = toUpdateFileItem.fileId;
 
     const fileEntity = fileEntities.find((file) => file.id === fileId);
 
@@ -251,7 +263,9 @@ export class FilesFieldSyncService {
       );
     }
 
-    (toAddFileItem as FileItemOutput).extension = path.extname(fileEntity.path);
+    (toUpdateFileItem as FileItemOutput).extension = path.extname(
+      fileEntity.path,
+    );
   }
 
   private validateToRemoveFileItem(

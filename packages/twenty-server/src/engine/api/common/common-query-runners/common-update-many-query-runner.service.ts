@@ -146,14 +146,13 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
       });
+      await this.processFilesFieldSyncOperationsIfNeeded({
+        originalData,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        workspace: authContext.workspace,
+      });
     }
-
-    await this.processFilesFieldSyncOperationsIfNeeded({
-      originalData,
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-      workspace: authContext.workspace,
-    });
 
     return updatedRecords;
   }
