@@ -68,7 +68,7 @@ export type RunManifestBuildOptions = {
   writeOutput?: boolean;
 };
 
-const EMPTY_FILE_PATHS: EntityFilePaths = {
+export const EMPTY_FILE_PATHS: EntityFilePaths = {
   application: [],
   objects: [],
   objectExtensions: [],

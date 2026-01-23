@@ -9,7 +9,7 @@ import {
 const logger = createLogger('manifest-watch');
 
 export type ManifestWatcherCallbacks = {
-  onBuildSuccess?: (result: ManifestBuildResult) => void;
+  onBuildSuccess?: (result: ManifestBuildResult) => Promise<void>;
 };
 
 export type ManifestWatcherOptions = {
@@ -59,9 +59,15 @@ export class ManifestWatcher {
 
       if (result.manifest) {
         logger.log('👀 Watching for changes...');
-        this.callbacks.onBuildSuccess?.(result);
+        await this.callbacks.onBuildSuccess?.(result);
       }
     });
+
+    const result = await runManifestBuild(this.appPath);
+
+    if (result.manifest) {
+      await this.callbacks.onBuildSuccess?.(result);
+    }
 
     logger.log('📂 Watcher started');
   }
