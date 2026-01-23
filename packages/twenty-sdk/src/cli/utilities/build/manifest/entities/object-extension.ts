@@ -2,22 +2,29 @@ import { glob } from 'fast-glob';
 import { type ObjectExtensionManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
-import { type ValidationError } from '../manifest.types';
+import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
+import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 import {
   type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
-} from './entity.interface';
+} from '@/cli/utilities/build/manifest/entities/entity-interface';
 
 export class ObjectExtensionEntityBuilder
   implements ManifestEntityBuilder<ObjectExtensionManifest>
 {
-  async build(appPath: string): Promise<EntityBuildResult<ObjectExtensionManifest>> {
+  async build(
+    appPath: string,
+  ): Promise<EntityBuildResult<ObjectExtensionManifest>> {
     const extensionFiles = await glob(['**/*.object-extension.ts'], {
       cwd: appPath,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
+      ignore: [
+        '**/node_modules/**',
+        '**/*.d.ts',
+        '**/dist/**',
+        '**/.twenty/**',
+      ],
     });
 
     const manifests: ObjectExtensionManifest[] = [];

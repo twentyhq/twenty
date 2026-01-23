@@ -7744,6 +7744,11 @@ msgstr "Siirry edelliseen versioon"
 msgid "Navigate to previous workflow"
 msgstr "Siirry edelliseen työnkulkuun"
 
+#. js-lingui-id: FpO6v4
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "navigation menu item"
+msgstr ""
+
 #. js-lingui-id: qqeAJM
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Never"

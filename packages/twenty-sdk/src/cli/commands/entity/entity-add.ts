@@ -1,9 +1,9 @@
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import { getFrontComponentBaseFile } from '@/cli/utilities/entity/utils/entity-front-component-template';
-import { getFunctionBaseFile } from '@/cli/utilities/entity/utils/entity-function-template';
-import { convertToLabel } from '@/cli/utilities/entity/utils/entity-label';
-import { getNewObjectFileContent } from '@/cli/utilities/entity/utils/entity-object-template';
-import { getRoleBaseFile } from '@/cli/utilities/entity/utils/entity-role-template';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
+import { getFunctionBaseFile } from '@/cli/utilities/entity/entity-function-template';
+import { convertToLabel } from '@/cli/utilities/entity/entity-label';
+import { getNewObjectFileContent } from '@/cli/utilities/entity/entity-object-template';
+import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';

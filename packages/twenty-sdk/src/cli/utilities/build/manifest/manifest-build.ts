@@ -1,22 +1,26 @@
-import { findPathFile } from '@/cli/utilities/file/utils/file-find';
-import { parseJsoncFile } from '@/cli/utilities/file/utils/file-jsonc';
+import { findPathFile } from '@/cli/utilities/file/file-find';
+import { parseJsoncFile } from '@/cli/utilities/file/file-jsonc';
 import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';
 import { relative, sep } from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
-import { createLogger } from '../common/logger';
-import { applicationEntityBuilder } from './entities/application';
-import { frontComponentEntityBuilder } from './entities/front-component';
-import { functionEntityBuilder } from './entities/function';
-import { objectEntityBuilder } from './entities/object';
-import { objectExtensionEntityBuilder } from './entities/object-extension';
-import { roleEntityBuilder } from './entities/role';
-import { displayEntitySummary, displayErrors, displayWarnings } from './manifest-display';
+import { applicationEntityBuilder } from '@/cli/utilities/build/manifest/entities/application';
+import { frontComponentEntityBuilder } from '@/cli/utilities/build/manifest/entities/front-component';
+import { functionEntityBuilder } from '@/cli/utilities/build/manifest/entities/function';
+import { objectEntityBuilder } from '@/cli/utilities/build/manifest/entities/object';
+import { objectExtensionEntityBuilder } from '@/cli/utilities/build/manifest/entities/object-extension';
+import { roleEntityBuilder } from '@/cli/utilities/build/manifest/entities/role';
+import {
+  displayEntitySummary,
+  displayErrors,
+  displayWarnings,
+} from '@/cli/utilities/build/manifest/manifest-display';
 import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
-import { validateManifest } from './manifest-validate';
-import { writeManifestToOutput } from './manifest-writer';
-import { ManifestValidationError } from './manifest.types';
+import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
+import { ManifestValidationError } from '@/cli/utilities/build/manifest/manifest-types';
+import { createLogger } from '@/cli/utilities/build/common/logger';
+import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
 
 const logger = createLogger('manifest-watch');
 
@@ -93,7 +97,9 @@ export const updateManifestChecksum = ({
   checksum,
 }: UpdateManifestChecksumParams): ApplicationManifest | null => {
   if (entityType === 'function') {
-    const fnIndex = manifest.functions.findIndex((f) => f.builtHandlerPath === builtPath);
+    const fnIndex = manifest.functions.findIndex(
+      (f) => f.builtHandlerPath === builtPath,
+    );
     if (fnIndex === -1) {
       return null;
     }
@@ -105,16 +111,19 @@ export const updateManifestChecksum = ({
     };
   }
 
-  const componentIndex = manifest.frontComponents?.findIndex(
-    (c) => c.builtComponentPath === builtPath,
-  ) ?? -1;
+  const componentIndex =
+    manifest.frontComponents.findIndex(
+      (c) => c.builtComponentPath === builtPath,
+    ) ?? -1;
   if (componentIndex === -1) {
     return null;
   }
   return {
     ...manifest,
-    frontComponents: manifest.frontComponents?.map((component, index) =>
-      index === componentIndex ? { ...component, builtComponentChecksum: checksum } : component,
+    frontComponents: manifest.frontComponents.map((component, index) =>
+      index === componentIndex
+        ? { ...component, builtComponentChecksum: checksum }
+        : component,
     ),
   };
 };
@@ -173,11 +182,9 @@ export const runManifestBuild = async (
     const manifest: ApplicationManifest = {
       application,
       objects: objectManifests,
-      objectExtensions:
-        objectExtensionManifests.length > 0 ? objectExtensionManifests : undefined,
+      objectExtensions: objectExtensionManifests,
       functions: functionManifests,
-      frontComponents:
-        frontComponentManifests.length > 0 ? frontComponentManifests : undefined,
+      frontComponents: frontComponentManifests,
       roles: roleManifests,
       sources,
       packageJson,

@@ -4779,6 +4779,11 @@ msgstr "Ваша версия приложения устарела. Пожал�
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "Подписка на оплату повреждена. Пожалуйста, обратитесь в службу поддержки."
 
+#. js-lingui-id: hDEOuv
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Your CalDAV server does not support incremental sync (RFC 6578). Please use a compatible provider such as Nextcloud, iCloud, or Fastmail."
+msgstr ""
+
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Your Password Has Been Successfully Changed"

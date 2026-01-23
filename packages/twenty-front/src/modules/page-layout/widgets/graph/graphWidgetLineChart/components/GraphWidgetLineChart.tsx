@@ -1,3 +1,4 @@
+import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
@@ -96,11 +97,6 @@ export const GraphWidgetLineChart = ({
   const chartTheme = useLineChartTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(0);
-
-  const debouncedSetChartWidth = useDebouncedCallback(
-    (width: number) => setChartWidth(width),
-    300,
-  );
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -291,7 +287,7 @@ export const GraphWidgetLineChart = ({
       >
         <NodeDimensionEffect
           elementRef={containerRef}
-          onDimensionChange={({ width }) => debouncedSetChartWidth(width)}
+          onDimensionChange={({ width }) => setChartWidth(width)}
         />
         <ResponsiveLine
           data={nivoData}
@@ -301,6 +297,8 @@ export const GraphWidgetLineChart = ({
             bottom: margins.bottom,
             left: margins.left,
           }}
+          animate
+          motionConfig={CHART_MOTION_CONFIG}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',

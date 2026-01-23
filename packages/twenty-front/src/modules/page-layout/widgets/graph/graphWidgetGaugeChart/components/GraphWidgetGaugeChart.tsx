@@ -1,3 +1,4 @@
+import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { GaugeChartEndLine } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/components/GaugeChartEndLine';
@@ -123,6 +124,8 @@ export const GraphWidgetGaugeChart = ({
           endAngle={90}
           innerRadius={0.7}
           padding={0.2}
+          animate
+          motionConfig={CHART_MOTION_CONFIG}
           enableTracks={false}
           enableRadialGrid={false}
           enableCircularGrid={false}
