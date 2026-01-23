@@ -5,7 +5,8 @@ export type LoggerContext =
   | 'manifest-watch'
   | 'functions-watch'
   | 'front-components-watch'
-  | 'file-upload';
+  | 'file-upload'
+  | 'app-sync';
 
 type LoggerConfig = {
   prefix: string;
@@ -31,6 +32,10 @@ const LOGGER_CONFIGS: Record<LoggerContext, LoggerConfig> = {
   },
   'file-upload': {
     prefix: '[file-upload]',
+    color: chalk.blue,
+  },
+  'app-sync': {
+    prefix: '[app-sync]',
     color: chalk.blue,
   },
 };
