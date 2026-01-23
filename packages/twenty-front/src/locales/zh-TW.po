@@ -7744,6 +7744,11 @@ msgstr "導航至上一版本"
 msgid "Navigate to previous workflow"
 msgstr "導航至上一個工作流程"
 
+#. js-lingui-id: FpO6v4
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "navigation menu item"
+msgstr ""
+
 #. js-lingui-id: qqeAJM
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Never"
