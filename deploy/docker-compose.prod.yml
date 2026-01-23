@@ -2,7 +2,7 @@ name: controlit-crm
 
 services:
   server:
-    image: twentycrm/twenty:${TAG:-latest}
+    image: ghcr.io/akruminsh/controlit-crm:${TAG:-latest}
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
     ports:
@@ -43,7 +43,7 @@ services:
     restart: always
 
   worker:
-    image: twentycrm/twenty:${TAG:-latest}
+    image: ghcr.io/akruminsh/controlit-crm:${TAG:-latest}
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
     command: ["yarn", "worker:prod"]
