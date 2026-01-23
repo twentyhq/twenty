@@ -1,21 +1,21 @@
 /* @license Enterprise */
 
 import {
-  RowLevelPermissionPredicate,
-  RowLevelPermissionPredicateOperand,
-  RowLevelPermissionPredicateValue,
+    RowLevelPermissionPredicate,
+    RowLevelPermissionPredicateOperand,
+    RowLevelPermissionPredicateValue,
 } from 'twenty-shared/types';
 import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Relation,
-  UpdateDateColumn,
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    Index,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    Relation,
+    UpdateDateColumn,
 } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
