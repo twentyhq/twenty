@@ -82,7 +82,6 @@ export class MessagingSendMessageService {
           to: sendMessageInput.to,
           cc: sendMessageInput.cc,
           bcc: sendMessageInput.bcc,
-          keepBcc: true,
           subject: sendMessageInput.subject,
           text: sendMessageInput.body,
           html: sendMessageInput.html,
@@ -98,7 +97,11 @@ export class MessagingSendMessageService {
             : {}),
         });
 
-        const messageBuffer = await mail.compile().build();
+        const compiledMessage = mail.compile();
+
+        compiledMessage.keepBcc = true;
+
+        const messageBuffer = await compiledMessage.build();
         const encodedMessage = Buffer.from(messageBuffer).toString('base64');
 
         await gmailClient.users.messages.send({
