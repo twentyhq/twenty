@@ -3,11 +3,11 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type DeleteResult, IsNull, type Repository } from 'typeorm';
 
-import * as authUtils from 'src/engine/core-modules/auth/auth.util';
 import {
   KeyValuePairEntity,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
@@ -23,15 +23,15 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 jest.mock('src/engine/core-modules/auth/auth.util', () => ({
-  encryptText: jest.fn((text) => `encrypted:${text}`),
-  decryptText: jest.fn((text) => text.replace('encrypted:', '')),
+  encryptText: jest.fn((text) => `${text}`),
+  decryptText: jest.fn((text) => text.replace('', '')),
 }));
 
 describe('ConfigStorageService', () => {
   let service: ConfigStorageService;
   let keyValuePairRepository: Repository<KeyValuePairEntity>;
   let configValueConverter: ConfigValueConverterService;
-  let environmentConfigDriver: EnvironmentConfigDriver;
+  let secretEncryptionService: SecretEncryptionService;
 
   const createMockKeyValuePair = (
     key: string,
@@ -79,6 +79,13 @@ describe('ConfigStorageService', () => {
             delete: jest.fn(),
           },
         },
+        {
+          provide: SecretEncryptionService,
+          useValue: {
+            decrypt: jest.fn((value) => value),
+            encrypt: jest.fn((value) => value),
+          },
+        },
       ],
     }).compile();
 
@@ -89,8 +96,8 @@ describe('ConfigStorageService', () => {
     configValueConverter = module.get<ConfigValueConverterService>(
       ConfigValueConverterService,
     );
-    environmentConfigDriver = module.get<EnvironmentConfigDriver>(
-      EnvironmentConfigDriver,
+    secretEncryptionService = module.get<SecretEncryptionService>(
+      SecretEncryptionService,
     );
 
     jest.clearAllMocks();
@@ -167,7 +174,7 @@ describe('ConfigStorageService', () => {
     it('should decrypt sensitive string values', async () => {
       const key = 'SENSITIVE_CONFIG' as keyof ConfigVariables;
       const originalValue = 'sensitive-value';
-      const encryptedValue = 'encrypted:sensitive-value';
+      const encryptedValue = 'sensitive-value';
 
       const mockRecord = createMockKeyValuePair(key as string, encryptedValue);
 
@@ -191,10 +198,8 @@ describe('ConfigStorageService', () => {
       const result = await service.get(key);
 
       expect(result).toBe(originalValue);
-      expect(environmentConfigDriver.get).toHaveBeenCalledWith('APP_SECRET');
-      expect(authUtils.decryptText).toHaveBeenCalledWith(
+      expect(secretEncryptionService.decrypt).toHaveBeenCalledWith(
         encryptedValue,
-        'test-secret',
       );
     });
 
@@ -229,7 +234,7 @@ describe('ConfigStorageService', () => {
 
     it('should handle decryption failure in get() by returning original value', async () => {
       const key = 'SENSITIVE_CONFIG' as keyof ConfigVariables;
-      const encryptedValue = 'encrypted:sensitive-value';
+      const encryptedValue = 'sensitive-value';
 
       const mockRecord = createMockKeyValuePair(key as string, encryptedValue);
 
@@ -251,16 +256,17 @@ describe('ConfigStorageService', () => {
       ).mockReturnValue(encryptedValue);
 
       // Mock decryption to throw an error
-      (authUtils.decryptText as jest.Mock).mockImplementationOnce(() => {
-        throw new Error('Decryption failed');
-      });
+      (secretEncryptionService.decrypt as jest.Mock).mockImplementationOnce(
+        () => {
+          throw new Error('Decryption failed');
+        },
+      );
 
       const result = await service.get(key);
 
       expect(result).toBe(encryptedValue);
-      expect(authUtils.decryptText).toHaveBeenCalledWith(
+      expect(secretEncryptionService.decrypt).toHaveBeenCalledWith(
         encryptedValue,
-        'test-secret',
       );
     });
 
@@ -405,7 +411,7 @@ describe('ConfigStorageService', () => {
       const key = 'SENSITIVE_CONFIG' as keyof ConfigVariables;
       const value = 'sensitive-value';
       const convertedValue = 'sensitive-value';
-      const encryptedValue = 'encrypted:sensitive-value';
+      const encryptedValue = 'sensitive-value';
 
       jest.spyOn(keyValuePairRepository, 'findOne').mockResolvedValue(null);
 
@@ -431,10 +437,8 @@ describe('ConfigStorageService', () => {
         workspaceId: null,
         type: KeyValuePairType.CONFIG_VARIABLE,
       });
-      expect(environmentConfigDriver.get).toHaveBeenCalledWith('APP_SECRET');
-      expect(authUtils.encryptText).toHaveBeenCalledWith(
+      expect(secretEncryptionService.encrypt).toHaveBeenCalledWith(
         convertedValue,
-        'test-secret',
       );
     });
 
@@ -459,9 +463,11 @@ describe('ConfigStorageService', () => {
       ).mockReturnValue(convertedValue);
 
       // Mock encryption to throw an error
-      (authUtils.encryptText as jest.Mock).mockImplementationOnce(() => {
-        throw new Error('Encryption failed');
-      });
+      (secretEncryptionService.encrypt as jest.Mock).mockImplementationOnce(
+        () => {
+          throw new Error('Encryption failed');
+        },
+      );
 
       await service.set(key, value);
 
@@ -608,7 +614,7 @@ describe('ConfigStorageService', () => {
 
     it('should decrypt sensitive string values in loadAll', async () => {
       const configVars: KeyValuePairEntity[] = [
-        createMockKeyValuePair('SENSITIVE_CONFIG', 'encrypted:sensitive-value'),
+        createMockKeyValuePair('SENSITIVE_CONFIG', 'sensitive-value'),
         createMockKeyValuePair('NORMAL_CONFIG', 'normal-value'),
       ];
 
@@ -640,10 +646,8 @@ describe('ConfigStorageService', () => {
       expect(result.get('NORMAL_CONFIG' as keyof ConfigVariables)).toBe(
         'normal-value',
       );
-      expect(environmentConfigDriver.get).toHaveBeenCalledWith('APP_SECRET');
-      expect(authUtils.decryptText).toHaveBeenCalledWith(
-        'encrypted:sensitive-value',
-        'test-secret',
+      expect(secretEncryptionService.decrypt).toHaveBeenCalledWith(
+        'sensitive-value',
       );
     });
   });
