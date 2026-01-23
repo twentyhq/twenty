@@ -107,9 +107,6 @@ export const SettingsMorphRelationMultiSelect = ({
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const [localSelectedObjectMetadataIds, setLocalSelectedObjectMetadataIds] =
-    useState<string[]>(selectedObjectMetadataIds);
-
   const { getIcon } = useIcons();
   const options = activeObjectMetadataItems
     .filter(isObjectMetadataAvailableForRelation)
@@ -123,7 +120,7 @@ export const SettingsMorphRelationMultiSelect = ({
     }));
 
   const selectedOptions = options.filter((option) =>
-    localSelectedObjectMetadataIds.includes(option.objectMetadataId),
+    selectedObjectMetadataIds.includes(option.objectMetadataId),
   );
 
   const filteredOptions = useMemo(
