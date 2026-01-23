@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,6 +9,7 @@ import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { PrometheusService } from 'src/engine/core-modules/metrics/prometheus.service';
 import { EVENT_STREAM_TTL_MS } from 'src/engine/subscriptions/constants/event-stream-ttl.constant';
 import {
   EventStreamException,
@@ -17,12 +18,37 @@ import {
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
 
 @Injectable()
-export class EventStreamService {
+export class EventStreamService implements OnModuleInit {
+  private readonly logger = new Logger(EventStreamService.name);
+
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineSubscriptions)
     private readonly cacheStorageService: CacheStorageService,
     private readonly cacheLockService: CacheLockService,
+    private readonly prometheusService: PrometheusService,
   ) {}
+
+  onModuleInit() {
+    this.prometheusService.createGauge({
+      name: 'twenty_event_streams_live_total',
+      help: 'Current number of live event streams',
+      collect: async (gauge) => {
+        try {
+          const count = await this.getTotalActiveStreamCount();
+
+          gauge.set(count);
+        } catch (error) {
+          this.logger.error('Failed to collect event streams metrics', error);
+        }
+      },
+    });
+  }
+
+  async getTotalActiveStreamCount(): Promise<number> {
+    return this.cacheStorageService.scanAndCountSetMembers(
+      'workspace:*:activeStreams',
+    );
+  }
 
   async createEventStream({
     workspaceId,
