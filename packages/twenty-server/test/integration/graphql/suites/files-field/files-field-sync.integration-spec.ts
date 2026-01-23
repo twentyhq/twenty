@@ -6,7 +6,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -114,6 +114,45 @@ describe('fileFieldSync - FILES field <> files sync', () => {
   let createdObjectMetadataId = '';
   let uploadedFiles: UploadedFile[] = [];
 
+  const checkFileExistsInDB = async (fileId: string): Promise<boolean> => {
+    const result = await global.testDataSource.query(
+      'SELECT id FROM core."file" WHERE id = $1',
+      [fileId],
+    );
+
+    return result.length > 0;
+  };
+
+  const checkFileIsInPermanentStorage = async (
+    fileId: string,
+  ): Promise<boolean> => {
+    const result = await global.testDataSource.query(
+      'SELECT path FROM core."file" WHERE id = $1',
+      [fileId],
+    );
+
+    if (result.length === 0) {
+      return false;
+    }
+
+    return result[0].path.startsWith(FileFolder.FilesField);
+  };
+
+  const checkFileIsInTemporaryStorage = async (
+    fileId: string,
+  ): Promise<boolean> => {
+    const result = await global.testDataSource.query(
+      'SELECT path FROM core."file" WHERE id = $1',
+      [fileId],
+    );
+
+    if (result.length === 0) {
+      return false;
+    }
+
+    return result[0].path.startsWith(FileFolder.TemporaryFilesField);
+  };
+
   beforeAll(async () => {
     jest.useRealTimers();
 
@@ -204,6 +243,11 @@ describe('fileFieldSync - FILES field <> files sync', () => {
 
     uploadedFiles.push(imageFile, textFile);
 
+    expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
+    expect(await checkFileIsInTemporaryStorage(imageFile.id)).toBe(true);
+    expect(await checkFileIsInTemporaryStorage(textFile.id)).toBe(true);
+
     const response = await makeGraphqlAPIRequest({
       query: createRecordsQuery,
       variables: {
@@ -239,6 +283,11 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     expect(createdRecord.filesField[1].fileId).toBe(textFile.id);
     expect(createdRecord.filesField[1].extension).toBe('.txt');
 
+    expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(imageFile.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(textFile.id)).toBe(true);
+
     await makeGraphqlAPIRequest({
       query: deleteRecordsQuery,
       variables: {
@@ -265,6 +314,13 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     );
 
     uploadedFiles.push(imageFile, textFile, anotherImageFile);
+
+    expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(anotherImageFile.id)).toBe(true);
+    expect(await checkFileIsInTemporaryStorage(imageFile.id)).toBe(true);
+    expect(await checkFileIsInTemporaryStorage(textFile.id)).toBe(true);
+    expect(await checkFileIsInTemporaryStorage(anotherImageFile.id)).toBe(true);
 
     const createResponse = await makeGraphqlAPIRequest({
       query: createRecordsQuery,
@@ -335,6 +391,10 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     expect(updatedRecord.filesField[2].label).toBe('textFile-label.txt');
     expect(updatedRecord.filesField[2].extension).toBe('.txt');
 
+    expect(await checkFileIsInPermanentStorage(imageFile.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(anotherImageFile.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(textFile.id)).toBe(true);
+
     await makeGraphqlAPIRequest({
       query: deleteRecordsQuery,
       variables: {
@@ -357,6 +417,11 @@ describe('fileFieldSync - FILES field <> files sync', () => {
 
     uploadedFiles.push(imageFile, textFile);
 
+    expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
+    expect(await checkFileIsInTemporaryStorage(imageFile.id)).toBe(true);
+    expect(await checkFileIsInTemporaryStorage(textFile.id)).toBe(true);
+
     const createResponse = await makeGraphqlAPIRequest({
       query: createRecordsQuery,
       variables: {
@@ -376,6 +441,8 @@ describe('fileFieldSync - FILES field <> files sync', () => {
         upsert: false,
       },
     });
+
+    expect(await checkFileIsInPermanentStorage(imageFile.id)).toBe(true);
 
     const createdRecord = createResponse.body.data.createFileSyncTestObjects[0];
     const recordId = createdRecord.id;
@@ -412,6 +479,11 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     expect(updatedRecord.filesField[1].fileId).toBe(textFile.id);
     expect(updatedRecord.filesField[1].label).toBe('added-text.txt');
 
+    expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(imageFile.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(textFile.id)).toBe(true);
+
     await makeGraphqlAPIRequest({
       query: deleteRecordsQuery,
       variables: {
@@ -433,6 +505,11 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     );
 
     uploadedFiles.push(imageFile, textFile);
+
+    expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
+    expect(await checkFileIsInTemporaryStorage(imageFile.id)).toBe(true);
+    expect(await checkFileIsInTemporaryStorage(textFile.id)).toBe(true);
 
     const createResponse = await makeGraphqlAPIRequest({
       query: createRecordsQuery,
@@ -457,6 +534,9 @@ describe('fileFieldSync - FILES field <> files sync', () => {
         upsert: false,
       },
     });
+
+    expect(await checkFileIsInPermanentStorage(imageFile.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(textFile.id)).toBe(true);
 
     const createdRecord = createResponse.body.data.createFileSyncTestObjects[0];
     const recordId = createdRecord.id;
@@ -483,6 +563,10 @@ describe('fileFieldSync - FILES field <> files sync', () => {
 
     expect(updatedRecord.filesField).toHaveLength(1);
     expect(updatedRecord.filesField[0].fileId).toBe(textFile.id);
+
+    expect(await checkFileExistsInDB(imageFile.id)).toBe(false);
+    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(textFile.id)).toBe(true);
 
     await makeGraphqlAPIRequest({
       query: deleteRecordsQuery,
