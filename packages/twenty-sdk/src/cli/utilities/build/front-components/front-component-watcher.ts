@@ -33,6 +33,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
   private watchMode: boolean;
   private lastChecksums: Map<string, string> = new Map();
   private onFileBuilt?: OnFileBuiltCallback;
+  private getCurrentGeneration: () => number;
   private buildCompletePromise: Promise<void> = Promise.resolve();
   private resolveBuildComplete: (() => void) | null = null;
 
@@ -41,6 +42,8 @@ export class FrontComponentsWatcher implements RestartableWatcher {
     this.componentPaths = options.sourcePaths;
     this.watchMode = options.watch ?? true;
     this.onFileBuilt = options.onFileBuilt;
+    // Default to generation 0 if no getter is provided
+    this.getCurrentGeneration = options.getCurrentGeneration ?? (() => 0);
   }
 
   shouldRestart(sourcePaths: string[]): boolean {
@@ -140,11 +143,15 @@ export class FrontComponentsWatcher implements RestartableWatcher {
                   return;
                 }
 
+                // Get current generation at the time of build completion
+                const generation = watcher.getCurrentGeneration();
+
                 const { hasChanges } = await processEsbuildResult({
                   result,
                   outputDir,
                   builtDir: FRONT_COMPONENTS_DIR,
                   lastChecksums: watcher.lastChecksums,
+                  generation,
                   onFileBuilt: watcher.onFileBuilt,
                   onSuccess: (relativePath) =>
                     logger.success(`✓ Built ${relativePath}`),

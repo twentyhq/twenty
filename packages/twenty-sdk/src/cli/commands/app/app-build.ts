@@ -64,7 +64,7 @@ export class AppBuildCommand {
       appPath: this.appPath,
       sourcePaths: buildResult.filePaths.functions,
       watch: false,
-      onFileBuilt: (builtPath, checksum) => {
+      onFileBuilt: (_generation, builtPath, checksum) => {
         if (buildResult.manifest) {
           const updatedManifest = updateManifestChecksum({
             manifest: buildResult.manifest,
@@ -90,7 +90,7 @@ export class AppBuildCommand {
       appPath: this.appPath,
       sourcePaths: buildResult.filePaths.frontComponents,
       watch: false,
-      onFileBuilt: (builtPath, checksum) => {
+      onFileBuilt: (_generation, builtPath, checksum) => {
         if (buildResult.manifest) {
           const updatedManifest = updateManifestChecksum({
             manifest: buildResult.manifest,
