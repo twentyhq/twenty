@@ -6,7 +6,7 @@ export default [
     ignores: ['**/dist/**'],
   },
   {
-    files: ['*/.{js,jsx,ts,tsx}'],
+    files: ['**/*.{js,jsx,ts,tsx}'],
     rules: {
       'prettier/prettier': 'error',
     },
