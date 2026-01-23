@@ -12,8 +12,10 @@ import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-exec
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+import { ApiService } from '@/cli/utilities/api/api-service';
 
 const initLogger = createLogger('init');
+const appSyncLogger = createLogger('app-sync');
 
 export type AppDevOptions = {
   appPath?: string;
@@ -42,6 +44,8 @@ export class AppDevCommand {
   private frontComponentsWatcher: FrontComponentsWatcher | null = null;
 
   private fileUploader: FileUploader | null = null;
+
+  private apiService = new ApiService();
 
   private appPath: string = '';
   private state: AppDevState = {
@@ -125,35 +129,49 @@ export class AppDevCommand {
     this.manifestWatcher = new ManifestWatcher({
       appPath: this.appPath,
       callbacks: {
-        onBuildSuccess: this.onManifestBuild,
+        onBuildSuccess: async (result: ManifestBuildResult) => {
+          this.state.manifest = result.manifest;
+
+          const functionSourcePaths = result.filePaths.functions;
+          const shouldRestartFunctions =
+            this.functionsWatcher?.shouldRestart(functionSourcePaths);
+          if (shouldRestartFunctions) {
+            if (result.manifest) {
+              this.initializeFunctionsFileUploadStatus(result.manifest);
+            }
+            this.functionsWatcher?.restart(functionSourcePaths);
+          }
+
+          const componentSourcePaths = result.filePaths.frontComponents;
+          const shouldRestartFrontComponents =
+            this.frontComponentsWatcher?.shouldRestart(componentSourcePaths);
+          if (shouldRestartFrontComponents) {
+            if (result.manifest) {
+              this.initializeFrontComponentsFileUploadStatus(result.manifest);
+            }
+            this.frontComponentsWatcher?.restart(componentSourcePaths);
+          }
+
+          if (result.manifest) {
+            await this.syncApplication(result.manifest);
+          }
+        },
       },
     });
 
     await this.manifestWatcher.start();
   }
 
-  private async onManifestBuild(result: ManifestBuildResult) {
-    this.state.manifest = result.manifest;
+  private async syncApplication(manifest: ApplicationManifest): Promise<void> {
+    initLogger.log('Sync application');
+    const syncResult = await this.apiService.syncApplication(manifest);
 
-    const functionSourcePaths = result.filePaths.functions;
-    const shouldRestartFunctions =
-      this.functionsWatcher?.shouldRestart(functionSourcePaths);
-    if (shouldRestartFunctions) {
-      if (result.manifest) {
-        this.initializeFunctionsFileUploadStatus(result.manifest);
-      }
-      this.functionsWatcher?.restart(functionSourcePaths);
+    if (!syncResult.success) {
+      appSyncLogger.error(`❌ Application Sync failed: ${syncResult.error}`);
+    } else {
+      appSyncLogger.success('✓ Application synced successfully');
     }
-
-    const componentSourcePaths = result.filePaths.frontComponents;
-    const shouldRestartFrontComponents =
-      this.frontComponentsWatcher?.shouldRestart(componentSourcePaths);
-    if (shouldRestartFrontComponents) {
-      if (result.manifest) {
-        this.initializeFrontComponentsFileUploadStatus(result.manifest);
-      }
-      this.frontComponentsWatcher?.restart(componentSourcePaths);
-    }
+    appSyncLogger.success('');
   }
 
   private async startFunctionsWatcher(sourcePaths: string[]): Promise<void> {
