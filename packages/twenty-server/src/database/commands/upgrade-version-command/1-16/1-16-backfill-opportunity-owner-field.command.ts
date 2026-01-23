@@ -140,10 +140,6 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
         this.logger.log(
           `Renamed custom owner field to 'ownerOld' in workspace ${workspaceId}`,
         );
-
-        await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-          'flatFieldMetadataMaps',
-        ]);
       }
     }
 
