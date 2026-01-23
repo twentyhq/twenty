@@ -29,7 +29,7 @@ import styled from '@emotion/styled';
 import { type MouseEvent } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/display';
-import { WidgetType } from '~/generated/graphql';
+import { PageLayoutType, WidgetType } from '~/generated/graphql';
 
 const StyledNoAccessContainer = styled.div`
   align-items: center;
@@ -78,6 +78,9 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const isLastWidget = useIsCurrentWidgetLastOfTab(widget.id);
+
+  const isReorderEnabled =
+    currentPageLayout.type !== PageLayoutType.RECORD_PAGE;
 
   // TODO: when we have more widgets without headers, we should use a more generic approach to hide the header
   // each widget type could have metadata (e.g., hasHeader: boolean or headerMode: 'always' | 'editOnly' | 'never')
@@ -147,6 +150,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
             variant={variant}
             isInEditMode={isPageLayoutInEditMode}
             isResizing={isResizing}
+            isReorderEnabled={isReorderEnabled}
             title={widget.title}
             onRemove={handleRemove}
             actions={actions}

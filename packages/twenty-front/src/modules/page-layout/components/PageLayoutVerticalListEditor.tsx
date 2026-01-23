@@ -34,11 +34,13 @@ const StyledDraggableWrapper = styled.div<{ isDragging: boolean }>`
 type PageLayoutVerticalListEditorProps = {
   widgets: PageLayoutWidget[];
   onReorder: (result: DropResult) => void;
+  isReorderEnabled?: boolean;
 };
 
 export const PageLayoutVerticalListEditor = ({
   widgets,
   onReorder,
+  isReorderEnabled = true,
 }: PageLayoutVerticalListEditorProps) => {
   const droppableId = `page-layout-vertical-list-${useId()}`;
 
@@ -67,7 +69,12 @@ export const PageLayoutVerticalListEditor = ({
             {...provided.droppableProps}
           >
             {widgets.map((widget, index) => (
-              <Draggable key={widget.id} draggableId={widget.id} index={index}>
+              <Draggable
+                key={widget.id}
+                draggableId={widget.id}
+                index={index}
+                isDragDisabled={!isReorderEnabled}
+              >
                 {(provided, snapshot) => (
                   <StyledDraggableWrapper
                     ref={provided.innerRef}
