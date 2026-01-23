@@ -4,7 +4,6 @@ import {
   Module,
   RequestMethod,
 } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
@@ -48,10 +47,6 @@ const MIGRATED_REST_METHODS = [
 @Module({
   imports: [
     SentryModule.forRoot(),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
-    }),
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
       imports: [GraphQLConfigModule, MetricsModule, DataloaderModule],

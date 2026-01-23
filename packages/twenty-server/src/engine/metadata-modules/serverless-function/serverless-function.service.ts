@@ -18,6 +18,7 @@ import { AuditService } from 'src/engine/core-modules/audit/services/audit.servi
 import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/get-serverless-folder-or-throw.utils';
@@ -70,6 +71,7 @@ export class ServerlessFunctionService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
   async hasServerlessFunctionPublishedVersion(
@@ -205,7 +207,7 @@ export class ServerlessFunctionService {
             [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
           }
         : {}),
-      ...buildEnvVar(flatApplicationVariables),
+      ...buildEnvVar(flatApplicationVariables, this.secretEncryptionService),
     };
 
     // We keep that check to build functions
