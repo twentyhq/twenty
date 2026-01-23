@@ -245,7 +245,8 @@ const GENERATE_ATTACHMENT_SEEDS = (): AttachmentDataSeed[] => {
       entityIndex++;
     } else {
       // 5% Opportunity attachments
-      targetOpportunityId = OPPORTUNITY_IDS[entityIndex % OPPORTUNITY_IDS.length];
+      targetOpportunityId =
+        OPPORTUNITY_IDS[entityIndex % OPPORTUNITY_IDS.length];
       entityIndex++;
     }
 
