@@ -1,16 +1,16 @@
 import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
-import { OUTPUT_DIR } from '../common/constants';
-import { processEsbuildResult } from '../common/esbuild-result-processor';
-import { createLogger } from '../common/logger';
+import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
+import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
+import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
+import { createLogger } from '@/cli/utilities/build/common/logger';
 import {
   type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
-} from '../common/restartable-watcher.interface';
-import { FUNCTIONS_DIR } from './constants';
+} from '@/cli/utilities/build/common/restartable-watcher.interface';
+import { FUNCTIONS_DIR } from '@/cli/utilities/build/functions/constants';
 
 const logger = createLogger('functions-watch');
 

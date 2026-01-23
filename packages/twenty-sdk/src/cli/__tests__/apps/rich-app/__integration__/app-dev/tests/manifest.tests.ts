@@ -16,7 +16,7 @@ export const defineManifestTests = (appPath: string): void => {
       const { sources: _sources, ...sanitizedManifest } = manifest;
 
       expect(normalizeManifestForComparison(sanitizedManifest)).toEqual(
-        normalizeManifestForComparison(expectedManifest),
+        normalizeManifestForComparison(expectedManifest as any),
       );
 
       for (const fn of manifest.functions) {
@@ -36,7 +36,9 @@ export const defineManifestTests = (appPath: string): void => {
       const manifest = await fs.readJson(manifestOutputPath);
 
       expect(manifest?.application.displayName).toBe('Hello World');
-      expect(manifest?.application.description).toBe('A simple hello world app');
+      expect(manifest?.application.description).toBe(
+        'A simple hello world app',
+      );
     });
 
     it('should load all entity types', async () => {

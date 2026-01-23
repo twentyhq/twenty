@@ -3,9 +3,9 @@ import { type RunCliCommandResult } from '@/cli/__tests__/integration/utils/run-
 import { join } from 'path';
 
 import { defineConsoleOutputTests } from './tests/console-output.tests';
-import { defineFrontComponentsTests } from './tests/front-components.tests';
-import { defineFunctionsTests } from './tests/functions.tests';
-import { defineManifestTests } from './tests/manifest.tests';
+import { defineManifestTests } from '../app-dev/tests/manifest.tests';
+import { defineFrontComponentsTests } from '../app-dev/tests/front-components.tests';
+import { defineFunctionsTests } from '../app-dev/tests/functions.tests';
 
 const APP_PATH = join(__dirname, '../..');
 

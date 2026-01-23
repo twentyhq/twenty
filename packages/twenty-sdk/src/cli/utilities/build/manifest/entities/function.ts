@@ -1,15 +1,16 @@
 import { glob } from 'fast-glob';
 import { type ServerlessFunctionManifest } from 'twenty-shared/application';
-import { createLogger } from '../../common/logger';
-import { FUNCTIONS_DIR } from '../../functions/constants';
-import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
-import { type ValidationError } from '../manifest.types';
+import { createLogger } from '@/cli/utilities/build/common/logger';
+
+import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
+import { type ValidationError } from '@/cli/utilities/build/manifest/manifest.types';
 import {
   type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
-} from './entity.interface';
+} from '@/cli/utilities/build/manifest/entities/entity.interface';
+import { FUNCTIONS_DIR } from '@/cli/utilities/build/functions/constants';
 
 const logger = createLogger('manifest-watch');
 
@@ -23,10 +24,17 @@ type ExtractedFunctionManifest = Omit<
 export class FunctionEntityBuilder
   implements ManifestEntityBuilder<ServerlessFunctionManifest>
 {
-  async build(appPath: string): Promise<EntityBuildResult<ServerlessFunctionManifest>> {
+  async build(
+    appPath: string,
+  ): Promise<EntityBuildResult<ServerlessFunctionManifest>> {
     const functionFiles = await glob(['**/*.function.ts'], {
       cwd: appPath,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
+      ignore: [
+        '**/node_modules/**',
+        '**/*.d.ts',
+        '**/dist/**',
+        '**/.twenty/**',
+      ],
     });
 
     const manifests: ServerlessFunctionManifest[] = [];

@@ -11,7 +11,7 @@ import {
 import * as path from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
-import { type ApiResponse } from '../types/api-response.types';
+import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
 import { pascalCase } from 'twenty-shared/utils';
 
 export class ApiService {

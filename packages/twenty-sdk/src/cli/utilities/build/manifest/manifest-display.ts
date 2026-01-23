@@ -1,11 +1,14 @@
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { createLogger } from '../common/logger';
-import { applicationEntityBuilder } from './entities/application';
-import { frontComponentEntityBuilder } from './entities/front-component';
-import { functionEntityBuilder } from './entities/function';
-import { objectEntityBuilder } from './entities/object';
-import { roleEntityBuilder } from './entities/role';
-import { type ManifestValidationError, type ValidationWarning } from './manifest.types';
+import { frontComponentEntityBuilder } from '@/cli/utilities/build/manifest/entities/front-component';
+import { functionEntityBuilder } from '@/cli/utilities/build/manifest/entities/function';
+import { objectEntityBuilder } from '@/cli/utilities/build/manifest/entities/object';
+import { roleEntityBuilder } from '@/cli/utilities/build/manifest/entities/role';
+import {
+  type ManifestValidationError,
+  type ValidationWarning,
+} from '@/cli/utilities/build/manifest/manifest.types';
+import { applicationEntityBuilder } from '@/cli/utilities/build/manifest/entities/application';
 
 const logger = createLogger('manifest-watch');
 

@@ -5,22 +5,22 @@ import * as fs from 'fs-extra';
 import { relative, sep } from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
-import { createLogger } from '../common/logger';
-import { applicationEntityBuilder } from './entities/application';
-import { frontComponentEntityBuilder } from './entities/front-component';
-import { functionEntityBuilder } from './entities/function';
-import { objectEntityBuilder } from './entities/object';
-import { objectExtensionEntityBuilder } from './entities/object-extension';
-import { roleEntityBuilder } from './entities/role';
+import { applicationEntityBuilder } from '@/cli/utilities/build/manifest/entities/application';
+import { frontComponentEntityBuilder } from '@/cli/utilities/build/manifest/entities/front-component';
+import { functionEntityBuilder } from '@/cli/utilities/build/manifest/entities/function';
+import { objectEntityBuilder } from '@/cli/utilities/build/manifest/entities/object';
+import { objectExtensionEntityBuilder } from '@/cli/utilities/build/manifest/entities/object-extension';
+import { roleEntityBuilder } from '@/cli/utilities/build/manifest/entities/role';
 import {
   displayEntitySummary,
   displayErrors,
   displayWarnings,
-} from './manifest-display';
+} from '@/cli/utilities/build/manifest/manifest-display';
 import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
-import { validateManifest } from './manifest-validate';
-import { writeManifestToOutput } from './manifest-writer';
-import { ManifestValidationError } from './manifest.types';
+import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
+import { ManifestValidationError } from '@/cli/utilities/build/manifest/manifest.types';
+import { createLogger } from '@/cli/utilities/build/common/logger';
+import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
 
 const logger = createLogger('manifest-watch');
 
