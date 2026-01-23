@@ -13,4 +13,3 @@ export type RowLevelPermissionPredicateValue =
   | RelationPredicateValue
   | Record<string, unknown>
   | null
-  | undefined;
