@@ -2,7 +2,6 @@ import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageL
 import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
 import { PageLayoutGridResizeHandle } from '@/page-layout/components/PageLayoutGridResizeHandle';
 import { ReactGridLayoutCardWrapper } from '@/page-layout/components/ReactGridLayoutCardWrapper';
-import { DASHBOARD_ANIMATION_DISABLED } from '@/page-layout/constants/DashboardAnimationDisabled';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
@@ -168,8 +167,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     [activeTabWidgets, hasPendingPlaceholder],
   );
 
-  const shouldDisableTransitions =
-    DASHBOARD_ANIMATION_DISABLED && !isDefined(draggingWidgetId);
+  const shouldDisableTransitions = !isDefined(draggingWidgetId);
 
   return (
     <StyledGridContainer

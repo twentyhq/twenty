@@ -1,6 +1,6 @@
-import { DASHBOARD_ANIMATION_DISABLED } from '@/page-layout/constants/DashboardAnimationDisabled';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { CustomArcsLayer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/CustomArcsLayer';
 import { GraphPieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphPieChartTooltip';
 import { PieChartCenterMetric } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer';
@@ -187,7 +187,8 @@ export const GraphWidgetPieChart = ({
             margin={showDataLabels && !hasNoData ? PIE_CHART_MARGINS : {}}
             innerRadius={0.8}
             colors={chartColors}
-            animate={!DASHBOARD_ANIMATION_DISABLED}
+            animate
+            motionConfig={CHART_MOTION_CONFIG}
             enableArcLinkLabels={showDataLabels && !hasNoData}
             enableArcLabels={false}
             tooltip={() => null}

@@ -1,7 +1,7 @@
-import { DASHBOARD_ANIMATION_DISABLED } from '@/page-layout/constants/DashboardAnimationDisabled';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
+import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomSliceHoverLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomSliceHoverLayer';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
@@ -378,7 +378,8 @@ export const GraphWidgetBarChart = ({
           }}
           indexScale={{ type: 'band', round: true }}
           colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
-          animate={!DASHBOARD_ANIMATION_DISABLED}
+          animate
+          motionConfig={CHART_MOTION_CONFIG}
           layers={[
             'grid',
             'markers',

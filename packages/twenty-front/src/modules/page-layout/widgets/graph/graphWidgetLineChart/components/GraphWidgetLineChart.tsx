@@ -1,10 +1,10 @@
-import { DASHBOARD_ANIMATION_DISABLED } from '@/page-layout/constants/DashboardAnimationDisabled';
+import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
 import {
-    CustomCrosshairLayer,
-    type SliceHoverData,
+  CustomCrosshairLayer,
+  type SliceHoverData,
 } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomCrosshairLayer';
 import { CustomLinesLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomLinesLayer';
 import { CustomPointLabelsLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomPointLabelsLayer';
@@ -21,19 +21,19 @@ import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColo
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
-    formatGraphValue,
-    type GraphValueFormatOptions,
+  formatGraphValue,
+  type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
-    ResponsiveLine,
-    type LineCustomSvgLayerProps,
-    type LineSeries,
-    type Point,
-    type SliceTooltipProps,
+  ResponsiveLine,
+  type LineCustomSvgLayerProps,
+  type LineSeries,
+  type Point,
+  type SliceTooltipProps,
 } from '@nivo/line';
 import { useCallback, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -297,7 +297,8 @@ export const GraphWidgetLineChart = ({
             bottom: margins.bottom,
             left: margins.left,
           }}
-          animate={!DASHBOARD_ANIMATION_DISABLED}
+          animate
+          motionConfig={CHART_MOTION_CONFIG}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',

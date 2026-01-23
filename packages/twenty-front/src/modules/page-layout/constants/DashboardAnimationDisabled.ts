@@ -1,1 +1,0 @@
-export const DASHBOARD_ANIMATION_DISABLED = true;
