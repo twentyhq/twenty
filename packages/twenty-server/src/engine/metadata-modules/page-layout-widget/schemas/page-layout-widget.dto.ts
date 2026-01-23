@@ -3,9 +3,10 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { WidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/schemas/widget-configuration.interface';
-import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
+import { PageLayoutWidgetConfigurationTypeSettings } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configuration.type';
 
 registerEnumType(WidgetType, { name: 'WidgetType' });
 
@@ -25,7 +26,9 @@ export class GridPositionDTO {
 }
 
 @ObjectType('PageLayoutWidget')
-export class PageLayoutWidgetDTO {
+export class PageLayoutWidgetDTO<
+  T extends WidgetConfigurationType = WidgetConfigurationType,
+> {
   @IDField(() => UUIDScalarType)
   id: string;
 
@@ -45,7 +48,7 @@ export class PageLayoutWidgetDTO {
   gridPosition: GridPositionDTO;
 
   @Field(() => WidgetConfiguration, { nullable: false })
-  configuration: AllPageLayoutWidgetConfiguration;
+  configuration: PageLayoutWidgetConfigurationTypeSettings<T>;
 
   @Field()
   createdAt: Date;
