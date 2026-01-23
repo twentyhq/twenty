@@ -28,6 +28,9 @@ export class PageLayoutDTO {
   @Field(() => [PageLayoutTabDTO], { nullable: true })
   tabs?: PageLayoutTabDTO[] | null;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  defaultTabIdToFocusOnMobileAndSidePanel?: string | null;
+
   @Field()
   createdAt: Date;
 
