@@ -2,18 +2,18 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
-    IsBoolean,
-    IsEnum,
-    IsIn,
-    IsNotEmpty,
-    IsObject,
-    IsOptional,
-    IsString,
-    IsTimeZone,
-    IsUUID,
-    Max,
-    Min,
-    ValidateNested,
+  IsBoolean,
+  IsEnum,
+  IsIn,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsTimeZone,
+  IsUUID,
+  Max,
+  Min,
+  ValidateNested,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CalendarStartDay } from 'twenty-shared/constants';
