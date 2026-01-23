@@ -10,4 +10,5 @@ export type PackageJson = {
   version: string;
   dependencies?: object;
   devDependencies?: object;
+  scripts?: Record<string, string>;
 };
