@@ -3,29 +3,54 @@ import { inspect } from 'util';
 import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 import { z } from 'zod';
-import { type FieldMetadataSettingsMapping } from 'twenty-shared/types';
 
+import {
+  type AddFileItemInput,
+  type AddOrUpdateFileItemInput,
+  type RemoveFileItemInput,
+} from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
-export const fileItemSchema = z
+const addOrUpdateFileItemSchema = z
   .object({
     fileId: z.string().uuidv4(),
     label: z.string(),
   })
   .strict();
 
-export const filesFieldSchema = z.array(fileItemSchema);
+const removeFileItemSchema = z
+  .object({
+    fileId: z.string().uuidv4(),
+  })
+  .strict();
 
-export type FileItem = z.infer<typeof fileItemSchema>;
+export const filesFieldSchema = z
+  .object({
+    addFiles: z.array(addOrUpdateFileItemSchema).optional(),
+    updateFiles: z.array(addOrUpdateFileItemSchema).optional(),
+    removeFiles: z.array(removeFileItemSchema).optional(),
+  })
+  .strict();
+
+export type FilesFieldInput = {
+  addFiles?: AddOrUpdateFileItemInput[];
+  updateFiles?: AddOrUpdateFileItemInput[];
+  removeFiles?: RemoveFileItemInput[];
+};
+
+export type EnrichedFilesFieldInput = {
+  addFiles?: (AddFileItemInput & { extension: string })[];
+  updateFiles?: AddOrUpdateFileItemInput[];
+  removeFiles?: RemoveFileItemInput[];
+};
 
 export const validateFilesFieldOrThrow = (
   value: unknown,
   fieldName: string,
-  settings: FieldMetadataSettingsMapping['FILES'],
-): FileItem[] | null => {
+): FilesFieldInput | null => {
   if (isNull(value)) return null;
 
   let parsedValue: unknown = value;
@@ -37,10 +62,10 @@ export const validateFilesFieldOrThrow = (
       const inspectedValue = inspect(value);
 
       throw new CommonQueryRunnerException(
-        `Invalid value "${inspectedValue}" for FILES field "${fieldName}" - It should be an array of objects with "fileId" and "label" properties.`,
+        `Invalid value "${inspectedValue}" for FILES field "${fieldName}" - It should be an object with "addFiles" and/or "removeFiles" properties.`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
         {
-          userFriendlyMessage: msg`Invalid value "${inspectedValue}" for FILES field "${fieldName}" - It should be an array of objects with "fileId" and "label" properties.`,
+          userFriendlyMessage: msg`Invalid value "${inspectedValue}" for FILES field "${fieldName}" - It should be an object with "addFiles" and/or "removeFiles" properties.`,
         },
       );
     }
@@ -59,18 +84,6 @@ export const validateFilesFieldOrThrow = (
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
       {
         userFriendlyMessage: msg`Invalid value for FILES field "${fieldName}" - ${errorMessage}`,
-      },
-    );
-  }
-
-  if (result.data.length > settings.maxNumberOfValues) {
-    const maxNumberOfValues = settings.maxNumberOfValues;
-
-    throw new CommonQueryRunnerException(
-      `Max number of files is ${maxNumberOfValues}`,
-      CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
-      {
-        userFriendlyMessage: msg`Max number of files is ${maxNumberOfValues}`,
       },
     );
   }

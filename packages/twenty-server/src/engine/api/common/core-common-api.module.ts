@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CommonArgsProcessors } from 'src/engine/api/common/common-args-processors/common-args-processors';
+import { FilesFieldSyncService } from 'src/engine/api/common/common-args-processors/data-arg-processor/services/files-field-sync.service';
 import { CommonQueryRunners } from 'src/engine/api/common/common-query-runners/common-query-runners';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
@@ -12,6 +13,7 @@ import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
@@ -30,7 +32,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceQueryHookModule,
     WorkspaceQueryRunnerModule,
     PermissionsModule,
-    TypeOrmModule.forFeature([RoleTargetEntity]),
+    TypeOrmModule.forFeature([RoleTargetEntity, FileEntity]),
     UserRoleModule,
     ApiKeyModule,
     FileModule,
@@ -49,6 +51,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ProcessNestedRelationsV2Helper,
     ...CommonArgsProcessors,
     ProcessAggregateHelper,
+    FilesFieldSyncService,
     ...CommonQueryRunners,
     CommonResultGettersService,
     GroupByWithRecordsService,

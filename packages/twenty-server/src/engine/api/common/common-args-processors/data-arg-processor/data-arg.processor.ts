@@ -14,6 +14,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
+import { FilesFieldSyncService } from 'src/engine/api/common/common-args-processors/data-arg-processor/services/files-field-sync.service';
 import { transformActorField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-actor-field.util';
 import { transformAddressField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-address-field.util';
 import { transformArrayField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-array-field.util';
@@ -61,7 +62,10 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 
 @Injectable()
 export class DataArgProcessor {
-  constructor(private readonly recordPositionService: RecordPositionService) {}
+  constructor(
+    private readonly recordPositionService: RecordPositionService,
+    private readonly filesFieldSyncService: FilesFieldSyncService,
+  ) {}
 
   async process({
     partialRecordInputs,
@@ -153,6 +157,13 @@ export class DataArgProcessor {
       }
       processedRecords.push(processedRecord);
     }
+
+    await this.filesFieldSyncService.enrichDataArgsAndValidateFiles({
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      data: processedRecords,
+      workspaceId: workspace.id,
+    });
 
     return processedRecords;
   }
@@ -248,11 +259,7 @@ export class DataArgProcessor {
         return transformEmailsValue(validatedValue);
       }
       case FieldMetadataType.FILES: {
-        const validatedValue = validateFilesFieldOrThrow(
-          value,
-          key,
-          fieldMetadata.settings as FieldMetadataSettingsMapping['FILES'],
-        );
+        const validatedValue = validateFilesFieldOrThrow(value, key);
 
         return transformRawJsonField(validatedValue);
       }

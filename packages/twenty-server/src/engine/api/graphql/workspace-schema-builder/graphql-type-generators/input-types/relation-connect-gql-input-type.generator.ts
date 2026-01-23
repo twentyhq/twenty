@@ -127,7 +127,7 @@ export class RelationConnectGqlInputTypeGenerator {
 
             uniqueProperties.forEach((property) => {
               const scalarType =
-                this.typeMapperService.mapToPreBuiltGraphQLInputType({
+                this.typeMapperService.mapToPreBuiltGraphQLCreateInputType({
                   fieldMetadataType: property.type,
                 });
 
@@ -149,7 +149,7 @@ export class RelationConnectGqlInputTypeGenerator {
           }
         } else {
           const scalarType =
-            this.typeMapperService.mapToPreBuiltGraphQLInputType({
+            this.typeMapperService.mapToPreBuiltGraphQLCreateInputType({
               fieldMetadataType: field.type,
               typeOptions: {
                 settings: field.settings,

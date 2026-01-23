@@ -72,7 +72,7 @@ export class CompositeFieldMetadataUpdateGqlInputTypeGenerator {
 
       const type = isEnumFieldMetadataType(property.type)
         ? this.gqlTypesStorage.getGqlTypeByKey(key)
-        : this.typeMapperService.mapToPreBuiltGraphQLInputType({
+        : this.typeMapperService.mapToPreBuiltGraphQLUpdateInputType({
             fieldMetadataType: property.type,
             typeOptions,
           });

@@ -240,7 +240,7 @@ export class FileUploadService {
       sourceFile: sanitizedFile,
       destinationPath: name,
       mimeType,
-      fileFolder: FileFolder.FilesField,
+      fileFolder: FileFolder.TemporaryFilesField,
       applicationId,
       workspaceId,
       fileId,
