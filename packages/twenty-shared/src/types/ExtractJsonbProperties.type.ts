@@ -1,4 +1,4 @@
-import { __JsonbPropertyBrand__ } from "@/types/JsonbProperty.type";
+import { __JsonbPropertyBrand__ } from '@/types/JsonbProperty.type';
 
 export type ExtractJsonbProperties<T> = NonNullable<
   {
