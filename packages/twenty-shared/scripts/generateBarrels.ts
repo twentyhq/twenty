@@ -351,8 +351,13 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
         break;
 
       case ts.isVariableStatement(node):
+        // Ambient declarations (declare const/let/var) are type-level only and have no runtime value
+        const isDeclareStatement = modifiers?.some(
+          (mod) => mod.kind === ts.SyntaxKind.DeclareKeyword,
+        );
+
         node.declarationList.declarations.forEach((decl) => {
-          const kind = getKind(node);
+          const kind = isDeclareStatement ? 'type' : getKind(node);
 
           if (ts.isIdentifier(decl.name)) {
             exports.push({

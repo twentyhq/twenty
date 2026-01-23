@@ -201,8 +201,10 @@ export type {
   RelationPredicateValue,
   RowLevelPermissionPredicateValue,
 } from './RowLevelPermissionPredicateValue';
-export type { SerializedRelation } from './SerializedRelation.type';
-export { SerializedRelationBrand } from './SerializedRelation.type';
+export type {
+  SerializedRelationBrand,
+  SerializedRelation,
+} from './SerializedRelation.type';
 export type { ServerlessFunctionEvent } from './ServerlessFunctionEvent';
 export { SettingsPath } from './SettingsPath';
 export type { Sources } from './SourcesType';
