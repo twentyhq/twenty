@@ -213,7 +213,7 @@ export class WorkspaceInsertQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedResultForEvent,
+          recordsAfter: formattedResultForEvent,
           authContext: this.authContext,
         }),
       );
@@ -224,7 +224,7 @@ export class WorkspaceInsertQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedResultForEvent,
+          recordsAfter: formattedResultForEvent,
           authContext: this.authContext,
         }),
       );
