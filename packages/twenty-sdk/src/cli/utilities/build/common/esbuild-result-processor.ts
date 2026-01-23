@@ -2,18 +2,13 @@ import crypto from 'crypto';
 import type * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { OUTPUT_DIR } from './constants';
-import {
-  type OnFileBuiltCallback,
-  type UploadConfig,
-} from './restartable-watcher.interface';
+import { type OnFileBuiltCallback } from './restartable-watcher.interface';
 
 export type ProcessEsbuildResultParams = {
   result: esbuild.BuildResult;
   outputDir: string;
   builtDir: string;
   lastChecksums: Map<string, string>;
-  uploadConfig?: UploadConfig;
   onFileBuilt?: OnFileBuiltCallback;
   onSuccess: (relativePath: string) => void;
 };
@@ -27,7 +22,6 @@ export const processEsbuildResult = async ({
   outputDir,
   builtDir,
   lastChecksums,
-  uploadConfig,
   onFileBuilt,
   onSuccess,
 }: ProcessEsbuildResultParams): Promise<ProcessEsbuildResultOutput> => {
@@ -56,24 +50,6 @@ export const processEsbuildResult = async ({
 
     if (onFileBuilt) {
       await onFileBuilt(builtPath, checksum);
-    }
-
-    if (uploadConfig) {
-      const uploadResult = await uploadConfig.apiService.uploadFile({
-        filePath: path.join(uploadConfig.appPath, OUTPUT_DIR, builtPath),
-        builtHandlerPath: builtPath,
-        fileFolder: uploadConfig.fileFolder,
-        applicationUniversalIdentifier:
-          uploadConfig.applicationUniversalIdentifier,
-      });
-
-      if (uploadResult.success) {
-        uploadConfig.onUploadSuccess?.(builtPath);
-      } else {
-        uploadConfig.onUploadError?.(builtPath, uploadResult.error);
-      }
-
-      await uploadConfig.onFileUploaded?.(builtPath, uploadResult.success);
     }
   }
 

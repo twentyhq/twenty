@@ -12,7 +12,11 @@ import { functionEntityBuilder } from './entities/function';
 import { objectEntityBuilder } from './entities/object';
 import { objectExtensionEntityBuilder } from './entities/object-extension';
 import { roleEntityBuilder } from './entities/role';
-import { displayEntitySummary, displayErrors, displayWarnings } from './manifest-display';
+import {
+  displayEntitySummary,
+  displayErrors,
+  displayWarnings,
+} from './manifest-display';
 import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
 import { validateManifest } from './manifest-validate';
 import { writeManifestToOutput } from './manifest-writer';
@@ -93,7 +97,9 @@ export const updateManifestChecksum = ({
   checksum,
 }: UpdateManifestChecksumParams): ApplicationManifest | null => {
   if (entityType === 'function') {
-    const fnIndex = manifest.functions.findIndex((f) => f.builtHandlerPath === builtPath);
+    const fnIndex = manifest.functions.findIndex(
+      (f) => f.builtHandlerPath === builtPath,
+    );
     if (fnIndex === -1) {
       return null;
     }
@@ -105,16 +111,19 @@ export const updateManifestChecksum = ({
     };
   }
 
-  const componentIndex = manifest.frontComponents?.findIndex(
-    (c) => c.builtComponentPath === builtPath,
-  ) ?? -1;
+  const componentIndex =
+    manifest.frontComponents.findIndex(
+      (c) => c.builtComponentPath === builtPath,
+    ) ?? -1;
   if (componentIndex === -1) {
     return null;
   }
   return {
     ...manifest,
-    frontComponents: manifest.frontComponents?.map((component, index) =>
-      index === componentIndex ? { ...component, builtComponentChecksum: checksum } : component,
+    frontComponents: manifest.frontComponents.map((component, index) =>
+      index === componentIndex
+        ? { ...component, builtComponentChecksum: checksum }
+        : component,
     ),
   };
 };
@@ -173,11 +182,9 @@ export const runManifestBuild = async (
     const manifest: ApplicationManifest = {
       application,
       objects: objectManifests,
-      objectExtensions:
-        objectExtensionManifests.length > 0 ? objectExtensionManifests : undefined,
+      objectExtensions: objectExtensionManifests,
       functions: functionManifests,
-      frontComponents:
-        frontComponentManifests.length > 0 ? frontComponentManifests : undefined,
+      frontComponents: frontComponentManifests,
       roles: roleManifests,
       sources,
       packageJson,

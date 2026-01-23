@@ -9,7 +9,6 @@ import {
   type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
-  type UploadConfig,
 } from '../common/restartable-watcher.interface';
 import { FRONT_COMPONENTS_DIR } from './constants';
 
@@ -34,7 +33,6 @@ export class FrontComponentsWatcher implements RestartableWatcher {
   private watchMode: boolean;
   private lastChecksums: Map<string, string> = new Map();
   private onFileBuilt?: OnFileBuiltCallback;
-  private uploadConfig?: UploadConfig;
   private buildCompletePromise: Promise<void> = Promise.resolve();
   private resolveBuildComplete: (() => void) | null = null;
 
@@ -43,7 +41,6 @@ export class FrontComponentsWatcher implements RestartableWatcher {
     this.componentPaths = options.sourcePaths;
     this.watchMode = options.watch ?? true;
     this.onFileBuilt = options.onFileBuilt;
-    this.uploadConfig = options.uploadConfig;
   }
 
   shouldRestart(sourcePaths: string[]): boolean {
@@ -148,7 +145,6 @@ export class FrontComponentsWatcher implements RestartableWatcher {
                   outputDir,
                   builtDir: FRONT_COMPONENTS_DIR,
                   lastChecksums: watcher.lastChecksums,
-                  uploadConfig: watcher.uploadConfig,
                   onFileBuilt: watcher.onFileBuilt,
                   onSuccess: (relativePath) =>
                     logger.success(`✓ Built ${relativePath}`),

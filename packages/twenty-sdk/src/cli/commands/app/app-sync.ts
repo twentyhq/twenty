@@ -15,7 +15,6 @@ export class AppSyncCommand {
   ): Promise<ApiResponse<any>> {
     const result = await this.buildCommand.execute({
       appPath,
-      uploadBuiltFiles: true,
     });
 
     if (!result.success) {

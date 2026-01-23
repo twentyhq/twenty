@@ -9,7 +9,6 @@ import {
   type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
-  type UploadConfig,
 } from '../common/restartable-watcher.interface';
 import { FUNCTIONS_DIR } from './constants';
 
@@ -48,7 +47,6 @@ export class FunctionsWatcher implements RestartableWatcher {
   private watchMode: boolean;
   private lastChecksums: Map<string, string> = new Map();
   private onFileBuilt?: OnFileBuiltCallback;
-  private uploadConfig?: UploadConfig;
   private buildCompletePromise: Promise<void> = Promise.resolve();
   private resolveBuildComplete: (() => void) | null = null;
 
@@ -57,7 +55,6 @@ export class FunctionsWatcher implements RestartableWatcher {
     this.functionPaths = options.sourcePaths;
     this.watchMode = options.watch ?? true;
     this.onFileBuilt = options.onFileBuilt;
-    this.uploadConfig = options.uploadConfig;
   }
 
   shouldRestart(sourcePaths: string[]): boolean {
@@ -170,7 +167,6 @@ export class FunctionsWatcher implements RestartableWatcher {
                   outputDir,
                   builtDir: FUNCTIONS_DIR,
                   lastChecksums: watcher.lastChecksums,
-                  uploadConfig: watcher.uploadConfig,
                   onFileBuilt: watcher.onFileBuilt,
                   onSuccess: (relativePath) =>
                     logger.success(`✓ Built ${relativePath}`),

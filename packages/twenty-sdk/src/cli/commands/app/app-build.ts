@@ -1,4 +1,3 @@
-import { ApiService } from '@/cli/utilities/api/services/api.service';
 import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
 import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
@@ -11,30 +10,23 @@ import {
 import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import { FileFolder } from 'twenty-shared/types';
 
 const initLogger = createLogger('init');
-const functionsLogger = createLogger('functions-watch');
-const frontComponentsLogger = createLogger('front-components-watch');
 
 export type AppBuildOptions = {
   appPath?: string;
-  uploadBuiltFiles?: boolean;
 };
 
 export class AppBuildCommand {
   private functionsBuilder: FunctionsWatcher | null = null;
   private frontComponentsBuilder: FrontComponentsWatcher | null = null;
-  private apiService = new ApiService();
 
   private appPath: string = '';
-  private uploadBuiltFiles = false;
 
   async execute(
     options: AppBuildOptions,
   ): Promise<ApiResponse<ManifestBuildResult>> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
-    this.uploadBuiltFiles = options.uploadBuiltFiles ?? false;
 
     initLogger.log('🚀 Building Twenty Application');
     initLogger.log(`📁 App Path: ${this.appPath}`);
@@ -73,22 +65,6 @@ export class AppBuildCommand {
       appPath: this.appPath,
       sourcePaths: buildResult.filePaths.functions,
       watch: false,
-      uploadConfig:
-        buildResult.manifest && this.uploadBuiltFiles
-          ? {
-              appPath: this.appPath,
-              apiService: this.apiService,
-              applicationUniversalIdentifier:
-                buildResult.manifest.application.universalIdentifier,
-              fileFolder: FileFolder.BuiltFunction,
-              onUploadSuccess: (builtPath) =>
-                functionsLogger.success(`☁️ Uploaded ${builtPath}`),
-              onUploadError: (builtPath, error) =>
-                functionsLogger.error(
-                  `Failed to upload ${builtPath} -- ${error}`,
-                ),
-            }
-          : undefined,
       onFileBuilt: (builtPath, checksum) => {
         if (buildResult.manifest) {
           const updatedManifest = updateManifestChecksum({
@@ -115,22 +91,6 @@ export class AppBuildCommand {
       appPath: this.appPath,
       sourcePaths: buildResult.filePaths.frontComponents,
       watch: false,
-      uploadConfig:
-        buildResult.manifest && this.uploadBuiltFiles
-          ? {
-              appPath: this.appPath,
-              apiService: this.apiService,
-              applicationUniversalIdentifier:
-                buildResult.manifest.application.universalIdentifier,
-              fileFolder: FileFolder.BuiltFrontComponent,
-              onUploadSuccess: (builtPath) =>
-                frontComponentsLogger.success(`☁️ Uploaded ${builtPath}`),
-              onUploadError: (builtPath, error) =>
-                frontComponentsLogger.error(
-                  `Failed to upload ${builtPath} -- ${error}`,
-                ),
-            }
-          : undefined,
       onFileBuilt: (builtPath, checksum) => {
         if (buildResult.manifest) {
           const updatedManifest = updateManifestChecksum({
