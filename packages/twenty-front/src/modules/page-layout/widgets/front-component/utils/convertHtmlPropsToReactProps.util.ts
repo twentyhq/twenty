@@ -1,3 +1,4 @@
+// Maps HTML attribute names to React prop names
 const HTML_TO_REACT_PROP_MAP: Record<string, string> = {
   class: 'className',
   for: 'htmlFor',

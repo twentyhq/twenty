@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import * as babel from '@babel/core';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -241,8 +242,9 @@ export class FrontComponentService {
     _id: string,
     _workspaceId: string,
   ): Promise<FrontComponentCodeDTO> {
-    const sourceCode = `
-const { createElement, useState, useEffect } = React;
+    // JSX source code (would come from database in real implementation)
+    const jsxSourceCode = `
+const { useState, useEffect } = React;
 const { createRoot } = ReactDOM;
 
 const FrontComponent = () => {
@@ -256,18 +258,38 @@ const FrontComponent = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return createElement('div', null,
-    createElement('h3', null, 'Remote DOM front component'),
-    createElement('p', null, 'Rendered in a web worker and mirrored on the host.'),
-    createElement('button', { onClick: () => setClickCount(clickCount + 1) }, 'Click me'),
-    createElement('p', null, 'Clicked ' + clickCount + ' time' + (clickCount === 1 ? '' : 's')),
-    createElement('p', null, 'Current time: ' + currentTime)
+  return (
+    <div>
+      <h3>Remote DOM front component</h3>
+      <p>Rendered in a web worker and mirrored on the host.</p>
+      <button onClick={() => setClickCount(clickCount + 1)}>Click me</button>
+      <p>Clicked {clickCount} time{clickCount === 1 ? '' : 's'}</p>
+      <p>Current time: {currentTime}</p>
+    </div>
   );
 };
 
-createRoot(root).render(createElement(FrontComponent));
+createRoot(root).render(<FrontComponent />);
 `.trim();
 
+    const sourceCode = this.transpileJsxToJs(jsxSourceCode);
+
     return { sourceCode };
+  }
+
+  private transpileJsxToJs(jsxCode: string): string {
+    const result = babel.transformSync(jsxCode, {
+      presets: [['@babel/preset-react', { runtime: 'classic' }]],
+      filename: 'component.jsx',
+    });
+
+    if (!result?.code) {
+      throw new FrontComponentException(
+        'Failed to transpile JSX code',
+        FrontComponentExceptionCode.FRONT_COMPONENT_NOT_FOUND,
+      );
+    }
+
+    return result.code;
   }
 }
