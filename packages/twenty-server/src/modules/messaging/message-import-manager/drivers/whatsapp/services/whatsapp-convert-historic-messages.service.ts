@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { MessageParticipantRole } from 'twenty-shared/types';
+import { parsePhoneNumber } from 'libphonenumber-js/max';
 
 import { WhatsappWebhookHistoryThread } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/types/whatsapp-webhook-history.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -29,7 +30,7 @@ export class WhatsappConvertHistoricMessagesService {
     workspaceId: string,
   ) {
     let parsedMessages: MessageWithParticipants[] = [];
-    const userPhoneNumber = thread.id;
+    const userPhoneNumber = parsePhoneNumber(thread.id);
     let messageParticipants: MessageParticipant[] = [];
 
     const context = buildSystemAuthContext(workspaceId);
@@ -64,7 +65,10 @@ export class WhatsappConvertHistoricMessagesService {
 
           return await personRepository.findOne({
             where: {
-              phones: { primaryPhoneNumber: userPhoneNumber }, // TODO: fix if Twenty becomes BSP or delete it
+              whatsAppPhoneNumber: {
+                primaryPhoneCallingCode: userPhoneNumber.countryCallingCode,
+                primaryPhoneNumber: userPhoneNumber.nationalNumber,
+              },
             },
           });
         },
@@ -86,7 +90,7 @@ export class WhatsappConvertHistoricMessagesService {
       if (message.from === wabaPhoneNumber) {
         messageParticipants.push({
           role: MessageParticipantRole.TO,
-          handle: '+'.concat(userPhoneNumber),
+          handle: '+'.concat(thread.id),
           displayName: personName,
         });
         message.type === 'system'

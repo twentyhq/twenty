@@ -1302,6 +1302,9 @@ export const STANDARD_OBJECTS = {
       whatsAppId: {
         universalIdentifier: PERSON_STANDARD_FIELD_IDS.whatsappId,
       },
+      whatsAppPhoneNumber: {
+        universalIdentifier: PERSON_STANDARD_FIELD_IDS.whatsappPhoneNumber,
+      },
     },
     indexes: {
       companyIdIndex: {

@@ -59,5 +59,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   >;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
   searchVector: string;
+  whatsAppPhoneNumber: PhonesMetadata;
   whatsAppId: string | null;
 }

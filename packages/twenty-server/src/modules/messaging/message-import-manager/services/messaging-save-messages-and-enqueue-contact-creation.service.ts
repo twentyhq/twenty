@@ -41,6 +41,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     messageChannel: MessageChannelWorkspaceEntity,
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
+    source: FieldActorSource.EMAIL | FieldActorSource.WHATSAPP,
   ) {
     const handleAliases = connectedAccount.handleAliases?.split(',') || [];
     const authContext = buildSystemAuthContext(workspaceId);
@@ -112,6 +113,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
               await this.messageParticipantService.saveMessageParticipants(
                 participantsWithMessageId,
                 workspaceId,
+                source,
                 transactionManager,
               );
 

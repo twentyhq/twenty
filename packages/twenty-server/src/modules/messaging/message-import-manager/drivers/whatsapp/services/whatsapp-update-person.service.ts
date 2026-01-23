@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { parsePhoneNumber } from 'libphonenumber-js/max';
-import { getCountryCodesForCallingCode } from 'twenty-shared/utils';
 
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -41,34 +40,21 @@ export class WhatsappUpdatePersonService {
             'person',
           );
 
-        if (
-          await personRepository.findOneBy({
-            phones: {
-              primaryPhoneNumber: formattedOldNumber.nationalNumber,
+        await personRepository.update(
+          {
+            whatsAppPhoneNumber: {
               primaryPhoneCallingCode: formattedOldNumber.countryCallingCode,
+              primaryPhoneNumber: formattedOldNumber.nationalNumber,
             },
-          })
-        ) {
-          await personRepository.update(
-            {
-              phones: {
-                primaryPhoneCallingCode: formattedOldNumber.countryCallingCode,
-                primaryPhoneNumber: formattedOldNumber.nationalNumber,
-              },
+          },
+          {
+            whatsAppPhoneNumber: {
+              primaryPhoneCallingCode: formattedNewNumber.countryCallingCode,
+              primaryPhoneNumber: formattedNewNumber.nationalNumber,
             },
-            {
-              phones: {
-                primaryPhoneCallingCode: formattedNewNumber.countryCallingCode,
-                primaryPhoneNumber: formattedNewNumber.nationalNumber,
-                primaryPhoneCountryCode: getCountryCodesForCallingCode(
-                  formattedNewNumber.countryCallingCode,
-                )[0], // possible discrepancies
-              },
-              whatsAppId: wa_id,
-            },
-          );
-        }
-        // TODO: add case where old phone number is in additionalPhones array
+            whatsAppId: wa_id,
+          },
+        );
       },
     );
   }

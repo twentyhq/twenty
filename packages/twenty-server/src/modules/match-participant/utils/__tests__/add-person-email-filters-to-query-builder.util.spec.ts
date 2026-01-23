@@ -1,7 +1,7 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { type SelectQueryBuilder } from 'typeorm';
 
-import { addPersonEmailAndPhoneNumberFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-and-phone-number-filters-to-query-builder';
+import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 type AddPersonEmailFiltersToQueryBuilderTestCase = EachTestingContext<{
@@ -120,7 +120,7 @@ describe('addPersonEmailFiltersToQueryBuilder', () => {
   it.each(testCases)(
     '$title',
     ({ context: { emails, excludePersonIds, description } }) => {
-      const result = addPersonEmailAndPhoneNumberFiltersToQueryBuilder({
+      const result = addPersonEmailFiltersToQueryBuilder({
         queryBuilder:
           mockQueryBuilder as SelectQueryBuilder<PersonWorkspaceEntity>,
         emailsOrPhoneNumbers: emails,

@@ -24,11 +24,12 @@ import { filterOutContactsThatBelongToSelfOrWorkspaceMembers } from 'src/modules
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/contact-creation-manager/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
-import { addPersonEmailAndPhoneNumberFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-and-phone-number-filters-to-query-builder';
+import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
 import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
+import { addPersonWhatsappNumberFilterToQueryBuilder } from 'src/modules/match-participant/utils/add-person-whatsapp-number-filter-to-query-builder';
 
 @Injectable()
 export class CreateCompanyAndPersonService {
@@ -86,10 +87,16 @@ export class CreateCompanyAndPersonService {
           return [];
         }
 
-        const queryBuilder = addPersonEmailAndPhoneNumberFiltersToQueryBuilder({
-          queryBuilder: personRepository.createQueryBuilder('person'),
-          emailsOrPhoneNumbers: uniqueHandles,
-        }); // TODO: technically it'd be easier to find people with their whatsapp id, add different query builder?
+        const queryBuilder =
+          source === 'EMAIL'
+            ? addPersonEmailFiltersToQueryBuilder({
+                queryBuilder: personRepository.createQueryBuilder('person'),
+                emails: uniqueHandles,
+              })
+            : addPersonWhatsappNumberFilterToQueryBuilder({
+                queryBuilder: personRepository.createQueryBuilder('person'),
+                phoneNumbers: uniqueHandles,
+              });
 
         const alreadyCreatedPeople = await queryBuilder
           .orderBy('person.createdAt', 'ASC')
@@ -220,41 +227,24 @@ export class CreateCompanyAndPersonService {
     for (const contact of uniqueContacts) {
       if (!contact.handle.includes('@')) {
         const parsedNumber = parsePhoneNumber(contact.handle);
-        const existingPersonOnPrimaryPhoneNumber = alreadyCreatedPeople.find(
+        const existingPersonOnWhatsAppNumber = alreadyCreatedPeople.find(
           (person) => {
             return (
               // country flag is unnecessary as main focus is on phone number
-              person.phones.primaryPhoneNumber ===
+              person.whatsAppPhoneNumber.primaryPhoneNumber ===
                 parsedNumber.nationalNumber &&
-              person.phones.primaryPhoneCallingCode ===
+              person.whatsAppPhoneNumber.primaryPhoneCallingCode ===
                 parsedNumber.countryCallingCode
             );
           },
         );
 
-        if (isDefined(existingPersonOnPrimaryPhoneNumber)) {
-          shouldCreateOrRestorePeopleByHandleMap.set(contact.handle, {
-            existingPerson: existingPersonOnPrimaryPhoneNumber,
-          });
+        if (!isDefined(existingPersonOnWhatsAppNumber)) {
           continue;
         }
 
-        const existingPersonOnAdditionalPhoneNumber = alreadyCreatedPeople.find(
-          (person) => {
-            return person.phones.additionalPhones?.includes({
-              number: parsedNumber.nationalNumber,
-              callingCode: parsedNumber.countryCallingCode,
-              countryCode: getCountryCodesForCallingCode(
-                parsedNumber.countryCallingCode,
-              )[0], // TODO: ^ this will fail if country code isn't matching, how to fix it?
-            });
-          },
-        );
-
-        if (!isDefined(existingPersonOnAdditionalPhoneNumber)) continue;
-
         shouldCreateOrRestorePeopleByHandleMap.set(contact.handle, {
-          existingPerson: existingPersonOnAdditionalPhoneNumber,
+          existingPerson: existingPersonOnWhatsAppNumber,
         });
       } else {
         const existingPersonOnPrimaryEmail = alreadyCreatedPeople.find(
@@ -411,7 +401,7 @@ export class CreateCompanyAndPersonService {
 
         return {
           id,
-          phones: {
+          whatsAppPhoneNumber: {
             primaryPhoneNumber: number,
             primaryPhoneCallingCode: callingCode,
             primaryPhoneCountryCode: countryCode,

@@ -14,22 +14,6 @@ export const PERSON_CUSTOM_FIELD_SEEDS: FieldMetadataSeed[] = [
     isUnique: false,
   },
   {
-    type: FieldMetadataType.PHONES,
-    name: 'whatsapp',
-    label: 'Whatsapp',
-    description: "Contact's Whatsapp Number",
-    icon: 'IconBrandWhatsapp',
-    isActive: true,
-    isNullable: false,
-    isUnique: false,
-    defaultValue: {
-      primaryPhoneNumber: "''",
-      primaryPhoneCountryCode: "'FR'",
-      primaryPhoneCallingCode: "'+33'",
-      additionalPhones: null,
-    },
-  },
-  {
     type: FieldMetadataType.MULTI_SELECT,
     name: 'workPreference',
     label: 'Work Preference',

@@ -1,3 +1,5 @@
+import { FieldActorSource } from 'twenty-shared/types';
+
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -29,6 +31,7 @@ export class MessagingSaveNonEmailMessagesJob {
       messageChannel,
       connectedAccount,
       workspaceId,
+      FieldActorSource.WHATSAPP,
     );
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { In } from 'typeorm';
+import { FieldActorSource } from 'twenty-shared/types';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -19,6 +20,7 @@ export class MessagingMessageParticipantService {
   public async saveMessageParticipants(
     participants: ParticipantWithMessageId[],
     workspaceId: string,
+    source: FieldActorSource.EMAIL | FieldActorSource.WHATSAPP,
     transactionManager?: WorkspaceEntityManager,
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
@@ -75,6 +77,7 @@ export class MessagingMessageParticipantService {
           transactionManager,
           matchWith: 'workspaceMemberAndPerson',
           workspaceId,
+          source,
         });
       },
     );

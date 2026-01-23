@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { FieldActorSource } from 'twenty-shared/types';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -162,6 +163,7 @@ export class MessagingMessagesImportService {
               messageChannel,
               connectedAccountWithFreshTokens,
               workspaceId,
+              FieldActorSource.EMAIL,
             );
           }
 

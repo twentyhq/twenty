@@ -558,4 +558,24 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  whatsAppPhoneNumber: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'whatsAppPhoneNumber',
+      type: FieldMetadataType.PHONES,
+      label: 'WhatsApp phone number',
+      description: 'WhatsApp phone number',
+      icon: 'IconBrandWhatsapp',
+      isNullable: true,
+      isUnique: true,
+      settings: {
+        maxNumberOfValues: 1,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

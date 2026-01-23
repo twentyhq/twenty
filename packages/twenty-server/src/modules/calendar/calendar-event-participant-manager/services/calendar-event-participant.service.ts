@@ -181,6 +181,7 @@ export class CalendarEventParticipantService {
           transactionManager,
           matchWith: 'workspaceMemberAndPerson',
           workspaceId,
+          source: FieldActorSource.EMAIL,
         });
       },
     );

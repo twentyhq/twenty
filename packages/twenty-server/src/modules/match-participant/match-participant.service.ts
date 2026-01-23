@@ -3,18 +3,20 @@ import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 import { Any, In } from 'typeorm';
+import { FieldActorSource } from 'twenty-shared/types';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { addPersonEmailAndPhoneNumberFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-and-phone-number-filters-to-query-builder';
+import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { findPersonByPhoneNumber } from 'src/modules/match-participant/utils/find-person-by-phone-number';
+import { findPersonByWhatsAppNumber } from 'src/modules/match-participant/utils/find-person-by-whatsapp-number';
+import { addPersonWhatsappNumberFilterToQueryBuilder } from 'src/modules/match-participant/utils/add-person-whatsapp-number-filter-to-query-builder';
 
 type ObjectMetadataName = 'messageParticipant' | 'calendarEventParticipant';
 
@@ -52,6 +54,7 @@ type MatchParticipantsArgs<
   transactionManager?: WorkspaceEntityManager;
   matchWith: 'workspaceMemberOnly' | 'personOnly' | 'workspaceMemberAndPerson';
   workspaceId: string;
+  source: FieldActorSource.EMAIL | FieldActorSource.WHATSAPP;
 };
 
 @Injectable()
@@ -88,6 +91,7 @@ export class MatchParticipantService<
     transactionManager,
     matchWith = 'workspaceMemberAndPerson',
     workspaceId,
+    source,
   }: MatchParticipantsArgs<ParticipantWorkspaceEntity>) {
     if (participants.length === 0) {
       return;
@@ -120,10 +124,16 @@ export class MatchParticipantService<
         ...new Set(participants.map((participant) => participant.handle)),
       ].filter(isDefined);
 
-      const queryBuilder = addPersonEmailAndPhoneNumberFiltersToQueryBuilder({
-        queryBuilder: personRepository.createQueryBuilder('person'),
-        emailsOrPhoneNumbers: uniqueParticipantsHandles,
-      });
+      const queryBuilder =
+        source === FieldActorSource.EMAIL
+          ? addPersonEmailFiltersToQueryBuilder({
+              queryBuilder: personRepository.createQueryBuilder('person'),
+              emails: uniqueParticipantsHandles,
+            })
+          : addPersonWhatsappNumberFilterToQueryBuilder({
+              queryBuilder: personRepository.createQueryBuilder('person'),
+              phoneNumbers: uniqueParticipantsHandles,
+            });
 
       const people = await queryBuilder
         .orderBy('person.createdAt', 'ASC')
@@ -149,7 +159,7 @@ export class MatchParticipantService<
               people,
               email: participant.handle,
             }) ||
-            findPersonByPhoneNumber({
+            findPersonByWhatsAppNumber({
               people,
               phoneNumber: participant.handle,
             });
@@ -244,6 +254,7 @@ export class MatchParticipantService<
             tobeRematchedParticipants as ParticipantWorkspaceEntity[],
           objectMetadataName,
           workspaceId,
+          source: FieldActorSource.EMAIL,
         });
       },
     );
@@ -316,6 +327,10 @@ export class MatchParticipantService<
           participants: tobeRematchedParticipants,
           objectMetadataName,
           workspaceId,
+          source:
+            participantMatching.personEmails.length > 0
+              ? FieldActorSource.EMAIL
+              : FieldActorSource.WHATSAPP,
         });
       },
     );
