@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/utils/recordIdentifierToObjectRecordIdentifier';
 import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
@@ -18,82 +18,94 @@ type NavigationMenuItemFolder = {
 };
 
 export const useNavigationMenuItemsByFolder = () => {
-  const coreViews = useRecoilValue(coreViewsState).map(convertCoreViewToView);
+  const coreViews = useRecoilValue(coreViewsState);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
 
-  const navigationMenuItemsByFolder = useMemo(() => {
-    const folderItems = navigationMenuItems.filter(
-      (item) =>
+  const views = coreViews.map(convertCoreViewToView);
+
+  const { folders, itemsByFolderId } = navigationMenuItems.reduce<{
+    folders: Array<{ id: string; name: string }>;
+    itemsByFolderId: Map<string, NavigationMenuItem[]>;
+  }>(
+    (acc, item) => {
+      const isFolder =
         isDefined(item.name) &&
         !isDefined(item.folderId) &&
         !isDefined(item.targetRecordId) &&
         !isDefined(item.targetObjectMetadataId) &&
-        !isDefined(item.viewId),
-    );
+        !isDefined(item.viewId);
 
-    const folderItemsResult: NavigationMenuItemFolder[] = [];
+      if (isFolder) {
+        acc.folders.push({ id: item.id, name: item.name || 'Folder' });
+      } else if (isDefined(item.folderId)) {
+        const existingItems = acc.itemsByFolderId.get(item.folderId);
+        if (isDefined(existingItems)) {
+          existingItems.push(item);
+        } else {
+          acc.itemsByFolderId.set(item.folderId, [item]);
+        }
+      }
 
-    folderItems.forEach((folderItem) => {
-      const folderId = folderItem.id;
-      const folderName = folderItem.name || 'Folder';
+      return acc;
+    },
+    { folders: [], itemsByFolderId: new Map() },
+  );
 
-      const itemsInFolder = navigationMenuItems.filter(
-        (item) => item.folderId === folderId,
+  const navigationMenuItemsByFolder = folders.reduce<
+    NavigationMenuItemFolder[]
+  >((acc, folder) => {
+    const itemsInFolder = itemsByFolderId.get(folder.id) || [];
+
+    const targetRecordIdentifiersMap = itemsInFolder.reduce<
+      Map<string, ObjectRecordIdentifier>
+    >((map, item) => {
+      const itemTargetRecordId = item.targetRecordId;
+      if (!isDefined(itemTargetRecordId) || isDefined(item.viewId)) {
+        return map;
+      }
+
+      const targetRecordIdentifier = item.targetRecordIdentifier;
+
+      if (!isDefined(targetRecordIdentifier)) {
+        return map;
+      }
+
+      const itemObjectMetadata = objectMetadataItems.find(
+        (meta) => meta.id === item.targetObjectMetadataId,
       );
 
-      const targetRecordIdentifiersMap = new Map<
-        string,
-        ObjectRecordIdentifier
-      >();
-      itemsInFolder.forEach((item) => {
-        const itemTargetRecordId = item.targetRecordId;
-        if (!isDefined(itemTargetRecordId) || isDefined(item.viewId)) {
-          return;
-        }
-
-        const targetRecordIdentifier = item.targetRecordIdentifier;
-
-        if (!isDefined(targetRecordIdentifier)) {
-          return;
-        }
-
-        const itemObjectMetadata = objectMetadataItems.find(
-          (meta) => meta.id === item.targetObjectMetadataId,
+      if (isDefined(itemObjectMetadata)) {
+        const objectRecordIdentifier = recordIdentifierToObjectRecordIdentifier(
+          {
+            recordIdentifier: targetRecordIdentifier,
+            objectMetadataItem: itemObjectMetadata,
+          },
         );
 
-        if (isDefined(itemObjectMetadata)) {
-          const objectRecordIdentifier =
-            recordIdentifierToObjectRecordIdentifier({
-              recordIdentifier: targetRecordIdentifier,
-              objectMetadataItem: itemObjectMetadata,
-            });
+        map.set(itemTargetRecordId, objectRecordIdentifier);
+      }
 
-          targetRecordIdentifiersMap.set(
-            itemTargetRecordId,
-            objectRecordIdentifier,
-          );
-        }
-      });
+      return map;
+    }, new Map());
 
-      const sortedItems = sortNavigationMenuItems(
-        itemsInFolder,
-        true,
-        coreViews,
-        objectMetadataItems,
-        targetRecordIdentifiersMap,
-      );
+    const sortedItems = sortNavigationMenuItems(
+      itemsInFolder,
+      true,
+      views,
+      objectMetadataItems,
+      targetRecordIdentifiersMap,
+    );
 
-      folderItemsResult.push({
-        folderId,
-        folderName,
-        navigationMenuItems: sortedItems,
-      });
+    acc.push({
+      folderId: folder.id,
+      folderName: folder.name,
+      navigationMenuItems: sortedItems,
     });
 
-    return folderItemsResult;
-  }, [navigationMenuItems, objectMetadataItems, coreViews]);
+    return acc;
+  }, []);
 
   return { navigationMenuItemsByFolder };
 };
