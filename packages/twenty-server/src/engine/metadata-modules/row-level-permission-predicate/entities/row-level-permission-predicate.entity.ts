@@ -72,7 +72,7 @@ export class RowLevelPermissionPredicateEntity
   operand: RowLevelPermissionPredicateOperand;
 
   @Column({ nullable: true, type: 'jsonb' })
-  value: JsonbProperty<RowLevelPermissionPredicateValue | null>;
+  value: JsonbProperty<RowLevelPermissionPredicateValue> | null;
 
   @Column({ nullable: true, type: 'text', default: null })
   subFieldName: string | null;

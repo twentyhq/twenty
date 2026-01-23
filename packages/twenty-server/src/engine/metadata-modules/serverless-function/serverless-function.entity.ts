@@ -73,7 +73,7 @@ export class ServerlessFunctionEntity
   checksum: string | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  toolInputSchema: JsonbProperty<object | null>;
+  toolInputSchema: JsonbProperty<object> | null;
 
   @Column({ nullable: false, default: false })
   isTool: boolean;

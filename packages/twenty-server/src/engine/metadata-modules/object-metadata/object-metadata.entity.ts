@@ -1,14 +1,14 @@
 import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    Index,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    type Relation,
-    Unique,
-    UpdateDateColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  type Relation,
+  Unique,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
@@ -64,7 +64,7 @@ export class ObjectMetadataEntity
   icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides: JsonbProperty<ObjectStandardOverridesDTO | null>;
+  standardOverrides: JsonbProperty<ObjectStandardOverridesDTO> | null;
 
   /**
    * @deprecated
@@ -159,3 +159,5 @@ export class ObjectMetadataEntity
   })
   views: Relation<ViewEntity[]>;
 }
+
+const tmp: JsonbProperty<ObjectStandardOverridesDTO> | null = null;

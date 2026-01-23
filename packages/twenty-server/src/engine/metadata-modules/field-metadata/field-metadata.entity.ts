@@ -101,7 +101,7 @@ export class FieldMetadataEntity<
   icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides: JsonbProperty<FieldStandardOverridesDTO | null>;
+  standardOverrides: JsonbProperty<FieldStandardOverridesDTO> | null;
 
   @Column('jsonb', { nullable: true })
   options: JsonbProperty<FieldMetadataOptions<TFieldMetadataType>>;
