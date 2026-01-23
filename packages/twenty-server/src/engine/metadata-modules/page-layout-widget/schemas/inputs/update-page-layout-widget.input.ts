@@ -2,56 +2,45 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
-  IsEnum,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-  IsUUID,
-  ValidateNested,
+    IsEnum,
+    IsObject,
+    IsOptional,
+    IsString,
+    IsUUID,
+    ValidateNested,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { GridPositionInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/grid-position.input';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { GridPositionInput } from 'src/engine/metadata-modules/page-layout-widget/schemas/inputs/grid-position.input';
 import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 
 @InputType()
-export class UpdatePageLayoutWidgetWithIdInput {
-  @Field(() => UUIDScalarType)
-  @IsUUID()
-  @IsNotEmpty()
-  id: string;
-
-  @Field(() => UUIDScalarType)
-  @IsUUID()
-  @IsNotEmpty()
-  pageLayoutTabId: string;
-
-  @Field()
+export class UpdatePageLayoutWidgetInput {
+  @Field({ nullable: true })
   @IsString()
-  @IsNotEmpty()
-  title: string;
+  @IsOptional()
+  title?: string;
 
-  @Field(() => WidgetType)
+  @Field(() => WidgetType, { nullable: true })
   @IsEnum(WidgetType)
-  @IsNotEmpty()
-  type: WidgetType;
+  @IsOptional()
+  type?: WidgetType;
 
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
   @IsOptional()
-  objectMetadataId: string | null;
+  objectMetadataId?: string | null;
 
-  @Field(() => GridPositionInput)
+  @Field(() => GridPositionInput, { nullable: true })
   @ValidateNested()
   @Type(() => GridPositionInput)
-  @IsNotEmpty()
-  gridPosition: GridPositionInput;
+  @IsOptional()
+  gridPosition?: GridPositionInput;
 
   @Field(() => GraphQLJSON, { nullable: true })
   @IsObject()
   @IsOptional()
-  configuration: AllPageLayoutWidgetConfiguration;
+  configuration?: AllPageLayoutWidgetConfiguration;
 }
