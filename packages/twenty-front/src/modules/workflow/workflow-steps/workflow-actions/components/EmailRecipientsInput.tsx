@@ -1,6 +1,7 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { extractNonEmptyEmails } from '@/workflow/workflow-steps/workflow-actions/email-action/utils/extractNonEmptyEmails';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -55,16 +56,14 @@ export const EmailRecipientsInput = ({
 
     newEntries[index] = { ...newEntries[index], value: newValue };
 
-    if (index === entries.length - 1 && newValue.trim().length > 0) {
+    const isLastEntry = entryId === entries[entries.length - 1].id;
+
+    if (isLastEntry && newValue.trim().length > 0) {
       newEntries.push({ id: v4(), value: '' });
     }
 
     setEntries(newEntries);
-
-    const nonEmptyValues = newEntries
-      .map((entry) => entry.value.trim())
-      .filter((value) => value.length > 0);
-    onChange(nonEmptyValues);
+    onChange(extractNonEmptyEmails(newEntries));
   };
 
   const handleRemoveEntry = (entryId: string) => {
@@ -75,35 +74,37 @@ export const EmailRecipientsInput = ({
     }
 
     setEntries(newEntries);
-
-    const nonEmptyValues = newEntries
-      .map((entry) => entry.value.trim())
-      .filter((value) => value.length > 0);
-    onChange(nonEmptyValues);
+    onChange(extractNonEmptyEmails(newEntries));
   };
 
   return (
     <FormFieldInputContainer>
       <InputLabel>{label}</InputLabel>
       <StyledContainer>
-        {entries.map((entry, index) => (
-          <StyledEmailRow key={entry.id} readonly={readonly}>
-            <FormTextFieldInput
-              placeholder={placeholder ?? t`Enter email address`}
-              readonly={readonly}
-              defaultValue={entry.value}
-              onChange={(value) => handleEntryChange(entry.id, value ?? '')}
-              VariablePicker={WorkflowVariablePicker}
-            />
-            {!readonly && (
-              <Button
-                onClick={() => handleRemoveEntry(entry.id)}
-                Icon={IconTrash}
-                disabled={index === entries.length - 1}
+        {entries.map((entry) => {
+          const isLastEntry = entry.id === entries[entries.length - 1].id;
+
+          return (
+            <StyledEmailRow key={entry.id} readonly={readonly}>
+              <FormTextFieldInput
+                placeholder={placeholder ?? t`Enter email address`}
+                readonly={readonly}
+                defaultValue={entry.value}
+                onChange={(value) => handleEntryChange(entry.id, value ?? '')}
+                VariablePicker={WorkflowVariablePicker}
               />
-            )}
-          </StyledEmailRow>
-        ))}
+              {!readonly &&
+                (isLastEntry ? (
+                  <Button Icon={IconTrash} disabled={true} />
+                ) : (
+                  <Button
+                    onClick={() => handleRemoveEntry(entry.id)}
+                    Icon={IconTrash}
+                  />
+                ))}
+            </StyledEmailRow>
+          );
+        })}
       </StyledContainer>
     </FormFieldInputContainer>
   );
