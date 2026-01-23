@@ -1,23 +1,22 @@
 import IconAddressBookRaw from '@assets/icons/address-book.svg?react';
 import { useTheme } from '@emotion/react';
-import { type IconComponentProps } from 'twenty-ui/display';
+import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IconAddressBookProps = Pick<
-  IconComponentProps,
-  'size' | 'stroke' | 'color'
->;
-
-export const IconAddressBook = (props: IconAddressBookProps) => {
+export const IconAddressBook = ({
+  size,
+  stroke,
+  color,
+}: IconComponentProps) => {
   const theme = useTheme();
-  const size = props.size ?? 24;
-  const stroke = props.stroke ?? theme.icon.stroke.md;
+  const iconSize = size ?? 24;
+  const iconStroke = stroke ?? theme.icon.stroke.md;
 
   return (
     <IconAddressBookRaw
-      height={size}
-      width={size}
-      stroke={props.color ?? 'currentColor'}
-      strokeWidth={stroke}
+      height={iconSize}
+      width={iconSize}
+      stroke={color ?? 'currentColor'}
+      strokeWidth={iconStroke}
     />
   );
 };

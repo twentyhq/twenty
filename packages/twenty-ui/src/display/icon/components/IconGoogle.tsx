@@ -1,13 +1,11 @@
 import { useTheme } from '@emotion/react';
 
 import IconGoogleRaw from '@assets/icons/google.svg?react';
-import { type IconComponentProps } from 'twenty-ui/display';
+import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IconGoogleProps = Pick<IconComponentProps, 'size'>;
-
-export const IconGoogle = (props: IconGoogleProps) => {
+export const IconGoogle = ({ size }: IconComponentProps) => {
   const theme = useTheme();
-  const size = props.size ?? theme.icon.size.lg;
+  const iconSize = size ?? theme.icon.size.lg;
 
-  return <IconGoogleRaw height={size} width={size} />;
+  return <IconGoogleRaw height={iconSize} width={iconSize} />;
 };

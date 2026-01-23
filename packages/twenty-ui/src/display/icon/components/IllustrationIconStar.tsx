@@ -2,19 +2,19 @@ import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 
 import IllustrationIconStarRaw from '@assets/icons/illustration-star.svg?react';
-import { type IconComponentProps } from 'twenty-ui/display';
+import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IllustrationIconStarProps = Pick<IconComponentProps, 'size'>;
 
-export const IllustrationIconStar = (props: IllustrationIconStarProps) => {
+
+export const IllustrationIconStar = ({ size }: IconComponentProps) => {
   const theme = useTheme();
-  const size = props.size ?? theme.icon.size.lg;
+  const iconSize = size ?? theme.icon.size.lg;
 
   return (
     <IllustrationIconWrapper>
       <IllustrationIconStarRaw
-        height={size}
-        width={size}
+        height={iconSize}
+        width={iconSize}
         fill={theme.accent.accent3}
         color={theme.accent.accent8}
       />

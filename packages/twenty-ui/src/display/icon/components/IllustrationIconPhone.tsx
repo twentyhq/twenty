@@ -2,19 +2,19 @@ import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 
 import IllustrationIconPhoneRaw from '@assets/icons/illustration-phone.svg?react';
-import { type IconComponentProps } from 'twenty-ui/display';
+import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IllustrationIconPhoneProps = Pick<IconComponentProps, 'size'>;
 
-export const IllustrationIconPhone = (props: IllustrationIconPhoneProps) => {
+
+export const IllustrationIconPhone = ({ size }: IconComponentProps) => {
   const theme = useTheme();
-  const size = props.size ?? theme.icon.size.lg;
+  const iconSize = size ?? theme.icon.size.lg;
 
   return (
     <IllustrationIconWrapper>
       <IllustrationIconPhoneRaw
-        height={size}
-        width={size}
+        height={iconSize}
+        width={iconSize}
         fill={theme.accent.accent3}
         color={theme.accent.accent8}
       />

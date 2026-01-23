@@ -1,21 +1,21 @@
 import IllustrationIconCalendarEventRaw from '@assets/icons/illustration-calendar-event.svg?react';
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
-import { type IconComponentProps } from 'twenty-ui/display';
-type IllustrationIconCalendarEventProps = Pick<IconComponentProps, 'size'>;
+import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-export const IllustrationIconCalendarEvent = (
-  props: IllustrationIconCalendarEventProps,
-) => {
+
+export const IllustrationIconCalendarEvent = ({
+  size,
+}: IconComponentProps) => {
   const theme = useTheme();
-  const size = props.size ?? theme.icon.size.lg;
+  const iconSize = size ?? theme.icon.size.lg;
   return (
     <IllustrationIconWrapper>
       <IllustrationIconCalendarEventRaw
         fill={theme.accent.accent3}
         color={theme.accent.accent8}
-        height={size}
-        width={size}
+        height={iconSize}
+        width={iconSize}
       />
     </IllustrationIconWrapper>
   );

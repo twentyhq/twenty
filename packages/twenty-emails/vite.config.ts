@@ -10,6 +10,12 @@ export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/packages/twenty-emails',
 
+  resolve: {
+    alias: {
+      'src/': path.resolve(__dirname, 'src') + '/',
+    },
+  },
+
   plugins: [
     react({
       plugins: [['@lingui/swc-plugin', {}]],

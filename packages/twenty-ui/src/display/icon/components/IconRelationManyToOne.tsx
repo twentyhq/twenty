@@ -1,16 +1,18 @@
 import { useTheme } from '@emotion/react';
 
 import IconRelationManyToOneRaw from '@assets/icons/many-to-one.svg?react';
-import { type IconComponentProps } from 'twenty-ui/display';
+import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IconRelationManyToOneProps = Pick<IconComponentProps, 'size' | 'stroke'>;
-
-export const IconRelationManyToOne = (props: IconRelationManyToOneProps) => {
+export const IconRelationManyToOne = ({ size, stroke }: IconComponentProps) => {
   const theme = useTheme();
-  const size = props.size ?? 24;
-  const stroke = props.stroke ?? theme.icon.stroke.md;
+  const iconSize = size ?? 24;
+  const iconStroke = stroke ?? theme.icon.stroke.md;
 
   return (
-    <IconRelationManyToOneRaw height={size} width={size} strokeWidth={stroke} />
+    <IconRelationManyToOneRaw
+      height={iconSize}
+      width={iconSize}
+      strokeWidth={iconStroke}
+    />
   );
 };
