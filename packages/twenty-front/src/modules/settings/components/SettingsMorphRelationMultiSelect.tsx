@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { plural } from '@lingui/core/macro';
-import { useMemo, useState, useCallback, type MouseEvent } from 'react';
+import { useMemo, useState, useCallback, useRef, type MouseEvent } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -98,6 +98,9 @@ export const SettingsMorphRelationMultiSelect = ({
 }: SettingsMorphRelationMultiSelectProps) => {
   const [searchInputValue, setSearchInputValue] = useState('');
   const [lastDeselectedId, setLastDeselectedId] = useState<string | null>(null);
+  // Use a ref to track the last deselected ID to avoid race conditions
+  // The ref always has the latest value, while state might be stale in callbacks
+  const lastDeselectedIdRef = useRef<string | null>(null);
   const [containerWidth, setContainerWidth] = useState<number | undefined>(
     undefined,
   );
@@ -170,8 +173,10 @@ export const SettingsMorphRelationMultiSelect = ({
         // Track the deselected item only if selection becomes empty
         if (newSelectedObjectMetadataIds.length === 0) {
           setLastDeselectedId(objectMetadataId);
+          lastDeselectedIdRef.current = objectMetadataId;
         } else {
           setLastDeselectedId(null);
+          lastDeselectedIdRef.current = null;
         }
         onChange?.(newSelectedObjectMetadataIds);
       } else {
@@ -186,6 +191,7 @@ export const SettingsMorphRelationMultiSelect = ({
           // The form reverted to include the deselected item, so replace it entirely
           onChange?.([objectMetadataId]);
           setLastDeselectedId(null);
+          lastDeselectedIdRef.current = null;
         } else {
           // Normal case: add the item
           const newSelectedObjectMetadataIds = Array.from(
@@ -193,6 +199,7 @@ export const SettingsMorphRelationMultiSelect = ({
           );
           onChange?.(newSelectedObjectMetadataIds);
           setLastDeselectedId(null);
+          lastDeselectedIdRef.current = null;
         }
       }
     },
@@ -214,19 +221,25 @@ export const SettingsMorphRelationMultiSelect = ({
       const currentTarget = event.currentTarget;
       const relatedTarget = event.relatedTarget as Node | null;
 
+      // Use ref to get the latest lastDeselectedId value to avoid race conditions
+      // Also check the actual current prop value to ensure we have the latest state
+      const currentLastDeselectedId = lastDeselectedIdRef.current;
+
       if (
         !currentTarget.contains(relatedTarget) &&
         selectedObjectMetadataIds.length === 0 &&
-        isDefined(lastDeselectedId)
+        isDefined(currentLastDeselectedId)
       ) {
         // Dropdown closed with 0 selections, re-add the last deselected item
-        onChange?.([lastDeselectedId]);
+        // Only do this if the prop actually reflects 0 selections (not stale)
+        onChange?.([currentLastDeselectedId]);
         setLastDeselectedId(null);
+        lastDeselectedIdRef.current = null;
       }
 
       onBlur?.();
     },
-    [selectedObjectMetadataIds, lastDeselectedId, onChange, onBlur],
+    [selectedObjectMetadataIds, onChange, onBlur],
   );
 
   return (
