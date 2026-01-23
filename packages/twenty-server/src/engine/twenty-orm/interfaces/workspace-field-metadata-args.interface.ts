@@ -1,11 +1,11 @@
 import {
-  type FieldMetadataType,
-  type FieldMetadataSettings,
-  type FieldMetadataOptions,
+    type FieldMetadataOptions,
+    type FieldMetadataSettings,
+    type FieldMetadataType,
 } from 'twenty-shared/types';
 
-import { type FieldMetadataDefaultValue } from 'twenty-shared/types';
 import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
+import { type FieldMetadataDefaultValue } from 'twenty-shared/types';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 

@@ -1,12 +1,13 @@
 import {
-  type FieldMetadataDefaultSerializableValue,
-  type FieldMetadataFunctionDefaultValue,
+  FieldMetadataDefaultValueForAnyType,
   type FieldMetadataDefaultValueFunctionNames,
-  fieldMetadataDefaultValueFunctionName,
+  type FieldMetadataFunctionDefaultValue,
+  fieldMetadataDefaultValueFunctionName
 } from 'twenty-shared/types';
 
+// TODO prastoin
 export const isFunctionDefaultValue = (
-  defaultValue: FieldMetadataDefaultSerializableValue,
+  defaultValue: FieldMetadataDefaultValueForAnyType,
 ): defaultValue is FieldMetadataFunctionDefaultValue => {
   return (
     typeof defaultValue === 'string' &&

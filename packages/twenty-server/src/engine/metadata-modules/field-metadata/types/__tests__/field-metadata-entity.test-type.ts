@@ -1,5 +1,6 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
+  JsonbProperty,
   type AllFieldMetadataSettings,
   type FieldMetadataDateSettings,
   type FieldMetadataDateTimeSettings,
@@ -14,7 +15,7 @@ import { type Relation as TypeOrmRelation } from 'typeorm';
 
 import {
   type FieldMetadataDefaultValueForAnyType,
-  type FieldMetadataDefaultValueForType,
+  type FieldMetadataDefaultValueMapping,
 } from 'twenty-shared/types';
 
 import {
@@ -168,7 +169,7 @@ type SettingsAssertions = [
   Expect<
     HasAllProperties<
       PhonesFieldMetadata,
-      { settings: FieldMetadataMultiItemSettings | null }
+      { settings: JsonbProperty<FieldMetadataMultiItemSettings> | null }
     >
   >,
   Expect<
@@ -210,20 +211,20 @@ type DefaultValueAssertions = [
   Expect<
     HasAllProperties<
       UUIDFieldMetadata,
-      { defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.UUID> }
+      { defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.UUID] }
     >
   >,
   Expect<
     HasAllProperties<
       TextFieldMetadata,
-      { defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.TEXT> }
+      { defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.TEXT] }
     >
   >,
   Expect<
     HasAllProperties<
       NumberFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.NUMBER>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.NUMBER];
       }
     >
   >,
@@ -231,21 +232,21 @@ type DefaultValueAssertions = [
     HasAllProperties<
       BooleanFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.BOOLEAN>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.BOOLEAN];
       }
     >
   >,
   Expect<
     HasAllProperties<
       DateFieldMetadata,
-      { defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.DATE> }
+      { defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.DATE] }
     >
   >,
   Expect<
     HasAllProperties<
       DateTimeFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.DATE_TIME>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.DATE_TIME];
       }
     >
   >,
@@ -253,7 +254,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       CurrencyFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.CURRENCY>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.CURRENCY];
       }
     >
   >,
@@ -261,7 +262,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       FullNameFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.FULL_NAME>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.FULL_NAME];
       }
     >
   >,
@@ -269,7 +270,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       RatingFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.RATING>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.RATING];
       }
     >
   >,
@@ -277,7 +278,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       SelectFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.SELECT>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.SELECT];
       }
     >
   >,
@@ -285,7 +286,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       MultiSelectFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.MULTI_SELECT>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.MULTI_SELECT];
       }
     >
   >,
@@ -293,7 +294,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       PositionFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.POSITION>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.POSITION];
       }
     >
   >,
@@ -301,7 +302,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       RawJsonFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.RAW_JSON>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.RAW_JSON];
       }
     >
   >,
@@ -309,7 +310,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       RichTextFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.RICH_TEXT>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.RICH_TEXT];
       }
     >
   >,
@@ -317,7 +318,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       ActorFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.ACTOR>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.ACTOR];
       }
     >
   >,
@@ -325,7 +326,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       ArrayFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.ARRAY>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.ARRAY];
       }
     >
   >,
@@ -333,7 +334,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       PhonesFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.PHONES>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.PHONES];
       }
     >
   >,
@@ -341,7 +342,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       EmailsFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.EMAILS>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.EMAILS];
       }
     >
   >,
@@ -349,7 +350,7 @@ type DefaultValueAssertions = [
     HasAllProperties<
       LinksFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.LINKS>;
+        defaultValue: FieldMetadataDefaultValueMapping[FieldMetadataType.LINKS];
       }
     >
   >,

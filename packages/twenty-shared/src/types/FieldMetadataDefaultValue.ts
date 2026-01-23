@@ -243,15 +243,11 @@ export class FieldMetadataDefaultArray {
   value!: string[] | null;
 }
 
-type ExtractValueType<T> = T extends { value: infer V } ? V : T;
-
-type UnionOfValues<T> = T[keyof T];
-
-type FieldMetadataDefaultValueMapping = {
+export type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.UUID]: JsonbProperty<
     FieldMetadataDefaultValueString | FieldMetadataDefaultValueUuidFunction
   >;
-  [FieldMetadataType.TEXT]: JsonbProperty<FieldMetadataDefaultValueString>;
+  [FieldMetadataType.TEXT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PHONES]: JsonbProperty<FieldMetadataDefaultValuePhones>;
   [FieldMetadataType.EMAILS]: JsonbProperty<FieldMetadataDefaultValueEmails>;
   [FieldMetadataType.DATE_TIME]: JsonbProperty<
@@ -260,16 +256,16 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.DATE]: JsonbProperty<
     FieldMetadataDefaultValueDateTime | FieldMetadataDefaultValueNowFunction
   >;
-  [FieldMetadataType.BOOLEAN]: JsonbProperty<FieldMetadataDefaultValueBoolean>;
-  [FieldMetadataType.NUMBER]: JsonbProperty<FieldMetadataDefaultValueNumber>;
-  [FieldMetadataType.POSITION]: JsonbProperty<FieldMetadataDefaultValueNumber>;
-  [FieldMetadataType.NUMERIC]: JsonbProperty<FieldMetadataDefaultValueString>;
+  [FieldMetadataType.BOOLEAN]: FieldMetadataDefaultValueBoolean;
+  [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
+  [FieldMetadataType.POSITION]: FieldMetadataDefaultValueNumber;
+  [FieldMetadataType.NUMERIC]: FieldMetadataDefaultValueString;
   [FieldMetadataType.LINKS]: JsonbProperty<FieldMetadataDefaultValueLinks>;
   [FieldMetadataType.CURRENCY]: JsonbProperty<FieldMetadataDefaultValueCurrency>;
   [FieldMetadataType.FULL_NAME]: JsonbProperty<FieldMetadataDefaultValueFullName>;
   [FieldMetadataType.ADDRESS]: JsonbProperty<FieldMetadataDefaultValueAddress>;
-  [FieldMetadataType.RATING]: JsonbProperty<FieldMetadataDefaultValueString>;
-  [FieldMetadataType.SELECT]: JsonbProperty<FieldMetadataDefaultValueString>;
+  [FieldMetadataType.RATING]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.MULTI_SELECT]: JsonbProperty<FieldMetadataDefaultValueStringArray>;
   [FieldMetadataType.RAW_JSON]: JsonbProperty<FieldMetadataDefaultValueRawJson>;
   [FieldMetadataType.RICH_TEXT]: JsonbProperty<FieldMetadataDefaultValueRichText>;
@@ -277,38 +273,19 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.ARRAY]: JsonbProperty<FieldMetadataDefaultArray>;
 };
 
-export type FieldMetadataClassValidation =
-  UnionOfValues<FieldMetadataDefaultValueMapping>;
+export type FieldMetadataFunctionDefaultValue =
+  | JsonbProperty<FieldMetadataDefaultValueUuidFunction>
+  | JsonbProperty<FieldMetadataDefaultValueNowFunction>;
 
-export type FieldMetadataFunctionDefaultValue = ExtractValueType<
-  FieldMetadataDefaultValueUuidFunction | FieldMetadataDefaultValueNowFunction
->;
-
-export type FieldMetadataDefaultValueForType<
-  T extends keyof FieldMetadataDefaultValueMapping,
-> = ExtractValueType<FieldMetadataDefaultValueMapping[T]> | null;
-
-export type FieldMetadataDefaultValueForAnyType = ExtractValueType<
-  UnionOfValues<FieldMetadataDefaultValueMapping>
-> | null;
+export type FieldMetadataDefaultValueForAnyType =
+  | null
+  | FieldMetadataDefaultValueMapping[keyof FieldMetadataDefaultValueMapping];
 
 export type FieldMetadataDefaultValue<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ?
-        | null
-        | FieldMetadataDefaultValueMapping[keyof FieldMetadataDefaultValueMapping]
+    ? FieldMetadataDefaultValueForAnyType
     : T extends keyof FieldMetadataDefaultValueMapping
-      ? FieldMetadataDefaultValueForType<T>
+      ? FieldMetadataDefaultValueMapping[T]
       : never | null;
-
-type FieldMetadataDefaultValueExtractedTypes = {
-  [K in keyof FieldMetadataDefaultValueMapping]: ExtractValueType<
-    FieldMetadataDefaultValueMapping[K]
-  >;
-};
-
-export type FieldMetadataDefaultSerializableValue =
-  | FieldMetadataDefaultValueExtractedTypes[keyof FieldMetadataDefaultValueExtractedTypes]
-  | null;

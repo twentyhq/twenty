@@ -1,6 +1,5 @@
 import { type ColumnType } from 'typeorm';
 
-import { type FieldMetadataDefaultSerializableValue } from 'twenty-shared/types';
 
 import {
   FieldMetadataException,
@@ -9,9 +8,10 @@ import {
 import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/is-function-default-value.util';
 import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { FieldMetadataDefaultValueForAnyType } from 'twenty-shared/types';
 
 type SerializeDefaultValueArgs = {
-  defaultValue?: FieldMetadataDefaultSerializableValue;
+  defaultValue?: FieldMetadataDefaultValueForAnyType;
   columnType?: ColumnType;
   schemaName: string;
   tableName: string;

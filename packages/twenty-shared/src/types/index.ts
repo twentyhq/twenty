@@ -59,12 +59,10 @@ export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEn
 export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties.type';
 export type {
   FieldMetadataDefaultValueFunctionNames,
-  FieldMetadataClassValidation,
+  FieldMetadataDefaultValueMapping,
   FieldMetadataFunctionDefaultValue,
-  FieldMetadataDefaultValueForType,
   FieldMetadataDefaultValueForAnyType,
   FieldMetadataDefaultValue,
-  FieldMetadataDefaultSerializableValue,
 } from './FieldMetadataDefaultValue';
 export {
   fieldMetadataDefaultValueFunctionName,
