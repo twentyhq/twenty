@@ -41,7 +41,7 @@ const StyledIntegrationLogo = styled.img`
   height: 100%;
 `;
 
-const StyledTwentyLogo = styled.img`
+const StyledCrmLogo = styled.img`
   height: ${({ theme }) => theme.spacing(12)};
   padding: ${({ theme }) => theme.spacing(2)};
 `;
@@ -67,7 +67,7 @@ export const SettingsIntegrationPreview = ({
           <StyledIntegrationLogo alt="" src={integrationLogoUrl} />
         </StyledIntegrationLogoContainer>
         <StyledSyncImage />
-        <StyledTwentyLogo alt="" src="/images/integrations/twenty-logo.svg" />
+        <StyledCrmLogo alt="Controlit CRM" src="/images/integrations/twenty-logo.svg" />
       </StyledLogosContainer>
       <StyledLabel>Import your tables as remote objects</StyledLabel>
     </StyledCardContent>

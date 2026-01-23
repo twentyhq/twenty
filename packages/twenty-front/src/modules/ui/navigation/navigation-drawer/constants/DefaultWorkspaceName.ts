@@ -1,1 +1,1 @@
-export const DEFAULT_WORKSPACE_NAME = 'Twenty';
+export const DEFAULT_WORKSPACE_NAME = 'Controlit CRM';
