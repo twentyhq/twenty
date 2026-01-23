@@ -146,7 +146,7 @@ export class WhatsappAccountService {
             );
 
             if (existingIntegrationEntry === null) {
-              await this.integrationsRepository.insert({
+              await this.integrationsRepository.save({
                 whatsappBusinessAccountId: input.businessAccountId,
                 workspaceId: input.workspaceId,
                 whatsappWebhookToken: input.webhookToken,

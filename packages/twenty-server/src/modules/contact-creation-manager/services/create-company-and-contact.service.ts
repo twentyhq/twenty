@@ -88,7 +88,7 @@ export class CreateCompanyAndPersonService {
         }
 
         const queryBuilder =
-          source === 'EMAIL'
+          source !== 'WHATSAPP'
             ? addPersonEmailFiltersToQueryBuilder({
                 queryBuilder: personRepository.createQueryBuilder('person'),
                 emails: uniqueHandles,

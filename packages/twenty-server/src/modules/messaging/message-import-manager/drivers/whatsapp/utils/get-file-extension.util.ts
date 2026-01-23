@@ -7,7 +7,7 @@ export const getFileExtension = (mimeType: string) => {
     'audio/mpeg': '.mp3',
     'audio/mp4': '.mp4',
     'audio/ogg': '.ogg',
-    'text/plain': '.text',
+    'text/plain': '.txt',
     'application/vnd.ms-excel': '.xls',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
       '.xlsx',

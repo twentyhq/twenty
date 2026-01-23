@@ -50,7 +50,7 @@ export class CalendarEventParticipantMatchParticipantJob {
     if (
       participantMatching.personIds.length > 0 ||
       participantMatching.personEmails.length > 0 ||
-      participantMatching.personPhoneNumbers.length === 0
+      participantMatching.personPhoneNumbers.length > 0
     ) {
       await this.matchParticipantService.matchParticipantsForPeople({
         objectMetadataName: 'calendarEventParticipant',

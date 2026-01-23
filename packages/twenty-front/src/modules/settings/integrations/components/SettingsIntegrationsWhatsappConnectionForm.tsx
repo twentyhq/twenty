@@ -16,15 +16,7 @@ const StyledFormContainer = styled.div`
 const StyledInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
   font-size: ${({ theme }) => theme.font.size.md};
-`;
-
-const StyledTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-  flex-direction: column;
-  font-size: ${({ theme }) => theme.font.size.xxl};
 `;
 
 const StyledButtonContainer = styled.div`
@@ -88,6 +80,7 @@ export const SettingsIntegrationsWhatsappConnectionForm = ({
             <SettingsTextInput
               instanceId="app-secret-whatsapp-connection-form"
               label={t`App secret`}
+              type="password"
               placeholder={''}
               value={field.value || ''}
               onChange={field.onChange}
@@ -102,6 +95,7 @@ export const SettingsIntegrationsWhatsappConnectionForm = ({
             <SettingsTextInput
               instanceId="bearer-token-whatsapp-connection-form"
               label={t`Bearer token`}
+              type="password"
               placeholder={''}
               value={field.value || ''}
               onChange={field.onChange}
@@ -110,25 +104,23 @@ export const SettingsIntegrationsWhatsappConnectionForm = ({
           )}
         />
         <StyledInfoContainer>
-          <StyledTitle>Disclaimer</StyledTitle>
-          <StyledInfoContainer>
-            While we are trying our best to make sure that integration is
-            compatible with WhatsApp API and Meta's Policy, we cannot guarantee
-            that your account will not be banned by Meta due to
-            improper/non-compliant usage of official API as it's usage is beyond
-            our control.
-            <StyledButtonContainer>
-              <Button
-                Icon={IconFileInfo}
-                title={t`More info here`}
-                onClick={() =>
-                  window.open(
-                    'https://developers.facebook.com/documentation/business-messaging/whatsapp/policy-enforcement',
-                  )
-                }
-              />
-            </StyledButtonContainer>
-          </StyledInfoContainer>
+          <H2Title
+            title={t`Disclaimer`}
+            description={t`While we are trying our best to make sure that integration is compatible with WhatsApp API and Meta's Policy, we cannot guarantee that your account will not be banned by Meta due to improper/non-compliant usage of official API as it's usage is beyond our control.`}
+          />
+          <StyledButtonContainer>
+            <Button
+              Icon={IconFileInfo}
+              title={t`More info here`}
+              onClick={() =>
+                window.open(
+                  'https://developers.facebook.com/documentation/business-messaging/whatsapp/policy-enforcement',
+                  '_blank',
+                  'noopener,noreferrer',
+                )
+              }
+            />
+          </StyledButtonContainer>
         </StyledInfoContainer>
       </StyledFormContainer>
     </Section>

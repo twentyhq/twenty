@@ -22,8 +22,8 @@ export class WhatsappFindMessageService {
             'message',
           );
 
-        const message = await messageRepository.findOne({
-          where: { id: messageId },
+        const message = await messageRepository.findOneBy({
+          id: messageId,
         });
 
         return message !== null ? message.text : null;

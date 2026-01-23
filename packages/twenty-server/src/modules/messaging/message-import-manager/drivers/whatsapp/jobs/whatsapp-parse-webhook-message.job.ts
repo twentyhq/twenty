@@ -61,7 +61,7 @@ export class WhatsappParseWebhookMessageJob {
         throw new Error('WhatsApp connected account not found');
       }
 
-      workspaceId = workspaceIdByWABAId.workspace.id;
+      workspaceId = workspaceIdByWABAId.workspaceId;
 
       for (const change of messages.entry[0].changes) {
         if (change.value.errors === undefined) {
@@ -87,7 +87,7 @@ export class WhatsappParseWebhookMessageJob {
       if (workspaceIdByWABAId === null) {
         throw new Error('WhatsApp connected account not found');
       }
-      workspaceId = workspaceIdByWABAId.workspace.id;
+      workspaceId = workspaceIdByWABAId.workspaceId;
 
       for (const thread of history.entry[0].changes[0].value.history[0]
         .threads) {

@@ -54,6 +54,7 @@ export const SettingsIntegrationGroup = ({
             <StyledGroupLink
               target="_blank"
               to={integrationGroup.hyperlink ?? ''}
+              rel="noopener, noreferrer"
             >
               <div>{integrationGroup.hyperlinkText}</div>
               <div>→</div>

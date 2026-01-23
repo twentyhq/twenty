@@ -54,7 +54,7 @@ export class WhatsappResolver {
 
     const connectedIntegration = await this.integrationsRepository.findOne({
       where: {
-        whatsappBusinessAccountId: connectedAccount.id,
+        whatsappBusinessAccountId: connectedAccount.handle,
         workspaceId: workspace.id,
       },
     });

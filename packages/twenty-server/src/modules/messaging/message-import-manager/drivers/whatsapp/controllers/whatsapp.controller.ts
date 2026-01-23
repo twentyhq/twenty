@@ -55,6 +55,8 @@ export class WhatsappController {
     if (mode !== 'subscribe') {
       res.status(HttpStatus.BAD_REQUEST).send();
       this.logger.error('WhatsApp webhook verification failed - wrong request');
+
+      return null;
     }
 
     const whatsapp = await this.integrationsRepository.findOneBy({
@@ -89,7 +91,9 @@ export class WhatsappController {
       !validateWebhookPayload(signature, JSON.stringify(body), appSecret)
     ) {
       res.status(HttpStatus.BAD_REQUEST).send();
-      throw new Error('Invalid WhatsApp webhook message');
+      this.logger.error('Invalid WhatsApp webhook message');
+
+      return null;
     }
     res.status(HttpStatus.OK).send();
     await this.messageQueueService.add<WhatsappParseWebhookMessageJobData>(
@@ -118,7 +122,9 @@ export class WhatsappController {
       !validateWebhookPayload(signature, JSON.stringify(body), appSecret)
     ) {
       res.status(HttpStatus.BAD_REQUEST).send();
-      throw new Error('Invalid WhatsApp webhook message');
+      this.logger.error('Invalid WhatsApp webhook message');
+
+      return null;
     }
     res.status(HttpStatus.OK).send();
     await this.messageQueueService.add<WhatsappParseWebhookMessageJobData>(

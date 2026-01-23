@@ -7,7 +7,7 @@ export const getFileCategory = (mimeType: string) => {
     'audio/mpeg': 'AUDIO',
     'audio/mp4': 'AUDIO',
     'audio/ogg': 'AUDIO',
-    'text/plain': 'TEXT',
+    'text/plain': 'TEXT_DOCUMENT',
     'application/vnd.ms-excel': 'SPREADSHEET',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
       'SPREADSHEET',

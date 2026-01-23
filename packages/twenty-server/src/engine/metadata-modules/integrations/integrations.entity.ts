@@ -1,29 +1,21 @@
-import {
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryColumn,
-  Relation,
-} from 'typeorm';
+import { ObjectType } from '@nestjs/graphql';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 
-@Entity({ name: 'integration', schema: 'core' })
-@Index(['whatsappWebhookToken'], { unique: true })
-@Index(['whatsappBusinessAccountId', 'workspaceId'], { unique: true })
-export class IntegrationsEntity {
-  @Column({ nullable: true })
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
+@Entity({ name: 'integrations', schema: 'core' })
+@ObjectType('Integrations')
+export class IntegrationsEntity extends WorkspaceRelatedEntity {
+  @IDField(() => UUIDScalarType)
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ nullable: true, unique: true })
   whatsappBusinessAccountId: string;
 
-  @ManyToOne(() => WorkspaceEntity)
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
-
-  @PrimaryColumn({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   whatsappWebhookToken: string;
 }

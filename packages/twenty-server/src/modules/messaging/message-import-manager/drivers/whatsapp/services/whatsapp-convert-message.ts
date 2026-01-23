@@ -185,10 +185,13 @@ export class WhatsappConvertMessage {
             workspaceId,
           );
 
-        text =
-          message.reaction?.emoji !== undefined
-            ? `User reacted with ${message.reaction?.emoji} to ${relatedMessage}`
-            : `User removed reaction from ${relatedMessage}`;
+        if (relatedMessage !== null) {
+          if (message.reaction?.emoji !== undefined) {
+            text = `User reacted with ${message.reaction?.emoji} to ${relatedMessage}`;
+          } else {
+            text = `User removed reaction from ${relatedMessage}`;
+          }
+        }
         break;
       }
       case 'sticker':
@@ -218,7 +221,7 @@ export class WhatsappConvertMessage {
       receivedAt: receivedAt,
       subject: null,
       text: text,
-      attachments: [],
+      attachments: [], // for time being that's fine, integration shouldn't be published to public until email attachments are done
       externalId: externalId,
       messageThreadExternalId: message.group_id || message.from, // TODO: find a way to create arbitrary external message thread id (or maybe way to update thread id?)
       direction: MessageDirection.INCOMING,
