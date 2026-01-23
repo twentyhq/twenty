@@ -1,4 +1,4 @@
-name: Build and Push Controlit CRM
+name: Build and Push Controlit CRM  # Triggered manually
 
 on:
   push:
