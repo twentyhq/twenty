@@ -6,7 +6,8 @@ export type LoggerContext =
   | 'functions-watch'
   | 'front-components-watch'
   | 'file-upload'
-  | 'app-sync';
+  | 'app-sync'
+  | 'orchestrator';
 
 type LoggerConfig = {
   prefix: string;
@@ -37,6 +38,10 @@ const LOGGER_CONFIGS: Record<LoggerContext, LoggerConfig> = {
   'app-sync': {
     prefix: '[app-sync]',
     color: chalk.gray,
+  },
+  orchestrator: {
+    prefix: '[orchestrator]',
+    color: chalk.blueBright,
   },
 };
 
