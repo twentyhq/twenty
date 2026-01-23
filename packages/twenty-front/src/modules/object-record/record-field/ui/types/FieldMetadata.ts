@@ -301,6 +301,7 @@ const FieldActorSourceSchema = z.union([
   z.literal('WEBHOOK'),
   z.literal('AGENT'),
   z.literal('APPLICATION'),
+  z.literal('WHATSAPP'),
 ]);
 
 export const FieldActorValueSchema = z.object({

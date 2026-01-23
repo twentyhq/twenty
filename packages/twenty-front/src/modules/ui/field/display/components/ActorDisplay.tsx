@@ -60,7 +60,8 @@ export const ActorDisplay = ({
             context?.provider as keyof typeof PROVIDERS_ICON_MAPPING.CALENDAR
           ] ?? PROVIDERS_ICON_MAPPING.CALENDAR.default
         );
-      // TODO: add WHATSAPP case?
+      case 'WHATSAPP':
+        return IconWhatsapp;
       case 'SYSTEM':
         return IconRobot;
       case 'WORKFLOW':
