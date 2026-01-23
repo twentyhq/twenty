@@ -1,275 +1,275 @@
 ---
-title: Chart Settings
-description: Configure your charts to display data exactly how you need it.
+title: Grafik Ayarları
+description: Grafiklerinizi, verileri tam ihtiyacınız olan şekilde görüntüleyecek biçimde yapılandırın.
 ---
 
 import { ChartIcon } from '/snippets/chart-icon.mdx';
 
-## Accessing Chart Settings
+## Grafik Ayarlarına Erişim
 
-1. Click the **Edit** button in the top-right corner of your dashboard
+1. Panelinizin sağ üst köşesindeki **Düzenle** düğmesine tıklayın
 
-<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="Edit mode" />
+<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="Düzenleme modu" />
 
-2. The dashboard enters edit mode
-3. Click on any widget to select it
-4. The settings panel opens on the right
+2. Panel düzenleme moduna geçer
+3. Herhangi bir bileşeni seçmek için üzerine tıklayın
+4. Ayarlar paneli sağda açılır
 
-Settings are organized into sections:
+Ayarlar bölümlere ayrılmıştır:
 
-* **Data**: What data to pull and how to filter it
-* **X axis**: How to group and sort categories (bar/line charts)
-* **Y axis**: What to measure and how to display it (bar/line charts)
-* **Style**: Colors, labels, and visual options
+* **Veri**: Hangi verilerin çekileceği ve nasıl filtreleneceği
+* **X ekseni**: Kategorilerin nasıl gruplandırılacağı ve sıralanacağı (çubuk/çizgi grafikler)
+* **Y ekseni**: Nelerin ölçüleceği ve nasıl görüntüleneceği (çubuk/çizgi grafikler)
+* **Stil**: Renkler, etiketler ve görsel seçenekler
 
 <Note>
-  Some settings only appear when other settings are configured. For example, **Date granularity** only appears when you select a date field.
+  Bazı ayarlar yalnızca diğer ayarlar yapılandırıldığında görünür. Örneğin, **Tarih ayrıntı düzeyi** yalnızca bir tarih alanı seçtiğinizde görünür.
 </Note>
 
 ---
 
-## Data Settings
+## Veri Ayarları
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="database" />Source </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="database" />Kaynak </span>
 
-Choose which object to pull data from.
+Verilerin hangi nesneden çekileceğini seçin.
 
-1. Click **Source**
-2. Select an object (Opportunities, People, Companies, etc.)
+1. **Kaynak**'a tıklayın
+2. Bir nesne seçin (Fırsatlar, Kişiler, Şirketler vb.)
 
-All your standard and custom objects are available. Changing the source resets other settings since field options depend on the selected object.
+Tüm standart ve özel nesneleriniz kullanılabilir. Kaynağı değiştirmek diğer ayarları sıfırlar; çünkü alan seçenekleri seçilen nesneye bağlıdır.
 
 <img src="/images/user-guide/dashboard/dashboard-chart-settings-source.png" alt="Kaynak" />
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />Filter </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />Filtre </span>
 
-Limit which records are included in the chart.
+Grafiğe dahil edilecek kayıtları sınırlandırın.
 
 1. **Filter**'e tıklayın
-2. The filter builder opens
-3. Click **+ Add filter**
-4. Select a field, condition, and value
-5. Add more filters as needed
+2. Filtre oluşturucu açılır
+3. **+ Filtre Ekle**'ye tıklayın
+4. Bir alan, koşul ve değer seçin
+5. Gerektiğinde daha fazla filtre ekleyin
 
-Filters work the same as in table views. Use them to focus on specific segments of your data.
+Filtreler, tablo görünümlerindekiyle aynı şekilde çalışır. Verilerinizin belirli bölümlerine odaklanmak için bunları kullanın.
 
-**Example**: Filter opportunities where Stage equals "Won" to show only closed deals.
+**Örnek**: Yalnızca kapanan anlaşmaları göstermek için Aşama değeri "Kazanıldı" olan fırsatları filtreleyin.
 
 <img src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png" alt="Filtre" />
 
 <Tip>
-  For date fields, try **Is relative** to create dynamic filters like "Past 7 days" or "This month" that automatically update.
+  Tarih alanları için, otomatik olarak güncellenen "Son 7 gün" veya "Bu ay" gibi dinamik filtreler oluşturmak üzere **Göreli** seçeneğini deneyin.
 </Tip>
 
 <Tip>
-  Advanced filters are supported—add multiple filter rules and combine them with **And** or **Or** logic.
+  Gelişmiş filtreler desteklenir—birden fazla filtre kuralı ekleyin ve bunları **Ve** veya **Veya** mantığıyla birleştirin.
 </Tip>
 
 ---
 
-## X Axis Settings
+## X Ekseni Ayarları
 
-These settings control the horizontal axis of bar and line charts—typically how your data is grouped into categories.
+Bu ayarlar, çubuk ve çizgi grafiklerin yatay eksenini kontrol eder—genellikle verilerinizin kategorilere nasıl gruplandırılacağını belirler.
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-x" />Data on display </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-x" />Görüntülenen veri </span>
 
-Select the field to group your data by. This determines the categories shown on the X axis.
+Verilerinizi gruplandıracağınız alanı seçin. Bu, X ekseninde gösterilen kategorileri belirler.
 
-**Example**: Select "Stage" to see data grouped by pipeline stage, or "Created date" to see data over time.
+**Örnek**: Verileri satış süreci aşamasına göre gruplandırılmış görmek için "Aşama"yı veya zaman içindeki verileri görmek için "Oluşturulma tarihi"ni seçin.
 
 <img src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png" alt="Görüntülenen veriler" />
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Date granularity </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Tarih ayrıntı düzeyi </span>
 
-When grouping by a date field, choose the time period for grouping.
+Bir tarih alanına göre gruplandırırken, gruplandırma için zaman aralığını seçin.
 
-| Seçenek             | Groups data by       | Example output                                |
-| ------------------- | -------------------- | --------------------------------------------- |
-| **Day**             | Each calendar day    | Jan 1, Jan 2, Jan 3...                        |
-| **Week**            | Calendar weeks       | Week 1, Week 2, Week 3...                     |
-| **Month**           | Calendar months      | January, February, March...                   |
-| **Quarter**         | Fiscal quarters      | Q1, Q2, Q3, Q4                                |
-| **Year**            | Calendar years       | 2023, 2024, 2025                              |
-| **Day of week**     | Weekday (aggregated) | Monday, Tuesday... (all Mondays combined)     |
-| **Month of year**   | Month (aggregated)   | January, February... (all Januaries combined) |
-| **Quarter of year** | Quarter (aggregated) | Q1, Q2, Q3, Q4 (all Q1s combined)             |
+| Seçenek           | Verileri şu şekilde gruplandırır | Örnek çıktı                                          |
+| ----------------- | -------------------------------- | ---------------------------------------------------- |
+| **Gün**           | Her takvim günü                  | 1 Oca, 2 Oca, 3 Oca...                               |
+| **Hafta**         | Takvim haftaları                 | Hafta 1, Hafta 2, Hafta 3...                         |
+| **Ay**            | Takvim ayları                    | Ocak, Şubat, Mart...                                 |
+| **Çeyrek**        | Mali çeyrekler                   | Q1, Q2, Q3, Q4                                       |
+| **Yıl**           | Takvim yılları                   | 2023, 2024, 2025                                     |
+| **Haftanın günü** | Haftanın günü (birleştirilmiş)   | Pazartesi, Salı... (tüm Pazartesiler birleştirilmiş) |
+| **Yılın ayı**     | Ay (birleştirilmiş)              | Ocak, Şubat... (tüm Ocaklar birleştirilmiş)          |
+| **Yılın çeyreği** | Çeyrek (birleştirilmiş)          | Q1, Q2, Q3, Q4 (tüm Q1'ler birleştirilmiş)           |
 
-The "of week/year" options aggregate across all time. Use **Day of week** to see which weekday typically gets the most deals. Use **Month** to see trends month by month.
+"hafta/yıl" seçenekleri tüm zaman genelinde birleştirme yapar. **Haftanın günü**nü, genellikle en çok anlaşmanın hangi günde gerçekleştiğini görmek için kullanın. **Ay** seçeneğini, aylara göre eğilimleri görmek için kullanın.
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Sort by </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Şuna göre sırala </span>
 
-Control the order of categories on the X axis.
+X eksenindeki kategorilerin sırasını kontrol edin.
 
-* **Position** – Uses the order defined in your Select field settings
-* **Alphabetical** – A to Z (or chronological for dates)
-* **By value** – Ordered by the metric (highest or lowest first)
-* **Manual** – Drag to set your own order
+* **Konum** – Seçim alanı ayarlarınızda tanımlanan sırayı kullanır
+* **Alfabetik** – A'dan Z'ye (tarihler için kronolojik)
+* **Değere göre** – Metrik değere göre sıralanır (önce en yüksek veya en düşük)
+* **El ile** – Kendi sıranızı belirlemek için sürükleyin
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="Sort by" />
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="Şuna göre sırala" />
 
-**Tip**: For pipeline stages, use **Position** to show stages in your sales process order (Lead → Qualified → Proposal → Won).
+**İpucu**: Boru hattı aşamaları için, aşamaları satış sürecinizin sırasına göre göstermek üzere **Konum**u kullanın (Aday → Nitelikli → Teklif → Kazanıldı).
 
 <Note>
-  The options shown depend on your field type. Select fields have all options; date and text fields show fewer.
+  Gösterilen seçenekler, alan türünüze bağlıdır. Seçim alanlarında tüm seçenekler bulunur; tarih ve metin alanları daha az seçenek gösterir.
 </Note>
 
 <Tip>
-  With **Manual** sorting, drag categories to create a custom order—perfect for highlighting specific segments or telling a story with your data.
+  **El ile** sıralamada, özel bir sıra oluşturmak için kategorileri sürükleyin—belirli bölümleri vurgulamak veya verilerinizle bir hikâye anlatmak için idealdir.
 </Tip>
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />Omit zero values </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />Sıfır değerleri hariç tut </span>
 
-Hide categories that have zero or no data.
+Sıfır olan veya verisi olmayan kategorileri gizleyin.
 
-* **On**: Categories with no records are hidden
-* **Off**: All categories are shown, even if empty
+* **Açık**: Kaydı olmayan kategoriler gizlenir
+* **Kapalı**: Boş olsa bile tüm kategoriler gösterilir
 
-Use this to clean up charts with sparse data.
+Seyrek veriye sahip grafikleri sadeleştirmek için bunu kullanın.
 
 ---
 
-## Y Axis Settings
+## Y Ekseni Ayarları
 
-These settings control what you're measuring and how it's displayed.
+Bu ayarlar, neyi ölçtüğünüzü ve nasıl görüntülendiğini kontrol eder.
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-y" />Data on display </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-y" />Görüntülenen veri </span>
 
-Select the field and operation to calculate your metric.
+Metrik değerinizi hesaplamak için alanı ve işlemi seçin.
 
-* **Counts** – Count all, Count empty, Count not empty, Count unique values
-* **Math** – Sum, Average, Min, Max (number fields)
-* **Percentages** – Percent empty, Percent not empty
+* **Sayım** – Tümünü say, Boş olanları say, Boş olmayanları say, Benzersiz değerleri say
+* **Matematik** – Toplam, Ortalama, Minimum, Maksimum (sayı alanları)
+* **Yüzdeler** – Boş olanların yüzdesi, Boş olmayanların yüzdesi
 
-Boolean fields add Count true/false. Aggregate charts with date fields show Earliest/Latest.
+Boolean alanlar için Doğru/Yanlış sayımı eklenir. Tarih alanlarına sahip toplama grafiklerinde En erken/En geç gösterilir.
 
-**Example**: Select "Amount" with Sum to see total deal value per category, or Count all to see number of deals.
+**Örnek**: Kategori başına toplam anlaşma değerini görmek için "Tutar"ı Toplam ile seçin veya anlaşma sayısını görmek için "Tümünü say"ı seçin.
 
 <img src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png" alt="Görüntülenen veriler" />
 
 <Note>
-  The options shown depend on your field and chart type. If you don't see an expected operation, check your field type.
+  Gösterilen seçenekler, alanınıza ve grafik türünüze bağlıdır. Beklediğiniz bir işlem görünmüyorsa, alan türünüzü kontrol edin.
 </Note>
 
 ### Oran
 
-For Select, Multi-select, or Boolean fields, you can calculate the percentage of a specific value.
+Seçim, Çoklu seçim veya Boolean alanları için belirli bir değerin yüzdesini hesaplayabilirsiniz.
 
-1. Select a Select, Multi-select, or Boolean field
-2. Enable **Ratio**
-3. Choose the option to measure
+1. Bir Seçim, Çoklu seçim veya Boolean alanı seçin
+2. **Oran**'ı etkinleştirin
+3. Ölçülecek seçeneği seçin
 
-**Example**: Show "Won" deals as a percentage of all opportunities. If you have 10 Won out of 50 total, the chart shows 20%.
+**Örnek**: "Kazanıldı" anlaşmalarını tüm fırsatların yüzdesi olarak gösterin. Toplam 50'de 10 Kazanıldı varsa, grafik %20 gösterir.
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filters" />Group by </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filters" />Şuna göre grupla </span>
 
-Add a second dimension to create multiple series (multiple bars or lines).
+Birden çok seri oluşturmak için ikinci bir boyut ekleyin (birden çok çubuk veya çizgi).
 
-1. Set your X axis field first
-2. Click **Group by**
-3. Select a second field
+1. Önce X ekseni alanınızı ayarlayın
+2. **Şuna göre grupla**'ya tıklayın
+3. İkinci bir alan seçin
 
-**Example**: Group deals by Stage (X axis) AND by Owner (Group by) to see each person's pipeline breakdown side by side.
+**Örnek**: Her kişinin boru hattı dökümünü yan yana görmek için anlaşmaları Aşamaya (X ekseni) VE Sahibe (Şuna göre grupla) göre gruplayın.
 
 <img src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png" alt="Grupla" />
 
-When Group by is set, you'll see multiple colors in your chart and a legend appears.
+Şuna göre grupla ayarlandığında, grafikte birden fazla renk görürsünüz ve bir açıklama görünür.
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Date granularity </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Tarih ayrıntı düzeyi </span>
 
-When Group by is a date field, choose the time period (same options as X axis).
+Şuna göre grupla bir tarih alanı olduğunda, zaman aralığını seçin (X eksenindeki seçeneklerle aynıdır).
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Sort by </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Şuna göre sırala </span>
 
-When **Group by** is set, control the order of grouped series (e.g., which owner's bar appears first within each category).
+**Şuna göre grupla** ayarlandığında, gruplanmış serilerin sırasını kontrol edin (ör. her kategoride hangi sahibin çubuğunun önce görüneceği).
 
-Same options as X axis sorting—Position, Alphabetical, and Manual—except **value-based sorting is not available** for secondary grouping.
+X ekseni sıralamasıyla aynı seçenekler—Konum, Alfabetik ve El ile—ancak ikincil gruplandırma için **değer temelli sıralama kullanılamaz**.
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="chart-bar-popular" />Cumulative </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="chart-bar-popular" />Kümülatif </span>
 
-Show running totals instead of individual values.
+Tek tek değerler yerine kümülatif toplamları gösterin.
 
-* **Off**: Each bar/point shows its own value
-* **On**: Each bar/point shows the sum of all previous values plus its own
+* **Kapalı**: Her çubuk/nokta kendi değerini gösterir
+* **Açık**: Her çubuk/nokta, önceki tüm değerlerin toplamını kendi değeriyle birlikte gösterir
 
-**Example**: January = 10, February = 15
+**Örnek**: Ocak = 10, Şubat = 15
 
-* Cumulative off: Shows 10 and 15
-* Cumulative on: Shows 10 and 25 (10 + 15)
+* Kümülatif kapalı: 10 ve 15 gösterir
+* Kümülatif açık: 10 ve 25 gösterir (10 + 15)
 
-Use cumulative to track progress toward a goal over time.
+Zaman içinde bir hedefe doğru ilerlemeyi izlemek için kümülatifi kullanın.
 
 <img src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png" alt="Kümülatif" />
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />Min range / <ChartIcon icon="math-max" />Max range </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />Alt sınır / <ChartIcon icon="math-max" />Üst sınır </span>
 
-Set fixed minimum and maximum values for the Y axis.
+Y ekseni için sabit minimum ve maksimum değerler ayarlayın.
 
-* Leave blank for automatic scaling
-* Enter a number to fix the boundary
+* Otomatik ölçekleme için boş bırakın
+* Sınırı sabitlemek için bir sayı girin
 
-**When to use:**
+**Ne zaman kullanılmalı:**
 
-* Set Min to 0 for accurate visual comparisons
-* Set both for consistent scales across multiple charts
-* Focus on a specific value range by setting both
+* Doğru görsel karşılaştırmalar için Minimum'u 0 olarak ayarlayın
+* Birden çok grafik arasında tutarlı ölçekler için her ikisini de ayarlayın
+* Her ikisini de ayarlayarak belirli bir değer aralığına odaklanın
 
 ---
 
-## Style Settings
+## Stil Ayarları
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="color-swatch" />Colors </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="color-swatch" />Renkler </span>
 
-Set the color scheme for your chart. Choose from a variety of color palettes.
+Grafiğiniz için renk düzenini ayarlayın. Çeşitli renk paletleri arasından seçim yapın.
 
 <Note>
-  When grouping by a Select field, the chart automatically uses the colors defined for each option in your field settings.
+  Bir Seçim alanına göre gruplandırırken, grafik alan ayarlarınızda her seçenek için tanımlanan renkleri otomatik olarak kullanır.
 </Note>
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />Axis name </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />Eksen adı </span>
 
-Choose which axis labels to show: **None**, **X axis**, **Y axis**, or **Both** (bar and line charts only).
+Hangi eksen etiketlerinin gösterileceğini seçin: **Yok**, **X ekseni**, **Y ekseni** veya **Her ikisi** (yalnızca çubuk ve çizgi grafikler).
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="stack-2" />Stacked bars / Stacked lines </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="stack-2" />Yığılmış çubuklar / Yığılmış çizgiler </span>
 
-When Group by is set, choose how multiple series are displayed.
+Şuna göre grupla ayarlandığında, birden çok serinin nasıl görüntüleneceğini seçin.
 
-* **Off (Grouped)**: Series appear side by side. Use when comparing exact values between groups.
-* **On (Stacked)**: Series stack on top of each other. Use when showing composition—how parts make up a whole.
+* **Kapalı (Gruplanmış)**: Seriler yan yana görünür. Gruplar arasındaki kesin değerleri karşılaştırırken kullanın.
+* **Açık (Yığılmış)**: Seriler birbirinin üzerine yığılır. Bileşimi gösterirken—parçaların bütünü nasıl oluşturduğunu—kullanın.
 
-**Example**: Deals by stage, grouped by owner
+**Örnek**: Aşamaya göre anlaşmalar, sahibe göre gruplanmış
 
-* Grouped: See each owner's exact numbers side by side
-* Stacked: See total deals per stage, with each owner's contribution stacked
+* Gruplanmış: Her sahibin kesin sayılarını yan yana görün
+* Yığılmış: Aşama başına toplam anlaşmaları ve her sahibin katkısının yığıldığını görün
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />Data labels </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />Veri etiketleri </span>
 
-Show values directly on chart elements (bars, points, slices).
+Değerleri grafik öğelerinin üzerinde doğrudan gösterin (çubuklar, noktalar, dilimler).
 
-* **On**: Values appear on the chart
-* **Off**: No values shown (cleaner look)
+* **Açık**: Değerler grafikte görünür
+* **Kapalı**: Değerler gösterilmez (daha sade görünüm)
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />Legend </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />Açıklama </span>
 
-Show or hide the legend (only appears when Group by is set).
+Açıklamayı gösterin veya gizleyin (yalnızca Şuna göre grupla ayarlandığında görünür).
 
-* **On**: Legend shows what each color represents
-* **Off**: No legend displayed
+* **Açık**: Açıklama, her rengin neyi temsil ettiğini gösterir
+* **Kapalı**: Açıklama gösterilmez
 
 <Tip>
-  **Hover** over a legend item to highlight that group. **Click** to temporarily hide it from the chart.
+  Bir açıklama öğesinin üzerine **gelin**, o grubu vurgulamak için. Geçici olarak grafikten gizlemek için **tıklayın**.
 </Tip>
 
 ---
 
-## Chart-Specific Notes
+## Grafiğe Özel Notlar
 
 ### Pasta grafikleri
 
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Each slice represents** – Define how slices are grouped
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Hide empty category** – Remove zero-value slices
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Show value in center** – Display the aggregate value (sum, average, count, etc.)
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Her dilim şunu temsil eder** – Dilimlerin nasıl gruplandığını tanımlayın
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Boş kategoriyi gizle** – Sıfır değerli dilimleri kaldırın
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Merkezde değeri göster** – Toplulaştırılmış değeri görüntüleyin (toplam, ortalama, sayım vb.)
 
-### Aggregate charts
+### Toplama grafikleri
 
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Prefix** – Add text before the number (e.g., `$`)
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Suffix** – Add text after the number (e.g., `%`)
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Önek** – Sayının önüne metin ekleyin (ör. `$`)
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Sonek** – Sayının sonuna metin ekleyin (ör. `%`)

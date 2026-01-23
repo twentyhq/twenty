@@ -6,7 +6,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { PageLayoutType } from '~/generated/graphql';
 
 export const CommandMenuCalendarEventPage = () => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -50,9 +52,19 @@ export const CommandMenuCalendarEventPage = () => {
   }
 
   return (
-    <>
+    <LayoutRenderingProvider
+      value={{
+        targetRecordIdentifier: {
+          id: calendarEvent.id,
+          targetObjectNameSingular: CoreObjectNameSingular.CalendarEvent,
+        },
+        layoutType: PageLayoutType.RECORD_PAGE,
+        isInRightDrawer: true,
+        isLegacyRecordShowPage: true,
+      }}
+    >
       <CalendarEventDetailsEffect record={calendarEvent} />
       <CalendarEventDetails calendarEvent={calendarEvent} />
-    </>
+    </LayoutRenderingProvider>
   );
 };

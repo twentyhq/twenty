@@ -27,7 +27,7 @@ import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 // We could refactor this type to be dynamic to view type
 @Entity({ name: 'view', schema: 'core' })
@@ -46,10 +46,7 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   'CHK_VIEW_CALENDAR_INTEGRITY',
   `("type" != 'CALENDAR' OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL))`,
 )
-export class ViewEntity
-  extends SyncableEntityRequired
-  implements Required<ViewEntity>
-{
+export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

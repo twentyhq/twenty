@@ -120,7 +120,7 @@ export default [
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
-        project: [path.resolve(__dirname, 'tsconfig.*.json')],
+        project: [path.resolve(__dirname, 'tsconfig.json')],
       },
     },
     plugins: {

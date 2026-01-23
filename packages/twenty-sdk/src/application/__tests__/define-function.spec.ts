@@ -1,4 +1,4 @@
-import { defineFunction } from '../functions/define-function';
+import { defineFunction } from '@/application';
 
 // Mock handler for testing
 const mockHandler = async () => ({ success: true });

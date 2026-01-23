@@ -19,8 +19,7 @@ export const transformAgentEntityToFlatAgent = (
     responseFormat: agentEntity.responseFormat,
     workspaceId: agentEntity.workspaceId,
     isCustom: agentEntity.isCustom,
-    // TODO remove once MakeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand has been run once
-    universalIdentifier: agentEntity.universalIdentifier ?? agentEntity.id,
+    universalIdentifier: agentEntity.universalIdentifier,
     applicationId: agentEntity.applicationId,
     modelConfiguration: agentEntity.modelConfiguration,
     evaluationInputs: agentEntity.evaluationInputs,

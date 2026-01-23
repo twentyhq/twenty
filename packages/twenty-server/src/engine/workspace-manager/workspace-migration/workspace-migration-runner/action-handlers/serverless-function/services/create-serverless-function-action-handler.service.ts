@@ -7,18 +7,23 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
-import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getSeedProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-seed-project-files';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/get-serverless-folder-or-throw.utils';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { CreateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { FunctionBuildService } from 'src/engine/metadata-modules/function-build/function-build.service';
 
 @Injectable()
 export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'create',
   'serverlessFunction',
 ) {
-  constructor(private readonly fileStorageService: FileStorageService) {
+  constructor(
+    private readonly fileStorageService: FileStorageService,
+    private readonly functionBuildService: FunctionBuildService,
+  ) {
     super();
   }
 
@@ -27,6 +32,8 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
     const { flatEntity: serverlessFunction } = action;
+
+    await this.buildAndSaveServerlessFunction(serverlessFunction);
 
     const serverlessFunctionRepository =
       queryRunner.manager.getRepository<ServerlessFunctionEntity>(
@@ -37,9 +44,13 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
       ...serverlessFunction,
       workspaceId,
     });
+  }
 
-    const draftFileFolder = getServerlessFolder({
-      serverlessFunction,
+  private async buildAndSaveServerlessFunction(
+    serverlessFunction: FlatServerlessFunction,
+  ) {
+    const draftFileFolder = getServerlessFolderOrThrow({
+      flatServerlessFunction: serverlessFunction,
       version: 'draft',
     });
 
@@ -49,15 +60,19 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
         draftFileFolder,
       );
     } else {
-      for (const file of await getBaseTypescriptProjectFiles) {
+      for (const file of await getSeedProjectFiles) {
         await this.fileStorageService.write({
           file: file.content,
           name: file.name,
-          mimeType: undefined,
+          mimeType: 'application/typescript',
           folder: join(draftFileFolder, file.path),
         });
       }
     }
+    await this.functionBuildService.buildAndUpload({
+      flatServerlessFunction: serverlessFunction,
+      version: 'draft',
+    });
   }
 
   async rollbackForMetadata(
@@ -66,8 +81,8 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
     const { action } = context;
 
     await this.fileStorageService.delete({
-      folderPath: getServerlessFolder({
-        serverlessFunction: action.flatEntity,
+      folderPath: getServerlessFolderOrThrow({
+        flatServerlessFunction: action.flatEntity,
       }),
     });
   }

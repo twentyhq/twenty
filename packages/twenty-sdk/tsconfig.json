@@ -1,26 +1,28 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
+    "jsx": "react-jsx",
     "strictNullChecks": true,
     "alwaysStrict": true,
     "noImplicitAny": true,
     "strictBindCallApply": false,
     "noEmit": true,
+    "types": ["jest", "node"],
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.lib.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
-  ],
-  "extends": "../../tsconfig.base.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    "**/__mocks__/**/*",
+    "**/__tests__/**/*",
+    "vite.config.ts",
+    "scripts/generateBarrels.ts",
+    "jest.config.mjs"
+  ]
 }

@@ -97,11 +97,11 @@
       "cache": true,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsc -b tsconfig.json --incremental"
+        "command": "tsgo -p tsconfig.json"
       },
       "configurations": {
         "watch": {
-          "watch": true
+          "command": "tsgo -p tsconfig.json --watch"
         }
       },
       "dependsOn": ["^build"]

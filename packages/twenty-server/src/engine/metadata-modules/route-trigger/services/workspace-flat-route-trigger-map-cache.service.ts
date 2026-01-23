@@ -46,8 +46,7 @@ export class WorkspaceFlatRouteTriggerMapCacheService extends WorkspaceCacheProv
         ...routeTriggerEntityWithoutRelations,
         createdAt: routeTriggerEntity.createdAt.toISOString(),
         updatedAt: routeTriggerEntity.updatedAt.toISOString(),
-        universalIdentifier:
-          routeTriggerEntity.universalIdentifier ?? routeTriggerEntity.id,
+        universalIdentifier: routeTriggerEntity.universalIdentifier,
       } satisfies FlatRouteTrigger;
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

@@ -1,0 +1,1 @@
+export const PIE_CHART_MAXIMUM_NUMBER_OF_SLICES = 100;

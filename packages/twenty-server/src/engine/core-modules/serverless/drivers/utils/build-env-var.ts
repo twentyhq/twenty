@@ -1,12 +1,14 @@
-import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { type FlatApplicationVariable } from 'src/engine/core-modules/applicationVariable/types/flat-application-variable.type';
 
-export const buildEnvVar = (serverlessFunction: ServerlessFunctionEntity) => {
-  return (serverlessFunction.application?.applicationVariables ?? []).reduce(
-    (acc, v) => {
-      acc[v.key] = String(v.value ?? '');
+export const buildEnvVar = (
+  flatApplicationVariables: FlatApplicationVariable[],
+): Record<string, string> => {
+  return flatApplicationVariables.reduce<Record<string, string>>(
+    (acc, flatApplicationVariable) => {
+      acc[flatApplicationVariable.key] = flatApplicationVariable.value;
 
       return acc;
     },
-    {} as Record<string, string>,
+    {},
   );
 };

@@ -19,6 +19,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBox, useIcons, type IconComponent } from 'twenty-ui/display';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
@@ -49,6 +50,7 @@ export type SettingsMorphRelationMultiSelectProps = {
   callToActionButton?: CallToActionButton;
   dropdownOffset?: DropdownOffset;
   hasRightElement?: boolean;
+  error?: string;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -68,6 +70,13 @@ const StyledDescription = styled.span`
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
+const StyledError = styled.span`
+  color: ${({ theme }) => theme.color.red};
+  display: block;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+`;
+
 export const SettingsMorphRelationMultiSelect = ({
   className,
   disabled: disabledFromProps,
@@ -85,6 +94,7 @@ export const SettingsMorphRelationMultiSelect = ({
   callToActionButton,
   dropdownOffset,
   hasRightElement,
+  error,
 }: SettingsMorphRelationMultiSelectProps) => {
   const [searchInputValue, setSearchInputValue] = useState('');
   const [lastDeselectedId, setLastDeselectedId] = useState<string | null>(null);
@@ -93,6 +103,9 @@ export const SettingsMorphRelationMultiSelect = ({
   );
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+
+  const [localSelectedObjectMetadataIds, setLocalSelectedObjectMetadataIds] =
+    useState<string[]>(selectedObjectMetadataIds);
 
   const { getIcon } = useIcons();
   const options = activeObjectMetadataItems
@@ -107,7 +120,7 @@ export const SettingsMorphRelationMultiSelect = ({
     }));
 
   const selectedOptions = options.filter((option) =>
-    selectedObjectMetadataIds.includes(option.objectMetadataId),
+    localSelectedObjectMetadataIds.includes(option.objectMetadataId),
   );
 
   const filteredOptions = useMemo(
@@ -329,7 +342,10 @@ export const SettingsMorphRelationMultiSelect = ({
           }
         />
       )}
-      {!!description && <StyledDescription>{description}</StyledDescription>}
+      {isNonEmptyString(description) && (
+        <StyledDescription>{description}</StyledDescription>
+      )}
+      {isNonEmptyString(error) && <StyledError>{error}</StyledError>}
     </StyledContainer>
   );
 };

@@ -1,4 +1,4 @@
-import { defineObject } from '../objects/define-object';
+import { defineObject } from '@/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type ObjectManifest } from 'twenty-shared/application';
 

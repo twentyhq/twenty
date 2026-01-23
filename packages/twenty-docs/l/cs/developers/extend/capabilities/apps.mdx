@@ -31,37 +31,44 @@ Aplikace vám umožňují vytvářet a spravovat přizpůsobení Twenty **jako k
 Vytvořte novou aplikaci pomocí oficiálního scaffolderu, poté se ověřte a začněte vyvíjet:
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# Vygenerujte kostru nové aplikace
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# Authenticate using your API key (you'll be prompted)
-yarn auth
+# Pokud nepoužíváte yarn@4
+corepack enable
+yarn install
 
-# Start dev mode: automatically syncs local changes to your workspace
-yarn dev
+# Přihlaste se pomocí svého API klíče (budete vyzváni)
+yarn auth:login
+
+# Spusťte vývojový režim: automaticky synchronizuje místní změny s vaším pracovním prostorem
+yarn app:dev
 ```
 
 Odtud můžete:
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn create-entity
+yarn app:create-entity
 
 # Generate a typed Twenty client and workspace entity types
-yarn generate
+yarn app:generate
 
 # Run a one‑time sync (instead of watch mode)
-yarn sync
+yarn app:sync
 
 # Watch your application's functions logs
-yarn logs
+yarn function:logs
+
+# Execute a function by name
+yarn function:execute -n my-function -p '{"name": "test"}'
 
 # Uninstall the application from the current workspace
-yarn uninstall
+yarn app:uninstall
 
 # Display commands' help
-yarn help
+yarn app:help
 ```
 
 Viz také: referenční stránky CLI pro [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) a [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -85,18 +92,16 @@ my-twenty-app/
   .nvmrc
   .yarnrc.yml
   .yarn/
-    releases/
-      yarn-4.9.2.cjs
     install-state.gz
   eslint.config.mjs
   tsconfig.json
   README.md
   src/
     app/
-      application.config.ts     # Required - main application configuration
-      default-function.role.ts  # Default role for serverless functions
-      // your entities (*.object.ts, *.function.ts, *.role.ts)
-    utils/                      # Optional - handler implementations & utilities
+      application.config.ts     # Povinné - hlavní konfigurace aplikace
+      default-function.role.ts  # Výchozí role pro serverless funkce
+      // vaše entity (*.object.ts, *.function.ts, *.role.ts)
+    utils/                      # Volitelné - implementace handlerů a nástroje
 ```
 
 ### Konvence před konfigurací
@@ -164,27 +169,42 @@ V kostce:
 
 Pozdější příkazy přidají další soubory a složky:
 
-* `yarn generate` vytvoří složku `generated/` (typovaný klient Twenty + typy pracovního prostoru).
-* `yarn create-entity` přidá soubory s definicemi entit do `src/app/` pro vaše vlastní objekty, funkce nebo role.
+* `yarn app:generate` vytvoří složku `generated/` (typovaný klient Twenty + typy pracovního prostoru).
+* `yarn app:create-entity` přidá soubory s definicemi entit do `src/app/` pro vaše vlastní objekty, funkce nebo role.
+  l
 
 ## Ověření
 
-Při prvním spuštění `yarn auth` budete vyzváni k zadání:
+Při prvním spuštění `yarn auth:login` budete vyzváni k zadání:
 
 * URL API (výchozí je http://localhost:3000 nebo váš aktuální profil pracovního prostoru)
 * Klíč API
 
-Vaše přihlašovací údaje se ukládají pro jednotlivé uživatele do `~/.twenty/config.json`. Můžete spravovat více profilů a přepínat pomocí `--workspace <name>`.
+Vaše přihlašovací údaje se ukládají pro jednotlivé uživatele do `~/.twenty/config.json`. Můžete spravovat více profilů a přepínat mezi nimi.
 
-Příklady:
+### Správa pracovních prostorů
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
-yarn auth
+yarn auth:login
 
-# Use a specific workspace profile
-yarn auth --workspace my-custom-workspace
+# Login to a specific workspace profile
+yarn auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn auth:list
+
+# Switch the default workspace (interactive)
+yarn auth:switch
+
+# Switch to a specific workspace
+yarn auth:switch production
+
+# Check current authentication status
+yarn auth:status
 ```
+
+Jakmile přepnete pracovní prostor pomocí `auth:switch`, všechny následující příkazy budou tento pracovní prostor používat jako výchozí. Můžete jej stále dočasně přepsat pomocí `--workspace <name>`.
 
 ## Používejte zdroje SDK (typy a konfiguraci)
 
@@ -282,7 +302,7 @@ Hlavní body:
 * Hodnota `universalIdentifier` musí být jedinečná a stabilní napříč nasazeními.
 * Každé pole vyžaduje `name`, `type`, `label` a svůj vlastní stabilní `universalIdentifier`.
 * Pole `fields` je volitelné — objekty můžete definovat i bez vlastních polí.
-* Nové objekty můžete vygenerovat pomocí `yarn create-entity`, který vás provede pojmenováním, poli a vztahy.
+* Nové objekty můžete vygenerovat pomocí `yarn app:create-entity`, který vás provede pojmenováním, poli a vztahy.
 
 <Note>
   **Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole jako `name`, `createdAt`, `updatedAt`, `createdBy`, `position` a `deletedAt`. Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
@@ -496,7 +516,8 @@ export default defineFunction({
     {
       universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
       type: 'databaseEvent',
-      eventName: 'person.created',
+      eventName: 'person.updated',
+      updatedFields: ['name'],
     },
   ],
 });
@@ -509,21 +530,21 @@ Běžné typy spouštěčů:
 > např. `path: '/post-card/create',` -> volání na `<APP_URL>/s/post-card/create`
 
 * **cron**: Spouští vaši funkci podle plánu pomocí výrazu CRON.
-* **databaseEvent**: Spouští se při událostech životního cyklu objektů v pracovním prostoru
+* **databaseEvent**: Spouští se při událostech životního cyklu objektů v pracovním prostoru. Když je operace události `updated`, lze konkrétní sledovaná pole určit v poli `updatedFields`. Pokud zůstane nedefinované nebo prázdné, spustí funkci jakákoli aktualizace.
 
-> např. `person.created`
+> např. `person.updated`
 
 Poznámky:
 
 * Pole `triggers` je volitelné. Funkce bez spouštěčů lze použít jako pomocné funkce volané jinými funkcemi.
 * V jedné funkci můžete kombinovat více typů spouštěčů.
 
-### Route trigger payload
+### Payload spouštěče trasy
 
 <Warning>
-  **Breaking change (v1.16, January 2026):** The route trigger payload format has changed. Prior to v1.16, query parameters, path parameters, and body were sent directly as the payload. Starting with v1.16, they are nested inside a structured `RoutePayload` object.
+  **Zpětně nekompatibilní změna (v1.16, leden 2026):** Formát payloadu spouštěče trasy se změnil. Před verzí v1.16 byly parametry dotazu, parametry cesty a tělo odesílány přímo jako payload. Od verze v1.16 jsou zanořeny uvnitř strukturovaného objektu `RoutePayload`.
 
-  **Before v1.16:**
+  **Před v1.16:**
 
   ```typescript
   const handler = async (params) => {
@@ -531,7 +552,7 @@ Poznámky:
   };
   ```
 
-  **After v1.16:**
+  **Po v1.16:**
 
   ```typescript
   const handler = async (event: RoutePayload) => {
@@ -541,10 +562,10 @@ Poznámky:
   };
   ```
 
-  **To migrate existing functions:** Update your handler to destructure from `event.body`, `event.queryStringParameters`, or `event.pathParameters` instead of directly from the params object.
+  **Jak migrovat existující funkce:** Aktualizujte svůj handler tak, aby destrukturoval z `event.body`, `event.queryStringParameters` nebo `event.pathParameters` místo přímo z objektu params.
 </Warning>
 
-When a route trigger invokes your function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Import the type from `twenty-sdk`:
+Když spouštěč trasy vyvolá vaši funkci, ta obdrží objekt `RoutePayload`, který odpovídá formátu AWS HTTP API v2. Importujte typ z `twenty-sdk`:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -560,21 +581,21 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-The `RoutePayload` type has the following structure:
+Typ `RoutePayload` má následující strukturu:
 
-| Property                     | Typ                                   | Popis                                                                                   |
-| ---------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------- |
-| `headers`                    | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`)                           |
-| `queryStringParameters`      | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)                            |
-| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern (e.g., `/users/:id` → `{ id: '123' }`) |
-| `text zprávy`                | `object \| null`                      | Parsed request body (JSON)                                                              |
-| `isBase64Encoded`            | `booleovská hodnota`                  | Whether the body is base64 encoded                                                      |
-| `requestContext.http.method` | `string`                              | HTTP method (GET, POST, PUT, PATCH, DELETE)                                             |
-| `requestContext.http.path`   | `string`                              | Raw request path                                                                        |
+| Vlastnost                    | Typ                                   | Popis                                                                             |
+| ---------------------------- | ------------------------------------- | --------------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | Záhlaví HTTP (pouze ta uvedená v `forwardedRequestHeaders`)                       |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Parametry query stringu (více hodnot spojených čárkami)                           |
+| `pathParameters`             | `Record<string, string \| undefined>` | Parametry cesty extrahované ze vzoru trasy (např. `/users/:id` → `{ id: '123' }`) |
+| `text zprávy`                | `object \| null`                      | Parsované tělo požadavku (JSON)                                                   |
+| `isBase64Encoded`            | `booleovská hodnota`                  | Zda je tělo kódováno base64                                                       |
+| `requestContext.http.method` | `string`                              | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                       |
+| `requestContext.http.path`   | `string`                              | Nezpracovaná cesta požadavku                                                      |
 
-### Forwarding HTTP headers
+### Přeposílání záhlaví HTTP
 
-By default, HTTP headers from incoming requests are **not** passed to your serverless function for security reasons. To access specific headers, explicitly list them in the `forwardedRequestHeaders` array:
+Ve výchozím nastavení se záhlaví HTTP z příchozích požadavků z bezpečnostních důvodů do vaší serverless funkce **ne** předávají. Chcete-li zpřístupnit konkrétní záhlaví, výslovně je uveďte v poli `forwardedRequestHeaders`:
 
 ```typescript
 export default defineFunction({
@@ -594,7 +615,7 @@ export default defineFunction({
 });
 ```
 
-In your handler, you can then access these headers:
+Ve vašem handleru k nim poté můžete přistupovat:
 
 ```typescript
 const handler = async (event: RoutePayload) => {
@@ -607,17 +628,17 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-  Header names are normalized to lowercase. Access them using lowercase keys (for example, `event.headers['content-type']`).
+  Názvy záhlaví jsou normalizovány na malá písmena. Přistupujte k nim pomocí klíčů s malými písmeny (například `event.headers['content-type']`).
 </Note>
 
 Nové funkce můžete vytvářet dvěma způsoby:
 
-* **Vygenerované**: Spusťte `yarn create-entity` a zvolte možnost přidat novou funkci. Tím se vygeneruje startovací soubor s obslužnou funkcí a konfigurací.
+* **Vygenerované**: Spusťte `yarn app:create-entity` a zvolte možnost přidat novou funkci. Tím se vygeneruje startovací soubor s obslužnou funkcí a konfigurací.
 * **Ruční**: Vytvořte nový soubor `*.function.ts` a použijte `defineFunction()` podle stejného vzoru.
 
 ### Generovaný typovaný klient
 
-Spusťte yarn generate a vytvořte lokální typovaný klient v generated/ na základě schématu vašeho pracovního prostoru. Použijte jej ve svých funkcích:
+Spusťte yarn app:generate a vytvořte lokálního typovaného klienta v generated/ na základě schématu vašeho pracovního prostoru. Použijte jej ve svých funkcích:
 
 ```typescript
 import Twenty from './generated';
@@ -626,7 +647,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Klient je znovu generován příkazem `yarn generate`. Spusťte jej znovu po změně objektů a po `yarn sync`, případně při připojení k novému pracovnímu prostoru.
+Klient je znovu generován příkazem `yarn app:generate`. Spusťte jej znovu po změně objektů a po `yarn app:sync`, případně při připojení k novému pracovnímu prostoru.
 
 #### Běhové přihlašovací údaje v serverless funkcích
 
@@ -670,13 +691,13 @@ Poté přidejte skripty jako tyto:
 }
 ```
 
-Nyní můžete spouštět stejné příkazy přes Yarn, např. `yarn dev`, `yarn sync` atd.
+Nyní můžete spouštět stejné příkazy přes Yarn, např. `yarn app:dev`, `yarn app:sync` atd.
 
 ## Řešení potíží
 
-* Chyby ověření: spusťte `yarn auth` a ujistěte se, že váš klíč API má požadovaná oprávnění.
+* Chyby ověření: spusťte `yarn auth:login` a ujistěte se, že váš klíč API má požadovaná oprávnění.
 * Nelze se připojit k serveru: ověřte URL API a že je server Twenty dosažitelný.
-* Typy nebo klient chybí/jsou zastaralé: spusťte `yarn generate` a poté `yarn dev`.
-* Režim vývoje nesynchronizuje: ujistěte se, že běží `yarn dev` a že vaše prostředí změny neignoruje.
+* Typy nebo klient chybí/jsou zastaralé: spusťte `yarn app:generate` a poté `yarn app:dev`.
+* Režim vývoje nesynchronizuje: ujistěte se, že běží `yarn app:dev` a že vaše prostředí změny neignoruje.
 
 Kanál podpory na Discordu: https://discord.com/channels/1130383047699738754/1130386664812982322

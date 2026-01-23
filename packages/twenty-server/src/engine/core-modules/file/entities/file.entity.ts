@@ -1,5 +1,3 @@
-import { ObjectType } from '@nestjs/graphql';
-
 import {
   Column,
   CreateDateColumn,
@@ -17,7 +15,6 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity('file')
-@ObjectType('File')
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
 export class FileEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
