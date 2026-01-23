@@ -22,6 +22,7 @@ import {
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
+import { type JsonbEntityProperty } from 'src/types/jsonb-entity-property.type';
 import { AssignIfIsGivenFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-if-is-given-field-metadata-type.type';
 import { AssignTypeIfIsMorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-morph-or-relation-field-metadata-type.type';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
@@ -106,7 +107,7 @@ export class FieldMetadataEntity<
   options: FieldMetadataOptions<TFieldMetadataType>;
 
   @Column('jsonb', { nullable: true })
-  settings: FieldMetadataSettings<TFieldMetadataType>;
+  settings: JsonbEntityProperty<FieldMetadataSettings<TFieldMetadataType>>;
 
   @Column({ default: false })
   isCustom: boolean;

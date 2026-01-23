@@ -17,7 +17,7 @@ import {
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { SerializedForeignKey } from 'twenty-shared/types';
+import { SerializedRelation } from 'twenty-shared/types';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -40,7 +40,7 @@ export class LineChartConfigurationDTO
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  aggregateFieldMetadataId: SerializedForeignKey<string>;
+  aggregateFieldMetadataId: SerializedRelation<string>;
 
   @Field(() => AggregateOperations)
   @IsEnum(AggregateOperations)
@@ -50,7 +50,7 @@ export class LineChartConfigurationDTO
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  primaryAxisGroupByFieldMetadataId: SerializedForeignKey<string>;
+  primaryAxisGroupByFieldMetadataId: SerializedRelation<string>;
 
   @Field(() => String, { nullable: true })
   @IsString()
@@ -82,7 +82,7 @@ export class LineChartConfigurationDTO
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
   @IsOptional()
-  secondaryAxisGroupByFieldMetadataId?: SerializedForeignKey<string>;
+  secondaryAxisGroupByFieldMetadataId?: SerializedRelation<string>;
 
   @Field(() => String, { nullable: true })
   @IsString()

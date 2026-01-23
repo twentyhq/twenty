@@ -4,7 +4,7 @@ import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
 import { type RelationOnDeleteAction } from '@/types/RelationOnDeleteAction.type';
 import { type RelationType } from '@/types/RelationType';
-import { type SerializedForeignKey } from '@/types/SerializedForeignKey.type';
+import { type SerializedRelation } from '@/types/SerializedRelation.type';
 
 export enum NumberDataType {
   FLOAT = 'float',
@@ -44,7 +44,7 @@ export type FieldMetadataRelationSettings = {
   joinColumnName?: string | null;
   // Points to the target field on the junction object
   // For MORPH_RELATION fields, morphRelations already contains all targets
-  junctionTargetFieldId?: SerializedForeignKey<string>;
+  junctionTargetFieldId?: SerializedRelation<string>;
 };
 export type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];
