@@ -36,7 +36,7 @@ const LOGGER_CONFIGS: Record<LoggerContext, LoggerConfig> = {
   },
   'app-sync': {
     prefix: '[app-sync]',
-    color: chalk.blue,
+    color: chalk.gray,
   },
 };
 

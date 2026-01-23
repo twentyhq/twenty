@@ -163,7 +163,7 @@ export class AppDevCommand {
   }
 
   private async syncApplication(manifest: ApplicationManifest): Promise<void> {
-    initLogger.log('Sync application');
+    appSyncLogger.log('Sync application');
     const syncResult = await this.apiService.syncApplication(manifest);
 
     if (!syncResult.success) {
@@ -171,7 +171,6 @@ export class AppDevCommand {
     } else {
       appSyncLogger.success('✓ Application synced successfully');
     }
-    appSyncLogger.success('');
   }
 
   private async startFunctionsWatcher(sourcePaths: string[]): Promise<void> {
