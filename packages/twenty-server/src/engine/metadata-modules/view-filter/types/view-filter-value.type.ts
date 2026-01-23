@@ -10,5 +10,3 @@ export type ViewFilterValue =
   | number
   | RelationFilterValue
   | Record<string, unknown>
-  | null
-  | undefined;
