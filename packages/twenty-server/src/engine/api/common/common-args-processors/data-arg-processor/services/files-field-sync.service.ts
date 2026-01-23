@@ -26,6 +26,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -245,7 +246,7 @@ export class FilesFieldSyncService {
         `File to update should not be a temporary files field file: ${fileId}`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
         {
-          userFriendlyMessage: msg`${fileId} file is already associated with a permanent files field. Re-upload the file.`,
+          userFriendlyMessage: STANDARD_ERROR_MESSAGE,
         },
       );
     }
