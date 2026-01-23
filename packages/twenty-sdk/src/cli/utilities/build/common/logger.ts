@@ -4,7 +4,8 @@ export type LoggerContext =
   | 'init'
   | 'manifest-watch'
   | 'functions-watch'
-  | 'front-components-watch';
+  | 'front-components-watch'
+  | 'file-upload';
 
 type LoggerConfig = {
   prefix: string;
@@ -28,6 +29,10 @@ const LOGGER_CONFIGS: Record<LoggerContext, LoggerConfig> = {
     prefix: '[front-components-watch]',
     color: chalk.green,
   },
+  'file-upload': {
+    prefix: '[file-upload]',
+    color: chalk.blue,
+  },
 };
 
 export type Logger = {
@@ -43,8 +48,11 @@ export const createLogger = (context: LoggerContext): Logger => {
 
   return {
     log: (message: string) => console.log(`${prefix} ${message}`),
-    success: (message: string) => console.log(`${prefix} ${chalk.green(message)}`),
-    error: (message: string) => console.error(`${prefix} ${chalk.red(message)}`),
-    warn: (message: string) => console.log(`${prefix} ${chalk.yellow(message)}`),
+    success: (message: string) =>
+      console.log(`${prefix} ${chalk.green(message)}`),
+    error: (message: string) =>
+      console.error(`${prefix} ${chalk.red(message)}`),
+    warn: (message: string) =>
+      console.log(`${prefix} ${chalk.yellow(message)}`),
   };
 };

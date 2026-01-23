@@ -1,4 +1,4 @@
-import { ConfigService } from '@/cli/utilities/config/services/config.service';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import chalk from 'chalk';
 import * as fs from 'fs';
@@ -11,7 +11,8 @@ import {
 import * as path from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
-import { type ApiResponse } from '../types/api-response.types';
+import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
+import { pascalCase } from 'twenty-shared/utils';
 
 export class ApiService {
   private client: AxiosInstance;
@@ -271,7 +272,8 @@ export class ApiService {
       if (response.data.errors) {
         return {
           success: false,
-          error: response.data.errors[0]?.message || 'Failed to fetch functions',
+          error:
+            response.data.errors[0]?.message || 'Failed to fetch functions',
         };
       }
 
@@ -415,10 +417,12 @@ export class ApiService {
 
   async uploadFile({
     filePath,
+    builtHandlerPath,
     fileFolder,
     applicationUniversalIdentifier,
   }: {
     filePath: string;
+    builtHandlerPath: string;
     fileFolder: FileFolder;
     applicationUniversalIdentifier: string;
   }): Promise<ApiResponse<boolean>> {
@@ -443,13 +447,15 @@ export class ApiService {
       }
     `;
 
+      const graphqlEnumFileFolder = pascalCase(fileFolder);
+
       const operations = JSON.stringify({
         query: mutation,
         variables: {
           file: null,
           applicationUniversalIdentifier,
-          filePath,
-          fileFolder,
+          filePath: builtHandlerPath,
+          fileFolder: graphqlEnumFileFolder,
         },
       });
 

@@ -206,6 +206,38 @@ export class CacheStorageService {
     } while (cursor !== 0);
   }
 
+  async scanAndCountSetMembers(scanPattern: string): Promise<number> {
+    if (!this.isRedisCache()) {
+      throw new Error(
+        'scanAndCountSetMembers is only supported with Redis cache',
+      );
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+    let cursor = 0;
+    let totalCount = 0;
+
+    do {
+      const result = await redisClient.scan(cursor, {
+        MATCH: `${this.namespace}:${scanPattern}`,
+        COUNT: 100,
+      });
+
+      cursor = result.cursor;
+      const keys = result.keys;
+
+      if (keys.length > 0) {
+        const counts = await Promise.all(
+          keys.map((key) => redisClient.sCard(key)),
+        );
+
+        totalCount += counts.reduce((sum, count) => sum + count, 0);
+      }
+    } while (cursor !== 0);
+
+    return totalCount;
+  }
+
   async acquireLock(key: string, ttl = 1000): Promise<boolean> {
     if (!this.isRedisCache()) {
       throw new Error('acquireLock is only supported with Redis cache');

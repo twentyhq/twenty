@@ -1,16 +1,16 @@
 import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
-import { cleanupRemovedFiles } from '../common/cleanup-removed-files';
-import { OUTPUT_DIR } from '../common/constants';
-import { createLogger } from '../common/logger';
-import { processEsbuildResult } from '../common/esbuild-result-processor';
+import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
+import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
+import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
+import { createLogger } from '@/cli/utilities/build/common/logger';
 import {
   type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
-} from '../common/restartable-watcher.interface';
-import { FRONT_COMPONENTS_DIR } from './constants';
+} from '@/cli/utilities/build/common/restartable-watcher-interface';
+import { FRONT_COMPONENTS_DIR } from '@/cli/utilities/build/front-components/constants';
 
 const logger = createLogger('front-components-watch');
 
@@ -78,7 +78,11 @@ export class FrontComponentsWatcher implements RestartableWatcher {
       logger.warn('🔄 Restarting...');
       await this.close();
 
-      const outputDir = path.join(this.appPath, OUTPUT_DIR, FRONT_COMPONENTS_DIR);
+      const outputDir = path.join(
+        this.appPath,
+        OUTPUT_DIR,
+        FRONT_COMPONENTS_DIR,
+      );
       await cleanupRemovedFiles(outputDir, this.componentPaths, sourcePaths);
       this.componentPaths = sourcePaths;
       this.lastChecksums.clear();
@@ -142,7 +146,8 @@ export class FrontComponentsWatcher implements RestartableWatcher {
                   builtDir: FRONT_COMPONENTS_DIR,
                   lastChecksums: watcher.lastChecksums,
                   onFileBuilt: watcher.onFileBuilt,
-                  onSuccess: (relativePath) => logger.success(`✓ Built ${relativePath}`),
+                  onSuccess: (relativePath) =>
+                    logger.success(`✓ Built ${relativePath}`),
                 });
 
                 if (hasChanges && watchMode) {

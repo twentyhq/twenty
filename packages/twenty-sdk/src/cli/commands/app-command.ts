@@ -1,4 +1,4 @@
-import { formatPath } from '@/cli/utilities/file/utils/file-path';
+import { formatPath } from '@/cli/utilities/file/file-path';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import { AppBuildCommand } from './app/app-build';
@@ -106,9 +106,7 @@ export const registerCommands = (program: Command): void => {
     .action(async (appPath?: string) => {
       try {
         const result = await syncCommand.execute(formatPath(appPath));
-        if (!result.success) {
-          process.exit(1);
-        }
+        process.exit(result.success ? 0 : 1);
       } catch {
         process.exit(1);
       }
@@ -123,9 +121,7 @@ export const registerCommands = (program: Command): void => {
           appPath: formatPath(appPath),
           askForConfirmation: true,
         });
-        if (!result.success) {
-          process.exit(1);
-        }
+        process.exit(result.success ? 0 : 1);
       } catch {
         process.exit(1);
       }

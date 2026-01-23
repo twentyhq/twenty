@@ -1,8 +1,9 @@
+import { pascalCase } from 'twenty-shared/utils';
+
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { camelCase } from 'src/utils/camel-case';
-import { pascalCase } from 'src/utils/pascal-case';
 
 export const getResolverName = (
   objectMetadata: Pick<ObjectMetadataEntity, 'namePlural' | 'nameSingular'>,

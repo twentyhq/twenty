@@ -1,16 +1,13 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { ApiService } from '@/cli/utilities/api/services/api.service';
-import { ConfigService } from '@/cli/utilities/config/services/config.service';
+import { ApiService } from '@/cli/utilities/api/api-service';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 
 export class AuthLoginCommand {
   private configService = new ConfigService();
   private apiService = new ApiService();
 
-  async execute(options: {
-    apiKey?: string;
-    apiUrl?: string;
-  }): Promise<void> {
+  async execute(options: { apiKey?: string; apiUrl?: string }): Promise<void> {
     try {
       let { apiKey, apiUrl } = options;
 

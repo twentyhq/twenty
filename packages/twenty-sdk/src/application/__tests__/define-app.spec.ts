@@ -1,4 +1,4 @@
-import { defineApp } from '../define-app';
+import { defineApp } from '@/application';
 
 describe('defineApp', () => {
   it('should return the config when valid', () => {

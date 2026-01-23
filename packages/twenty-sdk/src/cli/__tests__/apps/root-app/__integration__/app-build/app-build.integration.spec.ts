@@ -1,7 +1,7 @@
 import { join } from 'path';
 
-import { runAppBuild } from '../../../../integration/utils/run-app-build.util';
-import { type RunCliCommandResult } from '../../../../integration/utils/run-cli-command.util';
+import { runAppBuild } from '@/cli/__tests__/integration/utils/run-app-build.util';
+import { type RunCliCommandResult } from '@/cli/__tests__/integration/utils/run-cli-command.util';
 import { defineConsoleOutputTests } from './tests/console-output.tests';
 import { defineFrontComponentsTests } from '../app-dev/tests/front-components.tests';
 import { defineFunctionsTests } from '../app-dev/tests/functions.tests';

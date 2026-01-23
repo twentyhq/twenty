@@ -13,14 +13,6 @@ export type PublicFeatureFlag = {
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
-    key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
-    metadata: {
-      label: 'Dashboards',
-      description: 'Enable dashboards',
-      imagePath: 'https://twenty.com/images/lab/is-dashboards-enabled.png',
-    },
-  },
-  {
     key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
     metadata: {
       label: 'Junction Relations',

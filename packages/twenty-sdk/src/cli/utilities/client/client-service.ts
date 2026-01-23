@@ -1,5 +1,5 @@
-import { ApiService } from '@/cli/utilities/api/services/api.service';
-import { ConfigService } from '@/cli/utilities/config/services/config.service';
+import { ApiService } from '@/cli/utilities/api/api-service';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import { generate } from '@genql/cli';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
@@ -11,7 +11,7 @@ import {
 
 export const GENERATED_FOLDER_NAME = 'generated';
 
-export class GenerateService {
+export class ClientService {
   private configService: ConfigService;
   private apiService: ApiService;
 
@@ -20,7 +20,7 @@ export class GenerateService {
     this.apiService = new ApiService();
   }
 
-  async generateClient(appPath: string): Promise<void> {
+  async generate(appPath: string): Promise<void> {
     const outputPath = join(appPath, GENERATED_FOLDER_NAME);
 
     console.log(chalk.blue('📦 Generating Twenty client...'));

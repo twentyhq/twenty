@@ -43,10 +43,6 @@ export const parseJsoncString = (
   return result;
 };
 
-export const parseTextFile = async (filePath: string) => {
-  return await fs.readFile(filePath, 'utf8');
-};
-
 export const parseJsoncFile = async (
   filePath: string,
   options: JsoncParseOptions = {},
@@ -60,13 +56,4 @@ export const parseJsoncFile = async (
     }
     throw new Error(`Failed to read file ${filePath}: ${error}`);
   }
-};
-
-export const writeJsoncFile = async (
-  filePath: string,
-  data: any,
-  options: { spaces?: number } = {},
-): Promise<void> => {
-  const content = JSON.stringify(data, null, options.spaces ?? 2);
-  await fs.writeFile(filePath, content, 'utf8');
 };
