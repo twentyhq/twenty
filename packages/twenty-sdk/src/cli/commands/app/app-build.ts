@@ -7,7 +7,6 @@ import {
   runManifestBuild,
   updateManifestChecksum,
 } from '@/cli/utilities/build/manifest/manifest-build';
-import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 
@@ -112,6 +111,5 @@ export class AppBuildCommand {
   private async cleanup(): Promise<void> {
     await this.functionsBuilder?.close();
     await this.frontComponentsBuilder?.close();
-    await manifestExtractFromFileServer.closeViteServer();
   }
 }

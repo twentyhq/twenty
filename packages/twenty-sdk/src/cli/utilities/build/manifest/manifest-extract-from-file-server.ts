@@ -1,21 +1,18 @@
+import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
+import { createRequire } from 'module';
+import * as os from 'os';
 import path from 'path';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
-import { createServer, type ViteDevServer } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 export type ExtractManifestOptions = {
   entryProperty?: string;
 };
 
 export class ManifestExtractFromFileServer {
-  private server: ViteDevServer | null = null;
   private appPath: string | null = null;
 
   init(appPath: string): void {
-    if (this.appPath !== appPath) {
-      this.closeViteServer();
-    }
     this.appPath = appPath;
   }
 
@@ -30,11 +27,7 @@ export class ManifestExtractFromFileServer {
     }
 
     const { entryProperty } = options;
-    const server = await this.getServer();
-    const module = (await server.ssrLoadModule(filepath)) as Record<
-      string,
-      unknown
-    >;
+    const module = await this.loadModule(filepath);
 
     const config = this.extractConfigFromModule<Record<string, unknown>>(
       module,
@@ -74,35 +67,59 @@ export class ManifestExtractFromFileServer {
     } as TManifest;
   }
 
-  async closeViteServer(): Promise<void> {
-    if (this.server) {
-      await this.server.close();
-      this.server = null;
-    }
-  }
-
-  private async getServer(): Promise<ViteDevServer> {
+  private async loadModule(filepath: string): Promise<Record<string, unknown>> {
     if (!this.appPath) {
       throw new Error(
         'ManifestExtractFromFileServer not initialized. Call init(appPath) first.',
       );
     }
 
-    if (this.server) {
-      return this.server;
+    const tsconfigPath = path.join(this.appPath, 'tsconfig.json');
+    const hasTsconfig = await fs.pathExists(tsconfigPath);
+
+    // Resolve react from the app's node_modules for the alias
+    const appRequire = createRequire(path.join(this.appPath, 'package.json'));
+    let reactPath: string | undefined;
+    let reactDomPath: string | undefined;
+
+    try {
+      reactPath = path.dirname(appRequire.resolve('react/package.json'));
+      reactDomPath = path.dirname(appRequire.resolve('react-dom/package.json'));
+    } catch {
+      // React not installed in app, will be bundled if used
     }
 
-    this.server = await createServer({
-      root: this.appPath,
-      plugins: [tsconfigPaths({ root: this.appPath })],
-      server: { middlewareMode: true },
-      optimizeDeps: { disabled: true },
+    const result = await esbuild.build({
+      entryPoints: [filepath],
+      bundle: true,
+      write: false,
+      format: 'cjs',
+      platform: 'node',
+      target: 'node18',
+      jsx: 'automatic',
+      tsconfig: hasTsconfig ? tsconfigPath : undefined,
+      // Use alias to resolve react from app's node_modules
+      alias: {
+        ...(reactPath && { react: reactPath }),
+        ...(reactDomPath && { 'react-dom': reactDomPath }),
+      },
       logLevel: 'silent',
-      configFile: false,
-      esbuild: { jsx: 'automatic' },
     });
 
-    return this.server;
+    const code = result.outputFiles[0].text;
+
+    const tempDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), 'twenty-manifest-'),
+    );
+    const tempFile = path.join(tempDir, 'module.cjs');
+
+    try {
+      await fs.writeFile(tempFile, code);
+
+      return require(tempFile) as Record<string, unknown>;
+    } finally {
+      await fs.remove(tempDir);
+    }
   }
 
   private extractConfigFromModule<T>(
@@ -159,13 +176,52 @@ export class ManifestExtractFromFileServer {
       return null;
     }
 
-    const server = await this.getServer();
-    const resolved = await server.pluginContainer.resolveId(
-      importSpecifier,
-      filepath,
-    );
-    if (resolved?.id) {
-      return path.relative(this.appPath, resolved.id).replace(/\\/g, '/');
+    const resolveDir = path.dirname(filepath);
+    const tsconfigPath = path.join(this.appPath, 'tsconfig.json');
+    const hasTsconfig = await fs.pathExists(tsconfigPath);
+
+    try {
+      const result = await esbuild.build({
+        stdin: {
+          contents: `import "${importSpecifier}"`,
+          resolveDir,
+          loader: 'ts',
+        },
+        bundle: true,
+        write: false,
+        metafile: true,
+        platform: 'node',
+        logLevel: 'silent',
+        tsconfig: hasTsconfig ? tsconfigPath : undefined,
+        external: ['*'],
+        plugins: [
+          {
+            name: 'resolve-capture',
+            setup: (build) => {
+              build.onResolve({ filter: /.*/ }, async (args) => {
+                if (args.kind === 'entry-point') {
+                  return undefined;
+                }
+                const resolved = await build.resolve(args.path, {
+                  kind: args.kind,
+                  resolveDir: args.resolveDir,
+                  importer: args.importer,
+                });
+                return { path: resolved.path, external: true };
+              });
+            },
+          },
+        ],
+      });
+
+      const inputs = Object.keys(result.metafile?.inputs ?? {});
+      const resolvedPath = inputs.find((input) => input !== '<stdin>');
+
+      if (resolvedPath) {
+        return path.relative(this.appPath, resolvedPath).replace(/\\/g, '/');
+      }
+    } catch {
+      // Fallback to manual resolution
     }
 
     if (importSpecifier.startsWith('.')) {
