@@ -5,8 +5,8 @@ import { isNull } from '@sniptt/guards';
 import { z } from 'zod';
 
 import {
-  type AddFileItemInput,
   type AddOrUpdateFileItemInput,
+  type FileItemOutput,
   type RemoveFileItemInput,
 } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import {
@@ -42,7 +42,7 @@ export type FilesFieldInput = {
 };
 
 export type EnrichedFilesFieldInput = {
-  addFiles?: (AddFileItemInput & { extension: string })[];
+  addFiles?: FileItemOutput[];
   updateFiles?: AddOrUpdateFileItemInput[];
   removeFiles?: RemoveFileItemInput[];
 };

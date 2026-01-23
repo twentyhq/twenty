@@ -152,7 +152,7 @@ export class FileStorageService {
         id: fileId,
         workspaceId,
         applicationId,
-        path: Like(`${fileFolder}%`),
+        path: Like(`${fileFolder}/%`),
       },
     });
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
