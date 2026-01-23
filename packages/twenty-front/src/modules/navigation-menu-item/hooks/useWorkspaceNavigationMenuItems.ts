@@ -1,5 +1,4 @@
 import { useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -7,7 +6,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 
 import { isDefined } from 'twenty-shared/utils';
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
@@ -16,7 +14,6 @@ import { useSortedNavigationMenuItems } from './useSortedNavigationMenuItems';
 export const useWorkspaceNavigationMenuItems = (): {
   workspaceNavigationMenuItemsObjectMetadataItems: ObjectMetadataItem[];
 } => {
-  const featureFlags = useFeatureFlagsMap();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItems: rawWorkspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
@@ -27,11 +24,10 @@ export const useWorkspaceNavigationMenuItems = (): {
     .map(convertCoreViewToView)
     .filter(
       (view) =>
-        featureFlags[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED] === true ||
         view.objectMetadataId !==
-          objectMetadataItems.find(
-            (item) => item.nameSingular === CoreObjectNameSingular.Dashboard,
-          )?.id,
+        objectMetadataItems.find(
+          (item) => item.nameSingular === CoreObjectNameSingular.Dashboard,
+        )?.id,
     );
 
   const workspaceNavigationMenuItemViewIds = new Set(
