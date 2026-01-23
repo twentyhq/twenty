@@ -1,20 +1,27 @@
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type RoleManifest } from 'twenty-shared/application';
-import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
-import { type ValidationError } from '../manifest.types';
+import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
+import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 import {
   type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
-} from './entity.interface';
+} from '@/cli/utilities/build/manifest/entities/entity-interface';
+import { createLogger } from '@/cli/utilities/build/common/logger';
+
+const logger = createLogger('manifest-watch');
 
 export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
   async build(appPath: string): Promise<EntityBuildResult<RoleManifest>> {
     const roleFiles = await glob(['**/*.role.ts'], {
       cwd: appPath,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
+      ignore: [
+        '**/node_modules/**',
+        '**/*.d.ts',
+        '**/dist/**',
+        '**/.twenty/**',
+      ],
     });
 
     const manifests: RoleManifest[] = [];
@@ -24,7 +31,9 @@ export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
         const absolutePath = `${appPath}/${filePath}`;
 
         manifests.push(
-          await manifestExtractFromFileServer.extractManifestFromFile<RoleManifest>(absolutePath),
+          await manifestExtractFromFileServer.extractManifestFromFile<RoleManifest>(
+            absolutePath,
+          ),
         );
       } catch (error) {
         throw new Error(
@@ -57,7 +66,7 @@ export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
   }
 
   display(roles: RoleManifest[]): void {
-    console.log(chalk.green(`  ✓ Found ${roles?.length ?? 'no'} role(s)`));
+    logger.success(`✓ Found ${roles?.length ?? 'no'} role(s)`);
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {

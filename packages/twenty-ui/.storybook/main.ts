@@ -30,7 +30,7 @@ const config: StorybookConfig = {
       plugins.push(
         checker({
           typescript: {
-            tsconfigPath: path.resolve(dirname, '../tsconfig.dev.json'),
+            tsconfigPath: path.resolve(dirname, '../tsconfig.json'),
           },
         }),
       );

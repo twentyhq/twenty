@@ -1,13 +1,13 @@
 import chalk from 'chalk';
-import { GenerateService } from '@/cli/utilities/generate/services/generate.service';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { ClientService } from '@/cli/utilities/client/client-service';
 
 export class AppGenerateCommand {
-  private generateService = new GenerateService();
+  private clientService = new ClientService();
 
   async execute(appPath: string = CURRENT_EXECUTION_DIRECTORY) {
     try {
-      await this.generateService.generateClient(appPath);
+      await this.clientService.generate(appPath);
     } catch (error) {
       console.error(
         chalk.red('Generate Twenty client failed:'),

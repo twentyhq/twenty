@@ -21,5 +21,17 @@ export const defineFunctionsTests = (appPath: string): void => {
         'src/root.function.mjs.map',
       ]);
     });
+
+    it('should not create shared chunk files for utilities', async () => {
+      const functionsDir = join(appPath, '.twenty/output/functions');
+      const files = await fs.readdir(functionsDir, { recursive: true });
+
+      // Chunk files have a hash suffix like "greeting.util-CipJsYK0.mjs"
+      const chunkFiles = files
+        .map((f) => f.toString())
+        .filter((f) => f.endsWith('.mjs') && !f.includes('.function.mjs'));
+
+      expect(chunkFiles).toEqual([]);
+    });
   });
 };

@@ -31,6 +31,7 @@ type WorkflowIfElseBranchEditorProps = {
   branch: StepIfElseBranch;
   branchIndex: number;
   branchLabel: MessageDescriptor;
+  elseIfIndex?: number;
   branchFilterGroup: StepFilterGroup | undefined;
   readonly: boolean;
   onFilterSettingsUpdate: (filterSettings: FilterSettings) => Promise<void>;
@@ -41,6 +42,7 @@ export const WorkflowIfElseBranchEditor = ({
   branch,
   branchIndex,
   branchLabel,
+  elseIfIndex,
   branchFilterGroup,
   readonly,
   onFilterSettingsUpdate,
@@ -111,6 +113,7 @@ export const WorkflowIfElseBranchEditor = ({
                     firstFilterLabel={capitalize(
                       i18n._(branchLabel).toLowerCase(),
                     )}
+                    elseIfIndex={elseIfIndex}
                     preventDeletion={preventDeletion}
                   />
                 );

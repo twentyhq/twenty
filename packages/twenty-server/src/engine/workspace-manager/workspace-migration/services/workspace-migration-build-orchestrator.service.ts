@@ -21,6 +21,7 @@ import { WorkspaceMigrationDatabaseEventTriggerActionsBuilderService } from 'src
 import { WorkspaceMigrationFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-field-actions-builder.service';
 import { WorkspaceMigrationFrontComponentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/workspace-migration-front-component-actions-builder.service';
 import { WorkspaceMigrationIndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/workspace-migration-index-actions-builder.service';
+import { WorkspaceMigrationNavigationMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/workspace-migration-navigation-menu-item-actions-builder.service';
 import { WorkspaceMigrationObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/workspace-migration-object-actions-builder.service';
 import { WorkspaceMigrationPageLayoutTabActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/workspace-migration-page-layout-tab-actions-builder.service';
 import { WorkspaceMigrationPageLayoutWidgetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/workspace-migration-page-layout-widget-actions-builder.service';
@@ -58,6 +59,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationAgentActionsBuilderService: WorkspaceMigrationAgentActionsBuilderService,
     private readonly workspaceMigrationSkillActionsBuilderService: WorkspaceMigrationSkillActionsBuilderService,
     private readonly workspaceMigrationCommandMenuItemActionsBuilderService: WorkspaceMigrationCommandMenuItemActionsBuilderService,
+    private readonly workspaceMigrationNavigationMenuItemActionsBuilderService: WorkspaceMigrationNavigationMenuItemActionsBuilderService,
     private readonly workspaceMigrationPageLayoutActionsBuilderService: WorkspaceMigrationPageLayoutActionsBuilderService,
     private readonly workspaceMigrationPageLayoutWidgetActionsBuilderService: WorkspaceMigrationPageLayoutWidgetActionsBuilderService,
     private readonly workspaceMigrationPageLayoutTabActionsBuilderService: WorkspaceMigrationPageLayoutTabActionsBuilderService,
@@ -161,6 +163,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatAgentMaps,
       flatSkillMaps,
       flatCommandMenuItemMaps,
+      flatNavigationMenuItemMaps,
       flatPageLayoutMaps,
       flatPageLayoutWidgetMaps,
       flatPageLayoutTabMaps,
@@ -859,6 +862,46 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatNavigationMenuItemMaps)) {
+      const {
+        from: fromFlatNavigationMenuItemMaps,
+        to: toFlatNavigationMenuItemMaps,
+      } = flatNavigationMenuItemMaps;
+
+      const navigationMenuItemResult =
+        await this.workspaceMigrationNavigationMenuItemActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatNavigationMenuItemMaps,
+            to: toFlatNavigationMenuItemMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatObjectMetadataMaps:
+                optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+              flatViewMaps: optimisticAllFlatEntityMaps.flatViewMaps,
+            },
+            workspaceId,
+          },
+        );
+
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            navigationMenuItemResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
+
+      if (navigationMenuItemResult.status === 'fail') {
+        orchestratorFailureReport.navigationMenuItem.push(
+          ...navigationMenuItemResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.navigationMenuItem =
+          navigationMenuItemResult.actions;
+      }
+    }
+
     if (isDefined(flatPageLayoutMaps)) {
       const { from: fromFlatPageLayoutMaps, to: toFlatPageLayoutMaps } =
         flatPageLayoutMaps;
@@ -1015,13 +1058,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
       };
     }
 
-    const relatedFlatEntityMapsKeys = [
-      ...new Set([
-        ...Object.keys(fromToAllFlatEntityMaps),
-        ...Object.keys(dependencyAllFlatEntityMaps ?? {}),
-      ]),
-    ] as (keyof AllFlatEntityMaps)[];
-
     const { aggregatedOrchestratorActionsReport } =
       aggregateOrchestratorActionsReport({
         orchestratorActionsReport,
@@ -1032,7 +1068,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
     return {
       status: 'success',
       workspaceMigration: {
-        relatedFlatEntityMapsKeys,
         actions: [
           // Object and fields and indexes
           ...aggregatedOrchestratorActionsReport.index.delete,
@@ -1116,6 +1151,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
           ...aggregatedOrchestratorActionsReport.commandMenuItem.create,
           ...aggregatedOrchestratorActionsReport.commandMenuItem.update,
+          ///
+
+          // Navigation Menu Items
+          ...aggregatedOrchestratorActionsReport.navigationMenuItem.delete,
+          ...aggregatedOrchestratorActionsReport.navigationMenuItem.create,
+          ...aggregatedOrchestratorActionsReport.navigationMenuItem.update,
           ///
 
           // Page layouts

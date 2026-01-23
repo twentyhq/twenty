@@ -37,11 +37,6 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
         workspaceId: workspaceId,
         value: false,
@@ -68,11 +63,6 @@ export const seedFeatureFlags = async ({
       },
       {
         key: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_IF_ELSE_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },

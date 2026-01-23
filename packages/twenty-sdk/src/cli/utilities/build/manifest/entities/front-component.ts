@@ -1,26 +1,43 @@
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type FrontComponentManifest } from 'twenty-shared/application';
-import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
-import { type ValidationError } from '../manifest.types';
+import { createLogger } from '@/cli/utilities/build/common/logger';
+
+import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
+import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 import {
   type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
-} from './entity.interface';
+} from '@/cli/utilities/build/manifest/entities/entity-interface';
+import { FRONT_COMPONENTS_DIR } from '@/cli/utilities/build/front-components/constants';
 
-type FrontComponentConfig = Omit<FrontComponentManifest, 'componentPath' | 'componentName'> & {
+const logger = createLogger('manifest-watch');
+
+type FrontComponentConfig = Omit<
+  FrontComponentManifest,
+  | 'sourceComponentPath'
+  | 'builtComponentPath'
+  | 'builtComponentChecksum'
+  | 'componentName'
+> & {
   component: { name: string };
 };
 
 export class FrontComponentEntityBuilder
   implements ManifestEntityBuilder<FrontComponentManifest>
 {
-  async build(appPath: string): Promise<EntityBuildResult<FrontComponentManifest>> {
+  async build(
+    appPath: string,
+  ): Promise<EntityBuildResult<FrontComponentManifest>> {
     const componentFiles = await glob(['**/*.front-component.tsx'], {
       cwd: appPath,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
+      ignore: [
+        '**/node_modules/**',
+        '**/*.d.ts',
+        '**/dist/**',
+        '**/.twenty/**',
+      ],
     });
 
     const manifests: FrontComponentManifest[] = [];
@@ -34,11 +51,14 @@ export class FrontComponentEntityBuilder
           );
 
         const { component, ...rest } = config;
+        const builtComponentPath = this.computeBuiltComponentPath(filePath);
 
         manifests.push({
           ...rest,
           componentName: component.name,
-          componentPath: filePath,
+          sourceComponentPath: filePath,
+          builtComponentPath,
+          builtComponentChecksum: null,
         });
       } catch (error) {
         throw new Error(
@@ -48,6 +68,12 @@ export class FrontComponentEntityBuilder
     }
 
     return { manifests, filePaths: componentFiles };
+  }
+
+  private computeBuiltComponentPath(sourceComponentPath: string): string {
+    const builtPath = sourceComponentPath.replace(/\.tsx?$/, '.mjs');
+
+    return `${FRONT_COMPONENTS_DIR}/${builtPath}`;
   }
 
   validate(
@@ -67,13 +93,13 @@ export class FrontComponentEntityBuilder
   }
 
   display(components: FrontComponentManifest[]): void {
-    console.log(chalk.green(`  ✓ Found ${components.length} front component(s)`));
+    logger.success(`✓ Found ${components.length} front component(s)`);
 
     if (components.length > 0) {
-      console.log(chalk.gray(`  📍 Front component entry points:`));
+      logger.log('📍 Entry points:');
       for (const component of components) {
         const name = component.name || component.universalIdentifier;
-        console.log(chalk.gray(`     - ${name} (${component.componentPath})`));
+        logger.log(`   - ${name} (${component.sourceComponentPath})`);
       }
     }
   }

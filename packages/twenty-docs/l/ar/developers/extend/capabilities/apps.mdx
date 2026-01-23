@@ -31,18 +31,18 @@ description: أنشئ وأدِر تخصيصات Twenty على هيئة كود.
 أنشئ تطبيقًا جديدًا باستخدام المُهيئ الرسمي، ثم قم بالمصادقة وابدأ التطوير:
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# إنشاء تطبيق جديد
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# If you don't use yarn@4
+# إذا كنت لا تستخدم yarn@4
 corepack enable
 yarn install
 
-# Authenticate using your API key (you'll be prompted)
+# قم بالمصادقة باستخدام مفتاح واجهة برمجة التطبيقات الخاص بك (سيُطلب منك ذلك)
 yarn auth:login
 
-# Start dev mode: automatically syncs local changes to your workspace
+# ابدأ وضع التطوير: يُزامن التغييرات المحلية تلقائيًا مع مساحة العمل الخاصة بك
 yarn app:dev
 ```
 
@@ -98,10 +98,10 @@ my-twenty-app/
   README.md
   src/
     app/
-      application.config.ts     # Required - main application configuration
-      default-function.role.ts  # Default role for serverless functions
-      // your entities (*.object.ts, *.function.ts, *.role.ts)
-    utils/                      # Optional - handler implementations & utilities
+      application.config.ts     # مطلوب - التكوين الرئيسي للتطبيق
+      default-function.role.ts  # الدور الافتراضي للوظائف بدون خادم
+      // الكيانات الخاصة بك (*.object.ts, *.function.ts, *.role.ts)
+    utils/                      # اختياري - تنفيذات المُعالِجات والأدوات المساعدة
 ```
 
 ### الاتفاقية فوق التهيئة

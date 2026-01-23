@@ -1,16 +1,18 @@
-import chalk from 'chalk';
 import { glob } from 'fast-glob';
 import { type ObjectManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
-import { type ValidationError } from '../manifest.types';
+import { createLogger } from '@/cli/utilities/build/common/logger';
+import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
+import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 import {
   type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
-} from './entity.interface';
+} from '@/cli/utilities/build/manifest/entities/entity-interface';
+
+const logger = createLogger('manifest-watch');
 
 export class ObjectEntityBuilder
   implements ManifestEntityBuilder<ObjectManifest>
@@ -18,7 +20,12 @@ export class ObjectEntityBuilder
   async build(appPath: string): Promise<EntityBuildResult<ObjectManifest>> {
     const objectFiles = await glob(['**/*.object.ts'], {
       cwd: appPath,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
+      ignore: [
+        '**/node_modules/**',
+        '**/*.d.ts',
+        '**/dist/**',
+        '**/.twenty/**',
+      ],
     });
 
     const manifests: ObjectManifest[] = [];
@@ -28,7 +35,9 @@ export class ObjectEntityBuilder
         const absolutePath = `${appPath}/${filePath}`;
 
         manifests.push(
-          await manifestExtractFromFileServer.extractManifestFromFile<ObjectManifest>(absolutePath),
+          await manifestExtractFromFileServer.extractManifestFromFile<ObjectManifest>(
+            absolutePath,
+          ),
         );
       } catch (error) {
         throw new Error(
@@ -104,7 +113,7 @@ export class ObjectEntityBuilder
   }
 
   display(objects: ObjectManifest[]): void {
-    console.log(chalk.green(`  ✓ Found ${objects.length} object(s)`));
+    logger.success(`✓ Found ${objects.length} object(s)`);
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {

@@ -76,6 +76,13 @@ export const generateNodesAndEdgesForIfElseNode = ({
       branch,
     });
 
+    const elseIfIndex =
+      branchIndex > 0 &&
+      branchIndex < totalBranches - 1 &&
+      isDefined(branch.filterGroupId)
+        ? branchIndex
+        : undefined;
+
     const nextStepIds = branch.nextStepIds;
     for (const nextStepId of nextStepIds) {
       const nextStep = steps.find((s) => s.id === nextStepId);
@@ -99,6 +106,7 @@ export const generateNodesAndEdgesForIfElseNode = ({
           labelOptions: {
             position: Position.Bottom,
             label,
+            elseIfIndex,
           },
           edgePathStrategy: getEdgePathStrategy({
             step,

@@ -15,8 +15,8 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
     {
       __typename: 'PageLayoutTab',
       id: 'default-tab-fields',
-      title: 'Fields',
-      icon: 'IconList',
+      title: 'Home',
+      icon: 'IconHome',
       position: 100,
       layoutMode: 'vertical-list',
       pageLayoutId: DEFAULT_RECORD_PAGE_LAYOUT_ID,

@@ -1,5 +1,5 @@
 import {
-  PackageJson,
+  type PackageJson,
   type Application,
   type ObjectManifest,
   type ServerlessFunctionManifest,
@@ -13,8 +13,8 @@ export type ApplicationManifest = {
   application: Application;
   objects: ObjectManifest[];
   objectExtensions?: ObjectExtensionManifest[];
-  serverlessFunctions: ServerlessFunctionManifest[];
-  frontComponents?: FrontComponentManifest[];
+  functions: ServerlessFunctionManifest[];
+  frontComponents: FrontComponentManifest[];
   roles?: RoleManifest[];
   sources: Sources;
   packageJson: PackageJson;

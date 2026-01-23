@@ -21,8 +21,8 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
     {
       __typename: 'PageLayoutTab',
       id: 'workflow-version-tab-fields',
-      title: 'Fields',
-      icon: 'IconList',
+      title: 'Home',
+      icon: 'IconHome',
       position: 100,
       layoutMode: 'vertical-list',
       pageLayoutId: DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID,

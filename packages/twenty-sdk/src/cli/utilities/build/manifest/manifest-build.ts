@@ -1,22 +1,28 @@
-import { findPathFile } from '@/cli/utilities/file/utils/file-find';
-import { parseJsoncFile } from '@/cli/utilities/file/utils/file-jsonc';
-import chalk from 'chalk';
+import { findPathFile } from '@/cli/utilities/file/file-find';
+import { parseJsoncFile } from '@/cli/utilities/file/file-jsonc';
 import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';
-import path, { relative, sep } from 'path';
+import { relative, sep } from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
-import { OUTPUT_DIR } from '../common/constants';
-import { applicationEntityBuilder } from './entities/application';
-import { frontComponentEntityBuilder } from './entities/front-component';
-import { functionEntityBuilder } from './entities/function';
-import { objectEntityBuilder } from './entities/object';
-import { objectExtensionEntityBuilder } from './entities/object-extension';
-import { roleEntityBuilder } from './entities/role';
-import { displayEntitySummary, displayErrors, displayWarnings } from './manifest-display';
+import { applicationEntityBuilder } from '@/cli/utilities/build/manifest/entities/application';
+import { frontComponentEntityBuilder } from '@/cli/utilities/build/manifest/entities/front-component';
+import { functionEntityBuilder } from '@/cli/utilities/build/manifest/entities/function';
+import { objectEntityBuilder } from '@/cli/utilities/build/manifest/entities/object';
+import { objectExtensionEntityBuilder } from '@/cli/utilities/build/manifest/entities/object-extension';
+import { roleEntityBuilder } from '@/cli/utilities/build/manifest/entities/role';
+import {
+  displayEntitySummary,
+  displayErrors,
+  displayWarnings,
+} from '@/cli/utilities/build/manifest/manifest-display';
 import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
-import { validateManifest } from './manifest-validate';
-import { ManifestValidationError } from './manifest.types';
+import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
+import { ManifestValidationError } from '@/cli/utilities/build/manifest/manifest-types';
+import { createLogger } from '@/cli/utilities/build/common/logger';
+import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
+
+const logger = createLogger('manifest-watch');
 
 export type EntityFilePaths = {
   application: string[];
@@ -56,26 +62,6 @@ const loadSources = async (appPath: string): Promise<Sources> => {
   return sources;
 };
 
-const writeManifestToOutput = async (
-  appPath: string,
-  manifest: ApplicationManifest,
-): Promise<void> => {
-  try {
-    const outputDir = path.join(appPath, OUTPUT_DIR);
-    await fs.ensureDir(outputDir);
-
-    const manifestPath = path.join(outputDir, 'manifest.json');
-    await fs.writeJSON(manifestPath, manifest, { spaces: 2 });
-
-    console.log(chalk.green(`  ✓ Manifest written to ${manifestPath}`));
-  } catch (error) {
-    console.error(
-      chalk.red('  ✗ Failed to write manifest:'),
-      error instanceof Error ? error.message : error,
-    );
-  }
-};
-
 export type RunManifestBuildOptions = {
   display?: boolean;
   writeOutput?: boolean;
@@ -95,6 +81,53 @@ export type ManifestBuildResult = {
   filePaths: EntityFilePaths;
 };
 
+export type ManifestEntityType = 'function' | 'frontComponent';
+
+export type UpdateManifestChecksumParams = {
+  manifest: ApplicationManifest;
+  entityType: ManifestEntityType;
+  builtPath: string;
+  checksum: string;
+};
+
+export const updateManifestChecksum = ({
+  manifest,
+  entityType,
+  builtPath,
+  checksum,
+}: UpdateManifestChecksumParams): ApplicationManifest | null => {
+  if (entityType === 'function') {
+    const fnIndex = manifest.functions.findIndex(
+      (f) => f.builtHandlerPath === builtPath,
+    );
+    if (fnIndex === -1) {
+      return null;
+    }
+    return {
+      ...manifest,
+      functions: manifest.functions.map((fn, index) =>
+        index === fnIndex ? { ...fn, builtHandlerChecksum: checksum } : fn,
+      ),
+    };
+  }
+
+  const componentIndex =
+    manifest.frontComponents.findIndex(
+      (c) => c.builtComponentPath === builtPath,
+    ) ?? -1;
+  if (componentIndex === -1) {
+    return null;
+  }
+  return {
+    ...manifest,
+    frontComponents: manifest.frontComponents.map((component, index) =>
+      index === componentIndex
+        ? { ...component, builtComponentChecksum: checksum }
+        : component,
+    ),
+  };
+};
+
 export const runManifestBuild = async (
   appPath: string,
   options: RunManifestBuildOptions = {},
@@ -102,7 +135,7 @@ export const runManifestBuild = async (
   const { display = true, writeOutput = true } = options;
 
   if (display) {
-    console.log(chalk.blue('🔄 Building manifest...'));
+    logger.log('🔄 Building...');
   }
 
   try {
@@ -149,11 +182,9 @@ export const runManifestBuild = async (
     const manifest: ApplicationManifest = {
       application,
       objects: objectManifests,
-      objectExtensions:
-        objectExtensionManifests.length > 0 ? objectExtensionManifests : undefined,
-      serverlessFunctions: functionManifests,
-      frontComponents:
-        frontComponentManifests.length > 0 ? frontComponentManifests : undefined,
+      objectExtensions: objectExtensionManifests,
+      functions: functionManifests,
+      frontComponents: frontComponentManifests,
       roles: roleManifests,
       sources,
       packageJson,
@@ -163,7 +194,7 @@ export const runManifestBuild = async (
       application,
       objects: objectManifests,
       objectExtensions: objectExtensionManifests,
-      serverlessFunctions: functionManifests,
+      functions: functionManifests,
       frontComponents: frontComponentManifests,
       roles: roleManifests,
     });
@@ -180,7 +211,8 @@ export const runManifestBuild = async (
     }
 
     if (writeOutput) {
-      await writeManifestToOutput(appPath, manifest);
+      const manifestPath = await writeManifestToOutput(appPath, manifest);
+      logger.success(`✓ Written to ${manifestPath}`);
     }
 
     return { manifest, filePaths };
@@ -189,9 +221,8 @@ export const runManifestBuild = async (
       if (error instanceof ManifestValidationError) {
         displayErrors(error);
       } else {
-        console.error(
-          chalk.red('  ✗ Build failed:'),
-          error instanceof Error ? error.message : error,
+        logger.error(
+          `✗ Build failed: ${error instanceof Error ? error.message : error}`,
         );
       }
     }

@@ -3,30 +3,24 @@ import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguratio
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useTemporaryFieldsConfiguration = (
   objectNameSingular: string,
-): FieldsConfiguration | null => {
+): FieldsConfiguration => {
   const { t } = useLingui();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
-  const configuration = useMemo<FieldsConfiguration | null>(() => {
+  const configuration = useMemo<FieldsConfiguration>(() => {
     if (!isDefined(objectMetadataItem)) {
-      return null;
+      throw new Error('Object metadata item is not defined');
     }
 
-    const fieldsToDisplay = objectMetadataItem.fields.filter(
-      (field) =>
-        field.type !== FieldMetadataType.RELATION &&
-        field.type !== FieldMetadataType.MORPH_RELATION &&
-        field.type !== FieldMetadataType.RICH_TEXT_V2,
-    );
+    const fieldsToDisplay = objectMetadataItem.fields;
 
     if (fieldsToDisplay.length === 0) {
-      return null;
+      throw new Error('No fields to display');
     }
 
     const generalFields: Array<{ fieldMetadataId: string; position: number }> =
@@ -72,7 +66,7 @@ export const useTemporaryFieldsConfiguration = (
     }
 
     if (sections.length === 0) {
-      return null;
+      throw new Error('No sections to display');
     }
 
     return {

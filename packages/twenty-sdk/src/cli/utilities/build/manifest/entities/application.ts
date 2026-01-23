@@ -1,24 +1,38 @@
-import chalk from 'chalk';
-import * as fs from 'fs-extra';
+import { glob } from 'fast-glob';
 import path from 'path';
-import { type Application } from 'twenty-shared/application';
+import {
+  type Application,
+  type ApplicationVariables,
+} from 'twenty-shared/application';
+import { createLogger } from '../../common/logger';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
-import { type ValidationError } from '../manifest.types';
 import {
   type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
-} from './entity.interface';
+} from '@/cli/utilities/build/manifest/entities/entity-interface';
+import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
+
+const logger = createLogger('manifest-watch');
 
 const findApplicationConfigPath = async (appPath: string): Promise<string> => {
-  const configFile = path.join(appPath, 'application.config.ts');
+  const files = await glob('**/application.config.ts', {
+    cwd: appPath,
+    ignore: ['**/node_modules/**', '**/.twenty/**', '**/dist/**'],
+  });
 
-  if (await fs.pathExists(configFile)) {
-    return configFile;
+  if (files.length === 0) {
+    throw new Error('Missing application.config.ts in your app');
   }
 
-  throw new Error('Missing application.config.ts in your app root');
+  if (files.length > 1) {
+    throw new Error(
+      `Multiple application.config.ts files found: ${files.join(', ')}. Only one is allowed.`,
+    );
+  }
+
+  return path.join(appPath, files[0]);
 };
 
 export class ApplicationEntityBuilder
@@ -57,7 +71,7 @@ export class ApplicationEntityBuilder
   display(applications: Application[]): void {
     const application = applications[0];
     const appName = application?.displayName ?? 'Application';
-    console.log(chalk.green(`  ✓ Loaded "${appName}"`));
+    logger.success(`✓ Loaded "${appName}"`);
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
@@ -71,7 +85,7 @@ export class ApplicationEntityBuilder
     if (application?.applicationVariables) {
       for (const [name, variable] of Object.entries(
         application.applicationVariables,
-      )) {
+      ) as [string, ApplicationVariables[string]][]) {
         if (variable.universalIdentifier) {
           const locations = seen.get(variable.universalIdentifier) ?? [];
           locations.push(`application.variables.${name}`);

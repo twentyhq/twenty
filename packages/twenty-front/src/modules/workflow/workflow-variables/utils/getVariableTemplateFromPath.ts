@@ -1,3 +1,5 @@
+import { joinVariablePath } from 'twenty-shared/workflow';
+
 export const getVariableTemplateFromPath = ({
   stepId,
   path,
@@ -9,5 +11,5 @@ export const getVariableTemplateFromPath = ({
     return `{{${stepId}}}`;
   }
 
-  return `{{${stepId}.${path.join('.')}}}`;
+  return `{{${stepId}.${joinVariablePath(path)}}}`;
 };

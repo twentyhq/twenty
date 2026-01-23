@@ -1,9 +1,11 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Readable } from 'stream';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 
 describe('FileStorageService', () => {
   let service: FileStorageService;
@@ -13,6 +15,10 @@ describe('FileStorageService', () => {
     getCurrentDriver: jest.fn(),
   };
 
+  const mockFileRepository = {
+    save: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -20,6 +26,10 @@ describe('FileStorageService', () => {
         {
           provide: FileStorageDriverFactory,
           useValue: mockFileStorageDriverFactory,
+        },
+        {
+          provide: getRepositoryToken(FileEntity),
+          useValue: mockFileRepository,
         },
       ],
     }).compile();
@@ -48,6 +58,9 @@ describe('FileStorageService', () => {
         copy: jest.fn(),
         download: jest.fn(),
         checkFileExists: jest.fn(),
+        checkFolderExists: jest.fn(),
+        writeFolder: jest.fn(),
+        readFolder: jest.fn(),
       };
 
       mockFileStorageDriverFactory.getCurrentDriver.mockReturnValue(mockDriver);
@@ -67,7 +80,11 @@ describe('FileStorageService', () => {
         await service.write(writeParams);
 
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-        expect(mockDriver.write).toHaveBeenCalledWith(writeParams);
+        expect(mockDriver.write).toHaveBeenCalledWith({
+          filePath: 'documents/test.txt',
+          sourceFile: writeParams.file,
+          mimeType: 'text/plain',
+        });
       });
 
       it('should handle write errors', async () => {
@@ -86,7 +103,6 @@ describe('FileStorageService', () => {
           'Write failed',
         );
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-        expect(mockDriver.write).toHaveBeenCalledWith(writeParams);
       });
     });
 
@@ -104,7 +120,9 @@ describe('FileStorageService', () => {
         const result = await service.read(readParams);
 
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-        expect(mockDriver.read).toHaveBeenCalledWith(readParams);
+        expect(mockDriver.read).toHaveBeenCalledWith({
+          filePath: 'documents/test.txt',
+        });
         expect(result).toBe(mockStream);
       });
 
@@ -120,7 +138,6 @@ describe('FileStorageService', () => {
 
         await expect(service.read(readParams)).rejects.toThrow('Read failed');
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-        expect(mockDriver.read).toHaveBeenCalledWith(readParams);
       });
     });
 

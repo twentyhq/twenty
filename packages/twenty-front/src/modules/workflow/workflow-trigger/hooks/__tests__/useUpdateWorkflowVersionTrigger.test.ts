@@ -56,6 +56,7 @@ describe('useUpdateWorkflowVersionTrigger', () => {
     });
     expect(mockUpdateOneRecord).toHaveBeenCalledWith({
       idToUpdate: 'version-id',
+      objectNameSingular: 'workflowVersion',
       updateOneRecordInput: {
         trigger,
       },

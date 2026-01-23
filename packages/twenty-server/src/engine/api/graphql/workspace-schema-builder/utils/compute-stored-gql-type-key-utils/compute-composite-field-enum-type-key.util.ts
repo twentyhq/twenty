@@ -1,4 +1,4 @@
-import { pascalCase } from 'src/utils/pascal-case';
+import { pascalCase } from 'twenty-shared/utils';
 
 export const computeCompositeFieldEnumTypeKey = (
   fieldMetadataType: string,

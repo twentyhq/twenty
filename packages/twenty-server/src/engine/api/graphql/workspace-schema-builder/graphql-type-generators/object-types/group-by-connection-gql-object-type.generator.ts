@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLObjectType, isObjectType } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
@@ -10,7 +10,6 @@ import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder
 import { GraphQLOutputTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/types/graphql-field-config-map.types';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
 export class GroupByConnectionGqlObjectTypeGenerator {
