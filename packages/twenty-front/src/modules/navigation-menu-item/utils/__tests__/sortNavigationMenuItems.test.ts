@@ -1,6 +1,5 @@
 import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { type View } from '@/views/types/View';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -46,12 +45,6 @@ describe('sortNavigationMenuItems', () => {
     icon: 'IconUser',
   };
 
-  const mockObjectRecord: ObjectRecord = {
-    id: 'record-id',
-    name: 'John Doe',
-    __typename: 'Person',
-  } as ObjectRecord;
-
   const mockObjectRecordIdentifier: ObjectRecordIdentifier = {
     id: 'record-id',
     name: 'John Doe',
@@ -60,34 +53,12 @@ describe('sortNavigationMenuItems', () => {
     linkToShowPage: '/app/objects/people/record-id',
   };
 
-  const getObjectRecordIdentifierByNameSingular = jest.fn(
-    (
-      record: ObjectRecord,
-      objectNameSingular: string,
-    ): ObjectRecordIdentifier => {
-      if (objectNameSingular === 'person') {
-        return mockObjectRecordIdentifier;
-      }
-      return {
-        id: record.id,
-        name: 'Unknown',
-      };
-    },
-  );
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('should return empty array when navigationMenuItems is empty', () => {
-    const result = sortNavigationMenuItems(
-      [],
-      getObjectRecordIdentifierByNameSingular,
-      true,
-      [],
-      [],
-      new Map(),
-    );
+    const result = sortNavigationMenuItems([], true, [], [], new Map());
 
     expect(result).toEqual([]);
   });
@@ -101,7 +72,6 @@ describe('sortNavigationMenuItems', () => {
 
     const result = sortNavigationMenuItems(
       [navigationMenuItem],
-      getObjectRecordIdentifierByNameSingular,
       true,
       [mockView],
       [mockObjectMetadataItem],
@@ -129,7 +99,6 @@ describe('sortNavigationMenuItems', () => {
 
     const result = sortNavigationMenuItems(
       [navigationMenuItem],
-      getObjectRecordIdentifierByNameSingular,
       true,
       [],
       [mockObjectMetadataItem],
@@ -147,15 +116,16 @@ describe('sortNavigationMenuItems', () => {
       position: 2,
     } as NavigationMenuItem;
 
-    const targetRecords = new Map([['record-id', mockObjectRecord]]);
+    const targetRecordIdentifiers = new Map([
+      ['record-id', mockObjectRecordIdentifier],
+    ]);
 
     const result = sortNavigationMenuItems(
       [navigationMenuItem],
-      getObjectRecordIdentifierByNameSingular,
       true,
       [],
       [mockObjectMetadataItem],
-      targetRecords,
+      targetRecordIdentifiers,
     );
 
     expect(result).toHaveLength(1);
@@ -181,7 +151,6 @@ describe('sortNavigationMenuItems', () => {
 
     const result = sortNavigationMenuItems(
       [navigationMenuItem],
-      getObjectRecordIdentifierByNameSingular,
       true,
       [],
       [mockObjectMetadataItem],
@@ -199,21 +168,22 @@ describe('sortNavigationMenuItems', () => {
       position: 1,
     } as NavigationMenuItem;
 
-    const targetRecords = new Map([['record-id', mockObjectRecord]]);
+    const targetRecordIdentifiers = new Map([
+      ['record-id', mockObjectRecordIdentifier],
+    ]);
 
     const result = sortNavigationMenuItems(
       [navigationMenuItem],
-      getObjectRecordIdentifierByNameSingular,
       true,
       [],
       [mockObjectMetadataItem],
-      targetRecords,
+      targetRecordIdentifiers,
     );
 
     expect(result).toEqual([]);
   });
 
-  it('should return null for record link when targetRecord is not found', () => {
+  it('should return null for record link when targetRecordIdentifier is not found', () => {
     const navigationMenuItem: NavigationMenuItem = {
       id: 'item-id',
       targetRecordId: 'non-existent-record-id',
@@ -223,7 +193,6 @@ describe('sortNavigationMenuItems', () => {
 
     const result = sortNavigationMenuItems(
       [navigationMenuItem],
-      getObjectRecordIdentifierByNameSingular,
       true,
       [],
       [mockObjectMetadataItem],
@@ -241,15 +210,16 @@ describe('sortNavigationMenuItems', () => {
       position: 2,
     } as NavigationMenuItem;
 
-    const targetRecords = new Map([['record-id', mockObjectRecord]]);
+    const targetRecordIdentifiers = new Map([
+      ['record-id', mockObjectRecordIdentifier],
+    ]);
 
     const result = sortNavigationMenuItems(
       [navigationMenuItem],
-      getObjectRecordIdentifierByNameSingular,
       false,
       [],
       [mockObjectMetadataItem],
-      targetRecords,
+      targetRecordIdentifiers,
     );
 
     expect(result).toHaveLength(1);
@@ -278,19 +248,18 @@ describe('sortNavigationMenuItems', () => {
       },
     ] as NavigationMenuItem[];
 
-    const targetRecords = new Map([
-      ['record-id-1', { ...mockObjectRecord, id: 'record-id-1' }],
-      ['record-id-2', { ...mockObjectRecord, id: 'record-id-2' }],
-      ['record-id-3', { ...mockObjectRecord, id: 'record-id-3' }],
+    const targetRecordIdentifiers = new Map([
+      ['record-id-1', { ...mockObjectRecordIdentifier, id: 'record-id-1' }],
+      ['record-id-2', { ...mockObjectRecordIdentifier, id: 'record-id-2' }],
+      ['record-id-3', { ...mockObjectRecordIdentifier, id: 'record-id-3' }],
     ]);
 
     const result = sortNavigationMenuItems(
       navigationMenuItems,
-      getObjectRecordIdentifierByNameSingular,
       true,
       [],
       [mockObjectMetadataItem],
-      targetRecords,
+      targetRecordIdentifiers,
     );
 
     expect(result).toHaveLength(3);
@@ -314,15 +283,16 @@ describe('sortNavigationMenuItems', () => {
       },
     ] as NavigationMenuItem[];
 
-    const targetRecords = new Map([['record-id', mockObjectRecord]]);
+    const targetRecordIdentifiers = new Map([
+      ['record-id', mockObjectRecordIdentifier],
+    ]);
 
     const result = sortNavigationMenuItems(
       navigationMenuItems,
-      getObjectRecordIdentifierByNameSingular,
       true,
       [mockView],
       [mockObjectMetadataItem],
-      targetRecords,
+      targetRecordIdentifiers,
     );
 
     expect(result).toHaveLength(2);
@@ -332,7 +302,7 @@ describe('sortNavigationMenuItems', () => {
     expect(result[1].objectNameSingular).toBe('person');
   });
 
-  it('should handle empty targetRecords map', () => {
+  it('should handle empty targetRecordIdentifiers map', () => {
     const navigationMenuItem: NavigationMenuItem = {
       id: 'item-id',
       targetRecordId: 'non-existent-record-id',
@@ -342,7 +312,6 @@ describe('sortNavigationMenuItems', () => {
 
     const result = sortNavigationMenuItems(
       [navigationMenuItem],
-      getObjectRecordIdentifierByNameSingular,
       true,
       [],
       [mockObjectMetadataItem],
@@ -363,7 +332,6 @@ describe('sortNavigationMenuItems', () => {
 
     const result = sortNavigationMenuItems(
       [navigationMenuItem],
-      getObjectRecordIdentifierByNameSingular,
       true,
       [mockView],
       [mockObjectMetadataItem],
@@ -385,7 +353,6 @@ describe('sortNavigationMenuItems', () => {
 
     const result = sortNavigationMenuItems(
       [navigationMenuItem],
-      getObjectRecordIdentifierByNameSingular,
       true,
       [],
       [mockObjectMetadataItem],

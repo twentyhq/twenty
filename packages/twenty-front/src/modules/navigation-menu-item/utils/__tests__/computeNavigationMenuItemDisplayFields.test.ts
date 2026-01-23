@@ -1,6 +1,5 @@
 import { computeNavigationMenuItemDisplayFields } from '@/navigation-menu-item/utils/computeNavigationMenuItemDisplayFields';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 
 describe('computeNavigationMenuItemDisplayFields', () => {
@@ -12,12 +11,6 @@ describe('computeNavigationMenuItemDisplayFields', () => {
     labelPlural: 'People',
   } as ObjectMetadataItem;
 
-  const mockObjectRecord: ObjectRecord = {
-    id: 'record-id',
-    name: 'John Doe',
-    __typename: 'Person',
-  } as ObjectRecord;
-
   const mockObjectRecordIdentifier: ObjectRecordIdentifier = {
     id: 'record-id',
     name: 'John Doe',
@@ -26,19 +19,8 @@ describe('computeNavigationMenuItemDisplayFields', () => {
     linkToShowPage: '/app/objects/people/record-id',
   };
 
-  it('should return null when targetRecord is null', () => {
-    const result = computeNavigationMenuItemDisplayFields(
-      null,
-      mockObjectMetadataItem,
-      mockObjectRecordIdentifier,
-    );
-
-    expect(result).toBeNull();
-  });
-
   it('should return null when objectMetadataItem is null', () => {
     const result = computeNavigationMenuItemDisplayFields(
-      mockObjectRecord,
       null,
       mockObjectRecordIdentifier,
     );
@@ -46,35 +28,23 @@ describe('computeNavigationMenuItemDisplayFields', () => {
     expect(result).toBeNull();
   });
 
-  it('should return null when both targetRecord and objectMetadataItem are null', () => {
+  it('should return null when objectRecordIdentifier is null', () => {
     const result = computeNavigationMenuItemDisplayFields(
-      null,
-      null,
-      mockObjectRecordIdentifier,
-    );
-
-    expect(result).toBeNull();
-  });
-
-  it('should return display fields with empty values when objectRecordIdentifier is null', () => {
-    const result = computeNavigationMenuItemDisplayFields(
-      mockObjectRecord,
       mockObjectMetadataItem,
       null,
     );
 
-    expect(result).toEqual({
-      labelIdentifier: '',
-      avatarUrl: '',
-      avatarType: 'icon',
-      link: '',
-      objectNameSingular: 'person',
-    });
+    expect(result).toBeNull();
+  });
+
+  it('should return null when both objectMetadataItem and objectRecordIdentifier are null', () => {
+    const result = computeNavigationMenuItemDisplayFields(null, null);
+
+    expect(result).toBeNull();
   });
 
   it('should return complete display fields when all parameters are provided', () => {
     const result = computeNavigationMenuItemDisplayFields(
-      mockObjectRecord,
       mockObjectMetadataItem,
       mockObjectRecordIdentifier,
     );
@@ -95,7 +65,6 @@ describe('computeNavigationMenuItemDisplayFields', () => {
     };
 
     const result = computeNavigationMenuItemDisplayFields(
-      mockObjectRecord,
       mockObjectMetadataItem,
       identifierWithoutOptionalFields,
     );
@@ -116,7 +85,6 @@ describe('computeNavigationMenuItemDisplayFields', () => {
     } as ObjectMetadataItem;
 
     const result = computeNavigationMenuItemDisplayFields(
-      mockObjectRecord,
       customMetadataItem,
       mockObjectRecordIdentifier,
     );
@@ -132,7 +100,6 @@ describe('computeNavigationMenuItemDisplayFields', () => {
     };
 
     const result = computeNavigationMenuItemDisplayFields(
-      mockObjectRecord,
       mockObjectMetadataItem,
       identifierWithNullAvatarType,
     );
@@ -148,7 +115,6 @@ describe('computeNavigationMenuItemDisplayFields', () => {
     };
 
     const result = computeNavigationMenuItemDisplayFields(
-      mockObjectRecord,
       mockObjectMetadataItem,
       identifierWithoutLink,
     );
@@ -164,7 +130,6 @@ describe('computeNavigationMenuItemDisplayFields', () => {
     };
 
     const result = computeNavigationMenuItemDisplayFields(
-      mockObjectRecord,
       mockObjectMetadataItem,
       identifierWithoutAvatarUrl,
     );
@@ -180,7 +145,6 @@ describe('computeNavigationMenuItemDisplayFields', () => {
     };
 
     const result = computeNavigationMenuItemDisplayFields(
-      mockObjectRecord,
       mockObjectMetadataItem,
       identifierWithoutAvatarType,
     );

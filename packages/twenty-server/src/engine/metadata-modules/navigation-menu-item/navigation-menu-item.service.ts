@@ -3,6 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
+import { getRecordImageIdentifier } from 'src/engine/core-modules/record-crud/utils/get-record-image-identifier.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -12,6 +15,7 @@ import { fromFlatNavigationMenuItemToNavigationMenuItemDto } from 'src/engine/me
 import { fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOrThrow } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-update-navigation-menu-item-input-to-flat-navigation-menu-item-to-update-or-throw.util';
 import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
 import { type NavigationMenuItemDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/navigation-menu-item.dto';
+import { RecordIdentifierDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/record-identifier.dto';
 import { type UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 import {
   NavigationMenuItemException,
@@ -31,6 +35,7 @@ export class NavigationMenuItemService {
     private readonly applicationService: ApplicationService,
     private readonly navigationMenuItemAccessService: NavigationMenuItemAccessService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly fileService: FileService,
   ) {}
 
   async findAll({
@@ -346,12 +351,12 @@ export class NavigationMenuItemService {
     targetRecordId: string;
     targetObjectMetadataId: string;
     workspaceId: string;
-  }): Promise<Record<string, unknown> | null> {
-    const { flatObjectMetadataMaps } =
+  }): Promise<RecordIdentifierDTO | null> {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
         },
       );
 
@@ -363,23 +368,49 @@ export class NavigationMenuItemService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const repository = await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          objectMetadata.nameSingular,
-          {
-            shouldBypassPermissionChecks: true,
-          },
-        );
+    const record =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const repository = await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            objectMetadata.nameSingular,
+            {
+              shouldBypassPermissionChecks: true,
+            },
+          );
 
-        const record = await repository.findOneBy({
-          id: targetRecordId,
-        });
+          return await repository.findOneBy({
+            id: targetRecordId,
+          });
+        },
+      );
 
-        return record;
-      },
+    if (!isDefined(record)) {
+      return null;
+    }
+
+    const labelIdentifier = getRecordDisplayName(
+      record,
+      objectMetadata,
+      flatFieldMetadataMaps,
     );
+
+    const imageIdentifier = getRecordImageIdentifier({
+      record,
+      flatObjectMetadata: objectMetadata,
+      flatFieldMetadataMaps,
+      signUrl: (url: string) =>
+        this.fileService.signFileUrl({
+          url,
+          workspaceId,
+        }),
+    });
+
+    return {
+      id: record.id,
+      labelIdentifier,
+      imageIdentifier,
+    };
   }
 }

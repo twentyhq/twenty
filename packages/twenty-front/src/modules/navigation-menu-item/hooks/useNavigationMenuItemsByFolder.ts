@@ -2,15 +2,10 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
+import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/utils/recordIdentifierToObjectRecordIdentifier';
 import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
-import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
@@ -23,12 +18,6 @@ type NavigationMenuItemFolder = {
 };
 
 export const useNavigationMenuItemsByFolder = () => {
-  const { objectMetadataItems: objectMetadataItemsFromHook } =
-    useObjectMetadataItems();
-  const apolloCoreClient = useApolloCoreClient();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const getObjectRecordIdentifierByNameSingular =
-    useGetObjectRecordIdentifierByNameSingular();
   const coreViews = useRecoilValue(coreViewsState).map(convertCoreViewToView);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -54,43 +43,46 @@ export const useNavigationMenuItemsByFolder = () => {
         (item) => item.folderId === folderId,
       );
 
-      const targetRecordsMap = new Map<string, ObjectRecord>();
+      const targetRecordIdentifiersMap = new Map<
+        string,
+        ObjectRecordIdentifier
+      >();
       itemsInFolder.forEach((item) => {
         const itemTargetRecordId = item.targetRecordId;
         if (!isDefined(itemTargetRecordId) || isDefined(item.viewId)) {
           return;
         }
 
-        const itemObjectMetadata = objectMetadataItemsFromHook.find(
+        const targetRecordIdentifier = item.targetRecordIdentifier;
+
+        if (!isDefined(targetRecordIdentifier)) {
+          return;
+        }
+
+        const itemObjectMetadata = objectMetadataItems.find(
           (meta) => meta.id === item.targetObjectMetadataId,
         );
+
         if (isDefined(itemObjectMetadata)) {
-          const itemRecordGqlFields = generateDepthRecordGqlFieldsFromObject({
-            objectMetadataItem: itemObjectMetadata,
-            depth: 1,
-            objectMetadataItems: objectMetadataItemsFromHook,
-          });
-          const itemRecord = getRecordFromCache<ObjectRecord>({
-            cache: apolloCoreClient.cache,
-            recordId: itemTargetRecordId,
-            objectMetadataItems: objectMetadataItemsFromHook,
-            objectMetadataItem: itemObjectMetadata,
-            recordGqlFields: itemRecordGqlFields,
-            objectPermissionsByObjectMetadataId,
-          });
-          if (isDefined(itemRecord)) {
-            targetRecordsMap.set(itemTargetRecordId, itemRecord);
-          }
+          const objectRecordIdentifier =
+            recordIdentifierToObjectRecordIdentifier({
+              recordIdentifier: targetRecordIdentifier,
+              objectMetadataItem: itemObjectMetadata,
+            });
+
+          targetRecordIdentifiersMap.set(
+            itemTargetRecordId,
+            objectRecordIdentifier,
+          );
         }
       });
 
       const sortedItems = sortNavigationMenuItems(
         itemsInFolder,
-        getObjectRecordIdentifierByNameSingular,
         true,
         coreViews,
         objectMetadataItems,
-        targetRecordsMap,
+        targetRecordIdentifiersMap,
       );
 
       folderItemsResult.push({
@@ -101,15 +93,7 @@ export const useNavigationMenuItemsByFolder = () => {
     });
 
     return folderItemsResult;
-  }, [
-    navigationMenuItems,
-    objectMetadataItemsFromHook,
-    objectMetadataItems,
-    apolloCoreClient.cache,
-    objectPermissionsByObjectMetadataId,
-    getObjectRecordIdentifierByNameSingular,
-    coreViews,
-  ]);
+  }, [navigationMenuItems, objectMetadataItems, coreViews]);
 
   return { navigationMenuItemsByFolder };
 };

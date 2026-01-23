@@ -1,5 +1,4 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { type View } from '@/views/types/View';
 import { AppPath } from 'twenty-shared/types';
@@ -17,14 +16,10 @@ export type ProcessedNavigationMenuItem = NavigationMenuItem &
 
 export const sortNavigationMenuItems = (
   navigationMenuItems: NavigationMenuItem[],
-  getObjectRecordIdentifierByNameSingular: (
-    record: ObjectRecord,
-    objectNameSingular: string,
-  ) => ObjectRecordIdentifier,
   hasLinkToShowPage: boolean,
   views: Pick<View, 'id' | 'name' | 'objectMetadataId' | 'icon'>[],
   objectMetadataItems: ObjectMetadataItem[],
-  targetRecords: Map<string, ObjectRecord>,
+  targetRecordIdentifiers: Map<string, ObjectRecordIdentifier>,
 ): ProcessedNavigationMenuItem[] => {
   return navigationMenuItems
     .map((navigationMenuItem) => {
@@ -73,21 +68,15 @@ export const sortNavigationMenuItems = (
         return null;
       }
 
-      const targetRecord = targetRecords.get(navigationMenuItem.targetRecordId);
+      const objectRecordIdentifier = targetRecordIdentifiers.get(
+        navigationMenuItem.targetRecordId,
+      );
 
-      if (!isDefined(targetRecord)) {
+      if (!isDefined(objectRecordIdentifier)) {
         return null;
       }
 
-      const objectNameSingular = objectMetadataItem.nameSingular;
-
-      const objectRecordIdentifier = getObjectRecordIdentifierByNameSingular(
-        targetRecord,
-        objectNameSingular,
-      );
-
       const displayFields = computeNavigationMenuItemDisplayFields(
-        targetRecord,
         objectMetadataItem,
         objectRecordIdentifier,
       );

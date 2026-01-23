@@ -9,7 +9,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import GraphQLJSON from 'graphql-type-json';
 import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -23,6 +22,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
 import { NavigationMenuItemDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/navigation-menu-item.dto';
+import { RecordIdentifierDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/record-identifier.dto';
 import { UpdateOneNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 import { NavigationMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/navigation-menu-item/interceptors/navigation-menu-item-graphql-api-exception.interceptor';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
@@ -117,11 +117,11 @@ export class NavigationMenuItemResolver {
     });
   }
 
-  @ResolveField(() => GraphQLJSON, { nullable: true })
-  async targetRecord(
+  @ResolveField(() => RecordIdentifierDTO, { nullable: true })
+  async targetRecordIdentifier(
     @Parent() navigationMenuItem: NavigationMenuItemDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<Record<string, unknown> | null> {
+  ): Promise<RecordIdentifierDTO | null> {
     if (
       !isDefined(navigationMenuItem.targetRecordId) ||
       !isDefined(navigationMenuItem.targetObjectMetadataId)

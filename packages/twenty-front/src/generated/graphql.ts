@@ -3055,8 +3055,8 @@ export type NavigationMenuItem = {
   name?: Maybe<Scalars['String']>;
   position: Scalars['Float'];
   targetObjectMetadataId?: Maybe<Scalars['UUID']>;
-  targetRecord?: Maybe<Scalars['JSON']>;
   targetRecordId?: Maybe<Scalars['UUID']>;
+  targetRecordIdentifier?: Maybe<RecordIdentifier>;
   updatedAt: Scalars['DateTime'];
   userWorkspaceId?: Maybe<Scalars['UUID']>;
   viewId?: Maybe<Scalars['UUID']>;
@@ -3878,6 +3878,13 @@ export type RatioAggregateConfig = {
   __typename?: 'RatioAggregateConfig';
   fieldMetadataId: Scalars['UUID'];
   optionValue: Scalars['String'];
+};
+
+export type RecordIdentifier = {
+  __typename?: 'RecordIdentifier';
+  id: Scalars['UUID'];
+  imageIdentifier?: Maybe<Scalars['String']>;
+  labelIdentifier: Scalars['String'];
 };
 
 export type Relation = {

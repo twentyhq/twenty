@@ -7,9 +7,10 @@ import {
   IsOptional,
   IsUUID,
 } from 'class-validator';
-import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
+import { RecordIdentifierDTO } from './record-identifier.dto';
 
 @ObjectType('NavigationMenuItem')
 export class NavigationMenuItemDTO {
@@ -66,6 +67,6 @@ export class NavigationMenuItemDTO {
   @Field()
   updatedAt: Date;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  targetRecord?: Record<string, unknown> | null;
+  @Field(() => RecordIdentifierDTO, { nullable: true })
+  targetRecordIdentifier?: RecordIdentifierDTO | null;
 }

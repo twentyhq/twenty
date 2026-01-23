@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
+import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/utils/recordIdentifierToObjectRecordIdentifier';
 import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
-import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
@@ -14,12 +14,11 @@ import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationM
 export const useSortedNavigationMenuItems = () => {
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
-  const getObjectRecordIdentifierByNameSingular =
-    useGetObjectRecordIdentifierByNameSingular();
   const coreViews = useRecoilValue(coreViewsState).map(convertCoreViewToView);
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const targetRecords = useMemo(() => {
-    const recordsMap = new Map<string, ObjectRecord>();
+  const targetRecordIdentifiers = useMemo(() => {
+    const identifiersMap = new Map<string, ObjectRecordIdentifier>();
 
     [...navigationMenuItems, ...workspaceNavigationMenuItems].forEach(
       (navigationMenuItem) => {
@@ -32,33 +31,47 @@ export const useSortedNavigationMenuItems = () => {
           return;
         }
 
-        const targetRecord = navigationMenuItem.targetRecord;
-        if (isDefined(targetRecord) && typeof targetRecord === 'object') {
-          recordsMap.set(itemTargetRecordId, targetRecord);
+        const targetRecordIdentifier =
+          navigationMenuItem.targetRecordIdentifier;
+        if (!isDefined(targetRecordIdentifier)) {
+          return;
         }
+
+        const objectMetadataItem = objectMetadataItems.find(
+          (item) => item.id === navigationMenuItem.targetObjectMetadataId,
+        );
+
+        if (!isDefined(objectMetadataItem)) {
+          return;
+        }
+
+        const objectRecordIdentifier = recordIdentifierToObjectRecordIdentifier(
+          {
+            recordIdentifier: targetRecordIdentifier,
+            objectMetadataItem,
+          },
+        );
+
+        identifiersMap.set(itemTargetRecordId, objectRecordIdentifier);
       },
     );
 
-    return recordsMap;
-  }, [navigationMenuItems, workspaceNavigationMenuItems]);
-
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+    return identifiersMap;
+  }, [navigationMenuItems, workspaceNavigationMenuItems, objectMetadataItems]);
 
   const navigationMenuItemsSorted = useMemo(() => {
     return sortNavigationMenuItems(
       navigationMenuItems,
-      getObjectRecordIdentifierByNameSingular,
       true,
       coreViews,
       objectMetadataItems,
-      targetRecords,
+      targetRecordIdentifiers,
     );
   }, [
     navigationMenuItems,
-    getObjectRecordIdentifierByNameSingular,
     coreViews,
     objectMetadataItems,
-    targetRecords,
+    targetRecordIdentifiers,
   ]);
 
   const workspaceNavigationMenuItemsSorted = useMemo(() => {
@@ -71,23 +84,22 @@ export const useSortedNavigationMenuItems = () => {
       if (!isDefined(itemTargetRecordId)) {
         return false;
       }
-      const matchesTargetRecord = targetRecords.has(itemTargetRecordId);
+      const matchesTargetRecord =
+        targetRecordIdentifiers.has(itemTargetRecordId);
       return matchesTargetRecord;
     });
     return sortNavigationMenuItems(
       filtered,
-      getObjectRecordIdentifierByNameSingular,
       false,
       coreViews,
       objectMetadataItems,
-      targetRecords,
+      targetRecordIdentifiers,
     );
   }, [
     workspaceNavigationMenuItems,
-    getObjectRecordIdentifierByNameSingular,
     coreViews,
     objectMetadataItems,
-    targetRecords,
+    targetRecordIdentifiers,
   ]);
 
   return {
