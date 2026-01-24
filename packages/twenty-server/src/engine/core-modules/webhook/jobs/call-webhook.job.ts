@@ -1,6 +1,5 @@
 import crypto from 'crypto';
 
-import axios from 'axios';
 import { getAbsoluteUrl } from 'twenty-shared/utils';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
@@ -10,8 +9,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { getSecureAdapter } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
 
 export type CallWebhookJobData = {
   targetUrl: string;
@@ -33,7 +31,7 @@ export class CallWebhookJob {
   constructor(
     private readonly auditService: AuditService,
     private readonly metricsService: MetricsService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
   private generateSignature(
@@ -85,13 +83,7 @@ export class CallWebhookJob {
           .toString('hex');
       }
 
-      const isSafeModeEnabled = this.twentyConfigService.get(
-        'HTTP_TOOL_SAFE_MODE_ENABLED',
-      );
-
-      const axiosClient = isSafeModeEnabled
-        ? axios.create({ adapter: getSecureAdapter() })
-        : axios.create();
+      const axiosClient = this.secureHttpClientService.getHttpClient();
 
       const response = await axiosClient.post(
         getAbsoluteUrl(data.targetUrl),

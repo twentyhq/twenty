@@ -69,8 +69,6 @@ export class ConfigVariables {
   @IsOptional()
   IS_EMAIL_VERIFICATION_REQUIRED = false;
 
-  // TODO: Consider renaming to OUTBOUND_HTTP_SAFE_MODE_ENABLED as this now
-  // applies to both HTTP workflow actions and webhooks
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,
     description:
@@ -78,7 +76,7 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  HTTP_TOOL_SAFE_MODE_ENABLED = true;
+  OUTBOUND_HTTP_SAFE_MODE_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,

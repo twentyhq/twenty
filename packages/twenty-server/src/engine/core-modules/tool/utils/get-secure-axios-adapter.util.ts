@@ -1,17 +1,16 @@
-import dns from 'dns/promises';
+import * as dns from 'dns/promises';
+import * as http from 'http';
+import * as https from 'https';
+import { type LookupFunction } from 'net';
 
 import axios, {
-  AxiosHeaders,
   type AxiosAdapter,
   type InternalAxiosRequestConfig,
 } from 'axios';
 
 import { isPrivateIp } from 'src/engine/core-modules/tool/utils/is-private-ip.util';
 
-export type SecureAdapterDependencies = {
-  dnsLookup: typeof dns.lookup;
-  httpAdapter: AxiosAdapter;
-};
+import { type SecureAdapterDependencies } from './get-secure-axios-adapter.types';
 
 const defaultDependencies: SecureAdapterDependencies = {
   dnsLookup: dns.lookup,
@@ -34,10 +33,7 @@ export const getSecureAdapter = (
       throw new Error('URL should use http/https protocol');
     }
 
-    const originalHostname = url.hostname;
-    const originalPort = url.port;
-
-    const { address: resolvedIp } = await dnsLookup(originalHostname);
+    const { address: resolvedIp, family } = await dnsLookup(url.hostname);
 
     if (isPrivateIp(resolvedIp)) {
       throw new Error(
@@ -45,25 +41,37 @@ export const getSecureAdapter = (
       );
     }
 
-    // Replace hostname with resolved IP to prevent DNS rebinding attacks.
-    // This ensures the actual HTTP request goes to the validated IP address,
-    // not a potentially different IP from a second DNS lookup.
-    url.hostname = resolvedIp;
-    config.url = url.toString();
+    // Use a custom lookup function that returns our pre-validated IP.
+    // This prevents DNS rebinding attacks while preserving the original
+    // hostname in the URL for proper TLS certificate validation and SNI.
+    // Note: LookupFunction can be called with 2 or 3 arguments, and when
+    // options.all is true, it expects an array of addresses.
+    const ipFamily = family === 6 ? 6 : 4;
+    const secureLookup: LookupFunction = (
+      _hostname,
+      optionsOrCallback,
+      maybeCallback,
+    ) => {
+      const options =
+        typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
+      const callback =
+        typeof optionsOrCallback === 'function'
+          ? optionsOrCallback
+          : maybeCallback;
 
-    // Preserve the original Host header for virtual hosting compatibility
-    const hostHeader = originalPort
-      ? `${originalHostname}:${originalPort}`
-      : originalHostname;
+      if (options.all) {
+        (callback as Function)(null, [
+          { address: resolvedIp, family: ipFamily },
+        ]);
+      } else {
+        (callback as Function)(null, resolvedIp, ipFamily);
+      }
+    };
 
-    if (!config.headers) {
-      config.headers = new AxiosHeaders();
-    }
-
-    if (config.headers instanceof AxiosHeaders) {
-      config.headers.set('Host', hostHeader);
+    if (url.protocol === 'https:') {
+      config.httpsAgent = new https.Agent({ lookup: secureLookup });
     } else {
-      (config.headers as Record<string, string>)['Host'] = hostHeader;
+      config.httpAgent = new http.Agent({ lookup: secureLookup });
     }
 
     return httpAdapter(config);

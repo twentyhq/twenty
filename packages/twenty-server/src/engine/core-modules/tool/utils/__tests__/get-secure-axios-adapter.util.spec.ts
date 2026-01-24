@@ -1,9 +1,10 @@
+import * as http from 'http';
+import * as https from 'https';
+
 import { AxiosHeaders, type InternalAxiosRequestConfig } from 'axios';
 
-import {
-  getSecureAdapter,
-  type SecureAdapterDependencies,
-} from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
+import { type SecureAdapterDependencies } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.types';
+import { getSecureAdapter } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
 
 describe('getSecureAdapter', () => {
   let mockDnsLookup: jest.Mock;
@@ -160,7 +161,7 @@ describe('getSecureAdapter', () => {
   });
 
   describe('DNS rebinding protection', () => {
-    it('should replace hostname with resolved IP in the request URL', async () => {
+    it('should preserve original hostname in URL for TLS validation', async () => {
       mockDnsLookup.mockResolvedValue({
         address: '93.184.216.34',
         family: 4,
@@ -176,48 +177,119 @@ describe('getSecureAdapter', () => {
 
       expect(mockHttpAdapter).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: 'https://93.184.216.34/api/data',
+          url: 'https://example.com/api/data',
         }),
       );
     });
 
-    it('should set Host header to original hostname', async () => {
+    it('should set httpsAgent with custom lookup for HTTPS requests', async () => {
       mockDnsLookup.mockResolvedValue({
         address: '93.184.216.34',
         family: 4,
       });
 
       const adapter = getSecureAdapter(dependencies);
-      const headers = new AxiosHeaders();
       const config = {
         url: 'https://example.com/api/data',
-        headers,
+        headers: new AxiosHeaders(),
       } as InternalAxiosRequestConfig;
 
       await adapter(config);
 
-      expect(config.headers.get('Host')).toBe('example.com');
+      expect(config.httpsAgent).toBeInstanceOf(https.Agent);
+      expect(config.httpAgent).toBeUndefined();
     });
 
-    it('should include port in Host header when specified', async () => {
+    it('should set httpAgent with custom lookup for HTTP requests', async () => {
       mockDnsLookup.mockResolvedValue({
         address: '93.184.216.34',
         family: 4,
       });
 
       const adapter = getSecureAdapter(dependencies);
-      const headers = new AxiosHeaders();
       const config = {
-        url: 'https://example.com:8443/api/data',
-        headers,
+        url: 'http://example.com/api/data',
+        headers: new AxiosHeaders(),
       } as InternalAxiosRequestConfig;
 
       await adapter(config);
 
-      expect(config.headers.get('Host')).toBe('example.com:8443');
+      expect(config.httpAgent).toBeInstanceOf(http.Agent);
+      expect(config.httpsAgent).toBeUndefined();
     });
 
-    it('should preserve query parameters after IP replacement', async () => {
+    it('should use custom lookup that returns validated IP', async () => {
+      mockDnsLookup.mockResolvedValue({
+        address: '93.184.216.34',
+        family: 4,
+      });
+
+      const adapter = getSecureAdapter(dependencies);
+      const config = {
+        url: 'https://example.com/api/data',
+        headers: new AxiosHeaders(),
+      } as InternalAxiosRequestConfig;
+
+      await adapter(config);
+
+      // Verify the agent's lookup returns our pre-validated IP
+      const agent = config.httpsAgent as https.Agent;
+      const lookupFn = (agent.options as { lookup?: Function }).lookup;
+
+      expect(lookupFn).toBeDefined();
+
+      const lookupResult = await new Promise<{
+        address: string;
+        family: number;
+      }>((resolve) => {
+        lookupFn!(
+          'any-hostname',
+          {},
+          (err: unknown, address: string, family: number) => {
+            resolve({ address, family });
+          },
+        );
+      });
+
+      expect(lookupResult.address).toBe('93.184.216.34');
+      expect(lookupResult.family).toBe(4);
+    });
+
+    it('should handle IPv6 addresses correctly', async () => {
+      mockDnsLookup.mockResolvedValue({
+        address: '2001:4860:4860::8888',
+        family: 6,
+      });
+
+      const adapter = getSecureAdapter(dependencies);
+      const config = {
+        url: 'https://example.com/api/data',
+        headers: new AxiosHeaders(),
+      } as InternalAxiosRequestConfig;
+
+      await adapter(config);
+
+      const agent = config.httpsAgent as https.Agent;
+      const lookupFn = (agent.options as { lookup?: Function }).lookup;
+
+      const lookupResult = await new Promise<{
+        address: string;
+        family: number;
+      }>((resolve) => {
+        lookupFn!(
+          'any-hostname',
+          {},
+          (err: unknown, address: string, family: number) => {
+            resolve({ address, family });
+          },
+        );
+      });
+
+      expect(lookupResult.address).toBe('2001:4860:4860::8888');
+      expect(lookupResult.family).toBe(6);
+    });
+
+    it('should preserve query parameters in URL', async () => {
       mockDnsLookup.mockResolvedValue({
         address: '93.184.216.34',
         family: 4,
@@ -233,12 +305,12 @@ describe('getSecureAdapter', () => {
 
       expect(mockHttpAdapter).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: 'https://93.184.216.34/api?foo=bar&baz=qux',
+          url: 'https://example.com/api?foo=bar&baz=qux',
         }),
       );
     });
 
-    it('should preserve port after IP replacement', async () => {
+    it('should preserve port in URL', async () => {
       mockDnsLookup.mockResolvedValue({
         address: '93.184.216.34',
         family: 4,
@@ -254,7 +326,7 @@ describe('getSecureAdapter', () => {
 
       expect(mockHttpAdapter).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: 'https://93.184.216.34:8443/api',
+          url: 'https://example.com:8443/api',
         }),
       );
     });
@@ -310,7 +382,7 @@ describe('getSecureAdapter', () => {
 
       expect(mockHttpAdapter).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: expect.stringContaining('93.184.216.34'),
+          url: 'https://user:pass@example.com/api',
         }),
       );
     });
@@ -332,7 +404,7 @@ describe('getSecureAdapter', () => {
       expect(mockHttpAdapter).toHaveBeenCalled();
     });
 
-    it('should create headers object if not provided', async () => {
+    it('should work without pre-existing headers', async () => {
       mockDnsLookup.mockResolvedValue({
         address: '93.184.216.34',
         family: 4,
@@ -347,7 +419,7 @@ describe('getSecureAdapter', () => {
       await adapter(config);
 
       expect(mockHttpAdapter).toHaveBeenCalled();
-      expect(config.headers).toBeDefined();
+      expect(config.httpsAgent).toBeInstanceOf(https.Agent);
     });
 
     it('should work with plain object headers', async () => {
@@ -365,7 +437,7 @@ describe('getSecureAdapter', () => {
       await adapter(config);
 
       expect(mockHttpAdapter).toHaveBeenCalled();
-      expect(config.headers['Host']).toBe('example.com');
+      expect(config.httpsAgent).toBeInstanceOf(https.Agent);
     });
   });
 });
