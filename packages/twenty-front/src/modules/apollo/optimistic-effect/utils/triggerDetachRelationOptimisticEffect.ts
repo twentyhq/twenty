@@ -89,5 +89,11 @@ export const triggerDetachRelationOptimisticEffect = ({
     return;
   }
 
-  upsertRecordsInStore({ partialRecords: [newCachedRecord] });
+  const partialRecordForStore = {
+    id: newCachedRecord.id,
+    __typename: newCachedRecord.__typename,
+    [fieldNameOnTargetRecord]: newCachedRecord[fieldNameOnTargetRecord],
+  } as ObjectRecord;
+
+  upsertRecordsInStore({ partialRecords: [partialRecordForStore] });
 };
