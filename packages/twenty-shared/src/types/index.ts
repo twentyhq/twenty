@@ -53,7 +53,10 @@ export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { CrudOperationType } from './CrudOperationType';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export type { ExcludeFunctions } from './ExcludeFunctions';
-export type { ExtractJsonbProperties } from './ExtractJsonbProperties.type';
+export type {
+  HasJsonbPropertyBrand,
+  ExtractJsonbProperties,
+} from './ExtractJsonbProperties.type';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
 export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties.type';

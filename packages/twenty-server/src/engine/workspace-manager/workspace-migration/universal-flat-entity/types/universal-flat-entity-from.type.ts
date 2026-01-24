@@ -11,12 +11,12 @@ import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migrat
 import {
   ExtractJsonbProperties,
   ExtractSerializedRelationProperties,
+  HasJsonbPropertyBrand,
   JSONB_PROPERTY_BRAND,
-  JsonbProperty,
 } from 'twenty-shared/types';
 
 type FormatRecordSerializedRelation<T> = T extends unknown
-  ? T extends object
+  ? HasJsonbPropertyBrand<T> extends true
     ? Omit<
         {
           [P in keyof T as P extends ExtractSerializedRelationProperties<T> &
@@ -28,8 +28,6 @@ type FormatRecordSerializedRelation<T> = T extends unknown
       >
     : T
   : never;
-
-type toto = FormatRecordSerializedRelation<JsonbProperty<string>>
 
 // TODO Handle universal settings
 export type UniversalFlatEntityFrom<
