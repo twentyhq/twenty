@@ -1,6 +1,7 @@
+import { type Equal, type Expect } from 'twenty-shared/testing';
+
 import { type ExtractJsonbProperties } from '../extract-jsonb-properties.type';
 import { type JsonbProperty } from '../jsonb-property.type';
-import { type Equal, type Expect } from 'twenty-shared/testing';
 
 type TestedRecord = {
   // Non-JsonbProperty fields

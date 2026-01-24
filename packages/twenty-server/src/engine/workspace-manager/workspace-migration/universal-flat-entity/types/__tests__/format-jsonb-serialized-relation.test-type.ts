@@ -1,11 +1,11 @@
 import { type Equal, type Expect } from 'twenty-shared/testing';
+import { type SerializedRelation } from 'twenty-shared/types';
+
+import { type FormatJsonbSerializedRelation } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-jsonb-serialized-relation.type';
 import {
   type JSONB_PROPERTY_BRAND,
   type JsonbProperty,
-  type SerializedRelation,
-} from 'twenty-shared/types';
-
-import { type FormatJsonbSerializedRelation } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-jsonb-serialized-relation.type';
+} from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 type BrandedObjectWithRelation = JsonbProperty<{
   name: string;

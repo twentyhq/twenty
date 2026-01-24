@@ -1,10 +1,12 @@
-import {
-  type JsonbProperty,
-  JSONB_PROPERTY_BRAND,
-} from '../jsonb-property.type';
 import { type Equal, type Expect } from 'twenty-shared/testing';
 
+import {
+  type JsonbProperty,
+  type JSONB_PROPERTY_BRAND,
+} from '../jsonb-property.type';
+
 type SimpleObject = { value: string };
+
 type NestedObject = { nested: { deep: number } };
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -39,10 +41,16 @@ type ObjectAssertions = [
 type ArrayAssertions = [
   // Arrays are objects, so they get branded on the array itself
   Expect<
-    Equal<JsonbProperty<string[]>, string[] & { [JSONB_PROPERTY_BRAND]?: never }>
+    Equal<
+      JsonbProperty<string[]>,
+      string[] & { [JSONB_PROPERTY_BRAND]?: never }
+    >
   >,
   Expect<
-    Equal<JsonbProperty<number[]>, number[] & { [JSONB_PROPERTY_BRAND]?: never }>
+    Equal<
+      JsonbProperty<number[]>,
+      number[] & { [JSONB_PROPERTY_BRAND]?: never }
+    >
   >,
   Expect<
     Equal<
