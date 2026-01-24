@@ -137,12 +137,12 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       flatFieldMetadataMaps: context.flatFieldMetadataMaps,
     });
 
-    const recordsToMerge = await context.repository.find({
+    const fetchedRecords = await context.repository.find({
       where: { id: In(args.ids) },
       select: columnsToSelect,
     });
 
-    if (recordsToMerge.length !== args.ids.length) {
+    if (fetchedRecords.length !== args.ids.length) {
       throw new CommonQueryRunnerException(
         'One or more records not found',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
@@ -150,12 +150,30 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       );
     }
 
+    // Preserve original input order
+    const recordsById = new Map(
+      fetchedRecords.map((record) => [record.id, record]),
+    );
+    const recordsToMerge = args.ids.map((id) => {
+      const record = recordsById.get(id);
+
+      if (!record) {
+        throw new CommonQueryRunnerException(
+          `Record with id ${id} not found`,
+          CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+          { userFriendlyMessage: msg`Record not found.` },
+        );
+      }
+
+      return record;
+    });
+
     if (args.dryRun && args.selectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps: context.flatObjectMetadataMaps,
         flatFieldMetadataMaps: context.flatFieldMetadataMaps,
         parentObjectMetadataItem: context.flatObjectMetadata,
-        parentObjectRecords: recordsToMerge as ObjectRecord[],
+        parentObjectRecords: recordsToMerge,
         relations: args.selectedFieldsResult.relations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
@@ -168,7 +186,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       });
     }
 
-    return recordsToMerge as ObjectRecord[];
+    return recordsToMerge;
   }
 
   private validateAndGetPriorityRecord(

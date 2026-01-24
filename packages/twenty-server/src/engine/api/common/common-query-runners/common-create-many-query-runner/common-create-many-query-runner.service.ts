@@ -419,18 +419,33 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
     });
 
+    const orderedIds = objectRecords.generatedMaps.map((record) => record.id);
+
     const upsertedRecords = await queryBuilder
       .setFindOptions({
         select: columnsToSelect,
       })
       .where({
-        id: In(objectRecords.generatedMaps.map((record) => record.id)),
+        id: In(orderedIds),
       })
       .withDeleted()
       .take(QUERY_MAX_RECORDS)
       .getMany();
 
-    return upsertedRecords as ObjectRecord[];
+    // Preserve original input order by sorting results to match orderedIds
+    const recordsById = new Map<string, ObjectRecord>(
+      upsertedRecords.map((record) => [record.id, record as ObjectRecord]),
+    );
+
+    return orderedIds.map((id) => {
+      const record = recordsById.get(id);
+
+      if (!record) {
+        throw new Error(`Record with id ${id} not found after upsert`);
+      }
+
+      return record;
+    });
   }
 
   async processQueryResult(

@@ -71,12 +71,21 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     });
 
     if (isDefined(args.ids) && args.ids.length > 0) {
-      objectRecords = (await existingRecordsQueryBuilder
+      const fetchedRecords = (await existingRecordsQueryBuilder
         .where({ id: In(args.ids) })
         .setFindOptions({
           select: columnsToSelect,
         })
         .getMany()) as ObjectRecord[];
+
+      // Preserve original input order
+      const recordsById = new Map(
+        fetchedRecords.map((record) => [record.id, record]),
+      );
+
+      objectRecords = args.ids
+        .map((id) => recordsById.get(id))
+        .filter(isDefined);
     } else if (args.data && !isEmpty(args.data)) {
       objectRecords = args.data;
     }
