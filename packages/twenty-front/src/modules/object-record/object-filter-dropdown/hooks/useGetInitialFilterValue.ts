@@ -57,7 +57,8 @@ export const useGetInitialFilterValue = () => {
 
         break;
       }
-      case 'BOOLEAN': {
+      case 'BOOLEAN':
+      case 'boolean': {
         if (newOperand === RecordFilterOperand.IS) {
           return { value: 'false', displayValue: 'false' };
         }
