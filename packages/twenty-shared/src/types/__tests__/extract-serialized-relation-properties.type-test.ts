@@ -1,6 +1,6 @@
+import { Equal, Expect } from '@/testing';
 import { type ExtractSerializedRelationProperties } from '@/types/ExtractSerializedRelationProperties.type';
 import { type SerializedRelation } from '@/types/SerializedRelation.type';
-import { type Equal, type Expect } from 'twenty-shared/testing';
 
 type TestedRecord = {
   // Non-SerializedRelation fields
@@ -39,5 +39,31 @@ type Assertions = [
   // Object with no SerializedRelation fields returns never
   Expect<
     Equal<ExtractSerializedRelationProperties<{ a: string; b: number }>, never>
+  >,
+
+  // Primitives return never (tests T extends object branch)
+  Expect<Equal<ExtractSerializedRelationProperties<string>, never>>,
+  Expect<Equal<ExtractSerializedRelationProperties<number>, never>>,
+  Expect<Equal<ExtractSerializedRelationProperties<null>, never>>,
+
+  // Empty object returns never
+  Expect<Equal<ExtractSerializedRelationProperties<object>, never>>,
+
+  // Union types distribute correctly
+  Expect<
+    Equal<
+      ExtractSerializedRelationProperties<
+        { a: SerializedRelation } | { b: SerializedRelation }
+      >,
+      'a' | 'b'
+    >
+  >,
+
+  // Mixed union with object and primitive
+  Expect<
+    Equal<
+      ExtractSerializedRelationProperties<{ rel: SerializedRelation } | string>,
+      'rel'
+    >
   >,
 ];
