@@ -13,14 +13,17 @@ import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless
 import { CreateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { buildAndUploadServerlessFunction } from 'src/engine/core-modules/serverless/drivers/utils/build-and-upload-serverless-function';
+import { FunctionBuildService } from 'src/engine/metadata-modules/function-build/function-build.service';
 
 @Injectable()
 export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'create',
   'serverlessFunction',
 ) {
-  constructor(private readonly fileStorageService: FileStorageService) {
+  constructor(
+    private readonly fileStorageService: FileStorageService,
+    private readonly functionBuildService: FunctionBuildService,
+  ) {
     super();
   }
 
@@ -66,10 +69,9 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
         });
       }
     }
-    await buildAndUploadServerlessFunction({
+    await this.functionBuildService.buildAndUpload({
       flatServerlessFunction: serverlessFunction,
       version: 'draft',
-      fileStorageService: this.fileStorageService,
     });
   }
 

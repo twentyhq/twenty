@@ -52,12 +52,11 @@ const mocks: MockedResponse[] = [
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
   const useUpdateOneRecordMutation: RecordUpdateHook = () => {
-    const { updateOneRecord } = useUpdateOneRecord({
-      objectNameSingular: CoreObjectNameSingular.Company,
-    });
+    const { updateOneRecord } = useUpdateOneRecord();
 
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
-      updateOneRecord?.({
+      updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.Company,
         idToUpdate: variables.where.id as string,
         updateOneRecordInput: variables.updateOneRecordInput,
       });

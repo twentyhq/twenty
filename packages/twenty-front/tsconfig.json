@@ -24,29 +24,29 @@
       "@/*": ["./src/modules/*"],
       "~/*": ["./src/*"]
     },
+    "types": ["node", "jest"],
     "plugins": [
       {
         "name": "@styled/typescript-styled-plugin",
         "lint": {
-          "validProperties": ["container-type"],
+          "validProperties": ["container-type"]
         }
       }
     ]
   },
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.dev.json"
-    },
-    {
-      "path": "./tsconfig.build.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    },
-    {
-      "path": "./tsconfig.storybook.json"
-    }
+  "include": [
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/**/*.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".storybook/*.ts",
+    ".storybook/*.tsx",
+    "lingui.config.ts",
+    "jest.config.mjs",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "setupTests.ts"
   ],
   "extends": "../../tsconfig.base.json"
 }

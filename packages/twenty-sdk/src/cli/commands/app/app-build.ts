@@ -1,10 +1,15 @@
-import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
+import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
-import { runManifestBuild, type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-build';
+import {
+  type ManifestBuildResult,
+  runManifestBuild,
+  updateManifestChecksum,
+} from '@/cli/utilities/build/manifest/manifest-build';
 import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 
 const initLogger = createLogger('init');
 
@@ -18,7 +23,9 @@ export class AppBuildCommand {
 
   private appPath: string = '';
 
-  async execute(options: AppBuildOptions): Promise<ApiResponse<null>> {
+  async execute(
+    options: AppBuildOptions,
+  ): Promise<ApiResponse<ManifestBuildResult>> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
     initLogger.log('🚀 Building Twenty Application');
@@ -33,7 +40,7 @@ export class AppBuildCommand {
 
     initLogger.success('✅ Build completed successfully');
 
-    return { success: true, data: null };
+    return { success: true, data: buildResult };
   }
 
   private async runBuild(): Promise<ManifestBuildResult | null> {
@@ -45,27 +52,58 @@ export class AppBuildCommand {
 
     await this.buildFunctions(buildResult);
     await this.buildFrontComponents(buildResult);
-
+    await writeManifestToOutput(this.appPath, buildResult.manifest);
     await this.cleanup();
 
     return buildResult;
   }
 
-  private async buildFunctions(buildResult: ManifestBuildResult): Promise<void> {
+  private async buildFunctions(
+    buildResult: ManifestBuildResult,
+  ): Promise<void> {
     this.functionsBuilder = new FunctionsWatcher({
       appPath: this.appPath,
-      buildResult,
+      sourcePaths: buildResult.filePaths.functions,
       watch: false,
+      onFileBuilt: (builtPath, checksum) => {
+        if (buildResult.manifest) {
+          const updatedManifest = updateManifestChecksum({
+            manifest: buildResult.manifest,
+            entityType: 'function',
+            builtPath,
+            checksum,
+          });
+
+          if (updatedManifest) {
+            buildResult.manifest = updatedManifest;
+          }
+        }
+      },
     });
 
     await this.functionsBuilder.start();
   }
 
-  private async buildFrontComponents(buildResult: ManifestBuildResult): Promise<void> {
+  private async buildFrontComponents(
+    buildResult: ManifestBuildResult,
+  ): Promise<void> {
     this.frontComponentsBuilder = new FrontComponentsWatcher({
       appPath: this.appPath,
-      buildResult,
+      sourcePaths: buildResult.filePaths.frontComponents,
       watch: false,
+      onFileBuilt: (builtPath, checksum) => {
+        if (buildResult.manifest) {
+          const updatedManifest = updateManifestChecksum({
+            manifest: buildResult.manifest,
+            entityType: 'frontComponent',
+            builtPath,
+            checksum,
+          });
+          if (updatedManifest) {
+            buildResult.manifest = updatedManifest;
+          }
+        }
+      },
     });
 
     await this.frontComponentsBuilder.start();

@@ -17,5 +17,6 @@ export default defineConfig({
     diff: {
       truncateThreshold: 0,
     },
+    fileParallelism: false,
   },
 });

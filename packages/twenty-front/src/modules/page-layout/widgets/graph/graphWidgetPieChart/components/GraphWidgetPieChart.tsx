@@ -1,5 +1,6 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { CustomArcsLayer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/CustomArcsLayer';
 import { GraphPieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphPieChartTooltip';
 import { PieChartCenterMetric } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer';
@@ -140,7 +141,7 @@ export const GraphWidgetPieChart = ({
   const chartColors = hasNoData
     ? [theme.background.tertiary]
     : enrichedData.map((item) => item.colorScheme.solid);
-  const pieChartPadAngle = hasNoData ? 0 : 0.4;
+  const pieChartPadAngle = hasNoData || enrichedData.length <= 1 ? 0 : 0.4;
 
   const ArcsLayer = useCallback(
     (props: PieCustomLayerProps<PieChartDataItemWithColor>) => (
@@ -186,6 +187,8 @@ export const GraphWidgetPieChart = ({
             margin={showDataLabels && !hasNoData ? PIE_CHART_MARGINS : {}}
             innerRadius={0.8}
             colors={chartColors}
+            animate
+            motionConfig={CHART_MOTION_CONFIG}
             enableArcLinkLabels={showDataLabels && !hasNoData}
             enableArcLabels={false}
             tooltip={() => null}

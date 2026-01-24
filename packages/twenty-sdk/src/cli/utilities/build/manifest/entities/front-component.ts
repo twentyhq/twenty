@@ -1,21 +1,25 @@
 import { glob } from 'fast-glob';
 import { type FrontComponentManifest } from 'twenty-shared/application';
-import { createLogger } from '../../common/logger';
-import { FRONT_COMPONENTS_DIR } from '../../front-components/constants';
-import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
-import { type ValidationError } from '../manifest.types';
+import { createLogger } from '@/cli/utilities/build/common/logger';
+
+import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
+import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 import {
   type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
-} from './entity.interface';
+} from '@/cli/utilities/build/manifest/entities/entity-interface';
+import { FRONT_COMPONENTS_DIR } from '@/cli/utilities/build/front-components/constants';
 
 const logger = createLogger('manifest-watch');
 
 type FrontComponentConfig = Omit<
   FrontComponentManifest,
-  'sourceComponentPath' | 'builtComponentPath' | 'componentName'
+  | 'sourceComponentPath'
+  | 'builtComponentPath'
+  | 'builtComponentChecksum'
+  | 'componentName'
 > & {
   component: { name: string };
 };
@@ -23,10 +27,17 @@ type FrontComponentConfig = Omit<
 export class FrontComponentEntityBuilder
   implements ManifestEntityBuilder<FrontComponentManifest>
 {
-  async build(appPath: string): Promise<EntityBuildResult<FrontComponentManifest>> {
+  async build(
+    appPath: string,
+  ): Promise<EntityBuildResult<FrontComponentManifest>> {
     const componentFiles = await glob(['**/*.front-component.tsx'], {
       cwd: appPath,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
+      ignore: [
+        '**/node_modules/**',
+        '**/*.d.ts',
+        '**/dist/**',
+        '**/.twenty/**',
+      ],
     });
 
     const manifests: FrontComponentManifest[] = [];
@@ -47,6 +58,7 @@ export class FrontComponentEntityBuilder
           componentName: component.name,
           sourceComponentPath: filePath,
           builtComponentPath,
+          builtComponentChecksum: null,
         });
       } catch (error) {
         throw new Error(

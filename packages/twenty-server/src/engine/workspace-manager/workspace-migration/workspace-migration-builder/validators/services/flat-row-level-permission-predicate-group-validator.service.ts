@@ -26,9 +26,11 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
       flatRowLevelPermissionPredicateGroupMaps:
         optimisticFlatPredicateGroupMaps,
       flatRoleMaps,
+      flatObjectMetadataMaps,
     } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps as Partial<{
       flatRowLevelPermissionPredicateGroupMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps;
       flatRoleMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRoleMaps;
+      flatObjectMetadataMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatObjectMetadataMaps;
     }>;
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -86,6 +88,21 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
       });
     }
 
+    const objectMetadata = flatObjectMetadataMaps
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatPredicateGroupToValidate.objectMetadataId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        })
+      : undefined;
+
+    if (!isDefined(objectMetadata)) {
+      validationResult.errors.push({
+        code: RowLevelPermissionPredicateGroupExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        message: t`Object metadata not found`,
+        userFriendlyMessage: msg`Object metadata not found`,
+      });
+    }
+
     return validationResult;
   }
 
@@ -135,9 +152,11 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
       flatRowLevelPermissionPredicateGroupMaps:
         optimisticFlatPredicateGroupMaps,
       flatRoleMaps,
+      flatObjectMetadataMaps,
     } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps as Partial<{
       flatRowLevelPermissionPredicateGroupMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps;
       flatRoleMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRoleMaps;
+      flatObjectMetadataMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatObjectMetadataMaps;
     }>;
 
     const existingPredicateGroup =
@@ -181,6 +200,20 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
     }
 
     if (
+      updatedPredicateGroup.objectMetadataId !==
+      existingPredicateGroup.objectMetadataId
+    ) {
+      const existingObjectMetadataId = existingPredicateGroup.objectMetadataId;
+      const updatedObjectMetadataId = updatedPredicateGroup.objectMetadataId;
+
+      validationResult.errors.push({
+        code: RowLevelPermissionPredicateGroupExceptionCode.UNAUTHORIZED_OBJECT_MODIFICATION,
+        message: t`Cannot modify predicate group to change its object from ${existingObjectMetadataId} to ${updatedObjectMetadataId}`,
+        userFriendlyMessage: msg`Cannot modify predicate group to change its object`,
+      });
+    }
+
+    if (
       isDefined(
         updatedPredicateGroup.parentRowLevelPermissionPredicateGroupId,
       ) &&
@@ -213,6 +246,21 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
         code: RowLevelPermissionPredicateGroupExceptionCode.ROLE_NOT_FOUND,
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
+      });
+    }
+
+    const objectMetadata = flatObjectMetadataMaps
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: updatedPredicateGroup.objectMetadataId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        })
+      : undefined;
+
+    if (!isDefined(objectMetadata)) {
+      validationResult.errors.push({
+        code: RowLevelPermissionPredicateGroupExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        message: t`Object metadata not found`,
+        userFriendlyMessage: msg`Object metadata not found`,
       });
     }
 

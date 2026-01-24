@@ -1,26 +1,42 @@
-import { ApiService } from '@/cli/utilities/api/services/api.service';
-import { type ApiResponse } from '@/cli/utilities/api/types/api-response.types';
-import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import path from 'path';
+import { AppBuildCommand } from '@/cli/commands/app/app-build';
+import { FileUploader } from '@/cli/utilities/file/file-uploader';
+import { ApiService } from '@/cli/utilities/api/api-service';
 
 export class AppSyncCommand {
   private apiService = new ApiService();
+  private buildCommand = new AppBuildCommand();
 
   async execute(
     appPath: string = CURRENT_EXECUTION_DIRECTORY,
   ): Promise<ApiResponse<any>> {
     console.log(chalk.blue('🚀 Syncing Twenty Application'));
-    console.log(chalk.gray(`📁 App Path: ${appPath}`));
     console.log('');
 
-    const { manifest } = await runManifestBuild(appPath, { writeOutput: false });
+    const result = await this.buildCommand.execute({
+      appPath,
+    });
+
+    if (!result.success) {
+      return result;
+    }
+
+    const manifest = result.data.manifest;
 
     if (!manifest) {
-      return { success: false, error: 'Build failed' };
+      return { success: false, error: 'No manifest found. Build failed?' };
     }
+
+    const uploadService = new FileUploader({
+      applicationUniversalIdentifier: manifest.application.universalIdentifier,
+      appPath,
+    });
+
+    await uploadService.uploadManifestBuiltFiles(manifest);
 
     const yarnLockPath = path.join(appPath, 'yarn.lock');
     let yarnLock = '';
@@ -29,20 +45,17 @@ export class AppSyncCommand {
       yarnLock = await fs.readFile(yarnLockPath, 'utf8');
     }
 
-    const serverlessSyncResult = await this.apiService.syncApplication({
+    const syncResult = await this.apiService.syncApplication({
       manifest,
       yarnLock,
     });
 
-    if (serverlessSyncResult.success === false) {
-      console.error(
-        chalk.red('❌ Application Sync failed:'),
-        serverlessSyncResult.error,
-      );
+    if (!syncResult.success) {
+      console.error(chalk.red('❌ Application Sync failed:'), syncResult.error);
     } else {
       console.log(chalk.green('✅ Application synced successfully'));
     }
 
-    return serverlessSyncResult;
+    return syncResult;
   }
 }

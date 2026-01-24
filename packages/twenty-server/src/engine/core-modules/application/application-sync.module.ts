@@ -5,6 +5,8 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
+import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { DatabaseEventTriggerModule } from 'src/engine/metadata-modules/database-event-trigger/database-event-trigger.module';
@@ -18,11 +20,11 @@ import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
-import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
-import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 
 @Module({
   imports: [
@@ -45,11 +47,13 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
     PermissionFlagModule,
     WorkflowCommonModule,
     FileStorageModule,
+    WorkspaceCacheModule,
+    WorkspaceMigrationRunnerModule,
   ],
   providers: [
     ApplicationResolver,
     ApplicationSyncService,
-    WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
+    WorkspaceMigrationGraphqlApiExceptionInterceptor,
   ],
   exports: [ApplicationSyncService],
 })

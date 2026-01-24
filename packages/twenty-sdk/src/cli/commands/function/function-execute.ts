@@ -1,6 +1,6 @@
-import { ApiService } from '@/cli/utilities/api/services/api.service';
+import { ApiService } from '@/cli/utilities/api/api-service';
 import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -164,7 +164,7 @@ export class FunctionExecuteCommand {
     fn: { universalIdentifier: string; applicationId: string | null },
     manifest: ApplicationManifest,
   ): boolean {
-    return manifest.serverlessFunctions.some(
+    return manifest.functions.some(
       (manifestFn) => manifestFn.universalIdentifier === fn.universalIdentifier,
     );
   }

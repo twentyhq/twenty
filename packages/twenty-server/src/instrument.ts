@@ -2,6 +2,7 @@ import process from 'process';
 
 import opentelemetry from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
+import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import {
   AggregationTemporality,
   ConsoleMetricExporter,
@@ -49,6 +50,10 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
 
 // Meter setup
 
+const prometheusExporter = meterDrivers.includes(MeterDriver.Prometheus)
+  ? new PrometheusExporter({ port: 9464 })
+  : null;
+
 const meterProvider = new MeterProvider({
   readers: [
     ...(meterDrivers.includes(MeterDriver.Console)
@@ -70,6 +75,7 @@ const meterProvider = new MeterProvider({
           }),
         ]
       : []),
+    ...(prometheusExporter ? [prometheusExporter] : []),
   ],
 });
 

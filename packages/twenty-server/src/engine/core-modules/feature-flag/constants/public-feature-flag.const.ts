@@ -13,28 +13,12 @@ export type PublicFeatureFlag = {
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
-    key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
-    metadata: {
-      label: 'Dashboards',
-      description: 'Enable dashboards',
-      imagePath: 'https://twenty.com/images/lab/is-dashboards-enabled.png',
-    },
-  },
-  {
     key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
     metadata: {
       label: 'Junction Relations',
       description:
         'Enable many-to-many relations through junction tables configuration',
       imagePath: 'https://twenty.com/images/lab/is-junction-relations.png',
-    },
-  },
-  {
-    key: FeatureFlagKey.IS_IF_ELSE_ENABLED,
-    metadata: {
-      label: 'If/Else Workflow Node',
-      description: 'Enable if/else conditional branching in workflows',
-      imagePath: 'https://twenty.com/images/lab/is-if-else-enabled.png',
     },
   },
   {

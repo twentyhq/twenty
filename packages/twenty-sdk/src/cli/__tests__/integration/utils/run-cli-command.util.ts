@@ -23,12 +23,7 @@ export type RunCliCommandResult = {
 export const runCliCommand = (
   options: RunCliCommandOptions,
 ): Promise<RunCliCommandResult> => {
-  const {
-    command,
-    args = [],
-    waitForOutput,
-    timeout = 30000,
-  } = options;
+  const { command, args = [], waitForOutput, timeout = 30000 } = options;
 
   return new Promise((resolve) => {
     // Run from CLI directory to use twenty-sdk's tsconfig paths
@@ -68,7 +63,7 @@ export const runCliCommand = (
         setTimeout(() => {
           child.kill();
           resolve({ success: true, output });
-        }, 500);
+        }, 1500);
       }
     });
 

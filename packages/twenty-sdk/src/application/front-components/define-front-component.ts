@@ -1,4 +1,4 @@
-import { type FrontComponentConfig } from './front-component-config';
+import { type FrontComponentConfig } from '@/application/front-components/front-component-config';
 
 /**
  * Define a front component configuration with validation.

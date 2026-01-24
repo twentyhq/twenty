@@ -40,9 +40,7 @@ export const NameFields = ({ autoSave = true }: NameFieldsProps) => {
     currentWorkspaceMember?.name?.lastName ?? '',
   );
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   const debouncedUpdate = useDebouncedCallback(async () => {
@@ -53,6 +51,7 @@ export const NameFields = ({ autoSave = true }: NameFieldsProps) => {
 
       if (autoSave) {
         await updateOneRecord({
+          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
           idToUpdate: currentWorkspaceMember?.id,
           updateOneRecordInput: {
             name: {

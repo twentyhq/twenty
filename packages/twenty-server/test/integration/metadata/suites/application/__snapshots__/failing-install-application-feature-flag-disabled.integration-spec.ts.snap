@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Install application should fail when feature flag is disabled should fail with forbidden error when feature flag is disabled 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "Application installation from tarball is not enabled",
+  "name": "UserInputError",
+}
+`;

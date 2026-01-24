@@ -1,7 +1,8 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
 
-import expectedManifest from '../manifest.expected.json';
+import { normalizeManifestForComparison } from '@/cli/__tests__/integration/utils/normalize-manifest.util';
+import { EXPECTED_MANIFEST } from '../expected-manifest';
 
 export const defineManifestTests = (appPath: string): void => {
   const manifestOutputPath = join(appPath, '.twenty/output/manifest.json');
@@ -14,21 +15,37 @@ export const defineManifestTests = (appPath: string): void => {
 
       const { sources: _sources, ...sanitizedManifest } = manifest;
 
-      expect(sanitizedManifest).toEqual(expectedManifest);
+      expect(normalizeManifestForComparison(sanitizedManifest)).toEqual(
+        normalizeManifestForComparison(EXPECTED_MANIFEST),
+      );
+
+      for (const fn of manifest.functions) {
+        expect(fn.builtHandlerChecksum).toBeDefined();
+        expect(fn.builtHandlerChecksum).not.toBeNull();
+        expect(typeof fn.builtHandlerChecksum).toBe('string');
+      }
+
+      for (const component of manifest.frontComponents ?? []) {
+        expect(component.builtComponentChecksum).toBeDefined();
+        expect(component.builtComponentChecksum).not.toBeNull();
+        expect(typeof component.builtComponentChecksum).toBe('string');
+      }
     });
 
     it('should have correct application config', async () => {
       const manifest = await fs.readJson(manifestOutputPath);
 
       expect(manifest?.application.displayName).toBe('Hello World');
-      expect(manifest?.application.description).toBe('A simple hello world app');
+      expect(manifest?.application.description).toBe(
+        'A simple hello world app',
+      );
     });
 
     it('should load all entity types', async () => {
       const manifest = await fs.readJson(manifestOutputPath);
 
       expect(manifest?.objects).toHaveLength(2);
-      expect(manifest?.serverlessFunctions).toHaveLength(4);
+      expect(manifest?.functions).toHaveLength(4);
       expect(manifest?.frontComponents).toHaveLength(4);
       expect(manifest?.roles).toHaveLength(2);
       expect(manifest?.objectExtensions).toHaveLength(1);

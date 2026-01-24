@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
+  ObjectRecordEvent,
   type ObjectRecordCreateEvent,
   type ObjectRecordDeleteEvent,
   type ObjectRecordDestroyEvent,
-  type ObjectRecordNonDestructiveEvent,
   type ObjectRecordUpdateEvent,
   type ObjectRecordUpsertEvent,
 } from 'twenty-shared/database-events';
@@ -308,7 +308,7 @@ export class WorkflowDatabaseEventTriggerListener {
   }
 
   private async shouldIgnoreEvent(
-    payload: WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
+    payload: WorkspaceEventBatch<ObjectRecordEvent>,
   ) {
     const workspaceId = payload.workspaceId;
     const databaseEventName = payload.name;
@@ -330,7 +330,7 @@ export class WorkflowDatabaseEventTriggerListener {
     payload,
     action,
   }: {
-    payload: WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>;
+    payload: WorkspaceEventBatch<ObjectRecordEvent>;
     action: DatabaseEventAction;
   }) {
     const workspaceId = payload.workspaceId;
@@ -390,7 +390,7 @@ export class WorkflowDatabaseEventTriggerListener {
     eventListener,
     action,
   }: {
-    eventPayload: ObjectRecordNonDestructiveEvent;
+    eventPayload: ObjectRecordEvent;
     eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
     action: DatabaseEventAction;
   }) {

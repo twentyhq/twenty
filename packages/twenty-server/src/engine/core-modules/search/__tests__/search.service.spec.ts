@@ -119,6 +119,7 @@ describe('SearchService', () => {
       const objectResults = [
         {
           objectNameSingular: 'person',
+          objectLabelSingular: 'Person',
           tsRankCD: 2,
           tsRank: 1,
           recordId: '',
@@ -127,6 +128,7 @@ describe('SearchService', () => {
         },
         {
           objectNameSingular: 'company',
+          objectLabelSingular: 'Company',
           tsRankCD: 1,
           tsRank: 1,
           recordId: '',
@@ -135,6 +137,7 @@ describe('SearchService', () => {
         },
         {
           objectNameSingular: 'regular-custom-object',
+          objectLabelSingular: 'Regular Custom Object',
           tsRankCD: 3,
           tsRank: 1,
           recordId: '',
@@ -154,6 +157,7 @@ describe('SearchService', () => {
       const objectResults = [
         {
           objectNameSingular: 'person',
+          objectLabelSingular: 'Person',
           tsRankCD: 1,
           tsRank: 1,
           recordId: '',
@@ -162,6 +166,7 @@ describe('SearchService', () => {
         },
         {
           objectNameSingular: 'company',
+          objectLabelSingular: 'Company',
           tsRankCD: 1,
           tsRank: 2,
           recordId: '',
@@ -170,6 +175,7 @@ describe('SearchService', () => {
         },
         {
           objectNameSingular: 'regular-custom-object',
+          objectLabelSingular: 'Regular Custom Object',
           tsRankCD: 1,
           tsRank: 3,
           recordId: '',
@@ -189,6 +195,7 @@ describe('SearchService', () => {
       const objectResults = [
         {
           objectNameSingular: 'company',
+          objectLabelSingular: 'Company',
           tsRankCD: 1,
           tsRank: 1,
           recordId: '',
@@ -197,6 +204,7 @@ describe('SearchService', () => {
         },
         {
           objectNameSingular: 'person',
+          objectLabelSingular: 'Person',
           tsRankCD: 1,
           tsRank: 1,
           recordId: '',
@@ -205,6 +213,7 @@ describe('SearchService', () => {
         },
         {
           objectNameSingular: 'regular-custom-object',
+          objectLabelSingular: 'Regular Custom Object',
           tsRankCD: 1,
           tsRank: 1,
           recordId: '',
@@ -227,6 +236,7 @@ describe('SearchService', () => {
         {
           record: {
             objectNameSingular: 'company',
+            objectLabelSingular: 'Company',
             tsRankCD: 0.9,
             tsRank: 0.9,
             recordId: 'companyId1',
@@ -243,6 +253,7 @@ describe('SearchService', () => {
         {
           record: {
             objectNameSingular: 'company',
+            objectLabelSingular: 'Company',
             tsRankCD: 0.89,
             tsRank: 0.89,
             recordId: 'companyId2',
@@ -259,6 +270,7 @@ describe('SearchService', () => {
         {
           record: {
             objectNameSingular: 'person',
+            objectLabelSingular: 'Person',
             tsRankCD: 0.87,
             tsRank: 0.87,
             recordId: 'personId1',
@@ -276,6 +288,7 @@ describe('SearchService', () => {
         {
           record: {
             objectNameSingular: 'person',
+            objectLabelSingular: 'Person',
             tsRankCD: 0.87,
             tsRank: 0.87,
             recordId: 'personId2',
@@ -293,6 +306,7 @@ describe('SearchService', () => {
         {
           record: {
             objectNameSingular: 'opportunity',
+            objectLabelSingular: 'Opportunity',
             tsRankCD: 0.87,
             tsRank: 0.87,
             recordId: 'opportunityId1',
@@ -311,6 +325,7 @@ describe('SearchService', () => {
         {
           record: {
             objectNameSingular: 'note',
+            objectLabelSingular: 'Note',
             tsRankCD: 0.2,
             tsRank: 0.2,
             recordId: 'noteId1',
@@ -330,6 +345,7 @@ describe('SearchService', () => {
         {
           record: {
             objectNameSingular: 'company',
+            objectLabelSingular: 'Company',
             tsRankCD: 0.1,
             tsRank: 0.1,
             recordId: 'companyId3',
@@ -362,6 +378,7 @@ describe('SearchService', () => {
         {
           record: {
             objectNameSingular: 'person',
+            objectLabelSingular: 'Person',
             tsRankCD: 0.87,
             tsRank: 0.87,
             recordId: 'personId2',
@@ -379,6 +396,7 @@ describe('SearchService', () => {
         {
           record: {
             objectNameSingular: 'opportunity',
+            objectLabelSingular: 'Opportunity',
             tsRankCD: 0.87,
             tsRank: 0.87,
             recordId: 'opportunityId1',
@@ -397,6 +415,7 @@ describe('SearchService', () => {
         {
           record: {
             objectNameSingular: 'note',
+            objectLabelSingular: 'Note',
             tsRankCD: 0.2,
             tsRank: 0.2,
             recordId: 'noteId1',
@@ -416,6 +435,7 @@ describe('SearchService', () => {
         {
           record: {
             objectNameSingular: 'company',
+            objectLabelSingular: 'Company',
             tsRankCD: 0.1,
             tsRank: 0.1,
             recordId: 'companyId3',

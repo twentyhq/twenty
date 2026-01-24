@@ -115,6 +115,34 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
       return;
     }
 
+    const customOwnerField = flatFieldMetadatas.find(
+      (field) =>
+        field.name === 'owner' &&
+        field.universalIdentifier !== ownerUniversalIdentifier,
+    );
+
+    if (isDefined(customOwnerField)) {
+      if (options.dryRun) {
+        this.logger.log(
+          `[DRY RUN] Would rename custom owner field to 'ownerOld' in workspace ${workspaceId}`,
+        );
+      } else {
+        await this.fieldMetadataService.updateOneField({
+          updateFieldInput: {
+            id: customOwnerField.id,
+            name: 'ownerOld',
+            label: 'Owner (Old)',
+          },
+          workspaceId,
+          isSystemBuild: true,
+        });
+
+        this.logger.log(
+          `Renamed custom owner field to 'ownerOld' in workspace ${workspaceId}`,
+        );
+      }
+    }
+
     if (options.dryRun) {
       this.logger.log(
         `[DRY RUN] Would create owner field for opportunity in workspace ${workspaceId}`,

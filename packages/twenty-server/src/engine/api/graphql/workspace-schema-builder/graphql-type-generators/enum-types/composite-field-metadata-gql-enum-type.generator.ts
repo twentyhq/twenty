@@ -6,6 +6,7 @@ import {
   type CompositeProperty,
   type CompositeType,
 } from 'twenty-shared/types';
+import { pascalCase } from 'twenty-shared/utils';
 
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeCompositeFieldEnumTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-enum-type-key.util';
@@ -14,7 +15,6 @@ import {
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
 export class CompositeFieldMetadataGqlEnumTypeGenerator {
