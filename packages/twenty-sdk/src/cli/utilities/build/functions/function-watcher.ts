@@ -39,6 +39,9 @@ export const FUNCTION_EXTERNAL_MODULES: string[] = [
   'twenty-shared/*',
 ];
 
+/**
+ * Watches function files and rebuilds them using esbuild.
+ */
 export class FunctionsWatcher implements RestartableWatcher {
   private appPath: string;
   private functionPaths: string[];
@@ -47,7 +50,6 @@ export class FunctionsWatcher implements RestartableWatcher {
   private watchMode: boolean;
   private lastChecksums: Map<string, string> = new Map();
   private onFileBuilt?: OnFileBuiltCallback;
-  private getCurrentGeneration: () => number;
   private buildCompletePromise: Promise<void> = Promise.resolve();
   private resolveBuildComplete: (() => void) | null = null;
 
@@ -56,14 +58,11 @@ export class FunctionsWatcher implements RestartableWatcher {
     this.functionPaths = options.sourcePaths;
     this.watchMode = options.watch ?? true;
     this.onFileBuilt = options.onFileBuilt;
-    // Default to generation 0 if no getter is provided
-    this.getCurrentGeneration = options.getCurrentGeneration ?? (() => 0);
   }
 
   shouldRestart(sourcePaths: string[]): boolean {
     const currentPaths = this.functionPaths.sort().join(',');
     const newPaths = [...sourcePaths].sort().join(',');
-
     return currentPaths !== newPaths;
   }
 
@@ -165,15 +164,11 @@ export class FunctionsWatcher implements RestartableWatcher {
                   return;
                 }
 
-                // Get current generation at the time of build completion
-                const generation = watcher.getCurrentGeneration();
-
                 const { hasChanges } = await processEsbuildResult({
                   result,
                   outputDir,
                   builtDir: FUNCTIONS_DIR,
                   lastChecksums: watcher.lastChecksums,
-                  generation,
                   onFileBuilt: watcher.onFileBuilt,
                   onSuccess: (relativePath) =>
                     logger.success(`✓ Built ${relativePath}`),

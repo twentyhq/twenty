@@ -9,11 +9,6 @@ export type ProcessEsbuildResultParams = {
   outputDir: string;
   builtDir: string;
   lastChecksums: Map<string, string>;
-  /**
-   * The generation number to pass to onFileBuilt callback.
-   * This allows the orchestrator to identify stale completions.
-   */
-  generation: number;
   onFileBuilt?: OnFileBuiltCallback;
   onSuccess: (relativePath: string) => void;
 };
@@ -27,7 +22,6 @@ export const processEsbuildResult = async ({
   outputDir,
   builtDir,
   lastChecksums,
-  generation,
   onFileBuilt,
   onSuccess,
 }: ProcessEsbuildResultParams): Promise<ProcessEsbuildResultOutput> => {
@@ -57,7 +51,7 @@ export const processEsbuildResult = async ({
     onSuccess(relativePath);
 
     if (onFileBuilt) {
-      await onFileBuilt(generation, builtPath, checksum);
+      await onFileBuilt(builtPath, checksum);
     }
   }
 
