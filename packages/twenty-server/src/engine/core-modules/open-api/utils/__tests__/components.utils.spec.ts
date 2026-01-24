@@ -53,7 +53,7 @@ describe('computeSchemaComponents', () => {
     "description": "Object description",
     "example": {
       "fieldCurrency": {
-        "amountMicros": 284000000,
+        "amountMicros": "284000000",
         "currencyCode": "EUR",
       },
       "fieldEmails": {
@@ -554,7 +554,7 @@ describe('computeSchemaComponents', () => {
     "description": "Object description",
     "example": {
       "fieldCurrency": {
-        "amountMicros": 253000000,
+        "amountMicros": "253000000",
         "currencyCode": "EUR",
       },
       "fieldEmails": {
