@@ -9,10 +9,12 @@ export interface RestartableWatcher {
  * Callback invoked when a file has been built.
  * @param builtPath - The path to the built file (relative to output dir)
  * @param checksum - The MD5 checksum of the built file content
+ * @param sourcePath - The original source file path (entry point)
  */
 export type OnFileBuiltCallback = (
   builtPath: string,
   checksum: string,
+  sourcePath: string,
 ) => void | Promise<void>;
 
 export type RestartableWatcherOptions = {

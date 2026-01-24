@@ -3,16 +3,18 @@ import {
   type ManifestBuildResult,
   runManifestBuild,
 } from '@/cli/utilities/build/manifest/manifest-build';
+import { devUIState } from '@/cli/utilities/dev/dev-ui-state';
+import { relative } from 'path';
 
 export type ManifestWatcherCallbacks = {
   /**
    * Called when a file change is detected, BEFORE the manifest build starts.
    */
-  onChangeDetected?: () => void;
+  onChangeDetected?: (filePath?: string) => void;
   /**
    * Called when the manifest build completes (success or failure).
    */
-  onBuildComplete?: (result: ManifestBuildResult) => void;
+  onBuildComplete?: (result: ManifestBuildResult, filePath?: string) => void;
 };
 
 export type ManifestWatcherOptions = {
@@ -62,21 +64,31 @@ export class ManifestWatcher {
         return;
       }
 
+      // Emit file change event for the UI
+      devUIState.fileChanged(filePath);
+      devUIState.fileBuilding(filePath);
+      devUIState.manifestBuilding();
+
+      const relativePath = relative(this.appPath, filePath);
+
       // Notify change detected
-      this.callbacks.onChangeDetected?.();
+      this.callbacks.onChangeDetected?.(relativePath);
 
       // Rebuild manifest
       const result = await runManifestBuild(this.appPath, {
+        display: false,
         writeOutput: false,
       });
 
-      this.callbacks.onBuildComplete?.(result);
+      this.callbacks.onBuildComplete?.(result, relativePath);
     });
 
     // Initial build
+    devUIState.manifestBuilding();
     this.callbacks.onChangeDetected?.();
 
     const result = await runManifestBuild(this.appPath, {
+      display: false,
       writeOutput: false,
     });
 

@@ -1,8 +1,7 @@
-import { createLogger } from '@/cli/utilities/build/common/logger';
 import {
-  EMPTY_FILE_PATHS,
-  type EntityFilePaths,
+  EMPTY_ENTITIES,
   type ManifestBuildResult,
+  type ManifestEntities,
   updateManifestChecksum,
 } from '@/cli/utilities/build/manifest/manifest-build';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
@@ -10,8 +9,7 @@ import { ApiService } from '@/cli/utilities/api/api-service';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
-
-const logger = createLogger('orchestrator');
+import { devUIState } from './dev-ui-state';
 
 export type DevModeOrchestratorOptions = {
   appPath: string;
@@ -38,7 +36,7 @@ export class DevModeOrchestrator {
 
   // Current state
   private manifest: ApplicationManifest | null = null;
-  private filePaths: EntityFilePaths = EMPTY_FILE_PATHS;
+  private entities: ManifestEntities = EMPTY_ENTITIES;
   private isManifestReady = false;
 
   // Services
@@ -64,23 +62,29 @@ export class DevModeOrchestrator {
   /**
    * Called when a file change is detected. Resets the sync timer.
    */
-  onChangeDetected(): void {
+  onChangeDetected(filePath?: string): void {
     this.cancelPendingSync();
     this.isManifestReady = false;
+    if (filePath) {
+      devUIState.fileBuilding(filePath);
+    }
   }
 
   /**
    * Called when the manifest build completes.
    */
-  onManifestBuilt(result: ManifestBuildResult): void {
+  onManifestBuilt(result: ManifestBuildResult, filePath?: string): void {
     if (!result.manifest) {
-      logger.error('Manifest build failed');
+      devUIState.manifestError('Build failed');
       return;
     }
 
     this.manifest = result.manifest;
-    this.filePaths = result.filePaths;
+    this.entities = result.entities;
     this.isManifestReady = true;
+
+    // Update UI with manifest info
+    devUIState.manifestReady(result, filePath);
 
     // Initialize file uploader on first successful manifest
     if (!this.fileUploader) {
@@ -99,23 +103,27 @@ export class DevModeOrchestrator {
    * Called when a file is built by esbuild.
    * Uploads immediately and schedules a sync.
    */
-  onFileBuilt(
+  async onFileBuilt(
     type: 'function' | 'frontComponent',
     builtPath: string,
+    filePath: string,
     checksum: string,
-  ): void {
+  ): Promise<void> {
     const fileFolder =
       type === 'function'
         ? FileFolder.BuiltFunction
         : FileFolder.BuiltFrontComponent;
 
-    // Upload immediately
+    // Update UI state to 'built'
+    devUIState.fileBuilt(filePath);
+
     if (this.fileUploader) {
       this.uploadFile(builtPath, fileFolder);
     }
 
-    // Update manifest checksum
+    // Update manifest checksum (internal data only, no UI state change needed)
     if (this.manifest) {
+      devUIState.manifestBuilding();
       const updated = updateManifestChecksum({
         manifest: this.manifest,
         entityType: type,
@@ -125,6 +133,10 @@ export class DevModeOrchestrator {
       if (updated) {
         this.manifest = updated;
       }
+      devUIState.manifestReady({
+        manifest: this.manifest,
+        entities: this.entities,
+      });
     }
 
     // Reschedule sync (debounce)
@@ -132,10 +144,10 @@ export class DevModeOrchestrator {
   }
 
   /**
-   * Gets current file paths (used by app-dev to manage watchers).
+   * Gets current entities with source paths (used by app-dev to manage watchers).
    */
-  getFilePaths(): EntityFilePaths {
-    return this.filePaths;
+  getEntities(): ManifestEntities {
+    return this.entities;
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -143,14 +155,18 @@ export class DevModeOrchestrator {
   // ─────────────────────────────────────────────────────────────────────────
 
   private uploadFile(builtPath: string, fileFolder: FileFolder): void {
+    devUIState.fileUploading(builtPath);
+
     const uploadPromise = this.fileUploader!.uploadFile({
       builtPath,
       fileFolder,
     })
+      .then(() => {
+        devUIState.fileUploaded(builtPath);
+      })
       .catch((error) => {
-        logger.error(
-          `Upload failed for ${builtPath}: ${error instanceof Error ? error.message : error}`,
-        );
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        devUIState.fileUploadError(builtPath, errorMsg);
       })
       .finally(() => {
         this.activeUploads.delete(uploadPromise);
@@ -202,13 +218,19 @@ export class DevModeOrchestrator {
         await Promise.all(this.activeUploads);
       }
 
+      devUIState.syncing();
       // Step 3: Sync with API
       const result = await this.apiService.syncApplication(manifestToSync);
 
       if (result.success) {
-        logger.success('✓ Synced');
+        devUIState.synced();
       } else {
-        logger.error(`✗ Sync failed: ${result.error}`);
+        const errorMsg = result.error
+          ? typeof result.error === 'string'
+            ? result.error
+            : JSON.stringify(result.error)
+          : 'Unknown error';
+        devUIState.syncError(errorMsg);
       }
     } finally {
       this.isSyncing = false;

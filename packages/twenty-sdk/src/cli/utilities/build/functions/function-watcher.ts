@@ -4,15 +4,13 @@ import path from 'path';
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
-import { createLogger } from '@/cli/utilities/build/common/logger';
 import {
   type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { FUNCTIONS_DIR } from '@/cli/utilities/build/functions/constants';
-
-const logger = createLogger('functions-watch');
+import { devUIState } from '@/cli/utilities/dev/dev-ui-state';
 
 export const FUNCTION_EXTERNAL_MODULES: string[] = [
   'path',
@@ -143,9 +141,8 @@ export class FunctionsWatcher implements RestartableWatcher {
             build.onEnd(async (result) => {
               try {
                 if (result.errors.length > 0) {
-                  logger.error('✗ Build error:');
                   for (const error of result.errors) {
-                    logger.error(`  ${error.text}`);
+                    devUIState.manifestError(`Function build: ${error.text}`);
                   }
                   return;
                 }
@@ -156,8 +153,9 @@ export class FunctionsWatcher implements RestartableWatcher {
                   builtDir: FUNCTIONS_DIR,
                   lastChecksums: watcher.lastChecksums,
                   onFileBuilt: watcher.onFileBuilt,
-                  onSuccess: (relativePath) =>
-                    logger.success(`✓ ${relativePath}`),
+                  onSuccess: () => {
+                    // Success is handled by the orchestrator via onFileBuilt
+                  },
                 });
               } finally {
                 watcher.resolveBuildComplete?.();

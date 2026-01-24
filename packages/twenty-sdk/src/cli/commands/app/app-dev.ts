@@ -1,12 +1,12 @@
-import { createLogger } from '@/cli/utilities/build/common/logger';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
 import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
 import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-build';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { DevModeOrchestrator } from '@/cli/utilities/dev/dev-mode-orchestrator';
-
-const initLogger = createLogger('init');
+import { devUIState } from '@/cli/utilities/dev/dev-ui-state';
+import { renderDevUI } from '@/cli/utilities/dev/dev-ui';
 
 export type AppDevOptions = {
   appPath?: string;
@@ -27,13 +27,20 @@ export class AppDevCommand {
   private functionsWatcher: FunctionsWatcher | null = null;
   private frontComponentsWatcher: FrontComponentsWatcher | null = null;
   private watchersStarted = false;
+  private unmountUI: (() => void) | null = null;
 
   async execute(options: AppDevOptions): Promise<void> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
-    initLogger.log('🚀 Starting Twenty Application Development Mode');
-    initLogger.log(`📁 App Path: ${this.appPath}`);
-    console.log('');
+    // Get frontend URL from config
+    const configService = new ConfigService();
+    const config = await configService.getConfig();
+    const frontendUrl = config.apiUrl.replace('3000', '3001'); // Frontend is at the same base URL, except for localhost
+
+    // Initialize UI state and render Ink UI
+    devUIState.init(this.appPath, frontendUrl);
+    const { unmount } = await renderDevUI();
+    this.unmountUI = unmount;
 
     this.orchestrator = new DevModeOrchestrator({ appPath: this.appPath });
 
@@ -45,11 +52,11 @@ export class AppDevCommand {
     this.manifestWatcher = new ManifestWatcher({
       appPath: this.appPath,
       callbacks: {
-        onChangeDetected: () => {
-          this.orchestrator!.onChangeDetected();
+        onChangeDetected: (filePath?: string) => {
+          this.orchestrator!.onChangeDetected(filePath);
         },
-        onBuildComplete: (result: ManifestBuildResult) => {
-          this.orchestrator!.onManifestBuilt(result);
+        onBuildComplete: (result: ManifestBuildResult, filePath?: string) => {
+          this.orchestrator!.onManifestBuilt(result, filePath);
 
           if (result.manifest) {
             this.handleWatcherRestarts(result);
@@ -65,22 +72,26 @@ export class AppDevCommand {
    * Starts or restarts file watchers when the file list changes.
    */
   private handleWatcherRestarts(result: ManifestBuildResult): void {
-    const { functions, frontComponents } = result.filePaths;
+    // Extract source paths from entities
+    const functionPaths = result.entities.functions.map((fn) => fn.sourcePath);
+    const frontComponentPaths = result.entities.frontComponents.map(
+      (fc) => fc.sourcePath,
+    );
 
     // Start watchers on first successful manifest build
     if (!this.watchersStarted) {
       this.watchersStarted = true;
-      void this.startFileWatchers(functions, frontComponents);
+      void this.startFileWatchers(functionPaths, frontComponentPaths);
       return;
     }
 
     // Restart watchers if file lists changed
-    if (this.functionsWatcher?.shouldRestart(functions)) {
-      this.functionsWatcher.restart(functions);
+    if (this.functionsWatcher?.shouldRestart(functionPaths)) {
+      this.functionsWatcher.restart(functionPaths);
     }
 
-    if (this.frontComponentsWatcher?.shouldRestart(frontComponents)) {
-      this.frontComponentsWatcher.restart(frontComponents);
+    if (this.frontComponentsWatcher?.shouldRestart(frontComponentPaths)) {
+      this.frontComponentsWatcher.restart(frontComponentPaths);
     }
   }
 
@@ -98,8 +109,13 @@ export class AppDevCommand {
     this.functionsWatcher = new FunctionsWatcher({
       appPath: this.appPath,
       sourcePaths,
-      onFileBuilt: (builtPath, checksum) => {
-        this.orchestrator!.onFileBuilt('function', builtPath, checksum);
+      onFileBuilt: async (builtPath, checksum, sourcePath) => {
+        await this.orchestrator!.onFileBuilt(
+          'function',
+          builtPath,
+          sourcePath,
+          checksum,
+        );
       },
     });
 
@@ -112,8 +128,13 @@ export class AppDevCommand {
     this.frontComponentsWatcher = new FrontComponentsWatcher({
       appPath: this.appPath,
       sourcePaths,
-      onFileBuilt: (builtPath, checksum) => {
-        this.orchestrator!.onFileBuilt('frontComponent', builtPath, checksum);
+      onFileBuilt: async (builtPath, checksum, sourcePath) => {
+        await this.orchestrator!.onFileBuilt(
+          'frontComponent',
+          builtPath,
+          sourcePath,
+          checksum,
+        );
       },
     });
 
@@ -122,8 +143,8 @@ export class AppDevCommand {
 
   private setupGracefulShutdown(): void {
     const shutdown = async () => {
-      console.log('');
-      initLogger.warn('🛑 Stopping...');
+      // Unmount Ink UI before exiting
+      this.unmountUI?.();
 
       await Promise.all([
         this.manifestWatcher?.close(),

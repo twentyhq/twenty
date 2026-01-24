@@ -3,7 +3,14 @@ import { parseJsoncFile } from '@/cli/utilities/file/file-jsonc';
 import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';
 import { relative, sep } from 'path';
-import { type ApplicationManifest } from 'twenty-shared/application';
+import {
+  type ApplicationManifest,
+  type ObjectManifest,
+  type ServerlessFunctionManifest,
+  type FrontComponentManifest,
+  type ObjectExtensionManifest,
+  type RoleManifest,
+} from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
 import { applicationEntityBuilder } from '@/cli/utilities/build/manifest/entities/application';
 import { frontComponentEntityBuilder } from '@/cli/utilities/build/manifest/entities/front-component';
@@ -25,13 +32,20 @@ import { readFile } from 'fs-extra';
 
 const logger = createLogger('manifest-watch');
 
-export type EntityFilePaths = {
-  application: string[];
-  objects: string[];
-  objectExtensions: string[];
-  functions: string[];
-  frontComponents: string[];
-  roles: string[];
+/**
+ * Entity type with source path attached.
+ */
+export type WithSourcePath<T> = T & { sourcePath: string };
+
+/**
+ * All manifest entities with their source paths attached.
+ */
+export type ManifestEntities = {
+  objects: WithSourcePath<ObjectManifest>[];
+  objectExtensions: WithSourcePath<ObjectExtensionManifest>[];
+  functions: WithSourcePath<ServerlessFunctionManifest>[];
+  frontComponents: WithSourcePath<FrontComponentManifest>[];
+  roles: WithSourcePath<RoleManifest>[];
 };
 
 const loadSources = async (appPath: string): Promise<Sources> => {
@@ -68,8 +82,7 @@ export type RunManifestBuildOptions = {
   writeOutput?: boolean;
 };
 
-export const EMPTY_FILE_PATHS: EntityFilePaths = {
-  application: [],
+export const EMPTY_ENTITIES: ManifestEntities = {
   objects: [],
   objectExtensions: [],
   functions: [],
@@ -79,7 +92,11 @@ export const EMPTY_FILE_PATHS: EntityFilePaths = {
 
 export type ManifestBuildResult = {
   manifest: ApplicationManifest | null;
-  filePaths: EntityFilePaths;
+  /**
+   * All manifest entities with their source paths attached.
+   * Each entity has a `sourcePath` property containing the path to its source file.
+   */
+  entities: ManifestEntities;
 };
 
 export type ManifestEntityType = 'function' | 'frontComponent';
@@ -170,28 +187,38 @@ export const runManifestBuild = async (
     ]);
 
     const application = applicationBuildResult.manifests[0];
-    const objectManifests = objectBuildResult.manifests;
-    const objectExtensionManifests = objectExtensionBuildResult.manifests;
-    const functionManifests = functionBuildResult.manifests;
-    const frontComponentManifests = frontComponentBuildResult.manifests;
-    const roleManifests = roleBuildResult.manifests;
 
-    const filePaths: EntityFilePaths = {
-      application: applicationBuildResult.filePaths,
-      objects: objectBuildResult.filePaths,
-      objectExtensions: objectExtensionBuildResult.filePaths,
-      functions: functionBuildResult.filePaths,
-      frontComponents: frontComponentBuildResult.filePaths,
-      roles: roleBuildResult.filePaths,
+    // Build entities with source paths attached
+    const entities: ManifestEntities = {
+      objects: objectBuildResult.manifests.map((obj, i) => ({
+        ...obj,
+        sourcePath: objectBuildResult.filePaths[i],
+      })),
+      objectExtensions: objectExtensionBuildResult.manifests.map((ext, i) => ({
+        ...ext,
+        sourcePath: objectExtensionBuildResult.filePaths[i],
+      })),
+      functions: functionBuildResult.manifests.map((fn, i) => ({
+        ...fn,
+        sourcePath: functionBuildResult.filePaths[i],
+      })),
+      frontComponents: frontComponentBuildResult.manifests.map((fc, i) => ({
+        ...fc,
+        sourcePath: frontComponentBuildResult.filePaths[i],
+      })),
+      roles: roleBuildResult.manifests.map((role, i) => ({
+        ...role,
+        sourcePath: roleBuildResult.filePaths[i],
+      })),
     };
 
     const manifest: ApplicationManifest = {
       application,
-      objects: objectManifests,
-      objectExtensions: objectExtensionManifests,
-      functions: functionManifests,
-      frontComponents: frontComponentManifests,
-      roles: roleManifests,
+      objects: entities.objects,
+      objectExtensions: entities.objectExtensions,
+      functions: entities.functions,
+      frontComponents: entities.frontComponents,
+      roles: entities.roles,
       sources,
       packageJson,
       yarnLock,
@@ -199,11 +226,11 @@ export const runManifestBuild = async (
 
     const validation = validateManifest({
       application,
-      objects: objectManifests,
-      objectExtensions: objectExtensionManifests,
-      functions: functionManifests,
-      frontComponents: frontComponentManifests,
-      roles: roleManifests,
+      objects: entities.objects,
+      objectExtensions: entities.objectExtensions,
+      functions: entities.functions,
+      frontComponents: entities.frontComponents,
+      roles: entities.roles,
     });
 
     if (!validation.isValid) {
@@ -222,17 +249,15 @@ export const runManifestBuild = async (
       logger.success(`✓ Written to ${manifestPath}`);
     }
 
-    return { manifest, filePaths };
+    return { manifest, entities };
   } catch (error) {
-    if (display) {
-      if (error instanceof ManifestValidationError) {
-        displayErrors(error);
-      } else {
-        logger.error(
-          `✗ Build failed: ${error instanceof Error ? error.message : error}`,
-        );
-      }
+    if (error instanceof ManifestValidationError) {
+      displayErrors(error);
+    } else {
+      logger.error(
+        `✗ Build failed: ${error instanceof Error ? error.message : error}`,
+      );
     }
-    return { manifest: null, filePaths: EMPTY_FILE_PATHS };
+    return { manifest: null, entities: EMPTY_ENTITIES };
   }
 };

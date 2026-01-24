@@ -60,11 +60,15 @@ export class AppBuildCommand {
   private async buildFunctions(
     buildResult: ManifestBuildResult,
   ): Promise<void> {
+    const sourcePaths = buildResult.entities.functions.map(
+      (fn) => fn.sourcePath,
+    );
+
     this.functionsBuilder = new FunctionsWatcher({
       appPath: this.appPath,
-      sourcePaths: buildResult.filePaths.functions,
+      sourcePaths,
       watch: false,
-      onFileBuilt: (builtPath, checksum) => {
+      onFileBuilt: (builtPath, checksum, _sourcePath) => {
         if (buildResult.manifest) {
           const updatedManifest = updateManifestChecksum({
             manifest: buildResult.manifest,
@@ -86,11 +90,15 @@ export class AppBuildCommand {
   private async buildFrontComponents(
     buildResult: ManifestBuildResult,
   ): Promise<void> {
+    const sourcePaths = buildResult.entities.frontComponents.map(
+      (fc) => fc.sourcePath,
+    );
+
     this.frontComponentsBuilder = new FrontComponentsWatcher({
       appPath: this.appPath,
-      sourcePaths: buildResult.filePaths.frontComponents,
+      sourcePaths,
       watch: false,
-      onFileBuilt: (builtPath, checksum) => {
+      onFileBuilt: (builtPath, checksum, _sourcePath) => {
         if (buildResult.manifest) {
           const updatedManifest = updateManifestChecksum({
             manifest: buildResult.manifest,

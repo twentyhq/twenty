@@ -4,15 +4,13 @@ import path from 'path';
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
-import { createLogger } from '@/cli/utilities/build/common/logger';
 import {
   type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { FRONT_COMPONENTS_DIR } from '@/cli/utilities/build/front-components/constants';
-
-const logger = createLogger('front-components-watch');
+import { devUIState } from '@/cli/utilities/dev/dev-ui-state';
 
 export const FRONT_COMPONENT_EXTERNAL_MODULES: string[] = [
   'react',
@@ -121,9 +119,10 @@ export class FrontComponentsWatcher implements RestartableWatcher {
             build.onEnd(async (result) => {
               try {
                 if (result.errors.length > 0) {
-                  logger.error('✗ Build error:');
                   for (const error of result.errors) {
-                    logger.error(`  ${error.text}`);
+                    devUIState.manifestError(
+                      `Front component build: ${error.text}`,
+                    );
                   }
                   return;
                 }
@@ -134,8 +133,9 @@ export class FrontComponentsWatcher implements RestartableWatcher {
                   builtDir: FRONT_COMPONENTS_DIR,
                   lastChecksums: watcher.lastChecksums,
                   onFileBuilt: watcher.onFileBuilt,
-                  onSuccess: (relativePath) =>
-                    logger.success(`✓ ${relativePath}`),
+                  onSuccess: () => {
+                    // Success is handled by the orchestrator via onFileBuilt
+                  },
                 });
               } finally {
                 watcher.resolveBuildComplete?.();

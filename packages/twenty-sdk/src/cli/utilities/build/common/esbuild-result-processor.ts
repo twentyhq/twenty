@@ -51,7 +51,8 @@ export const processEsbuildResult = async ({
     onSuccess(relativePath);
 
     if (onFileBuilt) {
-      await onFileBuilt(builtPath, checksum);
+      const sourcePath = result.metafile?.outputs?.[outputFile]?.entryPoint;
+      await onFileBuilt(builtPath, checksum, sourcePath ?? '');
     }
   }
 
