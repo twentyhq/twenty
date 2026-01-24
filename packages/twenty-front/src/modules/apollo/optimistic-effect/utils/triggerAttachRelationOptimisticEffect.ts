@@ -123,10 +123,12 @@ export const triggerAttachRelationOptimisticEffect = ({
     return;
   }
 
+  const fieldNameOnTargetRecordValue = newCachedRecord[fieldNameOnTargetRecord];
+
   const partialRecordForStore = {
     id: newCachedRecord.id,
     __typename: newCachedRecord.__typename,
-    [fieldNameOnTargetRecord]: newCachedRecord[fieldNameOnTargetRecord],
+    [fieldNameOnTargetRecord]: fieldNameOnTargetRecordValue,
   } as ObjectRecord;
 
   upsertRecordsInStore({ partialRecords: [partialRecordForStore] });
