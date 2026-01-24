@@ -18,6 +18,19 @@ To avoid conflicts, we follow these guidelines:
 1. For `Good First Issue` and `Experienced Contributor` issues without `size: long` labels, we'll merge the first PRs that meet our [code quality standards](https://docs.twenty.com/developers). **We don't assign contributors to these issues**. For `priority: high` issues, our core team will step in within days if no adequate contributions are received.
 2. For `size: long` Issues, assigned contributors have one week to submit their first draft PR.
 
+## Development Setup
+
+Before contributing, you’ll need to set up the project locally.
+
+### Prerequisites
+
+Make sure you have the following installed:
+- Node.js (recommended version: see `.nvmrc` if available)
+- Package manager (npm / yarn / pnpm — see project docs)
+- Git
+
+Additional requirements (database, services, etc.) are documented in the main README.
+
 ## How to Contribute
 
 1. **Fork the Repository:** Click on the 'Fork' button in the upper right corner of the repository's GitHub page. This will create a copy of the repository in your GitHub account.
