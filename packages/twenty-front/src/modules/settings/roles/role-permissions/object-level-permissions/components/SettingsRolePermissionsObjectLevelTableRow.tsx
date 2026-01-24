@@ -1,6 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelOverrideCellContainer } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCellContainer';
 import { SettingsRolePermissionsObjectLevelSeeFieldsValueForObject } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject';
+import { SettingsRolePermissionsObjectLevelTableRowOptionsDropdown } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown';
 import { SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject';
 import { OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/constants/ObjectLevelPermissionTableGridAutoColumns';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -32,6 +33,9 @@ type SettingsRolePermissionsObjectLevelTableRowProps = {
   fromAgentId?: string;
 };
 
+/**
+ * Renders a clickable table row representing object-level permissions for a single object type.
+ */
 export const SettingsRolePermissionsObjectLevelTableRow = ({
   objectMetadataItem,
   roleId,
@@ -87,6 +91,12 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
         <SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject
           roleId={roleId}
           objectMetadataItemId={objectMetadataItem.id}
+        />
+      </TableCell>
+      <TableCell>
+        <SettingsRolePermissionsObjectLevelTableRowOptionsDropdown
+          roleId={roleId}
+          objectMetadataId={objectMetadataItem.id}
         />
       </TableCell>
       <TableCell align="right">
