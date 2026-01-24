@@ -57,13 +57,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
     await fs.emptyDir(outputDir);
 
     if (this.componentPaths.length > 0) {
-      logger.log('🎨 Building...');
       await this.createContext();
-    } else {
-      logger.log('No front components to build');
-      if (this.watchMode) {
-        logger.log('👀 Watching for changes...');
-      }
     }
   }
 
@@ -77,7 +71,6 @@ export class FrontComponentsWatcher implements RestartableWatcher {
 
     this.isRestarting = true;
     try {
-      logger.warn('🔄 Restarting...');
       await this.close();
 
       const outputDir = path.join(
@@ -90,14 +83,8 @@ export class FrontComponentsWatcher implements RestartableWatcher {
       this.lastChecksums.clear();
 
       if (this.componentPaths.length > 0) {
-        logger.log('🎨 Building...');
         await this.createContext();
-      } else {
-        logger.log('No front components to build');
-        logger.log('👀 Watching for changes...');
       }
-
-      logger.success('✓ Restarted');
     } finally {
       this.isRestarting = false;
     }
@@ -112,7 +99,6 @@ export class FrontComponentsWatcher implements RestartableWatcher {
       entryPoints[entryName] = path.join(this.appPath, componentPath);
     }
 
-    const watchMode = this.watchMode;
     const watcher = this;
 
     this.esBuildContext = await esbuild.context({
@@ -142,19 +128,15 @@ export class FrontComponentsWatcher implements RestartableWatcher {
                   return;
                 }
 
-                const { hasChanges } = await processEsbuildResult({
+                await processEsbuildResult({
                   result,
                   outputDir,
                   builtDir: FRONT_COMPONENTS_DIR,
                   lastChecksums: watcher.lastChecksums,
                   onFileBuilt: watcher.onFileBuilt,
                   onSuccess: (relativePath) =>
-                    logger.success(`✓ Built ${relativePath}`),
+                    logger.success(`✓ ${relativePath}`),
                 });
-
-                if (hasChanges && watchMode) {
-                  logger.log('👀 Watching for changes...');
-                }
               } finally {
                 watcher.resolveBuildComplete?.();
               }

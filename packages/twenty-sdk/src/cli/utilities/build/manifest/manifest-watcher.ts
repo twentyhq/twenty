@@ -1,12 +1,8 @@
 import chokidar, { type FSWatcher } from 'chokidar';
-import path from 'path';
-import { createLogger } from '@/cli/utilities/build/common/logger';
 import {
   type ManifestBuildResult,
   runManifestBuild,
 } from '@/cli/utilities/build/manifest/manifest-build';
-
-const logger = createLogger('manifest-watch');
 
 export type ManifestWatcherCallbacks = {
   /**
@@ -66,9 +62,6 @@ export class ManifestWatcher {
         return;
       }
 
-      const relativePath = path.relative(this.appPath, filePath);
-      logger.log(`File ${event}: ${relativePath}`);
-
       // Notify change detected
       this.callbacks.onChangeDetected?.();
 
@@ -81,7 +74,6 @@ export class ManifestWatcher {
     });
 
     // Initial build
-    logger.log('📂 Starting initial build...');
     this.callbacks.onChangeDetected?.();
 
     const result = await runManifestBuild(this.appPath, {
@@ -89,7 +81,6 @@ export class ManifestWatcher {
     });
 
     this.callbacks.onBuildComplete?.(result);
-    logger.log('📂 Watcher started');
   }
 
   async close(): Promise<void> {
