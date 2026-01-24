@@ -1,10 +1,21 @@
-import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
+  Equal,
+  type Expect,
+  type HasAllProperties,
+} from 'twenty-shared/testing';
+import {
+  FieldNumberVariant,
+  LinkMetadata,
+  NumberDataType,
+  RelationOnDeleteAction,
+  RelationType,
+  SerializedRelation,
   type FieldMetadataType,
   type NullablePartial,
 } from 'twenty-shared/types';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { Prettify } from 'zod/v4/core/util.cjs';
 
 // Relation field types have defined relation universal identifiers
 type DefinedRelationUniversalIdentifierRecord = {
@@ -78,4 +89,68 @@ type UniversalFlatTransformationAssertions = [
       OneToManyUniversalIdentifierArrays
     >
   >,
+];
+
+type NarrowedTestCase = Prettify<
+  UniversalFlatFieldMetadata<FieldMetadataType.RELATION>['settings']
+>;
+type NarrowedExpectedResult = {
+  relationType: RelationType;
+  onDelete?: RelationOnDeleteAction | undefined;
+  joinColumnName?: string | null | undefined;
+  junctionTargetFieldUniversalIdentifier?: SerializedRelation | undefined;
+};
+
+type SettingsTestCase = Prettify<
+  UniversalFlatFieldMetadata<
+    | FieldMetadataType.RELATION
+    | FieldMetadataType.NUMBER
+    | FieldMetadataType.TEXT
+  >['settings']
+>;
+type SettingsExpectedResult =
+  | {
+      relationType: RelationType;
+      onDelete?: RelationOnDeleteAction | undefined;
+      joinColumnName?: string | null | undefined;
+      junctionTargetFieldUniversalIdentifier?: SerializedRelation | undefined;
+    }
+  | {
+      dataType?: NumberDataType | undefined;
+      decimals?: number | undefined;
+      type?: FieldNumberVariant | undefined;
+      fooUniversalIdentifier: SerializedRelation;
+    }
+  | {
+      displayedMaxRows?: number | undefined;
+    }
+  | null;
+
+type DefaultValueTestCase = Prettify<
+  UniversalFlatFieldMetadata<
+    | FieldMetadataType.RELATION
+    | FieldMetadataType.NUMBER
+    | FieldMetadataType.TEXT
+    | FieldMetadataType.LINKS
+    | FieldMetadataType.CURRENCY
+  >['defaultValue']
+>;
+type DefaultValueExpectedResult =
+  | string
+  | number
+  | null
+  | {
+      amountMicros: string | null;
+      currencyCode: string | null;
+    }
+  | {
+      primaryLinkLabel: string | null;
+      primaryLinkUrl: string | null;
+      secondaryLinks: LinkMetadata[] | null;
+    };
+
+type Assertions = [
+  Expect<Equal<NarrowedTestCase, NarrowedExpectedResult>>,
+  Expect<Equal<SettingsTestCase, SettingsExpectedResult>>,
+  Expect<Equal<DefaultValueTestCase, DefaultValueExpectedResult>>,
 ];

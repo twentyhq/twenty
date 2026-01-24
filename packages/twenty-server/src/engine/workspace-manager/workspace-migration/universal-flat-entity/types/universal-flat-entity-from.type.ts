@@ -8,12 +8,28 @@ import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modul
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
-import { Equal, Expect } from 'twenty-shared/testing';
 import {
   ExtractJsonbProperties,
   ExtractSerializedRelationProperties,
-  FieldMetadataType,
+  JSONB_PROPERTY_BRAND,
+  JsonbProperty,
 } from 'twenty-shared/types';
+
+type FormatRecordSerializedRelation<T> = T extends unknown
+  ? T extends object
+    ? Omit<
+        {
+          [P in keyof T as P extends ExtractSerializedRelationProperties<T> &
+            string
+            ? `${RemoveSuffix<P, 'Id'>}UniversalIdentifier`
+            : P]: T[P];
+        },
+        typeof JSONB_PROPERTY_BRAND
+      >
+    : T
+  : never;
+
+type toto = FormatRecordSerializedRelation<JsonbProperty<string>>
 
 // TODO Handle universal settings
 export type UniversalFlatEntityFrom<
@@ -29,6 +45,7 @@ export type UniversalFlatEntityFrom<
   | ExtractEntityRelatedEntityProperties<TEntity>
   | Extract<MetadataManyToOneJoinColumn<TMetadataName>, keyof TEntity>
   | keyof CastRecordTypeOrmDatePropertiesToString<TEntity>
+  | ExtractJsonbProperties<TEntity>
 > &
   CastRecordTypeOrmDatePropertiesToString<TEntity> & {
     [P in ExtractEntityOneToManyEntityRelationProperties<
@@ -42,17 +59,9 @@ export type UniversalFlatEntityFrom<
   } & {
     applicationUniversalIdentifier: string;
   } & {
-    [P in ExtractJsonbProperties<TEntity> & string as `${P}Toto`]: true;
+    [P in ExtractJsonbProperties<TEntity>]: FormatRecordSerializedRelation<
+      TEntity[P]
+    >;
   };
 
-type tmp = FieldMetadataEntity<FieldMetadataType.RELATION>['settings'];
-type tmp2 = FieldMetadataEntity<FieldMetadataType>['settings'];
-type toto = ExtractSerializedRelationProperties<tmp>;
-type toto2 = ExtractSerializedRelationProperties<tmp2>;
-
-type Assertions = [
-  // Success below
-  Expect<Equal<toto, 'junctionTargetFieldId'>>,
-  // Failing below
-  Expect<Equal<toto2, 'junctionTargetFieldId'>>,
-];
+type tmp = ExtractJsonbProperties<FieldMetadataEntity>;

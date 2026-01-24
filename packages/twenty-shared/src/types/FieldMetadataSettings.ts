@@ -25,6 +25,7 @@ type FieldMetadataNumberSettings = {
   dataType?: NumberDataType;
   decimals?: number;
   type?: FieldNumberVariant;
+  foo: SerializedRelation
 };
 
 type FieldMetadataTextSettings = {

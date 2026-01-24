@@ -12,9 +12,15 @@ type TestedRecord = {
   plainUnknown: unknown;
 
   // JsonbProperty fields - should be extracted
-  jsonbEmpty: JsonbProperty<{}>;
+  jsonbPlainString: JsonbProperty<string>;
+  jsonbPlainNumber: JsonbProperty<number>;
+  jsonbPlainUnknown: JsonbProperty<unknown>;
   jsonbString: JsonbProperty<string>;
   jsonbNumber: JsonbProperty<number>;
+  jsonbPlainObject: JsonbProperty<{}>;
+  jsonbPlainArray: JsonbProperty<string[]>;
+  jsonbPlainObjectNullable: JsonbProperty<{} | null>;
+  jsonbEmpty: JsonbProperty<{}>;
   jsonbArray: JsonbProperty<string[]>;
   jsonbNested: JsonbProperty<{ nested: { deep: number } }>;
   jsonbNullable: JsonbProperty<{}> | null;
@@ -22,6 +28,8 @@ type TestedRecord = {
   jsonbOptional?: JsonbProperty<{}>;
   jsonbInnerNullable: JsonbProperty<{} | null>;
   jsonbInnerUndefinable: JsonbProperty<{} | undefined>;
+
+  jsonbInnerNullableWithProperties: JsonbProperty<null | { value: string }>;
 };
 
 type TestResult = ExtractJsonbProperties<TestedRecord>;
@@ -31,9 +39,15 @@ type Assertions = [
   Expect<
     Equal<
       TestResult,
-      | 'jsonbEmpty'
+      | 'jsonbPlainString'
+      | 'jsonbPlainNumber'
+      | 'jsonbPlainUnknown'
       | 'jsonbString'
       | 'jsonbNumber'
+      | 'jsonbPlainObject'
+      | 'jsonbPlainArray'
+      | 'jsonbPlainObjectNullable'
+      | 'jsonbEmpty'
       | 'jsonbArray'
       | 'jsonbNested'
       | 'jsonbNullable'
@@ -41,6 +55,7 @@ type Assertions = [
       | 'jsonbOptional'
       | 'jsonbInnerNullable'
       | 'jsonbInnerUndefinable'
+      | 'jsonbInnerNullableWithProperties'
     >
   >,
 
