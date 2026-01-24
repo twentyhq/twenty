@@ -11,21 +11,12 @@ const logger = createLogger('manifest-watch');
 export type ManifestWatcherCallbacks = {
   /**
    * Called when a file change is detected, BEFORE the manifest build starts.
-   * This allows the orchestrator to start a new generation.
-   * @param filePath - The path of the file that changed, or undefined for initial build
-   * @returns The new generation number to associate with this build
    */
-  onChangeDetected?: (filePath?: string) => number;
+  onChangeDetected?: () => void;
   /**
    * Called when the manifest build completes (success or failure).
-   * @param generation - The generation number from onChangeDetected
-   * @param result - The manifest build result
    */
-  onBuildComplete?: (generation: number, result: ManifestBuildResult) => void;
-  /**
-   * @deprecated Use onBuildComplete instead. Kept for backwards compatibility.
-   */
-  onBuildSuccess?: (result: ManifestBuildResult) => Promise<void>;
+  onBuildComplete?: (result: ManifestBuildResult) => void;
 };
 
 export type ManifestWatcherOptions = {
@@ -33,6 +24,9 @@ export type ManifestWatcherOptions = {
   callbacks?: ManifestWatcherCallbacks;
 };
 
+/**
+ * Watches for file changes and rebuilds the manifest.
+ */
 export class ManifestWatcher {
   private appPath: string;
   private callbacks: ManifestWatcherCallbacks;
@@ -44,6 +38,7 @@ export class ManifestWatcher {
   }
 
   async start(): Promise<void> {
+    // Set up file watcher
     this.watcher = chokidar.watch(this.appPath, {
       ignored: [
         '**/node_modules/**',
@@ -61,57 +56,39 @@ export class ManifestWatcher {
     });
 
     this.watcher.on('all', async (event, filePath) => {
+      // Only watch TypeScript and JSON files
       if (!filePath.match(/\.(ts|tsx|json)$/)) {
         return;
       }
 
-      // Double-check to prevent watching our own output
+      // Ignore our own output
       if (filePath.includes('.twenty')) {
         return;
       }
 
-      const relativeFilePath = path.relative(this.appPath, filePath);
-      logger.log(`File ${event}: ${relativeFilePath}`);
+      const relativePath = path.relative(this.appPath, filePath);
+      logger.log(`File ${event}: ${relativePath}`);
 
-      // Get generation BEFORE starting build, passing the relative file path
-      const generation =
-        this.callbacks.onChangeDetected?.(relativeFilePath) ?? 0;
+      // Notify change detected
+      this.callbacks.onChangeDetected?.();
 
-      // Don't write manifest here - the orchestrator will write it
-      // after checksums are populated by the file watchers
+      // Rebuild manifest
       const result = await runManifestBuild(this.appPath, {
         writeOutput: false,
       });
 
-      // Notify with generation for new API
-      if (this.callbacks.onBuildComplete) {
-        this.callbacks.onBuildComplete(generation, result);
-      }
-
-      // Legacy callback support
-      if (result.manifest) {
-        logger.log('👀 Watching for changes...');
-        await this.callbacks.onBuildSuccess?.(result);
-      }
+      this.callbacks.onBuildComplete?.(result);
     });
 
-    // Initial build uses generation 0
-    const initialGeneration = this.callbacks.onChangeDetected?.() ?? 0;
-    // Don't write manifest here - the orchestrator will write it
-    // after checksums are populated by the file watchers
+    // Initial build
+    logger.log('📂 Starting initial build...');
+    this.callbacks.onChangeDetected?.();
+
     const result = await runManifestBuild(this.appPath, {
       writeOutput: false,
     });
 
-    if (this.callbacks.onBuildComplete) {
-      this.callbacks.onBuildComplete(initialGeneration, result);
-    }
-
-    // Legacy callback support for initial build
-    if (result.manifest) {
-      await this.callbacks.onBuildSuccess?.(result);
-    }
-
+    this.callbacks.onBuildComplete?.(result);
     logger.log('📂 Watcher started');
   }
 

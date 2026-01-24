@@ -13,25 +13,19 @@ export type AppDevOptions = {
 };
 
 /**
- * AppDevCommand orchestrates the development mode for Twenty applications.
+ * Runs the development mode for Twenty applications.
  *
- * It uses a generation-based event queue (DevModeOrchestrator) to handle
- * race conditions when multiple files change simultaneously:
- *
- * 1. ManifestWatcher detects changes and calls onChangeDetected() to start a new generation
- * 2. The manifest is rebuilt and passed to onManifestBuilt()
- * 3. FunctionsWatcher and FrontComponentsWatcher rebuild affected files
- * 4. Each built file calls onFileBuilt() with its generation number
- * 5. Only when ALL operations for the current generation complete does sync happen
- * 6. Stale callbacks from previous generations are ignored
+ * Flow:
+ * 1. ManifestWatcher detects file changes and rebuilds the manifest
+ * 2. FunctionsWatcher/FrontComponentsWatcher rebuild and upload affected files
+ * 3. After changes settle (debounce), sync with the API
  */
 export class AppDevCommand {
+  private appPath = '';
   private orchestrator: DevModeOrchestrator | null = null;
   private manifestWatcher: ManifestWatcher | null = null;
   private functionsWatcher: FunctionsWatcher | null = null;
   private frontComponentsWatcher: FrontComponentsWatcher | null = null;
-
-  private appPath: string = '';
   private watchersStarted = false;
 
   async execute(options: AppDevOptions): Promise<void> {
@@ -41,30 +35,22 @@ export class AppDevCommand {
     initLogger.log(`📁 App Path: ${this.appPath}`);
     console.log('');
 
-    // Initialize the orchestrator
     this.orchestrator = new DevModeOrchestrator({ appPath: this.appPath });
 
-    await this.startWatchers();
-
-    this.setupGracefulShutdown();
-  }
-
-  private async startWatchers(): Promise<void> {
     await this.startManifestWatcher();
+    this.setupGracefulShutdown();
   }
 
   private async startManifestWatcher(): Promise<void> {
     this.manifestWatcher = new ManifestWatcher({
       appPath: this.appPath,
       callbacks: {
-        onChangeDetected: (filePath?: string) => {
-          return this.orchestrator!.onChangeDetected(filePath);
+        onChangeDetected: () => {
+          this.orchestrator!.onChangeDetected();
         },
-        onBuildComplete: (generation: number, result: ManifestBuildResult) => {
-          // Notify orchestrator of manifest build completion
-          this.orchestrator!.onManifestBuilt(generation, result);
+        onBuildComplete: (result: ManifestBuildResult) => {
+          this.orchestrator!.onManifestBuilt(result);
 
-          // Handle watcher restarts separately (per plan requirement)
           if (result.manifest) {
             this.handleWatcherRestarts(result);
           }
@@ -76,46 +62,35 @@ export class AppDevCommand {
   }
 
   /**
-   * Handles restarting function/component watchers when file lists change.
-   * This is separate from the orchestrator's event queue.
+   * Starts or restarts file watchers when the file list changes.
    */
   private handleWatcherRestarts(result: ManifestBuildResult): void {
-    const functionSourcePaths = result.filePaths.functions;
-    const componentSourcePaths = result.filePaths.frontComponents;
+    const { functions, frontComponents } = result.filePaths;
 
     // Start watchers on first successful manifest build
     if (!this.watchersStarted) {
       this.watchersStarted = true;
-      void this.startFileWatchers(functionSourcePaths, componentSourcePaths);
-
+      void this.startFileWatchers(functions, frontComponents);
       return;
     }
 
-    // Check if functions watcher needs restart
-    const shouldRestartFunctions =
-      this.functionsWatcher?.shouldRestart(functionSourcePaths);
-    if (shouldRestartFunctions) {
-      this.functionsWatcher?.restart(functionSourcePaths);
+    // Restart watchers if file lists changed
+    if (this.functionsWatcher?.shouldRestart(functions)) {
+      this.functionsWatcher.restart(functions);
     }
 
-    // Check if components watcher needs restart
-    const shouldRestartFrontComponents =
-      this.frontComponentsWatcher?.shouldRestart(componentSourcePaths);
-    if (shouldRestartFrontComponents) {
-      this.frontComponentsWatcher?.restart(componentSourcePaths);
+    if (this.frontComponentsWatcher?.shouldRestart(frontComponents)) {
+      this.frontComponentsWatcher.restart(frontComponents);
     }
   }
 
-  /**
-   * Starts the function and component watchers.
-   */
   private async startFileWatchers(
-    functionSourcePaths: string[],
-    componentSourcePaths: string[],
+    functions: string[],
+    frontComponents: string[],
   ): Promise<void> {
     await Promise.all([
-      this.startFunctionsWatcher(functionSourcePaths),
-      this.startFrontComponentsWatcher(componentSourcePaths),
+      this.startFunctionsWatcher(functions),
+      this.startFrontComponentsWatcher(frontComponents),
     ]);
   }
 
@@ -123,14 +98,8 @@ export class AppDevCommand {
     this.functionsWatcher = new FunctionsWatcher({
       appPath: this.appPath,
       sourcePaths,
-      getCurrentGeneration: () => this.orchestrator!.getCurrentGeneration(),
-      onFileBuilt: (generation, builtPath, checksum) => {
-        this.orchestrator!.onFileBuilt(
-          generation,
-          'function',
-          builtPath,
-          checksum,
-        );
+      onFileBuilt: (builtPath, checksum) => {
+        this.orchestrator!.onFileBuilt('function', builtPath, checksum);
       },
     });
 
@@ -143,14 +112,8 @@ export class AppDevCommand {
     this.frontComponentsWatcher = new FrontComponentsWatcher({
       appPath: this.appPath,
       sourcePaths,
-      getCurrentGeneration: () => this.orchestrator!.getCurrentGeneration(),
-      onFileBuilt: (generation, builtPath, checksum) => {
-        this.orchestrator!.onFileBuilt(
-          generation,
-          'frontComponent',
-          builtPath,
-          checksum,
-        );
+      onFileBuilt: (builtPath, checksum) => {
+        this.orchestrator!.onFileBuilt('frontComponent', builtPath, checksum);
       },
     });
 
@@ -162,10 +125,12 @@ export class AppDevCommand {
       console.log('');
       initLogger.warn('🛑 Stopping...');
 
-      // Close all watchers
-      await this.manifestWatcher?.close();
-      await this.functionsWatcher?.close();
-      await this.frontComponentsWatcher?.close();
+      await Promise.all([
+        this.manifestWatcher?.close(),
+        this.functionsWatcher?.close(),
+        this.frontComponentsWatcher?.close(),
+      ]);
+
       process.exit(0);
     };
 
