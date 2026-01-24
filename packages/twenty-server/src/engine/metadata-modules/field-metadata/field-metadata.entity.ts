@@ -106,7 +106,7 @@ export class FieldMetadataEntity<
   options: FieldMetadataOptions<TFieldMetadataType>;
 
   @Column('jsonb', { nullable: true })
-  settings: FieldMetadataSettings<TFieldMetadataType>;
+  settings: JsonbProperty<FieldMetadataSettings<TFieldMetadataType>>;
 
   @Column({ default: false })
   isCustom: boolean;

@@ -2,7 +2,6 @@ import { type AllowedAddressSubField } from '@/types/AddressFieldsType';
 import { type FieldMetadataMultiItemSettings } from '@/types/FieldMetadataMultiItemSettings';
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
-import { type JsonbProperty } from '@/types/JsonbProperty.type';
 import { type RelationOnDeleteAction } from '@/types/RelationOnDeleteAction.type';
 import { type RelationType } from '@/types/RelationType';
 import { type SerializedRelation } from '@/types/SerializedRelation.type';
@@ -62,19 +61,19 @@ type FieldMetadataTsVectorSettings = {
 };
 
 export type FieldMetadataSettingsMapping = {
-  [FieldMetadataType.NUMBER]: JsonbProperty<FieldMetadataNumberSettings> | null;
-  [FieldMetadataType.DATE]: JsonbProperty<FieldMetadataDateSettings> | null;
-  [FieldMetadataType.DATE_TIME]: JsonbProperty<FieldMetadataDateTimeSettings> | null;
-  [FieldMetadataType.TEXT]: JsonbProperty<FieldMetadataTextSettings> | null;
-  [FieldMetadataType.RELATION]: JsonbProperty<FieldMetadataRelationSettings>;
-  [FieldMetadataType.ADDRESS]: JsonbProperty<FieldMetadataAddressSettings> | null;
-  [FieldMetadataType.MORPH_RELATION]: JsonbProperty<FieldMetadataRelationSettings>;
-  [FieldMetadataType.TS_VECTOR]: JsonbProperty<FieldMetadataTsVectorSettings> | null;
-  [FieldMetadataType.PHONES]: JsonbProperty<FieldMetadataMultiItemSettings> | null;
-  [FieldMetadataType.EMAILS]: JsonbProperty<FieldMetadataMultiItemSettings> | null;
-  [FieldMetadataType.LINKS]: JsonbProperty<FieldMetadataMultiItemSettings> | null;
-  [FieldMetadataType.ARRAY]: JsonbProperty<FieldMetadataMultiItemSettings> | null;
-  [FieldMetadataType.FILES]: JsonbProperty<FieldMetadataFilesSettings>;
+  [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
+  [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;
+  [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings | null;
+  [FieldMetadataType.TEXT]: FieldMetadataTextSettings | null;
+  [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
+  [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
+  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
+  [FieldMetadataType.TS_VECTOR]: FieldMetadataTsVectorSettings | null;
+  [FieldMetadataType.PHONES]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.EMAILS]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.LINKS]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.ARRAY]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.FILES]: FieldMetadataFilesSettings;
 };
 
 export type AllFieldMetadataSettings =

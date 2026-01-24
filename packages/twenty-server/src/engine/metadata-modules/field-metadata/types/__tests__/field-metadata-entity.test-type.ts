@@ -132,63 +132,101 @@ type SettingsAssertions = [
   Expect<
     HasAllProperties<
       TextFieldMetadata,
-      { settings: FieldMetadataSettingsMapping[FieldMetadataType.TEXT] }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.TEXT]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       NumberFieldMetadata,
-      { settings: FieldMetadataSettingsMapping[FieldMetadataType.NUMBER] }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.NUMBER]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       DateFieldMetadata,
-      { settings: FieldMetadataSettingsMapping[FieldMetadataType.DATE] }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.DATE]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       DateTimeFieldMetadata,
-      { settings: FieldMetadataSettingsMapping[FieldMetadataType.DATE_TIME] }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.DATE_TIME]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       ArrayFieldMetadata,
-      { settings: FieldMetadataSettingsMapping[FieldMetadataType.ARRAY] }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.ARRAY]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       PhonesFieldMetadata,
-      { settings: FieldMetadataSettingsMapping[FieldMetadataType.PHONES] }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.PHONES]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       EmailsFieldMetadata,
-      { settings: FieldMetadataSettingsMapping[FieldMetadataType.EMAILS] }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.EMAILS]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       LinksFieldMetadata,
-      { settings: FieldMetadataSettingsMapping[FieldMetadataType.LINKS] }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.LINKS]
+        >;
+      }
     >
   >,
 
   Expect<
     HasAllProperties<
       RelationFieldMetadata,
-      { settings: FieldMetadataSettingsMapping[FieldMetadataType.RELATION] }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.RELATION]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       MorphRelationFieldMetadata,
       {
-        settings: FieldMetadataSettingsMapping[FieldMetadataType.MORPH_RELATION];
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.MORPH_RELATION]
+        >;
       }
     >
   >,
@@ -196,7 +234,7 @@ type SettingsAssertions = [
   Expect<
     HasAllProperties<
       AbstractFieldMetadata,
-      { settings: AllFieldMetadataSettings | null }
+      { settings: JsonbProperty<AllFieldMetadataSettings> | null }
     >
   >,
 ];

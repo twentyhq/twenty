@@ -5,16 +5,15 @@ import {
 } from 'twenty-shared/testing';
 import {
   type FieldMetadataDefaultOption,
+  type FieldMetadataType,
   type FieldNumberVariant,
   type LinkMetadata,
+  type NullablePartial,
   type NumberDataType,
   type RelationOnDeleteAction,
   type RelationType,
   type SerializedRelation,
-  type FieldMetadataType,
-  type NullablePartial,
 } from 'twenty-shared/types';
-import { type Prettify } from 'zod/v4/core/util.cjs';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
@@ -92,9 +91,8 @@ type UniversalFlatTransformationAssertions = [
   >,
 ];
 
-type NarrowedTestCase = Prettify<
-  UniversalFlatFieldMetadata<FieldMetadataType.RELATION>['settings']
->;
+type NarrowedTestCase =
+  UniversalFlatFieldMetadata<FieldMetadataType.RELATION>['settings'];
 
 type NarrowedExpectedResult = {
   relationType: RelationType;
@@ -103,13 +101,9 @@ type NarrowedExpectedResult = {
   junctionTargetFieldUniversalIdentifier?: SerializedRelation | undefined;
 };
 
-type SettingsTestCase = Prettify<
-  UniversalFlatFieldMetadata<
-    | FieldMetadataType.RELATION
-    | FieldMetadataType.NUMBER
-    | FieldMetadataType.TEXT
-  >['settings']
->;
+type SettingsTestCase = UniversalFlatFieldMetadata<
+  FieldMetadataType.RELATION | FieldMetadataType.NUMBER | FieldMetadataType.TEXT
+>['settings'];
 
 type SettingsExpectedResult =
   | {
@@ -128,15 +122,13 @@ type SettingsExpectedResult =
     }
   | null;
 
-type DefaultValueTestCase = Prettify<
-  UniversalFlatFieldMetadata<
-    | FieldMetadataType.RELATION
-    | FieldMetadataType.NUMBER
-    | FieldMetadataType.TEXT
-    | FieldMetadataType.LINKS
-    | FieldMetadataType.CURRENCY
-  >['defaultValue']
->;
+type DefaultValueTestCase = UniversalFlatFieldMetadata<
+  | FieldMetadataType.RELATION
+  | FieldMetadataType.NUMBER
+  | FieldMetadataType.TEXT
+  | FieldMetadataType.LINKS
+  | FieldMetadataType.CURRENCY
+>['defaultValue'];
 
 type DefaultValueExpectedResult =
   | string
