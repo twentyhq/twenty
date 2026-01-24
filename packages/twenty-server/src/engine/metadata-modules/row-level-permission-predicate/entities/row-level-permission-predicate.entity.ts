@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import {
-  JsonbProperty,
   RowLevelPermissionPredicate,
   RowLevelPermissionPredicateOperand,
   RowLevelPermissionPredicateValue,
@@ -24,6 +23,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity({ name: 'rowLevelPermissionPredicate', schema: 'core' })
 @Index('IDX_RLPP_WORKSPACE_ID_ROLE_ID_OBJECT_METADATA_ID', [

@@ -1,7 +1,6 @@
 import { type LinkMetadata } from '@/types/composite-types/links.composite-type';
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
-import { type JsonbProperty } from '@/types/JsonbProperty.type';
 
 export const fieldMetadataDefaultValueFunctionName = {
   UUID: 'uuid',
@@ -69,39 +68,39 @@ export type FieldMetadataDefaultValuePhones = {
 };
 
 export type FieldMetadataDefaultValueMapping = {
-  [FieldMetadataType.UUID]: JsonbProperty<
-    string | FieldMetadataDefaultValueUuidFunction
-  > | null;
-  [FieldMetadataType.TEXT]: JsonbProperty<string> | null;
-  [FieldMetadataType.PHONES]: JsonbProperty<FieldMetadataDefaultValuePhones> | null;
-  [FieldMetadataType.EMAILS]: JsonbProperty<FieldMetadataDefaultValueEmails> | null;
-  [FieldMetadataType.DATE_TIME]: JsonbProperty<
-    Date | FieldMetadataDefaultValueNowFunction
-  > | null;
-  [FieldMetadataType.DATE]: JsonbProperty<
-    Date | FieldMetadataDefaultValueNowFunction
-  > | null;
-  [FieldMetadataType.BOOLEAN]: JsonbProperty<boolean> | null;
-  [FieldMetadataType.NUMBER]: JsonbProperty<number> | null;
-  [FieldMetadataType.POSITION]: JsonbProperty<number> | null;
-  [FieldMetadataType.NUMERIC]: JsonbProperty<string> | null;
-  [FieldMetadataType.LINKS]: JsonbProperty<FieldMetadataDefaultValueLinks> | null;
-  [FieldMetadataType.CURRENCY]: JsonbProperty<FieldMetadataDefaultValueCurrency> | null;
-  [FieldMetadataType.FULL_NAME]: JsonbProperty<FieldMetadataDefaultValueFullName> | null;
-  [FieldMetadataType.ADDRESS]: JsonbProperty<FieldMetadataDefaultValueAddress> | null;
-  [FieldMetadataType.RATING]: JsonbProperty<string> | null;
-  [FieldMetadataType.SELECT]: JsonbProperty<string> | null;
-  [FieldMetadataType.MULTI_SELECT]: JsonbProperty<string[]> | null;
-  [FieldMetadataType.RAW_JSON]: JsonbProperty<object> | null;
-  [FieldMetadataType.RICH_TEXT]: JsonbProperty<string> | null;
-  [FieldMetadataType.RICH_TEXT_V2]: JsonbProperty<FieldMetadataDefaultValueRichTextV2> | null;
-  [FieldMetadataType.ACTOR]: JsonbProperty<FieldMetadataDefaultActor> | null;
-  [FieldMetadataType.ARRAY]: JsonbProperty<string[]> | null;
+  [FieldMetadataType.UUID]:
+    | string
+    | FieldMetadataDefaultValueUuidFunction
+    | null;
+  [FieldMetadataType.TEXT]: string | null;
+  [FieldMetadataType.PHONES]: FieldMetadataDefaultValuePhones | null;
+  [FieldMetadataType.EMAILS]: FieldMetadataDefaultValueEmails | null;
+  [FieldMetadataType.DATE_TIME]:
+    | Date
+    | FieldMetadataDefaultValueNowFunction
+    | null;
+  [FieldMetadataType.DATE]: Date | FieldMetadataDefaultValueNowFunction | null;
+  [FieldMetadataType.BOOLEAN]: boolean | null;
+  [FieldMetadataType.NUMBER]: number | null;
+  [FieldMetadataType.POSITION]: number | null;
+  [FieldMetadataType.NUMERIC]: string | null;
+  [FieldMetadataType.LINKS]: FieldMetadataDefaultValueLinks | null;
+  [FieldMetadataType.CURRENCY]: FieldMetadataDefaultValueCurrency | null;
+  [FieldMetadataType.FULL_NAME]: FieldMetadataDefaultValueFullName | null;
+  [FieldMetadataType.ADDRESS]: FieldMetadataDefaultValueAddress | null;
+  [FieldMetadataType.RATING]: string | null;
+  [FieldMetadataType.SELECT]: string | null;
+  [FieldMetadataType.MULTI_SELECT]: string[] | null;
+  [FieldMetadataType.RAW_JSON]: object | null;
+  [FieldMetadataType.RICH_TEXT]: string | null;
+  [FieldMetadataType.RICH_TEXT_V2]: FieldMetadataDefaultValueRichTextV2 | null;
+  [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor | null;
+  [FieldMetadataType.ARRAY]: string[] | null;
 };
 
 export type FieldMetadataFunctionDefaultValue =
-  | JsonbProperty<FieldMetadataDefaultValueUuidFunction>
-  | JsonbProperty<FieldMetadataDefaultValueNowFunction>;
+  | FieldMetadataDefaultValueUuidFunction
+  | FieldMetadataDefaultValueNowFunction;
 
 export type FieldMetadataDefaultValueForAnyType =
   | null

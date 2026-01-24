@@ -53,10 +53,6 @@ export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { CrudOperationType } from './CrudOperationType';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export type { ExcludeFunctions } from './ExcludeFunctions';
-export type {
-  HasJsonbPropertyBrand,
-  ExtractJsonbProperties,
-} from './ExtractJsonbProperties.type';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
 export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties.type';
@@ -111,8 +107,6 @@ export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
 export type { IsEmptyRecord } from './IsEmptyRecord.type';
 export type { IsExactly } from './IsExactly';
-export type { JsonbProperty } from './JsonbProperty.type';
-export { JSONB_PROPERTY_BRAND } from './JsonbProperty.type';
 export { MessageParticipantRole } from './MessageParticipantRole';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NonNullableRequired } from './NonNullableRequired';

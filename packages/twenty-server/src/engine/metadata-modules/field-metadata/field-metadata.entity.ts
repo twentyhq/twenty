@@ -3,7 +3,6 @@ import {
   FieldMetadataOptions,
   FieldMetadataSettings,
   FieldMetadataType,
-  JsonbProperty,
 } from 'twenty-shared/types';
 import {
   Check,
@@ -31,6 +30,7 @@ import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 // This entity is used as a reference test case for type utilities in:
 // Modifying relations or properties may require updating type test expectations for Typecheck to pass.
@@ -91,7 +91,7 @@ export class FieldMetadataEntity<
   label: string;
 
   @Column({ nullable: true, type: 'jsonb' })
-  defaultValue: FieldMetadataDefaultValue<TFieldMetadataType>;
+  defaultValue: JsonbProperty<FieldMetadataDefaultValue<TFieldMetadataType>>;
 
   @Column({ nullable: true, type: 'text' })
   description: string | null;

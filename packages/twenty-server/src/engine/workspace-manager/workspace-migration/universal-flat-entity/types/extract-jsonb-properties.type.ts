@@ -1,4 +1,4 @@
-import { JSONB_PROPERTY_BRAND } from '@/types/JsonbProperty.type';
+import { JSONB_PROPERTY_BRAND } from './jsonb-property.type';
 
 export type HasJsonbPropertyBrand<T> = typeof JSONB_PROPERTY_BRAND extends keyof T
   ? true

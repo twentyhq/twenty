@@ -1,5 +1,5 @@
-import { type ExtractJsonbProperties } from '@/types/ExtractJsonbProperties.type';
-import { type JsonbProperty } from '@/types/JsonbProperty.type';
+import { type ExtractJsonbProperties } from '../extract-jsonb-properties.type';
+import { type JsonbProperty } from '../jsonb-property.type';
 import { type Equal, type Expect } from 'twenty-shared/testing';
 
 type TestedRecord = {

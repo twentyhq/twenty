@@ -1,7 +1,7 @@
 import {
   type JsonbProperty,
   JSONB_PROPERTY_BRAND,
-} from '@/types/JsonbProperty.type';
+} from '../jsonb-property.type';
 import { type Equal, type Expect } from 'twenty-shared/testing';
 
 type SimpleObject = { value: string };
