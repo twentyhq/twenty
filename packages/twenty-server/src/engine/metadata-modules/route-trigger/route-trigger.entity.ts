@@ -1,4 +1,6 @@
-import { HTTPMethod, JsonbProperty } from 'twenty-shared/types';
+import { HTTPMethod } from 'twenty-shared/types';
+
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import {
   Column,
   CreateDateColumn,
