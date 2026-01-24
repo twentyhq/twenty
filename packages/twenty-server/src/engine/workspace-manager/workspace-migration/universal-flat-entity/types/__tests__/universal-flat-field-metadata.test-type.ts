@@ -1,22 +1,22 @@
 import {
-  Equal,
+  type Equal,
   type Expect,
   type HasAllProperties,
 } from 'twenty-shared/testing';
 import {
-  FieldMetadataDefaultOption,
-  FieldNumberVariant,
-  LinkMetadata,
-  NumberDataType,
-  RelationOnDeleteAction,
-  RelationType,
-  SerializedRelation,
+  type FieldMetadataDefaultOption,
+  type FieldNumberVariant,
+  type LinkMetadata,
+  type NumberDataType,
+  type RelationOnDeleteAction,
+  type RelationType,
+  type SerializedRelation,
   type FieldMetadataType,
-  type NullablePartial
+  type NullablePartial,
 } from 'twenty-shared/types';
+import { type Prettify } from 'zod/v4/core/util.cjs';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { Prettify } from 'zod/v4/core/util.cjs';
 
 // Relation field types have defined relation universal identifiers
 type DefinedRelationUniversalIdentifierRecord = {
@@ -95,6 +95,7 @@ type UniversalFlatTransformationAssertions = [
 type NarrowedTestCase = Prettify<
   UniversalFlatFieldMetadata<FieldMetadataType.RELATION>['settings']
 >;
+
 type NarrowedExpectedResult = {
   relationType: RelationType;
   onDelete?: RelationOnDeleteAction | undefined;
@@ -109,6 +110,7 @@ type SettingsTestCase = Prettify<
     | FieldMetadataType.TEXT
   >['settings']
 >;
+
 type SettingsExpectedResult =
   | {
       relationType: RelationType;
@@ -135,6 +137,7 @@ type DefaultValueTestCase = Prettify<
     | FieldMetadataType.CURRENCY
   >['defaultValue']
 >;
+
 type DefaultValueExpectedResult =
   | string
   | number

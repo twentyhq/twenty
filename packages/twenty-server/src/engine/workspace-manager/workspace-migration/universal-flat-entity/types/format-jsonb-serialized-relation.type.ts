@@ -1,9 +1,10 @@
-import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
 import {
-  ExtractSerializedRelationProperties,
-  HasJsonbPropertyBrand,
-  JSONB_PROPERTY_BRAND,
+  type ExtractSerializedRelationProperties,
+  type HasJsonbPropertyBrand,
+  type JSONB_PROPERTY_BRAND,
 } from 'twenty-shared/types';
+
+import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
 
 export type FormatJsonbSerializedRelation<T> = T extends unknown
   ? T extends (infer U)[]

@@ -6,11 +6,13 @@ import { type WidgetConfigurationType } from 'src/engine/metadata-modules/page-l
 
 type GaugeChartConfiguration =
   PageLayoutWidgetEntity<WidgetConfigurationType.GAUGE_CHART>['configuration'];
+
 type AllConfigurations =
   PageLayoutWidgetEntity<WidgetConfigurationType>['configuration'];
 
 type GaugeChartSerializedRelationProperties =
   ExtractSerializedRelationProperties<GaugeChartConfiguration>;
+
 type AllConfigurationsSerializedRelationProperties =
   ExtractSerializedRelationProperties<AllConfigurations>;
 

@@ -1,5 +1,5 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
-import { ExtractJsonbProperties } from 'twenty-shared/types';
+import { type ExtractJsonbProperties } from 'twenty-shared/types';
 
 import { type CastRecordTypeOrmDatePropertiesToString } from 'src/engine/metadata-modules/flat-entity/types/cast-record-typeorm-date-properties-to-string.type';
 import { type ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-one-to-many-entity-relation-properties.type';

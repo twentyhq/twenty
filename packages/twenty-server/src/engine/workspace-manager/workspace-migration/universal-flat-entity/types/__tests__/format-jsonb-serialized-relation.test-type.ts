@@ -1,8 +1,8 @@
-import { Equal, type Expect } from 'twenty-shared/testing';
+import { type Equal, type Expect } from 'twenty-shared/testing';
 import {
-  JSONB_PROPERTY_BRAND,
-  JsonbProperty,
-  SerializedRelation,
+  type JSONB_PROPERTY_BRAND,
+  type JsonbProperty,
+  type SerializedRelation,
 } from 'twenty-shared/types';
 
 import { type FormatJsonbSerializedRelation } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-jsonb-serialized-relation.type';
@@ -163,6 +163,7 @@ type MultipleRelationsAssertions = [
 // Verify brand is removed
 type BrandRemovedCheck =
   FormatJsonbSerializedRelation<BrandedObjectWithRelation>;
+
 // eslint-disable-next-line unused-imports/no-unused-vars
 type BrandRemovedAssertion = Expect<
   Equal<
