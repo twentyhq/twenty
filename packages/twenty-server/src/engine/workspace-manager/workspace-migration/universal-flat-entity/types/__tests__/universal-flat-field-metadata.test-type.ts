@@ -119,7 +119,6 @@ type SettingsExpectedResult =
       dataType?: NumberDataType | undefined;
       decimals?: number | undefined;
       type?: FieldNumberVariant | undefined;
-      fooUniversalIdentifier: SerializedRelation;
     }
   | {
       displayedMaxRows?: number | undefined;
@@ -150,7 +149,7 @@ type DefaultValueExpectedResult =
     };
 
 type Assertions = [
-  Expect<Equal<NarrowedTestCase, NarrowedExpectedResult>>,
   Expect<Equal<SettingsTestCase, SettingsExpectedResult>>,
+  Expect<Equal<NarrowedTestCase, NarrowedExpectedResult>>,
   Expect<Equal<DefaultValueTestCase, DefaultValueExpectedResult>>,
 ];
