@@ -1,9 +1,12 @@
 import { type Equal, type Expect } from 'twenty-shared/testing';
 
 import {
-  type JsonbProperty,
   type JSONB_PROPERTY_BRAND,
-} from '../jsonb-property.type';
+  type JsonbProperty,
+} from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+type EmptyObject = {};
 
 type SimpleObject = { value: string };
 
@@ -34,7 +37,12 @@ type ObjectAssertions = [
       NestedObject & { [JSONB_PROPERTY_BRAND]?: never }
     >
   >,
-  Expect<Equal<JsonbProperty<{}>, {} & { [JSONB_PROPERTY_BRAND]?: never }>>,
+  Expect<
+    Equal<
+      JsonbProperty<EmptyObject>,
+      EmptyObject & { [JSONB_PROPERTY_BRAND]?: never }
+    >
+  >,
 ];
 
 // eslint-disable-next-line unused-imports/no-unused-vars
