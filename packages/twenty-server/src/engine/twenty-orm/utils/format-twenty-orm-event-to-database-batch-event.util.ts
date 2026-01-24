@@ -1,13 +1,18 @@
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
 import {
   ObjectRecordCreateEvent,
   ObjectRecordDeleteEvent,
   ObjectRecordDestroyEvent,
+  ObjectRecordRestoreEvent,
   ObjectRecordUpdateEvent,
   ObjectRecordUpsertEvent,
   type ObjectRecordDiff,
 } from 'twenty-shared/database-events';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import {
+  assertUnreachable,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import type { ObjectLiteral } from 'typeorm';
 
@@ -31,68 +36,98 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   flatFieldMetadataMaps,
   workspaceId,
   authContext,
-  entities,
-  beforeEntities,
+  recordsAfter,
+  recordsBefore,
 }: {
   action: DatabaseEventAction;
   objectMetadataItem: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   workspaceId: string;
   authContext?: AuthContext;
-  entities: T | T[];
-  beforeEntities?: T | T[];
+  recordsAfter?: T[];
+  recordsBefore?: T[];
 }): DatabaseBatchEventInput<T, DatabaseEventAction> | undefined => {
   if (objectMetadataItem.standardId === STANDARD_OBJECT_IDS.timelineActivity) {
     return;
   }
 
   const objectMetadataNameSingular = objectMetadataItem.nameSingular;
-  const entityArray = isDefined(entities)
-    ? Array.isArray(entities)
-      ? entities
-      : [entities]
-    : [];
+
   let events: (
-    | ObjectRecordCreateEvent<T>
-    | ObjectRecordUpdateEvent<T>
     | ObjectRecordDeleteEvent<T>
+    | ObjectRecordRestoreEvent<T>
+    | ObjectRecordUpdateEvent<T>
+    | ObjectRecordCreateEvent<T>
+    | ObjectRecordDestroyEvent<T>
     | ObjectRecordUpsertEvent<T>
   )[] = [];
 
   switch (action) {
-    case DatabaseEventAction.CREATED:
-      events = entityArray.map((after) => {
-        const event = new ObjectRecordCreateEvent<T>();
+    case DatabaseEventAction.CREATED: {
+      if (!isDefined(recordsAfter)) {
+        throw new Error(
+          `recordsAfter is required for ${action.toUpperCase()} action`,
+        );
+      }
 
-        event.userId = authContext?.user?.id;
-        event.workspaceMemberId = authContext?.workspaceMemberId;
-        event.recordId = after.id;
-        event.properties = { after };
+      if (!isNonEmptyArray(recordsAfter)) {
+        break;
+      }
 
-        return event;
-      });
+      events =
+        recordsAfter?.map((recordAfter) => {
+          const event = new ObjectRecordCreateEvent<T>();
+
+          event.userId = authContext?.user?.id;
+          event.workspaceMemberId = authContext?.workspaceMemberId;
+          event.recordId = recordAfter.id;
+          event.properties = { after: recordAfter };
+
+          return event;
+        }) ?? [];
       break;
+    }
     case DatabaseEventAction.UPDATED:
-      events = entityArray
-        .map((after) => {
-          if (!beforeEntities) {
-            throw new Error('beforeEntities is required for UPDATED action');
+    case DatabaseEventAction.DELETED:
+    case DatabaseEventAction.RESTORED: {
+      if (!isDefined(recordsAfter)) {
+        throw new Error(
+          `recordsAfter is required for ${action.toUpperCase()} action`,
+        );
+      }
+
+      if (!isDefined(recordsBefore)) {
+        throw new Error(
+          `recordsBefore is required for ${action.toUpperCase()} action`,
+        );
+      }
+
+      if (!isNonEmptyArray(recordsAfter)) {
+        break;
+      }
+
+      events = recordsAfter
+        .map((recordAfter) => {
+          if (!isNonEmptyArray(recordsBefore)) {
+            throw new Error(
+              `recordsBefore is required for ${action.toUpperCase()} action`,
+            );
           }
 
-          const before = Array.isArray(beforeEntities)
-            ? beforeEntities.find((before) => before.id === after.id)
-            : beforeEntities;
+          const correspondingRecordBefore = recordsBefore.find(
+            (recordBeforeToFind) => recordBeforeToFind.id === recordAfter.id,
+          );
 
-          if (!isDefined(before)) {
+          if (!isDefined(correspondingRecordBefore)) {
             throw new TwentyORMException(
-              'Record mismatch detected while computing event data for UPDATED action',
+              `Record mismatch detected while computing event data for ${action.toUpperCase()} action`,
               TwentyORMExceptionCode.ORM_EVENT_DATA_CORRUPTED,
             );
           }
 
           const diff = objectRecordChangedValues(
-            before,
-            after,
+            correspondingRecordBefore,
+            recordAfter,
             objectMetadataItem,
             flatFieldMetadataMaps,
           ) as Partial<ObjectRecordDiff<T>>;
@@ -103,74 +138,102 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
             return;
           }
 
-          const event = new ObjectRecordUpdateEvent<T>();
+          const eventPayload = {
+            userId: authContext?.user?.id,
+            workspaceMemberId: authContext?.workspaceMemberId,
+            recordId: recordAfter.id,
+            properties: {
+              before: correspondingRecordBefore,
+              after: recordAfter,
+              updatedFields,
+              diff,
+            },
+          } satisfies
+            | ObjectRecordUpdateEvent<T>
+            | ObjectRecordDeleteEvent<T>
+            | ObjectRecordRestoreEvent<T>;
 
-          event.userId = authContext?.user?.id;
-          event.workspaceMemberId = authContext?.workspaceMemberId;
-          event.recordId = after.id;
-          event.properties = {
-            before,
-            after,
-            updatedFields,
-            diff,
-          };
-
-          return event;
+          switch (action) {
+            case DatabaseEventAction.DELETED:
+              return Object.assign(
+                new ObjectRecordDeleteEvent<T>(),
+                eventPayload,
+              );
+            case DatabaseEventAction.UPDATED:
+              return Object.assign(
+                new ObjectRecordUpdateEvent<T>(),
+                eventPayload,
+              );
+            case DatabaseEventAction.RESTORED:
+              return Object.assign(
+                new ObjectRecordRestoreEvent<T>(),
+                eventPayload,
+              );
+            default:
+              return assertUnreachable(action);
+          }
         })
         .filter(isDefined);
       break;
-    case DatabaseEventAction.DELETED:
-      events = entityArray.map((before) => {
-        const event = new ObjectRecordDeleteEvent<T>();
+    }
+    case DatabaseEventAction.DESTROYED: {
+      if (!isDefined(recordsBefore)) {
+        throw new Error(`recordsBefore is required for "${action}" action`);
+      }
 
-        event.userId = authContext?.user?.id;
-        event.workspaceMemberId = authContext?.workspaceMemberId;
-        event.recordId = before.id;
-        event.properties = { before };
+      if (!isNonEmptyArray(recordsBefore)) {
+        break;
+      }
 
-        return event;
-      });
-      break;
-    case DatabaseEventAction.DESTROYED:
-      events = entityArray.map((before) => {
+      events = recordsBefore.map((recordBefore) => {
         const event = new ObjectRecordDestroyEvent<T>();
 
         event.userId = authContext?.user?.id;
         event.workspaceMemberId = authContext?.workspaceMemberId;
-        event.recordId = before.id;
-        event.properties = { before };
+        event.recordId = recordBefore.id;
+        event.properties = { before: recordBefore };
 
         return event;
       });
       break;
-    case DatabaseEventAction.UPSERTED:
-      events = entityArray.map((after) => {
+    }
+    case DatabaseEventAction.UPSERTED: {
+      if (!isDefined(recordsAfter)) {
+        throw new Error(`recordsAfter is required for "${action}" action`);
+      }
+
+      if (!isNonEmptyArray(recordsAfter)) {
+        break;
+      }
+
+      events = recordsAfter.map((recordAfter) => {
         const event = new ObjectRecordUpsertEvent<T>();
 
         event.userId = authContext?.user?.id;
         event.workspaceMemberId = authContext?.workspaceMemberId;
-        event.recordId = after.id;
+        event.recordId = recordAfter.id;
 
-        const before = beforeEntities
-          ? Array.isArray(beforeEntities)
-            ? beforeEntities.find((before) => before.id === after.id)
-            : beforeEntities
-          : undefined;
+        const correspondingRecordBefore = recordsBefore?.find(
+          (recordBeforeToFind) => recordBeforeToFind.id === recordAfter.id,
+        );
 
         let updatedFields;
         let diff;
 
         diff = objectRecordChangedValues(
-          before ?? {},
-          after,
+          correspondingRecordBefore ?? {},
+          recordAfter,
           objectMetadataItem,
           flatFieldMetadataMaps,
         ) as Partial<ObjectRecordDiff<T>>;
+
         updatedFields = Object.keys(diff);
 
         event.properties = {
-          after,
-          ...(before && { before }),
+          after: recordAfter,
+          ...(correspondingRecordBefore && {
+            before: correspondingRecordBefore,
+          }),
           ...(diff && { diff }),
           ...(updatedFields && { updatedFields }),
         };
@@ -178,6 +241,8 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         return event;
       });
       break;
+    }
+
     default:
       return;
   }
