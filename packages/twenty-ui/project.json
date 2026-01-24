@@ -80,7 +80,15 @@
         "fix": {}
       }
     },
-    "test": {},
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": [
+        "{projectRoot}/coverage"
+      ],
+      "options": {
+        "config": "{projectRoot}/vitest.unit.config.ts"
+      }
+    },
     "typecheck": {},
     "storybook:build": {
       "configurations": {

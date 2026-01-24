@@ -16,19 +16,19 @@ const meta: Meta<typeof ContactLink> = {
 
 export default meta;
 type Story = StoryObj<typeof ContactLink>;
-const clickJestFn = fn();
+const clickFn = fn();
 
 export const Email: Story = {
   args: {
     href: `mailto:${'email@example.com'}`,
     children: 'email@example.com',
-    onClick: clickJestFn,
+    onClick: clickFn,
   },
 };
 
 export const Phone: Story = {
   args: {
     children: '11111111111',
-    onClick: clickJestFn,
+    onClick: clickFn,
   },
 };

@@ -1,10 +1,11 @@
 import { getOsShortcutSeparator } from '../getOsShortcutSeparator';
+import { vi } from 'vitest';
 
 describe('getOsShortcutSeparator', () => {
-  let userAgentSpy: jest.SpyInstance;
+  let userAgentSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    userAgentSpy = jest.spyOn(window.navigator, 'userAgent', 'get');
+    userAgentSpy = vi.spyOn(window.navigator, 'userAgent', 'get');
   });
 
   afterEach(() => {

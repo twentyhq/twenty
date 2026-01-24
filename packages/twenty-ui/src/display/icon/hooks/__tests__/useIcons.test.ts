@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import * as recoil from 'recoil';
+import { vi } from 'vitest';
 
 import {
   Icon123,
@@ -14,9 +15,9 @@ describe('useIcons', () => {
     Icon123,
     IconBuildingSkyscraper,
   };
-  jest
-    .spyOn(recoil, 'useRecoilValue')
-    .mockImplementationOnce(() => mockedStateIcons);
+  vi.spyOn(recoil, 'useRecoilValue').mockImplementationOnce(
+    () => mockedStateIcons,
+  );
   const { result } = renderHook(() => useIcons(), {
     wrapper: recoil.RecoilRoot,
   });

@@ -4,13 +4,13 @@ import { ComponentDecorator } from '@ui/testing';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { MainButton } from '../MainButton';
 
-const clickJestFn = fn();
+const clickFn = fn();
 
 const meta: Meta<typeof MainButton> = {
   title: 'UI/Input/Button/MainButton',
   component: MainButton,
   decorators: [ComponentDecorator],
-  args: { title: 'A primary Button', onClick: clickJestFn },
+  args: { title: 'A primary Button', onClick: clickFn },
 };
 
 export default meta;
@@ -20,11 +20,11 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(clickJestFn).toHaveBeenCalledTimes(0);
+    expect(clickFn).toHaveBeenCalledTimes(0);
     const button = canvas.getByRole('button');
     await userEvent.click(button);
 
-    expect(clickJestFn).toHaveBeenCalledTimes(1);
+    expect(clickFn).toHaveBeenCalledTimes(1);
   },
 };
 

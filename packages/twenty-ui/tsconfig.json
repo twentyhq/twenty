@@ -9,7 +9,7 @@
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "noEmit": true,
-    "types": ["node", "jest"],
+    "types": ["node", "vitest/globals"],
     "outDir": "../../.cache/tsc",
     "paths": {
       "@ui/*": ["./src/*"],
@@ -22,8 +22,9 @@
     "src/**/*.d.ts",
     ".storybook/*.ts",
     ".storybook/*.tsx",
-    "jest.config.mjs",
     "setupTests.ts",
-    "vite.config.ts"
+    "vite.config.ts",
+    "vitest.config.ts",
+    "vitest.unit.config.ts"
   ]
 }

@@ -16,19 +16,19 @@ const meta: Meta<typeof RoundedLink> = {
 
 export default meta;
 type Story = StoryObj<typeof RoundedLink>;
-const clickJestFn = fn();
+const clickFn = fn();
 
 export const Default: Story = {
   args: {
-    onClick: clickJestFn,
+    onClick: clickFn,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(clickJestFn).toHaveBeenCalledTimes(0);
+    await expect(clickFn).toHaveBeenCalledTimes(0);
     const link = canvas.getByRole('link');
     await userEvent.click(link);
 
-    await expect(clickJestFn).toHaveBeenCalledTimes(1);
+    await expect(clickFn).toHaveBeenCalledTimes(1);
   },
 };

@@ -4,7 +4,7 @@ import { ComponentDecorator } from '@ui/testing';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { RoundedIconButton } from '../RoundedIconButton';
 
-const clickJestFn = fn();
+const clickFn = fn();
 
 const meta: Meta<typeof RoundedIconButton> = {
   title: 'UI/Input/Button/RoundedIconButton',
@@ -17,14 +17,14 @@ type Story = StoryObj<typeof RoundedIconButton>;
 export const Default: Story = {
   decorators: [ComponentDecorator],
   argTypes: { Icon: { control: false } },
-  args: { onClick: clickJestFn, Icon: IconArrowRight },
+  args: { onClick: clickFn, Icon: IconArrowRight },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(clickJestFn).toHaveBeenCalledTimes(0);
+    expect(clickFn).toHaveBeenCalledTimes(0);
     const button = canvas.getByRole('button');
     await userEvent.click(button);
 
-    expect(clickJestFn).toHaveBeenCalledTimes(1);
+    expect(clickFn).toHaveBeenCalledTimes(1);
   },
 };
