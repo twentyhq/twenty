@@ -149,6 +149,7 @@ type OptionsTestCase =
 
 type OptionsExpectedResult = FieldMetadataDefaultOption[];
 
+// eslint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<Equal<SettingsTestCase, SettingsExpectedResult>>,
   Expect<Equal<NarrowedTestCase, NarrowedExpectedResult>>,

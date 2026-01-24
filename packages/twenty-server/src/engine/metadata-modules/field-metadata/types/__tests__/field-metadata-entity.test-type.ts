@@ -451,7 +451,7 @@ type OptionsAssertions = [
     HasAllProperties<
       AbstractFieldMetadata,
       {
-        options: FieldMetadataOptionForAnyType;
+        options: JsonbProperty<FieldMetadataOptionForAnyType>;
       }
     >
   >,

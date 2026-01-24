@@ -1,6 +1,5 @@
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
-import { type JsonbProperty } from '@/types/JsonbProperty.type';
 
 export type TagColor =
   | 'green'
@@ -26,9 +25,9 @@ export class FieldMetadataComplexOption extends FieldMetadataDefaultOption {
 }
 
 type FieldMetadataOptionsMapping = {
-  [FieldMetadataType.RATING]: JsonbProperty<FieldMetadataDefaultOption[]>;
-  [FieldMetadataType.SELECT]: JsonbProperty<FieldMetadataComplexOption[]>;
-  [FieldMetadataType.MULTI_SELECT]: JsonbProperty<FieldMetadataComplexOption[]>;
+  [FieldMetadataType.RATING]: FieldMetadataDefaultOption[];
+  [FieldMetadataType.SELECT]: FieldMetadataComplexOption[];
+  [FieldMetadataType.MULTI_SELECT]: FieldMetadataComplexOption[];
 };
 
 export type FieldMetadataOptionForAnyType =
