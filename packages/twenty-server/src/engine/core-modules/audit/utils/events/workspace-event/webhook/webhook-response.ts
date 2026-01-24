@@ -11,6 +11,7 @@ export const webhookResponseSchema = z.strictObject({
     url: z.string(),
     webhookId: z.string(),
     eventName: z.string(),
+    error: z.string().optional(),
   }),
 });
 

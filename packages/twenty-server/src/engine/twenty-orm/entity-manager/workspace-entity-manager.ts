@@ -45,6 +45,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { type BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/deep-partial-entity-with-nested-relation-fields.type';
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { getEntityTarget } from 'src/engine/twenty-orm/entity-manager/utils/get-entity-target';
@@ -1272,8 +1273,8 @@ export class WorkspaceEntityManager extends EntityManager {
           objectMetadataItem,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: updatedEntities,
-          beforeEntities: updatedEntities.map(
+          recordsAfter: updatedEntities,
+          recordsBefore: updatedEntities.map(
             (entity) => beforeUpdateMapById[entity.id],
           ),
         }),
@@ -1285,7 +1286,7 @@ export class WorkspaceEntityManager extends EntityManager {
           objectMetadataItem,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: createdEntities,
+          recordsAfter: createdEntities,
         }),
       );
 
@@ -1471,13 +1472,17 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.flatFieldMetadataMaps,
     );
 
+    const recordsBefore = Array.isArray(formattedResult)
+      ? formattedResult
+      : [formattedResult];
+
     this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
       formatTwentyOrmEventToDatabaseBatchEvent({
         action: DatabaseEventAction.DESTROYED,
         objectMetadataItem,
         flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
         workspaceId: this.internalContext.workspaceId,
-        entities: formattedResult,
+        recordsBefore,
       }),
     );
 
@@ -1562,6 +1567,29 @@ export class WorkspaceEntityManager extends EntityManager {
     const entityTarget =
       target ?? (isEntityArray ? entity[0]?.constructor : entity.constructor);
 
+    const entityArray = isEntityArray ? entity : [entity];
+
+    const entityIds = entityArray
+      .map((entity) => (entity as { id: string }).id)
+      .filter(isDefined);
+
+    const recordsBeforeFindResult = await this.find<BaseWorkspaceEntity>(
+      entityTarget,
+      {
+        where: { id: In(entityIds) },
+      },
+      { shouldBypassPermissionChecks: true }, // Bypass as this is for event emission
+    );
+
+    const beforeUpdateMapById = recordsBeforeFindResult.reduce(
+      (acc, e: BaseWorkspaceEntity) => {
+        acc[e.id] = e;
+
+        return acc;
+      },
+      {} as Record<string, BaseWorkspaceEntity>,
+    );
+
     const objectMetadataItem = getObjectMetadataFromEntityTarget(
       entityTarget,
       this.internalContext,
@@ -1592,13 +1620,22 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.flatFieldMetadataMaps,
     );
 
+    const recordsAfter = Array.isArray(formattedResult)
+      ? formattedResult
+      : [formattedResult];
+
+    const recordsBefore = recordsAfter.map<Entity>(
+      (record) => beforeUpdateMapById[record.id] as unknown as Entity,
+    );
+
     this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
       formatTwentyOrmEventToDatabaseBatchEvent({
         action: DatabaseEventAction.DELETED,
         objectMetadataItem,
         flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
         workspaceId: this.internalContext.workspaceId,
-        entities: formattedResult,
+        recordsAfter,
+        recordsBefore,
       }),
     );
 
@@ -1679,6 +1716,29 @@ export class WorkspaceEntityManager extends EntityManager {
     const entityTarget =
       target ?? (isEntityArray ? entity[0]?.constructor : entity.constructor);
 
+    const entityArray = isEntityArray ? entity : [entity];
+
+    const entityIds = entityArray
+      .map((entity) => (entity as { id: string }).id)
+      .filter(isDefined);
+
+    const recordsBeforeFindResult = await this.find<BaseWorkspaceEntity>(
+      entityTarget,
+      {
+        where: { id: In(entityIds) },
+      },
+      { shouldBypassPermissionChecks: true }, // Bypass as this is for event emission
+    );
+
+    const beforeUpdateMapById = recordsBeforeFindResult.reduce(
+      (acc, e: BaseWorkspaceEntity) => {
+        acc[e.id] = e;
+
+        return acc;
+      },
+      {} as Record<string, BaseWorkspaceEntity>,
+    );
+
     const objectMetadataItem = getObjectMetadataFromEntityTarget(
       entityTarget,
       this.internalContext,
@@ -1709,13 +1769,22 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.flatFieldMetadataMaps,
     );
 
+    const recordsAfter = Array.isArray(formattedResult)
+      ? formattedResult
+      : [formattedResult];
+
+    const recordsBefore = recordsAfter.map<Entity>(
+      (record) => beforeUpdateMapById[record.id] as unknown as Entity,
+    );
+
     this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
       formatTwentyOrmEventToDatabaseBatchEvent({
         action: DatabaseEventAction.RESTORED,
         objectMetadataItem,
         flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
         workspaceId: this.internalContext.workspaceId,
-        entities: formattedResult,
+        recordsAfter,
+        recordsBefore,
       }),
     );
 

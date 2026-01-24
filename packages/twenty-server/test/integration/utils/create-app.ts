@@ -19,6 +19,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { ExceptionHandlerMockService } from 'src/engine/core-modules/exception-handler/mocks/exception-handler-mock.service';
 import { MockedUnhandledExceptionFilter } from 'src/engine/core-modules/exception-handler/mocks/mock-unhandled-exception.filter';
 import { SyncDriver } from 'src/engine/core-modules/message-queue/drivers/sync.driver';
+import { JobsModule } from 'src/engine/core-modules/message-queue/jobs.module';
 import { QUEUE_DRIVER } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 
@@ -49,7 +50,12 @@ export const createApp = async (
   const stripeSDKMockService = new StripeSDKMockService();
   const mockExceptionHandlerService = new ExceptionHandlerMockService();
   let moduleBuilder: TestingModuleBuilder = Test.createTestingModule({
-    imports: [AppModule, CommandModule, MessageQueueModule.registerExplorer()],
+    imports: [
+      AppModule,
+      CommandModule,
+      JobsModule,
+      MessageQueueModule.registerExplorer(),
+    ],
     providers: [
       {
         provide: APP_FILTER,

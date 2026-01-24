@@ -419,16 +419,24 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
     });
 
+    const orderedIds = objectRecords.generatedMaps.map((record) => record.id);
+
     const upsertedRecords = await queryBuilder
       .setFindOptions({
         select: columnsToSelect,
       })
       .where({
-        id: In(objectRecords.generatedMaps.map((record) => record.id)),
+        id: In(orderedIds),
       })
       .withDeleted()
       .take(QUERY_MAX_RECORDS)
       .getMany();
+
+    const orderIndex = new Map(orderedIds.map((id, index) => [id, index]));
+
+    upsertedRecords.sort(
+      (a, b) => (orderIndex.get(a.id) ?? 0) - (orderIndex.get(b.id) ?? 0),
+    );
 
     return upsertedRecords as ObjectRecord[];
   }

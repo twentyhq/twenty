@@ -72,11 +72,11 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,
     description:
-      'Enable safe mode for HTTP requests (prevents private IPs and other security risks)',
+      'Enable safe mode for outbound HTTP requests (prevents private IPs and other security risks). Applies to HTTP workflow actions and webhooks.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  HTTP_TOOL_SAFE_MODE_ENABLED = true;
+  OUTBOUND_HTTP_SAFE_MODE_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,

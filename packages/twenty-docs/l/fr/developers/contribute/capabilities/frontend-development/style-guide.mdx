@@ -258,33 +258,34 @@ const StyledButton = styled.button`
 `;
 ```
 
-## Enforcing No-Type Imports
+## Type Imports
 
-Avoid type imports. To enforce this standard, an ESLint rule checks for and reports any type imports. This helps maintain consistency and readability in the TypeScript code.
+Prefer **inline type imports** when importing TypeScript types.
+This aligns with the enforced ESLint configuration and existing usage across the codebase.
 
 ```tsx
-// ❌ Bad
-import { type Meta, type StoryObj } from '@storybook/react';
+// ❌ Bad – imports types as runtime values
+import { Meta, StoryObj } from '@storybook/react-vite';
 
-// ❌ Bad
-import type { Meta, StoryObj } from '@storybook/react';
+// ❌ Bad – valid but not the preferred fix style
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
-// ✅ Good
-import { Meta, StoryObj } from '@storybook/react';
+// ✅ Good – preferred inline type imports
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 ```
 
-### Why No-Type Imports
+### Why Inline Type Imports
 
-* **Consistency**: By avoiding type imports and using a single approach for both type and value imports, the codebase remains consistent in its module import style.
+* **Consistency**: Matches the enforced ESLint rule and current code usage.
 
-* **Readability**: No-type imports improve code readability by making it clear when you're importing values or types. This reduces ambiguity and makes it easier to understand the purpose of imported symbols.
+* **Clarity**: Explicitly marks types while keeping imports grouped.
 
-* **Maintainability**: It enhances codebase maintainability because developers can identify and locate type-only imports when reviewing or modifying code.
+* **Tooling Alignment**: Avoids ESLint errors and unnecessary auto-fixes.
 
 ### ESLint Rule
 
-An ESLint rule, `@typescript-eslint/consistent-type-imports`, enforces the no-type import standard. This rule will generate errors or warnings for any type import violations.
+An ESLint rule, `@typescript-eslint/consistent-type-imports`, is configured to:
 
-Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). In most situations, you should not need to use type-only imports.
+* Prefer explicit type imports
 
-To ensure your code complies with this rule, make sure to run ESLint as part of your development workflow.
+* **Enforce** the `inline-type-imports` fix style

@@ -21,7 +21,7 @@ export const buildAttachmentStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'taskIdIndex',
-      relatedFieldNames: ['task'],
+      relatedFieldNames: ['targetTask'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -33,7 +33,7 @@ export const buildAttachmentStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'noteIdIndex',
-      relatedFieldNames: ['note'],
+      relatedFieldNames: ['targetNote'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -45,7 +45,7 @@ export const buildAttachmentStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'personIdIndex',
-      relatedFieldNames: ['person'],
+      relatedFieldNames: ['targetPerson'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -57,7 +57,7 @@ export const buildAttachmentStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'companyIdIndex',
-      relatedFieldNames: ['company'],
+      relatedFieldNames: ['targetCompany'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -69,7 +69,7 @@ export const buildAttachmentStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'opportunityIdIndex',
-      relatedFieldNames: ['opportunity'],
+      relatedFieldNames: ['targetOpportunity'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -81,7 +81,7 @@ export const buildAttachmentStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'dashboardIdIndex',
-      relatedFieldNames: ['dashboard'],
+      relatedFieldNames: ['targetDashboard'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -93,7 +93,7 @@ export const buildAttachmentStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'workflowIdIndex',
-      relatedFieldNames: ['workflow'],
+      relatedFieldNames: ['targetWorkflow'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
