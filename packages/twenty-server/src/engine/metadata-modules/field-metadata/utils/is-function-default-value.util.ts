@@ -5,7 +5,6 @@ import {
   fieldMetadataDefaultValueFunctionName,
 } from 'twenty-shared/types';
 
-// TODO prastoin
 export const isFunctionDefaultValue = (
   defaultValue: FieldMetadataDefaultValueForAnyType,
 ): defaultValue is FieldMetadataFunctionDefaultValue => {

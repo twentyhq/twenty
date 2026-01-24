@@ -10,13 +10,11 @@ export const fieldMetadataDefaultValueFunctionName = {
 export type FieldMetadataDefaultValueFunctionNames =
   (typeof fieldMetadataDefaultValueFunctionName)[keyof typeof fieldMetadataDefaultValueFunctionName];
 
-// Function default values
 export type FieldMetadataDefaultValueUuidFunction =
   typeof fieldMetadataDefaultValueFunctionName.UUID;
 export type FieldMetadataDefaultValueNowFunction =
   typeof fieldMetadataDefaultValueFunctionName.NOW;
 
-// Composite types (object shapes)
 export type FieldMetadataDefaultValueRichTextV2 = {
   blocknote: string | null;
   markdown: string | null;

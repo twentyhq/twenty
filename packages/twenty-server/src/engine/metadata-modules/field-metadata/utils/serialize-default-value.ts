@@ -9,7 +9,7 @@ import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field
 
 export const serializeDefaultValue = (
   defaultValue?: FieldMetadataDefaultValueForAnyType,
-): string | number | boolean | null => {
+) => {
   if (defaultValue === undefined || defaultValue === null) {
     return null;
   }
