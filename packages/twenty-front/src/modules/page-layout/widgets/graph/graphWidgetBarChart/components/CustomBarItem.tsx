@@ -1,8 +1,6 @@
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
-import { graphWidgetIsSliceHoveredComponentFamilySelector } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetIsSliceHoveredComponentFamilySelector';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { animated, to } from '@react-spring/web';
@@ -22,19 +20,12 @@ type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
 const StyledBarRect = styled(animated.rect)<{
   $isInteractive?: boolean;
   $isDimmed?: boolean;
-  $isSliceHovered?: boolean;
 }>`
   cursor: ${({ $isInteractive }) => ($isInteractive ? 'pointer' : 'default')};
-  filter: ${({ $isSliceHovered, $isInteractive }) =>
-    $isSliceHovered && $isInteractive
-      ? `brightness(${BAR_CHART_CONSTANTS.HOVER_BRIGHTNESS})`
-      : 'none'};
   opacity: ${({ $isDimmed }) =>
     $isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1};
   pointer-events: none;
-  transition:
-    filter 0.15s ease-in-out,
-    opacity 0.15s ease-in-out;
+  transition: opacity 0.15s ease-in-out;
 `;
 
 // This is a copy of the BarItem component from @nivo/bar with some design modifications
@@ -57,11 +48,6 @@ export const CustomBarItem = <D extends BarDatum>({
 }: CustomBarItemProps<D>) => {
   const highlightedLegendId = useRecoilComponentValue(
     graphWidgetHighlightedLegendIdComponentState,
-  );
-
-  const isSliceHovered = useRecoilComponentFamilyValue(
-    graphWidgetIsSliceHoveredComponentFamilySelector,
-    String(barData.indexValue),
   );
 
   const isDimmed =
@@ -163,7 +149,6 @@ export const CustomBarItem = <D extends BarDatum>({
         <StyledBarRect
           $isInteractive={isInteractive}
           $isDimmed={isDimmed}
-          $isSliceHovered={isSliceHovered}
           clipPath={clipInterpolations ? `url(#${clipPathId})` : undefined}
           width={barInterpolations.finalBarWidth}
           height={barInterpolations.finalBarHeight}
