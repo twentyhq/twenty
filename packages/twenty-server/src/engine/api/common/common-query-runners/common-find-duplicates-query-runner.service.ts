@@ -78,14 +78,13 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         })
         .getMany()) as ObjectRecord[];
 
-      // Preserve original input order
-      const recordsById = new Map(
-        fetchedRecords.map((record) => [record.id, record]),
+      const orderIndex = new Map(args.ids.map((id, index) => [id, index]));
+
+      fetchedRecords.sort(
+        (a, b) => (orderIndex.get(a.id) ?? 0) - (orderIndex.get(b.id) ?? 0),
       );
 
-      objectRecords = args.ids
-        .map((id) => recordsById.get(id))
-        .filter(isDefined);
+      objectRecords = fetchedRecords;
     } else if (args.data && !isEmpty(args.data)) {
       objectRecords = args.data;
     }

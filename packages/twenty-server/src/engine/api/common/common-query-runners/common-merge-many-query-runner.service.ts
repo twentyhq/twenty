@@ -137,10 +137,10 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       flatFieldMetadataMaps: context.flatFieldMetadataMaps,
     });
 
-    const fetchedRecords = await context.repository.find({
+    const fetchedRecords = (await context.repository.find({
       where: { id: In(args.ids) },
       select: columnsToSelect,
-    });
+    })) as ObjectRecord[];
 
     if (fetchedRecords.length !== args.ids.length) {
       throw new CommonQueryRunnerException(
@@ -150,23 +150,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       );
     }
 
-    // Preserve original input order
-    const recordsById = new Map(
-      fetchedRecords.map((record) => [record.id, record]),
+    const orderIndex = new Map(args.ids.map((id, index) => [id, index]));
+
+    fetchedRecords.sort(
+      (a, b) => (orderIndex.get(a.id) ?? 0) - (orderIndex.get(b.id) ?? 0),
     );
-    const recordsToMerge = args.ids.map((id) => {
-      const record = recordsById.get(id);
 
-      if (!record) {
-        throw new CommonQueryRunnerException(
-          `Record with id ${id} not found`,
-          CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
-          { userFriendlyMessage: msg`Record not found.` },
-        );
-      }
-
-      return record;
-    });
+    const recordsToMerge = fetchedRecords;
 
     if (args.dryRun && args.selectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({

@@ -1,5 +1,3 @@
-import { HttpService } from '@nestjs/axios';
-
 import crypto from 'crypto';
 
 import { getAbsoluteUrl } from 'twenty-shared/utils';
@@ -11,6 +9,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
 
 export type CallWebhookJobData = {
   targetUrl: string;
@@ -30,9 +29,9 @@ export type CallWebhookJobData = {
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJob {
   constructor(
-    private readonly httpService: HttpService,
     private readonly auditService: AuditService,
     private readonly metricsService: MetricsService,
+    private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
   private generateSignature(
@@ -84,7 +83,9 @@ export class CallWebhookJob {
           .toString('hex');
       }
 
-      const response = await this.httpService.axiosRef.post(
+      const axiosClient = this.secureHttpClientService.getHttpClient();
+
+      const response = await axiosClient.post(
         getAbsoluteUrl(data.targetUrl),
         payloadWithoutSecret,
         {
@@ -106,10 +107,18 @@ export class CallWebhookJob {
         shouldStoreInCache: false,
       });
     } catch (err) {
+      const isSSRFBlocked =
+        err instanceof Error &&
+        err.message.includes('internal IP address') &&
+        err.message.includes('is not allowed');
+
       auditService.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         success: false,
         ...commonPayload,
         ...(err.response && { status: err.response.status }),
+        ...(isSSRFBlocked && {
+          error: 'Webhook URL resolves to a private/internal IP address',
+        }),
       });
     }
   }
