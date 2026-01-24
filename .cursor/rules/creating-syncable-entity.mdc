@@ -27,6 +27,7 @@ Examples of existing syncable entities: `skill`, `agent`, `view`, `viewField`, `
 3. [Step-by-Step Implementation](#step-by-step-implementation)
    - [Step 1: Add Metadata Name Constant](#step-1-add-metadata-name-constant-twenty-shared)
    - [Step 2: Create TypeORM Entity](#step-2-create-typeorm-entity)
+   - [Step 2b: Using JsonbProperty and SerializedRelation Types](#step-2b-using-jsonbproperty-and-serializedrelation-types)
    - [Step 3: Define Flat Entity Type](#step-3-define-flat-entity-type)
    - [Step 4: Define Editable Properties](#step-4-define-editable-properties)
    - [Step 5: Register in Central Constants](#step-5-register-in-central-constants)
@@ -234,6 +235,160 @@ export abstract class WorkspaceRelatedEntity {
 | `universalIdentifier` | `string` (required) | Unique identifier for syncing across workspaces/applications |
 | `applicationId` | `string` (required) | Links the entity to an application (Twenty Standard or Custom) |
 | `workspaceId` | `string` (required) | Links the entity to a workspace (from `WorkspaceRelatedEntity`) |
+
+---
+
+### Step 2b: Using JsonbProperty and SerializedRelation Types
+
+When your entity has JSONB columns or stores foreign key references inside JSONB structures, you must use the branded type wrappers to enable automatic universal identifier mapping.
+
+#### JsonbProperty Wrapper
+
+Wrap all JSONB column types with `JsonbProperty<T>` to mark them for the universal entity transformation system:
+
+```typescript
+import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+
+@Entity('myEntity')
+export class MyEntityEntity extends SyncableEntity {
+  // Simple JSONB column - wrap the type
+  @Column({ type: 'jsonb', nullable: true })
+  settings: JsonbProperty<MyEntitySettings> | null;
+
+  // JSONB column with complex type
+  @Column({ type: 'jsonb', nullable: false })
+  configuration: JsonbProperty<MyEntityConfiguration>;
+
+  // Array stored as JSONB
+  @Column({ type: 'jsonb', nullable: true })
+  tags: JsonbProperty<string[]> | null;
+}
+```
+
+**When to use `JsonbProperty<T>`:**
+- Any column with `type: 'jsonb'` that stores an object or array
+- Configuration objects, settings, metadata blobs
+- Any structured data stored as JSON in the database
+
+**What it enables:**
+- The type system can identify which properties are JSONB columns
+- Automatic transformation of serialized relations within JSONB structures
+- Type-safe universal entity mapping
+
+#### SerializedRelation Type
+
+Use `SerializedRelation` for properties **inside JSONB structures** that store foreign key references (entity IDs):
+
+```typescript
+import { SerializedRelation } from 'twenty-shared/types';
+import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+
+// Define the JSONB structure type
+type MyEntityConfiguration = {
+  name: string;
+  // This stores a reference to another field's ID - use SerializedRelation
+  targetFieldMetadataId: SerializedRelation;
+  // This stores a reference to an object's ID
+  sourceObjectMetadataId: SerializedRelation;
+  // Regular string - NOT a foreign key reference
+  displayFormat: string;
+};
+
+@Entity('myEntity')
+export class MyEntityEntity extends SyncableEntity {
+  @Column({ type: 'jsonb', nullable: false })
+  configuration: JsonbProperty<MyEntityConfiguration>;
+}
+```
+
+**When to use `SerializedRelation`:**
+- Properties inside JSONB that store UUIDs referencing other entities
+- Foreign key relationships that can't use TypeORM relations (because they're in JSONB)
+- Any `*Id` property inside a JSONB structure that references another metadata entity
+
+**What it enables:**
+- Automatic renaming from `*Id` to `*UniversalIdentifier` in universal entities
+- Type-safe extraction of serialized relation properties
+- Proper handling during workspace sync/migration
+
+#### Complete Example
+
+```typescript
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { SerializedRelation } from 'twenty-shared/types';
+
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+
+// JSONB structure with serialized relations
+type WidgetConfiguration = {
+  title: string;
+  // Foreign keys stored in JSONB - use SerializedRelation
+  fieldMetadataId: SerializedRelation;
+  objectMetadataId: SerializedRelation;
+  // Optional foreign key
+  viewId?: SerializedRelation;
+  // Regular properties (not foreign keys)
+  displayMode: 'compact' | 'expanded';
+  maxItems: number;
+};
+
+type GridPosition = {
+  row: number;
+  column: number;
+  width: number;
+  height: number;
+};
+
+@Entity('widget')
+export class WidgetEntity extends SyncableEntity implements Required<WidgetEntity> {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ nullable: true, type: 'uuid' })
+  standardId: string | null;
+
+  @Column({ nullable: false })
+  name: string;
+
+  // JSONB column with serialized relations - wrap with JsonbProperty
+  @Column({ type: 'jsonb', nullable: false })
+  configuration: JsonbProperty<WidgetConfiguration>;
+
+  // JSONB column without serialized relations - still wrap with JsonbProperty
+  @Column({ type: 'jsonb', nullable: false })
+  gridPosition: JsonbProperty<GridPosition>;
+
+  @Column({ default: false })
+  isCustom: boolean;
+
+  // ... other columns
+}
+```
+
+**Result in Universal Entity:**
+
+When transformed to a universal entity, the `configuration` property will have its `SerializedRelation` fields automatically renamed:
+
+```typescript
+// Original (in database/flat entity)
+{
+  fieldMetadataId: "abc-123",
+  objectMetadataId: "def-456",
+  viewId: "ghi-789",
+  displayMode: "compact",
+  maxItems: 10,
+}
+
+// Transformed (in universal entity)
+{
+  fieldMetadataUniversalIdentifier: "abc-123",
+  objectMetadataUniversalIdentifier: "def-456",
+  viewUniversalIdentifier: "ghi-789",
+  displayMode: "compact",
+  maxItems: 10,
+}
+```
 
 ---
 
@@ -1142,6 +1297,11 @@ Before considering your syncable entity complete, verify:
 - [ ] Entity has `standardId` column (nullable, for standard entities)
 - [ ] Entity has `isCustom` boolean column
 - [ ] Entity-to-flat transform sets `universalIdentifier` correctly (`standardId || id`)
+
+### JSONB Properties and Serialized Relations
+- [ ] All JSONB columns are wrapped with `JsonbProperty<T>`
+- [ ] Foreign key references inside JSONB structures use `SerializedRelation` type
+- [ ] JSONB structure types are properly defined with `SerializedRelation` for `*Id` properties
 
 ### Registration (twenty-shared)
 - [ ] Metadata name added to `ALL_METADATA_NAME`
