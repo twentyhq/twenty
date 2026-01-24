@@ -22,6 +22,10 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true,
+    "paths": {
+      "src/*": ["./src/*"],
+      "~/*": ["./*"]
+    }
   },
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

@@ -1,4 +1,3 @@
-import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import {
   formatGraphValue,
@@ -8,6 +7,7 @@ import {
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
+import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { BarChartLayout } from '~/generated/graphql';
 
 type GetBarChartAxisConfigsProps = {
@@ -16,7 +16,8 @@ type GetBarChartAxisConfigsProps = {
   yAxisLabel?: string;
   formatOptions?: GraphValueFormatOptions;
   valueTickValues?: number[];
-  tickConfig: BarChartTickConfig;
+  tickConfiguration: BarChartTickConfig;
+  margins: ChartMargins;
 };
 
 export const getBarChartAxisConfigs = ({
@@ -25,7 +26,8 @@ export const getBarChartAxisConfigs = ({
   yAxisLabel,
   formatOptions,
   valueTickValues,
-  tickConfig,
+  tickConfiguration,
+  margins,
 }: GetBarChartAxisConfigsProps) => {
   const {
     categoryTickValues,
@@ -33,25 +35,24 @@ export const getBarChartAxisConfigs = ({
     maxBottomAxisTickLabelLength,
     maxLeftAxisTickLabelLength,
     bottomAxisTickRotation,
-  } = tickConfig;
+  } = tickConfiguration;
 
   const resolvedValueTickValues =
     valueTickValues && valueTickValues.length > 0
       ? valueTickValues
       : numberOfValueTicks;
 
-  const baseMargins = getBarChartMargins({ xAxisLabel, yAxisLabel });
-
   const hasRotation = bottomAxisTickRotation !== 0;
-  const margins =
-    layout === BarChartLayout.VERTICAL && hasRotation
-      ? {
-          ...baseMargins,
-          bottom:
-            baseMargins.bottom +
-            COMMON_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN,
-        }
-      : baseMargins;
+  const baseBottomLegendOffset =
+    BAR_CHART_CONSTANTS.BOTTOM_AXIS_LEGEND_OFFSET +
+    (hasRotation ? BAR_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN : 0);
+  const bottomLegendOffset = Math.min(
+    baseBottomLegendOffset,
+    Math.max(
+      margins.bottom - COMMON_CHART_CONSTANTS.LEGEND_OFFSET_MARGIN_BUFFER,
+      0,
+    ),
+  );
 
   if (layout === BarChartLayout.VERTICAL) {
     return {
@@ -62,11 +63,7 @@ export const getBarChartAxisConfigs = ({
         tickValues: categoryTickValues,
         tickRotation: bottomAxisTickRotation,
         legend: xAxisLabel,
-        legendOffset:
-          BAR_CHART_CONSTANTS.BOTTOM_AXIS_LEGEND_OFFSET +
-          (hasRotation
-            ? BAR_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN
-            : 0),
+        legendOffset: bottomLegendOffset,
         format: (value: string | number) =>
           truncateTickLabel(String(value), maxBottomAxisTickLabelLength),
       },
@@ -97,7 +94,13 @@ export const getBarChartAxisConfigs = ({
       tickRotation: BAR_CHART_CONSTANTS.NO_ROTATION_ANGLE,
       tickValues: resolvedValueTickValues,
       legend: xAxisLabel,
-      legendOffset: BAR_CHART_CONSTANTS.BOTTOM_AXIS_LEGEND_OFFSET,
+      legendOffset: Math.min(
+        BAR_CHART_CONSTANTS.BOTTOM_AXIS_LEGEND_OFFSET,
+        Math.max(
+          margins.bottom - COMMON_CHART_CONSTANTS.LEGEND_OFFSET_MARGIN_BUFFER,
+          0,
+        ),
+      ),
       format: (value: number) =>
         truncateTickLabel(
           formatGraphValue(value, formatOptions ?? {}),

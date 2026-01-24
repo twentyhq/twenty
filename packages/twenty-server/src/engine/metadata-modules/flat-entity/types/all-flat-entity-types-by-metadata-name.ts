@@ -6,6 +6,7 @@ import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -18,6 +19,7 @@ import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { type NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
@@ -57,6 +59,11 @@ import {
   type DeleteIndexAction,
   type UpdateIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
+import {
+  type CreateNavigationMenuItemAction,
+  type DeleteNavigationMenuItemAction,
+  type UpdateNavigationMenuItemAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
 import {
   type CreateObjectAction,
   type DeleteObjectAction,
@@ -309,6 +316,15 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatCommandMenuItem;
     entity: MetadataEntity<'commandMenuItem'>;
+  };
+  navigationMenuItem: {
+    actions: {
+      create: CreateNavigationMenuItemAction;
+      update: UpdateNavigationMenuItemAction;
+      delete: DeleteNavigationMenuItemAction;
+    };
+    flatEntity: FlatNavigationMenuItem;
+    entity: NavigationMenuItemEntity;
   };
   pageLayout: {
     actions: {

@@ -4,19 +4,15 @@
     "declaration": true,
     "declarationMap": true,
     "noEmit": false,
-    "baseUrl": ".",
     "outDir": "../../.cache/tsc",
     "types": ["node"]
   },
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
   "exclude": [
     "**/*.spec.ts",
     "**/*.test.ts",
     "**/*.spec.tsx",
     "**/*.test.tsx",
-    "**/*.spec.js",
-    "**/*.test.js",
-    "**/*.spec.jsx",
-    "**/*.test.jsx"
-  ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
+    "**/__mocks__/**/*"
+  ]
 }

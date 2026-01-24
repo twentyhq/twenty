@@ -2,7 +2,7 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { v4 } from 'uuid';
 
-const APP_FOLDER = 'src/app';
+const APP_FOLDER = 'src';
 
 export const copyBaseApplicationProject = async ({
   appName,
@@ -33,6 +33,10 @@ export const copyBaseApplicationProject = async ({
   });
 
   await createDefaultFrontComponent({
+    appDirectory: appFolderPath,
+  });
+
+  await createDefaultFunction({
     appDirectory: appFolderPath,
   });
 
@@ -67,6 +71,7 @@ generated
 
 # dev
 /dist/
+.twenty
 
 # production
 /build
@@ -139,7 +144,7 @@ export const HelloWorld = () => {
 
 export default defineFrontComponent({
   universalIdentifier: '${universalIdentifier}',
-  name: 'hello-world',
+  name: 'hello-world-front-component',
   description: 'A sample front component',
   component: HelloWorld,
 });
@@ -149,6 +154,41 @@ export default defineFrontComponent({
     join(appDirectory, 'hello-world.front-component.tsx'),
     content,
   );
+};
+
+const createDefaultFunction = async ({
+  appDirectory,
+}: {
+  appDirectory: string;
+}) => {
+  const universalIdentifier = v4();
+  const triggerUniversalIdentifier = v4();
+
+  const content = `import { defineFunction } from 'twenty-sdk';
+
+const handler = async (): Promise<{ message: string }> => {
+  return { message: 'Hello, World!' };
+};
+
+export default defineFunction({
+  universalIdentifier: '${universalIdentifier}',
+  name: 'hello-world-function',
+  description: 'A sample serverless function',
+  timeoutSeconds: 5,
+  handler,
+  triggers: [
+    {
+      universalIdentifier: '${triggerUniversalIdentifier}',
+      type: 'route',
+      path: '/hello-world-function',
+      httpMethod: 'GET',
+      isAuthRequired: false,
+    },
+  ],
+});
+`;
+
+  await fs.writeFile(join(appDirectory, 'hello-world.function.ts'), content);
 };
 
 const createApplicationConfig = async ({
@@ -161,7 +201,7 @@ const createApplicationConfig = async ({
   appDirectory: string;
 }) => {
   const content = `import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default-function.role';
 
 export default defineApp({
   universalIdentifier: '${v4()}',
@@ -198,6 +238,7 @@ const createPackageJson = async ({
       'auth:switch': 'twenty auth:switch',
       'auth:list': 'twenty auth:list',
       'app:dev': 'twenty app:dev',
+      'app:build': 'twenty app:build',
       'app:sync': 'twenty app:sync',
       'entity:add': 'twenty entity:add',
       'app:generate': 'twenty app:generate',

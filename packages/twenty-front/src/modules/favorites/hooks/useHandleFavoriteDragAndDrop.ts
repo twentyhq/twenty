@@ -12,9 +12,7 @@ import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 export const useHandleFavoriteDragAndDrop = () => {
   const { favorites } = usePrefetchedFavoritesData();
   const { favoritesSorted } = useSortedFavorites();
-  const { updateOneRecord: updateOneFavorite } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Favorite,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
   const setOpenFavoriteFolderIds = useSetRecoilState(
     openFavoriteFolderIdsState,
   );
@@ -67,7 +65,8 @@ export const useHandleFavoriteDragAndDrop = () => {
           ? 1
           : folderFavorites[folderFavorites.length - 1].position + 1;
 
-      updateOneFavorite({
+      updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.Favorite,
         idToUpdate: draggableId,
         updateOneRecordInput: {
           favoriteFolderId: destinationFolderId,
@@ -100,7 +99,8 @@ export const useHandleFavoriteDragAndDrop = () => {
         });
       }
 
-      updateOneFavorite({
+      updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.Favorite,
         idToUpdate: draggableId,
         updateOneRecordInput: {
           favoriteFolderId: destinationFolderId,
@@ -120,7 +120,8 @@ export const useHandleFavoriteDragAndDrop = () => {
       items: favoritesInSameList,
     });
 
-    updateOneFavorite({
+    updateOneRecord({
+      objectNameSingular: CoreObjectNameSingular.Favorite,
       idToUpdate: draggableId,
       updateOneRecordInput: { position: newPosition },
     });

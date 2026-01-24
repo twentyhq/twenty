@@ -18,8 +18,8 @@ import assert from 'assert';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { FileFolder } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 

@@ -1,72 +1,72 @@
 ---
-title: Uniqueness Constraints
-description: How Twenty enforces data uniqueness during import.
+title: Ограничения уникальности
+description: Как Twenty обеспечивает уникальность данных при импорте.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Обзор
 
-Twenty enforces uniqueness on certain fields to prevent duplicate records and ensure data integrity. Understanding these constraints is essential for successful imports.
+Twenty обеспечивает уникальность для определённых полей, чтобы предотвратить дублирование записей и обеспечить целостность данных. Понимание этих ограничений важно для успешного импорта.
 
-## Default Unique Fields
+## Уникальные поля по умолчанию
 
-| Объект                       | Unique Fields          |
-| ---------------------------- | ---------------------- |
-| **People**                   | `id`, `email`          |
-| **Компании**                 | `id`, `domain`         |
-| **Пользовательские объекты** | `id` only (by default) |
+| Объект                       | Уникальные поля            |
+| ---------------------------- | -------------------------- |
+| **Люди**                     | `id`, `email`              |
+| **Компании**                 | `id`, `domain`             |
+| **Пользовательские объекты** | Только `id` (по умолчанию) |
 
-<Note>The `id` field is Twenty's internal identifier, auto-generated for each record. It uses UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>Поле `id` — внутренний идентификатор Twenty, автоматически создаётся для каждой записи. Используется формат UUID (например, `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
 
-## Custom Unique Fields
+## Пользовательские уникальные поля
 
-You can define additional unique fields under **Settings → Data Model**:
+Вы можете задать дополнительные уникальные поля в разделе **Настройки → Модель данных**:
 
-1. Go to **Settings → Data Model**
-2. Select the object
-3. Click on a field
-4. Enable **Unique** in field settings
+1. Перейдите в **Настройки → Модель данных**
+2. Выберите объект
+3. Нажмите на поле
+4. Включите **Уникальность** в настройках поля
 
-### Use Cases for Custom Unique Fields
+### Сценарии использования пользовательских уникальных полей
 
-* **External IDs**: Store IDs from other systems (Salesforce ID, HubSpot ID)
-* **Business identifiers**: Employee numbers, customer codes
-* **Alternative contact info**: LinkedIn profile, phone number
+* **Внешние идентификаторы**: храните идентификаторы из других систем (Salesforce ID, HubSpot ID)
+* **Бизнес-идентификаторы**: номера сотрудников, коды клиентов
+* **Альтернативные контактные данные**: профиль LinkedIn, номер телефона
 
-<Note>The field name `id` is reserved for Twenty's internal ID. Use a different name like `externalId` or `legacyId` for external identifiers.</Note>
+<Note>Имя поля `id` зарезервировано для внутреннего идентификатора Twenty. Для внешних идентификаторов используйте другое имя, например `externalId` или `legacyId`.</Note>
 
-## Import Behavior
+## Поведение при импорте
 
-### Creating New Records
+### Создание новых записей
 
-If a unique field value doesn't exist, a new record is created.
+Если значение уникального поля отсутствует, создаётся новая запись.
 
-### Updating Existing Records
+### Обновление существующих записей
 
-If a unique field value matches an existing record, that record is **updated** with the new data.
-<Warning>To **update existing records**, it is recommended to **only match one unique field**.</Warning>
+Если значение уникального поля совпадает с существующей записью, эта запись будет **обновлена** новыми данными.
+<Warning>Чтобы **обновлять существующие записи**, рекомендуется **сопоставлять только одно уникальное поле**.</Warning>
 
-### Soft-Deleted Records
+### Записи, помеченные как удалённые
 
 <Warning>
-  **Deleted records count toward uniqueness.**
+  **Записи, помеченные как удалённые, учитываются при проверке уникальности.**
 
-  Soft-deleted records (visible under Command Menu → See deleted records) are included in uniqueness checks. If you import a record with the same unique value as a deleted record, the deleted record will be **restored** with the new data.
+  Записи, помеченные как удалённые (видны в Командном меню → Показать удалённые записи), учитываются при проверке уникальности. Если вы импортируете запись с тем же уникальным значением, что и у удалённой записи, удалённая запись будет **восстановлена** с новыми данными.
 </Warning>
 
-## Duplicate Detection During Import
+## Обнаружение дубликатов при импорте
 
-During the validation phase:
+На этапе проверки:
 
-* Duplicates within your file are highlighted in yellow
-* You can edit or remove duplicate rows from the UI before starting the import
+* Дубликаты в вашем файле подсвечиваются жёлтым
+* Вы можете отредактировать или удалить строки-дубликаты в интерфейсе перед началом импорта
 
 <VimeoEmbed videoId="1145246326" title="Видеодемонстрация" />
 
 ## Лучшие практики
 
-1. **Remove duplicates** from your file before importing
-2. **Check for existing records** in Twenty before importing
-3. **Use external IDs** when migrating from other systems
-4. **Include unique fields** if you want to update existing records
+1. **Удалите дубликаты** из файла перед импортом
+2. **Проверьте наличие существующих записей** в Twenty перед импортом
+3. **Используйте внешние идентификаторы** при миграции из других систем
+4. **Указывайте уникальные поля**, если хотите обновлять существующие записи

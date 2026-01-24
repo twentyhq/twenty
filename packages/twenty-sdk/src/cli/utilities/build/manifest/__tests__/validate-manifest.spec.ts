@@ -1,9 +1,9 @@
 import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
-import { FieldMetadataType } from 'twenty-shared/types';
 import {
   type Application,
   type ObjectExtensionManifest,
 } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('validateManifest - objectExtensions', () => {
   const validApplication: Application = {
@@ -31,8 +31,9 @@ describe('validateManifest - objectExtensions', () => {
       const result = validateManifest({
         application: validApplication,
         objects: [],
+        frontComponents: [],
         objectExtensions: [validObjectExtension],
-        serverlessFunctions: [],
+        functions: [],
         roles: [],
       });
 
@@ -59,7 +60,8 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [extensionByUuid],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -86,7 +88,8 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [validObjectExtension, anotherExtension],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -122,7 +125,8 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [extensionWithSelect],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -141,7 +145,8 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -163,7 +168,8 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -189,7 +195,8 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -216,7 +223,8 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -246,7 +254,8 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -276,7 +285,8 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -306,7 +316,8 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -337,7 +348,8 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -369,7 +381,8 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [invalidExtension],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -410,7 +423,8 @@ describe('validateManifest - objectExtensions', () => {
         application: validApplication,
         objects: [],
         objectExtensions: [extensionWithDuplicates],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 
@@ -457,7 +471,8 @@ describe('validateManifest - objectExtensions', () => {
             ],
           },
         ],
-        serverlessFunctions: [],
+        functions: [],
+        frontComponents: [],
         roles: [],
       });
 

@@ -38,6 +38,13 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for navigationMenuItem 1`] = `
+[
+  "objectMetadata",
+  "navigationMenuItem",
+]
+`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for objectMetadata 1`] = `
 [
   "fieldMetadata",

@@ -6,22 +6,26 @@ export const STANDARD_INDEX_FIELD_UNIVERSAL_IDENTIFIERS: Record<
   Record<string, string[]>
 > = {
   attachment: {
-    taskIdIndex: [STANDARD_OBJECTS.attachment.fields.task.universalIdentifier],
-    noteIdIndex: [STANDARD_OBJECTS.attachment.fields.note.universalIdentifier],
+    taskIdIndex: [
+      STANDARD_OBJECTS.attachment.fields.targetTask.universalIdentifier,
+    ],
+    noteIdIndex: [
+      STANDARD_OBJECTS.attachment.fields.targetNote.universalIdentifier,
+    ],
     personIdIndex: [
-      STANDARD_OBJECTS.attachment.fields.person.universalIdentifier,
+      STANDARD_OBJECTS.attachment.fields.targetPerson.universalIdentifier,
     ],
     companyIdIndex: [
-      STANDARD_OBJECTS.attachment.fields.company.universalIdentifier,
+      STANDARD_OBJECTS.attachment.fields.targetCompany.universalIdentifier,
     ],
     opportunityIdIndex: [
-      STANDARD_OBJECTS.attachment.fields.opportunity.universalIdentifier,
+      STANDARD_OBJECTS.attachment.fields.targetOpportunity.universalIdentifier,
     ],
     dashboardIdIndex: [
-      STANDARD_OBJECTS.attachment.fields.dashboard.universalIdentifier,
+      STANDARD_OBJECTS.attachment.fields.targetDashboard.universalIdentifier,
     ],
     workflowIdIndex: [
-      STANDARD_OBJECTS.attachment.fields.workflow.universalIdentifier,
+      STANDARD_OBJECTS.attachment.fields.targetWorkflow.universalIdentifier,
     ],
   },
   blocklist: {

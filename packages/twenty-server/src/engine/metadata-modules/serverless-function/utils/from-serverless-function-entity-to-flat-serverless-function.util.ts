@@ -28,8 +28,6 @@ export const fromServerlessFunctionEntityToFlatServerlessFunction = (
       serverlessFunctionEntity.routeTriggers.map((el) => el.id) ?? [],
     databaseEventTriggerIds:
       serverlessFunctionEntity.databaseEventTriggers.map((el) => el.id) ?? [],
-    universalIdentifier:
-      serverlessFunctionEntity.universalIdentifier ??
-      serverlessFunctionEntity.id,
+    universalIdentifier: serverlessFunctionEntity.universalIdentifier,
   };
 };

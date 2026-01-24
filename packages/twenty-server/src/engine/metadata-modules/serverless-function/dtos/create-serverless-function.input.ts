@@ -54,7 +54,12 @@ export class CreateServerlessFunctionInput {
   @IsString()
   @Field({ nullable: true })
   @IsOptional()
-  handlerPath?: string;
+  sourceHandlerPath?: string;
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  builtHandlerPath?: string;
 
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()

@@ -4,11 +4,11 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import styled from '@emotion/styled';
-import { Section } from '@react-email/components';
-import { type CalendarChannelVisibility } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
-import { Card } from 'twenty-ui/layout';
+import { Section } from '@react-email/components';
 import { H2Title, IconUserPlus } from 'twenty-ui/display';
+import { Card } from 'twenty-ui/layout';
+import { type CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
 const StyledDetailsContainer = styled.div`
   display: flex;
@@ -26,12 +26,11 @@ type SettingsAccountsCalendarChannelDetailsProps = {
 export const SettingsAccountsCalendarChannelDetails = ({
   calendarChannel,
 }: SettingsAccountsCalendarChannelDetailsProps) => {
-  const { updateOneRecord } = useUpdateOneRecord<CalendarChannel>({
-    objectNameSingular: CoreObjectNameSingular.CalendarChannel,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const handleVisibilityChange = (value: CalendarChannelVisibility) => {
     updateOneRecord({
+      objectNameSingular: CoreObjectNameSingular.CalendarChannel,
       idToUpdate: calendarChannel.id,
       updateOneRecordInput: {
         visibility: value,
@@ -41,6 +40,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
 
   const handleContactAutoCreationToggle = (value: boolean) => {
     updateOneRecord({
+      objectNameSingular: CoreObjectNameSingular.CalendarChannel,
       idToUpdate: calendarChannel.id,
       updateOneRecordInput: {
         isContactAutoCreationEnabled: value,

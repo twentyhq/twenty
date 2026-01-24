@@ -13,14 +13,6 @@ export type PublicFeatureFlag = {
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
-    key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
-    metadata: {
-      label: 'Dashboards',
-      description: 'Enable dashboards',
-      imagePath: 'https://twenty.com/images/lab/is-dashboards-enabled.png',
-    },
-  },
-  {
     key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
     metadata: {
       label: 'Junction Relations',
@@ -30,11 +22,12 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_IF_ELSE_ENABLED,
+    key: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
     metadata: {
-      label: 'If/Else Workflow Node',
-      description: 'Enable if/else conditional branching in workflows',
-      imagePath: 'https://twenty.com/images/lab/is-if-else-enabled.png',
+      label: 'Row Level Permissions',
+      description: 'Enable row level permission',
+      imagePath:
+        'https://twenty.com/images/lab/is-row-level-permission-predicates-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

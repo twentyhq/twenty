@@ -1,26 +1,32 @@
-import chalk from 'chalk';
 import { type ApplicationManifest } from 'twenty-shared/application';
-import { displayApplication } from './entities/application';
-import { displayFrontComponents } from './entities/front-component';
-import { displayFunctions } from './entities/function';
-import { displayObjects } from './entities/object';
-import { displayRoles } from './entities/role';
-import { type ManifestValidationError, type ValidationWarning } from './manifest.types';
+import { createLogger } from '../common/logger';
+import { frontComponentEntityBuilder } from '@/cli/utilities/build/manifest/entities/front-component';
+import { functionEntityBuilder } from '@/cli/utilities/build/manifest/entities/function';
+import { objectEntityBuilder } from '@/cli/utilities/build/manifest/entities/object';
+import { roleEntityBuilder } from '@/cli/utilities/build/manifest/entities/role';
+import {
+  type ManifestValidationError,
+  type ValidationWarning,
+} from '@/cli/utilities/build/manifest/manifest-types';
+import { applicationEntityBuilder } from '@/cli/utilities/build/manifest/entities/application';
+
+const logger = createLogger('manifest-watch');
 
 export const displayEntitySummary = (manifest: ApplicationManifest): void => {
-  displayApplication(manifest);
-  displayObjects(manifest.objects);
-  displayFunctions(manifest.serverlessFunctions);
-  displayFrontComponents(manifest.frontComponents ?? []);
-  displayRoles(manifest.roles ?? []);
+  applicationEntityBuilder.display(
+    manifest.application ? [manifest.application] : [],
+  );
+  objectEntityBuilder.display(manifest.objects ?? []);
+  functionEntityBuilder.display(manifest.functions ?? []);
+  frontComponentEntityBuilder.display(manifest.frontComponents ?? []);
+  roleEntityBuilder.display(manifest.roles ?? []);
 };
 
 export const displayErrors = (error: ManifestValidationError): void => {
-  console.log(chalk.red('\n  ✗ Manifest validation failed:\n'));
+  logger.error('✗ Validation failed:');
   for (const err of error.errors) {
-    console.log(chalk.red(`    • ${err.path}: ${err.message}`));
+    logger.error(`  • ${err.path}: ${err.message}`);
   }
-  console.log('');
 };
 
 export const displayWarnings = (warnings: ValidationWarning[]): void => {
@@ -28,9 +34,8 @@ export const displayWarnings = (warnings: ValidationWarning[]): void => {
     return;
   }
 
-  console.log('');
   for (const warning of warnings) {
     const path = warning.path ? `${warning.path}: ` : '';
-    console.log(chalk.yellow(`  ⚠ ${path}${warning.message}`));
+    logger.warn(`⚠ ${path}${warning.message}`);
   }
 };

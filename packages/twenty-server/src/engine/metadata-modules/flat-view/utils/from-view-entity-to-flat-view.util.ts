@@ -15,9 +15,7 @@ export const fromViewEntityToFlatView = (viewEntity: ViewEntity): FlatView => {
     createdAt: viewEntity.createdAt.toISOString(),
     updatedAt: viewEntity.updatedAt.toISOString(),
     deletedAt: viewEntity.deletedAt?.toISOString() ?? null,
-    universalIdentifier:
-      viewEntityWithoutRelations.universalIdentifier ??
-      viewEntityWithoutRelations.id,
+    universalIdentifier: viewEntityWithoutRelations.universalIdentifier,
     viewFieldIds: viewEntity.viewFields.map((viewField) => viewField.id),
     viewFilterIds: viewEntity.viewFilters.map((viewFilter) => viewFilter.id),
     viewGroupIds: viewEntity.viewGroups.map((viewGroup) => viewGroup.id),

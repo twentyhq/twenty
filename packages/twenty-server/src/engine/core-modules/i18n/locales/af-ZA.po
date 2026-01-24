@@ -307,6 +307,7 @@ msgstr "'n Onverwagte konfigurasiefout het voorgekom."
 
 #. js-lingui-id: W5A0Ly
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
 #: src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-group/filters/view-group-rest-api-exception.filter.ts
@@ -581,9 +582,24 @@ msgstr ""
 msgid "Cannot modify predicate belonging to a different role."
 msgstr ""
 
+#. js-lingui-id: eiujBX
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
+msgid "Cannot modify predicate group belonging to a different object."
+msgstr ""
+
 #. js-lingui-id: 3niIR5
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Cannot modify predicate group belonging to a different role."
+msgstr ""
+
+#. js-lingui-id: Su850d
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Cannot modify predicate group to change its object"
+msgstr ""
+
+#. js-lingui-id: 988ie8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Cannot modify predicate group to change its object from {existingObjectMetadataId} to {updatedObjectMetadataId}"
 msgstr ""
 
 #. js-lingui-id: jm1hwE
@@ -652,6 +668,17 @@ msgstr ""
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot update workflow version status manually"
 msgstr "Kan nie werkvloeiontwikke se status met die hand bywerk nie"
+
+#. js-lingui-id: NGL+Sl
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "Circular dependency detected in navigation menu item hierarchy"
+msgstr ""
+
+#. js-lingui-id: /WTI79
+#: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
+msgid "Circular dependency detected in navigation menu item hierarchy."
+msgstr ""
 
 #. js-lingui-id: 9uirl8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
@@ -1033,13 +1060,13 @@ msgid "Empty field permissions are not allowed."
 msgstr "Leë veldtoestemmings word nie toegelaat nie."
 
 #. js-lingui-id: qpXqpa
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Entity not found."
 msgstr "Entiteit nie gevind nie."
 
 #. js-lingui-id: jxgcg/
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "Enum operation failed."
 msgstr "Enum-bewerking het misluk."
 
@@ -1190,7 +1217,7 @@ msgstr "Veld metadata nie gevind nie"
 
 #. js-lingui-id: JrAl/I
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Field metadata not found."
@@ -1325,6 +1352,18 @@ msgstr ""
 #. js-lingui-id: AMd8Po
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field type is not supported"
+msgstr ""
+
+#. js-lingui-id: 9110hD
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "Folder name is required and cannot be empty"
+msgstr ""
+
+#. js-lingui-id: 2WhlK8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "Folder name is required when creating a folder"
 msgstr ""
 
 #. js-lingui-id: eWmJYU
@@ -1517,7 +1556,7 @@ msgstr "Onvoldoende toestemmings."
 
 #. js-lingui-id: pSjWxS
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "Invalid action type."
 msgstr "Ongeldige aksietipe."
 
@@ -1739,6 +1778,11 @@ msgstr "Ongeldige minuut waarde. Moet 'n heelgetal wees groter as 1"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Invalid morph relation input"
 msgstr "Ongeldige morfverhoudingsinvoer"
+
+#. js-lingui-id: isIEpm
+#: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
+msgid "Invalid navigation menu item input."
+msgstr ""
 
 #. js-lingui-id: 5ZHOkh
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -2288,6 +2332,11 @@ msgstr "Metadata-weergawe nie gevind nie."
 msgid "Microsoft API authentication is disabled."
 msgstr "Microsoft API-outentikasie is gedeaktiveer."
 
+#. js-lingui-id: oqzqZq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+msgid "Migration execution failed."
+msgstr ""
+
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
@@ -2323,21 +2372,6 @@ msgstr "Model-ID kan nie leeg wees nie"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
 msgstr "Maandag"
-
-#. js-lingui-id: FqzlX4
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must have the same relation type"
-msgstr "Morfverhouding-skeppingsladings moet dieselfde verhoudingtipes hê"
-
-#. js-lingui-id: nU54nm
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to other object metadata"
-msgstr "Morph-verhouding skeppayloads moet slegs verhouding tot ander voorwerp metadata bevat"
-
-#. js-lingui-id: Z/Awgf
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "Morph relation creation payloads must only contain relation to the same object metadata"
-msgstr "Morfverhouding-skeppingsladings moet slegs verhouding tot dieselfde objekmetadata bevat"
 
 #. js-lingui-id: Lcqv5g
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -2417,6 +2451,48 @@ msgstr "Naam moet in camelCase wees"
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Names are not synced with labels"
 msgstr "Name is nie gesynkroniseer met etikette nie"
+
+#. js-lingui-id: RJyaoR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "Navigation menu item cannot be its own parent"
+msgstr ""
+
+#. js-lingui-id: xSvMwa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "Navigation menu item cannot be multiple types simultaneously"
+msgstr ""
+
+#. js-lingui-id: t38VAr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "Navigation menu item hierarchy exceeds maximum depth of {NAVIGATION_MENU_ITEM_MAX_DEPTH}"
+msgstr ""
+
+#. js-lingui-id: E+iJnK
+#: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
+msgid "Navigation menu item hierarchy exceeds maximum depth."
+msgstr ""
+
+#. js-lingui-id: uFv7+4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "Navigation menu item must be either a folder (with name), a view link (with viewId), or a record link (with targetRecordId and targetObjectMetadataId)"
+msgstr ""
+
+#. js-lingui-id: s+CGNO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "Navigation menu item not found"
+msgstr ""
+
+#. js-lingui-id: p5qcyl
+#: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
+msgid "Navigation menu item not found."
+msgstr ""
 
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
@@ -2546,14 +2622,19 @@ msgstr "Voorwerp etiket is te kort"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Object metadata not found"
 msgstr "Voorwerp metadata nie gevind nie"
 
 #. js-lingui-id: rHce90
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Object metadata not found."
 msgstr "Voorwerp metadata nie gevind nie."
@@ -2797,6 +2878,14 @@ msgstr "Bladsyuitleg-widget om by te werk nie gevind nie"
 msgid "Page layout widget with id {flatPageLayoutWidgetId} already exists"
 msgstr "Bladsyuitleg-widget met ID {flatPageLayoutWidgetId} bestaan reeds"
 
+#. js-lingui-id: T1gSWA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "Parent navigation menu item not found"
+msgstr ""
+
 #. js-lingui-id: Xsgh7b
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -2874,6 +2963,14 @@ msgstr ""
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Please use single sign-on to authenticate."
 msgstr "Gebruik asseblief enkel-aanmelding om te outentikeer."
+
+#. js-lingui-id: KTTUV3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "Position must be a non-negative integer"
+msgstr ""
 
 #. js-lingui-id: +DJKfQ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
@@ -3197,19 +3294,12 @@ msgstr ""
 #. js-lingui-id: vMP7nZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
-#: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-delete-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-or-throw.util.ts
 msgid "Row level permission predicate group to delete not found"
-msgstr ""
-
-#. js-lingui-id: h/Rc4f
-#: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-destroy-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-or-throw.util.ts
-msgid "Row level permission predicate group to destroy not found"
 msgstr ""
 
 #. js-lingui-id: NhW7fb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
-#: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-update-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-to-update-or-throw.util.ts
 msgid "Row level permission predicate group to update not found"
 msgstr ""
 
@@ -3227,19 +3317,12 @@ msgstr ""
 #. js-lingui-id: zdTUvE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-#: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-delete-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-or-throw.util.ts
 msgid "Row level permission predicate to delete not found"
-msgstr ""
-
-#. js-lingui-id: WzQYVM
-#: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-destroy-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-or-throw.util.ts
-msgid "Row level permission predicate to destroy not found"
 msgstr ""
 
 #. js-lingui-id: aeNy7i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-#: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-update-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-to-update-or-throw.util.ts
 msgid "Row level permission predicate to update not found"
 msgstr ""
 
@@ -3454,6 +3537,18 @@ msgstr ""
 #. js-lingui-id: xLsFda
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not reference this field"
+msgstr ""
+
+#. js-lingui-id: 9Q/KBa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "targetObjectMetadataId is required when targetRecordId is provided"
+msgstr ""
+
+#. js-lingui-id: vdVtAE
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "targetRecordId is required when targetObjectMetadataId is provided"
 msgstr ""
 
 #. js-lingui-id: M10it4
@@ -3702,7 +3797,7 @@ msgid "This operation is not allowed. Please try a different approach or contact
 msgstr "Hierdie operasie word nie toegelaat nie. Probeer asseblief 'n ander benadering of kontak ondersteuning indien jy hulp benodig."
 
 #. js-lingui-id: bEhTPN
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."
 msgstr "Hierdie bewerking word nie ondersteun nie."
 
@@ -3862,7 +3957,7 @@ msgid "Unknown permission required."
 msgstr "Onbekende toestemming vereis."
 
 #. js-lingui-id: Md/2jb
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "Unsupported composite column type."
 msgstr "Nie-ondersteunde saamgestelde kolomtipe."
 
@@ -3882,7 +3977,7 @@ msgid "Unsupported field metadata type {fieldType}"
 msgstr "Ongesteunde veldmetadata tipe {fieldType}"
 
 #. js-lingui-id: B4Eu7x
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "Unsupported field metadata type."
 msgstr ""
 
@@ -4214,6 +4309,12 @@ msgstr "Sig om by te werk nie gevind nie"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 msgid "View with same id is already exists"
 msgstr "\"Kyk met dieselfde id bestaan reeds\""
+
+#. js-lingui-id: qTtxHh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "viewId cannot be provided together with targetRecordId or targetObjectMetadataId"
+msgstr ""
 
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -4599,10 +4700,20 @@ msgstr "Jy het nie toestemming om toegang tot hierdie funksie te kry nie. Kontak
 msgid "You do not have permission to access this workflow."
 msgstr "Jy het nie toestemming om toegang tot hierdie werkvloei te kry nie."
 
+#. js-lingui-id: sjYS9x
+#: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
+msgid "You do not have permission to create workspace-level navigation menu items. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: P69VwK
 #: src/engine/core-modules/user/user.resolver.ts
 msgid "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access."
 msgstr "Jy het nie toestemming om hierdie gebruiker uit die werksruimte te verwyder nie. Kontak asseblief jou werkruimte-administrateur vir toegang."
+
+#. js-lingui-id: NuG0g3
+#: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
+msgid "You do not have permission to delete workspace-level navigation menu items. Please contact your workspace administrator for access."
+msgstr ""
 
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts
@@ -4626,6 +4737,11 @@ msgstr "Jy het nie toestemming om hierdie werkvloei-aksie uit te voer nie."
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr "Jy het nie toestemming om hierdie velde op te dateer nie: {fieldsList}. Kontak asseblief jou werkruimte administrateur."
+
+#. js-lingui-id: RZzKii
+#: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
+msgid "You do not have permission to update workspace-level navigation menu items. Please contact your workspace administrator for access."
+msgstr ""
 
 #. js-lingui-id: ZPo5fR
 #: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
@@ -4662,6 +4778,11 @@ msgstr "Jou toepassingsweergawe is verouderd. Verfris asseblief die bladsy om vo
 #: src/engine/core-modules/billing/billing.validate.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "Jou faktuurintekening is beskadig. Kontak asseblief ondersteuning."
+
+#. js-lingui-id: hDEOuv
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Your CalDAV server does not support incremental sync (RFC 6578). Please use a compatible provider such as Nextcloud, iCloud, or Fastmail."
+msgstr ""
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
