@@ -26,10 +26,6 @@ export const getCanvasBarChartTooltipData = ({
   enrichedKeys,
   formatOptions,
 }: GetCanvasBarChartTooltipDataParameters): BarChartTooltipData | null => {
-  if (slice.bars.length === 0) {
-    return null;
-  }
-
   const dataRow = data.find(
     (row) => String(row[indexBy]) === slice.indexValue,
   );

@@ -1,4 +1,6 @@
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositions';
+import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { isDefined } from 'twenty-shared/utils';
 
 export type CanvasBarSlice = {
@@ -58,6 +60,76 @@ export const computeSlicesFromCanvasBars = ({
   computedSlices.sort((sliceA, sliceB) => sliceA.sliceLeft - sliceB.sliceLeft);
 
   return computedSlices;
+};
+
+type ComputeAllCategorySlicesParams = {
+  data: Record<string, unknown>[];
+  indexBy: string;
+  bars: BarPosition[];
+  isVerticalLayout: boolean;
+  chartWidth: number;
+  chartHeight: number;
+  margins: ChartMargins;
+};
+
+export const computeAllCategorySlices = ({
+  data,
+  indexBy,
+  bars,
+  isVerticalLayout,
+  chartWidth,
+  chartHeight,
+  margins,
+}: ComputeAllCategorySlicesParams): CanvasBarSlice[] => {
+  if (data.length === 0) {
+    return [];
+  }
+
+  const innerWidth = chartWidth - margins.left - margins.right;
+  const innerHeight = chartHeight - margins.top - margins.bottom;
+  const categoryAxisLength = isVerticalLayout ? innerWidth : innerHeight;
+  const dataLength = data.length;
+
+  const categoryWidth =
+    (categoryAxisLength / dataLength) *
+    (1 - BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO);
+  const outerPadding =
+    (categoryAxisLength * BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO) / 2;
+  const categoryStep = categoryAxisLength / dataLength;
+
+  const barsByIndexValue = new Map<string, BarPosition[]>();
+  for (const bar of bars) {
+    const existingBars = barsByIndexValue.get(bar.indexValue);
+    if (isDefined(existingBars)) {
+      existingBars.push(bar);
+    } else {
+      barsByIndexValue.set(bar.indexValue, [bar]);
+    }
+  }
+
+  const slices: CanvasBarSlice[] = [];
+
+  for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
+    const dataPoint = data[dataIndex];
+    const indexValue = String(dataPoint[indexBy]);
+
+    const categoryStart = outerPadding + dataIndex * categoryStep;
+    const sliceLeft = categoryStart;
+    const sliceRight = categoryStart + categoryWidth;
+    const sliceCenter = (sliceLeft + sliceRight) / 2;
+
+    const barsForCategory = barsByIndexValue.get(indexValue) ?? [];
+
+    slices.push({
+      indexValue,
+      bars: barsForCategory,
+      sliceLeft,
+      sliceRight,
+      sliceCenter,
+    });
+  }
+
+  return slices;
 };
 
 type FindSliceAtCanvasPositionParams = {

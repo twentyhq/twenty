@@ -2,7 +2,7 @@ import { useBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart
 import { useCanvasRenderer } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useCanvasRenderer';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import {
-  computeSlicesFromCanvasBars,
+  computeAllCategorySlices,
   findAnchorBarInCanvasSlice,
   findSliceAtCanvasPosition,
   type CanvasBarSlice,
@@ -58,6 +58,9 @@ const StyledCanvasContainer = styled.div<{ $isClickable: boolean }>`
 
 const StyledCanvas = styled.canvas`
   display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
 `;
 
 export const CanvasBarChart = ({
@@ -110,11 +113,16 @@ export const CanvasBarChart = ({
 
   const slices = useMemo(
     () =>
-      computeSlicesFromCanvasBars({
+      computeAllCategorySlices({
+        data,
+        indexBy,
         bars,
         isVerticalLayout: isVertical,
+        chartWidth,
+        chartHeight,
+        margins,
       }),
-    [bars, isVertical],
+    [data, indexBy, bars, isVertical, chartWidth, chartHeight, margins],
   );
 
   const hoveredSlice = useMemo(() => {
@@ -194,17 +202,30 @@ export const CanvasBarChart = ({
         return;
       }
 
-      const anchorBar = findAnchorBarInCanvasSlice({
-        bars: slice.bars,
-        isVerticalLayout: isVertical,
-      });
+      let offsetLeft: number;
+      let offsetTop: number;
 
-      const offsetLeft = isVertical
-        ? slice.sliceCenter + margins.left
-        : anchorBar.x + anchorBar.width + margins.left;
-      const offsetTop = isVertical
-        ? anchorBar.y + margins.top
-        : slice.sliceCenter + margins.top;
+      if (slice.bars.length === 0) {
+        const innerHeight = chartHeight - margins.top - margins.bottom;
+        offsetLeft = isVertical
+          ? slice.sliceCenter + margins.left
+          : margins.left;
+        offsetTop = isVertical
+          ? innerHeight + margins.top
+          : slice.sliceCenter + margins.top;
+      } else {
+        const anchorBar = findAnchorBarInCanvasSlice({
+          bars: slice.bars,
+          isVerticalLayout: isVertical,
+        });
+
+        offsetLeft = isVertical
+          ? slice.sliceCenter + margins.left
+          : anchorBar.x + anchorBar.width + margins.left;
+        offsetTop = isVertical
+          ? anchorBar.y + margins.top
+          : slice.sliceCenter + margins.top;
+      }
 
       onSliceHover({
         slice,
@@ -212,7 +233,14 @@ export const CanvasBarChart = ({
         offsetTop,
       });
     },
-    [margins, slices, isVertical, hoveredSliceIndexValue, onSliceHover],
+    [
+      margins,
+      slices,
+      isVertical,
+      hoveredSliceIndexValue,
+      onSliceHover,
+      chartHeight,
+    ],
   );
 
   const handleMouseLeave = useCallback(() => {
