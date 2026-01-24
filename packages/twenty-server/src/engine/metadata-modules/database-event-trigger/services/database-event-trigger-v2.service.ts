@@ -10,7 +10,7 @@ import {
   DatabaseEventTriggerException,
   DatabaseEventTriggerExceptionCode,
 } from 'src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception';
-import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
+import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { fromCreateDatabaseEventTriggerInputToFlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/utils/from-create-database-event-trigger-input-to-flat-database-event-trigger.util';
 import { fromUpdateDatabaseEventTriggerInputToFlatDatabaseEventTriggerToUpdateOrThrow } from 'src/engine/metadata-modules/database-event-trigger/utils/from-update-database-event-trigger-input-to-flat-database-event-trigger-to-update-or-throw.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -34,7 +34,7 @@ export class DatabaseEventTriggerV2Service {
      * when interacting with another application than workspace custom one
      * */
     applicationId?: string,
-  ) {
+  ): Promise<FlatDatabaseEventTrigger> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -92,7 +92,7 @@ export class DatabaseEventTriggerV2Service {
   async updateOne(
     databaseEventTriggerInput: UpdateDatabaseEventTriggerInput,
     workspaceId: string,
-  ) {
+  ): Promise<FlatDatabaseEventTrigger> {
     const { flatDatabaseEventTriggerMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {

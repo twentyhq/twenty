@@ -6,7 +6,7 @@ export const FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES = [
   'timeoutSeconds',
   'checksum',
   'code',
-  'handlerPath',
+  'sourceHandlerPath',
   'handlerName',
   'toolInputSchema',
   'isTool',

@@ -1,34 +1,34 @@
 ---
-title: Twenty Apps
-description: Build and manage Twenty customizations as code.
+title: Приложения Twenty
+description: Создавайте и управляйте настройками Twenty в виде кода.
 ---
 
 <Warning>
-  Apps are currently in alpha testing. The feature is functional but still evolving.
+  Приложения сейчас проходят альфа-тестирование. Функциональность работает, но продолжает развиваться.
 </Warning>
 
-## What Are Apps?
+## Что такое приложения?
 
-Apps let you build and manage Twenty customizations **as code**. Instead of configuring everything through the UI, you define your data model and serverless functions in code — making it faster to build, maintain, and roll out to multiple workspaces.
+Приложения позволяют создавать и управлять настройками Twenty **в виде кода**. Вместо настройки всего через интерфейс вы определяете модель данных и бессерверные функции в коде — так быстрее создавать, поддерживать и развёртывать в нескольких рабочих пространствах.
 
-**What you can do today:**
+**Что вы можете делать уже сегодня:**
 
-* Define custom objects and fields as code (managed data model)
-* Build serverless functions with custom triggers
-* Deploy the same app across multiple workspaces
+* Определяйте пользовательские объекты и поля в виде кода (управляемая модель данных)
+* Создавайте бессерверные функции с пользовательскими триггерами
+* Развёртывайте одно и то же приложение в нескольких рабочих пространствах
 
-**Coming soon:**
+**Скоро:**
 
-* Custom UI layouts and components
+* Пользовательские макеты и компоненты интерфейса
 
 ## Требования
 
-* Node.js 24+ and Yarn 4
-* A Twenty workspace and an API key (create one at https://app.twenty.com/settings/api-webhooks)
+* Node.js 24+ и Yarn 4
+* Рабочее пространство Twenty и ключ API (создайте его на https://app.twenty.com/settings/api-webhooks)
 
-## Getting Started
+## Начало работы
 
-Create a new app using the official scaffolder, then authenticate and start developing:
+Создайте новое приложение с помощью официального генератора, затем выполните аутентификацию и начните разработку:
 
 ```bash filename="Terminal"
 # Scaffold a new app
@@ -55,7 +55,10 @@ yarn app:generate
 yarn app:sync
 
 # Watch your application's functions logs
-yarn app:logs
+yarn function:logs
+
+# Execute a function by name
+yarn function:execute -n my-function -p '{"name": "test"}'
 
 # Uninstall the application from the current workspace
 yarn app:uninstall
@@ -64,18 +67,18 @@ yarn app:uninstall
 yarn app:help
 ```
 
-See also: the CLI reference pages for [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) and [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
+Смотрите также: страницы справки CLI для [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) и [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
 
-## Project structure (scaffolded)
+## Структура проекта (сгенерированного)
 
-When you run `npx create-twenty-app@latest my-twenty-app`, the scaffolder:
+Когда вы запускаете `npx create-twenty-app@latest my-twenty-app`, генератор:
 
-* Copies a minimal base application into `my-twenty-app/`
-* Adds a local `twenty-sdk` dependency and Yarn 4 configuration
-* Creates config files and scripts wired to the `twenty` CLI
-* Generates a default application config and a default function role
+* Копирует минимальное базовое приложение в `my-twenty-app/`
+* Добавляет локальную зависимость `twenty-sdk` и конфигурацию Yarn 4
+* Создаёт файлы конфигурации и скрипты, подключённые к CLI `twenty`
+* Генерирует конфигурацию приложения по умолчанию и роль функции по умолчанию
 
-A freshly scaffolded app looks like this:
+Свежесгенерированное приложение выглядит так:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -99,21 +102,21 @@ my-twenty-app/
     utils/                      # Optional - handler implementations & utilities
 ```
 
-### Convention-over-configuration
+### Соглашения важнее конфигурации
 
-Applications use a **convention-over-configuration** approach where entities are detected by their file suffix. This allows flexible organization within the `src/app/` folder:
+Приложения используют подход **соглашения важнее конфигурации**, при котором сущности определяются по суффиксу файла. Это позволяет гибко организовать структуру в папке `src/app/`:
 
-| File suffix     | Entity type                     |
-| --------------- | ------------------------------- |
-| `*.object.ts`   | Custom object definitions       |
-| `*.function.ts` | Serverless function definitions |
-| `*.role.ts`     | Role definitions                |
+| Суффикс файла   | Тип сущности                          |
+| --------------- | ------------------------------------- |
+| `*.object.ts`   | Определения пользовательских объектов |
+| `*.function.ts` | Определения бессерверных функций      |
+| `*.role.ts`     | Определения ролей                     |
 
-### Supported folder organizations
+### Поддерживаемые способы организации папок
 
-You can organize your entities in any of these patterns:
+Вы можете организовать свои сущности по любому из этих шаблонов:
 
-**Traditional (by type):**
+**Традиционный (по типам):**
 
 ```text
 src/app/
@@ -126,7 +129,7 @@ src/app/
     └── admin.role.ts
 ```
 
-**Feature-based:**
+**По функциональности:**
 
 ```text
 src/app/
@@ -137,7 +140,7 @@ src/app/
     └── postCardAdmin.role.ts
 ```
 
-**Flat:**
+**Плоский:**
 
 ```text
 src/app/
@@ -147,66 +150,80 @@ src/app/
 └── admin.role.ts
 ```
 
-At a high level:
+В общих чертах:
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall`, and `auth` that delegate to the local `twenty` CLI.
-* **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `generated/` (typed client), `dist/`, `build/`, coverage folders, log files, and `.env*` files.
-* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Lock and configure the Yarn 4 toolchain used by the project.
-* **.nvmrc**: Pins the Node.js version expected by the project.
-* **eslint.config.mjs** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
-* **README.md**: A short README in the app root with basic instructions.
-* **src/app/**: The main place where you define your application-as-code:
-  * `application.config.ts`: Global configuration for your app (metadata and runtime wiring). See "Application config" below.
-  * `*.role.ts`: Role definitions used by your serverless functions. See "Default function role" below.
-  * `*.object.ts`: Custom object definitions.
-  * `*.function.ts`: Serverless function definitions.
-* **src/utils/**: Optional folder for handler implementations and utilities.
+* **package.json**: Объявляет имя приложения, версию, движки (Node 24+, Yarn 4) и добавляет `twenty-sdk`, а также скрипты вроде `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall` и `auth`, которые делегируют выполнение локальному CLI `twenty`.
+* **.gitignore**: Игнорирует распространённые артефакты, такие как `node_modules`, `.yarn`, `generated/` (типизированный клиент), `dist/`, `build/`, каталоги coverage, файлы журналов и файлы `.env*`.
+* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Фиксируют и настраивают используемый в проекте инструментарий Yarn 4.
+* **.nvmrc**: Фиксирует версию Node.js, ожидаемую проектом.
+* **eslint.config.mjs** и **tsconfig.json**: Обеспечивают линтинг и конфигурацию TypeScript для исходников вашего приложения на TypeScript.
+* **README.md**: Короткий README в корне приложения с базовыми инструкциями.
+* **src/app/**: Основное место, где вы определяете приложение как код:
+  * `application.config.ts`: Глобальная конфигурация вашего приложения (метаданные и параметры выполнения). См. раздел «Конфигурация приложения» ниже.
+  * `*.role.ts`: Определения ролей, используемых вашими бессерверными функциями. См. раздел «Роль функции по умолчанию» ниже.
+  * `*.object.ts`: Определения пользовательских объектов.
+  * `*.function.ts`: Определения бессерверных функций.
+* **src/utils/**: Необязательная папка для реализаций обработчиков и утилит.
 
-Later commands will add more files and folders:
+Позднее команды добавят больше файлов и папок:
 
-* `yarn app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
-* `yarn app:create-entity` will add entity definition files under `src/app/` for your custom objects, functions, or roles.
+* `yarn app:generate` создаст папку `generated/` (типизированный клиент Twenty + типы рабочего пространства).
+* `yarn app:create-entity` добавит файлы определений сущностей в `src/app/` для ваших пользовательских объектов, функций или ролей.
   l
 
 ## Аутентификация
 
-The first time you run `yarn auth:login`, you'll be prompted for:
+При первом запуске `yarn auth:login` вам будет предложено указать:
 
-* API URL (defaults to http://localhost:3000 or your current workspace profile)
-* API key
+* URL API (по умолчанию http://localhost:3000 или текущий профиль рабочего пространства)
+* Ключ API
 
-Your credentials are stored per-user in `~/.twenty/config.json`. You can maintain multiple profiles and switch using `--workspace <name>`.
+Ваши учётные данные хранятся для каждого пользователя в `~/.twenty/config.json`. You can maintain multiple profiles and switch between them.
 
-Примеры:
+### Managing workspaces
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
 yarn auth:login
 
-# Use a specific workspace profile
+# Login to a specific workspace profile
 yarn auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn auth:list
+
+# Switch the default workspace (interactive)
+yarn auth:switch
+
+# Switch to a specific workspace
+yarn auth:switch production
+
+# Check current authentication status
+yarn auth:status
 ```
 
-## Use the SDK resources (types & config)
+Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
 
-The twenty-sdk provides typed building blocks and helper functions you use inside your app. Below are the key pieces you'll touch most often.
+## Используйте ресурсы SDK (типы и конфигурация)
 
-### Helper functions
+Пакет twenty-sdk предоставляет типизированные строительные блоки и вспомогательные функции, которые вы используете внутри своего приложения. Ниже — ключевые части, с которыми вы будете работать чаще всего.
 
-The SDK provides four helper functions with built-in validation for defining your app entities:
+### Вспомогательные функции
 
-| Function           | Назначение                                   |
-| ------------------ | -------------------------------------------- |
-| `defineApp()`      | Configure application metadata               |
-| `defineObject()`   | Define custom objects with fields            |
-| `defineFunction()` | Define serverless functions with handlers    |
-| `defineRole()`     | Configure role permissions and object access |
+SDK предоставляет четыре вспомогательных функции с встроенной валидацией для определения сущностей вашего приложения:
 
-These functions validate your configuration at runtime and provide better IDE autocompletion and type safety.
+| Функция            | Назначение                                      |
+| ------------------ | ----------------------------------------------- |
+| `defineApp()`      | Настраивает метаданные приложения               |
+| `defineObject()`   | Определяет пользовательские объекты с полями    |
+| `defineFunction()` | Определяет бессерверные функции с обработчиками |
+| `defineRole()`     | Настраивает права роли и доступ к объектам      |
 
-### Defining objects
+Эти функции проверяют вашу конфигурацию во время выполнения и обеспечивают лучшую автодополняемость в IDE и безопасность типов.
 
-Custom objects describe both schema and behavior for records in your workspace. Use `defineObject()` to define objects with built-in validation:
+### Определение объектов
+
+Пользовательские объекты описывают как схему, так и поведение записей в вашем рабочем пространстве. Используйте `defineObject()` для определения объектов со встроенной валидацией:
 
 ```typescript
 // src/app/postCard.object.ts
@@ -277,20 +294,20 @@ export default defineObject({
 });
 ```
 
-Key points:
+Основные моменты:
 
-* Use `defineObject()` for built-in validation and better IDE support.
-* The `universalIdentifier` must be unique and stable across deployments.
-* Each field requires a `name`, `type`, `label`, and its own stable `universalIdentifier`.
-* The `fields` array is optional — you can define objects without custom fields.
-* You can scaffold new objects using `yarn app:create-entity`, which guides you through naming, fields, and relationships.
+* Используйте `defineObject()` для встроенной валидации и лучшей поддержки в IDE.
+* `universalIdentifier` должен быть уникальным и стабильным между развёртываниями.
+* Каждому полю требуются `name`, `type`, `label` и собственный стабильный `universalIdentifier`.
+* Массив `fields` необязателен — вы можете определять объекты без пользовательских полей.
+* Вы можете сгенерировать новые объекты с помощью `yarn app:create-entity`, который проведёт вас через выбор именования, полей и связей.
 
 <Note>
-  **Base fields are created automatically.** When you define a custom object, Twenty automatically adds standard fields such as `name`, `createdAt`, `updatedAt`, `createdBy`, `position`, and `deletedAt`. You don't need to define these in your `fields` array — only add your custom fields.
+  **Базовые поля создаются автоматически.** Когда вы определяете пользовательский объект, Twenty автоматически добавляет стандартные поля, такие как `name`, `createdAt`, `updatedAt`, `createdBy`, `position` и `deletedAt`. Вам не нужно определять их в массиве `fields` — добавляйте только свои пользовательские поля.
 </Note>
 
-<Accordion title="Alternative: Decorator-based syntax">
-  You can also define objects using TypeScript decorators. This approach uses class-based syntax with `@Object`, `@Field`, and `@Relation` decorators:
+<Accordion title="Альтернатива: синтаксис на декораторах">
+  Вы также можете определять объекты с помощью декораторов TypeScript. Этот подход использует классовый синтаксис с декораторами `@Object`, `@Field` и `@Relation`:
 
   ```typescript
   import {
@@ -337,18 +354,18 @@ Key points:
   }
   ```
 
-  Note: The decorator approach requires `experimentalDecorators` in your TypeScript config.
+  Примечание: подход с декораторами требует `experimentalDecorators` в конфигурации TypeScript.
 </Accordion>
 
-### Application config (application.config.ts)
+### Конфигурация приложения (application.config.ts)
 
-Every app has a single `application.config.ts` file that describes:
+У каждого приложения есть единственный файл `application.config.ts`, который описывает:
 
-* **Who the app is**: identifiers, display name, and description.
-* **How its functions run**: which role they use for permissions.
-* **(Optional) variables**: key–value pairs exposed to your functions as environment variables.
+* **Что это за приложение**: идентификаторы, отображаемое имя и описание.
+* **Как запускаются его функции**: какую роль они используют для прав доступа.
+* **(Необязательно) переменные**: пары ключ-значение, предоставляемые вашим функциям как переменные окружения.
 
-Use `defineApp()` to define your application configuration:
+Используйте `defineApp()` для определения конфигурации вашего приложения:
 
 ```typescript
 // src/app/application.config.ts
@@ -372,23 +389,23 @@ export default defineApp({
 });
 ```
 
-Notes:
+Заметки:
 
-* `universalIdentifier` fields are deterministic IDs you own; generate them once and keep them stable across syncs.
-* `applicationVariables` become environment variables for your functions (for example, `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
+* `universalIdentifier` — это детерминированные идентификаторы, которыми вы управляете; сгенерируйте их один раз и сохраняйте стабильными между синхронизациями.
+* `applicationVariables` становятся переменными окружения для ваших функций (например, `DEFAULT_RECIPIENT_NAME` доступна как `process.env.DEFAULT_RECIPIENT_NAME`).
+* `functionRoleUniversalIdentifier` должен соответствовать роли, которую вы определяете в файле `*.role.ts` (см. ниже).
 
-#### Roles and permissions
+#### Роли и разрешения
 
-Applications can define roles that encapsulate permissions on your workspace's objects and actions. The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's serverless functions.
+Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. Поле `functionRoleUniversalIdentifier` в `application.config.ts` обозначает роль по умолчанию, используемую бессерверными функциями вашего приложения.
 
-* The runtime API key injected as `TWENTY_API_KEY` is derived from this default function role.
-* The typed client will be restricted to the permissions granted to that role.
-* Follow least‑privilege: create a dedicated role with only the permissions your functions need, then reference its universal identifier.
+* Ключ API во время выполнения, подставляемый как `TWENTY_API_KEY`, получается из этой роли функции по умолчанию.
+* Типизированный клиент будет ограничен правами, предоставленными этой ролью.
+* Следуйте принципу наименьших привилегий: создайте отдельную роль только с теми правами, которые нужны вашим функциям, и укажите её универсальный идентификатор.
 
-##### Default function role (\*.role.ts)
+##### Роль функции по умолчанию (\*.role.ts)
 
-When you scaffold a new app, the CLI also creates a default role file. Use `defineRole()` to define roles with built-in validation:
+Когда вы генерируете новое приложение, CLI также создаёт файл роли по умолчанию. Используйте `defineRole()` для определения ролей со встроенной валидацией:
 
 ```typescript
 // src/app/default-function.role.ts
@@ -430,21 +447,21 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application.config.ts` as `functionRoleUniversalIdentifier`. In other words:
+`universalIdentifier` этой роли затем указывается в `application.config.ts` как `functionRoleUniversalIdentifier`. Иными словами:
 
-* **\*.role.ts** defines what the default function role can do.
-* **application.config.ts** points to that role so your functions inherit its permissions.
+* **\*.role.ts** определяет, что может делать роль функции по умолчанию.
+* **application.config.ts** указывает на эту роль, чтобы ваши функции наследовали её права.
 
-Notes:
+Заметки:
 
-* Start from the scaffolded role, then progressively restrict it following least‑privilege.
-* Replace the `objectPermissions` and `fieldPermissions` with the objects/fields your functions need.
-* `permissionFlags` control access to platform-level capabilities. Keep them minimal; add only what you need.
-* See a working example in the Hello World app: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+* Начните со сгенерированной роли, затем постепенно ограничивайте её, следуя принципу наименьших привилегий.
+* Замените `objectPermissions` и `fieldPermissions` на объекты/поля, которые нужны вашим функциям.
+* `permissionFlags` управляют доступом к возможностям на уровне платформы. Держите их минимальными; добавляйте только то, что нужно.
+* См. рабочий пример в приложении Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
-### Serverless function config and entrypoint
+### Конфигурация бессерверной функции и точка входа
 
-Each function file uses `defineFunction()` to export a configuration with a handler and optional triggers. Use the `*.function.ts` file suffix for automatic detection.
+Каждый файл функции использует `defineFunction()` для экспорта конфигурации с обработчиком и необязательными триггерами. Используйте суффикс файла `*.function.ts` для автоматического обнаружения.
 
 ```typescript
 // src/app/createPostCard.function.ts
@@ -504,28 +521,28 @@ export default defineFunction({
 });
 ```
 
-Common trigger types:
+Распространённые типы триггеров:
 
-* **route**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
+* **route**: Публикует вашу функцию по HTTP-пути и методу **под конечной точкой `/s/`**:
 
-> e.g. `path: '/post-card/create',` -> call on `<APP_URL>/s/post-card/create`
+> например, `path: '/post-card/create',` -> вызов по адресу `<APP_URL>/s/post-card/create`
 
-* **cron**: Runs your function on a schedule using a CRON expression.
-* **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
+* **cron**: Запускает вашу функцию по расписанию с использованием выражения CRON.
+* **databaseEvent**: Запускается при событиях жизненного цикла объектов рабочего пространства. Когда операция события — `updated`, можно указать конкретные поля для отслеживания в массиве `updatedFields`. Если оставить не заданным или пустым, любое обновление будет вызывать функцию.
 
-> e.g. `person.updated`
+> например, `person.updated`
 
-Notes:
+Заметки:
 
-* The `triggers` array is optional. Functions without triggers can be used as utility functions called by other functions.
-* You can mix multiple trigger types in a single function.
+* Массив `triggers` необязателен. Функции без триггеров можно использовать как вспомогательные, вызываемые другими функциями.
+* Вы можете сочетать несколько типов триггеров в одной функции.
 
-### Route trigger payload
+### Полезная нагрузка триггера маршрута
 
 <Warning>
-  **Breaking change (v1.16, January 2026):** The route trigger payload format has changed. Prior to v1.16, query parameters, path parameters, and body were sent directly as the payload. Starting with v1.16, they are nested inside a structured `RoutePayload` object.
+  **Нарушающее совместимость изменение (v1.16, январь 2026):** Формат полезной нагрузки триггера маршрута изменился. До v1.16 параметры запроса, параметры пути и тело передавались напрямую в качестве полезной нагрузки. Начиная с v1.16 они вложены в структурированный объект `RoutePayload`.
 
-  **Before v1.16:**
+  **До v1.16:**
 
   ```typescript
   const handler = async (params) => {
@@ -533,7 +550,7 @@ Notes:
   };
   ```
 
-  **After v1.16:**
+  **После v1.16:**
 
   ```typescript
   const handler = async (event: RoutePayload) => {
@@ -543,10 +560,10 @@ Notes:
   };
   ```
 
-  **To migrate existing functions:** Update your handler to destructure from `event.body`, `event.queryStringParameters`, or `event.pathParameters` instead of directly from the params object.
+  **Чтобы мигрировать существующие функции:** Обновите обработчик, чтобы деструктурировать из `event.body`, `event.queryStringParameters` или `event.pathParameters` вместо прямого доступа к объекту params.
 </Warning>
 
-When a route trigger invokes your function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Import the type from `twenty-sdk`:
+Когда триггер маршрута вызывает вашу функцию, она получает объект `RoutePayload`, соответствующий формату AWS HTTP API v2. Импортируйте тип из `twenty-sdk`:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -562,21 +579,21 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-The `RoutePayload` type has the following structure:
+Тип `RoutePayload` имеет следующую структуру:
 
-| Property                     | Тип                                   | Описание                                                                                |
-| ---------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------- |
-| `headers`                    | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`)                           |
-| `queryStringParameters`      | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)                            |
-| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern (e.g., `/users/:id` → `{ id: '123' }`) |
-| `текст`                      | `object \| null`                      | Parsed request body (JSON)                                                              |
-| `isBase64Encoded`            | `логический тип`                      | Whether the body is base64 encoded                                                      |
-| `requestContext.http.method` | `строка`                              | HTTP method (GET, POST, PUT, PATCH, DELETE)                                             |
-| `requestContext.http.path`   | `строка`                              | Raw request path                                                                        |
+| Свойство                     | Тип                                   | Описание                                                                                   |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP-заголовки (только перечисленные в `forwardedRequestHeaders`)                          |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Параметры строки запроса (несколько значений объединяются запятыми)                        |
+| `pathParameters`             | `Record<string, string \| undefined>` | Параметры пути, извлечённые из шаблона маршрута (например, `/users/:id` → `{ id: '123' }`) |
+| `текст`                      | `object \| null`                      | Разобранное тело запроса (JSON)                                                            |
+| `isBase64Encoded`            | `логический тип`                      | Является ли тело закодированным в base64                                                   |
+| `requestContext.http.method` | `строка`                              | Метод HTTP (GET, POST, PUT, PATCH, DELETE)                                                 |
+| `requestContext.http.path`   | `строка`                              | Необработанный путь запроса                                                                |
 
-### Forwarding HTTP headers
+### Проброс HTTP-заголовков
 
-By default, HTTP headers from incoming requests are **not** passed to your serverless function for security reasons. To access specific headers, explicitly list them in the `forwardedRequestHeaders` array:
+По умолчанию HTTP-заголовки из входящих запросов **не** передаются в вашу бессерверную функцию по соображениям безопасности. Чтобы получить доступ к определённым заголовкам, явно перечислите их в массиве `forwardedRequestHeaders`:
 
 ```typescript
 export default defineFunction({
@@ -596,7 +613,7 @@ export default defineFunction({
 });
 ```
 
-In your handler, you can then access these headers:
+В обработчике вы сможете получить доступ к этим заголовкам:
 
 ```typescript
 const handler = async (event: RoutePayload) => {
@@ -609,17 +626,17 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-  Header names are normalized to lowercase. Access them using lowercase keys (for example, `event.headers['content-type']`).
+  Имена заголовков приводятся к нижнему регистру. Обращайтесь к ним, используя ключи в нижнем регистре (например, `event.headers['content-type']`).
 </Note>
 
-You can create new functions in two ways:
+Вы можете создать новые функции двумя способами:
 
-* **Scaffolded**: Run `yarn app:create-entity` and choose the option to add a new function. This generates a starter file with a handler and config.
-* **Manual**: Create a new `*.function.ts` file and use `defineFunction()`, following the same pattern.
+* **Сгенерировано**: Запустите `yarn app:create-entity` и выберите опцию добавления новой функции. Это создаёт стартовый файл с обработчиком и конфигурацией.
+* **Вручную**: Создайте новый файл `*.function.ts` и используйте `defineFunction()`, следуя тому же шаблону.
 
-### Generated typed client
+### Сгенерированный типизированный клиент
 
-Run yarn app:generate to create a local typed client in generated/ based on your workspace schema. Use it in your functions:
+Запустите yarn app:generate, чтобы создать локальный типизированный клиент в generated/ на основе схемы вашего рабочего пространства. Используйте его в своих функциях:
 
 ```typescript
 import Twenty from './generated';
@@ -628,34 +645,34 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated by `yarn app:generate`. Re-run after changing your objects and `yarn app:sync` or when onboarding to a new workspace.
+Клиент повторно генерируется командой `yarn app:generate`. Запускайте повторно после изменения ваших объектов и `yarn app:sync` или при подключении к новому рабочему пространству.
 
-#### Runtime credentials in serverless functions
+#### Учётные данные времени выполнения в бессерверных функциях
 
-When your function runs on Twenty, the platform injects credentials as environment variables before your code executes:
+Когда ваша функция запускается на Twenty, платформа подставляет учётные данные как переменные окружения перед выполнением вашего кода:
 
-* `TWENTY_API_URL`: Base URL of the Twenty API your app targets.
-* `TWENTY_API_KEY`: Short‑lived key scoped to your application's default function role.
+* `TWENTY_API_URL`: Базовый URL API Twenty, на который нацелено ваше приложение.
+* `TWENTY_API_KEY`: Краткоживущий ключ, ограниченный ролью функции по умолчанию вашего приложения.
 
 Заметки:
 
-* You do not need to pass URL or API key to the generated client. It reads `TWENTY_API_URL` and `TWENTY_API_KEY` from process.env at runtime.
-* The API key's permissions are determined by the role referenced in your `application.config.ts` via `functionRoleUniversalIdentifier`. This is the default role used by serverless functions of your application.
-* Applications can define roles to follow least‑privilege. Grant only the permissions your functions need, then point `functionRoleUniversalIdentifier` to that role's universal identifier.
+* Вам не нужно передавать URL или ключ API сгенерированному клиенту. Он читает `TWENTY_API_URL` и `TWENTY_API_KEY` из process.env во время выполнения.
+* Права ключа API определяются ролью, на которую ссылается ваш `application.config.ts` через `functionRoleUniversalIdentifier`. Это роль по умолчанию, используемая бессерверными функциями вашего приложения.
+* Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Выдавайте только те права, которые нужны вашим функциям, затем укажите в `functionRoleUniversalIdentifier` универсальный идентификатор этой роли.
 
-### Hello World example
+### Пример Hello World
 
-Explore a minimal, end-to-end example that demonstrates objects, functions, and multiple triggers [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+Посмотрите минимальный сквозной пример, демонстрирующий объекты, функции и несколько триггеров, [здесь](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
-## Manual setup (without the scaffolder)
+## Ручная настройка (без генератора)
 
-While we recommend using `create-twenty-app` for the best getting-started experience, you can also set up a project manually. Do not install the CLI globally. Instead, add `twenty-sdk` as a local dependency and wire scripts in your package.json:
+Хотя мы рекомендуем использовать `create-twenty-app` для наилучшего старта, вы также можете настроить проект вручную. Не устанавливайте CLI глобально. Вместо этого добавьте `twenty-sdk` как локальную зависимость и настройте скрипты в вашем package.json:
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-Then add scripts like these:
+Затем добавьте скрипты, подобные этим:
 
 ```json filename="package.json"
 {
@@ -672,13 +689,13 @@ Then add scripts like these:
 }
 ```
 
-Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:sync`, etc.
+Теперь вы можете запускать те же команды через Yarn, например, `yarn app:dev`, `yarn app:sync` и т. д.
 
 ## Устранение неполадок
 
-* Authentication errors: run `yarn auth:login` and ensure your API key has the required permissions.
-* Cannot connect to server: verify the API URL and that the Twenty server is reachable.
-* Types or client missing/outdated: run `yarn app:generate` and then `yarn app:dev`.
-* Dev mode not syncing: ensure `yarn app:dev` is running and that changes are not ignored by your environment.
+* Ошибки аутентификации: выполните `yarn auth:login` и убедитесь, что у вашего ключа API есть необходимые права.
+* Не удаётся подключиться к серверу: проверьте URL API и доступность сервера Twenty.
+* Отсутствующие/устаревшие типы или клиент: выполните `yarn app:generate`, затем `yarn app:dev`.
+* Режим разработки не синхронизируется: убедитесь, что запущен `yarn app:dev`, и что ваша среда не игнорирует изменения.
 
-Discord Help Channel: https://discord.com/channels/1130383047699738754/1130386664812982322
+Канал помощи в Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

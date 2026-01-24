@@ -1,125 +1,125 @@
 ---
-title: SSO Configuration
-description: Configure Single Sign-On for secure enterprise authentication.
+title: Конфигурация SSO
+description: Настройте единый вход (SSO) для безопасной корпоративной аутентификации.
 ---
 
-## About SSO
+## О SSO
 
-Single Sign-On (SSO) allows your team members to log into Twenty using your organization's identity provider. This provides:
+Единый вход (SSO) позволяет участникам вашей команды входить в Twenty, используя провайдера идентификации вашей организации. Это обеспечивает:
 
-* **Centralized access control**: Manage access from one place
-* **Enhanced security**: Leverage your existing security policies
-* **Better user experience**: One set of credentials for all tools
+* **Централизованное управление доступом**: управляйте доступом из одного места
+* **Повышенная безопасность**: используйте существующие политики безопасности
+* **Лучший пользовательский опыт**: один набор учетных данных для всех инструментов
 
-## Supported Providers
+## Поддерживаемые провайдеры
 
-Twenty supports SSO with:
+Twenty поддерживает SSO с:
 
-* **SAML 2.0**: Works with most enterprise identity providers
-* **Google Workspace**: For organizations using Google
-* **Microsoft Entra ID**: (formerly Azure AD) For Microsoft environments
+* **SAML 2.0**: работает с большинством корпоративных провайдеров идентификации
+* **Google Workspace**: для организаций, использующих Google
+* **Microsoft Entra ID**: (ранее Azure AD) для сред Microsoft
 
-## Setting Up SSO
+## Настройка SSO
 
 ### Требования
 
-* Organization plan (cloud and self-hosted workspaces)
-* Admin access to your identity provider
-* Admin access to Twenty workspace
+* План Organization (облачные и самостоятельно размещённые рабочие пространства)
+* Доступ администратора к вашему провайдеру идентификации
+* Доступ администратора к рабочему пространству Twenty
 
 <Note>
-  **For self-hosting users willing to set up SSO**, reach out to contact@twenty.com
+  **Для пользователей с самостоятельным размещением, желающих настроить SSO**, свяжитесь по адресу contact@twenty.com
 </Note>
 
-### Configuration Steps
+### Шаги настройки
 
-#### 1. Access SSO Settings
+#### 1. Доступ к настройкам SSO
 
-1. Go to **Settings → Security**
-2. Find the **SSO Configuration** section
-3. Click **Configure SSO**
+1. Перейдите в **Настройки → Безопасность**
+2. Найдите раздел **Конфигурация SSO**
+3. Нажмите **Настроить SSO**
 
-#### 2) Choose Your Provider
+#### 2) Выберите своего провайдера
 
-Select your identity provider from the list or choose "Custom SAML" for other providers.
+Выберите вашего провайдера идентификации из списка или выберите "Custom SAML" для других провайдеров.
 
-#### 3. Configure Your Identity Provider
+#### 3. Настройте вашего провайдера идентификации
 
-You'll need to configure your identity provider with:
+Вам потребуется настроить вашего провайдера идентификации со следующими параметрами:
 
-* **Entity ID**: Provided by Twenty
-* **ACS URL**: The callback URL for authentication
-* **Certificate**: For secure communication
+* **Entity ID**: предоставляется Twenty
+* **ACS URL**: URL обратного вызова для аутентификации
+* **Сертификат**: для защищённой связи
 
-#### 4. Enter Provider Details in Twenty
+#### 4. Введите данные провайдера в Twenty
 
-* **SSO URL**: Login URL from your provider
-* **Entity ID**: Your provider's identifier
-* **Certificate**: X.509 certificate from your provider
+* **SSO URL**: URL для входа от вашего провайдера
+* **Entity ID**: идентификатор вашего провайдера
+* **Сертификат**: сертификат X.509 от вашего провайдера
 
-#### 5. Test and Enable
+#### 5. Проверка и включение
 
-1. Click **Test Configuration** to verify setup
-2. Enable SSO when testing is successful
-3. Configure user provisioning preferences
+1. Нажмите **Проверить конфигурацию**, чтобы проверить настройку
+2. Включите SSO, когда проверка пройдёт успешно
+3. Настройте параметры подготовки пользователей
 
-## User Provisioning
+## Подготовка пользователей
 
-### Just-in-Time (JIT) Provisioning
+### Подготовка Just-in-Time (JIT)
 
-* Users are created automatically on first login
-* Assigned default role automatically
-* No manual user creation needed
+* Пользователи создаются автоматически при первом входе
+* Им автоматически назначается роль по умолчанию
+* Ручное создание пользователей не требуется
 
-### Manual Provisioning
+### Ручная подготовка
 
-* Invite users before they can log in
-* Pre-assign specific roles
-* More control over who can access
+* Пригласите пользователей до того, как они смогут войти
+* Предварительно назначьте конкретные роли
+* Больше контроля над тем, кто имеет доступ
 
-## Managing SSO Users
+## Управление пользователями SSO
 
-### Role Assignment
+### Назначение ролей
 
-SSO users can be assigned roles like regular users:
+Пользователям SSO можно назначать роли так же, как обычным пользователям:
 
-1. Go to **Settings → Members**
-2. Find the user
-3. Change their role as needed
+1. Перейдите в **Настройки → Участники**
+2. Найдите пользователя
+3. Измените их роль при необходимости
 
-### Access Revocation
+### Отзыв доступа
 
-To remove access for SSO users:
+Чтобы удалить доступ для пользователей SSO:
 
-* Remove them from your identity provider, or
-* Remove them from the Twenty workspace
+* Удалите их из вашего провайдера идентификации или
+* Удалите их из рабочего пространства Twenty
 
 ## Лучшие практики
 
 ### Безопасность
 
-* **Require SSO**: Disable password login for SSO users
-* **Regular audits**: Review access periodically
-* **Strong IdP policies**: Enforce MFA at the identity provider
+* **Требовать SSO**: отключите вход по паролю для пользователей SSO
+* **Регулярные аудиты**: периодически пересматривайте доступ
+* **Строгие политики IdP**: обеспечьте MFA на стороне провайдера идентификации
 
-### User Management
+### Управление пользователями
 
-* **Clear naming**: Use consistent naming from your directory
-* **Group mapping**: Map IdP groups to Twenty roles (if available)
-* **Offboarding process**: Include Twenty in your deprovisioning workflow
+* **Понятные названия**: используйте единообразные наименования из вашего каталога
+* **Сопоставление групп**: сопоставьте группы IdP с ролями Twenty (если доступно)
+* **Процесс офбординга**: включите Twenty в ваш рабочий процесс отзыва доступов
 
 ## Устранение неполадок
 
-### Common Issues
+### Распространённые проблемы
 
-* **Certificate errors**: Ensure certificate hasn't expired
-* **URL mismatches**: Verify ACS URL matches exactly
-* **User not found**: Check JIT provisioning settings
+* **Ошибки сертификата**: убедитесь, что срок действия сертификата не истёк
+* **Несоответствия URL**: убедитесь, что ACS URL совпадает в точности
+* **Пользователь не найден**: проверьте настройки JIT-подготовки
 
 ### Получение помощи
 
-If you encounter issues, contact support with:
+Если вы столкнётесь с проблемами, обратитесь в поддержку, указав:
 
-* Error messages received
-* Identity provider being used
-* Configuration details (without sensitive data)
+* Полученные сообщения об ошибках
+* Используемый провайдер идентификации
+* Подробности конфигурации (без конфиденциальных данных)

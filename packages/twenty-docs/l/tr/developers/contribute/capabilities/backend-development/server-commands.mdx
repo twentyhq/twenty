@@ -5,12 +5,12 @@ title: Backend Komutları
 ## Faydalı Komutlar
 
 Bu komutlar packages/twenty-server klasöründen çalıştırılmalıdır.
-From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+Diğer herhangi bir klasörden `npx nx {command} twenty-server` (veya `npx nx run twenty-server:{command}`) çalıştırabilirsiniz.
 
 ### İlk Kurulum
 
 ```
-npx nx database:reset twenty-server # setup the database with dev seeds
+npx nx database:reset twenty-server # veritabanını geliştirme tohum verileriyle kur
 ```
 
 ### Sunucuyu Başlatma
@@ -22,7 +22,7 @@ npx nx run twenty-server:start
 ### Kod Temizleme
 
 ```
-npx nx run twenty-server:lint # pass --fix to fix lint errors
+npx nx run twenty-server:lint # lint hatalarını düzeltmek için --fix'i geç
 ```
 
 ### Test
@@ -60,7 +60,7 @@ npx nx run twenty-server:command workspace:sync-metadata -f
 ```
 
 <Warning>
-  This will drop the database and re-run the migrations and seed.
+  Bu işlem veritabanını siler, migrasyonları ve tohumlamayı yeniden çalıştırır.
 
   Bu komutu çalıştırmadan önce saklamak istediğiniz verileri yedeklediğinizden emin olun.
 </Warning>

@@ -4,21 +4,21 @@ import { join } from 'path';
 import { promisify } from 'util';
 
 import { getLayerDependenciesDirName } from 'src/engine/core-modules/serverless/drivers/utils/get-layer-dependencies-dir-name';
-import type { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { type FlatServerlessFunctionLayer } from 'src/engine/metadata-modules/serverless-function-layer/types/flat-serverless-function-layer.type';
 
 const execFilePromise = promisify(execFile);
 
 export const copyAndBuildDependencies = async (
   buildDirectory: string,
-  serverlessFunction: ServerlessFunctionEntity,
+  flatServerlessFunctionLayer: FlatServerlessFunctionLayer,
 ) => {
   await fs.mkdir(buildDirectory, {
     recursive: true,
   });
 
-  const packageJson = serverlessFunction.serverlessFunctionLayer.packageJson;
+  const packageJson = flatServerlessFunctionLayer.packageJson;
 
-  const yarnLock = serverlessFunction.serverlessFunctionLayer.yarnLock;
+  const yarnLock = flatServerlessFunctionLayer.yarnLock;
 
   await fs.writeFile(
     join(buildDirectory, 'package.json'),

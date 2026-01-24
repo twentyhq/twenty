@@ -1,39 +1,43 @@
 ---
-title: Twenty Apps
-description: Build and manage Twenty customizations as code.
+title: Twenty Uygulamaları
+description: Twenty özelleştirmelerini kod olarak oluşturun ve yönetin.
 ---
 
 <Warning>
-  Apps are currently in alpha testing. The feature is functional but still evolving.
+  Uygulamalar şu anda alfa testinde. Özellik işlevsel ancak hâlâ gelişmekte.
 </Warning>
 
-## What Are Apps?
+## Uygulamalar Nedir?
 
-Apps let you build and manage Twenty customizations **as code**. Instead of configuring everything through the UI, you define your data model and serverless functions in code — making it faster to build, maintain, and roll out to multiple workspaces.
+Uygulamalar, Twenty özelleştirmelerini **kod olarak** oluşturup yönetmenizi sağlar. Her şeyi UI üzerinden yapılandırmak yerine, veri modelinizi ve sunucusuz fonksiyonlarınızı kodla tanımlarsınız — bu da oluşturmayı, bakımı ve birden çok çalışma alanına dağıtımı hızlandırır.
 
-**What you can do today:**
+**Bugün Yapabilecekleriniz:**
 
-* Define custom objects and fields as code (managed data model)
-* Build serverless functions with custom triggers
-* Deploy the same app across multiple workspaces
+* Özel nesneleri ve alanları kod olarak tanımlayın (yönetilen veri modeli)
+* Özel tetikleyicilerle sunucusuz fonksiyonlar oluşturun
+* Aynı uygulamayı birden çok çalışma alanına dağıtın
 
-**Coming soon:**
+**Yakında:**
 
-* Custom UI layouts and components
+* Özel UI düzenleri ve bileşenleri
 
 ## Ön Gereksinimler
 
-* Node.js 24+ and Yarn 4
-* A Twenty workspace and an API key (create one at https://app.twenty.com/settings/api-webhooks)
+* Node.js 24+ ve Yarn 4
+* Bir Twenty çalışma alanı ve bir API anahtarı (https://app.twenty.com/settings/api-webhooks adresinde oluşturun)
 
-## Getting Started
+## Başlarken
 
-Create a new app using the official scaffolder, then authenticate and start developing:
+Resmi scaffolder aracını kullanarak yeni bir uygulama oluşturun, ardından kimlik doğrulaması yapıp geliştirmeye başlayın:
 
 ```bash filename="Terminal"
 # Scaffold a new app
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
+
+# If you don't use yarn@4
+corepack enable
+yarn install
 
 # Authenticate using your API key (you'll be prompted)
 yarn auth:login
@@ -55,7 +59,10 @@ yarn app:generate
 yarn app:sync
 
 # Watch your application's functions logs
-yarn app:logs
+yarn function:logs
+
+# Execute a function by name
+yarn function:execute -n my-function -p '{"name": "test"}'
 
 # Uninstall the application from the current workspace
 yarn app:uninstall
@@ -64,18 +71,18 @@ yarn app:uninstall
 yarn app:help
 ```
 
-See also: the CLI reference pages for [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) and [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
+Ayrıca bkz.: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) ve [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk) için CLI başvuru sayfaları.
 
-## Project structure (scaffolded)
+## Proje yapısı (şablondan oluşturulmuş)
 
-When you run `npx create-twenty-app@latest my-twenty-app`, the scaffolder:
+`npx create-twenty-app@latest my-twenty-app` komutunu çalıştırdığınızda scaffolder şunları yapar:
 
-* Copies a minimal base application into `my-twenty-app/`
-* Adds a local `twenty-sdk` dependency and Yarn 4 configuration
-* Creates config files and scripts wired to the `twenty` CLI
-* Generates a default application config and a default function role
+* Minimal bir temel uygulamayı `my-twenty-app/` içine kopyalar
+* Yerel bir `twenty-sdk` bağımlılığı ve Yarn 4 yapılandırması ekler
+* `twenty` CLI ile bağlantılı yapılandırma dosyaları ve betikler oluşturur
+* Varsayılan bir uygulama yapılandırması ve varsayılan bir fonksiyon rolü üretir
 
-A freshly scaffolded app looks like this:
+Yeni şablondan oluşturulan bir uygulama şöyle görünür:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -85,8 +92,6 @@ my-twenty-app/
   .nvmrc
   .yarnrc.yml
   .yarn/
-    releases/
-      yarn-4.9.2.cjs
     install-state.gz
   eslint.config.mjs
   tsconfig.json
@@ -99,21 +104,21 @@ my-twenty-app/
     utils/                      # Optional - handler implementations & utilities
 ```
 
-### Convention-over-configuration
+### Sözleşme-öncelikli yapılandırma
 
-Applications use a **convention-over-configuration** approach where entities are detected by their file suffix. This allows flexible organization within the `src/app/` folder:
+Uygulamalar, varlıkların dosya sonekiyle algılandığı **sözleşme-öncelikli yapılandırma** yaklaşımını kullanır. Bu, `src/app/` klasörü içinde esnek bir düzenlemeye olanak tanır:
 
-| File suffix     | Entity type                     |
-| --------------- | ------------------------------- |
-| `*.object.ts`   | Custom object definitions       |
-| `*.function.ts` | Serverless function definitions |
-| `*.role.ts`     | Role definitions                |
+| Dosya soneki    | Varlık türü                   |
+| --------------- | ----------------------------- |
+| `*.object.ts`   | Özel nesne tanımları          |
+| `*.function.ts` | Sunucusuz fonksiyon tanımları |
+| `*.role.ts`     | Rol tanımları                 |
 
-### Supported folder organizations
+### Desteklenen klasör düzenleri
 
-You can organize your entities in any of these patterns:
+Varlıklarınızı şu desenlerden herhangi birine göre düzenleyebilirsiniz:
 
-**Traditional (by type):**
+**Geleneksel (türe göre):**
 
 ```text
 src/app/
@@ -126,7 +131,7 @@ src/app/
     └── admin.role.ts
 ```
 
-**Feature-based:**
+**Özelliğe dayalı:**
 
 ```text
 src/app/
@@ -137,7 +142,7 @@ src/app/
     └── postCardAdmin.role.ts
 ```
 
-**Flat:**
+**Düz:**
 
 ```text
 src/app/
@@ -147,66 +152,80 @@ src/app/
 └── admin.role.ts
 ```
 
-At a high level:
+Genel hatlarıyla:
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall`, and `auth` that delegate to the local `twenty` CLI.
-* **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `generated/` (typed client), `dist/`, `build/`, coverage folders, log files, and `.env*` files.
-* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Lock and configure the Yarn 4 toolchain used by the project.
-* **.nvmrc**: Pins the Node.js version expected by the project.
-* **eslint.config.mjs** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
-* **README.md**: A short README in the app root with basic instructions.
-* **src/app/**: The main place where you define your application-as-code:
-  * `application.config.ts`: Global configuration for your app (metadata and runtime wiring). See "Application config" below.
-  * `*.role.ts`: Role definitions used by your serverless functions. See "Default function role" below.
-  * `*.object.ts`: Custom object definitions.
-  * `*.function.ts`: Serverless function definitions.
-* **src/utils/**: Optional folder for handler implementations and utilities.
+* **package.json**: Uygulama adını, sürümünü, motorları (Node 24+, Yarn 4) bildirir ve yerel `twenty` CLI’ına yetki devreden `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall` ve `auth` gibi betiklerin yanı sıra `twenty-sdk` ekler.
+* **.gitignore**: `node_modules`, `.yarn`, `generated/` (türlendirilmiş istemci), `dist/`, `build/`, kapsam klasörleri, günlük dosyaları ve `.env*` dosyaları gibi yaygın artifaktları yok sayar.
+* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Proje tarafından kullanılan Yarn 4 araç zincirini kilitler ve yapılandırır.
+* **.nvmrc**: Projenin beklediği Node.js sürümünü sabitler.
+* **eslint.config.mjs** ve **tsconfig.json**: Uygulamanızın TypeScript kaynakları için linting ve TypeScript yapılandırması sağlar.
+* **README.md**: Uygulama kökünde temel talimatların yer aldığı kısa bir README.
+* **src/app/**: Uygulamanızı kod olarak tanımladığınız ana yer:
+  * `application.config.ts`: Uygulamanız için genel yapılandırma (meta veriler ve çalışma zamanı bağlantıları). Aşağıda "Uygulama yapılandırması"na bakın.
+  * `*.role.ts`: Sunucusuz fonksiyonlarınız tarafından kullanılan rol tanımları. Aşağıda "Varsayılan fonksiyon rolü"ne bakın.
+  * `*.object.ts`: Özel nesne tanımları.
+  * `*.function.ts`: Sunucusuz fonksiyon tanımları.
+* **src/utils/**: İşleyici uygulamaları ve yardımcılar için isteğe bağlı klasör.
 
-Later commands will add more files and folders:
+İlerideki komutlar daha fazla dosya ve klasör ekleyecektir:
 
-* `yarn app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
-* `yarn app:create-entity` will add entity definition files under `src/app/` for your custom objects, functions, or roles.
+* `yarn app:generate`, `generated/` klasörünü oluşturur (türlendirilmiş Twenty istemcisi + çalışma alanı türleri).
+* `yarn app:create-entity`, özel nesneleriniz, fonksiyonlarınız veya rolleriniz için `src/app/` altında varlık tanım dosyaları ekler.
   l
 
 ## Kimlik Doğrulama
 
-The first time you run `yarn auth:login`, you'll be prompted for:
+`yarn auth:login` komutunu ilk kez çalıştırdığınızda, sizden şunlar istenir:
 
-* API URL (defaults to http://localhost:3000 or your current workspace profile)
-* API key
+* API URL’si (varsayılan: http://localhost:3000 veya mevcut çalışma alanı profiliniz)
+* API anahtarı
 
-Your credentials are stored per-user in `~/.twenty/config.json`. You can maintain multiple profiles and switch using `--workspace <name>`.
+Kimlik bilgileriniz kullanıcı başına `~/.twenty/config.json` içinde saklanır. You can maintain multiple profiles and switch between them.
 
-Örnekler:
+### Managing workspaces
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
 yarn auth:login
 
-# Use a specific workspace profile
+# Login to a specific workspace profile
 yarn auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn auth:list
+
+# Switch the default workspace (interactive)
+yarn auth:switch
+
+# Switch to a specific workspace
+yarn auth:switch production
+
+# Check current authentication status
+yarn auth:status
 ```
 
-## Use the SDK resources (types & config)
+Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
 
-The twenty-sdk provides typed building blocks and helper functions you use inside your app. Below are the key pieces you'll touch most often.
+## SDK kaynaklarını kullanın (türler ve yapılandırma)
 
-### Helper functions
+twenty-sdk, uygulamanız içinde kullandığınız türlendirilmiş yapı taşları ve yardımcı fonksiyonlar sağlar. Aşağıda en sık dokunacağınız başlıca parçalar yer alıyor.
 
-The SDK provides four helper functions with built-in validation for defining your app entities:
+### Yardımcı fonksiyonlar
 
-| Function           | Amaç                                         |
-| ------------------ | -------------------------------------------- |
-| `defineApp()`      | Configure application metadata               |
-| `defineObject()`   | Define custom objects with fields            |
-| `defineFunction()` | Define serverless functions with handlers    |
-| `defineRole()`     | Configure role permissions and object access |
+SDK, uygulama varlıklarınızı tanımlamak için yerleşik doğrulamaya sahip dört yardımcı fonksiyon sunar:
 
-These functions validate your configuration at runtime and provide better IDE autocompletion and type safety.
+| Fonksiyon          | Amaç                                            |
+| ------------------ | ----------------------------------------------- |
+| `defineApp()`      | Uygulama meta verilerini yapılandırın           |
+| `defineObject()`   | Alanlara sahip özel nesneler tanımlayın         |
+| `defineFunction()` | İşleyicilerle sunucusuz fonksiyonlar tanımlayın |
+| `defineRole()`     | Rol izinlerini ve nesne erişimini yapılandırın  |
 
-### Defining objects
+Bu fonksiyonlar, yapılandırmanızı çalışma anında doğrular ve daha iyi IDE otomatik tamamlama ve tür güvenliği sağlar.
 
-Custom objects describe both schema and behavior for records in your workspace. Use `defineObject()` to define objects with built-in validation:
+### Nesnelerin tanımlanması
+
+Özel nesneler, çalışma alanınızdaki kayıtlar için hem şemayı hem de davranışı tanımlar. Yerleşik doğrulamayla nesneler tanımlamak için `defineObject()` kullanın:
 
 ```typescript
 // src/app/postCard.object.ts
@@ -277,20 +296,20 @@ export default defineObject({
 });
 ```
 
-Key points:
+Önemli noktalar:
 
-* Use `defineObject()` for built-in validation and better IDE support.
-* The `universalIdentifier` must be unique and stable across deployments.
-* Each field requires a `name`, `type`, `label`, and its own stable `universalIdentifier`.
-* The `fields` array is optional — you can define objects without custom fields.
-* You can scaffold new objects using `yarn app:create-entity`, which guides you through naming, fields, and relationships.
+* Yerleşik doğrulama ve daha iyi IDE desteği için `defineObject()` kullanın.
+* `universalIdentifier` dağıtımlar arasında benzersiz ve kararlı olmalıdır.
+* Her alan bir `name`, `type`, `label` ve kendi kararlı `universalIdentifier` değerini gerektirir.
+* `fields` dizisi isteğe bağlıdır — özel alanlar olmadan da nesneler tanımlayabilirsiniz.
+* `yarn app:create-entity` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz.
 
 <Note>
-  **Base fields are created automatically.** When you define a custom object, Twenty automatically adds standard fields such as `name`, `createdAt`, `updatedAt`, `createdBy`, `position`, and `deletedAt`. You don't need to define these in your `fields` array — only add your custom fields.
+  **Temel alanlar otomatik olarak oluşturulur.** Özel bir nesne tanımladığınızda Twenty, `name`, `createdAt`, `updatedAt`, `createdBy`, `position` ve `deletedAt` gibi standart alanları otomatik olarak ekler. Bunları `fields` dizinizde tanımlamanız gerekmez — yalnızca özel alanlarınızı ekleyin.
 </Note>
 
-<Accordion title="Alternative: Decorator-based syntax">
-  You can also define objects using TypeScript decorators. This approach uses class-based syntax with `@Object`, `@Field`, and `@Relation` decorators:
+<Accordion title="Alternatif: Dekoratör tabanlı söz dizimi">
+  Nesneleri TypeScript dekoratörlerini kullanarak da tanımlayabilirsiniz. Bu yaklaşım, `@Object`, `@Field` ve `@Relation` dekoratörleriyle sınıf tabanlı söz dizimi kullanır:
 
   ```typescript
   import {
@@ -337,18 +356,18 @@ Key points:
   }
   ```
 
-  Note: The decorator approach requires `experimentalDecorators` in your TypeScript config.
+  Not: Dekoratör yaklaşımı, TypeScript yapılandırmanızda `experimentalDecorators` gerektirir.
 </Accordion>
 
-### Application config (application.config.ts)
+### Uygulama yapılandırması (application.config.ts)
 
-Every app has a single `application.config.ts` file that describes:
+Her uygulamanın aşağıdakileri açıklayan tek bir `application.config.ts` dosyası vardır:
 
-* **Who the app is**: identifiers, display name, and description.
-* **How its functions run**: which role they use for permissions.
-* **(Optional) variables**: key–value pairs exposed to your functions as environment variables.
+* **Uygulamanın kim olduğu**: tanımlayıcılar, görünen ad ve açıklama.
+* **Fonksiyonlarının nasıl çalıştığı**: izinler için hangi rolü kullandıkları.
+* **(İsteğe bağlı) değişkenler**: fonksiyonlarınıza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
 
-Use `defineApp()` to define your application configuration:
+Uygulama yapılandırmanızı tanımlamak için `defineApp()` kullanın:
 
 ```typescript
 // src/app/application.config.ts
@@ -372,23 +391,23 @@ export default defineApp({
 });
 ```
 
-Notes:
+Notlar:
 
-* `universalIdentifier` fields are deterministic IDs you own; generate them once and keep them stable across syncs.
-* `applicationVariables` become environment variables for your functions (for example, `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
+* `universalIdentifier` alanları size ait belirleyici kimliklerdir; bunları bir kez oluşturun ve eşitlemeler boyunca kararlı tutun.
+* `applicationVariables`, fonksiyonlarınız için ortam değişkenlerine dönüşür (örneğin, `DEFAULT_RECIPIENT_NAME` değeri `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
+* `functionRoleUniversalIdentifier`, `*.role.ts` dosyanızda tanımladığınız rolle eşleşmelidir (aşağıya bakın).
 
-#### Roles and permissions
+#### Roller ve izinler
 
-Applications can define roles that encapsulate permissions on your workspace's objects and actions. The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's serverless functions.
+Uygulamalar, çalışma alanınızdaki nesneler ve eylemler üzerindeki izinleri kapsülleyen roller tanımlayabilir. `application.config.ts` içindeki `functionRoleUniversalIdentifier` alanı, uygulamanızın sunucusuz fonksiyonları tarafından kullanılan varsayılan rolü belirtir.
 
-* The runtime API key injected as `TWENTY_API_KEY` is derived from this default function role.
-* The typed client will be restricted to the permissions granted to that role.
-* Follow least‑privilege: create a dedicated role with only the permissions your functions need, then reference its universal identifier.
+* `TWENTY_API_KEY` olarak enjekte edilen çalışma zamanı API anahtarı bu varsayılan fonksiyon rolünden türetilir.
+* Türlendirilmiş istemci, o role tanınan izinlerle sınırlandırılır.
+* En az ayrıcalık ilkesini izleyin: Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinlere sahip özel bir rol oluşturun ve ardından evrensel tanımlayıcısına referans verin.
 
-##### Default function role (\*.role.ts)
+##### Varsayılan fonksiyon rolü (\*.role.ts)
 
-When you scaffold a new app, the CLI also creates a default role file. Use `defineRole()` to define roles with built-in validation:
+Yeni bir uygulama oluşturduğunuzda CLI ayrıca varsayılan bir rol dosyası da oluşturur. Yerleşik doğrulamayla roller tanımlamak için `defineRole()` kullanın:
 
 ```typescript
 // src/app/default-function.role.ts
@@ -430,21 +449,21 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application.config.ts` as `functionRoleUniversalIdentifier`. In other words:
+Bu rolün `universalIdentifier` değeri, `application.config.ts` içinde `functionRoleUniversalIdentifier` olarak referans verilir. Başka bir deyişle:
 
-* **\*.role.ts** defines what the default function role can do.
-* **application.config.ts** points to that role so your functions inherit its permissions.
+* **\*.role.ts**, varsayılan fonksiyon rolünün neler yapabileceğini tanımlar.
+* **application.config.ts** bu role işaret eder, böylece fonksiyonlarınız onun izinlerini devralır.
 
-Notes:
+Notlar:
 
-* Start from the scaffolded role, then progressively restrict it following least‑privilege.
-* Replace the `objectPermissions` and `fieldPermissions` with the objects/fields your functions need.
-* `permissionFlags` control access to platform-level capabilities. Keep them minimal; add only what you need.
-* See a working example in the Hello World app: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+* Oluşturulan rol ile başlayın ve en az ayrıcalık ilkesini izleyerek aşamalı olarak kısıtlayın.
+* `objectPermissions` ve `fieldPermissions` değerlerini, fonksiyonlarınızın ihtiyaç duyduğu nesneler/alanlarla değiştirin.
+* `permissionFlags`, platform düzeyindeki yeteneklere erişimi kontrol eder. Minimumda tutun; yalnızca ihtiyacınız olanları ekleyin.
+* Çalışan bir örneği Hello World uygulamasında görün: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
-### Serverless function config and entrypoint
+### Sunucusuz fonksiyon yapılandırması ve giriş noktası
 
-Each function file uses `defineFunction()` to export a configuration with a handler and optional triggers. Use the `*.function.ts` file suffix for automatic detection.
+Her fonksiyon dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren bir yapılandırmayı dışa aktarmak için `defineFunction()` kullanır. Otomatik algılama için `*.function.ts` dosya soneğini kullanın.
 
 ```typescript
 // src/app/createPostCard.function.ts
@@ -504,28 +523,28 @@ export default defineFunction({
 });
 ```
 
-Common trigger types:
+Yaygın tetikleyici türleri:
 
-* **route**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
+* **route**: Fonksiyonunuzu bir HTTP yolu ve yöntemiyle **`/s/` uç noktası altında** sunar:
 
-> e.g. `path: '/post-card/create',` -> call on `<APP_URL>/s/post-card/create`
+> örn. `path: '/post-card/create',` -> `<APP_URL>/s/post-card/create` üzerinden çağırın
 
-* **cron**: Runs your function on a schedule using a CRON expression.
-* **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
+* **cron**: Bir CRON ifadesi kullanarak fonksiyonunuzu bir zamanlamayla çalıştırır.
+* **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme fonksiyonu tetikler.
 
-> e.g. `person.updated`
+> örn. `person.updated`
 
-Notes:
+Notlar:
 
-* The `triggers` array is optional. Functions without triggers can be used as utility functions called by other functions.
-* You can mix multiple trigger types in a single function.
+* `triggers` dizisi isteğe bağlıdır. Tetikleyicisi olmayan fonksiyonlar, diğer fonksiyonlar tarafından çağrılan yardımcı fonksiyonlar olarak kullanılabilir.
+* Tek bir fonksiyonda birden çok tetikleyici türünü birleştirebilirsiniz.
 
-### Route trigger payload
+### Rota tetikleyicisi yükü
 
 <Warning>
-  **Breaking change (v1.16, January 2026):** The route trigger payload format has changed. Prior to v1.16, query parameters, path parameters, and body were sent directly as the payload. Starting with v1.16, they are nested inside a structured `RoutePayload` object.
+  **Kırıcı değişiklik (v1.16, Ocak 2026):** Rota tetikleyicisi yük formatı değişti. v1.16'dan önce, sorgu parametreleri, yol parametreleri ve gövde doğrudan payload olarak gönderiliyordu. v1.16 itibarıyla, yapılandırılmış bir `RoutePayload` nesnesinin içine yerleştiriliyorlar.
 
-  **Before v1.16:**
+  **v1.16'dan önce:**
 
   ```typescript
   const handler = async (params) => {
@@ -533,7 +552,7 @@ Notes:
   };
   ```
 
-  **After v1.16:**
+  **v1.16'dan sonra:**
 
   ```typescript
   const handler = async (event: RoutePayload) => {
@@ -543,10 +562,10 @@ Notes:
   };
   ```
 
-  **To migrate existing functions:** Update your handler to destructure from `event.body`, `event.queryStringParameters`, or `event.pathParameters` instead of directly from the params object.
+  **Mevcut fonksiyonları taşımak için:** İşleyicinizi, parametreler nesnesinden doğrudan ayırmak yerine `event.body`, `event.queryStringParameters` veya `event.pathParameters` üzerinden ayrıştıracak şekilde güncelleyin.
 </Warning>
 
-When a route trigger invokes your function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Import the type from `twenty-sdk`:
+Bir rota tetikleyicisi fonksiyonunuzu çağırdığında, AWS HTTP API v2 formatını izleyen bir `RoutePayload` nesnesi alır. Türü `twenty-sdk` içinden içe aktarın:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -562,21 +581,21 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-The `RoutePayload` type has the following structure:
+`RoutePayload` türünün yapısı şu şekildedir:
 
-| Property                     | Tür                                   | Açıklama                                                                                |
-| ---------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------- |
-| `headers`                    | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`)                           |
-| `queryStringParameters`      | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)                            |
-| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern (e.g., `/users/:id` → `{ id: '123' }`) |
-| `gövde`                      | `object \| null`                      | Parsed request body (JSON)                                                              |
-| `isBase64Encoded`            | `boolean`                             | Whether the body is base64 encoded                                                      |
-| `requestContext.http.method` | `string`                              | HTTP method (GET, POST, PUT, PATCH, DELETE)                                             |
-| `requestContext.http.path`   | `string`                              | Raw request path                                                                        |
+| Özellik                      | Tür                                   | Açıklama                                                                           |
+| ---------------------------- | ------------------------------------- | ---------------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı)         |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Sorgu dizesi parametreleri (birden çok değer virgülle birleştirilir)               |
+| `pathParameters`             | `Record<string, string \| undefined>` | Rota deseninden çıkarılan yol parametreleri (örn., `/users/:id` → `{ id: '123' }`) |
+| `gövde`                      | `object \| null`                      | Ayrıştırılmış istek gövdesi (JSON)                                                 |
+| `isBase64Encoded`            | `boolean`                             | Gövdenin base64 ile kodlanıp kodlanmadığı                                          |
+| `requestContext.http.method` | `string`                              | HTTP yöntemi (GET, POST, PUT, PATCH, DELETE)                                       |
+| `requestContext.http.path`   | `string`                              | Ham istek yolu                                                                     |
 
-### Forwarding HTTP headers
+### HTTP başlıklarını iletme
 
-By default, HTTP headers from incoming requests are **not** passed to your serverless function for security reasons. To access specific headers, explicitly list them in the `forwardedRequestHeaders` array:
+Varsayılan olarak, güvenlik nedenleriyle gelen isteklerden HTTP başlıkları sunucusuz fonksiyonunuza **aktarılmaz**. Belirli başlıklara erişmek için bunları açıkça `forwardedRequestHeaders` dizisinde listeleyin:
 
 ```typescript
 export default defineFunction({
@@ -596,7 +615,7 @@ export default defineFunction({
 });
 ```
 
-In your handler, you can then access these headers:
+Daha sonra işleyicinizde bu başlıklara erişebilirsiniz:
 
 ```typescript
 const handler = async (event: RoutePayload) => {
@@ -609,17 +628,17 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-  Header names are normalized to lowercase. Access them using lowercase keys (for example, `event.headers['content-type']`).
+  Başlık adları küçük harfe normalize edilir. Onlara küçük harfli anahtarlarla erişin (örneğin, `event.headers['content-type']`).
 </Note>
 
-You can create new functions in two ways:
+Yeni fonksiyonları iki şekilde oluşturabilirsiniz:
 
-* **Scaffolded**: Run `yarn app:create-entity` and choose the option to add a new function. This generates a starter file with a handler and config.
-* **Manual**: Create a new `*.function.ts` file and use `defineFunction()`, following the same pattern.
+* **Şablondan**: `yarn app:create-entity` çalıştırın ve yeni bir fonksiyon ekleme seçeneğini seçin. Bu, bir işleyici ve yapılandırma içeren bir başlangıç dosyası oluşturur.
+* **Manuel**: Yeni bir `*.function.ts` dosyası oluşturun ve aynı deseni izleyerek `defineFunction()` kullanın.
 
-### Generated typed client
+### Oluşturulmuş türlendirilmiş istemci
 
-Run yarn app:generate to create a local typed client in generated/ based on your workspace schema. Use it in your functions:
+Çalışma alanı şemanıza göre generated/ içinde yerel bir türlendirilmiş istemci oluşturmak için yarn app:generate çalıştırın. Fonksiyonlarınızda kullanın:
 
 ```typescript
 import Twenty from './generated';
@@ -628,34 +647,34 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated by `yarn app:generate`. Re-run after changing your objects and `yarn app:sync` or when onboarding to a new workspace.
+İstemci `yarn app:generate` tarafından yeniden oluşturulur. Nesnelerinizi değiştirip `yarn app:sync` çalıştırdıktan sonra veya yeni bir çalışma alanına katılırken yeniden çalıştırın.
 
-#### Runtime credentials in serverless functions
+#### Sunucusuz fonksiyonlarda çalışma zamanı kimlik bilgileri
 
-When your function runs on Twenty, the platform injects credentials as environment variables before your code executes:
+Fonksiyonunuz Twenty üzerinde çalıştığında, platform kodunuz yürütülmeden önce kimlik bilgilerini ortam değişkenleri olarak enjekte eder:
 
-* `TWENTY_API_URL`: Base URL of the Twenty API your app targets.
-* `TWENTY_API_KEY`: Short‑lived key scoped to your application's default function role.
+* `TWENTY_API_URL`: Uygulamanızın hedeflediği Twenty API'nin temel URL’si.
+* `TWENTY_API_KEY`: Uygulamanızın varsayılan fonksiyon rolü kapsamına sahip kısa ömürlü anahtar.
 
 Notlar:
 
-* You do not need to pass URL or API key to the generated client. It reads `TWENTY_API_URL` and `TWENTY_API_KEY` from process.env at runtime.
-* The API key's permissions are determined by the role referenced in your `application.config.ts` via `functionRoleUniversalIdentifier`. This is the default role used by serverless functions of your application.
-* Applications can define roles to follow least‑privilege. Grant only the permissions your functions need, then point `functionRoleUniversalIdentifier` to that role's universal identifier.
+* Oluşturulan istemciye URL veya API anahtarı geçirmeniz gerekmez. Çalışma zamanında `TWENTY_API_URL` ve `TWENTY_API_KEY` değerlerini process.env üzerinden okur.
+* API anahtarının izinleri, `application.config.ts` içinde `functionRoleUniversalIdentifier` aracılığıyla referans verilen role göre belirlenir. Bu, uygulamanızın sunucusuz fonksiyonları tarafından kullanılan varsayılan roldür.
+* Uygulamalar, en az ayrıcalık ilkesini izlemek için roller tanımlayabilir. Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri verin ve ardından `functionRoleUniversalIdentifier` değerini o rolün evrensel tanımlayıcısına yönlendirin.
 
-### Hello World example
+### Hello World örneği
 
-Explore a minimal, end-to-end example that demonstrates objects, functions, and multiple triggers [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+Nesneleri, fonksiyonları ve birden çok tetikleyiciyi gösteren minimal, uçtan uca bir örneği [buradan](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world) inceleyin:
 
-## Manual setup (without the scaffolder)
+## Manuel kurulum (scaffolder olmadan)
 
-While we recommend using `create-twenty-app` for the best getting-started experience, you can also set up a project manually. Do not install the CLI globally. Instead, add `twenty-sdk` as a local dependency and wire scripts in your package.json:
+En iyi başlangıç deneyimi için `create-twenty-app` kullanmanızı önersek de, bir projeyi manuel olarak da kurabilirsiniz. CLI'yi global olarak kurmayın. Bunun yerine `twenty-sdk`'yi yerel bir bağımlılık olarak ekleyin ve package.json içinde betikleri bağlayın:
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-Then add scripts like these:
+Ardından şu gibi betikler ekleyin:
 
 ```json filename="package.json"
 {
@@ -672,13 +691,13 @@ Then add scripts like these:
 }
 ```
 
-Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:sync`, etc.
+Artık aynı komutları Yarn üzerinden çalıştırabilirsiniz; örn. `yarn app:dev`, `yarn app:sync` vb.
 
 ## Sorun Giderme
 
-* Authentication errors: run `yarn auth:login` and ensure your API key has the required permissions.
-* Cannot connect to server: verify the API URL and that the Twenty server is reachable.
-* Types or client missing/outdated: run `yarn app:generate` and then `yarn app:dev`.
-* Dev mode not syncing: ensure `yarn app:dev` is running and that changes are not ignored by your environment.
+* Kimlik doğrulama hataları: `yarn auth:login` çalıştırın ve API anahtarınızın gerekli izinlere sahip olduğundan emin olun.
+* Sunucuya bağlanılamıyor: API URL’sini ve Twenty sunucusunun erişilebilir olduğunu doğrulayın.
+* Türler veya istemci eksik/eski: `yarn app:generate` ve ardından `yarn app:dev` çalıştırın.
+* Geliştirme modu eşitlenmiyor: `yarn app:dev`'in çalıştığından ve değişikliklerin ortamınız tarafından yok sayılmadığından emin olun.
 
-Discord Help Channel: https://discord.com/channels/1130383047699738754/1130386664812982322
+Discord Yardım Kanalı: https://discord.com/channels/1130383047699738754/1130386664812982322

@@ -1,4 +1,4 @@
-import { type BarChartConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartConfig';
+import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphColorScheme';
 import { type BarDatum, type ComputedDatum } from '@nivo/bar';
@@ -51,36 +51,37 @@ describe('getBarChartColor', () => {
     ],
   };
 
-  const mockBarConfigs: BarChartConfig[] = [
-    {
-      key: 'sales',
-      indexValue: 'January',
-      colorScheme: mockBlueColorScheme,
-    },
-    {
-      key: 'revenue',
-      indexValue: 'January',
-      colorScheme: mockGreenColorScheme,
-    },
-    {
-      key: 'sales',
-      indexValue: 'February',
-      colorScheme: mockBlueColorScheme,
-    },
-  ];
+  const mockEnrichedKeysMap = new Map<string, BarChartEnrichedKey>([
+    [
+      'sales',
+      {
+        key: 'sales',
+        label: 'Sales',
+        colorScheme: mockBlueColorScheme,
+      },
+    ],
+    [
+      'revenue',
+      {
+        key: 'revenue',
+        label: 'Revenue',
+        colorScheme: mockGreenColorScheme,
+      },
+    ],
+  ]);
 
-  it('should return the correct color when datum matches bar config', () => {
+  it('should return the correct color when datum matches enriched key', () => {
     const datum: ComputedDatum<BarDatum> = {
       id: 'sales',
       indexValue: 'January',
     } as unknown as ComputedDatum<BarDatum>;
 
-    const result = getBarChartColor(datum, mockBarConfigs, mockTheme);
+    const result = getBarChartColor(datum, mockEnrichedKeysMap, mockTheme);
 
     expect(result).toBe('#solidBlue');
   });
 
-  it('should return different colors for different keys at same index', () => {
+  it('should return different colors for different keys', () => {
     const salesDatum: ComputedDatum<BarDatum> = {
       id: 'sales',
       indexValue: 'January',
@@ -91,10 +92,14 @@ describe('getBarChartColor', () => {
       indexValue: 'January',
     } as unknown as ComputedDatum<BarDatum>;
 
-    const salesColor = getBarChartColor(salesDatum, mockBarConfigs, mockTheme);
+    const salesColor = getBarChartColor(
+      salesDatum,
+      mockEnrichedKeysMap,
+      mockTheme,
+    );
     const revenueColor = getBarChartColor(
       revenueDatum,
-      mockBarConfigs,
+      mockEnrichedKeysMap,
       mockTheme,
     );
 
@@ -102,40 +107,33 @@ describe('getBarChartColor', () => {
     expect(revenueColor).toBe('#solidGreen');
   });
 
-  it('should return theme fallback color when no matching config is found', () => {
+  it('should return theme fallback color when no matching key is found', () => {
     const datum: ComputedDatum<BarDatum> = {
       id: 'unknown',
       indexValue: 'January',
     } as unknown as ComputedDatum<BarDatum>;
 
-    const result = getBarChartColor(datum, mockBarConfigs, mockTheme);
+    const result = getBarChartColor(datum, mockEnrichedKeysMap, mockTheme);
 
     expect(result).toBe('#fallback');
   });
 
-  it('should return fallback color when indexValue does not match', () => {
-    const datum: ComputedDatum<BarDatum> = {
-      id: 'sales',
-      indexValue: 'March',
-    } as unknown as ComputedDatum<BarDatum>;
-
-    const result = getBarChartColor(datum, mockBarConfigs, mockTheme);
-
-    expect(result).toBe('#fallback');
-  });
-
-  it('should return fallback color when barConfigs is empty', () => {
+  it('should return fallback color when enrichedKeysMap is empty', () => {
     const datum: ComputedDatum<BarDatum> = {
       id: 'sales',
       indexValue: 'January',
     } as unknown as ComputedDatum<BarDatum>;
 
-    const result = getBarChartColor(datum, [], mockTheme);
+    const result = getBarChartColor(
+      datum,
+      new Map<string, BarChartEnrichedKey>(),
+      mockTheme,
+    );
 
     expect(result).toBe('#fallback');
   });
 
-  it('should match based on both key and indexValue', () => {
+  it('should return same color for same key regardless of indexValue', () => {
     const januaryDatum: ComputedDatum<BarDatum> = {
       id: 'sales',
       indexValue: 'January',
@@ -148,12 +146,12 @@ describe('getBarChartColor', () => {
 
     const januaryColor = getBarChartColor(
       januaryDatum,
-      mockBarConfigs,
+      mockEnrichedKeysMap,
       mockTheme,
     );
     const februaryColor = getBarChartColor(
       februaryDatum,
-      mockBarConfigs,
+      mockEnrichedKeysMap,
       mockTheme,
     );
 

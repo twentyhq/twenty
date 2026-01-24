@@ -1,13 +1,38 @@
 import { Injectable } from '@nestjs/common';
 
-import { metrics, type Attributes } from '@opentelemetry/api';
+import {
+  metrics,
+  type Attributes,
+  type Meter,
+  type MetricOptions,
+  type ObservableGauge,
+  type ObservableResult,
+} from '@opentelemetry/api';
 
 import { MetricsCacheService } from 'src/engine/core-modules/metrics/metrics-cache.service';
 import { type MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
+const METER_NAME = 'twenty-server';
+
 @Injectable()
 export class MetricsService {
   constructor(private readonly metricsCacheService: MetricsCacheService) {}
+
+  getMeter(): Meter {
+    return metrics.getMeter(METER_NAME);
+  }
+
+  createObservableGauge(
+    name: string,
+    options: MetricOptions,
+    callback: (observableResult: ObservableResult) => void | Promise<void>,
+  ): ObservableGauge {
+    const gauge = this.getMeter().createObservableGauge(name, options);
+
+    gauge.addCallback(callback);
+
+    return gauge;
+  }
 
   async incrementCounter({
     key,
@@ -20,9 +45,7 @@ export class MetricsService {
     attributes?: Attributes;
     shouldStoreInCache?: boolean;
   }) {
-    //TODO : Define meter name usage in monitoring
-    const meter = metrics.getMeter('twenty-server');
-    const counter = meter.createCounter(key);
+    const counter = this.getMeter().createCounter(key);
 
     counter.add(1, attributes);
 
@@ -42,9 +65,7 @@ export class MetricsService {
     attributes?: Attributes;
     shouldStoreInCache?: boolean;
   }) {
-    //TODO : Define meter name usage in monitoring
-    const meter = metrics.getMeter('twenty-server');
-    const counter = meter.createCounter(key);
+    const counter = this.getMeter().createCounter(key);
 
     counter.add(eventIds.length, attributes);
 

@@ -6,8 +6,9 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { ServerlessFunctionRuntime } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -238,29 +239,34 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
 
   describe('runStepCreationSideEffectsAndBuildStep', () => {
     it('should create code step with serverless function', async () => {
-      const mockServerlessFunction = {
+      const mockFlatServerlessFunction: FlatServerlessFunction = {
         id: 'new-function-id',
         name: 'Test Function',
         description: 'Test Description',
         latestVersion: 'v1',
         publishedVersions: [],
         workspaceId: mockWorkspaceId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         deletedAt: null,
-        isActive: true,
-        isSystem: false,
-        isCustom: true,
-        isPublic: false,
-        runtime: 'nodejs',
+        runtime: ServerlessFunctionRuntime.NODE22,
         timeoutSeconds: 30,
-        layerArn: '',
-        layerName: '',
-        layerSize: 0,
-      } as unknown as ServerlessFunctionEntity;
+        sourceHandlerPath: 'src/index.ts',
+        builtHandlerPath: 'index.mjs',
+        handlerName: 'main',
+        checksum: null,
+        toolInputSchema: null,
+        isTool: false,
+        serverlessFunctionLayerId: 'layer-id',
+        universalIdentifier: 'universal-id',
+        applicationId: 'application-id',
+        cronTriggerIds: [],
+        databaseEventTriggerIds: [],
+        routeTriggerIds: [],
+      };
 
       serverlessFunctionService.createOneServerlessFunction.mockResolvedValue(
-        mockServerlessFunction,
+        mockFlatServerlessFunction,
       );
 
       const result = await service.runStepCreationSideEffectsAndBuildStep({
@@ -313,29 +319,34 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         nextStepIds: ['next-step'],
       } as unknown as WorkflowAction;
 
-      const mockNewServerlessFunction = {
+      const mockNewFlatServerlessFunction: FlatServerlessFunction = {
         id: 'new-function-id',
         name: 'Test Function',
         description: 'Test Description',
         latestVersion: 'v1',
         publishedVersions: [],
         workspaceId: mockWorkspaceId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         deletedAt: null,
-        isActive: true,
-        isSystem: false,
-        isCustom: true,
-        isPublic: false,
-        runtime: 'nodejs',
+        runtime: ServerlessFunctionRuntime.NODE22,
         timeoutSeconds: 30,
-        layerArn: '',
-        layerName: '',
-        layerSize: 0,
-      } as unknown as ServerlessFunctionEntity;
+        sourceHandlerPath: 'src/index.ts',
+        builtHandlerPath: 'index.mjs',
+        handlerName: 'main',
+        checksum: null,
+        toolInputSchema: null,
+        isTool: false,
+        serverlessFunctionLayerId: 'layer-id',
+        universalIdentifier: 'universal-id',
+        applicationId: 'application-id',
+        cronTriggerIds: [],
+        databaseEventTriggerIds: [],
+        routeTriggerIds: [],
+      };
 
       serverlessFunctionService.duplicateServerlessFunction.mockResolvedValue(
-        mockNewServerlessFunction,
+        mockNewFlatServerlessFunction,
       );
 
       const clonedStep = await service.cloneStep({

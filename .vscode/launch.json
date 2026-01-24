@@ -68,6 +68,7 @@
         "./jest-integration.config.ts",
         "${relativeFile}",
         "--silent=false",
+        "${input:updateSnapshot}"
       ],
       "cwd": "${workspaceFolder}/packages/twenty-server",
       "console": "integratedTerminal",
@@ -97,6 +98,15 @@
       "env": {
         "NODE_ENV": "test"
       }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "updateSnapshot",
+      "type": "pickString",
+      "description": "Update snapshots?",
+      "options": ["", "--updateSnapshot"],
+      "default": ""
     }
   ]
 }

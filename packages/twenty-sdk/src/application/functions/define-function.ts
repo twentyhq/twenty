@@ -1,4 +1,4 @@
-import { type FunctionConfig } from './function-config';
+import { type FunctionConfig } from '@/application/functions/function-config';
 
 /**
  * Define a serverless function configuration with validation.
@@ -68,7 +68,9 @@ export const defineFunction = <T extends FunctionConfig>(config: T): T => {
         break;
 
       default:
-        throw new Error(`Unknown trigger type: ${(trigger as { type: string }).type}`);
+        throw new Error(
+          `Unknown trigger type: ${(trigger as { type: string }).type}`,
+        );
     }
   }
 

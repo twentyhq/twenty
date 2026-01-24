@@ -140,9 +140,7 @@ export const RecordDetailRelationRecordsListItem = ({
     relationObjectMetadataItem.id,
   );
 
-  const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
-    objectNameSingular: relationObjectMetadataNameSingular,
-  });
+  const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord();
   const { deleteOneRecord: deleteOneRelationRecord } = useDeleteOneRecord({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
@@ -204,6 +202,7 @@ export const RecordDetailRelationRecordsListItem = ({
       onSubmit?.({ newValue: null });
     } else {
       updateOneRelationRecord({
+        objectNameSingular: relationObjectMetadataNameSingular,
         idToUpdate: relationRecord.id,
         updateOneRecordInput,
       });

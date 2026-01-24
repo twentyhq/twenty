@@ -6,6 +6,7 @@ import { type FieldMetadataItem } from './FieldMetadataItem';
 export type ObjectMetadataItem = Omit<
   GeneratedObject,
   | '__typename'
+  | 'applicationId'
   | 'fields'
   | 'indexMetadatas'
   | 'labelIdentifierFieldMetadataId'
@@ -13,6 +14,7 @@ export type ObjectMetadataItem = Omit<
   | 'indexMetadataList'
 > & {
   __typename?: string;
+  applicationId?: string;
   fields: FieldMetadataItem[];
   readableFields: FieldMetadataItem[];
   updatableFields: FieldMetadataItem[];

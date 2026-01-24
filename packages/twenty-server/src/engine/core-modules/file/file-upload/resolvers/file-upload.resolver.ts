@@ -3,11 +3,11 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
-
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { FileFolder } from 'twenty-shared/types';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
+import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -25,7 +25,9 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 export class FileUploadResolver {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
-  @Mutation(() => SignedFileDTO)
+  @Mutation(() => SignedFileDTO, {
+    deprecationReason: 'Use uploadFilesFieldFile instead',
+  })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async uploadFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -50,6 +52,28 @@ export class FileUploadResolver {
     }
 
     return files[0];
+  }
+
+  @Mutation(() => FileDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  async uploadFilesFieldFile(
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream, filename, mimetype }: FileUpload,
+  ): Promise<FileDTO> {
+    const stream = createReadStream();
+    const buffer = await streamToBuffer(stream);
+
+    const fileEntity = await this.fileUploadService.uploadFilesFieldFile({
+      file: buffer,
+      filename,
+      declaredMimeType: mimetype,
+      workspaceId,
+      applicationId: workspaceCustomApplicationId,
+    });
+
+    return fileEntity;
   }
 
   @Mutation(() => SignedFileDTO)

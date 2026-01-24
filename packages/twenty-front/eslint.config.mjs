@@ -49,11 +49,7 @@ const config = [
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
-        project: [
-          path.resolve(__dirname, 'tsconfig.dev.json'),
-          path.resolve(__dirname, 'tsconfig.storybook.json'),
-          path.resolve(__dirname, 'tsconfig.spec.json'),
-        ],
+        project: [path.resolve(__dirname, 'tsconfig.json')],
         ecmaFeatures: {
           jsx: true,
         },

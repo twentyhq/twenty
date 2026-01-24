@@ -41,6 +41,11 @@ export default defineConfig(() => {
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-shared',
+    resolve: {
+      alias: {
+        '@/': path.resolve(__dirname, 'src') + '/',
+      },
+    },
     plugins: [
       tsconfigPaths({
         root: __dirname

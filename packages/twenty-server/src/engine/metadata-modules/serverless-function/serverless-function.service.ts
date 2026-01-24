@@ -1,32 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { join } from 'path';
-
 import deepEqual from 'deep-equal';
 import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
 } from 'twenty-shared/application';
-import { Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import { FileFolder } from 'twenty-shared/types';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
-import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
-import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/get-serverless-folder-or-throw.utils';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
-import { DEFAULT_TOOL_INPUT_SCHEMA } from 'src/engine/metadata-modules/serverless-function/constants/default-tool-input-schema.constant';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { type UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -34,13 +34,21 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { findFlatServerlessFunctionOrThrow } from 'src/engine/metadata-modules/serverless-function/utils/find-flat-serverless-function-or-throw.util';
+import { fromCreateServerlessFunctionInputToFlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/utils/from-create-serverless-function-input-to-flat-serverless-function.util';
+import { fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOrThrow } from 'src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
+import { FunctionBuildService } from 'src/engine/metadata-modules/function-build/function-build.service';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
@@ -49,6 +57,7 @@ export class ServerlessFunctionService {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly serverlessService: ServerlessService,
+    private readonly functionBuildService: FunctionBuildService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
     @InjectRepository(ServerlessFunctionEntity)
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
@@ -57,33 +66,57 @@ export class ServerlessFunctionService {
     private readonly auditService: AuditService,
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly subscriptionService: SubscriptionService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async hasServerlessFunctionPublishedVersion(serverlessFunctionId: string) {
-    return await this.serverlessFunctionRepository.exists({
-      where: {
-        id: serverlessFunctionId,
-        latestVersion: Not(IsNull()),
-      },
+  async hasServerlessFunctionPublishedVersion(
+    serverlessFunctionId: string,
+    workspaceId: string,
+  ) {
+    const { flatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
+        },
+      );
+
+    const flatServerlessFunction = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: serverlessFunctionId,
+      flatEntityMaps: flatServerlessFunctionMaps,
     });
+
+    return (
+      isDefined(flatServerlessFunction) &&
+      !isDefined(flatServerlessFunction.deletedAt) &&
+      isDefined(flatServerlessFunction.latestVersion)
+    );
   }
 
   async getServerlessFunctionSourceCode(
     workspaceId: string,
     id: string,
     version: string,
-  ): Promise<Sources | undefined> {
-    const serverlessFunction =
-      await this.serverlessFunctionRepository.findOneOrFail({
-        where: {
-          id,
+  ) {
+    const { flatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
           workspaceId,
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
-      });
+      );
+
+    const flatServerlessFunction = findFlatServerlessFunctionOrThrow({
+      id,
+      flatServerlessFunctionMaps,
+    });
 
     try {
-      const folderPath = getServerlessFolder({
-        serverlessFunction,
+      const folderPath = getServerlessFolderOrThrow({
+        flatServerlessFunction,
         version,
       });
 
@@ -109,30 +142,57 @@ export class ServerlessFunctionService {
   }): Promise<ServerlessExecuteResult> {
     await this.throttleExecution(workspaceId);
 
-    const functionToExecute =
-      await this.serverlessFunctionRepository.findOneOrFail({
-        where: {
-          id,
-          workspaceId,
-        },
-        relations: [
-          'serverlessFunctionLayer',
-          'application.applicationVariables',
-        ],
-      });
+    const {
+      flatServerlessFunctionMaps,
+      flatApplicationMaps,
+      applicationVariableMaps,
+      serverlessFunctionLayerMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatServerlessFunctionMaps',
+      'flatApplicationMaps',
+      'applicationVariableMaps',
+      'serverlessFunctionLayerMaps',
+    ]);
 
-    const applicationAccessToken = isDefined(functionToExecute.applicationId)
+    const flatServerlessFunction = findFlatServerlessFunctionOrThrow({
+      id,
+      flatServerlessFunctionMaps,
+    });
+
+    const flatServerlessFunctionLayer =
+      serverlessFunctionLayerMaps.byId[
+        flatServerlessFunction.serverlessFunctionLayerId
+      ];
+
+    if (!isDefined(flatServerlessFunctionLayer)) {
+      throw new ServerlessFunctionException(
+        `Serverless function layer with id ${flatServerlessFunction.serverlessFunctionLayerId} not found`,
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const applicationAccessToken = isDefined(
+      flatServerlessFunction.applicationId,
+    )
       ? await this.applicationTokenService.generateApplicationToken({
           workspaceId,
-          applicationId: functionToExecute.applicationId,
+          applicationId: flatServerlessFunction.applicationId,
           expiresInSeconds: Math.max(
-            functionToExecute.timeoutSeconds,
+            flatServerlessFunction.timeoutSeconds,
             MIN_TOKEN_EXPIRATION_IN_SECONDS,
           ),
         })
       : undefined;
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
+
+    const flatApplicationVariables = isDefined(
+      flatServerlessFunction.applicationId,
+    )
+      ? (applicationVariableMaps.byApplicationId[
+          flatServerlessFunction.applicationId
+        ] ?? [])
+      : [];
 
     const envVariables = {
       ...(isDefined(baseUrl)
@@ -145,18 +205,32 @@ export class ServerlessFunctionService {
             [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
           }
         : {}),
-      ...buildEnvVar(functionToExecute),
+      ...buildEnvVar(flatApplicationVariables),
     };
+
+    // We keep that check to build functions
+    if (
+      !(await this.functionBuildService.isBuilt({
+        flatServerlessFunction,
+        version,
+      }))
+    ) {
+      await this.functionBuildService.buildAndUpload({
+        flatServerlessFunction,
+        version,
+      });
+    }
 
     const resultServerlessFunction = await this.callWithTimeout({
       callback: () =>
         this.serverlessService.execute({
-          serverlessFunction: functionToExecute,
+          flatServerlessFunction,
+          flatServerlessFunctionLayer,
           payload,
           version,
           env: envVariables,
         }),
-      timeoutMs: functionToExecute.timeoutSeconds * 1000,
+      timeoutMs: flatServerlessFunction.timeoutSeconds * 1000,
     });
 
     if (this.twentyConfigService.get('SERVERLESS_LOGS_ENABLED')) {
@@ -164,18 +238,24 @@ export class ServerlessFunctionService {
       console.log(resultServerlessFunction.logs);
     }
 
+    const applicationUniversalIdentifier = isDefined(
+      flatServerlessFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[flatServerlessFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
     await this.subscriptionService.publish({
       channel: SubscriptionChannel.SERVERLESS_FUNCTION_LOGS_CHANNEL,
       workspaceId,
       payload: {
         serverlessFunctionLogs: {
           logs: resultServerlessFunction.logs,
-          id: functionToExecute.id,
-          name: functionToExecute.name,
-          universalIdentifier: functionToExecute.universalIdentifier,
-          applicationId: functionToExecute.applicationId,
-          applicationUniversalIdentifier:
-            functionToExecute.application?.universalIdentifier,
+          id: flatServerlessFunction.id,
+          name: flatServerlessFunction.name,
+          universalIdentifier: flatServerlessFunction.universalIdentifier,
+          applicationId: flatServerlessFunction.applicationId,
+          applicationUniversalIdentifier,
         },
       },
     });
@@ -190,23 +270,31 @@ export class ServerlessFunctionService {
         ...(resultServerlessFunction.error && {
           errorType: resultServerlessFunction.error.errorType,
         }),
-        functionId: functionToExecute.id,
-        functionName: functionToExecute.name,
+        functionId: flatServerlessFunction.id,
+        functionName: flatServerlessFunction.name,
       });
 
     return resultServerlessFunction;
   }
 
-  async publishOneServerlessFunctionOrFail(id: string, workspaceId: string) {
-    const existingServerlessFunction =
-      await this.serverlessFunctionRepository.findOneOrFail({
-        where: {
-          id,
+  async publishOneServerlessFunctionOrFail(
+    id: string,
+    workspaceId: string,
+  ): Promise<FlatServerlessFunction> {
+    const { flatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
           workspaceId,
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
-      });
+      );
 
-    if (isDefined(existingServerlessFunction.latestVersion)) {
+    const existingFlatServerlessFunction = findFlatServerlessFunctionOrThrow({
+      id,
+      flatServerlessFunctionMaps,
+    });
+
+    if (isDefined(existingFlatServerlessFunction.latestVersion)) {
       const latestCode = await this.getServerlessFunctionSourceCode(
         workspaceId,
         id,
@@ -219,62 +307,103 @@ export class ServerlessFunctionService {
       );
 
       if (deepEqual(latestCode, draftCode)) {
-        return existingServerlessFunction;
+        return existingFlatServerlessFunction;
       }
     }
 
-    const newVersion = existingServerlessFunction.latestVersion
-      ? `${parseInt(existingServerlessFunction.latestVersion, 10) + 1}`
+    const newVersion = existingFlatServerlessFunction.latestVersion
+      ? `${parseInt(existingFlatServerlessFunction.latestVersion, 10) + 1}`
       : '1';
 
-    const draftFolderPath = getServerlessFolder({
-      serverlessFunction: existingServerlessFunction,
+    const draftSourceFolderPath = getServerlessFolderOrThrow({
+      flatServerlessFunction: existingFlatServerlessFunction,
       version: 'draft',
+      fileFolder: FileFolder.ServerlessFunction,
     });
 
-    const newFolderPath = getServerlessFolder({
-      serverlessFunction: existingServerlessFunction,
+    const newSourceFolderPath = getServerlessFolderOrThrow({
+      flatServerlessFunction: existingFlatServerlessFunction,
       version: newVersion,
+      fileFolder: FileFolder.ServerlessFunction,
     });
 
     await this.fileStorageService.copy({
-      from: { folderPath: draftFolderPath },
-      to: { folderPath: newFolderPath },
+      from: { folderPath: draftSourceFolderPath },
+      to: { folderPath: newSourceFolderPath },
+    });
+
+    const draftBuiltFolderPath = getServerlessFolderOrThrow({
+      flatServerlessFunction: existingFlatServerlessFunction,
+      version: 'draft',
+      fileFolder: FileFolder.BuiltFunction,
+    });
+
+    const newBuiltFolderPath = getServerlessFolderOrThrow({
+      flatServerlessFunction: existingFlatServerlessFunction,
+      version: newVersion,
+      fileFolder: FileFolder.BuiltFunction,
+    });
+
+    await this.fileStorageService.copy({
+      from: { folderPath: draftBuiltFolderPath },
+      to: { folderPath: newBuiltFolderPath },
     });
 
     const newPublishedVersions = [
-      ...existingServerlessFunction.publishedVersions,
+      ...existingFlatServerlessFunction.publishedVersions,
       newVersion,
     ];
 
-    await this.serverlessFunctionRepository.update(
-      existingServerlessFunction.id,
-      {
-        latestVersion: newVersion,
-        publishedVersions: newPublishedVersions,
-      },
-    );
+    const updatedFlatServerlessFunction: FlatServerlessFunction = {
+      ...existingFlatServerlessFunction,
+      latestVersion: newVersion,
+      publishedVersions: newPublishedVersions,
+    };
 
-    const publishedServerlessFunction =
-      await this.serverlessFunctionRepository.findOneOrFail({
-        where: {
-          id,
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            serverlessFunction: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [updatedFlatServerlessFunction],
+            },
+          },
           workspaceId,
+          isSystemBuild: false,
         },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while publishing serverless function',
+      );
+    }
+
+    const { flatServerlessFunctionMaps: recomputedFlatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
+        },
+      );
+
+    const publishedFlatServerlessFunction =
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatServerlessFunctionMaps,
       });
 
-    // This check should never be thrown, but we encounter some issue with
-    // publishing serverless function in self hosted instances
-    // See https://github.com/twentyhq/twenty/issues/13058
-    // TODO: remove this check when issue solved
-    if (!isDefined(publishedServerlessFunction.latestVersion)) {
+    if (!isDefined(publishedFlatServerlessFunction.latestVersion)) {
       throw new WorkflowVersionStepException(
-        `Fail to publish serverlessFunction ${publishedServerlessFunction.id}.Received latest version ${publishedServerlessFunction.latestVersion}`,
+        `Fail to publish serverlessFunction ${publishedFlatServerlessFunction.id}.Received latest version ${publishedFlatServerlessFunction.latestVersion}`,
         WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE,
       );
     }
 
-    return publishedServerlessFunction;
+    return publishedFlatServerlessFunction;
   }
 
   async deleteOneServerlessFunction({
@@ -285,73 +414,196 @@ export class ServerlessFunctionService {
     id: string;
     workspaceId: string;
     softDelete?: boolean;
-  }) {
-    const existingServerlessFunction =
-      await this.serverlessFunctionRepository.findOneOrFail({
-        where: {
-          id,
+  }): Promise<FlatServerlessFunction> {
+    const { flatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
           workspaceId,
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
-        withDeleted: true,
-      });
+      );
 
-    if (softDelete) {
-      await this.serverlessFunctionRepository.softDelete({ id });
-    } else {
-      await this.serverlessFunctionRepository.delete({ id });
-      // We don't need to await this
-      this.fileStorageService.delete({
-        folderPath: getServerlessFolder({
-          serverlessFunction: existingServerlessFunction,
-        }),
-      });
+    const existingFlatServerlessFunction = flatServerlessFunctionMaps.byId[id];
+
+    if (!isDefined(existingFlatServerlessFunction)) {
+      throw new ServerlessFunctionException(
+        'Serverless function to delete not found',
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+      );
     }
 
-    // We don't need to await this
-    this.serverlessService.delete(existingServerlessFunction);
+    if (softDelete) {
+      const updatedFlatServerlessFunctionWithDeletedAt: FlatServerlessFunction =
+        {
+          ...existingFlatServerlessFunction,
+          deletedAt: new Date().toISOString(),
+        };
 
-    return existingServerlessFunction;
+      const validateAndBuildResult =
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+          {
+            allFlatEntityOperationByMetadataName: {
+              serverlessFunction: {
+                flatEntityToCreate: [],
+                flatEntityToDelete: [],
+                flatEntityToUpdate: [
+                  updatedFlatServerlessFunctionWithDeletedAt,
+                ],
+              },
+            },
+            workspaceId,
+            isSystemBuild: false,
+          },
+        );
+
+      if (isDefined(validateAndBuildResult)) {
+        throw new WorkspaceMigrationBuilderException(
+          validateAndBuildResult,
+          'Multiple validation errors occurred while deleting serverless function',
+        );
+      }
+
+      return updatedFlatServerlessFunctionWithDeletedAt;
+    } else {
+      const validateAndBuildResult =
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+          {
+            allFlatEntityOperationByMetadataName: {
+              serverlessFunction: {
+                flatEntityToCreate: [],
+                flatEntityToDelete: [existingFlatServerlessFunction],
+                flatEntityToUpdate: [],
+              },
+            },
+            workspaceId,
+            isSystemBuild: false,
+          },
+        );
+
+      if (isDefined(validateAndBuildResult)) {
+        throw new WorkspaceMigrationBuilderException(
+          validateAndBuildResult,
+          'Multiple validation errors occurred while destroying serverless function',
+        );
+      }
+    }
+
+    return existingFlatServerlessFunction;
   }
 
-  async restoreOneServerlessFunction(id: string) {
-    await this.serverlessFunctionRepository.restore({ id });
+  async restoreOneServerlessFunction(
+    id: string,
+    workspaceId: string,
+  ): Promise<FlatServerlessFunction> {
+    const { flatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
+        },
+      );
+
+    const existingFlatServerlessFunction = flatServerlessFunctionMaps.byId[id];
+
+    if (!isDefined(existingFlatServerlessFunction)) {
+      throw new ServerlessFunctionException(
+        'Serverless function to restore not found',
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const restoredFlatServerlessFunction: FlatServerlessFunction = {
+      ...existingFlatServerlessFunction,
+      deletedAt: null,
+    };
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            serverlessFunction: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [restoredFlatServerlessFunction],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while restoring serverless function',
+      );
+    }
+
+    const { flatServerlessFunctionMaps: recomputedFlatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
+        },
+      );
+
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatServerlessFunctionMaps,
+    });
   }
 
   async updateOneServerlessFunction(
     serverlessFunctionInput: UpdateServerlessFunctionInput,
     workspaceId: string,
-  ) {
-    const existingServerlessFunction =
-      await this.serverlessFunctionRepository.findOneOrFail({
-        where: {
-          id: serverlessFunctionInput.id,
+  ): Promise<FlatServerlessFunction> {
+    const { flatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
           workspaceId,
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
+      );
+
+    const updatedFlatServerlessFunction =
+      fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOrThrow({
+        flatServerlessFunctionMaps,
+        updateServerlessFunctionInput: serverlessFunctionInput,
       });
 
-    await this.serverlessFunctionRepository.update(
-      existingServerlessFunction.id,
-      {
-        name: serverlessFunctionInput.update.name,
-        description: serverlessFunctionInput.update.description,
-        timeoutSeconds: serverlessFunctionInput.update.timeoutSeconds,
-        toolInputSchema: serverlessFunctionInput.update.toolInputSchema,
-        isTool: serverlessFunctionInput.update.isTool,
-      },
-    );
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            serverlessFunction: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [updatedFlatServerlessFunction],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
 
-    const fileFolder = getServerlessFolder({
-      serverlessFunction: existingServerlessFunction,
-      version: 'draft',
-    });
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while updating serverless function',
+      );
+    }
 
-    await this.fileStorageService.writeFolder(
-      serverlessFunctionInput.update.code,
-      fileFolder,
-    );
+    const { flatServerlessFunctionMaps: recomputedFlatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
+        },
+      );
 
-    return this.serverlessFunctionRepository.findOneBy({
-      id: existingServerlessFunction.id,
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: updatedFlatServerlessFunction.id,
+      flatEntityMaps: recomputedFlatServerlessFunctionMaps,
     });
   }
 
@@ -390,7 +642,7 @@ export class ServerlessFunctionService {
       serverlessFunctionLayerId?: string;
     },
     workspaceId: string,
-  ) {
+  ): Promise<FlatServerlessFunction> {
     let serverlessFunctionToCreateLayerId =
       serverlessFunctionInput.serverlessFunctionLayerId;
 
@@ -403,40 +655,58 @@ export class ServerlessFunctionService {
       serverlessFunctionToCreateLayerId = commonServerlessFunctionLayerId;
     }
 
-    const createServerlessFunctionInput: CreateServerlessFunctionInput = {
-      ...serverlessFunctionInput,
-      serverlessFunctionLayerId: serverlessFunctionToCreateLayerId,
-    };
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
 
-    // If no toolInputSchema is provided, use the default schema
-    // (because the default template will be used for the code)
-    const toolInputSchema = isDefined(serverlessFunctionInput.toolInputSchema)
-      ? serverlessFunctionInput.toolInputSchema
-      : DEFAULT_TOOL_INPUT_SCHEMA;
-
-    const serverlessFunctionToCreate = this.serverlessFunctionRepository.create(
-      { ...createServerlessFunctionInput, workspaceId, toolInputSchema },
-    );
-
-    const createdServerlessFunction =
-      await this.serverlessFunctionRepository.save(serverlessFunctionToCreate);
-
-    const draftFileFolder = getServerlessFolder({
-      serverlessFunction: createdServerlessFunction,
-      version: 'draft',
-    });
-
-    for (const file of await getBaseTypescriptProjectFiles) {
-      await this.fileStorageService.write({
-        file: file.content,
-        name: file.name,
-        mimeType: undefined,
-        folder: join(draftFileFolder, file.path),
+    const flatServerlessFunctionToCreate =
+      fromCreateServerlessFunctionInputToFlatServerlessFunction({
+        createServerlessFunctionInput: {
+          ...serverlessFunctionInput,
+          serverlessFunctionLayerId: serverlessFunctionToCreateLayerId,
+        },
+        workspaceId,
+        workspaceCustomApplicationId:
+          serverlessFunctionInput.applicationId ??
+          workspaceCustomFlatApplication.id,
       });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            serverlessFunction: {
+              flatEntityToCreate: [flatServerlessFunctionToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while creating serverless function',
+      );
     }
 
-    return this.serverlessFunctionRepository.findOneBy({
-      id: createdServerlessFunction.id,
+    const { flatServerlessFunctionMaps: recomputedFlatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
+        },
+      );
+
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatServerlessFunctionToCreate.id,
+      flatEntityMaps: recomputedFlatServerlessFunctionMaps,
     });
   }
 
@@ -453,24 +723,29 @@ export class ServerlessFunctionService {
       return;
     }
 
-    const serverlessFunction =
-      await this.serverlessFunctionRepository.findOneOrFail({
-        where: {
-          id,
+    const { flatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
           workspaceId,
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
-      });
+      );
+
+    const flatServerlessFunction = findFlatServerlessFunctionOrThrow({
+      id,
+      flatServerlessFunctionMaps,
+    });
 
     await this.fileStorageService.copy({
       from: {
-        folderPath: getServerlessFolder({
-          serverlessFunction: serverlessFunction,
+        folderPath: getServerlessFolderOrThrow({
+          flatServerlessFunction,
           version,
         }),
       },
       to: {
-        folderPath: getServerlessFolder({
-          serverlessFunction: serverlessFunction,
+        folderPath: getServerlessFolderOrThrow({
+          flatServerlessFunction,
           version: 'draft',
         }),
       },
@@ -485,50 +760,51 @@ export class ServerlessFunctionService {
     id: string;
     version: string;
     workspaceId: string;
-  }) {
-    const serverlessFunctionToDuplicate =
-      await this.serverlessFunctionRepository.findOneOrFail({
-        where: {
-          id,
+  }): Promise<FlatServerlessFunction> {
+    const { flatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
           workspaceId,
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
         },
-      });
+      );
 
-    const newServerlessFunction = await this.createOneServerlessFunction(
+    const flatServerlessFunctionToDuplicate = findFlatServerlessFunctionOrThrow(
       {
-        name: serverlessFunctionToDuplicate.name,
-        description: serverlessFunctionToDuplicate.description ?? undefined,
-        timeoutSeconds: serverlessFunctionToDuplicate.timeoutSeconds,
-        applicationId: serverlessFunctionToDuplicate.applicationId ?? undefined,
+        id,
+        flatServerlessFunctionMaps,
+      },
+    );
+
+    const newFlatServerlessFunction = await this.createOneServerlessFunction(
+      {
+        name: flatServerlessFunctionToDuplicate.name,
+        description: flatServerlessFunctionToDuplicate.description ?? undefined,
+        timeoutSeconds: flatServerlessFunctionToDuplicate.timeoutSeconds,
+        applicationId:
+          flatServerlessFunctionToDuplicate.applicationId ?? undefined,
         serverlessFunctionLayerId:
-          serverlessFunctionToDuplicate.serverlessFunctionLayerId,
+          flatServerlessFunctionToDuplicate.serverlessFunctionLayerId,
       },
       workspaceId,
     );
 
-    if (!isDefined(newServerlessFunction)) {
-      throw new ServerlessFunctionException(
-        'Failed to create new serverless function',
-        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CREATE_FAILED,
-      );
-    }
-
     await this.fileStorageService.copy({
       from: {
-        folderPath: getServerlessFolder({
-          serverlessFunction: serverlessFunctionToDuplicate,
+        folderPath: getServerlessFolderOrThrow({
+          flatServerlessFunction: flatServerlessFunctionToDuplicate,
           version,
         }),
       },
       to: {
-        folderPath: getServerlessFolder({
-          serverlessFunction: newServerlessFunction,
+        folderPath: getServerlessFolderOrThrow({
+          flatServerlessFunction: newFlatServerlessFunction,
           version: 'draft',
         }),
       },
     });
 
-    return newServerlessFunction;
+    return newFlatServerlessFunction;
   }
 
   private async throttleExecution(workspaceId: string) {

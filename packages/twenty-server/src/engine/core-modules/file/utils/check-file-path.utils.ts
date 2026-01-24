@@ -1,9 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 
-import {
-  type AllowedFolders,
-  FileFolder,
-} from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { FileFolder } from 'twenty-shared/types';
+
+import { type AllowedFolders } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { kebabCase } from 'src/utils/kebab-case';
 import { settings } from 'src/engine/constants/settings';

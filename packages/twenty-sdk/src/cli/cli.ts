@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { registerCommands } from '@/cli/commands/app.command';
-import { ConfigService } from '@/cli/utilities/config/services/config.service';
+import { registerCommands } from '@/cli/commands/app-command';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
 import { inspect } from 'util';
@@ -17,15 +17,21 @@ program
 
 program.option(
   '--workspace <name>',
-  'Use a specific workspace configuration',
-  'default',
+  'Use a specific workspace configuration (overrides the default set by auth:switch)',
 );
 
-program.hook('preAction', (thisCommand) => {
+program.hook('preAction', async (thisCommand) => {
   const opts = (thisCommand as any).optsWithGlobals
     ? (thisCommand as any).optsWithGlobals()
     : thisCommand.opts();
-  const workspace = opts.workspace;
+
+  // If --workspace is provided, use it; otherwise, read the persisted default
+  let workspace = opts.workspace;
+  if (!workspace) {
+    const configService = new ConfigService();
+    workspace = await configService.getDefaultWorkspace();
+  }
+
   ConfigService.setActiveWorkspace(workspace);
   console.log(
     chalk.gray(`👩‍💻 Workspace - ${ConfigService.getActiveWorkspace()}`),

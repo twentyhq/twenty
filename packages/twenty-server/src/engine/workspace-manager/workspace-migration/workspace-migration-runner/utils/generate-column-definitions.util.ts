@@ -16,9 +16,9 @@ import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/work
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration/utils/compute-postgres-enum-name.util';
 import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
 import {
-  WorkspaceMigrationRunnerException,
-  WorkspaceMigrationRunnerExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+  WorkspaceMigrationActionExecutionException,
+  WorkspaceMigrationActionExecutionExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
@@ -40,10 +40,10 @@ export const generateCompositeColumnDefinition = ({
     compositeProperty.type === FieldMetadataType.RELATION ||
     compositeProperty.type === FieldMetadataType.MORPH_RELATION
   ) {
-    throw new WorkspaceMigrationRunnerException(
-      `Relation type not supported for composite columns`,
-      WorkspaceMigrationRunnerExceptionCode.UNSUPPORTED_COMPOSITE_COLUMN_TYPE,
-    );
+    throw new WorkspaceMigrationActionExecutionException({
+      message: `Relation type not supported for composite columns`,
+      code: WorkspaceMigrationActionExecutionExceptionCode.UNSUPPORTED_COMPOSITE_COLUMN_TYPE,
+    });
   }
 
   const columnName = computeCompositeColumnName(

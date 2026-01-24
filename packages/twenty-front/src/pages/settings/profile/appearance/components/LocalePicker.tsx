@@ -30,9 +30,7 @@ export const LocalePicker = () => {
   );
   const setDateLocale = useSetRecoilState(dateLocaleState);
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
@@ -46,6 +44,7 @@ export const LocalePicker = () => {
 
     try {
       await updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
         idToUpdate: currentWorkspaceMember.id,
         updateOneRecordInput: changedFields,
       });

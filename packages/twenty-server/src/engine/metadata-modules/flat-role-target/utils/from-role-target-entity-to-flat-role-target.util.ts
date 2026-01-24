@@ -12,7 +12,7 @@ export const fromRoleTargetsEntityToFlatRoleTarget = (
     agentId: roleTarget.agentId,
     apiKeyId: roleTarget.apiKeyId,
     applicationId: roleTarget.applicationId,
-    universalIdentifier: roleTarget.universalIdentifier ?? roleTarget.id,
+    universalIdentifier: roleTarget.universalIdentifier,
     createdAt: roleTarget.createdAt.toISOString(),
     updatedAt: roleTarget.updatedAt.toISOString(),
   };

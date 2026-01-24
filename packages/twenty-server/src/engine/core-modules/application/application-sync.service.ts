@@ -105,7 +105,7 @@ export class ApplicationSyncService {
       });
     }
 
-    if (manifest.serverlessFunctions.length > 0) {
+    if (manifest.functions.length > 0) {
       if (!isDefined(application.serverlessFunctionLayerId)) {
         throw new ApplicationException(
           `Failed to sync serverless function, could not find a serverless function layer.`,
@@ -114,7 +114,7 @@ export class ApplicationSyncService {
       }
 
       await this.syncServerlessFunctions({
-        serverlessFunctionsToSync: manifest.serverlessFunctions,
+        serverlessFunctionsToSync: manifest.functions,
         code: manifest.sources,
         workspaceId,
         applicationId: application.id,
@@ -158,7 +158,7 @@ export class ApplicationSyncService {
 
     let serverlessFunctionLayerId = application.serverlessFunctionLayerId;
 
-    if (manifest.serverlessFunctions.length > 0) {
+    if (manifest.functions.length > 0) {
       if (!isDefined(serverlessFunctionLayerId)) {
         serverlessFunctionLayerId = (
           await this.serverlessFunctionLayerService.create(
@@ -177,6 +177,7 @@ export class ApplicationSyncService {
           packageJson,
           yarnLock,
         },
+        workspaceId,
       );
     }
 
@@ -184,6 +185,7 @@ export class ApplicationSyncService {
       {
         applicationVariables: manifest.application.applicationVariables,
         applicationId: application.id,
+        workspaceId,
       },
     );
 
@@ -945,7 +947,7 @@ export class ApplicationSyncService {
           name,
           code,
           timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
-          handlerPath: serverlessFunctionToSync.handlerPath,
+          sourceHandlerPath: serverlessFunctionToSync.sourceHandlerPath,
           handlerName: serverlessFunctionToSync.handlerName,
           toolInputSchema: serverlessFunctionToSync.toolInputSchema,
           isTool: serverlessFunctionToSync.isTool,
@@ -989,7 +991,7 @@ export class ApplicationSyncService {
         code,
         universalIdentifier: serverlessFunctionToCreate.universalIdentifier,
         timeoutSeconds: serverlessFunctionToCreate.timeoutSeconds,
-        handlerPath: serverlessFunctionToCreate.handlerPath,
+        sourceHandlerPath: serverlessFunctionToCreate.sourceHandlerPath,
         handlerName: serverlessFunctionToCreate.handlerName,
         applicationId,
         serverlessFunctionLayerId,
