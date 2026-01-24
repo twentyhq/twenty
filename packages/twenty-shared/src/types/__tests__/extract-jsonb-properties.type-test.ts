@@ -10,13 +10,12 @@ type TestedRecord = {
   plainObjectNullable: {} | null;
   plainArray: string[];
   plainUnknown: unknown;
+  jsonbString: JsonbProperty<string>;
+  jsonbPlainUnknown: JsonbProperty<unknown>;
+  jsonbNumber: JsonbProperty<number>;
+  jsonbull: JsonbProperty<null>;
 
   // JsonbProperty fields - should be extracted
-  jsonbPlainString: JsonbProperty<string>;
-  jsonbPlainNumber: JsonbProperty<number>;
-  jsonbPlainUnknown: JsonbProperty<unknown>;
-  jsonbString: JsonbProperty<string>;
-  jsonbNumber: JsonbProperty<number>;
   jsonbPlainObject: JsonbProperty<{}>;
   jsonbPlainArray: JsonbProperty<string[]>;
   jsonbPlainObjectNullable: JsonbProperty<{} | null>;
@@ -28,8 +27,12 @@ type TestedRecord = {
   jsonbOptional?: JsonbProperty<{}>;
   jsonbInnerNullable: JsonbProperty<{} | null>;
   jsonbInnerUndefinable: JsonbProperty<{} | undefined>;
-
+  jsonbUnionWithPrimitive: JsonbProperty<{}> | string | null;
   jsonbInnerNullableWithProperties: JsonbProperty<null | { value: string }>;
+  wrongUsageButPassing:
+    | JsonbProperty<null | { value: string }>
+    | string
+    | { foo: string };
 };
 
 type TestResult = ExtractJsonbProperties<TestedRecord>;
@@ -39,11 +42,6 @@ type Assertions = [
   Expect<
     Equal<
       TestResult,
-      | 'jsonbPlainString'
-      | 'jsonbPlainNumber'
-      | 'jsonbPlainUnknown'
-      | 'jsonbString'
-      | 'jsonbNumber'
       | 'jsonbPlainObject'
       | 'jsonbPlainArray'
       | 'jsonbPlainObjectNullable'
@@ -56,6 +54,8 @@ type Assertions = [
       | 'jsonbInnerNullable'
       | 'jsonbInnerUndefinable'
       | 'jsonbInnerNullableWithProperties'
+      | 'jsonbUnionWithPrimitive'
+      | 'wrongUsageButPassing'
     >
   >,
 
