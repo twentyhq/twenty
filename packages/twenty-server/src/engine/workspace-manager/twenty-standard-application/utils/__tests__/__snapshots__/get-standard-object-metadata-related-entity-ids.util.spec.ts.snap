@@ -1,20 +1,14 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`getStandardObjectMetadataRelatedEntityIds should return standard object metadata related entity ids 1`] = `
 {
   "attachment": {
     "fields": {
-      "company": {
-        "id": "00000000-0000-0000-0000-000000000013",
-      },
       "createdAt": {
         "id": "00000000-0000-0000-0000-000000000002",
       },
       "createdBy": {
         "id": "00000000-0000-0000-0000-000000000008",
-      },
-      "dashboard": {
-        "id": "00000000-0000-0000-0000-000000000015",
       },
       "deletedAt": {
         "id": "00000000-0000-0000-0000-000000000004",
@@ -31,26 +25,32 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
       "name": {
         "id": "00000000-0000-0000-0000-000000000005",
       },
-      "note": {
+      "targetCompany": {
+        "id": "00000000-0000-0000-0000-000000000013",
+      },
+      "targetDashboard": {
+        "id": "00000000-0000-0000-0000-000000000015",
+      },
+      "targetNote": {
         "id": "00000000-0000-0000-0000-000000000011",
       },
-      "opportunity": {
+      "targetOpportunity": {
         "id": "00000000-0000-0000-0000-000000000014",
       },
-      "person": {
+      "targetPerson": {
         "id": "00000000-0000-0000-0000-000000000012",
       },
-      "task": {
+      "targetTask": {
         "id": "00000000-0000-0000-0000-000000000010",
+      },
+      "targetWorkflow": {
+        "id": "00000000-0000-0000-0000-000000000016",
       },
       "updatedAt": {
         "id": "00000000-0000-0000-0000-000000000003",
       },
       "updatedBy": {
         "id": "00000000-0000-0000-0000-000000000009",
-      },
-      "workflow": {
-        "id": "00000000-0000-0000-0000-000000000016",
       },
     },
     "id": "00000000-0000-0000-0000-000000000017",

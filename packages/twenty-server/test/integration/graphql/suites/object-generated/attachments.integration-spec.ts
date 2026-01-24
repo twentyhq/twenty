@@ -16,13 +16,13 @@ describe('attachmentsResolver (e2e)', () => {
                 createdAt
                 updatedAt
                 deletedAt
-                taskId
-                noteId
-                personId
-                companyId
-                opportunityId
-                petId
-                surveyResultId
+                targetTaskId
+                targetNoteId
+                targetPersonId
+                targetCompanyId
+                targetOpportunityId
+                targetPetId
+                targetSurveyResultId
               }
             }
           }
@@ -56,13 +56,13 @@ describe('attachmentsResolver (e2e)', () => {
           expect(attachments).toHaveProperty('createdAt');
           expect(attachments).toHaveProperty('updatedAt');
           expect(attachments).toHaveProperty('deletedAt');
-          expect(attachments).toHaveProperty('taskId');
-          expect(attachments).toHaveProperty('noteId');
-          expect(attachments).toHaveProperty('personId');
-          expect(attachments).toHaveProperty('companyId');
-          expect(attachments).toHaveProperty('opportunityId');
-          expect(attachments).toHaveProperty('petId');
-          expect(attachments).toHaveProperty('surveyResultId');
+          expect(attachments).toHaveProperty('targetTaskId');
+          expect(attachments).toHaveProperty('targetNoteId');
+          expect(attachments).toHaveProperty('targetPersonId');
+          expect(attachments).toHaveProperty('targetCompanyId');
+          expect(attachments).toHaveProperty('targetOpportunityId');
+          expect(attachments).toHaveProperty('targetPetId');
+          expect(attachments).toHaveProperty('targetSurveyResultId');
         }
       });
   });
