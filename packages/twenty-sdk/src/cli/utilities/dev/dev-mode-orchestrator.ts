@@ -178,7 +178,6 @@ export class DevModeOrchestrator {
   private async performSync(): Promise<void> {
     // Wait for manifest to be ready
     if (!this.isManifestReady || !this.manifest) {
-      logger.log('Waiting for manifest...');
       return;
     }
 
@@ -195,29 +194,24 @@ export class DevModeOrchestrator {
         JSON.stringify(this.manifest),
       );
 
-      logger.log('Starting sync...');
-
       // Step 1: Write manifest to disk
       await writeManifestToOutput(this.appPath, manifestToSync);
 
       // Step 2: Wait for all uploads to complete
       while (this.activeUploads.size > 0) {
-        logger.log(`Waiting for ${this.activeUploads.size} upload(s)...`);
         await Promise.all(this.activeUploads);
       }
 
       // Step 3: Sync with API
-      logger.log('Syncing with server...');
       const result = await this.apiService.syncApplication(manifestToSync);
 
       if (result.success) {
-        logger.success('✓ Application synced successfully');
+        logger.success('✓ Synced');
       } else {
         logger.error(`✗ Sync failed: ${result.error}`);
       }
     } finally {
       this.isSyncing = false;
-      logger.log('👀 Watching for changes...');
     }
   }
 }
