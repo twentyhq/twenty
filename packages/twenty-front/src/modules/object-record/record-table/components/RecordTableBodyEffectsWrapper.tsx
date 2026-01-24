@@ -5,6 +5,7 @@ import { RecordTableBodyFocusKeyboardEffect } from '@/object-record/record-table
 import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffects';
 import { RecordTableNoRecordGroupScrollToPreviousRecordEffect } from '@/object-record/record-table/virtualization/components/RecordTableNoRecordGroupScrollToPreviousRecordEffect';
 import { RecordTableVirtualizedInitialDataLoadEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedInitialDataLoadEffect';
+import { RecordTableVirtualizedFieldMetadataUpdateEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedFieldMetadataUpdateEffect';
 
 export interface RecordTableBodyEffectsWrapperProps {
   hasRecordGroups: boolean;
@@ -23,6 +24,7 @@ export const RecordTableBodyEffectsWrapper = ({
         <>
           <RecordTableNoRecordGroupScrollToPreviousRecordEffect />
           <RecordTableVirtualizedInitialDataLoadEffect />
+          <RecordTableVirtualizedFieldMetadataUpdateEffect />
         </>
       )}
       <RecordTableBodyEscapeHotkeyEffect />
