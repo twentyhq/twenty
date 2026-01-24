@@ -22,4 +22,5 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   accountOwnerId: string;
   messageChannels: EntityRelation<MessageChannelWorkspaceEntity[]>;
   calendarChannels: EntityRelation<CalendarChannelWorkspaceEntity[]>;
+  state: string;
 }

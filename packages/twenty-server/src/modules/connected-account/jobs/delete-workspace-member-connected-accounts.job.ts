@@ -33,9 +33,12 @@ export class DeleteWorkspaceMemberConnectedAccountsCleanupJob {
             'connectedAccount',
           );
 
-        await connectedAccountRepository.delete({
-          accountOwnerId: workspaceMemberId,
-        });
+        await connectedAccountRepository.update(
+          {
+            accountOwnerId: workspaceMemberId,
+          },
+          { state: 'ARCHIVED' },
+        );
       },
     );
   }

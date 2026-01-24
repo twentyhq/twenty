@@ -525,6 +525,9 @@ export const STANDARD_OBJECTS = {
         universalIdentifier:
           CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.connectionParameters,
       },
+      state: {
+        universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.state,
+      },
     },
     indexes: {
       accountOwnerIdIndex: {

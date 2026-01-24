@@ -344,4 +344,31 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  state: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.SELECT,
+      fieldName: 'state',
+      label: 'State',
+      description: 'State of connected account',
+      icon: 'IconUserExclamation',
+      isNullable: false,
+      isSystem: true,
+      defaultValue: '"ACTIVE"',
+      options: [
+        { value: 'ACTIVE', label: 'Active', position: 0, color: 'green' },
+        {
+          value: 'ARCHIVED',
+          label: 'Archived',
+          position: 1,
+          color: 'gray',
+        },
+      ],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

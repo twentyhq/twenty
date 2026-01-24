@@ -157,6 +157,7 @@ export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   handleAliases: '20202020-8a3d-46be-814f-6228af16c47b',
   scopes: '20202020-8a3d-46be-814f-6228af16c47c',
   connectionParameters: '20202020-a1b2-46be-814f-6228af16c481',
+  state: '20202020-d313-4be8-8f83-ad5fdad853e8',
 } as const;
 
 export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
