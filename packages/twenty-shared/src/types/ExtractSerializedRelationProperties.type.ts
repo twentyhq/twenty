@@ -1,4 +1,4 @@
-import { SERIALIZED_RELATION_BRAND } from './SerializedRelation.type';
+import { type SERIALIZED_RELATION_BRAND } from './SerializedRelation.type';
 
 export type HasSerializedRelationPropertyBrand<T> =
   typeof SERIALIZED_RELATION_BRAND extends keyof T ? true : false;

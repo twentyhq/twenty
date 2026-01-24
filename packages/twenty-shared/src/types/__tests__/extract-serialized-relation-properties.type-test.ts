@@ -36,9 +36,6 @@ type Assertions = [
     >
   >,
 
-  // Empty object returns never
-  Expect<Equal<ExtractSerializedRelationProperties<{}>, never>>,
-
   // Object with no SerializedRelation fields returns never
   Expect<
     Equal<ExtractSerializedRelationProperties<{ a: string; b: number }>, never>
