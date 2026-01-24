@@ -4,6 +4,7 @@ import {
   type HasAllProperties,
 } from 'twenty-shared/testing';
 import {
+  FieldMetadataDefaultOption,
   FieldNumberVariant,
   LinkMetadata,
   NumberDataType,
@@ -11,7 +12,7 @@ import {
   RelationType,
   SerializedRelation,
   type FieldMetadataType,
-  type NullablePartial,
+  type NullablePartial
 } from 'twenty-shared/types';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -148,8 +149,14 @@ type DefaultValueExpectedResult =
       secondaryLinks: LinkMetadata[] | null;
     };
 
+type OptionsTestCase =
+  UniversalFlatFieldMetadata<FieldMetadataType.RATING>['options'];
+
+type OptionsExpectedResult = FieldMetadataDefaultOption[];
+
 type Assertions = [
   Expect<Equal<SettingsTestCase, SettingsExpectedResult>>,
   Expect<Equal<NarrowedTestCase, NarrowedExpectedResult>>,
   Expect<Equal<DefaultValueTestCase, DefaultValueExpectedResult>>,
+  Expect<Equal<OptionsTestCase, OptionsExpectedResult>>,
 ];
