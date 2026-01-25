@@ -86,7 +86,12 @@
         "{projectRoot}/coverage"
       ],
       "options": {
-        "config": "{projectRoot}/vitest.unit.config.ts"
+        "configFile": "{projectRoot}/vitest.unit.config.ts"
+      },
+      "configurations": {
+        "ci": {
+          "configFile": "{projectRoot}/vitest.unit.config.ts"
+        }
       }
     },
     "typecheck": {},

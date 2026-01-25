@@ -92,11 +92,11 @@
         "excludeStories"
       ],
       "options": {
-        "config": "{projectRoot}/vitest.unit.config.ts"
+        "configFile": "{projectRoot}/vitest.unit.config.ts"
       },
       "configurations": {
         "ci": {
-          "config": "{projectRoot}/vitest.unit.config.ts"
+          "configFile": "{projectRoot}/vitest.unit.config.ts"
         }
       }
     },
