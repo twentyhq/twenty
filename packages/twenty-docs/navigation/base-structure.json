@@ -52,6 +52,7 @@
                 "user-guide/data-model/how-tos/create-custom-objects",
                 "user-guide/data-model/how-tos/create-custom-fields",
                 "user-guide/data-model/how-tos/create-relation-fields",
+                "user-guide/data-model/how-tos/create-many-to-many-relations",
                 "user-guide/data-model/how-tos/customize-your-data-model",
                 "user-guide/data-model/how-tos/data-model-faq"
               ]

@@ -3,6 +3,7 @@ import { useCallback, useMemo, useRef } from 'react';
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { type Attachment } from '@/activities/files/types/Attachment';
+import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
@@ -20,6 +21,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
@@ -28,6 +30,7 @@ import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import {
+  FeatureFlagKey,
   PageLayoutType,
   WidgetConfigurationType,
   type StandaloneRichTextConfiguration,
@@ -63,6 +66,9 @@ export const StandaloneRichTextWidget = ({
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();
   const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
   const { uploadAttachmentFile } = useUploadAttachmentFile();
+  const isAttachmentMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ATTACHMENT_MIGRATED,
+  );
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -70,6 +76,10 @@ export const StandaloneRichTextWidget = ({
 
   const isDashboard = layoutType === PageLayoutType.DASHBOARD;
   const dashboardId = isDashboard ? targetRecordIdentifier?.id : undefined;
+  const attachmentTargetFieldIdName = getActivityTargetObjectFieldIdName({
+    nameSingular: CoreObjectNameSingular.Dashboard,
+    isMorphRelation: isAttachmentMigrated,
+  });
 
   const configuration = widget.configuration as
     | StandaloneRichTextConfiguration
@@ -80,7 +90,7 @@ export const StandaloneRichTextWidget = ({
   const { records: attachments } = useFindManyRecords<Attachment>({
     objectNameSingular: CoreObjectNameSingular.Attachment,
     filter: isDefined(dashboardId)
-      ? { dashboardId: { eq: dashboardId } }
+      ? { [attachmentTargetFieldIdName]: { eq: dashboardId } }
       : undefined,
     skip: !isDefined(dashboardId),
   });

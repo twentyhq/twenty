@@ -2,11 +2,37 @@ import { renderHook } from '@testing-library/react';
 import { vi } from 'vitest';
 
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
+import { type Attachment } from '@/activities/files/types/Attachment';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 vi.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: vi.fn(),
 }));
+vi.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: vi.fn(),
+}));
+
+const mockUseFindManyRecords = (records: Attachment[]) => {
+  vi.mocked(useFindManyRecords).mockReturnValue({
+    objectMetadataItem: getMockObjectMetadataItemOrThrow('attachment'),
+    records,
+    totalCount: records.length,
+    loading: false,
+    error: undefined,
+    fetchMoreRecords: vi.fn(),
+    queryIdentifier: '',
+    hasNextPage: false,
+    pageInfo: {
+      hasNextPage: false,
+      hasPreviousPage: false,
+      startCursor: '',
+      endCursor: '',
+    },
+    refetch: vi.fn(),
+  });
+};
 
 describe('useAttachments', () => {
   afterEach(() => {
@@ -14,59 +40,31 @@ describe('useAttachments', () => {
   });
 
   it('fetches attachments correctly for a given targetableObject', () => {
-    const mockAttachments = [
-      { id: '1', name: 'Attachment 1', __typename: 'Attachment' },
-      { id: '2', name: 'Attachment 2', __typename: 'Attachment' },
+    const mockAttachments: Attachment[] = [
+      {
+        id: '1',
+        name: 'Attachment 1',
+        fullPath: '/attachments/1',
+        fileCategory: 'OTHER',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        __typename: 'Attachment',
+      },
+      {
+        id: '2',
+        name: 'Attachment 2',
+        fullPath: '/attachments/2',
+        fileCategory: 'OTHER',
+        createdAt: '2024-01-02T00:00:00.000Z',
+        __typename: 'Attachment',
+      },
     ];
     const mockTargetableObject = {
       id: '1',
       targetObjectNameSingular: 'SomeObject',
     };
 
-    vi.mocked(useFindManyRecords).mockReturnValue({
-      objectMetadataItem: {
-        id: '1',
-        nameSingular: 'attachment',
-        namePlural: 'attachments',
-        labelSingular: 'Attachment',
-        labelPlural: 'Attachments',
-        description: null,
-        icon: null,
-        createdAt: '',
-        updatedAt: '',
-        isActive: true,
-        isCustom: false,
-        isSystem: false,
-        isRemote: false,
-        isSearchable: true,
-        isUIReadOnly: false,
-        isLabelSyncedWithName: false,
-        applicationId: '',
-        shortcut: null,
-        duplicateCriteria: null,
-        standardOverrides: null,
-        labelIdentifierFieldMetadataId: '',
-        imageIdentifierFieldMetadataId: null,
-        fields: [],
-        readableFields: [],
-        updatableFields: [],
-        indexMetadatas: [],
-      },
-      records: mockAttachments,
-      totalCount: 2,
-      loading: false,
-      error: undefined,
-      fetchMoreRecords: vi.fn(),
-      queryIdentifier: '',
-      hasNextPage: false,
-      pageInfo: {
-        hasNextPage: false,
-        hasPreviousPage: false,
-        startCursor: '',
-        endCursor: '',
-      },
-      refetch: vi.fn(),
-    });
+    mockUseFindManyRecords(mockAttachments);
+    vi.mocked(useIsFeatureEnabled).mockReturnValue(false);
 
     const { result } = renderHook(() => useAttachments(mockTargetableObject));
 
@@ -79,50 +77,8 @@ describe('useAttachments', () => {
       targetObjectNameSingular: 'SomeObject',
     };
 
-    vi.mocked(useFindManyRecords).mockReturnValue({
-      objectMetadataItem: {
-        id: '1',
-        nameSingular: 'attachment',
-        namePlural: 'attachments',
-        labelSingular: 'Attachment',
-        labelPlural: 'Attachments',
-        description: null,
-        icon: null,
-        createdAt: '',
-        updatedAt: '',
-        isActive: true,
-        isCustom: false,
-        isSystem: false,
-        isRemote: false,
-        isSearchable: true,
-        isUIReadOnly: false,
-        isLabelSyncedWithName: false,
-        applicationId: '',
-        shortcut: null,
-        duplicateCriteria: null,
-        standardOverrides: null,
-        labelIdentifierFieldMetadataId: '',
-        imageIdentifierFieldMetadataId: null,
-        fields: [],
-        readableFields: [],
-        updatableFields: [],
-        indexMetadatas: [],
-      },
-      records: [],
-      totalCount: 0,
-      loading: false,
-      error: undefined,
-      fetchMoreRecords: vi.fn(),
-      queryIdentifier: '',
-      hasNextPage: false,
-      pageInfo: {
-        hasNextPage: false,
-        hasPreviousPage: false,
-        startCursor: '',
-        endCursor: '',
-      },
-      refetch: vi.fn(),
-    });
+    mockUseFindManyRecords([]);
+    vi.mocked(useIsFeatureEnabled).mockReturnValue(false);
 
     const { result } = renderHook(() => useAttachments(mockTargetableObject));
 

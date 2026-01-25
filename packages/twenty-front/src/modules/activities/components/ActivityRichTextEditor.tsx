@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
+import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
@@ -35,11 +36,13 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 type ActivityRichTextEditorProps = {
   activityId: string;
@@ -70,21 +73,21 @@ export const ActivityRichTextEditor = ({
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
+  const isAttachmentMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ATTACHMENT_MIGRATED,
+  );
+
+  const attachmentTargetFieldIdName = getActivityTargetObjectFieldIdName({
+    nameSingular: activityObjectNameSingular,
+    isMorphRelation: isAttachmentMigrated,
+  });
+
   const { records: attachments } = useFindManyRecords<Attachment>({
     objectNameSingular: CoreObjectNameSingular.Attachment,
     filter: {
-      or: [
-        {
-          noteId: {
-            eq: activityId,
-          },
-        },
-        {
-          taskId: {
-            eq: activityId,
-          },
-        },
-      ],
+      [attachmentTargetFieldIdName]: {
+        eq: activityId,
+      },
     },
   });
 
