@@ -173,19 +173,17 @@ describe('useDeleteOneRecord', () => {
       );
 
       await act(async () => {
-        try {
-          await result.current.deleteOneRecord(personRecord.id);
-          fail('Should have thrown an error');
-        } catch {
-          assertCachedRecordIsNull({
-            recordId: personRecord.id,
-            objectMetadataItem: personObjectMetadataItem,
-          });
-          assertCachedRecordIsNull({
-            recordId: relatedCompanyRecord.id,
-            objectMetadataItem: companyObjectMetadataItem,
-          });
-        }
+        await expect(
+          result.current.deleteOneRecord(personRecord.id),
+        ).rejects.toBeDefined();
+        assertCachedRecordIsNull({
+          recordId: personRecord.id,
+          objectMetadataItem: personObjectMetadataItem,
+        });
+        assertCachedRecordIsNull({
+          recordId: relatedCompanyRecord.id,
+          objectMetadataItem: companyObjectMetadataItem,
+        });
       });
     });
   });
@@ -313,22 +311,20 @@ describe('useDeleteOneRecord', () => {
       );
 
       await act(async () => {
-        try {
-          await result.current.deleteOneRecord(personRecord.id);
-          fail('Should have thrown an error');
-        } catch {
-          assertCachedRecordMatchSnapshot({
-            recordId: personRecord.id,
-            objectMetadataItem: personObjectMetadataItem,
-            matchObject: {
-              deletedAt: null,
-            },
-          });
-          assertCachedRecordMatchSnapshot({
-            objectMetadataItem: companyObjectMetadataItem,
-            recordId: personRecord.company.id,
-          });
-        }
+        await expect(
+          result.current.deleteOneRecord(personRecord.id),
+        ).rejects.toBeDefined();
+        assertCachedRecordMatchSnapshot({
+          recordId: personRecord.id,
+          objectMetadataItem: personObjectMetadataItem,
+          matchObject: {
+            deletedAt: null,
+          },
+        });
+        assertCachedRecordMatchSnapshot({
+          objectMetadataItem: companyObjectMetadataItem,
+          recordId: personRecord.company.id,
+        });
       });
 
       expect(apolloMocks[0].result).not.toHaveBeenCalled();

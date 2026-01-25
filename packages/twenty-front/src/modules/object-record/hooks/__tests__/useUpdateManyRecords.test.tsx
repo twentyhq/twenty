@@ -205,18 +205,13 @@ describe('useUpdateManyRecords', () => {
       );
 
       await act(async () => {
-        try {
-          await result.current.updateManyRecords({
+        await expect(
+          result.current.updateManyRecords({
             recordIdsToUpdate: personIds,
             updateOneRecordInput: updateInput,
-          });
-          fail('Should have thrown an error');
-        } catch (e) {
-          expect(e).toMatchInlineSnapshot(
-            `[ApolloError: Internal server error]`,
-          );
-          assertCachedRecordsMatch(personRecords);
-        }
+          }),
+        ).rejects.toMatchInlineSnapshot(`[ApolloError: Internal server error]`);
+        assertCachedRecordsMatch(personRecords);
       });
 
       expect(apolloMocks[0].result).not.toHaveBeenCalled();

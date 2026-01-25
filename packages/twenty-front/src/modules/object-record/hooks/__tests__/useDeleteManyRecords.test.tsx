@@ -16,10 +16,10 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { InMemoryCache } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
 import { act } from 'react';
-import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
-import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { vi } from 'vitest';
+import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const getDefaultMocks = (
   overrides?: Partial<MockedResponse>,
@@ -196,17 +196,12 @@ describe('useDeleteManyRecords', () => {
       );
 
       await act(async () => {
-        try {
-          await result.current.deleteManyRecords({
+        await expect(
+          result.current.deleteManyRecords({
             recordIdsToDelete: personIds,
-          });
-          fail('Should have thrown an error');
-        } catch (e) {
-          expect(e).toMatchInlineSnapshot(
-            `[ApolloError: Internal server error]`,
-          );
-          assertCachedRecordsMatch(personRecords);
-        }
+          }),
+        ).rejects.toMatchInlineSnapshot(`[ApolloError: Internal server error]`);
+        assertCachedRecordsMatch(personRecords);
       });
 
       expect(apolloMocks[0].result).not.toHaveBeenCalled();
