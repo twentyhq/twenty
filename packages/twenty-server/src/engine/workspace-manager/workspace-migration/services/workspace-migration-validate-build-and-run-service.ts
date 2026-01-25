@@ -186,6 +186,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         });
 
     if (validateAndBuildResult.status === 'fail') {
+      this.logger.debug(JSON.stringify(validateAndBuildResult, null, 2));
       return validateAndBuildResult;
     }
 
