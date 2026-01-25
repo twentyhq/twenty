@@ -1,14 +1,21 @@
 import { AIChatTab } from '@/ai/components/AIChatTab';
 import styled from '@emotion/styled';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-const StyledContainer = styled.div`
-  height: 100%;
+const StyledContainer = styled.div<{ isMobile: boolean }>`
+  height: ${({ theme, isMobile }) => {
+    const mobileOffset = isMobile ? theme.spacing(13) : '0px';
+
+    return `calc(100% - ${mobileOffset})`;
+  }};
   width: 100%;
 `;
 
 export const CommandMenuAskAIPage = () => {
+  const isMobile = useIsMobile();
+
   return (
-    <StyledContainer>
+    <StyledContainer isMobile={isMobile}>
       <AIChatTab />
     </StyledContainer>
   );
