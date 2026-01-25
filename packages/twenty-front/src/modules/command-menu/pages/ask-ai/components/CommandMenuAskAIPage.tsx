@@ -1,5 +1,5 @@
-import { AIChatTab } from '@/ai/components/AIChatTab';
 import styled from '@emotion/styled';
+import { AIChatTab } from '@/ai/components/AIChatTab';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledContainer = styled.div<{ isMobile: boolean }>`
