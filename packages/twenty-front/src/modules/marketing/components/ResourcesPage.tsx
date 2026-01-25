@@ -1,20 +1,19 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import {
-  IconFolder,
-  IconFile,
-  IconUpload,
-  IconDownload,
-  IconTrash,
-  IconEye,
-  IconShare,
-  IconPlus,
-  IconSearch,
-  IconFilter,
-  IconPdf,
-  IconPhoto,
-  IconFileSpreadsheet,
-  IconFileWord,
+    IconDownload,
+    IconEye,
+    IconFile,
+    IconFileSpreadsheet,
+    IconFileWord,
+    IconFilter,
+    IconFolder,
+    IconPdf,
+    IconPhoto,
+    IconPlus,
+    IconSearch,
+    IconShare,
+    IconUpload
 } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
