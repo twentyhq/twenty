@@ -39,11 +39,15 @@ Viele Datensätze in Objekt A können mit vielen Datensätzen in Objekt B verkn�
 
 **Beispiel:** Viele Personen können mit vielen Projekten verknüpft werden, und umgekehrt.
 
-<Warning>
-  **Viele-zu-Viele-Beziehungen werden noch nicht unterstützt.**
+Viele-zu-viele-Beziehungen verwenden ein **Verknüpfungsobjekt**-Muster: ein Zwischenobjekt, das beide Seiten verbindet. Mit der Funktion für Verknüpfungsbeziehungen zeigt Twenty die endgültig verknüpften Datensätze direkt an und blendet das Zwischenobjekt in der Benutzeroberfläche aus.
 
-  Dieser Beziehungstyp ist für H1 2026 geplant. Als Workaround erstellen Sie ein zwischengeschaltetes "Junction"-Objekt (z. B. "Projektzuweisungen"), das Viele-zu-Eins-Beziehungen zu beiden Objekten hat.
+<img src="/images/user-guide/fields/junction-relation-diagram.png" style={{width:'100%'}} />
+
+<Warning>
+  **Lab-Funktion**: Verknüpfungsbeziehungen müssen vor der Verwendung unter **Einstellungen → Updates → Lab** aktiviert werden.
 </Warning>
+
+Siehe [Viele-zu-Viele-Beziehungen erstellen](/l/de/user-guide/data-model/how-tos/create-many-to-many-relations) für eine vollständige Schritt-für-Schritt-Anleitung.
 
 ## Beziehungsfeld erstellen
 
