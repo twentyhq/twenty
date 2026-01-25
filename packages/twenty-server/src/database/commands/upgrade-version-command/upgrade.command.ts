@@ -28,10 +28,10 @@ import { IdentifyAgentMetadataCommand } from 'src/database/commands/upgrade-vers
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
 import { IdentifyIndexMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-index-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
+import { IdentifyRemainingEntitiesMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-remaining-entities-metadata.command';
 import { IdentifyRoleMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-role-metadata.command';
 import { IdentifyViewFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-field-metadata.command';
 import { IdentifyViewFilterMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-filter-metadata.command';
-import { IdentifyRemainingEntitiesMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-remaining-entities-metadata.command';
 import { IdentifyViewGroupMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-group-metadata.command';
 import { IdentifyViewMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-metadata.command';
 import { MakeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-agent-universal-identifier-and-application-id-not-nullable-migration.command';
@@ -142,8 +142,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     const commands_1160: VersionCommands = [
       this.updateTaskOnDeleteActionCommand,
-      this.backfillOpportunityOwnerFieldCommand,
-      this.backfillStandardPageLayoutsCommand,
       this.identifyAgentMetadataCommand,
       this.identifyFieldMetadataCommand,
       this.identifyObjectMetadataCommand,
@@ -153,6 +151,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.identifyViewFilterMetadataCommand,
       this.identifyViewGroupMetadataCommand,
       this.identifyIndexMetadataCommand,
+      this.backfillOpportunityOwnerFieldCommand,
+      this.backfillStandardPageLayoutsCommand,
       this
         .makeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this
