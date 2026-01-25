@@ -1,13 +1,11 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import {
-  IconMail,
-  IconTemplate,
-  IconFolder,
-  IconSparkles,
-  IconBrandInstagram,
-  IconMessage,
-  IconSettings,
+    IconBrandInstagram,
+    IconFolder,
+    IconMail,
+    IconMessage,
+    IconTemplate
 } from 'twenty-ui/display';
 
 import { NewsletterBuilder } from './NewsletterBuilder';
