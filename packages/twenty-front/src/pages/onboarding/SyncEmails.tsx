@@ -9,6 +9,7 @@ import { Title } from '@/auth/components/Title';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
@@ -78,6 +79,12 @@ export const SyncEmails = () => {
     setNextOnboardingStatus();
   };
 
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
+  const isSSOEnabled =
+    !!currentWorkspace?.isMicrosoftAuthEnabled ||
+    !!currentWorkspace?.isGoogleAuthEnabled;
+
   const isGoogleMessagingEnabled = useRecoilValue(
     isGoogleMessagingEnabledState,
   );
@@ -118,7 +125,7 @@ export const SyncEmails = () => {
         />
       </StyledSyncEmailsContainer>
       <StyledProviderContainer>
-        {isGoogleProviderEnabled && (
+        {!isSSOEnabled && isGoogleProviderEnabled && (
           <MainButton
             title={t`Sync with Google`}
             onClick={() => handleButtonClick(ConnectedAccountProvider.GOOGLE)}
@@ -126,7 +133,7 @@ export const SyncEmails = () => {
             Icon={() => <IconGoogle size={theme.icon.size.sm} />}
           />
         )}
-        {isMicrosoftProviderEnabled && (
+        {!isSSOEnabled && isMicrosoftProviderEnabled && (
           <MainButton
             title={t`Sync with Outlook`}
             onClick={() =>
@@ -140,6 +147,22 @@ export const SyncEmails = () => {
           <MainButton
             title={t`Continue`}
             onClick={continueWithoutSync}
+            width={144}
+          />
+        )}
+        {isSSOEnabled && isMicrosoftProviderEnabled && (
+          <MainButton
+            title={t`Continue`}
+            onClick={() =>
+              handleButtonClick(ConnectedAccountProvider.MICROSOFT)
+            }
+            width={144}
+          />
+        )}
+        {isSSOEnabled && isGoogleProviderEnabled && (
+          <MainButton
+            title={t`Continue`}
+            onClick={() => ConnectedAccountProvider.GOOGLE}
             width={144}
           />
         )}
