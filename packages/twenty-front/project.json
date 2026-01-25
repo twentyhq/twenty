@@ -87,8 +87,17 @@
       "outputs": [
         "{projectRoot}/coverage"
       ],
+      "inputs": [
+        "^default",
+        "excludeStories"
+      ],
       "options": {
         "config": "{projectRoot}/vitest.unit.config.ts"
+      },
+      "configurations": {
+        "ci": {
+          "config": "{projectRoot}/vitest.unit.config.ts"
+        }
       }
     },
     "storybook:build": {
