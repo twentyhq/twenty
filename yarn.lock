@@ -57322,6 +57322,7 @@ __metadata:
   resolution: "twenty-docs@workspace:packages/twenty-docs"
   dependencies:
     mintlify: "npm:latest"
+    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 

@@ -80,6 +80,7 @@
                       "user-guide/data-model/how-tos/create-custom-objects",
                       "user-guide/data-model/how-tos/create-custom-fields",
                       "user-guide/data-model/how-tos/create-relation-fields",
+                      "user-guide/data-model/how-tos/create-many-to-many-relations",
                       "user-guide/data-model/how-tos/customize-your-data-model",
                       "user-guide/data-model/how-tos/data-model-faq"
                     ]
@@ -524,6 +525,7 @@
                       "l/fr/user-guide/data-model/how-tos/create-custom-objects",
                       "l/fr/user-guide/data-model/how-tos/create-custom-fields",
                       "l/fr/user-guide/data-model/how-tos/create-relation-fields",
+                      "l/fr/user-guide/data-model/how-tos/create-many-to-many-relations",
                       "l/fr/user-guide/data-model/how-tos/customize-your-data-model",
                       "l/fr/user-guide/data-model/how-tos/data-model-faq"
                     ]
@@ -968,6 +970,7 @@
                       "l/ar/user-guide/data-model/how-tos/create-custom-objects",
                       "l/ar/user-guide/data-model/how-tos/create-custom-fields",
                       "l/ar/user-guide/data-model/how-tos/create-relation-fields",
+                      "l/ar/user-guide/data-model/how-tos/create-many-to-many-relations",
                       "l/ar/user-guide/data-model/how-tos/customize-your-data-model",
                       "l/ar/user-guide/data-model/how-tos/data-model-faq"
                     ]
@@ -1412,6 +1415,7 @@
                       "l/cs/user-guide/data-model/how-tos/create-custom-objects",
                       "l/cs/user-guide/data-model/how-tos/create-custom-fields",
                       "l/cs/user-guide/data-model/how-tos/create-relation-fields",
+                      "l/cs/user-guide/data-model/how-tos/create-many-to-many-relations",
                       "l/cs/user-guide/data-model/how-tos/customize-your-data-model",
                       "l/cs/user-guide/data-model/how-tos/data-model-faq"
                     ]
@@ -1856,6 +1860,7 @@
                       "l/de/user-guide/data-model/how-tos/create-custom-objects",
                       "l/de/user-guide/data-model/how-tos/create-custom-fields",
                       "l/de/user-guide/data-model/how-tos/create-relation-fields",
+                      "l/de/user-guide/data-model/how-tos/create-many-to-many-relations",
                       "l/de/user-guide/data-model/how-tos/customize-your-data-model",
                       "l/de/user-guide/data-model/how-tos/data-model-faq"
                     ]
@@ -2300,6 +2305,7 @@
                       "l/es/user-guide/data-model/how-tos/create-custom-objects",
                       "l/es/user-guide/data-model/how-tos/create-custom-fields",
                       "l/es/user-guide/data-model/how-tos/create-relation-fields",
+                      "l/es/user-guide/data-model/how-tos/create-many-to-many-relations",
                       "l/es/user-guide/data-model/how-tos/customize-your-data-model",
                       "l/es/user-guide/data-model/how-tos/data-model-faq"
                     ]
@@ -2744,6 +2750,7 @@
                       "l/it/user-guide/data-model/how-tos/create-custom-objects",
                       "l/it/user-guide/data-model/how-tos/create-custom-fields",
                       "l/it/user-guide/data-model/how-tos/create-relation-fields",
+                      "l/it/user-guide/data-model/how-tos/create-many-to-many-relations",
                       "l/it/user-guide/data-model/how-tos/customize-your-data-model",
                       "l/it/user-guide/data-model/how-tos/data-model-faq"
                     ]
@@ -3188,6 +3195,7 @@
                       "l/ja/user-guide/data-model/how-tos/create-custom-objects",
                       "l/ja/user-guide/data-model/how-tos/create-custom-fields",
                       "l/ja/user-guide/data-model/how-tos/create-relation-fields",
+                      "l/ja/user-guide/data-model/how-tos/create-many-to-many-relations",
                       "l/ja/user-guide/data-model/how-tos/customize-your-data-model",
                       "l/ja/user-guide/data-model/how-tos/data-model-faq"
                     ]
@@ -3632,6 +3640,7 @@
                       "l/ko/user-guide/data-model/how-tos/create-custom-objects",
                       "l/ko/user-guide/data-model/how-tos/create-custom-fields",
                       "l/ko/user-guide/data-model/how-tos/create-relation-fields",
+                      "l/ko/user-guide/data-model/how-tos/create-many-to-many-relations",
                       "l/ko/user-guide/data-model/how-tos/customize-your-data-model",
                       "l/ko/user-guide/data-model/how-tos/data-model-faq"
                     ]
@@ -4076,6 +4085,7 @@
                       "l/pt/user-guide/data-model/how-tos/create-custom-objects",
                       "l/pt/user-guide/data-model/how-tos/create-custom-fields",
                       "l/pt/user-guide/data-model/how-tos/create-relation-fields",
+                      "l/pt/user-guide/data-model/how-tos/create-many-to-many-relations",
                       "l/pt/user-guide/data-model/how-tos/customize-your-data-model",
                       "l/pt/user-guide/data-model/how-tos/data-model-faq"
                     ]
@@ -4520,6 +4530,7 @@
                       "l/ro/user-guide/data-model/how-tos/create-custom-objects",
                       "l/ro/user-guide/data-model/how-tos/create-custom-fields",
                       "l/ro/user-guide/data-model/how-tos/create-relation-fields",
+                      "l/ro/user-guide/data-model/how-tos/create-many-to-many-relations",
                       "l/ro/user-guide/data-model/how-tos/customize-your-data-model",
                       "l/ro/user-guide/data-model/how-tos/data-model-faq"
                     ]
@@ -4964,6 +4975,7 @@
                       "l/ru/user-guide/data-model/how-tos/create-custom-objects",
                       "l/ru/user-guide/data-model/how-tos/create-custom-fields",
                       "l/ru/user-guide/data-model/how-tos/create-relation-fields",
+                      "l/ru/user-guide/data-model/how-tos/create-many-to-many-relations",
                       "l/ru/user-guide/data-model/how-tos/customize-your-data-model",
                       "l/ru/user-guide/data-model/how-tos/data-model-faq"
                     ]
@@ -5408,6 +5420,7 @@
                       "l/tr/user-guide/data-model/how-tos/create-custom-objects",
                       "l/tr/user-guide/data-model/how-tos/create-custom-fields",
                       "l/tr/user-guide/data-model/how-tos/create-relation-fields",
+                      "l/tr/user-guide/data-model/how-tos/create-many-to-many-relations",
                       "l/tr/user-guide/data-model/how-tos/customize-your-data-model",
                       "l/tr/user-guide/data-model/how-tos/data-model-faq"
                     ]
@@ -5852,6 +5865,7 @@
                       "l/zh/user-guide/data-model/how-tos/create-custom-objects",
                       "l/zh/user-guide/data-model/how-tos/create-custom-fields",
                       "l/zh/user-guide/data-model/how-tos/create-relation-fields",
+                      "l/zh/user-guide/data-model/how-tos/create-many-to-many-relations",
                       "l/zh/user-guide/data-model/how-tos/customize-your-data-model",
                       "l/zh/user-guide/data-model/how-tos/data-model-faq"
                     ]
