@@ -65,8 +65,7 @@ const StyledOrganizationBenefitsContainer = styled.div`
   flex-direction: column;
   width: 100%;
   gap: 16px;
-  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)}
-    ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
