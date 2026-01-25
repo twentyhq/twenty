@@ -1,10 +1,6 @@
 import styled from '@emotion/styled';
 import {
-  IconCurrencyDollar,
-  IconReceipt,
-  IconArrowUp,
-  IconArrowDown,
-  IconPercentage,
+    IconCurrencyDollar
 } from 'twenty-ui/display';
 
 const StyledFinanceContainer = styled.div`

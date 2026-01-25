@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import {
-  IconCheckbox,
-  IconCheck,
-  IconFile,
-  IconSignature,
-  IconUpload,
-  IconChevronDown,
-  IconChevronRight,
+    IconCheck,
+    IconChevronDown,
+    IconChevronRight,
+    IconFile,
+    IconSignature,
+    IconUpload
 } from 'twenty-ui/display';
 
 const StyledChecklistContainer = styled.div`

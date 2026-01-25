@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import {
-  IconShield,
-  IconCheck,
-  IconAlertTriangle,
-  IconClock,
-  IconFile,
-  IconCalendar,
+    IconAlertTriangle,
+    IconCalendar,
+    IconCheck,
+    IconClock,
+    IconFile,
+    IconShield,
 } from 'twenty-ui/display';
 
 const StyledComplianceContainer = styled.div`
