@@ -1,16 +1,14 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import {
-  IconPhoto,
-  IconDownload,
-  IconShare,
-  IconSparkles,
-  IconHome,
-  IconBrandInstagram,
-  IconBrandFacebook,
-  IconBrandTwitter,
-  IconRefresh,
-  IconCopy,
+    IconBrandFacebook,
+    IconBrandInstagram,
+    IconBrandTwitter,
+    IconCopy,
+    IconDownload,
+    IconHome,
+    IconRefresh,
+    IconSparkles
 } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
