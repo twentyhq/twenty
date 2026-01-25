@@ -1,6 +1,7 @@
 import { useBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarPositions';
 import { useCanvasRenderer } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useCanvasRenderer';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
+import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositions';
 import {
   computeAllCategorySlices,
   findAnchorBarInCanvasSlice,
@@ -47,6 +48,7 @@ type CanvasBarChartProps = {
   ) => void;
   onSliceClick?: (slice: CanvasBarSlice) => void;
   onSliceLeave: () => void;
+  allowDataTransitions: boolean;
 };
 
 const StyledCanvasContainer = styled.div<{ $isClickable: boolean }>`
@@ -62,6 +64,15 @@ const StyledCanvas = styled.canvas`
   top: 0;
   left: 0;
 `;
+
+const getBarKey = (bar: BarPosition) => `${bar.indexValue}::${bar.seriesId}`;
+
+const lerp = (from: number, to: number, t: number) => from + (to - from) * t;
+
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+const buildBarMap = (bars: BarPosition[]) =>
+  new Map(bars.map((bar) => [getBarKey(bar), bar]));
 
 export const CanvasBarChart = ({
   data,
@@ -81,10 +92,16 @@ export const CanvasBarChart = ({
   onSliceHover,
   onSliceClick,
   onSliceLeave,
+  allowDataTransitions,
 }: CanvasBarChartProps) => {
   const theme = useTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dpr, setDpr] = useState(1);
+  const [previousBars, setPreviousBars] = useState<BarPosition[]>([]);
+  const [previousSize, setPreviousSize] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
 
   const highlightedLegendId = useRecoilComponentValue(
     graphWidgetHighlightedLegendIdComponentState,
@@ -136,7 +153,6 @@ export const CanvasBarChart = ({
   }, [slices, hoveredSliceIndexValue]);
 
   const { render } = useCanvasRenderer({
-    bars,
     margins,
     layout,
     borderRadius,
@@ -159,6 +175,10 @@ export const CanvasBarChart = ({
       return;
     }
 
+    if (chartWidth <= 0 || chartHeight <= 0) {
+      return;
+    }
+
     canvas.width = chartWidth * dpr;
     canvas.height = chartHeight * dpr;
     canvas.style.width = `${chartWidth}px`;
@@ -169,9 +189,134 @@ export const CanvasBarChart = ({
       return;
     }
 
-    ctx.scale(dpr, dpr);
-    render(ctx, chartWidth, chartHeight);
-  }, [chartWidth, chartHeight, dpr, render]);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const sizeIsStable =
+      previousSize !== null &&
+      previousSize.width === chartWidth &&
+      previousSize.height === chartHeight;
+
+    const shouldAnimate =
+      allowDataTransitions &&
+      sizeIsStable &&
+      !(bars.length === 0 && previousBars.length === 0) &&
+      previousBars !== bars;
+
+    if (!shouldAnimate) {
+      render(ctx, chartWidth, chartHeight, bars);
+
+      if (previousBars !== bars) {
+        setPreviousBars(bars);
+      }
+
+      if (!sizeIsStable) {
+        setPreviousSize({ width: chartWidth, height: chartHeight });
+      }
+
+      return;
+    }
+
+    const fromMap = buildBarMap(previousBars);
+    const toMap = buildBarMap(bars);
+    const allKeys = new Set([...fromMap.keys(), ...toMap.keys()]);
+
+    const innerWidth = chartWidth - margins.left - margins.right;
+    const innerHeight = chartHeight - margins.top - margins.bottom;
+    const axisLength = isVertical ? innerHeight : innerWidth;
+    const range = valueDomain.max - valueDomain.min;
+    const zeroPixel =
+      range === 0 ? 0 : ((0 - valueDomain.min) / range) * axisLength;
+    const baselineY = innerHeight - zeroPixel;
+
+    const toBaselineBar = (bar: BarPosition): BarPosition => {
+      if (isVertical) {
+        return {
+          ...bar,
+          y: baselineY,
+          height: 0,
+          value: 0,
+        };
+      }
+
+      return {
+        ...bar,
+        x: zeroPixel,
+        width: 0,
+        value: 0,
+      };
+    };
+
+    const durationMs = theme.animation.duration.fast * 1000;
+    const startTime = performance.now();
+    let frameId = 0;
+
+    const drawFrame = (now: number) => {
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / durationMs, 1);
+      const eased = easeOutCubic(t);
+
+      const interpolatedBars: BarPosition[] = [];
+
+      for (const key of allKeys) {
+        const fromBar = fromMap.get(key);
+        const toBar = toMap.get(key);
+
+        if (!fromBar && !toBar) {
+          continue;
+        }
+
+        const startBar = fromBar ?? toBaselineBar(toBar as BarPosition);
+        const endBar = toBar ?? toBaselineBar(fromBar as BarPosition);
+
+        interpolatedBars.push({
+          ...endBar,
+          x: lerp(startBar.x, endBar.x, eased),
+          y: lerp(startBar.y, endBar.y, eased),
+          width: lerp(startBar.width, endBar.width, eased),
+          height: lerp(startBar.height, endBar.height, eased),
+          value: lerp(startBar.value, endBar.value, eased),
+          color: endBar.color ?? startBar.color,
+          seriesId: endBar.seriesId ?? startBar.seriesId,
+          indexValue: endBar.indexValue ?? startBar.indexValue,
+          shouldRoundFreeEnd:
+            endBar.shouldRoundFreeEnd ?? startBar.shouldRoundFreeEnd,
+          seriesIndex: endBar.seriesIndex ?? startBar.seriesIndex,
+        });
+      }
+
+      render(ctx, chartWidth, chartHeight, interpolatedBars);
+
+      if (t < 1) {
+        frameId = requestAnimationFrame(drawFrame);
+        return;
+      }
+
+      render(ctx, chartWidth, chartHeight, bars);
+      setPreviousBars(bars);
+      setPreviousSize({ width: chartWidth, height: chartHeight });
+    };
+
+    frameId = requestAnimationFrame(drawFrame);
+
+    return () => cancelAnimationFrame(frameId);
+  }, [
+    allowDataTransitions,
+    bars,
+    chartHeight,
+    chartWidth,
+    dpr,
+    isVertical,
+    margins.bottom,
+    margins.left,
+    margins.right,
+    margins.top,
+    previousBars,
+    previousSize,
+    render,
+    theme.animation.duration.fast,
+    valueDomain.max,
+    valueDomain.min,
+  ]);
 
   const handleMouseMove = useCallback(
     (event: MouseEvent<HTMLCanvasElement>) => {

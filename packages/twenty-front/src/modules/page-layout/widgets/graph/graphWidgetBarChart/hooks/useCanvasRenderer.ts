@@ -12,7 +12,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
 
 type UseCanvasRendererParams = {
-  bars: BarPosition[];
   margins: ChartMargins;
   layout: BarChartLayout;
   borderRadius: number;
@@ -26,7 +25,6 @@ type UseCanvasRendererParams = {
 };
 
 export const useCanvasRenderer = ({
-  bars,
   margins,
   layout,
   borderRadius,
@@ -41,7 +39,12 @@ export const useCanvasRenderer = ({
   const isVertical = layout === BarChartLayout.VERTICAL;
 
   const render = useCallback(
-    (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+    (
+      ctx: CanvasRenderingContext2D,
+      width: number,
+      height: number,
+      bars: BarPosition[],
+    ) => {
       const innerWidth = width - margins.left - margins.right;
       const innerHeight = height - margins.top - margins.bottom;
 
@@ -77,7 +80,6 @@ export const useCanvasRenderer = ({
       ctx.restore();
     },
     [
-      bars,
       margins,
       borderRadius,
       gridColor,

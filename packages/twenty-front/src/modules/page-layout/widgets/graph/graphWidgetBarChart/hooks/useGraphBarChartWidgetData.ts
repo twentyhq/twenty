@@ -39,6 +39,7 @@ type UseGraphBarChartWidgetDataResult = {
   layout?: BarChartLayout;
   groupMode: 'grouped' | 'stacked' | undefined;
   loading: boolean;
+  isRefetching: boolean;
   error?: Error;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
@@ -65,6 +66,7 @@ export const useGraphBarChartWidgetData = ({
 
   const {
     data: queryData,
+    previousData,
     loading,
     error,
   } = useQuery(BAR_CHART_DATA, {
@@ -77,10 +79,16 @@ export const useGraphBarChartWidgetData = ({
     },
   });
 
-  const chartData = (queryData?.barChartData?.data as BarDatum[]) ?? [];
+  const effectiveQueryData = queryData ?? previousData;
 
-  const formattedToRawLookup = queryData?.barChartData?.formattedToRawLookup
-    ? new Map(Object.entries(queryData.barChartData.formattedToRawLookup))
+  const chartData =
+    (effectiveQueryData?.barChartData?.data as BarDatum[]) ?? [];
+
+  const formattedToRawLookup = effectiveQueryData?.barChartData
+    ?.formattedToRawLookup
+    ? new Map(
+        Object.entries(effectiveQueryData.barChartData.formattedToRawLookup),
+      )
     : new Map();
 
   const colorDeterminingFieldId = isDefined(
@@ -116,7 +124,7 @@ export const useGraphBarChartWidgetData = ({
     selectFieldOptions,
   });
 
-  const series = queryData?.barChartData?.series?.map(
+  const series = effectiveQueryData?.barChartData?.series?.map(
     (seriesItem: BarChartSeries): BarChartSeriesWithColor => {
       const rawValue = formattedToRawLookup.get(seriesItem.key);
 
@@ -136,23 +144,25 @@ export const useGraphBarChartWidgetData = ({
 
   return {
     data: chartData,
-    indexBy: queryData?.barChartData?.indexBy ?? 'id',
-    keys: queryData?.barChartData?.keys ?? [],
+    indexBy: effectiveQueryData?.barChartData?.indexBy ?? 'id',
+    keys: effectiveQueryData?.barChartData?.keys ?? [],
     series,
-    xAxisLabel: queryData?.barChartData?.xAxisLabel ?? '',
-    yAxisLabel: queryData?.barChartData?.yAxisLabel ?? '',
+    xAxisLabel: effectiveQueryData?.barChartData?.xAxisLabel ?? '',
+    yAxisLabel: effectiveQueryData?.barChartData?.yAxisLabel ?? '',
     showDataLabels: configuration.displayDataLabel ?? false,
     showLegend: configuration.displayLegend ?? true,
-    layout: queryData?.barChartData?.layout,
+    layout: effectiveQueryData?.barChartData?.layout,
     groupMode: getEffectiveGroupMode(
       configuration.groupMode,
       configuration.secondaryAxisGroupByFieldMetadataId,
     ),
-    hasTooManyGroups: queryData?.barChartData?.hasTooManyGroups ?? false,
+    hasTooManyGroups:
+      effectiveQueryData?.barChartData?.hasTooManyGroups ?? false,
     colorMode,
     formattedToRawLookup,
     objectMetadataItem,
-    loading,
+    loading: loading && !previousData,
+    isRefetching: loading && !!previousData,
     error,
   };
 };

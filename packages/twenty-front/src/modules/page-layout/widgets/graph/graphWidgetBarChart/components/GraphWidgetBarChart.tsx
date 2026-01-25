@@ -20,6 +20,9 @@ import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBa
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
+import { isSidePanelAnimatingState } from '@/command-menu/states/isSidePanelAnimatingState';
+import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
+import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
@@ -33,6 +36,7 @@ import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { BarChartLayout } from '~/generated/graphql';
+import { useRecoilValue } from 'recoil';
 
 type GraphWidgetBarChartProps = {
   colorMode: GraphColorMode;
@@ -122,6 +126,21 @@ export const GraphWidgetBarChart = ({
   const hoveredSliceIndexValue = useRecoilComponentValue(
     graphWidgetHoveredSliceIndexComponentState,
   );
+
+  const draggingWidgetId = useRecoilComponentValue(
+    pageLayoutDraggingWidgetIdComponentState,
+  );
+
+  const resizingWidgetId = useRecoilComponentValue(
+    pageLayoutResizingWidgetIdComponentState,
+  );
+
+  const isSidePanelAnimating = useRecoilValue(isSidePanelAnimatingState);
+
+  const isLayoutAnimating =
+    isSidePanelAnimating || draggingWidgetId === id || resizingWidgetId === id;
+
+  const allowDataTransitions = !isLayoutAnimating;
 
   const formatOptions: GraphValueFormatOptions = {
     customFormatter,
@@ -304,6 +323,7 @@ export const GraphWidgetBarChart = ({
           {chartWidth > 0 && chartHeight > 0 && (
             <>
               <CanvasBarChart
+                allowDataTransitions={allowDataTransitions}
                 chartHeight={chartHeight}
                 chartWidth={chartWidth}
                 data={data}
