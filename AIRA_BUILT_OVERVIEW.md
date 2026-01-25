@@ -2,43 +2,70 @@
 #                    AIRA PLATFORM - OVERVIEW OF WHAT'S BUILT
 # ═══════════════════════════════════════════════════════════════════════════════
 
-## 📊 ENTITIES CREATED (15 Total)
+## 📊 ENTITIES CREATED (24 Total)
 
-### Core Business Entities
+### Core Transaction Entities (6)
 
 | Entity | File | Purpose |
 |--------|------|---------|
 | **Transaction** | `transaction.workspace-entity.ts` | Real estate deals (buyer, seller, lease) |
-| **Property** | `property.workspace-entity.ts` | Property listings |
-| **Mortgage** | `mortgage.workspace-entity.ts` | Loan applications & processing |
-| **Document** | `document.workspace-entity.ts` | Document management with versioning |
-| **Team** | `team.workspace-entity.ts` | Team structure & membership |
+| **TransactionFolder** | `transaction-folder.workspace-entity.ts` | Folder structure with tabs (Overview, Files, Timeline, Checklist, Compliance, Finance) |
+| **TransactionDocument** | `transaction-document.workspace-entity.ts` | Documents with e-signature tracking |
+| **TimelineDate** | `timeline-date.workspace-entity.ts` | Key dates auto-populated from Texas standards |
+| **Checklist** | `checklist.workspace-entity.ts` | Checklist templates (buyer, seller, etc.) |
+| **ChecklistItem** | `checklist-item.workspace-entity.ts` | Individual checklist items with signatures |
 
-### Workflow & Process Entities
+### Marketing & Communications (4)
 
 | Entity | File | Purpose |
 |--------|------|---------|
-| **Checklist** | `checklist.workspace-entity.ts` | Checklist templates (buyer, seller, etc.) |
-| **ChecklistItem** | `checklist-item.workspace-entity.ts` | Individual checklist items |
-| **Compliance** | `compliance.workspace-entity.ts` | Compliance tracking & audits |
-| **PipelineStage** | `pipeline-stage.workspace-entity.ts` | Customizable pipeline stages |
+| **EmailTemplate** | `email-template.workspace-entity.ts` | Email templates with blocks |
+| **SmsTemplate** | `sms-template.workspace-entity.ts` | SMS/Text message templates |
+| **Newsletter** | `newsletter.workspace-entity.ts` | Newsletter builder with 25+ block types |
+| **EmailBlock** | `email-block.workspace-entity.ts` | Reusable HTML email blocks |
 
-### Automation & Communication Entities
+### Property & Social Media (2)
+
+| Entity | File | Purpose |
+|--------|------|---------|
+| **PropertyPost** | `property-post.workspace-entity.ts` | AI-generated social posts (Just Listed, Just Sold, Open House) |
+| **Campaign** | `campaign.workspace-entity.ts` | Marketing campaigns with analytics |
+
+### Automation & Notifications (3)
 
 | Entity | File | Purpose |
 |--------|------|---------|
 | **Automation** | `automation.workspace-entity.ts` | Triggers, conditions, actions |
-| **Notification** | `notification.workspace-entity.ts` | In-app, email, SMS notifications |
-| **EmailTemplate** | `email-template.workspace-entity.ts` | Email templates with blocks |
-| **SmsTemplate** | `sms-template.workspace-entity.ts` | SMS/Text message templates |
-| **Campaign** | `campaign.workspace-entity.ts` | Marketing campaigns |
+| **Notification** | `notification.workspace-entity.ts` | In-app, email, SMS, push notifications |
+| **Compliance** | `compliance.workspace-entity.ts` | Compliance tracking & audits |
 
-### Configuration Entities
+### Team & Collaboration (4)
 
 | Entity | File | Purpose |
 |--------|------|---------|
-| **LeadSource** | `lead-source.workspace-entity.ts` | Track lead sources & ROI |
+| **Team** | `team.workspace-entity.ts` | Team structure & membership |
 | **CustomRole** | `custom-role.workspace-entity.ts` | Role-based permissions |
+| **Collaborator** | `collaborator.workspace-entity.ts` | Invite system for sharing folders |
+| **Resource** | `resource.workspace-entity.ts` | Shareable files and templates |
+
+### Mortgage & Finance (1)
+
+| Entity | File | Purpose |
+|--------|------|---------|
+| **Mortgage** | `mortgage.workspace-entity.ts` | Loan applications & processing |
+
+### Integrations (2)
+
+| Entity | File | Purpose |
+|--------|------|---------|
+| **DriveSync** | `drive-sync.workspace-entity.ts` | Google Drive integration with folder templates |
+| **LeadSource** | `lead-source.workspace-entity.ts` | Track lead sources & ROI |
+
+### Pipeline (1)
+
+| Entity | File | Purpose |
+|--------|------|---------|
+| **PipelineStage** | `pipeline-stage.workspace-entity.ts` | Customizable pipeline stages |
 
 ---
 
