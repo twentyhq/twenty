@@ -103,9 +103,11 @@ password
 {{- end -}}
 {{- end -}}
 
-{{/* Compose Server URL from ingress, else service */}}
+{{/* Compose Server URL from override, ingress, or service */}}
 {{- define "twenty.serverUrl" -}}
-{{- if and .Values.server.ingress.enabled (gt (len .Values.server.ingress.hosts) 0) -}}
+{{- if .Values.server.env.SERVER_URL -}}
+{{- .Values.server.env.SERVER_URL -}}
+{{- else if and .Values.server.ingress.enabled (gt (len .Values.server.ingress.hosts) 0) -}}
 {{- $host := (index .Values.server.ingress.hosts 0).host -}}
 {{- $tls := gt (len .Values.server.ingress.tls) 0 -}}
 {{- $scheme := ternary "https" "http" $tls -}}
