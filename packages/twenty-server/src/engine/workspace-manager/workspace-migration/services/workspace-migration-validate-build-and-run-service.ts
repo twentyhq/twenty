@@ -48,6 +48,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     twentyConfigService: TwentyConfigService,
   ) {
     const logLevels = twentyConfigService.get('LOG_LEVELS');
+
     this.isDebugEnabled = logLevels.includes('debug');
   }
 
