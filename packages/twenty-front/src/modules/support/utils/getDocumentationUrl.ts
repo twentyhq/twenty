@@ -1,5 +1,6 @@
 import {
   DOCUMENTATION_BASE_URL,
+  DOCUMENTATION_DEFAULT_LANGUAGE,
   DOCUMENTATION_DEFAULT_PATH,
   DOCUMENTATION_SUPPORTED_LANGUAGES,
   type DocumentationPath,
@@ -18,6 +19,11 @@ export const getDocumentationUrl = ({
 
   // Extract language code from locale (e.g., 'fr' from 'fr-FR')
   const langCode = locale.split('-')[0].toLowerCase();
+
+  // English content is served at root path (no /l/en/ prefix)
+  if (langCode === DOCUMENTATION_DEFAULT_LANGUAGE) {
+    return `${DOCUMENTATION_BASE_URL}${path}`;
+  }
 
   const isSupported = DOCUMENTATION_SUPPORTED_LANGUAGES.includes(
     langCode as (typeof DOCUMENTATION_SUPPORTED_LANGUAGES)[number],
