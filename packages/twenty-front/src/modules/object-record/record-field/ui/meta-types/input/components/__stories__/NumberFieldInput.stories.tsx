@@ -13,7 +13,7 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useNumberField } from '@/object-record/record-field/ui/meta-types/hooks/useNumberField';
-import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { getFieldInputEventContextProviderWithMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithMocks';
 import { NumberFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/NumberFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
@@ -22,13 +22,13 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 
 const {
-  FieldInputEventContextProviderWithJestMocks,
+  FieldInputEventContextProviderWithMocks,
   handleEnterMocked,
   handleEscapeMocked,
   handleClickoutsideMocked,
   handleTabMocked,
   handleShiftTabMocked,
-} = getFieldInputEventContextProviderWithJestMocks();
+} = getFieldInputEventContextProviderWithMocks();
 
 const NumberFieldValueSetterEffect = ({ value }: { value: number }) => {
   const { setFieldValue } = useNumberField();
@@ -103,11 +103,11 @@ const NumberFieldInputWithContext = ({
         <RecordFieldsScopeContextProvider
           value={{ scopeInstanceId: RECORD_TABLE_CELL_INPUT_ID_PREFIX }}
         >
-          <FieldInputEventContextProviderWithJestMocks>
+          <FieldInputEventContextProviderWithMocks>
             {isReady && <StorybookFieldInputDropdownFocusIdSetterEffect />}
             <NumberFieldValueSetterEffect value={value} />
             <NumberFieldInput />
-          </FieldInputEventContextProviderWithJestMocks>
+          </FieldInputEventContextProviderWithMocks>
         </RecordFieldsScopeContextProvider>
       </FieldContext.Provider>
       {isReady && <div data-testid="is-ready-marker" />}

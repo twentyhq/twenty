@@ -4,7 +4,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useEmailsField } from '@/object-record/record-field/ui/meta-types/hooks/useEmailsField';
-import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { getFieldInputEventContextProviderWithMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithMocks';
 import { EmailsFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -17,8 +17,8 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const updateRecord = fn();
 
-const { FieldInputEventContextProviderWithJestMocks } =
-  getFieldInputEventContextProviderWithJestMocks();
+const { FieldInputEventContextProviderWithMocks } =
+  getFieldInputEventContextProviderWithMocks();
 
 const EmailValueSetterEffect = ({ value }: { value: FieldEmailsValue }) => {
   const { setFieldValue, setDraftValue } = useEmailsField();
@@ -88,10 +88,10 @@ const EmailInputWithContext = ({
           useUpdateRecord: () => [updateRecord, { loading: false }],
         }}
       >
-        <FieldInputEventContextProviderWithJestMocks>
+        <FieldInputEventContextProviderWithMocks>
           <EmailValueSetterEffect value={value} />
           <EmailFieldValueGater />
-        </FieldInputEventContextProviderWithJestMocks>
+        </FieldInputEventContextProviderWithMocks>
       </FieldContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>
   );

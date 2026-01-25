@@ -1,5 +1,5 @@
-import { vi } from 'vitest';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
+import { vi } from 'vitest';
 
 global.fetch = vi.fn(() =>
   Promise.resolve({
@@ -11,7 +11,7 @@ global.fetch = vi.fn(() =>
 window.URL.createObjectURL = vi.fn(() => 'mock-url');
 window.URL.revokeObjectURL = vi.fn();
 
-// FIXME: jest is behaving weirdly here, it's not finding the element
+// FIXME: Test environment is behaving weirdly here, it's not finding the element
 // Also the document's innerHTML is empty
 // `global.fetch` and `window.fetch` are also undefined
 describe.skip('downloadFile', () => {

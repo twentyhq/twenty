@@ -2,9 +2,9 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { type PropsWithChildren } from 'react';
 import { fn } from 'storybook/test';
 
-type FieldInputEventContextProviderWithJestMocksProps = PropsWithChildren;
+type FieldInputEventContextProviderWithMocksProps = PropsWithChildren;
 
-export const getFieldInputEventContextProviderWithJestMocks = () => {
+export const getFieldInputEventContextProviderWithMocks = () => {
   const handleSubmitMocked = fn();
   const handleCancelMocked = fn();
   const handleClickoutsideMocked = fn();
@@ -13,9 +13,9 @@ export const getFieldInputEventContextProviderWithJestMocks = () => {
   const handleShiftTabMocked = fn();
   const handleTabMocked = fn();
 
-  const FieldInputEventContextProviderWithJestMocks = ({
+  const FieldInputEventContextProviderWithMocks = ({
     children,
-  }: FieldInputEventContextProviderWithJestMocksProps) => {
+  }: FieldInputEventContextProviderWithMocksProps) => {
     return (
       <FieldInputEventContext.Provider
         value={{
@@ -34,7 +34,7 @@ export const getFieldInputEventContextProviderWithJestMocks = () => {
   };
 
   return {
-    FieldInputEventContextProviderWithJestMocks,
+    FieldInputEventContextProviderWithMocks,
     handleSubmitMocked,
     handleCancelMocked,
     handleClickoutsideMocked,

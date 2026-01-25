@@ -7,14 +7,14 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { getFieldInputEventContextProviderWithMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithMocks';
 import { BooleanFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/BooleanFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 
-const { FieldInputEventContextProviderWithJestMocks, handleSubmitMocked } =
-  getFieldInputEventContextProviderWithJestMocks();
+const { FieldInputEventContextProviderWithMocks, handleSubmitMocked } =
+  getFieldInputEventContextProviderWithMocks();
 
 const BooleanFieldValueSetterEffect = ({
   value,
@@ -69,13 +69,13 @@ const BooleanFieldInputWithContext = ({
           isRecordFieldReadOnly: false,
         }}
       >
-        <FieldInputEventContextProviderWithJestMocks>
+        <FieldInputEventContextProviderWithMocks>
           <BooleanFieldValueSetterEffect
             value={value}
             recordId={recordId ?? ''}
           />
           <BooleanFieldInput testId="boolean-field-input" />
-        </FieldInputEventContextProviderWithJestMocks>
+        </FieldInputEventContextProviderWithMocks>
       </FieldContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>
   );

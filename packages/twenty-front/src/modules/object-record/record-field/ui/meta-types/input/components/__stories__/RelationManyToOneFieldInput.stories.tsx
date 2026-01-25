@@ -27,7 +27,7 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput';
-import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
+import { getFieldInputEventContextProviderWithMocks } from './utils/getFieldInputEventContextProviderWithMocks';
 
 const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -53,10 +53,10 @@ const RelationWorkspaceSetterEffect = () => {
 };
 
 const {
-  FieldInputEventContextProviderWithJestMocks,
+  FieldInputEventContextProviderWithMocks,
   handleSubmitMocked,
   handleCancelMocked,
-} = getFieldInputEventContextProviderWithJestMocks();
+} = getFieldInputEventContextProviderWithMocks();
 
 type RelationManyToOneFieldInputWithContextProps = {
   value: number;
@@ -107,11 +107,11 @@ const RelationManyToOneFieldInputWithContext = ({
             instanceId: 'relation-to-one-field-input-123-Relation',
           }}
         >
-          <FieldInputEventContextProviderWithJestMocks>
+          <FieldInputEventContextProviderWithMocks>
             <RelationWorkspaceSetterEffect />
 
             <RelationManyToOneFieldInput />
-          </FieldInputEventContextProviderWithJestMocks>
+          </FieldInputEventContextProviderWithMocks>
         </RecordFieldComponentInstanceContext.Provider>
       </FieldContext.Provider>
       <div data-testid="data-field-input-click-outside-div" />

@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 type MockResponseConfig = {
   body?: string;
   status?: number;
@@ -12,30 +14,36 @@ type MockResponseFactory = (
 
 type MockRejectFactory = () => unknown | Promise<unknown>;
 
-type MockFn = ((...args: unknown[]) => unknown) & {
-  mockImplementation: (impl: (...args: any[]) => any) => MockFn;
-  mockReset: () => void;
-};
-
-type Runtime = {
-  fn?: () => MockFn;
-  stubGlobal?: (key: string, value: unknown) => void;
-};
-
-const runtime = ((globalThis as unknown as { vi?: Runtime; jest?: Runtime })
-  .vi ?? (globalThis as unknown as { jest?: Runtime }).jest) as
-  | Runtime
-  | undefined;
-
-if (!runtime?.fn) {
+if (typeof vi === 'undefined' || typeof vi.fn !== 'function') {
   throw new Error('fetchMock requires a test runtime with fn() support.');
 }
 
-const fetchMock = runtime.fn() as MockFn & {
-  mockResponse: (factory: MockResponseFactory) => typeof fetchMock;
-  mockReject: (factory: MockRejectFactory) => typeof fetchMock;
-  mockReset: () => void;
+type FetchFn = (
+  input: RequestInfo | URL,
+  init?: RequestInit,
+) => Promise<Response>;
+
+type FetchMock = Mock<FetchFn> & {
+  mockResponse: (factory: MockResponseFactory) => FetchMock;
+  mockReject: (factory: MockRejectFactory) => FetchMock;
 };
+
+const fetchMock: FetchMock = Object.assign(vi.fn<FetchFn>(), {
+  mockResponse: (factory: MockResponseFactory) => {
+    fetchMock.mockImplementation(async (input, init) => {
+      const payload = await factory(input, init);
+      return buildResponse(payload);
+    });
+    return fetchMock;
+  },
+  mockReject: (factory: MockRejectFactory) => {
+    fetchMock.mockImplementation(async () => {
+      const error = await factory();
+      return Promise.reject(error);
+    });
+    return fetchMock;
+  },
+});
 
 const buildResponse = (payload: MockResponseConfig | string) => {
   if (typeof payload === 'string') {
@@ -49,33 +57,11 @@ const buildResponse = (payload: MockResponseConfig | string) => {
   });
 };
 
-fetchMock.mockResponse = (factory: MockResponseFactory) => {
-  fetchMock.mockImplementation(
-    async (input?: RequestInfo | URL, init?: RequestInit) => {
-      const payload = await factory(input, init);
-      return buildResponse(payload);
-    },
-  );
-  return fetchMock;
-};
-
-fetchMock.mockReject = (factory: MockRejectFactory) => {
-  fetchMock.mockImplementation(async () => {
-    const error = await factory();
-    return Promise.reject(error);
-  });
-  return fetchMock;
-};
-
-fetchMock.mockReset = () => {
-  fetchMock.mockImplementation(() => undefined);
-};
-
 export const enableFetchMocks = () => {
-  if (typeof runtime?.stubGlobal === 'function') {
-    runtime.stubGlobal('fetch', fetchMock);
+  if (typeof vi.stubGlobal === 'function') {
+    vi.stubGlobal('fetch', fetchMock);
   } else {
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
   }
 
   return fetchMock;

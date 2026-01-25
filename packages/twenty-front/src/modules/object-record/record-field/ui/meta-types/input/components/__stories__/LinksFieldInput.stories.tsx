@@ -4,7 +4,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useLinksField } from '@/object-record/record-field/ui/meta-types/hooks/useLinksField';
-import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { getFieldInputEventContextProviderWithMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithMocks';
 import { LinksFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
@@ -16,10 +16,10 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 const updateRecord = fn();
 
 const {
-  FieldInputEventContextProviderWithJestMocks,
+  FieldInputEventContextProviderWithMocks,
   handleEscapeMocked,
   handleClickoutsideMocked,
-} = getFieldInputEventContextProviderWithJestMocks();
+} = getFieldInputEventContextProviderWithMocks();
 
 const LinksValueSetterEffect = ({
   value,
@@ -102,10 +102,10 @@ const LinksInputWithContext = ({
             useUpdateRecord: () => [updateRecord, { loading: false }],
           }}
         >
-          <FieldInputEventContextProviderWithJestMocks>
+          <FieldInputEventContextProviderWithMocks>
             <LinksValueSetterEffect value={value} />
             <LinksFieldValueGater />
-          </FieldInputEventContextProviderWithJestMocks>
+          </FieldInputEventContextProviderWithMocks>
         </FieldContext.Provider>
       </RecordFieldComponentInstanceContext.Provider>
       <div data-testid="links-field-input-click-outside-div" />

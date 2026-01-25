@@ -8,7 +8,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useDateTimeField } from '@/object-record/record-field/ui/meta-types/hooks/useDateTimeField';
-import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { getFieldInputEventContextProviderWithMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithMocks';
 import { DateTimeFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/DateTimeFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
@@ -17,11 +17,11 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 
 const {
-  FieldInputEventContextProviderWithJestMocks,
+  FieldInputEventContextProviderWithMocks,
   handleEscapeMocked,
   handleClickoutsideMocked,
   handleEnterMocked,
-} = getFieldInputEventContextProviderWithJestMocks();
+} = getFieldInputEventContextProviderWithMocks();
 
 const formattedDate = new Date(2022, 0, 1, 2, 0, 0);
 
@@ -94,11 +94,11 @@ const DateFieldInputWithContext = ({
         <RecordFieldsScopeContextProvider
           value={{ scopeInstanceId: instanceId }}
         >
-          <FieldInputEventContextProviderWithJestMocks>
+          <FieldInputEventContextProviderWithMocks>
             <StorybookFieldInputDropdownFocusIdSetterEffect />
             <DateFieldValueSetterEffect value={value} />
             <DateFieldValueGater />
-          </FieldInputEventContextProviderWithJestMocks>
+          </FieldInputEventContextProviderWithMocks>
         </RecordFieldsScopeContextProvider>
       </FieldContext.Provider>
       <div data-testid="data-field-input-click-outside-div"></div>

@@ -4,7 +4,7 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { usePhonesField } from '@/object-record/record-field/ui/meta-types/hooks/usePhonesField';
-import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { getFieldInputEventContextProviderWithMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithMocks';
 import { PhonesFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -14,8 +14,8 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-const { FieldInputEventContextProviderWithJestMocks } =
-  getFieldInputEventContextProviderWithJestMocks();
+const { FieldInputEventContextProviderWithMocks } =
+  getFieldInputEventContextProviderWithMocks();
 
 const PhoneValueSetterEffect = ({ value }: { value: FieldPhonesValue }) => {
   const { setFieldValue, setDraftValue } = usePhonesField();
@@ -85,10 +85,10 @@ const PhoneInputWithContext = ({
           useUpdateRecord: () => [() => {}, { loading: false }],
         }}
       >
-        <FieldInputEventContextProviderWithJestMocks>
+        <FieldInputEventContextProviderWithMocks>
           <PhoneValueSetterEffect value={value} />
           <PhoneFieldValueGater />
-        </FieldInputEventContextProviderWithJestMocks>
+        </FieldInputEventContextProviderWithMocks>
       </FieldContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>
   );

@@ -82,8 +82,7 @@
         "fix": {}
       }
     },
-    "test": {},
-    "test:vitest": {
+    "test": {
       "executor": "@nx/vitest:test",
       "outputs": [
         "{projectRoot}/coverage"

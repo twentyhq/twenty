@@ -10,7 +10,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRatingField } from '@/object-record/record-field/ui/meta-types/hooks/useRatingField';
-import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { getFieldInputEventContextProviderWithMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithMocks';
 import { RatingFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RatingFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
@@ -18,8 +18,8 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType, type FieldRatingValue } from 'twenty-shared/types';
 
-const { FieldInputEventContextProviderWithJestMocks, handleSubmitMocked } =
-  getFieldInputEventContextProviderWithJestMocks();
+const { FieldInputEventContextProviderWithMocks, handleSubmitMocked } =
+  getFieldInputEventContextProviderWithMocks();
 
 const RatingFieldValueSetterEffect = ({
   value,
@@ -86,9 +86,9 @@ const RatingFieldInputWithContext = ({
         }}
       >
         <RatingFieldValueSetterEffect value={value} />
-        <FieldInputEventContextProviderWithJestMocks>
+        <FieldInputEventContextProviderWithMocks>
           <RatingFieldInput />
-        </FieldInputEventContextProviderWithJestMocks>
+        </FieldInputEventContextProviderWithMocks>
       </FieldContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>
   );

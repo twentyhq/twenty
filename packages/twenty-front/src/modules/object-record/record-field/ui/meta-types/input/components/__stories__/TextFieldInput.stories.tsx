@@ -5,7 +5,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useTextField } from '@/object-record/record-field/ui/meta-types/hooks/useTextField';
-import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { getFieldInputEventContextProviderWithMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithMocks';
 import { TextFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/TextFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
@@ -30,13 +30,13 @@ const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
 };
 
 const {
-  FieldInputEventContextProviderWithJestMocks,
+  FieldInputEventContextProviderWithMocks,
   handleEscapeMocked,
   handleClickoutsideMocked,
   handleEnterMocked,
   handleShiftTabMocked,
   handleTabMocked,
-} = getFieldInputEventContextProviderWithJestMocks();
+} = getFieldInputEventContextProviderWithMocks();
 
 type TextFieldInputWithContextProps = {
   value: string;
@@ -94,10 +94,10 @@ const TextFieldInputWithContext = ({
           isRecordFieldReadOnly: false,
         }}
       >
-        <FieldInputEventContextProviderWithJestMocks>
+        <FieldInputEventContextProviderWithMocks>
           <TextFieldValueSetterEffect value={value} />
           <TextFieldInput />
-        </FieldInputEventContextProviderWithJestMocks>
+        </FieldInputEventContextProviderWithMocks>
       </FieldContext.Provider>
       {isReady && <div data-testid="is-ready-marker" />}
       <div data-testid="data-field-input-click-outside-div" />

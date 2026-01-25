@@ -16,15 +16,15 @@ import {
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
+import { getFieldInputEventContextProviderWithMocks } from './utils/getFieldInputEventContextProviderWithMocks';
 
 const targetableObjectId = 'test-id';
 
 const {
-  FieldInputEventContextProviderWithJestMocks,
+  FieldInputEventContextProviderWithMocks,
   handleEscapeMocked,
   handleClickoutsideMocked,
-} = getFieldInputEventContextProviderWithJestMocks();
+} = getFieldInputEventContextProviderWithMocks();
 
 const clearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks !== false) {
@@ -76,9 +76,9 @@ const RichTextFieldInputWithContext = () => {
           isRecordFieldReadOnly: false,
         }}
       >
-        <FieldInputEventContextProviderWithJestMocks>
+        <FieldInputEventContextProviderWithMocks>
           <RichTextFieldInput />
-        </FieldInputEventContextProviderWithJestMocks>
+        </FieldInputEventContextProviderWithMocks>
       </FieldContext.Provider>
       <div data-testid="click-outside-element" />
     </RecordFieldComponentInstanceContext.Provider>
