@@ -162,7 +162,7 @@ export const SyncEmails = () => {
         {isSSOEnabled && isGoogleProviderEnabled && (
           <MainButton
             title={t`Continue`}
-            onClick={() => ConnectedAccountProvider.GOOGLE}
+            onClick={() => handleButtonClick(ConnectedAccountProvider.GOOGLE)}
             width={144}
           />
         )}
