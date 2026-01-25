@@ -1,5 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
@@ -7,15 +8,17 @@ import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPa
 import { captchaState } from '@/client-config/states/captchaState';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 
-jest.mock('@/captcha/utils/isCaptchaRequiredForPath');
+vi.mock('@/captcha/utils/isCaptchaRequiredForPath', () => ({
+  isCaptchaRequiredForPath: vi.fn(),
+}));
 
 describe('useRequestFreshCaptchaToken', () => {
-  const mockGrecaptchaExecute = jest.fn();
-  const mockTurnstileRender = jest.fn();
-  const mockTurnstileExecute = jest.fn();
+  const mockGrecaptchaExecute = vi.fn();
+  const mockTurnstileRender = vi.fn();
+  const mockTurnstileExecute = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     window.grecaptcha = {
       execute: mockGrecaptchaExecute,
@@ -26,7 +29,7 @@ describe('useRequestFreshCaptchaToken', () => {
       execute: mockTurnstileExecute,
     };
 
-    (isCaptchaRequiredForPath as jest.Mock).mockReturnValue(true);
+    vi.mocked(isCaptchaRequiredForPath).mockReturnValue(true);
 
     mockGrecaptchaExecute.mockImplementation((_siteKey, _options) => {
       return Promise.resolve('google-recaptcha-token');
@@ -44,7 +47,7 @@ describe('useRequestFreshCaptchaToken', () => {
   });
 
   it('should not request a token if captcha is not required for the current path', async () => {
-    (isCaptchaRequiredForPath as jest.Mock).mockReturnValue(false);
+    vi.mocked(isCaptchaRequiredForPath).mockReturnValue(false);
 
     const { result } = renderHook(() => useRequestFreshCaptchaToken(), {
       wrapper: RecoilRoot,

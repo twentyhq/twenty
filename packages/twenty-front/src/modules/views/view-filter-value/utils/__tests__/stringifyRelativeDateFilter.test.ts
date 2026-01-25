@@ -2,17 +2,15 @@ import { detectCalendarStartDay } from '@/localization/utils/detection/detectCal
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import { type RelativeDateFilter } from 'twenty-shared/utils';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { vi } from 'vitest';
 
-jest.mock('@/localization/utils/detection/detectCalendarStartDay');
+vi.mock('@/localization/utils/detection/detectCalendarStartDay');
 
 describe('stringifyRelativeDateFilter', () => {
-  const mockDetectCalendarStartDay =
-    detectCalendarStartDay as jest.MockedFunction<
-      typeof detectCalendarStartDay
-    >;
+  const mockDetectCalendarStartDay = vi.mocked(detectCalendarStartDay);
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockDetectCalendarStartDay.mockReturnValue(FirstDayOfTheWeek.MONDAY);
   });
 

@@ -11,6 +11,7 @@ import {
 } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
+import { vi } from 'vitest';
 
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -29,7 +30,7 @@ const mockFilterValueDependencies: RecordFilterValueDependencies = {
   timeZone: 'Europe/Paris',
 };
 
-jest.useFakeTimers().setSystemTime(new Date('2020-01-01'));
+vi.useFakeTimers().setSystemTime(new Date('2020-01-01'));
 
 describe('computeViewRecordGqlOperationFilter', () => {
   it('should work as expected for single filter', () => {

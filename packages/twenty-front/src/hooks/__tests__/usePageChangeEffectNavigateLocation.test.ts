@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { vi } from 'vitest';
 
 import { OnboardingStatus } from '~/generated/graphql';
 
@@ -14,24 +15,24 @@ import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffect
 import { UNTESTED_APP_PATHS } from '~/testing/constants/UntestedAppPaths';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
-jest.mock('@/onboarding/hooks/useOnboardingStatus');
+vi.mock('@/onboarding/hooks/useOnboardingStatus');
 const setupMockOnboardingStatus = (
   onboardingStatus: OnboardingStatus | undefined,
 ) => {
-  jest.mocked(useOnboardingStatus).mockReturnValueOnce(onboardingStatus);
+  vi.mocked(useOnboardingStatus).mockReturnValueOnce(onboardingStatus);
 };
 
-jest.mock('@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo');
+vi.mock('@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo');
 const setupMockIsWorkspaceActivationStatusEqualsTo = (
   isWorkspaceSuspended: boolean,
 ) => {
-  jest
-    .mocked(useIsWorkspaceActivationStatusEqualsTo)
-    .mockReturnValueOnce(isWorkspaceSuspended);
+  vi.mocked(useIsWorkspaceActivationStatusEqualsTo).mockReturnValueOnce(
+    isWorkspaceSuspended,
+  );
 };
 
-jest.mock('~/utils/isMatchingLocation');
-const mockIsMatchingLocation = jest.mocked(isMatchingLocation);
+vi.mock('~/utils/isMatchingLocation');
+const mockIsMatchingLocation = vi.mocked(isMatchingLocation);
 
 const setupMockIsMatchingLocation = (pathname: string) => {
   mockIsMatchingLocation.mockImplementation(
@@ -39,38 +40,37 @@ const setupMockIsMatchingLocation = (pathname: string) => {
   );
 };
 
-jest.mock('@/auth/hooks/useIsLogged');
+vi.mock('@/auth/hooks/useIsLogged');
 const setupMockIsLogged = (isLogged: boolean) => {
-  jest.mocked(useIsLogged).mockReturnValueOnce(isLogged);
+  vi.mocked(useIsLogged).mockReturnValueOnce(isLogged);
 };
 
 const defaultHomePagePath = '/objects/companies';
 
-jest.mock('@/navigation/hooks/useDefaultHomePagePath');
-jest.mocked(useDefaultHomePagePath).mockReturnValue({
+vi.mock('@/navigation/hooks/useDefaultHomePagePath');
+vi.mocked(useDefaultHomePagePath).mockReturnValue({
   defaultHomePagePath,
 });
 
-jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace');
-jest.mocked(useIsCurrentLocationOnAWorkspace).mockReturnValue({
+vi.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace');
+vi.mocked(useIsCurrentLocationOnAWorkspace).mockReturnValue({
   isOnAWorkspace: true,
 });
 
-jest.mock('react-router-dom');
+vi.mock('react-router-dom');
 const setupMockUseParams = (objectNamePlural?: string) => {
-  jest
-    .mocked(useParams)
-    .mockReturnValueOnce({ objectNamePlural: objectNamePlural ?? '' });
+  vi.mocked(useParams).mockReturnValueOnce({
+    objectNamePlural: objectNamePlural ?? '',
+  });
 };
 
-jest.mock('recoil');
+vi.mock('recoil');
 const setupMockRecoil = (
   objectNamePlural?: string,
   verifyEmailRedirectPath?: string,
   calendarBookingPageId?: string | null,
 ) => {
-  jest
-    .mocked(useRecoilValue)
+  vi.mocked(useRecoilValue)
     .mockReturnValueOnce(calendarBookingPageId ?? 'mock-calendar-id')
     .mockReturnValueOnce([{ namePlural: objectNamePlural ?? '' }])
     .mockReturnValueOnce(verifyEmailRedirectPath);

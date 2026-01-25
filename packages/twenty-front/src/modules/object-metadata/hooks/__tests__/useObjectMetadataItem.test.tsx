@@ -1,11 +1,14 @@
 import { renderHook } from '@testing-library/react';
+import { type ReactNode } from 'react';
+import { vi } from 'vitest';
 
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getHookErrorBoundaryWrapper } from '~/testing/test-helpers/getHookErrorBoundaryWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const MetadataWrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
@@ -18,7 +21,7 @@ describe('useObjectMetadataItem', () => {
     const { result } = renderHook(
       () => useObjectMetadataItem({ objectNameSingular: 'opportunity' }),
       {
-        wrapper: Wrapper,
+        wrapper: MetadataWrapper,
       },
     );
 
@@ -28,13 +31,23 @@ describe('useObjectMetadataItem', () => {
   });
 
   it('should throw an error when invalid object name singular is provided', async () => {
-    expect(() =>
-      renderHook(
-        () => useObjectMetadataItem({ objectNameSingular: 'invalid-object' }),
-        {
-          wrapper: Wrapper,
-        },
-      ),
-    ).toThrow(ObjectMetadataItemNotFoundError);
+    const onError = vi.fn();
+    const ErrorBoundaryWrapper = getHookErrorBoundaryWrapper(onError);
+    const Wrapper = ({ children }: { children: ReactNode }) => (
+      <ErrorBoundaryWrapper>
+        <MetadataWrapper>{children}</MetadataWrapper>
+      </ErrorBoundaryWrapper>
+    );
+
+    renderHook(
+      () => useObjectMetadataItem({ objectNameSingular: 'invalid-object' }),
+      {
+        wrapper: Wrapper,
+      },
+    );
+
+    expect(onError).toHaveBeenCalledWith(
+      expect.any(ObjectMetadataItemNotFoundError),
+    );
   });
 });

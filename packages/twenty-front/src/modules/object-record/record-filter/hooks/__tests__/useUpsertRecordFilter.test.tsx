@@ -6,10 +6,10 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 

@@ -12,10 +12,11 @@ import {
   type RecordUpdateHookParams,
 } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/ui/hooks/useToggleEditOnlyInput';
-import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generateEmptyRecordNode } from '~/testing/test-helpers/generateEmptyRecordNode';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { vi } from 'vitest';
 
 const recordId = 'recordId';
 
@@ -36,10 +37,10 @@ const mocks: MockedResponse[] = [
         input: { idealCustomerProfile: true },
       },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         updateCompany: {
-          ...generateEmptyJestRecordNode({
+          ...generateEmptyRecordNode({
             objectNameSingular: CoreObjectNameSingular.Company,
             input: { id: recordId },
             withDepthOneRelation: true,
@@ -65,13 +66,13 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
     return [updateEntity, { loading: false }];
   };
 
-  const JestMetadataAndApolloMocksWrapper =
-    getJestMetadataAndApolloMocksWrapper({
+  const TestMetadataAndApolloMocksWrapper =
+    getTestMetadataAndApolloMocksWrapper({
       apolloMocks: mocks,
     });
 
   return (
-    <JestMetadataAndApolloMocksWrapper>
+    <TestMetadataAndApolloMocksWrapper>
       <FieldContext.Provider
         value={{
           fieldDefinition: booleanFieldDefinition,
@@ -83,7 +84,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
       >
         {children}
       </FieldContext.Provider>
-    </JestMetadataAndApolloMocksWrapper>
+    </TestMetadataAndApolloMocksWrapper>
   );
 };
 

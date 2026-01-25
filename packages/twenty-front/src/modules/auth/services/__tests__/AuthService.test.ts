@@ -1,7 +1,7 @@
-import { enableFetchMocks } from 'jest-fetch-mock';
 import { act } from 'react';
 
 import { renewToken } from '@/auth/services/AuthService';
+import fetchMock, { enableFetchMocks } from '~/testing/test-helpers/fetchMock';
 
 enableFetchMocks();
 

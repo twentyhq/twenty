@@ -1,8 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import {
   findManyViewsQuery,
   query,
@@ -10,7 +11,7 @@ import {
   variables,
 } from '@/object-metadata/hooks/__mocks__/useCreateOneObjectMetadataItem';
 
-import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util';
+import { expectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/expect-metadata-request-status.util';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { mockedUserData } from '~/testing/mock-data/users';
 import {
@@ -24,7 +25,7 @@ const mocks = [
       query,
       variables,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         createOneObject: responseData,
       },
@@ -35,7 +36,7 @@ const mocks = [
       query: GET_CURRENT_USER,
       variables: {},
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         currentUser: mockedUserData,
       },
@@ -46,7 +47,7 @@ const mocks = [
       query: findManyObjectMetadataItemsQuery,
       variables: {},
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: findManyObjectMetadataItemsResponseData,
     })),
   },
@@ -55,7 +56,7 @@ const mocks = [
       query: findManyViewsQuery,
       variables: {},
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         views: {
           __typename: 'ViewConnection',
@@ -73,7 +74,7 @@ const mocks = [
   },
 ];
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 
@@ -91,7 +92,7 @@ describe('useCreateOneObjectMetadataItem', () => {
         namePlural: 'viewFilters',
         nameSingular: 'viewFilter',
       });
-      jestExpectSuccessfulMetadataRequestResult(res);
+      expectSuccessfulMetadataRequestResult(res);
       expect(res.response).toEqual({ data: { createOneObject: responseData } });
     });
   });

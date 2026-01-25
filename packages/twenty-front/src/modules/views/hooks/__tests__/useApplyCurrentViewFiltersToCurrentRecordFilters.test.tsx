@@ -15,7 +15,7 @@ import {
   type CoreViewFilter,
   ViewFilterOperand as CoreViewFilterOperand,
 } from '~/generated/graphql';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { getTestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksAndActionMenuWrapper';
 import {
   mockedCoreViewsData,
   mockedViewsData,
@@ -77,7 +77,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
     viewFilters: [mockCoreViewFilter],
   } satisfies CoreViewWithRelations;
 
-  const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+  const wrapper = getTestMetadataAndApolloMocksAndActionMenuWrapper({
     apolloMocks: [],
     componentInstanceId: 'instanceId',
     contextStoreCurrentObjectMetadataNameSingular:
@@ -144,7 +144,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+        wrapper: getTestMetadataAndApolloMocksAndActionMenuWrapper({
           apolloMocks: [],
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
@@ -185,7 +185,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+        wrapper: getTestMetadataAndApolloMocksAndActionMenuWrapper({
           apolloMocks: [],
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:

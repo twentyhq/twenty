@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { useRecoilValue } from 'recoil';
+import { vi } from 'vitest';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
@@ -8,11 +9,11 @@ import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spread
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 
 import gql from 'graphql-tag';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
-const mockBatchCreateManyRecords = jest.fn().mockResolvedValue([]);
+const mockBatchCreateManyRecords = vi.fn().mockResolvedValue([]);
 
-jest.mock('@/object-record/hooks/useBatchCreateManyRecords', () => ({
+vi.mock('@/object-record/hooks/useBatchCreateManyRecords', () => ({
   useBatchCreateManyRecords: () => ({
     batchCreateManyRecords: mockBatchCreateManyRecords,
   }),
@@ -20,11 +21,11 @@ jest.mock('@/object-record/hooks/useBatchCreateManyRecords', () => ({
 
 const companyId = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
 
-jest.mock('uuid', () => ({
-  v4: jest.fn(() => companyId),
+vi.mock('uuid', () => ({
+  v4: vi.fn(() => companyId),
 }));
 
-const mockResult = jest.fn(() => ({
+const mockResult = vi.fn(() => ({
   data: {
     createCompanies: [
       {
@@ -67,13 +68,13 @@ const fakeCsv = () => {
   return new File([blob], 'fakeData.csv', { type: 'text/csv' });
 };
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: companyMocks,
 });
 
 describe('useOpenObjectRecordsSpreadsheetImportDialog', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should open dialog and configure onSubmit function correctly', async () => {

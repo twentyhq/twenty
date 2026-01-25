@@ -7,11 +7,12 @@ import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogMa
 import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
 import { type DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOptions';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { vi } from 'vitest';
 
 const mockedUuid = 'mocked-uuid';
-jest.mock('uuid');
+vi.mock('uuid');
 
-(uuidv4 as jest.Mock).mockReturnValue(mockedUuid);
+vi.mocked(uuidv4).mockReturnValue(mockedUuid);
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
@@ -27,7 +28,7 @@ const renderHookConfig = {
   wrapper: Wrapper,
 };
 
-const mockOnclick = jest.fn();
+const mockOnclick = vi.fn();
 
 type DialogOptionsArray = Array<Omit<DialogOptions, 'id'>>;
 

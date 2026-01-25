@@ -5,6 +5,7 @@ import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-record/utils/getAvailableFieldsIdsForAggregationFromObjectFields';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { vi } from 'vitest';
 
 const AMOUNT_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
 const PRICE_FIELD_ID = '9d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0b';
@@ -18,10 +19,10 @@ const FIELDS_MOCKS = [
   { id: ACTIVE_FIELD_ID, type: FieldMetadataType.BOOLEAN, name: 'active' },
 ];
 
-jest.mock(
+vi.mock(
   '@/object-record/utils/getAvailableAggregationsFromObjectFields',
   () => ({
-    getAvailableAggregationsFromObjectFields: jest.fn().mockReturnValue({
+    getAvailableAggregationsFromObjectFields: vi.fn().mockReturnValue({
       active: {
         [AggregateOperations.COUNT_TRUE]: 'countTrueActive',
         [AggregateOperations.COUNT_FALSE]: 'CountFalseActive',

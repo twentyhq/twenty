@@ -3,14 +3,14 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { type PropsWithChildren } from 'react';
 
-type JestRecordIndexContextProviderWrapperProps = {
+type TestRecordIndexContextProviderWrapperProps = {
   objectMetadataItem: ObjectMetadataItem;
 } & PropsWithChildren;
 
-export const JestRecordIndexContextProviderWrapper = ({
+export const TestRecordIndexContextProviderWrapper = ({
   objectMetadataItem,
   children,
-}: JestRecordIndexContextProviderWrapperProps) => {
+}: TestRecordIndexContextProviderWrapperProps) => {
   const {
     fieldDefinitionByFieldMetadataItemId,
     fieldMetadataItemByFieldMetadataItemId,

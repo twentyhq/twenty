@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import {
@@ -9,17 +10,17 @@ import {
 } from '~/generated-metadata/graphql';
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
 
-const mockTriggerApisOAuth = jest.fn();
-const mockNavigate = jest.fn();
+const mockTriggerApisOAuth = vi.fn();
+const mockNavigate = vi.fn();
 
-jest.mock('@/settings/accounts/hooks/useTriggerApiOAuth', () => ({
-  useTriggerApisOAuth: jest.fn().mockImplementation(() => ({
+vi.mock('@/settings/accounts/hooks/useTriggerApiOAuth', () => ({
+  useTriggerApisOAuth: vi.fn().mockImplementation(() => ({
     triggerApisOAuth: mockTriggerApisOAuth,
   })),
 }));
 
-jest.mock('~/hooks/useNavigateSettings', () => ({
-  useNavigateSettings: jest.fn().mockImplementation(() => mockNavigate),
+vi.mock('~/hooks/useNavigateSettings', () => ({
+  useNavigateSettings: vi.fn().mockImplementation(() => mockNavigate),
 }));
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -28,7 +29,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useTriggerProviderReconnect', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('IMAP_SMTP_CALDAV provider', () => {

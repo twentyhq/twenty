@@ -3,12 +3,12 @@ import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
-import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
+import { TestObjectMetadataItemSetter } from '~/testing/test-helpers/TestObjectMetadataItemSetter';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
-    <JestObjectMetadataItemSetter>{children}</JestObjectMetadataItemSetter>
+    <TestObjectMetadataItemSetter>{children}</TestObjectMetadataItemSetter>
   </RecoilRoot>
 );
 

@@ -6,7 +6,7 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import {
   initialFavorites,
@@ -14,7 +14,7 @@ import {
   sortedFavorites,
 } from '@/favorites/hooks/__mocks__/useFavorites';
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 

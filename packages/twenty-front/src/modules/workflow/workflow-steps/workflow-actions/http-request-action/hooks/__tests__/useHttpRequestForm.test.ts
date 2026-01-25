@@ -1,5 +1,6 @@
 import { type WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useHttpRequestForm } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useHttpRequestForm';
 
 describe('useHttpRequestForm', () => {
@@ -23,15 +24,15 @@ describe('useHttpRequestForm', () => {
     },
   };
 
-  const mockOnActionUpdate = jest.fn();
+  const mockOnActionUpdate = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers();
+    vi.clearAllMocks();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('should initialize with correct form data', () => {
@@ -76,7 +77,7 @@ describe('useHttpRequestForm', () => {
     });
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
 
     expect(mockOnActionUpdate).toHaveBeenCalledWith(
@@ -104,7 +105,7 @@ describe('useHttpRequestForm', () => {
     });
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
 
     expect(mockOnActionUpdate).not.toHaveBeenCalled();

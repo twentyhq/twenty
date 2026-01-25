@@ -1,22 +1,23 @@
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { renderHook } from '@testing-library/react';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { vi } from 'vitest';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
-const mutationResendWorspaceInvitationCallSpy = jest.fn();
+const mutationResendWorspaceInvitationCallSpy = vi.fn();
 
-jest.mock('~/generated-metadata/graphql', () => ({
+vi.mock('~/generated-metadata/graphql', () => ({
   useResendWorkspaceInvitationMutation: () => [
     mutationResendWorspaceInvitationCallSpy,
   ],
 }));
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
 describe('useResendWorkspaceInvitation', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('Resend Workspace Invitation', async () => {

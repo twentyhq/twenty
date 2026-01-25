@@ -1,9 +1,10 @@
 import { gql } from '@apollo/client';
+import { vi } from 'vitest';
 
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromPersonId';
 
-jest.mock('@apollo/client', () => ({
-  gql: jest.fn().mockImplementation((strings) => {
+vi.mock('@apollo/client', () => ({
+  gql: vi.fn().mockImplementation((strings) => {
     return strings.map((str: string) => str.trim()).join(' ');
   }),
 }));

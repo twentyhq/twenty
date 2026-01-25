@@ -7,10 +7,10 @@ import { isMultiDragActiveComponentState } from '@/object-record/record-drag/sta
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
 describe('useEndRecordDrag', () => {
-  const Wrapper = getJestMetadataAndApolloMocksWrapper({});
+  const Wrapper = getTestMetadataAndApolloMocksWrapper({});
 
   it('should clear all board drag states', () => {
     const { result } = renderHook(

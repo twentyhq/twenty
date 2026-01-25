@@ -8,7 +8,7 @@ import { isMultiDragActiveComponentState } from '@/object-record/record-drag/sta
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
 const createDragStart = (draggableId: string, index: number): DragStart => ({
   draggableId,
@@ -21,7 +21,7 @@ const createDragStart = (draggableId: string, index: number): DragStart => ({
 });
 
 describe('useStartRecordDrag', () => {
-  const Wrapper = getJestMetadataAndApolloMocksWrapper({});
+  const Wrapper = getTestMetadataAndApolloMocksWrapper({});
 
   it('should set single drag state when dragged record is not in selection', () => {
     const { result } = renderHook(

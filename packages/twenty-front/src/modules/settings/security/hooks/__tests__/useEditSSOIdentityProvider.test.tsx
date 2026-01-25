@@ -1,28 +1,29 @@
 /* @license Enterprise */
 
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { useUpdateSSOIdentityProvider } from '@/settings/security/hooks/useUpdateSSOIdentityProvider';
 import { SsoIdentityProviderStatus } from '~/generated/graphql';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
-const mutationEditSSOIDPCallSpy = jest.fn();
+const mutationEditSSOIDPCallSpy = vi.fn();
 
-jest.mock('~/generated-metadata/graphql', () => {
-  const actual = jest.requireActual('~/generated-metadata/graphql');
+vi.mock('~/generated-metadata/graphql', async () => {
+  const actual = await vi.importActual('~/generated-metadata/graphql');
   return {
     ...actual,
     useEditSsoIdentityProviderMutation: () => [mutationEditSSOIDPCallSpy],
   };
 });
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
 describe('useEditSsoIdentityProvider', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('Deactivate SSO identity provider', async () => {

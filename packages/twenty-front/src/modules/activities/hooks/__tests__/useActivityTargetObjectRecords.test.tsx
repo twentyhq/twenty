@@ -9,7 +9,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
-import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
+import { TestObjectMetadataItemSetter } from '~/testing/test-helpers/TestObjectMetadataItemSetter';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -113,13 +113,13 @@ const task = {
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider cache={cache}>
-      <JestObjectMetadataItemSetter>
+      <TestObjectMetadataItemSetter>
         <SnackBarComponentInstanceContext.Provider
           value={{ instanceId: 'snack-bar-manager' }}
         >
           {children}
         </SnackBarComponentInstanceContext.Provider>
-      </JestObjectMetadataItemSetter>
+      </TestObjectMetadataItemSetter>
     </MockedProvider>
   </RecoilRoot>
 );

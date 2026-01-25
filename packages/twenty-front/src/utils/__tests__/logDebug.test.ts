@@ -1,10 +1,11 @@
+import { vi } from 'vitest';
 import { logDebug } from '~/utils/logDebug';
 
 describe('logDebug', () => {
-  let consoleDebugSpy: jest.SpyInstance;
+  let consoleDebugSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation(() => {});
+    consoleDebugSpy = vi.spyOn(console, 'debug').mockImplementation(() => {});
   });
 
   afterEach(() => {

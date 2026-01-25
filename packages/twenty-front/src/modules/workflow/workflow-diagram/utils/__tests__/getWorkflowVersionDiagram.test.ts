@@ -1,7 +1,8 @@
 import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
+import { vi } from 'vitest';
 
-jest.mock('uuid', () => ({
+vi.mock('uuid', () => ({
   v4: getUuidV4Mock(),
 }));
 

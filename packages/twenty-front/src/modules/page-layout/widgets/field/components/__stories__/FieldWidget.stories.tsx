@@ -32,7 +32,7 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -254,7 +254,7 @@ const mockCompanyRecord: ObjectRecord = {
   },
 };
 
-const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
+const TestMetadataAndApolloMocksWrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
@@ -371,7 +371,7 @@ export const TextFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -400,7 +400,7 @@ export const TextFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -463,7 +463,7 @@ export const AddressFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -492,7 +492,7 @@ export const AddressFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -558,7 +558,7 @@ export const NumberFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -587,7 +587,7 @@ export const NumberFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -650,7 +650,7 @@ export const LinkFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -679,7 +679,7 @@ export const LinkFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -752,7 +752,7 @@ export const ManyToOneRelationFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -781,7 +781,7 @@ export const ManyToOneRelationFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -849,7 +849,7 @@ export const OneToManyRelationFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -878,7 +878,7 @@ export const OneToManyRelationFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -941,7 +941,7 @@ export const BooleanFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -970,7 +970,7 @@ export const BooleanFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1032,7 +1032,7 @@ export const CurrencyFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1061,7 +1061,7 @@ export const CurrencyFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1126,7 +1126,7 @@ export const EmailsFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1155,7 +1155,7 @@ export const EmailsFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1221,7 +1221,7 @@ export const PhonesFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1250,7 +1250,7 @@ export const PhonesFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1316,7 +1316,7 @@ export const SelectFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1345,7 +1345,7 @@ export const SelectFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1409,7 +1409,7 @@ export const MultiSelectFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1438,7 +1438,7 @@ export const MultiSelectFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1513,7 +1513,7 @@ export const TimelineActivityRelationFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1542,7 +1542,7 @@ export const TimelineActivityRelationFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1614,7 +1614,7 @@ export const ManyToOneRelationCardWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1643,7 +1643,7 @@ export const ManyToOneRelationCardWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1719,7 +1719,7 @@ export const OneToManyRelationCardWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1748,7 +1748,7 @@ export const OneToManyRelationCardWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1818,7 +1818,7 @@ export const TimelineActivityRelationCardWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1847,7 +1847,7 @@ export const TimelineActivityRelationCardWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1980,7 +1980,7 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -2009,7 +2009,7 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },

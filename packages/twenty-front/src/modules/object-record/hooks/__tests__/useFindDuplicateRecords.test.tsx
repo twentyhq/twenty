@@ -2,12 +2,13 @@ import { renderHook, waitFor } from '@testing-library/react';
 
 import { useFindDuplicateRecords } from '@/object-record/hooks/useFindDuplicateRecords';
 
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import {
   query,
   responseData,
   variables,
 } from '@/object-record/hooks/__mocks__/useFindDuplicateRecords';
+import { vi } from 'vitest';
 
 const mocks = [
   {
@@ -15,13 +16,13 @@ const mocks = [
       query,
       variables,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: responseData,
     })),
   },
 ];
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 

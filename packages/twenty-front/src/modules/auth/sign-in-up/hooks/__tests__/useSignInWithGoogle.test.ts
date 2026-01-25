@@ -2,17 +2,18 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { renderHook } from '@testing-library/react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { vi } from 'vitest';
 import { BillingPlanKey, SubscriptionInterval } from '~/generated/graphql';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
-jest.mock('react-router-dom', () => ({
-  useParams: jest.fn(),
-  useSearchParams: jest.fn(),
-  Link: jest.fn(),
+vi.mock('react-router-dom', () => ({
+  useParams: vi.fn(),
+  useSearchParams: vi.fn(),
+  Link: vi.fn(),
 }));
 
-jest.mock('@/auth/hooks/useAuth', () => ({
-  useAuth: jest.fn(),
+vi.mock('@/auth/hooks/useAuth', () => ({
+  useAuth: vi.fn(),
 }));
 
 describe('useSignInWithGoogle', () => {
@@ -22,22 +23,39 @@ describe('useSignInWithGoogle', () => {
     requirePaymentMethod: true,
   };
 
-  const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  const Wrapper = getTestMetadataAndApolloMocksWrapper({
     apolloMocks: [],
   });
 
   it('should call signInWithGoogle with correct params', () => {
-    const signInWithGoogleMock = jest.fn();
+    const signInWithGoogleMock = vi.fn();
     const mockUseParams = { workspaceInviteHash: 'testHash' };
 
     const mockSearchParams = new URLSearchParams(
       'inviteToken=testToken&billingCheckoutSessionState={"plan":"Pro","interval":"Month","requirePaymentMethod":true}',
     );
 
-    (useParams as jest.Mock).mockReturnValue(mockUseParams);
-    (useSearchParams as jest.Mock).mockReturnValue([mockSearchParams]);
-    (useAuth as jest.Mock).mockReturnValue({
+    vi.mocked(useParams).mockReturnValue(mockUseParams);
+    vi.mocked(useSearchParams).mockReturnValue([mockSearchParams, vi.fn()]);
+    vi.mocked(useAuth).mockReturnValue({
+      getLoginTokenFromCredentials: vi.fn(),
+      verifyEmailAndGetWorkspaceAgnosticToken: vi.fn(),
+      verifyEmailAndGetLoginToken: vi.fn(),
+      getAuthTokensFromLoginToken: vi.fn(),
+      checkUserExists: {
+        checkUserExistsData: undefined,
+        checkUserExistsQuery: vi.fn(),
+      },
+      clearSession: vi.fn(),
+      signOut: vi.fn(),
+      signUpWithCredentials: vi.fn(),
+      signUpWithCredentialsInWorkspace: vi.fn(),
+      signInWithCredentialsInWorkspace: vi.fn(),
+      signInWithCredentials: vi.fn(),
       signInWithGoogle: signInWithGoogleMock,
+      signInWithMicrosoft: vi.fn(),
+      setAuthTokens: vi.fn(),
+      getAuthTokensFromOTP: vi.fn(),
     });
 
     const { result } = renderHook(() => useSignInWithGoogle(), {
@@ -56,14 +74,31 @@ describe('useSignInWithGoogle', () => {
   });
 
   it('should call signInWithGoogle with undefined invite token if not present', () => {
-    const signInWithGoogleMock = jest.fn();
+    const signInWithGoogleMock = vi.fn();
     const mockUseParams = { workspaceInviteHash: 'testHash' };
     const mockSearchParams = new URLSearchParams();
 
-    (useParams as jest.Mock).mockReturnValue(mockUseParams);
-    (useSearchParams as jest.Mock).mockReturnValue([mockSearchParams]);
-    (useAuth as jest.Mock).mockReturnValue({
+    vi.mocked(useParams).mockReturnValue(mockUseParams);
+    vi.mocked(useSearchParams).mockReturnValue([mockSearchParams, vi.fn()]);
+    vi.mocked(useAuth).mockReturnValue({
+      getLoginTokenFromCredentials: vi.fn(),
+      verifyEmailAndGetWorkspaceAgnosticToken: vi.fn(),
+      verifyEmailAndGetLoginToken: vi.fn(),
+      getAuthTokensFromLoginToken: vi.fn(),
+      checkUserExists: {
+        checkUserExistsData: undefined,
+        checkUserExistsQuery: vi.fn(),
+      },
+      clearSession: vi.fn(),
+      signOut: vi.fn(),
+      signUpWithCredentials: vi.fn(),
+      signUpWithCredentialsInWorkspace: vi.fn(),
+      signInWithCredentialsInWorkspace: vi.fn(),
+      signInWithCredentials: vi.fn(),
       signInWithGoogle: signInWithGoogleMock,
+      signInWithMicrosoft: vi.fn(),
+      setAuthTokens: vi.fn(),
+      getAuthTokensFromOTP: vi.fn(),
     });
 
     const { result } = renderHook(() => useSignInWithGoogle(), {

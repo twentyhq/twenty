@@ -1,10 +1,13 @@
 import { renderHook } from '@testing-library/react';
+import React, { type ReactNode } from 'react';
+import { vi } from 'vitest';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getHookErrorBoundaryWrapper } from '~/testing/test-helpers/getHookErrorBoundaryWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const MetadataWrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
@@ -24,7 +27,7 @@ describe('useObjectMetadataItemById', () => {
           objectId: opportunityObjectMetadata.id,
         }),
       {
-        wrapper: Wrapper,
+        wrapper: MetadataWrapper,
       },
     );
 
@@ -34,10 +37,23 @@ describe('useObjectMetadataItemById', () => {
   });
 
   it('should throw an error when invalid ID is provided', async () => {
-    expect(() =>
-      renderHook(() => useObjectMetadataItemById({ objectId: 'invalid-id' }), {
-        wrapper: Wrapper,
+    const onError = vi.fn();
+    const ErrorBoundaryWrapper = getHookErrorBoundaryWrapper(onError);
+    const Wrapper = ({ children }: { children: ReactNode }) =>
+      React.createElement(
+        ErrorBoundaryWrapper,
+        null,
+        React.createElement(MetadataWrapper, null, children),
+      );
+
+    renderHook(() => useObjectMetadataItemById({ objectId: 'invalid-id' }), {
+      wrapper: Wrapper,
+    });
+
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Object metadata item not found for id invalid-id',
       }),
-    ).toThrow(`Object metadata item not found for id invalid-id`);
+    );
   });
 });

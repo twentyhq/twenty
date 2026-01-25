@@ -7,6 +7,7 @@ import {
 } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { vi } from 'vitest';
 
 describe('addErrorsAndRunHooks', () => {
   const requiredField = {
@@ -118,11 +119,11 @@ describe('addErrorsAndRunHooks', () => {
     level: 'error',
   };
 
-  const rowHook: SpreadsheetImportRowHook = jest.fn((row, addError) => {
+  const rowHook: SpreadsheetImportRowHook = vi.fn((row, addError) => {
     addError('name', nameError);
     return row;
   });
-  const tableHook: SpreadsheetImportTableHook = jest.fn((table, addError) => {
+  const tableHook: SpreadsheetImportTableHook = vi.fn((table, addError) => {
     addError(0, 'age', ageError);
     return table;
   });

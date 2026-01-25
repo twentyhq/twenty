@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
 
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
 const expectedQueryTemplate = `
   mutation DeleteOnePerson($idToDelete: UUID!) {
@@ -14,7 +14,7 @@ const expectedQueryTemplate = `
   }
 `.replace(/\s/g, '');
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 

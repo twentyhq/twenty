@@ -1,10 +1,14 @@
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 
 import { useActivities } from '@/activities/hooks/useActivities';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
+import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 
 const tasks = [
   {
@@ -32,17 +36,33 @@ const tasks = [
   },
 ];
 
-const useActivitiesMock = jest.fn(() => {
-  return {
-    activities: tasks,
-  };
-});
+const useActivitiesMock = vi.fn(
+  (_params: {
+    objectNameSingular:
+      | CoreObjectNameSingular.Note
+      | CoreObjectNameSingular.Task;
+    targetableObjects: ActivityTargetableObject[];
+    activityTargetsOrderByVariables: RecordGqlOperationOrderBy;
+    skip?: boolean;
+    limit: number;
+  }) => {
+    return {
+      activities: tasks,
+      loading: false,
+      totalCountActivities: tasks.length,
+      fetchMoreActivities: vi.fn(),
+      hasNextPage: false,
+    };
+  },
+);
 
-jest.mock('@/activities/hooks/useActivities', () => ({
-  useActivities: jest.fn(),
+vi.mock('@/activities/hooks/useActivities', () => ({
+  useActivities: vi.fn(),
 }));
 
-(useActivities as jest.Mock).mockImplementation(useActivitiesMock);
+vi.mocked(useActivities).mockImplementation(
+  useActivitiesMock as typeof useActivities,
+);
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
@@ -60,8 +80,10 @@ describe('useTasks', () => {
       wrapper: Wrapper,
     });
 
-    expect(result.current).toEqual({
-      tasks: tasks,
-    });
+    expect(result.current.tasks).toEqual(tasks);
+    expect(result.current.tasksLoading).toBe(false);
+    expect(result.current.totalCountTasks).toBe(tasks.length);
+    expect(result.current.hasNextPage).toBe(false);
+    expect(result.current.fetchMoreTasks).toBeInstanceOf(Function);
   });
 });

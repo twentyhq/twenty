@@ -1,79 +1,86 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
-import { useMutation } from '@apollo/client';
+import { useTestHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useTestHttpRequest';
+import { type ApolloClient, useMutation } from '@apollo/client';
 import { act, renderHook } from '@testing-library/react';
 import React from 'react';
 import { RecoilRoot } from 'recoil';
 import { resolveInput } from 'twenty-shared/utils';
-import { useTestHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useTestHttpRequest';
+import { vi } from 'vitest';
 
 // Mock Apollo Client
-jest.mock('@apollo/client', () => ({
-  ...jest.requireActual('@apollo/client'),
-  useMutation: jest.fn(),
-}));
+vi.mock('@apollo/client', async () => {
+  const actual = await vi.importActual('@apollo/client');
+  return {
+    ...actual,
+    useMutation: vi.fn(),
+  };
+});
 
-jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
-  useApolloCoreClient: jest.fn(),
+vi.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
+  useApolloCoreClient: vi.fn(),
 }));
 
 // Mock the resolveInput function
-jest.mock('twenty-shared/utils', () => ({
-  ...jest.requireActual('twenty-shared/utils'),
-  resolveInput: jest.fn((input, context) => {
-    // For testing purposes, we'll actually do the replacement for simple cases
-    if (typeof input === 'string') {
-      return input.replace(/{{([^}]+)}}/g, (match, path) => {
-        const parts = path.split('.');
-        let current = context;
-        for (const part of parts) {
-          if (
-            current !== null &&
-            current !== undefined &&
-            typeof current === 'object' &&
-            part in current
-          ) {
-            current = (current as any)[part];
-          } else {
-            return 'undefined';
+vi.mock('twenty-shared/utils', async () => {
+  const actual = await vi.importActual('twenty-shared/utils');
+  return {
+    ...actual,
+    resolveInput: vi.fn((input, context) => {
+      // For testing purposes, we'll actually do the replacement for simple cases
+      if (typeof input === 'string') {
+        return input.replace(/{{([^}]+)}}/g, (match, path) => {
+          const parts = path.split('.');
+          let current = context;
+          for (const part of parts) {
+            if (
+              current !== null &&
+              current !== undefined &&
+              typeof current === 'object' &&
+              part in current
+            ) {
+              current = (current as any)[part];
+            } else {
+              return 'undefined';
+            }
+          }
+          return current;
+        });
+      } else if (typeof input === 'object' && input !== null) {
+        // Handle object replacement recursively
+        const result = { ...input };
+        for (const [key, value] of Object.entries(input)) {
+          if (typeof value === 'string') {
+            result[key] = value.replace(/{{([^}]+)}}/g, (match, path) => {
+              const parts = path.split('.');
+              let current = context;
+              for (const part of parts) {
+                if (
+                  current !== null &&
+                  current !== undefined &&
+                  typeof current === 'object' &&
+                  part in current
+                ) {
+                  current = (current as any)[part];
+                } else {
+                  return 'undefined';
+                }
+              }
+              return current;
+            });
           }
         }
-        return current;
-      });
-    } else if (typeof input === 'object' && input !== null) {
-      // Handle object replacement recursively
-      const result = { ...input };
-      for (const [key, value] of Object.entries(input)) {
-        if (typeof value === 'string') {
-          result[key] = value.replace(/{{([^}]+)}}/g, (match, path) => {
-            const parts = path.split('.');
-            let current = context;
-            for (const part of parts) {
-              if (
-                current !== null &&
-                current !== undefined &&
-                typeof current === 'object' &&
-                part in current
-              ) {
-                current = (current as any)[part];
-              } else {
-                return 'undefined';
-              }
-            }
-            return current;
-          });
-        }
+        return result;
       }
-      return result;
-    }
-    return input;
-  }),
-}));
+      return input;
+    }),
+  };
+});
 
 describe('useTestHttpRequest', () => {
   const actionId = 'test-action-id';
-  const mockApolloClient = {};
-  const mockMutate = jest.fn();
+  const mockApolloClient = {} as ApolloClient<object>;
+  const mockMutate = vi.fn();
 
   const mockFormData: HttpRequestFormData = {
     url: 'https://api.example.com/users',
@@ -90,9 +97,9 @@ describe('useTestHttpRequest', () => {
     React.createElement(RecoilRoot, null, children);
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useApolloCoreClient as jest.Mock).mockReturnValue(mockApolloClient);
-    (useMutation as jest.Mock).mockReturnValue([mockMutate]);
+    vi.clearAllMocks();
+    vi.mocked(useApolloCoreClient).mockReturnValue(mockApolloClient);
+    vi.mocked(useMutation).mockReturnValue([mockMutate] as any);
   });
 
   it('should initialize with correct default values', () => {

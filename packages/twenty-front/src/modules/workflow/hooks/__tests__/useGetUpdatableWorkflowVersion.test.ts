@@ -1,8 +1,10 @@
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 
-const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
+const mockCreateDraftFromWorkflowVersion = vi.fn().mockResolvedValue('457');
 const mockWorkflowId = '123';
 const mockWorkflow = {
   id: mockWorkflowId,
@@ -12,28 +14,28 @@ const mockWorkflow = {
   },
 } as WorkflowWithCurrentVersion;
 
-jest.mock('@/workflow/hooks/useCreateDraftFromWorkflowVersion', () => ({
+vi.mock('@/workflow/hooks/useCreateDraftFromWorkflowVersion', () => ({
   useCreateDraftFromWorkflowVersion: () => ({
     createDraftFromWorkflowVersion: mockCreateDraftFromWorkflowVersion,
   }),
 }));
 
-jest.mock(
+vi.mock(
   '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
   () => ({
-    useRecoilComponentValue: jest.fn(() => mockWorkflowId),
+    useRecoilComponentValue: vi.fn(() => mockWorkflowId),
   }),
 );
 
-jest.mock('@/workflow/hooks/useWorkflowWithCurrentVersion', () => ({
-  useWorkflowWithCurrentVersion: jest.fn((workflowId) =>
+vi.mock('@/workflow/hooks/useWorkflowWithCurrentVersion', () => ({
+  useWorkflowWithCurrentVersion: vi.fn((workflowId) =>
     workflowId === mockWorkflowId ? mockWorkflow : undefined,
   ),
 }));
 
 describe('useGetUpdatableWorkflowVersionOrThrow', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should return draft version id when current version is draft', async () => {
@@ -57,10 +59,9 @@ describe('useGetUpdatableWorkflowVersionOrThrow', () => {
       },
     } as WorkflowWithCurrentVersion;
 
-    const {
-      useWorkflowWithCurrentVersion,
-    } = require('@/workflow/hooks/useWorkflowWithCurrentVersion');
-    useWorkflowWithCurrentVersion.mockReturnValue(mockActiveWorkflow);
+    vi.mocked(useWorkflowWithCurrentVersion).mockReturnValue(
+      mockActiveWorkflow,
+    );
 
     const { result } = renderHook(() =>
       useGetUpdatableWorkflowVersionOrThrow(),
@@ -76,10 +77,7 @@ describe('useGetUpdatableWorkflowVersionOrThrow', () => {
   });
 
   it('should throw an error when workflow is not found', async () => {
-    const {
-      useWorkflowWithCurrentVersion,
-    } = require('@/workflow/hooks/useWorkflowWithCurrentVersion');
-    useWorkflowWithCurrentVersion.mockReturnValue(undefined);
+    vi.mocked(useWorkflowWithCurrentVersion).mockReturnValue(undefined);
 
     const { result } = renderHook(() =>
       useGetUpdatableWorkflowVersionOrThrow(),

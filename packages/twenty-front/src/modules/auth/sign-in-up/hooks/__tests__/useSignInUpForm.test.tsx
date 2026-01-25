@@ -4,6 +4,7 @@ import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 
 const TestWrapper = ({
   children,
@@ -30,7 +31,7 @@ const TestWrapper = ({
 
 describe('useSignInUpForm', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should initialize the form with default values', async () => {

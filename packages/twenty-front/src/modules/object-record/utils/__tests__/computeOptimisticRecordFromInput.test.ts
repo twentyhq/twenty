@@ -251,8 +251,8 @@ describe('computeOptimisticRecordFromInput', () => {
         cache,
         objectPermissionsByObjectMetadataId: {},
       }),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `"Should never occur, encountered unknown fields unknwon, foo, bar in objectMetadataItem person"`,
+    ).toThrowError(
+      'Should never occur, encountered unknown fields unknwon, foo, bar in objectMetadataItem person',
     );
   });
 
@@ -272,8 +272,8 @@ describe('computeOptimisticRecordFromInput', () => {
         cache,
         objectPermissionsByObjectMetadataId: {},
       }),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `"Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: company"`,
+    ).toThrowError(
+      'Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: company',
     );
   });
 
@@ -293,8 +293,8 @@ describe('computeOptimisticRecordFromInput', () => {
         cache,
         objectPermissionsByObjectMetadataId: {},
       }),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `"Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: company"`,
+    ).toThrowError(
+      'Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: company',
     );
   });
 });

@@ -11,12 +11,13 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { type MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
 import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { JestRecordIndexContextProviderWrapper } from '~/testing/jest/JestRecordIndexContextProviderWrapper';
+import { vi } from 'vitest';
 import {
   getMockPersonObjectMetadataItem,
   peopleQueryResult,
 } from '~/testing/mock-data/people';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
+import { TestRecordIndexContextProviderWrapper } from '~/testing/test-helpers/TestRecordIndexContextProviderWrapper';
 
 const recordTableId = 'people';
 const objectNameSingular = 'person';
@@ -102,7 +103,7 @@ const mocks: MockedResponse[] = [
         limit: QUERY_DEFAULT_LIMIT_RECORDS,
       },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         people: peopleQueryResult.people,
         pageInfo: {
@@ -117,20 +118,23 @@ const mocks: MockedResponse[] = [
   },
 ];
 
-const HookMockWrapper = getJestMetadataAndApolloMocksWrapper({
+const HookMockWrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: jest.fn().mockReturnValue({
-    pathname: '/',
-    search: '',
-    hash: '',
-    state: null,
-    key: 'default',
-  }),
-}));
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useLocation: vi.fn().mockReturnValue({
+      pathname: '/',
+      search: '',
+      hash: '',
+      state: null,
+      key: 'default',
+    }),
+  };
+});
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
@@ -141,7 +145,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
         <RecordComponentInstanceContextsWrapper
           componentInstanceId={recordTableId}
         >
-          <JestRecordIndexContextProviderWrapper
+          <TestRecordIndexContextProviderWrapper
             objectMetadataItem={mockPersonObjectMetadataItem}
           >
             <RecordTableContextProvider
@@ -159,7 +163,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
                 </RecordTableComponentInstance>
               </ObjectNamePluralSetter>
             </RecordTableContextProvider>
-          </JestRecordIndexContextProviderWrapper>
+          </TestRecordIndexContextProviderWrapper>
         </RecordComponentInstanceContextsWrapper>
       </ViewComponentInstanceContext.Provider>
     </HookMockWrapper>

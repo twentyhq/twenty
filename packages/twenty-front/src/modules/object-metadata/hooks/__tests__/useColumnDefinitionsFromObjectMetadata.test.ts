@@ -11,10 +11,10 @@ import {
   SubscriptionStatus,
   WorkspaceActivationStatus,
 } from '~/generated/graphql';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { getTestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+const Wrapper = getTestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
   componentInstanceId: 'instanceId',
   contextStoreCurrentObjectMetadataNameSingular: 'company',

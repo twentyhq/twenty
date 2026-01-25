@@ -7,17 +7,18 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
+import { vi } from 'vitest';
 
 // TODO: fix the dates, and test the not supported types
 const mockDate = new Date('2024-03-20T12:00:00Z');
 
 beforeAll(() => {
-  jest.useFakeTimers();
-  jest.setSystemTime(mockDate);
+  vi.useFakeTimers();
+  vi.setSystemTime(mockDate);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 describe('buildValueFromFilter', () => {

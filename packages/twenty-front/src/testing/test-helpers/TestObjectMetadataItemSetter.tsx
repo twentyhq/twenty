@@ -5,7 +5,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-export const JestObjectMetadataItemSetter = ({
+export const TestObjectMetadataItemSetter = ({
   children,
   objectMetadataItems,
 }: {

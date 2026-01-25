@@ -4,35 +4,36 @@ import { useIncrementalUpdateManyRecords } from '@/object-record/hooks/useIncrem
 import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
-jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
-jest.mock('@/object-record/utils/dispatchObjectRecordOperationBrowserEvent');
-jest.mock('@/object-record/hooks/useUpdateManyRecords', () => ({
-  useUpdateManyRecords: jest.fn(),
+vi.mock('@/object-metadata/hooks/useObjectMetadataItem');
+vi.mock('@/object-record/utils/dispatchObjectRecordOperationBrowserEvent');
+vi.mock('@/object-record/hooks/useUpdateManyRecords', () => ({
+  useUpdateManyRecords: vi.fn(),
 }));
-jest.mock('@/object-record/hooks/useRefetchAggregateQueries', () => ({
+vi.mock('@/object-record/hooks/useRefetchAggregateQueries', () => ({
   useRefetchAggregateQueries: () => ({
-    refetchAggregateQueries: jest.fn(),
+    refetchAggregateQueries: vi.fn(),
   }),
 }));
-jest.mock('@/object-record/hooks/useIncrementalFetchAndMutateRecords');
+vi.mock('@/object-record/hooks/useIncrementalFetchAndMutateRecords');
 
-const mockUseObjectMetadataItem = jest.mocked(useObjectMetadataItem);
-const mockDispatchObjectRecordOperationBrowserEvent = jest.mocked(
+const mockUseObjectMetadataItem = vi.mocked(useObjectMetadataItem);
+const mockDispatchObjectRecordOperationBrowserEvent = vi.mocked(
   dispatchObjectRecordOperationBrowserEvent,
 );
-const mockUseUpdateManyRecords = jest.mocked(useUpdateManyRecords);
-const mockUseIncrementalFetchAndMutateRecords = jest.mocked(
+const mockUseUpdateManyRecords = vi.mocked(useUpdateManyRecords);
+const mockUseIncrementalFetchAndMutateRecords = vi.mocked(
   useIncrementalFetchAndMutateRecords,
 );
 
 describe('useIncrementalUpdateManyRecords', () => {
-  const mockUpdateManyRecords = jest.fn();
-  const mockIncrementalFetchAndMutate = jest.fn();
-  const mockUpdateProgress = jest.fn();
+  const mockUpdateManyRecords = vi.fn();
+  const mockIncrementalFetchAndMutate = vi.fn();
+  const mockUpdateProgress = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     mockUseObjectMetadataItem.mockReturnValue({
       objectMetadataItem: {
@@ -40,7 +41,7 @@ describe('useIncrementalUpdateManyRecords', () => {
       } as any,
     });
 
-    mockDispatchObjectRecordOperationBrowserEvent.mockImplementation(jest.fn());
+    mockDispatchObjectRecordOperationBrowserEvent.mockImplementation(vi.fn());
 
     mockUseUpdateManyRecords.mockReturnValue({
       updateManyRecords: mockUpdateManyRecords,
@@ -51,7 +52,7 @@ describe('useIncrementalUpdateManyRecords', () => {
       progress: { displayType: 'number' },
       isProcessing: false,
       updateProgress: mockUpdateProgress,
-      cancel: jest.fn(),
+      cancel: vi.fn(),
     });
   });
 

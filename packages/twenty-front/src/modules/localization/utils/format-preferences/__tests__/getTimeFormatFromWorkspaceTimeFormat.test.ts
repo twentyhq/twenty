@@ -1,10 +1,11 @@
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/format-preferences/getTimeFormatFromWorkspaceTimeFormat';
+import { vi } from 'vitest';
 import { WorkspaceMemberTimeFormatEnum } from '~/generated/graphql';
 
 // Mock detectTimeFormat
-jest.mock('@/localization/utils/detection/detectTimeFormat', () => ({
-  detectTimeFormat: jest.fn(() => 'HOUR_12'),
+vi.mock('@/localization/utils/detection/detectTimeFormat', () => ({
+  detectTimeFormat: vi.fn(() => 'HOUR_12'),
 }));
 
 describe('getTimeFormatFromWorkspaceTimeFormat', () => {

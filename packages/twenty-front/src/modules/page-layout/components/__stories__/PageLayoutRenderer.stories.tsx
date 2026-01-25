@@ -24,7 +24,7 @@ import {
   type PageLayoutWidget,
   WidgetConfigurationType,
 } from '~/generated/graphql';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -262,7 +262,7 @@ const CoreClientProviderWrapper = ({
   );
 };
 
-const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
+const TestMetadataAndApolloMocksWrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: graphqlMocks,
 });
 
@@ -272,7 +272,7 @@ const meta: Meta<typeof PageLayoutRenderer> = {
   decorators: [
     (Story) => (
       <MemoryRouter>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <LayoutRenderingProvider
               value={{
@@ -287,7 +287,7 @@ const meta: Meta<typeof PageLayoutRenderer> = {
               <Story />
             </LayoutRenderingProvider>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </MemoryRouter>
     ),
   ],

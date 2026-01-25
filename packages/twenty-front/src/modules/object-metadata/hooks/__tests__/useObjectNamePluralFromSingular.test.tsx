@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
-import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
+import { TestObjectMetadataItemSetter } from '~/testing/test-helpers/TestObjectMetadataItemSetter';
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 
 describe('useObjectNamePluralFromSingular', () => {
@@ -11,9 +11,9 @@ describe('useObjectNamePluralFromSingular', () => {
       {
         wrapper: ({ children }) => (
           <RecoilRoot>
-            <JestObjectMetadataItemSetter>
+            <TestObjectMetadataItemSetter>
               {children}
-            </JestObjectMetadataItemSetter>
+            </TestObjectMetadataItemSetter>
           </RecoilRoot>
         ),
       },

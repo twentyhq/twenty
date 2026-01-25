@@ -4,6 +4,7 @@ import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot, RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 import {
   type Billing,
   OnboardingStatus,
@@ -67,19 +68,37 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </MockedProvider>
 );
 
-jest.mock('@/settings/roles/hooks/usePermissionFlagMap', () => ({
-  usePermissionFlagMap: jest.fn(),
+vi.mock('@/settings/roles/hooks/usePermissionFlagMap', () => ({
+  usePermissionFlagMap: vi.fn(),
 }));
 
 describe('useSettingsNavigationItems', () => {
   it('should hide workspace settings when no permissions', () => {
-    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+    vi.mocked(usePermissionFlagMap).mockImplementation(() => ({
+      [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
       [PermissionFlagType.WORKSPACE]: false,
       [PermissionFlagType.WORKSPACE_MEMBERS]: false,
-      [PermissionFlagType.DATA_MODEL]: false,
-      [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
       [PermissionFlagType.ROLES]: false,
+      [PermissionFlagType.DATA_MODEL]: false,
       [PermissionFlagType.SECURITY]: false,
+      [PermissionFlagType.WORKFLOWS]: false,
+      [PermissionFlagType.IMPERSONATE]: false,
+      [PermissionFlagType.SSO_BYPASS]: false,
+      [PermissionFlagType.APPLICATIONS]: false,
+      [PermissionFlagType.LAYOUTS]: false,
+      [PermissionFlagType.BILLING]: false,
+      [PermissionFlagType.AI_SETTINGS]: false,
+      [PermissionFlagType.AI]: false,
+      [PermissionFlagType.VIEWS]: false,
+      [PermissionFlagType.UPLOAD_FILE]: false,
+      [PermissionFlagType.DOWNLOAD_FILE]: false,
+      [PermissionFlagType.SEND_EMAIL_TOOL]: false,
+      [PermissionFlagType.HTTP_REQUEST_TOOL]: false,
+      [PermissionFlagType.CODE_INTERPRETER_TOOL]: false,
+      [PermissionFlagType.IMPORT_CSV]: false,
+      [PermissionFlagType.EXPORT_CSV]: false,
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
+      [PermissionFlagType.PROFILE_INFORMATION]: false,
     }));
 
     const { result } = renderHook(() => useSettingsNavigationItems(), {
@@ -94,13 +113,31 @@ describe('useSettingsNavigationItems', () => {
   });
 
   it('should show workspace settings when has permissions', () => {
-    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+    vi.mocked(usePermissionFlagMap).mockImplementation(() => ({
+      [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: true,
       [PermissionFlagType.WORKSPACE]: true,
       [PermissionFlagType.WORKSPACE_MEMBERS]: true,
-      [PermissionFlagType.DATA_MODEL]: true,
-      [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: true,
       [PermissionFlagType.ROLES]: true,
+      [PermissionFlagType.DATA_MODEL]: true,
       [PermissionFlagType.SECURITY]: true,
+      [PermissionFlagType.WORKFLOWS]: true,
+      [PermissionFlagType.IMPERSONATE]: true,
+      [PermissionFlagType.SSO_BYPASS]: true,
+      [PermissionFlagType.APPLICATIONS]: true,
+      [PermissionFlagType.LAYOUTS]: true,
+      [PermissionFlagType.BILLING]: true,
+      [PermissionFlagType.AI_SETTINGS]: true,
+      [PermissionFlagType.AI]: true,
+      [PermissionFlagType.VIEWS]: true,
+      [PermissionFlagType.UPLOAD_FILE]: true,
+      [PermissionFlagType.DOWNLOAD_FILE]: true,
+      [PermissionFlagType.SEND_EMAIL_TOOL]: true,
+      [PermissionFlagType.HTTP_REQUEST_TOOL]: true,
+      [PermissionFlagType.CODE_INTERPRETER_TOOL]: true,
+      [PermissionFlagType.IMPORT_CSV]: true,
+      [PermissionFlagType.EXPORT_CSV]: true,
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: true,
+      [PermissionFlagType.PROFILE_INFORMATION]: true,
     }));
 
     const { result } = renderHook(() => useSettingsNavigationItems(), {

@@ -2,14 +2,15 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { detectDateFormat } from '@/localization/utils/detection/detectDateFormat';
 import { formatDateISOStringToDateTimeSimplified } from '@/localization/utils/formatDateISOStringToDateTimeSimplified';
 import { formatInTimeZone } from 'date-fns-tz';
+import { type MockedFunction, vi } from 'vitest';
 
-jest.mock('@/localization/utils/detection/detectDateFormat');
-jest.mock('date-fns-tz');
+vi.mock('@/localization/utils/detection/detectDateFormat');
+vi.mock('date-fns-tz');
 
-const mockDetectDateFormat = detectDateFormat as jest.MockedFunction<
+const mockDetectDateFormat = detectDateFormat as MockedFunction<
   typeof detectDateFormat
 >;
-const mockFormatInTimeZone = formatInTimeZone as jest.MockedFunction<
+const mockFormatInTimeZone = formatInTimeZone as MockedFunction<
   typeof formatInTimeZone
 >;
 
@@ -19,7 +20,7 @@ describe('formatDateISOStringToDateTimeSimplified', () => {
   const mockTimeFormat = TimeFormat.HOUR_24;
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it('should format the date correctly when DATE_FORMAT is MONTH_FIRST', () => {

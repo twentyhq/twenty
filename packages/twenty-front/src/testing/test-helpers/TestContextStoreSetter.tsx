@@ -16,7 +16,7 @@ import { type RecordFilterGroup } from '@/object-record/record-filter-group/type
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
-export type JestContextStoreSetterMocks = {
+export type TestContextStoreSetterMocks = {
   contextStoreTargetedRecordsRule?: ContextStoreTargetedRecordsRule;
   contextStoreNumberOfSelectedRecords?: number;
   contextStoreFilters?: RecordFilter[];
@@ -26,9 +26,9 @@ export type JestContextStoreSetterMocks = {
   contextStoreCurrentViewType?: ContextStoreViewType;
 };
 
-type JestContextStoreSetterProps =
-  PropsWithChildren<JestContextStoreSetterMocks>;
-export const JestContextStoreSetter = ({
+type TestContextStoreSetterProps =
+  PropsWithChildren<TestContextStoreSetterMocks>;
+export const TestContextStoreSetter = ({
   contextStoreCurrentViewId,
   contextStoreTargetedRecordsRule = {
     mode: 'selection',
@@ -40,7 +40,7 @@ export const JestContextStoreSetter = ({
   contextStoreFilterGroups = [],
   contextStoreCurrentViewType,
   children,
-}: JestContextStoreSetterProps) => {
+}: TestContextStoreSetterProps) => {
   const setContextStoreTargetedRecordsRule = useSetRecoilComponentState(
     contextStoreTargetedRecordsRuleComponentState,
   );

@@ -9,10 +9,10 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { type InMemoryCache } from '@apollo/client';
-import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
-import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
+import { TestContextStoreSetter } from '~/testing/test-helpers/TestContextStoreSetter';
+import { TestObjectMetadataItemSetter } from '~/testing/test-helpers/TestObjectMetadataItemSetter';
 
-export const getJestMetadataAndApolloMocksWrapper = ({
+export const getTestMetadataAndApolloMocksWrapper = ({
   apolloMocks,
   cache,
   onInitializeRecoilSnapshot,
@@ -35,15 +35,15 @@ export const getJestMetadataAndApolloMocksWrapper = ({
             <ViewComponentInstanceContext.Provider
               value={{ instanceId: 'instanceId' }}
             >
-              <JestObjectMetadataItemSetter
+              <TestObjectMetadataItemSetter
                 objectMetadataItems={objectMetadataItems}
               >
                 <ContextStoreComponentInstanceContext.Provider
                   value={{ instanceId: 'instanceId' }}
                 >
-                  <JestContextStoreSetter>{children}</JestContextStoreSetter>
+                  <TestContextStoreSetter>{children}</TestContextStoreSetter>
                 </ContextStoreComponentInstanceContext.Provider>
-              </JestObjectMetadataItemSetter>
+              </TestObjectMetadataItemSetter>
             </ViewComponentInstanceContext.Provider>
           </RecordComponentInstanceContextsWrapper>
         </MockedProvider>

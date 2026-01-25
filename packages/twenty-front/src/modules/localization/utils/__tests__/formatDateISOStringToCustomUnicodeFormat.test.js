@@ -1,8 +1,9 @@
 import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 import { formatInTimeZone } from 'date-fns-tz';
 import { enUS } from 'date-fns/locale';
+import { vi } from 'vitest';
 
-jest.mock('date-fns-tz');
+vi.mock('date-fns-tz');
 
 describe('formatDateISOStringToCustomUnicodeFormat', () => {
   const mockDate = '2023-08-15T10:30:00Z';
@@ -10,7 +11,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
   const mockTimeFormat = 'HH:mm';
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it('should use provided timezone', () => {

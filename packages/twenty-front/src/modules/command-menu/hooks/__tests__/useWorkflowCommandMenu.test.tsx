@@ -18,16 +18,17 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { t } from '@lingui/core/macro';
 import { act } from 'react';
 import { IconBolt, IconSettingsAutomation, useIcons } from 'twenty-ui/display';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { getTestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { vi } from 'vitest';
 
-jest.mock('uuid', () => ({
-  v4: jest.fn().mockReturnValue('mocked-uuid'),
+vi.mock('uuid', () => ({
+  v4: vi.fn().mockReturnValue('mocked-uuid'),
 }));
 
-const mockNavigateCommandMenu = jest.fn();
-jest.mock('@/command-menu/hooks/useNavigateCommandMenu', () => ({
+const mockNavigateCommandMenu = vi.fn();
+vi.mock('@/command-menu/hooks/useNavigateCommandMenu', () => ({
   useNavigateCommandMenu: () => ({
     navigateCommandMenu: mockNavigateCommandMenu,
   }),
@@ -37,13 +38,13 @@ const workflowMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'workflow',
 )!;
 
-jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
-  useObjectMetadataItem: jest.fn(() => ({
+vi.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
+  useObjectMetadataItem: vi.fn(() => ({
     objectMetadataItem: workflowMockObjectMetadataItem,
   })),
 }));
 
-const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+const wrapper = getTestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
   componentInstanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
   contextStoreCurrentObjectMetadataNameSingular:
@@ -134,7 +135,7 @@ const renderHooks = () => {
 
 describe('useWorkflowCommandMenu', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should navigate to the workflow step select trigger type page', () => {

@@ -5,6 +5,7 @@ import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generat
 import { generateUpdateOneRecordMutation } from '@/object-metadata/utils/generateUpdateOneRecordMutation';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { AvatarType } from 'twenty-ui/display';
+import { vi } from 'vitest';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -139,7 +140,7 @@ export const mocks = [
         },
       },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         createFavorite: {
           __typename: 'Favorite',
@@ -162,7 +163,7 @@ export const mocks = [
       `,
       variables: { idToDelete: favoriteId },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         deleteFavorite: {
           __typename: 'Favorite',
@@ -182,7 +183,7 @@ export const mocks = [
         },
       },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         updateFavorite: {
           __typename: 'Favorite',
@@ -205,7 +206,7 @@ export const mocks = [
         },
       },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         updateFavorite: {
           __typename: 'Favorite',
@@ -229,7 +230,7 @@ export const mocks = [
         },
       },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         updateFavorite: {
           __typename: 'Favorite',

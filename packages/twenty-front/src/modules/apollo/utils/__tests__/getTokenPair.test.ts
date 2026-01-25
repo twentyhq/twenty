@@ -1,18 +1,19 @@
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { vi } from 'vitest';
 
-jest.mock('~/utils/cookie-storage', () => ({
+vi.mock('~/utils/cookie-storage', () => ({
   cookieStorage: {
-    getItem: jest.fn(),
-    removeItem: jest.fn(),
+    getItem: vi.fn(),
+    removeItem: vi.fn(),
   },
 }));
 
-const mockCookieStorage = cookieStorage as jest.Mocked<typeof cookieStorage>;
+const mockCookieStorage = vi.mocked(cookieStorage);
 
 describe('getTokenPair', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('when tokenPair cookie does not exist', () => {
@@ -215,7 +216,7 @@ describe('getTokenPair', () => {
       mockCookieStorage.getItem.mockReturnValue('{"valid": "json"');
       // Simulate JSON.parse throwing an error
       const originalParse = JSON.parse;
-      JSON.parse = jest.fn(() => {
+      JSON.parse = vi.fn(() => {
         throw new SyntaxError('Unexpected end of JSON input');
       });
 

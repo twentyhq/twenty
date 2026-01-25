@@ -2,9 +2,10 @@ import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateSt
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { vi } from 'vitest';
 
-const mockGetUpdatableWorkflowVersion = jest.fn();
-const mockDuplicateWorkflowVersionStep = jest.fn().mockResolvedValue({
+const mockGetUpdatableWorkflowVersion = vi.fn();
+const mockDuplicateWorkflowVersionStep = vi.fn().mockResolvedValue({
   data: {
     duplicateWorkflowVersionStep: {
       stepsDiff: [
@@ -18,7 +19,7 @@ const mockDuplicateWorkflowVersionStep = jest.fn().mockResolvedValue({
   },
 });
 
-jest.mock(
+vi.mock(
   '@/workflow/workflow-steps/hooks/useDuplicateWorkflowVersionStep',
   () => ({
     useDuplicateWorkflowVersionStep: () => ({
@@ -27,7 +28,7 @@ jest.mock(
   }),
 );
 
-jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
+vi.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
   useGetUpdatableWorkflowVersionOrThrow: () => ({
     getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
   }),
@@ -52,7 +53,7 @@ const wrapper = ({ children }: { children: React.ReactNode }) => {
 
 describe('useDuplicateStep', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should create step in workflow version', async () => {

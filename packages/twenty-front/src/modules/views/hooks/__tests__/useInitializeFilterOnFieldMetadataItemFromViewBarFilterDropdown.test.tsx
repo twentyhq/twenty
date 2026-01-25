@@ -21,10 +21,11 @@ import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdow
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { vi } from 'vitest';
 
-const mockPushFocusItemToFocusStack = jest.fn();
+const mockPushFocusItemToFocusStack = vi.fn();
 
-jest.mock('@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack', () => ({
+vi.mock('@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack', () => ({
   usePushFocusItemToFocusStack: () => ({
     pushFocusItemToFocusStack: mockPushFocusItemToFocusStack,
   }),
@@ -60,7 +61,7 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 
 describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should initialize filter for a basic text field with no existing filter', () => {

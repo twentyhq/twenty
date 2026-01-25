@@ -5,12 +5,11 @@ import { RecoilRoot } from 'recoil';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { formatNumber as utilFormatNumber } from '~/utils/format/formatNumber';
+import { vi } from 'vitest';
 
-jest.mock('~/utils/format/formatNumber');
+vi.mock('~/utils/format/formatNumber');
 
-const mockUtilFormatNumber = utilFormatNumber as jest.MockedFunction<
-  typeof utilFormatNumber
->;
+const mockUtilFormatNumber = vi.mocked(utilFormatNumber);
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot
@@ -30,7 +29,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useNumberFormat', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should be a function', () => {

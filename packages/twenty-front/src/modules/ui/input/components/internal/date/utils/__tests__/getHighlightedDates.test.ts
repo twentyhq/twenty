@@ -1,7 +1,8 @@
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 import { Temporal } from 'temporal-polyfill';
+import { vi } from 'vitest';
 
-jest.useFakeTimers().setSystemTime(new Date('2024-10-01T00:00:00.000Z'));
+vi.useFakeTimers().setSystemTime(new Date('2024-10-01T00:00:00.000Z'));
 
 const TIME_ZONE = 'UTC';
 

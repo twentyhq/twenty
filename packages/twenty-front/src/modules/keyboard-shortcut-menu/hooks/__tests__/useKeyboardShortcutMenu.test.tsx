@@ -1,21 +1,22 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
+import { vi } from 'vitest';
 
 import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';
 
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 
-const mockPushFocusItemToFocusStack = jest.fn();
-const mockRemoveFocusItemFromFocusStackById = jest.fn();
+const mockPushFocusItemToFocusStack = vi.fn();
+const mockRemoveFocusItemFromFocusStackById = vi.fn();
 
-jest.mock('@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack', () => ({
+vi.mock('@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack', () => ({
   usePushFocusItemToFocusStack: () => ({
     pushFocusItemToFocusStack: mockPushFocusItemToFocusStack,
   }),
 }));
 
-jest.mock(
+vi.mock(
   '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById',
   () => ({
     useRemoveFocusItemFromFocusStackById: () => ({
@@ -44,7 +45,7 @@ const renderHookConfig = () => {
 
 describe('useKeyboardShortcutMenu', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should toggle keyboard shortcut menu correctly', async () => {

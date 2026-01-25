@@ -5,6 +5,7 @@ import {
   SignUpDocument,
   SignUpInWorkspaceDocument,
 } from '~/generated-metadata/graphql';
+import { vi } from 'vitest';
 
 export const queries = {
   getLoginTokenFromCredentials: GetLoginTokenFromCredentialsDocument,
@@ -115,7 +116,7 @@ export const mocks = {
       query: queries.getLoginTokenFromCredentials,
       variables: variables.getLoginTokenFromCredentials,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         getLoginTokenFromCredentials: results.getLoginTokenFromCredentials,
       },
@@ -126,7 +127,7 @@ export const mocks = {
       query: queries.getAuthTokensFromLoginToken,
       variables: variables.getAuthTokensFromLoginToken,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         getAuthTokensFromLoginToken: results.getAuthTokensFromLoginToken,
       },
@@ -137,7 +138,7 @@ export const mocks = {
       query: queries.signup,
       variables: variables.signup,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         signUp: results.signUp,
       },
@@ -148,7 +149,7 @@ export const mocks = {
       query: queries.getCurrentUser,
       variables: variables.getCurrentUser,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: results.getCurrentUser,
     })),
   },
@@ -157,7 +158,7 @@ export const mocks = {
       query: queries.signUpInWorkspace,
       variables: variables.signUpInWorkspace,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         signUpInWorkspace: results.signUpInWorkspace,
       },

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`generateGroupByQuery should generate valid GraphQL query for empty aggregate operations 1`] = `
+exports[`generateGroupByQuery > should generate valid GraphQL query for 'empty aggregate operations' 1`] = `
 "
     query PeopleGroupByAggregates(
       $groupBy: [PersonGroupByInput!]!
@@ -22,7 +22,7 @@ exports[`generateGroupByQuery should generate valid GraphQL query for empty aggr
   "
 `;
 
-exports[`generateGroupByQuery should generate valid GraphQL query for multiple aggregate operations 1`] = `
+exports[`generateGroupByQuery > should generate valid GraphQL query for 'multiple aggregate operations' 1`] = `
 "
     query OpportunitiesGroupByAggregates(
       $groupBy: [OpportunityGroupByInput!]!
@@ -47,7 +47,7 @@ exports[`generateGroupByQuery should generate valid GraphQL query for multiple a
   "
 `;
 
-exports[`generateGroupByQuery should generate valid GraphQL query for single aggregate operation 1`] = `
+exports[`generateGroupByQuery > should generate valid GraphQL query for 'single aggregate operation' 1`] = `
 "
     query OpportunitiesGroupByAggregates(
       $groupBy: [OpportunityGroupByInput!]!

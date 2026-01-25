@@ -1,15 +1,14 @@
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { hasTokenPair } from '@/apollo/utils/hasTokenPair';
+import { vi } from 'vitest';
 
-jest.mock('../getTokenPair');
+vi.mock('../getTokenPair');
 
-const mockGetTokenPair = getTokenPair as jest.MockedFunction<
-  typeof getTokenPair
->;
+const mockGetTokenPair = vi.mocked(getTokenPair);
 
 describe('hasTokenPair', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('when getTokenPair returns a valid token pair', () => {

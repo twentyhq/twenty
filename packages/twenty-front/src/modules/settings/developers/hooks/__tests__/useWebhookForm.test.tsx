@@ -2,6 +2,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 import { RecoilRoot } from 'recoil';
 
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
@@ -11,15 +12,15 @@ import { UPDATE_WEBHOOK } from '@/settings/developers/graphql/mutations/updateWe
 import { GET_WEBHOOK } from '@/settings/developers/graphql/queries/getWebhook';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 
-const mockNavigateSettings = jest.fn();
-const mockEnqueueSuccessSnackBar = jest.fn();
-const mockEnqueueErrorSnackBar = jest.fn();
+const mockNavigateSettings = vi.fn();
+const mockEnqueueSuccessSnackBar = vi.fn();
+const mockEnqueueErrorSnackBar = vi.fn();
 
-jest.mock('~/hooks/useNavigateSettings', () => ({
+vi.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: () => mockNavigateSettings,
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
+vi.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
   useSnackBar: () => ({
     enqueueSuccessSnackBar: mockEnqueueSuccessSnackBar,
     enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
@@ -136,7 +137,7 @@ const Wrapper = ({
 
 describe('useWebhookForm', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Create Mode', () => {

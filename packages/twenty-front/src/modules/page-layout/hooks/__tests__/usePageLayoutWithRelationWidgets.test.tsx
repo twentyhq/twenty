@@ -4,6 +4,7 @@ import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLay
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
   AggregateOperations,
   BarChartLayout,
@@ -13,9 +14,14 @@ import {
   WidgetType,
 } from '~/generated/graphql';
 
-jest.mock('@/ui/layout/contexts/LayoutRenderingContext');
-jest.mock(
+vi.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
+  useLayoutRenderingContext: vi.fn(),
+}));
+vi.mock(
   '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems',
+  () => ({
+    useFieldListFieldMetadataItems: vi.fn(),
+  }),
 );
 
 describe('usePageLayoutWithRelationWidgets', () => {
@@ -159,14 +165,18 @@ describe('usePageLayoutWithRelationWidgets', () => {
   ];
 
   beforeEach(() => {
-    (useLayoutRenderingContext as jest.Mock).mockReturnValue({
+    vi.mocked(useLayoutRenderingContext).mockReturnValue({
       targetRecordIdentifier: {
+        id: '1',
         targetObjectNameSingular: 'company',
       },
       layoutType: PageLayoutType.RECORD_PAGE,
+      isInRightDrawer: false,
     });
 
-    (useFieldListFieldMetadataItems as jest.Mock).mockReturnValue({
+    vi.mocked(useFieldListFieldMetadataItems).mockReturnValue({
+      inlineFieldMetadataItems: [],
+      legacyActivityTargetFieldMetadataItems: [],
       boxedRelationFieldMetadataItems: mockRelationFields,
     });
   });
@@ -255,7 +265,9 @@ describe('usePageLayoutWithRelationWidgets', () => {
   });
 
   it('should return unchanged layout when no relation fields exist', () => {
-    (useFieldListFieldMetadataItems as jest.Mock).mockReturnValue({
+    vi.mocked(useFieldListFieldMetadataItems).mockReturnValue({
+      inlineFieldMetadataItems: [],
+      legacyActivityTargetFieldMetadataItems: [],
       boxedRelationFieldMetadataItems: [],
     });
 
@@ -275,11 +287,13 @@ describe('usePageLayoutWithRelationWidgets', () => {
   });
 
   it('should return unchanged layout when not a record page', () => {
-    (useLayoutRenderingContext as jest.Mock).mockReturnValue({
+    vi.mocked(useLayoutRenderingContext).mockReturnValue({
       targetRecordIdentifier: {
+        id: '1',
         targetObjectNameSingular: 'company',
       },
       layoutType: PageLayoutType.DASHBOARD,
+      isInRightDrawer: false,
     });
 
     const { result } = renderHook(() =>

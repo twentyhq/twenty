@@ -1,14 +1,15 @@
 import { type MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import gql from 'graphql-tag';
+import { vi } from 'vitest';
 
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 
 const mockedDate = '2024-03-15T12:00:00.000Z';
-const toISOStringMock = jest.fn(() => mockedDate);
+const toISOStringMock = vi.fn(() => mockedDate);
 global.Date.prototype.toISOString = toISOStringMock;
 
 const { id, title, bodyV2, status, dueAt } = mockedTasks[0];
@@ -77,7 +78,7 @@ const mocks: MockedResponse[] = [
         input: mockedActivity,
       },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         createTask: {
           ...mockedActivity,
@@ -92,7 +93,7 @@ const mocks: MockedResponse[] = [
   },
 ];
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 

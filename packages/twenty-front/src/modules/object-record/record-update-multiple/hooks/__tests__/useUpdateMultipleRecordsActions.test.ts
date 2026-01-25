@@ -3,38 +3,39 @@ import { useIncrementalUpdateManyRecords } from '@/object-record/hooks/useIncrem
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useUpdateMultipleRecordsActions } from '@/object-record/record-update-multiple/hooks/useUpdateMultipleRecordsActions';
 
-jest.mock('@/context-store/utils/computeContextStoreFilters');
-jest.mock('@/object-record/hooks/useIncrementalUpdateManyRecords');
-jest.mock('@/object-record/record-filter/hooks/useFilterValueDependencies');
-jest.mock('@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow');
-jest.mock('@/ui/utilities/state/component-state/hooks/useRecoilComponentValue');
+vi.mock('@/context-store/utils/computeContextStoreFilters');
+vi.mock('@/object-record/hooks/useIncrementalUpdateManyRecords');
+vi.mock('@/object-record/record-filter/hooks/useFilterValueDependencies');
+vi.mock('@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow');
+vi.mock('@/ui/utilities/state/component-state/hooks/useRecoilComponentValue');
 
-const mockComputeContextStoreFilters = jest.mocked(computeContextStoreFilters);
-const mockUseIncrementalUpdateManyRecords = jest.mocked(
+const mockComputeContextStoreFilters = vi.mocked(computeContextStoreFilters);
+const mockUseIncrementalUpdateManyRecords = vi.mocked(
   useIncrementalUpdateManyRecords,
 );
-const mockUseFilterValueDependencies = jest.mocked(useFilterValueDependencies);
-const mockUseContextStoreObjectMetadataItemOrThrow = jest.mocked(
+const mockUseFilterValueDependencies = vi.mocked(useFilterValueDependencies);
+const mockUseContextStoreObjectMetadataItemOrThrow = vi.mocked(
   useContextStoreObjectMetadataItemOrThrow,
 );
-const mockUseRecoilComponentValue = jest.mocked(useRecoilComponentValue);
+const mockUseRecoilComponentValue = vi.mocked(useRecoilComponentValue);
 
 describe('useUpdateMultipleRecordsActions', () => {
-  const mockIncrementalUpdateManyRecords = jest.fn();
+  const mockIncrementalUpdateManyRecords = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockIncrementalUpdateManyRecords.mockResolvedValue(5);
 
     mockUseIncrementalUpdateManyRecords.mockReturnValue({
       incrementalUpdateManyRecords: mockIncrementalUpdateManyRecords,
       isProcessing: false,
       progress: { processedRecordCount: 5 },
-      cancel: jest.fn(),
+      cancel: vi.fn(),
     } as any);
 
     mockUseContextStoreObjectMetadataItemOrThrow.mockReturnValue({

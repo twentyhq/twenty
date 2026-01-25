@@ -9,20 +9,20 @@ import {
 } from '@/object-record/hooks/__mocks__/useCreateManyRecords';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
+import { vi } from 'vitest';
 
-jest.mock('uuid', () => ({
-  v4: jest.fn(),
+vi.mock('uuid', () => ({
+  v4: vi.fn(),
 }));
 
-jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
-const mockRefetchAggregateQueries = jest.fn();
-jest.mocked(useRefetchAggregateQueries).mockReturnValue({
+vi.mock('@/object-record/hooks/useRefetchAggregateQueries');
+const mockRefetchAggregateQueries = vi.fn();
+vi.mocked(useRefetchAggregateQueries).mockReturnValue({
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
 
-jest
-  .mocked(v4)
+vi.mocked(v4)
   .mockReturnValueOnce(variables.data[0].id)
   .mockReturnValueOnce(variables.data[1].id);
 
@@ -34,7 +34,7 @@ const mocks = [
       query,
       variables,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         createPeople: response,
       },
@@ -48,7 +48,7 @@ const mocks = [
         upsert: true,
       },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         createPeople: response,
       },
@@ -56,13 +56,13 @@ const mocks = [
   },
 ];
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 
 describe('useCreateManyRecords', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
   it('works as expected', async () => {
     const { result } = renderHook(

@@ -1,10 +1,11 @@
 import { type MutableRefObject } from 'react';
+import { vi } from 'vitest';
 import { combineRefs } from '~/utils/combineRefs';
 
 describe('combineRefs', () => {
   it('should handle function refs', () => {
-    const ref1 = jest.fn();
-    const ref2 = jest.fn();
+    const ref1 = vi.fn();
+    const ref2 = vi.fn();
     const node = document.createElement('div');
 
     const combinedRef = combineRefs(ref1, ref2);
@@ -27,7 +28,7 @@ describe('combineRefs', () => {
   });
 
   it('should handle mixed function and object refs', () => {
-    const funcRef = jest.fn();
+    const funcRef = vi.fn();
     const objRef: MutableRefObject<HTMLDivElement | null> = { current: null };
     const node = document.createElement('div');
 
@@ -39,7 +40,7 @@ describe('combineRefs', () => {
   });
 
   it('should handle undefined refs', () => {
-    const ref1 = jest.fn();
+    const ref1 = vi.fn();
     const node = document.createElement('div');
 
     const combinedRef = combineRefs(ref1, undefined);
@@ -65,7 +66,7 @@ describe('combineRefs', () => {
   });
 
   it('should handle null refs', () => {
-    const ref1 = jest.fn();
+    const ref1 = vi.fn();
     const node = document.createElement('div');
 
     const combinedRef = combineRefs(ref1, null);

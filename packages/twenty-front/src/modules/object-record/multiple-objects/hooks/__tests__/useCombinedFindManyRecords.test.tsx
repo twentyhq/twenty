@@ -7,13 +7,14 @@ import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { vi } from 'vitest';
 
-jest.mock(
+vi.mock(
   '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery',
   () => ({
-    useGenerateCombinedFindManyRecordsQuery: jest.fn(),
+    useGenerateCombinedFindManyRecordsQuery: vi.fn(),
   }),
 );
 
@@ -107,7 +108,7 @@ const renderUseCombinedFindManyRecordsHook = async ({
   expectedResult = {},
   mockQueryResult = mockQuery,
 }: RenderUseCombinedFindManyRecordsHookParams) => {
-  (useGenerateCombinedFindManyRecordsQuery as jest.Mock).mockReturnValue(
+  vi.mocked(useGenerateCombinedFindManyRecordsQuery).mockReturnValue(
     mockQueryResult,
   );
 
@@ -136,7 +137,7 @@ const renderUseCombinedFindManyRecordsHook = async ({
       });
     },
     {
-      wrapper: getJestMetadataAndApolloMocksWrapper({ apolloMocks: mocks }),
+      wrapper: getTestMetadataAndApolloMocksWrapper({ apolloMocks: mocks }),
     },
   );
 
@@ -154,7 +155,7 @@ const renderUseCombinedFindManyRecordsHook = async ({
 
 describe('useCombinedFindManyRecords', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should return records for multiple objects', async () => {

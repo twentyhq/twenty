@@ -7,7 +7,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { type MockedResponse } from '@apollo/client/testing';
 
 import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCacheInstance';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import {
   allMockCompanyRecordsWithRelation,
@@ -19,10 +19,11 @@ import {
   getMockPersonRecord,
 } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { vi } from 'vitest';
 
-jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
-const mockRefetchAggregateQueries = jest.fn();
-(useRefetchAggregateQueries as jest.Mock).mockReturnValue({
+vi.mock('@/object-record/hooks/useRefetchAggregateQueries');
+const mockRefetchAggregateQueries = vi.fn();
+vi.mocked(useRefetchAggregateQueries).mockReturnValue({
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
 
@@ -48,7 +49,7 @@ describe('useDeleteOneRecord', () => {
         variables: { idToDelete: personRecord.id },
         query,
       },
-      result: jest.fn((variables) => ({
+      result: vi.fn((variables) => ({
         data: {
           deletePerson: {
             __typename: 'Person',
@@ -64,7 +65,7 @@ describe('useDeleteOneRecord', () => {
   const defaultMocks = getDefaultMocks();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('A. Starting from empty cache', () => {
@@ -85,7 +86,7 @@ describe('useDeleteOneRecord', () => {
             objectNameSingular: personObjectMetadataItem.nameSingular,
           }),
         {
-          wrapper: getJestMetadataAndApolloMocksWrapper({
+          wrapper: getTestMetadataAndApolloMocksWrapper({
             apolloMocks: defaultMocks,
             cache,
           }),
@@ -129,7 +130,7 @@ describe('useDeleteOneRecord', () => {
             objectNameSingular: personObjectMetadataItem.nameSingular,
           }),
         {
-          wrapper: getJestMetadataAndApolloMocksWrapper({
+          wrapper: getTestMetadataAndApolloMocksWrapper({
             cache,
             apolloMocks,
           }),
@@ -164,7 +165,7 @@ describe('useDeleteOneRecord', () => {
             objectNameSingular: personObjectMetadataItem.nameSingular,
           }),
         {
-          wrapper: getJestMetadataAndApolloMocksWrapper({
+          wrapper: getTestMetadataAndApolloMocksWrapper({
             cache,
             apolloMocks,
           }),
@@ -219,7 +220,7 @@ describe('useDeleteOneRecord', () => {
             objectNameSingular: personObjectMetadataItem.nameSingular,
           }),
         {
-          wrapper: getJestMetadataAndApolloMocksWrapper({
+          wrapper: getTestMetadataAndApolloMocksWrapper({
             apolloMocks: defaultMocks,
             cache,
           }),
@@ -262,7 +263,7 @@ describe('useDeleteOneRecord', () => {
             objectNameSingular: personObjectMetadataItem.nameSingular,
           }),
         {
-          wrapper: getJestMetadataAndApolloMocksWrapper({
+          wrapper: getTestMetadataAndApolloMocksWrapper({
             apolloMocks,
             cache,
           }),
@@ -304,7 +305,7 @@ describe('useDeleteOneRecord', () => {
             objectNameSingular: personObjectMetadataItem.nameSingular,
           }),
         {
-          wrapper: getJestMetadataAndApolloMocksWrapper({
+          wrapper: getTestMetadataAndApolloMocksWrapper({
             apolloMocks,
             cache,
           }),

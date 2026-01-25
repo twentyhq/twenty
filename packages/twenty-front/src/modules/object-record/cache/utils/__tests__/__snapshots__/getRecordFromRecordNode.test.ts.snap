@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`getRecordFromRecordNode should convert a simple record node 1`] = `
+exports[`getRecordFromRecordNode > should convert a simple record node 1`] = `
 {
   "__typename": "Person",
   "email": "john@example.com",
@@ -9,7 +9,7 @@ exports[`getRecordFromRecordNode should convert a simple record node 1`] = `
 }
 `;
 
-exports[`getRecordFromRecordNode should handle array values 1`] = `
+exports[`getRecordFromRecordNode > should handle array values 1`] = `
 {
   "__typename": "Person",
   "id": "123",
@@ -25,7 +25,7 @@ exports[`getRecordFromRecordNode should handle array values 1`] = `
 }
 `;
 
-exports[`getRecordFromRecordNode should handle connection fields with edges 1`] = `
+exports[`getRecordFromRecordNode > should handle connection fields with edges 1`] = `
 {
   "__typename": "Company",
   "id": "123",
@@ -45,7 +45,7 @@ exports[`getRecordFromRecordNode should handle connection fields with edges 1`] 
 }
 `;
 
-exports[`getRecordFromRecordNode should handle deeply nested structures 1`] = `
+exports[`getRecordFromRecordNode > should handle deeply nested structures 1`] = `
 {
   "__typename": "Workspace",
   "id": "123",
@@ -60,7 +60,7 @@ exports[`getRecordFromRecordNode should handle deeply nested structures 1`] = `
 }
 `;
 
-exports[`getRecordFromRecordNode should handle mixed nested objects and connections 1`] = `
+exports[`getRecordFromRecordNode > should handle mixed nested objects and connections 1`] = `
 {
   "__typename": "Company",
   "address": {
@@ -84,7 +84,7 @@ exports[`getRecordFromRecordNode should handle mixed nested objects and connecti
 }
 `;
 
-exports[`getRecordFromRecordNode should handle nested object fields 1`] = `
+exports[`getRecordFromRecordNode > should handle nested object fields 1`] = `
 {
   "__typename": "Person",
   "id": "123",
@@ -96,7 +96,7 @@ exports[`getRecordFromRecordNode should handle nested object fields 1`] = `
 }
 `;
 
-exports[`getRecordFromRecordNode should handle null and undefined values 1`] = `
+exports[`getRecordFromRecordNode > should handle null and undefined values 1`] = `
 {
   "__typename": "Person",
   "email": null,

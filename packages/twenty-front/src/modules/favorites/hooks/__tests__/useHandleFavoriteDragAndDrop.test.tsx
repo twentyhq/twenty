@@ -11,25 +11,26 @@ import { createFolderDroppableId } from '@/favorites/utils/createFolderDroppable
 import { createFolderHeaderDroppableId } from '@/favorites/utils/createFolderHeaderDroppableId';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { vi } from 'vitest';
 import {
   initialFavorites,
   mockWorkspaceMember,
   mocks,
 } from '@/favorites/hooks/__mocks__/useFavorites';
 
-jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
+vi.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: () => ({ records: initialFavorites }),
 }));
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 
 describe('useHandleFavoriteDragAndDrop', () => {
   const mockResponderProvided: ResponderProvided = {
-    announce: jest.fn(),
+    announce: vi.fn(),
   };
 
   const setupHook = () => {

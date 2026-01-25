@@ -1,5 +1,7 @@
 import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
-jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
+import { vi } from 'vitest';
+
+vi.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
 
 describe('formatTimeZoneLabel', () => {
   it('should format the time zone label correctly when location is included in the label', () => {

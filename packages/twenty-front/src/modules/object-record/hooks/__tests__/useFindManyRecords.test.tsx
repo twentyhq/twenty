@@ -3,10 +3,11 @@ import { renderHook } from '@testing-library/react';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { vi } from 'vitest';
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
   onInitializeRecoilSnapshot: (snapshot) => {
     snapshot.set(currentWorkspaceMemberState, {
@@ -22,7 +23,7 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
 
 describe('useFindManyRecords', () => {
   it('should work as expected', async () => {
-    const onCompleted = jest.fn();
+    const onCompleted = vi.fn();
 
     const { result } = renderHook(
       () => {

@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import React, { act } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
+import { vi } from 'vitest';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { useSetIsRecordTableCellFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableCellFocusActive';
@@ -9,11 +10,11 @@ import { recordTableFocusPositionComponentState } from '@/object-record/record-t
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 
 const mockClassList = {
-  add: jest.fn(),
-  remove: jest.fn(),
+  add: vi.fn(),
+  remove: vi.fn(),
 };
 
-const mockGetElementById = jest.spyOn(document, 'getElementById');
+const mockGetElementById = vi.spyOn(document, 'getElementById');
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot
@@ -72,7 +73,7 @@ const renderHooks = () => {
 
 describe('useSetIsRecordTableFocusActive', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     mockGetElementById.mockReturnValue({
       classList: mockClassList,

@@ -5,15 +5,15 @@ import { RecoilRoot } from 'recoil';
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
 import { getFormatPreferencesFromWorkspaceMember } from '@/localization/utils/format-preferences/getFormatPreferencesFromWorkspaceMember';
+import { vi } from 'vitest';
 
-jest.mock(
+vi.mock(
   '@/localization/utils/format-preferences/getFormatPreferencesFromWorkspaceMember',
 );
 
-const mockGetFormatPreferencesFromWorkspaceMember =
-  getFormatPreferencesFromWorkspaceMember as jest.MockedFunction<
-    typeof getFormatPreferencesFromWorkspaceMember
-  >;
+const mockGetFormatPreferencesFromWorkspaceMember = vi.mocked(
+  getFormatPreferencesFromWorkspaceMember,
+);
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>{children}</RecoilRoot>
@@ -21,7 +21,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useInitializeFormatPreferences', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should be a function', () => {

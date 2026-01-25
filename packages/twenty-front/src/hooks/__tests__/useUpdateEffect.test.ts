@@ -1,10 +1,11 @@
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 describe('useUpdateEffect', () => {
   it('should call the effect callback on update', () => {
-    const effect = jest.fn();
+    const effect = vi.fn();
     const { rerender } = renderHook(() => {
       useUpdateEffect(effect);
     });

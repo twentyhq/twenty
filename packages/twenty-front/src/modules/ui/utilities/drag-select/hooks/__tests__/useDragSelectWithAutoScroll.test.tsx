@@ -2,16 +2,17 @@ import { renderHook } from '@testing-library/react';
 
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useDragSelectWithAutoScroll } from '@/ui/utilities/drag-select/hooks/useDragSelectWithAutoScroll';
+import { vi } from 'vitest';
 
-jest.mock(
+vi.mock(
   '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext',
   () => ({
-    useComponentInstanceStateContext: jest.fn(),
+    useComponentInstanceStateContext: vi.fn(),
   }),
 );
 
 describe('useDragSelectWithAutoScroll', () => {
-  const mockUseComponentInstanceStateContext = jest.mocked(
+  const mockUseComponentInstanceStateContext = vi.mocked(
     useComponentInstanceStateContext,
   );
 
@@ -26,10 +27,10 @@ describe('useDragSelectWithAutoScroll', () => {
     };
 
     const element = {
-      getBoundingClientRect: jest
+      getBoundingClientRect: vi
         .fn()
         .mockReturnValue({ ...defaultBounds, ...bounds }),
-      scrollTo: jest.fn(),
+      scrollTo: vi.fn(),
       scrollTop: 50,
       scrollLeft: 25,
     };
@@ -41,7 +42,7 @@ describe('useDragSelectWithAutoScroll', () => {
 
   afterEach(() => {
     document.getElementById = originalGetElementById;
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('instance ID resolution', () => {
@@ -51,7 +52,7 @@ describe('useDragSelectWithAutoScroll', () => {
       });
 
       const mockElement = createMockScrollElement();
-      document.getElementById = jest
+      document.getElementById = vi
         .fn()
         .mockImplementation((id) =>
           id === 'scroll-wrapper-explicit-instance' ? mockElement : null,
@@ -77,7 +78,7 @@ describe('useDragSelectWithAutoScroll', () => {
       });
 
       const mockElement = createMockScrollElement();
-      document.getElementById = jest
+      document.getElementById = vi
         .fn()
         .mockImplementation((id) =>
           id === 'scroll-wrapper-context-instance' ? mockElement : null,
@@ -95,7 +96,7 @@ describe('useDragSelectWithAutoScroll', () => {
 
     it('should not attempt scrolling when no instance ID available', () => {
       mockUseComponentInstanceStateContext.mockReturnValue(null);
-      document.getElementById = jest.fn();
+      document.getElementById = vi.fn();
 
       const { result } = renderHook(() => useDragSelectWithAutoScroll({}));
 
@@ -120,7 +121,7 @@ describe('useDragSelectWithAutoScroll', () => {
         right: 600,
       });
 
-      document.getElementById = jest.fn().mockReturnValue(mockElement);
+      document.getElementById = vi.fn().mockReturnValue(mockElement);
     });
 
     it('should calculate correct scroll amounts for vertical scrolling', () => {
@@ -132,7 +133,7 @@ describe('useDragSelectWithAutoScroll', () => {
         top: 35,
       });
 
-      jest.clearAllMocks();
+      vi.clearAllMocks();
 
       result.current.handleAutoScroll(300, 395);
 
@@ -151,7 +152,7 @@ describe('useDragSelectWithAutoScroll', () => {
         behavior: 'auto',
       });
 
-      jest.clearAllMocks();
+      vi.clearAllMocks();
 
       result.current.handleAutoScroll(595, 250);
 
@@ -204,7 +205,7 @@ describe('useDragSelectWithAutoScroll', () => {
         behavior: 'auto',
       });
 
-      jest.clearAllMocks();
+      vi.clearAllMocks();
 
       result.current.handleAutoScroll(120, 250);
 
@@ -220,7 +221,7 @@ describe('useDragSelectWithAutoScroll', () => {
     });
 
     it('should handle missing DOM element gracefully', () => {
-      document.getElementById = jest.fn().mockReturnValue(null);
+      document.getElementById = vi.fn().mockReturnValue(null);
 
       const { result } = renderHook(() => useDragSelectWithAutoScroll({}));
 
@@ -230,8 +231,8 @@ describe('useDragSelectWithAutoScroll', () => {
     });
 
     it('should handle element without getBoundingClientRect', () => {
-      const brokenElement = { scrollTo: jest.fn() };
-      document.getElementById = jest.fn().mockReturnValue(brokenElement);
+      const brokenElement = { scrollTo: vi.fn() };
+      document.getElementById = vi.fn().mockReturnValue(brokenElement);
 
       const { result } = renderHook(() => useDragSelectWithAutoScroll({}));
 

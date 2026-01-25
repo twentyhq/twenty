@@ -6,16 +6,17 @@ import { useMorphPersistManyToOne } from '@/object-record/record-field/ui/meta-t
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { vi } from 'vitest';
 
-const mockUpdateOneRecord = jest.fn();
+const mockUpdateOneRecord = vi.fn();
 
-jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
+vi.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   useUpdateOneRecord: () => ({
     updateOneRecord: mockUpdateOneRecord,
   }),
 }));
 
-jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
+vi.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   useObjectMetadataItems: () => ({
     objectMetadataItems: [
       {

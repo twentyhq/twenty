@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -12,7 +13,7 @@ describe('useUserTimezone', () => {
     // Mock Intl.DateTimeFormat to return a consistent system timezone
     global.Intl = {
       ...originalIntl,
-      DateTimeFormat: jest.fn().mockImplementation(() => ({
+      DateTimeFormat: vi.fn().mockImplementation(() => ({
         resolvedOptions: () => ({ timeZone: mockSystemTimezone }),
       })),
     } as any;

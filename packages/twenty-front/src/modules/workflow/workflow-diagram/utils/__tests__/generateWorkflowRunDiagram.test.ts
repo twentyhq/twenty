@@ -6,8 +6,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
+import { vi } from 'vitest';
 
-jest.mock('uuid', () => ({
+vi.mock('uuid', () => ({
   v4: getUuidV4Mock(),
 }));
 

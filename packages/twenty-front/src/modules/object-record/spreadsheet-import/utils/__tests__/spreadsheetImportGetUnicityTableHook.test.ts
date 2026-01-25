@@ -4,6 +4,7 @@ import { type ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { IndexType } from '~/generated-metadata/graphql';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { vi } from 'vitest';
 
 describe('spreadsheetImportGetUnicityTableHook', () => {
   const baseMockCompany = getMockCompanyObjectMetadataItem();
@@ -78,7 +79,7 @@ describe('spreadsheetImportGetUnicityTableHook', () => {
       { 'Link URL (domainName)': 'https://other.com' },
     ];
 
-    const addErrorMock = jest.fn();
+    const addErrorMock = vi.fn();
 
     const result = hook(testData, addErrorMock);
 
@@ -104,7 +105,7 @@ describe('spreadsheetImportGetUnicityTableHook', () => {
       { 'Link URL (domainName)': 'test3.com', id: '3' },
     ];
 
-    const addErrorMock = jest.fn();
+    const addErrorMock = vi.fn();
 
     const result = hook(testData, addErrorMock);
 
@@ -128,7 +129,7 @@ describe('spreadsheetImportGetUnicityTableHook', () => {
       { name: 'test', employees: '101', id: '3' },
     ];
 
-    const addErrorMock = jest.fn();
+    const addErrorMock = vi.fn();
 
     const result = hook(testData, addErrorMock);
 
@@ -175,7 +176,7 @@ describe('spreadsheetImportGetUnicityTableHook', () => {
       },
     ];
 
-    const addErrorMock = jest.fn();
+    const addErrorMock = vi.fn();
 
     const result = hook(testData, addErrorMock);
 

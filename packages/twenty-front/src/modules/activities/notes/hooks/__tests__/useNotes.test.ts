@@ -1,27 +1,28 @@
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 
-jest.mock('@/activities/hooks/useActivities', () => ({
-  useActivities: jest.fn(() => ({
+vi.mock('@/activities/hooks/useActivities', () => ({
+  useActivities: vi.fn(() => ({
     activities: [{ id: '1', content: 'Example Note' }],
     loading: false,
   })),
 }));
 
-jest.mock('recoil', () => {
-  const actualRecoil = jest.requireActual('recoil');
+vi.mock('recoil', async () => {
+  const actualRecoil = await vi.importActual('recoil');
   return {
     ...actualRecoil,
-    useRecoilState: jest.fn(() => {
+    useRecoilState: vi.fn(() => {
       const mockCurrentNotesQueryVariables = {
         filter: {},
         orderBy: 'mockOrderBy',
       };
-      return [mockCurrentNotesQueryVariables, jest.fn()];
+      return [mockCurrentNotesQueryVariables, vi.fn()];
     }),
-    atom: jest.fn(),
+    atom: vi.fn(),
   };
 });
 

@@ -10,6 +10,7 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { IconDotsVertical } from 'twenty-ui/display';
+import { vi } from 'vitest';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
@@ -50,7 +51,7 @@ const renderHooks = () => {
 
 describe('useCommandMenu', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should open and close the command menu', () => {

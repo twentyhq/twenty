@@ -3,7 +3,7 @@ import { type ReactNode, useEffect } from 'react';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-export const JestRecordStoreSetter = ({
+export const TestRecordStoreSetter = ({
   children,
   records,
 }: {

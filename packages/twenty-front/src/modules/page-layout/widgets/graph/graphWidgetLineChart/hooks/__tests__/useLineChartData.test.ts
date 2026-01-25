@@ -1,12 +1,13 @@
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeriesWithColor';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
 import { type LineChartSeries } from '~/generated/graphql';
 
-const mockUseRecoilComponentValue = jest.fn();
-jest.mock(
+const mockUseRecoilComponentValue = vi.fn();
+vi.mock(
   '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
   () => ({
     useRecoilComponentValue: () => mockUseRecoilComponentValue(),
@@ -15,7 +16,7 @@ jest.mock(
 
 describe('useLineChartData', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockUseRecoilComponentValue.mockReturnValue([]);
   });
 

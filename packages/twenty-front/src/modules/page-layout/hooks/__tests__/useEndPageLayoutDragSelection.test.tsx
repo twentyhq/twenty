@@ -3,6 +3,7 @@ import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { vi } from 'vitest';
 import { isDefined } from 'twenty-shared/utils';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
@@ -13,10 +14,15 @@ import {
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
 
-jest.mock(
+vi.mock(
   '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu',
+  () => ({
+    useNavigatePageLayoutCommandMenu: vi.fn(),
+  }),
 );
-jest.mock('../../utils/calculateGridBoundsFromSelectedCells');
+vi.mock('../../utils/calculateGridBoundsFromSelectedCells', () => ({
+  calculateGridBoundsFromSelectedCells: vi.fn(),
+}));
 
 const createInitializeState =
   (initialSelectedCells?: Set<string>, initialDraggedArea?: any) =>
@@ -40,20 +46,18 @@ const createInitializeState =
   };
 
 describe('useEndPageLayoutDragSelection', () => {
-  const mockNavigatePageLayoutCommandMenu = jest.fn();
+  const mockNavigatePageLayoutCommandMenu = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useNavigatePageLayoutCommandMenu as jest.Mock).mockReturnValue({
+    vi.clearAllMocks();
+    vi.mocked(useNavigatePageLayoutCommandMenu).mockReturnValue({
       navigatePageLayoutCommandMenu: mockNavigatePageLayoutCommandMenu,
     });
   });
 
   it('should handle drag selection end with valid bounds', () => {
     const mockBounds = { x: 0, y: 0, w: 2, h: 2 };
-    (calculateGridBoundsFromSelectedCells as jest.Mock).mockReturnValue(
-      mockBounds,
-    );
+    vi.mocked(calculateGridBoundsFromSelectedCells).mockReturnValue(mockBounds);
 
     const { result } = renderHook(
       () => ({
@@ -107,7 +111,7 @@ describe('useEndPageLayoutDragSelection', () => {
   });
 
   it('should not navigate when no cells are selected', () => {
-    (calculateGridBoundsFromSelectedCells as jest.Mock).mockReturnValue(null);
+    vi.mocked(calculateGridBoundsFromSelectedCells).mockReturnValue(null);
 
     const { result } = renderHook(
       () => ({
@@ -145,7 +149,7 @@ describe('useEndPageLayoutDragSelection', () => {
   });
 
   it('should not navigate when bounds calculation returns null', () => {
-    (calculateGridBoundsFromSelectedCells as jest.Mock).mockReturnValue(null);
+    vi.mocked(calculateGridBoundsFromSelectedCells).mockReturnValue(null);
 
     const { result } = renderHook(
       () => ({
@@ -202,9 +206,7 @@ describe('useEndPageLayoutDragSelection', () => {
 
   it('should navigate to widget selection when bounds are valid', () => {
     const mockBounds = { x: 0, y: 0, w: 2, h: 2 };
-    (calculateGridBoundsFromSelectedCells as jest.Mock).mockReturnValue(
-      mockBounds,
-    );
+    vi.mocked(calculateGridBoundsFromSelectedCells).mockReturnValue(mockBounds);
 
     const { result } = renderHook(
       () => ({
@@ -236,9 +238,7 @@ describe('useEndPageLayoutDragSelection', () => {
 
   it('should clear selected cells after successful navigation', () => {
     const mockBounds = { x: 0, y: 0, w: 1, h: 1 };
-    (calculateGridBoundsFromSelectedCells as jest.Mock).mockReturnValue(
-      mockBounds,
-    );
+    vi.mocked(calculateGridBoundsFromSelectedCells).mockReturnValue(mockBounds);
 
     const { result } = renderHook(
       () => ({

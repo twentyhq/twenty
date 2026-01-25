@@ -3,6 +3,7 @@ import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { vi } from 'vitest';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { useCreateWidgetFromClick } from '@/page-layout/hooks/useCreateWidgetFromClick';
@@ -11,16 +12,19 @@ import {
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
 
-jest.mock(
+vi.mock(
   '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu',
+  () => ({
+    useNavigatePageLayoutCommandMenu: vi.fn(),
+  }),
 );
 
 describe('useCreateWidgetFromClick', () => {
-  const mockNavigatePageLayoutCommandMenu = jest.fn();
+  const mockNavigatePageLayoutCommandMenu = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useNavigatePageLayoutCommandMenu as jest.Mock).mockReturnValue({
+    vi.clearAllMocks();
+    vi.mocked(useNavigatePageLayoutCommandMenu).mockReturnValue({
       navigatePageLayoutCommandMenu: mockNavigatePageLayoutCommandMenu,
     });
   });

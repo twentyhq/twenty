@@ -1,14 +1,15 @@
+import { vi } from 'vitest';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 
-global.fetch = jest.fn(() =>
+global.fetch = vi.fn(() =>
   Promise.resolve({
     status: 200,
-    blob: jest.fn(),
+    blob: vi.fn(),
   } as unknown as Response),
 );
 
-window.URL.createObjectURL = jest.fn(() => 'mock-url');
-window.URL.revokeObjectURL = jest.fn();
+window.URL.createObjectURL = vi.fn(() => 'mock-url');
+window.URL.revokeObjectURL = vi.fn();
 
 // FIXME: jest is behaving weirdly here, it's not finding the element
 // Also the document's innerHTML is empty
@@ -30,6 +31,6 @@ describe.skip('downloadFile', () => {
 
     expect(link).toHaveBeenCalledTimes(1);
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 });

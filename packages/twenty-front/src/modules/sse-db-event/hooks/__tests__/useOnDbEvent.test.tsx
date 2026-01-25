@@ -1,35 +1,32 @@
 import { renderHook } from '@testing-library/react';
 import { createClient } from 'graphql-sse';
+import { vi } from 'vitest';
 
 import { useOnDbEvent } from '@/sse-db-event/hooks/useOnDbEvent';
 import { DatabaseEventAction } from '~/generated/graphql';
 import { getTokenPair } from '~/modules/apollo/utils/getTokenPair';
 
-jest.mock('~/modules/apollo/utils/getTokenPair');
-jest.mock('graphql-sse');
+vi.mock('~/modules/apollo/utils/getTokenPair');
+vi.mock('graphql-sse');
 
-const mockGetTokenPair = getTokenPair as jest.MockedFunction<
-  typeof getTokenPair
->;
-const mockCreateClient = createClient as jest.MockedFunction<
-  typeof createClient
->;
+const mockGetTokenPair = vi.mocked(getTokenPair);
+const mockCreateClient = vi.mocked(createClient);
 
 // Mock environment variable
 const mockServerBaseUrl = 'http://localhost:3000';
-jest.mock('~/config', () => ({
+vi.mock('~/config', () => ({
   REACT_APP_SERVER_BASE_URL: 'http://localhost:3000',
 }));
 
 describe('useOnDbEvent', () => {
-  const mockUnsubscribe = jest.fn();
+  const mockUnsubscribe = vi.fn();
   const mockClient = {
-    subscribe: jest.fn(() => mockUnsubscribe),
-    dispose: jest.fn(),
+    subscribe: vi.fn(() => mockUnsubscribe),
+    dispose: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockCreateClient.mockReturnValue(mockClient as any);
   });
 
@@ -43,7 +40,7 @@ describe('useOnDbEvent', () => {
             objectNameSingular: 'test',
             action: DatabaseEventAction.CREATED,
           },
-          onData: jest.fn(),
+          onData: vi.fn(),
         }),
       );
 
@@ -70,7 +67,7 @@ describe('useOnDbEvent', () => {
             objectNameSingular: 'test',
             action: DatabaseEventAction.CREATED,
           },
-          onData: jest.fn(),
+          onData: vi.fn(),
         }),
       );
 
@@ -100,7 +97,7 @@ describe('useOnDbEvent', () => {
             objectNameSingular: 'test',
             action: DatabaseEventAction.CREATED,
           },
-          onData: jest.fn(),
+          onData: vi.fn(),
         }),
       );
 
@@ -130,7 +127,7 @@ describe('useOnDbEvent', () => {
             objectNameSingular: 'test',
             action: DatabaseEventAction.CREATED,
           },
-          onData: jest.fn(),
+          onData: vi.fn(),
         }),
       );
 
@@ -161,7 +158,7 @@ describe('useOnDbEvent', () => {
             objectNameSingular: 'test',
             action: DatabaseEventAction.CREATED,
           },
-          onData: jest.fn(),
+          onData: vi.fn(),
         }),
       );
 
@@ -191,7 +188,7 @@ describe('useOnDbEvent', () => {
             objectNameSingular: 'test',
             action: DatabaseEventAction.CREATED,
           },
-          onData: jest.fn(),
+          onData: vi.fn(),
         }),
       );
 
@@ -227,7 +224,7 @@ describe('useOnDbEvent', () => {
             objectNameSingular: 'test',
             action: DatabaseEventAction.CREATED,
           },
-          onData: jest.fn(),
+          onData: vi.fn(),
         }),
       );
 
@@ -246,7 +243,7 @@ describe('useOnDbEvent', () => {
             objectNameSingular: 'test',
             action: DatabaseEventAction.CREATED,
           },
-          onData: jest.fn(),
+          onData: vi.fn(),
           skip: true,
         }),
       );
@@ -255,7 +252,7 @@ describe('useOnDbEvent', () => {
     });
 
     it('should subscribe when skip is false or undefined', () => {
-      const mockOnData = jest.fn();
+      const mockOnData = vi.fn();
 
       renderHook(() =>
         useOnDbEvent({
@@ -272,7 +269,7 @@ describe('useOnDbEvent', () => {
     });
 
     it('should pass correct parameters to subscription', () => {
-      const mockOnData = jest.fn();
+      const mockOnData = vi.fn();
 
       renderHook(() =>
         useOnDbEvent({

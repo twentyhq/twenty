@@ -1,19 +1,21 @@
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { useTimelineActivities } from '@/activities/timeline-activities/hooks/useTimelineActivities';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
-jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
-  useFindManyRecords: jest.fn(),
+vi.mock('@/object-record/hooks/useFindManyRecords', () => ({
+  useFindManyRecords: vi.fn(),
 }));
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
 describe('useTimelineActivities', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('fetches events correctly for a given targetableObject', () => {
@@ -51,12 +53,49 @@ describe('useTimelineActivities', () => {
       targetObjectNameSingular: 'Opportunity',
     };
 
-    const useFindManyRecordsMock = jest.requireMock(
-      '@/object-record/hooks/useFindManyRecords',
-    );
-
-    useFindManyRecordsMock.useFindManyRecords.mockReturnValue({
+    vi.mocked(useFindManyRecords).mockReturnValue({
+      objectMetadataItem: {
+        id: '1',
+        nameSingular: 'timelineActivity',
+        namePlural: 'timelineActivities',
+        labelSingular: 'Timeline Activity',
+        labelPlural: 'Timeline Activities',
+        description: null,
+        icon: null,
+        createdAt: '',
+        updatedAt: '',
+        isActive: true,
+        isCustom: false,
+        isSystem: false,
+        isRemote: false,
+        isSearchable: true,
+        isUIReadOnly: false,
+        isLabelSyncedWithName: false,
+        applicationId: '',
+        shortcut: null,
+        duplicateCriteria: null,
+        standardOverrides: null,
+        labelIdentifierFieldMetadataId: '',
+        imageIdentifierFieldMetadataId: null,
+        fields: [],
+        readableFields: [],
+        updatableFields: [],
+        indexMetadatas: [],
+      },
       records: mockedTimelineActivities,
+      totalCount: mockedTimelineActivities.length,
+      loading: false,
+      error: undefined,
+      fetchMoreRecords: vi.fn(),
+      queryIdentifier: '',
+      hasNextPage: false,
+      pageInfo: {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: '',
+        endCursor: '',
+      },
+      refetch: vi.fn(),
     });
 
     const { result } = renderHook(

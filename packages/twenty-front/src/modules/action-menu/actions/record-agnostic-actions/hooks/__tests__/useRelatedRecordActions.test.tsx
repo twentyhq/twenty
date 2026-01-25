@@ -3,9 +3,10 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 import { useRelatedRecordActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions';
 
-jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
+vi.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   useObjectMetadataItems: () => ({
     objectMetadataItems: [
       {
@@ -29,7 +30,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 describe('useRelatedRecordActions', () => {
-  const mockGetIcon = jest.fn();
+  const mockGetIcon = vi.fn();
 
   beforeEach(() => {
     mockGetIcon.mockClear();

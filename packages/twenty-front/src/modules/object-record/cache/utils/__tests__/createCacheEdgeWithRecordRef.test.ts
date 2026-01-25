@@ -4,6 +4,7 @@ import { encodeCursor } from '@/apollo/utils/encodeCursor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ToReferenceFunction } from '@apollo/client/cache/core/types/common';
+import { vi } from 'vitest';
 
 import { createCacheEdgeWithRecordRef } from '@/object-record/cache/utils/createCacheEdgeWithRecordRef';
 
@@ -23,7 +24,7 @@ describe('createCacheEdgeWithRecordRef', () => {
       __ref: 'Person:123',
     };
 
-    const toReference: ToReferenceFunction = jest.fn(() => mockReference);
+    const toReference: ToReferenceFunction = vi.fn(() => mockReference);
 
     // When
     const result = createCacheEdgeWithRecordRef({
@@ -53,7 +54,7 @@ describe('createCacheEdgeWithRecordRef', () => {
       nameSingular: 'person',
     } as ObjectMetadataItem;
 
-    const toReference: ToReferenceFunction = jest.fn(() => undefined);
+    const toReference: ToReferenceFunction = vi.fn(() => undefined);
 
     // When
     const result = createCacheEdgeWithRecordRef({

@@ -1,22 +1,29 @@
+import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { getGroupByAggregateQueryName } from '@/object-record/record-aggregate/utils/getGroupByAggregateQueryName';
 import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryName';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
-jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
-  useApolloCoreClient: jest.fn(),
+vi.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
+  useApolloCoreClient: vi.fn(),
 }));
 
 describe('useRefetchAggregateQueries', () => {
-  const mockRefetchQueries = jest.fn();
-  const mockApolloClient = {
-    refetchQueries: mockRefetchQueries,
-  };
+  const mockRefetchQueries = vi.fn();
+  const mockApolloClient = new ApolloClient({
+    uri: 'http://localhost',
+    cache: new InMemoryCache(),
+  });
+  Object.defineProperty(mockApolloClient, 'refetchQueries', {
+    value: mockRefetchQueries,
+    writable: true,
+  });
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useApolloCoreClient as jest.Mock).mockReturnValue(mockApolloClient);
+    vi.clearAllMocks();
+    vi.mocked(useApolloCoreClient).mockReturnValue(mockApolloClient);
   });
 
   it('should refetch queries', async () => {

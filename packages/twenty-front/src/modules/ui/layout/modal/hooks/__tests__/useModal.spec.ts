@@ -4,12 +4,13 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { act } from 'react';
+import { vi } from 'vitest';
 
 const modalId = 'test-modal-id';
 
 describe('useModal', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should open a modal', () => {

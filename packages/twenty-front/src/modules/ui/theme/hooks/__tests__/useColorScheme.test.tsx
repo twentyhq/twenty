@@ -1,13 +1,14 @@
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { vi } from 'vitest';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
-const updateOneRecordMock = jest.fn();
+const updateOneRecordMock = vi.hoisted(() => vi.fn());
 
-jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
+vi.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   useUpdateOneRecord: () => ({
     updateOneRecord: updateOneRecordMock,
   }),

@@ -1,4 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
@@ -8,8 +9,8 @@ import {
   QUERY_MAX_RECORDS,
 } from 'twenty-shared/constants';
 import { MessageParticipantRole } from 'twenty-shared/types';
-import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generateEmptyRecordNode } from '~/testing/test-helpers/generateEmptyRecordNode';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { useEmailThreadInCommandMenu } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInCommandMenu';
 
 const mocks = [
@@ -25,7 +26,7 @@ const mocks = [
       `,
       variables: { objectRecordId: '1' },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         messageThread: {
           id: '1',
@@ -166,12 +167,12 @@ const mocks = [
         limit: QUERY_MAX_RECORDS,
       },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         messages: {
           edges: [
             {
-              node: generateEmptyJestRecordNode({
+              node: generateEmptyRecordNode({
                 objectNameSingular: 'message',
                 input: {
                   id: '1',
@@ -182,7 +183,7 @@ const mocks = [
               cursor: '1',
             },
             {
-              node: generateEmptyJestRecordNode({
+              node: generateEmptyRecordNode({
                 objectNameSingular: 'message',
                 input: {
                   id: '2',
@@ -323,12 +324,12 @@ const mocks = [
         limit: QUERY_DEFAULT_LIMIT_RECORDS,
       },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         messageParticipants: {
           edges: [
             {
-              node: generateEmptyJestRecordNode({
+              node: generateEmptyRecordNode({
                 objectNameSingular: 'messageParticipant',
                 input: {
                   id: 'messageParticipant-1',
@@ -339,7 +340,7 @@ const mocks = [
               cursor: '1',
             },
             {
-              node: generateEmptyJestRecordNode({
+              node: generateEmptyRecordNode({
                 objectNameSingular: 'messageParticipant',
                 input: {
                   id: 'messageParticipant-2',
@@ -364,7 +365,7 @@ const mocks = [
 ];
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  const MetadataWrapper = getJestMetadataAndApolloMocksWrapper({
+  const MetadataWrapper = getTestMetadataAndApolloMocksWrapper({
     apolloMocks: mocks,
     onInitializeRecoilSnapshot: ({ set }) => {
       set(

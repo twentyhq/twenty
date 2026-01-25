@@ -3,7 +3,7 @@ import { print } from 'graphql';
 
 import { PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
 const expectedQueryTemplate = `
   mutation CreateOnePerson($input: PersonCreateInput!) {
@@ -13,7 +13,7 @@ const expectedQueryTemplate = `
   }
 `.replace(/\s/g, '');
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 

@@ -2,25 +2,26 @@ import { type WorkflowTrigger } from '@/workflow/types/Workflow';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { act, renderHook } from '@testing-library/react';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { vi } from 'vitest';
 
-const mockUpdateOneRecord = jest.fn();
-const mockGetUpdatableWorkflowVersion = jest.fn();
-const mockMarkStepForRecomputation = jest.fn();
+const mockUpdateOneRecord = vi.fn();
+const mockGetUpdatableWorkflowVersion = vi.fn();
+const mockMarkStepForRecomputation = vi.fn();
 
-jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
-  useUpdateOneRecord: jest.fn(() => ({
+vi.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
+  useUpdateOneRecord: vi.fn(() => ({
     updateOneRecord: mockUpdateOneRecord,
   })),
 }));
 
-jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
-  useGetUpdatableWorkflowVersionOrThrow: jest.fn(() => ({
+vi.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
+  useGetUpdatableWorkflowVersionOrThrow: vi.fn(() => ({
     getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
   })),
 }));
 
-jest.mock('@/workflow/workflow-variables/hooks/useStepsOutputSchema', () => ({
-  useStepsOutputSchema: jest.fn(() => ({
+vi.mock('@/workflow/workflow-variables/hooks/useStepsOutputSchema', () => ({
+  useStepsOutputSchema: vi.fn(() => ({
     markStepForRecomputation: mockMarkStepForRecomputation,
   })),
 }));
@@ -37,7 +38,7 @@ describe('useUpdateWorkflowVersionTrigger', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('updates the trigger and marks it for recomputation for frontend-computed types', async () => {

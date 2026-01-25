@@ -5,18 +5,25 @@ import { RecoilRoot } from 'recoil';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { AppPath } from 'twenty-shared/types';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
+import { vi } from 'vitest';
 
-jest.mock('react-router-dom', () => ({
-  useLocation: jest.fn(),
+vi.mock('react-router-dom', () => ({
+  useLocation: vi.fn(),
 }));
 
-const mockUseLocation = reactRouterDom.useLocation as jest.Mock;
+const mockUseLocation = vi.mocked(reactRouterDom.useLocation);
 
-jest.mock('~/utils/isMatchingLocation');
-const mockIsMatchingLocation = jest.mocked(isMatchingLocation);
+vi.mock('~/utils/isMatchingLocation');
+const mockIsMatchingLocation = vi.mocked(isMatchingLocation);
 
 const setupMockIsMatchingLocation = (pathname: string) => {
-  mockUseLocation.mockReturnValue({ pathname });
+  mockUseLocation.mockReturnValue({
+    pathname,
+    search: '',
+    hash: '',
+    state: null,
+    key: 'default',
+  });
   mockIsMatchingLocation.mockImplementation(
     (_location, path) => path === pathname,
   );

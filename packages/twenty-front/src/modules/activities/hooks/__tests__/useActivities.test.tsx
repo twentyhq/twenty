@@ -1,17 +1,19 @@
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 
 import { useActivities } from '@/activities/hooks/useActivities';
+import { useActivityTargetsForTargetableObjects } from '@/activities/hooks/useActivityTargetsForTargetableObjects';
 import { type Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
-jest.mock('@/activities/hooks/useActivityTargetsForTargetableObjects', () => ({
-  useActivityTargetsForTargetableObjects: jest.fn(),
+vi.mock('@/activities/hooks/useActivityTargetsForTargetableObjects', () => ({
+  useActivityTargetsForTargetableObjects: vi.fn(),
 }));
 
-jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
-  useFindManyRecords: jest.fn(),
+vi.mock('@/object-record/hooks/useFindManyRecords', () => ({
+  useFindManyRecords: vi.fn(),
 }));
 
 const mockActivityTarget = {
@@ -46,19 +48,24 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useActivities', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('fetches activities', async () => {
-    const useActivityTargetsForTargetableObjectsMock = jest.requireMock(
-      '@/activities/hooks/useActivityTargetsForTargetableObjects',
-    );
-    useActivityTargetsForTargetableObjectsMock.useActivityTargetsForTargetableObjects.mockReturnValue(
-      {
-        activityTargets: [{ ...mockActivityTarget, task: mockActivity }],
-        loadingActivityTargets: false,
-      },
-    );
+    vi.mocked(useActivityTargetsForTargetableObjects).mockReturnValue({
+      activityTargets: [
+        {
+          ...mockActivityTarget,
+          taskId: mockActivity.id,
+          task: mockActivity,
+          __typename: 'TaskTarget',
+        },
+      ],
+      loadingActivityTargets: false,
+      totalCountActivityTargets: 1,
+      fetchMoreActivityTargets: vi.fn(),
+      hasNextPage: false,
+    });
 
     const { result } = renderHook(
       () => {

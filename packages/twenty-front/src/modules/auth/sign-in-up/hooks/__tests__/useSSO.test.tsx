@@ -6,19 +6,32 @@ import { ApolloError } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
-jest.mock('@/domain-manager/hooks/useRedirect');
-jest.mock('~/generated/graphql');
+vi.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
+  useSnackBar: vi.fn(),
+}));
+vi.mock('@/domain-manager/hooks/useRedirect', () => ({
+  useRedirect: vi.fn(),
+}));
+vi.mock('~/generated/graphql');
 
-const mockEnqueueErrorSnackBar = jest.fn();
-const mockRedirect = jest.fn();
+const mockEnqueueErrorSnackBar = vi.fn();
+const mockRedirect = vi.fn();
 
-(useSnackBar as jest.Mock).mockReturnValue({
+vi.mocked(useSnackBar).mockReturnValue({
+  handleSnackBarClose: vi.fn(),
+  enqueueSuccessSnackBar: vi.fn(),
   enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
+  enqueueInfoSnackBar: vi.fn(),
+  enqueueWarningSnackBar: vi.fn(),
 });
-(useRedirect as jest.Mock).mockReturnValue({
-  redirect: mockRedirect,
+vi.mocked(useRedirect).mockReturnValue({
+  redirect: Object.assign(mockRedirect, {
+    cancel: vi.fn(),
+    flush: vi.fn(),
+    isPending: vi.fn().mockReturnValue(false),
+  }),
 });
 
 const apolloMocks = [
@@ -63,7 +76,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 
 describe('useSSO', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should call getAuthorizationUrlForSSO with correct parameters', async () => {

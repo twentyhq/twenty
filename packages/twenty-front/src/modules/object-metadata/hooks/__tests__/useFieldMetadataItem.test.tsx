@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
+import { vi } from 'vitest';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -13,19 +14,19 @@ import {
   responseData,
   variables,
 } from '@/object-metadata/hooks/__mocks__/useFieldMetadataItem';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
 import {
   query as findManyObjectMetadataItemsQuery,
   responseData as findManyObjectMetadataItemsResponseData,
 } from '@/object-metadata/hooks/__mocks__/useFindManyObjectMetadataItems';
-import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util';
+import { expectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/expect-metadata-request-status.util';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { mockedUserData } from '~/testing/mock-data/users';
 
-jest.mock('@/object-metadata/hooks/useUpdateOneFieldMetadataItem', () => ({
+vi.mock('@/object-metadata/hooks/useUpdateOneFieldMetadataItem', () => ({
   useUpdateOneFieldMetadataItem: () => ({
-    updateOneFieldMetadataItem: jest.fn().mockResolvedValue({
+    updateOneFieldMetadataItem: vi.fn().mockResolvedValue({
       status: 'successful',
       response: {
         data: {
@@ -83,7 +84,7 @@ const mocks = [
       query: GET_CURRENT_USER,
       variables: {},
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         currentUser: mockedUserData,
       },
@@ -94,7 +95,7 @@ const mocks = [
       query: queries.deleteMetadataField,
       variables: variables.deleteMetadataField,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         deleteOneField: responseData.default,
       },
@@ -105,7 +106,7 @@ const mocks = [
       query: queries.deleteMetadataField,
       variables: variables.deleteMetadataFieldRelation,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         deleteOneField: responseData.fieldRelation,
       },
@@ -116,7 +117,7 @@ const mocks = [
       query: queries.createMetadataField,
       variables: variables.createMetadataField,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         createOneField: responseData.createMetadataField,
       },
@@ -127,13 +128,13 @@ const mocks = [
       query: findManyObjectMetadataItemsQuery,
       variables: {},
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: findManyObjectMetadataItemsResponseData,
     })),
   },
 ];
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 
@@ -149,7 +150,7 @@ describe('useFieldMetadataItem', () => {
         objectMetadataId,
       );
 
-      jestExpectSuccessfulMetadataRequestResult(response);
+      expectSuccessfulMetadataRequestResult(response);
 
       expect(response.response).toEqual({
         data: {
@@ -172,7 +173,7 @@ describe('useFieldMetadataItem', () => {
         name: 'fieldName',
         isLabelSyncedWithName: true,
       });
-      jestExpectSuccessfulMetadataRequestResult(res);
+      expectSuccessfulMetadataRequestResult(res);
 
       expect(res.response).toEqual({
         data: {
@@ -193,7 +194,7 @@ describe('useFieldMetadataItem', () => {
         objectMetadataId,
       );
 
-      jestExpectSuccessfulMetadataRequestResult(response);
+      expectSuccessfulMetadataRequestResult(response);
       expect(response.response.data).toEqual({
         updateOneField: responseData.default,
       });
@@ -210,7 +211,7 @@ describe('useFieldMetadataItem', () => {
         idToDelete: fieldMetadataItem.id,
         objectMetadataId,
       });
-      jestExpectSuccessfulMetadataRequestResult(res);
+      expectSuccessfulMetadataRequestResult(res);
 
       expect(res.response).toEqual({
         data: {
@@ -230,7 +231,7 @@ describe('useFieldMetadataItem', () => {
         idToDelete: fieldRelationMetadataItem.id,
         objectMetadataId,
       });
-      jestExpectSuccessfulMetadataRequestResult(res);
+      expectSuccessfulMetadataRequestResult(res);
 
       expect(res.response).toEqual({
         data: {

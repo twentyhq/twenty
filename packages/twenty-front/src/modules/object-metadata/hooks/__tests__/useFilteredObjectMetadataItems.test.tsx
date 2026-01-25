@@ -2,6 +2,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 
 import {
   query,
@@ -19,7 +20,7 @@ const mocks = [
       query,
       variables,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         updateOneObject: responseData,
       },

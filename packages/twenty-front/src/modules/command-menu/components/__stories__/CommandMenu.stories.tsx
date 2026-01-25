@@ -35,7 +35,7 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { IconDotsVertical } from 'twenty-ui/display';
-import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
+import { TestContextStoreSetter } from '~/testing/test-helpers/TestContextStoreSetter';
 
 const openTimeout = 50;
 
@@ -53,13 +53,13 @@ const ContextStoreDecorator: Decorator = (Story) => {
           <ActionMenuComponentInstanceContext.Provider
             value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
           >
-            <JestContextStoreSetter
+            <TestContextStoreSetter
               contextStoreCurrentObjectMetadataNameSingular="company"
               contextStoreCurrentViewId="1"
               contextStoreCurrentViewType={ContextStoreViewType.Table}
             >
               <Story />
-            </JestContextStoreSetter>
+            </TestContextStoreSetter>
           </ActionMenuComponentInstanceContext.Provider>
         </ViewComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>

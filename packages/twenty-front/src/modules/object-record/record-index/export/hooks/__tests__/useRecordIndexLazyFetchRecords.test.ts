@@ -1,14 +1,16 @@
-import { renderHook, waitFor } from '@testing-library/react';
-import { act } from 'react';
 import {
   percentage,
   sleep,
   useRecordIndexLazyFetchRecords,
 } from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
+import { renderHook, waitFor } from '@testing-library/react';
+import { act } from 'react';
+import { vi } from 'vitest';
 
+import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { ViewType } from '@/views/types/ViewType';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { getTestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const mockPerson = {
@@ -61,7 +63,7 @@ const mockPerson = {
   },
 };
 
-const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+const Wrapper = getTestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
   componentInstanceId: 'recordIndexId',
   contextStoreTargetedRecordsRule: {
@@ -71,8 +73,8 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   contextStoreCurrentObjectMetadataNameSingular: 'person',
 });
 
-jest.mock('@/object-record/hooks/useLazyFetchAllRecords', () => ({
-  useLazyFetchAllRecords: jest.fn(),
+vi.mock('@/object-record/hooks/useLazyFetchAllRecords', () => ({
+  useLazyFetchAllRecords: vi.fn(),
 }));
 
 describe('useRecordData', () => {
@@ -80,15 +82,19 @@ describe('useRecordData', () => {
   const objectMetadataItem = generatedMockObjectMetadataItems.find(
     (item) => item.nameSingular === 'person',
   );
-  let mockFetchAllRecords: jest.Mock;
+  let mockFetchAllRecords: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     // Mock the hook's implementation
-    mockFetchAllRecords = jest.fn();
-    (useLazyFetchAllRecords as jest.Mock).mockReturnValue({
-      progress: 100,
+    mockFetchAllRecords = vi.fn().mockResolvedValue([]);
+    vi.mocked(useLazyFetchAllRecords).mockReturnValue({
+      progress: {
+        processedRecordCount: 100,
+        totalRecordCount: 100,
+        displayType: 'percentage',
+      },
       isDownloading: false,
-      fetchAllRecords: mockFetchAllRecords, // Mock the function
+      fetchAllRecords: mockFetchAllRecords as () => Promise<RecordGqlNode[]>,
     });
   });
   if (!objectMetadataItem) {
@@ -97,7 +103,7 @@ describe('useRecordData', () => {
 
   describe('data fetching', () => {
     it('should handle no records', async () => {
-      const callback = jest.fn();
+      const callback = vi.fn();
 
       mockFetchAllRecords.mockReturnValue([]);
 
@@ -126,7 +132,7 @@ describe('useRecordData', () => {
     });
 
     it('should call the callback function with fetched data', async () => {
-      const callback = jest.fn();
+      const callback = vi.fn();
       mockFetchAllRecords.mockReturnValue([mockPerson]);
 
       const { result } = renderHook(
@@ -163,10 +169,11 @@ describe('useRecordData', () => {
     });
 
     it('should resolve sleep after given time', async () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
       const sleepPromise = sleep(1000);
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
       await expect(sleepPromise).resolves.toBeUndefined();
+      vi.useRealTimers();
     });
   });
 });

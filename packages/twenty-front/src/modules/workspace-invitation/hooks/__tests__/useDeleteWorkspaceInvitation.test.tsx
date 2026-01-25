@@ -1,22 +1,23 @@
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { renderHook } from '@testing-library/react';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { vi } from 'vitest';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
-const mutationDeleteWorkspaceInvitationCallSpy = jest.fn();
+const mutationDeleteWorkspaceInvitationCallSpy = vi.fn();
 
-jest.mock('~/generated-metadata/graphql', () => ({
+vi.mock('~/generated-metadata/graphql', () => ({
   useDeleteWorkspaceInvitationMutation: () => [
     mutationDeleteWorkspaceInvitationCallSpy,
   ],
 }));
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
 describe('useDeleteWorkspaceInvitation', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('Delete Workspace Invitation', async () => {

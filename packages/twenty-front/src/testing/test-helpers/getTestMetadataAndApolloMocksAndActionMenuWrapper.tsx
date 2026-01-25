@@ -5,22 +5,22 @@ import { type ReactNode } from 'react';
 import { type MutableSnapshot } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  JestContextStoreSetter,
-  type JestContextStoreSetterMocks,
-} from '~/testing/jest/JestContextStoreSetter';
-import { JestRecordIndexContextProviderWrapper } from '~/testing/jest/JestRecordIndexContextProviderWrapper';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+  TestContextStoreSetter,
+  type TestContextStoreSetterMocks,
+} from '~/testing/test-helpers/TestContextStoreSetter';
+import { TestRecordIndexContextProviderWrapper } from '~/testing/test-helpers/TestRecordIndexContextProviderWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-export type GetJestMetadataAndApolloMocksAndActionMenuWrapperProps = {
+export type GetTestMetadataAndApolloMocksAndActionMenuWrapperProps = {
   apolloMocks:
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;
   onInitializeRecoilSnapshot?: (snapshot: MutableSnapshot) => void;
   componentInstanceId: string;
-} & JestContextStoreSetterMocks;
+} & TestContextStoreSetterMocks;
 
-export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
+export const getTestMetadataAndApolloMocksAndActionMenuWrapper = ({
   apolloMocks,
   onInitializeRecoilSnapshot,
   contextStoreTargetedRecordsRule,
@@ -30,8 +30,8 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
   contextStoreCurrentObjectMetadataNameSingular,
   contextStoreFilters,
   componentInstanceId,
-}: GetJestMetadataAndApolloMocksAndActionMenuWrapperProps) => {
-  const Wrapper = getJestMetadataAndApolloMocksWrapper({
+}: GetTestMetadataAndApolloMocksAndActionMenuWrapperProps) => {
+  const Wrapper = getTestMetadataAndApolloMocksWrapper({
     apolloMocks,
     onInitializeRecoilSnapshot,
   });
@@ -56,10 +56,10 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
             instanceId: componentInstanceId,
           }}
         >
-          <JestRecordIndexContextProviderWrapper
+          <TestRecordIndexContextProviderWrapper
             objectMetadataItem={mockObjectMetadataItem}
           >
-            <JestContextStoreSetter
+            <TestContextStoreSetter
               contextStoreCurrentViewId={contextStoreCurrentViewId}
               contextStoreFilters={contextStoreFilters}
               contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
@@ -72,8 +72,8 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
               contextStoreCurrentViewType={contextStoreCurrentViewType}
             >
               {children}
-            </JestContextStoreSetter>
-          </JestRecordIndexContextProviderWrapper>
+            </TestContextStoreSetter>
+          </TestRecordIndexContextProviderWrapper>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </Wrapper>

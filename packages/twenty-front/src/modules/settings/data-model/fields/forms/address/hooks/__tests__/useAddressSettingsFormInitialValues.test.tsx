@@ -2,27 +2,28 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { renderHook } from '@testing-library/react';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { type MockedFunction, vi } from 'vitest';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { useAddressSettingsFormInitialValues } from '@/settings/data-model/fields/forms/address/hooks/useAddressSettingsFormInitialValues';
 
-jest.mock('react-hook-form', () => ({
-  useFormContext: jest.fn(),
+vi.mock('react-hook-form', () => ({
+  useFormContext: vi.fn(),
 }));
 
-const mockResetField = jest.fn();
-const mockUseFormContext = useFormContext as jest.MockedFunction<
+const mockResetField = vi.fn();
+const mockUseFormContext = useFormContext as MockedFunction<
   typeof useFormContext
 >;
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
   objectMetadataItems: generatedMockObjectMetadataItems,
 });
 
 describe('useAddressSettingsFormInitialValues', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockUseFormContext.mockReturnValue({
       resetField: mockResetField,
     } as any);
@@ -131,7 +132,7 @@ describe('useAddressSettingsFormInitialValues', () => {
       ['addressStreet1', 'addressCity', 'addressCountry'],
     );
 
-    const WrapperSpecific = getJestMetadataAndApolloMocksWrapper({
+    const WrapperSpecific = getTestMetadataAndApolloMocksWrapper({
       apolloMocks: [],
       objectMetadataItems: newGeneratedMockObjectMetadataItems,
     });
@@ -179,7 +180,7 @@ describe('useAddressSettingsFormInitialValues', () => {
   });
 
   it('should handle partial subFields configuration', () => {
-    const WrapperSpecific = getJestMetadataAndApolloMocksWrapper({
+    const WrapperSpecific = getTestMetadataAndApolloMocksWrapper({
       apolloMocks: [],
       objectMetadataItems: addNewAddressToMetadataItems(
         generatedMockObjectMetadataItems,

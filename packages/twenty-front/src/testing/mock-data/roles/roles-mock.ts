@@ -4,7 +4,7 @@ import {
   type ObjectPermission,
   type Role,
 } from '~/generated/graphql';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
 export const MOCK_ROLE_ID_GRANTS_ALL = 'role-id-1';
 export const MOCK_ROLE_ID_REVOKES_ALL = 'role-id-2';
@@ -116,7 +116,7 @@ export const BASE_ROLE_MOCK_REVOKES_ALL: Role = {
   rowLevelPermissionPredicates: [],
 };
 
-export const rolesMockHookWrapper = getJestMetadataAndApolloMocksWrapper({
+export const rolesMockHookWrapper = getTestMetadataAndApolloMocksWrapper({
   onInitializeRecoilSnapshot: (snapshot) => {
     snapshot.set(
       settingsDraftRoleFamilyState(MOCK_ROLE_ID_GRANTS_ALL),

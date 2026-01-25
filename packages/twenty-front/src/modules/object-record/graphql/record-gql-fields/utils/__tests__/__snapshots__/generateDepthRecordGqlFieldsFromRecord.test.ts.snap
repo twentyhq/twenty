@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`generateDepthRecordGqlFieldsFromRecord should generate depth one record gql fields from empty record 1`] = `
+exports[`generateDepthRecordGqlFieldsFromRecord > should generate depth one record gql fields from empty record 1`] = `
 {
   "accountOwner": false,
   "accountOwnerId": false,
@@ -33,7 +33,7 @@ exports[`generateDepthRecordGqlFieldsFromRecord should generate depth one record
 }
 `;
 
-exports[`generateDepthRecordGqlFieldsFromRecord should generate depth one record gql fields from record with some fields 1`] = `
+exports[`generateDepthRecordGqlFieldsFromRecord > should generate depth one record gql fields from record with some fields 1`] = `
 {
   "accountOwner": false,
   "accountOwnerId": false,
@@ -66,7 +66,7 @@ exports[`generateDepthRecordGqlFieldsFromRecord should generate depth one record
 }
 `;
 
-exports[`generateDepthRecordGqlFieldsFromRecord should generate depth zero record gql fields from record with some fields 1`] = `
+exports[`generateDepthRecordGqlFieldsFromRecord > should generate depth zero record gql fields from record with some fields 1`] = `
 {
   "accountOwnerId": false,
   "address": false,

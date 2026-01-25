@@ -1,19 +1,22 @@
 import { ApolloError, gql, InMemoryCache } from '@apollo/client';
-import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
+import { vi } from 'vitest';
 import { WorkspaceActivationStatus } from '~/generated/graphql';
+import fetchMock, { enableFetchMocks } from '~/testing/test-helpers/fetchMock';
 
 enableFetchMocks();
 
-jest.mock('@/auth/services/AuthService', () => {
-  const initialAuthService = jest.requireActual('@/auth/services/AuthService');
+vi.mock('@/auth/services/AuthService', async () => {
+  const initialAuthService = await vi.importActual(
+    '@/auth/services/AuthService',
+  );
   return {
     ...initialAuthService,
-    renewToken: jest.fn().mockReturnValue(
+    renewToken: vi.fn().mockReturnValue(
       Promise.resolve({
         accessOrWorkspaceAgnosticToken: {
           token: 'newAccessToken',
@@ -25,8 +28,8 @@ jest.mock('@/auth/services/AuthService', () => {
   };
 });
 
-const mockOnError = jest.fn();
-const mockOnNetworkError = jest.fn();
+const mockOnError = vi.fn();
+const mockOnNetworkError = vi.fn();
 
 const mockWorkspaceMember = {
   id: 'workspace-member-id',

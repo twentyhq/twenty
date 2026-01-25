@@ -2,9 +2,10 @@ import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart
 import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
-const mockUseRecoilComponentValue = jest.fn();
-jest.mock(
+const mockUseRecoilComponentValue = vi.fn();
+vi.mock(
   '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
   () => ({
     useRecoilComponentValue: () => mockUseRecoilComponentValue(),
@@ -13,7 +14,7 @@ jest.mock(
 
 describe('useBarChartData', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockUseRecoilComponentValue.mockReturnValue([]);
   });
 

@@ -1,27 +1,53 @@
-import { useMutation } from '@apollo/client';
-import { renderHook } from '@testing-library/react';
-import { type ComputeStepOutputSchemaInput } from '~/generated/graphql';
 import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
+import { ApolloClient, InMemoryCache, useMutation } from '@apollo/client';
+import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
+import { type ComputeStepOutputSchemaInput } from '~/generated/graphql';
 
-jest.mock('@apollo/client');
-jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
-  useApolloCoreClient: () => ({}),
+vi.mock('@apollo/client', async () => {
+  const actual = await vi.importActual('@apollo/client');
+  return {
+    ...actual,
+    useMutation: vi.fn(),
+  };
+});
+vi.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
+  useApolloCoreClient: () =>
+    new ApolloClient({
+      uri: 'http://localhost',
+      cache: new InMemoryCache(),
+    }),
 }));
 
 describe('useComputeStepOutputSchema', () => {
   it('should compute schema successfully', async () => {
-    const mockInput = { stepId: '123' };
+    const mockInput: ComputeStepOutputSchemaInput = {
+      step: { type: 'object' },
+      workflowVersionId: '123',
+    };
     const mockResponse = {
       data: { computeStepOutputSchema: { schema: { type: 'object' } } },
     };
-    const mockMutate = jest.fn().mockResolvedValue(mockResponse);
+    const mockMutate = vi.fn().mockResolvedValue(mockResponse);
+    const mockApolloClient = new ApolloClient({
+      uri: 'http://localhost',
+      cache: new InMemoryCache(),
+    });
 
-    (useMutation as jest.Mock).mockReturnValue([mockMutate]);
+    vi.mocked(useMutation).mockReturnValue([
+      mockMutate,
+      {
+        data: undefined,
+        loading: false,
+        error: undefined,
+        called: false,
+        reset: vi.fn(),
+        client: mockApolloClient,
+      },
+    ]);
 
     const { result } = renderHook(() => useComputeStepOutputSchema());
-    const response = await result.current.computeStepOutputSchema(
-      mockInput as unknown as ComputeStepOutputSchemaInput,
-    );
+    const response = await result.current.computeStepOutputSchema(mockInput);
 
     expect(mockMutate).toHaveBeenCalledWith({
       variables: { input: mockInput },

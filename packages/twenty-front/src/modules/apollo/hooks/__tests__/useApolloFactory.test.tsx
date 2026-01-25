@@ -1,18 +1,19 @@
 import { ApolloError, gql } from '@apollo/client';
 import { act, renderHook } from '@testing-library/react';
-import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
-import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
+import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
+import { vi } from 'vitest';
+import fetchMock, { enableFetchMocks } from '~/testing/test-helpers/fetchMock';
 
 enableFetchMocks();
 
-const mockNavigate = jest.fn();
+const mockNavigate = vi.fn();
 
-jest.mock('react-router-dom', () => {
-  const initialRouter = jest.requireActual('react-router-dom');
+vi.mock('react-router-dom', async () => {
+  const initialRouter = await vi.importActual('react-router-dom');
 
   return {
     ...initialRouter,

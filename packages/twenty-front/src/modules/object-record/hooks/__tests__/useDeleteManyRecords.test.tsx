@@ -16,9 +16,10 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { InMemoryCache } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
 import { act } from 'react';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { vi } from 'vitest';
 
 const getDefaultMocks = (
   overrides?: Partial<MockedResponse>,
@@ -28,7 +29,7 @@ const getDefaultMocks = (
       query,
       variables,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         deletePeople: responseData,
       },
@@ -37,9 +38,9 @@ const getDefaultMocks = (
   },
 ];
 
-jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
-const mockRefetchAggregateQueries = jest.fn();
-(useRefetchAggregateQueries as jest.Mock).mockReturnValue({
+vi.mock('@/object-record/hooks/useRefetchAggregateQueries');
+const mockRefetchAggregateQueries = vi.fn();
+vi.mocked(useRefetchAggregateQueries).mockReturnValue({
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
 const objectMetadataItem = getMockPersonObjectMetadataItem();
@@ -81,7 +82,7 @@ describe('useDeleteManyRecords', () => {
     );
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     cache = new InMemoryCache();
   });
 
@@ -91,7 +92,7 @@ describe('useDeleteManyRecords', () => {
       const { result } = renderHook(
         () => useDeleteManyRecords({ objectNameSingular: 'person' }),
         {
-          wrapper: getJestMetadataAndApolloMocksWrapper({
+          wrapper: getTestMetadataAndApolloMocksWrapper({
             apolloMocks,
             cache,
           }),
@@ -134,7 +135,7 @@ describe('useDeleteManyRecords', () => {
       const { result } = renderHook(
         () => useDeleteManyRecords({ objectNameSingular: 'person' }),
         {
-          wrapper: getJestMetadataAndApolloMocksWrapper({
+          wrapper: getTestMetadataAndApolloMocksWrapper({
             apolloMocks,
             cache,
           }),
@@ -158,7 +159,7 @@ describe('useDeleteManyRecords', () => {
       const { result } = renderHook(
         () => useDeleteManyRecords({ objectNameSingular: 'person' }),
         {
-          wrapper: getJestMetadataAndApolloMocksWrapper({
+          wrapper: getTestMetadataAndApolloMocksWrapper({
             apolloMocks: getDefaultMocks({
               delay: Number.POSITIVE_INFINITY,
             }),
@@ -185,7 +186,7 @@ describe('useDeleteManyRecords', () => {
       const { result } = renderHook(
         () => useDeleteManyRecords({ objectNameSingular: 'person' }),
         {
-          wrapper: getJestMetadataAndApolloMocksWrapper({
+          wrapper: getTestMetadataAndApolloMocksWrapper({
             apolloMocks: getDefaultMocks({
               error: new Error('Internal server error'),
             }),

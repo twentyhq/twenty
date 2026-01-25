@@ -2,26 +2,27 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 
+import { useAuth } from '@/auth/hooks/useAuth';
+import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { useAuth } from '@/auth/hooks/useAuth';
-import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
-jest.mock('../useAuth', () => ({
-  useAuth: jest.fn(),
+vi.mock('../useAuth', () => ({
+  useAuth: vi.fn(),
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: jest.fn(),
+vi.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
+  useSnackBar: vi.fn(),
 }));
 
-jest.mock('~/hooks/useNavigateApp', () => ({
-  useNavigateApp: jest.fn(),
+vi.mock('~/hooks/useNavigateApp', () => ({
+  useNavigateApp: vi.fn(),
 }));
 
 dynamicActivate(SOURCE_LOCALE);
@@ -35,22 +36,43 @@ const renderHooks = () => {
 };
 
 describe('useVerifyLogin', () => {
-  const mockGetAuthTokensFromLoginToken = jest.fn();
-  const mockEnqueueErrorSnackBar = jest.fn();
-  const mockNavigate = jest.fn();
+  const mockGetAuthTokensFromLoginToken = vi.fn();
+  const mockEnqueueErrorSnackBar = vi.fn();
+  const mockNavigate = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    (useAuth as jest.Mock).mockReturnValue({
+    vi.mocked(useAuth).mockReturnValue({
+      getLoginTokenFromCredentials: vi.fn(),
+      verifyEmailAndGetWorkspaceAgnosticToken: vi.fn(),
+      verifyEmailAndGetLoginToken: vi.fn(),
       getAuthTokensFromLoginToken: mockGetAuthTokensFromLoginToken,
+      checkUserExists: {
+        checkUserExistsData: undefined,
+        checkUserExistsQuery: vi.fn(),
+      },
+      clearSession: vi.fn(),
+      signOut: vi.fn(),
+      signUpWithCredentials: vi.fn(),
+      signUpWithCredentialsInWorkspace: vi.fn(),
+      signInWithCredentialsInWorkspace: vi.fn(),
+      signInWithCredentials: vi.fn(),
+      signInWithGoogle: vi.fn(),
+      signInWithMicrosoft: vi.fn(),
+      setAuthTokens: vi.fn(),
+      getAuthTokensFromOTP: vi.fn(),
     });
 
-    (useSnackBar as jest.Mock).mockReturnValue({
+    vi.mocked(useSnackBar).mockReturnValue({
+      handleSnackBarClose: vi.fn(),
+      enqueueSuccessSnackBar: vi.fn(),
       enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
+      enqueueInfoSnackBar: vi.fn(),
+      enqueueWarningSnackBar: vi.fn(),
     });
 
-    (useNavigateApp as jest.Mock).mockReturnValue(mockNavigate);
+    vi.mocked(useNavigateApp).mockReturnValue(mockNavigate);
   });
 
   it('should verify login token', async () => {

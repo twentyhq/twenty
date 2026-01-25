@@ -5,8 +5,9 @@ import {
   variables,
 } from '@/object-record/hooks/__mocks__/useFindOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generateEmptyRecordNode } from '~/testing/test-helpers/generateEmptyRecordNode';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
+import { vi } from 'vitest';
 
 const mocks = [
   {
@@ -14,9 +15,9 @@ const mocks = [
       query,
       variables,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
-        person: generateEmptyJestRecordNode({
+        person: generateEmptyRecordNode({
           objectNameSingular: 'person',
           input: { id: '6205681e-7c11-40b4-9e32-f523dbe54590' },
           withDepthOneRelation: true,
@@ -26,7 +27,7 @@ const mocks = [
   },
 ];
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 

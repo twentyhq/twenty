@@ -1,4 +1,5 @@
 import { parseInitialBlocknote } from '@/ui/input/editor/utils/parseInitialBlocknote';
+import { vi } from 'vitest';
 
 describe('parseInitialBlocknote', () => {
   it('should parse valid JSON array string', () => {
@@ -24,7 +25,7 @@ describe('parseInitialBlocknote', () => {
   });
 
   it('should return undefined for invalid JSON', () => {
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     expect(parseInitialBlocknote('invalid json')).toBeUndefined();
     expect(consoleSpy).toHaveBeenCalled();
     consoleSpy.mockRestore();
@@ -39,7 +40,7 @@ describe('parseInitialBlocknote', () => {
   });
 
   it('should use custom log context when parsing fails', () => {
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     parseInitialBlocknote('invalid', 'Custom context');
     expect(consoleSpy).toHaveBeenCalledWith('Custom context');
     consoleSpy.mockRestore();

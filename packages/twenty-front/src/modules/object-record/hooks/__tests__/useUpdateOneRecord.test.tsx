@@ -7,7 +7,8 @@ import {
 } from '@/object-record/hooks/__mocks__/useUpdateOneRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
+import { vi } from 'vitest';
 
 const person = { id: '36abbb63-34ed-4a16-89f5-f549ac55d0f9' };
 const updateInput = {
@@ -28,7 +29,7 @@ const mocks = [
       query,
       variables,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         updatePerson,
       },
@@ -36,13 +37,13 @@ const mocks = [
   },
 ];
 
-jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
-const mockRefetchAggregateQueries = jest.fn();
-(useRefetchAggregateQueries as jest.Mock).mockReturnValue({
+vi.mock('@/object-record/hooks/useRefetchAggregateQueries');
+const mockRefetchAggregateQueries = vi.fn();
+vi.mocked(useRefetchAggregateQueries).mockReturnValue({
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 
@@ -50,7 +51,7 @@ const idToUpdate = '36abbb63-34ed-4a16-89f5-f549ac55d0f9';
 
 describe('useUpdateOneRecord', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
   it('works as expected', async () => {
     const { result } = renderHook(() => useUpdateOneRecord(), {

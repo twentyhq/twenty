@@ -17,42 +17,31 @@ import { getWorkspaceMemberUpdateFromFormatPreferences } from '@/localization/ut
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
+import { vi } from 'vitest';
 
-jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
-  useUpdateOneRecord: jest.fn(),
+vi.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
+  useUpdateOneRecord: vi.fn(),
 }));
-jest.mock('@/localization/utils/detection/detectTimeZone');
-jest.mock('@/localization/utils/detection/detectDateFormat');
-jest.mock('@/localization/utils/detection/detectTimeFormat');
-jest.mock('@/localization/utils/detection/detectNumberFormat');
-jest.mock('@/localization/utils/detection/detectCalendarStartDay');
-jest.mock(
+vi.mock('@/localization/utils/detection/detectTimeZone');
+vi.mock('@/localization/utils/detection/detectDateFormat');
+vi.mock('@/localization/utils/detection/detectTimeFormat');
+vi.mock('@/localization/utils/detection/detectNumberFormat');
+vi.mock('@/localization/utils/detection/detectCalendarStartDay');
+vi.mock(
   '@/localization/utils/format-preferences/getWorkspaceMemberUpdateFromFormatPreferences',
 );
 
-const mockUseUpdateOneRecord = useUpdateOneRecord as jest.MockedFunction<
-  typeof useUpdateOneRecord
->;
-const mockDetectTimeZone = detectTimeZone as jest.MockedFunction<
-  typeof detectTimeZone
->;
-const mockDetectDateFormat = detectDateFormat as jest.MockedFunction<
-  typeof detectDateFormat
->;
-const mockDetectTimeFormat = detectTimeFormat as jest.MockedFunction<
-  typeof detectTimeFormat
->;
-const mockDetectNumberFormat = detectNumberFormat as jest.MockedFunction<
-  typeof detectNumberFormat
->;
-const mockDetectCalendarStartDay =
-  detectCalendarStartDay as jest.MockedFunction<typeof detectCalendarStartDay>;
-const mockGetWorkspaceMemberUpdateFromFormatPreferences =
-  getWorkspaceMemberUpdateFromFormatPreferences as jest.MockedFunction<
-    typeof getWorkspaceMemberUpdateFromFormatPreferences
-  >;
+const mockUseUpdateOneRecord = vi.mocked(useUpdateOneRecord);
+const mockDetectTimeZone = vi.mocked(detectTimeZone);
+const mockDetectDateFormat = vi.mocked(detectDateFormat);
+const mockDetectTimeFormat = vi.mocked(detectTimeFormat);
+const mockDetectNumberFormat = vi.mocked(detectNumberFormat);
+const mockDetectCalendarStartDay = vi.mocked(detectCalendarStartDay);
+const mockGetWorkspaceMemberUpdateFromFormatPreferences = vi.mocked(
+  getWorkspaceMemberUpdateFromFormatPreferences,
+);
 
-const mockUpdateOneRecord = jest.fn();
+const mockUpdateOneRecord = vi.fn();
 
 const mockCurrentWorkspaceMember = {
   id: 'workspace-member-1',
@@ -84,7 +73,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
 
 describe('useFormatPreferences', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     mockUseUpdateOneRecord.mockReturnValue({
       updateOneRecord: mockUpdateOneRecord,

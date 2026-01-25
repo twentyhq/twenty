@@ -3,6 +3,7 @@ import {
   type ReadFieldFunction,
   type ToReferenceFunction,
 } from '@apollo/client/cache/core/types/common';
+import { vi } from 'vitest';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
@@ -27,16 +28,14 @@ describe('processGroupByConnectionWithRecords', () => {
     __ref: 'Person:123',
   };
 
-  const mockReadField = jest.fn(
-    (fieldName: any, from: any, ..._args: any[]) => {
-      if (fieldName === 'id' && from === mockReference) {
-        return '123';
-      }
-      return undefined;
-    },
-  ) as unknown as ReadFieldFunction;
+  const mockReadField = vi.fn((fieldName: any, from: any, ..._args: any[]) => {
+    if (fieldName === 'id' && from === mockReference) {
+      return '123';
+    }
+    return undefined;
+  }) as unknown as ReadFieldFunction;
 
-  const mockToReference: ToReferenceFunction = jest.fn(() => mockReference);
+  const mockToReference: ToReferenceFunction = vi.fn(() => mockReference);
 
   it('should return cached data when no records match', () => {
     const cachedEdges: RecordGqlRefEdge[] = [];

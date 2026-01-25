@@ -1,11 +1,12 @@
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
+import { vi } from 'vitest';
 
 // Mock the getActionIcon function
-jest.mock(
+vi.mock(
   '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon',
   () => ({
-    getActionIcon: jest.fn((actionType) => {
+    getActionIcon: vi.fn((actionType) => {
       const mockIcons = {
         CREATE_RECORD: 'IconPlus',
         UPDATE_RECORD: 'IconEdit',

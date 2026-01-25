@@ -1,10 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 
 describe('useTrackPointer', () => {
   it('Should call onMouseDown when mouse down event is triggered', () => {
-    const onMouseDown = jest.fn();
+    const onMouseDown = vi.fn();
 
     renderHook(() =>
       useTrackPointer({
@@ -25,7 +26,7 @@ describe('useTrackPointer', () => {
   });
 
   it('Should call onMouseUp when mouse up event is triggered', () => {
-    const onMouseUp = jest.fn();
+    const onMouseUp = vi.fn();
 
     renderHook(() =>
       useTrackPointer({
@@ -46,7 +47,7 @@ describe('useTrackPointer', () => {
   });
 
   it('Should call onInternalMouseMove when mouse move event is triggered', () => {
-    const onInternalMouseMove = jest.fn();
+    const onInternalMouseMove = vi.fn();
 
     renderHook(() =>
       useTrackPointer({
@@ -67,7 +68,7 @@ describe('useTrackPointer', () => {
   });
 
   it('Should pass the correct event object to the callback', () => {
-    const onMouseDown = jest.fn();
+    const onMouseDown = vi.fn();
 
     renderHook(() =>
       useTrackPointer({
@@ -86,7 +87,7 @@ describe('useTrackPointer', () => {
   });
 
   it('Should handle touch events correctly', () => {
-    const onMouseDown = jest.fn();
+    const onMouseDown = vi.fn();
 
     renderHook(() =>
       useTrackPointer({
@@ -116,7 +117,7 @@ describe('useTrackPointer', () => {
   });
 
   it('Should not track pointer when shouldTrackPointer is false', () => {
-    const onMouseDown = jest.fn();
+    const onMouseDown = vi.fn();
 
     renderHook(() =>
       useTrackPointer({

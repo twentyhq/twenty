@@ -1,5 +1,6 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { parseFontSizeToPx } from '@/page-layout/widgets/graph/utils/parseFontSizeToPx';
+import { vi } from 'vitest';
 
 describe('parseFontSizeToPx', () => {
   it('returns numeric font sizes as-is when valid', () => {
@@ -17,7 +18,7 @@ describe('parseFontSizeToPx', () => {
   });
 
   it('parses rem/em using root font size', () => {
-    const computedStyleSpy = jest
+    const computedStyleSpy = vi
       .spyOn(window, 'getComputedStyle')
       .mockReturnValue({ fontSize: '20px' } as CSSStyleDeclaration);
 
@@ -33,7 +34,7 @@ describe('parseFontSizeToPx', () => {
   });
 
   it('falls back when root font size is invalid', () => {
-    const computedStyleSpy = jest
+    const computedStyleSpy = vi
       .spyOn(window, 'getComputedStyle')
       .mockReturnValue({ fontSize: 'oops' } as CSSStyleDeclaration);
 

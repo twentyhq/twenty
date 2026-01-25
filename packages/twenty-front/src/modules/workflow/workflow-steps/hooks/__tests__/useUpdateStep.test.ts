@@ -1,35 +1,33 @@
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { act, renderHook } from '@testing-library/react';
 import { type WorkflowAction } from '~/generated/graphql';
+import { vi } from 'vitest';
 
-const mockUpdateWorkflowVersionStep = jest.fn();
-const mockGetUpdatableWorkflowVersion = jest.fn();
-const mockMarkStepForRecomputation = jest.fn();
+const mockUpdateWorkflowVersionStep = vi.fn();
+const mockGetUpdatableWorkflowVersion = vi.fn();
+const mockMarkStepForRecomputation = vi.fn();
 
-jest.mock(
-  '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep',
-  () => ({
-    useUpdateWorkflowVersionStep: () => ({
-      updateWorkflowVersionStep: mockUpdateWorkflowVersionStep,
-    }),
+vi.mock('@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep', () => ({
+  useUpdateWorkflowVersionStep: () => ({
+    updateWorkflowVersionStep: mockUpdateWorkflowVersionStep,
   }),
-);
+}));
 
-jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
+vi.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
   useGetUpdatableWorkflowVersionOrThrow: () => ({
     getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
   }),
 }));
 
-jest.mock('@/workflow/workflow-variables/hooks/useStepsOutputSchema', () => ({
-  useStepsOutputSchema: jest.fn(() => ({
+vi.mock('@/workflow/workflow-variables/hooks/useStepsOutputSchema', () => ({
+  useStepsOutputSchema: vi.fn(() => ({
     markStepForRecomputation: mockMarkStepForRecomputation,
   })),
 }));
 
 describe('useUpdateStep', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should update step in workflow version', async () => {

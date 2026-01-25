@@ -11,7 +11,7 @@ import { type RecordChipData } from '@/object-record/record-field/ui/types/Recor
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { getTestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksAndActionMenuWrapper';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -146,7 +146,7 @@ const createContextStoreWrapper = ({
   companies: typeof companiesMock;
   componentInstanceId: string;
 }) => {
-  return getJestMetadataAndApolloMocksAndActionMenuWrapper({
+  return getTestMetadataAndApolloMocksAndActionMenuWrapper({
     apolloMocks: [
       {
         request: {

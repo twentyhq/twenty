@@ -46,7 +46,9 @@
     "jest.config.mjs",
     "vite.config.ts",
     "vitest.config.ts",
-    "setupTests.ts"
+    "vitest.unit.config.ts",
+    "setupTests.ts",
+    "setupTests.vitest.ts"
   ],
   "extends": "../../tsconfig.base.json"
 }

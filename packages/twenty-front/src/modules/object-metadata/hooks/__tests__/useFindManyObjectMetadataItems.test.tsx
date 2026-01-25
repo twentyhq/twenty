@@ -2,6 +2,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 
@@ -16,7 +17,7 @@ const mocks = [
     request: {
       query,
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         objects: responseData,
       },

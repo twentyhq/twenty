@@ -1,23 +1,21 @@
 import { renderHook } from '@testing-library/react';
 import { useUpdateAgentLabel } from '@/workflow/workflow-steps/hooks/useUpdateAgentLabel';
+import { vi } from 'vitest';
 
-const mockUpdateAgent = jest.fn();
-const mockUseFindOneAgentQuery = jest.fn();
+const mockUpdateAgent = vi.hoisted(() => vi.fn());
+const mockUseFindOneAgentQuery = vi.hoisted(() => vi.fn());
 
-jest.mock('~/generated-metadata/graphql', () => ({
-  useFindOneAgentQuery: jest.fn(),
+vi.mock('~/generated-metadata/graphql', () => ({
+  useFindOneAgentQuery: mockUseFindOneAgentQuery,
   useUpdateOneAgentMutation: () => [mockUpdateAgent],
 }));
 
 describe('useUpdateAgentLabel', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockUseFindOneAgentQuery.mockReturnValue({
       data: undefined,
     });
-    (
-      require('~/generated-metadata/graphql').useFindOneAgentQuery as jest.Mock
-    ).mockImplementation(mockUseFindOneAgentQuery);
   });
 
   it('should skip query when agentId is undefined', () => {

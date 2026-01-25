@@ -7,10 +7,17 @@ import {
   displayedExportProgress,
   generateCsv,
 } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
-
-jest.useFakeTimers();
+import { vi } from 'vitest';
 
 describe('generateCsv', () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+
   it('generates a csv with formatted headers', async () => {
     const columns: Pick<
       ColumnDefinition<FieldMetadata>,

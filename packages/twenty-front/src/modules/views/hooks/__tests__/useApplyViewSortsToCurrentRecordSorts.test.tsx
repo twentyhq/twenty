@@ -8,7 +8,7 @@ import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockO
 import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewSortDirection } from '~/generated/graphql';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { getTestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksAndActionMenuWrapper';
 import { useApplyViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyViewSortsToCurrentRecordSorts';
 
 const mockObjectMetadataItemNameSingular = 'company';
@@ -52,7 +52,7 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
         return { applyViewSortsToCurrentRecordSorts, currentSorts };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+        wrapper: getTestMetadataAndApolloMocksAndActionMenuWrapper({
           apolloMocks: [],
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
@@ -87,7 +87,7 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
         return { applyViewSortsToCurrentRecordSorts, currentSorts };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+        wrapper: getTestMetadataAndApolloMocksAndActionMenuWrapper({
           apolloMocks: [],
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:

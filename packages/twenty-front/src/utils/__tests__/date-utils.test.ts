@@ -14,12 +14,22 @@ import {
   parseDate,
 } from '~/utils/date-utils';
 import { logError } from '~/utils/logError';
+import { vi } from 'vitest';
 
 i18n.load(SOURCE_LOCALE, enMessages);
 i18n.activate(SOURCE_LOCALE);
 
-jest.mock('~/utils/logError');
-jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
+vi.mock('~/utils/logError');
+vi.useFakeTimers();
+vi.setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
+afterAll(() => {
+  vi.useRealTimers();
+});
 
 describe('beautifyExactDateTime', () => {
   it('should return the date in the correct format with time', () => {
@@ -64,21 +74,21 @@ describe('parseDate', () => {
   it('should log an error and return empty string when passed an invalid date string', () => {
     expect(() => {
       parseDate('invalid-date-string');
-    }).toThrow(
-      Error('Invalid date passed to formatPastDate: "invalid-date-string"'),
+    }).toThrowError(
+      'Invalid date passed to formatPastDate: "invalid-date-string"',
     );
   });
 
   it('should log an error and return empty string when passed NaN', () => {
     expect(() => {
       parseDate(NaN);
-    }).toThrow(Error('Invalid date passed to formatPastDate: "NaN"'));
+    }).toThrowError('Invalid date passed to formatPastDate: "NaN"');
   });
 
   it('should log an error and return empty string when passed invalid Date object', () => {
     expect(() => {
       parseDate(new Date(NaN));
-    }).toThrow(Error('Invalid date passed to formatPastDate: "Invalid Date"'));
+    }).toThrowError('Invalid date passed to formatPastDate: "Invalid Date"');
   });
 });
 
@@ -96,7 +106,10 @@ describe('beautifyPastDateRelativeToNow', () => {
     const result = beautifyPastDateRelativeToNow('invalid-date-string');
 
     expect(logError).toHaveBeenCalledWith(
-      Error('Invalid date passed to formatPastDate: "invalid-date-string"'),
+      expect.objectContaining({
+        message: 'Invalid date passed to formatPastDate: "invalid-date-string"',
+        code: 'INVALID_DATE_FORMAT',
+      }),
     );
     expect(result).toEqual('');
   });
@@ -105,7 +118,10 @@ describe('beautifyPastDateRelativeToNow', () => {
     const result = beautifyPastDateRelativeToNow(NaN);
 
     expect(logError).toHaveBeenCalledWith(
-      Error('Invalid date passed to formatPastDate: "NaN"'),
+      expect.objectContaining({
+        message: 'Invalid date passed to formatPastDate: "NaN"',
+        code: 'INVALID_DATE_FORMAT',
+      }),
     );
     expect(result).toEqual('');
   });
@@ -116,7 +132,10 @@ describe('beautifyPastDateRelativeToNow', () => {
     );
 
     expect(logError).toHaveBeenCalledWith(
-      Error('Invalid date passed to formatPastDate: "Invalid Date"'),
+      expect.objectContaining({
+        message: 'Invalid date passed to formatPastDate: "Invalid Date"',
+        code: 'INVALID_DATE_FORMAT',
+      }),
     );
     expect(result).toEqual('');
   });
@@ -127,7 +146,10 @@ describe('hasDatePassed', () => {
     const result = hasDatePassed('invalid-date-string');
 
     expect(logError).toHaveBeenCalledWith(
-      Error('Invalid date passed to formatPastDate: "invalid-date-string"'),
+      expect.objectContaining({
+        message: 'Invalid date passed to formatPastDate: "invalid-date-string"',
+        code: 'INVALID_DATE_FORMAT',
+      }),
     );
     expect(result).toEqual(false);
   });
@@ -136,7 +158,10 @@ describe('hasDatePassed', () => {
     const result = hasDatePassed(NaN);
 
     expect(logError).toHaveBeenCalledWith(
-      Error('Invalid date passed to formatPastDate: "NaN"'),
+      expect.objectContaining({
+        message: 'Invalid date passed to formatPastDate: "NaN"',
+        code: 'INVALID_DATE_FORMAT',
+      }),
     );
     expect(result).toEqual(false);
   });
@@ -145,7 +170,10 @@ describe('hasDatePassed', () => {
     const result = hasDatePassed(new Date(NaN));
 
     expect(logError).toHaveBeenCalledWith(
-      Error('Invalid date passed to formatPastDate: "Invalid Date"'),
+      expect.objectContaining({
+        message: 'Invalid date passed to formatPastDate: "Invalid Date"',
+        code: 'INVALID_DATE_FORMAT',
+      }),
     );
     expect(result).toEqual(false);
   });

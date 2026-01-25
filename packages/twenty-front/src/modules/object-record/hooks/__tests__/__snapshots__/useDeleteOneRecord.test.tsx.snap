@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`useDeleteOneRecord A. Starting from empty cache 1. Should successfully delete record and update record cache entry 1`] = `
+exports[`useDeleteOneRecord > A. Starting from empty cache > 1. Should successfully delete record and update record cache entry 1`] = `
 {
   "__typename": "Person",
   "deletedAt": "2024-02-14T09:45:00Z",
@@ -8,7 +8,7 @@ exports[`useDeleteOneRecord A. Starting from empty cache 1. Should successfully 
 }
 `;
 
-exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle successfull record deletion 1`] = `
+exports[`useDeleteOneRecord > B. Starting from filled cache > 1. Should handle successfull record deletion 1`] = `
 {
   "__typename": "Person",
   "avatarUrl": null,
@@ -78,7 +78,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
 }
 `;
 
-exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle successfull record deletion 2`] = `
+exports[`useDeleteOneRecord > B. Starting from filled cache > 1. Should handle successfull record deletion 2`] = `
 {
   "__typename": "Company",
   "accountOwner": null,
@@ -147,7 +147,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
 }
 `;
 
-exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optimistic cache on record deletion 1`] = `
+exports[`useDeleteOneRecord > B. Starting from filled cache > 2. Should handle optimistic cache on record deletion 1`] = `
 {
   "__typename": "Person",
   "avatarUrl": null,
@@ -217,7 +217,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
 }
 `;
 
-exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optimistic cache on record deletion 2`] = `
+exports[`useDeleteOneRecord > B. Starting from filled cache > 2. Should handle optimistic cache on record deletion 2`] = `
 {
   "__typename": "Company",
   "accountOwner": null,
@@ -286,7 +286,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
 }
 `;
 
-exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optimistic cache rollback on record deletion failure 1`] = `
+exports[`useDeleteOneRecord > B. Starting from filled cache > 3. Should handle optimistic cache rollback on record deletion failure 1`] = `
 {
   "__typename": "Person",
   "avatarUrl": null,
@@ -356,7 +356,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
 }
 `;
 
-exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optimistic cache rollback on record deletion failure 2`] = `
+exports[`useDeleteOneRecord > B. Starting from filled cache > 3. Should handle optimistic cache rollback on record deletion failure 2`] = `
 {
   "__typename": "Company",
   "accountOwner": null,

@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
 
 import { useUpdateManyRecordsMutation } from '@/object-record/hooks/useUpdateManyRecordsMutation';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
 const expectedQueryTemplate = `
   mutation UpdateManyPeople($filter: PersonFilterInput!, $data: PersonUpdateInput!) {
@@ -12,7 +12,7 @@ const expectedQueryTemplate = `
   }
 `.replace(/\s/g, '');
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 

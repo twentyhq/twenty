@@ -1,14 +1,14 @@
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { renderHook } from '@testing-library/react';
-import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { TestObjectMetadataItemSetter } from '~/testing/test-helpers/TestObjectMetadataItemSetter';
+import { getTestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksAndActionMenuWrapper';
 
 const testComponentInstanceId = 'test';
 const testCurrentViewId = 'view-id';
 const testObjectMetadataItemNameSingular = 'person';
 const testObjectMetadataItemNamePlural = 'people';
 
-const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+const Wrapper = getTestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
   componentInstanceId: testComponentInstanceId,
   contextStoreCurrentObjectMetadataNameSingular:
@@ -32,9 +32,9 @@ describe('useRecordIndexIdFromCurrentContextStore', () => {
         wrapper: ({ children }) => {
           return (
             <Wrapper>
-              <JestObjectMetadataItemSetter>
+              <TestObjectMetadataItemSetter>
                 {children}
-              </JestObjectMetadataItemSetter>
+              </TestObjectMetadataItemSetter>
             </Wrapper>
           );
         },

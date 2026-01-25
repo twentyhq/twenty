@@ -2,10 +2,11 @@ import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart
 import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { type PieChartDataItem } from '~/generated/graphql';
 
-const mockUseRecoilComponentValue = jest.fn();
-jest.mock(
+const mockUseRecoilComponentValue = vi.fn();
+vi.mock(
   '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
   () => ({
     useRecoilComponentValue: () => mockUseRecoilComponentValue(),
@@ -14,7 +15,7 @@ jest.mock(
 
 describe('usePieChartData', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockUseRecoilComponentValue.mockReturnValue([]);
   });
 

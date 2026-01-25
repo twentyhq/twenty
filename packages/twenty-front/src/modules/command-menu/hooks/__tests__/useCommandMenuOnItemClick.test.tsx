@@ -4,6 +4,7 @@ import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
+import { vi } from 'vitest';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
@@ -38,7 +39,7 @@ const renderHooks = () => {
 describe('useCommandMenuOnItemClick', () => {
   it('onItemClick', () => {
     const { result } = renderHooks();
-    const onClickMock = jest.fn();
+    const onClickMock = vi.fn();
 
     act(() => {
       result.current.onItemClick({

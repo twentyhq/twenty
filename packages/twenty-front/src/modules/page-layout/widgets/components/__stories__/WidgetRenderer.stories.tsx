@@ -46,7 +46,7 @@ import {
   WidgetConfigurationType,
 } from '~/generated/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -224,7 +224,7 @@ const CoreClientProviderWrapper = ({
   );
 };
 
-const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
+const TestMetadataAndApolloMocksWrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: graphqlMocks,
 });
 
@@ -295,7 +295,7 @@ export const WithNumberChart: Story = {
 
     return (
       <div style={{ width: '300px', height: '100px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -326,7 +326,7 @@ export const WithNumberChart: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -380,7 +380,7 @@ export const WithGaugeChart: Story = {
 
     return (
       <div style={{ width: '300px', height: '400px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -411,7 +411,7 @@ export const WithGaugeChart: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -469,7 +469,7 @@ export const WithBarChart: Story = {
 
     return (
       <div style={{ width: '300px', height: '500px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -500,7 +500,7 @@ export const WithBarChart: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -561,7 +561,7 @@ export const SmallWidget: Story = {
 
     return (
       <div style={{ width: '300px', height: '100px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -592,7 +592,7 @@ export const SmallWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -657,7 +657,7 @@ export const MediumWidget: Story = {
 
     return (
       <div style={{ width: '400px', height: '250px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -688,7 +688,7 @@ export const MediumWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -753,7 +753,7 @@ export const LargeWidget: Story = {
 
     return (
       <div style={{ width: '600px', height: '400px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -784,7 +784,7 @@ export const LargeWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -845,7 +845,7 @@ export const WideWidget: Story = {
 
     return (
       <div style={{ width: '800px', height: '200px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -876,7 +876,7 @@ export const WideWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -941,7 +941,7 @@ export const TallWidget: Story = {
 
     return (
       <div style={{ width: '300px', height: '500px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -972,7 +972,7 @@ export const TallWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1055,7 +1055,7 @@ export const WithManyToOneRelationFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1086,7 +1086,7 @@ export const WithManyToOneRelationFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1161,7 +1161,7 @@ export const WithOneToManyRelationFieldWidget: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1192,7 +1192,7 @@ export const WithOneToManyRelationFieldWidget: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1275,7 +1275,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1306,7 +1306,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1389,7 +1389,7 @@ export const OnMobile: Story = {
 
     return (
       <div style={{ width: '100%', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1420,7 +1420,7 @@ export const OnMobile: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1485,7 +1485,7 @@ export const InSidePanel: Story = {
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1516,7 +1516,7 @@ export const InSidePanel: Story = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },
@@ -1765,7 +1765,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
         style={{ width: '300px', height: '200px' }}
         className={containerClassName}
       >
-        <JestMetadataAndApolloMocksWrapper>
+        <TestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
               <LayoutRenderingProvider
@@ -1799,7 +1799,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
+        </TestMetadataAndApolloMocksWrapper>
       </div>
     );
   },

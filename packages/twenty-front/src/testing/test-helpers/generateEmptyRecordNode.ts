@@ -4,22 +4,22 @@ import { prefillRecord } from '@/object-record/utils/prefillRecord';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-type GenerateEmptyJestRecordNodeArgs = {
+type GenerateEmptyRecordNodeArgs = {
   objectNameSingular: string;
   input: Record<string, unknown>;
   withDepthOneRelation?: boolean;
 };
-export const generateEmptyJestRecordNode = ({
+export const generateEmptyRecordNode = ({
   objectNameSingular,
   input,
   withDepthOneRelation = false,
-}: GenerateEmptyJestRecordNodeArgs) => {
+}: GenerateEmptyRecordNodeArgs) => {
   const objectMetadataItem =
     getMockObjectMetadataItemOrThrow(objectNameSingular);
 
   if (!objectMetadataItem) {
     throw new Error(
-      `ObjectMetadataItem not found for objectNameSingular: ${objectNameSingular} while generating empty Jest record node`,
+      `ObjectMetadataItem not found for objectNameSingular: ${objectNameSingular} while generating empty record node`,
     );
   }
 

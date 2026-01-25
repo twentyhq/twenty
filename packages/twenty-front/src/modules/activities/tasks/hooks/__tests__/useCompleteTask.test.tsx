@@ -1,10 +1,11 @@
 import { type MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 import { type Task } from '@/activities/types/Task';
 import { generateUpdateOneRecordMutation } from '@/object-metadata/utils/generateUpdateOneRecordMutation';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -41,7 +42,7 @@ const mocks: MockedResponse[] = [
         input: { status: task.status },
       },
     },
-    result: jest.fn(() => ({
+    result: vi.fn(() => ({
       data: {
         updateTask: {
           __typename: 'Task',
@@ -75,7 +76,7 @@ const mocks: MockedResponse[] = [
   },
 ];
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 

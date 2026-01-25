@@ -1,4 +1,5 @@
 import { type ApolloCache } from '@apollo/client';
+import { vi } from 'vitest';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
@@ -18,7 +19,7 @@ describe('triggerUpdateGroupByQueriesOptimisticEffect', () => {
   };
 
   it('should call cache.modify with correct field name', () => {
-    const mockModify = jest.fn();
+    const mockModify = vi.fn();
     const mockCache = {
       modify: mockModify,
     } as unknown as ApolloCache<unknown>;
@@ -40,7 +41,7 @@ describe('triggerUpdateGroupByQueriesOptimisticEffect', () => {
   });
 
   it('should handle update operation', () => {
-    const mockModify = jest.fn();
+    const mockModify = vi.fn();
     const mockCache = {
       modify: mockModify,
     } as unknown as ApolloCache<unknown>;
@@ -57,7 +58,7 @@ describe('triggerUpdateGroupByQueriesOptimisticEffect', () => {
   });
 
   it('should handle delete operation', () => {
-    const mockModify = jest.fn();
+    const mockModify = vi.fn();
     const mockCache = {
       modify: mockModify,
     } as unknown as ApolloCache<unknown>;
@@ -74,7 +75,7 @@ describe('triggerUpdateGroupByQueriesOptimisticEffect', () => {
   });
 
   it('should handle empty records array', () => {
-    const mockModify = jest.fn();
+    const mockModify = vi.fn();
     const mockCache = {
       modify: mockModify,
     } as unknown as ApolloCache<unknown>;

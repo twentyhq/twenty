@@ -1,25 +1,26 @@
 /* @license Enterprise */
 
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { useCreateSSOIdentityProvider } from '@/settings/security/hooks/useCreateSSOIdentityProvider';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 
-const mutationOIDCCallSpy = jest.fn();
-const mutationSAMLCallSpy = jest.fn();
+const mutationOIDCCallSpy = vi.fn();
+const mutationSAMLCallSpy = vi.fn();
 
-jest.mock('~/generated-metadata/graphql', () => ({
+vi.mock('~/generated-metadata/graphql', () => ({
   useCreateOidcIdentityProviderMutation: () => [mutationOIDCCallSpy],
   useCreateSamlIdentityProviderMutation: () => [mutationSAMLCallSpy],
 }));
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
 describe('useCreateSSOIdentityProvider', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('create OIDC sso identity provider', async () => {

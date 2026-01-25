@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`settingsDataModelObjectAboutFormSchema fails when isLabelSyncedWithName is not a boolean 1`] = `
+exports[`settingsDataModelObjectAboutFormSchema > 'fails when isLabelSyncedWithName is n…' 1`] = `
 [ZodError: [
   {
     "expected": "boolean",
@@ -13,7 +13,7 @@ exports[`settingsDataModelObjectAboutFormSchema fails when isLabelSyncedWithName
 ]]
 `;
 
-exports[`settingsDataModelObjectAboutFormSchema fails when labels are empty strings 1`] = `
+exports[`settingsDataModelObjectAboutFormSchema > 'fails when labels are empty strings' 1`] = `
 [ZodError: [
   {
     "origin": "string",
@@ -52,7 +52,7 @@ exports[`settingsDataModelObjectAboutFormSchema fails when labels are empty stri
 ]]
 `;
 
-exports[`settingsDataModelObjectAboutFormSchema fails when names are not in camelCase 1`] = `
+exports[`settingsDataModelObjectAboutFormSchema > 'fails when names are not in camelCase' 1`] = `
 [ZodError: [
   {
     "code": "custom",
@@ -71,7 +71,7 @@ exports[`settingsDataModelObjectAboutFormSchema fails when names are not in came
 ]]
 `;
 
-exports[`settingsDataModelObjectAboutFormSchema fails when required fields are missing 1`] = `
+exports[`settingsDataModelObjectAboutFormSchema > 'fails when required fields are missing' 1`] = `
 [ZodError: [
   {
     "expected": "string",
@@ -92,7 +92,7 @@ exports[`settingsDataModelObjectAboutFormSchema fails when required fields are m
 ]]
 `;
 
-exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural labels are the same 1`] = `
+exports[`settingsDataModelObjectAboutFormSchema > 'fails when singular and plural labels…' 1`] = `
 [ZodError: [
   {
     "code": "custom",
@@ -111,7 +111,7 @@ exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural l
 ]]
 `;
 
-exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural names are the same 1`] = `
+exports[`settingsDataModelObjectAboutFormSchema > 'fails when singular and plural names …' 1`] = `
 [ZodError: [
   {
     "code": "custom",
@@ -130,7 +130,7 @@ exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural n
 ]]
 `;
 
-exports[`settingsDataModelObjectAboutFormSchema fails with invalid types for optional fields 1`] = `
+exports[`settingsDataModelObjectAboutFormSchema > 'fails with invalid types for optional…' 1`] = `
 [ZodError: [
   {
     "expected": "string",

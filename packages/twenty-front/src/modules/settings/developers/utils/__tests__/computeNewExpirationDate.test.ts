@@ -1,6 +1,7 @@
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
+import { vi } from 'vitest';
 
-jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
+vi.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
 
 describe('computeNewExpirationDate', () => {
   it('should compute properly', () => {

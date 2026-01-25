@@ -83,6 +83,15 @@
       }
     },
     "test": {},
+    "test:vitest": {
+      "executor": "@nx/vitest:test",
+      "outputs": [
+        "{projectRoot}/coverage"
+      ],
+      "options": {
+        "config": "{projectRoot}/vitest.unit.config.ts"
+      }
+    },
     "storybook:build": {
       "options": {
         "env": {

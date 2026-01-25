@@ -2,7 +2,9 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 
+import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -14,8 +16,12 @@ import {
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 // Mocks
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
-jest.mock('~/generated-metadata/graphql');
+vi.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
+  useSnackBar: vi.fn(),
+}));
+vi.mock('~/generated-metadata/graphql', () => ({
+  useEmailPasswordResetLinkMutation: vi.fn(),
+}));
 
 dynamicActivate(SOURCE_LOCALE);
 
@@ -35,19 +41,34 @@ const renderHooks = () => {
 };
 
 describe('useHandleResetPassword', () => {
-  const enqueueErrorSnackBarMock = jest.fn();
-  const enqueueSuccessSnackBarMock = jest.fn();
-  const emailPasswordResetLinkMock = jest.fn();
+  const enqueueErrorSnackBarMock = vi.fn();
+  const enqueueSuccessSnackBarMock = vi.fn();
+  const emailPasswordResetLinkMock = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    (useSnackBar as jest.Mock).mockReturnValue({
-      enqueueErrorSnackBar: enqueueErrorSnackBarMock,
+    vi.mocked(useSnackBar).mockReturnValue({
+      handleSnackBarClose: vi.fn(),
       enqueueSuccessSnackBar: enqueueSuccessSnackBarMock,
+      enqueueErrorSnackBar: enqueueErrorSnackBarMock,
+      enqueueInfoSnackBar: vi.fn(),
+      enqueueWarningSnackBar: vi.fn(),
     });
-    (useEmailPasswordResetLinkMutation as jest.Mock).mockReturnValue([
+    const mockApolloClient = new ApolloClient({
+      uri: 'http://localhost',
+      cache: new InMemoryCache(),
+    });
+    vi.mocked(useEmailPasswordResetLinkMutation).mockReturnValue([
       emailPasswordResetLinkMock,
+      {
+        data: undefined,
+        loading: false,
+        error: undefined,
+        called: false,
+        reset: vi.fn(),
+        client: mockApolloClient,
+      },
     ]);
   });
 

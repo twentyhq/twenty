@@ -9,6 +9,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { type ReactNode, act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
+import { vi } from 'vitest';
 
 import {
   email,
@@ -23,53 +24,53 @@ import { renderHook } from '@testing-library/react';
 import { iconsState } from 'twenty-ui/display';
 import { SupportDriver } from '~/generated/graphql';
 
-const redirectSpy = jest.fn();
+const redirectSpy = vi.fn();
 
-jest.mock('@/domain-manager/hooks/useRedirect', () => ({
-  useRedirect: jest.fn().mockImplementation(() => ({
+vi.mock('@/domain-manager/hooks/useRedirect', () => ({
+  useRedirect: vi.fn().mockImplementation(() => ({
     redirect: redirectSpy,
   })),
 }));
 
-jest.mock('@/object-metadata/hooks/useRefreshObjectMetadataItems', () => ({
-  useRefreshObjectMetadataItems: jest.fn().mockImplementation(() => ({
-    refreshObjectMetadataItems: jest.fn(),
+vi.mock('@/object-metadata/hooks/useRefreshObjectMetadataItems', () => ({
+  useRefreshObjectMetadataItems: vi.fn().mockImplementation(() => ({
+    refreshObjectMetadataItems: vi.fn(),
   })),
 }));
 
-jest.mock('@/domain-manager/hooks/useOrigin', () => ({
-  useOrigin: jest.fn().mockImplementation(() => ({
+vi.mock('@/domain-manager/hooks/useOrigin', () => ({
+  useOrigin: vi.fn().mockImplementation(() => ({
     origin: 'http://localhost',
   })),
 }));
 
-jest.mock('@/captcha/hooks/useRequestFreshCaptchaToken', () => ({
-  useRequestFreshCaptchaToken: jest.fn().mockImplementation(() => ({
-    requestFreshCaptchaToken: jest.fn(),
+vi.mock('@/captcha/hooks/useRequestFreshCaptchaToken', () => ({
+  useRequestFreshCaptchaToken: vi.fn().mockImplementation(() => ({
+    requestFreshCaptchaToken: vi.fn(),
   })),
 }));
 
-jest.mock('@/auth/sign-in-up/hooks/useSignUpInNewWorkspace', () => ({
-  useSignUpInNewWorkspace: jest.fn().mockImplementation(() => ({
-    createWorkspace: jest.fn(),
+vi.mock('@/auth/sign-in-up/hooks/useSignUpInNewWorkspace', () => ({
+  useSignUpInNewWorkspace: vi.fn().mockImplementation(() => ({
+    createWorkspace: vi.fn(),
   })),
 }));
 
-jest.mock('@/domain-manager/hooks/useRedirectToWorkspaceDomain', () => ({
-  useRedirectToWorkspaceDomain: jest.fn().mockImplementation(() => ({
-    redirectToWorkspaceDomain: jest.fn(),
+vi.mock('@/domain-manager/hooks/useRedirectToWorkspaceDomain', () => ({
+  useRedirectToWorkspaceDomain: vi.fn().mockImplementation(() => ({
+    redirectToWorkspaceDomain: vi.fn(),
   })),
 }));
 
-jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace', () => ({
-  useIsCurrentLocationOnAWorkspace: jest.fn().mockImplementation(() => ({
+vi.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace', () => ({
+  useIsCurrentLocationOnAWorkspace: vi.fn().mockImplementation(() => ({
     isOnAWorkspace: true,
   })),
 }));
 
-jest.mock('@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain', () => ({
-  useLastAuthenticatedWorkspaceDomain: jest.fn().mockImplementation(() => ({
-    setLastAuthenticateWorkspaceDomain: jest.fn(),
+vi.mock('@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain', () => ({
+  useLastAuthenticatedWorkspaceDomain: vi.fn().mockImplementation(() => ({
+    setLastAuthenticateWorkspaceDomain: vi.fn(),
   })),
 }));
 
@@ -101,7 +102,7 @@ const renderHooks = () => {
 
 describe('useAuth', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should return login token object', async () => {

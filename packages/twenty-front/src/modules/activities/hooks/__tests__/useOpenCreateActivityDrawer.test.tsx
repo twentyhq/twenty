@@ -1,77 +1,51 @@
-import { type MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { vi } from 'vitest';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import gql from 'graphql-tag';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { mockedTasks } from '~/testing/mock-data/tasks';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-const mockedDate = '2024-03-15T12:00:00.000Z';
-const toISOStringMock = jest.fn(() => mockedDate);
-global.Date.prototype.toISOString = toISOStringMock;
+const mockCreateActivity = vi.hoisted(() => vi.fn());
+const mockCreateActivityTarget = vi.hoisted(() => vi.fn());
+const mockOpenRecordInCommandMenu = vi.hoisted(() => vi.fn());
 
-const { id, title, bodyV2, status, dueAt } = mockedTasks[0];
-const mockedActivity = {
-  id,
-  title,
-  bodyV2,
-  status,
-  dueAt,
-  updatedAt: mockedDate,
-};
-
-const mocks: MockedResponse[] = [
-  {
-    request: {
-      query: gql`
-        mutation CreateOneActivity($input: ActivityCreateInput!) {
-          createActivity(data: $input) {
-            __typename
-            createdAt
-            reminderAt
-            authorId
-            title
-            status
-            updatedAt
-            body
-            dueAt
-            type
-            id
-            assigneeId
-          }
-        }
-      `,
-      variables: {
-        input: mockedActivity,
-      },
+vi.mock('@/object-record/hooks/useCreateOneRecord', () => ({
+  useCreateOneRecord: vi.fn(
+    ({ objectNameSingular }: { objectNameSingular: string }) => {
+      if (objectNameSingular === 'note') {
+        return { createOneRecord: mockCreateActivity };
+      }
+      if (objectNameSingular === 'noteTarget') {
+        return { createOneRecord: mockCreateActivityTarget };
+      }
+      return { createOneRecord: vi.fn() };
     },
-    result: jest.fn(() => ({
-      data: {
-        createActivity: {
-          ...mockedActivity,
-          __typename: 'Activity',
-          assigneeId: '',
-          authorId: '1',
-          reminderAt: null,
-          createdAt: mockedDate,
-        },
-      },
-    })),
-  },
-];
+  ),
+}));
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: mocks,
+vi.mock('@/command-menu/hooks/useOpenRecordInCommandMenu', () => ({
+  useOpenRecordInCommandMenu: () => ({
+    openRecordInCommandMenu: mockOpenRecordInCommandMenu,
+  }),
+}));
+
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
 });
 
 const mockObjectMetadataItems = generatedMockObjectMetadataItems;
 
 describe('useOpenCreateActivityDrawer', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockCreateActivity.mockResolvedValue({ id: 'note-id' });
+    mockCreateActivityTarget.mockResolvedValue({ id: 'note-target-id' });
+  });
+
   it('works as expected', async () => {
     const { result } = renderHook(
       () => {

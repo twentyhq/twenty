@@ -2,13 +2,14 @@ import { Editor } from '@tiptap/core';
 import { Document } from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
+import { type Mock, vi } from 'vitest';
 
 import { type SlashCommandItem } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
 import { SlashCommandRenderer } from '@/advanced-text-editor/extensions/slash-command/SlashCommandRenderer';
 
 describe('SlashCommandRenderer', () => {
   let editor: Editor;
-  let mockCommand: jest.Mock;
+  let mockCommand: Mock;
   let mockClientRect: () => DOMRect;
 
   const createMockItems = (): SlashCommandItem[] => [
@@ -16,12 +17,12 @@ describe('SlashCommandRenderer', () => {
       id: 'test-1',
       title: 'Test Command 1',
       description: 'Test description',
-      command: jest.fn(),
+      command: vi.fn(),
     },
     {
       id: 'test-2',
       title: 'Test Command 2',
-      command: jest.fn(),
+      command: vi.fn(),
     },
   ];
 
@@ -31,7 +32,7 @@ describe('SlashCommandRenderer', () => {
       content: '<p></p>',
     });
 
-    mockCommand = jest.fn();
+    mockCommand = vi.fn();
     mockClientRect = () => new DOMRect(100, 100, 200, 50);
   });
 
@@ -128,7 +129,7 @@ describe('SlashCommandRenderer', () => {
         {
           id: 'new-item',
           title: 'New Item',
-          command: jest.fn(),
+          command: vi.fn(),
         },
       ];
 
@@ -274,7 +275,7 @@ describe('SlashCommandRenderer', () => {
       });
 
       // Simulate ref being set
-      renderer.ref = { onKeyDown: jest.fn() };
+      renderer.ref = { onKeyDown: vi.fn() };
 
       renderer.destroy();
 

@@ -18,31 +18,32 @@ import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpe
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { IconList } from 'twenty-ui/display';
+import { vi } from 'vitest';
 
-const mockCloseDropdown = jest.fn();
-const mockResetContextStoreStates = jest.fn();
-const mockResetSelectedItem = jest.fn();
-const mockEmitSidePanelCloseEvent = jest.fn();
+const mockCloseDropdown = vi.fn();
+const mockResetContextStoreStates = vi.fn();
+const mockResetSelectedItem = vi.fn();
+const mockEmitSidePanelCloseEvent = vi.fn();
 
-jest.mock('@/ui/layout/dropdown/hooks/useCloseDropdown', () => ({
+vi.mock('@/ui/layout/dropdown/hooks/useCloseDropdown', () => ({
   useCloseDropdown: () => ({
     closeDropdown: mockCloseDropdown,
   }),
 }));
 
-jest.mock('@/command-menu/hooks/useResetContextStoreStates', () => ({
+vi.mock('@/command-menu/hooks/useResetContextStoreStates', () => ({
   useResetContextStoreStates: () => ({
     resetContextStoreStates: mockResetContextStoreStates,
   }),
 }));
 
-jest.mock('@/ui/layout/selectable-list/hooks/useSelectableList', () => ({
+vi.mock('@/ui/layout/selectable-list/hooks/useSelectableList', () => ({
   useSelectableList: () => ({
     resetSelectedItem: mockResetSelectedItem,
   }),
 }));
 
-jest.mock('@/ui/layout/right-drawer/utils/emitSidePanelCloseEvent', () => ({
+vi.mock('@/ui/layout/right-drawer/utils/emitSidePanelCloseEvent', () => ({
   emitSidePanelCloseEvent: () => {
     mockEmitSidePanelCloseEvent();
   },
@@ -56,7 +57,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 
 describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   const renderHooks = () => {

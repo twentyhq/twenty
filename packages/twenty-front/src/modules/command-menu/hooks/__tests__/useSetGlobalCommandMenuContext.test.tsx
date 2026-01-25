@@ -14,20 +14,18 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { getTestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksAndActionMenuWrapper';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
+import { vi } from 'vitest';
 
-const mockCopyContextStoreStates = jest.fn();
-jest.mock(
-  '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates',
-  () => ({
-    useCopyContextStoreStates: () => ({
-      copyContextStoreStates: mockCopyContextStoreStates,
-    }),
+const mockCopyContextStoreStates = vi.fn();
+vi.mock('@/command-menu/hooks/useCopyContextStoreAndActionMenuStates', () => ({
+  useCopyContextStoreStates: () => ({
+    copyContextStoreStates: mockCopyContextStoreStates,
   }),
-);
+}));
 
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
@@ -35,7 +33,7 @@ const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
 
 const peopleMock = getPeopleRecordConnectionMock();
 
-const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+const wrapper = getTestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
   componentInstanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
   contextStoreCurrentObjectMetadataNameSingular:
@@ -55,7 +53,7 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
 
 describe('useSetGlobalCommandMenuContext', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should reset all command menu context states', () => {

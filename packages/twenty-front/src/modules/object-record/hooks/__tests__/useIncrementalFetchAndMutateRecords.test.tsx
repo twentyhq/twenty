@@ -2,19 +2,21 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIncrementalFetchAndMutateRecords';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 
-jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
-jest.mock('@/object-record/hooks/useLazyFindManyRecords');
+vi.mock('@/object-metadata/hooks/useObjectMetadataItem');
+vi.mock('@/object-record/hooks/useLazyFindManyRecords');
 
-const mockUseObjectMetadataItem = jest.mocked(useObjectMetadataItem);
-const mockUseLazyFindManyRecords = jest.mocked(useLazyFindManyRecords);
+const mockUseObjectMetadataItem = vi.mocked(useObjectMetadataItem);
+const mockUseLazyFindManyRecords = vi.mocked(useLazyFindManyRecords);
+const originalAbortController = global.AbortController;
 
 describe('useIncrementalFetchAndMutateRecords', () => {
-  const mockFindManyRecordsLazy = jest.fn();
-  const mockFetchMoreRecordsLazy = jest.fn();
+  const mockFindManyRecordsLazy = vi.fn();
+  const mockFetchMoreRecordsLazy = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockUseObjectMetadataItem.mockReturnValue({
       objectMetadataItem: {
         nameSingular: 'company',
@@ -58,7 +60,7 @@ describe('useIncrementalFetchAndMutateRecords', () => {
       } as any),
     );
 
-    const mutateBatchMock = jest.fn();
+    const mutateBatchMock = vi.fn();
 
     await result.current.incrementalFetchAndMutate(mutateBatchMock);
 
@@ -101,7 +103,7 @@ describe('useIncrementalFetchAndMutateRecords', () => {
 
     expect(result.current.isProcessing).toBe(false);
 
-    await result.current.incrementalFetchAndMutate(jest.fn());
+    await result.current.incrementalFetchAndMutate(vi.fn());
 
     expect(result.current.isProcessing).toBe(false);
   });
@@ -118,7 +120,7 @@ describe('useIncrementalFetchAndMutateRecords', () => {
       } as any),
     );
 
-    await result.current.incrementalFetchAndMutate(jest.fn());
+    await result.current.incrementalFetchAndMutate(vi.fn());
     expect(mockFindManyRecordsLazy).not.toHaveBeenCalled();
   });
 
@@ -139,20 +141,22 @@ describe('useIncrementalFetchAndMutateRecords', () => {
       } as any),
     );
 
-    const abortMock = jest.fn();
+    const abortMock = vi.fn();
 
-    jest.spyOn(global, 'AbortController').mockImplementation(
-      () =>
-        ({
-          signal: { aborted: true } as unknown as AbortSignal,
-          abort: abortMock,
-        }) as unknown as AbortController,
-    );
+    class MockAbortController {
+      signal = { aborted: true } as AbortSignal;
+      abort = abortMock;
+    }
 
-    await result.current.incrementalFetchAndMutate(jest.fn());
+    global.AbortController = MockAbortController;
+
+    try {
+      await result.current.incrementalFetchAndMutate(vi.fn());
+    } finally {
+      global.AbortController = originalAbortController;
+    }
 
     expect(mockFetchMoreRecordsLazy).not.toHaveBeenCalled();
-    jest.restoreAllMocks();
   });
 
   it('should call abort on current controller when cancel is invoked', () => {
@@ -175,7 +179,7 @@ describe('useIncrementalFetchAndMutateRecords', () => {
     );
 
     await expect(
-      result.current.incrementalFetchAndMutate(jest.fn()),
+      result.current.incrementalFetchAndMutate(vi.fn()),
     ).resolves.toBeUndefined();
   });
 
@@ -189,7 +193,7 @@ describe('useIncrementalFetchAndMutateRecords', () => {
     );
 
     await expect(
-      result.current.incrementalFetchAndMutate(jest.fn()),
+      result.current.incrementalFetchAndMutate(vi.fn()),
     ).rejects.toThrow('Network error');
   });
 });

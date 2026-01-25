@@ -1,10 +1,11 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/format-preferences/getDateFormatFromWorkspaceDateFormat';
+import { vi } from 'vitest';
 import { WorkspaceMemberDateFormatEnum } from '~/generated/graphql';
 
 // Mock detectDateFormat
-jest.mock('@/localization/utils/detection/detectDateFormat', () => ({
-  detectDateFormat: jest.fn(() => 'MONTH_FIRST'),
+vi.mock('@/localization/utils/detection/detectDateFormat', () => ({
+  detectDateFormat: vi.fn(() => 'MONTH_FIRST'),
 }));
 
 describe('getDateFormatFromWorkspaceDateFormat', () => {

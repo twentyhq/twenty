@@ -4,7 +4,7 @@ import { useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import {
   favoriteId,
@@ -12,12 +12,13 @@ import {
   mockWorkspaceMember,
   mocks,
 } from '@/favorites/hooks/__mocks__/useFavorites';
+import { vi } from 'vitest';
 
-jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
+vi.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: () => ({ records: initialFavorites }),
 }));
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 

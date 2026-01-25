@@ -1,18 +1,31 @@
-import { gql } from '@apollo/client';
-import { type Operation } from '@apollo/client/core';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
+import { gql } from '@apollo/client';
+import {
+  Observable,
+  type FetchResult,
+  type Operation,
+} from '@apollo/client/core';
+import { vi } from 'vitest';
 
-global.fetch = jest.fn();
+global.fetch = vi.fn();
 describe('StreamingRestLink', () => {
   let streamingLink: StreamingRestLink;
-  let mockForward: jest.MockedFunction<(operation: Operation) => any>;
+  let mockForward: (operation: Operation) => Observable<FetchResult>;
+  let forwardResult: Observable<FetchResult>;
 
   beforeEach(() => {
     streamingLink = new StreamingRestLink({
       uri: 'https://api.example.com',
     });
-    mockForward = jest.fn();
-    (global.fetch as jest.Mock).mockClear();
+    const mockFn = vi.fn();
+    forwardResult = new Observable(() => {});
+    mockFn.mockImplementation(
+      (_operation: Operation): Observable<FetchResult> => {
+        return forwardResult;
+      },
+    );
+    mockForward = mockFn;
+    vi.mocked(global.fetch).mockClear();
   });
 
   describe('request', () => {
@@ -30,7 +43,7 @@ describe('StreamingRestLink', () => {
       const result = streamingLink.request(operation, mockForward);
 
       expect(mockForward).toHaveBeenCalledWith(operation);
-      expect(result).toBe(mockForward(operation));
+      expect(result).toBe(forwardResult);
     });
 
     it('should handle operations with @stream directive', async () => {
@@ -46,28 +59,34 @@ describe('StreamingRestLink', () => {
           }
         `,
         variables: { threadId: '123', requestBody: { threadId: '123' } },
-        getContext: () => ({ onChunk: jest.fn() }),
+        getContext: () => ({ onChunk: vi.fn() }),
         operationName: 'StreamTest',
         extensions: {},
-        setContext: jest.fn(),
+        setContext: vi.fn(),
       } as Operation;
 
-      const mockResponse = {
-        ok: true,
-        body: {
-          getReader: () => ({
-            read: jest.fn().mockResolvedValue({ done: true }),
-            releaseLock: jest.fn(),
-          }),
+      const mockReadableStream = new ReadableStream({
+        start: (controller) => {
+          controller.close();
         },
-      };
-      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+      });
+      const mockResponse = new Response(mockReadableStream, {
+        status: 200,
+        statusText: 'OK',
+      });
+      Object.defineProperty(mockResponse.body, 'getReader', {
+        value: () => ({
+          read: vi.fn().mockResolvedValue({ done: true }),
+          releaseLock: vi.fn(),
+        }),
+      });
+      vi.mocked(global.fetch).mockResolvedValue(mockResponse);
 
       const observable = streamingLink.request(operation, mockForward);
       const observer = {
-        next: jest.fn(),
-        error: jest.fn(),
-        complete: jest.fn(),
+        next: vi.fn(),
+        error: vi.fn(),
+        complete: vi.fn(),
       };
 
       observable.subscribe(observer);
@@ -97,13 +116,13 @@ describe('StreamingRestLink', () => {
         getContext: () => ({}),
       } as Operation;
 
-      (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
+      vi.mocked(global.fetch).mockRejectedValue(new Error('Network error'));
 
       const observable = streamingLink.request(operation, mockForward);
       const observer = {
-        next: jest.fn(),
-        error: jest.fn(),
-        complete: jest.fn(),
+        next: vi.fn(),
+        error: vi.fn(),
+        complete: vi.fn(),
       };
 
       observable.subscribe(observer);
@@ -124,14 +143,17 @@ describe('StreamingRestLink', () => {
         getContext: () => ({}),
       } as Operation;
 
-      const mockResponse = { ok: false, status: 404 };
-      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+      const mockResponse = new Response(null, {
+        status: 404,
+        statusText: 'Not Found',
+      });
+      vi.mocked(global.fetch).mockResolvedValue(mockResponse);
 
       const observable = streamingLink.request(operation, mockForward);
       const observer = {
-        next: jest.fn(),
-        error: jest.fn(),
-        complete: jest.fn(),
+        next: vi.fn(),
+        error: vi.fn(),
+        complete: vi.fn(),
       };
 
       observable.subscribe(observer);
@@ -139,7 +161,10 @@ describe('StreamingRestLink', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(observer.error).toHaveBeenCalledWith(
-        new Error('HTTP error! status: 404'),
+        expect.objectContaining({
+          message: 'HTTP error! status: 404',
+          statusCode: 404,
+        }),
       );
     });
   });
@@ -204,7 +229,7 @@ describe('StreamingRestLink', () => {
         `,
         operationName: 'Test',
         extensions: {},
-        setContext: jest.fn(),
+        setContext: vi.fn(),
         getContext: () => ({}),
       } as unknown as Operation;
 

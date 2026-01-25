@@ -1,3 +1,4 @@
+import { gql } from '@apollo/client';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -6,10 +7,11 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { renderHook } from '@testing-library/react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
+import { vi } from 'vitest';
 
-jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
-jest.mock('@/object-record/utils/generateAggregateQuery');
+vi.mock('@/object-metadata/hooks/useObjectMetadataItem');
+vi.mock('@/object-record/utils/generateAggregateQuery');
 
 const fields = [
   {
@@ -56,24 +58,24 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   isUIReadOnly: false,
 };
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
 describe('useAggregateRecordsQuery', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useObjectMetadataItem as jest.Mock).mockReturnValue({
+    vi.clearAllMocks();
+    vi.mocked(useObjectMetadataItem).mockReturnValue({
       objectMetadataItem: mockObjectMetadataItem,
     });
 
-    (generateAggregateQuery as jest.Mock).mockReturnValue({
-      loc: {
-        source: {
-          body: 'query AggregateCompanies($filter: CompanyFilterInput) { companies(filter: $filter) { totalCount } }',
-        },
-      },
-    });
+    vi.mocked(generateAggregateQuery).mockReturnValue(gql`
+      query AggregateCompanies($filter: CompanyFilterInput) {
+        companies(filter: $filter) {
+          totalCount
+        }
+      }
+    `);
   });
 
   it('should handle simple count operation', () => {

@@ -1,4 +1,5 @@
 import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
+import { vi } from 'vitest';
 
 describe('PlaceAutocompleteSelect Component', () => {
   describe('component interface', () => {
@@ -6,7 +7,7 @@ describe('PlaceAutocompleteSelect Component', () => {
       // Test that the component accepts the expected props
       const mockProps = {
         list: [] as PlaceAutocompleteResult[],
-        onChange: jest.fn(),
+        onChange: vi.fn(),
         dropdownId: 'test-dropdown',
       };
 
@@ -35,7 +36,7 @@ describe('PlaceAutocompleteSelect Component', () => {
     });
 
     it('should handle onChange callback function', () => {
-      const mockOnChange = jest.fn();
+      const mockOnChange = vi.fn();
       const testPlaceId = 'test-place-id';
 
       // Simulate calling the onChange function
@@ -121,7 +122,7 @@ describe('PlaceAutocompleteSelect Component', () => {
 
   describe('callback behavior', () => {
     it('should call onChange with correct placeId', () => {
-      const mockOnChange = jest.fn();
+      const mockOnChange = vi.fn();
       const testPlaceIds = [
         'ChIJD7fiBh9u5kcRYJSMaMOCCwQ',
         'ChIJOwg_06VPwokRYv534QaPC8g',
@@ -139,7 +140,7 @@ describe('PlaceAutocompleteSelect Component', () => {
     });
 
     it('should handle multiple onChange calls', () => {
-      const mockOnChange = jest.fn();
+      const mockOnChange = vi.fn();
       const calls = 10;
 
       for (let i = 0; i < calls; i++) {

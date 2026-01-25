@@ -6,9 +6,31 @@ Object.defineProperty(navigator, 'language', {
   value: 'en-US',
 });
 
-describe('detectCalendarStartDay', () => {
-  let originalIntlLocale: typeof Intl.Locale;
+const originalIntlLocale = Intl.Locale;
 
+const setMockLocale = ({
+  weekInfo,
+  shouldThrow = false,
+}: {
+  weekInfo?: { firstDay: number };
+  shouldThrow?: boolean;
+}) => {
+  class MockLocale {
+    weekInfo?: { firstDay: number };
+
+    constructor() {
+      if (shouldThrow) {
+        throw new Error('Force fallback');
+      }
+      this.weekInfo = weekInfo;
+    }
+  }
+
+  // @ts-expect-error - override Intl.Locale for test
+  global.Intl.Locale = MockLocale;
+};
+
+describe('detectCalendarStartDay', () => {
   beforeEach(() => {
     // Reset to default
     Object.defineProperty(navigator, 'language', {
@@ -17,15 +39,13 @@ describe('detectCalendarStartDay', () => {
     });
 
     // Store original and mock Intl.Locale to force fallback logic
-    originalIntlLocale = global.Intl.Locale;
-    (global.Intl as any).Locale = jest.fn().mockImplementation(() => {
-      throw new Error('Force fallback');
-    });
+    setMockLocale({ shouldThrow: true });
   });
 
   afterEach(() => {
     // Restore original Intl.Locale
-    (global.Intl as any).Locale = originalIntlLocale;
+    // @ts-expect-error - restore Intl.Locale after test
+    global.Intl.Locale = originalIntlLocale;
   });
 
   it('should return SUNDAY for en-US locale', () => {
@@ -94,18 +114,14 @@ describe('detectCalendarStartDay', () => {
 
   it('should handle Intl.Locale with weekInfo support', () => {
     // Temporarily restore original and mock with weekInfo
-    (global.Intl as any).Locale = jest.fn().mockImplementation(() => ({
-      weekInfo: { firstDay: 1 }, // Monday
-    }));
+    setMockLocale({ weekInfo: { firstDay: 1 } });
 
     expect(detectCalendarStartDay()).toBe('MONDAY');
   });
 
   it('should handle Intl.Locale with Saturday firstDay', () => {
     // Temporarily restore original and mock with weekInfo
-    (global.Intl as any).Locale = jest.fn().mockImplementation(() => ({
-      weekInfo: { firstDay: 6 }, // Saturday
-    }));
+    setMockLocale({ weekInfo: { firstDay: 6 } });
 
     expect(detectCalendarStartDay()).toBe('SATURDAY');
   });

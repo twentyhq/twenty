@@ -1,6 +1,7 @@
 import { fireEvent, renderHook } from '@testing-library/react';
 import React, { act } from 'react';
 import { RecoilRoot } from 'recoil';
+import { vi } from 'vitest';
 
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,7 +17,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 const listenerId = 'listenerId';
 describe('useListenClickOutside', () => {
   it('should trigger the callback when clicking outside the specified refs', () => {
-    const callback = jest.fn();
+    const callback = vi.fn();
 
     renderHook(
       () =>
@@ -37,7 +38,7 @@ describe('useListenClickOutside', () => {
   });
 
   it('should not call the callback when clicking inside the specified refs using default comparison', () => {
-    const callback = jest.fn();
+    const callback = vi.fn();
 
     renderHook(
       () =>

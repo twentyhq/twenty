@@ -2,7 +2,8 @@ import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
-import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
+import { vi } from 'vitest';
+import { TestObjectMetadataItemSetter } from '~/testing/test-helpers/TestObjectMetadataItemSetter';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -14,25 +15,29 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
     <RecoilRoot>
-      <JestObjectMetadataItemSetter>{children}</JestObjectMetadataItemSetter>
+      <TestObjectMetadataItemSetter>{children}</TestObjectMetadataItemSetter>
     </RecoilRoot>
   );
 };
 
-jest.mock('twenty-ui/display', () => ({
-  useIcons: jest.fn(),
-}));
+vi.mock('twenty-ui/display', async () => {
+  const actual = await vi.importActual('twenty-ui/display');
+  return {
+    ...actual,
+    useIcons: vi.fn(),
+  };
+});
 
 describe('useBuildSpreadSheetImportFields', () => {
-  const mockGetIcon = jest.fn().mockReturnValue('MockIcon');
-  const mockUseIcons = useIcons as jest.MockedFunction<typeof useIcons>;
+  const mockGetIcon = vi.fn().mockReturnValue('MockIcon');
+  const mockUseIcons = vi.mocked(useIcons);
 
   beforeEach(() => {
     mockUseIcons.mockReturnValue({
       getIcon: mockGetIcon,
       getIcons: () => ({}),
     });
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   const createMockFieldMetadataItem = (

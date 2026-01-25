@@ -5,7 +5,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getTestMetadataAndApolloMocksWrapper } from '~/testing/test-helpers/getTestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import {
   favoriteTargetObjectRecord,
@@ -14,16 +14,17 @@ import {
   mockWorkspaceMember,
   mocks,
 } from '@/favorites/hooks/__mocks__/useFavorites';
+import { vi } from 'vitest';
 
-jest.mock('uuid', () => ({
+vi.mock('uuid', () => ({
   v4: () => mockId,
 }));
 
-jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
+vi.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: () => ({ records: initialFavorites }),
 }));
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getTestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 
