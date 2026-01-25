@@ -183,6 +183,15 @@ export const CanvasBarChart = ({
       const rect = canvas.getBoundingClientRect();
       const x = event.clientX - rect.left - margins.left;
       const y = event.clientY - rect.top - margins.top;
+      const innerWidth = chartWidth - margins.left - margins.right;
+      const innerHeight = chartHeight - margins.top - margins.bottom;
+
+      if (x < 0 || y < 0 || x > innerWidth || y > innerHeight) {
+        if (isDefined(hoveredSliceIndexValue)) {
+          onSliceHover(null);
+        }
+        return;
+      }
 
       const slice = findSliceAtCanvasPosition({
         mouseX: x,
@@ -240,6 +249,7 @@ export const CanvasBarChart = ({
       hoveredSliceIndexValue,
       onSliceHover,
       chartHeight,
+      chartWidth,
     ],
   );
 
@@ -261,6 +271,12 @@ export const CanvasBarChart = ({
       const rect = canvas.getBoundingClientRect();
       const x = event.clientX - rect.left - margins.left;
       const y = event.clientY - rect.top - margins.top;
+      const innerWidth = chartWidth - margins.left - margins.right;
+      const innerHeight = chartHeight - margins.top - margins.bottom;
+
+      if (x < 0 || y < 0 || x > innerWidth || y > innerHeight) {
+        return;
+      }
 
       const slice = findSliceAtCanvasPosition({
         mouseX: x,
@@ -273,7 +289,7 @@ export const CanvasBarChart = ({
         onSliceClick(slice);
       }
     },
-    [margins, slices, isVertical, onSliceClick],
+    [margins, slices, isVertical, onSliceClick, chartHeight, chartWidth],
   );
 
   return (

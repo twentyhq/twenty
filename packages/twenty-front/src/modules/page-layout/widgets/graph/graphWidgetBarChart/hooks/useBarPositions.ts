@@ -5,7 +5,7 @@ import {
 } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositions';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { useMemo } from 'react';
-import { BarChartLayout } from '~/generated/graphql';
+import { type BarChartLayout } from '~/generated/graphql';
 
 type UseBarPositionsParams = {
   data: Record<string, unknown>[];
@@ -20,6 +20,8 @@ type UseBarPositionsParams = {
   valueDomain: { min: number; max: number };
   fallbackColor: string;
   innerPadding: number;
+  includeZeroValues?: boolean;
+  enabled?: boolean;
 };
 
 export const useBarPositions = ({
@@ -35,24 +37,15 @@ export const useBarPositions = ({
   valueDomain,
   fallbackColor,
   innerPadding,
+  includeZeroValues = false,
+  enabled = true,
 }: UseBarPositionsParams): BarPosition[] => {
-  return useMemo(
-    () =>
-      computeBarPositions({
-        data,
-        indexBy,
-        keys,
-        enrichedKeysMap,
-        chartWidth,
-        chartHeight,
-        margins,
-        layout,
-        groupMode,
-        valueDomain,
-        fallbackColor,
-        innerPadding,
-      }),
-    [
+  return useMemo(() => {
+    if (!enabled) {
+      return [];
+    }
+
+    return computeBarPositions({
       data,
       indexBy,
       keys,
@@ -65,6 +58,22 @@ export const useBarPositions = ({
       valueDomain,
       fallbackColor,
       innerPadding,
-    ],
-  );
+      includeZeroValues,
+    });
+  }, [
+    data,
+    indexBy,
+    keys,
+    enrichedKeysMap,
+    chartWidth,
+    chartHeight,
+    margins,
+    layout,
+    groupMode,
+    valueDomain,
+    fallbackColor,
+    innerPadding,
+    includeZeroValues,
+    enabled,
+  ]);
 };

@@ -31,6 +31,7 @@ type ComputeBarPositionsParams = {
   valueDomain: { min: number; max: number };
   fallbackColor: string;
   innerPadding: number;
+  includeZeroValues?: boolean;
 };
 
 const computeValueToPixel = (
@@ -57,6 +58,7 @@ const computeGroupedBarPositions = ({
   fallbackColor,
   innerPadding,
   shouldRoundFreeEndMap,
+  includeZeroValues = false,
 }: {
   data: Record<string, unknown>[];
   indexBy: string;
@@ -69,6 +71,7 @@ const computeGroupedBarPositions = ({
   fallbackColor: string;
   innerPadding: number;
   shouldRoundFreeEndMap: Map<string, boolean> | null;
+  includeZeroValues?: boolean;
 }): BarPosition[] => {
   const bars: BarPosition[] = [];
   const dataLength = data.length;
@@ -110,7 +113,7 @@ const computeGroupedBarPositions = ({
       const key = keys[keyIndex];
       const rawValue = dataPoint[key];
 
-      if (!isNumber(rawValue) || rawValue === 0) {
+      if (!isNumber(rawValue) || (!includeZeroValues && rawValue === 0)) {
         continue;
       }
 
@@ -172,6 +175,7 @@ const computeStackedBarPositions = ({
   valueDomain,
   fallbackColor,
   shouldRoundFreeEndMap,
+  includeZeroValues = false,
 }: {
   data: Record<string, unknown>[];
   indexBy: string;
@@ -183,6 +187,7 @@ const computeStackedBarPositions = ({
   valueDomain: { min: number; max: number };
   fallbackColor: string;
   shouldRoundFreeEndMap: Map<string, boolean> | null;
+  includeZeroValues?: boolean;
 }): BarPosition[] => {
   const bars: BarPosition[] = [];
   const dataLength = data.length;
@@ -220,7 +225,7 @@ const computeStackedBarPositions = ({
       const key = keys[keyIndex];
       const rawValue = dataPoint[key];
 
-      if (!isNumber(rawValue) || rawValue === 0) {
+      if (!isNumber(rawValue) || (!includeZeroValues && rawValue === 0)) {
         continue;
       }
 
@@ -320,6 +325,7 @@ export const computeBarPositions = ({
   valueDomain,
   fallbackColor,
   innerPadding,
+  includeZeroValues = false,
 }: ComputeBarPositionsParams): BarPosition[] => {
   const innerWidth = chartWidth - margins.left - margins.right;
   const innerHeight = chartHeight - margins.top - margins.bottom;
@@ -345,6 +351,7 @@ export const computeBarPositions = ({
       valueDomain,
       fallbackColor,
       shouldRoundFreeEndMap,
+      includeZeroValues,
     });
   }
 
@@ -360,6 +367,7 @@ export const computeBarPositions = ({
     fallbackColor,
     innerPadding,
     shouldRoundFreeEndMap,
+    includeZeroValues,
   });
 };
 

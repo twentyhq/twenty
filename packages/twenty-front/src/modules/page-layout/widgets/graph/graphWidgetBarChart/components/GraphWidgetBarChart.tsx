@@ -212,6 +212,25 @@ export const GraphWidgetBarChart = ({
     valueDomain,
   });
 
+  const labelBarsWithZeros = useBarPositions({
+    chartHeight,
+    chartWidth,
+    data,
+    enrichedKeysMap,
+    fallbackColor: theme.border.color.light,
+    groupMode,
+    includeZeroValues: true,
+    indexBy,
+    innerPadding,
+    keys: orderedKeys,
+    layout,
+    margins,
+    valueDomain,
+    enabled: showValues && !hasNoData && !omitNullValues,
+  });
+
+  const labelBars = omitNullValues ? bars : labelBarsWithZeros;
+
   const hasClickableItems = isDefined(onSliceClick);
   const hasNegativeValues = calculatedValueRange.minimum < 0;
 
@@ -324,7 +343,7 @@ export const GraphWidgetBarChart = ({
                 yAxisLabel={yAxisLabel}
               />
               <CanvasTotalsLayer
-                bars={bars}
+                bars={labelBars}
                 chartHeight={chartHeight}
                 chartWidth={chartWidth}
                 formatValue={(value) => formatGraphValue(value, formatOptions)}
