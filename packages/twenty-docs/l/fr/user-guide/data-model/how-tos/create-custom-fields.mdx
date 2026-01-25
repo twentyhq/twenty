@@ -1,72 +1,72 @@
 ---
-title: Create Custom Fields
-description: Step-by-step guide to adding custom fields to any object.
+title: Créer des Champs Personnalisés
+description: Guide étape par étape pour ajouter des champs personnalisés à n'importe quel objet.
 ---
 
-Custom fields let you capture information specific to your business. Add them to any object—standard or custom.
+Les champs personnalisés vous permettent de capturer des informations spécifiques à votre entreprise. Ajoutez-les à n'importe quel objet — standard ou personnalisé.
 
-## Steps
+## Étapes
 
-1. Go to **Settings → Data Model**
-2. Select the object you want to add a field to
-3. Click **+ Add Field**
-4. Choose a **field type** (see [Fields](/l/fr/user-guide/data-model/capabilities/fields) for all types)
-5. Enter the **field name** and optional description
-6. Configure field-specific settings (see below)
-7. Click **Save**
+1. Allez dans **Paramètres → Modèle de données**
+2. Sélectionnez l'objet auquel vous souhaitez ajouter un champ
+3. Cliquez sur **+ Ajouter un champ**
+4. Choisissez un **type de champ** (voir [Champs](/l/fr/user-guide/data-model/capabilities/fields) pour tous les types)
+5. Saisissez le **nom du champ** et une description facultative
+6. Configurez les paramètres spécifiques au champ (voir ci-dessous)
+7. Cliquez sur **Enregistrer**
 
-**Quick method:** Click the **+** at the end of column headers in any table view → **Customize fields**.
+**Méthode rapide :** Cliquez sur le **+** à la fin des en-têtes de colonne dans n'importe quelle vue en tableau → **Personnaliser les champs**.
 
-## Show the Field in Views
+## Afficher le champ dans les vues
 
-New fields aren't automatically visible. To display:
+Les nouveaux champs ne sont pas visibles automatiquement. Pour l'afficher :
 
-1. Open the object's table view
-2. Click **Options → Fields**
-3. Click the **eye icon** next to your field to show it
-4. Drag to reorder
+1. Ouvrez la vue en tableau de l'objet
+2. Cliquez sur **Options → Champs**
+3. Cliquez sur l'**icône en forme d'œil** à côté de votre champ pour l'afficher
+4. Faites glisser pour réorganiser
 
-## Configuration Options
+## Options de configuration
 
-### For Select / Multi-Select
+### Pour Sélection / Sélection multiple
 
-1. Click **+ Add option** to create choices
-2. Set a **default option** if desired
-3. Drag to reorder options
-
-<Note>
-  **Use API names for imports.** Enable **Advanced mode** in Settings to see API names. See [Field Mapping](/l/fr/user-guide/data-migration/capabilities/field-mapping).
-</Note>
-
-### For Currency Fields
-
-Set the **default currency** (USD, EUR, etc.) for new records.
-
-### For Phone Fields
-
-Set the **default country code** to pre-fill for new phone numbers.
-
-### Making a Field Unique
-
-Toggle **Unique** to prevent duplicate values across records.
+1. Cliquez sur **+ Ajouter une option** pour créer des choix
+2. Définissez une **option par défaut** si vous le souhaitez
+3. Faites glisser pour réorganiser les options
 
 <Note>
-  If duplicates exist (including in deleted records), you'll get an error. Clean up duplicates first.
+  **Utilisez les noms d'API pour les importations.** Activez le **mode avancé** dans Paramètres pour voir les noms d'API. Voir [Correspondance des champs](/l/fr/user-guide/data-migration/capabilities/field-mapping).
 </Note>
 
-### Setting Default Values
+### Pour les champs de devise
 
-For Select fields, you can choose which option is pre-selected for new records. For Checkbox fields, set whether it's checked or unchecked by default.
+Définissez la **devise par défaut** (USD, EUR, etc.) pour les nouveaux enregistrements.
 
-## Deactivating a Field
+### Pour les champs de téléphone
 
-1. Go to **Settings → Data Model**
-2. Find the field
-3. Click **⋮ → Deactivate**
+Définissez le **code du pays par défaut** à préremplir pour les nouveaux numéros de téléphone.
 
-Data is preserved. You can reactivate or permanently delete later.
+### Rendre un champ unique
 
-## Related
+Activez **Unique** pour empêcher les valeurs en double dans l'ensemble des enregistrements.
 
-* [Fields](/l/fr/user-guide/data-model/capabilities/fields) — all field types explained
-* [Data Model FAQ](/l/fr/user-guide/data-model/how-tos/data-model-faq) — common questions
+<Note>
+  S'il existe des doublons (y compris dans les enregistrements supprimés), une erreur s'affichera. Commencez par supprimer les doublons.
+</Note>
+
+### Définir des valeurs par défaut
+
+Pour les champs Sélection, vous pouvez choisir quelle option est présélectionnée pour les nouveaux enregistrements. Pour les champs Case à cocher, définissez s'ils sont cochés ou décochés par défaut.
+
+## Désactiver un champ
+
+1. Allez dans **Paramètres → Modèle de données**
+2. Recherchez le champ
+3. Cliquez sur **⋮ → Désactiver**
+
+Les données sont conservées. Vous pourrez le réactiver ou le supprimer définitivement plus tard.
+
+## Articles connexes
+
+* [Champs](/l/fr/user-guide/data-model/capabilities/fields) — tous les types de champs expliqués
+* [FAQ du modèle de données](/l/fr/user-guide/data-model/how-tos/data-model-faq) — questions fréquentes

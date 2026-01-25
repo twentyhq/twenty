@@ -1,17 +1,17 @@
 ---
-title: Icons
+title: Icônes
 image: /images/user-guide/objects/objects.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+  <img src="/images/user-guide/objects/objects.png" alt="En-tête" />
 </Frame>
 
-A list of icons used throughout our app.
+Une liste d'icônes utilisées dans notre application.
 
-## Tabler Icons
+## Icônes Tabler
 
-We use Tabler icons for React throughout the app.
+Nous utilisons les icônes Tabler pour React dans toute l'application.
 
 <Tabs>
   <Tab title="Installation">
@@ -22,52 +22,52 @@ We use Tabler icons for React throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    You can import each icon as a component. Here's an example:
+  <Tab title="Propriétés">
+    Vous pouvez importer chaque icône en tant que composant. Voici un exemple :
 
     <br />
 
     ```jsx
     import { IconArrowLeft } from "@tabler/icons-react";
 
-    export const MyComponent = () => {
+    export const MonComposant = () => {
       return <IconArrowLeft color="red" size={48} />;
     };
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props  | Type   | Description                                | Default      |
-    | ------ | ------ | ------------------------------------------ | ------------ |
-    | size   | number | The height and width of the icon in pixels | 24           |
-    | color  | string | The color of the icons                     | currentColor |
-    | stroke | number | The stroke width of the icon in pixels     | 2            |
+  <Tab title="Propriétés">
+    | Propriétés | Type   | Description                                   | Par défaut      |
+    | ---------- | ------ | --------------------------------------------- | --------------- |
+    | taille     | nombre | La hauteur et la largeur de l'icône en pixels | 24              |
+    | couleur    | chaîne | La couleur des icônes                         | couleurCourante |
+    | trait      | nombre | La largeur du trait de l'icône en pixels      | 2               |
   </Tab>
 </Tabs>
 
-## Custom Icons
+## Icônes personnalisées
 
-In addition to Tabler icons, the app also uses some custom icons.
+En plus des icônes Tabler, l'application utilise également certaines icônes personnalisées.
 
-### Icon Address Book
+### Icône Carnet d'adresses
 
-Displays an address book icon.
+Affiche une icône de carnet d'adresses.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Utilisation">
     ```jsx
     import { IconAddressBook } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
+    export const MonComposant = () => {
       return <IconAddressBook size={24} stroke={2} />;
     };
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props  | Type   | Description                                | Default |
-    | ------ | ------ | ------------------------------------------ | ------- |
-    | size   | number | The height and width of the icon in pixels | 24      |
-    | stroke | number | The stroke width of the icon in pixels     | 2       |
+  <Tab title="Propriétés">
+    | Propriétés | Type   | Description                                   | Par défaut |
+    | ---------- | ------ | --------------------------------------------- | ---------- |
+    | taille     | nombre | La hauteur et la largeur de l'icône en pixels | 24         |
+    | trait      | nombre | La largeur du trait de l'icône en pixels      | 2          |
   </Tab>
 </Tabs>
