@@ -1,180 +1,180 @@
 ---
-title: Create Many-to-Many Relations
-description: Connect records where many items on both sides can be linked together using junction objects.
+title: Çoktan-çoka İlişkiler Oluşturun
+description: Her iki tarafta da çok sayıda öğenin birbirine bağlanabildiği kayıtları bağlantı nesneleriyle bağlayın.
 ---
 
-Many-to-many relations let you connect multiple records on both sides. For example: many People can work on many Projects, and each Project can have many People.
+Çoktan-çoka ilişkiler, her iki tarafta birden fazla kaydı bağlamanıza olanak tanır. Örneğin: Birçok kişi birçok projede çalışabilir ve her proje birçok kişiye sahip olabilir.
 
 <Warning>
-  **Lab Feature**: Junction relations are currently in the Lab. Enable them at **Settings → Updates → Lab** before following this guide.
+  **Lab Özelliği**: Bağlantı ilişkileri şu anda Lab'de. Bu kılavuzu uygulamadan önce **Ayarlar → Güncellemeler → Lab** bölümünde bunları etkinleştirin.
 </Warning>
 
 <Note>
-  This feature also requires **Advanced mode** to be enabled (toggle at the bottom right of Settings).
+  Bu özellik ayrıca **Gelişmiş mod**un etkinleştirilmesini gerektirir (Ayarlar'ın sağ alt kısmındaki anahtarı kullanın).
 </Note>
 
-## When to Use Many-to-Many
+## Çoktan-çoka Ne Zaman Kullanılır
 
-Use many-to-many when both sides of a relationship can have multiple connections:
+Bir ilişkinin her iki tarafında da birden fazla bağlantı olabiliyorsa çoktan-çoka ilişkileri kullanın:
 
-| Relationship      | Örnek                                                                    |
-| ----------------- | ------------------------------------------------------------------------ |
-| People ↔ Projects | A person works on multiple projects; a project has multiple team members |
-| Companies ↔ Tags  | A company can have multiple tags; a tag can apply to multiple companies  |
-| Products ↔ Orders | A product can be in multiple orders; an order contains multiple products |
+| İlişki                | Örnek                                                                                     |
+| --------------------- | ----------------------------------------------------------------------------------------- |
+| Kişiler ↔ Projeler    | Bir kişi birden fazla projede çalışır; bir proje birden fazla ekip üyesine sahiptir       |
+| Şirketler ↔ Etiketler | Bir şirketin birden fazla etiketi olabilir; bir etiket birden fazla şirkete uygulanabilir |
+| Ürünler ↔ Siparişler  | Bir ürün birden fazla siparişte yer alabilir; bir sipariş birden fazla ürün içerir        |
 
 ## Nasıl Çalışır
 
-Twenty uses a **junction object** pattern for many-to-many relations. A junction object sits between two objects and holds the connections:
+Twenty, çoktan-çoka ilişkiler için bir **bağlantı nesnesi** desenini kullanır. Bir bağlantı nesnesi iki nesnenin arasında yer alır ve bağlantıları tutar:
 
 ```
 People ←→ Project Assignments ←→ Projects
 ```
 
-The **Project Assignments** object (junction) has:
+**Project Assignments** nesnesi (bağlantı) şunlara sahiptir:
 
-* A relation to People (many-to-one)
-* A relation to Projects (many-to-one)
+* People ile bir ilişki (çoktan-bire)
+* Projects ile bir ilişki (çoktan-bire)
 
-When you enable the junction relation toggle, Twenty displays linked records directly instead of showing the intermediate junction records.
+Bağlantı ilişkisi anahtarını etkinleştirdiğinizde, Twenty aradaki bağlantı kayıtlarını göstermeden bağlı kayıtları doğrudan görüntüler.
 
 ## Ön Gereksinimler
 
-1. **Enable Junction Relations in Lab**: Go to **Settings → Updates → Lab** and enable **Junction Relations**
-2. **Enable Advanced mode**: Toggle on **Advanced mode** at the bottom right of the Settings sidebar
-3. Plan your data model:
-   * Which two objects are you connecting?
-   * What should the junction object be called?
+1. **Lab'de Bağlantı İlişkilerini Etkinleştirin**: **Ayarlar → Güncellemeler → Lab** bölümüne gidin ve **Junction Relations**'ı etkinleştirin
+2. **Gelişmiş modu etkinleştirin**: Ayarlar kenar çubuğunun sağ alt kısmındaki **Advanced mode** anahtarını açın
+3. Veri modelinizi planlayın:
+   * Hangi iki nesneyi bağlıyorsunuz?
+   * Bağlantı nesnesinin adı ne olmalı?
 
-## Step 1: Create the Junction Object
+## Adım 1: Bağlantı Nesnesini Oluşturun
 
-First, create the intermediate object that will hold the connections.
+Önce, bağlantıları tutacak ara nesneyi oluşturun.
 
 1. **Ayarlar → Veri Modeli** bölümüne gidin
 2. **+ Yeni nesne**'ye tıklayın
-3. Name it descriptively (e.g., "Project Assignment", "Team Member", "Product Order")
+3. Açıklayıcı bir ad verin (örn. "Project Assignment", "Team Member", "Product Order")
 4. **Kaydet**'e tıklayın
 
 <Tip>
-  **Naming convention**: Use a name that describes the relationship, like "Project Assignment" or "Team Membership". This makes the data model easier to understand.
+  **Adlandırma kuralı**: "Project Assignment" veya "Team Membership" gibi ilişkiyi tanımlayan bir ad kullanın. Bu, veri modelinin anlaşılmasını kolaylaştırır.
 </Tip>
 
-## Step 2: Create Relations from the Junction Object
+## Adım 2: Bağlantı Nesnesinden İlişkiler Oluşturun
 
-Add relation fields from the junction object to both objects you want to connect.
+Bağlamak istediğiniz her iki nesneye de bağlantı nesnesinden ilişki alanları ekleyin.
 
-### First Relation (Junction → Object A)
+### İlk İlişki (Bağlantı → Nesne A)
 
-1. Select your junction object in **Settings → Data Model**
+1. **Ayarlar → Veri Modeli**'nde bağlantı nesnenizi seçin
 2. **+ Alan Ekle**'ye tıklayın
-3. Choose **Relation** as the field type
-4. Select the first object (e.g., "People")
-5. Set the relation type to **Many-to-One** (many assignments can link to one person)
-6. Name the fields:
-   * Field on junction: e.g., "Person"
-   * Field on People: e.g., "Project Assignments"
+3. Alan türü olarak **İlişki**'yi seçin
+4. İlk nesneyi seçin (örn. "People")
+5. İlişki türünü **Çoktan-Bire** olarak ayarlayın (birçok atama bir kişiye bağlanabilir)
+6. Alanları adlandırın:
+   * Bağlantı üzerindeki alan: örn. "Person"
+   * People üzerindeki alan: örn. "Project Assignments"
 7. **Kaydet**'e tıklayın
 
-### Second Relation (Junction → Object B)
+### İkinci İlişki (Bağlantı → Nesne B)
 
-1. Still on the junction object, click **+ Add Field**
-2. Choose **Relation** as the field type
-3. Select the second object (e.g., "Projects")
-4. Set the relation type to **Many-to-One**
-5. Name the fields:
-   * Field on junction: e.g., "Project"
-   * Field on Projects: e.g., "Team Members"
+1. Hâlâ bağlantı nesnesindeyken, **+ Add Field**'e tıklayın
+2. Alan türü olarak **İlişki**'yi seçin
+3. İkinci nesneyi seçin (örn. "Projects")
+4. İlişki türünü **Çoktan-Bire** olarak ayarlayın
+5. Alanları adlandırın:
+   * Bağlantı üzerindeki alan: örn. "Project"
+   * Projects üzerindeki alan: örn. "Team Members"
 6. **Kaydet**'e tıklayın
 
-## Step 3: Configure the Junction Relation Display
+## Adım 3: Bağlantı İlişkisi Görüntüsünü Yapılandırın
 
-Now configure the source objects to display linked records directly, skipping the intermediate junction object.
+Şimdi kaynak nesneleri, aradaki bağlantı nesnesini atlayıp bağlı kayıtları doğrudan gösterecek şekilde yapılandırın.
 
 1. **Ayarlar → Veri Modeli** bölümüne gidin
-2. Select the first object (e.g., "People")
-3. Find the relation field pointing to the junction object (e.g., "Project Assignments")
-4. Click to edit the field
-5. Enable **"This is a relation to a Junction Object"**
-6. Select the **Target relation** (e.g., "Project" — the field on the junction that points to the other side)
+2. İlk nesneyi seçin (örn. "People")
+3. Bağlantı nesnesini işaret eden ilişki alanını bulun (örn. "Project Assignments")
+4. Alanı düzenlemek için tıklayın
+5. **"Bu, bir bağlantı nesnesine kurulan bir ilişkidir"** seçeneğini etkinleştirin
+6. **Hedef ilişki**yi seçin (örn. "Project" — bağlantı üzerindeki, diğer tarafı işaret eden alan)
 7. **Kaydet**'e tıklayın
 
 {/* TODO: Add image
 <img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
 */}
 
-Repeat for the other object:
+Diğer nesne için tekrarlayın:
 
-1. Select "Projects" in Data Model
-2. Edit the "Team Members" relation field
-3. Enable the junction toggle
-4. Select "Person" as the target relation
+1. Veri Modeli'nde "Projects"i seçin
+2. "Team Members" ilişki alanını düzenleyin
+3. Bağlantı anahtarını etkinleştirin
+4. Hedef ilişki olarak "Person"ı seçin
 5. Kaydet
 
 ## Sonuç
 
-After configuration:
+Yapılandırmadan sonra:
 
-* On a **Person** record, the "Project Assignments" field displays **Projects** directly (not assignment records)
-* On a **Project** record, the "Team Members" field displays **People** directly
+* Bir **Person** kaydında, "Project Assignments" alanı **Projects**'i doğrudan görüntüler (atama kayıtlarını değil)
+* Bir **Project** kaydında, "Team Members" alanı **People**'ı doğrudan görüntüler
 
-The junction object still exists and stores the connections, but the UI presents a cleaner many-to-many view.
+Bağlantı nesnesi hâlâ mevcuttur ve bağlantıları saklar, ancak kullanıcı arayüzü daha sade bir çoktan-çoka görünüm sunar.
 
-## Example: People ↔ Projects
+## Örnek: Kişiler ↔ Projeler
 
-Here's a complete walkthrough:
+İşte eksiksiz bir adım adım anlatım:
 
-### Create the Junction Object
+### Bağlantı Nesnesini Oluşturun
 
-* Name: **Project Assignment**
-* Description: "Links people to projects they work on"
+* Ad: **Project Assignment**
+* Açıklama: "Kişileri üzerinde çalıştıkları projelere bağlar"
 
-### Add Relations
+### İlişkiler Ekleyin
 
 1. **Project Assignment → People**
-   * Type: Many-to-One
-   * Field on Assignment: "Person"
-   * Field on People: "Project Assignments"
+   * Tür: Çoktan-Bire
+   * Assignment üzerindeki alan: "Person"
+   * People üzerindeki alan: "Project Assignments"
 
 2. **Project Assignment → Projects**
-   * Type: Many-to-One
-   * Field on Assignment: "Project"
-   * Field on Projects: "Team Members"
+   * Tür: Çoktan-Bire
+   * Assignment üzerindeki alan: "Project"
+   * Projects üzerindeki alan: "Team Members"
 
-### Configure Junction Display
+### Bağlantı Görüntüsünü Yapılandırın
 
-1. On **People** object:
-   * Edit "Project Assignments" field
-   * Enable junction toggle
-   * Target: "Project"
+1. **People** nesnesinde:
+   * "Project Assignments" alanını düzenleyin
+   * Bağlantı anahtarını etkinleştirin
+   * Hedef: "Project"
 
-2. On **Projects** object:
-   * Edit "Team Members" field
-   * Enable junction toggle
-   * Target: "Person"
+2. **Projects** nesnesinde:
+   * "Team Members" alanını düzenleyin
+   * Bağlantı anahtarını etkinleştirin
+   * Hedef: "Person"
 
-### Use It
+### Kullanın
 
-* Open a Person record → See their Projects directly
-* Open a Project record → See team members directly
-* Create new connections from either side
+* Bir Person kaydını açın → Projelerini doğrudan görün
+* Bir Project kaydını açın → Ekip üyelerini doğrudan görün
+* Her iki taraftan da yeni bağlantılar oluşturun
 
-## Adding Extra Data to Connections
+## Bağlantılara Ek Veri Ekleme
 
-Since the junction object is a real object, you can add custom fields to store information about the relationship:
+Bağlantı nesnesi gerçek bir nesne olduğundan, ilişkiyle ilgili bilgileri saklamak için özel alanlar ekleyebilirsiniz:
 
-* **Role**: "Developer", "Designer", "Manager"
-* **Start Date**: When they joined the project
-* **Hours Allocated**: Weekly hours on this project
+* **Rol**: "Geliştirici", "Tasarımcı", "Yönetici"
+* **Başlangıç Tarihi**: Projeye katıldıkları tarih
+* **Ayrılan Saatler**: Bu projedeki haftalık saat sayısı
 
-To access this data, navigate to the junction object directly or query it via the API.
+Bu verilere erişmek için doğrudan bağlantı nesnesine gidin veya API aracılığıyla sorgulayın.
 
 ## Kısıtlamalar
 
-* **CSV Import/Export**: Importing many-to-many relations directly is not supported. Import records to the junction object instead.
-* **Filters**: Filtering by many-to-many relations may have limited options.
+* **CSV İçe/Dışa Aktarma**: Çoktan-çoka ilişkilerin doğrudan içe aktarımı desteklenmez. Bunun yerine kayıtları bağlantı nesnesine içe aktarın.
+* **Filtreler**: Çoktan-çoka ilişkilere göre filtrelemenin seçenekleri sınırlı olabilir.
 
 ## İlgili
 
-* [Relation Fields](/l/tr/user-guide/data-model/capabilities/relation-fields) — relation types explained
-* [Create Custom Objects](/l/tr/user-guide/data-model/how-tos/create-custom-objects) — how to create objects
-* [Create Relation Fields](/l/tr/user-guide/data-model/how-tos/create-relation-fields) — basic relation setup
+* [İlişki Alanları](/l/tr/user-guide/data-model/capabilities/relation-fields) — ilişki türlerinin açıklaması
+* [Özel Nesneler Oluşturma](/l/tr/user-guide/data-model/how-tos/create-custom-objects) — nesneleri nasıl oluşturacağınız
+* [İlişki Alanları Oluşturma](/l/tr/user-guide/data-model/how-tos/create-relation-fields) — temel ilişki kurulumu
