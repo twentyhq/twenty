@@ -85,6 +85,9 @@
       "outputs": [
         "{projectRoot}/coverage"
       ],
+      "dependsOn": [
+        "^build"
+      ],
       "options": {
         "configFile": "{projectRoot}/vitest.unit.config.ts"
       },

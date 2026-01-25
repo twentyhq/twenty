@@ -87,6 +87,9 @@
       "outputs": [
         "{projectRoot}/coverage"
       ],
+      "dependsOn": [
+        "^build"
+      ],
       "inputs": [
         "^default",
         "excludeStories"
