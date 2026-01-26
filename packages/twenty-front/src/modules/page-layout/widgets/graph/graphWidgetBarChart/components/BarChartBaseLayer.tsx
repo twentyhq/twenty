@@ -23,6 +23,14 @@ type BarChartBaseLayerProps = {
   allowDataTransitions: boolean;
 };
 
+type AnimationState = {
+  sourceBars: BarPosition[];
+  targetBars: BarPosition[];
+  startTime: number;
+  durationMs: number;
+  isAnimating: boolean;
+} | null;
+
 const StyledBaseCanvas = styled.canvas`
   display: block;
   pointer-events: none;
@@ -40,6 +48,49 @@ const easeOutCubic = (t: number) =>
 
 const buildBarMap = (bars: BarPosition[]) =>
   new Map(bars.map((bar) => [getBarKey(bar), bar]));
+
+const interpolateBars = (
+  sourceBars: BarPosition[],
+  targetBars: BarPosition[],
+  t: number,
+  toBaselineBar: (bar: BarPosition) => BarPosition,
+): BarPosition[] => {
+  const sourceMap = buildBarMap(sourceBars);
+  const targetMap = buildBarMap(targetBars);
+  const allKeys = new Set([...sourceMap.keys(), ...targetMap.keys()]);
+  const eased = easeOutCubic(t);
+
+  const result: BarPosition[] = [];
+
+  for (const key of allKeys) {
+    const fromBar = sourceMap.get(key);
+    const toBar = targetMap.get(key);
+
+    if (!fromBar && !toBar) {
+      continue;
+    }
+
+    const startBar = fromBar ?? toBaselineBar(toBar as BarPosition);
+    const endBar = toBar ?? toBaselineBar(fromBar as BarPosition);
+
+    result.push({
+      ...endBar,
+      x: lerp(startBar.x, endBar.x, eased),
+      y: lerp(startBar.y, endBar.y, eased),
+      width: lerp(startBar.width, endBar.width, eased),
+      height: lerp(startBar.height, endBar.height, eased),
+      value: lerp(startBar.value, endBar.value, eased),
+      color: endBar.color ?? startBar.color,
+      seriesId: endBar.seriesId ?? startBar.seriesId,
+      indexValue: endBar.indexValue ?? startBar.indexValue,
+      shouldRoundFreeEnd:
+        endBar.shouldRoundFreeEnd ?? startBar.shouldRoundFreeEnd,
+      seriesIndex: endBar.seriesIndex ?? startBar.seriesIndex,
+    });
+  }
+
+  return result;
+};
 
 export const BarChartBaseLayer = ({
   bars,
@@ -60,15 +111,18 @@ export const BarChartBaseLayer = ({
       window.devicePixelRatio ||
       CHART_CORE_CONSTANTS.DEFAULT_DEVICE_PIXEL_RATIO,
   );
-  const [previousBars, setPreviousBars] = useState<BarPosition[]>([]);
-  const [previousSize, setPreviousSize] = useState<{
+  const [chartSize, setChartSize] = useState<{
     width: number;
     height: number;
   } | null>(null);
+  const [animationState, setAnimationState] = useState<AnimationState>(null);
 
   const borderRadius = parseInt(theme.border.radius.sm);
   const gridColor = theme.border.color.light;
   const isVertical = layout === BarChartLayout.VERTICAL;
+  const durationMs =
+    theme.animation.duration.normal *
+    CHART_CORE_CONSTANTS.MILLISECONDS_PER_SECOND;
 
   const renderBase = useCallback(
     (
@@ -138,6 +192,113 @@ export const BarChartBaseLayer = ({
     valueDomain,
   ]);
 
+  const toBaselineBar = useCallback(
+    (bar: BarPosition): BarPosition => {
+      const { innerHeight, zeroPixel } = animationContext;
+      const baselineY = innerHeight - zeroPixel;
+
+      if (isVertical) {
+        return {
+          ...bar,
+          y: baselineY,
+          height: 0,
+          value: 0,
+        };
+      }
+
+      return {
+        ...bar,
+        x: zeroPixel,
+        width: 0,
+        value: 0,
+      };
+    },
+    [animationContext, isVertical],
+  );
+
+  useEffect(() => {
+    const sizeIsStable =
+      chartSize !== null &&
+      chartSize.width === chartWidth &&
+      chartSize.height === chartHeight;
+
+    if (!sizeIsStable) {
+      setChartSize({ width: chartWidth, height: chartHeight });
+      setAnimationState({
+        sourceBars: bars,
+        targetBars: bars,
+        startTime: performance.now(),
+        durationMs,
+        isAnimating: false,
+      });
+      return;
+    }
+
+    if (!allowDataTransitions) {
+      setAnimationState({
+        sourceBars: bars,
+        targetBars: bars,
+        startTime: performance.now(),
+        durationMs,
+        isAnimating: false,
+      });
+      return;
+    }
+
+    setAnimationState((prev) => {
+      const now = performance.now();
+
+      if (!prev) {
+        return {
+          sourceBars: bars,
+          targetBars: bars,
+          startTime: now,
+          durationMs,
+          isAnimating: false,
+        };
+      }
+
+      if (prev.targetBars === bars) {
+        return prev;
+      }
+
+      if (bars.length === 0 && prev.targetBars.length === 0) {
+        return {
+          sourceBars: bars,
+          targetBars: bars,
+          startTime: now,
+          durationMs,
+          isAnimating: false,
+        };
+      }
+
+      const sourceBars = prev.isAnimating
+        ? interpolateBars(
+            prev.sourceBars,
+            prev.targetBars,
+            Math.min((now - prev.startTime) / prev.durationMs, 1),
+            toBaselineBar,
+          )
+        : prev.targetBars;
+
+      return {
+        sourceBars,
+        targetBars: bars,
+        startTime: now,
+        durationMs,
+        isAnimating: true,
+      };
+    });
+  }, [
+    allowDataTransitions,
+    bars,
+    chartHeight,
+    chartSize,
+    chartWidth,
+    durationMs,
+    toBaselineBar,
+  ]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) {
@@ -160,123 +321,51 @@ export const BarChartBaseLayer = ({
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    const sizeIsStable =
-      previousSize !== null &&
-      previousSize.width === chartWidth &&
-      previousSize.height === chartHeight;
+    const staticBars = animationState?.targetBars ?? bars;
 
-    const shouldAnimate =
-      allowDataTransitions &&
-      sizeIsStable &&
-      !(bars.length === 0 && previousBars.length === 0) &&
-      previousBars !== bars;
-
-    if (!shouldAnimate) {
-      renderBase(ctx, chartWidth, chartHeight, bars);
-
-      if (previousBars !== bars) {
-        setPreviousBars(bars);
-      }
-
-      if (!sizeIsStable) {
-        setPreviousSize({ width: chartWidth, height: chartHeight });
-      }
-
+    if (
+      !animationState ||
+      !animationState.isAnimating ||
+      animationState.sourceBars === animationState.targetBars
+    ) {
+      renderBase(ctx, chartWidth, chartHeight, staticBars);
       return;
     }
 
-    const fromMap = buildBarMap(previousBars);
-    const toMap = buildBarMap(bars);
-    const allKeys = new Set([...fromMap.keys(), ...toMap.keys()]);
-
-    const { innerHeight, zeroPixel } = animationContext;
-    const baselineY = innerHeight - zeroPixel;
-
-    const toBaselineBar = (bar: BarPosition): BarPosition => {
-      if (isVertical) {
-        return {
-          ...bar,
-          y: baselineY,
-          height: 0,
-          value: 0,
-        };
-      }
-
-      return {
-        ...bar,
-        x: zeroPixel,
-        width: 0,
-        value: 0,
-      };
-    };
-
-    const durationMs =
-      theme.animation.duration.normal *
-      CHART_CORE_CONSTANTS.MILLISECONDS_PER_SECOND;
-    const startTime = performance.now();
     let frameId = 0;
 
-    const drawFrame = (now: number) => {
-      const elapsed = now - startTime;
-      const t = Math.min(elapsed / durationMs, 1);
-      const eased = easeOutCubic(t);
+    const drawFrame = () => {
+      const elapsed = performance.now() - animationState.startTime;
+      const t = Math.min(elapsed / animationState.durationMs, 1);
 
-      const interpolatedBars: BarPosition[] = [];
-
-      for (const key of allKeys) {
-        const fromBar = fromMap.get(key);
-        const toBar = toMap.get(key);
-
-        if (!fromBar && !toBar) {
-          continue;
-        }
-
-        const startBar = fromBar ?? toBaselineBar(toBar as BarPosition);
-        const endBar = toBar ?? toBaselineBar(fromBar as BarPosition);
-
-        interpolatedBars.push({
-          ...endBar,
-          x: lerp(startBar.x, endBar.x, eased),
-          y: lerp(startBar.y, endBar.y, eased),
-          width: lerp(startBar.width, endBar.width, eased),
-          height: lerp(startBar.height, endBar.height, eased),
-          value: lerp(startBar.value, endBar.value, eased),
-          color: endBar.color ?? startBar.color,
-          seriesId: endBar.seriesId ?? startBar.seriesId,
-          indexValue: endBar.indexValue ?? startBar.indexValue,
-          shouldRoundFreeEnd:
-            endBar.shouldRoundFreeEnd ?? startBar.shouldRoundFreeEnd,
-          seriesIndex: endBar.seriesIndex ?? startBar.seriesIndex,
-        });
-      }
-
-      renderBase(ctx, chartWidth, chartHeight, interpolatedBars);
-
-      if (t < 1) {
-        frameId = requestAnimationFrame(drawFrame);
+      if (t >= 1) {
+        renderBase(ctx, chartWidth, chartHeight, animationState.targetBars);
         return;
       }
 
-      renderBase(ctx, chartWidth, chartHeight, bars);
-      setPreviousBars(bars);
-      setPreviousSize({ width: chartWidth, height: chartHeight });
+      const interpolatedBars = interpolateBars(
+        animationState.sourceBars,
+        animationState.targetBars,
+        t,
+        toBaselineBar,
+      );
+
+      renderBase(ctx, chartWidth, chartHeight, interpolatedBars);
+
+      frameId = requestAnimationFrame(drawFrame);
     };
 
     frameId = requestAnimationFrame(drawFrame);
 
     return () => cancelAnimationFrame(frameId);
   }, [
-    allowDataTransitions,
+    animationState,
     bars,
     chartHeight,
     chartWidth,
     dpr,
-    isVertical,
-    previousBars,
-    previousSize,
     renderBase,
-    theme.animation.duration.normal,
-    animationContext,
+    toBaselineBar,
   ]);
 
   return <StyledBaseCanvas ref={canvasRef} />;
