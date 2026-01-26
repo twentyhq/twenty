@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
-import { FrontComponentContent } from '@/page-layout/widgets/front-component/components/FrontComponentContent';
+import { FrontComponentWidgetContent } from '@/page-layout/widgets/front-component/components/FrontComponentWidgetContent';
 
 type FrontComponentWidgetRendererProps = {
   widget: PageLayoutWidget;
@@ -19,5 +19,5 @@ export const FrontComponentWidgetRenderer = ({
 
   const frontComponentId = configuration.frontComponentId;
 
-  return <FrontComponentContent frontComponentId={frontComponentId} />;
+  return <FrontComponentWidgetContent frontComponentId={frontComponentId} />;
 };
