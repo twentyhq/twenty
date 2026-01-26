@@ -159,14 +159,6 @@ export class FlatCacheInvalidateCommand extends ActiveOrSuspendedWorkspacesMigra
       getMetadataFlatEntityMapsKey,
     );
 
-    if (allFlatMapsKeys.length > metadataNames.length) {
-      const relatedCount = allFlatMapsKeys.length - metadataNames.length;
-
-      this.logger.log(
-        `Added ${relatedCount} related metadata cache(s) for invalidation due to side effects`,
-      );
-    }
-
     return allFlatMapsKeys;
   }
 }
