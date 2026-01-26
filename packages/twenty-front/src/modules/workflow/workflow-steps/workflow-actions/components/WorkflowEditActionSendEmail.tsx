@@ -27,6 +27,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { type EmailRecipients } from 'twenty-shared/workflow';
 import { IconPlus } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
@@ -57,15 +58,9 @@ type WorkflowFile = {
   createdAt: string;
 };
 
-type EmailRecipients = {
-  to: string;
-  cc: string;
-  bcc: string;
-};
-
 type SendEmailFormData = {
   connectedAccountId: string;
-  recipients: EmailRecipients;
+  recipients: Required<EmailRecipients>;
   subject: string;
   body: string;
   files: WorkflowFile[];
@@ -97,7 +92,7 @@ export const WorkflowEditActionSendEmail = ({
     const ccValue = inputRecipients?.cc;
     const bccValue = inputRecipients?.bcc;
 
-    const recipients: EmailRecipients = {
+    const recipients: Required<EmailRecipients> = {
       to: Array.isArray(toValue)
         ? toValue.join(', ')
         : (toValue ?? legacyEmail ?? ''),

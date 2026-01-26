@@ -1,8 +1,4 @@
-export type EmailRecipients = {
-  to: string;
-  cc?: string;
-  bcc?: string;
-};
+import { type EmailRecipients } from 'twenty-shared/workflow';
 
 export type WorkflowSendEmailActionInput = {
   connectedAccountId: string;
