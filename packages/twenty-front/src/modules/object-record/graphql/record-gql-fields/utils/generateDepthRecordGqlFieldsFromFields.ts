@@ -57,10 +57,11 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           );
         }
 
-        if (
+        const isActivityTargetField =
           fieldMetadata.name === CoreObjectNamePlural.NoteTarget ||
-          fieldMetadata.name === CoreObjectNamePlural.TaskTarget
-        ) {
+          fieldMetadata.name === CoreObjectNamePlural.TaskTarget;
+
+        if (isActivityTargetField && depth === 1) {
           const activityTargetObjectNameSingular =
             fieldMetadata.name === CoreObjectNamePlural.NoteTarget
               ? CoreObjectNameSingular.Note
