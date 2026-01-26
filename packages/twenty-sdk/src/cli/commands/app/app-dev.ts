@@ -1,6 +1,9 @@
 import { createLogger } from '@/cli/utilities/build/common/logger';
-import { FrontComponentsWatcher } from '@/cli/utilities/build/front-components/front-component-watcher';
-import { FunctionsWatcher } from '@/cli/utilities/build/functions/function-watcher';
+import {
+  createFrontComponentsWatcher,
+  createFunctionsWatcher,
+  type EsbuildWatcher,
+} from '@/cli/utilities/build/common/esbuild-watcher';
 import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-build';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
@@ -16,8 +19,8 @@ export class AppDevCommand {
   private appPath = '';
   private orchestrator: DevModeOrchestrator | null = null;
   private manifestWatcher: ManifestWatcher | null = null;
-  private functionsWatcher: FunctionsWatcher | null = null;
-  private frontComponentsWatcher: FrontComponentsWatcher | null = null;
+  private functionsWatcher: EsbuildWatcher | null = null;
+  private frontComponentsWatcher: EsbuildWatcher | null = null;
   private watchersStarted = false;
 
   async execute(options: AppDevOptions): Promise<void> {
@@ -47,21 +50,21 @@ export class AppDevCommand {
     await this.manifestWatcher.start();
   }
 
-  private handleWatcherRestarts(result: ManifestBuildResult): void {
+  private async handleWatcherRestarts(result: ManifestBuildResult) {
     const { functions, frontComponents } = result.filePaths;
 
     if (!this.watchersStarted) {
       this.watchersStarted = true;
-      void this.startFileWatchers(functions, frontComponents);
+      await this.startFileWatchers(functions, frontComponents);
       return;
     }
 
     if (this.functionsWatcher?.shouldRestart(functions)) {
-      this.functionsWatcher.restart(functions);
+      await this.functionsWatcher.restart(functions);
     }
 
     if (this.frontComponentsWatcher?.shouldRestart(frontComponents)) {
-      this.frontComponentsWatcher.restart(frontComponents);
+      await this.frontComponentsWatcher.restart(frontComponents);
     }
   }
 
@@ -76,18 +79,11 @@ export class AppDevCommand {
   }
 
   private async startFunctionsWatcher(sourcePaths: string[]): Promise<void> {
-    this.functionsWatcher = new FunctionsWatcher({
+    this.functionsWatcher = createFunctionsWatcher({
       appPath: this.appPath,
       sourcePaths,
       onBuildError: this.orchestrator!.onFileBuildError.bind(this.orchestrator),
-      onFileBuilt: ({ fileFolder, builtPath, filePath, checksum }) => {
-        this.orchestrator!.onFileBuilt({
-          fileFolder,
-          builtPath,
-          filePath,
-          checksum,
-        });
-      },
+      onFileBuilt: this.orchestrator!.onFileBuilt.bind(this.orchestrator),
     });
 
     await this.functionsWatcher.start();
@@ -96,18 +92,11 @@ export class AppDevCommand {
   private async startFrontComponentsWatcher(
     sourcePaths: string[],
   ): Promise<void> {
-    this.frontComponentsWatcher = new FrontComponentsWatcher({
+    this.frontComponentsWatcher = createFrontComponentsWatcher({
       appPath: this.appPath,
       sourcePaths,
       onBuildError: this.orchestrator!.onFileBuildError.bind(this.orchestrator),
-      onFileBuilt: ({ fileFolder, builtPath, filePath, checksum }) => {
-        this.orchestrator!.onFileBuilt({
-          fileFolder,
-          builtPath,
-          filePath,
-          checksum,
-        });
-      },
+      onFileBuilt: this.orchestrator!.onFileBuilt.bind(this.orchestrator),
     });
 
     await this.frontComponentsWatcher.start();

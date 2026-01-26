@@ -37,12 +37,32 @@ export const FUNCTION_EXTERNAL_MODULES: string[] = [
   'twenty-shared/*',
 ];
 
-/**
- * Watches function files and rebuilds them using esbuild.
- */
-export class FunctionsWatcher implements RestartableWatcher {
+export const FRONT_COMPONENT_EXTERNAL_MODULES: string[] = [
+  'react',
+  'react-dom',
+  'react/jsx-runtime',
+  'react/jsx-dev-runtime',
+  'twenty-sdk',
+  'twenty-sdk/*',
+  'twenty-shared',
+  'twenty-shared/*',
+];
+
+export type EsbuildWatcherConfig = {
+  externalModules: string[];
+  fileFolder: FileFolder;
+  platform?: esbuild.Platform;
+  jsx?: 'automatic';
+  extraPlugins?: esbuild.Plugin[];
+};
+
+export type EsbuildWatcherOptions = RestartableWatcherOptions & {
+  config: EsbuildWatcherConfig;
+};
+
+export class EsbuildWatcher implements RestartableWatcher {
   private appPath: string;
-  private functionPaths: string[];
+  private sourcePaths: string[];
   private esBuildContext: esbuild.BuildContext | null = null;
   private isRestarting = false;
   private watchMode: boolean;
@@ -51,17 +71,19 @@ export class FunctionsWatcher implements RestartableWatcher {
   private onBuildError?: OnBuildErrorCallback;
   private buildCompletePromise: Promise<void> = Promise.resolve();
   private resolveBuildComplete: (() => void) | null = null;
+  private config: EsbuildWatcherConfig;
 
-  constructor(options: RestartableWatcherOptions) {
+  constructor(options: EsbuildWatcherOptions) {
     this.appPath = options.appPath;
-    this.functionPaths = options.sourcePaths;
+    this.sourcePaths = options.sourcePaths;
     this.watchMode = options.watch ?? true;
     this.onFileBuilt = options.onFileBuilt;
     this.onBuildError = options.onBuildError;
+    this.config = options.config;
   }
 
   shouldRestart(sourcePaths: string[]): boolean {
-    const currentPaths = this.functionPaths.sort().join(',');
+    const currentPaths = this.sourcePaths.sort().join(',');
     const newPaths = [...sourcePaths].sort().join(',');
     return currentPaths !== newPaths;
   }
@@ -70,7 +92,7 @@ export class FunctionsWatcher implements RestartableWatcher {
     const outputDir = path.join(this.appPath, OUTPUT_DIR);
     await fs.emptyDir(outputDir);
 
-    if (this.functionPaths.length > 0) {
+    if (this.sourcePaths.length > 0) {
       await this.createContext();
     }
   }
@@ -88,11 +110,11 @@ export class FunctionsWatcher implements RestartableWatcher {
       await this.close();
 
       const outputDir = path.join(this.appPath, OUTPUT_DIR);
-      await cleanupRemovedFiles(outputDir, this.functionPaths, sourcePaths);
-      this.functionPaths = sourcePaths;
+      await cleanupRemovedFiles(outputDir, this.sourcePaths, sourcePaths);
+      this.sourcePaths = sourcePaths;
       this.lastChecksums.clear();
 
-      if (this.functionPaths.length > 0) {
+      if (this.sourcePaths.length > 0) {
         await this.createContext();
       }
     } finally {
@@ -104,65 +126,55 @@ export class FunctionsWatcher implements RestartableWatcher {
     const outputDir = path.join(this.appPath, OUTPUT_DIR);
 
     const entryPoints: Record<string, string> = {};
-    for (const functionPath of this.functionPaths) {
-      const entryName = functionPath.replace(/\.tsx?$/, '');
-      entryPoints[entryName] = path.join(this.appPath, functionPath);
+    for (const sourcePath of this.sourcePaths) {
+      const entryName = sourcePath.replace(/\.tsx?$/, '');
+      entryPoints[entryName] = path.join(this.appPath, sourcePath);
     }
 
     const watcher = this;
+
+    const plugins: esbuild.Plugin[] = [
+      ...(this.config.extraPlugins ?? []),
+      {
+        name: 'build-notifications',
+        setup: (build) => {
+          build.onEnd(async (result) => {
+            try {
+              if (result.errors.length > 0) {
+                await this.onBuildError?.(result.errors.map((err) => err.text));
+                return;
+              }
+
+              await processEsbuildResult({
+                result,
+                appPath: this.appPath,
+                fileFolder: this.config.fileFolder,
+                lastChecksums: watcher.lastChecksums,
+                onFileBuilt: watcher.onFileBuilt,
+              });
+            } finally {
+              watcher.resolveBuildComplete?.();
+            }
+          });
+        },
+      },
+    ];
 
     this.esBuildContext = await esbuild.context({
       entryPoints,
       bundle: true,
       splitting: false,
       format: 'esm',
-      platform: 'node',
+      platform: this.config.platform,
       outdir: outputDir,
       outExtension: { '.js': '.mjs' },
-      external: FUNCTION_EXTERNAL_MODULES,
+      external: this.config.externalModules,
       tsconfig: path.join(this.appPath, 'tsconfig.json'),
+      jsx: this.config.jsx,
       sourcemap: true,
       metafile: true,
       logLevel: 'silent',
-      plugins: [
-        {
-          name: 'external-patterns',
-          setup: (build) => {
-            build.onResolve(
-              { filter: /(?:^|\/)generated(?:\/|$)/ },
-              (args) => ({
-                path: args.path,
-                external: true,
-              }),
-            );
-          },
-        },
-        {
-          name: 'build-notifications',
-          setup: (build) => {
-            build.onEnd(async (result) => {
-              try {
-                if (result.errors.length > 0) {
-                  await this.onBuildError?.(
-                    result.errors.map((err) => err.text),
-                  );
-                  return;
-                }
-
-                await processEsbuildResult({
-                  result,
-                  appPath: this.appPath,
-                  fileFolder: FileFolder.BuiltFunction,
-                  lastChecksums: watcher.lastChecksums,
-                  onFileBuilt: watcher.onFileBuilt,
-                });
-              } finally {
-                watcher.resolveBuildComplete?.();
-              }
-            });
-          },
-        },
-      ],
+      plugins,
     });
 
     this.buildCompletePromise = new Promise<void>((resolve) => {
@@ -177,3 +189,38 @@ export class FunctionsWatcher implements RestartableWatcher {
     }
   }
 }
+
+const externalPatternsPlugin: esbuild.Plugin = {
+  name: 'external-patterns',
+  setup: (build) => {
+    build.onResolve({ filter: /(?:^|\/)generated(?:\/|$)/ }, (args) => ({
+      path: args.path,
+      external: true,
+    }));
+  },
+};
+
+export const createFunctionsWatcher = (
+  options: RestartableWatcherOptions,
+): EsbuildWatcher =>
+  new EsbuildWatcher({
+    ...options,
+    config: {
+      externalModules: FUNCTION_EXTERNAL_MODULES,
+      fileFolder: FileFolder.BuiltFunction,
+      platform: 'node',
+      extraPlugins: [externalPatternsPlugin],
+    },
+  });
+
+export const createFrontComponentsWatcher = (
+  options: RestartableWatcherOptions,
+): EsbuildWatcher =>
+  new EsbuildWatcher({
+    ...options,
+    config: {
+      externalModules: FRONT_COMPONENT_EXTERNAL_MODULES,
+      fileFolder: FileFolder.BuiltFrontComponent,
+      jsx: 'automatic',
+    },
+  });

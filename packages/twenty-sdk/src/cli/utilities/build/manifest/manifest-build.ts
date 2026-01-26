@@ -86,7 +86,7 @@ export const updateManifestChecksum = ({
     builtPath,
     { fileFolder, checksum },
   ] of builtFileInfos.entries()) {
-    const rootBuiltPath = builtPath.replace(OUTPUT_DIR + '/', '');
+    const rootBuiltPath = relative(OUTPUT_DIR, builtPath);
     if (fileFolder === FileFolder.BuiltFunction) {
       const fnIndex = result.functions.findIndex(
         (f) => f.builtHandlerPath === rootBuiltPath,

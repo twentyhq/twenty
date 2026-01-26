@@ -15,7 +15,7 @@ const logger = createLogger('dev-mode');
 export type DevModeOrchestratorOptions = {
   appPath: string;
   debounceMs?: number;
-  onManifestBuilt: (result: ManifestBuildResult) => void;
+  onManifestBuilt: (result: ManifestBuildResult) => void | Promise<void>;
 };
 
 export class DevModeOrchestrator {
@@ -35,7 +35,9 @@ export class DevModeOrchestrator {
   private syncTimer: NodeJS.Timeout | null = null;
   private isSyncing = false;
 
-  private onManifestBuilt: (result: ManifestBuildResult) => void;
+  private onManifestBuilt: (
+    result: ManifestBuildResult,
+  ) => void | Promise<void>;
 
   constructor(options: DevModeOrchestratorOptions) {
     this.appPath = options.appPath;
@@ -155,7 +157,7 @@ export class DevModeOrchestrator {
 
       logger.success(`Successfully built manifest`);
 
-      this.onManifestBuilt(result);
+      await this.onManifestBuilt(result);
 
       if (!this.fileUploader) {
         this.fileUploader = new FileUploader({
