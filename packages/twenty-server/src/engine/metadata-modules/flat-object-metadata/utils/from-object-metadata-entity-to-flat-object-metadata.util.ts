@@ -22,8 +22,6 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
     indexMetadataIds: objectMetadataEntity.indexMetadatas.map(
       (indexEntity) => indexEntity.id,
     ),
-    fieldIds: objectMetadataEntity.fields.map(
-      (fieldEntity) => fieldEntity.id,
-    ),
+    fieldIds: objectMetadataEntity.fields.map((fieldEntity) => fieldEntity.id),
   };
 };
