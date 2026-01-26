@@ -13,8 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 type BarChartTooltipProps = {
   containerRef: RefObject<HTMLDivElement>;
-  data: BarChartDatum[];
-  indexBy: string;
+  dataByIndexValue: Map<string, BarChartDatum>;
   enrichedKeys: BarChartEnrichedKey[];
   formatOptions: GraphValueFormatOptions;
   onSliceClick?: (slice: BarChartSlice) => void;
@@ -24,8 +23,7 @@ type BarChartTooltipProps = {
 
 export const BarChartTooltip = ({
   containerRef,
-  data,
-  indexBy,
+  dataByIndexValue,
   enrichedKeys,
   formatOptions,
   onSliceClick,
@@ -44,7 +42,7 @@ export const BarChartTooltip = ({
   const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
     ? () => {
         if (isDefined(tooltipState)) {
-          onSliceClick(tooltipState.slice as BarChartSlice);
+          onSliceClick(tooltipState.slice);
         }
       }
     : undefined;
@@ -52,9 +50,8 @@ export const BarChartTooltip = ({
   const tooltipData = !isDefined(tooltipState)
     ? null
     : getBarChartTooltipData({
-        slice: tooltipState.slice as BarChartSlice,
-        data,
-        indexBy,
+        slice: tooltipState.slice,
+        dataByIndexValue,
         enrichedKeys,
         formatOptions,
       });

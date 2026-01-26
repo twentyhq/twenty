@@ -9,8 +9,7 @@ import {
 
 type GetBarChartTooltipDataParameters = {
   slice: BarChartSlice;
-  data: BarChartDatum[];
-  indexBy: string;
+  dataByIndexValue: Map<string, BarChartDatum>;
   enrichedKeys: BarChartEnrichedKey[];
   formatOptions: GraphValueFormatOptions;
 };
@@ -22,12 +21,11 @@ type BarChartTooltipData = {
 
 export const getBarChartTooltipData = ({
   slice,
-  data,
-  indexBy,
+  dataByIndexValue,
   enrichedKeys,
   formatOptions,
 }: GetBarChartTooltipDataParameters): BarChartTooltipData | null => {
-  const dataRow = data.find((row) => String(row[indexBy]) === slice.indexValue);
+  const dataRow = dataByIndexValue.get(slice.indexValue);
 
   if (!dataRow) {
     return null;

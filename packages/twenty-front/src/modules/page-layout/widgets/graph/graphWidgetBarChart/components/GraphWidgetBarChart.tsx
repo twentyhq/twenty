@@ -215,6 +215,11 @@ export const GraphWidgetBarChart = ({
     [data, indexBy],
   );
 
+  const dataByIndexValue = useMemo(
+    () => new Map(data.map((row) => [String(row[indexBy]), row])),
+    [data, indexBy],
+  );
+
   const innerPadding = getBarChartInnerPadding({
     chartHeight,
     chartWidth,
@@ -438,10 +443,9 @@ export const GraphWidgetBarChart = ({
 
       <BarChartTooltip
         containerRef={containerRef}
-        data={data}
+        dataByIndexValue={dataByIndexValue}
         enrichedKeys={enrichedKeys}
         formatOptions={formatOptions}
-        indexBy={indexBy}
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}
         onSliceClick={onSliceClick}
