@@ -21,7 +21,12 @@ const StyledEditor = styled.div<{
     box-sizing: border-box;
     display: flex;
     height: 100%;
-    overflow: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
+    overflow-x: auto;
+    overflow-y: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
     color: ${({ theme, readonly }) =>
       readonly ? theme.font.color.light : theme.font.color.primary};
     font-family: ${({ theme }) => theme.font.family};

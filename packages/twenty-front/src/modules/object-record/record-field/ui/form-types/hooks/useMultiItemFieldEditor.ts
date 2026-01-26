@@ -1,3 +1,4 @@
+import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { getMultiItemFieldEditorContent } from '@/workflow/workflow-variables/utils/getMultiItemFieldEditorContent';
 import { TextTag } from '@/workflow/workflow-variables/utils/textTag';
 import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
@@ -78,6 +79,35 @@ const CommaToTagExtension = Extension.create({
               return true;
             }
             return false;
+          },
+          handlePaste: (_view, event) => {
+            const pastedText = event.clipboardData?.getData('text/plain');
+
+            if (!pastedText) {
+              return false;
+            }
+
+            const parts = pastedText.split(',');
+
+            if (parts.length <= 1) {
+              return false;
+            }
+
+            parts.forEach((part) => {
+              const trimmedPart = part.trim();
+
+              if (trimmedPart.length === 0) {
+                return;
+              }
+
+              if (isStandaloneVariableString(trimmedPart)) {
+                editor.commands.insertVariableTag(trimmedPart);
+              } else {
+                editor.commands.insertTextTag(trimmedPart);
+              }
+            });
+
+            return true;
           },
         },
       }),
