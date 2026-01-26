@@ -3,13 +3,14 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import {
   FieldMetadataType,
-  type FieldMetadataRelationSettings,
+  type FieldMetadataSettings,
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { DataSource, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -19,6 +20,7 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -28,6 +30,9 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { ATTACHMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
+
+type RelationFieldMetadataSettings =
+  FieldMetadataSettings<FieldMetadataType.RELATION>;
 
 @Command({
   name: 'upgrade:1-17:migrate-attachment-to-morph-relations',
@@ -105,10 +110,11 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
         STANDARD_OBJECTS.attachment.fields.targetWorkflow.universalIdentifier,
       ]);
 
-      const attachmentObjectMetadata = findFlatEntityByUniversalIdentifier({
-        flatEntityMaps: flatObjectMetadataMaps,
-        universalIdentifier: STANDARD_OBJECTS.attachment.universalIdentifier,
-      });
+      const attachmentObjectMetadata =
+        findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+          flatEntityMaps: flatObjectMetadataMaps,
+          universalIdentifier: STANDARD_OBJECTS.attachment.universalIdentifier,
+        });
 
       if (!attachmentObjectMetadata) {
         this.logger.error(
@@ -118,9 +124,10 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
         return;
       }
 
-      const attachmentFieldMetadatas = attachmentObjectMetadata.fieldMetadataIds
-        .map((fieldId) => flatFieldMetadataMaps.byId[fieldId])
-        .filter(isDefined);
+      const attachmentFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
+        attachmentObjectMetadata,
+        flatFieldMetadataMaps,
+      );
 
       const isTwentyStandardApplicationField = (field: {
         applicationId: string;
@@ -172,8 +179,7 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
 
       const fieldMigrations = attachmentTargetRelationFields.map((field) => {
         const newFieldName = `target${capitalize(field.name)}`;
-        const relationSettings =
-          field.settings as FieldMetadataRelationSettings | null;
+        const relationSettings: RelationFieldMetadataSettings = field.settings;
         const oldJoinColumnName =
           relationSettings?.joinColumnName ??
           computeMorphOrRelationFieldJoinColumnName({ name: field.name });
