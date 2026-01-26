@@ -20,7 +20,7 @@ const StyledPriceUnitSpan = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const formatYearlyPriceIfNeccessary = (price: number, type: SubscriptionInterval = SubscriptionInterval.Year): number => {
+const formatYearlyPriceIfNecessary = (price: number, type: SubscriptionInterval = SubscriptionInterval.Year): number => {
   if (type !== SubscriptionInterval.Year) {
     return price
   }
