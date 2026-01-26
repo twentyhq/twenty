@@ -1,275 +1,275 @@
 ---
-title: Chart Settings
-description: Configure your charts to display data exactly how you need it.
+title: Impostazioni del grafico
+description: Configura i tuoi grafici per visualizzare i dati esattamente come ti serve.
 ---
 
 import { ChartIcon } from '/snippets/chart-icon.mdx';
 
-## Accessing Chart Settings
+## Accesso alle impostazioni del grafico
 
-1. Click the **Edit** button in the top-right corner of your dashboard
+1. Fai clic sul pulsante **Modifica** nell'angolo in alto a destra della dashboard
 
-<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="Edit mode" />
+<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="Modalità modifica" />
 
-2. The dashboard enters edit mode
-3. Click on any widget to select it
-4. The settings panel opens on the right
+2. La dashboard entra in modalità modifica
+3. Fai clic su qualsiasi widget per selezionarlo
+4. Il pannello delle impostazioni si apre a destra
 
-Settings are organized into sections:
+Le impostazioni sono organizzate in sezioni:
 
-* **Data**: What data to pull and how to filter it
-* **X axis**: How to group and sort categories (bar/line charts)
-* **Y axis**: What to measure and how to display it (bar/line charts)
-* **Style**: Colors, labels, and visual options
+* **Dati**: quali dati recuperare e come filtrarli
+* **Asse X**: come raggruppare e ordinare le categorie (grafici a barre/a linee)
+* **Asse Y**: cosa misurare e come visualizzarlo (grafici a barre/a linee)
+* **Stile**: colori, etichette e opzioni di visualizzazione
 
 <Note>
-  Some settings only appear when other settings are configured. For example, **Date granularity** only appears when you select a date field.
+  Alcune impostazioni compaiono solo quando ne sono configurate altre. Ad esempio, **Granularità della data** compare solo quando selezioni un campo data.
 </Note>
 
 ---
 
-## Data Settings
+## Impostazioni dati
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="database" />Source </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="database" />Origine </span>
 
-Choose which object to pull data from.
+Scegli da quale oggetto recuperare i dati.
 
-1. Click **Source**
-2. Select an object (Opportunities, People, Companies, etc.)
+1. Fai clic su **Origine**
+2. Seleziona un oggetto (Opportunità, Persone, Aziende, ecc.)
 
-All your standard and custom objects are available. Changing the source resets other settings since field options depend on the selected object.
+Tutti i tuoi oggetti standard e personalizzati sono disponibili. Modificare l'origine reimposta le altre impostazioni, poiché le opzioni dei campi dipendono dall'oggetto selezionato.
 
 <img src="/images/user-guide/dashboard/dashboard-chart-settings-source.png" alt="Fonte" />
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />Filter </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />Filtro </span>
 
-Limit which records are included in the chart.
+Limita quali record sono inclusi nel grafico.
 
 1. Fai clic su **Filtro**
-2. The filter builder opens
-3. Click **+ Add filter**
-4. Select a field, condition, and value
-5. Add more filters as needed
+2. Si apre il generatore di filtri
+3. Fai clic su **+ Aggiungi filtro**
+4. Seleziona un campo, una condizione e un valore
+5. Aggiungi altri filtri secondo necessità
 
-Filters work the same as in table views. Use them to focus on specific segments of your data.
+I filtri funzionano come nelle viste tabellari. Usali per concentrarti su segmenti specifici dei tuoi dati.
 
-**Example**: Filter opportunities where Stage equals "Won" to show only closed deals.
+**Esempio**: filtra le opportunità in cui la Fase è uguale a "Vinta" per mostrare solo le trattative chiuse.
 
 <img src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png" alt="Filtro" />
 
 <Tip>
-  For date fields, try **Is relative** to create dynamic filters like "Past 7 days" or "This month" that automatically update.
+  Per i campi data, prova **È relativo** per creare filtri dinamici come "Ultimi 7 giorni" o "Questo mese" che si aggiornano automaticamente.
 </Tip>
 
 <Tip>
-  Advanced filters are supported—add multiple filter rules and combine them with **And** or **Or** logic.
+  Sono supportati filtri avanzati: aggiungi più regole di filtro e combinane la logica con **E** o **O**.
 </Tip>
 
 ---
 
-## X Axis Settings
+## Impostazioni asse X
 
-These settings control the horizontal axis of bar and line charts—typically how your data is grouped into categories.
+Queste impostazioni controllano l'asse orizzontale dei grafici a barre e a linee: in genere come i dati vengono raggruppati in categorie.
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-x" />Data on display </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-x" />Dati visualizzati </span>
 
-Select the field to group your data by. This determines the categories shown on the X axis.
+Seleziona il campo in base al quale raggruppare i dati. Questo determina le categorie mostrate sull'asse X.
 
-**Example**: Select "Stage" to see data grouped by pipeline stage, or "Created date" to see data over time.
+**Esempio**: seleziona "Fase" per vedere i dati raggruppati per fase della pipeline oppure "Data di creazione" per vedere i dati nel tempo.
 
 <img src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png" alt="Dati visualizzati" />
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Date granularity </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Granularità della data </span>
 
-When grouping by a date field, choose the time period for grouping.
+Quando raggruppi per un campo data, scegli il periodo temporale per il raggruppamento.
 
-| Opzione             | Groups data by       | Example output                                |
-| ------------------- | -------------------- | --------------------------------------------- |
-| **Day**             | Each calendar day    | Jan 1, Jan 2, Jan 3...                        |
-| **Week**            | Calendar weeks       | Week 1, Week 2, Week 3...                     |
-| **Month**           | Calendar months      | January, February, March...                   |
-| **Quarter**         | Fiscal quarters      | Q1, Q2, Q3, Q4                                |
-| **Year**            | Calendar years       | 2023, 2024, 2025                              |
-| **Day of week**     | Weekday (aggregated) | Monday, Tuesday... (all Mondays combined)     |
-| **Month of year**   | Month (aggregated)   | January, February... (all Januaries combined) |
-| **Quarter of year** | Quarter (aggregated) | Q1, Q2, Q3, Q4 (all Q1s combined)             |
+| Opzione                    | Raggruppa i dati per               | Esempio di output                                        |
+| -------------------------- | ---------------------------------- | -------------------------------------------------------- |
+| **Giorno**                 | Ogni giorno di calendario          | 1 gen, 2 gen, 3 gen...                                   |
+| **Settimana**              | Settimane di calendario            | Settimana 1, Settimana 2, Settimana 3...                 |
+| **Mese**                   | Mesi di calendario                 | gennaio, febbraio, marzo...                              |
+| **Trimestre**              | Trimestri fiscali                  | T1, T2, T3, T4                                           |
+| **Anno**                   | Anni di calendario                 | 2023, 2024, 2025                                         |
+| **Giorno della settimana** | Giorno della settimana (aggregato) | lunedì, martedì... (tutti i lunedì combinati)            |
+| **Mese dell'anno**         | Mese (aggregato)                   | gennaio, febbraio... (tutti i mesi di gennaio combinati) |
+| **Trimestre dell'anno**    | Trimestre (aggregato)              | T1, T2, T3, T4 (tutti i T1 combinati)                    |
 
-The "of week/year" options aggregate across all time. Use **Day of week** to see which weekday typically gets the most deals. Use **Month** to see trends month by month.
+Le opzioni "della settimana/dell'anno" aggregano su tutto il periodo. Usa **Giorno della settimana** per vedere quale giorno della settimana in genere ottiene più trattative. Usa **Mese** per vedere le tendenze mese per mese.
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Sort by </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Ordina per </span>
 
-Control the order of categories on the X axis.
+Controlla l'ordine delle categorie sull'asse X.
 
-* **Position** – Uses the order defined in your Select field settings
-* **Alphabetical** – A to Z (or chronological for dates)
-* **By value** – Ordered by the metric (highest or lowest first)
-* **Manual** – Drag to set your own order
+* **Posizione** – usa l'ordine definito nelle impostazioni del campo Selezione
+* **Alfabetico** – dalla A alla Z (o cronologico per le date)
+* **Per valore** – ordinato per metrica (prima il più alto o il più basso)
+* **Manuale** – trascina per impostare un ordine personalizzato
 
 <img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="Ordina per" />
 
-**Tip**: For pipeline stages, use **Position** to show stages in your sales process order (Lead → Qualified → Proposal → Won).
+**Suggerimento**: per le fasi della pipeline, usa **Posizione** per mostrare le fasi nell'ordine del processo di vendita (Lead → Qualificata → Proposta → Vinta).
 
 <Note>
-  The options shown depend on your field type. Select fields have all options; date and text fields show fewer.
+  Le opzioni mostrate dipendono dal tipo di campo. I campi Selezione hanno tutte le opzioni; i campi data e testo ne mostrano di meno.
 </Note>
 
 <Tip>
-  With **Manual** sorting, drag categories to create a custom order—perfect for highlighting specific segments or telling a story with your data.
+  Con l'ordinamento **Manuale**, trascina le categorie per creare un ordine personalizzato: perfetto per evidenziare segmenti specifici o raccontare una storia con i tuoi dati.
 </Tip>
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />Omit zero values </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />Ometti i valori zero </span>
 
-Hide categories that have zero or no data.
+Nascondi le categorie che hanno zero dati o nessun dato.
 
-* **On**: Categories with no records are hidden
-* **Off**: All categories are shown, even if empty
+* **Attivo**: le categorie senza record vengono nascoste
+* **Disattivo**: tutte le categorie vengono mostrate, anche se vuote
 
-Use this to clean up charts with sparse data.
+Usalo per ripulire grafici con dati scarsi.
 
 ---
 
-## Y Axis Settings
+## Impostazioni asse Y
 
-These settings control what you're measuring and how it's displayed.
+Queste impostazioni controllano cosa stai misurando e come viene visualizzato.
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-y" />Data on display </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-y" />Dati visualizzati </span>
 
-Select the field and operation to calculate your metric.
+Seleziona il campo e l'operazione per calcolare la tua metrica.
 
-* **Counts** – Count all, Count empty, Count not empty, Count unique values
-* **Math** – Sum, Average, Min, Max (number fields)
-* **Percentages** – Percent empty, Percent not empty
+* **Conteggi** – Conta tutti, Conta vuoti, Conta non vuoti, Conta valori univoci
+* **Matematica** – Somma, Media, Min, Max (campi numerici)
+* **Percentuali** – Percentuale vuoti, Percentuale non vuoti
 
-Boolean fields add Count true/false. Aggregate charts with date fields show Earliest/Latest.
+I campi booleani aggiungono Conta vero/falso. I grafici aggregati con campi data mostrano Più antico/Più recente.
 
-**Example**: Select "Amount" with Sum to see total deal value per category, or Count all to see number of deals.
+**Esempio**: seleziona "Importo" con Somma per vedere il valore totale delle trattative per categoria, oppure Conta tutti per vedere il numero di trattative.
 
 <img src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png" alt="Dati visualizzati" />
 
 <Note>
-  The options shown depend on your field and chart type. If you don't see an expected operation, check your field type.
+  Le opzioni mostrate dipendono dal tipo di campo e di grafico. Se non vedi un'operazione prevista, verifica il tipo di campo.
 </Note>
 
 ### Rapporto
 
-For Select, Multi-select, or Boolean fields, you can calculate the percentage of a specific value.
+Per i campi Selezione, Selezione multipla o Booleano, puoi calcolare la percentuale di un valore specifico.
 
-1. Select a Select, Multi-select, or Boolean field
-2. Enable **Ratio**
-3. Choose the option to measure
+1. Seleziona un campo di tipo Selezione, Selezione multipla o Booleano
+2. Abilita **Rapporto**
+3. Scegli l'opzione da misurare
 
-**Example**: Show "Won" deals as a percentage of all opportunities. If you have 10 Won out of 50 total, the chart shows 20%.
+**Esempio**: mostra le trattative "Vinte" come percentuale di tutte le opportunità. Se hai 10 Vinte su 50 totali, il grafico mostra il 20%.
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filters" />Group by </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filters" />Raggruppa per </span>
 
-Add a second dimension to create multiple series (multiple bars or lines).
+Aggiungi una seconda dimensione per creare più serie (più barre o linee).
 
-1. Set your X axis field first
-2. Click **Group by**
-3. Select a second field
+1. Imposta prima il campo dell'asse X
+2. Fai clic su **Raggruppa per**
+3. Seleziona un secondo campo
 
-**Example**: Group deals by Stage (X axis) AND by Owner (Group by) to see each person's pipeline breakdown side by side.
+**Esempio**: raggruppa le trattative per Fase (asse X) E per Proprietario (Raggruppa per) per vedere affiancato il dettaglio della pipeline di ciascuna persona.
 
 <img src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png" alt="Raggruppa per" />
 
-When Group by is set, you'll see multiple colors in your chart and a legend appears.
+Quando Raggruppa per è impostato, vedrai più colori nel grafico e comparirà una legenda.
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Date granularity </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Granularità della data </span>
 
-When Group by is a date field, choose the time period (same options as X axis).
+Quando Raggruppa per è un campo data, scegli il periodo temporale (stesse opzioni dell'asse X).
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Sort by </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Ordina per </span>
 
-When **Group by** is set, control the order of grouped series (e.g., which owner's bar appears first within each category).
+Quando **Raggruppa per** è impostato, controlla l'ordine delle serie raggruppate (ad es., quale barra del proprietario appare per prima in ogni categoria).
 
-Same options as X axis sorting—Position, Alphabetical, and Manual—except **value-based sorting is not available** for secondary grouping.
+Stesse opzioni dell'ordinamento dell'asse X — Posizione, Alfabetico e Manuale — tranne che **l'ordinamento basato sul valore non è disponibile** per il raggruppamento secondario.
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="chart-bar-popular" />Cumulative </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="chart-bar-popular" />Cumulativo </span>
 
-Show running totals instead of individual values.
+Mostra totali progressivi invece dei valori individuali.
 
-* **Off**: Each bar/point shows its own value
-* **On**: Each bar/point shows the sum of all previous values plus its own
+* **Disattivo**: ogni barra/punto mostra il proprio valore
+* **Attivo**: ogni barra/punto mostra la somma di tutti i valori precedenti più il proprio
 
-**Example**: January = 10, February = 15
+**Esempio**: gennaio = 10, febbraio = 15
 
-* Cumulative off: Shows 10 and 15
-* Cumulative on: Shows 10 and 25 (10 + 15)
+* Cumulativo disattivo: mostra 10 e 15
+* Cumulativo attivo: mostra 10 e 25 (10 + 15)
 
-Use cumulative to track progress toward a goal over time.
+Usa il cumulativo per monitorare i progressi verso un obiettivo nel tempo.
 
 <img src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png" alt="Cumulativo" />
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />Min range / <ChartIcon icon="math-max" />Max range </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />Intervallo minimo / <ChartIcon icon="math-max" />Intervallo massimo </span>
 
-Set fixed minimum and maximum values for the Y axis.
+Imposta valori minimi e massimi fissi per l'asse Y.
 
-* Leave blank for automatic scaling
-* Enter a number to fix the boundary
+* Lascia vuoto per la scalatura automatica
+* Inserisci un numero per fissare il limite
 
-**When to use:**
+**Quando usarlo:**
 
-* Set Min to 0 for accurate visual comparisons
-* Set both for consistent scales across multiple charts
-* Focus on a specific value range by setting both
+* Imposta Min a 0 per confronti visivi accurati
+* Imposta entrambi per scale coerenti su più grafici
+* Concentrati su un intervallo di valori specifico impostando entrambi
 
 ---
 
-## Style Settings
+## Impostazioni stile
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="color-swatch" />Colors </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="color-swatch" />Colori </span>
 
-Set the color scheme for your chart. Choose from a variety of color palettes.
+Imposta la combinazione di colori per il grafico. Scegli tra una varietà di palette di colori.
 
 <Note>
-  When grouping by a Select field, the chart automatically uses the colors defined for each option in your field settings.
+  Quando raggruppi per un campo Selezione, il grafico usa automaticamente i colori definiti per ogni opzione nelle impostazioni del campo.
 </Note>
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />Axis name </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />Nome asse </span>
 
-Choose which axis labels to show: **None**, **X axis**, **Y axis**, or **Both** (bar and line charts only).
+Scegli quali etichette degli assi mostrare: **Nessuno**, **Asse X**, **Asse Y** o **Entrambi** (solo grafici a barre e a linee).
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="stack-2" />Stacked bars / Stacked lines </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="stack-2" />Barre impilate / Linee impilate </span>
 
-When Group by is set, choose how multiple series are displayed.
+Quando Raggruppa per è impostato, scegli come visualizzare le serie multiple.
 
-* **Off (Grouped)**: Series appear side by side. Use when comparing exact values between groups.
-* **On (Stacked)**: Series stack on top of each other. Use when showing composition—how parts make up a whole.
+* **Disattivo (Raggruppate)**: le serie appaiono affiancate. Usa quando confronti valori esatti tra gruppi.
+* **Attivo (Impilate)**: le serie si impilano una sull'altra. Usa quando mostri la composizione, cioè come le parti costituiscono un insieme.
 
-**Example**: Deals by stage, grouped by owner
+**Esempio**: trattative per fase, raggruppate per proprietario
 
-* Grouped: See each owner's exact numbers side by side
-* Stacked: See total deals per stage, with each owner's contribution stacked
+* Raggruppate: vedi i numeri esatti di ciascun proprietario affiancati
+* Impilate: vedi il totale delle trattative per fase, con il contributo di ciascun proprietario impilato
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />Data labels </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />Etichette dati </span>
 
-Show values directly on chart elements (bars, points, slices).
+Mostra i valori direttamente sugli elementi del grafico (barre, punti, sezioni).
 
-* **On**: Values appear on the chart
-* **Off**: No values shown (cleaner look)
+* **Attivo**: i valori compaiono nel grafico
+* **Disattivo**: nessun valore mostrato (aspetto più pulito)
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />Legend </span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />Legenda </span>
 
-Show or hide the legend (only appears when Group by is set).
+Mostra o nascondi la legenda (compare solo quando Raggruppa per è impostato).
 
-* **On**: Legend shows what each color represents
-* **Off**: No legend displayed
+* **Attivo**: la legenda mostra cosa rappresenta ciascun colore
+* **Disattivo**: nessuna legenda visualizzata
 
 <Tip>
-  **Hover** over a legend item to highlight that group. **Click** to temporarily hide it from the chart.
+  **Passa il mouse** su un elemento della legenda per evidenziare quel gruppo. **Fai clic** per nasconderlo temporaneamente dal grafico.
 </Tip>
 
 ---
 
-## Chart-Specific Notes
+## Note specifiche del grafico
 
 ### Grafici a torta
 
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Each slice represents** – Define how slices are grouped
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Hide empty category** – Remove zero-value slices
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Show value in center** – Display the aggregate value (sum, average, count, etc.)
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Ogni fetta rappresenta** – Definisci come vengono raggruppate le fette
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Nascondi categoria vuota** – Rimuovi le fette a valore zero
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Mostra il valore al centro** – Visualizza il valore aggregato (somma, media, conteggio, ecc.)
 
-### Aggregate charts
+### Grafici aggregati
 
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Prefix** – Add text before the number (e.g., `$`)
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Suffix** – Add text after the number (e.g., `%`)
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Prefisso** – Aggiungi testo prima del numero (ad es., `$`)
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Suffisso** – Aggiungi testo dopo il numero (ad es., `%`)

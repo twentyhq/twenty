@@ -55,7 +55,7 @@ export function processFieldMetadataForColumnNameMapping(
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   processor: ColumnNameProcessor,
 ) {
-  for (const fieldMetadataId of flatObjectMetadata.fieldMetadataIds) {
+  for (const fieldMetadataId of flatObjectMetadata.fieldIds) {
     const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
       flatEntityId: fieldMetadataId,

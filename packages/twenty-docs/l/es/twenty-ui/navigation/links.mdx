@@ -1,18 +1,18 @@
 ---
-title: Links
+title: Enlaces
 image: /images/user-guide/what-is-twenty/20.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Encabezado" />
 </Frame>
 
-## Contact Link
+## Enlace de Contacto
 
-A stylized link component for displaying contact information.
+Un componente de enlace estilizado para mostrar información de contacto.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="&#x22;Uso&#x22;">
     ```jsx
     import { BrowserRouter as Router } from 'react-router-dom';
 
@@ -38,22 +38,22 @@ A stylized link component for displaying contact information.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type              | Description                                                |
-    | --------- | ----------------- | ---------------------------------------------------------- |
-    | className | string            | Optional name for additional styling                       |
-    | href      | string            | The target URL or path for the link                        |
-    | onClick   | function          | Callback function to be triggered when the link is clicked |
-    | children  | `React.ReactNode` | The content to be displayed inside the link                |
+  <Tab title="&#x22;Props&#x22;">
+    | "Props"     | Tipo              | Descripción                                                                     |
+    | ----------- | ----------------- | ------------------------------------------------------------------------------- |
+    | "className" | string            | "Nombre opcional para estilización adicional"                                   |
+    | href        | string            | La URL o ruta objetivo del enlace                                               |
+    | onClick     | "función"         | Función de devolución de llamada que se activa cuando se hace clic en el enlace |
+    | hijos       | `React.ReactNode` | El contenido que se mostrará dentro del enlace                                  |
   </Tab>
 </Tabs>
 
-## Raw Link
+## Enlace Sin Estilo
 
-A stylized link component for displaying links.
+Un componente de enlace estilizado para mostrar enlaces.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="&#x22;Uso&#x22;">
     ```jsx
     import { RawLink } from "/navigation";
     import { BrowserRouter as Router } from "react-router-dom";
@@ -75,22 +75,22 @@ A stylized link component for displaying links.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type              | Description                                                |
-    | --------- | ----------------- | ---------------------------------------------------------- |
-    | className | string            | Optional name for additional styling                       |
-    | href      | string            | The target URL or path for the link                        |
-    | onClick   | function          | Callback function to be triggered when the link is clicked |
-    | children  | `React.ReactNode` | The content to be displayed inside the link                |
+  <Tab title="&#x22;Props&#x22;">
+    | "Props"       | Tipo              | Descripción                                                                     |
+    | ------------- | ----------------- | ------------------------------------------------------------------------------- |
+    | nombreDeClase | string            | Nombre opcional para estilo adicional                                           |
+    | href          | string            | La URL o ruta objetivo del enlace                                               |
+    | onClick       | función           | Función de devolución de llamada que se activa cuando se hace clic en el enlace |
+    | hijos         | `React.ReactNode` | El contenido que se mostrará dentro del enlace                                  |
   </Tab>
 </Tabs>
 
-## Rounded Link
+## Enlace Redondeado
 
-A rounded-styled link with a Chip component for links.
+Un enlace de estilo redondeado con un componente Chip para enlaces.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="&#x22;Uso&#x22;">
     ```jsx
     import { RoundedLink } from "/navigation";
     import { BrowserRouter as Router } from "react-router-dom";
@@ -111,21 +111,21 @@ A rounded-styled link with a Chip component for links.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props    | Type              | Description                                                |
-    | -------- | ----------------- | ---------------------------------------------------------- |
-    | href     | string            | The target URL or path for the link                        |
-    | children | `React.ReactNode` | The content to be displayed inside the link                |
-    | onClick  | function          | Callback function to be triggered when the link is clicked |
+  <Tab title="&#x22;Props&#x22;">
+    | "Props" | Tipo              | Descripción                                                                     |
+    | ------- | ----------------- | ------------------------------------------------------------------------------- |
+    | href    | cadena            | La URL o ruta objetivo del enlace                                               |
+    | hijos   | `React.ReactNode` | El contenido que se mostrará dentro del enlace                                  |
+    | onClick | "función"         | Función de devolución de llamada que se activa cuando se hace clic en el enlace |
   </Tab>
 </Tabs>
 
-## Social Link
+## Enlace Social
 
-Stylized social links, with support for various social link types, such as URLs, LinkedIn, and X (or Twitter).
+Enlaces sociales estilizados, con soporte para varios tipos de enlaces sociales, como URLs, LinkedIn y X (o Twitter).
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { SocialLink } from "twenty-ui/navigation";
     import { BrowserRouter as Router } from "react-router-dom";
@@ -144,11 +144,11 @@ Stylized social links, with support for various social link types, such as URLs,
   </Tab>
 
   <Tab title="Props">
-    | Props    | Type              | Description                                                                 |
-    | -------- | ----------------- | --------------------------------------------------------------------------- |
-    | href     | string            | The target URL or path for the link                                         |
-    | children | `React.ReactNode` | The content to be displayed inside the link                                 |
-    | type     | string            | The type of social links. Options include: `url`, `LinkedIn`, and `Twitter` |
-    | onClick  | function          | Callback function to be triggered when the link is clicked                  |
+    | Props   | Tipo              | Descripción                                                                        |
+    | ------- | ----------------- | ---------------------------------------------------------------------------------- |
+    | href    | string            | La URL o ruta objetivo del enlace                                                  |
+    | hijos   | `React.ReactNode` | El contenido que se mostrará dentro del enlace                                     |
+    | tipo    | string            | El tipo de enlaces sociales. Las opciones incluyen: `url`, `LinkedIn`, y `Twitter` |
+    | onClick | función           | Función de devolución de llamada que se activa cuando se hace clic en el enlace    |
   </Tab>
 </Tabs>

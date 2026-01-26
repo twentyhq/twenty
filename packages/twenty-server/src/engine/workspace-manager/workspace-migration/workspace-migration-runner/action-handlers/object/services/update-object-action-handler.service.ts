@@ -96,7 +96,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
         const objectFlatFieldMetadatas =
           findManyFlatEntityByIdInFlatEntityMapsOrThrow({
             flatEntityMaps: flatFieldMetadataMaps,
-            flatEntityIds: updatedObjectMetadata.fieldMetadataIds,
+            flatEntityIds: updatedObjectMetadata.fieldIds,
           });
         const enumOrCompositeFlatFieldMetadatas =
           objectFlatFieldMetadatas.filter(

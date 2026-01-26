@@ -236,7 +236,7 @@ export const computeSchemaComponents = (
       const flatFieldMetadatas =
         findManyFlatEntityByIdInFlatEntityMapsOrThrow<FlatFieldMetadata>({
           flatEntityMaps: flatFieldMetadataMaps,
-          flatEntityIds: item.fieldMetadataIds,
+          flatEntityIds: item.fieldIds,
         });
 
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent({

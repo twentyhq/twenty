@@ -1,94 +1,94 @@
 ---
-title: Import Relations Between Objects
-description: Import relationships between records via CSV.
+title: 导入对象之间的关系
+description: 通过 CSV 导入记录之间的关系。
 ---
 
-## Overview
+## 概览
 
-Twenty supports importing relationships between objects during CSV import. This allows you to link records (e.g., attach People to Companies) as part of your data migration.
+Twenty 支持在 CSV 导入过程中导入对象之间的关系。 这使您可以在数据迁移过程中关联记录（例如，将人员关联到公司）。
 
-<Note>**Currently supported for import**: One-to-many relations pointing to a single object type on each side (e.g., People → Companies). Relations pointing to multiple object types are not yet supported in import/export.</Note>
+<Note>**当前支持导入**：两侧均指向单一对象类型的一对多关系（例如，人员 → 公司）。 指向多个对象类型的关系目前尚不支持导入/导出。</Note>
 
-## How Relations Work in Twenty
+## Twenty 中关系的工作方式
 
-### One to Many / Many to One
+### 一对多 / 多对一
 
-Twenty supports standard relations where one record links to many others:
+Twenty 支持一条记录关联到多条记录的标准关系：
 
-* **One Company → Many People**: A company can have multiple employees, but each person belongs to one company
-* **One Company → Many Opportunities**: A company can have multiple deals, but each opportunity belongs to one company
+* **一个公司 → 多个人员**：一家公司可以有多名员工，但每个人只隶属于一家公司
+* **一个公司 → 多个商机**：一家公司可以有多个商机，但每个商机只属于一家公司
 
-### Relations That Can Point to Multiple Object Types
+### 可指向多种对象类型的关系
 
-Some relations can connect to different types of objects. This works in two ways:
+某些关系可以连接到不同类型的对象。 这有两种方式：
 
-**Pattern 1: Many records linking to one record each from different object types**
+**模式 1：来自不同对象类型的多条记录，各自链接到一条记录**
 
-Several Notes, Tasks, or Activities can each be attached to multiple object types at once:
+多条笔记、任务或活动可以同时附加到多种对象类型：
 
-* **Notes** can be linked to one Person, one Company, and one Opportunity simultaneously
-* **Tasks** can be linked to one Person, one Company, and one Opportunity simultaneously
+* **笔记** 可以同时关联到一个人员、一个公司和一个商机
+* **任务** 可以同时关联到一个人员、一个公司和一个商机
 
-Here, the Notes/Tasks are on the "many" side. Each links to one record per object type.
+在此场景中，笔记/任务位于“多”的一侧。 每条记录在每种对象类型上都仅链接到一条记录。
 
 <img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
 
-**Pattern 2: One record receiving links from many records of different object types**
+**模式 2：一条记录接收来自不同对象类型的多条记录的链接**
 
-A Project can receive links from multiple records across different object types:
+一个项目可以接收来自不同对象类型的多条记录的链接：
 
-* **A Project** can have many People linked to it, many Companies linked to it, and many Notes attached to it
+* **一个项目** 可以关联到许多人员、许多公司，并附加许多笔记
 
-Here, the Project is on the "one" side. Multiple records from different objects can all link to the same Project.
+在此场景中，项目位于“一”的一侧。 来自不同对象的多条记录都可以链接到同一个项目。
 
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Import/Export limitation**: Relations that point to multiple object types (like Notes → People/Companies/Opportunities) are **not yet supported** in CSV import or export.
+  **导入/导出限制**：指向多个对象类型的关系（如 笔记 → 人员/公司/商机）在 CSV 导入或导出中**尚不支持**。
 
-  * **Import**: Only one-to-many relations pointing to a single object type on each side can be imported
-  * **Export**: Columns for relations pointing to multiple object types are currently left empty
+  * **导入**：仅支持导入两侧均指向单一对象类型的一对多关系
+  * **导出**：指向多个对象类型的关系列目前会留空
 
-  This is on our roadmap.
+  此功能已在我们的路线图中。
 </Warning>
 
-### What's Not Supported Today
+### 当前不支持的内容
 
-**Many to Many relations** are not yet available. For example, you cannot currently create a relation where:
+**多对多关系** 目前尚不可用。 例如，您目前无法创建如下关系：
 
-* Many People are linked to many Projects
+* 多个人员关联到多个项目
 
-<Note>Many to Many relations are planned for H1 2026.</Note>
+<Note>多对多关系计划在 2026 年上半年推出。</Note>
 
-## Linking Records During Import
+## 在导入过程中关联记录
 
-<Note>**Reminder**: Only one-to-many relations pointing to a single object type can be imported (e.g., People → Companies). Relations pointing to multiple object types (e.g., Notes → People/Companies/Opportunities) are not yet supported.</Note>
+<Note>**提醒**：仅可导入指向单一对象类型的一对多关系（例如，人员 → 公司）。 指向多个对象类型的关系（例如，笔记 → 人员/公司/商机）目前尚不支持。</Note>
 
-### Step 1: Identify the "One" and "Many" Sides
+### 步骤 1：确定“一”和“多”两侧
 
-First, determine which object is on the "one" side and which is on the "many" side of the relationship.
+首先，确定关系中哪个对象位于“一”侧，哪个对象位于“多”侧。
 
-**Example**:
+**示例**：
 
-* **Company** is the "one" side (one company has many employees)
-* **People** is the "many" side (each person belongs to one company)
+* **公司** 位于“一”侧（一个公司有许多员工）
+* **人员** 位于“多”侧（每个人都隶属于一家公司）
 
-### Step 2: Ensure the "One" Side Records Exist
+### 步骤 2：确保“一”侧的记录已存在
 
-Before importing the "many" side, the "one" side records must already exist in Twenty.
+在导入“多”侧之前，“一”侧的记录必须已在 Twenty 中存在。
 
-* Import or create the "one" side records first (e.g., Companies)
-* Validate their unique identifier. This can be:
-  * The `id` (Twenty's UUID)
-  * A field set as unique (e.g., `domain` for Companies, or an external ID from your previous system)
+* 请先导入或创建“一”侧的记录（例如，公司）
+* 验证其唯一标识符。 可以是：
+  * `id`（Twenty 的 UUID）
+  * 一个被设置为唯一的字段（例如，公司的 `domain`，或您先前系统中的外部 ID）
 
-<Warning>The import will fail if a reference is made to a record that does not exist.</Warning>
+<Warning>若引用了不存在的记录，导入将失败。</Warning>
 
-### Step 3: Prepare Your CSV File
+### 步骤 3：准备您的 CSV 文件
 
-Add a column in your "many" side CSV file that references the "one" side record.
+在“多”侧的 CSV 文件中添加一列，用于引用“一”侧的记录。
 
-**Example**: For a People CSV file linking to Companies:
+**示例**：对于将人员关联到公司的 CSV 文件：
 
 ```
 firstName,lastName,email,companyDomain
@@ -96,53 +96,53 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-**Important**:
+**重要**：
 
-* The value must **exactly match** the unique field on the Company record
-* For domains, use the **Domain URL** (e.g., `https://acme.com`), not the Domain Label
-* Map only **one** unique identifier per relation: this leads to a smoother import
+* 该值必须与公司记录上的唯一字段**完全匹配**
+* 对于域名，请使用**域名 URL**（例如，`https://acme.com`），而不是域名标签
+* 每个关系只映射**一个**唯一标识符：这将使导入更顺畅
 
-### Step 4: Ensure the Relation Field Exists
+### 步骤 4：核实关系字段是否存在
 
-Before uploading your file, make sure the relation field exists between your objects.
+在上传文件之前，确保对象之间已存在关系字段。
 
-If it doesn't exist:
+如果不存在：
 
-1. Go to **Settings → Data Model**
-2. Select your object (e.g., People)
-3. Create a relation field pointing to the target object (e.g., Company)
+1. 进入 **设置 → 数据模型**
+2. 选择您的对象（例如，人员）
+3. 创建一个指向目标对象（例如，公司）的关系字段
 
-### Step 5: Upload and Map the Relation
+### 步骤 5：上传并映射关系
 
-1. Upload your CSV file via the import UI
-2. In the field mapping step, find your relation column (e.g., `companyDomain`)
-3. Map it to the relation field (e.g., Company)
-4. Twenty will automatically link each record to the matching parent
+1. 通过导入界面上传您的 CSV 文件
+2. 在字段映射步骤中，找到您的关系列（例如，`companyDomain`）
+3. 将其映射到关系字段（例如，公司）
+4. Twenty 将自动把每条记录关联到匹配的父级
 
-### Available Unique Fields for Relations
+### 可用于关系的唯一字段
 
-| Object                                | Unique Fields Available                 |
-| ------------------------------------- | --------------------------------------- |
-| **Companies**                         | `id`, `domain`, any custom unique field |
-| **People**                            | `id`, `email`, any custom unique field  |
-| **Workspace Members**                 | `id`, `email` (not name)                |
-| **Other standard and custom objects** | `id`, any field marked as unique        |
+| 对象               | 可用的唯一字段                 |
+| ---------------- | ----------------------- |
+| **公司**           | `id`、`domain`，任何自定义唯一字段 |
+| **人员**           | `id`、`email`，任何自定义唯一字段  |
+| **工作区成员**        | `id`、`email`（而非姓名）      |
+| **其他标准对象和自定义对象** | `id`，或任何标记为唯一的字段        |
 
-<Note>**Linking to Workspace Members**: When the relation points to Workspace Members (your team logging into Twenty), reference them by their **email address**, not their name.</Note>
+<Note>**关联到工作区成员**：当关系指向工作区成员（您的团队登录 Twenty）时，请使用其**电子邮件地址**进行引用，而不是姓名。</Note>
 
-<Note>We recommend using `domain` for Companies and `email` for People, as these are human-readable and easy to maintain in spreadsheets.</Note>
+<Note>我们建议对公司使用 `domain`，对人员使用 `email`，因为这些字段可读性强，且易于在电子表格中维护。</Note>
 
-<Note>**Reminder**: Soft-deleted records (visible under Command Menu → See deleted records) count toward uniqueness criteria. If you import a record with the same unique value as a deleted record, the deleted record will be restored. See [Uniqueness Constraints](/l/zh/user-guide/data-migration/capabilities/uniqueness-constraints) for more details.</Note>
+<Note>**提醒**：软删除的记录（可在“命令菜单 → 查看已删除的记录”中查看）计入唯一性判定标准。 如果您导入的记录与某条已删除记录具有相同的唯一值，该已删除记录将被还原。 详见[唯一性约束](/l/zh/user-guide/data-migration/capabilities/uniqueness-constraints)。</Note>
 
-## Import Order Rule
+## 导入顺序规则
 
 <Warning>
-  **Always import the "one" side first!**
+  **务必先导入“一”端！**
 
-  1. **Companies** first (no dependencies)
-  2. **People** second (linked to Companies)
-  3. **Opportunities** third (linked to Companies/People)
-  4. **Custom objects** following their dependencies
+  1. **公司** 优先（无依赖关系）
+  2. **人员** 其次（关联到公司）
+  3. **商机** 第三（关联到公司/人员）
+  4. **自定义对象**（按其依赖关系）
 
-  The parent record must exist before you can reference it.
+  在引用之前，父级记录必须已存在。
 </Warning>

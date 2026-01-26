@@ -1,12 +1,12 @@
 ---
-title: Feature Flags
+title: Drapeaux de fonctionnalité
 ---
 
-Feature flags are used to hide experimental features. For Twenty, they are set on workspace level and not on a user level.
+Les drapeaux de fonctionnalité sont utilisés pour masquer les fonctionnalités expérimentales. Pour Twenty, ils sont définis au niveau de l'espace de travail et non au niveau de l'utilisateur.
 
-## Adding a new feature flag
+## Ajout d'un nouveau drapeau de fonctionnalité
 
-In `FeatureFlagKey.ts` add the feature flag:
+Dans `FeatureFlagKey.ts` ajoutez l'indicateur de fonctionnalité :
 
 ```ts
 type FeatureFlagKey =
@@ -14,7 +14,7 @@ type FeatureFlagKey =
   | ...;
 ```
 
-Also add it to the enum in `feature-flag.entity.ts`:
+Ajoutez-le également à l'énumération dans `feature-flag.entity.ts` :
 
 ```ts
 enum FeatureFlagKeys {
@@ -23,7 +23,7 @@ enum FeatureFlagKeys {
 }
 ```
 
-To apply a feature flag on a **backend** feature use:
+Pour appliquer un drapeau de fonctionnalité à une fonctionnalité **back-end**, utilisez :
 
 ```ts
 @Gate({
@@ -31,16 +31,16 @@ To apply a feature flag on a **backend** feature use:
 })
 ```
 
-To apply a feature flag on a **frontend** feature use:
+Pour appliquer un drapeau de fonctionnalité à une fonctionnalité **front-end**, utilisez :
 
 ```ts
 const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
 ```
 
-## Configure feature flags for the deployment
+## Configurer les drapeaux de fonctionnalité pour le déploiement
 
-Change the corresponding record in the Table `core.featureFlag`:
+Modifiez l'enregistrement correspondant dans la Table `core.featureFlag` :
 
-| id     | key                      | workspaceId | value  |
-| ------ | ------------------------ | ----------- | ------ |
-| Random | `IS_FEATURENAME_ENABLED` | WorkspaceID | `true` |
+| iD        | clé                      | workspaceId | valeur |
+| --------- | ------------------------ | ----------- | ------ |
+| Aléatoire | `IS_FEATURENAME_ENABLED` | WorkspaceID | `vrai` |
