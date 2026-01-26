@@ -1,76 +1,76 @@
 ---
-title: Error Handling & Validation
-description: Review and fix import errors directly in the UI before confirming.
+title: Gestion des erreurs et validation
+description: Examinez et corrigez les erreurs d'importation directement dans l'interface avant de confirmer.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Pre-Import Validation
+## Validation préalable à l'importation
 
-After uploading your file and mapping fields, Twenty validates your data **before** importing. This allows you to catch and fix errors without affecting your existing data.
+Après avoir téléversé votre fichier et fait la correspondance des champs, Twenty valide vos données **avant** l'importation. Cela vous permet de détecter et de corriger les erreurs sans affecter vos données existantes.
 
-## How It Works
+## Comment ça marche
 
-1. **Upload** your CSV file
-2. **Map** your columns to Twenty fields
-3. **Review** the potential errors highlighted in yellow
-4. **Fix errors** directly in the UI
-5. **Confirm** the import
+1. **Téléversez** votre fichier CSV
+2. **Faites correspondre** vos colonnes aux champs de Twenty
+3. **Passez en revue** les erreurs potentielles mises en évidence en jaune
+4. **Corrigez les erreurs** directement dans l'interface
+5. **Confirmez** l'importation
 
-<VimeoEmbed videoId="1145273857" title="Video demonstration" />
+<VimeoEmbed videoId="1145273857" title="Démonstration vidéo" />
 
-## Error Display
+## Affichage des erreurs
 
-Rows with issues are highlighted in **yellow**. You can:
+Les lignes présentant des problèmes sont mises en évidence en **jaune**. Vous pouvez :
 
-* **Edit the cell directly** to fix the error
-* **Remove the row** to skip it entirely
+* **Modifiez la cellule directement** pour corriger l'erreur
+* **Supprimez la ligne** pour l'ignorer complètement
 
-This inline editing saves time—no need to go back to your spreadsheet, fix errors, and re-upload.
+Cette modification en ligne vous fait gagner du temps — inutile de revenir à votre feuille de calcul, de corriger les erreurs et de téléverser à nouveau.
 
-## Common Error Types
+## Types d'erreurs courants
 
-### Duplicate Values
+### Valeurs en double
 
-**Cause**: A unique field (email, domain) already exists in Twenty or appears twice in your file.
+**Cause** : Un champ unique (email, domaine) existe déjà dans Twenty ou apparaît deux fois dans votre fichier.
 
-**Fix**:
+**Correctif** :
 
-* Edit the duplicate value in the import UI
-* Remove one of the duplicate rows
+* Modifiez la valeur en double dans l'interface d'importation
+* Supprimez l'une des lignes en double
 
-See [Uniqueness Constraints](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints) for more details on how uniqueness is enforced.
+Voir [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints) pour plus de détails sur la façon dont l'unicité est appliquée.
 
-### Invalid Format
+### Format invalide
 
-**Cause**: Data doesn't match the expected format (e.g., invalid email, wrong date format).
+**Cause** : Les données ne correspondent pas au format attendu (p. ex., email invalide, format de date incorrect).
 
-**Fix**: Edit the cell to use the correct format.
+**Correctif** : Modifiez la cellule pour utiliser le format correct.
 
-See [Field Mapping](/l/fr/user-guide/data-migration/capabilities/field-mapping) for the expected format of each field type.
+Voir [Correspondance des champs](/l/fr/user-guide/data-migration/capabilities/field-mapping) pour le format attendu de chaque type de champ.
 
-### Missing Required Fields
+### Champs obligatoires manquants
 
-**Cause**: A required field is empty.
+**Cause** : Un champ obligatoire est vide.
 
-**Fix**: Enter a value in the required field or remove the row.
+**Correctif** : Saisissez une valeur dans le champ obligatoire ou supprimez la ligne.
 
-### Relation Not Found
+### Relation introuvable
 
-**Cause**: The referenced record doesn't exist (e.g., a Company domain that wasn't imported).
+**Cause** : L'enregistrement référencé n'existe pas (p. ex., un domaine d'entreprise qui n'a pas été importé).
 
-**Fix**:
+**Correctif** :
 
-* Import the parent records first
-* Or correct the reference value
+* Importez d'abord les enregistrements parents
+* Ou corrigez la valeur de référence
 
-See [Import Relations](/l/fr/user-guide/data-migration/capabilities/import-relations) for the correct import order and how to link records.
+Voir [Importation des relations](/l/fr/user-guide/data-migration/capabilities/import-relations) pour l'ordre d'importation correct et la manière de lier les enregistrements.
 
-## Tips for Fewer Errors
+## Conseils pour réduire les erreurs
 
-1. **Download the template** to see expected format prior to importing your file
-2. **Clean your data** in the spreadsheet first
-3. **Import files in correct order** to import relations (Companies → People → Opportunities)
-4. **Test with small batches** before full import
-5. **Check for duplicates** before uploading
-6. **Limit the size of your file to 10,000 records** per file
+1. **Téléchargez le modèle** pour voir le format attendu avant d'importer votre fichier
+2. **Nettoyez vos données** d'abord dans votre feuille de calcul
+3. **Importez les fichiers dans le bon ordre** pour importer les relations (Entreprises → Personnes → Opportunités)
+4. **Testez avec de petits lots** avant l'importation complète
+5. **Vérifiez les doublons** avant de téléverser
+6. **Limitez la taille de votre fichier à 10 000 enregistrements** par fichier

@@ -1,311 +1,311 @@
 ---
-title: Workflow Actions
-description: Learn about the actions available in Twenty workflows.
+title: Actions de flux de travail
+description: Découvrez les actions disponibles dans les workflows de Twenty.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Actions
+## À propos des actions
 
-Actions define what happens after a trigger fires. You can chain multiple actions together to build complex automations.
+Les actions définissent ce qui se passe après le déclenchement d'un déclencheur. Vous pouvez enchaîner plusieurs actions pour créer des automatisations complexes.
 
 <Tip>
-  * Use the variable picker (click the `(x+)` icon) to browse available data from previous steps
-  * Hover over any input field to see which step a variable comes from — helpful when the same field (e.g., ID) exists in multiple previous steps
-  * Give each action a descriptive name for easier maintenance
+  * Utilisez le sélecteur de variables (cliquez sur l'icône `(x+)`) pour parcourir les données disponibles provenant des étapes précédentes
+  * Survolez n'importe quel champ de saisie pour voir de quelle étape provient une variable — utile lorsque le même champ (par ex., ID) existe dans plusieurs étapes précédentes
+  * Donnez à chaque action un nom explicite pour faciliter la maintenance
 </Tip>
 
-## Record Actions
+## Actions sur les enregistrements
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
-### Create a Record
+### Créer un enregistrement
 
-Adds a new record to a selected object.
+Ajoute un nouvel enregistrement à un objet sélectionné.
 
 **Configuration**:
 
-* Select the target object
-* Fill out the required and optional fields
-* Use data from previous steps or input values manually to populate fields
+* Sélectionnez l'objet cible
+* Remplissez les champs requis et optionnels
+* Utilisez les données des étapes précédentes ou saisissez des valeurs manuellement pour remplir les champs
 
-**Output**: The newly created record data is available for use in subsequent steps.
+**Sortie**: Les données de l'enregistrement nouvellement créé sont disponibles pour une utilisation dans les étapes suivantes.
 
-### Update Record
+### Mettre à jour un enregistrement
 
-Modifies an existing record in a selected object.
+Modifie un enregistrement existant dans un objet sélectionné.
 
 <img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
 
 **Configuration**:
 
-* Select the target object
-* Choose the specific record to update.
-  * You can either choose a fixed record, using the drop down menu displaying all available records.
-  * Or you can have the record dynamically selected, by designating a record found in a previous step, using the `(x+)`. You cannot search for the record based on different criteria at this stage. If you've not yet identified the record, add a `Search Record` step before this `Update Record` step.
-* Select fields to modify and enter new values
+* Sélectionnez l'objet cible
+* Choisissez l'enregistrement spécifique à mettre à jour.
+  * Vous pouvez choisir un enregistrement fixe, à l'aide du menu déroulant affichant tous les enregistrements disponibles.
+  * Ou vous pouvez sélectionner l'enregistrement de façon dynamique, en désignant un enregistrement trouvé lors d'une étape précédente, à l'aide du `(x+)`. Vous ne pouvez pas rechercher l'enregistrement selon différents critères à ce stade. Si vous n'avez pas encore identifié l'enregistrement, ajoutez une étape `Search Record` avant cette étape `Update Record`.
+* Sélectionnez les champs à modifier et entrez de nouvelles valeurs
 
-**Output**: The updated record data is available for use in subsequent steps.
+**Sortie**: Les données de l'enregistrement mis à jour sont disponibles pour une utilisation dans les étapes suivantes.
 
-### Delete Record
+### Supprimer un enregistrement
 
-Removes a record from a selected object.
-
-**Configuration**:
-
-* Select the target object
-* Choose the specific record to delete
-
-**Output**: The deleted record data remains available for use in subsequent steps.
-
-### Search Records
-
-Finds records within a selected object using filter conditions.
+Supprime un enregistrement d'un objet sélectionné.
 
 **Configuration**:
 
-* Select the object to search
-* Set filter criteria to narrow results
-* Configure sorting and limits
+* Sélectionnez l'objet cible
+* Choisissez l'enregistrement spécifique à supprimer
 
-**Output**: Returns matching records that can be used in subsequent steps.
+**Sortie**: Les données de l'enregistrement supprimé restent disponibles pour une utilisation dans les étapes suivantes.
+
+### Rechercher des enregistrements
+
+Trouve des enregistrements dans un objet sélectionné en utilisant des conditions de filtre.
+
+**Configuration**:
+
+* Sélectionnez l'objet à rechercher
+* Définissez les critères de filtre pour restreindre les résultats
+* Configurez le tri et les limites
+
+**Sortie**: Renvoie les enregistrements correspondants qui peuvent être utilisés dans les étapes suivantes.
 
 <Note>
-  **Limit**: Search Records returns a maximum of **200 records**. If you need to process more, add specific filters to reduce results or use scheduled workflows to process in batches.
+  **Limite**: Search Records renvoie un maximum de **200 enregistrements**. Si vous devez en traiter davantage, ajoutez des filtres spécifiques pour réduire les résultats ou utilisez des workflows planifiés pour traiter par lots.
 </Note>
 
-**Best Practice**: Use [branches](/l/fr/user-guide/workflows/capabilities/workflow-branches) after Search Records to handle "found" vs "not found" scenarios.
+**Meilleure pratique**: Utilisez [branches](/l/fr/user-guide/workflows/capabilities/workflow-branches) après Search Records pour gérer les scénarios "trouvé" vs "non trouvé".
 
-### Upsert Record
+### Créer ou mettre à jour un enregistrement
 
-Creates a new record or updates an existing one based on matching criteria. This is useful when you're not sure if a record already exists.
+Crée un nouvel enregistrement ou met à jour un enregistrement existant en fonction de critères de correspondance. C'est utile lorsque vous n'êtes pas certain qu'un enregistrement existe déjà.
 
 <img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
 
 **Configuration**:
 
-* Select the target object
-* Note which fields can be used for matching: email for People, domain for Companies, ID for any object, or any field marked as Unique. You'll need to populate at least one of these below.
-* Fill out the field values. Do not forget to populate at least one of the unique identifiers.
+* Sélectionnez l'objet cible
+* Notez quels champs peuvent être utilisés pour la correspondance : adresse e-mail pour les Contacts, domaine pour les Entreprises, ID pour tout objet, ou tout champ marqué comme unique. Vous devrez renseigner au moins l'un des éléments ci-dessous.
+* Renseignez les valeurs des champs. N'oubliez pas de renseigner au moins un des identifiants uniques.
 
 <Note>
-  **Matching usually works even better when adding only one unique identifier.** For example, the screenshot below will match companies based on their domain. The ID is not necessarily needed.
+  **La correspondance fonctionne généralement encore mieux lorsque vous n'ajoutez qu'un seul identifiant unique.** Par exemple, la capture d'écran ci-dessous fera correspondre les entreprises en fonction de leur domaine. L'ID n'est pas forcément nécessaire.
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
 
-* Use data from previous steps to populate fields
+* Utilisez les données des étapes précédentes pour remplir les champs
 
-**How it works**:
+**Comment ça marche**:
 
-1. Searches for a record matching your criteria
-2. If found → updates the existing record
-3. If not found → creates a new record
+1. Recherche un enregistrement correspondant à vos critères
+2. S'il est trouvé → met à jour l'enregistrement existant
+3. S'il n'est pas trouvé → crée un nouvel enregistrement
 
-**Output**: The created or updated record data is available for use in subsequent steps.
+**Sortie**: Les données de l'enregistrement créé ou mis à jour sont disponibles pour une utilisation dans les étapes suivantes.
 
-## Flow Actions
+## Actions de flux de travail
 
-### Iterator
+### Itérateur
 
-**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
-
-**Configuration**:
-
-* Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
-* Define the actions to perform on each record in the loop.
-
-<Note>
-  - You can add several actions within an iterator.
-  - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
-</Note>
-
-* Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
-
-<VimeoEmbed videoId="1146577247" title="Video demonstration" />
-
-### Filter
-
-Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
+**Parcourt un tableau d'enregistrements** renvoyé par une étape précédente, vous permettant d'effectuer des actions sur chaque enregistrement individuellement.
 
 **Configuration**:
 
-* Select the record to filter
-* Define filter conditions and criteria
-* Configure which records should pass through to subsequent steps
+* Sélectionnez le tableau d'enregistrements depuis une étape précédente (par ex., résultats de Rechercher des enregistrements, d'un déclencheur manuel avec exécution par lots, d'un nœud de code)
+* Définissez les actions à effectuer sur chaque enregistrement dans la boucle.
 
 <Note>
-  1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
-  2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
+  - Vous pouvez ajouter plusieurs actions au sein d'un itérateur.
+  - Lorsque vous utilisez des branches à l'intérieur d'un itérateur, assurez-vous que la dernière étape de chaque branche revient à l'itérateur pour fermer la boucle.
 </Note>
 
-### Delay
+* Accéder aux champs `Current Item`: pour utiliser les champs de l'enregistrement en cours de traitement, cliquez sur l'étape **Iterator**, puis sélectionnez **Current item**. La liste des champs disponibles de cet enregistrement s'affichera et pourra être sélectionnée pour une utilisation dans les actions suivantes.
 
-Pauses workflow execution for a specified duration or until a specific date/time.
+<VimeoEmbed videoId="1146577247" title="Démonstration vidéo" />
 
-**Delay Types**:
+### Filtre
 
-| Type               | Description                                                        |
-| ------------------ | ------------------------------------------------------------------ |
-| **Duration**       | Wait for a specific amount of time (days, hours, minutes, seconds) |
-| **Scheduled Date** | Wait until a specific date and time                                |
-
-**Configuration for Duration**:
-
-* Set days, hours, minutes, and/or seconds
-* Combine multiple units (e.g., 2 days and 4 hours)
-
-**Configuration for Scheduled Date**:
-
-* Select a date and time
-* Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
-
-**Use cases**:
-
-* Wait 24 hours before sending a follow-up email
-* Pause until an opportunity's close date
-* Schedule actions for business hours
-
-<Note>
-  The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
-</Note>
-
-**Limits & Credits**:
-
-* **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
-* **1 credit consumed** when the Delay node executes, regardless of duration
-* **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
-
-## Communication Actions
-
-### Send Email
-
-Sends an email from your workflow. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
-Not suited for newsletters (which require richer formatting) or automated email sequences.
-
-**Prerequisites**: Add an email account in Settings → Accounts
+Filtre les enregistrements selon des conditions spécifiées, ne laissant passer que ceux qui répondent aux critères.
 
 **Configuration**:
 
-* Select the sender email account
+* Sélectionnez l'enregistrement à filtrer
+* Définissez les conditions de filtre et les critères
+* Configurez quels enregistrements doivent passer aux étapes suivantes
 
 <Note>
-  You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
+  1. **Sortie**: Les nœuds de filtre ne renvoient pas de données — ils agissent comme des portes. Si les conditions sont remplies, le flux de travail continue. Sinon, le flux de travail s'arrête à cette branche.
+  2. L'opérateur `IS` peut être utilisé avec des champs numériques. Il équivaut à `EQUAL`.
 </Note>
 
-For all the following steps, you can reference variables from previous steps for personalization.
+### Délai
 
-* Enter recipient email address.
+Met en pause l'exécution du flux de travail pendant une durée spécifiée ou jusqu'à une date/heure spécifique.
+
+**Types de délai**:
+
+| Type               | Description                                                      |
+| ------------------ | ---------------------------------------------------------------- |
+| **Durée**          | Attendre une durée spécifique (jours, heures, minutes, secondes) |
+| **Date planifiée** | Attendre jusqu'à une date et une heure spécifiques               |
+
+**Configuration pour la durée**:
+
+* Définissez des jours, des heures, des minutes et/ou des secondes
+* Combinez plusieurs unités (par ex., 2 jours et 4 heures)
+
+**Configuration pour la date planifiée**:
+
+* Sélectionnez une date et une heure
+* Peut référencer un champ de date d'une étape précédente (par ex., relancer 3 jours après une réunion)
+
+**Cas d'utilisation**:
+
+* Attendre 24 heures avant d'envoyer un e-mail de relance
+* Mettre en pause jusqu'à la date de clôture d'une opportunité
+* Planifier des actions pendant les heures ouvrées
 
 <Note>
-  Only one recipient is possible at the moment.
+  La date planifiée ne peut pas être dans le passé. Si un champ de date d'une étape précédente est utilisé et que la date est déjà passée, le flux de travail échouera.
 </Note>
 
-* Set subject line.
-* Compose message body. You can format links, create numbered list, bullet point lists, add attachments.
+**Limites et crédits**:
+
+* **Aucune limite de durée maximale** — vous pouvez définir des délais de quelques minutes, jours, semaines, ou plus
+* **1 crédit consommé** lorsque le nœud Délai s'exécute, quelle que soit la durée
+* **Aucun crédit consommé** pendant l'attente — un délai de 5 minutes coûte autant qu'un délai de 5 jours
+
+## Actions de communication
+
+### Envoyer l'email
+
+Envoie un e-mail à partir de votre flux de travail. Idéal pour des e-mails groupés basés sur des modèles. Les e-mails auront l'apparence de ceux que vous envoyez depuis votre boîte aux lettres.
+Ne convient pas aux newsletters (qui nécessitent un formatage plus riche) ni aux séquences d'e-mails automatisées.
+
+**Prérequis**: Ajoutez un compte de messagerie dans Paramètres → Comptes
+
+**Configuration**:
+
+* Sélectionnez le compte e-mail de l'expéditeur
 
 <Note>
-  Adding HTML signatures is not possible at the moment.
+  Vous pouvez uniquement envoyer des e-mails à partir de boîtes aux lettres synchronisées avec votre propre compte Twenty. L'envoi depuis les boîtes aux lettres d'autres membres de l'équipe (par ex., l'e-mail du propriétaire du compte) est sur la feuille de route.
 </Note>
 
-### Form
+Pour toutes les étapes suivantes, vous pouvez référencer des variables des étapes précédentes pour la personnalisation.
 
-Prompts a form during workflow execution to collect user input. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+* Entrez l'adresse e-mail du destinataire.
+
+<Note>
+  Un seul destinataire est possible pour le moment.
+</Note>
+
+* Définissez la ligne d'objet.
+* Rédigez le corps du message. Vous pouvez formater des liens, créer des listes numérotées, des listes à puces, ajouter des pièces jointes.
+
+<Note>
+  L'ajout de signatures HTML n'est pas possible pour le moment.
+</Note>
+
+### Formulaire
+
+Affiche un formulaire lors de l'exécution du flux de travail pour recueillir les saisies de l'utilisateur. Les réponses peuvent ensuite être utilisées dans les étapes suivantes pour créer des enregistrements, envoyer des e-mails ou exécuter toute autre action selon la saisie.
 
 <Warning>
-  **Forms are designed for manual triggers only**. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface, which is not the expected user experience. A notifications center will be released in 2026 to properly support forms in automated workflows.
+  **Les formulaires sont conçus uniquement pour les déclencheurs manuels**. Pour les flux de travail avec d'autres déclencheurs (Enregistrement créé, mis à jour, etc.), les formulaires ne sont accessibles que via l'interface de l'exécution de flux de travail, ce qui n'est pas l'expérience utilisateur attendue. Un centre de notifications sera lancé en 2026 pour supporter correctement les formulaires dans les flux de travail automatisés.
 </Warning>
 
 **Configuration**:
 
-* Configure the fields that users will be asked to fill. For each field, choose
-  * a type among text, number, date, a given record, a select field. Select fields from all objects are available.
-  * a label
-  * a default value under `Placeholder` (optional)
-* Edit the form title
+* Configurez les champs que les utilisateurs devront remplir. Pour chaque champ, choisissez
+  * un type parmi texte, nombre, date, un enregistrement donné, un champ de sélection. Les champs de sélection de tous les objets sont disponibles.
+  * une étiquette
+  * une valeur par défaut sous `Placeholder` (facultatif)
+* Modifiez le titre du formulaire
 
-**Output**: Form responses are available for use in subsequent steps.
+**Sortie**: Les réponses au formulaire sont disponibles pour une utilisation dans les étapes suivantes.
 
-**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+**Exemple**: Le flux de travail "Quick Lead" est disponible par défaut dans tous les espaces de travail, accessible partout dans le menu de commande `Cmd + K`.
 
-**How to fill the form**:
+**Comment remplir le formulaire**:
 
-* Trigger your manual workflow from the command menu `Cmd K`
-* Fill the form that is displayed in the side panel and click `Submit`.
+* Déclenchez votre flux de travail manuel depuis le menu de commande `Cmd K`
+* Remplissez le formulaire affiché dans le panneau latéral et cliquez sur `Submit`.
 
 <Note>
-  The fields cannot be made mandatory.
+  Les champs ne peuvent pas être rendus obligatoires.
 </Note>
 
-<VimeoEmbed videoId="1147277989" title="Video demonstration" />
+<VimeoEmbed videoId="1147277989" title="Démonstration vidéo" />
 
-## Integration Actions
+## Actions d'intégration
 
 ### Code
 
-Runs custom JavaScript within your workflow.
+Exécute du JavaScript personnalisé dans votre flux de travail.
 
 **Configuration**:
 
-* Access variables from previous steps. You can edit the variables names dynamically.
+* Accédez aux variables des étapes précédentes. Vous pouvez modifier dynamiquement les noms des variables.
 
-<VimeoEmbed videoId="1147281795" title="Video demonstration" />
+<VimeoEmbed videoId="1147281795" title="Démonstration vidéo" />
 
-* Write JavaScript code in the editor
-* Return variables for use in subsequent steps
-* Test code directly in the step
+* Écrivez le code JavaScript dans l'éditeur
+* Retournez des variables pour une utilisation dans les étapes suivantes
+* Testez le code directement dans l'étape
 
 <Note>
-  If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
+  Si vous devez utiliser des clés d'API externes dans votre code, vous devez les saisir directement dans le corps de la fonction. Vous ne pouvez pas configurer des clés d'API ailleurs et les référencer dans la fonction serverless.
 </Note>
 
 <Tip>
-  **Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/l/fr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
+  **Vous travaillez avec des tableaux ?** Les tableaux provenant de systèmes externes ou d'étapes précédentes peuvent arriver sous forme de chaînes de caractères. Voir [Gérer les tableaux dans les actions Code](/l/fr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) pour la solution.
 </Tip>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  Cliquez sur l'icône carrée en haut à droite de l'éditeur de code pour l'afficher en plein écran — utile car la largeur par défaut de l'éditeur est limitée.
 </Tip>
 
-### HTTP Request
+### Requête HTTP
 
-Sends a request to an external API as part of your workflow.
+Envoie une requête à une API externe dans le cadre de votre flux de travail.
 
 <img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
 
 **Configuration**:
 
-* Enter the API endpoint URL. Using parameters from previous steps is possible.
-* Select HTTP method (GET, POST, PUT, PATCH, DELETE)
-* Add required headers and values
-* Provide sample response for structure preview
+* Entrez l'URL du point de terminaison de l'API. Il est possible d'utiliser des paramètres issus des étapes précédentes.
+* Sélectionnez la méthode HTTP (GET, POST, PUT, PATCH, DELETE)
+* Ajoutez les en-têtes et valeurs requis
+* Fournissez un exemple de réponse pour l'aperçu de la structure
 
-## AI Actions
+## Actions d'IA
 
-### AI Agent - Coming Soon
+### Agent IA - Bientôt disponible
 
-Runs an AI agent within your workflow to perform intelligent tasks.
+Exécute un agent IA au sein de votre flux de travail pour effectuer des tâches intelligentes.
 
 **Configuration**:
 
-* **Agent**: Select an existing AI agent or use the default agent
-* **Prompt**: Write the instruction for the AI agent
-* Reference variables from previous steps in the prompt
+* **Agent**: Sélectionnez un agent IA existant ou utilisez l'agent par défaut
+* **Prompt**: Écrivez l'instruction pour l'agent IA
+* Référencez des variables des étapes précédentes dans le prompt
 
-**What AI Agents can do**:
+**Ce que les agents IA peuvent faire**:
 
-* Analyze and summarize data
-* Classify or categorize records
-* Generate text content
-* Make decisions based on data
-* Interact with your CRM data using tools
+* Analyser et résumer des données
+* Classer ou catégoriser des enregistrements
+* Générer du contenu textuel
+* Prendre des décisions basées sur des données
+* Interagir avec vos données CRM à l'aide d'outils
 
-**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
+**Sortie**: La réponse de l'agent IA est disponible pour une utilisation dans les étapes suivantes. Si l'agent a un schéma de sortie structuré, la réponse suivra ce format.
 
 <Note>
-  AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/l/fr/user-guide/workflows/capabilities/workflow-credits) for details.
+  Les actions d'agent IA consomment des crédits de flux de travail en fonction du modèle d'IA utilisé. Voir [Crédits de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-credits) pour plus de détails.
 </Note>
 
 <Note>
-  AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/l/fr/user-guide/permissions-access/capabilities/permissions) for details.
+  Les agents IA respectent les autorisations basées sur les rôles. Vous pouvez attribuer des rôles spécifiques aux agents dans **Paramètres → Rôles** pour contrôler les données auxquelles ils peuvent accéder. Voir [Autorisations](/l/fr/user-guide/permissions-access/capabilities/permissions) pour plus de détails.
 </Note>

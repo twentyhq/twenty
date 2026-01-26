@@ -1,0 +1,67 @@
+---
+title: FAQ sur les widgets
+description: Questions fréquentes et messages d'erreur expliqués.
+---
+
+<AccordionGroup>
+  <Accordion title="Comment afficher des pourcentages au lieu des décomptes ?">
+    Trois options :
+
+    * **Pourcentage vide/non vide** : Dans Données affichées, sélectionnez Pourcentage vide ou Pourcentage non vide
+    * **Ratio** : Pour les champs Sélection ou Case à cocher, activez Ratio pour afficher une option spécifique en pourcentage de tous les enregistrements
+    * **Suffixe** : Pour les graphiques agrégés, ajoutez `%` comme suffixe dans les paramètres Style
+  </Accordion>
+
+  <Accordion title="Quelle est la différence entre des barres groupées et empilées ?">
+    Lorsque vous utilisez **Regrouper par**, vous pouvez afficher les séries de deux façons :
+
+    * **Groupé** : Barres côte à côte—idéal pour comparer des valeurs exactes
+    * **Empilé** : Barres l'une sur l'autre—idéal pour montrer la composition
+
+    Activez l'option **Empilé** dans les paramètres Style pour basculer.
+  </Accordion>
+
+  <Accordion title="Pourquoi ne vois-je pas les options Somme ou Moyenne ?">
+    Les opérations disponibles dépendent du **type de champ** :
+
+    * **Champs Nombre** : Somme, Moyenne, Min, Max
+    * **Champs Date** : Le plus ancien, Le plus récent (graphiques agrégés uniquement)
+    * **Champs Case à cocher** : Compter vrai, Compter faux
+
+    Si vous ne voyez pas une option, vérifiez que vous avez sélectionné un type de champ compatible.
+  </Accordion>
+
+  <Accordion title="Pourquoi certains paramètres sont-ils grisés ou manquants ?">
+    De nombreux paramètres n'apparaissent que lorsque les prérequis sont remplis :
+
+    * **Granularité de date** : Sélectionnez d'abord un champ de date
+    * **Regrouper par, Légende, Empilé** : Définissez d'abord Source
+    * **Boutons de bascule Légende et Empilé** : Définissez d'abord Regrouper par
+
+    Si un paramètre est manquant, configurez d'abord son prérequis.
+  </Accordion>
+
+  <Accordion title="Que signifie 'Aucune donnée' ?">
+    Le graphique n'a trouvé aucun enregistrement correspondant à votre configuration.
+
+    **Pour corriger :** Supprimez ou ajustez les filtres, vérifiez que vous avez sélectionné le bon objet Source, ou assurez-vous que des enregistrements existent pour votre plage de dates.
+  </Accordion>
+
+  <Accordion title="Que signifie 'Configuration non valide' ?">
+    Un paramètre requis est manquant ou incompatible.
+
+    **Pour corriger :** Assurez-vous que Source est défini, que Données affichées est configuré, et que tous les champs de regroupement requis sont sélectionnés.
+  </Accordion>
+
+  <Accordion title="Que signifie 'Données non affichées' ?">
+    Vos données dépassent les limites d'affichage (100 barres, 100 points de données ou 100 segments).
+
+    **Pour corriger :** Ajoutez des filtres pour restreindre vos données, ou changez la granularité de date de Jour à Semaine ou Mois.
+  </Accordion>
+
+  <Accordion title="Pourquoi un axe n'affiche-t-il aucune donnée ?">
+    Le champ sélectionné n'a aucune valeur pour les enregistrements de votre filtre, ou le type de champ ne correspond pas aux données attendues.
+
+    **Pour corriger :** Essayez un autre champ, ou vérifiez que les enregistrements ont des valeurs pour le champ sélectionné.
+  </Accordion>
+</AccordionGroup>
