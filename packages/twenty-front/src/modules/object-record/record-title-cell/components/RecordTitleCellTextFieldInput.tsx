@@ -16,7 +16,12 @@ export const RecordTitleCellTextFieldInput = ({
   instanceId,
   sizeVariant,
 }: RecordTitleCellTextFieldInputProps) => {
-  const { fieldDefinition, draftValue, setDraftValue, fieldValue } = useTextField();
+  const {
+    fieldDefinition,
+    draftValue,
+    setDraftValue,
+    fieldValue,
+  } = useTextField();
 
   const wrapperRef = useRef<HTMLInputElement>(null);
 
