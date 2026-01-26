@@ -1,7 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
-  ArrayMinSize,
   IsArray,
   IsBoolean,
   IsNotEmpty,
@@ -19,7 +18,6 @@ export class UpsertObjectPermissionsInput {
   roleId: string;
 
   @IsArray()
-  @ArrayMinSize(1)
   @IsNotEmpty()
   @Field(() => [ObjectPermissionInput])
   objectPermissions: ObjectPermissionInput[];
