@@ -33,9 +33,11 @@ export type FlatEntityFrom<
     TEntity,
     TMetadataName,
     'universalIdentifier'
-  > & {
-    applicationUniversalIdentifier: string;
-  } & {
+  > & // & {
+  // Does this makes sense here ? even during // run ?
+  // applicationUniversalIdentifier: string;
+  // }
+  {
     [P in ExtractJsonbProperties<TEntity>]: ExpandJsonbSerializedRelation<
       TEntity[P]
     >;
