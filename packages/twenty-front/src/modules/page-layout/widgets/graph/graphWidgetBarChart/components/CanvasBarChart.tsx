@@ -246,7 +246,7 @@ export const CanvasBarChart = ({
       };
     };
 
-    const durationMs = theme.animation.duration.fast * 1000;
+    const durationMs = theme.animation.duration.normal * 1000;
     const startTime = performance.now();
     let frameId = 0;
 
@@ -316,6 +316,7 @@ export const CanvasBarChart = ({
     theme.animation.duration.fast,
     valueDomain.max,
     valueDomain.min,
+    theme.animation.duration.normal,
   ]);
 
   const handleMouseMove = useCallback(

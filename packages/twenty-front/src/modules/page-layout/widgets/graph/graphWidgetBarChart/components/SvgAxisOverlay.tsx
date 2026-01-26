@@ -114,7 +114,8 @@ export const SvgAxisOverlay = ({
       return 0;
     }
     const step = innerHeight / categoryCount;
-    return step / 2 + index * step;
+    const effectiveIndex = categoryCount - 1 - index;
+    return step / 2 + effectiveIndex * step;
   };
 
   const hasRotation = bottomAxisTickRotation !== 0;

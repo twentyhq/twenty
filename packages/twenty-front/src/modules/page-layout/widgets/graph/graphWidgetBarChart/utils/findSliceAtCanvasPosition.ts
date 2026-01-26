@@ -113,7 +113,10 @@ export const computeAllCategorySlices = ({
     const dataPoint = data[dataIndex];
     const indexValue = String(dataPoint[indexBy]);
 
-    const categoryStart = outerPadding + dataIndex * categoryStep;
+    const effectiveIndex = isVerticalLayout
+      ? dataIndex
+      : dataLength - 1 - dataIndex;
+    const categoryStart = outerPadding + effectiveIndex * categoryStep;
     const sliceLeft = categoryStart;
     const sliceRight = categoryStart + categoryWidth;
     const sliceCenter = (sliceLeft + sliceRight) / 2;

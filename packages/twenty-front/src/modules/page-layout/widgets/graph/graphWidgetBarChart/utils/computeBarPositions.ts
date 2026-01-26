@@ -107,7 +107,8 @@ const computeGroupedBarPositions = ({
   for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
     const dataPoint = data[dataIndex];
     const indexValue = String(dataPoint[indexBy]);
-    const categoryStart = outerPadding + dataIndex * categoryStep;
+    const effectiveIndex = isVertical ? dataIndex : dataLength - 1 - dataIndex;
+    const categoryStart = outerPadding + effectiveIndex * categoryStep;
 
     for (let keyIndex = 0; keyIndex < keysLength; keyIndex++) {
       const key = keys[keyIndex];
@@ -216,7 +217,8 @@ const computeStackedBarPositions = ({
   for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
     const dataPoint = data[dataIndex];
     const indexValue = String(dataPoint[indexBy]);
-    const categoryStart = outerPadding + dataIndex * categoryStep;
+    const effectiveIndex = isVertical ? dataIndex : dataLength - 1 - dataIndex;
+    const categoryStart = outerPadding + effectiveIndex * categoryStep;
 
     let positiveStackPixel = zeroPixel;
     let negativeStackPixel = zeroPixel;
