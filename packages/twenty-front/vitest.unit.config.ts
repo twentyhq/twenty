@@ -26,7 +26,7 @@ export default defineConfig({
     reporters: ['verbose'],
     watch: false,
     pool: 'forks',
-    isolate: false,
+    isolate: true,
     setupFiles: ['./setupTests.vitest.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx,js,jsx}'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/.storybook/**'],

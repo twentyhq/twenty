@@ -27,7 +27,7 @@ export default defineConfig({
     reporters: ['verbose'],
     watch: false,
     pool: 'forks',
-    isolate: false,
+    isolate: true,
     setupFiles: ['./setupTests.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/.storybook/**'],
