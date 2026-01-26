@@ -233,9 +233,14 @@ export class CacheStorageService {
           pipeline.sCard(key);
         }
 
-        const counts = (await pipeline.exec()) as number[];
+        const results = await pipeline.exec();
 
-        totalCount += counts.reduce((sum, count) => sum + count, 0);
+        for (const result of results) {
+          if (result instanceof Error) {
+            throw result;
+          }
+          totalCount += result as number;
+        }
       }
     } while (cursor !== 0);
 
