@@ -4,7 +4,7 @@ import { renderSliceHighlight } from '@/page-layout/widgets/graph/graphWidgetBar
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BarChartLayout } from '~/generated/graphql';
 
 type BarChartHoverLayerProps = {
@@ -40,25 +40,20 @@ export const BarChartHoverLayer = ({
   const isVertical = layout === BarChartLayout.VERTICAL;
   const highlightColor = theme.background.transparent.medium;
 
-  const canvasSize = useMemo(
-    () => ({ width: chartWidth, height: chartHeight }),
-    [chartWidth, chartHeight],
-  );
-
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) {
       return;
     }
 
-    if (canvasSize.width <= 0 || canvasSize.height <= 0) {
+    if (chartWidth <= 0 || chartHeight <= 0) {
       return;
     }
 
-    canvas.width = canvasSize.width * dpr;
-    canvas.height = canvasSize.height * dpr;
-    canvas.style.width = `${canvasSize.width}px`;
-    canvas.style.height = `${canvasSize.height}px`;
+    canvas.width = chartWidth * dpr;
+    canvas.height = chartHeight * dpr;
+    canvas.style.width = `${chartWidth}px`;
+    canvas.style.height = `${chartHeight}px`;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) {
@@ -66,7 +61,7 @@ export const BarChartHoverLayer = ({
     }
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
+    ctx.clearRect(0, 0, chartWidth, chartHeight);
 
     if (!hoveredSlice) {
       return;
@@ -75,8 +70,8 @@ export const BarChartHoverLayer = ({
     ctx.save();
     ctx.translate(margins.left, margins.top);
 
-    const innerWidth = canvasSize.width - margins.left - margins.right;
-    const innerHeight = canvasSize.height - margins.top - margins.bottom;
+    const innerWidth = chartWidth - margins.left - margins.right;
+    const innerHeight = chartHeight - margins.top - margins.bottom;
 
     renderSliceHighlight({
       ctx,
@@ -90,7 +85,8 @@ export const BarChartHoverLayer = ({
     ctx.restore();
   }, [
     hoveredSlice,
-    canvasSize,
+    chartWidth,
+    chartHeight,
     margins.left,
     margins.right,
     margins.top,

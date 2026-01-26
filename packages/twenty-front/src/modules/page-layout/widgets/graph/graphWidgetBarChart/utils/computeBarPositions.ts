@@ -86,8 +86,7 @@ const computeGroupedBarPositions = ({
     outerPaddingPx: BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
   });
 
-  const effectiveInnerPadding = innerPadding;
-  const totalInnerPadding = effectiveInnerPadding * (keysLength - 1);
+  const totalInnerPadding = innerPadding * (keysLength - 1);
   const availableBarSpace = categoryWidth - totalInnerPadding;
   const barThickness = Math.min(
     Math.max(
@@ -133,7 +132,7 @@ const computeGroupedBarPositions = ({
       const categoryPosition =
         categoryStart +
         groupCenteringOffset +
-        keyIndex * (barThickness + effectiveInnerPadding);
+        keyIndex * (barThickness + innerPadding);
 
       if (isVertical) {
         bars.push({

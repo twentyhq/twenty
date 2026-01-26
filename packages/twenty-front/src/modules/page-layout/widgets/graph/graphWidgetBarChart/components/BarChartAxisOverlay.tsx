@@ -143,7 +143,6 @@ export const BarChartAxisOverlay = ({
   };
 
   const hasRotation = bottomAxisTickRotation !== 0;
-  const rotationAngle = bottomAxisTickRotation;
 
   const rotatedLabelsExtraMargin = hasRotation
     ? BAR_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN
@@ -212,7 +211,9 @@ export const BarChartAxisOverlay = ({
                   y={BAR_CHART_CONSTANTS.TICK_PADDING + tickFontSize}
                   textAnchor={hasRotation ? 'end' : 'middle'}
                   transform={
-                    hasRotation ? `rotate(${rotationAngle})` : undefined
+                    hasRotation
+                      ? `rotate(${bottomAxisTickRotation})`
+                      : undefined
                   }
                   fill={theme.font.color.secondary}
                   fontSize={tickFontSize}

@@ -13,7 +13,7 @@ import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargin
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useCallback, useMemo, type MouseEvent } from 'react';
+import { useMemo, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
 
@@ -121,146 +121,117 @@ export const BarChart = ({
   const innerWidth = chartWidth - margins.left - margins.right;
   const innerHeight = chartHeight - margins.top - margins.bottom;
 
-  const handleMouseMove = useCallback(
-    (event: MouseEvent<HTMLDivElement>) => {
-      const { x, y } = getPointerPosition({
-        event,
-        element: event.currentTarget,
-      });
+  const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
+    const { x, y } = getPointerPosition({
+      event,
+      element: event.currentTarget,
+    });
 
-      const relativeX = x - margins.left;
-      const relativeY = y - margins.top;
+    const relativeX = x - margins.left;
+    const relativeY = y - margins.top;
 
-      if (
-        !isPointInChartArea({
-          x: relativeX,
-          y: relativeY,
-          innerWidth,
-          innerHeight,
-        })
-      ) {
-        if (isDefined(hoveredSliceIndexValue)) {
-          onSliceHover(null);
-        }
-        return;
+    if (
+      !isPointInChartArea({
+        x: relativeX,
+        y: relativeY,
+        innerWidth,
+        innerHeight,
+      })
+    ) {
+      if (isDefined(hoveredSliceIndexValue)) {
+        onSliceHover(null);
       }
+      return;
+    }
 
-      const slice = findSliceAtPosition({
-        mouseX: relativeX,
-        mouseY: relativeY,
-        slices,
+    const slice = findSliceAtPosition({
+      mouseX: relativeX,
+      mouseY: relativeY,
+      slices,
+      isVerticalLayout: isVertical,
+    });
+
+    if (!isDefined(slice)) {
+      if (isDefined(hoveredSliceIndexValue)) {
+        onSliceHover(null);
+      }
+      return;
+    }
+
+    if (slice.indexValue === hoveredSliceIndexValue) {
+      return;
+    }
+
+    let offsetLeft: number;
+    let offsetTop: number;
+
+    if (slice.bars.length === 0) {
+      offsetLeft = isVertical ? slice.sliceCenter + margins.left : margins.left;
+      offsetTop = isVertical
+        ? innerHeight + margins.top
+        : slice.sliceCenter + margins.top;
+    } else {
+      const anchorBar = findAnchorBarInSlice({
+        bars: slice.bars,
         isVerticalLayout: isVertical,
       });
 
-      if (!isDefined(slice)) {
-        if (isDefined(hoveredSliceIndexValue)) {
-          onSliceHover(null);
-        }
-        return;
-      }
+      offsetLeft = isVertical
+        ? slice.sliceCenter + margins.left
+        : anchorBar.x + anchorBar.width + margins.left;
+      offsetTop = isVertical
+        ? anchorBar.y + margins.top
+        : slice.sliceCenter + margins.top;
+    }
 
-      if (slice.indexValue === hoveredSliceIndexValue) {
-        return;
-      }
+    onSliceHover({
+      slice,
+      offsetLeft,
+      offsetTop,
+    });
+  };
 
-      let offsetLeft: number;
-      let offsetTop: number;
+  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (!isDefined(onSliceClick)) {
+      return;
+    }
 
-      if (slice.bars.length === 0) {
-        offsetLeft = isVertical
-          ? slice.sliceCenter + margins.left
-          : margins.left;
-        offsetTop = isVertical
-          ? innerHeight + margins.top
-          : slice.sliceCenter + margins.top;
-      } else {
-        const anchorBar = findAnchorBarInSlice({
-          bars: slice.bars,
-          isVerticalLayout: isVertical,
-        });
+    const { x, y } = getPointerPosition({
+      event,
+      element: event.currentTarget,
+    });
 
-        offsetLeft = isVertical
-          ? slice.sliceCenter + margins.left
-          : anchorBar.x + anchorBar.width + margins.left;
-        offsetTop = isVertical
-          ? anchorBar.y + margins.top
-          : slice.sliceCenter + margins.top;
-      }
+    const relativeX = x - margins.left;
+    const relativeY = y - margins.top;
 
-      onSliceHover({
-        slice,
-        offsetLeft,
-        offsetTop,
-      });
-    },
-    [
-      margins.left,
-      margins.top,
-      innerWidth,
-      innerHeight,
+    if (
+      !isPointInChartArea({
+        x: relativeX,
+        y: relativeY,
+        innerWidth,
+        innerHeight,
+      })
+    ) {
+      return;
+    }
+
+    const slice = findSliceAtPosition({
+      mouseX: relativeX,
+      mouseY: relativeY,
       slices,
-      isVertical,
-      hoveredSliceIndexValue,
-      onSliceHover,
-    ],
-  );
+      isVerticalLayout: isVertical,
+    });
 
-  const handleMouseLeave = useCallback(() => {
-    onSliceLeave();
-  }, [onSliceLeave]);
-
-  const handleClick = useCallback(
-    (event: MouseEvent<HTMLDivElement>) => {
-      if (!isDefined(onSliceClick)) {
-        return;
-      }
-
-      const { x, y } = getPointerPosition({
-        event,
-        element: event.currentTarget,
-      });
-
-      const relativeX = x - margins.left;
-      const relativeY = y - margins.top;
-
-      if (
-        !isPointInChartArea({
-          x: relativeX,
-          y: relativeY,
-          innerWidth,
-          innerHeight,
-        })
-      ) {
-        return;
-      }
-
-      const slice = findSliceAtPosition({
-        mouseX: relativeX,
-        mouseY: relativeY,
-        slices,
-        isVerticalLayout: isVertical,
-      });
-
-      if (isDefined(slice)) {
-        onSliceClick(slice);
-      }
-    },
-    [
-      margins.left,
-      margins.top,
-      innerWidth,
-      innerHeight,
-      slices,
-      isVertical,
-      onSliceClick,
-    ],
-  );
+    if (isDefined(slice)) {
+      onSliceClick(slice);
+    }
+  };
 
   return (
     <StyledCanvasContainer
       $isClickable={isDefined(onSliceClick)}
       onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseLeave={onSliceLeave}
       onClick={handleClick}
     >
       <BarChartBaseLayer
