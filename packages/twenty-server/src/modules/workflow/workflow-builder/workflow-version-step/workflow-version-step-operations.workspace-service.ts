@@ -205,7 +205,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               ...BASE_STEP_DEFINITION,
               input: {
                 connectedAccountId: '',
-                email: '',
+                recipients: {
+                  to: '',
+                  cc: '',
+                  bcc: '',
+                },
                 subject: '',
                 body: '',
               },

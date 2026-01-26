@@ -75,8 +75,15 @@ const CommaToTagExtension = Extension.create({
             return false;
           },
           handleKeyDown: (_view, event) => {
-            if (event.key === 'Enter') {
-              return true;
+            if (event.key === 'Enter' || event.key === ' ') {
+              const textBefore = getTextBeforeCursor(editor);
+
+              if (textBefore.trim().length > 0) {
+                setTimeout(() => {
+                  convertTextToTag(editor, textBefore);
+                }, 0);
+                return true;
+              }
             }
             return false;
           },
