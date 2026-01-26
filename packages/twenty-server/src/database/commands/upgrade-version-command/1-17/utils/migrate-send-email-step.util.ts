@@ -44,7 +44,7 @@ export const migrateInput = (
 ): MigratedSendEmailInput => {
   const { email, recipients, ...rest } = input;
 
-  const toValue = recipients?.to ?? email ?? '';
+  const toValue = recipients?.to || email || '';
   const ccValue = recipients?.cc ?? '';
   const bccValue = recipients?.bcc ?? '';
 

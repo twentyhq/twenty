@@ -88,7 +88,12 @@ export const BaseChip = ({
       </StyledLabel>
 
       {isDeletable && (
-        <StyledDelete onClick={onRemove} aria-label="Remove" danger={danger}>
+        <StyledDelete
+          type="button"
+          onClick={onRemove}
+          aria-label="Remove"
+          danger={danger}
+        >
           <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
         </StyledDelete>
       )}

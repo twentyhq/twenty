@@ -138,8 +138,17 @@ export class SendEmailTool implements Tool {
       );
     }
 
+    const to = parseCommaSeparatedEmails(parameters.recipients.to);
+
+    if (to.length === 0) {
+      throw new SendEmailToolException(
+        'No valid recipients specified',
+        SendEmailToolExceptionCode.INVALID_EMAIL,
+      );
+    }
+
     return {
-      to: parseCommaSeparatedEmails(parameters.recipients.to),
+      to,
       cc: parseCommaSeparatedEmails(parameters.recipients.cc),
       bcc: parseCommaSeparatedEmails(parameters.recipients.bcc),
     };
