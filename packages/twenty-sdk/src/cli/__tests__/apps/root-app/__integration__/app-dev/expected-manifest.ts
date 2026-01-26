@@ -84,7 +84,7 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
           isAuthRequired: false,
         },
       ],
-      handlerName: 'myHandler',
+      handlerName: 'default.handler',
       sourceHandlerPath: 'my.function.ts',
       builtHandlerPath: 'my.function.mjs',
       builtHandlerChecksum: '[checksum]',
