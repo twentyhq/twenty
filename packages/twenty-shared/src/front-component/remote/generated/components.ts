@@ -59,7 +59,7 @@ import {
 // HTML Element Remote Components
 // =============================================================================
 
-export const Div = createRemoteComponent('remote-div', DivElement, {
+export const div = createRemoteComponent('remote-div', DivElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -84,7 +84,7 @@ export const Div = createRemoteComponent('remote-div', DivElement, {
   },
 });
 
-export const Span = createRemoteComponent('remote-span', SpanElement, {
+export const span = createRemoteComponent('remote-span', SpanElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -109,7 +109,7 @@ export const Span = createRemoteComponent('remote-span', SpanElement, {
   },
 });
 
-export const Section = createRemoteComponent('remote-section', SectionElement, {
+export const section = createRemoteComponent('remote-section', SectionElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -134,7 +134,7 @@ export const Section = createRemoteComponent('remote-section', SectionElement, {
   },
 });
 
-export const Article = createRemoteComponent('remote-article', ArticleElement, {
+export const article = createRemoteComponent('remote-article', ArticleElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -159,7 +159,7 @@ export const Article = createRemoteComponent('remote-article', ArticleElement, {
   },
 });
 
-export const Header = createRemoteComponent('remote-header', HeaderElement, {
+export const header = createRemoteComponent('remote-header', HeaderElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -184,7 +184,7 @@ export const Header = createRemoteComponent('remote-header', HeaderElement, {
   },
 });
 
-export const Footer = createRemoteComponent('remote-footer', FooterElement, {
+export const footer = createRemoteComponent('remote-footer', FooterElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -209,7 +209,7 @@ export const Footer = createRemoteComponent('remote-footer', FooterElement, {
   },
 });
 
-export const Main = createRemoteComponent('remote-main', MainElement, {
+export const main = createRemoteComponent('remote-main', MainElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -234,7 +234,7 @@ export const Main = createRemoteComponent('remote-main', MainElement, {
   },
 });
 
-export const Nav = createRemoteComponent('remote-nav', NavElement, {
+export const nav = createRemoteComponent('remote-nav', NavElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -259,7 +259,7 @@ export const Nav = createRemoteComponent('remote-nav', NavElement, {
   },
 });
 
-export const Aside = createRemoteComponent('remote-aside', AsideElement, {
+export const aside = createRemoteComponent('remote-aside', AsideElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -284,7 +284,7 @@ export const Aside = createRemoteComponent('remote-aside', AsideElement, {
   },
 });
 
-export const P = createRemoteComponent('remote-p', PElement, {
+export const p = createRemoteComponent('remote-p', PElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -309,7 +309,7 @@ export const P = createRemoteComponent('remote-p', PElement, {
   },
 });
 
-export const H1 = createRemoteComponent('remote-h1', H1Element, {
+export const h1 = createRemoteComponent('remote-h1', H1Element, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -334,7 +334,7 @@ export const H1 = createRemoteComponent('remote-h1', H1Element, {
   },
 });
 
-export const H2 = createRemoteComponent('remote-h2', H2Element, {
+export const h2 = createRemoteComponent('remote-h2', H2Element, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -359,7 +359,7 @@ export const H2 = createRemoteComponent('remote-h2', H2Element, {
   },
 });
 
-export const H3 = createRemoteComponent('remote-h3', H3Element, {
+export const h3 = createRemoteComponent('remote-h3', H3Element, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -384,7 +384,7 @@ export const H3 = createRemoteComponent('remote-h3', H3Element, {
   },
 });
 
-export const H4 = createRemoteComponent('remote-h4', H4Element, {
+export const h4 = createRemoteComponent('remote-h4', H4Element, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -409,7 +409,7 @@ export const H4 = createRemoteComponent('remote-h4', H4Element, {
   },
 });
 
-export const H5 = createRemoteComponent('remote-h5', H5Element, {
+export const h5 = createRemoteComponent('remote-h5', H5Element, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -434,7 +434,7 @@ export const H5 = createRemoteComponent('remote-h5', H5Element, {
   },
 });
 
-export const H6 = createRemoteComponent('remote-h6', H6Element, {
+export const h6 = createRemoteComponent('remote-h6', H6Element, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -459,7 +459,7 @@ export const H6 = createRemoteComponent('remote-h6', H6Element, {
   },
 });
 
-export const Strong = createRemoteComponent('remote-strong', StrongElement, {
+export const strong = createRemoteComponent('remote-strong', StrongElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -484,7 +484,7 @@ export const Strong = createRemoteComponent('remote-strong', StrongElement, {
   },
 });
 
-export const Em = createRemoteComponent('remote-em', EmElement, {
+export const em = createRemoteComponent('remote-em', EmElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -509,7 +509,7 @@ export const Em = createRemoteComponent('remote-em', EmElement, {
   },
 });
 
-export const Small = createRemoteComponent('remote-small', SmallElement, {
+export const small = createRemoteComponent('remote-small', SmallElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -534,7 +534,7 @@ export const Small = createRemoteComponent('remote-small', SmallElement, {
   },
 });
 
-export const Code = createRemoteComponent('remote-code', CodeElement, {
+export const code = createRemoteComponent('remote-code', CodeElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -559,7 +559,7 @@ export const Code = createRemoteComponent('remote-code', CodeElement, {
   },
 });
 
-export const Pre = createRemoteComponent('remote-pre', PreElement, {
+export const pre = createRemoteComponent('remote-pre', PreElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -584,7 +584,7 @@ export const Pre = createRemoteComponent('remote-pre', PreElement, {
   },
 });
 
-export const Blockquote = createRemoteComponent(
+export const blockquote = createRemoteComponent(
   'remote-blockquote',
   BlockquoteElement,
   {
@@ -613,7 +613,7 @@ export const Blockquote = createRemoteComponent(
   },
 );
 
-export const A = createRemoteComponent('remote-a', AElement, {
+export const a = createRemoteComponent('remote-a', AElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -638,7 +638,7 @@ export const A = createRemoteComponent('remote-a', AElement, {
   },
 });
 
-export const Img = createRemoteComponent('remote-img', ImgElement, {
+export const img = createRemoteComponent('remote-img', ImgElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -663,7 +663,7 @@ export const Img = createRemoteComponent('remote-img', ImgElement, {
   },
 });
 
-export const Ul = createRemoteComponent('remote-ul', UlElement, {
+export const ul = createRemoteComponent('remote-ul', UlElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -688,7 +688,7 @@ export const Ul = createRemoteComponent('remote-ul', UlElement, {
   },
 });
 
-export const Ol = createRemoteComponent('remote-ol', OlElement, {
+export const ol = createRemoteComponent('remote-ol', OlElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -713,7 +713,7 @@ export const Ol = createRemoteComponent('remote-ol', OlElement, {
   },
 });
 
-export const Li = createRemoteComponent('remote-li', LiElement, {
+export const li = createRemoteComponent('remote-li', LiElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -738,7 +738,7 @@ export const Li = createRemoteComponent('remote-li', LiElement, {
   },
 });
 
-export const Form = createRemoteComponent('remote-form', FormElement, {
+export const form = createRemoteComponent('remote-form', FormElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -763,7 +763,7 @@ export const Form = createRemoteComponent('remote-form', FormElement, {
   },
 });
 
-export const Label = createRemoteComponent('remote-label', LabelElement, {
+export const label = createRemoteComponent('remote-label', LabelElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -788,36 +788,32 @@ export const Label = createRemoteComponent('remote-label', LabelElement, {
   },
 });
 
-export const HtmlInput = createRemoteComponent(
-  'remote-input',
-  HtmlInputElement,
-  {
-    eventProps: {
-      onClick: { event: 'click' },
-      onDblclick: { event: 'dblclick' },
-      onMousedown: { event: 'mousedown' },
-      onMouseup: { event: 'mouseup' },
-      onMouseover: { event: 'mouseover' },
-      onMouseout: { event: 'mouseout' },
-      onMouseenter: { event: 'mouseenter' },
-      onMouseleave: { event: 'mouseleave' },
-      onKeydown: { event: 'keydown' },
-      onKeyup: { event: 'keyup' },
-      onKeypress: { event: 'keypress' },
-      onFocus: { event: 'focus' },
-      onBlur: { event: 'blur' },
-      onChange: { event: 'change' },
-      onInput: { event: 'input' },
-      onSubmit: { event: 'submit' },
-      onScroll: { event: 'scroll' },
-      onWheel: { event: 'wheel' },
-      onContextmenu: { event: 'contextmenu' },
-      onDrag: { event: 'drag' },
-    },
+export const input = createRemoteComponent('remote-input', HtmlInputElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
   },
-);
+});
 
-export const Textarea = createRemoteComponent(
+export const textarea = createRemoteComponent(
   'remote-textarea',
   TextareaElement,
   {
@@ -846,7 +842,7 @@ export const Textarea = createRemoteComponent(
   },
 );
 
-export const Select = createRemoteComponent('remote-select', SelectElement, {
+export const select = createRemoteComponent('remote-select', SelectElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -871,7 +867,7 @@ export const Select = createRemoteComponent('remote-select', SelectElement, {
   },
 });
 
-export const Option = createRemoteComponent('remote-option', OptionElement, {
+export const option = createRemoteComponent('remote-option', OptionElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -896,7 +892,7 @@ export const Option = createRemoteComponent('remote-option', OptionElement, {
   },
 });
 
-export const HtmlButton = createRemoteComponent(
+export const button = createRemoteComponent(
   'remote-button',
   HtmlButtonElement,
   {
@@ -925,7 +921,7 @@ export const HtmlButton = createRemoteComponent(
   },
 );
 
-export const Table = createRemoteComponent('remote-table', TableElement, {
+export const table = createRemoteComponent('remote-table', TableElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -950,7 +946,7 @@ export const Table = createRemoteComponent('remote-table', TableElement, {
   },
 });
 
-export const Thead = createRemoteComponent('remote-thead', TheadElement, {
+export const thead = createRemoteComponent('remote-thead', TheadElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -975,7 +971,7 @@ export const Thead = createRemoteComponent('remote-thead', TheadElement, {
   },
 });
 
-export const Tbody = createRemoteComponent('remote-tbody', TbodyElement, {
+export const tbody = createRemoteComponent('remote-tbody', TbodyElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -1000,7 +996,7 @@ export const Tbody = createRemoteComponent('remote-tbody', TbodyElement, {
   },
 });
 
-export const Tfoot = createRemoteComponent('remote-tfoot', TfootElement, {
+export const tfoot = createRemoteComponent('remote-tfoot', TfootElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -1025,7 +1021,7 @@ export const Tfoot = createRemoteComponent('remote-tfoot', TfootElement, {
   },
 });
 
-export const Tr = createRemoteComponent('remote-tr', TrElement, {
+export const tr = createRemoteComponent('remote-tr', TrElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -1050,7 +1046,7 @@ export const Tr = createRemoteComponent('remote-tr', TrElement, {
   },
 });
 
-export const Th = createRemoteComponent('remote-th', ThElement, {
+export const th = createRemoteComponent('remote-th', ThElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -1075,7 +1071,7 @@ export const Th = createRemoteComponent('remote-th', ThElement, {
   },
 });
 
-export const Td = createRemoteComponent('remote-td', TdElement, {
+export const td = createRemoteComponent('remote-td', TdElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -1100,7 +1096,7 @@ export const Td = createRemoteComponent('remote-td', TdElement, {
   },
 });
 
-export const Br = createRemoteComponent('remote-br', BrElement, {
+export const br = createRemoteComponent('remote-br', BrElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -1125,7 +1121,7 @@ export const Br = createRemoteComponent('remote-br', BrElement, {
   },
 });
 
-export const Hr = createRemoteComponent('remote-hr', HrElement, {
+export const hr = createRemoteComponent('remote-hr', HrElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },

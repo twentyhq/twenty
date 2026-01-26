@@ -1,3 +1,3 @@
 export type HostAPI = {
-  componentCode: string;
+  componentUrl: string;
 };

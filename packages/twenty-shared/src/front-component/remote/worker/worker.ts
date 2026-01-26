@@ -20,6 +20,9 @@ ThreadWebWorker.self.export<SandboxAPI>({
     root.connect(batchedConnection);
     document.body.append(root);
 
-    createRoot(root).render(api.componentCode);
+    const componentModule = await import(api.componentUrl);
+
+    const reactRoot = createRoot(root);
+    reactRoot.render(componentModule.default);
   },
 });

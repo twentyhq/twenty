@@ -1,18 +1,18 @@
-import { type SandboxAPI } from '../../types/SandboxApi';
 import { ThreadWebWorker } from '@quilted/threads';
 import { type RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect } from 'react';
+import { type SandboxAPI } from '../../types/SandboxApi';
 
 type FrontComponentWorkerEffectProps = {
   workerUrl: URL;
-  componentCode: string;
+  componentUrl: string;
   receiver: RemoteReceiver;
   onError: () => void;
 };
 
 export const FrontComponentWorkerEffect = ({
   workerUrl,
-  componentCode,
+  componentUrl,
   receiver,
   onError,
 }: FrontComponentWorkerEffectProps) => {
@@ -28,9 +28,10 @@ export const FrontComponentWorkerEffect = ({
         const workerSandbox = new ThreadWebWorker<SandboxAPI>(worker);
 
         await workerSandbox.imports.render(receiver.connection, {
-          componentCode,
+          componentUrl,
         });
-      } catch {
+      } catch (error) {
+        console.error(error);
         onError();
       }
     };
@@ -40,7 +41,7 @@ export const FrontComponentWorkerEffect = ({
     return () => {
       worker?.terminate();
     };
-  }, [componentCode, receiver, onError]);
+  }, [componentUrl, receiver, onError]);
 
   return null;
 };

@@ -240,6 +240,7 @@ const generateRemoteComponents = (htmlElements: ComponentSchema[]): string => {
 
   const generateComponentDef = (comp: ComponentSchema) => {
     const hasEvents = comp.events.length > 0;
+    const componentExportName = comp.tagName;
 
     if (hasEvents) {
       const eventProps = comp.events
@@ -249,14 +250,14 @@ const generateRemoteComponents = (htmlElements: ComponentSchema[]): string => {
         })
         .join('\n');
 
-      return `export const ${comp.name} = createRemoteComponent('${comp.customElementName}', ${comp.name}Element, {
+      return `export const ${componentExportName} = createRemoteComponent('${comp.customElementName}', ${comp.name}Element, {
   eventProps: {
 ${eventProps}
   },
 });`;
     }
 
-    return `export const ${comp.name} = createRemoteComponent('${comp.customElementName}', ${comp.name}Element);`;
+    return `export const ${componentExportName} = createRemoteComponent('${comp.customElementName}', ${comp.name}Element);`;
   };
 
   const htmlDefs = htmlElements.map(generateComponentDef).join('\n\n');
