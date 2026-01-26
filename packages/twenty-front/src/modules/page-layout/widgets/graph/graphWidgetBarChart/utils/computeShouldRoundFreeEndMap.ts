@@ -36,8 +36,7 @@ export const computeShouldRoundFreeEndMap = ({
       const hasSameSignBarAfter = keysAfterCurrent.some((afterKey) => {
         const afterValue = dataPoint[afterKey];
         return (
-          isNumber(afterValue) &&
-          (isNegative ? afterValue < 0 : afterValue > 0)
+          isNumber(afterValue) && (isNegative ? afterValue < 0 : afterValue > 0)
         );
       });
 

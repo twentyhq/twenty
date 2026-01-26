@@ -1,14 +1,12 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
 
-const getBarKey = (bar: BarPosition) =>
-  `${bar.indexValue}::${bar.seriesId}`;
+const getBarKey = (bar: BarPosition) => `${bar.indexValue}::${bar.seriesId}`;
 
 const buildBarMap = (bars: BarPosition[]) =>
   new Map(bars.map((bar) => [getBarKey(bar), bar]));
 
-const lerp = (from: number, to: number, t: number) =>
-  from + (to - from) * t;
+const lerp = (from: number, to: number, t: number) => from + (to - from) * t;
 
 const easeOutCubic = (t: number) =>
   1 - Math.pow(1 - t, BAR_CHART_CONSTANTS.ANIMATION_EASING_EXPONENT);
