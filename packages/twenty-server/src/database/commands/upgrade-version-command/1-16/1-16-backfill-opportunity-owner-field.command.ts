@@ -287,6 +287,7 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
       this.logger.error(
         `Could not find custom owner relation target field ${customOwnerField.relationTargetFieldMetadataId}`,
       );
+
       return;
     }
 
