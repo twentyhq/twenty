@@ -156,7 +156,9 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
             attachmentTargetFieldUniversalIdentifiers.has(
               field.universalIdentifier,
             );
-          const isCustomTarget = relatedObject.isCustom && !isStandardAppField;
+          const isCustomTarget =
+            !isStandardAppField &&
+            field.standardId === ATTACHMENT_STANDARD_FIELD_IDS.targetCustom;
 
           if (!isStandardTarget && !isCustomTarget) {
             return [];
