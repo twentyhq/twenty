@@ -1,122 +1,122 @@
 ---
-title: Fix Import Errors
-description: Complete troubleshooting guide for resolving CSV import errors.
+title: インポートエラーの修正
+description: CSV のインポートエラーを解決するための包括的なトラブルシューティングガイド。
 ---
 
-## Overview
+## 概要
 
-Import not working? This guide helps you identify and fix common import errors step by step.
+インポートがうまくいきませんか？ このガイドでは、一般的なインポートエラーを段階的に特定して修正する方法を説明します。
 
-## How Import Validation Works
+## インポート検証の仕組み
 
-After uploading your file and mapping columns, Twenty validates your data:
+ファイルをアップロードして列をマッピングすると、Twenty がデータを検証します。
 
-1. **Validation runs** — Twenty checks each row for errors
-2. **Errors are highlighted** — problematic rows appear in **yellow**
-3. **You can fix in-place** — edit cells directly in the import UI
-4. **Or remove rows** — skip problematic records entirely
+1. **検証の実行** — Twenty が各行にエラーがないか確認します
+2. **エラーをハイライト** — 問題のある行は**黄色**で表示されます
+3. **その場で修正可能** — インポート UI でセルを直接編集できます
+4. **行を削除** — 問題のあるレコードをまるごとスキップします
 
-<Note>**Fix errors in the UI.** You don't need to go back to your spreadsheet. Edit cells directly during import to save time.</Note>
+<Note>**エラーは UI で修正できます。** スプレッドシートに戻る必要はありません。 インポート中にセルを直接編集して時間を節約しましょう。</Note>
 
-## Step-by-Step Troubleshooting
+## ステップごとのトラブルシューティング
 
-### Step 1: Identify the Error Type
+### ステップ 1: エラーの種類を特定する
 
-Click on a highlighted row to see the specific error message. Common error types:
+ハイライトされた行をクリックすると、具体的なエラーメッセージを確認できます。 よくあるエラーの種類：
 
-| Error Message                                                         | What It Means                                                |
-| --------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Duplicate values highlighted in yellow                                | Value already exists in Twenty or appears twice in your file |
-| `{field} is not a valid {type}` (hover on yellow cell)                | Data doesn't match expected format                           |
-| Required field highlighted                                            | A required field is empty                                    |
-| `Can't connect to {object}. No unique record found...` (import fails) | Referenced record doesn't exist                              |
-| `Too many records. Up to 10000 allowed` (upload blocked)              | File has more than 10,000 records                            |
+| エラーメッセージ                                                            | 意味                                     |
+| ------------------------------------------------------------------- | -------------------------------------- |
+| 重複する値が黄色でハイライト                                                      | その値は Twenty に既に存在するか、ファイル内で 2 回出現しています |
+| `{field} is not a valid {type}`（黄色のセルにカーソルを合わせる）                    | データが想定される形式と一致していません                   |
+| 必須フィールドがハイライト表示                                                     | 必須フィールドが空です                            |
+| `Can't connect to {object}. No unique record found...`（インポートは失敗します） | 参照されているレコードが存在しません                     |
+| `Too many records. Up to 10000 allowed`（アップロードがブロックされます）            | ファイルのレコード数が 10,000 を超えています             |
 
-### Step 2: Fix the Error
+### ステップ 2: エラーを修正する
 
-Follow the specific instructions below for each error type.
+各エラータイプに応じて、以下の手順に従ってください。
 
 ---
 
-## Error: Duplicate Value
+## エラー：重複する値
 
-### What You'll See
+### あなたが見るもの
 
-Rows with duplicate values are **highlighted in yellow** in the import UI before the import starts.
+インポート開始前に、重複する値がある行はインポート UI で**黄色でハイライト表示**されます。
 
-### What It Means
+### 意味
 
-A unique field (email, domain) either:
+一意のフィールド（email、domain）が次のいずれかに該当しています：
 
-* Already exists in Twenty
-* Appears twice in your file
+* Twenty に既に存在する
+* ファイル内で 2 回出現している
 
-### How to Fix
+### 解決方法
 
-**Option 1: Edit the duplicate value**
+**オプション 1：重複している値を編集**
 
-1. Click the cell with the error
-2. Change to a unique value
-3. Continue with import
+1. エラーのあるセルをクリック
+2. 一意の値に変更
+3. インポートを続行
 
-**Option 2: Remove the duplicate row**
+**オプション 2：重複行を削除**
 
-1. Click the X next to the row
-2. The row will be skipped during import
+1. 行の横にある X をクリック
+2. その行はインポート時にスキップされます
 
-**Option 3: Let Twenty update the existing record**
+**オプション 3：Twenty に既存レコードの更新を任せる**
 
-1. Ensure your file includes a unique identifier (`email`, `domain`, or `id`)
-2. Map the unique identifier field
-3. Twenty will update the existing record instead of creating a duplicate
+1. ファイルに一意の識別子（`email`、`domain`、または `id`）が含まれていることを確認する
+2. 一意の識別子フィールドをマッピングする
+3. Twenty は重複を作成せず、既存のレコードを更新します
 
 <Note>
-  **You can update unique fields too.**
+  一意のフィールドも更新できます。
 
-  * If you keep the `id` but change the `email` → the email will be updated
-  * If you keep the `email` but change the `id` → the id will be updated
+  * `id` を保持して `email` を変更すると → メールアドレスが更新されます
+  * `email` を保持して `id` を変更すると → ID が更新されます
 
-  As long as one unique identifier matches, Twenty updates the record.
+  いずれか 1 つの一意の識別子が一致していれば、Twenty がレコードを更新します。
 </Note>
 
-### How to Prevent This Error
+### このエラーの防止策
 
-Before importing:
+インポート前：
 
-1. Sort your spreadsheet by the unique field
-2. Remove duplicate rows
-3. Check if records already exist in Twenty
+1. スプレッドシートを一意のフィールドで並べ替える
+2. 重複行を削除する
+3. レコードが Twenty に既に存在するか確認する
 
 <Warning>
-  **Soft-deleted records count toward uniqueness.**
+  **論理削除されたレコードも一意性の判定に含まれます。**
 
-  Check Command Menu → See deleted records. Records there still enforce uniqueness. Permanently delete them or restore and update.
+  コマンドメニューを確認 → 削除済みレコードを表示。 そこにあるレコードにも一意性制約が適用されます。 完全に削除するか、復元して更新します。
 </Warning>
 
-For more details: [Uniqueness Constraints](/l/ja/user-guide/data-migration/capabilities/uniqueness-constraints)
+詳細はこちら： [一意性制約](/l/ja/user-guide/data-migration/capabilities/uniqueness-constraints)
 
 ---
 
-## Error: Invalid Format
+## エラー：無効な形式
 
-### What You'll See
+### あなたが見るもの
 
-The cell value is highlighted in yellow. Hover over it to see the error message:
+セルの値が黄色でハイライト表示されます。 カーソルを合わせるとエラーメッセージが表示されます：
 
 ```
-{field name} is not a valid {field type}
+{field name} は有効な {field type} ではありません
 ```
 
-### What It Means
+### 意味
 
-The data doesn't match the expected format for that field type.
+データがそのフィールドタイプの想定形式と一致していません。
 
-### How to Fix — By Field Type
+### 解決方法 — フィールドタイプ別
 
-#### Email
+#### メール
 
-**Problem:** Invalid email format
-**Solution:** Use format `name@domain.com`
+**問題:** 無効なメール形式
+**解決策:** `name@domain.com` 形式を使用する
 
 ```
 ❌ john.smith@
@@ -124,23 +124,23 @@ The data doesn't match the expected format for that field type.
 ✓ john.smith@acme.com
 ```
 
-#### Domain
+#### ドメイン
 
-**Problem:** Inconsistent format may cause duplicates
-**Solution:** Use `https://domain.com` format (recommended)
+**問題:** 形式の不一致は重複の原因になります
+**解決策:** `https://domain.com` 形式を使用（推奨）
 
 ```
-⚠️ acme.com         (valid, but not recommended)
-⚠️ www.acme.com     (valid, but not recommended)
-✅ https://acme.com  (recommended)
+⚠️ acme.com         （有効だが非推奨）
+⚠️ www.acme.com     （有効だが非推奨）
+✅ https://acme.com  （推奨）
 ```
 
-<Note>All formats are valid, but `https://domain.com` is recommended because it matches the format used by email/calendar sync. Using other formats may create duplicate companies.</Note>
+<Note>すべての形式は有効ですが、メール/カレンダー同期で使用される形式と一致するため、`https://domain.com` を推奨します。 他の形式を使用すると、会社が重複して作成される場合があります。</Note>
 
-#### Date
+#### 日付
 
-**Problem:** Unrecognized date format
-**Solution:** Use consistent format throughout file
+**問題:** 認識できない日付形式
+**解決策:** ファイル全体で形式を統一する
 
 ```
 ✓ 2024-03-15        (YYYY-MM-DD - recommended)
@@ -148,21 +148,21 @@ The data doesn't match the expected format for that field type.
 ✓ 15/03/2024        (DD/MM/YYYY)
 ```
 
-#### Phone
+#### 電話
 
-**Problem:** Missing required columns
-**Solution:** Include all phone columns
+**問題:** 必須列が不足
+**解決策:** すべての電話関連の列を含める
 
-| Column                                  | Example      |
+| 列                                       | 例            |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-#### Boolean
+#### ブール型
 
-**Problem:** Wrong boolean value
-**Solution:** Use uppercase `TRUE` or `FALSE`
+**問題:** 不正なブール値
+**解決策:** 大文字の `TRUE` または `FALSE` を使用する
 
 ```
 ❌ true
@@ -172,37 +172,37 @@ The data doesn't match the expected format for that field type.
 ✓ FALSE
 ```
 
-#### Select / Multi-Select
+#### セレクト／マルチセレクト
 
-**Problem:** Value doesn't match existing options
-**Solution:** Use **API names**, not display labels
+**問題:** 値が既存のオプションと一致しない
+**解決策:** 表示ラベルではなく、**API 名**を使用する
 
-How to find API names:
+API 名の確認方法:
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
-4. Use the API name (e.g., `OPTION_1`, not "Option 1")
+1. **設定 → データモデル** に移動する
+2. オブジェクトとフィールドを選択する
+3. **詳細モード** を有効にする（右下のトグル）
+4. API 名を使用する（例：`OPTION_1`。"Option 1" ではありません）
 
 ```
 ❌ High Priority
 ✓ HIGH_PRIORITY
 ```
 
-#### Currency
+#### 通貨
 
-**Problem:** Missing amount or currency code
-**Solution:** Fill both columns
+**問題:** 金額または通貨コードが欠落
+**解決策:** 両方の列を入力する
 
-| Column                | Example   |
+| 列                     | 例         |
 | --------------------- | --------- |
 | **Amount / Amount**   | `1234.56` |
 | **Amount / Currency** | `USD`     |
 
-#### Number
+#### 数
 
-**Problem:** Non-numeric characters
-**Solution:** Numbers only, period for decimals
+**問題:** 数値以外の文字を含む
+**解決策:** 数字のみを使用し、小数はピリオドを使用する
 
 ```
 ❌ $1,234.56
@@ -210,221 +210,221 @@ How to find API names:
 ✓ 1234.56
 ```
 
-For complete format reference: [Field Mapping](/l/ja/user-guide/data-migration/capabilities/field-mapping)
+完全な形式のリファレンス: [フィールドマッピング](/l/ja/user-guide/data-migration/capabilities/field-mapping)
 
 ---
 
-## Error: Required Field Missing
+## エラー：必須フィールドが未入力
 
-### What You'll See
+### あなたが見るもの
 
-The row is highlighted in yellow with the required field cell marked.
+必須フィールドのセルがマークされ、その行が黄色でハイライト表示されます。
 
-### What It Means
+### 意味
 
-A required field is empty for this row.
+この行で必須フィールドが未入力です。
 
-### How to Fix
+### 解決方法
 
-**Option 1: Enter a value**
+**オプション 1：値を入力**
 
-1. Click the empty cell
-2. Enter a value
-3. Continue with import
+1. 空のセルをクリック
+2. 値を入力する
+3. インポートを続行
 
-**Option 2: Remove the row**
+**オプション 2：行を削除**
 
-1. If you don't have the data, click X to skip the row
+1. データがない場合は、X をクリックしてその行をスキップ
 
-### How to Prevent This Error
+### このエラーの防止策
 
-Before importing, identify required fields:
+インポート前に、必須フィールドを確認してください：
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Check which fields are marked as required
+1. **設定 → データモデル** に移動する
+2. 対象のオブジェクトを選択する
+3. どのフィールドが必須としてマークされているか確認する
 
 ---
 
-## Error: Relation Not Found
+## エラー：リレーションが見つかりません
 
-### What You'll See
+### あなたが見るもの
 
-This error appears **after the import starts** — the import fails with a message like:
+このエラーは**インポート開始後**に発生します — 次のようなメッセージとともにインポートが失敗します：
 
 ```
 Can't connect to company. No unique record found with condition: id = 7776ee49-f608-4a77-8cc8-6fe96ae1e43f
 ```
 
-This means there is no Company in Twenty with that specific identifier.
+これは、その特定の識別子を持つ会社が Twenty に存在しないことを意味します。
 
-<Note>Unlike other errors, this one is not caught during the data review step. The import will start and then fail when it encounters the missing relation.</Note>
+<Note>他のエラーと異なり、このエラーはデータレビューの段階では検出されません。 インポートは開始されますが、欠落しているリレーションに遭遇すると失敗します。</Note>
 
-### What It Means
+### 意味
 
-You're trying to link to a record that doesn't exist in Twenty.
+Twenty に存在しないレコードへリンクしようとしています。
 
-### How to Fix
+### 解決方法
 
-**Option 1: Import parent records first**
+**オプション 1：まず親レコードをインポート**
 
-1. Cancel the current import
-2. Import the parent records (e.g., Companies)
-3. Then import the child records (e.g., People)
+1. 現在のインポートをキャンセル
+2. 親レコード（例：会社）をインポート
+3. その後、子レコード（例：連絡先）をインポート
 
-**Option 2: Fix the reference value**
+**オプション 2：参照値を修正**
 
-1. Check the reference value in your file
-2. Ensure it exactly matches an existing record
-3. Verify format: domains should be `https://domain.com`
+1. ファイル内の参照値を確認
+2. 既存のレコードと完全一致していることを確認
+3. 形式を確認：ドメインは `https://domain.com` にする
 
-**Option 3: Remove the relation**
+**オプション 3：リレーションを削除**
 
-1. Clear the cell to import without the relation
-2. Add the relation manually later
+1. セルを空にして、リレーションなしでインポート
+2. 後で手動でリレーションを追加
 
-### How to Prevent This Error
+### このエラーの防止策
 
-1. **Import in the correct order:**
-   * Companies first
-   * People second (with company references)
-   * Opportunities third
+1. **正しい順序でインポートする：**
+   * まず会社
+   * 次に連絡先（会社の参照付き）
+   * 最後に商談
 
-2. **Verify reference values:**
-   * Export parent records to get exact identifiers
-   * Use domain format `https://domain.com`
-   * Check for typos and case sensitivity
+2. **参照値を検証する：**
+   * 親レコードをエクスポートして正確な識別子を取得
+   * ドメイン形式は `https://domain.com` を使用
+   * 入力ミスや大文字・小文字の相違を確認
 
 <Warning>
-  **Import will fail if a reference is made to a non-existent record.**
+  **存在しないレコードを参照している場合、インポートは失敗します。**
 
-  Always import parent objects before child objects.
+  必ず子オブジェクトの前に親オブジェクトをインポートしてください。
 </Warning>
 
-For more details: [Import Relations](/l/ja/user-guide/data-migration/capabilities/import-relations)
+詳細はこちら： [リレーションのインポート](/l/ja/user-guide/data-migration/capabilities/import-relations)
 
 ---
 
-## Error: File Too Large
+## エラー：ファイルが大きすぎます
 
-### What You'll See
+### あなたが見るもの
 
-This error appears **when uploading your file** — the upload is blocked entirely:
+このエラーは**ファイルのアップロード時**に表示され、アップロードは完全にブロックされます：
 
 ```
 Too many records. Up to 10000 allowed
 ```
 
-You won't be able to proceed to the data review step until you reduce the file size.
+ファイルサイズを減らすまで、データレビューの段階に進むことはできません。
 
-### What It Means
+### 意味
 
-Your file has more than 10,000 records.
+ファイルのレコード数が 10,000 を超えています。
 
-### How to Fix
+### 解決方法
 
-**Option 1: Split into multiple files**
+**オプション 1：複数のファイルに分割**
 
-1. Divide your data into files of 10,000 records or fewer
-2. Import each file separately
-3. Maintain import order (Companies before People)
+1. データを 10,000 レコード以下のファイルに分割する
+2. 各ファイルを個別にインポートする
+3. インポートの順序を維持する（連絡先の前に会社）
 
-**Option 2: Use API import**
-For very large datasets, use the API which has no record limit.
-See: [How to Import Data via API](/l/ja/user-guide/data-migration/how-tos/import-data-via-api)
-
----
-
-## Error: Field Not Recognized
-
-### What It Means
-
-A column in your file can't be mapped because the field doesn't exist in Twenty.
-
-### How to Fix
-
-1. Go to **Settings → Data Model**
-2. Select the object you're importing
-3. Click **+ Add field**
-4. Create the custom field with the appropriate type
-5. Re-upload your file
-
-<Note>The CSV import creates records, not fields. All fields must exist before importing.</Note>
+**オプション 2：API インポートを使用**
+非常に大きなデータセットには、レコード数の制限がない API を使用してください。
+参照：[API でデータをインポートする方法](/l/ja/user-guide/data-migration/how-tos/import-data-via-api)
 
 ---
 
-## Error: User Relation Empty
+## エラー：フィールドが認識されません
 
-### What It Means
+### 意味
 
-You're trying to assign a record to a user (Owner, Assignee) but the relation isn't being mapped.
+ファイル内の列をマッピングできません。該当フィールドが Twenty に存在しないためです。
 
-### Common Causes
+### 解決方法
 
-1. **User hasn't accepted their invitation** — the user doesn't exist in Twenty yet
-2. **Using user ID from old system** — Twenty can't match IDs from another system
-3. **Wrong email format** — the email doesn't match the user's Twenty account
+1. **設定 → データモデル** に移動する
+2. インポート対象のオブジェクトを選択する
+3. **+ Add field** をクリック
+4. 適切なタイプでカスタムフィールドを作成する
+5. ファイルを再アップロードする
 
-### How to Fix
+<Note>CSV インポートで作成されるのはレコードであり、フィールドではありません。 すべてのフィールドは、インポート前に存在している必要があります。</Note>
 
-1. Ensure all users have **accepted their invitation** to your Twenty workspace
-2. Use the user's **email address** (not their name or old system ID)
-3. Use the same email they used to join Twenty
+---
+
+## エラー：ユーザーのリレーションが空
+
+### 意味
+
+レコードをユーザー（所有者、担当者）に割り当てようとしていますが、そのリレーションがマッピングされていません。
+
+### よくある原因
+
+1. **ユーザーが招待を受諾していない** — そのユーザーはまだ Twenty に存在していません
+2. **旧システムのユーザー ID を使用している** — Twenty は他システムの ID を照合できません
+3. **メール形式が不正** — 入力されたメールがユーザーの Twenty アカウントと一致していません
+
+### 解決方法
+
+1. すべてのユーザーが Twenty ワークスペースへの**招待を受諾**していることを確認する
+2. ユーザーの**メールアドレス**を使用する（名前や旧システムの ID ではなく）
+3. Twenty に参加した際と同じメールアドレスを使用する
 
 <Warning>
-  **Users must accept invitations before importing.**
+  **インポート前に、ユーザーは招待を受諾している必要があります。**
 
-  If a user hasn't accepted their invitation, records referencing them will have empty user relations.
+  ユーザーが招待を受諾していない場合、そのユーザーを参照するレコードのユーザーリレーションは空になります。
 </Warning>
 
 ---
 
-## Pre-Import Checklist
+## インポート前チェックリスト
 
-Avoid errors by checking these before importing:
+インポート前に次を確認し、エラーを回避してください：
 
-### File Requirements
+### ファイル要件
 
-<Check>File is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>File uses UTF-8 encoding</Check>
+<Check>ファイル形式が CSV、XLSX、または XLS</Check>
+<Check>レコード数が 10,000 未満</Check>
+<Check>UTF-8 エンコードを使用</Check>
 
-### Data Quality
+### データ品質
 
-<Check>No duplicate emails (for People)</Check>
-<Check>No duplicate domains (for Companies)</Check>
-<Check>All dates use consistent format</Check>
-<Check>All domains use `https://domain.com` format</Check>
+<Check>メールの重複なし（連絡先）</Check>
+<Check>ドメインの重複なし（会社）</Check>
+<Check>すべての日付が一貫した形式</Check>
+<Check>すべてのドメインが `https://domain.com` 形式</Check>
 
-### Field Formats
+### フィールドの形式
 
-<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
-<Check>Select fields use API names, not display labels</Check>
-<Check>Phone fields have all required columns</Check>
-<Check>Currency fields have both Amount and Currency Code</Check>
+<Check>ブール型フィールドは `TRUE` または `FALSE`（大文字）を使用</Check>
+<Check>セレクト型フィールドは表示ラベルではなく API 名を使用</Check>
+<Check>電話フィールドに必要な列がすべて揃っている</Check>
+<Check>通貨フィールドに金額と通貨コードの両方がある</Check>
 
-### Relations
+### 関連
 
-<Check>Parent records imported before child records</Check>
-<Check>Relation columns reference existing records</Check>
-<Check>Domain format matches Twenty's format exactly</Check>
+<Check>親レコードを子レコードより先にインポート</Check>
+<Check>リレーション列が既存レコードを参照している</Check>
+<Check>ドメイン形式が Twenty の形式と完全一致</Check>
 
-### Data Model
+### データモデル
 
-<Check>All custom fields exist in Settings → Data Model</Check>
-<Check>Select options exist before importing</Check>
+<Check>すべてのカスタムフィールドが 設定 → データモデル に存在</Check>
+<Check>インポート前にセレクトの選択肢が作成済み</Check>
 
 ---
 
-## Still Having Issues?
+## まだ問題がありますか？
 
-If you've tried the above solutions:
+上記の解決策を試しても解決しない場合：
 
-1. **Download the sample file** — see the exact format Twenty expects
-2. **Export existing records** — compare your file to working data
-3. **Test with a small batch** — try 5-10 rows first
-4. **Check the reference articles:**
-   * [Field Mapping](/l/ja/user-guide/data-migration/capabilities/field-mapping)
-   * [Uniqueness Constraints](/l/ja/user-guide/data-migration/capabilities/uniqueness-constraints)
-   * [Import Relations](/l/ja/user-guide/data-migration/capabilities/import-relations)
-   * [Error Handling](/l/ja/user-guide/data-migration/capabilities/error-handling)
+1. **サンプルファイルをダウンロード** — Twenty が想定する正確な形式を確認
+2. **既存レコードをエクスポート** — ファイルを動作しているデータと比較
+3. **少量でテスト** — まず 5〜10 行で試す
+4. **参考記事を確認：**
+   * [フィールドマッピング](/l/ja/user-guide/data-migration/capabilities/field-mapping)
+   * [一意性制約](/l/ja/user-guide/data-migration/capabilities/uniqueness-constraints)
+   * [リレーションのインポート](/l/ja/user-guide/data-migration/capabilities/import-relations)
+   * [エラー処理](/l/ja/user-guide/data-migration/capabilities/error-handling)

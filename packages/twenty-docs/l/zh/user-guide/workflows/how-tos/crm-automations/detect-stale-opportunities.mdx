@@ -1,56 +1,56 @@
 ---
-title: Detect Stale Opportunities
-description: Automatically notify managers when opportunities haven't been updated.
+title: 检测停滞商机
+description: 当商机未更新时自动通知经理。
 ---
 
-Keep your pipeline healthy by alerting managers when opportunities go stale. This workflow checks for opportunities that haven't been updated in a specified number of days.
+通过在商机变得停滞时提醒经理，保持销售管道健康。 此工作流会检查在指定天数内未更新的商机。
 
-## The Problem
+## 问题
 
-Opportunities sitting without updates lead to:
+长期未更新的商机会导致：
 
-* Deals going cold
-* Unreliable forecasts
-* Lost revenue
+* 交易变冷
+* 不可靠的预测
+* 收入流失
 
-## The Solution
+## 解决方案
 
-Create a scheduled workflow that finds stale opportunities and emails their managers.
+创建一个定时工作流，用于查找停滞商机并向其经理发送电子邮件。
 
-## Step-by-Step Setup
+## 分步设置
 
-### Step 1: Create the Workflow
+### 步骤 1：创建工作流
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it "Stale Opportunity Alert"
+1. 进入 **设置 → 工作流**
+2. 点击 **+ 新建工作流**
+3. 命名为 "停滞商机警报"
 
-### Step 2: Configure the Trigger
+### 步骤 2：配置触发器
 
-1. Select **On a Schedule**
-2. Set to run daily (e.g., every day at 8 AM)
+1. 选择 **On a Schedule**
+2. 设置为每日运行（例如，每天上午 8 点）
 
-### Step 3: Search for Stale Opportunities
+### 步骤 3：搜索停滞商机
 
-1. Add **Search Records** action
-2. Configure:
+1. 添加 **搜索记录** 操作
+2. 配置:
 
-| Field      | Value                                           |
-| ---------- | ----------------------------------------------- |
-| **Object** | Opportunities                                   |
-| **Filter** | Updated At is before (today - 7 days)           |
-| **Filter** | Stage is not "Closed Won" AND not "Closed Lost" |
-| **Limit**  | 100                                             |
+| 字段     | 值                                   |
+| ------ | ----------------------------------- |
+| **对象** | 机会                                  |
+| **过滤** | 更新时间早于（今天 - 7 天）                    |
+| **过滤** | 阶段不为 "Closed Won" 且不为 "Closed Lost" |
+| **限制** | 100                                 |
 
-### Step 4: Check If Any Found
+### 步骤 4：检查是否有结果
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. If no stale opportunities, the workflow stops here
+1. 添加 **过滤** 操作
+2. 条件：`{{searchRecords.length}}` 大于 0
+3. 如果没有停滞商机，工作流在此停止
 
-### Step 5: Format the Alert (Code Action)
+### 步骤 5：格式化警报（代码操作）
 
-Add a **Code** action to format the email:
+添加一个 **Code** 操作来格式化邮件：
 
 ```javascript
 export const main = async (params) => {
@@ -88,49 +88,49 @@ export const main = async (params) => {
 };
 ```
 
-### Step 6: Send Alert Email
+### 步骤 6：发送警报邮件
 
-Add **Send Email** action:
+添加 **Send Email** 操作：
 
-| Field       | Value                                                       |
-| ----------- | ----------------------------------------------------------- |
-| **To**      | sales-manager@yourcompany.com                               |
-| **Subject** | `🚨 {{code.totalCount}} Stale Opportunities Need Attention` |
-| **Body**    | `{{code.summary}}`                                          |
+| 字段      | 值                                  |
+| ------- | ---------------------------------- |
+| **收件人** | sales-manager@yourcompany.com      |
+| **主题**  | `🚨 {{code.totalCount}} 个停滞商机需要关注` |
+| **正文**  | `{{code.summary}}`                 |
 
-### Step 7: Test and Activate
+### 步骤 7：测试并启用
 
-1. Click **Test** to run the workflow
-2. Check that the email contains the right data
-3. Activate when ready
+1. 点击 **Test** 以运行工作流
+2. 检查邮件是否包含正确的数据
+3. 准备就绪后启用
 
-## Customization Options
+## 自定义选项
 
-### Change Staleness Threshold
+### 更改停滞阈值
 
-Modify the Search Records filter to change from 7 days to your preferred period:
+修改“搜索记录”的过滤条件，将 7 天更改为你偏好的周期：
 
-* 3 days for high-velocity sales
-* 14 days for enterprise deals
-* 30 days for long sales cycles
+* 高节奏销售：3 天
+* 企业级交易：14 天
+* 长销售周期：30 天
 
-### Alert Individual Reps
+### 单独提醒销售代表
 
-Instead of one manager email, use **Iterator** to send personalized emails to each rep about their own stale deals.
+使用 **Iterator** 向每位销售代表发送关于其自身停滞交易的个性化邮件，而不是只发一封经理邮件。
 
-### Add Escalation
+### 添加升级机制
 
-Create multiple workflows with increasing severity:
+创建多个工作流，并逐步提高严重性：
 
-1. Day 7: Email to rep
-2. Day 14: Email to rep + manager
-3. Day 21: Create task for manager to intervene
+1. 第 7 天：发送电子邮件给销售代表
+2. 第 14 天：发送电子邮件给销售代表和经理
+3. 第 21 天：为经理创建任务以便介入
 
-### Include in Slack
+### 集成 Slack
 
-Use **HTTP Request** to post to a Slack webhook instead of or in addition to email.
+使用 **HTTP Request** 向 Slack 的 webhook 发送消息，替代或补充电子邮件。
 
-## Related
+## 相关内容
 
-* [Workflow Actions](/l/zh/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/zh/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
+* [从工作流发送电子邮件](/l/zh/user-guide/workflows/capabilities/send-emails-from-workflows)

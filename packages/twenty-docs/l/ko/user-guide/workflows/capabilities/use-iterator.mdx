@@ -1,92 +1,88 @@
 ---
-title: Use Iterator
-description: Loop through arrays of records to perform actions on each item.
+title: Iterator 사용
+description: 레코드 배열을 순회하여 각 항목에 대해 작업을 수행합니다.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Iterator lets you loop through an array of records and perform actions on each one. It's essential for workflows that need to process multiple records returned by Search Records or received via webhooks.
+Iterator를 사용하면 레코드 배열을 반복하면서 각 항목에 대해 작업을 수행할 수 있습니다. 이는 Search Records가 반환하거나 웹훅으로 수신한 여러 레코드를 처리해야 하는 워크플로우에 필수적입니다.
 
-<Note>
-  Iterator is currently in beta. Activate it under **Settings → Releases → Lab**.
-</Note>
+## Iterator 사용 시기
 
-## When to Use Iterator
+| 시나리오         | 예시                   |
+| ------------ | -------------------- |
+| **검색 결과 처리** | 찾은 각 사람에게 이메일 보내기    |
+| **웹훅 배열 처리** | 각 항목에 대해 순서대로 레코드 생성 |
+| **대량 업데이트**  | 계산된 값으로 여러 레코드를 업데이트 |
+| **알림**       | 이벤트에 대해 여러 사람에게 알림   |
 
-| Scenario                   | Example                                        |
-| -------------------------- | ---------------------------------------------- |
-| **Process search results** | Send email to each person found                |
-| **Handle webhook arrays**  | Create records for each item in order          |
-| **Bulk updates**           | Update multiple records with calculated values |
-| **Notifications**          | Alert multiple people about an event           |
+## Iterator 이해하기
 
-## Understanding Iterator
+Iterator는 입력으로 **배열**을 필요로 합니다. 그다음:
 
-Iterator expects an **array** as input. It then:
+1. 배열에서 첫 번째 항목을 가져옵니다
+2. 해당 항목으로 Iterator 내부의 모든 액션을 실행합니다
+3. 다음 항목으로 이동합니다
+4. 모든 항목이 처리될 때까지 반복합니다
 
-1. Takes the first item from the array
-2. Runs all actions inside the iterator with that item
-3. Moves to the next item
-4. Repeats until all items are processed
+## 기본 설정
 
-## Basic Setup
+### 예시: 검색 결과의 모든 사람에게 이메일 보내기
 
-### Example: Email Everyone in Search Results
+**목표**: 특정 회사의 모든 연락처를 찾아 각 사람에게 개인화된 이메일을 보냅니다.
 
-**Goal**: Find all contacts in a specific company and send each one a personalized email.
+### 1단계: 레코드 검색
 
-### Step 1: Search for Records
+1. **레코드 검색** 액션을 추가합니다
+2. 오브젝트: **People**
+3. 필터: Company가 "Acme Inc"와 같음
+4. 이렇게 하면 사람들의 배열이 반환됩니다
 
-1. Add **Search Records** action
-2. Object: **People**
-3. Filter: Company equals "Acme Inc"
-4. This returns an array of people
+### 2단계: 결과 존재 여부 확인
 
-### Step 2: Check Results Exist
+1. **필터** 액션을 추가합니다
+2. 조건: `{{searchRecords.length}}`가 0보다 큼
+3. 이렇게 하면 결과가 비어 있을 때 발생하는 Iterator 오류를 방지합니다
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. This prevents Iterator errors on empty results
+### 3단계: 이터레이터 추가
 
-### Step 3: Add Iterator
+1. **Iterator** 액션을 추가합니다
+2. 배열 입력: `{{searchRecords}}` 선택
+3. 이렇게 하면 루프가 생성됩니다
 
-1. Add **Iterator** action
-2. Array input: Select `{{searchRecords}}`
-3. This creates a loop
+### 4단계: Iterator 내부에 액션 추가
 
-### Step 4: Add Actions Inside Iterator
+Iterator 아래에 배치된 액션은 각 항목에 대해 실행됩니다:
 
-Actions placed after Iterator run for each item:
+1. **Send Email** 액션을 추가합니다(Iterator 내부)
+2. 받는 사람: `{{iterator.currentItem.email}}`
+3. 제목: 안녕하세요 `{{iterator.currentItem.firstName}}`!
+4. 본문: 현재 항목의 필드를 사용한 개인화 메시지
 
-1. Add **Send Email** action (inside iterator)
-2. To: `{{iterator.currentItem.email}}`
-3. Subject: Hello `{{iterator.currentItem.firstName}}`!
-4. Body: Personalized message using current item fields
+### 결과
 
-### Result
+Search Records가 5명의 사람을 반환하면, Iterator는 다음을 수행합니다:
 
-If Search Records returns 5 people, the Iterator:
+* 사람 1에게 이메일을 보냅니다
+* 사람 2에게 이메일을 보냅니다
+* ... 5명 모두에 대해 계속 진행합니다
 
-* Sends email to person 1
-* Sends email to person 2
-* ... continues for all 5
+## 현재 항목 데이터에 접근하기
 
-## Accessing Current Item Data
+Iterator 내부에서 현재 레코드에 접근하려면 `{{iterator.currentItem}}`를 사용하세요:
 
-Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
+| 변수                                      | 설명                  |
+| --------------------------------------- | ------------------- |
+| `{{iterator.currentItem}}`              | 현재 레코드 객체 전체        |
+| `{{iterator.currentItem.id}}`           | 레코드 ID              |
+| `{{iterator.currentItem.email}}`        | 이메일 필드              |
+| `{{iterator.currentItem.company.name}}` | 연관된 회사 이름           |
+| `{{iterator.index}}`                    | 배열에서의 현재 위치(0부터 시작) |
 
-| Variable                                | Description                         |
-| --------------------------------------- | ----------------------------------- |
-| `{{iterator.currentItem}}`              | The entire current record object    |
-| `{{iterator.currentItem.id}}`           | Record ID                           |
-| `{{iterator.currentItem.email}}`        | Email field                         |
-| `{{iterator.currentItem.company.name}}` | Related company name                |
-| `{{iterator.index}}`                    | Current position in array (0-based) |
+## 일반적인 패턴
 
-## Common Patterns
+### 여러 레코드 업데이트
 
-### Update Multiple Records
-
-**Goal**: Mark all overdue tasks as "Late"
+**목표**: 기한이 지난 모든 작업을 "Late"로 표시
 
 ```
 1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
@@ -98,9 +94,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Status: Late
 ```
 
-### Create Records from Array
+### 배열에서 레코드 생성
 
-**Goal**: Webhook receives order with multiple items, create a record for each
+**목표**: 웹훅이 여러 항목이 있는 주문을 수신하면 각 항목에 대해 레코드를 생성
 
 ```
 1. Webhook Trigger (receives items array)
@@ -113,9 +109,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Related Order: {{trigger.body.orderId}}
 ```
 
-### Conditional Processing Inside Loop
+### 루프 내부 조건부 처리
 
-**Goal**: Only send email to contacts with valid emails
+**목표**: 유효한 이메일이 있는 연락처에게만 이메일 보내기
 
 ```
 1. Search Records (People)
@@ -125,56 +121,56 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
            - To: {{iterator.currentItem.email}}
 ```
 
-## Troubleshooting
+## 문제 해결
 
-### "Iterator expects an array"
+### "Iterator는 배열을 필요로 합니다"
 
-**Cause**: You passed a single record instead of an array.
+**원인**: 배열이 아닌 단일 레코드를 전달했습니다.
 
-**Fix**: Make sure you're passing the result of Search Records or an array field, not a single record.
+**해결 방법**: 단일 레코드가 아니라 Search Records의 결과 또는 배열 필드를 전달했는지 확인하세요.
 
 ```
 ✅ Correct: {{searchRecords}}
 ❌ Wrong: {{searchRecords[0]}}
 ```
 
-### Iterator Doesn't Run
+### Iterator가 실행되지 않음
 
-**Cause**: The array is empty.
+**원인**: 배열이 비어 있습니다.
 
-**Fix**: Add a Filter before Iterator to check array length:
+**해결 방법**: 배열 길이를 확인하기 위해 Iterator 앞에 Filter를 추가하세요:
 
 ```
 Filter: {{searchRecords.length}} > 0
 ```
 
-### Actions Run Too Many Times
+### 액션이 너무 많이 실행됨
 
-**Cause**: Search Records returned more records than expected.
+**원인**: Search Records가 예상보다 많은 레코드를 반환했습니다.
 
-**Fix**:
+**해결 방법**:
 
-* Add more specific filters to Search Records
-* Set a limit on Search Records (max 200)
-* Add Filter inside Iterator for additional conditions
+* Search Records에 더 구체적인 필터를 추가하세요
+* Search Records에 한도를 설정하세요(최대 200)
+* 추가 조건을 위해 Iterator 내부에 Filter를 추가하세요
 
-## Performance Considerations
+## 성능 고려 사항
 
-* **Credit usage**: Each iteration consumes credits for its actions
-* **Time**: Large arrays take longer to process
-* **Limits**: Consider batching very large operations
-* **Rate limits**: External API calls may hit rate limits with many iterations
+* **크레딧 사용량**: 각 반복은 해당 액션 실행에 크레딧을 소모합니다
+* **시간**: 큰 배열일수록 처리에 더 오래 걸립니다
+* **제한**: 매우 큰 작업은 배치 처리하는 것을 고려하세요
+* **요청 제한**: 반복이 많으면 외부 API 호출이 요청 제한에 걸릴 수 있습니다
 
-## Best Practices
+## 모범 사례
 
-1. **Always check array length** before Iterator to avoid errors
-2. **Add filters inside loops** when not all items need processing
-3. **Rename your Iterator step** to describe what it's looping through
-4. **Test with small arrays** before processing large datasets
-5. **Monitor workflow runs** to ensure iterations complete as expected
+1. 오류를 피하려면 Iterator 전에 **항상 배열 길이를 확인하세요**
+2. 모든 항목을 처리할 필요가 없는 경우 **루프 내부에 필터를 추가하세요**
+3. 순회 대상을 설명하도록 **Iterator 단계의 이름을 바꾸세요**
+4. **작은 배열로 테스트하세요** 대용량 데이터를 처리하기 전에
+5. 반복이 예상대로 완료되는지 확인하려면 **워크플로우 실행을 모니터링하세요**
 
-## Related
+## 관련 항목
 
-* [Workflow Actions](/l/ko/user-guide/workflows/capabilities/workflow-actions)
-* [How to Use Branches](/l/ko/user-guide/workflows/capabilities/use-branches-in-workflows)
-* [Workflows FAQ](/l/ko/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+* [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)
+* [브랜치 사용 방법](/l/ko/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [워크플로우 FAQ](/l/ko/user-guide/workflows/how-tos/need-more-help/workflows-faq)

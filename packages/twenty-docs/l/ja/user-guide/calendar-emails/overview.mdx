@@ -1,132 +1,130 @@
 ---
-title: Calendar & Emails
-description: Connect your email and calendar accounts to Twenty.
+title: カレンダーとメール
+description: メールとカレンダーのアカウントをTwentyに接続します。
 image: /images/user-guide/emails/emails_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/emails/emails_header.png" alt="Calendar & Emails" />
+  <img src="/images/user-guide/emails/emails_header.png" alt="カレンダーとメール" />
 </Frame>
 
-## Connection Options
+## 接続オプション
 
-### Google Account (Gmail & Google Calendar)
+### Google アカウント（Gmail & Google カレンダー）
 
-1. Go to **Settings → Accounts**
-2. Click **Add account**
-3. Select **Continue with Google**
-4. Authorize Twenty to access your Gmail and Google Calendar
-5. Configure email sync settings (visibility, auto-creation) → click **Next**
-6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
-7. Your emails and calendar events will start syncing automatically
+1. **設定 → アカウント** に移動します
+2. **アカウントを追加**をクリックします
+3. **Googleで続行**を選択します
+4. Twenty に Gmail および Google カレンダーへのアクセスを許可
+5. メールの同期設定（表示、自動作成）を設定し、→ **次へ**をクリックします
+6. カレンダーの同期設定（表示、自動作成）を設定し、→ **アカウントを追加**をクリックします
+7. メールとカレンダーのイベントは自動で同期され始めます
 
-### Microsoft Account (Outlook & Microsoft Calendar)
+### Microsoft アカウント（Outlook & Microsoft カレンダー）
 
-1. Go to **Settings → Accounts**
-2. Click **Add account**
-3. Select **Continue with Microsoft**
-4. Authorize Twenty to access your Outlook and Microsoft Calendar
-5. Configure email sync settings (visibility, auto-creation) → click **Next**
-6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
-7. Your emails and calendar events will start syncing automatically
+1. **設定 → アカウント** に移動します
+2. **アカウントを追加**をクリックします
+3. **Microsoftで続行**を選択します
+4. Twenty に Outlook および Microsoft カレンダーへのアクセスを許可
+5. メールの同期設定（表示、自動作成）を設定し、→ **次へ**をクリックします
+6. カレンダーの同期設定（表示、自動作成）を設定し、→ **アカウントを追加**をクリックします
+7. メールとカレンダーのイベントは自動で同期され始めます
 
-### SMTP/CalDAV Setup (Other Providers)
+### SMTP/CalDAV セットアップ（他のプロバイダー）
 
-For other email and calendar providers:
+他のメールおよびカレンダー プロバイダーの場合:
 
-1. Go to **Settings → Releases → Lab** to enable the feature
-2. Return to **Settings → Accounts**
-3. Configure SMTP settings for email
-4. Configure CalDAV settings for calendar
-5. Test the connection
+1. **設定 → アカウント** に移動します
+2. メール用の SMTP 設定を構成
+3. カレンダー用の CalDAV 設定を構成
+4. 接続をテスト
 
-### Multiple Mailboxes
+### 複数のメールボックス
 
-* **Unlimited Accounts**: Connect multiple email accounts per user
-* **Account Management**: Switch between different mailboxes
-* **Sync Settings**: Configure different settings per mailbox
+* **無制限のアカウント**: ユーザーごとに複数のメールアカウントを接続
+* **アカウント管理**: 異なるメールボックス間を切り替える
+* **同期設定**: メールボックスごとに異なる設定を構成
 
 <Warning>
-  Only true mailboxes can be connected (e.g., support@domain.com with its own inbox). Email aliases that forward to another mailbox cannot be connected to Twenty.
+  本物のメールボックスのみ接続可能（例: support@domain.com で独自の受信トレイ）。 他のメールボックスに転送するメールエイリアスは Twenty に接続できません。
 </Warning>
 
-## Email Configuration
+## メール設定
 
-### Message Visibility
+### メッセージの可視性
 
-Choose different levels of visibility for your emails:
+メールの可視性レベルを選択:
 
-* **Metadata Only**: Share only basic information (sender, recipient, date, time)
-* **Subject and Metadata**: Share subject line along with metadata
-* **All Email Content**: Share entire email content including attachments
+* **メタデータのみ**: 基本情報（送信者、受信者、日付、時間）のみ共有
+* **件名とメタデータ**: 件名とメタデータを共有
+* **すべてのメール コンテンツ**: 添付ファイルを含む全メールコンテンツを共有
 
-### Contact Auto-Creation
+### 連絡先の自動作成
 
-* **Deactivated**: No automatic contact creation
-* **For messages sent & received**: Create contacts for all external email interactions
-* **For messages sent only**: Create contacts only for emails you send
-* **Note**: Internal emails (same domain) are never synced to maintain privacy
+* **非活性化**: 連絡先の自動作成なし
+* **送受信メッセージ用**: すべての外部メール インタラクションの連絡先を作成
+* **送信メッセージ用のみ**: 送信するメールの連絡先のみ作成
+* **注意**: 内部メール（同じドメイン）はプライバシーを維持するために同期されません
 
-<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+<Note>有効にすると、連絡先はメールドメインに基づいて会社レコードに自動的にリンクされます。 会社がまだ存在しない場合は、Twentyが会社レコードを作成します。</Note>
 
-### Control which emails get sync with Message Folder Selection (Lab Feature)
+### メッセージ フォルダー選択で同期するメールを制御
 
-Control which email folders sync with Twenty:
+Twenty と同期するメールフォルダーを制御:
 
-1. Go to **Settings → Releases → Lab** and enable **Message Folder**
-2. Return to **Settings → Accounts** and select your connected email account
-3. Choose which folders to sync:
-   * **Inbox**: Primary incoming emails
-   * **Sent**: Outgoing emails you've sent
-   * **Custom Folders**: Any specific folders you want to include
-   * **Exclude Folders**: Skip folders like Spam, Trash, or personal folders
+1. **設定 → アカウント** に移動し、接続済みのメールアカウントを選択します
+2. 同期するフォルダーを選択してください:
+   * **受信トレイ**: 主要な受信メール
+   * **送信済み**: 送信したメール
+   * **カスタムフォルダー**: 含めたい特定のフォルダー
+   * **フォルダーの除外**: スパム、ゴミ箱、個人用フォルダーなどをスキップ
 
-This gives you precise control over which emails appear in your CRM without syncing everything.
+これにより、CRM に表示されるメールをすべて同期することなく正確に制御できます。
 
-**What Gets Synced:**
+**同期される内容:**
 
-* **External Emails**: All emails with external contacts from selected folders
-* **Internal Emails**: Not synced (same domain emails remain private)
-* **Attachments**: Coming in H1 2026
+* **外部メール**: 選択されたフォルダーの外部連絡先とのすべてのメール
+* **内部メール**: 同期されない（同じドメインのメールはプライベートのままです）
+* **添付ファイル**: H1 2026 に登場予定
 
-**Note**: We don't provide a CC email address for selective syncing. Instead, use the Message Folder feature above to achieve the same level of control over which emails sync with Twenty.
+**注意**: 選択的な同期用の CC メールアドレスは提供していません。 代わりに、上記のメッセージフォルダー機能を使用して、Twenty と同期するメールの制御レベルを同様に達成してください。 **注意**: 選択的な同期用の CC メールアドレスは提供していません。 代わりに、上記のメッセージフォルダー機能を使用して、Twenty と同期するメールの制御レベルを同様に達成してください。 代わりに、上記のメッセージフォルダー機能を使用して、Twenty と同期するメールの制御レベルを同様に達成してください。
 
-## Calendar Configuration
+## カレンダー設定
 
-### Event Visibility
+### イベントの可視性
 
-Choose what will be visible to other users in your workspace:
+ワークスペース内の他のユーザーに表示される内容を選択:
 
-* **Everything**: The whole event details will be shared with your team
-* **Metadata**: Only date & participants will be shared with your team
+* **すべて**: イベントの詳細全体をチームと共有
+* **メタデータ**: 日付と参加者のみをチームに共有
 
-### Contact Auto-Creation for Meetings
+### 会議のための連絡先自動作成
 
-* **Yes**: Automatically create contacts for meeting participants not in your CRM
-* **No**: Only link meetings to existing contacts
+* **はい**: CRM にない会議参加者の連絡先を自動的に作成
+* **いいえ**: 既存の連絡先にのみ会議をリンク
 
-<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+<Note>有効にすると、連絡先はメールドメインに基づいて会社レコードに自動的にリンクされます。 会社がまだ存在しない場合は、Twentyが会社レコードを作成します。</Note>
 
-### Control which events get sync
+### 同期するイベントを制御
 
-* **Meeting Import**: Automatically import calendar events
-* **Contact Linking**: Link meetings to People and Company records
+* **会議インポート**: カレンダーイベントを自動的にインポート
+* **連絡先のリンク**: 会議を人物および会社のレコードにリンク
 
-**What Gets Synced:**
+**同期される内容:**
 
-* **Meetings**: Calendar events with external participants
-* **Contact Linking**: Events automatically linked to CRM records
-* **Team Events**: Shared calendar visibility
+* **会議**: 外部参加者とのカレンダーイベント
+* **連絡先のリンク**: イベントが自動的に CRM レコードにリンク
+* **チームイベント**: 共有カレンダーの可視性
 
-## Sync Frequency
+## 同期頻度
 
-**Updates every 5 minutes**: Both email and calendar data sync automatically every 5 minutes after the initial import.
+**5分ごとの更新**: メールとカレンダーのデータが初回インポート後に5分ごとに自動的に同期されます。
 
 <Note>
-  **Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes—up to a few hours depending on volume. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
+  **初回同期のタイミング**: カレンダーの同期はすばやく完了します（通常は数分以内に）。一方、メールの同期は大容量のメールボックスではより時間がかかります。 Twenty は約 **1分あたり400通のメッセージ**を取り込みます（Gmail API のレート制限により制限されます）。そのため、10,000通のメールがあるメールボックスでは約25分かかります。 カレンダーのイベント由来の連絡先がメールの連絡先より先に表示されても心配はいりません。これは正常な動作です。
 </Note>
 
-## Next Steps
+## 次のステップ
 
-* [Mailbox capabilities](/l/ja/user-guide/calendar-emails/capabilities/mailbox)
-* [Troubleshoot missing emails](/l/ja/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)
+* [メールボックスの機能](/l/ja/user-guide/calendar-emails/capabilities/mailbox)
+* [メールが表示されない場合のトラブルシューティング](/l/ja/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)

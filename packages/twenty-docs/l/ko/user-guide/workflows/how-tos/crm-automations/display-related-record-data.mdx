@@ -1,130 +1,130 @@
 ---
-title: Display Related Record Data
-description: Show data from related records (e.g., Company info on Opportunities) using workflows.
+title: 관련 레코드 데이터 표시
+description: "워크플로우를 사용해 관련 레코드의 데이터를 표시합니다(예: Opportunities에 회사 정보 표시)."
 ---
 
-Display data from related records directly on your records — for example, show the employee count from a Company on its Opportunities. This workflow workaround is useful until nested fields are natively available.
+관련 레코드의 데이터를 내 레코드에 직접 표시하세요 — 예를 들어, Company의 직원 수를 해당 Opportunities에 표시합니다. 중첩 필드가 기본적으로 제공될 때까지 이 워크플로우 우회 방법이 유용합니다.
 
-## Common Use Cases
+## 일반적인 사용 사례
 
-| Source      | Destination | Fields to Copy                  |
-| ----------- | ----------- | ------------------------------- |
-| Company     | Opportunity | Industry, Company Size, ARR     |
-| Person      | Opportunity | Email, Phone, Title             |
-| Opportunity | Company     | Last Deal Amount, Last Won Date |
+| 소스 | 대상 | 복사할 필드             |
+| -- | -- | ------------------ |
+| 회사 | 기회 | 산업, 회사 규모, ARR     |
+| 사람 | 기회 | 이메일, 전화, 직함        |
+| 기회 | 회사 | 최근 거래 금액, 최근 성사 일자 |
 
-## Basic Field Copy
+## 기본 필드 복사
 
-### Example: Copy Contact Email to Opportunity
+### 예시: 연락처 이메일을 Opportunity로 복사
 
-**Goal**: When setting a Point of Contact on an opportunity, copy their email to the opportunity for easy access.
+**목표**: Opportunity에서 담당자를 설정할 때, 쉽게 액세스할 수 있도록 해당 이메일을 Opportunity로 복사합니다.
 
-### Prerequisite
+### 사전 준비
 
-Create the destination fields in **Settings → Data Model → Opportunities** before building the workflow:
+워크플로우를 만들기 전에 **설정 → 데이터 모델 → Opportunities**에서 대상 필드를 생성하세요:
 
-* Contact Email (type: Email)
-* Contact Phone (type: Phone)
+* 연락처 이메일(유형: Email)
+* 연락처 전화(유형: Phone)
 
-### Setup
+### 설정
 
-1. **Trigger**: Record is Updated (Opportunities, Point of Contact field)
+1. **트리거**: 레코드가 업데이트됨 (Opportunities, 담당자 필드)
 
-2. **Filter**: Check that Point of Contact is not empty
+2. **필터**: 담당자가 비어 있지 않은지 확인
 
-3. **Search Records**: Find the linked person
-   * Object: People
-   * Filter: ID equals `{{trigger.object.pointOfContact.id}}`
+3. **레코드 검색**: 연결된 사람 찾기
+   * 객체: People
+   * 필터: ID가 `{{trigger.object.pointOfContact.id}}`와 같음
 
-4. **Update Record**:
-   * Object: Opportunities
-   * Record: `{{trigger.object.id}}`
-   * Contact Email: `{{searchRecords[0].email}}`
-   * Contact Phone: `{{searchRecords[0].phone}}`
+4. **레코드 업데이트**:
+   * 객체: Opportunities
+   * 레코드: `{{trigger.object.id}}`
+   * 연락처 이메일: `{{searchRecords[0].email}}`
+   * 연락처 전화: `{{searchRecords[0].phone}}`
 
-## Copy Multiple Fields
+## 여러 필드 복사
 
-### Example: Sync Company Info to All Related Opportunities
+### 예시: 모든 관련 Opportunities에 회사 정보 동기화
 
-**Goal**: When company details change, update all related opportunities.
+**목표**: 회사 세부 정보가 변경되면 관련된 모든 Opportunities를 업데이트합니다.
 
-### Setup
+### 설정
 
-1. **Trigger**: Record is Updated (Companies)
-   * Fields: Industry, Company Size, Annual Revenue
+1. **트리거**: 레코드가 업데이트됨 (Companies)
+   * 필드: 산업, 회사 규모, 연간 매출
 
-2. **Search Records**: Find all opportunities for this company
-   * Object: Opportunities
-   * Filter: Company ID equals `{{trigger.object.id}}`
+2. **레코드 검색**: 이 회사의 모든 Opportunities 찾기
+   * 객체: Opportunities
+   * 필터: 회사 ID가 `{{trigger.object.id}}`와 같음
 
-3. **Iterator**: Loop through each opportunity
+3. **Iterator**: 각 Opportunity를 순회
 
-4. **Update Record** (inside iterator):
-   * Object: Opportunities
-   * Record: `{{iterator.currentItem.id}}`
-   * Company Industry: `{{trigger.object.industry}}`
-   * Company Size: `{{trigger.object.companySize}}`
-   * Company ARR: `{{trigger.object.annualRevenue}}`
+4. **레코드 업데이트** (iterator 내부):
+   * 객체: Opportunities
+   * 레코드: `{{iterator.currentItem.id}}`
+   * 회사 산업: `{{trigger.object.industry}}`
+   * 회사 규모: `{{trigger.object.companySize}}`
+   * 회사 ARR: `{{trigger.object.annualRevenue}}`
 
-## Copy on Record Creation
+## 레코드 생성 시 복사
 
-### Example: Pre-fill Opportunity with Company Data
+### 예시: 회사 데이터로 Opportunity를 미리 채우기
 
-**Goal**: When creating an opportunity linked to a company, automatically copy key company info.
+**목표**: 회사와 연결된 Opportunity를 생성할 때 핵심 회사 정보를 자동으로 복사합니다.
 
-### Prerequisite
+### 사전 준비
 
-Create the destination fields in **Settings → Data Model → Opportunities**:
+**설정 → 데이터 모델 → Opportunities**에서 대상 필드를 생성하세요:
 
-* Company Industry (type: Text)
-* Company Size (type: Number)
+* 회사 산업(유형: Text)
+* 회사 규모(유형: Number)
 
-### Setup
+### 설정
 
-1. **Trigger**: Record is Created (Opportunities)
-   * Filter: Company is not empty
+1. **트리거**: 레코드가 생성됨 (Opportunities)
+   * 필터: 회사가 비어 있지 않음
 
-2. **Search Records**: Get the linked company's details
-   * Object: Companies
-   * Filter: ID equals `{{trigger.object.company.id}}`
+2. **레코드 검색**: 연결된 회사의 세부 정보 가져오기
+   * 객체: Companies
+   * 필터: ID가 `{{trigger.object.company.id}}`와 같음
 
-3. **Update Record**:
-   * Object: Opportunities
-   * Record: `{{trigger.object.id}}`
-   * Company Industry: `{{searchRecords[0].industry}}`
-   * Company Size: `{{searchRecords[0].employees}}`
-
-<Note>
-  **Tasks and Notes limitation**: Relations on Tasks and Notes are hardcoded as many-to-many and are not yet available in workflow triggers or actions. To access these relations, use the [API](/l/ko/developers/extend/capabilities/apis) instead.
-</Note>
-
-## Bidirectional Sync
-
-### Example: Keep Primary Contact in Sync
-
-**Goal**: When a company's primary contact changes, update the contact. When a person becomes primary, update the company.
-
-### Workflow 1: Company → Person
-
-1. **Trigger**: Record is Updated (Companies, Primary Contact field)
-2. **Update Record**: Set person's "Is Primary Contact" to true
-3. **Search Records**: Find previous primary contact
-4. **Update Record**: Set previous contact's "Is Primary Contact" to false
-
-### Workflow 2: Person → Company
-
-1. **Trigger**: Record is Updated (People, Is Primary Contact = true)
-2. **Update Record**: Set company's Primary Contact to this person
+3. **레코드 업데이트**:
+   * 객체: Opportunities
+   * 레코드: `{{trigger.object.id}}`
+   * 회사 산업: `{{searchRecords[0].industry}}`
+   * 회사 규모: `{{searchRecords[0].employees}}`
 
 <Note>
-  Be careful with bidirectional syncs to avoid infinite loops. Use filters to check if the value actually changed before updating.
+  **작업 및 노트 제한 사항**: 작업과 노트의 관계는 다대다로 하드코딩되어 있으며, 워크플로우 트리거 또는 액션에서 아직 사용할 수 없습니다. 이러한 관계에 액세스하려면 대신 [API](/l/ko/developers/extend/capabilities/apis)를 사용하세요.
 </Note>
 
-## Using Code for Complex Mapping
+## 양방향 동기화
 
-### Example: Transform Data During Copy
+### 예시: 기본 담당자 동기화 유지
 
-**Goal**: Copy and format phone number from person to opportunity.
+**목표**: 회사의 기본 담당자가 변경되면 담당자를 업데이트합니다. 사람이 기본 담당자가 되면 회사를 업데이트합니다.
+
+### 워크플로우 1: Company → Person
+
+1. **트리거**: 레코드가 업데이트됨 (Companies, 기본 담당자 필드)
+2. **레코드 업데이트**: 사람의 "Is Primary Contact"를 true로 설정
+3. **레코드 검색**: 이전 기본 담당자 찾기
+4. **레코드 업데이트**: 이전 담당자의 "Is Primary Contact"를 false로 설정
+
+### 워크플로우 2: Person → Company
+
+1. **트리거**: 레코드가 업데이트됨 (People, Is Primary Contact = true)
+2. **레코드 업데이트**: 회사의 기본 담당자를 이 사람으로 설정
+
+<Note>
+  무한 루프를 피하기 위해 양방향 동기화에 주의하세요. 업데이트하기 전에 값이 실제로 변경되었는지 필터로 확인하세요.
+</Note>
+
+## 복잡한 매핑에 코드 사용
+
+### 예시: 복사 중 데이터 변환
+
+**목표**: 사람의 전화번호를 Opportunity로 복사하고 형식을 지정합니다.
 
 ```javascript
 export const main = async (params) => {
@@ -144,27 +144,27 @@ export const main = async (params) => {
 };
 ```
 
-## Best Practices
+## 모범 사례
 
-### Avoid Loops
+### 루프 방지
 
-* Don't create workflows that trigger each other endlessly
-* Use specific field conditions
-* Add checks to see if value actually changed
+* 서로를 끝없이 트리거하는 워크플로우를 만들지 마세요
+* 특정 필드 조건 사용
+* 값이 실제로 변경되었는지 확인을 추가하세요
 
-### Handle Missing Data
+### 누락된 데이터 처리
 
-* Always check if source record exists before copying
-* Provide default values for optional fields
-* Use filters to skip when source field is empty
+* 복사하기 전에 소스 레코드가 존재하는지 항상 확인하세요
+* 선택적 필드에 기본값 제공
+* 소스 필드가 비어 있을 때 건너뛰도록 필터 사용
 
-### Performance
+### 성능
 
-* Batch updates when copying to many records
-* Use scheduled workflows for bulk sync operations
-* Consider using Iterator for multiple record updates
+* 여러 레코드에 복사할 때 일괄 업데이트 사용
+* 대량 동기화 작업에는 예약된 워크플로우를 사용하세요
+* 다수의 레코드를 업데이트할 때 Iterator 사용을 고려하세요
 
-## Related
+## 관련 항목
 
-* [Workflow Actions](/l/ko/user-guide/workflows/capabilities/workflow-actions)
-* [Workflow Triggers](/l/ko/user-guide/workflows/capabilities/workflow-triggers)
+* [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)
+* [워크플로우 트리거](/l/ko/user-guide/workflows/capabilities/workflow-triggers)
