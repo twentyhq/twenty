@@ -1,8 +1,11 @@
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateActivityTargetGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
 import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
@@ -52,6 +55,27 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           throw new Error(
             `Target object metadata item not found for ${fieldMetadata.name}`,
           );
+        }
+
+        if (
+          fieldMetadata.name === CoreObjectNamePlural.NoteTarget ||
+          fieldMetadata.name === CoreObjectNamePlural.TaskTarget
+        ) {
+          const activityTargetObjectNameSingular =
+            fieldMetadata.name === CoreObjectNamePlural.NoteTarget
+              ? CoreObjectNameSingular.Note
+              : CoreObjectNameSingular.Task;
+
+          const activityTargetGqlFields = generateActivityTargetGqlFields({
+            activityObjectNameSingular: activityTargetObjectNameSingular,
+            objectMetadataItems,
+            loadRelations: 'activity',
+          });
+
+          return {
+            ...recordGqlFields,
+            [fieldMetadata.name]: activityTargetGqlFields,
+          };
         }
 
         if (isJunctionRelationField(fieldMetadata)) {
