@@ -206,6 +206,11 @@ export const GraphWidgetBarChart = ({
     width: chartWidth,
   });
 
+  const categoryValues = useMemo(
+    () => data.map((item) => String(item[indexBy] ?? '')),
+    [data, indexBy],
+  );
+
   const innerPadding = getBarChartInnerPadding({
     chartHeight,
     chartWidth,
@@ -344,6 +349,7 @@ export const GraphWidgetBarChart = ({
               />
               <SvgAxisOverlay
                 bottomAxisTickRotation={tickConfig.bottomAxisTickRotation}
+                categoryValues={categoryValues}
                 categoryTickValues={categoryTickValues}
                 chartHeight={chartHeight}
                 chartWidth={chartWidth}

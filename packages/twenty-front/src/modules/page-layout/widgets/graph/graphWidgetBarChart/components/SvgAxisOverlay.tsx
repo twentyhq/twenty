@@ -1,5 +1,6 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { computeCategoryBandScale } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeCategoryBandScale';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import {
@@ -12,6 +13,7 @@ import { BarChartLayout } from '~/generated/graphql';
 
 type SvgAxisOverlayProps = {
   bottomAxisTickRotation: number;
+  categoryValues: (string | number)[];
   categoryTickValues: (string | number)[];
   chartHeight: number;
   chartWidth: number;
@@ -39,6 +41,7 @@ export const SvgAxisOverlay = ({
   chartHeight,
   margins,
   layout,
+  categoryValues,
   categoryTickValues,
   valueTickValues,
   valueDomain,
@@ -57,6 +60,17 @@ export const SvgAxisOverlay = ({
 
   const innerWidth = chartWidth - margins.left - margins.right;
   const innerHeight = chartHeight - margins.top - margins.bottom;
+
+  const categoryIndexMap = new Map<string, number>(
+    categoryValues.map((value, index) => [String(value), index]),
+  );
+
+  const categoryScale = computeCategoryBandScale({
+    axisLength: isVertical ? innerWidth : innerHeight,
+    count: categoryValues.length,
+    padding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
+    outerPaddingPx: BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
+  });
 
   const bottomTickValues = isVertical ? categoryTickValues : valueTickValues;
   const leftTickValues = isVertical ? valueTickValues : categoryTickValues;
@@ -86,10 +100,16 @@ export const SvgAxisOverlay = ({
     index: number,
   ): number => {
     if (isVertical) {
-      const categoryCount = categoryTickValues.length;
-      if (categoryCount === 0) return 0;
-      const step = innerWidth / categoryCount;
-      return step / 2 + index * step;
+      if (categoryValues.length === 0) return 0;
+      const rawIndex =
+        categoryIndexMap.get(String(value)) ??
+        Math.min(index, categoryValues.length - 1);
+      const categoryIndex = Math.min(
+        Math.max(rawIndex, 0),
+        categoryValues.length - 1,
+      );
+      const start = categoryScale.offset + categoryIndex * categoryScale.step;
+      return start + categoryScale.bandwidth / 2;
     }
     const range = valueDomain.max - valueDomain.min;
     if (range === 0) return 0;
@@ -109,13 +129,16 @@ export const SvgAxisOverlay = ({
         innerHeight - ((Number(value) - valueDomain.min) / range) * innerHeight
       );
     }
-    const categoryCount = categoryTickValues.length;
+    const categoryCount = categoryValues.length;
     if (categoryCount === 0) {
       return 0;
     }
-    const step = innerHeight / categoryCount;
-    const effectiveIndex = categoryCount - 1 - index;
-    return step / 2 + effectiveIndex * step;
+    const rawIndex =
+      categoryIndexMap.get(String(value)) ?? Math.min(index, categoryCount - 1);
+    const clampedIndex = Math.min(Math.max(rawIndex, 0), categoryCount - 1);
+    const effectiveIndex = categoryCount - 1 - clampedIndex;
+    const start = categoryScale.offset + effectiveIndex * categoryScale.step;
+    return start + categoryScale.bandwidth / 2;
   };
 
   const hasRotation = bottomAxisTickRotation !== 0;

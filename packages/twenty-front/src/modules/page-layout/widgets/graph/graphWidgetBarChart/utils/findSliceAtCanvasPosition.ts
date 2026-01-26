@@ -1,5 +1,6 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositions';
+import { computeCategoryBandScale } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeCategoryBandScale';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -90,12 +91,16 @@ export const computeAllCategorySlices = ({
   const categoryAxisLength = isVerticalLayout ? innerWidth : innerHeight;
   const dataLength = data.length;
 
-  const categoryWidth =
-    (categoryAxisLength / dataLength) *
-    (1 - BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO);
-  const outerPadding =
-    (categoryAxisLength * BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO) / 2;
-  const categoryStep = categoryAxisLength / dataLength;
+  const {
+    step: categoryStep,
+    bandwidth: categoryWidth,
+    offset: outerPadding,
+  } = computeCategoryBandScale({
+    axisLength: categoryAxisLength,
+    count: dataLength,
+    padding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
+    outerPaddingPx: BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
+  });
 
   const barsByIndexValue = new Map<string, BarPosition[]>();
   for (const bar of bars) {

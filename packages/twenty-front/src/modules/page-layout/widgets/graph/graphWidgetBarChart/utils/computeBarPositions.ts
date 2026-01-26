@@ -4,6 +4,7 @@ import { isNumber } from '@sniptt/guards';
 import { BarChartLayout } from '~/generated/graphql';
 
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { computeCategoryBandScale } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeCategoryBandScale';
 
 export type BarPosition = {
   x: number;
@@ -85,12 +86,13 @@ const computeGroupedBarPositions = ({
   const categoryAxisLength = isVertical ? innerWidth : innerHeight;
   const valueAxisLength = isVertical ? innerHeight : innerWidth;
 
-  const categoryWidth =
-    (categoryAxisLength / dataLength) *
-    (1 - BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO);
-  const outerPadding =
-    (categoryAxisLength * BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO) / 2;
-  const categoryStep = categoryAxisLength / dataLength;
+  const { step: categoryStep, bandwidth: categoryWidth, offset: outerPadding } =
+    computeCategoryBandScale({
+      axisLength: categoryAxisLength,
+      count: dataLength,
+      padding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
+      outerPaddingPx: BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
+    });
 
   const effectiveInnerPadding = innerPadding;
   const totalInnerPadding = effectiveInnerPadding * (keysLength - 1);
@@ -202,12 +204,13 @@ const computeStackedBarPositions = ({
   const categoryAxisLength = isVertical ? innerWidth : innerHeight;
   const valueAxisLength = isVertical ? innerHeight : innerWidth;
 
-  const categoryWidth =
-    (categoryAxisLength / dataLength) *
-    (1 - BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO);
-  const outerPadding =
-    (categoryAxisLength * BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO) / 2;
-  const categoryStep = categoryAxisLength / dataLength;
+  const { step: categoryStep, bandwidth: categoryWidth, offset: outerPadding } =
+    computeCategoryBandScale({
+      axisLength: categoryAxisLength,
+      count: dataLength,
+      padding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
+      outerPaddingPx: BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
+    });
 
   const barThickness = Math.min(categoryWidth, BAR_CHART_CONSTANTS.MAXIMUM_WIDTH);
   const categoryBarCenteringOffset = (categoryWidth - barThickness) / 2;
