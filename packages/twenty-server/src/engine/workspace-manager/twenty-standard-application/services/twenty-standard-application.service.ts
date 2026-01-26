@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -223,16 +222,9 @@ export class TwentyStandardApplicationService {
       )
       .filter(isDefined);
 
-    if (featureFlagsMap[FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED]) {
-      await this.createManyNavigationMenuItem({
-        flatViews,
-        workspaceId,
-      });
-    } else {
-      await this.createManyFavorite({
-        flatViews,
-        workspaceId,
-      });
-    }
+    await this.createManyFavorite({
+      flatViews,
+      workspaceId,
+    });
   }
 }
