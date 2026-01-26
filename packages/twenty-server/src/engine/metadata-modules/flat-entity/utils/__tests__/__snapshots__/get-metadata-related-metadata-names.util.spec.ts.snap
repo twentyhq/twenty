@@ -42,6 +42,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 [
   "objectMetadata",
   "navigationMenuItem",
+  "view",
 ]
 `;
 
