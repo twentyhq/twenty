@@ -45,7 +45,7 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 
-    const type = this.typeMapperService.mapToPreBuiltGraphQLCreateInputType({
+    const type = this.typeMapperService.mapToPreBuiltGraphQLInputType({
       fieldMetadataType: fieldMetadata.type,
       typeOptions,
     });

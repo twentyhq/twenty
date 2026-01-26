@@ -240,10 +240,14 @@ export class FileUploadService {
       sourceFile: sanitizedFile,
       destinationPath: name,
       mimeType,
-      fileFolder: FileFolder.TemporaryFilesField,
+      fileFolder: FileFolder.FilesField,
       applicationId,
       workspaceId,
       fileId,
+      info: {
+        isTemporaryFile: true,
+        toDelete: false,
+      },
     });
   }
 }

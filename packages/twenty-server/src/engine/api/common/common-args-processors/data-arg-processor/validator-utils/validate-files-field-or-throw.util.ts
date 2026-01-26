@@ -4,53 +4,25 @@ import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 import { z } from 'zod';
 
-import {
-  type AddOrUpdateFileItemInput,
-  type FileItemOutput,
-  type RemoveFileItemInput,
-} from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
+import { type FileItemInput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
-const addOrUpdateFileItemSchema = z
+const fileItemSchema = z
   .object({
     fileId: z.string().uuidv4(),
     label: z.string(),
   })
   .strict();
 
-const removeFileItemSchema = z
-  .object({
-    fileId: z.string().uuidv4(),
-  })
-  .strict();
-
-export const filesFieldSchema = z
-  .object({
-    addFiles: z.array(addOrUpdateFileItemSchema).optional(),
-    updateFiles: z.array(addOrUpdateFileItemSchema).optional(),
-    removeFiles: z.array(removeFileItemSchema).optional(),
-  })
-  .strict();
-
-export type FilesFieldInput = {
-  addFiles?: AddOrUpdateFileItemInput[];
-  updateFiles?: AddOrUpdateFileItemInput[];
-  removeFiles?: RemoveFileItemInput[];
-};
-
-export type EnrichedFilesFieldInput = {
-  addFiles?: FileItemOutput[];
-  updateFiles?: AddOrUpdateFileItemInput[];
-  removeFiles?: RemoveFileItemInput[];
-};
+export const filesFieldSchema = z.array(fileItemSchema);
 
 export const validateFilesFieldOrThrow = (
   value: unknown,
   fieldName: string,
-): FilesFieldInput | null => {
+): FileItemInput[] | null => {
   if (isNull(value)) return null;
 
   let parsedValue: unknown = value;
@@ -62,10 +34,10 @@ export const validateFilesFieldOrThrow = (
       const inspectedValue = inspect(value);
 
       throw new CommonQueryRunnerException(
-        `Invalid value "${inspectedValue}" for FILES field "${fieldName}" - It should be an object with "addFiles" and/or "removeFiles" properties.`,
+        `Invalid value "${inspectedValue}" for FILES field "${fieldName}" - It should be an array of objects with "fileId" and "label" properties.`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
         {
-          userFriendlyMessage: msg`Invalid value "${inspectedValue}" for FILES field "${fieldName}" - It should be an object with "addFiles" and/or "removeFiles" properties.`,
+          userFriendlyMessage: msg`Invalid value "${inspectedValue}" for FILES field "${fieldName}" - It should be an array of objects with "fileId" and "label" properties.`,
         },
       );
     }

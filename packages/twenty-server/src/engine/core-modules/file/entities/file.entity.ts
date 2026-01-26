@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FileInfo } from 'src/engine/core-modules/file/types/file-info.types';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity('file')
@@ -46,4 +47,7 @@ export class FileEntity extends WorkspaceRelatedEntity {
 
   @Column({ nullable: false, default: false })
   isStaticAsset: boolean;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  info: FileInfo | null;
 }

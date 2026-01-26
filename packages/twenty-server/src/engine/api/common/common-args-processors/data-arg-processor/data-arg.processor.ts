@@ -158,13 +158,6 @@ export class DataArgProcessor {
       processedRecords.push(processedRecord);
     }
 
-    await this.filesFieldSyncService.enrichDataArgsAndValidateFiles({
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-      data: processedRecords,
-      workspaceId: workspace.id,
-    });
-
     return processedRecords;
   }
 
