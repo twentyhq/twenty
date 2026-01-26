@@ -119,11 +119,14 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
       return;
     }
 
-    const customOwnerField = flatFieldMetadatas.find(
-      (field) =>
-        field.name === 'owner' &&
-        field.universalIdentifier !== ownerUniversalIdentifier,
-    );
+    const customOwnerField =
+      flatFieldMetadatas.find(
+        (field) =>
+          field.name === 'owner' &&
+          field.universalIdentifier !== ownerUniversalIdentifier,
+        // Some self hoster might have run the name renaming successfully but not the joinColumnName
+        // Rather than asking them to restore db also grabbing them here
+      ) ?? flatFieldMetadatas.find((field) => field.name === 'ownerOld');
 
     if (isDefined(customOwnerField)) {
       await this.renameCustomOwnerFieldToOwnerOld({
