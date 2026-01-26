@@ -71,7 +71,7 @@ export class MigrateSendEmailRecipientsCommand extends ActiveOrSuspendedWorkspac
     for (const version of workflowVersions) {
       const steps = version.steps as WorkflowStep[] | null;
 
-      if (!isDefined(steps) || steps.length === 0) {
+      if (!isDefined(steps) || !Array.isArray(steps) || steps.length === 0) {
         continue;
       }
 
