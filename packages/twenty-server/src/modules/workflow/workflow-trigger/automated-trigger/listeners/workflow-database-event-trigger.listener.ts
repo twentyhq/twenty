@@ -5,6 +5,7 @@ import {
   type ObjectRecordCreateEvent,
   type ObjectRecordDeleteEvent,
   type ObjectRecordDestroyEvent,
+  type ObjectRecordRestoreEvent,
   type ObjectRecordUpdateEvent,
   type ObjectRecordUpsertEvent,
 } from 'twenty-shared/database-events';
@@ -135,6 +136,13 @@ export class WorkflowDatabaseEventTriggerListener {
       payload: clonedPayload,
       action: DatabaseEventAction.UPSERTED,
     });
+  }
+
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.RESTORED)
+  async handleObjectRecordRestoreEvent(
+    _payload: WorkspaceEventBatch<ObjectRecordRestoreEvent>,
+  ) {
+    return;
   }
 
   private async enrichCreatedEvent(

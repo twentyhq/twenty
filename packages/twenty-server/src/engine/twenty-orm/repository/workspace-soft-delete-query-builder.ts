@@ -129,9 +129,14 @@ export class WorkspaceSoftDeleteQueryBuilder<
         this.internalContext.flatFieldMetadataMaps,
       );
 
+      const action =
+        this.expressionMap.queryType === 'restore'
+          ? DatabaseEventAction.RESTORED
+          : DatabaseEventAction.DELETED;
+
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
         formatTwentyOrmEventToDatabaseBatchEvent({
-          action: DatabaseEventAction.DELETED,
+          action,
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
