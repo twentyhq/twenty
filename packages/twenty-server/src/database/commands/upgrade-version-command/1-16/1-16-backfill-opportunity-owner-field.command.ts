@@ -237,7 +237,7 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
   }): Promise<void> {
     if (dryRun) {
       this.logger.log(
-        `[DRY RUN] Would rename custom owner field to 'ownerOld' in workspace and search for colloding foreignKey ${workspaceId}`,
+        `[DRY RUN] Would rename custom owner field to 'ownerOld' in workspace and search for colliding foreignKey ${workspaceId}`,
       );
 
       return;
