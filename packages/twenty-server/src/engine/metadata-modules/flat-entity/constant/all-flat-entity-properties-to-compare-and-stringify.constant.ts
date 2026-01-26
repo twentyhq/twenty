@@ -179,6 +179,10 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
     propertiesToCompare: [...FLAT_FRONT_COMPONENT_EDITABLE_PROPERTIES],
     propertiesToStringify: [],
   },
+  webhook: {
+    propertiesToCompare: ['targetUrl', 'operations', 'description', 'secret'],
+    propertiesToStringify: [],
+  },
 } as const satisfies {
   [P in AllMetadataName]: OneFlatEntityConfiguration<P>;
 };

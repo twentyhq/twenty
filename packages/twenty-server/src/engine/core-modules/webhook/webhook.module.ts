@@ -2,23 +2,24 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
-import { WebhookEntity } from 'src/engine/core-modules/webhook/webhook.entity';
-import { WebhookResolver } from 'src/engine/core-modules/webhook/webhook.resolver';
-import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { WebhookQueryService } from 'src/engine/core-modules/webhook/webhook.service';
+import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
+import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 import { WebhookController } from './controllers/webhook.controller';
 
+// Legacy webhook module for backward compatibility with jobs
+// Main webhook CRUD operations are handled by the new WebhookModule in metadata-modules
 @Module({
   imports: [
     TypeOrmModule.forFeature([WebhookEntity]),
     AuthModule,
-    PermissionsModule,
     WorkspaceCacheStorageModule,
+    WebhookModule,
   ],
-  providers: [WebhookService, WebhookResolver],
+  providers: [WebhookQueryService],
   controllers: [WebhookController],
-  exports: [WebhookService, TypeOrmModule],
+  exports: [WebhookQueryService, TypeOrmModule],
 })
-export class WebhookModule {}
+export class CoreWebhookModule {}

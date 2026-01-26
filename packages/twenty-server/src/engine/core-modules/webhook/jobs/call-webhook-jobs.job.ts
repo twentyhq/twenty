@@ -13,7 +13,7 @@ import {
   CallWebhookJob,
   type CallWebhookJobData,
 } from 'src/engine/core-modules/webhook/jobs/call-webhook.job';
-import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
+import { WebhookQueryService } from 'src/engine/core-modules/webhook/webhook.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { transformEventBatchToWebhookEvents } from 'src/engine/core-modules/webhook/utils/transform-event-batch-to-webhook-events';
 
@@ -25,7 +25,7 @@ export class CallWebhookJobsJob {
   constructor(
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly webhookService: WebhookService,
+    private readonly webhookQueryService: WebhookQueryService,
   ) {}
 
   @Process(CallWebhookJobsJob.name)
@@ -39,7 +39,7 @@ export class CallWebhookJobsJob {
 
     const [nameSingular, operation] = workspaceEventBatch.name.split('.');
 
-    const webhooks = await this.webhookService.findByOperations(
+    const webhooks = await this.webhookQueryService.findByOperations(
       workspaceEventBatch.workspaceId,
       [
         `${nameSingular}.${operation}`,

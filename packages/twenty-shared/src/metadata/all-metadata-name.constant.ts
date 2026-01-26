@@ -23,4 +23,5 @@ export const ALL_METADATA_NAME = {
   commandMenuItem: 'commandMenuItem',
   navigationMenuItem: 'navigationMenuItem',
   frontComponent: 'frontComponent',
+  webhook: 'webhook',
 } as const;
