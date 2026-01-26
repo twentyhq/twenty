@@ -17,7 +17,7 @@ export class GraphqlQuerySelectedFieldsAggregateParser {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     accumulator: GraphqlQuerySelectedFieldsResult,
   ): void {
-    const fields = flatObjectMetadata.fieldMetadataIds
+    const fields = flatObjectMetadata.fieldIds
       .map((id) => flatFieldMetadataMaps.byId[id])
       .filter(isDefined);
 

@@ -70,7 +70,7 @@ export class GraphqlQueryOrderGroupByParser {
   }): Record<string, OrderByClause>[] {
     const parsedOrderBy: Record<string, OrderByClause>[] = [];
 
-    const fields = this.flatObjectMetadata.fieldMetadataIds
+    const fields = this.flatObjectMetadata.fieldIds
       .map((id) => this.flatFieldMetadataMaps.byId[id])
       .filter(isDefined);
 

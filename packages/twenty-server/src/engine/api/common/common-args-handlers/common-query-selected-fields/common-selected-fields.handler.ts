@@ -89,7 +89,7 @@ export class CommonSelectedFieldsHandler {
         | { [key: string]: boolean | { [key: string]: boolean } };
     } = {};
 
-    for (const fieldId of flatObjectMetadata.fieldMetadataIds) {
+    for (const fieldId of flatObjectMetadata.fieldIds) {
       const field = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityMaps: flatFieldMetadataMaps,
         flatEntityId: fieldId,

@@ -11,7 +11,7 @@ export const resolveRichTextFieldsInRecord = (
 ): Record<string, unknown> => {
   const { flatObjectMetadata, flatFieldMetadataMaps } = objectMetadataInfo;
 
-  const richTextFieldNames = flatObjectMetadata.fieldMetadataIds
+  const richTextFieldNames = flatObjectMetadata.fieldIds
     .map((fieldId) => flatFieldMetadataMaps.byId[fieldId])
     .filter((field) => field?.type === FieldMetadataType.RICH_TEXT_V2)
     .map((field) => field?.name)

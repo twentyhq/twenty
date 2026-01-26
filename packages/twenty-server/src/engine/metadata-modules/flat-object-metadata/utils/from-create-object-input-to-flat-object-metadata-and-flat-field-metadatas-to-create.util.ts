@@ -69,7 +69,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       nameField?.id ?? defaultFlatFieldForCustomObjectMaps.fields.idField.id;
 
     const flatObjectMetadataToCreate: FlatObjectMetadata = {
-      fieldMetadataIds: [],
+      fieldIds: [],
       viewIds: [],
       indexMetadataIds: [],
       createdAt,

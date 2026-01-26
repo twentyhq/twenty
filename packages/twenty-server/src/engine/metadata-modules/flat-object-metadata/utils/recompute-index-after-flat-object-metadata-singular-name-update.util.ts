@@ -32,7 +32,7 @@ export const recomputeIndexAfterFlatObjectMetadataSingularNameUpdate = ({
   const objectFlatFieldMetadatas =
     findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: optimisticFlatObjectMetadata.fieldMetadataIds,
+      flatEntityIds: optimisticFlatObjectMetadata.fieldIds,
     });
 
   return allRelatedFlatIndexMetadata.map<FlatIndexMetadata>((flatIndex) => {

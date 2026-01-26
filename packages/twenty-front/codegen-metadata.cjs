@@ -28,6 +28,8 @@ module.exports = {
     './src/modules/file/graphql/**/*.{ts,tsx}',
     './src/modules/onboarding/graphql/**/*.{ts,tsx}',
 
+    './src/modules/page-layout/widgets/**/graphql/**/*.{ts,tsx}',
+
     '!./src/**/*.test.{ts,tsx}',
     '!./src/**/*.stories.{ts,tsx}',
     '!./src/**/__mocks__/*.ts',

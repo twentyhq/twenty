@@ -29,7 +29,7 @@ export const recomputeSearchVectorFieldAfterLabelIdentifierUpdate = ({
   const objectFlatFieldMetadatas =
     findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: existingFlatObjectMetadata.fieldMetadataIds,
+      flatEntityIds: existingFlatObjectMetadata.fieldIds,
     });
 
   const searchVectorField = findOrThrow(
