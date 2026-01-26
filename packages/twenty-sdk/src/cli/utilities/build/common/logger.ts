@@ -1,13 +1,6 @@
 import chalk, { type ChalkInstance } from 'chalk';
 
-export type LoggerContext =
-  | 'init'
-  | 'manifest-watch'
-  | 'functions-watch'
-  | 'front-components-watch'
-  | 'file-upload'
-  | 'app-sync'
-  | 'orchestrator';
+export type LoggerContext = 'init' | 'manifest-builder' | 'dev-mode';
 
 type LoggerConfig = {
   prefix: string;
@@ -19,28 +12,12 @@ const LOGGER_CONFIGS: Record<LoggerContext, LoggerConfig> = {
     prefix: '[init]',
     color: chalk.cyan,
   },
-  'manifest-watch': {
-    prefix: '[manifest-watch]',
-    color: chalk.magenta,
-  },
-  'functions-watch': {
-    prefix: '[functions-watch]',
-    color: chalk.yellow,
-  },
-  'front-components-watch': {
-    prefix: '[front-components-watch]',
-    color: chalk.green,
-  },
-  'file-upload': {
-    prefix: '[file-upload]',
+  'manifest-builder': {
+    prefix: '[manifest-builder]',
     color: chalk.blue,
   },
-  'app-sync': {
-    prefix: '[app-sync]',
-    color: chalk.gray,
-  },
-  orchestrator: {
-    prefix: '[orchestrator]',
+  'dev-mode': {
+    prefix: '[dev-mode]',
     color: chalk.blueBright,
   },
 };

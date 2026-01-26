@@ -17,17 +17,17 @@ export const defineManifestTests = (appPath: string): void => {
     it('should have correct manifest content', async () => {
       const manifestPath = join(appPath, '.twenty/output/manifest.json');
       const manifest: ApplicationManifest = await fs.readJSON(manifestPath);
-      const expected = EXPECTED_MANIFEST;
 
-      expect(manifest.application).toEqual(expected.application);
-      expect(manifest.objects).toEqual(expected.objects);
+      expect(manifest.application).toEqual(EXPECTED_MANIFEST.application);
+      expect(manifest.objects).toEqual(EXPECTED_MANIFEST.objects);
 
       expect(
         normalizeManifestForComparison({ functions: manifest.functions })
           .functions,
       ).toEqual(
-        normalizeManifestForComparison({ functions: expected.functions })
-          .functions,
+        normalizeManifestForComparison({
+          functions: EXPECTED_MANIFEST.functions,
+        }).functions,
       );
 
       for (const fn of manifest.functions) {
@@ -42,7 +42,7 @@ export const defineManifestTests = (appPath: string): void => {
         }).frontComponents,
       ).toEqual(
         normalizeManifestForComparison({
-          frontComponents: expected.frontComponents,
+          frontComponents: EXPECTED_MANIFEST.frontComponents,
         }).frontComponents,
       );
 
@@ -51,7 +51,7 @@ export const defineManifestTests = (appPath: string): void => {
         expect(component.builtComponentChecksum).not.toBeNull();
         expect(typeof component.builtComponentChecksum).toBe('string');
       }
-      expect(manifest.roles).toEqual(expected.roles);
+      expect(manifest.roles).toEqual(EXPECTED_MANIFEST.roles);
     });
   });
 };

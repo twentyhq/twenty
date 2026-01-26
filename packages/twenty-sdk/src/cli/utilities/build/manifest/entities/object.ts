@@ -12,7 +12,7 @@ import {
   type ManifestWithoutSources,
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
 
-const logger = createLogger('manifest-watch');
+const logger = createLogger('manifest-builder');
 
 export class ObjectEntityBuilder
   implements ManifestEntityBuilder<ObjectManifest>

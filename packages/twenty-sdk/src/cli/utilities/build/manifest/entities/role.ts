@@ -10,7 +10,7 @@ import {
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
 import { createLogger } from '@/cli/utilities/build/common/logger';
 
-const logger = createLogger('manifest-watch');
+const logger = createLogger('manifest-builder');
 
 export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
   async build(appPath: string): Promise<EntityBuildResult<RoleManifest>> {

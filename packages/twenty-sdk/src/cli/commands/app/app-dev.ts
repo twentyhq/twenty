@@ -12,14 +12,6 @@ export type AppDevOptions = {
   appPath?: string;
 };
 
-/**
- * Runs the development mode for Twenty applications.
- *
- * Flow:
- * 1. ManifestWatcher detects file changes and rebuilds the manifest
- * 2. FunctionsWatcher/FrontComponentsWatcher rebuild and upload affected files
- * 3. After changes settle (debounce), sync with the API
- */
 export class AppDevCommand {
   private appPath = '';
   private orchestrator: DevModeOrchestrator | null = null;
@@ -35,7 +27,10 @@ export class AppDevCommand {
     initLogger.log(`📁 App Path: ${this.appPath}`);
     console.log('');
 
-    this.orchestrator = new DevModeOrchestrator({ appPath: this.appPath });
+    this.orchestrator = new DevModeOrchestrator({
+      appPath: this.appPath,
+      onManifestBuilt: this.handleWatcherRestarts.bind(this),
+    });
 
     await this.startManifestWatcher();
     this.setupGracefulShutdown();
@@ -44,37 +39,23 @@ export class AppDevCommand {
   private async startManifestWatcher(): Promise<void> {
     this.manifestWatcher = new ManifestWatcher({
       appPath: this.appPath,
-      callbacks: {
-        onChangeDetected: () => {
-          this.orchestrator!.onChangeDetected();
-        },
-        onBuildComplete: (result: ManifestBuildResult) => {
-          this.orchestrator!.onManifestBuilt(result);
-
-          if (result.manifest) {
-            this.handleWatcherRestarts(result);
-          }
-        },
-      },
+      onChangeDetected: this.orchestrator!.onChangeDetected.bind(
+        this.orchestrator,
+      ),
     });
 
     await this.manifestWatcher.start();
   }
 
-  /**
-   * Starts or restarts file watchers when the file list changes.
-   */
   private handleWatcherRestarts(result: ManifestBuildResult): void {
     const { functions, frontComponents } = result.filePaths;
 
-    // Start watchers on first successful manifest build
     if (!this.watchersStarted) {
       this.watchersStarted = true;
       void this.startFileWatchers(functions, frontComponents);
       return;
     }
 
-    // Restart watchers if file lists changed
     if (this.functionsWatcher?.shouldRestart(functions)) {
       this.functionsWatcher.restart(functions);
     }
@@ -98,8 +79,14 @@ export class AppDevCommand {
     this.functionsWatcher = new FunctionsWatcher({
       appPath: this.appPath,
       sourcePaths,
-      onFileBuilt: (builtPath, checksum) => {
-        this.orchestrator!.onFileBuilt('function', builtPath, checksum);
+      onBuildError: this.orchestrator!.onFileBuildError.bind(this.orchestrator),
+      onFileBuilt: ({ fileFolder, builtPath, filePath, checksum }) => {
+        this.orchestrator!.onFileBuilt({
+          fileFolder,
+          builtPath,
+          filePath,
+          checksum,
+        });
       },
     });
 
@@ -112,8 +99,14 @@ export class AppDevCommand {
     this.frontComponentsWatcher = new FrontComponentsWatcher({
       appPath: this.appPath,
       sourcePaths,
-      onFileBuilt: (builtPath, checksum) => {
-        this.orchestrator!.onFileBuilt('frontComponent', builtPath, checksum);
+      onBuildError: this.orchestrator!.onFileBuildError.bind(this.orchestrator),
+      onFileBuilt: ({ fileFolder, builtPath, filePath, checksum }) => {
+        this.orchestrator!.onFileBuilt({
+          fileFolder,
+          builtPath,
+          filePath,
+          checksum,
+        });
       },
     });
 

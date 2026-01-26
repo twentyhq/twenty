@@ -10,9 +10,8 @@ import {
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
-import { FUNCTIONS_DIR } from '@/cli/utilities/build/functions/constants';
 
-const logger = createLogger('manifest-watch');
+const logger = createLogger('manifest-builder');
 
 type ExtractedFunctionManifest = Omit<
   ServerlessFunctionManifest,
@@ -71,9 +70,7 @@ export class FunctionEntityBuilder
   }
 
   private computeBuiltHandlerPath(sourceHandlerPath: string): string {
-    const builtPath = sourceHandlerPath.replace(/\.tsx?$/, '.mjs');
-
-    return `${FUNCTIONS_DIR}/${builtPath}`;
+    return sourceHandlerPath.replace(/\.tsx?$/, '.mjs');
   }
 
   validate(

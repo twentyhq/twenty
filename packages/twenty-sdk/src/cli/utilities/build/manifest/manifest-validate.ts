@@ -14,6 +14,7 @@ import {
   type ValidationResult,
   type ValidationWarning,
 } from '@/cli/utilities/build/manifest/manifest-types';
+import type { ApplicationManifest } from 'twenty-shared/application';
 
 const collectAllDuplicates = (
   manifest: ManifestWithoutSources,
@@ -29,7 +30,7 @@ const collectAllDuplicates = (
 };
 
 export const validateManifest = (
-  manifest: ManifestWithoutSources,
+  manifest: ApplicationManifest,
 ): ValidationResult => {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];

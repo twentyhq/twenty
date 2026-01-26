@@ -4,15 +4,13 @@ import path from 'path';
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
-import { createLogger } from '@/cli/utilities/build/common/logger';
 import {
+  type OnBuildErrorCallback,
   type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '@/cli/utilities/build/common/restartable-watcher-interface';
-import { FRONT_COMPONENTS_DIR } from '@/cli/utilities/build/front-components/constants';
-
-const logger = createLogger('front-components-watch');
+import { FileFolder } from 'twenty-shared/types';
 
 export const FRONT_COMPONENT_EXTERNAL_MODULES: string[] = [
   'react',
@@ -36,6 +34,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
   private watchMode: boolean;
   private lastChecksums: Map<string, string> = new Map();
   private onFileBuilt?: OnFileBuiltCallback;
+  private onBuildError?: OnBuildErrorCallback;
   private buildCompletePromise: Promise<void> = Promise.resolve();
   private resolveBuildComplete: (() => void) | null = null;
 
@@ -44,6 +43,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
     this.componentPaths = options.sourcePaths;
     this.watchMode = options.watch ?? true;
     this.onFileBuilt = options.onFileBuilt;
+    this.onBuildError = options.onBuildError;
   }
 
   shouldRestart(sourcePaths: string[]): boolean {
@@ -53,7 +53,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
   }
 
   async start(): Promise<void> {
-    const outputDir = path.join(this.appPath, OUTPUT_DIR, FRONT_COMPONENTS_DIR);
+    const outputDir = path.join(this.appPath, OUTPUT_DIR);
     await fs.emptyDir(outputDir);
 
     if (this.componentPaths.length > 0) {
@@ -73,11 +73,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
     try {
       await this.close();
 
-      const outputDir = path.join(
-        this.appPath,
-        OUTPUT_DIR,
-        FRONT_COMPONENTS_DIR,
-      );
+      const outputDir = path.join(this.appPath, OUTPUT_DIR);
       await cleanupRemovedFiles(outputDir, this.componentPaths, sourcePaths);
       this.componentPaths = sourcePaths;
       this.lastChecksums.clear();
@@ -91,7 +87,7 @@ export class FrontComponentsWatcher implements RestartableWatcher {
   }
 
   private async createContext(): Promise<void> {
-    const outputDir = path.join(this.appPath, OUTPUT_DIR, FRONT_COMPONENTS_DIR);
+    const outputDir = path.join(this.appPath, OUTPUT_DIR);
 
     const entryPoints: Record<string, string> = {};
     for (const componentPath of this.componentPaths) {
@@ -121,21 +117,18 @@ export class FrontComponentsWatcher implements RestartableWatcher {
             build.onEnd(async (result) => {
               try {
                 if (result.errors.length > 0) {
-                  logger.error('✗ Build error:');
-                  for (const error of result.errors) {
-                    logger.error(`  ${error.text}`);
-                  }
+                  await this.onBuildError?.(
+                    result.errors.map((err) => err.text),
+                  );
                   return;
                 }
 
                 await processEsbuildResult({
                   result,
-                  outputDir,
-                  builtDir: FRONT_COMPONENTS_DIR,
+                  appPath: this.appPath,
+                  fileFolder: FileFolder.BuiltFrontComponent,
                   lastChecksums: watcher.lastChecksums,
                   onFileBuilt: watcher.onFileBuilt,
-                  onSuccess: (relativePath) =>
-                    logger.success(`✓ ${relativePath}`),
                 });
               } finally {
                 watcher.resolveBuildComplete?.();

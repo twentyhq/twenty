@@ -14,7 +14,7 @@ import {
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
 import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 
-const logger = createLogger('manifest-watch');
+const logger = createLogger('manifest-builder');
 
 const findApplicationConfigPath = async (appPath: string): Promise<string> => {
   const files = await glob('**/application.config.ts', {

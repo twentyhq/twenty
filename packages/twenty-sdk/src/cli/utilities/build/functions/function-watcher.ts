@@ -4,15 +4,13 @@ import path from 'path';
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
-import { createLogger } from '@/cli/utilities/build/common/logger';
 import {
+  type OnBuildErrorCallback,
   type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '@/cli/utilities/build/common/restartable-watcher-interface';
-import { FUNCTIONS_DIR } from '@/cli/utilities/build/functions/constants';
-
-const logger = createLogger('functions-watch');
+import { FileFolder } from 'twenty-shared/types';
 
 export const FUNCTION_EXTERNAL_MODULES: string[] = [
   'path',
@@ -50,6 +48,7 @@ export class FunctionsWatcher implements RestartableWatcher {
   private watchMode: boolean;
   private lastChecksums: Map<string, string> = new Map();
   private onFileBuilt?: OnFileBuiltCallback;
+  private onBuildError?: OnBuildErrorCallback;
   private buildCompletePromise: Promise<void> = Promise.resolve();
   private resolveBuildComplete: (() => void) | null = null;
 
@@ -58,6 +57,7 @@ export class FunctionsWatcher implements RestartableWatcher {
     this.functionPaths = options.sourcePaths;
     this.watchMode = options.watch ?? true;
     this.onFileBuilt = options.onFileBuilt;
+    this.onBuildError = options.onBuildError;
   }
 
   shouldRestart(sourcePaths: string[]): boolean {
@@ -67,7 +67,7 @@ export class FunctionsWatcher implements RestartableWatcher {
   }
 
   async start(): Promise<void> {
-    const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
+    const outputDir = path.join(this.appPath, OUTPUT_DIR);
     await fs.emptyDir(outputDir);
 
     if (this.functionPaths.length > 0) {
@@ -87,7 +87,7 @@ export class FunctionsWatcher implements RestartableWatcher {
     try {
       await this.close();
 
-      const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
+      const outputDir = path.join(this.appPath, OUTPUT_DIR);
       await cleanupRemovedFiles(outputDir, this.functionPaths, sourcePaths);
       this.functionPaths = sourcePaths;
       this.lastChecksums.clear();
@@ -101,7 +101,7 @@ export class FunctionsWatcher implements RestartableWatcher {
   }
 
   private async createContext(): Promise<void> {
-    const outputDir = path.join(this.appPath, OUTPUT_DIR, FUNCTIONS_DIR);
+    const outputDir = path.join(this.appPath, OUTPUT_DIR);
 
     const entryPoints: Record<string, string> = {};
     for (const functionPath of this.functionPaths) {
@@ -143,21 +143,18 @@ export class FunctionsWatcher implements RestartableWatcher {
             build.onEnd(async (result) => {
               try {
                 if (result.errors.length > 0) {
-                  logger.error('✗ Build error:');
-                  for (const error of result.errors) {
-                    logger.error(`  ${error.text}`);
-                  }
+                  await this.onBuildError?.(
+                    result.errors.map((err) => err.text),
+                  );
                   return;
                 }
 
                 await processEsbuildResult({
                   result,
-                  outputDir,
-                  builtDir: FUNCTIONS_DIR,
+                  appPath: this.appPath,
+                  fileFolder: FileFolder.BuiltFunction,
                   lastChecksums: watcher.lastChecksums,
                   onFileBuilt: watcher.onFileBuilt,
-                  onSuccess: (relativePath) =>
-                    logger.success(`✓ ${relativePath}`),
                 });
               } finally {
                 watcher.resolveBuildComplete?.();
