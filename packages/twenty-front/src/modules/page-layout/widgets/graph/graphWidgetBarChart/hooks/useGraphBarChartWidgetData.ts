@@ -11,7 +11,6 @@ import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/deter
 import { extractBarChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractBarChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useQuery } from '@apollo/client';
-import { type BarDatum } from '@nivo/bar';
 import { isString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -28,7 +27,7 @@ type UseGraphBarChartWidgetDataProps = {
 };
 
 type UseGraphBarChartWidgetDataResult = {
-  data: BarDatum[];
+  data: Record<string, unknown>[];
   indexBy: string;
   keys: string[];
   series: BarChartSeriesWithColor[];
@@ -82,7 +81,7 @@ export const useGraphBarChartWidgetData = ({
   const effectiveQueryData = queryData ?? previousData;
 
   const chartData =
-    (effectiveQueryData?.barChartData?.data as BarDatum[]) ?? [];
+    (effectiveQueryData?.barChartData?.data as Record<string, unknown>[]) ?? [];
 
   const formattedToRawLookup = effectiveQueryData?.barChartData
     ?.formattedToRawLookup
