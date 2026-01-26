@@ -229,7 +229,7 @@ describe('computeBarChartStackedLabels', () => {
 
     const result = computeBarChartStackedLabels(bars);
 
-    expect(result[0].verticalX).toBe((70 + 70) / 2);
+    expect(result[0].verticalX).toBe(70);
     expect(result[0].horizontalX).toBe(90);
   });
 });
