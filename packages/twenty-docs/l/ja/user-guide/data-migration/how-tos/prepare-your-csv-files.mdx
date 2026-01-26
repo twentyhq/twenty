@@ -1,200 +1,200 @@
 ---
-title: Prepare Your CSV Files
-description: Complete step-by-step guide to format your data for import into Twenty.
+title: CSV ファイルを準備する
+description: Twenty へのインポート用にデータをフォーマットするための、完全なステップバイステップガイド。
 ---
 
-## Overview
+## 概要
 
-This guide walks you through preparing your CSV file for a successful import. Follow these steps in order to avoid errors.
+このガイドは、インポートを成功させるための CSV ファイルの準備方法を順を追って説明します。 エラーを避けるために、次の手順に従ってください。
 
-## Step 1: Check File Requirements
+## ステップ 1: ファイル要件を確認する
 
-Before you start, ensure your file meets these requirements:
+開始する前に、ファイルが次の要件を満たしていることを確認してください。
 
-| Requirement    | Details                  |
+| 要件           | 詳細                    |
+| ------------ | --------------------- |
+| **形式**       | CSV、XLSX、または XLS      |
+| **サイズ上限**    | 1 ファイルあたり 10,000 レコード |
+| **エンコーディング** | UTF-8 推奨              |
+| **構造**       | ファイルごとに 1 つのオブジェクトタイプ |
+
+<Note>10,000 レコードを超えるデータセットは、複数のファイルに分割するか、[API インポート](/l/ja/user-guide/data-migration/how-tos/import-data-via-api)を使用してください。</Note>
+
+## ステップ 2: サンプルファイルをダウンロードする
+
+**これは最も重要なステップです。** サンプルファイルには、Twenty が想定する正確な列名と形式が示されています。
+
+1. オブジェクトビュー（People、Companies など）に移動します。
+2. 「**⋮**」→「**Import records**」をクリックします。
+3. 「**Download sample file**」をクリックします。
+4. このファイルをテンプレートとして使用してください。
+
+<Note>**プロのヒント:** 代わりに、既存のレコードを少数エクスポートします。 これにより、データのあるべきフォーマットの実例が得られ、インポート時に列名が自動的にマッピングされます。</Note>
+
+## ステップ 3: 重複値を削除する
+
+Twenty は一部のフィールドに一意性を強制します。 重複はインポートエラーの原因になります。
+
+| オブジェクト         | 一意のフィールド                 |
 | -------------- | ------------------------ |
-| **Format**     | CSV, XLSX, or XLS        |
-| **Size limit** | 10,000 records per file  |
-| **Encoding**   | UTF-8 recommended        |
-| **Structure**  | One object type per file |
+| **People**     | `id`, `email`            |
+| **会社**         | `id`, `domain`           |
+| **カスタムオブジェクト** | `id` に加え、一意に設定した任意のフィールド |
 
-<Note>For datasets larger than 10,000 records, split into multiple files or use the [API import](/l/ja/user-guide/data-migration/how-tos/import-data-via-api).</Note>
+**インポート前に:**
 
-## Step 2: Download the Sample File
+1. スプレッドシートを一意フィールド（email または domain）で並べ替えます。
+2. 重複行を削除または統合します。
+3. Twenty に既に存在する重複がないか確認します。
 
-**This is the most important step.** The sample file shows you the exact column names and format Twenty expects.
+<Warning>**ソフト削除されたレコードも一意性の判定に含まれます。** Command Menu → See deleted records にあるレコードは重複エラーの原因になります。 それらを完全に削除するか、復元して更新してください。</Warning>
 
-1. Go to the object view (People, Companies, etc.)
-2. Click **⋮** → **Import records**
-3. Click **Download sample file**
-4. Use this file as your template
+## ステップ 4: 各フィールドタイプを正しくフォーマットする
 
-<Note>**Pro tip:** Export a few existing records instead. This gives you real examples of how data should be formatted, and the column names will map automatically during import.</Note>
+フィールドタイプごとに必要な形式が異なります。 完全なリファレンスは次のとおりです。
 
-## Step 3: Remove Duplicate Values
+### テキストフィールド
 
-Twenty enforces uniqueness on certain fields. Duplicates will cause import errors.
+* 特別なフォーマットは不要です
+* 先頭/末尾の空白は自動的にトリムされます
 
-| Object             | Unique Fields                             |
-| ------------------ | ----------------------------------------- |
-| **People**         | `id`, `email`                             |
-| **Companies**      | `id`, `domain`                            |
-| **Custom objects** | `id`, plus any field you marked as unique |
+### メールフィールド
 
-**Before importing:**
-
-1. Sort your spreadsheet by the unique field (email or domain)
-2. Remove or merge duplicate rows
-3. Check for duplicates that already exist in Twenty
-
-<Warning>**Soft-deleted records count toward uniqueness.** Records in Command Menu → See deleted records will cause duplicate errors. Delete them permanently or restore and update them.</Warning>
-
-## Step 4: Format Each Field Type Correctly
-
-Different field types require specific formats. Here's the complete reference:
-
-### Text Fields
-
-* No special formatting required
-* Leading/trailing spaces are automatically trimmed
-
-### Email Fields
-
-* Must be valid email format: `name@domain.com`
-* Must be unique (no duplicates in file or in Twenty)
-* For additional emails, use this format in the **Emails / Additional Emails** column:
+* 有効なメール形式である必要があります: `name@domain.com`
+* 一意である必要があります（ファイル内および Twenty 内に重複がないこと）
+* 追加のメールについては、**Emails / Additional Emails** 列で次の形式を使用します:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
-### Domain Fields
+### ドメインフィールド
 
-* **Recommended format**: `https://domain.com`
-* This matches the format used by mailbox/calendar sync (prevents duplicates)
-* Fill both columns:
+* **推奨形式**: `https://domain.com`
+* これはメールボックス/カレンダーの同期で使用される形式と一致します（重複を防止）
+* 両方の列を入力してください。
   * **Domain / Domain Label**: `domain.com`
   * **Domain / Domain URL**: `https://domain.com`
-* Must be unique within your file and in Twenty
+* ファイル内および Twenty 内で一意である必要があります
 
-### Phone Fields
+### 電話番号フィールド
 
-Phone is a **nested field** requiring multiple columns:
+電話番号は、複数の列を必要とする**ネストされたフィールド**です:
 
-| Column                                  | Example      |
+| 列                                       | 例            |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-### Address Fields
+### 住所フィールド
 
-Address is a **nested field** with multiple columns (some can be left empty):
+住所は複数列からなる **入れ子のフィールド** です（空欄のままでよい列もあります）:
 
-* **Address / Address 1**: Street address line 1
-* **Address / Address 2**: Street address line 2 (optional)
-* **Address / City**: City name
-* **Address / State**: State or province
-* **Address / Country**: Country name
-* **Address / Post Code**: Postal/ZIP code
+* **Address / Address 1**: 住所の 1 行目（番地など）
+* **Address / Address 2**: 住所の 2 行目（任意）
+* **Address / City**: 市区町村名
+* **Address / State**: 州または都道府県
+* **Address / Country**: 国名
+* **Address / Post Code**: 郵便番号（ZIP コード）
 
-### Date Fields
+### 日付フィールド
 
-Use consistent formatting throughout your file:
+ファイル全体で形式を統一してください:
 
-* `YYYY-MM-DD` (recommended): `2024-03-15`
+* `YYYY-MM-DD`（推奨）: `2024-03-15`
 * `MM/DD/YYYY`: `03/15/2024`
 * `DD/MM/YYYY`: `15/03/2024`
 * ISO 8601: `2024-03-15T10:30:00Z`
 
-### Number Fields
+### 数値フィールド
 
-* Numbers only (no text)
-* Use period for decimals: `1234.56`
-* No thousands separators (not `1,234.56`)
+* 数値のみ（テキスト不可）
+* 小数点はピリオドを使用: `1234.56`
+* 桁区切りを使用しない（`1,234.56` は不可）
 
-### Currency Fields
+### 通貨フィールド
 
-Currency is a **nested field** requiring two columns that **both must be filled**:
+通貨は **2 列を要する入れ子のフィールド** で、**両方に入力が必要** です:
 
-| Column                | Example   |
+| 列                     | 例         |
 | --------------------- | --------- |
 | **Amount / Amount**   | `1234.56` |
 | **Amount / Currency** | `USD`     |
 
-### Boolean Fields
+### ブール値フィールド
 
-Use uppercase: `TRUE` or `FALSE`
+大文字を使用: `TRUE` または `FALSE`
 
-<Warning>Lowercase `true` or `false` will not work.</Warning>
+<Warning>小文字の `true` や `false` は動作しません。</Warning>
 
-### Select Fields
+### 選択フィールド
 
-Use the **API name** of the option, not the display label.
+表示ラベルではなく、オプションの **API 名** を使用してください。
 
-**How to find API names:**
+**API 名の見つけ方:**
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
-4. Copy the API name (e.g., `OPTION_1`, not "Option 1")
+1. **設定 → データモデル** に移動する
+2. オブジェクトとフィールドを選択
+3. **高度なモード** を有効化（右下のトグル）
+4. API 名をコピー（例: `OPTION_1`。"Option 1" ではありません）
 
-<Note>New select options are not created automatically. Add them in **Settings → Data Model** before importing.</Note>
+<Note>新しい選択肢は自動的に作成されません。 インポート前に **設定 → データモデル** で追加してください。</Note>
 
-### Multi-Select Fields
+### 複数選択フィールド
 
-Use API names in array format:
+API 名を配列形式で記述します:
 
 ```
 ["VALUE1","VALUE2"]
 ```
 
-### Array Fields
+### 配列フィールド
 
-Use JSON array format:
+JSON 配列形式を使用します:
 
 ```
 ["value1","value2"]
 ```
 
-### Rating Fields
+### 評価フィールド
 
-Use the format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, or `RATING_5`
+次の形式を使用: `RATING_1`、`RATING_2`、`RATING_3`、`RATING_4`、または `RATING_5`
 
-### Links/URL Fields
+### リンク/URL フィールド
 
-Fill both columns:
+両方の列を入力:
 
 * **Links / Link Label**: `Twenty`
 * **Links / Link URL**: `https://twenty.com`
 
-For secondary links, use the **Links / Secondary Links** column:
+二次リンクは **Links / Secondary Links** 列を使用します:
 
 ```
 [{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
-### JSON Fields
+### JSON フィールド
 
-Use valid JSON format:
+有効な JSON 形式を使用します:
 
 ```
 {"key":"value","key2":"value2"}
 ```
 
-### ID Fields
+### ID フィールド
 
-* **Optional**: Twenty auto-generates IDs if not provided
-* **Format**: UUID (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
-* **Use case**: Include ID to update existing records instead of creating new ones
+* **任意**: 指定がない場合、Twenty が ID を自動生成します
+* **形式**: UUID（例: `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`）
+* **用途**: 新規作成ではなく既存レコードを更新する場合は ID を含めます
 
-## Step 5: Add Relation Columns (If Linking Records)
+## 手順5: リレーション列を追加（レコードをリンクする場合）
 
-To link records to other objects (e.g., People to Companies), add a column with the unique identifier of the related record.
+レコードを他のオブジェクトにリンクするには（例: People を Companies にリンク）、関連レコードの一意の識別子を含む列を追加します。
 
-**Example**: Linking People to Companies
+**例**: People を Companies にリンク
 
-Add a column to your People CSV:
+People の CSV に列を追加:
 
 ```
 firstName,lastName,email,companyDomain
@@ -202,69 +202,69 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-**Important rules for relations:**
+**リレーションに関する重要なルール:**
 
-* The parent record must already exist in Twenty
-* Use the **Domain URL** format (`https://domain.com`), not the label
-* Map only ONE unique identifier (don't include both `companyId` AND `companyDomain`)
-* For Workspace Members, use their **email** (not name)
+* 親レコードは事前に Twenty に存在している必要があります
+* ラベルではなく **ドメイン URL** 形式（`https://domain.com`）を使用してください
+* 一意の識別子は 1 つだけマッピングしてください（`companyId` と `companyDomain` を両方含めない）
+* ワークスペースメンバーには **メールアドレス**（氏名ではなく）を使用してください
 
 <Warning>
-  **Import Order Matters!**
+  **インポート順序は重要です！**
 
-  Import the "one" side before the "many" side:
+  「1」側を「多」側より先にインポートしてください:
 
-  1. **Companies** first
-  2. **People** second (with company reference)
-  3. **Opportunities** third
+  1. **会社** を先に
+  2. **People** を 2 番目（会社参照付き）
+  3. **商談** を 3 番目に
 
-  The parent record must exist before you can reference it.
+  参照する前に親レコードが存在している必要があります。
 </Warning>
 
-See [How to Import Relations](/l/ja/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions.
+詳細な手順については、[リレーションをインポートする方法](/l/ja/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)を参照してください。
 
-## Step 6: Ensure Fields Exist in Twenty
+## 手順6: Twenty にフィールドが存在することを確認
 
-The import creates **records**, not **fields**. All fields you want to import must already exist in your data model.
+インポートで作成されるのはフィールドではなくレコードです。 インポートしたいフィールドはすべて、あらかじめデータモデルに存在している必要があります。
 
-**Before importing:**
+**インポート前に:**
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Create any custom fields you need
-4. Note the exact field names (they must match your column headers)
+1. **設定 → データモデル** に移動する
+2. 対象オブジェクトを選択する
+3. 必要なカスタムフィールドを作成する
+4. フィールド名の正確な表記を控える（列ヘッダーと一致している必要があります）
 
-## Step 7: Final Checklist
+## 手順7: 最終チェックリスト
 
-Before uploading your file, verify:
+ファイルをアップロードする前に、次を確認してください:
 
-<Check>File is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>Encoding is UTF-8</Check>
-<Check>No duplicate emails (for People) or domains (for Companies)</Check>
-<Check>Dates use consistent format throughout</Check>
-<Check>Domains use `https://domain.com` format</Check>
-<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
-<Check>Select fields use API names, not display labels</Check>
-<Check>All custom fields exist in Settings → Data Model</Check>
-<Check>Parent records imported before child records</Check>
-<Check>Relation columns reference existing records</Check>
+<Check>ファイル形式が CSV、XLSX、または XLS である</Check>
+<Check>ファイルのレコード数が 10,000 未満である</Check>
+<Check>エンコーディングが UTF-8 である</Check>
+<Check>（People）では重複するメールがなく、（Companies）では重複するドメインがない</Check>
+<Check>日付の形式が全体で統一されている</Check>
+<Check>ドメインが `https://domain.com` 形式である</Check>
+<Check>ブール値フィールドは `TRUE` または `FALSE`（大文字）を使用している</Check>
+<Check>選択フィールドは表示ラベルではなく API 名を使用している</Check>
+<Check>すべてのカスタムフィールドが 設定 → データモデル に存在する</Check>
+<Check>子レコードより先に親レコードをインポートしている</Check>
+<Check>リレーション列が既存レコードを参照している</Check>
 
-## Common Mistakes to Avoid
+## 避けるべき一般的なミス
 
-| Mistake                                      | Solution                              |
-| -------------------------------------------- | ------------------------------------- |
-| Using `true` instead of `TRUE`               | Boolean values must be uppercase      |
-| Using display labels for Select fields       | Find and use API names in Settings    |
-| Importing People before Companies            | Always import parent objects first    |
-| Missing currency code for Currency fields    | Fill both Amount and Currency columns |
-| Wrong domain format                          | Use `https://domain.com` consistently |
-| Mapping multiple unique fields for relations | Map only ONE (domain OR id, not both) |
+| 誤り                               | 解決策                                     |
+| -------------------------------- | --------------------------------------- |
+| `TRUE` の代わりに `true` を使用している      | ブール値は大文字である必要があります                      |
+| 選択フィールドで表示ラベルを使用している             | 設定で API 名を確認して使用する                      |
+| Companies より先に People をインポートしている | 常に親オブジェクトから先にインポートする                    |
+| 通貨フィールドで通貨コードが欠けている              | Amount と Currency の両方の列を入力する            |
+| ドメインの形式が誤っている                    | `https://domain.com` を一貫して使用する          |
+| リレーションで複数の一意フィールドをマッピングしている      | 1 つだけをマッピングする（domain か id のどちらかで、両方は不可） |
 
-## Next Steps
+## 次のステップ
 
-Your file is ready! Now:
+ファイルの準備ができました！ 次へ:
 
-* [Import Companies](/l/ja/user-guide/data-migration/how-tos/import-companies-via-csv) (import these first)
-* [Import Contacts](/l/ja/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [Fix any import errors](/l/ja/user-guide/data-migration/how-tos/fix-import-errors)
+* [会社をインポート](/l/ja/user-guide/data-migration/how-tos/import-companies-via-csv)（これを先にインポート）
+* [コンタクトをインポート](/l/ja/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [インポートエラーを修正](/l/ja/user-guide/data-migration/how-tos/fix-import-errors)

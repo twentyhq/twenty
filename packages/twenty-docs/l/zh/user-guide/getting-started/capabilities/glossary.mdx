@@ -1,108 +1,104 @@
 ---
-title: Glossary
-description: Get familiar with essential terminology used in Twenty.
+title: 术语表
+description: 了解 Twenty 使用的基本术语。
 ---
 
-## API
+## 接口
 
-API (Application Programming Interface) allows you to connect Twenty with other software systems and build custom integrations.
+API（应用程序接口）允许您将 Twenty 与其他软件系统连接并构建自定义集成。
 
-## Apps
+## 应用
 
-Apps are custom extensions built as code that can define data models and serverless functions. They enable developers to create reusable customizations that can be deployed across multiple workspaces.
+应用是以代码构建的自定义扩展，可定义数据模型和无服务器函数。 它使开发者能够创建可复用的自定义内容，并可部署到多个工作区。
 
-## Code Actions
+## 代码操作
 
-Code Actions are workflow steps that let you write custom JavaScript to transform data, make calculations, or perform complex logic that isn't possible with built-in actions.
+代码操作是工作流步骤，允许你编写自定义 JavaScript 来转换数据、进行计算，或执行内置操作无法实现的复杂逻辑。
 
-## Command Menu
+## 命令菜单
 
-The Command Menu is a quick-access interface (opened with `Cmd + K` on Mac and `Ctrl + K` on Windows) that lets you perform actions, create records, and navigate your workspace efficiently.
+命令菜单是一个快速访问界面（在 Mac 上用 `Cmd + K` 打开，Windows 上用 `Ctrl + K` 打开），可以让您执行操作、创建记录并高效地导航您的工作区。
 
-## Company & People
+## 公司与人员
 
-The CRM has two fundamental types of records:
+CRM 有两种基本类型的记录：
 
-* A `Company` represents a business or organization.
-* `People` represent your company's current and prospective customers or clients.
+* `公司` 表示一个企业或组织。
+* `人员` 代表您的公司当前和潜在的客户。
 
-## Custom Fields
+## 自定义字段
 
-Custom Fields are data fields you create to capture information specific to your business needs and processes.
+自定义字段是您创建的数据字段，用于捕获特定于您的业务需求和流程的信息。
 
-## Data Model
+## 数据模型
 
-A Data Model is the structure that defines how information is organized in your CRM, including what objects exist, their properties (fields), and how they relate to each other.
+数据模型是定义信息在您的 CRM 中如何组织的结构，包括哪些对象存在、它们的属性（字段）以及它们如何相互关联。
 
-## Favorites
+## 收藏夹
 
-Favorites are records you've marked for quick access, appearing in your sidebar for instant navigation to important data.
+收藏是你标记用于快速访问的记录，会显示在侧边栏，便于即时导航到重要数据。
 
-## Field
+## 字段
 
-A field refers to a specific area where particular data is stored for an entity.
+字段是指为某个实体存储特定数据的特定区域。
 
-## Integration
+## 迭代器
 
-Integrations are built-in tools that allow you to link Twenty with other software or systems.
+迭代器是一种工作流操作，用于遍历项目数组，并为列表中的每个项目执行后续操作。
 
-## Iterator
+## 看板
 
-An Iterator is a workflow action that loops through an array of items, executing subsequent actions for each item in the list.
+`看板` 是一种使用卡片和列来跟踪业务流程的可视化方法。 每一列代表您的流程中的一个阶段（例如：新建、进行中、赢得、失去），您可以随着进度将记录在这些阶段中移动。
 
-## Kanban
+## 对象
 
-A `Kanban` is a visual way to track your business processes using cards and columns. Each column represents a stage in your process (for example: new, ongoing, won, lost), and you move records through these stages as they progress.
+对象是一种数据结构，表示 CRM 中的特定类型的实体（如人员、公司或机会）。 对象可以是标准的（内置）或自定义的（由您创建）。
 
-## Object
+## 机会
 
-An Object is a data structure that represents a specific type of entity in your CRM (like People, Companies, or Opportunities). Objects can be standard (built-in) or custom (created by you).
+在 Twenty CRM 中，机会是与帐户或联系人潜在的交易或销售。
 
-## Opportunities
+## 记录
 
-Opportunities in Twenty CRM are potential deals or sales with accounts or contacts.
+记录表示一个对象的实例，比如特定的帐户或联系人。
 
-## Record
+## 关系字段
 
-A Record indicates an instance of an object, like a specific account or contact.
+关系字段在不同对象之间创建连接，允许您将记录链接在一起（例如连接一个人到一个公司）。
 
-## Relation Fields
+## 标准字段
 
-Relation Fields create connections between different objects, allowing you to link records together (like connecting a Person to a Company).
+标准字段是默认附带对象的预构建数据字段，并在所有工作空间中提供常见功能。
 
-## Standard Fields
+## 任务
 
-Standard Fields are pre-built data fields that come with objects by default and provide common functionality across all workspaces.
+在 Twenty CRM 中，任务是与联系人、帐户或机会相关的分配活动。
 
-## Tasks
+## 触发器
 
-Tasks in Twenty CRM are assigned activities relating to contacts, accounts, or opportunities.
+触发器是工作流的起点——用于启动自动化的事件或条件。 示例包括记录创建、记录更新、Webhook 或预定时间。
 
-## Triggers
+## 视图
 
-Triggers are the starting point of a workflow — the event or condition that initiates the automation. Examples include record creation, record updates, webhooks, or scheduled times.
+您可以使用视图自定义记录的显示，为每个视图设置不同的过滤器、布局和排序选项。
 
-## Views
+## 更新或插入
 
-You can customize the display of your records using views, setting different filters, layouts and sorting options for each view.
-
-## Upsert
-
-Upsert is an operation that combines "update" and "insert" — it updates an existing record if a match is found, or creates a new record if no match exists.
+更新或插入是一种将“更新”和“插入”合并的操作——如果找到匹配项，则更新现有记录；如果没有匹配，则创建新记录。
 
 ## Webhooks
 
-Webhooks are automated messages sent from Twenty to other applications when specific events occur, enabling real-time data synchronization.
+Webhook 是在特定事件发生时从 Twenty 发送到其他应用的自动消息，实现实时数据同步。
 
-## Workflows
+## 工作流
 
-Workflows are automated processes that trigger actions based on specific conditions, helping you automate repetitive tasks and business processes.
+工作流是基于特定条件触发动作的自动化过程，帮助您自动化重复性任务和业务流程。
 
-## Workspace
+## 工作区
 
-A `Workspace` typically represents a company using Twenty. It holds all the records and data that you and your team members add to Twenty.
-It has a single domain name, which is typically the domain name your company uses for employee email addresses.
+一个 `工作区` 通常代表使用 Twenty 的公司。 它保存您和您的团队成员添加到 Twenty 的所有记录和数据。
+它有一个单一的域名，通常是您公司用于员工电子邮件地址的域名。
 
-## Workspace Members
+## 工作区成员
 
-Workspace Members are the Twenty users from your team who have access to your workspace. They can be assigned as owners or assignees for records.
+工作区成员是您的团队中有权访问您的工作区的 Twenty 用户。 他们可以被指定为记录的所有者或被分配人。

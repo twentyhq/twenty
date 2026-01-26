@@ -1,12 +1,12 @@
 ---
-title: Feature Flags
+title: Flags de recurso
 ---
 
-Feature flags are used to hide experimental features. For Twenty, they are set on workspace level and not on a user level.
+As flags de recurso são usadas para ocultar recursos experimentais. Para a Twenty, eles são definidos no nível do espaço de trabalho e não no nível do usuário.
 
-## Adding a new feature flag
+## Adicionando uma nova flag de recurso
 
-In `FeatureFlagKey.ts` add the feature flag:
+Em `FeatureFlagKey.ts` adicione a flag de recurso:
 
 ```ts
 type FeatureFlagKey =
@@ -14,7 +14,7 @@ type FeatureFlagKey =
   | ...;
 ```
 
-Also add it to the enum in `feature-flag.entity.ts`:
+Também adicione-o ao enum em `feature-flag.entity.ts`:
 
 ```ts
 enum FeatureFlagKeys {
@@ -23,7 +23,7 @@ enum FeatureFlagKeys {
 }
 ```
 
-To apply a feature flag on a **backend** feature use:
+Para aplicar uma flag de recurso em um recurso de **back-end**, use:
 
 ```ts
 @Gate({
@@ -31,16 +31,16 @@ To apply a feature flag on a **backend** feature use:
 })
 ```
 
-To apply a feature flag on a **frontend** feature use:
+Para aplicar uma flag de recurso em um recurso de **front-end**, use:
 
 ```ts
 const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
 ```
 
-## Configure feature flags for the deployment
+## Configurar flags de recurso para a implantação
 
-Change the corresponding record in the Table `core.featureFlag`:
+Altere o registro correspondente na Tabela `core.featureFlag`:
 
-| id     | key                      | workspaceId | value  |
-| ------ | ------------------------ | ----------- | ------ |
-| Random | `IS_FEATURENAME_ENABLED` | WorkspaceID | `true` |
+| iD        | chave                    | workspaceId | valor        |
+| --------- | ------------------------ | ----------- | ------------ |
+| Aleatório | `IS_FEATURENAME_ENABLED` | WorkspaceID | `verdadeiro` |

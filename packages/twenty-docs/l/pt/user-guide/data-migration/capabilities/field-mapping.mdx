@@ -1,198 +1,198 @@
 ---
-title: Field Mapping
-description: How field mapping works during data import.
+title: Mapeamento de Campos
+description: Como o mapeamento de campos funciona durante a importação de dados.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## How Field Mapping Works
+## Como funciona o mapeamento de campos
 
-When you upload a file, Twenty analyzes your columns and attempts to match them to existing fields.
+Ao fazer upload de um arquivo, a Twenty analisa as suas colunas e tenta associá-las aos campos existentes.
 
-### Automatic Mapping
+### Mapeamento automático
 
-Twenty tries to match columns based on:
+A Twenty tenta associar as colunas com base em:
 
-* Column header names (exact or similar matches)
-* Data type detection (dates, numbers, emails)
-* Common field patterns
+* Nomes dos cabeçalhos das colunas (correspondências exatas ou semelhantes)
+* Detecção de tipo de dados (datas, números, e-mails)
+* Padrões comuns de campos
 
-<Note>**Quick tip:** Export a few rows from the object you want to import. The exported file will have the exact column names Twenty expects, making automatic mapping seamless during import.</Note>
+<Note>**Dica rápida:** Exporte algumas linhas do objeto que você deseja importar. O arquivo exportado terá exatamente os nomes de coluna que a Twenty espera, facilitando o mapeamento automático durante a importação.</Note>
 
-### Manual Mapping Options
+### Opções de mapeamento manual
 
-For each column, you can:
+Para cada coluna, você pode:
 
-* **Map to a field**: Select the matching Twenty field from a dropdown
-* **Do not map**: Skip the column entirely (data won't be imported)
+* **Mapear para um campo**: selecione o campo correspondente da Twenty em um menu suspenso
+* **Não mapear**: ignore a coluna completamente (os dados não serão importados)
 
-<Note>**Fields must exist before import.** The import creates records, not fields. Create custom fields under **Settings → Data Model** before importing.</Note>
+<Note>**Os campos devem existir antes da importação.** A importação cria registros, não campos. Crie campos personalizados em **Configurações → Modelo de Dados** antes de importar.</Note>
 
-## Field Type Compatibility
+## Compatibilidade de tipos de campo
 
-All field types available in the Data Model are supported for import.
+Todos os tipos de campos disponíveis no Modelo de Dados são compatíveis com a importação.
 
-You can also import `id` values to either assign a specific ID to new records or update existing ones.
+Você também pode importar valores de `id` para atribuir um ID específico a novos registros ou atualizar os existentes.
 
 <img src="/images/user-guide/fields/all-field-types.png" style={{width:'100%'}} />
 
-## Data Format Requirements
+## Requisitos de formato de dados
 
-<Note>**Some fields have special syntax.** We recommend downloading the sample file before preparing your import to see the expected syntax for each field type.</Note>
+<Note>**Alguns campos têm sintaxe especial.** Recomendamos baixar o arquivo de exemplo antes de preparar sua importação para ver a sintaxe esperada para cada tipo de campo.</Note>
 
-### Address Fields
+### Campos de Endereço
 
-Address is a nested field with multiple columns. Some can be left empty.
+Endereço é um campo aninhado com várias colunas. Algumas podem ficar em branco.
 
-* **Address / Address 1**: Street address line 1
-* **Address / Address 2**: Street address line 2
-* **Address / City**: City name
-* **Address / State**: State or province
-* **Address / Country**: Country name
-* **Address / Post Code**: Postal/ZIP code
+* **Endereço / Endereço 1**: Linha 1 do endereço
+* **Endereço / Endereço 2**: Linha 2 do endereço
+* **Endereço / Cidade**: Nome da cidade
+* **Endereço / Estado**: Estado ou província
+* **Endereço / País**: Nome do país
+* **Endereço / Código Postal**: Código Postal/CEP
 
-### Array Fields
+### Campos de Array
 
-Use the following format:
+Use o seguinte formato:
 
 ```
-["value1","value2"]
+[\"value1\",\"value2\"]
 ```
 
-### Boolean Fields
+### Campos Booleanos
 
-Use `TRUE` or `FALSE` (uppercase) - not `true` or `false`
+Use `TRUE` ou `FALSE` (em maiúsculas) - não `true` ou `false`
 
-### Currency Fields
+### Campos de Moeda
 
-Currency is a nested field with two columns that **both must be filled**:
+Moeda é um campo aninhado com duas colunas que **ambas devem ser preenchidas**:
 
-* **Amount / Amount**: The numeric value (e.g., `1234.56`)
-* **Amount / Currency**: The currency code (e.g., `USD`, `EUR`)
+* **Valor / Valor**: O valor numérico (por exemplo, `1234.56`)
+* **Valor / Moeda**: O código da moeda (por exemplo, `USD`, `EUR`)
 
-### Date Fields
+### Campos de Data
 
-Supported formats:
+Formatos suportados:
 
-* `YYYY-MM-DD` (recommended)
+* `YYYY-MM-DD` (recomendado)
 * `MM/DD/YYYY`
 * `DD/MM/YYYY`
-* ISO 8601 format
+* Formato ISO 8601
 
-### Domain Fields
+### Campos de Domínio
 
-* It is recommended to use the format `https://domain.com` to avoid creating duplicates, as this is the format used for Companies created by the mailbox and calendar synchronizations
-* A `Domain Label` and `Domain URL` can be filled: best practice is to fill `domain.com` in the label and `https://domain.com` in the url
-* Domains must be unique within the Companies object
-* **Domains must be unique within the file to import**
+* Recomenda-se usar o formato `https://domain.com` para evitar a criação de duplicatas, pois esse é o formato usado para Empresas criadas pelas sincronizações da caixa de correio e do calendário
+* Um `Domain Label` e uma `Domain URL` podem ser preenchidos: a boa prática é preencher `domain.com` no rótulo e `https://domain.com` na URL
+* Domínios devem ser exclusivos no objeto Empresas
+* **Os domínios devem ser exclusivos dentro do arquivo a ser importado**
 
-### Email Fields
+### Campos de E-mail
 
-* Must be valid email format
-* Emails must be unique within the People object
-* **Emails must be unique within the file to import**
-* For additional emails: use **Emails / Primary Email** for the main email, and **Emails / Additional Emails** with this format:
-
-```
-["jane@twenty.com","jane.doe@twenty.com"]
-```
-
-### Id Fields
-
-Specifying an `id` during import is optional. Twenty auto-generates one if not provided.
-
-Use cases for mapping an `id` column:
-
-* **Set a specific ID**: Choose the UUID for newly created records
-* **Update existing records**: Match against existing records to update them instead of creating duplicates. In that case, it is recommended to not map the other unique fields: mapping only one unique field ensures a smoother import.
-
-<Note>If you provide an `id`, it must be in UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
-
-### JSON Fields
-
-Use valid JSON format:
+* Deve estar em um formato de e-mail válido
+* Os e-mails devem ser exclusivos dentro do objeto Pessoas
+* **Os e-mails devem ser exclusivos dentro do arquivo a ser importado**
+* Para e-mails adicionais: use **E-mails / E-mail principal** para o e-mail principal e **E-mails / E-mails adicionais** com este formato:
 
 ```
-{"key":"value","key2":"value2"}
+[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
 ```
 
-### Links Fields
+### Campos de ID
 
-Similar to Domain fields:
+Especificar um `id` durante a importação é opcional. A Twenty gera um automaticamente se não for fornecido.
 
-* Fill both the label and URL columns: **Links / Link URL** and **Links / Link Label**
-* Use full URL format: `https://example.com`
-* For secondary links, use **Links / Secondary Links** column with this format:
+Casos de uso para mapear uma coluna `id`:
+
+* **Definir um ID específico**: escolha o UUID para registros recém-criados
+* **Atualizar registros existentes**: faça a correspondência com registros existentes para atualizá-los, em vez de criar duplicatas. Nesse caso, recomenda-se não mapear os outros campos exclusivos: mapear apenas um campo exclusivo garante uma importação mais tranquila.
+
+<Note>Se você fornecer um `id`, ele deve estar no formato UUID (por exemplo, `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+
+### Campos JSON
+
+Use um formato JSON válido:
 
 ```
-[{"url":"https://twenty.com","label":"Twenty"}]
+{\"key\":\"value\",\"key2\":\"value2\"}
 ```
 
-### Multi-Select Fields
+### Campos de Links
 
-Use the **API names** (not the display labels) in the following format:
+Semelhante aos campos de Domínio:
+
+* Preencha as colunas de rótulo e URL: **Links / URL do link** e **Links / Rótulo do link**
+* Use o formato completo de URL: `https://example.com`
+* Para links secundários, use a coluna **Links / Links Secundários** com este formato:
 
 ```
-["VALUE1","VALUE2"]
+[{\"url\":\"https://twenty.com\",\"label\":\"Twenty\"}]
 ```
 
-See [here](#finding-api-names-for-select-fields) where to find the API names.
+### Campos de Seleção Múltipla
 
-<Note>New select options will not be created automatically by the import. They must be added under **Settings → Data Model** before importing.</Note>
+Use os **nomes da API** (não os rótulos de exibição) no seguinte formato:
+
+```
+[\"VALUE1\",\"VALUE2\"]
+```
+
+Veja [aqui](#finding-api-names-for-select-fields) onde encontrar os nomes da API.
+
+<Note>Novas opções de seleção não serão criadas automaticamente pela importação. Elas devem ser adicionadas em **Configurações → Modelo de Dados** antes de importar.</Note>
 
 <Warning>
-  **Import overwrites, it does not add.**
+  **A importação substitui; não adiciona.**
 
-  If a record already has `VALUE2` and `VALUE3` selected, and you import `["VALUE1"]`, the record will only have `VALUE1` after import. The previous selections are replaced, not merged.
+  Se um registro já tiver `VALUE2` e `VALUE3` selecionados e você importar `[\"VALUE1\"]`, o registro terá apenas `VALUE1` após a importação. As seleções anteriores são substituídas, não mescladas.
 </Warning>
 
-### Number Fields
+### Campos Numéricos
 
-* Numbers only
-* Decimals use period: `1234.56`
-* No thousands separators
+* Apenas números
+* Decimais usam ponto: `1234.56`
+* Sem separadores de milhares
 
-### Phone Fields
+### Campos de Telefone
 
-Phone is a nested field with multiple columns that **must be filled**
+Telefone é um campo aninhado com várias colunas que devem ser preenchidas
 
-* **Phones / Primary Phone Number**: The phone number (e.g., `4159095555`)
-* **Phones / Primary Phone Country Code**: Country code (e.g., `US`)
-* **Phones / Primary Phone Calling Code**: Dialing code (e.g., `+1`)
+* **Telefones / Número de telefone principal**: O número de telefone (por exemplo, `4159095555`)
+* **Telefones / Código do país do telefone principal**: Código do país (por exemplo, `US`)
+* **Telefones / Código de chamada do telefone principal**: Código de discagem (por exemplo, `+1`)
 
-### Rating Fields
+### Campos de Classificação
 
-Use the API name format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
+Use o formato de nome da API: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
 
-### Relation Fields
+### Campos de Relação
 
-Please see our dedicated article: [Import Relations Between Objects](/l/pt/user-guide/data-migration/capabilities/import-relations)
+Consulte nosso artigo dedicado: [Importar relações entre objetos](/l/pt/user-guide/data-migration/capabilities/import-relations)
 
-### Select Fields
+### Campos de Seleção
 
-Use the **API name** of the option (not the display label):
+Use o **nome da API** da opção (não o rótulo de exibição):
 
 ```
 VALUE1
 ```
 
-See [here](#finding-api-names-for-select-fields) where to find the API names.
-<Note>New select options will not be created automatically by the import. They must be added under **Settings → Data Model** before importing.</Note>
+Veja [aqui](#finding-api-names-for-select-fields) onde encontrar os nomes da API.
+<Note>Novas opções de seleção não serão criadas automaticamente pela importação. Elas devem ser adicionadas em **Configurações → Modelo de Dados** antes de importar.</Note>
 
-### Text Fields
+### Campos de Texto
 
-* No special formatting required
-* Leading/trailing spaces are trimmed
+* Nenhuma formatação especial é necessária
+* Espaços no início e no fim são removidos
 
-## Finding API Names
+## Encontrar Nomes da API
 
-For Select, Multi-Select, and Array fields with predefined options, you must use the **API names**, not the display labels.
+Para campos Select, Multi-Select e Array com opções predefinidas, você deve usar os **nomes da API**, não os rótulos de exibição.
 
-### How to Find API Names
+### Como encontrar nomes da API
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at the bottom right of the settings page)
-4. View the API name for each option
+1. Vá para **Configurações → Modelo de Dados**
+2. Selecione o objeto e o campo
+3. Ative o **Modo Avançado** (alternador no canto inferior direito da página de configurações)
+4. Visualize o nome da API de cada opção
 
-<VimeoEmbed videoId="1144910809" title="Video demonstration" />
+<VimeoEmbed videoId="1144910809" title="Demonstração em vídeo" />

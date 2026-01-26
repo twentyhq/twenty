@@ -1,85 +1,85 @@
 ---
-title: Workflow Versions
-description: Manage workflow versions and drafts.
+title: ワークフローバージョン
+description: ワークフローのバージョンとドラフトを管理します。
 image: /images/user-guide/workflows/workflow.png
 ---
 
-## About Versions
+## バージョンについて
 
-Every time you activate a workflow, a new version is created. This allows you to track changes over time and revert to previous configurations if needed.
+ワークフローを有効化するたびに、新しいバージョンが作成されます。 これにより、経時的な変更を追跡し、必要に応じて以前の設定に戻すことができます。
 
-## Version Statuses
+## バージョンの状態
 
-| Status          | Description                            |
-| --------------- | -------------------------------------- |
-| **Draft**       | Being edited, not yet published        |
-| **Active**      | Live version responding to triggers    |
-| **Deactivated** | Previously active but manually stopped |
-| **Archived**    | Past versions kept for history         |
+| ステータス       | 説明                  |
+| ----------- | ------------------- |
+| **ドラフト**    | 編集中、まだ公開されていない      |
+| **アクティブ**   | トリガーに応答する稼働中のバージョン  |
+| **無効化済み**   | 以前はアクティブだったが手動で停止   |
+| **アーカイブ済み** | 履歴のために保存された過去のバージョン |
 
-## Working with Drafts
+## ドラフトの操作
 
-When you edit an active workflow, your changes are saved as a **draft**. The active version continues to run while you work on updates.
+アクティブなワークフローを編集すると、変更は**ドラフト**として保存されます。 更新作業中も、アクティブなバージョンは引き続き稼働します。
 
-Once you're done editing, you can:
+編集が完了したら、次のいずれかを実行できます。
 
-* **Activate**: Publish the draft as the new active version (the previous version is archived)
-* **Discard**: Delete the draft and keep the current active version
+* **有効化**: ドラフトを新しいアクティブ版として公開します（以前のバージョンはアーカイブされます）
+* **破棄**: ドラフトを削除し、現在のアクティブ版を維持します
 
-## Version History
+## バージョン履歴
 
-### Viewing Past Versions
+### 過去のバージョンを表示
 
-1. Open the workflow
-2. Click the **Versions** tab
-3. See all previous versions with timestamps
+1. ワークフローを開く
+2. **バージョン** タブをクリック
+3. タイムスタンプ付きですべての過去バージョンを確認
 
-### Restoring a Version
+### バージョンの復元
 
-1. Find the version you want to restore
-2. Click **Use as draft**
-3. The version is copied to a new draft
-4. Make any necessary updates
-5. Activate when ready
+1. 復元したいバージョンを見つける
+2. 「**ドラフトとして使用**」をクリック
+3. そのバージョンが新しいドラフトにコピーされます
+4. 必要な更新を行う
+5. 準備ができたら有効化する
 
-## Best Practices
+## ベストプラクティス
 
-### Version Management
+### バージョン管理
 
-* Activate only when ready for production
-* Keep meaningful changes between versions
-* Document major changes in workflow names or descriptions
-* Test in draft mode before activating
+* 本番運用の準備が整ってからのみ有効化する
+* バージョン間の変更は意味のあるものに限定する
+* ワークフロー名や説明の大きな変更は記録する
+* 有効化する前にドラフトモードでテストする
 
-### Reverting Changes
+### 変更のロールバック
 
-* If a new version causes issues, restore the previous version
-* Use the version history to track what changed
-* Always test restored versions before activating
+* 新しいバージョンで問題が発生した場合は、前のバージョンを復元する
+* バージョン履歴を使用して何が変わったかを追跡する
+* 復元したバージョンは、有効化前に必ずテストする
 
-## Common Workflows
+## 一般的なワークフロー
 
-### Quick Edit
+### クイック編集
 
-1. Make minor changes to an active workflow
-2. Test in draft mode
-3. Activate the new version
+1. アクティブなワークフローに軽微な変更を加える
+2. ドラフトモードでテストする
+3. 新しいバージョンを有効化する
 
-### Major Revision
+### 大幅な修正
 
-1. Use the previous version as a starting point
-2. Make significant changes in draft
-3. Thoroughly test all scenarios
-4. Activate when confident
+1. 前のバージョンを出発点として使用する
+2. ドラフトで大きな変更を加える
+3. あらゆるシナリオを徹底的にテストする
+4. 確信が持てたら有効化する
 
-### Rollback
+### ロールバック
 
-1. Identify the issue with the current version
-2. Find the last working version in history
-3. Click **Use as draft**
-4. Activate to restore the old behavior
+1. 現在のバージョンの問題を特定する
+2. 履歴から最後に正常に動作していたバージョンを見つける
+3. 「**ドラフトとして使用**」をクリック
+4. 有効化して以前の挙動を復元する
 
-## Related
+## 関連項目
 
-* [Getting Started with Workflows](/l/ja/user-guide/workflows/overview)
-* [Workflow Runs](/l/ja/user-guide/workflows/capabilities/workflow-runs)
+* [ワークフロー入門](/l/ja/user-guide/workflows/overview)
+* [ワークフローの実行](/l/ja/user-guide/workflows/capabilities/workflow-runs)

@@ -1,18 +1,18 @@
 ---
-title: Buttons
+title: Botões
 image: /images/user-guide/views/filter.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/views/filter.png" alt="Header" />
+  <img src="/images/user-guide/views/filter.png" alt="Cabeçalho" />
 </Frame>
 
-A list of buttons and button groups used throughout the app.
+Uma lista de botões e grupos de botões usados em todo o aplicativo.
 
-## Button
+## Botão
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { Button } from "@/ui/input/button/components/Button";
 
@@ -37,28 +37,28 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type                  | Description                                                                                                          |
-    | --------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
-    | className | string                | Optional class name for additional styling                                                                           |
-    | Icon      | `React.ComponentType` | An optional icon component that's displayed within the button                                                        |
-    | title     | string                | The text content of the button                                                                                       |
-    | fullWidth | boolean               | Defines whether the button should span the whole width of its container                                              |
-    | variant   | string                | The visual style variant of the button. Options include `primary`, `secondary`, and `tertiary`                       |
-    | size      | string                | The size of the button. Has two options: `small` and `medium`                                                        |
-    | position  | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
-    | accent    | string                | The accent color of the button. Options include: `default`, `blue`, and `danger`                                     |
-    | soon      | boolean               | Indicates if the button is marked as "soon" (such as for upcoming features)                                          |
-    | disabled  | boolean               | Specifies whether the button is disabled or not                                                                      |
-    | focus     | boolean               | Determines if the button has focus                                                                                   |
-    | onClick   | function              | A callback function that triggers when the user clicks on the button                                                 |
+  <Tab title="Propriedades">
+    | Propriedades    | Tipo                  | Descrição                                                                                                        |
+    | --------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------- |
+    | className       | string                | Nome de classe opcional para estilo adicional                                                                    |
+    | Ícone           | `React.ComponentType` | Um componente de ícone opcional que é exibido dentro do botão                                                    |
+    | título          | string                | O conteúdo de texto do botão                                                                                     |
+    | larguraCompleta | booleano              | Define se o botão deve ocupar toda a largura do seu container                                                    |
+    | variante        | string                | A variante de estilo visual do botão. As opções incluem `primary`, `secondary` e `tertiary`                      |
+    | tamanho         | string                | O tamanho do botão. Tem duas opções: `pequeno` e `médio`                                                         |
+    | posição         | string                | A posição do botão em relação aos seus irmãos. As opções incluem: `independente`, `esquerda`, `direita` e `meio` |
+    | destaque        | string                | A cor de destaque do botão. As opções incluem: `padrão`, `azul` e `perigo`                                       |
+    | em breve        | booleano              | Indica se o botão está marcado como "em breve" (como para recursos futuros)                                      |
+    | desativado      | booleano              | Especifica se o botão está desativado ou não                                                                     |
+    | foco            | booleano              | Determina se o botão está em foco                                                                                |
+    | aoClicar        | função                | Uma função de callback que é acionada quando o usuário clica no botão                                            |
   </Tab>
 </Tabs>
 
-## Button Group
+## Grupo de Botões
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { Button } from "@/ui/input/button/components/Button";
     import { ButtonGroup } from "@/ui/input/button/components/ButtonGroup";
@@ -115,21 +115,21 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type      | Description                                                                                                      |
-    | --------- | --------- | ---------------------------------------------------------------------------------------------------------------- |
-    | variant   | string    | The visual style variant of the buttons within the group. Options include `primary`, `secondary`, and `tertiary` |
-    | size      | string    | The size of the buttons within the group. Has two options: `medium` and `small`                                  |
-    | accent    | string    | The accent color of the buttons within the group. Options include `default`, `blue` and `danger`                 |
-    | className | string    | Optional class name for additional styling                                                                       |
-    | children  | ReactNode | An array of React elements representing the individual buttons within the group                                  |
+  <Tab title="Propriedades">
+    | Propriedades | Tipo      | Descrição                                                                                                     |
+    | ------------ | --------- | ------------------------------------------------------------------------------------------------------------- |
+    | variante     | string    | A variante de estilo visual dos botões dentro do grupo. As opções incluem `primary`, `secondary` e `tertiary` |
+    | tamanho      | string    | O tamanho dos botões dentro do grupo. Tem duas opções: `médio` e `pequeno`                                    |
+    | destaque     | string    | A cor de destaque dos botões dentro do grupo. As opções incluem `padrão`, `azul` e `perigo`                   |
+    | className    | string    | Nome de classe opcional para estilo adicional                                                                 |
+    | filhos       | ReactNode | Um array de elementos React que representam os botões individuais no grupo                                    |
   </Tab>
 </Tabs>
 
-## Floating Button
+## Botão Flutuante
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -152,25 +152,25 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type                  | Description                                                                                                      |
-    | ----------- | --------------------- | ---------------------------------------------------------------------------------------------------------------- |
-    | className   | string                | Optional name for additional styling                                                                             |
-    | Icon        | `React.ComponentType` | An optional icon component that's displayed within the button                                                    |
-    | title       | string                | The text content of the button                                                                                   |
-    | size        | string                | The size of the button. Has two options: `small` and `medium`                                                    |
-    | position    | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `middle`, `right` |
-    | applyShadow | boolean               | Determines whether to apply shadow to a button                                                                   |
-    | applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                                          |
-    | disabled    | boolean               | Determines whether the button is disabled                                                                        |
-    | focus       | boolean               | Indicates if the button has focus                                                                                |
+  <Tab title="Propriedades">
+    | Propriedades    | Tipo                  | Descrição                                                                                                       |
+    | --------------- | --------------------- | --------------------------------------------------------------------------------------------------------------- |
+    | className       | string                | Nome opcional para estilo adicional                                                                             |
+    | Ícone           | `React.ComponentType` | Um componente de ícone opcional que é exibido dentro do botão                                                   |
+    | título          | string                | O conteúdo de texto do botão                                                                                    |
+    | tamanho         | string                | O tamanho do botão. Tem duas opções: `pequeno` e `médio`                                                        |
+    | posição         | string                | A posição do botão em relação aos seus irmãos. As opções incluem: `independente`, `esquerda`, `meio`, `direita` |
+    | aplicarSombra   | booleano              | Determina se deve aplicar sombra a um botão                                                                     |
+    | aplicarDesfoque | booleano              | Determina se deve aplicar um efeito de desfoque ao botão                                                        |
+    | desativado      | booleano              | Determina se o botão está desativado                                                                            |
+    | foco            | booleano              | Indica se o botão está em foco                                                                                  |
   </Tab>
 </Tabs>
 
-## Floating Button Group
+## Grupo de Botões Flutuantes
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
     import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
@@ -206,18 +206,18 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props    | Type      | Description                                                                     | Default |
-    | -------- | --------- | ------------------------------------------------------------------------------- | ------- |
-    | size     | string    | The size of the button. Has two options: `small` and `medium`                   | small   |
-    | children | ReactNode | An array of React elements representing the individual buttons within the group |         |
+  <Tab title="Propriedades">
+    | Propriedades | Tipo      | Descrição                                                                  | Padrão  |
+    | ------------ | --------- | -------------------------------------------------------------------------- | ------- |
+    | tamanho      | string    | O tamanho do botão. Tem duas opções: `pequeno` e `médio`                   | pequeno |
+    | filhos       | ReactNode | Um array de elementos React que representam os botões individuais no grupo |         |
   </Tab>
 </Tabs>
 
-## Floating Icon Button
+## Botão de Ícone Flutuante
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -241,26 +241,26 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type                  | Description                                                                                                          |
-    | ----------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
-    | className   | string                | Optional name for additional styling                                                                                 |
-    | Icon        | `React.ComponentType` | An optional icon component that's displayed within the button                                                        |
-    | size        | string                | The size of the button. Has two options: `small` and `medium`                                                        |
-    | position    | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
-    | applyShadow | boolean               | Determines whether to apply shadow to a button                                                                       |
-    | applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                                              |
-    | disabled    | boolean               | Determines whether the button is disabled                                                                            |
-    | focus       | boolean               | Indicates if the button has focus                                                                                    |
-    | onClick     | function              | A callback function that triggers when the user clicks on the button                                                 |
-    | isActive    | boolean               | Determines if the button is in an active state                                                                       |
+  <Tab title="Propriedades">
+    | Propriedades    | Tipo                  | Descrição                                                                                                        |
+    | --------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------- |
+    | className       | string                | Nome opcional para estilo adicional                                                                              |
+    | Ícone           | `React.ComponentType` | Um componente de ícone opcional que é exibido dentro do botão                                                    |
+    | tamanho         | string                | O tamanho do botão. Tem duas opções: `pequeno` e `médio`                                                         |
+    | posição         | string                | A posição do botão em relação aos seus irmãos. As opções incluem: `independente`, `esquerda`, `direita` e `meio` |
+    | aplicarSombra   | booleano              | Determina se deve aplicar sombra a um botão                                                                      |
+    | aplicarDesfoque | booleano              | Determina se deve aplicar um efeito de desfoque ao botão                                                         |
+    | desativado      | booleano              | Determina se o botão está desativado                                                                             |
+    | foco            | booleano              | Indica se o botão está em foco                                                                                   |
+    | aoClicar        | função                | Uma função de callback que é acionada quando o usuário clica no botão                                            |
+    | estáAtivo       | booleano              | Determina se o botão está em um estado ativo                                                                     |
   </Tab>
 </Tabs>
 
-## Floating Icon Button Group
+## Grupo de Botões de Ícone Flutuantes
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
     import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
@@ -290,19 +290,19 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type   | Description                                                                                                                                                                                                                                                          |
-    | ----------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | className   | string | Optional name for additional styling                                                                                                                                                                                                                                 |
-    | size        | string | The size of the button. Has two options: `small` and `medium`                                                                                                                                                                                                        |
-    | iconButtons | array  | An array of objects, each representing an icon button in the group. Each object should include the icon component you want to display in the button, the function you want to call when a user clicks on the button, and whether the button should be active or not. |
+  <Tab title="Propriedades">
+    | Propriedades  | Tipo   | Descrição                                                                                                                                                                                                                                             |
+    | ------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className     | string | Nome opcional para estilo adicional                                                                                                                                                                                                                   |
+    | tamanho       | string | O tamanho do botão. Tem duas opções: `pequeno` e `médio`                                                                                                                                                                                              |
+    | botõesDeÍcone | array  | Um array de objetos, cada um representando um botão de ícone no grupo. Cada objeto deve incluir o componente de ícone que você deseja exibir no botão, a função a ser chamada quando um usuário clica no botão, e se o botão deve estar ativo ou não. |
   </Tab>
 </Tabs>
 
-## Light Button
+## Botão Claro
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { LightButton } from "@/ui/input/button/components/LightButton";
 
@@ -321,24 +321,24 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type              | Description                                                                 |
-    | --------- | ----------------- | --------------------------------------------------------------------------- |
-    | className | string            | Optional name for additional styling                                        |
-    | icon      | `React.ReactNode` | The icon you want to display in the button                                  |
-    | title     | string            | The text content of the button                                              |
-    | accent    | string            | The accent color of the button. Options include: `secondary` and `tertiary` |
-    | active    | boolean           | Determines if the button is in an active state                              |
-    | disabled  | boolean           | Determines whether the button is disabled                                   |
-    | focus     | boolean           | Indicates if the button has focus                                           |
-    | onClick   | function          | A callback function that triggers when the user clicks on the button        |
+  <Tab title="Propriedades">
+    | Propriedades | Tipo              | Descrição                                                              |
+    | ------------ | ----------------- | ---------------------------------------------------------------------- |
+    | className    | string            | Nome opcional para estilização adicional.                              |
+    | ícone        | `React.ReactNode` | O ícone que você deseja exibir no botão                                |
+    | título       | string            | O conteúdo de texto do botão                                           |
+    | destaque     | string            | A cor de destaque do botão. Opções incluem: `secundário` e `terciário` |
+    | ativo        | booleano          | Determina se o botão está em um estado ativo                           |
+    | desativado   | booleano          | Determina se o botão está desativado                                   |
+    | foco         | booleano          | Indica se o botão está em foco                                         |
+    | onClick      | função            | Uma função de callback que é acionada quando o usuário clica no botão  |
   </Tab>
 </Tabs>
 
-## Light Icon Button
+## Botão de Ícone Claro
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -362,26 +362,26 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type                  | Description                                                                 |
-    | --------- | --------------------- | --------------------------------------------------------------------------- |
-    | className | string                | Optional name for additional styling                                        |
-    | testId    | string                | Test identifier for the button                                              |
-    | Icon      | `React.ComponentType` | An optional icon component that's displayed within the button               |
-    | title     | string                | The text content of the button                                              |
-    | size      | string                | The size of the button. Has two options: `small` and `medium`               |
-    | accent    | string                | The accent color of the button. Options include: `secondary` and `tertiary` |
-    | active    | boolean               | Determines if the button is in an active state                              |
-    | disabled  | boolean               | Determines whether the button is disabled                                   |
-    | focus     | boolean               | Indicates if the button has focus                                           |
-    | onClick   | function              | A callback function that triggers when the user clicks on the button        |
+  <Tab title="Propriedades">
+    | Propriedades | Tipo                  | Descrição                                                              |
+    | ------------ | --------------------- | ---------------------------------------------------------------------- |
+    | className    | string                | Nome opcional para estilização adicional.                              |
+    | testeId      | string                | Identificador de teste para o botão                                    |
+    | Ícone        | `React.ComponentType` | Um componente de ícone opcional que é exibido dentro do botão          |
+    | título       | string                | O conteúdo de texto do botão                                           |
+    | tamanho      | string                | O tamanho do botão. Possui duas opções: `pequeno` e `médio`            |
+    | destaque     | string                | A cor de destaque do botão. Opções incluem: `secundário` e `terciário` |
+    | ativo        | booleano              | Determina se o botão está em um estado ativo                           |
+    | desativado   | booleano              | Determina se o botão está desativado                                   |
+    | foco         | booleano              | Indica se o botão está em foco                                         |
+    | aoClicar     | função                | Uma função de callback que é acionada quando o usuário clica no botão  |
   </Tab>
 </Tabs>
 
-## Main Button
+## Botão Principal
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { MainButton } from "@/ui/input/button/components/MainButton";
     import { IconCheckbox } from "@tabler/icons-react";
@@ -400,22 +400,22 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props                | Type                             | Description                                                                       |
-    | -------------------- | -------------------------------- | --------------------------------------------------------------------------------- |
-    | title                | string                           | The text content of the button                                                    |
-    | fullWidth            | boolean                          | Defines whether the button should span the whole width of its container           |
-    | variant              | string                           | The visual style variant of the button. Options include `primary` and `secondary` |
-    | soon                 | boolean                          | Indicates if the button is marked as "soon" (such as for upcoming features)       |
-    | Icon                 | `React.ComponentType`            | An optional icon component that's displayed within the button                     |
-    | React `button` props | `React.ComponentProps<'button'>` | All standard HTML button props are supported                                      |
+  <Tab title="Propriedades">
+    | Propriedades         | Tipo                             | Descrição                                                                       |
+    | -------------------- | -------------------------------- | ------------------------------------------------------------------------------- |
+    | título               | string                           | O conteúdo de texto do botão                                                    |
+    | larguraCompleta      | booleano                         | Define se o botão deve ocupar toda a largura do seu container                   |
+    | variante             | string                           | A variante de estilo visual do botão. As opções incluem `primary` e `secondary` |
+    | em breve             | booleano                         | Indica se o botão está marcado como "em breve" (como para recursos futuros)     |
+    | Ícone                | `React.ComponentType`            | Um componente de ícone opcional que é exibido dentro do botão                   |
+    | React `button` props | `React.ComponentProps<'button'>` | Todos os props padrão de botão HTML são suportados                              |
   </Tab>
 </Tabs>
 
-## Rounded Icon Button
+## Botão de Ícone Arredondado
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -430,10 +430,10 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props                | Type                                            | Description |
-    | -------------------- | ----------------------------------------------- | ----------- |
-    | Icon                 | `React.ComponentType`                           |             |
-    | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |             |
+  <Tab title="Propriedades">
+    | Propriedades         | Tipo                                            | Descrição |
+    | -------------------- | ----------------------------------------------- | --------- |
+    | Ícone                | `React.ComponentType`                           |           |
+    | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |           |
   </Tab>
 </Tabs>

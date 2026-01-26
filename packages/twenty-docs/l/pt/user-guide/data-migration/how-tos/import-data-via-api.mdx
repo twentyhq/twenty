@@ -1,176 +1,176 @@
 ---
-title: Import Data via API
-description: When and how to use Twenty's APIs for large-scale data imports.
+title: Importar dados via API
+description: Quando e como usar as APIs da Twenty para importações de dados em larga escala.
 ---
 
-## Overview
+## Visão Geral
 
-Twenty provides both **GraphQL** and **REST APIs** for programmatic data import. Use the API when CSV import isn't practical for your data volume or when you need automated, recurring imports.
+A Twenty oferece tanto **GraphQL** como **APIs REST** para a importação programática de dados. Use a API quando a importação por CSV não for prática para o seu volume de dados ou quando precisar de importações automatizadas e recorrentes.
 
-## When to Use API Import
+## Quando usar a importação via API
 
-| Scenario                           | Recommended Method            |
-| ---------------------------------- | ----------------------------- |
-| Under 10,000 records               | CSV Import                    |
-| 10,000 - 50,000 records            | CSV Import (split into files) |
-| **50,000+ records**                | **API Import**                |
-| One-time migration                 | Either (based on volume)      |
-| **Recurring imports**              | **API Import**                |
-| **Real-time sync**                 | **API Import**                |
-| **Integration with other systems** | **API Import**                |
+| Cenário                            | Método recomendado                        |
+| ---------------------------------- | ----------------------------------------- |
+| Menos de 10 000 registos           | Importação CSV                            |
+| 10 000 - 50 000 registos           | Importação CSV (dividida em ficheiros)    |
+| **Mais de 50 000 registos**        | **Importação via API**                    |
+| Migração única                     | Qualquer um dos dois (com base no volume) |
+| **Importações recorrentes**        | **Importação via API**                    |
+| **Sincronização em tempo real**    | **Importação via API**                    |
+| **Integração com outros sistemas** | **Importação via API**                    |
 
-<Note>For datasets in the hundreds of thousands, the API is significantly faster and more reliable than multiple CSV imports.</Note>
+<Note>Para conjuntos de dados na casa das centenas de milhares, a API é significativamente mais rápida e mais fiável do que múltiplas importações CSV.</Note>
 
-## API Rate Limits
+## Limites de taxa da API
 
-Twenty enforces rate limits to ensure system stability:
+A Twenty impõe limites de taxa para assegurar a estabilidade do sistema:
 
-| Limit                      | Value                 |
-| -------------------------- | --------------------- |
-| **Requests per minute**    | 100                   |
-| **Records per batch call** | 60                    |
-| **Maximum throughput**     | ~6,000 records/minute |
-
-<Warning>
-  **Plan your import around these limits.**
-
-  For 100,000 records at maximum throughput, expect approximately 17 minutes of import time. Add buffer time for error handling and retries.
-</Warning>
-
-## Getting Started
-
-### Step 1: Get Your API Key
-
-1. Go to **Settings → Developers**
-2. Click **+ Create API key**
-3. Give your key a descriptive name
-4. Copy the API key immediately (it won't be shown again)
-5. Store it securely
+| Limite                           | Valor                  |
+| -------------------------------- | ---------------------- |
+| **Pedidos por minuto**           | 100                    |
+| **Registos por chamada em lote** | 60                     |
+| **Taxa de transferência máxima** | ~6 000 registos/minuto |
 
 <Warning>
-  **Keep your API key secret.**
+  **Planeie a sua importação em função destes limites.**
 
-  Anyone with your API key can access and modify your workspace data. Never commit it to code repositories or share it publicly.
+  Para 100 000 registos à taxa de transferência máxima, conte com aproximadamente 17 minutos de tempo de importação. Adicione tempo de margem para tratamento de erros e novas tentativas.
 </Warning>
 
-### Step 2: Choose Your API
+## Primeiros passos
 
-Twenty supports two API types:
+### Passo 1: Obtenha a sua chave de API
 
-| API         | Best For                                                    | Documentation                                    |
-| ----------- | ----------------------------------------------------------- | ------------------------------------------------ |
-| **GraphQL** | Flexible queries, fetching related data, complex operations | [API Docs](/l/pt/developers/extend/capabilities/apis) |
-| **REST**    | Simple CRUD operations, familiar REST patterns              | [API Docs](/l/pt/developers/extend/capabilities/apis) |
+1. Vá para **Configurações → Programadores**
+2. Clique em **+ Criar chave de API**
+3. Dê à sua chave um nome descritivo
+4. Copie imediatamente a chave de API (não será mostrada novamente)
+5. Guarde-a em segurança
 
-Both APIs support:
+<Warning>
+  **Mantenha a sua chave de API em segredo.**
 
-* Creating, reading, updating, and deleting records
-* **Batch operations** — create or update up to 60 records per call
+  Qualquer pessoa com a sua chave de API pode aceder e modificar os dados do seu espaço de trabalho. Nunca a faça commit em repositórios de código nem a partilhe publicamente.
+</Warning>
 
-**For imports, use batch operations** to maximize throughput within rate limits.
+### Passo 2: Escolha a sua API
 
-### Step 3: Plan Your Import Order
+A Twenty suporta dois tipos de API:
 
-Just like CSV imports, **order matters** for relations:
+| API         | Melhor para                                                              | Documentação                                                |
+| ----------- | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| **GraphQL** | Consultas flexíveis, obtenção de dados relacionados, operações complexas | [Documentação da API](/l/pt/developers/extend/capabilities/apis) |
+| **REST**    | Operações CRUD simples, padrões REST familiares                          | [Documentação da API](/l/pt/developers/extend/capabilities/apis) |
 
-1. **Companies** first (no dependencies)
-2. **People** second (can link to Companies)
-3. **Opportunities** third (can link to Companies and People)
-4. **Tasks/Notes** (can link to any of the above)
-5. **Custom objects** (following their dependencies)
+Ambas as APIs suportam:
 
-## Best Practices
+* Criar, ler, atualizar e eliminar registos
+* **Operações em lote** — criar ou atualizar até 60 registos por chamada
 
-### Batch Your Requests
+**Para importações, use operações em lote** para maximizar a taxa de transferência dentro dos limites de taxa.
 
-* Don't send records one at a time
-* Group up to **60 records per API call**
-* This maximizes throughput within rate limits
+### Passo 3: Planeie a ordem da importação
 
-### Handle Rate Limits
+Tal como nas importações por CSV, **a ordem importa** para as relações:
 
-* Implement delays between requests (600ms minimum for sustained imports)
-* Use exponential backoff when you hit limits
-* Monitor for 429 (Too Many Requests) responses
+1. **Empresas** primeiro (sem dependências)
+2. **Pessoas** em segundo (podem ligar-se a Empresas)
+3. **Oportunidades** em terceiro (podem ligar-se a Empresas e Pessoas)
+4. **Tarefas/Notas** (podem ligar-se a qualquer um dos anteriores)
+5. **Objetos personalizados** (seguindo as suas dependências)
 
-### Validate Data First
+## Melhores Práticas
 
-* Clean and validate your data before importing
-* Check required fields are populated
-* Verify formats match Twenty's requirements (see [Field Mapping](/l/pt/user-guide/data-migration/capabilities/field-mapping))
+### Agrupe os seus pedidos
 
-### Log Everything
+* Não envie registos um de cada vez
+* Agrupe até **60 registos por chamada de API**
+* Isto maximiza a taxa de transferência dentro dos limites de taxa
 
-* Log every record imported (including IDs)
-* Log errors with full context
-* This helps debug issues and verify completion
+### Lide com os limites de taxa
 
-### Test First
+* Implemente atrasos entre pedidos (mínimo de 600 ms para importações contínuas)
+* Use backoff exponencial quando atingir os limites
+* Monitorize respostas 429 (Too Many Requests)
 
-* Test with a small batch (10-20 records)
-* Verify data appears correctly in Twenty
-* Then run the full import
+### Valide os dados primeiro
 
-### Upsert to Avoid Duplicates
+* Limpe e valide os seus dados antes de importar
+* Verifique se os campos obrigatórios estão preenchidos
+* Verifique se os formatos correspondem aos requisitos da Twenty (veja [Mapeamento de Campos](/l/pt/user-guide/data-migration/capabilities/field-mapping))
 
-The GraphQL API supports **batch upsert** — update if the record exists, create if not. This prevents duplicates when re-running imports.
+### Registe tudo
 
-## Finding Object and Field Names
+* Registe cada registo importado (incluindo IDs)
+* Registe erros com todo o contexto
+* Isto ajuda a depurar problemas e a verificar a conclusão
 
-To see available objects and fields:
+### Teste primeiro
 
-1. Go to **Settings → API and Webhooks**
-2. Browse the **Metadata API**
-3. View all standard and custom objects with their fields
+* Teste com um pequeno lote (10-20 registos)
+* Verifique se os dados aparecem corretamente na Twenty
+* Depois, execute a importação completa
 
-The documentation shows all standard and custom objects, their fields, and the expected data types.
+### Upsert para evitar duplicados
 
-## Professional Services
+A API GraphQL suporta **upsert em lote** — atualize se o registo existir, crie se não existir. Isto evita duplicados ao voltar a executar importações.
 
-For complex API migrations, our partners can help:
+## Encontrar nomes de objetos e campos
 
-| Service                 | What's Included                    |
-| ----------------------- | ---------------------------------- |
-| **Data Model Design**   | design your optimal data structure |
-| **Migration Scripts**   | write and run the import scripts   |
-| **Data Transformation** | handle complex mapping and cleanup |
-| **Validation & QA**     | verify the migration is complete   |
+Para ver os objetos e campos disponíveis:
 
-**Best for:**
+1. Vá para **Configurações → API e Webhooks**
+2. Explore a **API de Metadados**
+3. Veja todos os objetos padrão e personalizados com os seus campos
 
-* Migrations of 100,000+ records
-* Complex data transformations
-* Tight timelines
-* Teams without developer resources
+A documentação mostra todos os objetos padrão e personalizados, os seus campos e os tipos de dados esperados.
 
-Contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/pt/user-guide/getting-started/capabilities/implementation-services).
+## Serviços Profissionais
 
-## FAQ
+Para migrações de API complexas, os nossos parceiros podem ajudar:
+
+| Serviço                               | O que está incluído                          |
+| ------------------------------------- | -------------------------------------------- |
+| **Conceção do Modelo de Dados**       | conceber a sua estrutura de dados ideal      |
+| **Scripts de migração**               | escrever e executar os scripts de importação |
+| **Transformação de dados**            | tratar de mapeamentos complexos e limpeza    |
+| **Validação e Garantia de Qualidade** | verificar que a migração está concluída      |
+
+**Melhor para:**
+
+* Migrações de mais de 100 000 registos
+* Transformações de dados complexas
+* Prazos apertados
+* Equipas sem recursos de programadores
+
+Contacte-nos em [contact@twenty.com](mailto:contact@twenty.com) ou explore os nossos [Serviços de Implementação](/l/pt/user-guide/getting-started/capabilities/implementation-services).
+
+## Perguntas Frequentes
 
 <AccordionGroup>
-  <Accordion title="What's the difference between GraphQL and REST?">
-    GraphQL lets you request exactly the data you need in a single query and is better for complex operations. REST uses standard HTTP methods (GET, POST, PUT, DELETE) and may be more familiar if you've worked with traditional APIs.
+  <Accordion title="Qual é a diferença entre GraphQL e REST?">
+    O GraphQL permite solicitar exatamente os dados de que precisa numa única consulta e é melhor para operações complexas. O REST utiliza métodos HTTP padrão (GET, POST, PUT, DELETE) e pode ser mais familiar se já trabalhou com APIs tradicionais.
   </Accordion>
 
-  <Accordion title="Can I update existing records via API?">
-    Yes! Use update mutations (GraphQL) or PUT/PATCH requests (REST) with the record's `id`.
+  <Accordion title="Posso atualizar registos existentes via API?">
+    Sim! Utilize mutations de atualização (GraphQL) ou pedidos PUT/PATCH (REST) com o `id` do registo.
   </Accordion>
 
-  <Accordion title="How do I handle duplicates?">
-    Query for existing records first using unique identifiers (email, domain). Update if exists, create if not.
+  <Accordion title="Como devo lidar com duplicados?">
+    Pesquise primeiro por registos existentes usando identificadores únicos (email, domínio). Atualize se existir, crie se não existir.
   </Accordion>
 
-  <Accordion title="Can I delete records via API?">
-    Yes, use delete mutations (GraphQL) or DELETE requests (REST).
+  <Accordion title="Posso eliminar registos via API?">
+    Sim, utilize mutations de eliminação (GraphQL) ou pedidos DELETE (REST).
   </Accordion>
 
-  <Accordion title="Is there a Python or Node.js SDK?">
-    Not currently, but both APIs work with any HTTP client in any language.
+  <Accordion title="Existe um SDK para Python ou Node.js?">
+    De momento não, mas ambas as APIs funcionam com qualquer cliente HTTP em qualquer linguagem.
   </Accordion>
 </AccordionGroup>
 
-## API Documentation
+## Documentação da API
 
-For full implementation details, code examples, and schema reference:
+Para detalhes completos de implementação, exemplos de código e referência de esquema:
 
-* [API Documentation](/l/pt/developers/extend/capabilities/apis)
+* [Documentação da API](/l/pt/developers/extend/capabilities/apis)
