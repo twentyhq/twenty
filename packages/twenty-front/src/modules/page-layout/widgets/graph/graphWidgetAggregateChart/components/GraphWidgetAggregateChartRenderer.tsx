@@ -1,8 +1,8 @@
-import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useGraphWidgetAggregateQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery';
 import { assertAggregateChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertAggregateChartWidget';
-import { lazy, Suspense } from 'react';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { lazy, Suspense } from 'react';
 
 const GraphWidgetAggregateChart = lazy(() =>
   import(
@@ -23,11 +23,11 @@ export const GraphWidgetAggregateChartRenderer = () => {
   });
 
   if (loading) {
-    return <ChartSkeletonLoader />;
+    return <WidgetSkeletonLoader />;
   }
 
   return (
-    <Suspense fallback={<ChartSkeletonLoader />}>
+    <Suspense fallback={<WidgetSkeletonLoader />}>
       <GraphWidgetAggregateChart
         value={value ?? '-'}
         prefix={widget.configuration.prefix ?? undefined}

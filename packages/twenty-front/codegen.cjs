@@ -20,7 +20,6 @@ module.exports = {
     './src/modules/subscription/graphql/**/*.{ts,tsx}',
 
     './src/modules/page-layout/graphql/**/*.{ts,tsx}',
-    './src/modules/page-layout/widgets/**/graphql/**/*.{ts,tsx}',
 
     '!./src/**/*.test.{ts,tsx}',
     '!./src/**/*.stories.{ts,tsx}',
