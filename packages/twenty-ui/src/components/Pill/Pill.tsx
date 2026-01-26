@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
+import { type IconComponent } from '@ui/display';
 
 type PillProps = {
   className?: string;
