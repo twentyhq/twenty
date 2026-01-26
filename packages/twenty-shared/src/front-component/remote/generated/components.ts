@@ -10,56 +10,56 @@
 import { createRemoteComponent } from '@remote-dom/react';
 
 import {
-  DivElement,
-  SpanElement,
-  SectionElement,
-  ArticleElement,
-  HeaderElement,
-  FooterElement,
-  MainElement,
-  NavElement,
-  AsideElement,
-  PElement,
-  H1Element,
-  H2Element,
-  H3Element,
-  H4Element,
-  H5Element,
-  H6Element,
-  StrongElement,
-  EmElement,
-  SmallElement,
-  CodeElement,
-  PreElement,
-  BlockquoteElement,
-  AElement,
-  ImgElement,
-  UlElement,
-  OlElement,
-  LiElement,
-  FormElement,
-  LabelElement,
+  HtmlDivElement,
+  HtmlSpanElement,
+  HtmlSectionElement,
+  HtmlArticleElement,
+  HtmlHeaderElement,
+  HtmlFooterElement,
+  HtmlMainElement,
+  HtmlNavElement,
+  HtmlAsideElement,
+  HtmlPElement,
+  HtmlH1Element,
+  HtmlH2Element,
+  HtmlH3Element,
+  HtmlH4Element,
+  HtmlH5Element,
+  HtmlH6Element,
+  HtmlStrongElement,
+  HtmlEmElement,
+  HtmlSmallElement,
+  HtmlCodeElement,
+  HtmlPreElement,
+  HtmlBlockquoteElement,
+  HtmlAElement,
+  HtmlImgElement,
+  HtmlUlElement,
+  HtmlOlElement,
+  HtmlLiElement,
+  HtmlFormElement,
+  HtmlLabelElement,
   HtmlInputElement,
-  TextareaElement,
-  SelectElement,
-  OptionElement,
+  HtmlTextareaElement,
+  HtmlSelectElement,
+  HtmlOptionElement,
   HtmlButtonElement,
-  TableElement,
-  TheadElement,
-  TbodyElement,
-  TfootElement,
-  TrElement,
-  ThElement,
-  TdElement,
-  BrElement,
-  HrElement,
+  HtmlTableElement,
+  HtmlTheadElement,
+  HtmlTbodyElement,
+  HtmlTfootElement,
+  HtmlTrElement,
+  HtmlThElement,
+  HtmlTdElement,
+  HtmlBrElement,
+  HtmlHrElement,
 } from './elements';
 
 // =============================================================================
 // HTML Element Remote Components
 // =============================================================================
 
-export const div = createRemoteComponent('remote-div', DivElement, {
+export const HtmlDiv = createRemoteComponent('html-div', HtmlDivElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -84,7 +84,7 @@ export const div = createRemoteComponent('remote-div', DivElement, {
   },
 });
 
-export const span = createRemoteComponent('remote-span', SpanElement, {
+export const HtmlSpan = createRemoteComponent('html-span', HtmlSpanElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -109,484 +109,9 @@ export const span = createRemoteComponent('remote-span', SpanElement, {
   },
 });
 
-export const section = createRemoteComponent('remote-section', SectionElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const article = createRemoteComponent('remote-article', ArticleElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const header = createRemoteComponent('remote-header', HeaderElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const footer = createRemoteComponent('remote-footer', FooterElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const main = createRemoteComponent('remote-main', MainElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const nav = createRemoteComponent('remote-nav', NavElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const aside = createRemoteComponent('remote-aside', AsideElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const p = createRemoteComponent('remote-p', PElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const h1 = createRemoteComponent('remote-h1', H1Element, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const h2 = createRemoteComponent('remote-h2', H2Element, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const h3 = createRemoteComponent('remote-h3', H3Element, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const h4 = createRemoteComponent('remote-h4', H4Element, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const h5 = createRemoteComponent('remote-h5', H5Element, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const h6 = createRemoteComponent('remote-h6', H6Element, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const strong = createRemoteComponent('remote-strong', StrongElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const em = createRemoteComponent('remote-em', EmElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const small = createRemoteComponent('remote-small', SmallElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const code = createRemoteComponent('remote-code', CodeElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const pre = createRemoteComponent('remote-pre', PreElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const blockquote = createRemoteComponent(
-  'remote-blockquote',
-  BlockquoteElement,
+export const HtmlSection = createRemoteComponent(
+  'html-section',
+  HtmlSectionElement,
   {
     eventProps: {
       onClick: { event: 'click' },
@@ -613,209 +138,9 @@ export const blockquote = createRemoteComponent(
   },
 );
 
-export const a = createRemoteComponent('remote-a', AElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const img = createRemoteComponent('remote-img', ImgElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const ul = createRemoteComponent('remote-ul', UlElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const ol = createRemoteComponent('remote-ol', OlElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const li = createRemoteComponent('remote-li', LiElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const form = createRemoteComponent('remote-form', FormElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const label = createRemoteComponent('remote-label', LabelElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const input = createRemoteComponent('remote-input', HtmlInputElement, {
-  eventProps: {
-    onClick: { event: 'click' },
-    onDblclick: { event: 'dblclick' },
-    onMousedown: { event: 'mousedown' },
-    onMouseup: { event: 'mouseup' },
-    onMouseover: { event: 'mouseover' },
-    onMouseout: { event: 'mouseout' },
-    onMouseenter: { event: 'mouseenter' },
-    onMouseleave: { event: 'mouseleave' },
-    onKeydown: { event: 'keydown' },
-    onKeyup: { event: 'keyup' },
-    onKeypress: { event: 'keypress' },
-    onFocus: { event: 'focus' },
-    onBlur: { event: 'blur' },
-    onChange: { event: 'change' },
-    onInput: { event: 'input' },
-    onSubmit: { event: 'submit' },
-    onScroll: { event: 'scroll' },
-    onWheel: { event: 'wheel' },
-    onContextmenu: { event: 'contextmenu' },
-    onDrag: { event: 'drag' },
-  },
-});
-
-export const textarea = createRemoteComponent(
-  'remote-textarea',
-  TextareaElement,
+export const HtmlArticle = createRemoteComponent(
+  'html-article',
+  HtmlArticleElement,
   {
     eventProps: {
       onClick: { event: 'click' },
@@ -842,7 +167,65 @@ export const textarea = createRemoteComponent(
   },
 );
 
-export const select = createRemoteComponent('remote-select', SelectElement, {
+export const HtmlHeader = createRemoteComponent(
+  'html-header',
+  HtmlHeaderElement,
+  {
+    eventProps: {
+      onClick: { event: 'click' },
+      onDblclick: { event: 'dblclick' },
+      onMousedown: { event: 'mousedown' },
+      onMouseup: { event: 'mouseup' },
+      onMouseover: { event: 'mouseover' },
+      onMouseout: { event: 'mouseout' },
+      onMouseenter: { event: 'mouseenter' },
+      onMouseleave: { event: 'mouseleave' },
+      onKeydown: { event: 'keydown' },
+      onKeyup: { event: 'keyup' },
+      onKeypress: { event: 'keypress' },
+      onFocus: { event: 'focus' },
+      onBlur: { event: 'blur' },
+      onChange: { event: 'change' },
+      onInput: { event: 'input' },
+      onSubmit: { event: 'submit' },
+      onScroll: { event: 'scroll' },
+      onWheel: { event: 'wheel' },
+      onContextmenu: { event: 'contextmenu' },
+      onDrag: { event: 'drag' },
+    },
+  },
+);
+
+export const HtmlFooter = createRemoteComponent(
+  'html-footer',
+  HtmlFooterElement,
+  {
+    eventProps: {
+      onClick: { event: 'click' },
+      onDblclick: { event: 'dblclick' },
+      onMousedown: { event: 'mousedown' },
+      onMouseup: { event: 'mouseup' },
+      onMouseover: { event: 'mouseover' },
+      onMouseout: { event: 'mouseout' },
+      onMouseenter: { event: 'mouseenter' },
+      onMouseleave: { event: 'mouseleave' },
+      onKeydown: { event: 'keydown' },
+      onKeyup: { event: 'keyup' },
+      onKeypress: { event: 'keypress' },
+      onFocus: { event: 'focus' },
+      onBlur: { event: 'blur' },
+      onChange: { event: 'change' },
+      onInput: { event: 'input' },
+      onSubmit: { event: 'submit' },
+      onScroll: { event: 'scroll' },
+      onWheel: { event: 'wheel' },
+      onContextmenu: { event: 'contextmenu' },
+      onDrag: { event: 'drag' },
+    },
+  },
+);
+
+export const HtmlMain = createRemoteComponent('html-main', HtmlMainElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -867,7 +250,7 @@ export const select = createRemoteComponent('remote-select', SelectElement, {
   },
 });
 
-export const option = createRemoteComponent('remote-option', OptionElement, {
+export const HtmlNav = createRemoteComponent('html-nav', HtmlNavElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -892,8 +275,653 @@ export const option = createRemoteComponent('remote-option', OptionElement, {
   },
 });
 
-export const button = createRemoteComponent(
-  'remote-button',
+export const HtmlAside = createRemoteComponent('html-aside', HtmlAsideElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlP = createRemoteComponent('html-p', HtmlPElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlH1 = createRemoteComponent('html-h1', HtmlH1Element, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlH2 = createRemoteComponent('html-h2', HtmlH2Element, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlH3 = createRemoteComponent('html-h3', HtmlH3Element, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlH4 = createRemoteComponent('html-h4', HtmlH4Element, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlH5 = createRemoteComponent('html-h5', HtmlH5Element, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlH6 = createRemoteComponent('html-h6', HtmlH6Element, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlStrong = createRemoteComponent(
+  'html-strong',
+  HtmlStrongElement,
+  {
+    eventProps: {
+      onClick: { event: 'click' },
+      onDblclick: { event: 'dblclick' },
+      onMousedown: { event: 'mousedown' },
+      onMouseup: { event: 'mouseup' },
+      onMouseover: { event: 'mouseover' },
+      onMouseout: { event: 'mouseout' },
+      onMouseenter: { event: 'mouseenter' },
+      onMouseleave: { event: 'mouseleave' },
+      onKeydown: { event: 'keydown' },
+      onKeyup: { event: 'keyup' },
+      onKeypress: { event: 'keypress' },
+      onFocus: { event: 'focus' },
+      onBlur: { event: 'blur' },
+      onChange: { event: 'change' },
+      onInput: { event: 'input' },
+      onSubmit: { event: 'submit' },
+      onScroll: { event: 'scroll' },
+      onWheel: { event: 'wheel' },
+      onContextmenu: { event: 'contextmenu' },
+      onDrag: { event: 'drag' },
+    },
+  },
+);
+
+export const HtmlEm = createRemoteComponent('html-em', HtmlEmElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlSmall = createRemoteComponent('html-small', HtmlSmallElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlCode = createRemoteComponent('html-code', HtmlCodeElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlPre = createRemoteComponent('html-pre', HtmlPreElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlBlockquote = createRemoteComponent(
+  'html-blockquote',
+  HtmlBlockquoteElement,
+  {
+    eventProps: {
+      onClick: { event: 'click' },
+      onDblclick: { event: 'dblclick' },
+      onMousedown: { event: 'mousedown' },
+      onMouseup: { event: 'mouseup' },
+      onMouseover: { event: 'mouseover' },
+      onMouseout: { event: 'mouseout' },
+      onMouseenter: { event: 'mouseenter' },
+      onMouseleave: { event: 'mouseleave' },
+      onKeydown: { event: 'keydown' },
+      onKeyup: { event: 'keyup' },
+      onKeypress: { event: 'keypress' },
+      onFocus: { event: 'focus' },
+      onBlur: { event: 'blur' },
+      onChange: { event: 'change' },
+      onInput: { event: 'input' },
+      onSubmit: { event: 'submit' },
+      onScroll: { event: 'scroll' },
+      onWheel: { event: 'wheel' },
+      onContextmenu: { event: 'contextmenu' },
+      onDrag: { event: 'drag' },
+    },
+  },
+);
+
+export const HtmlA = createRemoteComponent('html-a', HtmlAElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlImg = createRemoteComponent('html-img', HtmlImgElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlUl = createRemoteComponent('html-ul', HtmlUlElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlOl = createRemoteComponent('html-ol', HtmlOlElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlLi = createRemoteComponent('html-li', HtmlLiElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlForm = createRemoteComponent('html-form', HtmlFormElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlLabel = createRemoteComponent('html-label', HtmlLabelElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlInput = createRemoteComponent('html-input', HtmlInputElement, {
+  eventProps: {
+    onClick: { event: 'click' },
+    onDblclick: { event: 'dblclick' },
+    onMousedown: { event: 'mousedown' },
+    onMouseup: { event: 'mouseup' },
+    onMouseover: { event: 'mouseover' },
+    onMouseout: { event: 'mouseout' },
+    onMouseenter: { event: 'mouseenter' },
+    onMouseleave: { event: 'mouseleave' },
+    onKeydown: { event: 'keydown' },
+    onKeyup: { event: 'keyup' },
+    onKeypress: { event: 'keypress' },
+    onFocus: { event: 'focus' },
+    onBlur: { event: 'blur' },
+    onChange: { event: 'change' },
+    onInput: { event: 'input' },
+    onSubmit: { event: 'submit' },
+    onScroll: { event: 'scroll' },
+    onWheel: { event: 'wheel' },
+    onContextmenu: { event: 'contextmenu' },
+    onDrag: { event: 'drag' },
+  },
+});
+
+export const HtmlTextarea = createRemoteComponent(
+  'html-textarea',
+  HtmlTextareaElement,
+  {
+    eventProps: {
+      onClick: { event: 'click' },
+      onDblclick: { event: 'dblclick' },
+      onMousedown: { event: 'mousedown' },
+      onMouseup: { event: 'mouseup' },
+      onMouseover: { event: 'mouseover' },
+      onMouseout: { event: 'mouseout' },
+      onMouseenter: { event: 'mouseenter' },
+      onMouseleave: { event: 'mouseleave' },
+      onKeydown: { event: 'keydown' },
+      onKeyup: { event: 'keyup' },
+      onKeypress: { event: 'keypress' },
+      onFocus: { event: 'focus' },
+      onBlur: { event: 'blur' },
+      onChange: { event: 'change' },
+      onInput: { event: 'input' },
+      onSubmit: { event: 'submit' },
+      onScroll: { event: 'scroll' },
+      onWheel: { event: 'wheel' },
+      onContextmenu: { event: 'contextmenu' },
+      onDrag: { event: 'drag' },
+    },
+  },
+);
+
+export const HtmlSelect = createRemoteComponent(
+  'html-select',
+  HtmlSelectElement,
+  {
+    eventProps: {
+      onClick: { event: 'click' },
+      onDblclick: { event: 'dblclick' },
+      onMousedown: { event: 'mousedown' },
+      onMouseup: { event: 'mouseup' },
+      onMouseover: { event: 'mouseover' },
+      onMouseout: { event: 'mouseout' },
+      onMouseenter: { event: 'mouseenter' },
+      onMouseleave: { event: 'mouseleave' },
+      onKeydown: { event: 'keydown' },
+      onKeyup: { event: 'keyup' },
+      onKeypress: { event: 'keypress' },
+      onFocus: { event: 'focus' },
+      onBlur: { event: 'blur' },
+      onChange: { event: 'change' },
+      onInput: { event: 'input' },
+      onSubmit: { event: 'submit' },
+      onScroll: { event: 'scroll' },
+      onWheel: { event: 'wheel' },
+      onContextmenu: { event: 'contextmenu' },
+      onDrag: { event: 'drag' },
+    },
+  },
+);
+
+export const HtmlOption = createRemoteComponent(
+  'html-option',
+  HtmlOptionElement,
+  {
+    eventProps: {
+      onClick: { event: 'click' },
+      onDblclick: { event: 'dblclick' },
+      onMousedown: { event: 'mousedown' },
+      onMouseup: { event: 'mouseup' },
+      onMouseover: { event: 'mouseover' },
+      onMouseout: { event: 'mouseout' },
+      onMouseenter: { event: 'mouseenter' },
+      onMouseleave: { event: 'mouseleave' },
+      onKeydown: { event: 'keydown' },
+      onKeyup: { event: 'keyup' },
+      onKeypress: { event: 'keypress' },
+      onFocus: { event: 'focus' },
+      onBlur: { event: 'blur' },
+      onChange: { event: 'change' },
+      onInput: { event: 'input' },
+      onSubmit: { event: 'submit' },
+      onScroll: { event: 'scroll' },
+      onWheel: { event: 'wheel' },
+      onContextmenu: { event: 'contextmenu' },
+      onDrag: { event: 'drag' },
+    },
+  },
+);
+
+export const HtmlButton = createRemoteComponent(
+  'html-button',
   HtmlButtonElement,
   {
     eventProps: {
@@ -921,7 +949,7 @@ export const button = createRemoteComponent(
   },
 );
 
-export const table = createRemoteComponent('remote-table', TableElement, {
+export const HtmlTable = createRemoteComponent('html-table', HtmlTableElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -946,7 +974,7 @@ export const table = createRemoteComponent('remote-table', TableElement, {
   },
 });
 
-export const thead = createRemoteComponent('remote-thead', TheadElement, {
+export const HtmlThead = createRemoteComponent('html-thead', HtmlTheadElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -971,7 +999,7 @@ export const thead = createRemoteComponent('remote-thead', TheadElement, {
   },
 });
 
-export const tbody = createRemoteComponent('remote-tbody', TbodyElement, {
+export const HtmlTbody = createRemoteComponent('html-tbody', HtmlTbodyElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -996,7 +1024,7 @@ export const tbody = createRemoteComponent('remote-tbody', TbodyElement, {
   },
 });
 
-export const tfoot = createRemoteComponent('remote-tfoot', TfootElement, {
+export const HtmlTfoot = createRemoteComponent('html-tfoot', HtmlTfootElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -1021,7 +1049,7 @@ export const tfoot = createRemoteComponent('remote-tfoot', TfootElement, {
   },
 });
 
-export const tr = createRemoteComponent('remote-tr', TrElement, {
+export const HtmlTr = createRemoteComponent('html-tr', HtmlTrElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -1046,7 +1074,7 @@ export const tr = createRemoteComponent('remote-tr', TrElement, {
   },
 });
 
-export const th = createRemoteComponent('remote-th', ThElement, {
+export const HtmlTh = createRemoteComponent('html-th', HtmlThElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -1071,7 +1099,7 @@ export const th = createRemoteComponent('remote-th', ThElement, {
   },
 });
 
-export const td = createRemoteComponent('remote-td', TdElement, {
+export const HtmlTd = createRemoteComponent('html-td', HtmlTdElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -1096,7 +1124,7 @@ export const td = createRemoteComponent('remote-td', TdElement, {
   },
 });
 
-export const br = createRemoteComponent('remote-br', BrElement, {
+export const HtmlBr = createRemoteComponent('html-br', HtmlBrElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },
@@ -1121,7 +1149,7 @@ export const br = createRemoteComponent('remote-br', BrElement, {
   },
 });
 
-export const hr = createRemoteComponent('remote-hr', HrElement, {
+export const HtmlHr = createRemoteComponent('html-hr', HtmlHrElement, {
   eventProps: {
     onClick: { event: 'click' },
     onDblclick: { event: 'dblclick' },

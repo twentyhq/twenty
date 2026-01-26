@@ -9,35 +9,35 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
   properties: Record<string, PropertySchema>;
 }> = [
   // Container elements
-  { tag: 'div', name: 'Div', properties: {} },
-  { tag: 'span', name: 'Span', properties: {} },
-  { tag: 'section', name: 'Section', properties: {} },
-  { tag: 'article', name: 'Article', properties: {} },
-  { tag: 'header', name: 'Header', properties: {} },
-  { tag: 'footer', name: 'Footer', properties: {} },
-  { tag: 'main', name: 'Main', properties: {} },
-  { tag: 'nav', name: 'Nav', properties: {} },
-  { tag: 'aside', name: 'Aside', properties: {} },
+  { tag: 'html-div', name: 'HtmlDiv', properties: {} },
+  { tag: 'html-span', name: 'HtmlSpan', properties: {} },
+  { tag: 'html-section', name: 'HtmlSection', properties: {} },
+  { tag: 'html-article', name: 'HtmlArticle', properties: {} },
+  { tag: 'html-header', name: 'HtmlHeader', properties: {} },
+  { tag: 'html-footer', name: 'HtmlFooter', properties: {} },
+  { tag: 'html-main', name: 'HtmlMain', properties: {} },
+  { tag: 'html-nav', name: 'HtmlNav', properties: {} },
+  { tag: 'html-aside', name: 'HtmlAside', properties: {} },
 
   // Text elements
-  { tag: 'p', name: 'P', properties: {} },
-  { tag: 'h1', name: 'H1', properties: {} },
-  { tag: 'h2', name: 'H2', properties: {} },
-  { tag: 'h3', name: 'H3', properties: {} },
-  { tag: 'h4', name: 'H4', properties: {} },
-  { tag: 'h5', name: 'H5', properties: {} },
-  { tag: 'h6', name: 'H6', properties: {} },
-  { tag: 'strong', name: 'Strong', properties: {} },
-  { tag: 'em', name: 'Em', properties: {} },
-  { tag: 'small', name: 'Small', properties: {} },
-  { tag: 'code', name: 'Code', properties: {} },
-  { tag: 'pre', name: 'Pre', properties: {} },
-  { tag: 'blockquote', name: 'Blockquote', properties: {} },
+  { tag: 'html-p', name: 'HtmlP', properties: {} },
+  { tag: 'html-h1', name: 'HtmlH1', properties: {} },
+  { tag: 'html-h2', name: 'HtmlH2', properties: {} },
+  { tag: 'html-h3', name: 'HtmlH3', properties: {} },
+  { tag: 'html-h4', name: 'HtmlH4', properties: {} },
+  { tag: 'html-h5', name: 'HtmlH5', properties: {} },
+  { tag: 'html-h6', name: 'HtmlH6', properties: {} },
+  { tag: 'html-strong', name: 'HtmlStrong', properties: {} },
+  { tag: 'html-em', name: 'HtmlEm', properties: {} },
+  { tag: 'html-small', name: 'HtmlSmall', properties: {} },
+  { tag: 'html-code', name: 'HtmlCode', properties: {} },
+  { tag: 'html-pre', name: 'HtmlPre', properties: {} },
+  { tag: 'html-blockquote', name: 'HtmlBlockquote', properties: {} },
 
   // Links & media
   {
-    tag: 'a',
-    name: 'A',
+    tag: 'html-a',
+    name: 'HtmlA',
     properties: {
       href: { type: 'string', optional: true },
       target: { type: 'string', optional: true },
@@ -45,8 +45,8 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
     },
   },
   {
-    tag: 'img',
-    name: 'Img',
+    tag: 'html-img',
+    name: 'HtmlImg',
     properties: {
       src: { type: 'string', optional: true },
       alt: { type: 'string', optional: true },
@@ -56,28 +56,28 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
   },
 
   // Lists
-  { tag: 'ul', name: 'Ul', properties: {} },
-  { tag: 'ol', name: 'Ol', properties: {} },
-  { tag: 'li', name: 'Li', properties: {} },
+  { tag: 'html-ul', name: 'HtmlUl', properties: {} },
+  { tag: 'html-ol', name: 'HtmlOl', properties: {} },
+  { tag: 'html-li', name: 'HtmlLi', properties: {} },
 
   // Forms
   {
-    tag: 'form',
-    name: 'Form',
+    tag: 'html-form',
+    name: 'HtmlForm',
     properties: {
       action: { type: 'string', optional: true },
       method: { type: 'string', optional: true },
     },
   },
   {
-    tag: 'label',
-    name: 'Label',
+    tag: 'html-label',
+    name: 'HtmlLabel',
     properties: {
       htmlFor: { type: 'string', optional: true },
     },
   },
   {
-    tag: 'input',
+    tag: 'html-input',
     name: 'HtmlInput',
     properties: {
       type: { type: 'string', optional: true },
@@ -90,8 +90,8 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
     },
   },
   {
-    tag: 'textarea',
-    name: 'Textarea',
+    tag: 'html-textarea',
+    name: 'HtmlTextarea',
     properties: {
       name: { type: 'string', optional: true },
       value: { type: 'string', optional: true },
@@ -103,8 +103,8 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
     },
   },
   {
-    tag: 'select',
-    name: 'Select',
+    tag: 'html-select',
+    name: 'HtmlSelect',
     properties: {
       name: { type: 'string', optional: true },
       value: { type: 'string', optional: true },
@@ -113,8 +113,8 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
     },
   },
   {
-    tag: 'option',
-    name: 'Option',
+    tag: 'html-option',
+    name: 'HtmlOption',
     properties: {
       value: { type: 'string', optional: true },
       disabled: { type: 'boolean', optional: true },
@@ -122,7 +122,7 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
     },
   },
   {
-    tag: 'button',
+    tag: 'html-button',
     name: 'HtmlButton',
     properties: {
       type: { type: 'string', optional: true },
@@ -131,22 +131,22 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
   },
 
   // Table elements
-  { tag: 'table', name: 'Table', properties: {} },
-  { tag: 'thead', name: 'Thead', properties: {} },
-  { tag: 'tbody', name: 'Tbody', properties: {} },
-  { tag: 'tfoot', name: 'Tfoot', properties: {} },
-  { tag: 'tr', name: 'Tr', properties: {} },
+  { tag: 'html-table', name: 'HtmlTable', properties: {} },
+  { tag: 'html-thead', name: 'HtmlThead', properties: {} },
+  { tag: 'html-tbody', name: 'HtmlTbody', properties: {} },
+  { tag: 'html-tfoot', name: 'HtmlTfoot', properties: {} },
+  { tag: 'html-tr', name: 'HtmlTr', properties: {} },
   {
-    tag: 'th',
-    name: 'Th',
+    tag: 'html-th',
+    name: 'HtmlTh',
     properties: {
       colSpan: { type: 'number', optional: true },
       rowSpan: { type: 'number', optional: true },
     },
   },
   {
-    tag: 'td',
-    name: 'Td',
+    tag: 'html-td',
+    name: 'HtmlTd',
     properties: {
       colSpan: { type: 'number', optional: true },
       rowSpan: { type: 'number', optional: true },
@@ -154,6 +154,6 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
   },
 
   // Other
-  { tag: 'br', name: 'Br', properties: {} },
-  { tag: 'hr', name: 'Hr', properties: {} },
+  { tag: 'html-br', name: 'HtmlBr', properties: {} },
+  { tag: 'html-hr', name: 'HtmlHr', properties: {} },
 ] as const;

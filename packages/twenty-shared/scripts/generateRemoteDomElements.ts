@@ -94,18 +94,23 @@ const FILE_HEADER = `/*
 // Schema Conversion
 // ============================================================================
 
+// Extract the actual HTML tag from the custom element name (e.g., html-div -> div)
+const extractHtmlTag = (tag: string): string => {
+  return tag.startsWith('html-') ? tag.slice(5) : tag;
+};
+
 const getHtmlElementSchemas = (): ComponentSchema[] => {
   return ALLOWED_HTML_ELEMENTS.map(({ tag, name, properties }) => ({
     name,
-    tagName: tag,
-    customElementName: `remote-${tag}`,
+    tagName: name,
+    customElementName: tag,
     properties: { ...HTML_COMMON_PROPERTIES, ...properties } as Record<
       string,
       PropertySchema
     >,
     events: COMMON_HTML_EVENTS,
     isHtmlElement: true,
-    htmlTag: tag,
+    htmlTag: extractHtmlTag(tag),
   }));
 };
 

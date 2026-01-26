@@ -20,5 +20,6 @@
     "src/**/*.tsx",
     "**/__mocks__/**/*",
     "jest.config.mjs"
-  ]
+  ],
+  "exclude": ["src/front-component/remote/mock/**/*"]
 }

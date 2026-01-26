@@ -101,203 +101,203 @@ const filterProps = (props: Record<string, unknown>) => {
   return filtered;
 };
 
-const DivWrapper = ({
+const HtmlDivWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('div', filterProps(props), children);
 };
 
-const SpanWrapper = ({
+const HtmlSpanWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('span', filterProps(props), children);
 };
 
-const SectionWrapper = ({
+const HtmlSectionWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('section', filterProps(props), children);
 };
 
-const ArticleWrapper = ({
+const HtmlArticleWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('article', filterProps(props), children);
 };
 
-const HeaderWrapper = ({
+const HtmlHeaderWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('header', filterProps(props), children);
 };
 
-const FooterWrapper = ({
+const HtmlFooterWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('footer', filterProps(props), children);
 };
 
-const MainWrapper = ({
+const HtmlMainWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('main', filterProps(props), children);
 };
 
-const NavWrapper = ({
+const HtmlNavWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('nav', filterProps(props), children);
 };
 
-const AsideWrapper = ({
+const HtmlAsideWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('aside', filterProps(props), children);
 };
 
-const PWrapper = ({
+const HtmlPWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('p', filterProps(props), children);
 };
 
-const H1Wrapper = ({
+const HtmlH1Wrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('h1', filterProps(props), children);
 };
 
-const H2Wrapper = ({
+const HtmlH2Wrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('h2', filterProps(props), children);
 };
 
-const H3Wrapper = ({
+const HtmlH3Wrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('h3', filterProps(props), children);
 };
 
-const H4Wrapper = ({
+const HtmlH4Wrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('h4', filterProps(props), children);
 };
 
-const H5Wrapper = ({
+const HtmlH5Wrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('h5', filterProps(props), children);
 };
 
-const H6Wrapper = ({
+const HtmlH6Wrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('h6', filterProps(props), children);
 };
 
-const StrongWrapper = ({
+const HtmlStrongWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('strong', filterProps(props), children);
 };
 
-const EmWrapper = ({
+const HtmlEmWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('em', filterProps(props), children);
 };
 
-const SmallWrapper = ({
+const HtmlSmallWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('small', filterProps(props), children);
 };
 
-const CodeWrapper = ({
+const HtmlCodeWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('code', filterProps(props), children);
 };
 
-const PreWrapper = ({
+const HtmlPreWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('pre', filterProps(props), children);
 };
 
-const BlockquoteWrapper = ({
+const HtmlBlockquoteWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('blockquote', filterProps(props), children);
 };
 
-const AWrapper = ({
+const HtmlAWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('a', filterProps(props), children);
 };
 
-const ImgWrapper = ({
+const HtmlImgWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('img', filterProps(props), children);
 };
 
-const UlWrapper = ({
+const HtmlUlWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('ul', filterProps(props), children);
 };
 
-const OlWrapper = ({
+const HtmlOlWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('ol', filterProps(props), children);
 };
 
-const LiWrapper = ({
+const HtmlLiWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('li', filterProps(props), children);
 };
 
-const FormWrapper = ({
+const HtmlFormWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('form', filterProps(props), children);
 };
 
-const LabelWrapper = ({
+const HtmlLabelWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
@@ -311,21 +311,21 @@ const HtmlInputWrapper = ({
   return React.createElement('input', filterProps(props), children);
 };
 
-const TextareaWrapper = ({
+const HtmlTextareaWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('textarea', filterProps(props), children);
 };
 
-const SelectWrapper = ({
+const HtmlSelectWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('select', filterProps(props), children);
 };
 
-const OptionWrapper = ({
+const HtmlOptionWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
@@ -339,63 +339,63 @@ const HtmlButtonWrapper = ({
   return React.createElement('button', filterProps(props), children);
 };
 
-const TableWrapper = ({
+const HtmlTableWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('table', filterProps(props), children);
 };
 
-const TheadWrapper = ({
+const HtmlTheadWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('thead', filterProps(props), children);
 };
 
-const TbodyWrapper = ({
+const HtmlTbodyWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('tbody', filterProps(props), children);
 };
 
-const TfootWrapper = ({
+const HtmlTfootWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('tfoot', filterProps(props), children);
 };
 
-const TrWrapper = ({
+const HtmlTrWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('tr', filterProps(props), children);
 };
 
-const ThWrapper = ({
+const HtmlThWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('th', filterProps(props), children);
 };
 
-const TdWrapper = ({
+const HtmlTdWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('td', filterProps(props), children);
 };
 
-const BrWrapper = ({
+const HtmlBrWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('br', filterProps(props), children);
 };
 
-const HrWrapper = ({
+const HtmlHrWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
@@ -411,49 +411,49 @@ export const componentRegistry = new Map<
   ReturnType<typeof createRemoteComponentRenderer>
 >([
   // HTML Elements
-  ['remote-div', createRemoteComponentRenderer(DivWrapper)],
-  ['remote-span', createRemoteComponentRenderer(SpanWrapper)],
-  ['remote-section', createRemoteComponentRenderer(SectionWrapper)],
-  ['remote-article', createRemoteComponentRenderer(ArticleWrapper)],
-  ['remote-header', createRemoteComponentRenderer(HeaderWrapper)],
-  ['remote-footer', createRemoteComponentRenderer(FooterWrapper)],
-  ['remote-main', createRemoteComponentRenderer(MainWrapper)],
-  ['remote-nav', createRemoteComponentRenderer(NavWrapper)],
-  ['remote-aside', createRemoteComponentRenderer(AsideWrapper)],
-  ['remote-p', createRemoteComponentRenderer(PWrapper)],
-  ['remote-h1', createRemoteComponentRenderer(H1Wrapper)],
-  ['remote-h2', createRemoteComponentRenderer(H2Wrapper)],
-  ['remote-h3', createRemoteComponentRenderer(H3Wrapper)],
-  ['remote-h4', createRemoteComponentRenderer(H4Wrapper)],
-  ['remote-h5', createRemoteComponentRenderer(H5Wrapper)],
-  ['remote-h6', createRemoteComponentRenderer(H6Wrapper)],
-  ['remote-strong', createRemoteComponentRenderer(StrongWrapper)],
-  ['remote-em', createRemoteComponentRenderer(EmWrapper)],
-  ['remote-small', createRemoteComponentRenderer(SmallWrapper)],
-  ['remote-code', createRemoteComponentRenderer(CodeWrapper)],
-  ['remote-pre', createRemoteComponentRenderer(PreWrapper)],
-  ['remote-blockquote', createRemoteComponentRenderer(BlockquoteWrapper)],
-  ['remote-a', createRemoteComponentRenderer(AWrapper)],
-  ['remote-img', createRemoteComponentRenderer(ImgWrapper)],
-  ['remote-ul', createRemoteComponentRenderer(UlWrapper)],
-  ['remote-ol', createRemoteComponentRenderer(OlWrapper)],
-  ['remote-li', createRemoteComponentRenderer(LiWrapper)],
-  ['remote-form', createRemoteComponentRenderer(FormWrapper)],
-  ['remote-label', createRemoteComponentRenderer(LabelWrapper)],
-  ['remote-input', createRemoteComponentRenderer(HtmlInputWrapper)],
-  ['remote-textarea', createRemoteComponentRenderer(TextareaWrapper)],
-  ['remote-select', createRemoteComponentRenderer(SelectWrapper)],
-  ['remote-option', createRemoteComponentRenderer(OptionWrapper)],
-  ['remote-button', createRemoteComponentRenderer(HtmlButtonWrapper)],
-  ['remote-table', createRemoteComponentRenderer(TableWrapper)],
-  ['remote-thead', createRemoteComponentRenderer(TheadWrapper)],
-  ['remote-tbody', createRemoteComponentRenderer(TbodyWrapper)],
-  ['remote-tfoot', createRemoteComponentRenderer(TfootWrapper)],
-  ['remote-tr', createRemoteComponentRenderer(TrWrapper)],
-  ['remote-th', createRemoteComponentRenderer(ThWrapper)],
-  ['remote-td', createRemoteComponentRenderer(TdWrapper)],
-  ['remote-br', createRemoteComponentRenderer(BrWrapper)],
-  ['remote-hr', createRemoteComponentRenderer(HrWrapper)],
+  ['html-div', createRemoteComponentRenderer(HtmlDivWrapper)],
+  ['html-span', createRemoteComponentRenderer(HtmlSpanWrapper)],
+  ['html-section', createRemoteComponentRenderer(HtmlSectionWrapper)],
+  ['html-article', createRemoteComponentRenderer(HtmlArticleWrapper)],
+  ['html-header', createRemoteComponentRenderer(HtmlHeaderWrapper)],
+  ['html-footer', createRemoteComponentRenderer(HtmlFooterWrapper)],
+  ['html-main', createRemoteComponentRenderer(HtmlMainWrapper)],
+  ['html-nav', createRemoteComponentRenderer(HtmlNavWrapper)],
+  ['html-aside', createRemoteComponentRenderer(HtmlAsideWrapper)],
+  ['html-p', createRemoteComponentRenderer(HtmlPWrapper)],
+  ['html-h1', createRemoteComponentRenderer(HtmlH1Wrapper)],
+  ['html-h2', createRemoteComponentRenderer(HtmlH2Wrapper)],
+  ['html-h3', createRemoteComponentRenderer(HtmlH3Wrapper)],
+  ['html-h4', createRemoteComponentRenderer(HtmlH4Wrapper)],
+  ['html-h5', createRemoteComponentRenderer(HtmlH5Wrapper)],
+  ['html-h6', createRemoteComponentRenderer(HtmlH6Wrapper)],
+  ['html-strong', createRemoteComponentRenderer(HtmlStrongWrapper)],
+  ['html-em', createRemoteComponentRenderer(HtmlEmWrapper)],
+  ['html-small', createRemoteComponentRenderer(HtmlSmallWrapper)],
+  ['html-code', createRemoteComponentRenderer(HtmlCodeWrapper)],
+  ['html-pre', createRemoteComponentRenderer(HtmlPreWrapper)],
+  ['html-blockquote', createRemoteComponentRenderer(HtmlBlockquoteWrapper)],
+  ['html-a', createRemoteComponentRenderer(HtmlAWrapper)],
+  ['html-img', createRemoteComponentRenderer(HtmlImgWrapper)],
+  ['html-ul', createRemoteComponentRenderer(HtmlUlWrapper)],
+  ['html-ol', createRemoteComponentRenderer(HtmlOlWrapper)],
+  ['html-li', createRemoteComponentRenderer(HtmlLiWrapper)],
+  ['html-form', createRemoteComponentRenderer(HtmlFormWrapper)],
+  ['html-label', createRemoteComponentRenderer(HtmlLabelWrapper)],
+  ['html-input', createRemoteComponentRenderer(HtmlInputWrapper)],
+  ['html-textarea', createRemoteComponentRenderer(HtmlTextareaWrapper)],
+  ['html-select', createRemoteComponentRenderer(HtmlSelectWrapper)],
+  ['html-option', createRemoteComponentRenderer(HtmlOptionWrapper)],
+  ['html-button', createRemoteComponentRenderer(HtmlButtonWrapper)],
+  ['html-table', createRemoteComponentRenderer(HtmlTableWrapper)],
+  ['html-thead', createRemoteComponentRenderer(HtmlTheadWrapper)],
+  ['html-tbody', createRemoteComponentRenderer(HtmlTbodyWrapper)],
+  ['html-tfoot', createRemoteComponentRenderer(HtmlTfootWrapper)],
+  ['html-tr', createRemoteComponentRenderer(HtmlTrWrapper)],
+  ['html-th', createRemoteComponentRenderer(HtmlThWrapper)],
+  ['html-td', createRemoteComponentRenderer(HtmlTdWrapper)],
+  ['html-br', createRemoteComponentRenderer(HtmlBrWrapper)],
+  ['html-hr', createRemoteComponentRenderer(HtmlHrWrapper)],
   // Core
   ['remote-fragment', RemoteFragmentRenderer],
 ]);

@@ -18,7 +18,7 @@ import {
 // HTML Element Property Types
 // =============================================================================
 
-export type DivProperties = {
+export type HtmlDivProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -30,7 +30,7 @@ export type DivProperties = {
   'data-testid'?: string;
 };
 
-export type SpanProperties = {
+export type HtmlSpanProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -42,7 +42,7 @@ export type SpanProperties = {
   'data-testid'?: string;
 };
 
-export type SectionProperties = {
+export type HtmlSectionProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -54,7 +54,7 @@ export type SectionProperties = {
   'data-testid'?: string;
 };
 
-export type ArticleProperties = {
+export type HtmlArticleProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -66,7 +66,7 @@ export type ArticleProperties = {
   'data-testid'?: string;
 };
 
-export type HeaderProperties = {
+export type HtmlHeaderProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -78,7 +78,7 @@ export type HeaderProperties = {
   'data-testid'?: string;
 };
 
-export type FooterProperties = {
+export type HtmlFooterProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -90,7 +90,7 @@ export type FooterProperties = {
   'data-testid'?: string;
 };
 
-export type MainProperties = {
+export type HtmlMainProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -102,7 +102,7 @@ export type MainProperties = {
   'data-testid'?: string;
 };
 
-export type NavProperties = {
+export type HtmlNavProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -114,7 +114,7 @@ export type NavProperties = {
   'data-testid'?: string;
 };
 
-export type AsideProperties = {
+export type HtmlAsideProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -126,7 +126,7 @@ export type AsideProperties = {
   'data-testid'?: string;
 };
 
-export type PProperties = {
+export type HtmlPProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -138,7 +138,7 @@ export type PProperties = {
   'data-testid'?: string;
 };
 
-export type H1Properties = {
+export type HtmlH1Properties = {
   id?: string;
   className?: string;
   style?: string;
@@ -150,7 +150,7 @@ export type H1Properties = {
   'data-testid'?: string;
 };
 
-export type H2Properties = {
+export type HtmlH2Properties = {
   id?: string;
   className?: string;
   style?: string;
@@ -162,7 +162,7 @@ export type H2Properties = {
   'data-testid'?: string;
 };
 
-export type H3Properties = {
+export type HtmlH3Properties = {
   id?: string;
   className?: string;
   style?: string;
@@ -174,7 +174,7 @@ export type H3Properties = {
   'data-testid'?: string;
 };
 
-export type H4Properties = {
+export type HtmlH4Properties = {
   id?: string;
   className?: string;
   style?: string;
@@ -186,7 +186,7 @@ export type H4Properties = {
   'data-testid'?: string;
 };
 
-export type H5Properties = {
+export type HtmlH5Properties = {
   id?: string;
   className?: string;
   style?: string;
@@ -198,7 +198,7 @@ export type H5Properties = {
   'data-testid'?: string;
 };
 
-export type H6Properties = {
+export type HtmlH6Properties = {
   id?: string;
   className?: string;
   style?: string;
@@ -210,7 +210,7 @@ export type H6Properties = {
   'data-testid'?: string;
 };
 
-export type StrongProperties = {
+export type HtmlStrongProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -222,7 +222,7 @@ export type StrongProperties = {
   'data-testid'?: string;
 };
 
-export type EmProperties = {
+export type HtmlEmProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -234,7 +234,7 @@ export type EmProperties = {
   'data-testid'?: string;
 };
 
-export type SmallProperties = {
+export type HtmlSmallProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -246,7 +246,7 @@ export type SmallProperties = {
   'data-testid'?: string;
 };
 
-export type CodeProperties = {
+export type HtmlCodeProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -258,7 +258,7 @@ export type CodeProperties = {
   'data-testid'?: string;
 };
 
-export type PreProperties = {
+export type HtmlPreProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -270,7 +270,7 @@ export type PreProperties = {
   'data-testid'?: string;
 };
 
-export type BlockquoteProperties = {
+export type HtmlBlockquoteProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -282,7 +282,7 @@ export type BlockquoteProperties = {
   'data-testid'?: string;
 };
 
-export type AProperties = {
+export type HtmlAProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -297,7 +297,7 @@ export type AProperties = {
   rel?: string;
 };
 
-export type ImgProperties = {
+export type HtmlImgProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -313,7 +313,7 @@ export type ImgProperties = {
   height?: number;
 };
 
-export type UlProperties = {
+export type HtmlUlProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -325,7 +325,7 @@ export type UlProperties = {
   'data-testid'?: string;
 };
 
-export type OlProperties = {
+export type HtmlOlProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -337,7 +337,7 @@ export type OlProperties = {
   'data-testid'?: string;
 };
 
-export type LiProperties = {
+export type HtmlLiProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -349,7 +349,7 @@ export type LiProperties = {
   'data-testid'?: string;
 };
 
-export type FormProperties = {
+export type HtmlFormProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -363,7 +363,7 @@ export type FormProperties = {
   method?: string;
 };
 
-export type LabelProperties = {
+export type HtmlLabelProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -395,7 +395,7 @@ export type HtmlInputProperties = {
   readOnly?: boolean;
 };
 
-export type TextareaProperties = {
+export type HtmlTextareaProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -414,7 +414,7 @@ export type TextareaProperties = {
   cols?: number;
 };
 
-export type SelectProperties = {
+export type HtmlSelectProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -430,7 +430,7 @@ export type SelectProperties = {
   multiple?: boolean;
 };
 
-export type OptionProperties = {
+export type HtmlOptionProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -459,7 +459,7 @@ export type HtmlButtonProperties = {
   disabled?: boolean;
 };
 
-export type TableProperties = {
+export type HtmlTableProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -471,7 +471,7 @@ export type TableProperties = {
   'data-testid'?: string;
 };
 
-export type TheadProperties = {
+export type HtmlTheadProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -483,7 +483,7 @@ export type TheadProperties = {
   'data-testid'?: string;
 };
 
-export type TbodyProperties = {
+export type HtmlTbodyProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -495,7 +495,7 @@ export type TbodyProperties = {
   'data-testid'?: string;
 };
 
-export type TfootProperties = {
+export type HtmlTfootProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -507,7 +507,7 @@ export type TfootProperties = {
   'data-testid'?: string;
 };
 
-export type TrProperties = {
+export type HtmlTrProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -519,21 +519,7 @@ export type TrProperties = {
   'data-testid'?: string;
 };
 
-export type ThProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-  colSpan?: number;
-  rowSpan?: number;
-};
-
-export type TdProperties = {
+export type HtmlThProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -547,7 +533,21 @@ export type TdProperties = {
   rowSpan?: number;
 };
 
-export type BrProperties = {
+export type HtmlTdProperties = {
+  id?: string;
+  className?: string;
+  style?: string;
+  title?: string;
+  tabIndex?: number;
+  role?: string;
+  'aria-label'?: string;
+  'aria-hidden'?: boolean;
+  'data-testid'?: string;
+  colSpan?: number;
+  rowSpan?: number;
+};
+
+export type HtmlBrProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -559,7 +559,7 @@ export type BrProperties = {
   'data-testid'?: string;
 };
 
-export type HrProperties = {
+export type HtmlHrProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -575,8 +575,8 @@ export type HrProperties = {
 // HTML Element Definitions
 // =============================================================================
 
-export const DivElement = createRemoteElement<
-  DivProperties,
+export const HtmlDivElement = createRemoteElement<
+  HtmlDivProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -637,8 +637,8 @@ export const DivElement = createRemoteElement<
   ],
 });
 
-export const SpanElement = createRemoteElement<
-  SpanProperties,
+export const HtmlSpanElement = createRemoteElement<
+  HtmlSpanProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -699,8 +699,8 @@ export const SpanElement = createRemoteElement<
   ],
 });
 
-export const SectionElement = createRemoteElement<
-  SectionProperties,
+export const HtmlSectionElement = createRemoteElement<
+  HtmlSectionProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -761,8 +761,8 @@ export const SectionElement = createRemoteElement<
   ],
 });
 
-export const ArticleElement = createRemoteElement<
-  ArticleProperties,
+export const HtmlArticleElement = createRemoteElement<
+  HtmlArticleProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -823,8 +823,8 @@ export const ArticleElement = createRemoteElement<
   ],
 });
 
-export const HeaderElement = createRemoteElement<
-  HeaderProperties,
+export const HtmlHeaderElement = createRemoteElement<
+  HtmlHeaderProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -885,8 +885,8 @@ export const HeaderElement = createRemoteElement<
   ],
 });
 
-export const FooterElement = createRemoteElement<
-  FooterProperties,
+export const HtmlFooterElement = createRemoteElement<
+  HtmlFooterProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -947,8 +947,8 @@ export const FooterElement = createRemoteElement<
   ],
 });
 
-export const MainElement = createRemoteElement<
-  MainProperties,
+export const HtmlMainElement = createRemoteElement<
+  HtmlMainProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1009,8 +1009,8 @@ export const MainElement = createRemoteElement<
   ],
 });
 
-export const NavElement = createRemoteElement<
-  NavProperties,
+export const HtmlNavElement = createRemoteElement<
+  HtmlNavProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1071,8 +1071,8 @@ export const NavElement = createRemoteElement<
   ],
 });
 
-export const AsideElement = createRemoteElement<
-  AsideProperties,
+export const HtmlAsideElement = createRemoteElement<
+  HtmlAsideProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1133,8 +1133,8 @@ export const AsideElement = createRemoteElement<
   ],
 });
 
-export const PElement = createRemoteElement<
-  PProperties,
+export const HtmlPElement = createRemoteElement<
+  HtmlPProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1195,8 +1195,8 @@ export const PElement = createRemoteElement<
   ],
 });
 
-export const H1Element = createRemoteElement<
-  H1Properties,
+export const HtmlH1Element = createRemoteElement<
+  HtmlH1Properties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1257,8 +1257,8 @@ export const H1Element = createRemoteElement<
   ],
 });
 
-export const H2Element = createRemoteElement<
-  H2Properties,
+export const HtmlH2Element = createRemoteElement<
+  HtmlH2Properties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1319,8 +1319,8 @@ export const H2Element = createRemoteElement<
   ],
 });
 
-export const H3Element = createRemoteElement<
-  H3Properties,
+export const HtmlH3Element = createRemoteElement<
+  HtmlH3Properties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1381,8 +1381,8 @@ export const H3Element = createRemoteElement<
   ],
 });
 
-export const H4Element = createRemoteElement<
-  H4Properties,
+export const HtmlH4Element = createRemoteElement<
+  HtmlH4Properties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1443,8 +1443,8 @@ export const H4Element = createRemoteElement<
   ],
 });
 
-export const H5Element = createRemoteElement<
-  H5Properties,
+export const HtmlH5Element = createRemoteElement<
+  HtmlH5Properties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1505,8 +1505,8 @@ export const H5Element = createRemoteElement<
   ],
 });
 
-export const H6Element = createRemoteElement<
-  H6Properties,
+export const HtmlH6Element = createRemoteElement<
+  HtmlH6Properties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1567,8 +1567,8 @@ export const H6Element = createRemoteElement<
   ],
 });
 
-export const StrongElement = createRemoteElement<
-  StrongProperties,
+export const HtmlStrongElement = createRemoteElement<
+  HtmlStrongProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1629,8 +1629,8 @@ export const StrongElement = createRemoteElement<
   ],
 });
 
-export const EmElement = createRemoteElement<
-  EmProperties,
+export const HtmlEmElement = createRemoteElement<
+  HtmlEmProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1691,8 +1691,8 @@ export const EmElement = createRemoteElement<
   ],
 });
 
-export const SmallElement = createRemoteElement<
-  SmallProperties,
+export const HtmlSmallElement = createRemoteElement<
+  HtmlSmallProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1753,8 +1753,8 @@ export const SmallElement = createRemoteElement<
   ],
 });
 
-export const CodeElement = createRemoteElement<
-  CodeProperties,
+export const HtmlCodeElement = createRemoteElement<
+  HtmlCodeProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1815,8 +1815,8 @@ export const CodeElement = createRemoteElement<
   ],
 });
 
-export const PreElement = createRemoteElement<
-  PreProperties,
+export const HtmlPreElement = createRemoteElement<
+  HtmlPreProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1877,8 +1877,8 @@ export const PreElement = createRemoteElement<
   ],
 });
 
-export const BlockquoteElement = createRemoteElement<
-  BlockquoteProperties,
+export const HtmlBlockquoteElement = createRemoteElement<
+  HtmlBlockquoteProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -1939,8 +1939,8 @@ export const BlockquoteElement = createRemoteElement<
   ],
 });
 
-export const AElement = createRemoteElement<
-  AProperties,
+export const HtmlAElement = createRemoteElement<
+  HtmlAProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2004,8 +2004,8 @@ export const AElement = createRemoteElement<
   ],
 });
 
-export const ImgElement = createRemoteElement<
-  ImgProperties,
+export const HtmlImgElement = createRemoteElement<
+  HtmlImgProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2070,8 +2070,8 @@ export const ImgElement = createRemoteElement<
   ],
 });
 
-export const UlElement = createRemoteElement<
-  UlProperties,
+export const HtmlUlElement = createRemoteElement<
+  HtmlUlProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2132,8 +2132,8 @@ export const UlElement = createRemoteElement<
   ],
 });
 
-export const OlElement = createRemoteElement<
-  OlProperties,
+export const HtmlOlElement = createRemoteElement<
+  HtmlOlProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2194,8 +2194,8 @@ export const OlElement = createRemoteElement<
   ],
 });
 
-export const LiElement = createRemoteElement<
-  LiProperties,
+export const HtmlLiElement = createRemoteElement<
+  HtmlLiProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2256,8 +2256,8 @@ export const LiElement = createRemoteElement<
   ],
 });
 
-export const FormElement = createRemoteElement<
-  FormProperties,
+export const HtmlFormElement = createRemoteElement<
+  HtmlFormProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2320,8 +2320,8 @@ export const FormElement = createRemoteElement<
   ],
 });
 
-export const LabelElement = createRemoteElement<
-  LabelProperties,
+export const HtmlLabelElement = createRemoteElement<
+  HtmlLabelProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2452,8 +2452,8 @@ export const HtmlInputElement = createRemoteElement<
   ],
 });
 
-export const TextareaElement = createRemoteElement<
-  TextareaProperties,
+export const HtmlTextareaElement = createRemoteElement<
+  HtmlTextareaProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2521,8 +2521,8 @@ export const TextareaElement = createRemoteElement<
   ],
 });
 
-export const SelectElement = createRemoteElement<
-  SelectProperties,
+export const HtmlSelectElement = createRemoteElement<
+  HtmlSelectProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2587,8 +2587,8 @@ export const SelectElement = createRemoteElement<
   ],
 });
 
-export const OptionElement = createRemoteElement<
-  OptionProperties,
+export const HtmlOptionElement = createRemoteElement<
+  HtmlOptionProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2716,8 +2716,8 @@ export const HtmlButtonElement = createRemoteElement<
   ],
 });
 
-export const TableElement = createRemoteElement<
-  TableProperties,
+export const HtmlTableElement = createRemoteElement<
+  HtmlTableProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2778,8 +2778,8 @@ export const TableElement = createRemoteElement<
   ],
 });
 
-export const TheadElement = createRemoteElement<
-  TheadProperties,
+export const HtmlTheadElement = createRemoteElement<
+  HtmlTheadProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2840,8 +2840,8 @@ export const TheadElement = createRemoteElement<
   ],
 });
 
-export const TbodyElement = createRemoteElement<
-  TbodyProperties,
+export const HtmlTbodyElement = createRemoteElement<
+  HtmlTbodyProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2902,8 +2902,8 @@ export const TbodyElement = createRemoteElement<
   ],
 });
 
-export const TfootElement = createRemoteElement<
-  TfootProperties,
+export const HtmlTfootElement = createRemoteElement<
+  HtmlTfootProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -2964,8 +2964,8 @@ export const TfootElement = createRemoteElement<
   ],
 });
 
-export const TrElement = createRemoteElement<
-  TrProperties,
+export const HtmlTrElement = createRemoteElement<
+  HtmlTrProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -3026,72 +3026,8 @@ export const TrElement = createRemoteElement<
   ],
 });
 
-export const ThElement = createRemoteElement<
-  ThProperties,
-  Record<string, never>,
-  Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
->({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-    colSpan: { type: Number },
-    rowSpan: { type: Number },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
-});
-
-export const TdElement = createRemoteElement<
-  TdProperties,
+export const HtmlThElement = createRemoteElement<
+  HtmlThProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -3154,8 +3090,72 @@ export const TdElement = createRemoteElement<
   ],
 });
 
-export const BrElement = createRemoteElement<
-  BrProperties,
+export const HtmlTdElement = createRemoteElement<
+  HtmlTdProperties,
+  Record<string, never>,
+  Record<string, never>,
+  {
+    click(event: RemoteEvent): void;
+    dblclick(event: RemoteEvent): void;
+    mousedown(event: RemoteEvent): void;
+    mouseup(event: RemoteEvent): void;
+    mouseover(event: RemoteEvent): void;
+    mouseout(event: RemoteEvent): void;
+    mouseenter(event: RemoteEvent): void;
+    mouseleave(event: RemoteEvent): void;
+    keydown(event: RemoteEvent): void;
+    keyup(event: RemoteEvent): void;
+    keypress(event: RemoteEvent): void;
+    focus(event: RemoteEvent): void;
+    blur(event: RemoteEvent): void;
+    change(event: RemoteEvent): void;
+    input(event: RemoteEvent): void;
+    submit(event: RemoteEvent): void;
+    scroll(event: RemoteEvent): void;
+    wheel(event: RemoteEvent): void;
+    contextmenu(event: RemoteEvent): void;
+    drag(event: RemoteEvent): void;
+  }
+>({
+  properties: {
+    id: { type: String },
+    className: { type: String },
+    style: { type: String },
+    title: { type: String },
+    tabIndex: { type: Number },
+    role: { type: String },
+    'aria-label': { type: String },
+    'aria-hidden': { type: Boolean },
+    'data-testid': { type: String },
+    colSpan: { type: Number },
+    rowSpan: { type: Number },
+  },
+  events: [
+    'click',
+    'dblclick',
+    'mousedown',
+    'mouseup',
+    'mouseover',
+    'mouseout',
+    'mouseenter',
+    'mouseleave',
+    'keydown',
+    'keyup',
+    'keypress',
+    'focus',
+    'blur',
+    'change',
+    'input',
+    'submit',
+    'scroll',
+    'wheel',
+    'contextmenu',
+    'drag',
+  ],
+});
+
+export const HtmlBrElement = createRemoteElement<
+  HtmlBrProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -3216,8 +3216,8 @@ export const BrElement = createRemoteElement<
   ],
 });
 
-export const HrElement = createRemoteElement<
-  HrProperties,
+export const HtmlHrElement = createRemoteElement<
+  HtmlHrProperties,
   Record<string, never>,
   Record<string, never>,
   {
@@ -3282,49 +3282,49 @@ export const HrElement = createRemoteElement<
 // Register All Elements
 // =============================================================================
 
-customElements.define('remote-div', DivElement);
-customElements.define('remote-span', SpanElement);
-customElements.define('remote-section', SectionElement);
-customElements.define('remote-article', ArticleElement);
-customElements.define('remote-header', HeaderElement);
-customElements.define('remote-footer', FooterElement);
-customElements.define('remote-main', MainElement);
-customElements.define('remote-nav', NavElement);
-customElements.define('remote-aside', AsideElement);
-customElements.define('remote-p', PElement);
-customElements.define('remote-h1', H1Element);
-customElements.define('remote-h2', H2Element);
-customElements.define('remote-h3', H3Element);
-customElements.define('remote-h4', H4Element);
-customElements.define('remote-h5', H5Element);
-customElements.define('remote-h6', H6Element);
-customElements.define('remote-strong', StrongElement);
-customElements.define('remote-em', EmElement);
-customElements.define('remote-small', SmallElement);
-customElements.define('remote-code', CodeElement);
-customElements.define('remote-pre', PreElement);
-customElements.define('remote-blockquote', BlockquoteElement);
-customElements.define('remote-a', AElement);
-customElements.define('remote-img', ImgElement);
-customElements.define('remote-ul', UlElement);
-customElements.define('remote-ol', OlElement);
-customElements.define('remote-li', LiElement);
-customElements.define('remote-form', FormElement);
-customElements.define('remote-label', LabelElement);
-customElements.define('remote-input', HtmlInputElement);
-customElements.define('remote-textarea', TextareaElement);
-customElements.define('remote-select', SelectElement);
-customElements.define('remote-option', OptionElement);
-customElements.define('remote-button', HtmlButtonElement);
-customElements.define('remote-table', TableElement);
-customElements.define('remote-thead', TheadElement);
-customElements.define('remote-tbody', TbodyElement);
-customElements.define('remote-tfoot', TfootElement);
-customElements.define('remote-tr', TrElement);
-customElements.define('remote-th', ThElement);
-customElements.define('remote-td', TdElement);
-customElements.define('remote-br', BrElement);
-customElements.define('remote-hr', HrElement);
+customElements.define('html-div', HtmlDivElement);
+customElements.define('html-span', HtmlSpanElement);
+customElements.define('html-section', HtmlSectionElement);
+customElements.define('html-article', HtmlArticleElement);
+customElements.define('html-header', HtmlHeaderElement);
+customElements.define('html-footer', HtmlFooterElement);
+customElements.define('html-main', HtmlMainElement);
+customElements.define('html-nav', HtmlNavElement);
+customElements.define('html-aside', HtmlAsideElement);
+customElements.define('html-p', HtmlPElement);
+customElements.define('html-h1', HtmlH1Element);
+customElements.define('html-h2', HtmlH2Element);
+customElements.define('html-h3', HtmlH3Element);
+customElements.define('html-h4', HtmlH4Element);
+customElements.define('html-h5', HtmlH5Element);
+customElements.define('html-h6', HtmlH6Element);
+customElements.define('html-strong', HtmlStrongElement);
+customElements.define('html-em', HtmlEmElement);
+customElements.define('html-small', HtmlSmallElement);
+customElements.define('html-code', HtmlCodeElement);
+customElements.define('html-pre', HtmlPreElement);
+customElements.define('html-blockquote', HtmlBlockquoteElement);
+customElements.define('html-a', HtmlAElement);
+customElements.define('html-img', HtmlImgElement);
+customElements.define('html-ul', HtmlUlElement);
+customElements.define('html-ol', HtmlOlElement);
+customElements.define('html-li', HtmlLiElement);
+customElements.define('html-form', HtmlFormElement);
+customElements.define('html-label', HtmlLabelElement);
+customElements.define('html-input', HtmlInputElement);
+customElements.define('html-textarea', HtmlTextareaElement);
+customElements.define('html-select', HtmlSelectElement);
+customElements.define('html-option', HtmlOptionElement);
+customElements.define('html-button', HtmlButtonElement);
+customElements.define('html-table', HtmlTableElement);
+customElements.define('html-thead', HtmlTheadElement);
+customElements.define('html-tbody', HtmlTbodyElement);
+customElements.define('html-tfoot', HtmlTfootElement);
+customElements.define('html-tr', HtmlTrElement);
+customElements.define('html-th', HtmlThElement);
+customElements.define('html-td', HtmlTdElement);
+customElements.define('html-br', HtmlBrElement);
+customElements.define('html-hr', HtmlHrElement);
 
 // Core elements
 customElements.define('remote-root', RemoteRootElement);
@@ -3335,49 +3335,49 @@ export { RemoteRootElement, RemoteFragmentElement };
 declare global {
   interface HTMLElementTagNameMap {
     // HTML Elements
-    'remote-div': InstanceType<typeof DivElement>;
-    'remote-span': InstanceType<typeof SpanElement>;
-    'remote-section': InstanceType<typeof SectionElement>;
-    'remote-article': InstanceType<typeof ArticleElement>;
-    'remote-header': InstanceType<typeof HeaderElement>;
-    'remote-footer': InstanceType<typeof FooterElement>;
-    'remote-main': InstanceType<typeof MainElement>;
-    'remote-nav': InstanceType<typeof NavElement>;
-    'remote-aside': InstanceType<typeof AsideElement>;
-    'remote-p': InstanceType<typeof PElement>;
-    'remote-h1': InstanceType<typeof H1Element>;
-    'remote-h2': InstanceType<typeof H2Element>;
-    'remote-h3': InstanceType<typeof H3Element>;
-    'remote-h4': InstanceType<typeof H4Element>;
-    'remote-h5': InstanceType<typeof H5Element>;
-    'remote-h6': InstanceType<typeof H6Element>;
-    'remote-strong': InstanceType<typeof StrongElement>;
-    'remote-em': InstanceType<typeof EmElement>;
-    'remote-small': InstanceType<typeof SmallElement>;
-    'remote-code': InstanceType<typeof CodeElement>;
-    'remote-pre': InstanceType<typeof PreElement>;
-    'remote-blockquote': InstanceType<typeof BlockquoteElement>;
-    'remote-a': InstanceType<typeof AElement>;
-    'remote-img': InstanceType<typeof ImgElement>;
-    'remote-ul': InstanceType<typeof UlElement>;
-    'remote-ol': InstanceType<typeof OlElement>;
-    'remote-li': InstanceType<typeof LiElement>;
-    'remote-form': InstanceType<typeof FormElement>;
-    'remote-label': InstanceType<typeof LabelElement>;
-    'remote-input': InstanceType<typeof HtmlInputElement>;
-    'remote-textarea': InstanceType<typeof TextareaElement>;
-    'remote-select': InstanceType<typeof SelectElement>;
-    'remote-option': InstanceType<typeof OptionElement>;
-    'remote-button': InstanceType<typeof HtmlButtonElement>;
-    'remote-table': InstanceType<typeof TableElement>;
-    'remote-thead': InstanceType<typeof TheadElement>;
-    'remote-tbody': InstanceType<typeof TbodyElement>;
-    'remote-tfoot': InstanceType<typeof TfootElement>;
-    'remote-tr': InstanceType<typeof TrElement>;
-    'remote-th': InstanceType<typeof ThElement>;
-    'remote-td': InstanceType<typeof TdElement>;
-    'remote-br': InstanceType<typeof BrElement>;
-    'remote-hr': InstanceType<typeof HrElement>;
+    'html-div': InstanceType<typeof HtmlDivElement>;
+    'html-span': InstanceType<typeof HtmlSpanElement>;
+    'html-section': InstanceType<typeof HtmlSectionElement>;
+    'html-article': InstanceType<typeof HtmlArticleElement>;
+    'html-header': InstanceType<typeof HtmlHeaderElement>;
+    'html-footer': InstanceType<typeof HtmlFooterElement>;
+    'html-main': InstanceType<typeof HtmlMainElement>;
+    'html-nav': InstanceType<typeof HtmlNavElement>;
+    'html-aside': InstanceType<typeof HtmlAsideElement>;
+    'html-p': InstanceType<typeof HtmlPElement>;
+    'html-h1': InstanceType<typeof HtmlH1Element>;
+    'html-h2': InstanceType<typeof HtmlH2Element>;
+    'html-h3': InstanceType<typeof HtmlH3Element>;
+    'html-h4': InstanceType<typeof HtmlH4Element>;
+    'html-h5': InstanceType<typeof HtmlH5Element>;
+    'html-h6': InstanceType<typeof HtmlH6Element>;
+    'html-strong': InstanceType<typeof HtmlStrongElement>;
+    'html-em': InstanceType<typeof HtmlEmElement>;
+    'html-small': InstanceType<typeof HtmlSmallElement>;
+    'html-code': InstanceType<typeof HtmlCodeElement>;
+    'html-pre': InstanceType<typeof HtmlPreElement>;
+    'html-blockquote': InstanceType<typeof HtmlBlockquoteElement>;
+    'html-a': InstanceType<typeof HtmlAElement>;
+    'html-img': InstanceType<typeof HtmlImgElement>;
+    'html-ul': InstanceType<typeof HtmlUlElement>;
+    'html-ol': InstanceType<typeof HtmlOlElement>;
+    'html-li': InstanceType<typeof HtmlLiElement>;
+    'html-form': InstanceType<typeof HtmlFormElement>;
+    'html-label': InstanceType<typeof HtmlLabelElement>;
+    'html-input': InstanceType<typeof HtmlInputElement>;
+    'html-textarea': InstanceType<typeof HtmlTextareaElement>;
+    'html-select': InstanceType<typeof HtmlSelectElement>;
+    'html-option': InstanceType<typeof HtmlOptionElement>;
+    'html-button': InstanceType<typeof HtmlButtonElement>;
+    'html-table': InstanceType<typeof HtmlTableElement>;
+    'html-thead': InstanceType<typeof HtmlTheadElement>;
+    'html-tbody': InstanceType<typeof HtmlTbodyElement>;
+    'html-tfoot': InstanceType<typeof HtmlTfootElement>;
+    'html-tr': InstanceType<typeof HtmlTrElement>;
+    'html-th': InstanceType<typeof HtmlThElement>;
+    'html-td': InstanceType<typeof HtmlTdElement>;
+    'html-br': InstanceType<typeof HtmlBrElement>;
+    'html-hr': InstanceType<typeof HtmlHrElement>;
     // Core
     'remote-root': InstanceType<typeof RemoteRootElement>;
     'remote-fragment': InstanceType<typeof RemoteFragmentElement>;

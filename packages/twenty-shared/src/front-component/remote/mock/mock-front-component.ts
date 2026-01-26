@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { button, div, h3, p } from '../generated/components';
+import { HtmlButton, HtmlDiv, HtmlH3, HtmlP } from '../generated/components';
 
 const FrontComponent = () => {
   const [clickCount, setClickCount] = useState(0);
@@ -16,28 +16,28 @@ const FrontComponent = () => {
   }, []);
 
   return React.createElement(
-    div,
+    HtmlDiv,
     null,
-    React.createElement(h3, null, 'Remote DOM front component'),
+    React.createElement(HtmlH3, null, 'Remote DOM front component'),
     React.createElement(
-      p,
+      HtmlP,
       null,
       'Rendered in a web worker and mirrored on the host.',
     ),
     React.createElement(
-      button,
+      HtmlButton,
       { onClick: () => setClickCount(clickCount + 1) },
       'Click me',
     ),
     React.createElement(
-      p,
+      HtmlP,
       null,
       'Clicked ',
       clickCount,
       ' time',
       clickCount === 1 ? '' : 's',
     ),
-    React.createElement(p, null, 'Current time: ', currentTime),
+    React.createElement(HtmlP, null, 'Current time: ', currentTime),
   );
 };
 
