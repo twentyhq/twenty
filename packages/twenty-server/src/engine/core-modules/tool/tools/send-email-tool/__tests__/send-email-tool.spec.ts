@@ -94,3 +94,28 @@ describe('SendEmailTool - normalizeRecipients', () => {
     expect(normalizeRecipients({ recipients: {} })).toBeNull();
   });
 });
+
+describe('SendEmailTool - workflow variable detection', () => {
+  const isWorkflowVariable = (value: string): boolean => {
+    const variablePattern = /{{[^{}]+}}/;
+
+    return variablePattern.test(value);
+  };
+
+  it('should detect workflow variables', () => {
+    expect(isWorkflowVariable('{{user.email}}')).toBe(true);
+    expect(isWorkflowVariable('{{trigger.record.email}}')).toBe(true);
+    expect(isWorkflowVariable('{{step.output.value}}')).toBe(true);
+  });
+
+  it('should not detect regular email addresses as workflow variables', () => {
+    expect(isWorkflowVariable('test@example.com')).toBe(false);
+    expect(isWorkflowVariable('user+tag@domain.com')).toBe(false);
+  });
+
+  it('should not detect partial or malformed variables', () => {
+    expect(isWorkflowVariable('{{incomplete')).toBe(false);
+    expect(isWorkflowVariable('incomplete}}')).toBe(false);
+    expect(isWorkflowVariable('hello {{user.email}} world')).toBe(true);
+  });
+});

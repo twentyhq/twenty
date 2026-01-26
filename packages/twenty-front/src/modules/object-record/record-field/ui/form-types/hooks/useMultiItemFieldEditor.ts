@@ -60,7 +60,7 @@ const CommaToTagExtension = Extension.create({
       new Plugin({
         key: new PluginKey('commaToTag'),
         props: {
-          handleTextInput(_view, _from, _to, text) {
+          handleTextInput: (_view, _from, _to, text) => {
             if (text === ',') {
               const textBefore = getTextBeforeCursor(editor);
 
@@ -73,7 +73,7 @@ const CommaToTagExtension = Extension.create({
             }
             return false;
           },
-          handleKeyDown(_view, event) {
+          handleKeyDown: (_view, event) => {
             if (event.key === 'Enter') {
               return true;
             }

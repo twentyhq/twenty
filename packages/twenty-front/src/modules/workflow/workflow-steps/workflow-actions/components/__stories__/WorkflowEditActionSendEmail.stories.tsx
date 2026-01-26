@@ -25,9 +25,9 @@ const DEFAULT_ACTION: WorkflowSendEmailAction = {
     input: {
       connectedAccountId: '',
       recipients: {
-        to: [],
-        cc: [],
-        bcc: [],
+        to: '',
+        cc: '',
+        bcc: '',
       },
       subject: '',
       body: '',
@@ -54,9 +54,9 @@ const CONFIGURED_ACTION: WorkflowSendEmailAction = {
     input: {
       connectedAccountId: mockedConnectedAccounts[0].accountOwnerId,
       recipients: {
-        to: ['test@twenty.com'],
-        cc: [],
-        bcc: [],
+        to: 'test@twenty.com',
+        cc: '',
+        bcc: '',
       },
       subject: 'Welcome to Twenty!',
       body: 'Dear Tim,\n\nWelcome to Twenty! We are excited to have you on board.\n\nBest regards,\nThe Team',

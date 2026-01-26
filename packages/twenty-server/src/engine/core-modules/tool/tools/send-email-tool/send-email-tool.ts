@@ -20,6 +20,7 @@ import {
 } from 'src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception';
 import { SendEmailInputZodSchema } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool.schema';
 import { type SendEmailInput } from 'src/engine/core-modules/tool/tools/send-email-tool/types/send-email-input.type';
+import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/send-email-tool/utils/parse-comma-separated-emails.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import {
   type Tool,
@@ -121,15 +122,10 @@ export class SendEmailTool implements Tool {
     );
   }
 
-  private parseCommaSeparatedEmails(value: string | undefined): string[] {
-    if (!value) {
-      return [];
-    }
+  private isWorkflowVariable(value: string): boolean {
+    const variablePattern = /{{[^{}]+}}/;
 
-    return value
-      .split(',')
-      .map((email) => email.trim())
-      .filter((email) => email.length > 0);
+    return variablePattern.test(value);
   }
 
   private normalizeRecipients(parameters: SendEmailInput): {
@@ -143,9 +139,9 @@ export class SendEmailTool implements Tool {
       parameters.recipients.to.trim().length > 0
     ) {
       return {
-        to: this.parseCommaSeparatedEmails(parameters.recipients.to),
-        cc: this.parseCommaSeparatedEmails(parameters.recipients.cc),
-        bcc: this.parseCommaSeparatedEmails(parameters.recipients.bcc),
+        to: parseCommaSeparatedEmails(parameters.recipients.to),
+        cc: parseCommaSeparatedEmails(parameters.recipients.cc),
+        bcc: parseCommaSeparatedEmails(parameters.recipients.bcc),
       };
     }
 
@@ -170,6 +166,10 @@ export class SendEmailTool implements Tool {
     const allEmails = [...recipients.to, ...recipients.cc, ...recipients.bcc];
 
     for (const email of allEmails) {
+      if (this.isWorkflowVariable(email)) {
+        continue;
+      }
+
       const result = emailSchema.safeParse(email);
 
       if (!result.success) {
@@ -284,16 +284,23 @@ export class SendEmailTool implements Tool {
         workspaceId,
       );
 
-      const messageChannelId = connectedAccount.messageChannels.find(
+      const messageChannel = connectedAccount.messageChannels.find(
         (channel) => channel.handle === connectedAccount.handle,
-      )?.id!;
+      );
+
+      if (!isDefined(messageChannel)) {
+        throw new SendEmailToolException(
+          `No message channel found for connected account '${connectedAccountId}'`,
+          SendEmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+        );
+      }
 
       const { accessToken, refreshToken } =
         await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
           {
             connectedAccount,
             workspaceId,
-            messageChannelId,
+            messageChannelId: messageChannel.id,
           },
         );
 
