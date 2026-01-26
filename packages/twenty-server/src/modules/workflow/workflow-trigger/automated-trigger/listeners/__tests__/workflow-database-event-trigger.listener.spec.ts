@@ -40,7 +40,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       updatedAt: new Date().toISOString(),
       icon: 'Icon123',
       universalIdentifier: 'test-object-metadata',
-      fieldMetadataIds: [],
+      fieldIds: [],
       indexMetadataIds: [],
       viewIds: [],
       applicationId: null,

@@ -96,7 +96,7 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
     }
 
     const flatFieldMetadatas = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityIds: opportunityObjectMetadata.fieldMetadataIds,
+      flatEntityIds: opportunityObjectMetadata.fieldIds,
       flatEntityMaps: flatFieldMetadataMaps,
     });
 

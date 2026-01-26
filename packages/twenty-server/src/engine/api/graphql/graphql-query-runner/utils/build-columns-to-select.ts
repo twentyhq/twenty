@@ -50,7 +50,7 @@ const getRequiredRelationColumns = (
 ): string[] => {
   const requiredColumns: string[] = [];
 
-  for (const fieldId of flatObjectMetadata.fieldMetadataIds) {
+  for (const fieldId of flatObjectMetadata.fieldIds) {
     const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: fieldId,
       flatEntityMaps: flatFieldMetadataMaps,

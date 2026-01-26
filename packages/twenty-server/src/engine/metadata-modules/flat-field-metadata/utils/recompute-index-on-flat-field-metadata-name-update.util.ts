@@ -26,7 +26,7 @@ export const recomputeIndexOnFlatFieldMetadataNameUpdate = ({
   const objectFlatFieldMetadatas =
     findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+      flatEntityIds: flatObjectMetadata.fieldIds,
     });
   const optimisticObjectFlatFieldMetadatas = objectFlatFieldMetadatas.map(
     (flatFieldMetadata) => {

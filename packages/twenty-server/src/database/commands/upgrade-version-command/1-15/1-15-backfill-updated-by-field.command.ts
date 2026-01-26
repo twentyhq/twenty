@@ -112,7 +112,7 @@ export class BackfillUpdatedByFieldCommand extends ActiveOrSuspendedWorkspacesMi
       }
 
       const flatFieldMetadatas = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+        flatEntityIds: flatObjectMetadata.fieldIds,
         flatEntityMaps: flatFieldMetadataMaps,
       });
 
