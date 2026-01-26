@@ -58036,7 +58036,7 @@ __metadata:
     type-fest: "npm:4.10.1"
     typescript: "npm:5.9.2"
     uuid: "npm:^9.0.0"
-    vite: "npm:^7.0.0"
+    vite: "npm:^7.3.1"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.0.17"
     xlsx-ugnis: "npm:^0.19.3"
@@ -59840,7 +59840,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^6.0.0 || ^7.0.0":
+"vite@npm:^6.0.0 || ^7.0.0, vite@npm:^7.3.1":
   version: 7.3.1
   resolution: "vite@npm:7.3.1"
   dependencies:
