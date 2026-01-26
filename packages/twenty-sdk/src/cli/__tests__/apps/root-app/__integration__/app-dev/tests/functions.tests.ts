@@ -4,11 +4,17 @@ import { join } from 'path';
 export const defineFunctionsTests = (appPath: string): void => {
   describe('functions', () => {
     it('should have built functions at root level', async () => {
-      const functionsDir = join(appPath, '.twenty/output/functions');
-      const files = await fs.readdir(functionsDir, { recursive: true });
-      const sortedFiles = files.map((f) => f.toString()).sort();
+      const outputDir = join(appPath, '.twenty/output');
+      const files = await fs.readdir(outputDir, { recursive: true });
+      const functionFiles = files
+        .map((f) => f.toString())
+        .filter((f) => f.includes('.function.'))
+        .sort();
 
-      expect(sortedFiles).toEqual(['my.function.mjs', 'my.function.mjs.map']);
+      expect(functionFiles).toEqual([
+        'my.function.mjs',
+        'my.function.mjs.map',
+      ]);
     });
   });
 };

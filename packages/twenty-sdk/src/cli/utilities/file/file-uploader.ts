@@ -1,6 +1,7 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
-import path from 'path';
+import path, { relative } from 'path';
 import { type FileFolder } from 'twenty-shared/types';
+import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 
 export class FileUploader {
   private apiService = new ApiService();
@@ -23,9 +24,11 @@ export class FileUploader {
     builtPath: string;
     fileFolder: FileFolder;
   }) {
+    const builtHandlerPath = relative(OUTPUT_DIR, builtPath);
+
     return await this.apiService.uploadFile({
       filePath: path.join(this.appPath, builtPath),
-      builtHandlerPath: builtPath,
+      builtHandlerPath,
       fileFolder,
       applicationUniversalIdentifier: this.applicationUniversalIdentifier,
     });

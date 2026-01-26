@@ -16,11 +16,7 @@ export const runAppDev = (
   return runCliCommand({
     command: 'app:dev',
     args: [appPath],
-    waitForOutput: [
-      '[manifest-watch] ✓ Written to',
-      '[functions-watch] ✓ Built',
-      '[front-components-watch] ✓ Built',
-    ],
+    waitForOutput: ['[dev-mode] ✓ Synced'],
     timeout,
   });
 };

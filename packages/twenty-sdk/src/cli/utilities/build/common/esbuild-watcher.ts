@@ -1,5 +1,4 @@
 import * as esbuild from 'esbuild';
-import * as fs from 'fs-extra';
 import path from 'path';
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
@@ -89,9 +88,6 @@ export class EsbuildWatcher implements RestartableWatcher {
   }
 
   async start(): Promise<void> {
-    const outputDir = path.join(this.appPath, OUTPUT_DIR);
-    await fs.emptyDir(outputDir);
-
     if (this.sourcePaths.length > 0) {
       await this.createContext();
     }

@@ -8,6 +8,9 @@ import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifes
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { DevModeOrchestrator } from '@/cli/utilities/dev/dev-mode-orchestrator';
+import path from 'path';
+import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
+import * as fs from 'fs-extra';
 
 const initLogger = createLogger('init');
 
@@ -30,6 +33,8 @@ export class AppDevCommand {
     initLogger.log(`📁 App Path: ${this.appPath}`);
     console.log('');
 
+    await this.cleanOutputDir();
+
     this.orchestrator = new DevModeOrchestrator({
       appPath: this.appPath,
       onManifestBuilt: this.handleWatcherRestarts.bind(this),
@@ -37,6 +42,12 @@ export class AppDevCommand {
 
     await this.startManifestWatcher();
     this.setupGracefulShutdown();
+  }
+
+  private async cleanOutputDir() {
+    const outputDir = path.join(this.appPath, OUTPUT_DIR);
+    await fs.ensureDir(outputDir);
+    await fs.emptyDir(outputDir);
   }
 
   private async startManifestWatcher(): Promise<void> {
