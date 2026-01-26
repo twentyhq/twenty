@@ -7,35 +7,16 @@ import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import {
+  type LegacySendEmailInput,
+  type MigratedSendEmailInput,
+  migrateSendEmailInput,
+  needsSendEmailMigration,
+} from 'src/database/commands/upgrade-version-command/1-16/utils/migrate-send-email-recipients.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-
-type LegacySendEmailInput = {
-  connectedAccountId: string;
-  email?: string;
-  recipients?: {
-    to: string | string[];
-    cc?: string | string[];
-    bcc?: string | string[];
-  };
-  subject?: string;
-  body?: string;
-  files?: unknown[];
-};
-
-type MigratedSendEmailInput = {
-  connectedAccountId: string;
-  recipients: {
-    to: string;
-    cc: string;
-    bcc: string;
-  };
-  subject?: string;
-  body?: string;
-  files?: unknown[];
-};
 
 type WorkflowStep = {
   id: string;
@@ -62,69 +43,6 @@ export class MigrateSendEmailRecipientsCommand extends ActiveOrSuspendedWorkspac
     protected readonly dataSourceService: DataSourceService,
   ) {
     super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService);
-  }
-
-  private arrayToCommaSeparatedString(
-    value: string | string[] | undefined,
-  ): string {
-    if (!isDefined(value)) {
-      return '';
-    }
-
-    if (Array.isArray(value)) {
-      return value.filter((v) => v.trim().length > 0).join(', ');
-    }
-
-    return value;
-  }
-
-  private migrateSendEmailInput(
-    input: LegacySendEmailInput,
-  ): MigratedSendEmailInput {
-    const { email, recipients, ...rest } = input;
-
-    let toValue = '';
-    let ccValue = '';
-    let bccValue = '';
-
-    if (isDefined(recipients)) {
-      toValue = this.arrayToCommaSeparatedString(recipients.to);
-      ccValue = this.arrayToCommaSeparatedString(recipients.cc);
-      bccValue = this.arrayToCommaSeparatedString(recipients.bcc);
-    }
-
-    if (isDefined(email) && email.trim().length > 0 && toValue.length === 0) {
-      toValue = email;
-    }
-
-    return {
-      ...rest,
-      recipients: {
-        to: toValue,
-        cc: ccValue,
-        bcc: bccValue,
-      },
-    };
-  }
-
-  private needsMigration(input: LegacySendEmailInput): boolean {
-    if (isDefined(input.email)) {
-      return true;
-    }
-
-    if (isDefined(input.recipients)) {
-      if (Array.isArray(input.recipients.to)) {
-        return true;
-      }
-      if (Array.isArray(input.recipients.cc)) {
-        return true;
-      }
-      if (Array.isArray(input.recipients.bcc)) {
-        return true;
-      }
-    }
-
-    return false;
   }
 
   override async runOnWorkspace({
@@ -165,12 +83,12 @@ export class MigrateSendEmailRecipientsCommand extends ActiveOrSuspendedWorkspac
 
         const input = step.settings.input as LegacySendEmailInput;
 
-        if (!this.needsMigration(input)) {
+        if (!needsSendEmailMigration(input)) {
           return step;
         }
 
         hasChanges = true;
-        const migratedInput = this.migrateSendEmailInput(input);
+        const migratedInput = migrateSendEmailInput(input);
 
         return {
           ...step,
