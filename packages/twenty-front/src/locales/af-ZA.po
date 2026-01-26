@@ -2081,6 +2081,11 @@ msgstr "Brons"
 msgid "Brown"
 msgstr "Bruin"
 
+#. js-lingui-id: 8SlslB
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
+msgid "Build many-to-many relations. <0>Learn more</0>"
+msgstr ""
+
 #. js-lingui-id: +7fBMP
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 msgid "Built-in"
@@ -7744,6 +7749,11 @@ msgstr "Navigeer na vorige weergawe"
 msgid "Navigate to previous workflow"
 msgstr "Navigeer na vorige werkstroom"
 
+#. js-lingui-id: FpO6v4
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "navigation menu item"
+msgstr ""
+
 #. js-lingui-id: qqeAJM
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Never"
@@ -12845,11 +12855,6 @@ msgstr "Waar"
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "Widget type"
 msgstr "Widget tipe"
-
-#. js-lingui-id: erVUKK
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
-msgid "Will show linked records directly instead of intermediate junction record"
-msgstr ""
 
 #. js-lingui-id: bB8dFW
 #: src/modules/billing/components/TrialCard.tsx

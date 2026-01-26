@@ -709,6 +709,16 @@ msgstr ""
 msgid "Composite type not found."
 msgstr "Összetett típus nem található."
 
+#. js-lingui-id: 3UUjIe
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-creation.util.ts
+msgid "Configuration is required for front component widget"
+msgstr ""
+
+#. js-lingui-id: tBK3H8
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-creation.util.ts
+msgid "Configuration is required for front component widget \"{title}\""
+msgstr ""
+
 #. js-lingui-id: wOVBIH
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for graph widget"
@@ -743,6 +753,7 @@ msgstr ""
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-configuration-type.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-type.util.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
 msgid "Configuration type is required"
 msgstr ""
 
@@ -750,6 +761,7 @@ msgstr ""
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-configuration-type.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-type.util.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
 msgid "Configuration type is required for widget \"{widgetTitle}\""
 msgstr ""
 
@@ -1613,6 +1625,16 @@ msgstr ""
 #. js-lingui-id: C25VTR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Invalid configuration for widget \"{widgetTitle}\": Chart type {chartType} requires IS_DASHBOARD_V2_ENABLED feature flag"
+msgstr ""
+
+#. js-lingui-id: /xPxQo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
+msgid "Invalid configuration type for front component widget"
+msgstr ""
+
+#. js-lingui-id: T3xkLf
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
+msgid "Invalid configuration type for front component widget \"{widgetTitle}\". Expected FRONT_COMPONENT, got {configurationTypeString}"
 msgstr ""
 
 #. js-lingui-id: PXgd1R

@@ -1,44 +1,44 @@
 ---
 title: Webhooks
-description: Receive real-time notifications when events occur in your CRM.
+description: Recibe notificaciones en tiempo real cuando ocurran eventos en tu CRM.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Webhooks push data to your systems in real-time when events occur in Twenty — no polling required. Use them to keep external systems in sync, trigger automations, or send alerts.
+Los webhooks envían datos a tus sistemas en tiempo real cuando ocurren eventos en Twenty — no se requiere sondeo. Úsalos para mantener sincronizados los sistemas externos, activar automatizaciones o enviar alertas.
 
-## Create a Webhook
+## Crear un Webhook
 
-1. Go to **Settings → APIs & Webhooks → Webhooks**
-2. Click **+ Create webhook**
-3. Enter your webhook URL (must be publicly accessible)
-4. Click **Save**
+1. Ve a **Configuración → APIs y Webhooks → Webhooks**
+2. Haga clic en **+ Crear webhook**
+3. Introduce la URL de tu webhook (debe ser públicamente accesible)
+4. Haga clic en **Guardar**
 
-The webhook activates immediately and starts sending notifications.
+El webhook se activa de inmediato y comienza a enviar notificaciones.
 
-<VimeoEmbed videoId="928786708" title="Creating a webhook" />
+<VimeoEmbed videoId="928786708" title="Crear un webhook" />
 
-### Manage Webhooks
+### Gestionar Webhooks
 
-**Edit**: Click the webhook → Update URL → **Save**
+**Editar**: Haz clic en el webhook → Actualizar la URL → **Guardar**
 
-**Delete**: Click the webhook → **Delete** → Confirm
+**Eliminar**: Haz clic en el webhook → **Eliminar** → Confirmar
 
-## Events
+## Eventos
 
-Twenty sends webhooks for these event types:
+Twenty envía webhooks para estos tipos de eventos:
 
-| Event              | Example                                                    |
-| ------------------ | ---------------------------------------------------------- |
-| **Record Created** | `person.created`, `company.created`, `note.created`        |
-| **Record Updated** | `person.updated`, `company.updated`, `opportunity.updated` |
-| **Record Deleted** | `person.deleted`, `company.deleted`                        |
+| Evento                       | Ejemplo                                                    |
+| ---------------------------- | ---------------------------------------------------------- |
+| **Se crea un registro**      | `person.created`, `company.created`, `note.created`        |
+| **Se actualiza un registro** | `person.updated`, `company.updated`, `opportunity.updated` |
+| **Se elimina un registro**   | `person.deleted`, `company.deleted`                        |
 
-All event types are sent to your webhook URL. Event filtering may be added in future releases.
+Todos los tipos de eventos se envían a la URL de tu webhook. Es posible que se agregue el filtrado de eventos en versiones futuras.
 
-## Payload Format
+## Formato de la carga útil
 
-Each webhook sends an HTTP POST with a JSON body:
+Cada webhook envía una solicitud HTTP POST con un cuerpo JSON:
 
 ```json
 {
@@ -55,35 +55,35 @@ Each webhook sends an HTTP POST with a JSON body:
 }
 ```
 
-| Field       | Description                                      |
-| ----------- | ------------------------------------------------ |
-| `event`     | What happened (e.g., `person.created`)           |
-| `data`      | The full record that was created/updated/deleted |
-| `timestamp` | When the event occurred (UTC)                    |
+| Campo             | Descripción                                        |
+| ----------------- | -------------------------------------------------- |
+| `evento`          | Qué ocurrió (p. ej., `person.created`)             |
+| `datos`           | El registro completo que se creó/actualizó/eliminó |
+| `marca de tiempo` | Cuándo ocurrió el evento (UTC)                     |
 
 <Note>
-  Respond with a **2xx HTTP status** (200-299) to acknowledge receipt. Non-2xx responses are logged as delivery failures.
+  Responde con un **estado HTTP 2xx** (200-299) para confirmar la recepción. Las respuestas que no sean 2xx se registran como errores de entrega.
 </Note>
 
-## Webhook Validation
+## Validación de Webhook
 
-Twenty signs each webhook request for security. Validate signatures to ensure requests are authentic.
+Twenty firma cada solicitud de webhook por seguridad. Valida las firmas para garantizar que las solicitudes sean auténticas.
 
-### Headers
+### Encabezados
 
-| Header                       | Description           |
-| ---------------------------- | --------------------- |
-| `X-Twenty-Webhook-Signature` | HMAC SHA256 signature |
-| `X-Twenty-Webhook-Timestamp` | Request timestamp     |
+| Encabezado                   | Descripción                     |
+| ---------------------------- | ------------------------------- |
+| `X-Twenty-Webhook-Signature` | Firma HMAC SHA256               |
+| `X-Twenty-Webhook-Timestamp` | Marca de tiempo de la solicitud |
 
-### Validation Steps
+### Pasos de validación
 
-1. Get the timestamp from `X-Twenty-Webhook-Timestamp`
-2. Create the string: `{timestamp}:{JSON payload}`
-3. Compute HMAC SHA256 using your webhook secret
-4. Compare with `X-Twenty-Webhook-Signature`
+1. Obtén la marca de tiempo de `X-Twenty-Webhook-Timestamp`
+2. Crea la cadena: `{timestamp}:{JSON payload}`
+3. Calcula HMAC SHA256 usando tu secreto de webhook
+4. Compara con `X-Twenty-Webhook-Signature`
 
-### Example (Node.js)
+### Ejemplo (Node.js)
 
 ```javascript
 const crypto = require("crypto");
@@ -101,12 +101,12 @@ const expectedSignature = crypto
 const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
 ```
 
-## Webhooks vs Workflows
+## Webhooks vs flujos de trabajo
 
-| Method                       | Direction | Use Case                                                   |
-| ---------------------------- | --------- | ---------------------------------------------------------- |
-| **Webhooks**                 | OUT       | Automatically notify external systems of any record change |
-| **Workflow + HTTP Request**  | OUT       | Send data out with custom logic (filters, transformations) |
-| **Workflow Webhook Trigger** | IN        | Receive data into Twenty from external systems             |
+| Método                                        | Dirección | Caso de uso                                                                       |
+| --------------------------------------------- | --------- | --------------------------------------------------------------------------------- |
+| **Webhooks**                                  | SALIDA    | Notificar automáticamente a los sistemas externos cualquier cambio en un registro |
+| **Flujo de trabajo + solicitud HTTP**         | SALIDA    | Enviar datos con lógica personalizada (filtros, transformaciones)                 |
+| **Disparador de webhook de flujo de trabajo** | ENTRADA   | Recibir datos en Twenty desde sistemas externos                                   |
 
-For receiving external data, see [Set Up a Webhook Trigger](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
+Para recibir datos externos, consulta [Configurar un disparador de webhook](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).

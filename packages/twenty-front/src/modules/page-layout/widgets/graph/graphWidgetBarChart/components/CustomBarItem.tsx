@@ -1,17 +1,20 @@
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { graphWidgetIsSliceHoveredComponentFamilySelector } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetIsSliceHoveredComponentFamilySelector';
+import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { animated, to } from '@react-spring/web';
 import { isNumber } from '@sniptt/guards';
 import { useMemo } from 'react';
 import styled from 'styled-components';
+import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
 
 type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   shouldRoundFreeEnd: boolean;
   seriesIndex: number;
-  isDimmed: boolean;
-  isSliceHovered: boolean;
   layout?: BarChartLayout;
   chartId?: string;
 };
@@ -49,11 +52,22 @@ export const CustomBarItem = <D extends BarDatum>({
   ariaHidden,
   shouldRoundFreeEnd,
   seriesIndex,
-  isDimmed,
-  isSliceHovered,
   layout = BarChartLayout.VERTICAL,
   chartId,
 }: CustomBarItemProps<D>) => {
+  const highlightedLegendId = useRecoilComponentValue(
+    graphWidgetHighlightedLegendIdComponentState,
+  );
+
+  const isSliceHovered = useRecoilComponentFamilyValue(
+    graphWidgetIsSliceHoveredComponentFamilySelector,
+    String(barData.indexValue),
+  );
+
+  const isDimmed =
+    isDefined(highlightedLegendId) &&
+    String(highlightedLegendId) !== String(barData.id);
+
   const isNegativeValue = isNumber(barData.value) && barData.value < 0;
 
   const isHorizontal = layout === BarChartLayout.HORIZONTAL;

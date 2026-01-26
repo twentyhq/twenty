@@ -1,92 +1,92 @@
 ---
-title: Workflow Runs
-description: Monitor and manage workflow executions.
+title: Execuções de Workflow
+description: Monitore e gerencie as execuções de fluxos de trabalho.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-## About Runs
+## Sobre Execuções
 
-A **Run** is a record of a workflow execution. Every time a workflow is triggered—whether by a record event, schedule, manual action, or webhook—a new run is created.
+Uma **Execução** é um registro de uma execução de fluxo de trabalho. Sempre que um fluxo de trabalho é acionado — seja por um evento de registro, agendamento, ação manual ou webhook — uma nova execução é criada.
 
-## Viewing Runs
+## Visualizando Execuções
 
-### From the Workflow Editor
+### No Editor de Fluxo de Trabalho
 
-1. Open the workflow you want to monitor
-2. Click the **Runs** panel on the right side
-3. See a list of recent runs with their status
+1. Abra o fluxo de trabalho que você deseja monitorar
+2. Clique no painel **Execuções** no lado direito
+3. Veja uma lista de execuções recentes com seus status
 
-### From the Workflow Runs View
+### Na Visualização de Execuções de Fluxo de Trabalho
 
-1. Go to **Workflow Runs** in the sidebar
-2. View runs across all workflows
-3. Filter by status, workflow, or date
+1. Vá para **Execuções de Fluxo de Trabalho** na barra lateral
+2. Veja execuções em todos os fluxos de trabalho
+3. Filtre por status, fluxo de trabalho ou data
 
-## Run Statuses
+## Status das Execuções
 
-| Status        | Description                                                              |
-| ------------- | ------------------------------------------------------------------------ |
-| **Running**   | Workflow is currently executing                                          |
-| **Completed** | Workflow finished successfully                                           |
-| **Failed**    | Workflow encountered an error and stopped                                |
-| **Waiting**   | Workflow is paused (e.g., waiting for a Delay action or Form submission) |
+| Estado         | Descrição                                                                                                  |
+| -------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Executando** | O fluxo de trabalho está em execução no momento                                                            |
+| **Concluído**  | O fluxo de trabalho foi concluído com êxito                                                                |
+| **Falhou**     | O fluxo de trabalho encontrou um erro e foi interrompido                                                   |
+| **Aguardando** | O fluxo de trabalho está em pausa (por exemplo, aguardando uma ação de Atraso ou o envio de um Formulário) |
 
-## Run Details
+## Detalhes da Execução
 
-Click on any run to see:
+Clique em qualquer execução para ver:
 
-* **Status**: Current state of the run
-* **Started at**: When the run began
-* **Duration**: How long the run took
-* **Trigger data**: The input that started the workflow
-* **Step outputs**: Data returned by each step
-* **Error messages**: If the run failed, what went wrong
+* **Status**: Estado atual da execução
+* **Iniciado em**: Quando a execução começou
+* **Duração**: Quanto tempo a execução levou
+* **Dados do gatilho**: A entrada que iniciou o fluxo de trabalho
+* **Saídas das etapas**: Dados retornados por cada etapa
+* **Mensagens de erro**: Se a execução falhou, o que deu errado
 
-## Step-by-Step Execution
+## Execução passo a passo
 
-Each run shows the progression through your workflow:
+Cada execução mostra o progresso ao longo do seu fluxo de trabalho:
 
-1. See which steps completed successfully
-2. Identify where failures occurred
-3. View the data passed between steps
-4. Debug issues by examining step inputs and outputs
+1. Veja quais etapas foram concluídas com êxito
+2. Identifique onde ocorreram falhas
+3. Veja os dados passados entre as etapas
+4. Depure problemas examinando as entradas e saídas das etapas
 
-## Error Handling
+## Tratamento de Erros
 
-When a run fails:
+Quando uma execução falha:
 
-1. Open the failed run
-2. Find the step that caused the failure
-3. Check the error message for details
-4. Common issues:
-   * Missing required fields
-   * Invalid data format
-   * External API errors
-   * Permission issues
+1. Abra a execução com falha
+2. Encontre a etapa que causou a falha
+3. Verifique a mensagem de erro para obter detalhes
+4. Problemas comuns:
+   * Campos obrigatórios ausentes
+   * Formato de dados inválido
+   * Erros de API externa
+   * Problemas de permissão
 
-## Re-running Workflows
+## Reexecutando fluxos de trabalho
 
-If a run fails, you can:
+Se uma execução falhar, você pode:
 
-* Fix the underlying issue and wait for the next trigger
-* For manual workflows, trigger again with the same or updated data
-* Review the workflow logic to prevent future failures
+* Corrija o problema subjacente e aguarde o próximo gatilho
+* Para fluxos de trabalho manuais, acione novamente com os mesmos dados ou dados atualizados
+* Revise a lógica do fluxo de trabalho para evitar falhas futuras
 
-## Performance Tips
+## Dicas de desempenho
 
-### Managing Run History
+### Gerenciando o histórico de execuções
 
-* Runs are retained for historical reference
-* Very old runs may be archived automatically
-* Export run data if you need to keep records
+* As execuções são mantidas para referência histórica
+* Execuções muito antigas podem ser arquivadas automaticamente
+* Exporte os dados da execução se precisar manter registros
 
-### Monitoring Best Practices
+### Melhores práticas de monitoramento
 
-* Check runs regularly after activating new workflows
-* Review failed runs to identify patterns
+* Verifique as execuções regularmente após ativar novos fluxos de trabalho
+* Revise as execuções com falha para identificar padrões
 
-## Related
+## Relacionados
 
-* [Workflow Triggers](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/pt/user-guide/workflows/capabilities/workflow-actions)
-* [Workflow Troubleshooting](/l/pt/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)
+* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+* [Solução de Problemas de Fluxo de Trabalho](/l/pt/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

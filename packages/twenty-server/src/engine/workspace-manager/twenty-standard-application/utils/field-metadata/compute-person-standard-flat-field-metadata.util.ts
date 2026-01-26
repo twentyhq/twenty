@@ -439,7 +439,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       targetObjectName: 'attachment',
-      targetFieldName: 'person',
+      targetFieldName: 'targetPerson',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

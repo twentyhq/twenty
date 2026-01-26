@@ -1,3 +1,4 @@
+import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
@@ -296,6 +297,8 @@ export const GraphWidgetLineChart = ({
             bottom: margins.bottom,
             left: margins.left,
           }}
+          animate
+          motionConfig={CHART_MOTION_CONFIG}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',

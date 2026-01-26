@@ -154,7 +154,7 @@ describe('FieldPermissionService', () => {
             [testObjectMetadataId]: {
               ...objectMetadataItemMock,
               id: testObjectMetadataId,
-              fieldMetadataIds: [testFieldMetadataId],
+              fieldIds: [testFieldMetadataId],
               indexMetadataIds: [],
               viewIds: [],
               universalIdentifier: testObjectMetadataId,
@@ -163,7 +163,7 @@ describe('FieldPermissionService', () => {
             [fieldRelationMock.objectMetadataId]: {
               ...objectMetadataItemMock,
               id: fieldRelationMock.objectMetadataId,
-              fieldMetadataIds: [fieldRelationMock.id],
+              fieldIds: [fieldRelationMock.id],
               indexMetadataIds: [],
               viewIds: [],
               universalIdentifier: fieldRelationMock.objectMetadataId,
@@ -444,7 +444,7 @@ describe('FieldPermissionService', () => {
                 [testObjectMetadataId]: {
                   ...systemObjectMetadata,
                   id: testObjectMetadataId,
-                  fieldMetadataIds: [],
+                  fieldIds: [],
                   indexMetadataIds: [],
                   viewIds: [],
                   universalIdentifier: testObjectMetadataId,
@@ -490,7 +490,7 @@ describe('FieldPermissionService', () => {
                 [testObjectMetadataId]: {
                   ...objectMetadataItemMock,
                   id: testObjectMetadataId,
-                  fieldMetadataIds: [],
+                  fieldIds: [],
                   indexMetadataIds: [],
                   viewIds: [],
                   universalIdentifier: testObjectMetadataId,

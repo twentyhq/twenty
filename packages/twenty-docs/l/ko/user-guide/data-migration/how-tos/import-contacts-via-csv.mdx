@@ -1,90 +1,90 @@
 ---
-title: Import Contacts via CSV
-description: Complete step-by-step guide to importing people/contacts into Twenty.
+title: CSV로 연락처 가져오기
+description: Twenty로 사람/연락처를 가져오는 포괄적인 단계별 가이드.
 ---
 
-## Overview
+## 개요
 
-This guide walks you through importing your contacts (People) into Twenty. **Import Companies first** if you want to link People to Companies.
+이 가이드는 연락처(People)를 Twenty로 가져오는 과정을 단계별로 안내합니다. **회사를 먼저 가져오세요** — 사람을 회사에 연결하려면.
 
-## Before You Start
+## 시작하기 전에
 
-### Prerequisites Checklist
+### 사전 준비 체크리스트
 
 <Check>
-  Your file is CSV, XLSX, or XLS format
+  파일이 CSV, XLSX 또는 XLS 형식임
 </Check>
 
 <Check>
-  File has fewer than 10,000 records
+  파일의 레코드가 10,000개 미만임
 </Check>
 
 <Check>
-  No duplicate email addresses in your file
+  파일에 중복된 이메일 주소가 없음
 </Check>
 
 <Check>
-  **Companies imported first** (if linking People to Companies)
+  **회사를 먼저 가져옴**(사람을 회사에 연결하는 경우)
 </Check>
 
 <Check>
-  All custom fields exist in **Settings → Data Model**
+  모든 사용자 정의 필드가 **Settings → Data Model**에 존재함
 </Check>
 
 <Warning>
-  **Import Companies Before People**
+  **사람보다 회사를 먼저 가져오기**
 
-  If you want to link People to Companies, import Companies first. The Company must exist before you can reference it.
+  사람을 회사에 연결하려면 먼저 회사를 가져오세요. 참조하려면 회사가 먼저 존재해야 합니다.
 </Warning>
 
-## Step 1: Prepare Your Contact Data
+## 1단계: 연락처 데이터 준비
 
-### Required and Recommended Fields
+### 필수 및 권장 필드
 
-| Field             | Required?   | Format            | Notes                     |
-| ----------------- | ----------- | ----------------- | ------------------------- |
-| **Email**         | Recommended | `name@domain.com` | Must be unique            |
-| **First Name**    | Recommended | Text              |                           |
-| **Last Name**     | Recommended | Text              |                           |
-| **Company**       | Optional    | Domain or ID      | Links to existing Company |
-| **Phone**         | Optional    | Multiple columns  | See below                 |
-| **Job Title**     | Optional    | Text              |                           |
-| **Custom fields** | Optional    | Varies            | Must exist in Data Model  |
+| 필드            | 필수?   | 형식                | 노트                 |
+| ------------- | ----- | ----------------- | ------------------ |
+| **이메일**       | 권장    | `name@domain.com` | 고유해야 함             |
+| **이름**        | 권장    | 텍스트               |                    |
+| **성**         | 권장    | 텍스트               |                    |
+| **회사**        | 선택 사항 | 도메인 또는 ID         | 기존 회사에 연결          |
+| **전화**        | 선택 사항 | 여러 열              | 아래 참조              |
+| **직책**        | 선택 사항 | 텍스트               |                    |
+| **사용자 정의 필드** | 선택 사항 | 항목에 따라 다름         | Data Model에 존재해야 함 |
 
-### Email Format
+### 이메일 형식
 
-* Must be valid email format: `name@domain.com`
-* **Must be unique** — no duplicates in your file or in Twenty
-* For additional emails, use the **Emails / Additional Emails** column:
+* 유효한 이메일 형식이어야 함: `name@domain.com`
+* **고유해야 함** — 파일 또는 Twenty에 중복이 없어야 합니다
+* 추가 이메일은 **Emails / Additional Emails** 열을 사용하세요:
 
 ```
-["jane@twenty.com","jane.doe@twenty.com"]
+[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
 ```
 
-### Phone Format
+### 전화 형식
 
-Phone is a **nested field** requiring multiple columns:
+전화는 여러 열이 필요한 **중첩 필드**입니다:
 
-| Column                                  | Example      |
+| 열                                       | 예시           |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-### Linking to Companies
+### 회사에 연결하기
 
-Add a column with the Company's unique identifier:
+회사 고유 식별자 열을 추가하세요:
 
-| Column Name     | Format     | Example                                |
-| --------------- | ---------- | -------------------------------------- |
-| `companyDomain` | URL format | `https://acme.com`                     |
-| `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| 열 이름            | 형식     | 예시                                     |
+| --------------- | ------ | -------------------------------------- |
+| `companyDomain` | URL 형식 | `https://acme.com`                     |
+| `companyId`     | UUID   | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-  **Use Domain URL format** (`https://acme.com`), not the label. This matches how Companies are stored in Twenty.
+  **도메인 URL 형식을 사용하세요**(`https://acme.com`), 라벨은 사용하지 마세요. 이는 Twenty에서 회사가 저장되는 방식과 일치합니다.
 </Note>
 
-### Sample CSV Structure
+### CSV 예시 구조
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain,Phones / Primary Phone Number,Phones / Primary Phone Country Code
@@ -93,150 +93,150 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-  **Pro tip:** Click **Download sample file** during import or export a few existing People to see the exact column names Twenty expects.
+  **전문가 팁:** 가져오기 중에 **Download sample file**을 클릭하거나 기존 People 몇 명을 내보내 Twenty가 기대하는 정확한 열 이름을 확인하세요.
 </Note>
 
-## Step 2: Access the Import Feature
+## 2단계: 가져오기 기능에 액세스
 
-**Option 1: From the People View**
+**옵션 1: People 보기에서**
 
-1. Navigate to **People** in the left sidebar
-2. Click the **⋮** icon on the top right
-3. Select **Import records**
+1. 왼쪽 사이드바에서 **People**로 이동하세요
+2. 오른쪽 상단의 **⋮** 아이콘을 클릭하세요
+3. **Import records**를 선택하세요
 
-**Option 2: Using Command Menu**
+**옵션 2: 커맨드 메뉴 사용**
 
-1. Press `Cmd + K` (Mac) or `Ctrl + K` (Windows)
-2. Type "import"
-3. Select **Import records**
-4. Choose **People**
+1. `Cmd + K`(Mac) 또는 `Ctrl + K`(Windows)를 누르세요
+2. "import"를 입력하세요
+3. **Import records**를 선택하세요
+4. **People**을 선택하세요
 
-## Step 3: Upload Your File
+## 3단계: 파일 업로드
 
-1. Click **Select file**
-2. Choose your CSV, XLSX, or XLS file
-3. Wait for Twenty to analyze your file
+1. **Select file**을 클릭하세요
+2. CSV, XLSX 또는 XLS 파일을 선택하세요
+3. Twenty가 파일을 분석할 때까지 기다리세요
 
-## Step 4: Map Your Columns
+## 4단계: 열 매핑
 
-Twenty automatically tries to match your columns to fields. Review and adjust:
+Twenty가 열을 필드에 자동으로 매칭하려고 시도합니다. 검토 및 조정:
 
-1. **Check automatic mappings** — verify they're correct
-2. **Fix incorrect mappings** — click the dropdown to select the right field
-3. **Skip columns** — select **Do not map** for columns you don't want to import
+1. **자동 매핑 확인** — 올바른지 검증하세요
+2. **잘못된 매핑 수정** — 드롭다운을 클릭하여 올바른 필드를 선택하세요
+3. **열 건너뛰기** — 가져오지 않을 열은 **Do not map**을 선택하세요
 
-### Important Mapping Rules
+### 중요한 매핑 규칙
 
-| Column Type       | Map To                         | Notes                              |
-| ----------------- | ------------------------------ | ---------------------------------- |
-| Company reference | **Company** relation field     | Use domain OR id, not both         |
-| Email             | **Email**                      | Primary email address              |
-| Additional emails | **Emails / Additional Emails** | Array format                       |
-| Phone             | Separate columns               | Number, Country Code, Calling Code |
+| 열 유형   | 매핑 대상                          | 노트                              |
+| ------ | ------------------------------ | ------------------------------- |
+| 회사 참조  | **회사** 관계 필드                   | 도메인 또는 ID 중 하나만 사용(둘 다 사용하지 않음) |
+| 이메일    | **이메일**                        | 기본 이메일 주소                       |
+| 추가 이메일 | **Emails / Additional Emails** | 배열 형식                           |
+| 전화     | 분리된 열                          | 번호, 국가 코드, 전화 걸기 코드             |
 
 <img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
 
-### Mapping the Company Relation
+### 회사 관계 매핑
 
-When mapping the company column:
+회사 열을 매핑할 때:
 
-1. Find your company reference column (e.g., `companyDomain`)
-2. Map it to the **Company** relation field
-3. Twenty will link each Person to the matching Company
+1. 회사 참조 열을 찾으세요(예: `companyDomain`)
+2. 이를 **회사** 관계 필드에 매핑하세요
+3. Twenty가 각 사람을 일치하는 회사에 연결합니다
 
 <Warning>
-  **Map only ONE unique identifier for relations.**
+  **관계에는 고유 식별자를 하나만 매핑하세요.**
 
-  Don't map both `companyId` AND `companyDomain`. Choose one—preferably domain since it's human-readable.
+  `companyId`와 `companyDomain`을 둘 다 매핑하지 마세요. 하나만 선택하세요—사람이 읽기 쉬우므로 도메인을 권장합니다.
 </Warning>
 
-## Step 5: Map Select Field Values
+## 5단계: 선택 필드 값 매핑
 
-If you have Select or Multi-Select fields (like Lead Source):
+선택 또는 다중 선택 필드(예: 리드 소스)가 있는 경우:
 
-1. Twenty shows your values alongside existing options
-2. Match each value in your file to a Twenty option
-3. Or create new options if needed
+1. Twenty에서 사용자의 값을 기존 옵션과 나란히 표시합니다
+2. 파일의 각 값을 Twenty 옵션과 매칭하세요
+3. 필요하면 새 옵션을 만드세요
 
 <Note>
-  Select options use **API names**, not display labels. Check **Settings → Data Model** → Enable **Advanced mode** to see API names.
+  선택 옵션은 표시 레이블이 아니라 **API 이름**을 사용합니다. API 이름을 보려면 **Settings → Data Model**에서 **Advanced mode**를 활성화하세요.
 </Note>
 
-## Step 6: Review and Fix Errors
+## 6단계: 오류 검토 및 수정
 
-Before completing the import, Twenty validates your data:
+가져오기를 완료하기 전에 Twenty가 데이터를 검증합니다:
 
-1. Click **Next Steps**
-2. Rows with errors are highlighted in **yellow**
-3. **Fix errors directly** — click a cell and edit the value
-4. **Remove problematic rows** — click the X to skip that row
+1. **다음 단계**를 클릭합니다
+2. 오류가 있는 행은 **노란색**으로 강조 표시됩니다
+3. **오류를 직접 수정** — 셀을 클릭하고 값을 편집하세요
+4. **문제가 있는 행 제거** — 해당 행을 건너뛰려면 X를 클릭하세요
 
-### Common Contact Import Errors
+### 일반적인 연락처 가져오기 오류
 
-| Error                      | Cause                                  | Solution                                    |
-| -------------------------- | -------------------------------------- | ------------------------------------------- |
-| **Duplicate email**        | Email already exists in Twenty or file | Remove duplicate or update existing record  |
-| **Invalid email format**   | Email format incorrect                 | Fix to `name@domain.com`                    |
-| **Relation not found**     | Company doesn't exist                  | Import Companies first or fix the reference |
-| **Missing required field** | Required field is empty                | Fill in the value or remove the row         |
+| 오류              | 원인                        | 해결책                       |
+| --------------- | ------------------------- | ------------------------- |
+| **중복 이메일**      | 이메일이 Twenty 또는 파일에 이미 존재함 | 중복을 제거하거나 기존 레코드를 업데이트하세요 |
+| **잘못된 이메일 형식**  | 이메일 형식이 올바르지 않음           | `name@domain.com`으로 수정하세요 |
+| **관계를 찾을 수 없음** | 회사가 존재하지 않음               | 먼저 회사를 가져오거나 참조를 수정하세요    |
+| **필수 필드 누락**    | 필수 필드가 비어 있음              | 값을 입력하거나 해당 행을 제거하세요      |
 
-## Step 7: Complete the Import
+## 7단계: 가져오기 완료
 
-1. Review the import summary
-2. Click **Confirm** to import
-3. Wait for the import to complete
-4. Verify by checking a few records and their Company links
+1. 가져오기 요약을 검토하세요
+2. 가져오려면 **확인**을 클릭합니다
+3. 가져오기가 완료될 때까지 기다리세요
+4. 몇 개의 레코드와 해당 회사 링크를 확인하여 검증하세요
 
-## After Importing Contacts
+## 연락처 가져오기 후
 
-Your contacts are now in Twenty! Next steps:
+이제 연락처가 Twenty에 있습니다! 다음 단계:
 
-1. **Verify Company links** — open a few People records to confirm they're linked to the right Company
-2. **Import Opportunities** — if needed, link them to People and Companies
-3. **Set up email sync** — connect your mailbox to see email history on contact records
+1. **회사 링크 확인** — 올바른 회사에 연결되어 있는지 확인하려면 몇 개의 연락처 레코드를 여세요
+2. **기회 가져오기** — 필요한 경우 연락처 및 회사에 연결하세요
+3. **이메일 동기화 설정** — 연락처 레코드에서 이메일 내역을 볼 수 있도록 메일박스를 연결하세요
 
-## Updating Existing Contacts
+## 기존 연락처 업데이트
 
-To update contacts instead of creating new ones:
+새로 생성하는 대신 연락처를 업데이트하려면:
 
-1. Include the `email` or `id` column in your file
-2. Twenty matches records by this unique identifier
-3. Existing contacts are updated; new ones are created
+1. 파일에 `email` 또는 `id` 열을 포함하세요
+2. Twenty는 이 고유 식별자로 레코드를 매칭합니다
+3. 기존 연락처는 업데이트되고, 새 연락처는 생성됩니다
 
-See [How to Update Existing Records](/l/ko/user-guide/data-migration/how-tos/update-existing-records-via-import) for details.
+자세한 내용은 [기존 레코드를 업데이트하는 방법](/l/ko/user-guide/data-migration/how-tos/update-existing-records-via-import)을 참조하세요.
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="Why can't two People have the same email?">
-    Email is a unique identifier in Twenty. This prevents duplicate contacts and ensures email sync correctly links emails to the right person.
+  <Accordion title="왜 두 연락처가 동일한 이메일을 가질 수 없나요?">
+    이메일은 Twenty에서 고유 식별자입니다. 이는 중복 연락처를 방지하고 이메일 동기화가 올바른 연락처에 이메일을 정확히 연결되도록 보장합니다.
   </Accordion>
 
-  <Accordion title="What if I have people without an email?">
-    You can leave the email empty. However, we recommend adding emails when possible for better data quality and email sync functionality.
+  <Accordion title="이메일이 없는 연락처가 있으면 어떻게 하나요?">
+    이메일을 비워둘 수 있습니다. 하지만 데이터 품질과 이메일 동기화 기능을 위해 가능하면 이메일을 추가할 것을 권장합니다.
   </Accordion>
 
-  <Accordion title="How do I link People to Companies during import?">
-    Add a column with the Company's domain (e.g., `https://acme.com`) or ID. During mapping, connect this column to the Company relation field.
+  <Accordion title="가져오기 중 연락처를 회사에 어떻게 연결하나요?">
+    회사의 도메인(예: `https://acme.com`) 또는 ID가 포함된 열을 추가하세요. 매핑 중에 이 열을 회사 관계 필드에 연결하세요.
   </Accordion>
 
-  <Accordion title="What if the Company doesn't exist yet?">
-    Import Companies first, then import People. The Company must exist before you can reference it.
+  <Accordion title="회사가 아직 존재하지 않으면 어떻게 하나요?">
+    먼저 회사를 가져오고, 그다음 연락처를 가져오세요. 참조하려면 해당 회사가 먼저 존재해야 합니다.
   </Accordion>
 
-  <Accordion title="Can I import the ID from my previous CRM?">
-    Yes! Create a custom field marked as "unique" in your data model to store the external ID. Note: the field name `id` is reserved for Twenty's internal ID.
+  <Accordion title="이전 CRM의 ID를 가져올 수 있나요?">
+    예! 외부 ID를 저장하려면 데이터 모델에 "unique"로 표시된 사용자 지정 필드를 만드세요. 참고: 필드 이름 `id`는 Twenty의 내부 ID로 예약되어 있습니다.
   </Accordion>
 
-  <Accordion title="How do I fix 'relation not found' errors?">
-    The Company you're referencing doesn't exist. Either import the Company first, or check that the domain/ID exactly matches an existing Company.
+  <Accordion title="'relation not found' 오류는 어떻게 해결하나요?">
+    참조하려는 회사가 존재하지 않습니다. 회사를 먼저 가져오거나, 도메인/ID가 기존 회사와 정확히 일치하는지 확인하세요.
   </Accordion>
 </AccordionGroup>
 
-## Troubleshooting
+## 문제 해결
 
-Having issues? Check:
+문제가 있으신가요? 확인하세요:
 
-* [How to Fix Import Errors](/l/ko/user-guide/data-migration/how-tos/fix-import-errors)
-* [How to Import Relations](/l/ko/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
-* [Field Mapping Reference](/l/ko/user-guide/data-migration/capabilities/field-mapping)
+* [가져오기 오류 수정](/l/ko/user-guide/data-migration/how-tos/fix-import-errors)
+* [관계 가져오기 방법](/l/ko/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [필드 매핑 레퍼런스](/l/ko/user-guide/data-migration/capabilities/field-mapping)

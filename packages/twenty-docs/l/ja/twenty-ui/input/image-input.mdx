@@ -1,16 +1,16 @@
 ---
-title: Image Input
+title: 画像入力
 image: /images/user-guide/objects/objects.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+  <img src="/images/user-guide/objects/objects.png" alt="ヘッダー" />
 </Frame>
 
-Allows users to upload and remove an image.
+ユーザーが画像をアップロードおよび削除できるようにします。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { ImageInput } from "@/ui/input/components/ImageInput";
 
@@ -20,15 +20,15 @@ Allows users to upload and remove an image.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props        | Type     | Description                                                                                       |
-    | ------------ | -------- | ------------------------------------------------------------------------------------------------- |
-    | picture      | string   | The image source URL                                                                              |
-    | onUpload     | function | The function called when a user uploads a new image. It receives the `File` object as a parameter |
-    | onRemove     | function | The function called when the user clicks on the remove button                                     |
-    | onAbort      | function | The function called when a user clicks on the abort button during image upload                    |
-    | isUploading  | boolean  | Indicates whether an image is currently being uploaded                                            |
-    | errorMessage | string   | An optional error message to display below the image input                                        |
-    | disabled     | boolean  | If `true`, the entire input is disabled, and the buttons are not clickable                        |
+  <Tab title="プロパティ">
+    | プロパティ        | タイプ    | 説明                                                                                                                                                |
+    | ------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | 写真           | string | 画像ソースURL                                                                                                                                          |
+    | onUpload     | 関数     | 新しい画像がアップロードされたときに呼び出される関数。 新しい画像がアップロードされたときに呼び出される関数。 パラメーターとして `File` オブジェクトを受け取ります 新しい画像がアップロードされたときに呼び出される関数。 パラメーターとして `File` オブジェクトを受け取ります |
+    | onRemove     | 関数     | ユーザーが削除ボタンをクリックしたときに呼び出される関数                                                                                                                      |
+    | onAbort      | 関数     | 画像のアップロード中に中止ボタンをクリックしたときに呼び出される関数                                                                                                                |
+    | isUploading  | ブール型   | 画像が現在アップロード中であるかどうかを示します                                                                                                                          |
+    | errorMessage | string | 画像入力の下に表示されるオプションのエラーメッセージ                                                                                                                        |
+    | disabled     | ブール型   | `true` の場合、入力全体が無効化され、ボタンをクリックできなくなります。                                                                                                           |
   </Tab>
 </Tabs>

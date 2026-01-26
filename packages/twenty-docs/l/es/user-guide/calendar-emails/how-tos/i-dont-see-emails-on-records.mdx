@@ -1,53 +1,53 @@
 ---
-title: I Don't See Emails on Records
-description: Troubleshooting missing emails on records.
+title: No veo correos electrónicos en los registros
+description: Solución de problemas de correos faltantes en los registros.
 ---
 
-## Common Reasons
+## Causas comunes
 
-### 1. Initial Sync Still in Progress
+### 1. La sincronización inicial aún está en curso
 
-Email sync takes time, especially for large mailboxes.
+La sincronización de correo electrónico lleva tiempo, especialmente para buzones grandes. Twenty importa correos electrónicos a aproximadamente **400 mensajes por minuto** (limitado por el límite de tasa de la API de Gmail).
 
-* **Calendar sync**: Completes in minutes
-* **Email sync**: Can take several hours for large mailboxes
+* **Sincronización del calendario**: se completa en minutos
+* **Sincronización de correo electrónico**: depende del tamaño del buzón (p. ej., 10,000 correos electrónicos ≈ 25 minutos, 50,000 correos electrónicos ≈ 2 horas)
 
-**Solution**: Wait up to a few hours for the initial import to complete.
+**Solución**: Espera a que la importación inicial finalice. Puedes estimar el tiempo en función del tamaño de tu buzón.
 
-### 2. Contact Doesn't Exist in Twenty
+### 2. El contacto no existe en Twenty
 
-Emails only appear on existing People records. If the contact wasn't created yet:
+Los correos electrónicos solo aparecen en los registros de Personas existentes. Si el contacto aún no se ha creado:
 
-* Enable **Contact Auto-Creation** in your mailbox settings
-* Or manually create the Person record first
+* Habilita la **creación automática de contactos** en la configuración de tu buzón
+* O crea primero manualmente el registro de Persona
 
-**Solution**: Go to **Settings → Accounts**, select your mailbox, and enable contact auto-creation.
+**Solución**: Ve a **Configuración → Cuentas**, selecciona tu buzón y habilita la creación automática de contactos.
 
-### 3. Internal Emails Are Excluded
+### 3. Los correos internos están excluidos
 
-Emails between colleagues (same email domain) are never synced to maintain privacy.
+Los correos entre colegas (mismo dominio de correo) nunca se sincronizan para mantener la privacidad.
 
-**Solution**: This is expected behavior. Only external emails are synced.
+**Solución**: Este es el comportamiento esperado. Solo se sincronizan los correos externos.
 
-### 4. Email Is from a Group or Distribution List
+### 4. El correo proviene de un grupo o lista de distribución
 
-Group emails and distribution lists are excluded from sync.
+Los correos de grupo y las listas de distribución están excluidos de la sincronización.
 
-**Solution**: This is expected behavior.
+**Solución**: Este es el comportamiento esperado.
 
-### 5. Folder Not Selected for Sync
+### 5. Carpeta no seleccionada para la sincronización
 
-If you're using the Message Folder feature, some folders might be excluded.
+Si estás usando la función Message Folder, es posible que algunas carpetas estén excluidas.
 
-**Solution**: Go to **Settings → Accounts**, select your mailbox, and check folder sync settings.
+**Solución**: Ve a **Configuración → Cuentas**, selecciona tu buzón y revisa la configuración de sincronización de carpetas.
 
-### 6. Wrong Email Address on Record
+### 6. Dirección de correo incorrecta en el registro
 
-The Person record might have a different email address than the one used in the email.
+Es posible que el registro de Persona tenga una dirección de correo diferente a la usada en el correo.
 
-**Solution**: Add the correct email address to the Person record.
+**Solución**: Agrega la dirección de correo correcta al registro de Persona.
 
-## Still Not Working?
+## ¿Sigue sin funcionar?
 
-1. Try disconnecting and reconnecting your mailbox
-2. Contact support if issues persist
+1. Intenta desconectar y volver a conectar tu buzón
+2. Contacta al soporte si los problemas persisten

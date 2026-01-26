@@ -1,18 +1,18 @@
 ---
-title: Zapier App
+title: Zapierアプリ
 ---
 
-Effortlessly sync Twenty with 3000+ apps using [Zapier](https://zapier.com/). Automate tasks, boost productivity, and supercharge your customer relationships!
+[Zapier](https://zapier.com/) を使って、3000以上のアプリと Twenty を簡単に同期できます。 タスクを自動化し、生産性を高め、顧客関係を強化しよう！
 
-## About Zapier
+## Zapierについて
 
-Zapier is a tool that allows you to automate workflows by connecting the apps that your team uses every day. The fundamental concept of Zapier is automation workflows, called Zaps, and include triggers and actions.
+Zapierは、チームが毎日使用するアプリを連携させてワークフローを自動化するツールです。 Zapierの基本的な概念は、Zapsと呼ばれる自動化ワークフローであり、トリガーとアクションを含みます。 Zapierは、チームが毎日使用するアプリを連携させてワークフローを自動化するツールです。 Zapierの基本的な概念は、Zapsと呼ばれる自動化ワークフローであり、トリガーとアクションを含みます。 Zapierの基本的な概念は、Zapsと呼ばれる自動化ワークフローであり、トリガーとアクションを含みます。
 
-You can learn more about how Zapier works [here](https://zapier.com/how-it-works).
+Zapierの仕組みについてもっと知りたい方は[こちら](https://zapier.com/how-it-works)をご覧ください。
 
-## Setup
+## セットアップ
 
-### Step 1: Install Zapier packages
+### ステップ 1: Zapier パッケージをインストール
 
 ```bash
 cd packages/twenty-zapier
@@ -20,33 +20,33 @@ cd packages/twenty-zapier
 yarn
 ```
 
-### Step 2: Login with the CLI
+### ステップ 2: CLI でログイン
 
-Use your Zapier credentials to log in using the CLI:
+Zapierの資格情報を使用してCLIでログインしてください。
 
 ```bash
 zapier login
 ```
 
-### Step 3: Set environment variables
+### ステップ3：環境変数をセットアップします
 
-From the `packages/twenty-zapier` folder, run:
+`packages/twenty-zapier`フォルダーから実行します。
 
 ```bash
 cp .env.example .env
 ```
 
-Run the application locally, go to [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks), and generate an API key.
+アプリケーションをローカルで実行し、[http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks)にアクセスしてAPIキーを生成してください。
 
-Replace the **YOUR_API_KEY** value in the `.env` file with the API key you just generated.
+.envファイルの**YOUR_API_KEY**値を生成したAPIキーで置き換えてください。
 
-## Development
+## 開発
 
 <Warning>
-  Make sure to run `yarn build` before any `zapier` command.
+  `zapier`コマンドを実行する前に`yarn build`を実行してください。
 </Warning>
 
-### Test
+### テスト
 
 ```bash
 yarn test
@@ -58,25 +58,25 @@ yarn test
 yarn format
 ```
 
-### Watch and compile as you edit code
+### コードを編集しながら監視＆コンパイル
 
 ```bash
 yarn watch
 ```
 
-### Validate your Zapier app
+### Zapierアプリを検証
 
 ```bash
 yarn validate
 ```
 
-### Deploy your Zapier app
+### Zapierアプリをデプロイ
 
 ```bash
 yarn deploy
 ```
 
-### List all Zapier CLI commands
+### すべてのZapier CLIコマンドを列挙
 
 ```bash
 zapier

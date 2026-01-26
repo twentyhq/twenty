@@ -14,7 +14,7 @@ export const getFlatObjectMetadataMock = (
   return {
     viewIds: [],
     indexMetadataIds: [],
-    fieldMetadataIds: [],
+    fieldIds: [],
     description: 'default flat object metadata description',
     icon: 'icon',
     id: faker.string.uuid(),

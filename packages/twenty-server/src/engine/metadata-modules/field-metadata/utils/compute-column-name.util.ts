@@ -2,13 +2,13 @@ import {
   type FieldMetadataType,
   type CompositeProperty,
 } from 'twenty-shared/types';
+import { pascalCase } from 'twenty-shared/utils';
 
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { pascalCase } from 'src/utils/pascal-case';
 
 type ComputeColumnNameOptions = { isForeignKey?: boolean };
 

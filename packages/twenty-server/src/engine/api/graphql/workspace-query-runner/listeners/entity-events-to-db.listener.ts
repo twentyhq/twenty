@@ -109,7 +109,10 @@ export class EntityEventsToDbListener {
         promises.push(
           this.entityEventsToDbQueueService.add<
             WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>
-          >(UpsertTimelineActivityFromInternalEvent.name, batchEvent),
+          >(
+            UpsertTimelineActivityFromInternalEvent.name,
+            batchEvent as WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
+          ),
         );
       }
     }

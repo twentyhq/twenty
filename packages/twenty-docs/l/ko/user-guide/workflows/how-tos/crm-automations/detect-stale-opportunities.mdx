@@ -1,56 +1,56 @@
 ---
-title: Detect Stale Opportunities
-description: Automatically notify managers when opportunities haven't been updated.
+title: 오래된 기회 감지
+description: 기회가 업데이트되지 않았을 때 관리자에게 자동으로 알립니다.
 ---
 
-Keep your pipeline healthy by alerting managers when opportunities go stale. This workflow checks for opportunities that haven't been updated in a specified number of days.
+기회가 오래되면 관리자에게 알림을 보내 파이프라인을 건강하게 유지하세요. 이 워크플로우는 지정한 일수 동안 업데이트되지 않은 기회를 확인합니다.
 
-## The Problem
+## 문제
 
-Opportunities sitting without updates lead to:
+업데이트 없이 방치된 기회는 다음을 초래합니다:
 
-* Deals going cold
-* Unreliable forecasts
-* Lost revenue
+* 거래가 식어감
+* 신뢰할 수 없는 매출 예측
+* 매출 손실
 
-## The Solution
+## 해결책
 
-Create a scheduled workflow that finds stale opportunities and emails their managers.
+오래된 기회를 찾아 해당 관리자에게 이메일을 보내는 예약 워크플로우를 만듭니다.
 
-## Step-by-Step Setup
+## 단계별 설정
 
-### Step 1: Create the Workflow
+### 1단계: 워크플로우 생성
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it "Stale Opportunity Alert"
+1. **설정 → 워크플로우**로 이동
+2. **+ 새 워크플로우**를 클릭
+3. 이름을 "오래된 기회 경고"로 지정
 
-### Step 2: Configure the Trigger
+### 2단계: 트리거 구성
 
-1. Select **On a Schedule**
-2. Set to run daily (e.g., every day at 8 AM)
+1. **On a Schedule**를 선택
+2. 매일 실행되도록 설정합니다(예: 매일 오전 8시).
 
-### Step 3: Search for Stale Opportunities
+### 3단계: 오래된 기회 검색
 
-1. Add **Search Records** action
-2. Configure:
+1. **레코드 검색** 액션을 추가합니다
+2. 구성:
 
-| Field      | Value                                           |
-| ---------- | ----------------------------------------------- |
-| **Object** | Opportunities                                   |
-| **Filter** | Updated At is before (today - 7 days)           |
-| **Filter** | Stage is not "Closed Won" AND not "Closed Lost" |
-| **Limit**  | 100                                             |
+| 필드     | 값                                          |
+| ------ | ------------------------------------------ |
+| **객체** | 기회                                         |
+| **필터** | Updated At이 (오늘 - 7일) 이전                   |
+| **필터** | Stage가 "Closed Won"이 아니며 "Closed Lost"도 아님 |
+| **제한** | 100                                        |
 
-### Step 4: Check If Any Found
+### 4단계: 발견된 항목이 있는지 확인
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. If no stale opportunities, the workflow stops here
+1. **필터** 액션을 추가합니다
+2. 조건: `{{searchRecords.length}}`가 0보다 큼
+3. 오래된 기회가 없으면 워크플로우는 여기서 중지됩니다
 
-### Step 5: Format the Alert (Code Action)
+### 5단계: 경고 형식 지정(코드 액션)
 
-Add a **Code** action to format the email:
+이메일을 형식 지정하기 위해 **코드** 액션을 추가합니다:
 
 ```javascript
 export const main = async (params) => {
@@ -88,49 +88,49 @@ export const main = async (params) => {
 };
 ```
 
-### Step 6: Send Alert Email
+### 6단계: 경고 이메일 보내기
 
-Add **Send Email** action:
+이메일 보내기 액션 추가:
 
-| Field       | Value                                                       |
-| ----------- | ----------------------------------------------------------- |
-| **To**      | sales-manager@yourcompany.com                               |
-| **Subject** | `🚨 {{code.totalCount}} Stale Opportunities Need Attention` |
-| **Body**    | `{{code.summary}}`                                          |
+| 필드        | 값                                            |
+| --------- | -------------------------------------------- |
+| **받는 사람** | sales-manager@yourcompany.com                |
+| **제목**    | `🚨 {{code.totalCount}}건의 오래된 기회에 주의가 필요합니다` |
+| **본문**    | `{{code.summary}}`                           |
 
-### Step 7: Test and Activate
+### 7단계: 테스트 및 활성화
 
-1. Click **Test** to run the workflow
-2. Check that the email contains the right data
-3. Activate when ready
+1. 워크플로우를 실행하려면 **Test**를 클릭합니다
+2. 이메일에 올바른 데이터가 포함되어 있는지 확인합니다
+3. 준비되면 활성화합니다
 
-## Customization Options
+## 맞춤 설정 옵션
 
-### Change Staleness Threshold
+### 정체 임계값 변경
 
-Modify the Search Records filter to change from 7 days to your preferred period:
+레코드 검색 필터를 수정하여 7일을 원하는 기간으로 변경합니다:
 
-* 3 days for high-velocity sales
-* 14 days for enterprise deals
-* 30 days for long sales cycles
+* 고속 영업의 경우 3일
+* 엔터프라이즈 거래의 경우 14일
+* 긴 영업 주기의 경우 30일
 
-### Alert Individual Reps
+### 개별 영업 담당자 알림
 
-Instead of one manager email, use **Iterator** to send personalized emails to each rep about their own stale deals.
+관리자에게 보내는 단일 이메일 대신 **Iterator**를 사용하여 각 영업 담당자에게 자신의 오래된 거래에 대한 개인화된 이메일을 보냅니다.
 
-### Add Escalation
+### 에스컬레이션 추가
 
-Create multiple workflows with increasing severity:
+심각도가 점차 높아지도록 여러 개의 워크플로우를 만듭니다:
 
-1. Day 7: Email to rep
-2. Day 14: Email to rep + manager
-3. Day 21: Create task for manager to intervene
+1. 7일차: 영업 담당자에게 이메일
+2. 14일차: 영업 담당자 및 관리자에게 이메일
+3. 21일차: 관리자가 개입할 수 있도록 작업 생성
 
-### Include in Slack
+### Slack에 포함
 
-Use **HTTP Request** to post to a Slack webhook instead of or in addition to email.
+이메일 대신 또는 추가로 **HTTP Request**를 사용해 Slack 웹훅으로 게시합니다.
 
-## Related
+## 관련 항목
 
-* [Workflow Actions](/l/ko/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/ko/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)
+* [워크플로우에서 이메일 보내기](/l/ko/user-guide/workflows/capabilities/send-emails-from-workflows)

@@ -14,7 +14,7 @@ import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
-import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -99,7 +99,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
         selectedFieldMetadataItem.type,
       );
 
-      if (isCompositeFieldType(filterType)) {
+      if (isCompositeFilterableFieldType(filterType)) {
         setObjectFilterDropdownSubMenuFieldType(filterType);
         setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
         setObjectFilterDropdownIsSelectingCompositeField(true);

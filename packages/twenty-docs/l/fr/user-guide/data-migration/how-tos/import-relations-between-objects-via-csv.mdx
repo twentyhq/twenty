@@ -1,103 +1,103 @@
 ---
-title: Import Relations Between Objects via CSV
-description: Complete step-by-step guide to linking records during CSV import.
+title: Importer des relations entre objets via CSV
+description: Guide complet étape par étape pour lier des enregistrements lors de l'importation CSV.
 ---
 
-## Overview
+## Vue d'ensemble
 
-This guide walks you through importing relations between objects—for example, linking People to Companies, or Opportunities to People.
+Ce guide vous accompagne dans l'importation des relations entre objets — par exemple, lier des Personnes à des Entreprises, ou des Opportunités à des Personnes.
 
-<Note>**What can be imported:** Only one-to-many relations pointing to a single object type. Relations pointing to multiple object types (like Notes linking to People AND Companies) are not yet supported for import.</Note>
+<Note>**Ce qui peut être importé :** Uniquement des relations un-à-plusieurs pointant vers un seul type d'objet. Les relations pointant vers plusieurs types d'objet (comme des Notes liées à des Personnes ET à des Entreprises) ne sont pas encore prises en charge pour l'importation.</Note>
 
-## Understanding Relations
+## Comprendre les relations
 
-### What is a "One-to-Many" Relation?
+### Qu'est-ce qu'une relation "un-à-plusieurs" ?
 
-In a one-to-many relation:
+Dans une relation un-à-plusieurs :
 
-* **One** Company has **many** People (employees)
-* **One** Company has **many** Opportunities
-* **One** Person has **many** Tasks
+* **Une** Entreprise a **de nombreuses** Personnes (employés)
+* **Une** Entreprise a **de nombreuses** Opportunités
+* **Une** Personne a **de nombreuses** Tâches
 
-The "one" side is the **parent**. The "many" side is the **child**.
+Le côté "un" est le **parent**. Le côté "plusieurs" est l'**enfant**.
 
-### Common Relations in Twenty
+### Relations courantes dans Twenty
 
-| Relation                  | "One" Side (Parent) | "Many" Side (Child) |
-| ------------------------- | ------------------- | ------------------- |
-| Companies → People        | Company             | People              |
-| Companies → Opportunities | Company             | Opportunities       |
-| People → Tasks            | Person              | Tasks               |
-| People → Notes            | Person              | Notes               |
+| Relation                   | Côté "un" (Parent) | Côté "plusieurs" (Enfant) |
+| -------------------------- | ------------------ | ------------------------- |
+| Entreprises → Personnes    | Entreprise         | Personnes                 |
+| Entreprises → Opportunités | Entreprise         | Opportunités              |
+| Personnes → Tâches         | Personne           | Tâches                    |
+| Personnes → Notes          | Personne           | Notes                     |
 
-## Step 1: Identify the "One" and "Many" Sides
+## Étape 1 : Identifier les côtés "un" et "plusieurs"
 
-Before importing, determine which object is the parent and which is the child.
+Avant l'importation, déterminez quel objet est le parent et lequel est l'enfant.
 
-**Ask yourself:** "Does ONE [Object A] have MANY [Object B]?"
+**Posez-vous la question :** "Est-ce qu'UN [Objet A] a PLUSIEURS [Objet B] ?"
 
-* One Company → Many People ✓ (Company is parent)
-* One Person → Many Companies ✗ (This is wrong—a person belongs to one company)
+* Une Entreprise → Plusieurs Personnes ✓ (l'Entreprise est le parent)
+* Une Personne → Plusieurs Entreprises ✗ (C'est faux — une personne appartient à une seule entreprise)
 
-## Step 2: Import the Parent Records First
+## Étape 2 : Importer d'abord les enregistrements parents
 
-The parent ("one" side) must exist in Twenty before you can reference it.
+Le parent (côté "un") doit exister dans Twenty avant que vous ne puissiez y faire référence.
 
-**Import order:**
+**Ordre d'import :**
 
-1. **Companies** first (no dependencies)
-2. **People** second (link to Companies)
-3. **Opportunities** third (link to Companies and/or People)
-4. **Tasks/Notes** (link to any of the above)
+1. **Entreprises** d'abord (aucune dépendance)
+2. **Personnes** ensuite (liées aux Entreprises)
+3. **Opportunités** en troisième (liées aux Entreprises et/ou aux Personnes)
+4. **Tâches/Notes** (liées à l'un des éléments ci-dessus)
 
 <Warning>
-  **If the parent record doesn't exist, the import will fail.**
+  **Si l'enregistrement parent n'existe pas, l'import échouera.**
 
-  Always verify that Companies are imported before importing People with company references.
+  Vérifiez toujours que les Entreprises sont importées avant d'importer des Personnes avec des références à l'Entreprise.
 </Warning>
 
-## Step 3: Note the Parent's Unique Identifier
+## Étape 3 : Noter l'identifiant unique du parent
 
-You need to reference the parent record using a **unique identifier**. Available options:
+Vous devez référencer l'enregistrement parent à l'aide d'un **identifiant unique**. Options disponibles :
 
-| Parent Object         | Available Unique Identifiers                                    |
-| --------------------- | --------------------------------------------------------------- |
-| **Companies**         | `id` (UUID), `domain` (recommended), or any custom unique field |
-| **People**            | `id` (UUID), `email`, or any custom unique field                |
-| **Workspace Members** | `id` (UUID), `email` (not name)                                 |
-| **Custom Objects**    | `id` (UUID), or any field marked as unique                      |
+| Objet parent                       | Identifiants uniques disponibles                                      |
+| ---------------------------------- | --------------------------------------------------------------------- |
+| **Entreprises**                    | `id` (UUID), `domain` (recommandé), ou tout champ unique personnalisé |
+| **Personnes**                      | `id` (UUID), `email`, ou tout champ unique personnalisé               |
+| **Membres de l'espace de travail** | `id` (UUID), `email` (pas le nom)                                     |
+| **Objets personnalisés**           | `id` (UUID), ou tout champ marqué comme unique                        |
 
-<Note>**Recommended:** Use `domain` for Companies and `email` for People. These are human-readable and easy to verify in your spreadsheet.</Note>
+<Note>**Recommandé :** Utilisez `domain` pour les Entreprises et `email` pour les Personnes. Ils sont lisibles par l'humain et faciles à vérifier dans votre feuille de calcul.</Note>
 
-### Finding the Identifier
+### Trouver l'identifiant
 
-If you need the `id`:
+Si vous avez besoin de l'`id` :
 
-1. Export the parent records from Twenty
-2. The export includes the `id` column
-3. Use these IDs in your child records file
+1. Exportez les enregistrements parents depuis Twenty
+2. L'export comprend la colonne `id`
+3. Utilisez ces identifiants dans votre fichier d'enregistrements enfants
 
-## Step 4: Verify the Relation Field Exists
+## Étape 4 : Vérifier que le champ de relation existe
 
-Before importing, ensure the relation field exists between your objects.
+Avant l'importation, assurez-vous que le champ de relation existe entre vos objets.
 
-**To check or create:**
+**Pour vérifier ou créer :**
 
-1. Go to **Settings → Data Model**
-2. Select your child object (e.g., People)
-3. Look for a relation field pointing to the parent (e.g., Company)
-4. If it doesn't exist, create it:
-   * Click **+ Add field**
-   * Select **Relation** type
-   * Choose the parent object
+1. Allez dans **Paramètres → Modèle de données**
+2. Sélectionnez votre objet enfant (par ex., Personnes)
+3. Recherchez un champ de relation pointant vers le parent (par ex., Entreprise)
+4. S'il n'existe pas, créez-le :
+   * Cliquez sur **+ Add field**
+   * Sélectionnez le type **Relation**
+   * Choisissez l'objet parent
 
-## Step 5: Prepare Your CSV File
+## Étape 5 : Préparer votre fichier CSV
 
-Add a column to your child CSV that references the parent using its unique identifier.
+Ajoutez une colonne à votre CSV enfant qui référence le parent en utilisant son identifiant unique.
 
-### Example: People Linking to Companies
+### Exemple : Personnes liées aux Entreprises
 
-**Your People CSV:**
+**Votre CSV Personnes :**
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain
@@ -106,66 +106,66 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co
 Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
 ```
 
-The `companyDomain` column references the Company's domain.
+La colonne `companyDomain` référence le domaine de l'Entreprise.
 
-### Format Requirements
+### Exigences de format
 
-| Identifier | Format         | Example                                |
-| ---------- | -------------- | -------------------------------------- |
-| Domain     | URL format     | `https://acme.com`                     |
-| Email      | Standard email | `john@acme.com`                        |
-| ID         | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| Identifiant | Format                  | Exemple                                |
+| ----------- | ----------------------- | -------------------------------------- |
+| Domaine     | Format d'URL            | `https://acme.com`                     |
+| E-mail      | Adresse e-mail standard | `john@acme.com`                        |
+| ID          | UUID                    | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **Domain format matters!**
+  **Le format du domaine est important !**
 
-  Use `https://domain.com` (not just `domain.com`). This matches how Twenty stores Company domains and prevents matching errors.
+  Utilisez `https://domain.com` (et non simplement `domain.com`). Cela correspond à la manière dont Twenty stocke les domaines des Entreprises et évite les erreurs d'association.
 </Warning>
 
-### Important Rules
+### Règles importantes
 
-1. **Exact match required** — the value must exactly match the parent record
-2. **Map only ONE unique identifier** — don't include both `companyId` AND `companyDomain`
-3. **Case sensitive** — `Acme.com` ≠ `acme.com`
+1. **Correspondance exacte requise** — la valeur doit correspondre exactement à l'enregistrement parent
+2. **N'associez qu'UN SEUL identifiant unique** — n'incluez pas à la fois `companyId` ET `companyDomain`
+3. **Sensible à la casse** — `Acme.com` ≠ `acme.com`
 
-## Step 6: Upload and Map the Relation
+## Étape 6 : Téléverser et associer la relation
 
-1. Navigate to the child object (e.g., People)
-2. Click **⋮** → **Import records**
-3. Upload your CSV file
-4. In the field mapping step:
-   * Find your relation column (e.g., `companyDomain`)
-   * Map it to the **Company** relation field
-5. Complete the remaining mapping
-6. Review errors and confirm
+1. Accédez à l'objet enfant (par ex., Personnes)
+2. Cliquez sur **⋮** → **Importer des enregistrements**
+3. Téléversez votre fichier CSV
+4. Lors de l'étape de correspondance des champs :
+   * Trouvez votre colonne de relation (par ex., `companyDomain`)
+   * Associez-la au champ de relation **Entreprise**
+5. Complétez les correspondances restantes
+6. Passez en revue les erreurs et confirmez
 
-Twenty will automatically link each child record to the matching parent.
+Twenty liera automatiquement chaque enregistrement enfant au parent correspondant.
 
-## Step 7: Verify the Import
+## Étape 7 : Vérifier l'importation
 
-After importing:
+Après l'importation :
 
-1. Open a few child records (e.g., People)
-2. Verify the relation field shows the correct parent (e.g., Company)
-3. Open a parent record and check the related records section
+1. Ouvrez quelques enregistrements enfants (par ex., Personnes)
+2. Vérifiez que le champ de relation affiche le parent correct (par ex., Entreprise)
+3. Ouvrez un enregistrement parent et vérifiez la section des enregistrements liés
 
-## Common Mistakes to Avoid
+## Erreurs courantes à éviter
 
-| Mistake                    | Problem                                            | Solution                                                |
-| -------------------------- | -------------------------------------------------- | ------------------------------------------------------- |
-| **Wrong import order**     | Importing People before Companies                  | Always import parents first, then children              |
-| **Wrong domain format**    | Using `acme.com` instead of `https://acme.com`     | Use full URL format with `https://`                     |
-| **Multiple unique fields** | Mapping both `companyId` AND `companyDomain`       | Map only ONE unique identifier                          |
-| **Missing relation field** | The relation field doesn't exist in the data model | Create it in **Settings → Data Model** before importing |
-| **Non-existent records**   | The parent record doesn't exist in Twenty          | Import parent records first, or check for typos         |
-| **Case mismatch**          | `Acme.com` in file but `acme.com` in Twenty        | Ensure exact case matching                              |
+| Erreur                          | Problème                                                    | Solution                                                                       |
+| ------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| **Mauvais ordre d'import**      | Importer des Personnes avant des Entreprises                | Importez toujours les parents d'abord, puis les enfants                        |
+| **Mauvais format de domaine**   | Utiliser `acme.com` au lieu de `https://acme.com`           | Utilisez le format d'URL complet avec `https://`                               |
+| **Plusieurs champs uniques**    | Associer à la fois `companyId` ET `companyDomain`           | N'associez qu'UN SEUL identifiant unique                                       |
+| **Champ de relation manquant**  | Le champ de relation n'existe pas dans le modèle de données | Créez-le dans **Paramètres → Modèle de données** avant l'importation           |
+| **Enregistrements inexistants** | L'enregistrement parent n'existe pas dans Twenty            | Importez d'abord les enregistrements parents, ou vérifiez les fautes de frappe |
+| **Incohérence de casse**        | `Acme.com` dans le fichier mais `acme.com` dans Twenty      | Assurez une correspondance exacte de la casse                                  |
 
-## Linking to Workspace Members
+## Liaison aux membres de l'espace de travail
 
-When linking to Workspace Members (your team):
+Lors de la liaison à des membres de l'espace de travail (votre équipe) :
 
-* Use their **email address**, not their name
-* Example: `owner@yourcompany.com`, not "John Smith"
+* Utilisez leur **adresse e-mail**, pas leur nom
+* Exemple : `owner@yourcompany.com`, pas "John Smith"
 
 ```csv
 taskName,assignedTo
@@ -176,53 +176,53 @@ Review proposal,jane@yourcompany.com
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="What if my parent record doesn't have a domain or email?">
-    You have two options:
+  <Accordion title="Que faire si mon enregistrement parent n'a pas de domaine ni d'e-mail ?">
+    Vous avez deux options :
 
-    1. Use the Twenty `id` (export parent records to get their IDs)
-    2. Create a custom unique field in your data model to store an external ID from your previous system
+    1. Utilisez l'`id` Twenty (exportez les enregistrements parents pour obtenir leurs identifiants)
+    2. Créez un champ unique personnalisé dans votre modèle de données pour stocker un identifiant externe provenant de votre système précédent
   </Accordion>
 
-  <Accordion title="Can I update relations on existing records?">
-    Yes! Include the child record's unique identifier (e.g., `email` for People) and the new relation value. The import will update the relation.
+  <Accordion title="Puis-je mettre à jour les relations sur des enregistrements existants ?">
+    Oui! Incluez l'identifiant unique de l'enregistrement enfant (par ex., `email` pour les Personnes) ainsi que la nouvelle valeur de relation. L'import mettra à jour la relation.
   </Accordion>
 
-  <Accordion title="Can I import Many-to-Many relationships?">
-    Many-to-Many relations are not yet supported for import. This is planned for H1 2026.
+  <Accordion title="Puis-je importer des relations plusieurs-à-plusieurs ?">
+    Les relations plusieurs-à-plusieurs ne sont pas encore prises en charge pour l'importation. C'est prévu pour S1 2026.
   </Accordion>
 
-  <Accordion title="Can I link to multiple object types (like Notes to People AND Companies)?">
-    Relations pointing to multiple object types are not yet supported for import/export. This is on our roadmap.
+  <Accordion title="Puis-je lier à plusieurs types d'objet (comme des Notes à des Personnes ET à des Entreprises) ?">
+    Les relations pointant vers plusieurs types d'objet ne sont pas encore prises en charge pour l'import/export. C'est sur notre feuille de route.
   </Accordion>
 
-  <Accordion title="What happens if a parent record doesn't exist?">
-    The import will show an error for that row. You can either:
+  <Accordion title="Que se passe-t-il si un enregistrement parent n'existe pas ?">
+    L'import affichera une erreur pour cette ligne. Vous pouvez :
 
-    * Import the parent record first, then re-import
-    * Fix the reference value
-    * Remove the row from import
+    * Importez d'abord l'enregistrement parent, puis réimportez
+    * Corrigez la valeur de référence
+    * Supprimez la ligne de l'import
   </Accordion>
 
-  <Accordion title="Why is my relation not linking correctly?">
-    Common causes:
+  <Accordion title="Pourquoi ma relation ne se lie-t-elle pas correctement ?">
+    Causes courantes :
 
-    * Wrong format (use `https://domain.com` for domains)
-    * Case mismatch (check exact spelling)
-    * Parent doesn't exist (import parents first)
-    * Mapping multiple identifiers (use only one)
+    * Mauvais format (utilisez `https://domain.com` pour les domaines)
+    * Incohérence de casse (vérifiez l'orthographe exacte)
+    * Le parent n'existe pas (importez d'abord les parents)
+    * Association de plusieurs identifiants (n'en utilisez qu'un seul)
   </Accordion>
 </AccordionGroup>
 
 <Warning>
-  **Remember: Soft-deleted records count toward uniqueness.**
+  **Rappel : Les enregistrements supprimés de façon logique comptent pour l'unicité.**
 
-  If you're getting "not found" errors but the record seems to exist, check Command Menu → See deleted records. The parent may have been soft-deleted.
+  Si vous obtenez des erreurs "introuvable" mais que l'enregistrement semble exister, vérifiez le menu de commande → Voir les enregistrements supprimés. Le parent a peut-être été supprimé de façon logique.
 </Warning>
 
-## Troubleshooting
+## Résolution des problèmes
 
-Having issues? Check:
+Vous rencontrez des problèmes ? Consultez :
 
-* [How to Fix Import Errors](/l/fr/user-guide/data-migration/how-tos/fix-import-errors)
-* [Import Relations Capabilities](/l/fr/user-guide/data-migration/capabilities/import-relations)
-* [Uniqueness Constraints](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [Comment corriger les erreurs d'import](/l/fr/user-guide/data-migration/how-tos/fix-import-errors)
+* [Fonctionnalités d'import des relations](/l/fr/user-guide/data-migration/capabilities/import-relations)
+* [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints)

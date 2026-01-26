@@ -55,6 +55,12 @@ export const settingsDataModelFieldMorphRelationFormSchema = z.object({
   ),
   targetFieldLabel: z.string().min(1),
   iconOnDestination: z.string().min(1),
+  settings: z
+    .object({
+      junctionTargetFieldId: z.string().optional(),
+    })
+    .catchall(z.unknown())
+    .optional(),
 });
 
 export type SettingsDataModelFieldMorphRelationFormValues = z.infer<

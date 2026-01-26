@@ -1,10 +1,6 @@
 import chalk, { type ChalkInstance } from 'chalk';
 
-export type LoggerContext =
-  | 'init'
-  | 'manifest-watch'
-  | 'functions-watch'
-  | 'front-components-watch';
+export type LoggerContext = 'init' | 'manifest-builder' | 'dev-mode';
 
 type LoggerConfig = {
   prefix: string;
@@ -16,17 +12,13 @@ const LOGGER_CONFIGS: Record<LoggerContext, LoggerConfig> = {
     prefix: '[init]',
     color: chalk.cyan,
   },
-  'manifest-watch': {
-    prefix: '[manifest-watch]',
-    color: chalk.magenta,
+  'manifest-builder': {
+    prefix: '[manifest-builder]',
+    color: chalk.blue,
   },
-  'functions-watch': {
-    prefix: '[functions-watch]',
-    color: chalk.yellow,
-  },
-  'front-components-watch': {
-    prefix: '[front-components-watch]',
-    color: chalk.green,
+  'dev-mode': {
+    prefix: '[dev-mode]',
+    color: chalk.blueBright,
   },
 };
 
@@ -43,8 +35,11 @@ export const createLogger = (context: LoggerContext): Logger => {
 
   return {
     log: (message: string) => console.log(`${prefix} ${message}`),
-    success: (message: string) => console.log(`${prefix} ${chalk.green(message)}`),
-    error: (message: string) => console.error(`${prefix} ${chalk.red(message)}`),
-    warn: (message: string) => console.log(`${prefix} ${chalk.yellow(message)}`),
+    success: (message: string) =>
+      console.log(`${prefix} ${chalk.green(message)}`),
+    error: (message: string) =>
+      console.error(`${prefix} ${chalk.red(message)}`),
+    warn: (message: string) =>
+      console.log(`${prefix} ${chalk.yellow(message)}`),
   };
 };

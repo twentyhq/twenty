@@ -1,198 +1,198 @@
 ---
-title: Permissions
-description: Control access to objects, fields, and settings with role-based permissions.
+title: 权限
+description: 使用基于角色的权限来控制对对象、字段和设置的访问。
 image: /images/user-guide/permissions/permissions.png
 ---
 
-Twenty's permission system allows you to control access to three main areas:
+Twenty 的权限系统允许您控制对三个主要区域的访问：
 
-* **Objects and Fields**: Control who can view, edit, or delete records and individual fields
-* **Settings**: Manage access to workspace configuration and administrative functions
-* **Actions**: Control general workspace actions like importing data or sending emails
+* **对象和字段**：控制谁可以查看、编辑或删除记录和单个字段
+* **设置**：管理对工作区配置和管理功能的访问
+* **操作**：控制一般工作区操作，如导入数据或发送邮件
 
-## Create a Role
+## 创建角色
 
-To create a new role:
+要创建新角色：
 
-1. Go to **Settings → Roles**
-2. Under **All Roles**, click on **+ Create Role**
-3. Enter a role name
-4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
-5. Click **Save** to finish
+1. 进入 **设置 → 角色**
+2. 在 **所有角色** 下，单击 **+ 创建角色**
+3. 输入角色名称
+4. 在默认的 **权限** 选项卡中，[配置权限](#customize-permissions)
+5. 单击 **保存** 完成
 
-## Delete a Role
+## 删除角色
 
-To delete a role:
+要删除角色：
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to remove
-3. Open the **Settings** tab, then click **Delete Role**
-4. Click **Confirm** in the modal
+1. 进入 **设置 → 角色**
+2. 单击您要删除的角色
+3. 打开 **设置** 选项卡，然后单击 **删除角色**
+4. 在模态框中单击 **确认**
 
 <Note>
-  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
+  如果删除某个角色，分配到该角色的任何工作区成员将会自动重新分配到默认角色。 除了 **管理员** 角色外，所有角色都可以被删除。 必须始终至少有一个成员分配到 **管理员** 角色。
 </Note>
 
-## Assign Roles to Members
+## 将角色分配给成员
 
-### View Current Assignments
+### 查看当前分配
 
-* Go to **Settings → Roles**
-* See all roles and how many members are assigned to each
-* View which members have which roles
+* 进入 **设置 → 角色**
+* 查看所有角色以及分配给每个角色的成员数
+* 查看哪些成员具有哪些角色
 
-### Assign a Role to a Member
+### 将角色分配给成员
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Click **+ Assign to member**
-5. Select the workspace member from the list
-6. Confirm the assignment
+1. 进入 **设置 → 角色**
+2. 单击您要分配的角色
+3. 打开 **分配** 选项卡
+4. 单击 **+ 分配给成员**
+5. 从列表中选择工作区成员
+6. 确认分配
 
-### Set Default Role
+### 设置默认角色
 
-1. Go to **Settings → Roles**
-2. In the **Options** section, find **Default Role**
-3. Select which role new members should automatically receive
-4. New workspace members will be assigned this role when they join
+1. 进入 **设置 → 角色**
+2. 在 **选项** 部分，找到 **默认角色**
+3. 选择新成员应该自动接收的角色
+4. 新工作区成员加入时将被分配此角色
 
 <Note>
-  You can only assign roles to existing workspace members. To invite new members, use [Member Management](/l/zh/user-guide/settings/capabilities/member-management).
+  您只能将角色分配给现有的工作区成员。 要邀请新成员，请使用 [成员管理](/l/zh/user-guide/settings/capabilities/member-management)。
 </Note>
 
-## Customize Permissions
+## 自定义权限
 
-Permissions determine what each role can access or modify within your workspace, including workspace objects records, settings, and actions.
+权限决定每个角色在您的工作区中可以访问或修改的内容，包括工作区对象记录、设置和操作。
 
-### Object Permissions
+### 对象权限
 
-The **Objects** section controls what this role can do with records across your workspace.
+**Objects** 部分控制此角色在整个工作区中对记录可以执行的操作。
 
-#### Set Default Permissions (All Objects)
+#### 设置默认权限（所有对象）
 
-First, configure the baseline permissions that apply to **all objects** by default:
+首先，配置默认适用于**所有对象**的基线权限：
 
-| Permission                         | Description                            |
-| ---------------------------------- | -------------------------------------- |
-| **See Records on All Objects**     | View records in lists and detail pages |
-| **Edit Records on All Objects**    | Modify existing records                |
-| **Delete Records on All Objects**  | Soft-delete records (can be restored)  |
-| **Destroy Records on All Objects** | Permanently delete records             |
+| 权限             | 描述           |
+| -------------- | ------------ |
+| **查看所有对象上的记录** | 在列表和详情页中查看记录 |
+| **编辑所有对象上的记录** | 修改现有记录       |
+| **删除所有对象上的记录** | 软删除记录（可恢复）   |
+| **销毁所有对象上的记录** | 永久删除记录       |
 
-Select or unselect based on what should be the default behavior for this role.
+根据该角色的默认行为应为何来勾选或取消勾选。
 
 <Note>
-  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+  **示例 — 实习生角色**：默认情况下，实习生应该可以查看所有对象，但不能编辑它们。 启用 "在所有对象上查看记录"，但保持 "在所有对象上编辑记录" 未勾选。
 </Note>
 
-#### Add Object-Level Exceptions
+#### 添加对象级例外
 
-After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+设置默认值后，使用 **Object-Level** 子部分添加规则，以覆盖特定对象的默认设置。
 
-Click **+ Add rule** and select an object to create an exception.
+点击 **+ Add rule** 并选择一个对象以创建例外。
 
-**Example rules for an Intern role:**
+**实习生角色的示例规则：**
 
-| Rule                                  | Effect                                                 |
-| ------------------------------------- | ------------------------------------------------------ |
-| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
-| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+| 规则                        | 效果                           |
+| ------------------------- | ---------------------------- |
+| Opportunities → 禁用 "查看记录" | 实习生完全无法查看 Opportunities 对象   |
+| People → 启用 "编辑记录"        | 实习生可以编辑 People 记录（但不能编辑其他对象） |
 
-### Field Permissions
+### 字段权限
 
-Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+在每个对象级规则内，您还可以进一步配置**字段级权限**，以控制对特定字段的访问。
 
-| Permission     | Description                |
-| -------------- | -------------------------- |
-| **See Field**  | View the field value       |
-| **Edit Field** | Modify the field value     |
-| **No Access**  | Field is completely hidden |
+| 权限        | 描述       |
+| --------- | -------- |
+| **查看字段**  | 查看该字段的值  |
+| **编辑字段**  | 修改该字段的值  |
+| **无访问权限** | 字段将被完全隐藏 |
 
-**Example — Restrict sensitive fields:**
+**示例 — 限制敏感字段：**
 
-For the Intern role with People edit access, you might want to restrict certain fields:
+对于具有 People 编辑权限的实习生角色，您可能希望限制某些字段：
 
-* People → Email → **See Field** only (cannot edit)
-* People → Address → **No Access** (completely hidden)
+* People → Email → 仅**查看字段**（不可编辑）
+* People → Address → **无访问权限**（完全隐藏）
 
-This allows the intern to edit most People fields while protecting sensitive information.
+这使得实习生可以编辑大多数 People 字段，同时保护敏感信息。
 
-### How Permission Inheritance Works
+### 权限继承如何工作
 
-Permissions cascade from general to specific:
+权限从全局到具体逐级生效：
 
-1. **All Objects** → sets the baseline for all objects
-2. **Object-Level rules** → override the baseline for specific objects
-3. **Field-Level rules** → override the object setting for specific fields
+1. **所有对象** → 为所有对象设定基线
+2. **对象级规则** → 覆盖特定对象的基线设置
+3. **字段级规则** → 覆盖特定字段的对象级设置
 
-More specific settings always take precedence.
+更具体的设置始终优先生效。
 
-### Managing Permission Overrides
+### 管理权限覆盖
 
-To override inherited permissions:
+要覆盖继承的权限：
 
-1. Click **X** to remove the inherited rule
-2. Select the specific permissions you want
-3. Click the orange **Undo** icon (circular arrow) to revert changes
+1. 单击 **X** 以移除继承的规则
+2. 选择您想要的具体权限
+3. 单击橙色 **撤销** 图标（圆形箭头）以还原更改
 
-When done, click **Finish**, then **Save** once redirected to the role page.
+完成后，单击 **完成**，然后在重定向到角色页面后单击 **保存**。
 
-### Workspace Settings Permissions
+### 工作区设置权限
 
-Control access to workspace settings in two ways:
+有两种方式控制对工作区设置的访问：
 
-* Toggle **Settings All Access** to grant full access
-* Or enable specific permissions (e.g., API key generation, workspace preferences, role assignment, data model configuration, security settings, and workflow management)
+* 切换 **设置全访问** 以授予完全访问权限
+* 或者启用特定权限（例如，API 密钥生成、工作区首选项、角色分配、数据模型配置、安全设置和工作流管理）
 
 <Note>
-  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+  **当前限制**：目前需要具有工作流管理的访问权限才能手动触发工作流。 此行为可能会在未来的版本中发生变化。
 </Note>
 
-### Workspace Action Permissions
+### 工作区操作权限
 
-Control access to general workspace actions:
+控制对一般工作区操作的访问：
 
-* Toggle **Application All Access** to grant full permissions
-* Or enable individual actions such as **Send Email**, **Import CSV**, and **Export CSV**
+* 切换 **应用全访问** 以授予所有权限
+* 或者启用个人操作，例如 **发送电子邮件**、**导入 CSV** 和 **导出 CSV**
 
-## Assigning Roles to API Keys and AI Agents
+## 将角色分配给 API 密钥和 AI 代理
 
-Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+除了工作区成员之外，还可以将角色分配给 **API Keys** 和 **AI Agents**。 这对于希望精确控制在其工作区中 "谁" 可以执行哪些操作的团队特别有用——包括自动化流程和集成。
 
-### Why Assign Roles to API Keys and AI Agents?
+### 为什么要将角色分配给 API 密钥和 AI 代理？
 
-* **Security**: Limit what automated processes can access or modify
-* **Compliance**: Ensure integrations only touch the data they need
-* **Control**: Prevent accidental data changes from misconfigured automations
-* **Auditability**: Track which actions were performed by which integration or agent
+* **安全性**：限制自动化流程可以访问或修改的内容
+* **合规性**：确保集成仅接触其所需的数据
+* **可控性**：防止因自动化配置错误而导致的数据意外更改
+* **可审计性**：追踪由哪个集成或代理执行了哪些操作
 
-### Assign a Role to an API Key
+### 将角色分配给 API 密钥
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key from the list
-6. Confirm the assignment
+1. 进入 **设置 → 角色**
+2. 单击您要分配的角色
+3. 打开 **分配** 选项卡
+4. 在 **API Keys** 下，点击 **+ Assign to API key**
+5. 从列表中选择该 API 密钥
+6. 确认分配
 
-The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+该 API 密钥现在将继承该角色定义的所有权限。 使用该密钥发起的任何 API 调用都将相应受限。
 
 <Note>
-  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+  未分配角色的 API 密钥将使用默认权限。 为提高安全性，请始终为生产环境的 API 密钥分配特定角色。
 </Note>
 
-### Assign a Role to an AI Agent
+### 将角色分配给 AI 代理
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Under **AI Agents**, click **+ Assign to AI agent**
-5. Select the AI agent from the list
-6. Confirm the assignment
+1. 进入 **设置 → 角色**
+2. 单击您要分配的角色
+3. 打开 **分配** 选项卡
+4. 在 **AI Agents** 下，点击 **+ Assign to AI agent**
+5. 从列表中选择该 AI 代理
+6. 确认分配
 
-The AI agent will only be able to access data and perform actions allowed by its assigned role.
+该 AI 代理只能访问其被分配角色所允许的数据并执行相应操作。
 
 <Note>
-  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+  对于在工作流中运行的 AI 代理，这可确保其无法访问或修改超出其预期范围的数据——即使该工作流具有更广泛的权限。
 </Note>
