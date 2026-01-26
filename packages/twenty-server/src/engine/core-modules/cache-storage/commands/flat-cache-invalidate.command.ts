@@ -21,7 +21,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 
 type FlatCacheFlushCommandOptions =
   ActiveOrSuspendedWorkspacesMigrationCommandOptions & {
-    all?: boolean;
+    allMetadata?: boolean;
   };
 
 @Command({
@@ -58,12 +58,12 @@ export class FlatCacheInvalidateCommand extends ActiveOrSuspendedWorkspacesMigra
   }
 
   @Option({
-    flags: '--all',
+    flags: '--all-metadata',
     description:
       'Flush cache for all metadata names. Takes precedence over --metadataName.',
     required: false,
   })
-  parseAll(): boolean {
+  parseAllMetadata(): boolean {
     return true;
   }
 
@@ -71,9 +71,9 @@ export class FlatCacheInvalidateCommand extends ActiveOrSuspendedWorkspacesMigra
     passedParams: string[],
     options: FlatCacheFlushCommandOptions,
   ): Promise<void> {
-    if (!options.all && this.metadataNames.length === 0) {
+    if (!options.allMetadata && this.metadataNames.length === 0) {
       this.logger.error(
-        'Either --all or at least one --metadataName must be provided.',
+        'Either --all-metadata or at least one --metadataName must be provided.',
       );
 
       return;
@@ -81,7 +81,7 @@ export class FlatCacheInvalidateCommand extends ActiveOrSuspendedWorkspacesMigra
 
     const validatedMetadataNames = this.validateAndExpandMetadataNames({
       inputMetadataNames: this.metadataNames,
-      all: options.all,
+      allMetadata: options.allMetadata,
     });
 
     if (validatedMetadataNames === null) {
@@ -112,16 +112,16 @@ export class FlatCacheInvalidateCommand extends ActiveOrSuspendedWorkspacesMigra
 
   private validateAndExpandMetadataNames({
     inputMetadataNames,
-    all,
+    allMetadata,
   }: {
     inputMetadataNames: string[];
-    all?: boolean;
+    allMetadata?: boolean;
   }): AllMetadataName[] | null {
     const validMetadataNames = Object.keys(
       ALL_METADATA_NAME,
     ) as AllMetadataName[];
 
-    if (all) {
+    if (allMetadata) {
       this.logger.log('Using all metadata names');
 
       return validMetadataNames;
@@ -136,7 +136,7 @@ export class FlatCacheInvalidateCommand extends ActiveOrSuspendedWorkspacesMigra
         `Invalid metadata name(s) provided: ${invalidNames.join(', ')}`,
       );
       this.logger.error(
-        `Valid metadata names are: ${validMetadataNames.join(', ')}, or use --all`,
+        `Valid metadata names are: ${validMetadataNames.join(', ')}, or use --all-metadata`,
       );
 
       return null;
