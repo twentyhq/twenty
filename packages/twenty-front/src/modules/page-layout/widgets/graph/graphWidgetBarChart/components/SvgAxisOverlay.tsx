@@ -31,6 +31,7 @@ type SvgAxisOverlayProps = {
 
 const StyledSvgOverlay = styled.svg`
   left: 0;
+  overflow: visible;
   pointer-events: none;
   position: absolute;
   top: 0;
