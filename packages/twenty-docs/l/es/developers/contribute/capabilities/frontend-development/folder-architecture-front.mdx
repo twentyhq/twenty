@@ -1,11 +1,11 @@
 ---
-title: Folder Architecture
-info: A detailed look into our folder architecture
+title: Arquitectura de Carpetas
+info: Una mirada detallada a nuestra arquitectura de carpetas
 ---
 
-In this guide, you will explore the details of the project directory structure and how it contributes to the organization and maintainability of Twenty.
+En esta guía, explorarás los detalles de la estructura del directorio del proyecto y cómo contribuye a la organización y mantenibilidad de Twenty.
 
-By following this folder architecture convention, it's easier to find the files related to specific features and ensure that the application is scalable and maintainable.
+Siguiendo esta convención de arquitectura de carpetas, es más fácil encontrar los archivos relacionados con funciones específicas y asegurar que la aplicación sea escalable y mantenible.
 
 ```
 front
@@ -22,14 +22,14 @@ front
 └───...
 ```
 
-## Pages
+## Páginas
 
-Includes the top-level components defined by the application routes. They import more low-level components from the modules folder (more details below).
+Incluye los componentes de alto nivel definidos por las rutas de la aplicación. Importan más componentes de bajo nivel de la carpeta de módulos (más detalles abajo).
 
-## Modules
+## Módulos
 
-Each module represents a feature or a group of feature, comprising its specific components, states, and operational logic.
-They should all follow the structure below. You can nest modules within modules (referred to as submodules) and the same rules will apply.
+Cada módulo representa una función o un grupo de funciones, comprendiendo sus componentes específicos, estados y lógica operativa.
+Todos deberían seguir la estructura siguiente. Puedes anidar módulos dentro de módulos (denominados submódulos) y se aplicarán las mismas reglas.
 
 ```
 module1
@@ -50,60 +50,60 @@ module1
   └───utils
 ```
 
-### Contexts
+### Contextos
 
-A context is a way to pass data through the component tree without having to pass props down manually at every level.
+Un contexto es una manera de pasar datos a través del árbol de componentes sin tener que pasar propiedades manualmente en cada nivel.
 
-See [React Context](https://react.dev/reference/react#context-hooks) for more details.
+Ver [React Context](https://react.dev/reference/react#context-hooks) para más detalles.
 
 ### GraphQL
 
-Includes fragments, queries, and mutations.
+Incluye fragmentos, consultas y mutaciones.
 
-See [GraphQL](https://graphql.org/learn/) for more details.
+Ver [GraphQL](https://graphql.org/learn/) para más detalles.
 
-* Fragments
+* Fragmentos
 
-A fragment is a reusable piece of a query, which you can use in different places. By using fragments, it's easier to avoid duplicating code.
+Un fragmento es una parte reutilizable de una consulta, que puedes usar en diferentes lugares. Usando fragmentos, es más fácil evitar la duplicación de código.
 
-See [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) for more details.
+Ver [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) para más detalles.
 
-* Queries
+* Consultas
 
-See [GraphQL Queries](https://graphql.org/learn/queries/) for more details.
+Ver [GraphQL Queries](https://graphql.org/learn/queries/) para más detalles.
 
-* Mutations
+* Mutaciones
 
-See [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) for more details.
+Ver [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) para más detalles.
 
 ### Hooks
 
-See [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) for more details.
+Ver [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) para más detalles.
 
-### States
+### Estados
 
-Contains the state management logic. [RecoilJS](https://recoiljs.org) handles this.
+Contiene la lógica de gestión de estado. [RecoilJS](https://recoiljs.org) maneja esto.
 
-* Selectors: See [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) for more details.
+* Selectores: Ver [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) para más detalles.
 
-React's built-in state management still handles state within a component.
+La gestión de estado incorporada de React todavía maneja el estado dentro de un componente.
 
-### Utils
+### Utilidades
 
-Should just contain reusable pure functions. Otherwise, create custom hooks in the `hooks` folder.
+Debería contener solo funciones puras reutilizables. De lo contrario, crea hooks personalizados en la carpeta `hooks`.
 
-## UI
+## Interfaz de usuario
 
-Contains all the reusable UI components used in the application.
+Contiene todos los componentes de interfaz de usuario reutilizables utilizados en la aplicación.
 
-This folder can contain sub-folders, like `data`, `display`, `feedback`, and `input` for specific types of components. Each component should be self-contained and reusable, so that you can use it in different parts of the application.
+Esta carpeta puede contener subcarpetas, como `datos`, `visualización`, `retroalimentación` y `entrada` para tipos específicos de componentes. Cada componente debe ser autónomo y reutilizable, para que puedas usarlo en diferentes partes de la aplicación.
 
-By separating the UI components from the other components in the `modules` folder, it's easier to maintain a consistent design and to make changes to the UI without affecting other parts (business logic) of the codebase.
+Al separar los componentes de la interfaz de usuario de otros componentes en la carpeta `modules`, es más fácil mantener un diseño consistente y realizar cambios en la interfaz de usuario sin afectar otras partes (lógica de negocio) del código base.
 
-## Interface and dependencies
+## Interfaz y dependencias
 
-You can import other module code from any module except for the `ui` folder. This will keep its code easy to test.
+Puedes importar otro código de módulo desde cualquier módulo excepto desde la carpeta `ui`. Esto mantendrá su código fácil de probar.
 
-### Internal
+### Interno
 
-Each part (hooks, states, ...) of a module can have an `internal` folder, which contains parts that are just used within the module.
+Cada parte (hooks, estados, ...) de un módulo puede tener una carpeta `internal`, que contiene partes que se usan solo dentro del módulo.

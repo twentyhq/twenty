@@ -1,74 +1,92 @@
 ---
-title: Dashboards
-description: Create and organize dashboards with tabs to visualize your CRM data.
+title: Tableaux de bord
+description: Créez et organisez des tableaux de bord avec des onglets pour visualiser vos données CRM.
 ---
 
-## Overview
+## Vue d'ensemble
 
-Dashboards in Twenty are organized in a hierarchy: **Dashboards → Tabs → Widgets**. Each dashboard can contain multiple tabs, and each tab contains widgets (charts, numbers, iFrames).
+Dans Twenty, les tableaux de bord sont organisés selon une hiérarchie: **Tableaux de bord → Onglets → Widgets**. Chaque tableau de bord peut contenir plusieurs onglets, et chaque onglet contient des widgets (graphiques, nombres, iFrames).
 
-## Creating a Dashboard
+## Création d'un tableau de bord
 
-1. Go to **Dashboards** in the navigation
-2. Click **+ New Dashboard**
-3. Give your dashboard a name
-4. Start adding tabs and widgets
+1. Accédez à **Tableaux de bord** dans la navigation
+2. Cliquez sur **+ New Record**
 
-## Working with Tabs
+<img src="/images/user-guide/dashboard/dashboard-create-new.png" alt="Créer un nouveau tableau de bord" />
 
-Tabs help you organize your dashboard into logical sections.
+3. Donnez un nom à votre tableau de bord
+4. Commencez à ajouter des onglets et des widgets
 
-### Creating Tabs
+## Utiliser les onglets
 
-1. In edit mode, click **+ Add Tab**
-2. Name your tab (e.g., "Pipeline Overview", "Team Performance")
-3. Add widgets to the tab
+Les onglets vous aident à organiser votre tableau de bord en sections logiques.
 
-### Duplicating Tabs
+### Création d'onglets
 
-1. Click on the tab you want to duplicate
-2. Click the **Duplicate** button in the side panel
+1. En mode édition, cliquez sur **+** dans la barre d'onglets, le panneau latéral s'ouvre à droite
+2. Nommez votre onglet (p. ex., "Aperçu du pipeline", "Performance de l'équipe")
+3. Ajoutez des widgets à l'onglet
 
-## Dashboard Layout
+### Réorganisation des onglets
 
-### Arranging Widgets
+1. En mode édition, cliquez et maintenez enfoncé sur l'onglet que vous souhaitez déplacer
+2. Glissez-déposez jusqu'à la nouvelle position
+3. Vous pouvez également cliquer sur l'onglet et utiliser le menu des commandes pour déplacer l'onglet vers la gauche ou la droite
 
-* Drag and drop to position
-* Resize for emphasis
-* Group related charts together
+### Suppression des onglets
 
-### Duplicating a Dashboard
+1. En mode édition, cliquez sur l'onglet que vous souhaitez supprimer
+2. Cliquez sur le bouton **Supprimer** dans le menu des commandes
 
-1. Exit edit mode (view mode only)
-2. Open the command bar with **Cmd + K** (or **Ctrl + K** on Windows)
-3. Select **Duplicate dashboard**
+### Duplication d'onglets
 
-### Best Practices
+1. Cliquez sur l'onglet que vous souhaitez dupliquer
+2. Cliquez sur le bouton **Duplicate** dans le panneau latéral
 
-* **Logical flow**: Arrange from overview to detail
-* **Visual hierarchy**: Larger charts for key metrics
-* **Consistent styling**: Use matching colors and fonts
+<img src="/images/user-guide/dashboard/dashboard-tabs.png" alt="Onglet du tableau de bord" />
 
-## Visibility & Access
+## Disposition du tableau de bord
 
-### Dashboard Visibility
+### Agencement des widgets
 
-Dashboards are visible to everyone who has access to your Twenty workspace. There is no private dashboard option at the moment.
+* Glissez-déposez pour positionner
+* Redimensionnez pour mettre en valeur
+* Regroupez les graphiques associés
 
-### Favorites
+### Duplication d'un tableau de bord
 
-You can add dashboards to your favorites for quick access. This is a personal setting—your favorites are not visible to other users.
+1. Sélectionnez le tableau de bord que vous souhaitez dupliquer
+2. Ouvrez la barre de commande avec **Cmd + K** (ou **Ctrl + K** sous Windows)
+3. Sélectionnez **Duplicate dashboard**
 
-To add a dashboard to favorites, open the dashboard and click the star icon.
+<img src="/images/user-guide/dashboard/dashboard-duplicate.png" alt="Dupliquer un tableau de bord" />
 
-### Timezone Behavior
+### Meilleures pratiques
 
-Dashboards currently display data based on the timezone of the user viewing them. This means the same dashboard may show different metrics for team members in different regions (e.g., APAC vs. US).
+* **Enchaînement logique**: Organisez du général au détail
+* **Hiérarchie visuelle**: Des graphiques plus grands pour les indicateurs clés
+* **Style cohérent**: Utilisez des couleurs et des polices assorties
+
+## Visibilité et accès
+
+### Visibilité du tableau de bord
+
+Les tableaux de bord sont visibles par toute personne ayant accès à votre espace de travail Twenty. Il n'existe pas d'option de tableau de bord privé pour le moment.
+
+### Favoris
+
+Vous pouvez ajouter des tableaux de bord à vos favoris pour un accès rapide. Il s'agit d'un paramètre personnel—vos favoris ne sont pas visibles par les autres utilisateurs.
+
+Pour ajouter un tableau de bord aux favoris, ouvrez le tableau de bord et cliquez sur l'icône d'étoile.
+
+### Comportement du fuseau horaire
+
+Les tableaux de bord affichent actuellement les données en fonction du fuseau horaire de l'utilisateur qui les consulte. Cela signifie qu'un même tableau de bord peut afficher des indicateurs différents pour des membres de l'équipe situés dans des régions différentes (p. ex., APAC vs US).
 
 <Note>
-  **Coming soon**: We will add the ability to set a specific timezone for a dashboard, so all users see consistent data regardless of their location.
+  **Bientôt disponible**: Nous ajouterons la possibilité de définir un fuseau horaire spécifique pour un tableau de bord, afin que tous les utilisateurs voient des données cohérentes, quel que soit leur emplacement.
 </Note>
 
 <Note>
-  **Coming soon**: Dashboard-level filters will allow you to apply filters across all widgets at once, making it faster to explore your data.
+  **Bientôt disponible**: Des filtres au niveau du tableau de bord vous permettront d'appliquer des filtres à tous les widgets en une seule fois, ce qui accélérera l'exploration de vos données.
 </Note>

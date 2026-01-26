@@ -4,9 +4,9 @@ title: Руководство по обновлению
 
 ## Общие рекомендации
 
-**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+**Всегда убедитесь, что сделали резервную копию вашей базы данных перед началом процесса обновления**, запустив `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
 
-To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+Чтобы восстановить резервную копию, выполните команду `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
 
 Если вы использовали Docker Compose, выполните следующие шаги:
 
@@ -46,7 +46,7 @@ yarn command:prod cache:flush
 
 Вам больше не нужно запускать никакие команды, новое изображение автоматически выполнит все необходимые миграции.
 
-### `User does not have permission` error
+### Ошибка `User does not have permission`
 
 Если после обновления вы столкнетесь с ошибками авторизации в большинстве запросов, возможно, потребуется очистить кэш для пересчета последних прав доступа.
 
@@ -316,8 +316,8 @@ yarn command:prod upgrade-0.31
 
 Обновите вашу инстанцию Twenty для использования изображения v0.30.0
 
-**Breaking change**:
-To enhance performances, Twenty now requires redis cache to be configured. Мы обновили [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) для этого.
+**Критически важное изменение**:
+Чтобы повысить производительность, Twenty теперь требует настроить кэш Redis. Мы обновили [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) для этого.
 Убедитесь, что вы обновили свою конфигурацию и обновили переменные окружения соответственно:
 
 ```

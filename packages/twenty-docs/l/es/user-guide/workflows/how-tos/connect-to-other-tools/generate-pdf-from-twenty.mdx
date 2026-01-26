@@ -1,0 +1,228 @@
+---
+title: Generar un PDF desde Twenty
+description: Cree un flujo de trabajo para generar y adjuntar un PDF (como una cotización) a un registro.
+---
+
+Genere u obtenga automáticamente un PDF y adjúntelo a un registro en Twenty. Esto se usa comúnmente para crear cotizaciones, facturas o informes vinculados a Empresas, Oportunidades u otros objetos.
+
+## Resumen
+
+Este flujo de trabajo utiliza un **Activador manual** para que los usuarios puedan generar un PDF bajo demanda para cualquier registro seleccionado. Una **Función sin servidor** se encarga de:
+
+1. Descargar el PDF desde una URL (de un servicio de generación de PDF)
+2. Subir el archivo a Twenty
+3. Crear un archivo adjunto vinculado al registro
+
+## Prerrequisitos
+
+Antes de configurar el flujo de trabajo:
+
+1. **Cree una clave de API**: Vaya a **Settings → APIs** y cree una nueva clave de API. Necesitará este token para la función sin servidor.
+2. **Configure un servicio de generación de PDF** (opcional): Si desea generar PDFs dinámicamente (p. ej., cotizaciones), use un servicio como Carbone, PDFMonkey o DocuSeal para crear el PDF y obtener una URL de descarga.
+
+## Configuración paso a paso
+
+### Paso 1: Configurar el disparador
+
+1. Vaya a **Flujos de trabajo** y cree un nuevo flujo de trabajo
+2. Seleccione **Activador manual**
+3. Elija el objeto al que desea adjuntar archivos PDF (p. ej., **Empresa** u **Oportunidad**)
+
+<Tip>
+  Con un Activador manual, los usuarios pueden ejecutar este flujo de trabajo usando un botón que aparece en la parte superior derecha una vez que se selecciona un registro, para generar y adjuntar un PDF.
+</Tip>
+
+### Paso 2: Añadir una Función sin servidor
+
+1. Añada una acción de **Función sin servidor**
+2. Cree una nueva función con el siguiente código
+3. Configure los parámetros de entrada
+
+#### Parámetros de entrada
+
+| Parámetro   | Valor                   |
+| ----------- | ----------------------- |
+| `companyId` | `{{trigger.object.id}}` |
+
+<Note>
+  Si va a adjuntar a un objeto diferente (Persona, Oportunidad, etc.), cambie el nombre del parámetro en consecuencia (p. ej., `personId`, `opportunityId`) y actualice la función sin servidor.
+</Note>
+
+#### Código de la Función sin servidor
+
+```typescript
+export const main = async (
+  params: { companyId: string },
+) => {
+  const { companyId } = params;
+
+  // Replace with your Twenty GraphQL endpoint
+  // Cloud: https://api.twenty.com/graphql
+  // Self-hosted: https://your-domain.com/graphql
+  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  // Replace with your API key from Settings → APIs
+  const authToken = 'YOUR_API_KEY';
+
+  // Replace with your PDF URL
+  // This could be from a PDF generation service or a static URL
+  const pdfUrl = 'https://your-pdf-service.com/generated-quote.pdf';
+  const filename = 'quote.pdf';
+
+  // Step 1: Download the PDF file
+  const pdfResponse = await fetch(pdfUrl);
+
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBlob = await pdfResponse.blob();
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Step 2: Upload the file via GraphQL multipart upload
+  const uploadMutation = `
+    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+      uploadFile(file: $file, fileFolder: $fileFolder) {
+        path
+      }
+    }
+  `;
+
+  const uploadForm = new FormData();
+  uploadForm.append('operations', JSON.stringify({
+    query: uploadMutation,
+    variables: { file: null, fileFolder: 'Attachment' },
+  }));
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
+
+  const uploadResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${authToken}` },
+    body: uploadForm,
+  });
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  }
+
+  const filePath = uploadResult.data?.uploadFile?.path;
+
+  if (!filePath) {
+    throw new Error('No file path returned from upload');
+  }
+
+  // Step 3: Create the attachment linked to the company
+  const attachmentMutation = `
+    mutation CreateAttachment($data: AttachmentCreateInput!) {
+      createAttachment(data: $data) {
+        id
+        name
+      }
+    }
+  `;
+
+  const attachmentResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: attachmentMutation,
+      variables: {
+        data: {
+          name: filename,
+          fullPath: filePath,
+          companyId,
+        },
+      },
+    }),
+  });
+
+  const attachmentResult = await attachmentResponse.json();
+
+  if (attachmentResult.errors?.length) {
+    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+  }
+
+  return attachmentResult.data?.createAttachment;
+};
+```
+
+### Paso 3: Personalice para su caso de uso
+
+#### Para adjuntar a un objeto diferente
+
+Reemplace `companyId` por el campo correspondiente:
+
+| Objeto               | Nombre del campo     |
+| -------------------- | -------------------- |
+| Empresa              | `companyId`          |
+| Persona              | `personId`           |
+| Oportunidad          | `opportunityId`      |
+| Objeto personalizado | `yourCustomObjectId` |
+
+Actualice tanto el parámetro de la función como el objeto `variables.data` en la mutación de adjunto.
+
+#### Para usar una URL de PDF dinámica
+
+Si usa un servicio de generación de PDF, puede:
+
+1. Primero, cree una acción de solicitud HTTP para generar el PDF
+2. Pase la URL de PDF devuelta a la función sin servidor como parámetro
+
+```typescript
+export const main = async (
+  params: { companyId: string; pdfUrl: string; filename: string },
+) => {
+  const { companyId, pdfUrl, filename } = params;
+  // ... rest of the function
+};
+```
+
+### Paso 4: Probar y activar
+
+1. Guarde el flujo de trabajo
+2. Vaya a un registro de Empresa
+3. Haga clic en el menú **⋮** y seleccione su flujo de trabajo
+4. Revise la sección **Adjuntos** del registro para verificar que el PDF se haya adjuntado
+5. Activa el flujo de trabajo
+
+## Combinación con servicios de generación de PDF
+
+Para crear cotizaciones o facturas dinámicas:
+
+### Ejemplo: Generar cotización → Adjuntar PDF
+
+| Paso | Acción                     | Propósito                                                       |
+| ---- | -------------------------- | --------------------------------------------------------------- |
+| 1    | Activador manual (Empresa) | El usuario lo inicia en un registro                             |
+| 2    | Buscar registro            | Obtener detalles de la oportunidad o de las partidas            |
+| 3    | Solicitud HTTP             | Llamar a la API de generación de PDF con los datos del registro |
+| 4    | Función sin servidor       | Descargar y adjuntar el PDF generado                            |
+
+### Servicios populares de generación de PDF
+
+* **Carbone** - Generación de documentos basada en plantillas
+* **PDFMonkey** - Creación dinámica de PDF a partir de plantillas
+* **DocuSeal** - Plataforma de automatización de documentos
+* **Documint** - Generación de documentos con enfoque API-first
+
+Cada servicio proporciona una API que devuelve una URL de PDF, que luego puede pasar a la función sin servidor.
+
+## Solución de Problemas
+
+| Problema                    | Solución                                                                                |
+| --------------------------- | --------------------------------------------------------------------------------------- |
+| "Error al descargar el PDF" | Compruebe que la URL del PDF sea accesible y devuelva un PDF válido                     |
+| "Error al subir"            | Verifique que su clave de API sea válida y tenga permisos de escritura                  |
+| "Error al crear el adjunto" | Asegúrese de que el nombre del campo de ID del objeto coincida con su objeto de destino |
+
+## Relacionado
+
+* [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)
+* [Funciones sin servidor](/l/es/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Generar una cotización o factura desde Twenty](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
