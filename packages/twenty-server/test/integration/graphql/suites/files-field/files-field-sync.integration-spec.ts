@@ -138,9 +138,7 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     return result[0].path.startsWith(FileFolder.FilesField);
   };
 
-  const checkFileIsInTemporaryStorage = async (
-    fileId: string,
-  ): Promise<boolean> => {
+  const checkFileIsTemporary = async (fileId: string): Promise<boolean> => {
     const result = await global.testDataSource.query(
       'SELECT path FROM core."file" WHERE id = $1',
       [fileId],
@@ -150,7 +148,7 @@ describe('fileFieldSync - FILES field <> files sync', () => {
       return false;
     }
 
-    return result[0].path.startsWith(FileFolder.TemporaryFilesField);
+    return result[0].info.isTemporaryFile;
   };
 
   beforeAll(async () => {
@@ -245,8 +243,8 @@ describe('fileFieldSync - FILES field <> files sync', () => {
 
     expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
     expect(await checkFileExistsInDB(textFile.id)).toBe(true);
-    expect(await checkFileIsInTemporaryStorage(imageFile.id)).toBe(true);
-    expect(await checkFileIsInTemporaryStorage(textFile.id)).toBe(true);
+    expect(await checkFileIsTemporary(imageFile.id)).toBe(true);
+    expect(await checkFileIsTemporary(textFile.id)).toBe(true);
 
     const response = await makeGraphqlAPIRequest({
       query: createRecordsQuery,
@@ -318,9 +316,9 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
     expect(await checkFileExistsInDB(textFile.id)).toBe(true);
     expect(await checkFileExistsInDB(anotherImageFile.id)).toBe(true);
-    expect(await checkFileIsInTemporaryStorage(imageFile.id)).toBe(true);
-    expect(await checkFileIsInTemporaryStorage(textFile.id)).toBe(true);
-    expect(await checkFileIsInTemporaryStorage(anotherImageFile.id)).toBe(true);
+    expect(await checkFileIsTemporary(imageFile.id)).toBe(true);
+    expect(await checkFileIsTemporary(textFile.id)).toBe(true);
+    expect(await checkFileIsTemporary(anotherImageFile.id)).toBe(true);
 
     const createResponse = await makeGraphqlAPIRequest({
       query: createRecordsQuery,
@@ -419,8 +417,8 @@ describe('fileFieldSync - FILES field <> files sync', () => {
 
     expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
     expect(await checkFileExistsInDB(textFile.id)).toBe(true);
-    expect(await checkFileIsInTemporaryStorage(imageFile.id)).toBe(true);
-    expect(await checkFileIsInTemporaryStorage(textFile.id)).toBe(true);
+    expect(await checkFileIsTemporary(imageFile.id)).toBe(true);
+    expect(await checkFileIsTemporary(textFile.id)).toBe(true);
 
     const createResponse = await makeGraphqlAPIRequest({
       query: createRecordsQuery,
@@ -508,8 +506,8 @@ describe('fileFieldSync - FILES field <> files sync', () => {
 
     expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
     expect(await checkFileExistsInDB(textFile.id)).toBe(true);
-    expect(await checkFileIsInTemporaryStorage(imageFile.id)).toBe(true);
-    expect(await checkFileIsInTemporaryStorage(textFile.id)).toBe(true);
+    expect(await checkFileIsTemporary(imageFile.id)).toBe(true);
+    expect(await checkFileIsTemporary(textFile.id)).toBe(true);
 
     const createResponse = await makeGraphqlAPIRequest({
       query: createRecordsQuery,

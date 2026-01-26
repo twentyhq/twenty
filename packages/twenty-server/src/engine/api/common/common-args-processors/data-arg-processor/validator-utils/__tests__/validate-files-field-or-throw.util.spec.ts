@@ -9,78 +9,35 @@ describe('validateFilesFieldOrThrow', () => {
       expect(result).toBeNull();
     });
 
-    it('should return the files input when addFiles is valid', () => {
-      const filesValue = {
-        addFiles: [
-          {
-            fileId: '550e8400-e29b-41d4-a716-446655440000',
-            label: 'Document 1',
-          },
-          {
-            fileId: '660e8400-e29b-41d4-a716-446655440001',
-            label: 'Document 2',
-          },
-        ],
-      };
+    it('should return the files array when value is valid', () => {
+      const filesValue = [
+        {
+          fileId: '550e8400-e29b-41d4-a716-446655440000',
+          label: 'Document 1',
+        },
+        {
+          fileId: '660e8400-e29b-41d4-a716-446655440001',
+          label: 'Document 2',
+        },
+      ];
       const result = validateFilesFieldOrThrow(filesValue, 'testField');
 
       expect(result).toEqual(filesValue);
     });
 
-    it('should return the files input when removeFiles is valid', () => {
-      const filesValue = {
-        removeFiles: [
-          {
-            fileId: '550e8400-e29b-41d4-a716-446655440000',
-          },
-        ],
-      };
-      const result = validateFilesFieldOrThrow(filesValue, 'testField');
+    it('should return an empty array when value is an empty array', () => {
+      const result = validateFilesFieldOrThrow([], 'testField');
 
-      expect(result).toEqual(filesValue);
+      expect(result).toEqual([]);
     });
 
-    it('should return the files input when both addFiles and removeFiles are valid', () => {
-      const filesValue = {
-        addFiles: [
-          {
-            fileId: '550e8400-e29b-41d4-a716-446655440000',
-            label: 'Document 1',
-          },
-        ],
-        removeFiles: [
-          {
-            fileId: '660e8400-e29b-41d4-a716-446655440001',
-          },
-        ],
-      };
-      const result = validateFilesFieldOrThrow(filesValue, 'testField');
-
-      expect(result).toEqual(filesValue);
-    });
-
-    it('should return an empty object when value is an empty object', () => {
-      const result = validateFilesFieldOrThrow({}, 'testField');
-
-      expect(result).toEqual({});
-    });
-
-    it('should return the files input when addFiles is an empty array', () => {
-      const filesValue = { addFiles: [] };
-      const result = validateFilesFieldOrThrow(filesValue, 'testField');
-
-      expect(result).toEqual(filesValue);
-    });
-
-    it('should parse and return valid stringified JSON', () => {
-      const filesValue = {
-        addFiles: [
-          {
-            fileId: '550e8400-e29b-41d4-a716-446655440000',
-            label: 'Document 1',
-          },
-        ],
-      };
+    it('should parse and return valid stringified JSON array', () => {
+      const filesValue = [
+        {
+          fileId: '550e8400-e29b-41d4-a716-446655440000',
+          label: 'Document 1',
+        },
+      ];
       const stringifiedValue = JSON.stringify(filesValue);
       const result = validateFilesFieldOrThrow(stringifiedValue, 'testField');
 
@@ -95,46 +52,37 @@ describe('validateFilesFieldOrThrow', () => {
       ).toThrow(CommonQueryRunnerException);
     });
 
-    it('should throw when value is an array instead of object', () => {
+    it('should throw when value is an object instead of array', () => {
       expect(() =>
         validateFilesFieldOrThrow(
-          [{ fileId: '550e8400-e29b-41d4-a716-446655440000', label: 'test' }],
+          { fileId: '550e8400-e29b-41d4-a716-446655440000', label: 'test' },
           'testField',
         ),
       ).toThrow(CommonQueryRunnerException);
     });
 
-    it('should throw when value is undefined', () => {
-      expect(() => validateFilesFieldOrThrow(undefined, 'testField')).toThrow(
+    it('should throw when array item is not an object', () => {
+      expect(() =>
+        validateFilesFieldOrThrow(['not an object'], 'testField'),
+      ).toThrow(CommonQueryRunnerException);
+    });
+
+    it('should throw when array item is null', () => {
+      expect(() => validateFilesFieldOrThrow([null], 'testField')).toThrow(
         CommonQueryRunnerException,
       );
     });
 
-    it('should throw when addFiles item is not an object', () => {
+    it('should throw when fileId key is missing', () => {
       expect(() =>
-        validateFilesFieldOrThrow({ addFiles: ['not an object'] }, 'testField'),
+        validateFilesFieldOrThrow([{ label: 'test' }], 'testField'),
       ).toThrow(CommonQueryRunnerException);
     });
 
-    it('should throw when addFiles item is null', () => {
-      expect(() =>
-        validateFilesFieldOrThrow({ addFiles: [null] }, 'testField'),
-      ).toThrow(CommonQueryRunnerException);
-    });
-
-    it('should throw when fileId key is missing in addFiles', () => {
+    it('should throw when label key is missing', () => {
       expect(() =>
         validateFilesFieldOrThrow(
-          { addFiles: [{ label: 'test' }] },
-          'testField',
-        ),
-      ).toThrow(CommonQueryRunnerException);
-    });
-
-    it('should throw when label key is missing in addFiles', () => {
-      expect(() =>
-        validateFilesFieldOrThrow(
-          { addFiles: [{ fileId: '550e8400-e29b-41d4-a716-446655440000' }] },
+          [{ fileId: '550e8400-e29b-41d4-a716-446655440000' }],
           'testField',
         ),
       ).toThrow(CommonQueryRunnerException);
@@ -143,27 +91,13 @@ describe('validateFilesFieldOrThrow', () => {
     it('should throw when extra keys are present in file item', () => {
       expect(() =>
         validateFilesFieldOrThrow(
-          {
-            addFiles: [
-              {
-                fileId: '550e8400-e29b-41d4-a716-446655440000',
-                label: 'test',
-                extraKey: 'invalid',
-              },
-            ],
-          },
-          'testField',
-        ),
-      ).toThrow(CommonQueryRunnerException);
-    });
-
-    it('should throw when extra keys are present in root object', () => {
-      expect(() =>
-        validateFilesFieldOrThrow(
-          {
-            addFiles: [],
-            invalidKey: 'test',
-          },
+          [
+            {
+              fileId: '550e8400-e29b-41d4-a716-446655440000',
+              label: 'test',
+              extraKey: 'invalid',
+            },
+          ],
           'testField',
         ),
       ).toThrow(CommonQueryRunnerException);
@@ -172,7 +106,7 @@ describe('validateFilesFieldOrThrow', () => {
     it('should throw when fileId is not a valid UUID', () => {
       expect(() =>
         validateFilesFieldOrThrow(
-          { addFiles: [{ fileId: 'not-a-uuid', label: 'test' }] },
+          [{ fileId: 'not-a-uuid', label: 'test' }],
           'testField',
         ),
       ).toThrow(CommonQueryRunnerException);
@@ -181,7 +115,7 @@ describe('validateFilesFieldOrThrow', () => {
     it('should throw when fileId is not a string', () => {
       expect(() =>
         validateFilesFieldOrThrow(
-          { addFiles: [{ fileId: 12345, label: 'test' }] },
+          [{ fileId: 12345, label: 'test' }],
           'testField',
         ),
       ).toThrow(CommonQueryRunnerException);
@@ -190,20 +124,7 @@ describe('validateFilesFieldOrThrow', () => {
     it('should throw when label is not a string', () => {
       expect(() =>
         validateFilesFieldOrThrow(
-          {
-            addFiles: [
-              { fileId: '550e8400-e29b-41d4-a716-446655440000', label: 12345 },
-            ],
-          },
-          'testField',
-        ),
-      ).toThrow(CommonQueryRunnerException);
-    });
-
-    it('should throw when removeFiles item has invalid fileId', () => {
-      expect(() =>
-        validateFilesFieldOrThrow(
-          { removeFiles: [{ fileId: 'not-a-uuid', label: 'test' }] },
+          [{ fileId: '550e8400-e29b-41d4-a716-446655440000', label: 12345 }],
           'testField',
         ),
       ).toThrow(CommonQueryRunnerException);

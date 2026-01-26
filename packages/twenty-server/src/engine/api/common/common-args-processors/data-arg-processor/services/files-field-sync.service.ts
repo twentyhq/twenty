@@ -12,15 +12,6 @@ import {
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import {
-  AddOrUpdateFileItemInput,
-  FileItemOutput,
-  RemoveFileItemInput,
-} from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
-import {
-  EnrichedFilesFieldInput,
-  FilesFieldInput,
-} from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util';
 import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
 import {
   CommonQueryRunnerException,
