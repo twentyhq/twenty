@@ -1,40 +1,40 @@
 ---
-title: Upgrade guide
+title: アップグレードガイド
 ---
 
-## General guidelines
+## 一般ガイドライン
 
-**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+**アップグレードプロセスを開始する前に、必ずデータベースのバックアップを作成してください**。以下のコマンドを実行します：`docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
 
-To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+バックアップを復元するには、次のコマンドを実行します：`cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
 
-If you used Docker Compose, follow these steps:
+Docker Composeを使用している場合、次の手順に従います：
 
-1. In a terminal, on the host where Twenty is running, turn off Twenty: `docker compose down`
+1. Twentyを実行しているホスト上のターミナルで、Twentyを停止します：`docker compose down`
 
-2. Upgrade the version by changing the `TAG` value in the .env file near your docker-compose. ( We recommend consuming `major.minor` version such as `v0.53` )
+2. docker-compose近くにある.envファイルの`TAG`値を変更してバージョンをアップグレードします。 ( `v0.53` のように `major.minor` バージョンを使用することをお勧めします ) ( `v0.53` のように `major.minor` バージョンを使用することをお勧めします ) ( `v0.53` のように `major.minor` バージョンを使用することをお勧めします )
 
-3. Bring Twenty back online with `docker compose up -d`
+3. `docker compose up -d` でTwentyを再起動します。
 
-If you want to upgrade your instance by few versions, e.g. from v0.33.0 to v0.35.0, you have to upgrade your instance sequentially, in this example from v0.33.0 to v0.34.0, then from v0.34.0 to v0.35.0.
+例えば、v0.33.0 から v0.35.0 に数バージョンアップグレードしたい場合は、インスタンスを順次アップグレードする必要があります。この例では、まず v0.33.0 から v0.34.0 、次に v0.34.0から v0.35.0 にアップグレードします。
 
-**Make sure that after each upgraded version you have non-corrupted backup.**
+**各アップグレードしたバージョンの後に壊れていないバックアップを必ず確認してください。**
 
-## Version-specific upgrade steps
+## バージョン固有のアップグレード手順
 
 ## v1.0
 
-Hello Twenty v1.0! 🎉
+こんにちは、Twenty v1.0! 🎉
 
 ## v0.60
 
-### Performance Enhancements
+### パフォーマンス向上
 
-All interactions with the metadata API have been optimized for better performance, particularly for object metadata manipulation and workspace creation operations.
+メタデータ API とのすべてのやり取りは、特にオブジェクトのメタデータ操作およびワークスペース作成の処理において、パフォーマンス向上のために最適化されました。
 
-We've refactored our caching strategy to prioritize cache hits over database queries when possible, significantly improving the performance of metadata API operations.
+キャッシング戦略を見直し、可能な場合はデータベースクエリよりもキャッシュヒットを優先するようにしました。これにより、メタデータAPIオペレーションのパフォーマンスが大幅に向上しました。
 
-If you encounter any runtime issues after upgrading, you may need to flush your cache to ensure it's synchronized with the latest changes. Run this command in your twenty-server container:
+アップグレード後にランタイムの問題が発生した場合は、キャッシュをフラッシュして最新の変更と同期させる必要があるかもしれません。 twenty-serverコンテナ内で次のコマンドを実行します： twenty-serverコンテナ内で次のコマンドを実行します：
 
 ```bash
 yarn command:prod cache:flush
@@ -42,113 +42,118 @@ yarn command:prod cache:flush
 
 ### v0.55
 
-Upgrade your Twenty instance to use v0.55 image
+Twentyインスタンスをv0.55イメージにアップグレードします。
 
-You don't need to run any command anymore, the new image will automatically care about running all required migrations.
+もうコマンドを実行する必要はありません。新しいイメージがすべての必要な移行を自動的に行います。
 
-### `User does not have permission` error
+### `User does not have permission` エラー
 
-If you encounter authorization errors on most requests after upgrading, you may need to flush your cache to recompute the latest permissions.
+アップグレード後にほとんどの要求で承認エラーが発生した場合は、キャッシュをフラッシュして最新の権限を再計算する必要があるかもしれません。
 
-In your `twenty-server` container, run:
+あなたの `twenty-server` コンテナ内で次のコマンドを実行します：
 
 ```bash
 yarn command:prod cache:flush
 ```
 
-This issue is specific to this Twenty version and should not be required for future upgrades.
+この問題は特定のTwentyバージョンに固有であり、今後のアップグレードでは不要なはずです。
 
 ### v0.54
 
-Since version `0.53`, no manual actions needed.
+バージョン `0.53` 以降、手動の操作は必要ありません。
 
-#### Metadata schema deprecation
+#### メタデータスキーマ廃止
 
-We've merged the `metadata` schema into the `core` one to simplify data retrieval from `TypeORM`.
-We have merged the `migrate` command step within the `upgrade` command. We do not recommend running `migrate` manually within any of your server/worker containers.
+データの取得を簡素化するために、`metadata` スキーマを `core` スキーマにマージしました。
+`upgrade` コマンド内の `migrate` コマンドステップを統合しました。 サーバーまたはワーカーコンテナ内で `migrate` を手動で実行することはお勧めしません。
 
-### Since v0.53
+### v0.53以降
 
-Starting from `0.53`, upgrade is programmatically done within the `DockerFile`, this means from now on, you shouldn't have to run any command manually anymore.
+`0.53` 以降、アップグレードは `DockerFile` 内でプログラム的に行われます。これはつまり、これ以降は手動でコマンドを実行する必要がないことを意味します。
 
-Make sure to keep upgrading your instance sequentially, without skipping any major version (e.g. `0.43.3` to `0.44.0` is allowed, but `0.43.1` to `0.45.0` isn't), else could lead to workspace version desynchronization that could result in runtime error and missing functionality.
+メジャーバージョンを飛ばさずに順次インスタンスをアップグレードし続けることを確認してください（e.g. `0.43.3`から`0.44.0`へのアップグレードは許可されていますが、`0.43.1`から`0.45.0`へのアップグレードはできません）。そうしないと、ワークスペースのバージョンが同期しないことが原因でランタイムエラーや機能の欠如が発生する可能性があります。
 
-To check if a workspace has been correctly migrated you can review its version in database in `core.workspace` table.
+ワークスペースが正しく移行されたかを確認するには、データベース内の `core.workspace` テーブル内でそのバージョンを確認できます。
 
-It should always be in the range of your current Twenty's instance `major.minor` version, you can view your instance version in the admin panel (at `/settings/admin-panel`, accessible if your user has `canAccessFullAdminPanel` property set to true in the database) or by running `echo $APP_VERSION` in your `twenty-server` container.
+それは常にあなたの現在のTwentyのインスタンスの `major.minor` バージョンの範囲内である必要があります。あなたのインスタンスバージョンは、管理パネル（ `/settings/admin-panel` にあり、データベース内でユーザーが `canAccessFullAdminPanel` プロパティを持っている場合にアクセス可能）にまたは `twenty-server` コンテナ内で `echo $APP_VERSION` を実行することで確認できます。
 
-To fix a desynchronized workspace version, you will have to upgrade from the corresponding twenty's version following related upgrade guide sequentially and so on until it reaches desired version.
+非同期化されたワークスペースバージョンを修正するには、対応するTwentyのバージョンから関連するアップグレードガイドに従って順次アップグレードし、それが目的のバージョンに到達するまで続ける必要があります。
 
-#### `auditLog` removal
+#### `auditLog` の削除
 
-We've removed the auditLog standard object, which means your backup size might be significantly reduced after this migration.
+監査ログ標準オブジェクトを削除しました。これにより、この移行後のバックアップサイズが大幅に縮小する可能性があります。
 
-### v0.51 to v0.52
+### v0.51からv0.52
 
-Upgrade your Twenty instance to use v0.52 image
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade
-```
-
-#### I have a workspace blocked in version between `0.52.0` and `0.52.6`
-
-Unfortunately `0.52.0` and `0.52.6` have been completely removed from dockerHub.
-You will have to manually update your workspace version to `0.51.0` in database and upgrade using twenty version `0.52.11` following its just above upgrade guide.
-
-### v0.50 to v0.51
-
-Upgrade your Twenty instance to use v0.51 image
+Twentyインスタンスをv0.52イメージにアップグレードします。
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade
 ```
 
-### v0.44.0 to v0.50.0
+#### 私は `0.52.0` と `0.52.6` の間のバージョンでブロックされたワークスペースを持っています。
 
-Upgrade your Twenty instance to use v0.50.0 image
+残念ながら、`0.52.0` と `0.52.6` はdockerHubから完全に削除されました。
+残念ながら、`0.52.0` と `0.52.6` はdockerHubから完全に削除されました。
+データベースでワークスペースバージョンを手動で `0.51.0` に更新し、twentyバージョン `0.52.11` を使用して、その直上のアップグレードガイドに従ってアップグレードする必要があります。
+残念ながら、`0.52.0` と `0.52.6` はdockerHubから完全に削除されました。
+データベースでワークスペースバージョンを手動で `0.51.0` に更新し、twentyバージョン `0.52.11` を使用して、その直上のアップグレードガイドに従ってアップグレードする必要があります。
 
-```
-yarn database:migrate:prod
-yarn command:prod upgrade
-```
+### v0.50からv0.51
 
-#### Docker-compose.yml mutation
-
-This version includes a `docker-compose.yml` mutation to give `worker` service access to the `server-local-data` volume.
-Please update your local `docker-compose.yml` with [v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)
-
-### v0.43.0 to v0.44.0
-
-Upgrade your Twenty instance to use v0.44.0 image
+Twentyインスタンスをv0.51イメージにアップグレードします。
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade
 ```
 
-### v0.42.0 to v0.43.0
+### v0.44.0からv0.50.0
 
-Upgrade your Twenty instance to use v0.43.0 image
+Twentyインスタンスをv0.50.0イメージにアップグレードします。
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade
 ```
 
-In this version, we have also switched to postgres:16 image in docker-compose.yml.
+#### Docker-compose.ymlの変更
 
-#### (Option 1) Database migration
+このバージョンには、`worker` サービスが `server-local-data` ボリュームにアクセスできるようにするための `docker-compose.yml` の変更が含まれています。
+ローカルの `docker-compose.yml` を[v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)に更新してください。
+ローカルの `docker-compose.yml` を[v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)に更新してください。
+ローカルの `docker-compose.yml` を[v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)に更新してください。
 
-Keeping the existing postgres-spilo image is fine, but you will have to freeze the version in your docker-compose.yml to be 0.43.0.
+### v0.43.0からv0.44.0
 
-#### (Option 2) Database migration
+Twentyインスタンスをv0.44.0イメージにアップグレードします。
 
-If you want to migrate your database to the new postgres:16 image, please follow these steps:
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
 
-1. Dump your database from the old postgres-spilo container
+### v0.42.0からv0.43.0
+
+Twentyインスタンスをv0.43.0イメージにアップグレードします。
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+本バージョンでは、`docker-compose.yml`において`postgres:16`イメージへの切り替えも行いました。
+
+#### ( オプション 1 ) データベース移行
+
+既存のpostgres-spiloイメージを保持するのは問題ありませんが、docker-compose.ymlでバージョンを0.43.0に固定する必要があります。
+
+#### ( オプション 2 ) データベース移行
+
+データベースを新しいpostgres:16イメージに移行したい場合は、次の手順に従ってください：
+
+1. 古いpostgres-spiloコンテナからデータベースをダンプします。
 
 ```
 docker exec -it twenty-db-1 sh
@@ -157,11 +162,11 @@ exit
 docker cp twenty-db-1:/home/postgres/databases_backup.sql .
 ```
 
-Make sure your dump file is not empty.
+ダンプファイルが空でないことを確認してください。
 
-2. Upgrade your docker-compose.yml to use postgres:16 image as in the [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) file.
+2. docker-compose.ymlを、新しいpostgres:16イメージを使用するようにアップグレードします。[docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml)を参照してください。
 
-3. Restore the database to the new postgres:16 container
+3. データベースを新しいpostgres:16コンテナへ復元します。
 
 ```
 docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
@@ -170,86 +175,90 @@ psql -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} -f databases_backup.sql
 exit
 ```
 
-### v0.41.0 to v0.42.0
+### v0.41.0からv0.42.0
 
-Upgrade your Twenty instance to use v0.42.0 image
+Twentyインスタンスをv0.42.0イメージにアップグレードします。
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.42
 ```
 
-**Environment Variables**
+**環境変数**
 
-* Removed: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
-* Added: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
+* 削除: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
+* 追加: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
 
-### v0.40.0 to v0.41.0
+### v0.40.0からv0.41.0
 
-Upgrade your Twenty instance to use v0.41.0 image
+Twentyインスタンスをv0.41.0イメージにアップグレードします。
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.41
 ```
 
-**Environment Variables**
+**環境変数**
 
-* Removed: `AUTH_MICROSOFT_TENANT_ID`
+* 削除: `AUTH_MICROSOFT_TENANT_ID`
 
-### v0.35.0 to v0.40.0
+### v0.35.0からv0.40.0
 
-Upgrade your Twenty instance to use v0.40.0 image
+Twentyインスタンスをv0.40.0イメージにアップグレードします。
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.40
 ```
 
-**Environment Variables**
+**環境変数**
 
-* Added: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
+* 追加: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
 
-### v0.34.0 to v0.35.0
+### v0.34.0からv0.35.0
 
-Upgrade your Twenty instance to use v0.35.0 image
+Twentyインスタンスをv0.35.0イメージにアップグレードします。
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.35
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.35` takes care of the data migration of all workspaces.
+`yarn database:migrate:prod` コマンドはデータベース構造（コアおよびメタデータスキーマ）の移行を適用します
+`yarn command:prod upgrade-0.35` はすべてのワークスペースのデータ移行を行います。
 
-**Environment Variables**
+**環境変数**
 
-* We replaced `ENABLE_DB_MIGRATIONS` with `DISABLE_DB_MIGRATIONS` (default value is now `false`, you probably don't have to set anything)
+* `ENABLE_DB_MIGRATIONS` を `DISABLE_DB_MIGRATIONS` に置き換えました（デフォルト値は`false`で、設定する必要はないと思われます）
 
-### v0.33.0 to v0.34.0
+### v0.33.0からv0.34.0
 
-Upgrade your Twenty instance to use v0.34.0 image
+Twentyインスタンスをv0.34.0イメージにアップグレードします。
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.34
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.34` takes care of the data migration of all workspaces.
+`yarn database:migrate:prod` コマンドはデータベース構造（コアおよびメタデータスキーマ）の移行を適用します
+`yarn command:prod upgrade-0.34` はすべてのワークスペースのデータ移行を行います。
 
-**Environment Variables**
+**環境変数**
 
-* Removed: `FRONT_BASE_URL`
-* Added: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
+* 削除: `FRONT_BASE_URL`
+* 追加: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
 
-We have updated the way we handle the frontend URL.
-You can now set the frontend URL using the `FRONT_DOMAIN`, `FRONT_PROTOCOL` and `FRONT_PORT` variables.
-If FRONT_DOMAIN is not set, the frontend URL will fall back to `SERVER_URL`.
+フロントエンドURLの取り扱いを更新しました。
+フロントエンドURLの取り扱いを更新しました。
+フロントエンドURLの取り扱いを更新しました。
+フロントエンドURLは、`FRONT_DOMAIN`、`FRONT_PROTOCOL`、`FRONT_PORT` 変数を使用して設定できます。
+FRONT_DOMAIN が設定されていない場合、フロントエンドURLは `SERVER_URL` に戻されます。
+FRONT_DOMAIN が設定されていない場合、フロントエンドURLは `SERVER_URL` に戻されます。
+FRONT_DOMAIN が設定されていない場合、フロントエンドURLは `SERVER_URL` に戻されます。
 
-### v0.32.0 to v0.33.0
+### v0.32.0からv0.33.0
 
-Upgrade your Twenty instance to use v0.33.0 image
+Twentyインスタンスをv0.33.0イメージにアップグレードします。
 
 ```
 yarn command:prod cache:flush
@@ -257,68 +266,75 @@ yarn database:migrate:prod
 yarn command:prod upgrade-0.33
 ```
 
-The `yarn command:prod cache:flush` command will flush the Redis cache.
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.33` takes care of the data migration of all workspaces.
+`yarn command:prod cache:flush` コマンドはRedisキャッシュをフラッシュします。
+`yarn database:migrate:prod` コマンドはデータベース構造（コアおよびメタデータスキーマ）の移行を適用します
+`yarn command:prod upgrade-0.33` はすべてのワークスペースのデータ移行を行います。
+`yarn database:migrate:prod` コマンドはデータベースへの移行を適用します。
+"`yarn command:prod workspace:sync-metadata -f` コマンドは、標準オブジェクトの定義をメタデータテーブルに同期し、既存のワークスペースに必要な移行を適用します。"
+The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
 
-Starting from this version, twenty-postgres image for DB became deprecated and twenty-postgres-spilo is used instead.
-If you want to keep using twenty-postgres image, simply replace `twentycrm/twenty-postgres:${TAG}` with `twentycrm/twenty-postgres` in docker-compose.yml.
+このバージョンから、DB用のtwenty-postgresイメージは廃止され、twenty-postgres-spiloが代わりに使用されるようになりました。
+このバージョンから、DB用のtwenty-postgresイメージは廃止され、twenty-postgres-spiloが代わりに使用されるようになりました。
+このバージョンから、DB用のtwenty-postgresイメージは廃止され、twenty-postgres-spiloが代わりに使用されるようになりました。
+twenty-postgresイメージを使い続けたい場合は、docker-compose.yml内の`twentycrm/twenty-postgres:${TAG}`を`twentycrm/twenty-postgres`に置き換えるだけで済みます。
 
-### v0.31.0 to v0.32.0
+### v0.31.0からv0.32.0
 
-Upgrade your Twenty instance to use v0.32.0 image
+Twentyインスタンスをv0.32.0イメージにアップグレードします。
 
-**Schema and data migration**
+**スキーマとデータ移行**
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.32
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.32` takes care of the data migration of all workspaces.
+`yarn database:migrate:prod` コマンドはデータベース構造（コアおよびメタデータスキーマ）の移行を適用します
+`yarn command:prod upgrade-0.32` はすべてのワークスペースのデータ移行を行います。
 
-**Environment Variables**
+**環境変数**
 
-We have updated the way we handle the Redis connection.
+Redis接続の取り扱いを更新しました。
 
-* Removed: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
-* Added: `REDIS_URL`
+* 削除: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+* 追加: `REDIS_URL`
 
-Update your `.env` file to use the new `REDIS_URL` variable instead of the individual Redis connection parameters.
+個々のRedis接続パラメーターの代わりに、新しい `REDIS_URL` 変数を使用するように `.env` ファイルを更新してください。
 
-We have also simplified the way we handle the JWT tokens.
+JWTトークンの取り扱いも簡素化しました。
 
-* Removed: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
-* Added: `APP_SECRET`
+* 削除: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
+* 追加: `APP_SECRET`
 
-Update your `.env` file to use the new `APP_SECRET` variable instead of the individual tokens secrets (you can use the same secret as before or generate a new random string)
+個々のトークンシークレットの代わりに、新しい `APP_SECRET` 変数を使用するように `.env` ファイルを更新してください（以前と同じシークレットを使用するか、新しいランダム文字列を生成して使用することができます）
 
-**Connected Account**
+**接続アカウント**
 
-If you are using connected account to synchronize your Google emails and calendars, you will need to activate the [People API](https://developers.google.com/people) on your Google Admin console.
+Googleメールとカレンダーを同期するために接続されたアカウントを使用する場合は、Google管理コンソールで[People API](https://developers.google.com/people)をアクティブにする必要があります。
 
-### v0.30.0 to v0.31.0
+### v0.30.0からv0.31.0
 
-Upgrade your Twenty instance to use v0.31.0 image
+Twentyインスタンスをv0.31.0イメージにアップグレードします。
 
-**Schema and data migration**:
+**スキーマとデータ移行**:
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.31
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.31` takes care of the data migration of all workspaces.
+`yarn database:migrate:prod` コマンドはデータベース構造（コアおよびメタデータスキーマ）の移行を適用します
+`yarn command:prod upgrade-0.31` はすべてのワークスペースのデータ移行を行います。
 
-### v0.24.0 to v0.30.0
+### v0.24.0からv0.30.0
 
-Upgrade your Twenty instance to use v0.30.0 image
+Twentyインスタンスをv0.30.0イメージにアップグレードします。
 
-**Breaking change**:
-To enhance performances, Twenty now requires redis cache to be configured. We have updated our [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) to reflect this.
-Make sure to update your configuration and to update your environment variables accordingly:
+**破壊的な変更**:
+パフォーマンスを向上させるために、TwentyはRedisキャッシュの設定を必要とするようになりました。 これを反映した[docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml)を更新しました。
+構成を更新し、環境変数を適切に更新してください：
+構成を更新し、環境変数を適切に更新してください：
+構成を更新し、環境変数を適切に更新してください：
 
 ```
 REDIS_HOST={your-redis-host}
@@ -326,49 +342,50 @@ REDIS_PORT={your-redis-port}
 CACHE_STORAGE_TYPE=redis
 ```
 
-**Schema and data migration**:
+**スキーマとデータ移行**:
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.30
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.30` takes care of the data migration of all workspaces.
+`yarn database:migrate:prod` コマンドはデータベース構造（コアおよびメタデータスキーマ）の移行を適用します
+`yarn command:prod upgrade-0.30` はすべてのワークスペースのデータ移行を行います。
 
-### v0.23.0 to v0.24.0
+### v0.23.0からv0.24.0
 
-Upgrade your Twenty instance to use v0.24.0 image
+Twentyインスタンスをv0.24.0イメージにアップグレードします。
 
-Run the following commands:
+次のコマンドを実行してください:
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.24
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.24` takes care of the data migration of all workspaces.
+`yarn database:migrate:prod` コマンドはデータベース構造（コアおよびメタデータスキーマ）の移行を適用します
+`yarn command:prod upgrade-0.24` はすべてのワークスペースのデータ移行を行います。
 
-### v0.22.0 to v0.23.0
+### v0.22.0からv0.23.0
 
-Upgrade your Twenty instance to use v0.23.0 image
+Twentyインスタンスをv0.23.0イメージにアップグレードします。
 
-Run the following commands:
+次のコマンドを実行してください:
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.23
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the Database.
-The `yarn command:prod upgrade-0.23` takes care of the data migration, including transferring activities to tasks/notes.
+`yarn database:migrate:prod` コマンドはデータベースへの移行を適用します。
+`yarn command:prod upgrade-0.23` は、アクティビティをタスク/ノートに移行するなど、データ移行を担当します。
+`yarn command:prod upgrade-0.23` は、アクティビティをタスク/ノートに移行するなど、データ移行を担当します。
 
-### v0.21.0 to v0.22.0
+### v0.21.0からv0.22.0
 
-Upgrade your Twenty instance to use v0.22.0 image
+Twentyインスタンスをv0.22.0イメージにアップグレードします。
 
-Run the following commands:
+次のコマンドを実行してください:
 
 ```
 yarn database:migrate:prod
@@ -376,6 +393,7 @@ yarn command:prod workspace:sync-metadata -f
 yarn command:prod upgrade-0.22
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the Database.
-The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces.
-The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
+`yarn database:migrate:prod` コマンドはデータベースへの移行を適用します。
+`yarn command:prod upgrade-0.23` は、アクティビティをタスク/ノートに移行するなど、データ移行を担当します。
+"`yarn command:prod workspace:sync-metadata -f` コマンドは、標準オブジェクトの定義をメタデータテーブルに同期し、既存のワークスペースに必要な移行を適用します。"
+`yarn command:prod upgrade-0.22` コマンドは、新しいオブジェクトの defaultRequestInstrumentationOptions に適合させるため、特定のデータ変換を適用します。

@@ -1,198 +1,198 @@
 ---
-title: Permissions
-description: Control access to objects, fields, and settings with role-based permissions.
+title: 権限
+description: ロールベースの権限でオブジェクト、フィールド、設定へのアクセスを制御します。
 image: /images/user-guide/permissions/permissions.png
 ---
 
-Twenty's permission system allows you to control access to three main areas:
+Twentyの権限システムにより、3つの主要な領域へのアクセスを制御できます:
 
-* **Objects and Fields**: Control who can view, edit, or delete records and individual fields
-* **Settings**: Manage access to workspace configuration and administrative functions
-* **Actions**: Control general workspace actions like importing data or sending emails
+* **オブジェクトとフィールド**: レコードと個々のフィールドを表示、編集、削除できる人を制御する
+* **設定**: ワークスペースの構成および管理機能へのアクセスを管理する
+* **アクション**: データのインポートやメールの送信など一般的なワークスペースアクションを制御する
 
-## Create a Role
+## ロールの作成
 
-To create a new role:
+新しい役割を作成するには:
 
-1. Go to **Settings → Roles**
-2. Under **All Roles**, click on **+ Create Role**
-3. Enter a role name
-4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
-5. Click **Save** to finish
+1. **設定 → 役割** に移動
+2. **すべての役割** で、 **+ 役割を作成** をクリック
+3. 役割名を入力
+4. デフォルトの**権限**タブで、[権限を設定](#customize-permissions)
+5. **保存**をクリックして完了します
 
-## Delete a Role
+## 役割を削除する
 
-To delete a role:
+役割を削除するには:
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to remove
-3. Open the **Settings** tab, then click **Delete Role**
-4. Click **Confirm** in the modal
+1. **設定 → 役割** に移動
+2. 削除したい役割をクリック
+3. **設定** タブを開き、 **役割を削除** をクリック
+4. モーダルで **確認** をクリック
 
 <Note>
-  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
+  ロールが削除されると、そのロールに割り当てられていたワークスペースメンバーは自動的にデフォルトのロールに再割り当てされます。 **Admin**ロール以外はすべて削除できます。 **管理者** 役割には常に少なくとも1人のメンバーが割り当てられている必要があります。
 </Note>
 
-## Assign Roles to Members
+## メンバーに役割を割り当てる
 
-### View Current Assignments
+### 現在の割り当てを表示
 
-* Go to **Settings → Roles**
-* See all roles and how many members are assigned to each
-* View which members have which roles
+* **設定 → 役割** に移動
+* すべての役割と各役割に割り当てられているメンバー数を確認
+* どのメンバーがどの役割を持っているかを表示
 
-### Assign a Role to a Member
+### メンバーに役割を割り当てる
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Click **+ Assign to member**
-5. Select the workspace member from the list
-6. Confirm the assignment
+1. **設定 → 役割** に移動
+2. 割り当てたい役割をクリック
+3. **割り当て** タブを開く
+4. **+ メンバーに割り当てる** をクリック
+5. リストからワークスペースメンバーを選択
+6. 割り当てを確認する
 
-### Set Default Role
+### デフォルトの役割を設定する
 
-1. Go to **Settings → Roles**
-2. In the **Options** section, find **Default Role**
-3. Select which role new members should automatically receive
-4. New workspace members will be assigned this role when they join
+1. **設定 → 役割** に移動
+2. **オプション** セクションで **デフォルトの役割** を見つける
+3. 新しいメンバーが自動的に受け取る役割を選択
+4. 新しいワークスペースメンバーが参加するとき、この役割が割り当てられます
 
 <Note>
-  You can only assign roles to existing workspace members. To invite new members, use [Member Management](/l/ja/user-guide/settings/capabilities/member-management).
+  ロールは既存のワークスペースメンバーにのみ割り当てできます。 新しいメンバーを招待するには、[メンバー管理](/l/ja/user-guide/settings/capabilities/member-management)を使用します。
 </Note>
 
-## Customize Permissions
+## 権限をカスタマイズする
 
-Permissions determine what each role can access or modify within your workspace, including workspace objects records, settings, and actions.
+権限は、ワークスペース内で各役割がアクセスまたは変更できるものを決定し、ワークスペースオブジェクトのレコード、設定、およびアクションを含みます。
 
-### Object Permissions
+### オブジェクトの権限
 
-The **Objects** section controls what this role can do with records across your workspace.
+**オブジェクト**セクションでは、このロールがワークスペース全体のレコードに対して何ができるかを制御します。
 
-#### Set Default Permissions (All Objects)
+#### デフォルトの権限を設定（すべてのオブジェクト）
 
-First, configure the baseline permissions that apply to **all objects** by default:
+まず、デフォルトで**すべてのオブジェクト**に適用されるベースライン権限を設定します。
 
-| Permission                         | Description                            |
-| ---------------------------------- | -------------------------------------- |
-| **See Records on All Objects**     | View records in lists and detail pages |
-| **Edit Records on All Objects**    | Modify existing records                |
-| **Delete Records on All Objects**  | Soft-delete records (can be restored)  |
-| **Destroy Records on All Objects** | Permanently delete records             |
+| 権限                    | 説明                  |
+| --------------------- | ------------------- |
+| **全オブジェクトでレコードを表示する** | リストおよび詳細ページでレコードを表示 |
+| **全オブジェクトでレコードを編集する** | 既存のレコードを変更          |
+| **全オブジェクトでレコードを削除する** | レコードをソフト削除（復元可能）    |
+| **全オブジェクトでレコードを破棄する** | レコードを完全に削除          |
 
-Select or unselect based on what should be the default behavior for this role.
+このロールのデフォルトの動作にすべき内容に基づいて選択または選択解除します。
 
 <Note>
-  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+  **例 — インターン ロール**: インターンは、デフォルトではすべてのオブジェクトを閲覧できるが編集はできないようにします。 "すべてのオブジェクトでレコードを表示"を有効にし、"すべてのオブジェクトでレコードを編集"は未選択のままにします。
 </Note>
 
-#### Add Object-Level Exceptions
+#### オブジェクトレベルの例外を追加
 
-After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+デフォルトを設定したら、**オブジェクトレベル**のサブセクションで特定のオブジェクトに対してデフォルトを上書きするルールを追加します。
 
-Click **+ Add rule** and select an object to create an exception.
+**+ ルールを追加**をクリックし、オブジェクトを選択して例外を作成します。
 
-**Example rules for an Intern role:**
+**インターン ロールのルール例:**
 
-| Rule                                  | Effect                                                 |
-| ------------------------------------- | ------------------------------------------------------ |
-| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
-| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+| ルール                           | 効果                                    |
+| ----------------------------- | ------------------------------------- |
+| Opportunities → "レコードを表示"を無効化 | インターンはOpportunitiesオブジェクトをまったく閲覧できません |
+| People → "レコードを編集"を有効化        | インターンはPeopleのレコードを編集できます（他のオブジェクトは不可） |
 
-### Field Permissions
+### フィールドの権限
 
-Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+各オブジェクトレベルのルール内で、さらに踏み込んで特定のフィールドへのアクセスを制御するための**フィールドレベルの権限**を設定できます。
 
-| Permission     | Description                |
-| -------------- | -------------------------- |
-| **See Field**  | View the field value       |
-| **Edit Field** | Modify the field value     |
-| **No Access**  | Field is completely hidden |
+| 権限           | 説明           |
+| ------------ | ------------ |
+| **フィールドを表示** | フィールド値を表示    |
+| **フィールドを編集** | フィールド値を変更    |
+| **アクセス不可**   | フィールドは完全に非表示 |
 
-**Example — Restrict sensitive fields:**
+**例 — 機微なフィールドの制限:**
 
-For the Intern role with People edit access, you might want to restrict certain fields:
+Peopleの編集権限を持つインターン ロールでは、特定のフィールドを制限したい場合があります。
 
-* People → Email → **See Field** only (cannot edit)
-* People → Address → **No Access** (completely hidden)
+* People → Email → **フィールドを表示**のみ（編集不可）
+* People → Address → **アクセス不可**（完全に非表示）
 
-This allows the intern to edit most People fields while protecting sensitive information.
+これにより、インターンはPeopleのほとんどのフィールドを編集できる一方、機微情報は保護されます。
 
-### How Permission Inheritance Works
+### 権限の継承のしくみ
 
-Permissions cascade from general to specific:
+権限は一般から個別へと段階的に適用されます。
 
-1. **All Objects** → sets the baseline for all objects
-2. **Object-Level rules** → override the baseline for specific objects
-3. **Field-Level rules** → override the object setting for specific fields
+1. **すべてのオブジェクト** → すべてのオブジェクトに対するベースラインを設定
+2. **オブジェクトレベルのルール** → 特定のオブジェクトのベースラインを上書き
+3. **フィールドレベルのルール** → 特定のフィールドについてオブジェクトの設定を上書き
 
-More specific settings always take precedence.
+より具体的な設定が常に優先されます。
 
-### Managing Permission Overrides
+### 権限オーバーライドを管理する
 
-To override inherited permissions:
+継承された権限を上書きするには:
 
-1. Click **X** to remove the inherited rule
-2. Select the specific permissions you want
-3. Click the orange **Undo** icon (circular arrow) to revert changes
+1. 継承されたルールを削除するには **X** をクリック
+2. 必要な特定の権限を選択
+3. 変更を元に戻すには、オレンジ色の **元に戻す** アイコン（円形の矢印）をクリック
 
-When done, click **Finish**, then **Save** once redirected to the role page.
+完了したら、役割ページにリダイレクトされたら **終了** をクリックし、**保存** をクリック。
 
-### Workspace Settings Permissions
+### ワークスペース設定の権限
 
-Control access to workspace settings in two ways:
+ワークスペース設定へのアクセスを2つの方法で制御する:
 
-* Toggle **Settings All Access** to grant full access
-* Or enable specific permissions (e.g., API key generation, workspace preferences, role assignment, data model configuration, security settings, and workflow management)
+* **すべてのアクセスを設定** を切り替えて完全アクセスを許可する
+* あるいは、特定の権限（例えば、APIキー生成、ワークスペース設定、役割割り当て、データモデル構成、セキュリティ設定、ワークフロー管理）を有効にする
 
 <Note>
-  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+  **現在の制限**: ワークフローを手動でトリガーするには、現在、ワークフロー管理へのアクセスが必要です。 この動作は今後のリリースで変更される可能性があります。
 </Note>
 
-### Workspace Action Permissions
+### ワークスペースアクションの権限
 
-Control access to general workspace actions:
+一般的なワークスペースアクションへのアクセスを制御する:
 
-* Toggle **Application All Access** to grant full permissions
-* Or enable individual actions such as **Send Email**, **Import CSV**, and **Export CSV**
+* **すべてのアプリケーションのアクセス** を切り替えて完全な権限を与える
+* あるいは、 **メール送信**, **CSVインポート**, **CSVエクスポート** などの個別のアクションを有効にする
 
-## Assigning Roles to API Keys and AI Agents
+## API キーおよびAI エージェントへのロール割り当て
 
-Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+ワークスペースメンバー以外にも、**API キー**や**AI エージェント**にロールを割り当てることができます。 これは、ワークスペース内で誰が何をできるかを正確に制御したいチーム、特に自動化プロセスや連携を含む場合に有用です。
 
-### Why Assign Roles to API Keys and AI Agents?
+### API キーとAI エージェントにロールを割り当てる理由
 
-* **Security**: Limit what automated processes can access or modify
-* **Compliance**: Ensure integrations only touch the data they need
-* **Control**: Prevent accidental data changes from misconfigured automations
-* **Auditability**: Track which actions were performed by which integration or agent
+* **セキュリティ**: 自動化プロセスがアクセスまたは変更できる範囲を制限
+* **コンプライアンス**: 連携が必要なデータのみに触れるようにする
+* **制御**: 誤設定された自動化による偶発的なデータ変更を防止
+* **監査可能性**: どの連携またはエージェントがどの操作を実行したかを追跡
 
-### Assign a Role to an API Key
+### API キーにロールを割り当てる
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key from the list
-6. Confirm the assignment
+1. **設定 → 役割** に移動
+2. 割り当てたい役割をクリック
+3. **割り当て** タブを開く
+4. **API キー**セクションで、**+ API キーに割り当て**をクリック
+5. リストからAPI キーを選択
+6. 割り当てを確認する
 
-The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+そのAPI キーは、割り当てたロールで定義されたすべての権限を継承します。 このキーで行われるAPI 呼び出しは、それに応じて制限されます。
 
 <Note>
-  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+  ロールが割り当てられていないAPI キーはデフォルトの権限を使用します。 より厳格なセキュリティのため、本番のAPI キーには必ず特定のロールを割り当ててください。
 </Note>
 
-### Assign a Role to an AI Agent
+### AI エージェントにロールを割り当てる
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Under **AI Agents**, click **+ Assign to AI agent**
-5. Select the AI agent from the list
-6. Confirm the assignment
+1. **設定 → 役割** に移動
+2. 割り当てたい役割をクリック
+3. **割り当て** タブを開く
+4. **AI エージェント**セクションで、**+ AI エージェントに割り当て**をクリック
+5. リストからAI エージェントを選択
+6. 割り当てを確認する
 
-The AI agent will only be able to access data and perform actions allowed by its assigned role.
+AI エージェントは、割り当てられたロールで許可されたデータへのアクセスと操作のみ実行できます。
 
 <Note>
-  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+  ワークフロー内で実行されるAI エージェントについては、ワークフローにより広い権限があっても、意図した範囲外のデータにアクセスまたは変更できないことを保証します。
 </Note>

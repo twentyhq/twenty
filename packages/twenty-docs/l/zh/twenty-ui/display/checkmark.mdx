@@ -1,16 +1,16 @@
 ---
-title: Checkmark
+title: 对勾标记
 image: /images/user-guide/tasks/tasks_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="标题" />
 </Frame>
 
-Represents a successful or completed action.
+表示一个成功或已完成的动作。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="**用法**">
     ```jsx
     import { Checkmark } from 'twenty-ui/display';
 
@@ -20,17 +20,17 @@ Represents a successful or completed action.
     ```
   </Tab>
 
-  <Tab title="Props">
-    Extends `React.ComponentPropsWithoutRef<'div'>` and accepts all the props of a regular `div` element.
+  <Tab title="属性">
+    扩展了 `React.ComponentPropsWithoutRef<'div'>`，并接受常规 `div` 元素的所有属性。
   </Tab>
 </Tabs>
 
-## Animated Checkmark
+## 动画对勾标记
 
-Represents a checkmark icon with the added feature of animation.
+表示一个带有动画特性的对勾图标。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { AnimatedCheckmark } from 'twenty-ui/display';
 
@@ -47,12 +47,12 @@ Represents a checkmark icon with the added feature of animation.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type    | Description                                 | Default     |
-    | ----------- | ------- | ------------------------------------------- | ----------- |
-    | isAnimating | boolean | Controls whether the checkmark is animating | false       |
-    | color       | string  | Color of the checkmark                      |             |
-    | duration    | number  | The duration of the animation in seconds    | 0.5 seconds |
-    | size        | number  | The size of the checkmark                   | 28 pixels   |
+  <Tab title="属性">
+    | 属性          | 类型  | 描述             | 默认    |
+    | ----------- | --- | -------------- | ----- |
+    | isAnimating | 布尔值 | 控制对勾标记是否在动画中   | 假     |
+    | 颜色          | 字符串 | 对勾标记的颜色        |       |
+    | 持续时间        | 数字  | 动画的持续时间（以秒为单位） | 0.5 秒 |
+    | 大小          | 数字  | 对勾标记的大小        | 28 像素 |
   </Tab>
 </Tabs>

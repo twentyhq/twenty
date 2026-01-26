@@ -1,13 +1,13 @@
 ---
-title: Local Setup
-description: The guide for contributors (or curious developers) who want to run Twenty locally.
+title: ローカルセットアップ
+description: 寄稿者（または好奇心旺盛な開発者）のためのガイドで、ローカルにTwentyを実行したい人向けです。
 ---
 
-## Prerequisites
+## 前提条件
 
 <Tabs>
-  <Tab title="Linux and MacOS">
-    Before you can install and use Twenty, make sure you install the following on your computer:
+  <Tab title="LinuxとMacOS">
+    Twentyをインストールして使用する前に、以下をコンピュータにインストールしてください。
 
     * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
     * [Node v24.5.0](https://nodejs.org/en/download)
@@ -15,25 +15,31 @@ description: The guide for contributors (or curious developers) who want to run 
     * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
     <Warning>
-      `npm` won't work, you should use `yarn` instead. Yarn is now shipped with Node.js, so you don't need to install it separately.
-      You only have to run `corepack enable` to enable Yarn if you haven't done it yet.
+      `npm`は使えません。代わりに`yarn`を使用してください。
+      `npm`は使えません。代わりに`yarn`を使用してください。 Yarnは今Node.jsに同梱されているので、別途インストールする必要はありません。
+      Yarnを有効にするには、まだしていない場合は`corepack enable`を実行するだけです。
+      `npm`は使えません。代わりに`yarn`を使用してください。 Yarnは今Node.jsに同梱されているので、別途インストールする必要はありません。
+      Yarnを有効にするには、まだしていない場合は`corepack enable`を実行するだけです。Yarnを有効にするには、まだしていない場合は`corepack enable`を実行するだけです。
     </Warning>
   </Tab>
 
-  <Tab title="Windows (WSL)">
-    1. Install WSL
-       Open PowerShell as Administrator and run:
+  <Tab title="Windows（WSL）">
+    1. WSLをインストール
+       管理者としてPowerShellを開き、次のコマンドを実行します。
 
     ```powershell
     wsl --install
     ```
 
-    You should now see a prompt to restart your computer. If not, restart it manually.
+    コンピュータを再起動するプロンプトが表示されるはずです。 表示されなければ、手動で再起動してください。 表示されなければ、手動で再起動してください。 表示されなければ、手動で再起動してください。
 
-    Upon restart, a powershell window will open and install Ubuntu. This may take up some time.
-    You'll see a prompt to create a username and password for your Ubuntu installation.
+    再起動後、PowerShellウィンドウが開き、Ubuntuをインストールします。 これには少し時間がかかるかもしれません。
+    再起動後、PowerShellウィンドウが開き、Ubuntuをインストールします。 これには少し時間がかかるかもしれません。
+    Ubuntuインストールのためにユーザー名とパスワードを設定するプロンプトが表示されます。 これには少し時間がかかるかもしれません。
+    再起動後、PowerShellウィンドウが開き、Ubuntuをインストールします。 これには少し時間がかかるかもしれません。
+    Ubuntuインストールのためにユーザー名とパスワードを設定するプロンプトが表示されます。
 
-    2. Install and configure git
+    2. gitをインストールして設定する
 
     ```bash
     sudo apt-get install git
@@ -43,10 +49,11 @@ description: The guide for contributors (or curious developers) who want to run 
     git config --global user.email "youremail@domain.com"
     ```
 
-    3. Install nvm, node.js and yarn
+    3. nvm、node.js、yarnをインストールする
 
     <Warning>
-      Use `nvm` to install the correct `node` version. The `.nvmrc` ensures all contributors use the same version.
+      `nvm`を使用して正しい`node`バージョンをインストールします。 `.nvmrc`は、すべての寄稿者が同じバージョンを使用することを保証します。
+      `.nvmrc`は、すべての寄稿者が同じバージョンを使用することを保証します。
     </Warning>
 
     ```bash
@@ -55,7 +62,7 @@ description: The guide for contributors (or curious developers) who want to run 
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
     ```
 
-    Close and reopen your terminal to use nvm. Then run the following commands.
+    nvmを使用できるようにするには、ターミナルを閉じて再度開いてください。 次のコマンドを実行します。 次のコマンドを実行します。 次のコマンドを実行します。
 
     ```bash
 
@@ -70,13 +77,15 @@ description: The guide for contributors (or curious developers) who want to run 
 
 ---
 
-## Step 1: Git Clone
+## ステップ1：Gitクローン
 
-In your terminal, run the following command.
+ターミナルで次のコマンドを実行します。
 
 <Tabs>
-  <Tab title="SSH (Recommended)">
-    If you haven't already set up SSH keys, you can learn how to do so [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh).
+  <Tab title="SSH（推奨）">
+    SSHキーの設定をまだ行っていない場合は、[こちら](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh)で学べます。```bash
+    git clone git@github.com:twentyhq/twenty.git
+    ```
 
     ```bash
     git clone git@github.com:twentyhq/twenty.git
@@ -90,36 +99,36 @@ In your terminal, run the following command.
   </Tab>
 </Tabs>
 
-## Step 2: Position yourself at the root
+## ステップ 2: ルートディレクトリに移動する
 
 ```bash
 cd twenty
 ```
 
-You should run all commands in the following steps from the root of the project.
+プロジェクトのルートで次のステップのすべてのコマンドを実行する必要があります。
 
-## Step 3: Set up a PostgreSQL Database
+## ステップ3：PostgreSQLデータベースをセットアップします
 
 <Tabs>
   <Tab title="Linux">
-    **Option 1 (preferred):** To provision your database locally:
-    Use the following link to install Postgresql on your Linux machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+    **オプション1（推奨）：** データベースをローカルにプロビジョニングするには：
+    LinuxマシンにPostgresqlをインストールするには、次のリンクを使用してください：[Postgresqlインストール](https://www.postgresql.org/download/linux/)
 
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
 
-    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+    注意：`psql`の前に`sudo -u postgres`を追加して、パーミッションエラーを避ける必要があるかもしれません。
 
-    **Option 2:** If you have docker installed:
+    **オプション2：** dockerをインストールしている場合：
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
   <Tab title="Mac OS">
-    **Option 1 (preferred):** To provision your database locally with `brew`:
+    **オプション1（推奨）：** `brew`でローカルにデータベースをプロビジョニングするには：
 
     ```bash
       brew install postgresql@16
@@ -128,16 +137,14 @@ You should run all commands in the following steps from the root of the project.
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
 
-    You can verify if the PostgreSQL server is running by executing:
+    PostgreSQLサーバーが稼働しているかどうかを確認するには、以下を実行してください。
 
     ```bash
       brew services list
     ```
 
-    The installer might not create the `postgres` user by default when installing
-    via Homebrew on MacOS. Instead, it creates a PostgreSQL role that matches your macOS
-    username (e.g., "john").
-    To check and create the `postgres` user if necessary, follow these steps:
+    インストーラーは、デフォルトでHomebrew経由でMacOSにインストールする際に`postgres`ユーザーを作成しないかもしれません。 代わりに、macOSのユーザー名（例：「john」）と一致するPostgreSQLロールを作成します。
+    必要に応じて、`postgres`ユーザーを確認して作成するには、次の手順を実行してください。
 
     ```bash
       # Connect to PostgreSQL
@@ -146,14 +153,14 @@ You should run all commands in the following steps from the root of the project.
       psql -U $(whoami) -d postgres
     ```
 
-    Once at the psql prompt (postgres=#), run:
+    psqlプロンプト（postgres=#）で次を実行します。
 
     ```bash
      # List existing PostgreSQL roles
      \du
     ```
 
-    You'll see output similar to:
+    以下のような出力が表示されます。
 
     ```bash
      Role name | Attributes  | Member of
@@ -161,98 +168,98 @@ You should run all commands in the following steps from the root of the project.
      john      | Superuser   | {}
     ```
 
-    If you do not see a `postgres` role listed, proceed to the next step.
-    Create the `postgres` role manually:
+    `postgres`ロールがリストに表示されない場合は、次のステップに進んでください。
+    `postgres`ロールを手動で作成します。
 
     ```bash
      CREATE ROLE postgres WITH SUPERUSER LOGIN;
     ```
 
-    This creates a superuser role named `postgres` with login access.
+    これにより、ログイン権限を持つ `postgres` というスーパーユーザーロールが作成されます。
 
-    **Option 2:** If you have docker installed:
+    **オプション2：** dockerをインストールしている場合：
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
-  <Tab title="Windows (WSL)">
-    All the following steps are to be run in the WSL terminal (within your virtual machine)
+  <Tab title="Windows（WSL）">
+    以下のすべてのステップは、WSLターミナル（仮想マシン内）で実行されます。
 
-    **Option 1:** To provision your Postgresql locally:
-    Use the following link to install Postgresql on your Linux virtual machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+    **オプション1：** PostgreSQLをローカルでプロビジョニングするには：
+    Linux仮想マシンにPostgresqlをインストールするには、次のリンクを使用してください：[Postgresqlインストール](https://www.postgresql.org/download/linux/)
 
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
 
-    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+    注意：`psql`の前に`sudo -u postgres`を追加して、パーミッションエラーを避ける必要があるかもしれません。
 
-    **Option 2:** If you have docker installed:
-    Running Docker on WSL adds an extra layer of complexity.
-    Only use this option if you are comfortable with the extra steps involved, including turning on [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
+    **オプション2：** dockerをインストールしている場合：
+    WSLでDockerを実行すると、手順が少し複雑になります。
+    追加の手順を含む[Docker Desktop WSL2](https://docs.docker.com/desktop/wsl)の有効化などの追加の手順に精通している場合にのみこのオプションを使用してください。
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 </Tabs>
 
-You can now access the database at [localhost:5432](localhost:5432), with user `postgres` and password `postgres` .
+データベースに[localhost:5432](localhost:5432)でアクセスできるようになりました。ユーザーは`postgres`、パスワードは`postgres`です。
 
-## Step 4: Set up a Redis Database (cache)
+## ステップ4：Redisデータベース（キャッシュ）をセットアップ
 
-Twenty requires a redis cache to provide the best performance
+Twentyは、最良のパフォーマンスを提供するためにredisキャッシュを必要とします。
 
 <Tabs>
   <Tab title="Linux">
-    **Option 1:** To provision your Redis locally:
-    Use the following link to install Redis on your Linux machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+    **オプション1：** Redisをローカルでプロビジョニングするには：
+    LinuxマシンにRedisをインストールするには、次のリンクを使用してください：[Redisインストール](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 
-    **Option 2:** If you have docker installed:
+    **オプション2：** dockerをインストールしている場合：
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
   <Tab title="Mac OS">
-    **Option 1 (preferred):** To provision your Redis locally with `brew`:
+    **オプション1（推奨）：** `brew`でredisをローカルプロビジョニングするには：
 
     ```bash
     brew install redis
     ```
 
-    Start your redis server:
+    Redisサーバーを開始します：
     `brew services start redis`
 
-    **Option 2:** If you have docker installed:
+    **オプション2：** dockerをインストールしている場合：
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
-  <Tab title="Windows (WSL)">
-    **Option 1:** To provision your Redis locally:
-    Use the following link to install Redis on your Linux virtual machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+  <Tab title="Windows（WSL）">
+    **オプション1：** Redisをローカルでプロビジョニングするには：
+    Linux仮想マシンにRedisをインストールするには、次のリンクを使用してください：[Redisインストール](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 
-    **Option 2:** If you have docker installed:
+    **オプション2：** dockerをインストールしている場合：
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 </Tabs>
 
-If you need a Client GUI, we recommend [redis insight](https://redis.io/insight/) (free version available)
+クライアントGUIが必要な場合は、[redis insight](https://redis.io/insight/)（無料版利用可能）をお勧めします。
 
-## Step 5: Setup environment variables
+## ステップ5：環境変数をセットアップします
 
-Use environment variables or `.env` files to configure your project. More info [here](/l/ja/developers/self-host/capabilities/setup)
+環境変数や`.env`ファイルを使ってプロジェクトを設定します。 詳細は[こちら](https://docs.twenty.com/l/ja/developers/self-hosting/setup)。 詳細は[こちら](/l/ja/developers/self-host/capabilities/setup)。
 
-Copy the `.env.example` files in `/front` and `/server`:
+`/front`と`/server`内の`.env.example`ファイルをコピーします：
 
 ```bash
 cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
@@ -260,48 +267,48 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/ja/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+  **マルチワークスペースモード:** デフォルトでは、Twenty は単一ワークスペースモードで動作し、ワークスペースは 1 つだけ作成できます。 マルチワークスペース対応を有効にするには（サブドメインベースの機能のテストに有用）、サーバーの `.env` ファイルで `IS_MULTIWORKSPACE_ENABLED=true` を設定してください。 詳細は[マルチワークスペースモード](/l/ja/developers/self-host/capabilities/setup#multi-workspace-mode)を参照してください。
 </Info>
 
-## Step 6: Installing dependencies
+## ステップ6：依存関係をインストールします
 
-To build Twenty server and seed some data into your database, run the following command:
+Twentyサーバーを構築し、データベースにデータをシードするには、以下のコマンドを実行します：
 
 ```bash
 yarn
 ```
 
-Note that `npm` or `pnpm` won't work
+`npm`または`pnpm`は使えません
 
-## Step 7: Running the project
+## ステップ7：プロジェクトを実行する
 
 <Tabs>
   <Tab title="Linux">
-    Depending on your Linux distribution, Redis server might be started automatically.
-    If not, check the [Redis installation guide](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) for your distro.
+    Linuxディストリビューションによっては、Redisサーバーが自動的に開始されるかもしれません。
+    そうでない場合は、[Redisインストールガイド](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)を参照し、お使いのディストリビューションに合わせて確認してください。
   </Tab>
 
   <Tab title="Mac OS">
-    Redis should already be running. If not, run:
+    Redisはすでに稼働しているはずです。 稼働していなかった場合は、以下を実行してください：
 
     ```bash
     brew services start redis
     ```
   </Tab>
 
-  <Tab title="Windows (WSL)">
-    Depending on your Linux distribution, Redis server might be started automatically.
-    If not, check the [Redis installation guide](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) for your distro.
+  <Tab title="Windows（WSL）">
+    Linuxディストリビューションによっては、Redisサーバーが自動的に開始されるかもしれません。
+    そうでない場合は、[Redisインストールガイド](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)を参照し、お使いのディストリビューションに合わせて確認してください。
   </Tab>
 </Tabs>
 
-Set up your database with the following command:
+次のコマンドでデータベースをセットアップします:
 
 ```bash
 npx nx database:reset twenty-server
 ```
 
-Start the server, the worker and the frontend services:
+サーバー、ワーカー、フロントエンドサービスを開始します:
 
 ```bash
 npx nx start twenty-server
@@ -309,25 +316,25 @@ npx nx worker twenty-server
 npx nx start twenty-front
 ```
 
-Alternatively, you can start all services at once:
+または、すべてのサービスを一度に開始することができます:
 
 ```bash
 npx nx start
 ```
 
-## Step 8: Use Twenty
+## ステップ 8: Twentyを使用する
 
-**Frontend**
+**フロントエンド**
 
-Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001).
-You can log in using the default demo account: `tim@apple.dev` (password: `tim@apple.dev`)
+Twentyのフロントエンドは[http://localhost:3001](http://localhost:3001)で稼働しています。
+デフォルトのデモアカウントを使用してログインできます: `tim@apple.dev` (パスワード: `tim@apple.dev`)
 
-**Backend**
+**バックエンド**
 
-* Twenty's server will be up and running at [http://localhost:3000](http://localhost:3000)
-* The GraphQL API can be accessed at [http://localhost:3000/graphql](http://localhost:3000/graphql)
-* The REST API can be reached at [http://localhost:3000/rest](http://localhost:3000/rest)
+* Twentyのサーバーは[http://localhost:3000](http://localhost:3000)で稼働しています
+* GraphQL API は [http://localhost:3000/graphql](http://localhost:3000/graphql) でアクセスできます
+* REST API は [http://localhost:3000/rest](http://localhost:3000/rest) でアクセスできます
 
-## Troubleshooting
+## トラブルシューティング
 
-If you encounter any problem, check [Troubleshooting](/l/ja/developers/self-host/capabilities/troubleshooting) for solutions.
+問題が発生した場合は、[トラブルシューティング](/l/ja/developers/self-host/capabilities/troubleshooting)を確認して解決策を見つけてください。
