@@ -48,6 +48,10 @@ export class AppDevCommand {
   }
 
   private async checkServer(): Promise<void> {
+    if (process.env.TWENTY_SKIP_SERVER_CHECK === 'true') {
+      return;
+    }
+
     const isAuthenticated = await this.apiService.validateAuth();
 
     if (!isAuthenticated) {
