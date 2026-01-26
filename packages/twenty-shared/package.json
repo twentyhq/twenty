@@ -36,6 +36,30 @@
     "transliteration": "^2.3.5",
     "zod": "^4.1.11"
   },
+  "peerDependencies": {
+    "@quilted/threads": "*",
+    "@remote-dom/core": "*",
+    "@remote-dom/react": "*",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@quilted/threads": {
+      "optional": true
+    },
+    "@remote-dom/core": {
+      "optional": true
+    },
+    "@remote-dom/react": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

@@ -1606,7 +1606,7 @@ export type FrontComponent = {
 
 export type FrontComponentCode = {
   __typename?: 'FrontComponentCode';
-  sourceCode: Scalars['String'];
+  componentCode: Scalars['String'];
 };
 
 export type FrontComponentConfiguration = {

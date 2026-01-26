@@ -1,5 +1,10 @@
-import { type HostAPI } from '@/front-component/remote/types/HostApi';
-import { type SandboxAPI } from '@/front-component/remote/types/SandboxApi';
+// Must import polyfill FIRST to provide HTMLElement and other DOM globals in the worker
+import '@remote-dom/core/polyfill';
+import '@remote-dom/react/polyfill';
+
+// Import remote elements to register custom elements
+import '../generated/elements';
+
 import { ThreadWebWorker } from '@quilted/threads';
 import {
   BatchingRemoteConnection,
@@ -7,6 +12,8 @@ import {
   type RemoteRootElement,
 } from '@remote-dom/core/elements';
 import { createRoot } from 'react-dom/client';
+import { type HostAPI } from '../../types/HostApi';
+import { type SandboxAPI } from '../../types/SandboxApi';
 
 ThreadWebWorker.self.export<SandboxAPI>({
   render: async (connection: RemoteConnection, api: HostAPI) => {
@@ -15,6 +22,6 @@ ThreadWebWorker.self.export<SandboxAPI>({
     root.connect(batchedConnection);
     document.body.append(root);
 
-    createRoot(root).render(api.componentToRender);
+    createRoot(root).render(api.componentCode);
   },
 });

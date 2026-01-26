@@ -1639,7 +1639,7 @@ export type FrontComponent = {
 
 export type FrontComponentCode = {
   __typename?: 'FrontComponentCode';
-  sourceCode: Scalars['String'];
+  componentCode: Scalars['String'];
 };
 
 export type FrontComponentConfiguration = {
@@ -6116,7 +6116,7 @@ export type GetFrontComponentCodeQueryVariables = Exact<{
 }>;
 
 
-export type GetFrontComponentCodeQuery = { __typename?: 'Query', getFrontComponentCode: { __typename?: 'FrontComponentCode', sourceCode: string } };
+export type GetFrontComponentCodeQuery = { __typename?: 'Query', getFrontComponentCode: { __typename?: 'FrontComponentCode', componentCode: string } };
 
 export type BarChartDataQueryVariables = Exact<{
   input: BarChartDataInput;
@@ -10719,7 +10719,7 @@ export type SkipSyncEmailOnboardingStepMutationOptions = Apollo.BaseMutationOpti
 export const GetFrontComponentCodeDocument = gql`
     query GetFrontComponentCode($id: UUID!) {
   getFrontComponentCode(id: $id) {
-    sourceCode
+    componentCode
   }
 }
     `;

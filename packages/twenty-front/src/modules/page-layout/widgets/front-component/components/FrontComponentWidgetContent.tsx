@@ -25,15 +25,15 @@ export const FrontComponentWidgetContent = ({
     return <WidgetSkeletonLoader />;
   }
 
-  const sourceCode = data?.getFrontComponentCode?.sourceCode;
+  const componentCode = data?.getFrontComponentCode?.componentCode;
 
-  if (isDefined(error) || hasError || !isDefined(sourceCode)) {
+  if (isDefined(error) || hasError || !isDefined(componentCode)) {
     return <PageLayoutWidgetNoDataDisplay />;
   }
 
   return (
     <FrontComponentContent
-      componentToRender={<div>FrontComponentContent</div>}
+      componentCode={componentCode}
       setHasError={setHasError}
     />
   );

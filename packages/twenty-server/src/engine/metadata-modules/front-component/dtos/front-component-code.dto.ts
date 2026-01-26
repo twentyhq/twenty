@@ -7,5 +7,5 @@ export class FrontComponentCodeDTO {
   @IsString()
   @IsNotEmpty()
   @Field()
-  sourceCode: string;
+  componentCode: string;
 }

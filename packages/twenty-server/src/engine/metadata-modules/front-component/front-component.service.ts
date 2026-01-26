@@ -241,8 +241,8 @@ export class FrontComponentService {
     _workspaceId: string,
   ): Promise<FrontComponentCodeDTO> {
     // TODO: get the source code from the front component here, we will implement a mock version for now
-    const sourceCode = '';
+    const componentCode = '<div>Hello World</div>';
 
-    return { sourceCode };
+    return { componentCode };
   }
 }

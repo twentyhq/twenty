@@ -1,14 +1,15 @@
-import { FrontComponentWorkerEffect } from '@/front-component/remote/components/FrontComponentWorkerEffect';
+import { componentRegistry } from '../generated';
+import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
 import { RemoteReceiver, RemoteRootRenderer } from '@remote-dom/react/host';
 import React, { useMemo } from 'react';
 
 type FrontComponentContentProps = {
-  componentToRender: React.ReactNode;
+  componentCode: string;
   setHasError: (hasError: boolean) => void;
 };
 
 export const FrontComponentContent = ({
-  componentToRender,
+  componentCode,
   setHasError,
 }: FrontComponentContentProps) => {
   const receiver = useMemo(() => new RemoteReceiver(), []);
@@ -16,12 +17,12 @@ export const FrontComponentContent = ({
   return (
     <>
       <FrontComponentWorkerEffect
-        workerUrl={new URL('./front-component.worker.ts', import.meta.url)}
-        componentToRender={componentToRender}
+        workerUrl={new URL('../../remote/worker/worker.ts', import.meta.url)}
+        componentCode={componentCode}
         receiver={receiver}
         onError={() => setHasError(true)}
       />
-      <RemoteRootRenderer receiver={receiver} components={new Map()} />
+      <RemoteRootRenderer receiver={receiver} components={componentRegistry} />
     </>
   );
 };
