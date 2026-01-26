@@ -1,122 +1,122 @@
 ---
-title: Fields
-description: Understand the role of fields and how to manage them.
+title: Campos
+description: Comprenda el papel de los campos y cómo gestionarlos.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Fields
+## Acerca de los Campos
 
-Fields are like columns in a spreadsheet. They store different types of data like text, numbers, or dates. Fields can be standard (built-in) or custom (the ones you create).
+Los campos son como columnas en una hoja de cálculo. Almacenan diferentes tipos de datos como texto, números o fechas. Los campos pueden ser estándar (integrados) o personalizados (los que usted crea).
 
-### Standard Fields
+### Campos Estándar
 
-Standard fields come built-in with Twenty to handle common business needs.
+Los campos estándar vienen integrados con Twenty para cubrir necesidades empresariales comunes.
 
-For example, `First Name` and `Last Name` are standard fields in the `People` object. They store text data for individual names.
+Por ejemplo, `Nombre` y `Apellido` son campos estándar en el objeto `Personas`. Almacenan datos de texto para nombres individuales.
 
-You cannot delete standard fields, but you can deactivate them if you don't need them.
+No puede eliminar campos estándar, pero puede desactivarlos si no los necesita.
 
-You can also customize the options of the standard `SELECT` type fields, for example the options for the `Stage` on Opportunities.
+También puede personalizar las opciones de los campos estándar de tipo `SELECT`, por ejemplo, las opciones para la `Etapa` en Oportunidades.
 
 <img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}} />
 
-### Custom Fields
+### Campos Personalizados
 
-Custom fields can be added to any object. You can store text, numbers, dates, dropdown selections, and more. Use custom fields to track information that's specific to your business.
+Se pueden añadir campos personalizados a cualquier objeto. Puede almacenar texto, números, fechas, selecciones desplegables y más. Utilice campos personalizados para rastrear información específica de su negocio.
 
-For instance, a custom field for SpaceX could be `Rocket Active Status`, indicating if a rocket is operational.
+Por ejemplo, un campo personalizado para SpaceX podría ser `Estado Activo del Cohete`, indicando si un cohete está operativo.
 
 <img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}} />
 
-## Field Types
+## Tipos de campo
 
-Twenty supports various field types:
+Twenty admite varios tipos de campo:
 
-| Type         | Description                                                       | Example            |
-| ------------ | ----------------------------------------------------------------- | ------------------ |
-| Address      | Structured address with street, city, state, country, postal code | Office Address     |
-| Array        | List of text values                                               | Tags               |
-| Boolean      | True/false checkbox                                               | Is Active          |
-| Currency     | Monetary value with currency code                                 | Deal Amount (USD)  |
-| Date         | Date values                                                       | Close Date         |
-| Date & Time  | Date with time                                                    | Meeting Time       |
-| Domain       | Website domain (used for Companies)                               | acme.com           |
-| Email        | Email addresses (with primary + additional)                       | Contact Email      |
-| JSON         | Structured JSON data                                              | Custom metadata    |
-| Links        | URLs with labels (primary + secondary)                            | Website, LinkedIn  |
-| Long Text    | Multi-line text                                                   | Description, Notes |
-| Multi-Select | Multiple choices from a predefined list                           | Tags, Categories   |
-| Number       | Numeric values (integers or decimals)                             | Quantity, Score    |
-| Phone        | Phone numbers with country code                                   | Work Phone         |
-| Rating       | Star rating (1-5)                                                 | Priority, Score    |
-| Relation     | Links to records in other objects                                 | Company → People   |
-| Select       | Single choice from a predefined list                              | Stage, Status      |
-| Text         | Single line of text                                               | Name, Title        |
+| Tipo               | Descripción                                                           | Ejemplo                         |
+| ------------------ | --------------------------------------------------------------------- | ------------------------------- |
+| Dirección          | Dirección estructurada con calle, ciudad, estado, país, código postal | Dirección de la oficina         |
+| Array              | Lista de valores de texto                                             | Etiquetas                       |
+| Booleano           | Casilla de verificación verdadero/falso                               | Activo                          |
+| Moneda             | Valor monetario con código de moneda                                  | Importe del acuerdo (USD)       |
+| Fecha              | Valores de fecha                                                      | Fecha de cierre                 |
+| Fecha y hora       | Fecha con hora                                                        | Hora de la reunión              |
+| Dominio            | Dominio del sitio web (usado para Empresas)                           | acme.com                        |
+| Correo electrónico | Direcciones de correo electrónico (con principal + adicionales)       | Correo electrónico del contacto |
+| JSON               | Datos JSON estructurados                                              | Metadatos personalizados        |
+| Enlaces            | URLs con etiquetas (principal + secundaria)                           | Sitio web, LinkedIn             |
+| Texto largo        | Texto multilínea                                                      | Descripción, notas              |
+| Selección múltiple | Varias opciones de una lista predefinida                              | Etiquetas, categorías           |
+| Número             | Valores numéricos (enteros o decimales)                               | Cantidad, puntuación            |
+| Teléfono           | Números de teléfono con código de país                                | Teléfono del trabajo            |
+| Valoración         | Valoración por estrellas (1-5)                                        | Prioridad, puntuación           |
+| Relación           | Enlaces a registros en otros objetos                                  | Empresa → Personas              |
+| Selección          | Una sola opción de una lista predefinida                              | Etapa, estado                   |
+| Texto              | Una sola línea de texto                                               | Nombre, título                  |
 
-## Create a Custom Field
+## Crear un Campo Personalizado
 
-To add a custom field to any object, follow these steps:
+Para agregar un campo personalizado a cualquier objeto, siga estos pasos:
 
-1. Go to `Settings` in the left sidebar.
-2. Go to `Data Model`, then select the object you wish to customize.
-3. Proceed by clicking on `Add Field`.
-4. Choose a field name and type that suits your requirements. Consider adding a field description for better understanding.
+1. Vaya a `Configuración` en la barra lateral izquierda.
+2. Vaya a `Modelo de Datos`, luego seleccione el objeto que desea personalizar.
+3. Proceda haciendo clic en `Agregar Campo`.
+4. Elija un nombre de campo y tipo que se adapten a sus requisitos. Considere agregar una descripción de campo para una mejor comprensión.
 
-Your newly created field is now available within the application's fields. To display it on a specific view, click on the options menu, then select `Fields`.
+Su nuevo campo creado ahora está disponible dentro de los campos de la aplicación. Para mostrarlo en una vista específica, haga clic en el menú de opciones, luego seleccione `Campos`.
 
-<VimeoEmbed videoId="927628219" title="Video demonstration" />
+<VimeoEmbed videoId="927628219" title="Demostración en video" />
 
-**Quick way:** Click the **+** button at the top right of any object table, then select `Customize fields`. This takes you directly to the Data Model settings.
+**Forma rápida:** Haga clic en el botón **+** en la esquina superior derecha de cualquier tabla de objetos, luego seleccione `Personalizar campos`. Esto lo lleva directamente a la configuración del Modelo de Datos.
 
 <img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}} />
 
-## Deactivate a Field
+## Desactivar un campo
 
-You can deactivate a field to hide it from the app without losing your data. Think of it as hiding the field rather than deleting it.
+Puede desactivar un campo para ocultarlo de la aplicación sin perder sus datos. Piense en ello como ocultar el campo en lugar de eliminarlo.
 
-Here's how you can do it:
+Así es como puede hacerlo:
 
-1. Find the field you want to deactivate in your object settings.
+1. Encuentre el campo que desea desactivar en la configuración de su objeto.
 
-2. Click the three dots `⋮` next to the field to open the menu.
+2. Haga clic en los tres puntos `⋮` junto al campo para abrir el menú.
 
-3. Select `Deactivate` from the dropdown.
+3. Seleccione `Desactivar` en el menú desplegable.
 
 <img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
 
-What happens when you deactivate a field?
+¿Qué ocurre cuando desactiva un campo?
 
-1. **In the app:** The field disappears and you can't add new values to it.
+1. **En la aplicación:** El campo desaparece y no puede añadir nuevos valores.
 
-2. **Existing relationships:** If it's a relation field, existing connections stay but you can't create new ones.
+2. **Relaciones existentes:** Si es un campo de relación, las conexiones existentes permanecen, pero no puede crear nuevas.
 
-3. **API access:** You can still access the field and its data through the API.
+3. **Acceso API:** Aún puede acceder al campo y sus datos a través de la API.
 
-You can reactivate Standard and Custom Fields or have the option to permanently delete them.
+Puede reactivar los Campos Estándar y Personalizados o tener la opción de eliminarlos permanentemente.
 
-## Make Fields Unique
+## Hacer Campos Únicos
 
-Make a field unique to ensure distinct records cannot have the same value. For example, email addresses are unique for each person.
+Haga un campo único para asegurar que registros distintos no puedan tener el mismo valor. Por ejemplo, las direcciones de correo electrónico son únicas para cada persona.
 
-If you get an error when setting uniqueness, check for duplicate values in your data (including deleted records).
+Si recibe un error al establecer la unicidad, verifique los valores duplicados en sus datos (incluso registros eliminados).
 
-## Field Configuration Best Practices
+## Mejores Prácticas de Configuración de Campos
 
-### Naming Conventions and Limitations
+### Convenciones y Limitaciones de Nombres
 
-* **Singular and plural named must be distinct**: Our GraphQL API needs distinct names for mutations
-* **Protected field names**: some names are reserved for system usage (e.g., `Type`, `Application`)
+* **Los nombres singulares y plurales deben ser distintos**: Nuestra API GraphQL necesita nombres distintos para mutaciones
+* **Nombres de campos protegidos**: algunos nombres están reservados para uso del sistema (p. ej., `Type`, `Application`)
 
-### Currency and Phone Fields
+### Campos de Moneda y Teléfono
 
-* **Default currency**: can be configured via the data model
-* **Default country codes**: can be configured for phone fields via the data model
+* **Moneda predeterminada:** se puede configurar a través del modelo de datos
+* **Códigos de país predeterminados:** se pueden configurar para campos de teléfono a través del modelo de datos
 
-### Select Fields
+### Campos de Selección
 
-* **A default option can be selected** for each Select field
+* **Se puede seleccionar una opción predeterminada** para cada campo de Selección
 
-### Record Text Fields
+### Campos de Texto del Registro
 
-* **Each object has one main display field**: This field appears in the leftmost column and represents the record when linked to other objects. It must be a text field. For example, People uses `Name` as the main field, so when you link a person to a company, you'll see their name in the company's view.
+* **Cada objeto tiene un campo principal de visualización**: Este campo aparece en la columna más a la izquierda y representa el registro cuando se vincula a otros objetos. Debe ser un campo de texto. Por ejemplo, las Personas utilizan `Nombre` como el campo principal, por lo que cuando vincula una persona a una empresa, verá su nombre en la vista de la empresa.

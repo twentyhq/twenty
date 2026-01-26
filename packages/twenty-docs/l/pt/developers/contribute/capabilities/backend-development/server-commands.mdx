@@ -1,19 +1,19 @@
 ---
-title: Backend Commands
+title: Comandos de Backend
 ---
 
-## Useful commands
+## Comandos Úteis
 
-These commands should be executed from packages/twenty-server folder.
+Esses comandos devem ser executados a partir da pasta packages/twenty-server.
 From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
 
-### First time setup
+### Configuração inicial
 
 ```
 npx nx database:reset twenty-server # setup the database with dev seeds
 ```
 
-### Starting the server
+### Iniciando o servidor
 
 ```
 npx nx run twenty-server:start
@@ -25,16 +25,16 @@ npx nx run twenty-server:start
 npx nx run twenty-server:lint # pass --fix to fix lint errors
 ```
 
-### Test
+### Teste
 
 ```
 npx nx run twenty-server:test:unit          # run unit tests
 npx nx run twenty-server:test:integration   # run integration tests
 ```
 
-Note: you can run `npx nx run twenty-server:test:integration:with-db-reset` in case you need to reset the database before running the integration tests.
+Nota: você pode executar `npx nx run twenty-server:test:integration:with-db-reset` caso precise redefinir o banco de dados antes de executar os testes de integração.
 
-### Resetting the database
+### Redefinindo o banco de dados
 
 If you want to reset and seed the database, you can run the following command:
 
@@ -42,9 +42,9 @@ If you want to reset and seed the database, you can run the following command:
 npx nx run twenty-server:database:reset
 ```
 
-### Migrations
+### Migrações
 
-#### For objects in Core/Metadata schemas (TypeORM)
+#### Para objetos nos esquemas Core/Metadata (TypeORM)
 
 ```bash
 npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
@@ -52,26 +52,25 @@ npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/mi
 
 #### For Workspace objects
 
-There are no migrations files, migration are generated automatically for each workspace,
-stored in the database, and applied with this command
+Não há arquivos de migração, as migrações são geradas automaticamente para cada espaço de trabalho, armazenadas no banco de dados e aplicadas com este comando
 
 ```bash
 npx nx run twenty-server:command workspace:sync-metadata -f
 ```
 
 <Warning>
-  This will drop the database and re-run the migrations and seed.
+  Isso excluirá o banco de dados e reexecutará as migrações e seeds.
 
-  Make sure to back up any data you want to keep before running this command.
+  Certifique-se de fazer backup de todos os dados que deseja manter antes de executar este comando.
 </Warning>
 
-## Tech Stack
+## Pilha de Tecnologias
 
-Twenty primarily uses NestJS for the backend.
+O Twenty usa principalmente NestJS para o backend.
 
-Prisma was the first ORM we used. But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. The project now uses TypeORM.
+Prisma foi o primeiro ORM que usamos. Mas para permitir que os usuários criem campos e objetos personalizados, um nível mais baixo fazia mais sentido, pois precisamos ter controle detalhado. O projeto agora usa TypeORM.
 
-Here's what the tech stack now looks like.
+Veja como a pilha de tecnologia se parece agora.
 
 **Core**
 
@@ -79,23 +78,23 @@ Here's what the tech stack now looks like.
 * [TypeORM](https://typeorm.io/)
 * [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
 
-**Database**
+**Banco de Dados**
 
 * [Postgres](https://www.postgresql.org/)
 
 **Third-party integrations**
 
-* [Sentry](https://sentry.io/welcome/) for tracking bugs
+* [Sentry](https://sentry.io/welcome/) para rastreamento de bugs
 
-**Testing**
+**Testes**
 
 * [Jest](https://jestjs.io/)
 
-**Tooling**
+**Ferramentas**
 
 * [Yarn](https://yarnpkg.com/)
 * [ESLint](https://eslint.org/)
 
-**Development**
+**Desenvolvimento**
 
 * [AWS EKS](https://aws.amazon.com/eks/)

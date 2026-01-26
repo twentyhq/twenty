@@ -1,0 +1,275 @@
+---
+title: Configuración del gráfico
+description: Configura tus gráficos para mostrar los datos exactamente como los necesitas.
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## Acceder a la configuración del gráfico
+
+1. Haz clic en el botón **Edit** en la esquina superior derecha de tu panel
+
+<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="Modo de edición" />
+
+2. El panel entra en modo de edición
+3. Haz clic en cualquier widget para seleccionarlo
+4. El panel de configuración se abre a la derecha
+
+La configuración está organizada en secciones:
+
+* **Datos**: qué datos obtener y cómo filtrarlos
+* **Eje X**: cómo agrupar y ordenar categorías (gráficos de barras/líneas)
+* **Eje Y**: qué medir y cómo mostrarlo (gráficos de barras/líneas)
+* **Estilo**: colores, etiquetas y opciones visuales
+
+<Note>
+  Algunas configuraciones solo aparecen cuando se configuran otras. Por ejemplo, **Granularidad de fecha** solo aparece cuando seleccionas un campo de fecha.
+</Note>
+
+---
+
+## Configuración de datos
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="database" />Origen </span>
+
+Elige de qué objeto extraer datos.
+
+1. Haz clic en **Source**
+2. Selecciona un objeto (Oportunidades, Personas, Empresas, etc.)
+
+Todos tus objetos estándar y personalizados están disponibles. Cambiar el origen restablece otras configuraciones, ya que las opciones de campo dependen del objeto seleccionado.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-source.png" alt="Fuente" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />Filtro </span>
+
+Limita qué registros se incluyen en el gráfico.
+
+1. Haz clic en **Filtrar**
+2. Se abre el generador de filtros
+3. Haz clic en **+ Add filter**
+4. Selecciona un campo, una condición y un valor
+5. Agrega más filtros según sea necesario
+
+Los filtros funcionan igual que en las vistas de tabla. Úsalos para enfocarte en segmentos específicos de tus datos.
+
+**Ejemplo**: filtra oportunidades donde Stage sea "Won" para mostrar solo los acuerdos cerrados.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png" alt="Filtro" />
+
+<Tip>
+  Para campos de fecha, prueba **Is relative** para crear filtros dinámicos como "Past 7 days" o "This month" que se actualizan automáticamente.
+</Tip>
+
+<Tip>
+  Se admiten filtros avanzados—agrega varias reglas de filtro y combínalas con lógica **And** u **Or**.
+</Tip>
+
+---
+
+## Configuración del eje X
+
+Estas configuraciones controlan el eje horizontal de los gráficos de barras y líneas—normalmente cómo se agrupan tus datos en categorías.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-x" />Datos en pantalla </span>
+
+Selecciona el campo por el que agrupar tus datos. Esto determina las categorías que se muestran en el eje X.
+
+**Ejemplo**: selecciona "Stage" para ver los datos agrupados por etapa del pipeline, o "Created date" para ver los datos a lo largo del tiempo.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png" alt="Datos en pantalla" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Granularidad de fecha </span>
+
+Al agrupar por un campo de fecha, elige el período de tiempo para agrupar.
+
+| Opción                | Agrupa los datos por        | Salida de ejemplo                               |
+| --------------------- | --------------------------- | ----------------------------------------------- |
+| **Día**               | Cada día del calendario     | 1 ene, 2 ene, 3 ene...                          |
+| **Semana**            | Semanas del calendario      | Semana 1, Semana 2, Semana 3...                 |
+| **Mes**               | Meses del calendario        | enero, febrero, marzo...                        |
+| **Trimestre**         | Trimestres fiscales         | Q1, Q2, Q3, Q4                                  |
+| **Año**               | Años del calendario         | 2023, 2024, 2025                                |
+| **Día de la semana**  | Día de la semana (agregado) | lunes, martes... (todos los lunes combinados)   |
+| **Mes del año**       | Mes (agregado)              | enero, febrero... (todos los eneros combinados) |
+| **Trimestre del año** | Trimestre (agregado)        | Q1, Q2, Q3, Q4 (todos los Q1 combinados)        |
+
+Las opciones "de semana/año" agregan a lo largo de todo el tiempo. Usa **Día de la semana** para ver qué día suele obtener más acuerdos. Usa **Mes** para ver tendencias mes a mes.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Ordenar por </span>
+
+Controla el orden de las categorías en el eje X.
+
+* **Posición** – usa el orden definido en la configuración de tu campo Select
+* **Alfabético** – de la A a la Z (o cronológico para fechas)
+* **Por valor** – ordenado por la métrica (el mayor o el menor primero)
+* **Manual** – arrastra para definir tu propio orden
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="Ordenar por" />
+
+**Consejo**: para las etapas del pipeline, usa **Posición** para mostrar las etapas en el orden de tu proceso de ventas (Lead → Qualified → Proposal → Won).
+
+<Note>
+  Las opciones mostradas dependen de tu tipo de campo. Los campos Select tienen todas las opciones; los campos de fecha y texto muestran menos.
+</Note>
+
+<Tip>
+  Con el ordenamiento **Manual**, arrastra categorías para crear un orden personalizado—perfecto para destacar segmentos específicos o contar una historia con tus datos.
+</Tip>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />Omitir valores cero </span>
+
+Oculta categorías que tienen cero o no tienen datos.
+
+* **Activado**: las categorías sin registros se ocultan
+* **Desactivado**: se muestran todas las categorías, incluso si están vacías
+
+Úsalo para depurar gráficos con datos escasos.
+
+---
+
+## Configuración del eje Y
+
+Estas configuraciones controlan qué estás midiendo y cómo se muestra.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-y" />Datos en pantalla </span>
+
+Selecciona el campo y la operación para calcular tu métrica.
+
+* **Recuentos** – Contar todo, Contar vacíos, Contar no vacíos, Contar valores únicos
+* **Matemáticas** – Suma, Promedio, Mín, Máx (campos numéricos)
+* **Porcentajes** – Porcentaje de vacíos, Porcentaje de no vacíos
+
+Los campos booleanos agregan Contar verdadero/falso. Los gráficos agregados con campos de fecha muestran el más antiguo/el más reciente.
+
+**Ejemplo**: selecciona "Amount" con Suma para ver el valor total de acuerdos por categoría, o Contar todo para ver el número de acuerdos.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png" alt="Datos en pantalla" />
+
+<Note>
+  Las opciones mostradas dependen de tu campo y del tipo de gráfico. Si no ves una operación esperada, verifica tu tipo de campo.
+</Note>
+
+### Proporción
+
+Para campos Select, Multi-select o Boolean, puedes calcular el porcentaje de un valor específico.
+
+1. Selecciona un campo Select, Multi-select o Boolean
+2. Activa **Ratio**
+3. Elige la opción a medir
+
+**Ejemplo**: muestra los acuerdos "Won" como porcentaje del total de oportunidades. Si tienes 10 Won de un total de 50, el gráfico muestra 20%.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filters" />Agrupar por </span>
+
+Agrega una segunda dimensión para crear múltiples series (múltiples barras o líneas).
+
+1. Configura primero tu campo del eje X
+2. Haz clic en **Group by**
+3. Selecciona un segundo campo
+
+**Ejemplo**: agrupa acuerdos por Stage (eje X) Y por Owner (Group by) para ver, lado a lado, el desglose del pipeline de cada persona.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png" alt="Agrupar por" />
+
+Cuando Group by está configurado, verás varios colores en tu gráfico y aparece una leyenda.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Granularidad de fecha </span>
+
+Cuando Group by es un campo de fecha, elige el período de tiempo (las mismas opciones que el eje X).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Ordenar por </span>
+
+Cuando **Group by** está configurado, controla el orden de las series agrupadas (p. ej., qué barra de propietario aparece primero dentro de cada categoría).
+
+Las mismas opciones que el orden del eje X—Posición, Alfabético y Manual—excepto que **el orden basado en valores no está disponible** para el agrupamiento secundario.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="chart-bar-popular" />Acumulado </span>
+
+Muestra totales acumulados en lugar de valores individuales.
+
+* **Desactivado**: cada barra/punto muestra su propio valor
+* **Activado**: cada barra/punto muestra la suma de todos los valores anteriores más el suyo
+
+**Ejemplo**: enero = 10, febrero = 15
+
+* Acumulado desactivado: muestra 10 y 15
+* Acumulado activado: muestra 10 y 25 (10 + 15)
+
+Usa el acumulado para hacer seguimiento del progreso hacia un objetivo a lo largo del tiempo.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png" alt="Acumulado" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />Rango mínimo / <ChartIcon icon="math-max" />Rango máximo </span>
+
+Establece valores mínimos y máximos fijos para el eje Y.
+
+* Déjalo en blanco para el escalado automático
+* Ingresa un número para fijar el límite
+
+**Cuándo usarlo:**
+
+* Establece Min en 0 para comparaciones visuales precisas
+* Establece ambos para escalas consistentes en varios gráficos
+* Enfócate en un rango de valores específico configurando ambos
+
+---
+
+## Configuración de estilo
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="color-swatch" />Colores </span>
+
+Define la paleta de colores de tu gráfico. Elige entre una variedad de paletas de colores.
+
+<Note>
+  Al agrupar por un campo Select, el gráfico usa automáticamente los colores definidos para cada opción en la configuración de tu campo.
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />Nombre del eje </span>
+
+Elige qué etiquetas de eje mostrar: **Ninguna**, **Eje X**, **Eje Y** o **Ambos** (solo gráficos de barras y líneas).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="stack-2" />Barras apiladas / Líneas apiladas </span>
+
+Cuando Group by está configurado, elige cómo se muestran las múltiples series.
+
+* **Desactivado (Agrupadas)**: las series aparecen una al lado de la otra. Úsalo al comparar valores exactos entre grupos.
+* **Activado (Apiladas)**: las series se apilan una encima de otra. Úsalo al mostrar la composición—cómo las partes conforman un todo.
+
+**Ejemplo**: acuerdos por etapa, agrupados por propietario
+
+* Agrupadas: ve los números exactos de cada propietario uno al lado del otro
+* Apiladas: ve los acuerdos totales por etapa, con la contribución de cada propietario apilada
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />Etiquetas de datos </span>
+
+Muestra valores directamente en los elementos del gráfico (barras, puntos, porciones).
+
+* **Activado**: los valores aparecen en el gráfico
+* **Desactivado**: no se muestran valores (apariencia más limpia)
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />Leyenda </span>
+
+Muestra u oculta la leyenda (solo aparece cuando Group by está configurado).
+
+* **Activado**: la leyenda muestra qué representa cada color
+* **Desactivado**: no se muestra la leyenda
+
+<Tip>
+  **Pasa el cursor** sobre un elemento de la leyenda para resaltar ese grupo. **Haz clic** para ocultarlo temporalmente del gráfico.
+</Tip>
+
+---
+
+## Notas específicas del gráfico
+
+### Gráficos de pastel
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Cada porción representa** – define cómo se agrupan las porciones
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Ocultar categoría vacía** – eliminar porciones con valor cero
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Mostrar valor en el centro** – mostrar el valor agregado (suma, promedio, recuento, etc.)
+
+### Gráficos agregados
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Prefijo** – agrega texto antes del número (p. ej., `$`)
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Sufijo** – agrega texto después del número (p. ej., `%`)

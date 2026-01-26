@@ -1,72 +1,72 @@
 ---
-title: Uniqueness Constraints
-description: How Twenty enforces data uniqueness during import.
+title: 一意性の制約
+description: Twenty によるインポート時のデータ一意性の確保方法。
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Overview
+## 概要
 
-Twenty enforces uniqueness on certain fields to prevent duplicate records and ensure data integrity. Understanding these constraints is essential for successful imports.
+Twenty は、重複レコードを防ぎデータの整合性を確保するため、特定のフィールドに一意性を強制します。 これらの制約を理解することは、インポートを成功させるうえで不可欠です。
 
-## Default Unique Fields
+## デフォルトの一意のフィールド
 
-| Object             | Unique Fields          |
-| ------------------ | ---------------------- |
-| **People**         | `id`, `email`          |
-| **Companies**      | `id`, `domain`         |
-| **Custom objects** | `id` only (by default) |
+| オブジェクト         | 一意のフィールド       |
+| -------------- | -------------- |
+| **連絡先**        | `id`, `email`  |
+| **会社**         | `id`, `domain` |
+| **カスタムオブジェクト** | `id` のみ（デフォルト） |
 
-<Note>The `id` field is Twenty's internal identifier, auto-generated for each record. It uses UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>`id` フィールドは Twenty の内部識別子で、各レコードに対して自動生成されます。 UUID 形式を使用します（例: `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`）。</Note>
 
-## Custom Unique Fields
+## カスタムの一意フィールド
 
-You can define additional unique fields under **Settings → Data Model**:
+追加の一意フィールドは **設定 → データモデル** で定義できます:
 
-1. Go to **Settings → Data Model**
-2. Select the object
-3. Click on a field
-4. Enable **Unique** in field settings
+1. **設定 → データモデル** に移動します
+2. オブジェクトを選択する
+3. フィールドをクリックする
+4. フィールド設定で **Unique** を有効化する
 
-### Use Cases for Custom Unique Fields
+### カスタムの一意フィールドのユースケース
 
-* **External IDs**: Store IDs from other systems (Salesforce ID, HubSpot ID)
-* **Business identifiers**: Employee numbers, customer codes
-* **Alternative contact info**: LinkedIn profile, phone number
+* **外部 ID**: 他システムの ID を保存（Salesforce ID、HubSpot ID）
+* **ビジネス識別子**: 従業員番号、顧客コード
+* **代替連絡先情報**: LinkedIn プロフィール、電話番号
 
-<Note>The field name `id` is reserved for Twenty's internal ID. Use a different name like `externalId` or `legacyId` for external identifiers.</Note>
+<Note>フィールド名 `id` は Twenty の内部 ID 用に予約されています。 外部識別子には `externalId` や `legacyId` など別の名前を使用してください。</Note>
 
-## Import Behavior
+## インポート時の動作
 
-### Creating New Records
+### 新規レコードの作成
 
-If a unique field value doesn't exist, a new record is created.
+一意フィールドの値が存在しない場合は、新しいレコードが作成されます。
 
-### Updating Existing Records
+### 既存レコードの更新
 
-If a unique field value matches an existing record, that record is **updated** with the new data.
-<Warning>To **update existing records**, it is recommended to **only match one unique field**.</Warning>
+一意フィールドの値が既存レコードに一致する場合、そのレコードは新しいデータで**更新**されます。
+<Warning>**既存レコードを更新**する場合は、**一意フィールドを 1 つのみに限定して照合**することを推奨します。</Warning>
 
-### Soft-Deleted Records
+### ソフト削除済みレコード
 
 <Warning>
-  **Deleted records count toward uniqueness.**
+  **削除済みレコードは一意性の判定に含まれます。**
 
-  Soft-deleted records (visible under Command Menu → See deleted records) are included in uniqueness checks. If you import a record with the same unique value as a deleted record, the deleted record will be **restored** with the new data.
+  ソフト削除されたレコード（コマンドメニュー → 削除済みレコードを表示 で表示可能）は、一意性チェックに含まれます。 削除済みレコードと同じ一意の値を持つレコードをインポートすると、その削除済みレコードが新しいデータで**復元**されます。
 </Warning>
 
-## Duplicate Detection During Import
+## インポート時の重複検出
 
-During the validation phase:
+検証フェーズ中:
 
-* Duplicates within your file are highlighted in yellow
-* You can edit or remove duplicate rows from the UI before starting the import
+* ファイル内の重複は黄色でハイライト表示されます
+* インポートを開始する前に、UI から重複行を編集または削除できます
 
-<VimeoEmbed videoId="1145246326" title="Video demonstration" />
+<VimeoEmbed videoId="1145246326" title="デモ動画" />
 
-## Best Practices
+## ベストプラクティス
 
-1. **Remove duplicates** from your file before importing
-2. **Check for existing records** in Twenty before importing
-3. **Use external IDs** when migrating from other systems
-4. **Include unique fields** if you want to update existing records
+1. インポート前にファイルから**重複を削除**してください
+2. インポート前に Twenty で**既存レコードを確認**してください
+3. 他のシステムから移行する場合は、**外部 ID を使用**してください
+4. 既存レコードを更新したい場合は、**一意フィールドを含め**てください

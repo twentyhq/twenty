@@ -1,155 +1,155 @@
 ---
-title: Data Model FAQ
-description: Frequently asked questions about Twenty's data model.
+title: Modelo de Dados FAQ
+description: Perguntas frequentes sobre o modelo de dados do Twenty.
 ---
 
-## Object Management
+## Gestão de Objetos
 
 <AccordionGroup>
-  <Accordion title="Can I delete a custom object?">
-    Yes, custom objects can be deleted. You can also deactivate them first, which hides the object and its data from the interface while preserving the data.
+  <Accordion title="Posso excluir um objeto personalizado?">
+    Sim, objetos personalizados podem ser excluídos. Você também pode desativá-los primeiro, o que oculta o objeto e seus dados da interface, preservando os dados.
   </Accordion>
 
-  <Accordion title="Can I delete standard objects (People, Companies, etc.)?">
-    No, standard objects cannot be deleted. You can only deactivate them, which hides them from the interface but preserves the data.
+  <Accordion title="Posso excluir objetos padrão (Pessoas, Empresas, etc.)?">
+    Não, os objetos padrão não podem ser excluídos. Você só pode desativá-los, o que os oculta da interface, mas preserva os dados.
   </Accordion>
 
-  <Accordion title="How many custom objects can I create?">
-    You can create as many custom objects and fields as you need — the price doesn't change.
+  <Accordion title="Quantos objetos personalizados posso criar?">
+    Você pode criar quantos objetos e campos personalizados precisar — o preço não muda.
   </Accordion>
 
-  <Accordion title="Can I rename a standard object?">
-    You can rename the label of standard objects (People, Companies, Opportunities), but not their API names. The API names are fixed for consistency across all Twenty workspaces.
+  <Accordion title="Posso renomear um objeto padrão?">
+    Você pode renomear o rótulo dos objetos padrão (Pessoas, Empresas, Oportunidades), mas não seus nomes de API. Os nomes de API são fixos para manter a consistência em todos os espaços de trabalho do Twenty.
   </Accordion>
 
-  <Accordion title="Can I change an object's icon?">
-    Yes, you can change the icon for both standard and custom objects in **Settings → Data Model**.
+  <Accordion title="Posso alterar o ícone de um objeto?">
+    Sim, você pode alterar o ícone tanto de objetos padrão quanto personalizados em **Settings → Data Model**.
   </Accordion>
 
-  <Accordion title="Can I reorder objects in the left navigation bar?">
-    Not yet. Object ordering in the navigation is currently fixed, but this feature is planned for a future release.
+  <Accordion title="Posso reordenar objetos na barra de navegação esquerda?">
+    Ainda não. A ordenação de objetos na navegação é atualmente fixa, mas esse recurso está previsto para uma versão futura.
   </Accordion>
 
-  <Accordion title="Can I hide objects from the left navigation bar?">
-    All active objects appear in the navigation. You can deactivate objects you don't need under **Settings → Data Model**.
+  <Accordion title="Posso ocultar objetos da barra de navegação esquerda?">
+    Todos os objetos ativos aparecem na navegação. Você pode desativar objetos que não precisa em **Configurações → Modelo de Dados**.
   </Accordion>
 </AccordionGroup>
 
-## Field Capabilities
+## Capacidades de Campos
 
 <AccordionGroup>
-  <Accordion title="Can I change a field type after creation?">
-    No, field types cannot be changed after creation. If you need a different type, create a new field with the correct type, migrate your data, then deactivate the old field.
+  <Accordion title="Posso alterar o tipo de um campo após a criação?">
+    Não, os tipos de campo não podem ser alterados após a criação. Se você precisar de um tipo diferente, crie um novo campo com o tipo correto, migre seus dados e, em seguida, desative o campo antigo.
   </Accordion>
 
-  <Accordion title="Why do I need different singular and plural names?">
-    Our GraphQL API uses both forms for different operations:
+  <Accordion title="Por que preciso de nomes diferentes no singular e plural?">
+    Nossa API GraphQL usa ambas as formas para diferentes operações:
 
-    * `createPerson` (singular) for single record actions
-    * `createPeople` (plural) for bulk operations
+    * `createPerson` (singular) para ações de registro único
+    * `createPeople` (plural) para operações em massa
 
-    This creates limitations when singular and plural forms are the same, but it improves the developer experience.
+    Isto cria limitações quando as formas singular e plural são as mesmas, mas melhora a experiência do desenvolvedor.
   </Accordion>
 
-  <Accordion title="Why are some field names protected?">
-    Certain field names like `Type` or `Application` are reserved for system use. Choose alternative names like `Category` or `Classification` instead.
+  <Accordion title="Por que alguns nomes de campos são protegidos?">
+    Certos nomes de campos como `Tipo` ou `Aplicação` são reservados para uso do sistema. Escolha nomes alternativos como `Categoria` ou `Classificação`.
   </Accordion>
 
-  <Accordion title="What happens when I deactivate a field?">
-    * The field is hidden from the interface
-    * Existing data is preserved
-    * You can still access the field via API
-    * Existing relations remain but you can't create new ones
-    * You can reactivate the field later
+  <Accordion title="O que acontece quando eu desativo um campo?">
+    * O campo fica oculto na interface
+    * Os dados existentes são preservados
+    * Você ainda pode acessar o campo via API
+    * As relações existentes permanecem, mas você não pode criar novas
+    * Você pode reativar o campo mais tarde
   </Accordion>
 
-  <Accordion title="Can I make a field required?">
-    Currently, you cannot make custom fields required. All fields accept empty values. You can use workflows to enforce required fields by sending alerts or blocking actions when fields are empty.
+  <Accordion title="Posso tornar um campo obrigatório?">
+    Atualmente, não é possível tornar campos personalizados obrigatórios. Todos os campos aceitam valores vazios. Você pode usar fluxos de trabalho para impor campos obrigatórios, enviando alertas ou bloqueando ações quando os campos estiverem vazios.
   </Accordion>
 
-  <Accordion title="What's the difference between unique and required?">
-    * **Unique**: No two records can have the same value in this field
-    * **Required**: The field must have a value (not currently supported for custom fields)
+  <Accordion title="Qual é a diferença entre único e obrigatório?">
+    * **Único**: dois registros não podem ter o mesmo valor neste campo
+    * **Obrigatório**: o campo deve ter um valor (atualmente não é suportado para campos personalizados)
   </Accordion>
 
-  <Accordion title="Can I create formula fields?">
-    Formula fields are coming in **Q1 2026**. In the meantime, you can use workflows to calculate and update field values automatically.
+  <Accordion title="Posso criar campos de fórmula?">
+    Campos de fórmula estarão disponíveis em **Q1 2026**. Enquanto isso, você pode usar fluxos de trabalho para calcular e atualizar valores de campos automaticamente.
   </Accordion>
 
-  <Accordion title="Can I have nested fields in my objects?">
-    Nested fields are coming in **Q1 2026**. Currently, you can use workflows to bring field values from related objects. For example, to display a company's industry on a Person record, create a custom field on People and use a workflow to synchronize the value.
+  <Accordion title="Posso ter campos aninhados nos meus objetos?">
+    Campos aninhados estarão disponíveis em **Q1 2026**. Atualmente, você pode usar fluxos de trabalho para trazer valores de campos de objetos relacionados. Por exemplo, para exibir a indústria de uma empresa em um registro de Pessoa, crie um campo personalizado em Pessoas e use um fluxo de trabalho para sincronizar o valor.
   </Accordion>
 
-  <Accordion title="Can I reorder fields in objects?">
-    Field reordering will be available with custom layouts in **Q4 2025**. Currently, fields appear in alphabetical order.
+  <Accordion title="Posso reordenar campos em objetos?">
+    A reordenação de campos estará disponível com layouts personalizados em **Q4 2025**. Atualmente, os campos aparecem em ordem alfabética.
   </Accordion>
 </AccordionGroup>
 
-## Relations
+## Relações
 
 <AccordionGroup>
-  <Accordion title="Can I have a relation pointing to the same object?">
-    Yes! Self-referencing relations are supported and recommended for use cases like account hierarchies. For example, create a relation from Companies to Companies to track parent/child accounts.
+  <Accordion title="Posso ter uma relação apontando para o mesmo objeto?">
+    Sim! Relações autorreferenciadas são suportadas e recomendadas para casos de uso como hierarquias de contas. Por exemplo, crie uma relação de Empresas para Empresas para acompanhar contas pai/filho.
   </Accordion>
 
-  <Accordion title="Can I create many-to-many relationships?">
-    Many-to-many relationships are coming in **H1 2026**. Currently, create an intermediate object with two one-to-many relationships as a workaround.
+  <Accordion title="Posso criar relacionamentos muitos-para-muitos?">
+    Relacionamentos muitos-para-muitos estarão disponíveis no **H1 2026**. Atualmente, crie um objeto intermediário com dois relacionamentos de um-para-muitos como uma solução alternativa.
 
-    For example, to link People and Projects (many-to-many), create a "Project Assignments" object with:
+    Por exemplo, para vincular Pessoas e Projetos (muitos-para-muitos), crie um objeto "Atribuições de Projeto" com:
 
-    * A relation to People (many assignments → one person)
-    * A relation to Projects (many assignments → one project)
+    * Uma relação com Pessoas (muitas atribuições → uma pessoa)
+    * Uma relação com Projetos (muitas atribuições → um projeto)
   </Accordion>
 
-  <Accordion title="What are relations to multiple object types (Morph relationships)?">
-    These allow one object to relate to multiple different object types through a single field. For example, Notes can be attached to People AND Companies AND Opportunities simultaneously.
+  <Accordion title="O que são relações com múltiplos tipos de objeto (relações Morph)?">
+    Essas relações permitem que um objeto se relacione com vários tipos de objeto diferentes por meio de um único campo. Por exemplo, Notas podem ser anexadas a Pessoas E Empresas E Oportunidades simultaneamente.
 
-    Each Note links to one Person, one Company, and one Opportunity at the same time.
+    Cada Nota está vinculada a uma Pessoa, uma Empresa e uma Oportunidade ao mesmo tempo.
 
-    Learn more in [Relation Fields](/l/pt/user-guide/data-model/capabilities/relation-fields).
+    Saiba mais em [Campos de relação](/l/pt/user-guide/data-model/capabilities/relation-fields).
   </Accordion>
 
-  <Accordion title="Can I have multiple relations between the same objects?">
-    Yes, you can create multiple relations between the same two objects. For example, a Company could have both a "Primary Contact" and "Billing Contact" relation to People.
+  <Accordion title="Posso ter várias relações entre os mesmos objetos?">
+    Sim, você pode criar várias relações entre os mesmos dois objetos. Por exemplo, uma Empresa poderia ter tanto uma relação "Contato Principal" quanto "Contato de Cobrança" com Pessoas.
   </Accordion>
 
-  <Accordion title="What happens to relations when I delete a record?">
-    When you delete a record, the relation link is removed from the related records. The related records themselves are not deleted.
+  <Accordion title="O que acontece com as relações quando eu excluo um registro?">
+    Quando você exclui um registro, o vínculo da relação é removido dos registros relacionados. Os próprios registros relacionados não são excluídos.
   </Accordion>
 
-  <Accordion title="Can I create circular relations?">
-    While technically possible, circular relations (A → B → C → A) should be avoided as they can cause confusion and potential performance issues.
+  <Accordion title="Posso criar relações circulares?">
+    Apesar de tecnicamente possíveis, relações circulares (A → B → C → A) devem ser evitadas, pois podem causar confusão e possíveis problemas de desempenho.
   </Accordion>
 </AccordionGroup>
 
-## Access and Permissions
+## Acesso e Permissões
 
 <AccordionGroup>
-  <Accordion title="Where can I see and edit my data model?">
-    Go to **Settings → Data Model** to view and edit all your objects and fields.
+  <Accordion title="Onde posso ver e editar meu modelo de dados?">
+    Acesse **Settings → Data Model** para visualizar e editar todos os seus objetos e campos.
   </Accordion>
 
-  <Accordion title="Why can't I see the Data Model under Settings?">
-    Reach out to your workspace administrator. Data model access is usually restricted to administrators only.
+  <Accordion title="Por que não posso ver o Modelo de Dados em Configurações?">
+    Entre em contato com o administrador do seu espaço de trabalho. O acesso ao modelo de dados é geralmente restrito apenas aos administradores.
   </Accordion>
 </AccordionGroup>
 
-## Data Management
+## Gerenciamento de dados
 
 <AccordionGroup>
-  <Accordion title="Is there a limit to how many records I can have?">
-    There's no hard limit on record counts. However, very large datasets may impact performance in some views. Use filters and views to manage large datasets effectively.
+  <Accordion title="Existe um limite para quantos registros posso ter?">
+    Não há um limite rígido para a quantidade de registros. No entanto, conjuntos de dados muito grandes podem impactar o desempenho em algumas visualizações. Use filtros e visualizações para gerenciar grandes conjuntos de dados com eficiência.
   </Accordion>
 
-  <Accordion title="Can I import data into custom objects?">
-    Yes, you can import CSV data into any object, including custom objects. The import process supports field mapping for custom fields. See [How to Prepare Your CSV Files](/l/pt/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  <Accordion title="Posso importar dados para objetos personalizados?">
+    Sim, você pode importar dados CSV para qualquer objeto, incluindo objetos personalizados. O processo de importação oferece suporte ao mapeamento de campos para campos personalizados. Consulte [Como preparar seus arquivos CSV](/l/pt/user-guide/data-migration/how-tos/prepare-your-csv-files).
   </Accordion>
 
-  <Accordion title="Can I export my data model configuration?">
-    Currently, there's no built-in export for data model configuration. Contact support if you need to migrate your data model between workspaces.
+  <Accordion title="Posso exportar minha configuração do modelo de dados?">
+    Atualmente, não há exportação nativa para a configuração do modelo de dados. Entre em contato com o suporte se você precisar migrar seu modelo de dados entre espaços de trabalho.
   </Accordion>
 </AccordionGroup>
 
-## Need More Help?
+## Precisa de mais ajuda?
 
-Check our [Implementation Services](/l/pt/user-guide/getting-started/capabilities/implementation-services) for help with complex data model design.
+Confira nossos [Serviços de implementação](/l/pt/user-guide/getting-started/capabilities/implementation-services) para obter ajuda com o design de modelos de dados complexos.

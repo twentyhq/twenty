@@ -1,48 +1,48 @@
 ---
-title: Workflows FAQ
-description: Frequently asked questions about workflows in Twenty.
+title: 工作流常见问题
+description: 关于 Twenty 中工作流的常见问题。
 ---
 
 <AccordionGroup>
-  <Accordion title="Why can't I activate a workflow?">
-    This is likely a permissions issue. You need access to workflows to create and activate them.
+  <Accordion title="为什么我无法启用工作流？">
+    这很可能是权限问题。 您需要工作流的访问权限才能创建并启用它们。
 
-    **Solution**: Contact your workspace administrator to grant you workflow access under **Settings → Roles**.
+    **解决方法**：联系您的工作区管理员，在**设置 → 角色**下为您授予工作流访问权限。
 
-    If you don't see the Workflows section at all in your sidebar, this confirms it's a permissions issue.
+    如果您在侧边栏根本看不到工作流部分，这就说明是权限问题。
   </Accordion>
 
-  <Accordion title="Why don't I see my manual workflow button in the top navbar?">
-    Manual workflows only appear in the navbar if properly configured:
+  <Accordion title="为什么我在顶部导航栏中看不到我的手动工作流按钮？">
+    手动工作流仅在正确配置后才会出现在导航栏中：
 
-    1. The workflow must be **activated** (not in draft mode)
-    2. The navbar placement must be set to **Pinned**
-    3. For Single/Bulk triggers, you must be on the correct object page
+    1. 工作流必须**已启用**（不是草稿模式）
+    2. 导航栏位置必须设置为**Pinned**
+    3. 对于 Single/Bulk 触发器，您必须位于正确的对象页面上
 
-    **To check**: Open the workflow → click the trigger → verify "Navbar placement" is set to "Pinned".
+    **检查方式**：打开工作流 → 点击触发器 → 确认 "Navbar placement" 设置为 "Pinned"。
 
-    You can always access manual workflows via **Cmd + K** (or **Ctrl + K**) regardless of navbar settings.
+    无论导航栏设置如何，您始终可以通过**Cmd + K**（或**Ctrl + K**）访问手动工作流。
   </Accordion>
 
-  <Accordion title="What's the difference between Single, Global, and Bulk manual triggers?">
-    | Type | Records Required | Workflow Runs |
-    | ---- | ---------------- | ------------- |
+  <Accordion title="Single、Global 和 Bulk 手动触发器有什么区别？">
+    | 类型 | 需要的记录 | 工作流运行 |
+    | -- | ----- | ----- |
 
-    \| **Global** | None | Once, no record input |
-    \| **Single** | One or more selected | Once per selected record |
-    \| **Bulk** | One or more selected | Once, with all records as array |
+    \| **Global** | 无 | 一次，无记录输入 |
+    \| **Single** | 选择一个或多个 | 每个选中的记录执行一次 |
+    \| **Bulk** | 选择一个或多个 | 执行一次，所有记录作为数组 |
 
-    * **Global**: Use when the workflow doesn't need any record context (e.g., generate a report)
-    * **Single**: Use when you want to process each selected record independently (e.g., send individual emails)
-    * **Bulk**: Use when you need to process records together or optimize credit usage (requires Iterator action)
+    * **Global**：当工作流不需要任何记录上下文时使用（例如，生成报告）
+    * **Single**：当您希望独立处理每个选定的记录时使用（例如，发送单独的电子邮件）
+    * **Bulk**：当您需要一起处理记录或优化额度使用时使用（需要 Iterator 操作）
 
-    See [Workflow Triggers](/l/zh/user-guide/workflows/capabilities/workflow-triggers) for details.
+    详见 [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)。
   </Accordion>
 
-  <Accordion title="I don't see an If/Else node. What should I do?">
-    An explicit If/Else node is not yet available but is on our roadmap.
+  <Accordion title="我没有看到 If/Else 节点。 我应该怎么办？">
+    明确的 If/Else 节点尚不可用，但已在我们的路线图上。
 
-    **Current workaround**: Create multiple branches from your step, each starting with a **Filter** action:
+    **当前变通方法**：从您的步骤创建多个分支，每个分支以一个**Filter** 操作开始：
 
     ```
     Step 1
@@ -52,203 +52,203 @@ description: Frequently asked questions about workflows in Twenty.
        └── Branch B: Filter (condition = false) → Actions...
     ```
 
-    Only the branch where the filter condition passes will execute its subsequent actions.
+    只有通过 Filter 条件的分支会执行后续操作。
 
-    See [How to Use Branches](/l/zh/user-guide/workflows/capabilities/workflow-branches) for a step-by-step guide.
+    逐步指南请参见[如何使用分支](/l/zh/user-guide/workflows/capabilities/workflow-branches)。
   </Accordion>
 
-  <Accordion title="Are workflow branches running in parallel?">
-    **Yes**, branches run in parallel by default.
+  <Accordion title="工作流分支是并行运行的吗？">
+    **是的**，分支默认并行运行。
 
-    If you want only one branch to execute:
+    如果您只希望一个分支执行：
 
-    * Add a **Filter** action at the start of each branch
-    * Set opposite conditions (e.g., Branch A: status = "Open", Branch B: status ≠ "Open")
+    * 在每个分支的开头添加一个**Filter** 操作
+    * 设置相反的条件（例如，分支 A：status = "Open"，分支 B：status ≠ "Open"）
 
-    Branches that fail their filter condition stop executing, while others continue.
+    未通过其 Filter 条件的分支将停止执行，其他分支会继续。
   </Accordion>
 
-  <Accordion title="Can I merge branches back together?">
-    **Yes**. After your parallel branches complete, you can add a step that both branches connect to.
+  <Accordion title="我可以将分支合并在一起吗？">
+    **是**。 并行分支完成后，您可以添加一个步骤，让两个分支都连接到该步骤。
 
-    In the workflow editor:
+    在工作流编辑器中：
 
-    1. Complete your branched actions
-    2. Add a new step after the branches
-    3. Drag connections from the end of each branch to this new step
+    1. 完成您的分支内操作
+    2. 在分支之后添加一个新步骤
+    3. 将每个分支末端的连接拖拽到这个新步骤
 
-    The merged step will execute after all connected branches complete.
+    合并后的步骤将在所有已连接分支完成后执行。
   </Accordion>
 
-  <Accordion title="What's the limit on Search Records results?">
-    **Search Records returns a maximum of 200 records.**
+  <Accordion title="Search Records 的结果限制是多少？">
+    **Search Records 最多返回 200 条记录。**
 
-    If you need to process more:
+    如果您需要处理更多：
 
-    * Add more specific filters to reduce results
-    * Use scheduled workflows to process in batches
-    * Consider using the API for bulk operations
+    * 添加更具体的筛选条件以减少结果
+    * 使用计划的工作流分批处理
+    * 考虑使用 API 进行批量操作
 
-    For most workflows, 200 records is sufficient. If you regularly hit this limit, consider restructuring your automation.
+    对大多数工作流而言，200 条记录已足够。 如果您经常触及此限制，请考虑重构您的自动化。
   </Accordion>
 
-  <Accordion title="Can I CC people on workflow emails?">
-    **Not yet.** CC and BCC fields for the Send Email action are on our roadmap.
+  <Accordion title="我可以在工作流邮件中抄送他人吗？">
+    \*\*还不可以。\*\*Send Email 操作的 CC 和 BCC 字段已在我们的路线图上。
 
-    **Current workaround**: Add multiple Send Email actions to send to additional recipients, or use an HTTP Request to send via an external email service that supports CC.
+    **当前变通方法**：添加多个 Send Email 操作以发送给其他收件人，或者使用 HTTP Request 通过支持 CC 的外部电子邮件服务发送。
   </Accordion>
 
-  <Accordion title="How do I use outputs from previous steps?">
-    Every action produces output data that can be used in subsequent steps.
+  <Accordion title="如何使用前面步骤的输出？">
+    每个操作都会产生可在后续步骤中使用的输出数据。
 
-    **To reference previous step data**:
+    **引用前一步数据**：
 
-    * Use the variable picker when configuring a field
-    * Or type `{{stepName.fieldName}}` directly
+    * 在配置字段时使用变量选择器
+    * 或直接输入 `{{stepName.fieldName}}`
 
-    **Examples**:
+    **示例**：
 
-    * Trigger data: `{{trigger.object.email}}`
-    * Search results: `{{searchRecords[0].name}}`
-    * Code output: `{{code.calculatedValue}}`
+    * 触发器数据：`{{trigger.object.email}}`
+    * 搜索结果：`{{searchRecords[0].name}}`
+    * 代码输出：`{{code.calculatedValue}}`
 
-    Hover over any field in the action configuration to see available variables from previous steps.
+    在操作配置中将鼠标悬停在任意字段上，即可查看前面步骤可用的变量。
   </Accordion>
 
-  <Accordion title="Why does my Iterator fail?">
-    **Iterator requires an array input.** Common issues:
+  <Accordion title="为什么我的 Iterator 会失败？">
+    **Iterator 需要数组输入。** 常见问题：
 
-    1. **Input is not an array**: Ensure you're passing results from Search Records or another action that returns an array
-    2. **Array is empty**: Add a filter before Iterator to check `{{searchRecords.length}} > 0`
-    3. **Wrong variable selected**: Make sure you select the array itself, not a single record
+    1. **输入不是数组**：请确保您传入的是 Search Records 或其他返回数组的操作的结果
+    2. **数组为空**：在 Iterator 之前添加筛选条件，检查 `{{searchRecords.length}} > 0`
+    3. **选择了错误的变量**：请确保您选择的是数组本身，而不是单个记录
 
-    **Correct setup**:
+    **正确设置**：
 
-    1. Search Records (returns array)
-    2. Filter: length > 0
-    3. Iterator: select `{{searchRecords}}`
-    4. Actions inside iterator use `{{iterator.currentItem.fieldName}}`
+    1. Search Records（返回数组）
+    2. Filter：length > 0
+    3. Iterator：选择 `{{searchRecords}}`
+    4. Iterator 内的操作使用 `{{iterator.currentItem.fieldName}}`
   </Accordion>
 
-  <Accordion title="What's the maximum execution time for Code actions?">
-    Code actions (serverless functions) have a **default timeout of 5 minutes** (300 seconds).
+  <Accordion title="Code 操作的最大执行时间是多少？">
+    Code 操作（无服务器函数）的**默认超时时间为 5 分钟**（300 秒）。
 
-    The maximum configurable timeout is **15 minutes** (900 seconds).
+    可配置的最大超时时间为**15 分钟**（900 秒）。
 
-    If your code exceeds this limit, the action will fail with a timeout error.
+    如果您的代码超过此限制，该操作将因超时错误而失败。
 
-    **Tips to avoid timeouts**:
+    **避免超时的提示**：
 
-    * Break large operations into smaller chunks using Iterator
-    * Avoid heavy computations; use external services via HTTP Request for intensive processing
-    * Optimize your code to reduce execution time
-    * If you need longer processing, consider using scheduled workflows that process data in batches
+    * 使用 Iterator 将大型操作拆分为更小的块
+    * 避免进行大量计算；通过 HTTP Request 使用外部服务进行密集型处理
+    * 优化您的代码以减少执行时间
+    * 如果您需要更长的处理时间，考虑使用计划的工作流按批次处理数据
   </Accordion>
 
-  <Accordion title="How do I read workflow runs?">
-    Workflow runs show the execution history and help you debug issues.
+  <Accordion title="如何查看工作流运行记录？">
+    工作流运行显示执行历史，并帮助您调试问题。
 
-    **Access runs**:
+    **访问运行记录**：
 
-    * In workflow editor → **Runs** panel on the right
-    * Or go to **Workflow Runs** in the sidebar
+    * 在工作流编辑器中 → 右侧的 **运行** 面板
+    * 或者前往侧边栏中的 **工作流运行**
 
-    **Understanding a run**:
+    **了解一次运行**：
 
-    * **Status**: Running, Completed, Failed, Waiting
-    * **Steps**: See which steps executed and their output
-    * **Errors**: Click failed steps to see error messages
-    * **Data**: View input/output data at each step
+    * **状态**：运行中、已完成、失败、等待中
+    * **步骤**：查看哪些步骤已执行及其输出
+    * **错误**：点击失败的步骤查看错误消息
+    * **数据**：查看每个步骤的输入/输出数据
 
-    See [Workflow Runs](/l/zh/user-guide/workflows/capabilities/workflow-runs) for details.
+    详见 [工作流运行](/l/zh/user-guide/workflows/capabilities/workflow-runs)。
   </Accordion>
 
-  <Accordion title="Why don't I see my workflow runs?">
-    Workflow runs might be failing immediately due to rate limits.
+  <Accordion title="为什么我看不到我的工作流运行？">
+    工作流运行可能由于速率限制而立即失败。
 
-    **Hard limit: 5,000 runs per hour per workspace.**
+    **硬性限制：每个工作区每小时 5,000 次运行。**
 
-    If you exceed this limit, workflows are immediately marked as failed and won't appear in your runs list as expected.
+    如果超出此限制，工作流会被立即标记为失败，并且不会如预期出现在您的运行列表中。
 
-    **Common scenarios that hit this limit**:
+    **常见的触发此限制的场景**：
 
-    * Selecting more than 5,000 records with a Single manual trigger
-    * Multiple workflows running simultaneously across your workspace
-    * High-frequency automated triggers (e.g., Record Updated on a busy object)
+    * 使用 Single 手动触发器选择超过 5,000 条记录
+    * 整个工作区同时运行多个工作流
+    * 高频率的自动触发（例如，在繁忙对象上的 Record Updated）
 
-    **Solutions**:
+    **解决方案**：
 
-    * Use **Bulk** triggers instead of Single to process many records in one run
-    * Space out large batch operations
-    * Use filters to reduce trigger frequency
-    * Schedule heavy workflows during off-peak hours
+    * 使用**Bulk** 触发器而非 Single，以在一次运行中处理多条记录
+    * 将大型批量操作分散进行
+    * 使用筛选条件降低触发频率
+    * 将繁重的工作流安排在非高峰时段
   </Accordion>
 
-  <Accordion title="What are the workflow rate limits?">
-    Twenty has two rate limits to ensure system stability:
+  <Accordion title="工作流的速率限制是什么？">
+    Twenty 设有两个速率限制以确保系统稳定性：
 
-    | Limit | Value | Behavior |
-    | ----- | ----- | -------- |
+    | 限制 | 值 | 行为 |
+    | -- | - | -- |
 
-    \| **Soft limit** | 100 runs/minute | Runs queue in "Not Started" status, processed gradually |
-    \| **Hard limit** | 5,000 runs/hour | Runs immediately fail |
+    \| **Soft limit** | 每分钟 100 次运行 | 运行会以 "Not Started" 状态排队，逐步处理 |
+    \| **Hard limit** | 每小时 5,000 次运行 | 运行会立即失败 |
 
-    **Soft limit (100/min)**: Your workflows won't fail—they just wait in the queue and are processed over time. You can trigger more than 100 records; execution will be slower.
+    **Soft limit（100/分钟）**：您的工作流不会失败——它们只会在队列中等待，并随着时间被处理。 您可以触发超过 100 条记录；执行速度会更慢。
 
-    **Hard limit (5,000/hr)**: This applies to your entire workspace. If all your workflows combined exceed 5,000 runs in an hour, additional runs will fail immediately.
+    **Hard limit（5,000/小时）**：这适用于您的整个工作区。 如果您所有工作流合计在一小时内超过 5,000 次运行，额外的运行将立即失败。
 
-    **Tips to stay within limits**:
+    **保持在限制内的提示**：
 
-    * Use Bulk triggers with Iterator instead of Single triggers for large batches
-    * Combine related automations into fewer workflows
-    * Use scheduled workflows to spread load over time
+    * 对于大型批量，使用带有 Iterator 的 Bulk 触发器，而不是 Single 触发器
+    * 将相关的自动化合并为更少的工作流
+    * 使用计划的工作流在一段时间内分散负载
   </Accordion>
 
-  <Accordion title="Can I retry a failed workflow run?">
-    **No, there is no automatic retry functionality at the moment.**
+  <Accordion title="我可以重试失败的工作流运行吗？">
+    **不，目前没有自动重试功能。**
 
-    If a workflow run fails, you'll need to:
+    如果某次工作流运行失败，您需要：
 
-    1. Review the error in **Settings → Workflows → [Your Workflow] → Runs**
-    2. Fix the issue (data, configuration, or external service)
-    3. Manually trigger the workflow again on the affected record(s)
+    1. 在**设置 → 工作流 → [Your Workflow] → 运行**中查看错误
+    2. 修复问题（数据、配置或外部服务）
+    3. 在受影响的记录上手动再次触发该工作流
 
-    **Tips to reduce failures**:
+    **减少失败的提示**：
 
-    * Add **Filter** nodes to validate data before actions
-    * Use **Search Records** to check if related records exist
-    * Test thoroughly with a few records before bulk operations
+    * 在操作前添加**Filter** 节点以验证数据
+    * 使用**Search Records** 检查相关记录是否存在
+    * 在进行批量操作之前，先用少量记录充分测试
 
-    Automatic retry functionality is on our roadmap for a future release.
+    自动重试功能已在我们的路线图上，计划在未来版本中提供。
   </Accordion>
 
-  <Accordion title="Should I deactivate workflows before CSV imports?">
-    **Yes, if your workflows are triggered by record creation or updates.**
+  <Accordion title="在进行 CSV 导入前，我需要停用工作流吗？">
+    **是的，如果您的工作流由记录的创建或更新触发。**
 
-    When you import data via CSV, each record created or updated can trigger workflows. A large import (thousands of records) could:
+    当您通过 CSV 导入数据时，每个创建或更新的记录都可能触发工作流。 大规模导入（数千条记录）可能会：
 
-    * Hit the 5,000 runs/hour limit
-    * Consume significant workflow credits
-    * Send unexpected emails or notifications
-    * Create duplicate tasks or records
+    * 触及每小时 5,000 次运行的限制
+    * 消耗大量工作流额度
+    * 发送意外的电子邮件或通知
+    * 创建重复的任务或记录
 
-    **Before a mass import**:
+    **进行批量导入之前**：
 
-    1. Go to **Settings → Workflows**
-    2. Identify workflows triggered by the object you're importing
-    3. **Deactivate** them temporarily
-    4. Run your CSV import
-    5. **Reactivate** the workflows when done
+    1. 进入**设置 → 工作流**
+    2. 识别由您要导入的对象触发的工作流
+    3. 暂时**停用**它们
+    4. 执行您的 CSV 导入
+    5. 完成后**重新启用**这些工作流
 
-    **Alternative**: If you need the workflows to run on imported data, import in smaller batches to stay within rate limits.
+    **替代方案**：如果您需要这些工作流在导入的数据上运行，请以较小的批次导入以维持在速率限制内。
   </Accordion>
 
-  <Accordion title="How do I clean up my workflow layout?">
-    If your workflow canvas looks messy with nodes scattered around, you can automatically organize it:
+  <Accordion title="如何整理我的工作流布局？">
+    如果您的工作流画布看起来很乱，节点散落各处，您可以自动整理：
 
-    1. Right-click anywhere on the workflow canvas
-    2. Click **Tidy up workflow**
+    1. 在工作流画布的任意位置点击右键
+    2. 点击**整理工作流**
 
-    This will automatically rearrange all nodes into a clean, organized layout.
+    这将自动将所有节点重新排列为整洁有序的布局。
   </Accordion>
 </AccordionGroup>

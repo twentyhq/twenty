@@ -1,19 +1,19 @@
 ---
-title: Backend Commands
+title: 后端命令
 ---
 
-## Useful commands
+## 实用命令
 
-These commands should be executed from packages/twenty-server folder.
-From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+这些命令应从 packages/twenty-server 文件夹中执行。
+从其他文件夹，您可以运行 `npx nx {command} twenty-server`（或 `npx nx run twenty-server:{command}`）。
 
-### First time setup
+### 首次设置
 
 ```
 npx nx database:reset twenty-server # setup the database with dev seeds
 ```
 
-### Starting the server
+### 启动服务器
 
 ```
 npx nx run twenty-server:start
@@ -25,77 +25,77 @@ npx nx run twenty-server:start
 npx nx run twenty-server:lint # pass --fix to fix lint errors
 ```
 
-### Test
+### 测试
 
 ```
 npx nx run twenty-server:test:unit          # run unit tests
 npx nx run twenty-server:test:integration   # run integration tests
 ```
 
-Note: you can run `npx nx run twenty-server:test:integration:with-db-reset` in case you need to reset the database before running the integration tests.
+注意：如果需要在运行集成测试之前重置数据库，可以运行 `npx nx run twenty-server:test:integration:with-db-reset`。
 
-### Resetting the database
+### 重置数据库
 
-If you want to reset and seed the database, you can run the following command:
+如果您想重置并为数据库预置数据，可以运行以下命令：
 
 ```bash
 npx nx run twenty-server:database:reset
 ```
 
-### Migrations
+### 迁移
 
-#### For objects in Core/Metadata schemas (TypeORM)
+#### 适用于 Core/Metadata 模式中的对象 (TypeORM)
 
 ```bash
 npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
 ```
 
-#### For Workspace objects
+#### 用于工作区对象
 
-There are no migrations files, migration are generated automatically for each workspace,
-stored in the database, and applied with this command
+没有迁移文件，每个工作区的迁移都是自动生成的，
+储存在数据库中，并通过该命令应用
 
 ```bash
 npx nx run twenty-server:command workspace:sync-metadata -f
 ```
 
 <Warning>
-  This will drop the database and re-run the migrations and seed.
+  这将删除数据库，并重新运行迁移和预置数据。
 
-  Make sure to back up any data you want to keep before running this command.
+  在运行此命令之前，请确保备份任何想要保留的数据。
 </Warning>
 
-## Tech Stack
+## 技术栈
 
-Twenty primarily uses NestJS for the backend.
+Twenty 主要使用 NestJS 作为后端。
 
-Prisma was the first ORM we used. But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. The project now uses TypeORM.
+Prisma 是我们最先使用的 ORM。 但为了允许用户创建自定义字段和对象，使用更底层的工具更有意义，因为我们需要进行精细控制。 项目现在使用 TypeORM。
 
-Here's what the tech stack now looks like.
+这是当前技术栈的样子。
 
-**Core**
+**核心**
 
 * [NestJS](https://nestjs.com/)
 * [TypeORM](https://typeorm.io/)
 * [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
 
-**Database**
+**数据库**
 
 * [Postgres](https://www.postgresql.org/)
 
-**Third-party integrations**
+**第三方集成**
 
-* [Sentry](https://sentry.io/welcome/) for tracking bugs
+* [Sentry](https://sentry.io/welcome/) 用于 bug 跟踪
 
-**Testing**
+**测试**
 
 * [Jest](https://jestjs.io/)
 
-**Tooling**
+**工具**
 
 * [Yarn](https://yarnpkg.com/)
 * [ESLint](https://eslint.org/)
 
-**Development**
+**开发**
 
 * [AWS EKS](https://aws.amazon.com/eks/)

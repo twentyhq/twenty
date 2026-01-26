@@ -1,122 +1,122 @@
 ---
-title: Fix Import Errors
-description: Complete troubleshooting guide for resolving CSV import errors.
+title: 修复导入错误
+description: 解决 CSV 导入错误的完整故障排除指南。
 ---
 
-## Overview
+## 概览
 
-Import not working? This guide helps you identify and fix common import errors step by step.
+导入无法正常工作？ 本指南将逐步帮助你识别并修复常见的导入错误。
 
-## How Import Validation Works
+## 导入验证的工作原理
 
-After uploading your file and mapping columns, Twenty validates your data:
+上传文件并完成列映射后，Twenty 会对你的数据进行验证：
 
-1. **Validation runs** — Twenty checks each row for errors
-2. **Errors are highlighted** — problematic rows appear in **yellow**
-3. **You can fix in-place** — edit cells directly in the import UI
-4. **Or remove rows** — skip problematic records entirely
+1. **开始验证** — Twenty 会逐行检查是否存在错误
+2. **错误会被高亮** — 有问题的行将以**黄色**显示
+3. **可就地修复** — 可在导入界面中直接编辑单元格
+4. **或移除行** — 完全跳过有问题的记录
 
-<Note>**Fix errors in the UI.** You don't need to go back to your spreadsheet. Edit cells directly during import to save time.</Note>
+<Note>**在界面中修复错误。** 无需返回电子表格。 在导入过程中直接编辑单元格以节省时间。</Note>
 
-## Step-by-Step Troubleshooting
+## 分步故障排查
 
-### Step 1: Identify the Error Type
+### 步骤 1：确定错误类型
 
-Click on a highlighted row to see the specific error message. Common error types:
+点击高亮的行查看具体的错误信息。 常见错误类型：
 
-| Error Message                                                         | What It Means                                                |
-| --------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Duplicate values highlighted in yellow                                | Value already exists in Twenty or appears twice in your file |
-| `{field} is not a valid {type}` (hover on yellow cell)                | Data doesn't match expected format                           |
-| Required field highlighted                                            | A required field is empty                                    |
-| `Can't connect to {object}. No unique record found...` (import fails) | Referenced record doesn't exist                              |
-| `Too many records. Up to 10000 allowed` (upload blocked)              | File has more than 10,000 records                            |
+| 错误消息                                                         | 含义                           |
+| ------------------------------------------------------------ | ---------------------------- |
+| 重复值以黄色高亮显示                                                   | 该值已存在于 Twenty 中，或在你的文件中出现了两次 |
+| `{field} is not a valid {type}`（将鼠标悬停在黄色单元格上）                | 数据与预期格式不匹配                   |
+| 必填字段被高亮显示                                                    | 必填字段为空                       |
+| `Can't connect to {object}. No unique record found...`（导入失败） | 被引用的记录不存在                    |
+| `Too many records. Up to 10000 allowed`（已阻止上传）               | 文件包含超过 10,000 条记录            |
 
-### Step 2: Fix the Error
+### 步骤 2：修复错误
 
-Follow the specific instructions below for each error type.
+根据下面针对每种错误类型的具体说明进行处理。
 
 ---
 
-## Error: Duplicate Value
+## 错误：重复值
 
-### What You'll See
+### 您将会看到什么
 
-Rows with duplicate values are **highlighted in yellow** in the import UI before the import starts.
+在开始导入之前，导入界面中包含重复值的行会被**黄色高亮**。
 
-### What It Means
+### 含义
 
-A unique field (email, domain) either:
+唯一字段（电子邮件、域名）可能：
 
-* Already exists in Twenty
-* Appears twice in your file
+* 已存在于 Twenty 中
+* 在你的文件中出现了两次
 
-### How to Fix
+### 修复方法
 
-**Option 1: Edit the duplicate value**
+**选项 1：编辑重复值**
 
-1. Click the cell with the error
-2. Change to a unique value
-3. Continue with import
+1. 点击包含错误的单元格
+2. 更改为唯一值
+3. 继续导入
 
-**Option 2: Remove the duplicate row**
+**选项 2：移除重复行**
 
-1. Click the X next to the row
-2. The row will be skipped during import
+1. 点击该行旁的 X
+2. 导入时将跳过该行
 
-**Option 3: Let Twenty update the existing record**
+**选项 3：让 Twenty 更新现有记录**
 
-1. Ensure your file includes a unique identifier (`email`, `domain`, or `id`)
-2. Map the unique identifier field
-3. Twenty will update the existing record instead of creating a duplicate
+1. 确保你的文件包含唯一标识符（`email`、`domain` 或 `id`）
+2. 映射该唯一标识符字段
+3. Twenty 将更新现有记录，而不是创建重复项
 
 <Note>
-  **You can update unique fields too.**
+  **你也可以更新唯一字段。**
 
-  * If you keep the `id` but change the `email` → the email will be updated
-  * If you keep the `email` but change the `id` → the id will be updated
+  * 如果保留 `id` 但更改 `email` → 将更新该电子邮件
+  * 如果保留 `email` 但更改 `id` → 将更新该 id
 
-  As long as one unique identifier matches, Twenty updates the record.
+  只要至少有一个唯一标识符匹配，Twenty 就会更新该记录。
 </Note>
 
-### How to Prevent This Error
+### 如何避免此错误
 
-Before importing:
+导入前：
 
-1. Sort your spreadsheet by the unique field
-2. Remove duplicate rows
-3. Check if records already exist in Twenty
+1. 按唯一字段对电子表格进行排序
+2. 删除重复行
+3. 检查 Twenty 中是否已存在这些记录
 
 <Warning>
-  **Soft-deleted records count toward uniqueness.**
+  **软删除的记录也会计入唯一性。**
 
-  Check Command Menu → See deleted records. Records there still enforce uniqueness. Permanently delete them or restore and update.
+  检查 Command Menu → 查看已删除的记录。 其中的记录仍会参与唯一性校验。 将其永久删除，或还原后再更新。
 </Warning>
 
-For more details: [Uniqueness Constraints](/l/zh/user-guide/data-migration/capabilities/uniqueness-constraints)
+了解更多详情：[唯一性约束](/l/zh/user-guide/data-migration/capabilities/uniqueness-constraints)
 
 ---
 
-## Error: Invalid Format
+## 错误：格式无效
 
-### What You'll See
+### 您将会看到什么
 
-The cell value is highlighted in yellow. Hover over it to see the error message:
+该单元格的值会以黄色高亮显示。 将鼠标悬停其上以查看错误信息：
 
 ```
 {field name} is not a valid {field type}
 ```
 
-### What It Means
+### 含义
 
-The data doesn't match the expected format for that field type.
+该数据与该字段类型的预期格式不匹配。
 
-### How to Fix — By Field Type
+### 修复方法 — 按字段类型
 
-#### Email
+#### 电子邮件
 
-**Problem:** Invalid email format
-**Solution:** Use format `name@domain.com`
+**问题：** 电子邮件格式无效
+**解决方案：** 使用 `name@domain.com` 格式
 
 ```
 ❌ john.smith@
@@ -124,10 +124,10 @@ The data doesn't match the expected format for that field type.
 ✓ john.smith@acme.com
 ```
 
-#### Domain
+#### 域
 
-**Problem:** Inconsistent format may cause duplicates
-**Solution:** Use `https://domain.com` format (recommended)
+**问题：** 格式不一致可能导致重复
+**解决方案：** 使用 `https://domain.com` 格式（推荐）
 
 ```
 ⚠️ acme.com         (valid, but not recommended)
@@ -135,12 +135,12 @@ The data doesn't match the expected format for that field type.
 ✅ https://acme.com  (recommended)
 ```
 
-<Note>All formats are valid, but `https://domain.com` is recommended because it matches the format used by email/calendar sync. Using other formats may create duplicate companies.</Note>
+<Note>所有格式都有效，但推荐使用 `https://domain.com`，因为它与电子邮件/日历同步所用的格式一致。 使用其他格式可能会创建重复的公司。</Note>
 
-#### Date
+#### 日期
 
-**Problem:** Unrecognized date format
-**Solution:** Use consistent format throughout file
+**问题：** 无法识别的日期格式
+**解决方案：** 在整个文件中使用一致的格式
 
 ```
 ✓ 2024-03-15        (YYYY-MM-DD - recommended)
@@ -148,21 +148,21 @@ The data doesn't match the expected format for that field type.
 ✓ 15/03/2024        (DD/MM/YYYY)
 ```
 
-#### Phone
+#### 电话
 
-**Problem:** Missing required columns
-**Solution:** Include all phone columns
+**问题：** 缺少必需的列
+**解决方案：** 包含所有电话相关列
 
-| Column                                  | Example      |
+| 列                                       | 示例           |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-#### Boolean
+#### 布尔值
 
-**Problem:** Wrong boolean value
-**Solution:** Use uppercase `TRUE` or `FALSE`
+**问题：** 布尔值不正确
+**解决方案：** 使用大写的 `TRUE` 或 `FALSE`
 
 ```
 ❌ true
@@ -172,37 +172,37 @@ The data doesn't match the expected format for that field type.
 ✓ FALSE
 ```
 
-#### Select / Multi-Select
+#### 选择/多选
 
-**Problem:** Value doesn't match existing options
-**Solution:** Use **API names**, not display labels
+**问题：** 值与现有选项不匹配
+**解决方案：** 使用**API 名称**，而非显示标签
 
-How to find API names:
+如何查找 API 名称：
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
-4. Use the API name (e.g., `OPTION_1`, not "Option 1")
+1. 进入 **设置 → 数据模型**
+2. 选择对象和字段
+3. 启用 **高级模式**（右下角切换）
+4. 使用 API 名称（例如：`OPTION_1`，而不是 "Option 1"）
 
 ```
 ❌ High Priority
 ✓ HIGH_PRIORITY
 ```
 
-#### Currency
+#### 货币
 
-**Problem:** Missing amount or currency code
-**Solution:** Fill both columns
+**问题：** 缺少金额或货币代码
+**解决方案：** 同时填写这两列
 
-| Column                | Example   |
+| 列                     | 示例        |
 | --------------------- | --------- |
 | **Amount / Amount**   | `1234.56` |
 | **Amount / Currency** | `USD`     |
 
-#### Number
+#### 数字
 
-**Problem:** Non-numeric characters
-**Solution:** Numbers only, period for decimals
+**问题：** 含非数字字符
+**解决方案：** 只能使用数字，小数点用英文句点
 
 ```
 ❌ $1,234.56
@@ -210,221 +210,221 @@ How to find API names:
 ✓ 1234.56
 ```
 
-For complete format reference: [Field Mapping](/l/zh/user-guide/data-migration/capabilities/field-mapping)
+完整格式参考：[字段映射](/l/zh/user-guide/data-migration/capabilities/field-mapping)
 
 ---
 
-## Error: Required Field Missing
+## 错误：缺少必填字段
 
-### What You'll See
+### 您将会看到什么
 
-The row is highlighted in yellow with the required field cell marked.
+该行将以黄色高亮，并标出缺失的必填字段单元格。
 
-### What It Means
+### 含义
 
-A required field is empty for this row.
+此行存在必填字段为空。
 
-### How to Fix
+### 修复方法
 
-**Option 1: Enter a value**
+**选项 1：输入一个值**
 
-1. Click the empty cell
-2. Enter a value
-3. Continue with import
+1. 点击空白单元格
+2. 输入值
+3. 继续导入
 
-**Option 2: Remove the row**
+**选项 2：移除该行**
 
-1. If you don't have the data, click X to skip the row
+1. 如果没有该数据，点击 X 跳过该行
 
-### How to Prevent This Error
+### 如何避免此错误
 
-Before importing, identify required fields:
+在导入之前，确定必填字段：
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Check which fields are marked as required
+1. 进入 **设置 → 数据模型**
+2. 选择你的对象
+3. 检查哪些字段被标记为必填
 
 ---
 
-## Error: Relation Not Found
+## 错误：未找到关系
 
-### What You'll See
+### 您将会看到什么
 
-This error appears **after the import starts** — the import fails with a message like:
+该错误会在**导入开始之后**出现 — 导入将因如下消息而失败：
 
 ```
 Can't connect to company. No unique record found with condition: id = 7776ee49-f608-4a77-8cc8-6fe96ae1e43f
 ```
 
-This means there is no Company in Twenty with that specific identifier.
+这意味着 Twenty 中没有具有该特定标识符的公司。
 
-<Note>Unlike other errors, this one is not caught during the data review step. The import will start and then fail when it encounters the missing relation.</Note>
+<Note>与其他错误不同，此错误不会在数据审核步骤中被捕获。 导入会开始执行，但在遇到缺失的关联时失败。</Note>
 
-### What It Means
+### 含义
 
-You're trying to link to a record that doesn't exist in Twenty.
+你正在尝试关联一条在 Twenty 中不存在的记录。
 
-### How to Fix
+### 修复方法
 
-**Option 1: Import parent records first**
+**选项 1：先导入父级记录**
 
-1. Cancel the current import
-2. Import the parent records (e.g., Companies)
-3. Then import the child records (e.g., People)
+1. 取消当前导入
+2. 导入父级记录（例如，公司）
+3. 然后导入子级记录（例如，人员）
 
-**Option 2: Fix the reference value**
+**选项 2：修正引用值**
 
-1. Check the reference value in your file
-2. Ensure it exactly matches an existing record
-3. Verify format: domains should be `https://domain.com`
+1. 检查文件中的引用值
+2. 确保其与现有记录完全匹配
+3. 核对格式：域名应为 `https://domain.com`
 
-**Option 3: Remove the relation**
+**选项 3：移除该关联**
 
-1. Clear the cell to import without the relation
-2. Add the relation manually later
+1. 清空该单元格，以不带关联地进行导入
+2. 稍后手动添加该关联
 
-### How to Prevent This Error
+### 如何避免此错误
 
-1. **Import in the correct order:**
-   * Companies first
-   * People second (with company references)
-   * Opportunities third
+1. **按正确顺序导入：**
+   * 先导入公司
+   * 其次导入人员（包含公司引用）
+   * 第三导入机会
 
-2. **Verify reference values:**
-   * Export parent records to get exact identifiers
-   * Use domain format `https://domain.com`
-   * Check for typos and case sensitivity
+2. **核对引用值：**
+   * 导出父级记录以获取精确的标识符
+   * 使用域名格式 `https://domain.com`
+   * 检查拼写错误和大小写是否一致
 
 <Warning>
-  **Import will fail if a reference is made to a non-existent record.**
+  **若引用了不存在的记录，导入将失败。**
 
-  Always import parent objects before child objects.
+  始终先导入父对象，再导入子对象。
 </Warning>
 
-For more details: [Import Relations](/l/zh/user-guide/data-migration/capabilities/import-relations)
+了解更多详情：[导入关系](/l/zh/user-guide/data-migration/capabilities/import-relations)
 
 ---
 
-## Error: File Too Large
+## 错误：文件过大
 
-### What You'll See
+### 您将会看到什么
 
-This error appears **when uploading your file** — the upload is blocked entirely:
+在上传文件时会出现该错误 — 上传将被完全阻止：
 
 ```
 Too many records. Up to 10000 allowed
 ```
 
-You won't be able to proceed to the data review step until you reduce the file size.
+在减小文件大小之前，你将无法进入数据审核步骤。
 
-### What It Means
+### 含义
 
-Your file has more than 10,000 records.
+你的文件包含超过 10,000 条记录。
 
-### How to Fix
+### 修复方法
 
-**Option 1: Split into multiple files**
+**选项 1：拆分为多个文件**
 
-1. Divide your data into files of 10,000 records or fewer
-2. Import each file separately
-3. Maintain import order (Companies before People)
+1. 将数据分成每个不超过 10,000 条记录的文件
+2. 分别导入每个文件
+3. 保持导入顺序（先公司，后人员）
 
-**Option 2: Use API import**
-For very large datasets, use the API which has no record limit.
-See: [How to Import Data via API](/l/zh/user-guide/data-migration/how-tos/import-data-via-api)
-
----
-
-## Error: Field Not Recognized
-
-### What It Means
-
-A column in your file can't be mapped because the field doesn't exist in Twenty.
-
-### How to Fix
-
-1. Go to **Settings → Data Model**
-2. Select the object you're importing
-3. Click **+ Add field**
-4. Create the custom field with the appropriate type
-5. Re-upload your file
-
-<Note>The CSV import creates records, not fields. All fields must exist before importing.</Note>
+**选项 2：使用 API 导入**
+对于非常大的数据集，请使用没有记录数量限制的 API。
+参见：[如何通过 API 导入数据](/l/zh/user-guide/data-migration/how-tos/import-data-via-api)
 
 ---
 
-## Error: User Relation Empty
+## 错误：无法识别字段
 
-### What It Means
+### 含义
 
-You're trying to assign a record to a user (Owner, Assignee) but the relation isn't being mapped.
+文件中的某一列无法映射，因为 Twenty 中不存在该字段。
 
-### Common Causes
+### 修复方法
 
-1. **User hasn't accepted their invitation** — the user doesn't exist in Twenty yet
-2. **Using user ID from old system** — Twenty can't match IDs from another system
-3. **Wrong email format** — the email doesn't match the user's Twenty account
+1. 进入 **设置 → 数据模型**
+2. 选择你要导入的对象
+3. 点击 **+ 添加字段**
+4. 创建具有适当类型的自定义字段
+5. 重新上传你的文件
 
-### How to Fix
+<Note>CSV 导入会创建记录，而不是字段。 在导入之前，所有字段都必须已存在。</Note>
 
-1. Ensure all users have **accepted their invitation** to your Twenty workspace
-2. Use the user's **email address** (not their name or old system ID)
-3. Use the same email they used to join Twenty
+---
+
+## 错误：用户关联为空
+
+### 含义
+
+你正在尝试将记录分配给某个用户（所有者、被指派者），但该关联未被映射。
+
+### 常见原因
+
+1. **用户尚未接受邀请** — 该用户在 Twenty 中尚不存在
+2. **使用旧系统的用户 ID** — Twenty 无法匹配来自其他系统的 ID
+3. **电子邮件格式错误** — 该邮箱与用户的 Twenty 账户不匹配
+
+### 修复方法
+
+1. 确保所有用户都已接受邀请加入你的 Twenty 工作区
+2. 使用用户的电子邮箱地址（而不是姓名或旧系统的 ID）
+3. 使用他们用于加入 Twenty 的同一邮箱
 
 <Warning>
-  **Users must accept invitations before importing.**
+  **在导入之前，用户必须先接受邀请。**
 
-  If a user hasn't accepted their invitation, records referencing them will have empty user relations.
+  如果某个用户尚未接受邀请，引用该用户的记录将出现空的用户关联。
 </Warning>
 
 ---
 
-## Pre-Import Checklist
+## 导入前清单
 
-Avoid errors by checking these before importing:
+导入前检查以下项目以避免错误：
 
-### File Requirements
+### 文件要求
 
-<Check>File is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>File uses UTF-8 encoding</Check>
+<Check>文件为 CSV、XLSX 或 XLS 格式</Check>
+<Check>文件少于 10,000 条记录</Check>
+<Check>文件使用 UTF-8 编码</Check>
 
-### Data Quality
+### 数据质量
 
-<Check>No duplicate emails (for People)</Check>
-<Check>No duplicate domains (for Companies)</Check>
-<Check>All dates use consistent format</Check>
-<Check>All domains use `https://domain.com` format</Check>
+<Check>无重复电子邮件（针对联系人）</Check>
+<Check>无重复域名（针对公司）</Check>
+<Check>所有日期采用一致的格式</Check>
+<Check>所有域名使用 `https://domain.com` 格式</Check>
 
-### Field Formats
+### 字段格式
 
-<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
-<Check>Select fields use API names, not display labels</Check>
-<Check>Phone fields have all required columns</Check>
-<Check>Currency fields have both Amount and Currency Code</Check>
+<Check>布尔字段使用 `TRUE` 或 `FALSE`（大写）</Check>
+<Check>选择字段使用 API 名称，而非显示标签</Check>
+<Check>电话字段包含所有必需的列</Check>
+<Check>货币字段同时包含金额和货币代码</Check>
 
-### Relations
+### 关系
 
-<Check>Parent records imported before child records</Check>
-<Check>Relation columns reference existing records</Check>
-<Check>Domain format matches Twenty's format exactly</Check>
+<Check>先导入父级记录，再导入子级记录</Check>
+<Check>关联列引用现有记录</Check>
+<Check>域名格式与 Twenty 的格式完全一致</Check>
 
-### Data Model
+### 数据模型
 
-<Check>All custom fields exist in Settings → Data Model</Check>
-<Check>Select options exist before importing</Check>
+<Check>设置 → 数据模型 中已存在所有自定义字段</Check>
+<Check>在导入前先创建所有选择项</Check>
 
 ---
 
-## Still Having Issues?
+## 仍有问题？
 
-If you've tried the above solutions:
+如果你已尝试以上解决方案：
 
-1. **Download the sample file** — see the exact format Twenty expects
-2. **Export existing records** — compare your file to working data
-3. **Test with a small batch** — try 5-10 rows first
-4. **Check the reference articles:**
-   * [Field Mapping](/l/zh/user-guide/data-migration/capabilities/field-mapping)
-   * [Uniqueness Constraints](/l/zh/user-guide/data-migration/capabilities/uniqueness-constraints)
-   * [Import Relations](/l/zh/user-guide/data-migration/capabilities/import-relations)
-   * [Error Handling](/l/zh/user-guide/data-migration/capabilities/error-handling)
+1. **下载示例文件** — 了解 Twenty 期望的确切格式
+2. **导出现有记录** — 将你的文件与可用数据进行对比
+3. **用小批量测试** — 先尝试 5-10 行
+4. **查看参考文章：**
+   * [字段映射](/l/zh/user-guide/data-migration/capabilities/field-mapping)
+   * [唯一性约束](/l/zh/user-guide/data-migration/capabilities/uniqueness-constraints)
+   * [导入关系](/l/zh/user-guide/data-migration/capabilities/import-relations)
+   * [错误处理](/l/zh/user-guide/data-migration/capabilities/error-handling)

@@ -1,176 +1,176 @@
 ---
-title: Import Data via API
-description: When and how to use Twenty's APIs for large-scale data imports.
+title: API로 데이터 가져오기
+description: 대규모 데이터 가져오기에 Twenty의 API를 언제, 어떻게 사용할지 안내합니다.
 ---
 
-## Overview
+## 개요
 
-Twenty provides both **GraphQL** and **REST APIs** for programmatic data import. Use the API when CSV import isn't practical for your data volume or when you need automated, recurring imports.
+Twenty는 프로그램 방식의 데이터 가져오기를 위해 **GraphQL** 및 **REST API**를 모두 제공합니다. 데이터 규모상 CSV 가져오기가 실용적이지 않거나 자동화된 반복 가져오기가 필요한 경우 API를 사용하세요.
 
-## When to Use API Import
+## API 가져오기 사용 시기
 
-| Scenario                           | Recommended Method            |
-| ---------------------------------- | ----------------------------- |
-| Under 10,000 records               | CSV Import                    |
-| 10,000 - 50,000 records            | CSV Import (split into files) |
-| **50,000+ records**                | **API Import**                |
-| One-time migration                 | Either (based on volume)      |
-| **Recurring imports**              | **API Import**                |
-| **Real-time sync**                 | **API Import**                |
-| **Integration with other systems** | **API Import**                |
+| 시나리오                 | 권장 방법            |
+| -------------------- | ---------------- |
+| 10,000개 미만의 레코드      | CSV 가져오기         |
+| 10,000 - 50,000개 레코드 | CSV 가져오기(파일로 분할) |
+| **50,000개 이상의 레코드**  | **API 가져오기**     |
+| 1회성 마이그레이션           | 둘 다 가능(규모에 따라)   |
+| **반복 가져오기**          | **API 가져오기**     |
+| **실시간 동기화**          | **API 가져오기**     |
+| **다른 시스템과의 통합**      | **API 가져오기**     |
 
-<Note>For datasets in the hundreds of thousands, the API is significantly faster and more reliable than multiple CSV imports.</Note>
+<Note>수십만 건 규모의 데이터셋의 경우, API가 여러 번의 CSV 가져오기보다 훨씬 빠르고 더 신뢰할 수 있습니다.</Note>
 
-## API Rate Limits
+## API 속도 제한
 
-Twenty enforces rate limits to ensure system stability:
+시스템 안정성을 보장하기 위해 Twenty는 속도 제한을 적용합니다:
 
-| Limit                      | Value                 |
-| -------------------------- | --------------------- |
-| **Requests per minute**    | 100                   |
-| **Records per batch call** | 60                    |
-| **Maximum throughput**     | ~6,000 records/minute |
-
-<Warning>
-  **Plan your import around these limits.**
-
-  For 100,000 records at maximum throughput, expect approximately 17 minutes of import time. Add buffer time for error handling and retries.
-</Warning>
-
-## Getting Started
-
-### Step 1: Get Your API Key
-
-1. Go to **Settings → Developers**
-2. Click **+ Create API key**
-3. Give your key a descriptive name
-4. Copy the API key immediately (it won't be shown again)
-5. Store it securely
+| 제한               | 값            |
+| ---------------- | ------------ |
+| **분당 요청 수**      | 100          |
+| **배치 호출당 레코드 수** | 60           |
+| **최대 처리량**       | ~6,000 레코드/분 |
 
 <Warning>
-  **Keep your API key secret.**
+  **이 한도를 기준으로 가져오기 계획을 수립하세요.**
 
-  Anyone with your API key can access and modify your workspace data. Never commit it to code repositories or share it publicly.
+  최대 처리량 기준으로 100,000개 레코드를 가져오는 데 약 17분이 소요됩니다. 오류 처리와 재시도를 위한 여유 시간을 추가하세요.
 </Warning>
 
-### Step 2: Choose Your API
+## 시작하기
 
-Twenty supports two API types:
+### 1단계: API 키 받기
 
-| API         | Best For                                                    | Documentation                                    |
-| ----------- | ----------------------------------------------------------- | ------------------------------------------------ |
-| **GraphQL** | Flexible queries, fetching related data, complex operations | [API Docs](/l/ko/developers/extend/capabilities/apis) |
-| **REST**    | Simple CRUD operations, familiar REST patterns              | [API Docs](/l/ko/developers/extend/capabilities/apis) |
+1. **설정 → 개발자**로 이동하세요.
+2. **+ API 키 생성**을 클릭하세요.
+3. 키에 설명적인 이름을 지정하세요.
+4. API 키를 즉시 복사하세요(다시 표시되지 않습니다).
+5. 안전하게 보관하세요.
 
-Both APIs support:
+<Warning>
+  **API 키를 비공개로 유지하세요.**
 
-* Creating, reading, updating, and deleting records
-* **Batch operations** — create or update up to 60 records per call
+  API 키를 가진 누구나 워크스페이스 데이터에 접근하고 수정할 수 있습니다. 코드 저장소에 커밋하거나 공개적으로 공유하지 마세요.
+</Warning>
 
-**For imports, use batch operations** to maximize throughput within rate limits.
+### 2단계: 사용할 API 선택
 
-### Step 3: Plan Your Import Order
+Twenty는 두 가지 유형의 API를 지원합니다:
 
-Just like CSV imports, **order matters** for relations:
+| API         | 적합한 용도                        | 문서                                             |
+| ----------- | ----------------------------- | ---------------------------------------------- |
+| **GraphQL** | 유연한 쿼리, 연관 데이터 조회, 복잡한 작업에 적합 | [API 문서](/l/ko/developers/extend/capabilities/apis) |
+| **REST**    | 단순한 CRUD 작업, 익숙한 REST 패턴      | [API 문서](/l/ko/developers/extend/capabilities/apis) |
 
-1. **Companies** first (no dependencies)
-2. **People** second (can link to Companies)
-3. **Opportunities** third (can link to Companies and People)
-4. **Tasks/Notes** (can link to any of the above)
-5. **Custom objects** (following their dependencies)
+두 API 모두 다음을 지원합니다:
 
-## Best Practices
+* 레코드 생성, 조회, 업데이트 및 삭제
+* **배치 작업** — 호출당 최대 60개 레코드를 생성하거나 업데이트
 
-### Batch Your Requests
+**가져오기에서는 배치 작업을 사용**하여 한도 내에서 처리량을 극대화하세요.
 
-* Don't send records one at a time
-* Group up to **60 records per API call**
-* This maximizes throughput within rate limits
+### 3단계: 가져오기 순서 계획
 
-### Handle Rate Limits
+CSV 가져오기와 마찬가지로, 관계형 데이터에서는 **순서가 중요**합니다:
 
-* Implement delays between requests (600ms minimum for sustained imports)
-* Use exponential backoff when you hit limits
-* Monitor for 429 (Too Many Requests) responses
+1. **회사** 먼저(종속성 없음)
+2. 그다음 **사람**(회사에 연결 가능)
+3. 세 번째로 **기회**(회사 및 사람에 연결 가능)
+4. **작업/노트**(위 항목 중 어느 것에도 연결 가능)
+5. **사용자 지정 객체**(종속성을 따름)
 
-### Validate Data First
+## 모범 사례
 
-* Clean and validate your data before importing
-* Check required fields are populated
-* Verify formats match Twenty's requirements (see [Field Mapping](/l/ko/user-guide/data-migration/capabilities/field-mapping))
+### 요청 일괄 처리
 
-### Log Everything
+* 레코드를 한 번에 하나씩 보내지 마세요
+* API 호출당 최대 **60개 레코드**로 묶으세요
+* 이렇게 하면 한도 내에서 처리량을 극대화할 수 있습니다
 
-* Log every record imported (including IDs)
-* Log errors with full context
-* This helps debug issues and verify completion
+### 속도 제한 처리
 
-### Test First
+* 요청 사이에 지연을 구현하세요(지속적인 가져오기의 경우 최소 600ms)
+* 한도에 도달하면 지수 백오프를 사용하세요
+* 429(Too Many Requests) 응답을 모니터링하세요
 
-* Test with a small batch (10-20 records)
-* Verify data appears correctly in Twenty
-* Then run the full import
+### 먼저 데이터 검증
 
-### Upsert to Avoid Duplicates
+* 가져오기 전에 데이터를 정리하고 검증하세요
+* 필수 필드가 채워졌는지 확인하세요
+* 형식이 Twenty의 요구 사항과 일치하는지 확인하세요([필드 매핑](/l/ko/user-guide/data-migration/capabilities/field-mapping) 참조)
 
-The GraphQL API supports **batch upsert** — update if the record exists, create if not. This prevents duplicates when re-running imports.
+### 모든 항목 로깅
 
-## Finding Object and Field Names
+* 가져온 모든 레코드를 로깅하세요(ID 포함)
+* 전체 컨텍스트와 함께 오류를 로깅하세요
+* 이는 문제를 디버깅하고 완료 여부를 확인하는 데 도움이 됩니다
 
-To see available objects and fields:
+### 먼저 테스트
 
-1. Go to **Settings → API and Webhooks**
-2. Browse the **Metadata API**
-3. View all standard and custom objects with their fields
+* 소량 배치(10-20개 레코드)로 테스트하세요
+* 데이터가 Twenty에 올바르게 표시되는지 확인하세요
+* 그런 다음 전체 가져오기를 실행하세요
 
-The documentation shows all standard and custom objects, their fields, and the expected data types.
+### 중복 방지를 위한 업서트
 
-## Professional Services
+GraphQL API는 **배치 업서트**를 지원합니다 — 레코드가 있으면 업데이트하고, 없으면 생성합니다. 이렇게 하면 가져오기를 다시 실행할 때 중복을 방지할 수 있습니다.
 
-For complex API migrations, our partners can help:
+## 객체 및 필드 이름 찾기
 
-| Service                 | What's Included                    |
-| ----------------------- | ---------------------------------- |
-| **Data Model Design**   | design your optimal data structure |
-| **Migration Scripts**   | write and run the import scripts   |
-| **Data Transformation** | handle complex mapping and cleanup |
-| **Validation & QA**     | verify the migration is complete   |
+사용 가능한 객체와 필드를 확인하려면:
 
-**Best for:**
+1. **설정 → API 및 웹훅**으로 이동하세요
+2. **Metadata API**를 살펴보세요
+3. 모든 표준 및 사용자 지정 객체와 해당 필드를 확인하세요
 
-* Migrations of 100,000+ records
-* Complex data transformations
-* Tight timelines
-* Teams without developer resources
+문서에는 모든 표준 및 사용자 지정 객체, 해당 필드, 예상 데이터 유형이 표시됩니다.
 
-Contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/ko/user-guide/getting-started/capabilities/implementation-services).
+## 전문 서비스
+
+복잡한 API 마이그레이션의 경우, 파트너가 도와드립니다:
+
+| 서비스             | 포함 내용              |
+| --------------- | ------------------ |
+| **데이터 모델 설계**   | 최적의 데이터 구조를 설계     |
+| **마이그레이션 스크립트** | 가져오기 스크립트를 작성하고 실행 |
+| **데이터 변환**      | 복잡한 매핑과 정리를 수행     |
+| **검증 및 QA**     | 마이그레이션이 완료되었는지 확인  |
+
+**적합한 용도:**
+
+* 100,000개 이상의 레코드 마이그레이션
+* 복잡한 데이터 변환
+* 빠듯한 일정
+* 개발 리소스가 없는 팀
+
+[contact@twenty.com](mailto:contact@twenty.com)으로 문의하시거나 당사의 [구현 서비스](/l/ko/user-guide/getting-started/capabilities/implementation-services)를 확인하세요.
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="What's the difference between GraphQL and REST?">
-    GraphQL lets you request exactly the data you need in a single query and is better for complex operations. REST uses standard HTTP methods (GET, POST, PUT, DELETE) and may be more familiar if you've worked with traditional APIs.
+  <Accordion title="GraphQL과 REST의 차이는 무엇인가요?">
+    GraphQL은 단일 쿼리로 필요한 데이터만 정확히 요청할 수 있으며, 복잡한 작업에 더 적합합니다. REST는 표준 HTTP 메서드(GET, POST, PUT, DELETE)를 사용하며, 기존 API로 작업해 본 경험이 있다면 더 익숙할 수 있습니다.
   </Accordion>
 
-  <Accordion title="Can I update existing records via API?">
-    Yes! Use update mutations (GraphQL) or PUT/PATCH requests (REST) with the record's `id`.
+  <Accordion title="API를 통해 기존 레코드를 업데이트할 수 있나요?">
+    예! 레코드의 `id`와 함께 업데이트 뮤테이션(GraphQL) 또는 PUT/PATCH 요청(REST)을 사용하세요.
   </Accordion>
 
-  <Accordion title="How do I handle duplicates?">
-    Query for existing records first using unique identifiers (email, domain). Update if exists, create if not.
+  <Accordion title="중복은 어떻게 처리하나요?">
+    고유 식별자(이메일, 도메인)를 사용해 먼저 기존 레코드를 조회하세요. 존재하면 업데이트하고, 없으면 생성하세요.
   </Accordion>
 
-  <Accordion title="Can I delete records via API?">
-    Yes, use delete mutations (GraphQL) or DELETE requests (REST).
+  <Accordion title="API를 통해 레코드를 삭제할 수 있나요?">
+    예, 삭제 뮤테이션(GraphQL) 또는 DELETE 요청(REST)을 사용하세요.
   </Accordion>
 
-  <Accordion title="Is there a Python or Node.js SDK?">
-    Not currently, but both APIs work with any HTTP client in any language.
+  <Accordion title="Python 또는 Node.js SDK가 있나요?">
+    현재는 없습니다. 하지만 두 API는 어떤 언어의 HTTP 클라이언트와도 작동합니다.
   </Accordion>
 </AccordionGroup>
 
-## API Documentation
+## API 문서
 
-For full implementation details, code examples, and schema reference:
+전체 구현 세부정보, 코드 예제, 스키마 참조는 다음을 확인하세요:
 
-* [API Documentation](/l/ko/developers/extend/capabilities/apis)
+* [API 문서](/l/ko/developers/extend/capabilities/apis)

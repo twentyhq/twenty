@@ -1,6 +1,5 @@
 import { isObject } from '@sniptt/guards';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   FieldMetadataType,
   type ActorFilter,
@@ -46,6 +45,10 @@ import {
   isMatchingUUIDFilter,
 } from 'twenty-shared/utils';
 
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
+
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is LeafObjectRecordFilter => {
@@ -58,6 +61,27 @@ const isAndFilter = (
 
 const isImplicitAndFilter = (filter: RecordGqlOperationFilter) =>
   Object.keys(filter).length > 1;
+
+const isMorphRelationJoinColumnKey = ({
+  fieldMetadataItem,
+  key,
+}: {
+  fieldMetadataItem: FieldMetadataItem;
+  key: string;
+}): boolean => {
+  if (!fieldMetadataItem.morphRelations?.length) {
+    return false;
+  }
+
+  const possibleJoinColumnNames = computePossibleMorphGqlFieldForFieldName({
+    fieldMetadata: {
+      morphRelations: fieldMetadataItem.morphRelations,
+      fieldName: fieldMetadataItem.name,
+    },
+  }).map((name) => `${name}Id`);
+
+  return possibleJoinColumnNames.includes(key);
+};
 
 const isOrFilter = (
   filter: RecordGqlOperationFilter,
@@ -175,8 +199,17 @@ export const isRecordMatchingFilter = ({
       objectMetadataItem.fields.find((field) => field.name === filterKey) ??
       objectMetadataItem.fields.find(
         (field) =>
-          field.type === FieldMetadataType.RELATION &&
+          (field.type === FieldMetadataType.RELATION ||
+            field.type === FieldMetadataType.MORPH_RELATION) &&
           field.settings?.joinColumnName === filterKey,
+      ) ??
+      objectMetadataItem.fields.find(
+        (field) =>
+          field.type === FieldMetadataType.MORPH_RELATION &&
+          isMorphRelationJoinColumnKey({
+            fieldMetadataItem: field,
+            key: filterKey,
+          }),
       );
 
     if (!isDefined(objectMetadataField)) {
@@ -366,9 +399,15 @@ export const isRecordMatchingFilter = ({
           });
         });
       }
-      case FieldMetadataType.RELATION: {
+      case FieldMetadataType.RELATION:
+      case FieldMetadataType.MORPH_RELATION: {
         const isJoinColumn =
-          objectMetadataField.settings?.joinColumnName === filterKey;
+          objectMetadataField.settings?.joinColumnName === filterKey ||
+          (objectMetadataField.type === FieldMetadataType.MORPH_RELATION &&
+            isMorphRelationJoinColumnKey({
+              fieldMetadataItem: objectMetadataField,
+              key: filterKey,
+            }));
 
         if (isJoinColumn) {
           return isMatchingUUIDFilter({

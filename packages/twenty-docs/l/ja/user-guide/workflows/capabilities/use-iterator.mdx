@@ -1,92 +1,88 @@
 ---
-title: Use Iterator
-description: Loop through arrays of records to perform actions on each item.
+title: Iterator を使用
+description: レコードの配列をループし、各アイテムに対してアクションを実行します。
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Iterator lets you loop through an array of records and perform actions on each one. It's essential for workflows that need to process multiple records returned by Search Records or received via webhooks.
+Iterator を使用すると、レコードの配列をループし、各レコードに対してアクションを実行できます。 これは、Search Records で返された複数のレコードや Webhook で受信したレコードを処理する必要があるワークフローに不可欠です。
 
-<Note>
-  Iterator is currently in beta. Activate it under **Settings → Releases → Lab**.
-</Note>
+## Iterator を使用するタイミング
 
-## When to Use Iterator
+| シナリオ               | 例                  |
+| ------------------ | ------------------ |
+| **検索結果を処理**        | 見つかった各人物にメールを送信    |
+| **Webhook の配列を処理** | 各アイテムごとに順番にレコードを作成 |
+| **一括更新**           | 計算された値で複数のレコードを更新  |
+| **通知**             | イベントについて複数人に通知     |
 
-| Scenario                   | Example                                        |
-| -------------------------- | ---------------------------------------------- |
-| **Process search results** | Send email to each person found                |
-| **Handle webhook arrays**  | Create records for each item in order          |
-| **Bulk updates**           | Update multiple records with calculated values |
-| **Notifications**          | Alert multiple people about an event           |
+## Iterator の理解
 
-## Understanding Iterator
+Iterator は入力として**配列**を想定しています。 その後、次を実行します:
 
-Iterator expects an **array** as input. It then:
+1. 配列から最初のアイテムを取り出す
+2. そのアイテムを使って Iterator 内のすべてのアクションを実行する
+3. 次のアイテムに進む
+4. すべてのアイテムが処理されるまで繰り返す
 
-1. Takes the first item from the array
-2. Runs all actions inside the iterator with that item
-3. Moves to the next item
-4. Repeats until all items are processed
+## 基本的なセットアップ
 
-## Basic Setup
+### 例: 検索結果の全員にメールを送信
 
-### Example: Email Everyone in Search Results
+**目標**: 特定の会社のすべての連絡先を見つけ、各人にパーソナライズされたメールを送信します。
 
-**Goal**: Find all contacts in a specific company and send each one a personalized email.
+### ステップ 1: レコードを検索
 
-### Step 1: Search for Records
+1. 「**Search Records**」アクションを追加
+2. オブジェクト: **People**
+3. フィルター: Company が "Acme Inc" に等しい
+4. これにより、People の配列が返されます
 
-1. Add **Search Records** action
-2. Object: **People**
-3. Filter: Company equals "Acme Inc"
-4. This returns an array of people
+### ステップ 2: 結果の有無を確認
 
-### Step 2: Check Results Exist
+1. 「**Filter**」アクションを追加
+2. 条件: `{{searchRecords.length}}` が 0 より大きい
+3. これにより、結果が空の場合の Iterator エラーを防止します
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. This prevents Iterator errors on empty results
+### ステップ 3: Iterator を追加
 
-### Step 3: Add Iterator
+1. 「**Iterator**」アクションを追加
+2. 配列の入力: `{{searchRecords}}` を選択
+3. これでループが作成されます
 
-1. Add **Iterator** action
-2. Array input: Select `{{searchRecords}}`
-3. This creates a loop
+### ステップ 4: Iterator 内にアクションを追加
 
-### Step 4: Add Actions Inside Iterator
+Iterator の後に配置したアクションは、各アイテムに対して実行されます:
 
-Actions placed after Iterator run for each item:
+1. 「**Send Email**」アクションを追加（Iterator 内）
+2. 宛先: `{{iterator.currentItem.email}}`
+3. 件名: こんにちは `{{iterator.currentItem.firstName}}`!
+4. 本文: 現在のアイテムのフィールドを使用したパーソナライズメッセージ
 
-1. Add **Send Email** action (inside iterator)
-2. To: `{{iterator.currentItem.email}}`
-3. Subject: Hello `{{iterator.currentItem.firstName}}`!
-4. Body: Personalized message using current item fields
+### 結果
 
-### Result
+Search Records が 5 人を返した場合、Iterator は次を実行します:
 
-If Search Records returns 5 people, the Iterator:
+* 1 人目にメールを送信
+* 2 人目にメールを送信
+* ... 5 人すべてに対して続行
 
-* Sends email to person 1
-* Sends email to person 2
-* ... continues for all 5
+## 現在のアイテムのデータにアクセスする
 
-## Accessing Current Item Data
+Iterator 内では、現在のレコードにアクセスするために `{{iterator.currentItem}}` を使用します:
 
-Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
+| 変数                                      | 説明               |
+| --------------------------------------- | ---------------- |
+| `{{iterator.currentItem}}`              | 現在のレコードオブジェクト全体  |
+| `{{iterator.currentItem.id}}`           | レコード ID          |
+| `{{iterator.currentItem.email}}`        | メールフィールド         |
+| `{{iterator.currentItem.company.name}}` | 関連する会社名          |
+| `{{iterator.index}}`                    | 配列内の現在の位置（0 始まり） |
 
-| Variable                                | Description                         |
-| --------------------------------------- | ----------------------------------- |
-| `{{iterator.currentItem}}`              | The entire current record object    |
-| `{{iterator.currentItem.id}}`           | Record ID                           |
-| `{{iterator.currentItem.email}}`        | Email field                         |
-| `{{iterator.currentItem.company.name}}` | Related company name                |
-| `{{iterator.index}}`                    | Current position in array (0-based) |
+## よくあるパターン
 
-## Common Patterns
+### 複数レコードを更新
 
-### Update Multiple Records
-
-**Goal**: Mark all overdue tasks as "Late"
+**目標**: 期限超過のタスクをすべて "Late" としてマークします。
 
 ```
 1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
@@ -98,9 +94,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Status: Late
 ```
 
-### Create Records from Array
+### 配列からレコードを作成
 
-**Goal**: Webhook receives order with multiple items, create a record for each
+**目標**: 複数のアイテムを含む注文を Webhook が受信したら、各アイテムのレコードを作成します。
 
 ```
 1. Webhook Trigger (receives items array)
@@ -113,9 +109,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Related Order: {{trigger.body.orderId}}
 ```
 
-### Conditional Processing Inside Loop
+### ループ内の条件付き処理
 
-**Goal**: Only send email to contacts with valid emails
+**目標**: 有効なメールアドレスを持つ連絡先にのみメールを送信します。
 
 ```
 1. Search Records (People)
@@ -125,56 +121,56 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
            - To: {{iterator.currentItem.email}}
 ```
 
-## Troubleshooting
+## トラブルシューティング
 
 ### "Iterator expects an array"
 
-**Cause**: You passed a single record instead of an array.
+**原因**: 配列ではなく単一のレコードを渡しました。
 
-**Fix**: Make sure you're passing the result of Search Records or an array field, not a single record.
+**対処**: 単一のレコードではなく、Search Records の結果または配列フィールドを渡していることを確認してください。
 
 ```
 ✅ Correct: {{searchRecords}}
 ❌ Wrong: {{searchRecords[0]}}
 ```
 
-### Iterator Doesn't Run
+### Iterator が実行されない
 
-**Cause**: The array is empty.
+**原因**: 配列が空です。
 
-**Fix**: Add a Filter before Iterator to check array length:
+**対処**: Iterator の前にフィルターを追加し、配列の長さを確認します:
 
 ```
 Filter: {{searchRecords.length}} > 0
 ```
 
-### Actions Run Too Many Times
+### アクションが過剰に実行される
 
-**Cause**: Search Records returned more records than expected.
+**原因**: Search Records が想定より多くのレコードを返しました。
 
-**Fix**:
+**対処**:
 
-* Add more specific filters to Search Records
-* Set a limit on Search Records (max 200)
-* Add Filter inside Iterator for additional conditions
+* Search Records により具体的なフィルターを追加する
+* Search Records に上限を設定する（最大 200）
+* 追加条件のために Iterator 内にフィルターを追加する
 
-## Performance Considerations
+## パフォーマンス上の考慮事項
 
-* **Credit usage**: Each iteration consumes credits for its actions
-* **Time**: Large arrays take longer to process
-* **Limits**: Consider batching very large operations
-* **Rate limits**: External API calls may hit rate limits with many iterations
+* **クレジット使用量**: 各イテレーションでアクション実行分のクレジットを消費します
+* **時間**: 大きな配列は処理に時間がかかります
+* **制限**: 非常に大きな処理はバッチ化を検討してください
+* **レート制限**: 繰り返しが多いと外部 API 呼び出しがレート制限に達する可能性があります
 
-## Best Practices
+## ベストプラクティス
 
-1. **Always check array length** before Iterator to avoid errors
-2. **Add filters inside loops** when not all items need processing
-3. **Rename your Iterator step** to describe what it's looping through
-4. **Test with small arrays** before processing large datasets
-5. **Monitor workflow runs** to ensure iterations complete as expected
+1. エラーを避けるため、Iterator の前に**配列の長さを必ず確認**
+2. **すべてのアイテムを処理する必要がない場合はループ内にフィルターを追加**
+3. **何をループしているか分かるように Iterator ステップの名前を変更**
+4. **小さな配列でテスト**してから大きなデータセットを処理する
+5. **ワークフローの実行を監視**して、イテレーションが想定どおりに完了することを確認する
 
-## Related
+## 関連
 
-* [Workflow Actions](/l/ja/user-guide/workflows/capabilities/workflow-actions)
-* [How to Use Branches](/l/ja/user-guide/workflows/capabilities/use-branches-in-workflows)
-* [Workflows FAQ](/l/ja/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [ブランチの使い方](/l/ja/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [ワークフロー FAQ](/l/ja/user-guide/workflows/how-tos/need-more-help/workflows-faq)

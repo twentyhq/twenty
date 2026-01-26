@@ -71,7 +71,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
         workspaceId,
       );
 
-    const fields = flatObjectMetadata.fieldMetadataIds
+    const fields = flatObjectMetadata.fieldIds
       .map((fieldId) => {
         const field = flatFieldMetadataMaps.byId[fieldId];
 

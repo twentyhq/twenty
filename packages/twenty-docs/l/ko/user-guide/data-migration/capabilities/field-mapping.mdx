@@ -1,198 +1,198 @@
 ---
-title: Field Mapping
-description: How field mapping works during data import.
+title: 필드 매핑
+description: 데이터 가져오기 시 필드 매핑이 작동하는 방식.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## How Field Mapping Works
+## 필드 매핑 작동 방식
 
-When you upload a file, Twenty analyzes your columns and attempts to match them to existing fields.
+파일을 업로드하면 Twenty가 열을 분석하여 기존 필드와 일치시키려고 시도합니다.
 
-### Automatic Mapping
+### 자동 매핑
 
-Twenty tries to match columns based on:
+Twenty는 다음을 기준으로 열을 일치시키려고 시도합니다:
 
-* Column header names (exact or similar matches)
-* Data type detection (dates, numbers, emails)
-* Common field patterns
+* 열 헤더 이름(정확 또는 유사 일치)
+* 데이터 유형 감지(날짜, 숫자, 이메일)
+* 일반적인 필드 패턴
 
-<Note>**Quick tip:** Export a few rows from the object you want to import. The exported file will have the exact column names Twenty expects, making automatic mapping seamless during import.</Note>
+<Note>**빠른 팁:** 가져오려는 객체에서 몇 행을 내보내세요. 내보낸 파일에는 Twenty가 기대하는 정확한 열 이름이 포함되어, 가져오는 동안 자동 매핑이 원활해집니다.</Note>
 
-### Manual Mapping Options
+### 수동 매핑 옵션
 
-For each column, you can:
+각 열에 대해 다음을 수행할 수 있습니다:
 
-* **Map to a field**: Select the matching Twenty field from a dropdown
-* **Do not map**: Skip the column entirely (data won't be imported)
+* **필드에 매핑**: 드롭다운에서 일치하는 Twenty 필드를 선택
+* **매핑하지 않음**: 해당 열을 완전히 건너뜁니다(데이터가 가져오지 않습니다)
 
-<Note>**Fields must exist before import.** The import creates records, not fields. Create custom fields under **Settings → Data Model** before importing.</Note>
+<Note>**가져오기 전에 필드가 존재해야 합니다.** 가져오기는 필드가 아니라 레코드를 생성합니다. 가져오기 전에 **설정 → 데이터 모델**에서 사용자 지정 필드를 생성하세요.</Note>
 
-## Field Type Compatibility
+## 필드 유형 호환성
 
-All field types available in the Data Model are supported for import.
+데이터 모델에서 제공되는 모든 필드 유형이 가져오기를 지원합니다.
 
-You can also import `id` values to either assign a specific ID to new records or update existing ones.
+`id` 값을 가져와 새 레코드에 특정 ID를 지정하거나 기존 레코드를 업데이트할 수도 있습니다.
 
 <img src="/images/user-guide/fields/all-field-types.png" style={{width:'100%'}} />
 
-## Data Format Requirements
+## 데이터 형식 요구 사항
 
-<Note>**Some fields have special syntax.** We recommend downloading the sample file before preparing your import to see the expected syntax for each field type.</Note>
+<Note>**일부 필드는 특별한 구문이 있습니다.** 가져오기를 준비하기 전에 샘플 파일을 다운로드하여 각 필드 유형에 필요한 구문을 확인하는 것을 권장합니다.</Note>
 
-### Address Fields
+### 주소 필드
 
-Address is a nested field with multiple columns. Some can be left empty.
+Address는 여러 열로 구성된 중첩 필드입니다. 일부는 비워 둘 수 있습니다.
 
-* **Address / Address 1**: Street address line 1
-* **Address / Address 2**: Street address line 2
-* **Address / City**: City name
-* **Address / State**: State or province
-* **Address / Country**: Country name
-* **Address / Post Code**: Postal/ZIP code
+* **Address / Address 1**: 주소 1행
+* **Address / Address 2**: 주소 2행
+* **Address / City**: 도시 이름
+* **Address / State**: 주 또는 도
+* **Address / Country**: 국가 이름
+* **Address / Post Code**: 우편번호/ZIP 코드
 
-### Array Fields
+### 배열 필드
 
-Use the following format:
+다음 형식을 사용하세요:
 
 ```
-["value1","value2"]
+[\"value1\",\"value2\"]
 ```
 
-### Boolean Fields
+### 부울 필드
 
-Use `TRUE` or `FALSE` (uppercase) - not `true` or `false`
+`TRUE` 또는 `FALSE`(대문자) - `true`나 `false`는 사용하지 마세요
 
-### Currency Fields
+### 통화 필드
 
-Currency is a nested field with two columns that **both must be filled**:
+통화는 두 개의 열이 있는 중첩 필드이며, **두 열 모두** 채워야 합니다:
 
-* **Amount / Amount**: The numeric value (e.g., `1234.56`)
-* **Amount / Currency**: The currency code (e.g., `USD`, `EUR`)
+* **Amount / Amount**: 숫자 값(예: `1234.56`)
+* **Amount / Currency**: 통화 코드(예: `USD`, `EUR`)
 
-### Date Fields
+### 날짜 필드
 
-Supported formats:
+지원되는 형식:
 
-* `YYYY-MM-DD` (recommended)
+* `YYYY-MM-DD`(권장)
 * `MM/DD/YYYY`
 * `DD/MM/YYYY`
-* ISO 8601 format
+* ISO 8601 형식
 
-### Domain Fields
+### 도메인 필드
 
-* It is recommended to use the format `https://domain.com` to avoid creating duplicates, as this is the format used for Companies created by the mailbox and calendar synchronizations
-* A `Domain Label` and `Domain URL` can be filled: best practice is to fill `domain.com` in the label and `https://domain.com` in the url
-* Domains must be unique within the Companies object
-* **Domains must be unique within the file to import**
+* 중복 생성을 방지하려면 `https://domain.com` 형식 사용을 권장합니다. 이 형식은 메일박스 및 캘린더 동기화로 생성되는 Companies 객체에 사용됩니다.
+* `Domain Label`과 `Domain URL`을 모두 채울 수 있습니다. 모범 사례는 라벨에는 `domain.com`, URL에는 `https://domain.com`을 입력하는 것입니다.
+* 도메인은 Companies 객체 내에서 고유해야 합니다
+* **가져올 파일 내에서도 도메인은 고유해야 합니다**
 
-### Email Fields
+### 이메일 필드
 
-* Must be valid email format
-* Emails must be unique within the People object
-* **Emails must be unique within the file to import**
-* For additional emails: use **Emails / Primary Email** for the main email, and **Emails / Additional Emails** with this format:
-
-```
-["jane@twenty.com","jane.doe@twenty.com"]
-```
-
-### Id Fields
-
-Specifying an `id` during import is optional. Twenty auto-generates one if not provided.
-
-Use cases for mapping an `id` column:
-
-* **Set a specific ID**: Choose the UUID for newly created records
-* **Update existing records**: Match against existing records to update them instead of creating duplicates. In that case, it is recommended to not map the other unique fields: mapping only one unique field ensures a smoother import.
-
-<Note>If you provide an `id`, it must be in UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
-
-### JSON Fields
-
-Use valid JSON format:
+* 유효한 이메일 형식이어야 합니다
+* 이메일은 People 객체 내에서 고유해야 합니다
+* **가져올 파일 내에서도 이메일은 고유해야 합니다**
+* 추가 이메일의 경우: 기본 이메일은 **Emails / Primary Email**을 사용하고, **Emails / Additional Emails**에는 다음 형식을 사용하세요:
 
 ```
-{"key":"value","key2":"value2"}
+[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
 ```
 
-### Links Fields
+### ID 필드
 
-Similar to Domain fields:
+가져오기 중 `id`를 지정하는 것은 선택 사항입니다. 제공하지 않으면 Twenty가 ID를 자동으로 생성합니다.
 
-* Fill both the label and URL columns: **Links / Link URL** and **Links / Link Label**
-* Use full URL format: `https://example.com`
-* For secondary links, use **Links / Secondary Links** column with this format:
+`id` 열을 매핑하는 사용 사례:
+
+* **특정 ID 설정**: 새로 생성될 레코드에 사용할 UUID를 선택
+* **기존 레코드 업데이트**: 중복 생성 대신 기존 레코드와 일치시켜 업데이트 이 경우 다른 고유 필드는 매핑하지 않는 것을 권장합니다. 고유 필드를 하나만 매핑하면 가져오기가 더 원활합니다.
+
+<Note>`id`를 제공하는 경우 UUID 형식이어야 합니다(예: `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+
+### JSON 필드
+
+유효한 JSON 형식을 사용하세요:
 
 ```
-[{"url":"https://twenty.com","label":"Twenty"}]
+{\"key\":\"value\",\"key2\":\"value2\"}
 ```
 
-### Multi-Select Fields
+### 링크 필드
 
-Use the **API names** (not the display labels) in the following format:
+도메인 필드와 유사합니다:
+
+* 라벨과 URL 두 열을 모두 채우세요: **Links / Link URL** 및 **Links / Link Label**
+* 전체 URL 형식을 사용하세요: `https://example.com`
+* 보조 링크의 경우 **Links / Secondary Links** 열을 사용하고 다음 형식을 사용하세요:
 
 ```
-["VALUE1","VALUE2"]
+[{\"url\":\"https://twenty.com\",\"label\":\"Twenty\"}]
 ```
 
-See [here](#finding-api-names-for-select-fields) where to find the API names.
+### 다중 선택 필드
 
-<Note>New select options will not be created automatically by the import. They must be added under **Settings → Data Model** before importing.</Note>
+표시 라벨이 아니라 **API 이름**을 다음 형식으로 사용하세요:
+
+```
+[\"VALUE1\",\"VALUE2\"]
+```
+
+API 이름을 찾는 위치는 [여기](#finding-api-names-for-select-fields)를 참고하세요.
+
+<Note>새 선택 옵션은 가져오기로 자동 생성되지 않습니다. 가져오기 전에 **설정 → 데이터 모델**에서 추가해야 합니다.</Note>
 
 <Warning>
-  **Import overwrites, it does not add.**
+  **가져오기는 추가하지 않고 덮어씁니다.**
 
-  If a record already has `VALUE2` and `VALUE3` selected, and you import `["VALUE1"]`, the record will only have `VALUE1` after import. The previous selections are replaced, not merged.
+  레코드에 이미 `VALUE2`와 `VALUE3`가 선택되어 있고 `[\"VALUE1\"]`을 가져오면, 가져온 후 해당 레코드에는 `VALUE1`만 남습니다. 이전 선택 항목은 병합되지 않고 대체됩니다.
 </Warning>
 
-### Number Fields
+### 숫자 필드
 
-* Numbers only
-* Decimals use period: `1234.56`
-* No thousands separators
+* 숫자만 입력
+* 소수점은 점을 사용합니다: `1234.56`
+* 천 단위 구분 기호 사용 금지
 
-### Phone Fields
+### 전화 필드
 
-Phone is a nested field with multiple columns that **must be filled**
+전화는 여러 열로 구성된 중첩 필드이며 **반드시 채워야 합니다**
 
-* **Phones / Primary Phone Number**: The phone number (e.g., `4159095555`)
-* **Phones / Primary Phone Country Code**: Country code (e.g., `US`)
-* **Phones / Primary Phone Calling Code**: Dialing code (e.g., `+1`)
+* **Phones / Primary Phone Number**: 전화번호(예: `4159095555`)
+* **Phones / Primary Phone Country Code**: 국가 코드(예: `US`)
+* **Phones / Primary Phone Calling Code**: 전화 걸기 코드(예: `+1`)
 
-### Rating Fields
+### 평점 필드
 
-Use the API name format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
+API 이름 형식을 사용하세요: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
 
-### Relation Fields
+### 관계 필드
 
-Please see our dedicated article: [Import Relations Between Objects](/l/ko/user-guide/data-migration/capabilities/import-relations)
+전용 문서를 참고하세요: [객체 간 관계 가져오기](/l/ko/user-guide/data-migration/capabilities/import-relations)
 
-### Select Fields
+### 선택 필드
 
-Use the **API name** of the option (not the display label):
+표시 라벨이 아니라 옵션의 **API 이름**을 사용하세요:
 
 ```
 VALUE1
 ```
 
-See [here](#finding-api-names-for-select-fields) where to find the API names.
-<Note>New select options will not be created automatically by the import. They must be added under **Settings → Data Model** before importing.</Note>
+API 이름을 찾는 위치는 [여기](#finding-api-names-for-select-fields)를 참고하세요.
+<Note>새 선택 옵션은 가져오기로 자동 생성되지 않습니다. 가져오기 전에 **설정 → 데이터 모델**에서 추가해야 합니다.</Note>
 
-### Text Fields
+### 텍스트 필드
 
-* No special formatting required
-* Leading/trailing spaces are trimmed
+* 특별한 형식 지정은 필요하지 않습니다
+* 앞뒤 공백은 제거됩니다
 
-## Finding API Names
+## API 이름 찾기
 
-For Select, Multi-Select, and Array fields with predefined options, you must use the **API names**, not the display labels.
+사전 정의된 옵션이 있는 Select, Multi-Select, Array 필드의 경우 표시 레이블이 아니라 반드시 **API 이름**을 사용해야 합니다.
 
-### How to Find API Names
+### API 이름을 찾는 방법
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at the bottom right of the settings page)
-4. View the API name for each option
+1. **설정 → 데이터 모델**로 이동
+2. 객체와 필드를 선택하세요
+3. **고급 모드**를 활성화하세요(설정 페이지 오른쪽 하단의 토글)
+4. 각 옵션의 API 이름을 확인하세요
 
-<VimeoEmbed videoId="1144910809" title="Video demonstration" />
+<VimeoEmbed videoId="1144910809" title="동영상 시연" />
