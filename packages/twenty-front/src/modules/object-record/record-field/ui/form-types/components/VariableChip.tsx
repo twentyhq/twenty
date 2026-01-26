@@ -38,6 +38,7 @@ export const VariableChip = ({
       label={label}
       title={title}
       onRemove={onRemove}
+      removeAriaLabel={t`Remove variable`}
       danger={isVariableNotFound}
       leftIcon={
         isVariableNotFound ? (

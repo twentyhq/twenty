@@ -66,6 +66,7 @@ type BaseChipProps = {
   label: string;
   title?: string;
   onRemove?: () => void;
+  removeAriaLabel?: string;
   danger?: boolean;
   leftIcon?: React.ReactNode;
 };
@@ -74,6 +75,7 @@ export const BaseChip = ({
   label,
   title,
   onRemove,
+  removeAriaLabel = 'Remove',
   danger = false,
   leftIcon,
 }: BaseChipProps) => {
@@ -91,7 +93,7 @@ export const BaseChip = ({
         <StyledDelete
           type="button"
           onClick={onRemove}
-          aria-label="Remove"
+          aria-label={removeAriaLabel}
           danger={danger}
         >
           <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
