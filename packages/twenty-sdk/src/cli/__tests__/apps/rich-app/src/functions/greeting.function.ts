@@ -6,13 +6,13 @@ const greetingHandler = () => {
 };
 
 export default defineFunction({
-  universalIdentifier: 'g0g1g2g3-g4g5-4000-8000-000000000001',
+  universalIdentifier: '9d412d9e-2caf-487c-8b66-d1585883dd4e',
   name: 'greeting-function',
   timeoutSeconds: 5,
   handler: greetingHandler,
   triggers: [
     {
-      universalIdentifier: 'g0g1g2g3-g4g5-4000-8000-000000000002',
+      universalIdentifier: 'f7b12160-3d25-4c92-a13f-a325dd60eb04',
       type: 'route',
       path: '/greet',
       httpMethod: 'GET',
