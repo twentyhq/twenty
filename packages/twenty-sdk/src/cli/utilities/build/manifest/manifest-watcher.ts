@@ -2,17 +2,17 @@ import chokidar, { type FSWatcher } from 'chokidar';
 
 export type ManifestWatcherOptions = {
   appPath: string;
-  onChangeDetected: (filePath: string) => void;
+  handleChangeDetected: (filePath: string) => void;
 };
 
 export class ManifestWatcher {
   private appPath: string;
-  private onChangeDetected: (filePath: string) => void;
+  private handleChangeDetected: (filePath: string) => void;
   private watcher: FSWatcher | null = null;
 
   constructor(options: ManifestWatcherOptions) {
     this.appPath = options.appPath;
-    this.onChangeDetected = options.onChangeDetected;
+    this.handleChangeDetected = options.handleChangeDetected;
   }
 
   async start(): Promise<void> {
@@ -29,7 +29,7 @@ export class ManifestWatcher {
       if (event === 'addDir') {
         return;
       }
-      this.onChangeDetected(filePath);
+      this.handleChangeDetected(filePath);
     });
   }
 

@@ -76,8 +76,8 @@ export class EsbuildWatcher implements RestartableWatcher {
     this.appPath = options.appPath;
     this.sourcePaths = options.sourcePaths;
     this.watchMode = options.watch ?? true;
-    this.onFileBuilt = options.onFileBuilt;
-    this.onBuildError = options.onBuildError;
+    this.onFileBuilt = options.handleFileBuilt;
+    this.onBuildError = options.handleBuildError;
     this.config = options.config;
   }
 

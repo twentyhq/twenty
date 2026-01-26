@@ -20,6 +20,6 @@ export type RestartableWatcherOptions = {
   appPath: string;
   sourcePaths: string[];
   watch?: boolean;
-  onFileBuilt: OnFileBuiltCallback;
-  onBuildError: OnBuildErrorCallback;
+  handleFileBuilt: OnFileBuiltCallback;
+  handleBuildError: OnBuildErrorCallback;
 };

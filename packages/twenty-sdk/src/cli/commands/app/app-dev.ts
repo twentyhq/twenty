@@ -40,7 +40,7 @@ export class AppDevCommand {
 
     this.orchestrator = new DevModeOrchestrator({
       appPath: this.appPath,
-      onManifestBuilt: this.handleWatcherRestarts.bind(this),
+      handleManifestBuilt: this.handleWatcherRestarts.bind(this),
     });
 
     await this.startManifestWatcher();
@@ -67,7 +67,7 @@ export class AppDevCommand {
   private async startManifestWatcher(): Promise<void> {
     this.manifestWatcher = new ManifestWatcher({
       appPath: this.appPath,
-      onChangeDetected: this.orchestrator!.onChangeDetected.bind(
+      handleChangeDetected: this.orchestrator!.handleChangeDetected.bind(
         this.orchestrator,
       ),
     });
@@ -107,8 +107,12 @@ export class AppDevCommand {
     this.functionsWatcher = createFunctionsWatcher({
       appPath: this.appPath,
       sourcePaths,
-      onBuildError: this.orchestrator!.onFileBuildError.bind(this.orchestrator),
-      onFileBuilt: this.orchestrator!.onFileBuilt.bind(this.orchestrator),
+      handleBuildError: this.orchestrator!.handleFileBuildError.bind(
+        this.orchestrator,
+      ),
+      handleFileBuilt: this.orchestrator!.handleFileBuilt.bind(
+        this.orchestrator,
+      ),
     });
 
     await this.functionsWatcher.start();
@@ -120,8 +124,12 @@ export class AppDevCommand {
     this.frontComponentsWatcher = createFrontComponentsWatcher({
       appPath: this.appPath,
       sourcePaths,
-      onBuildError: this.orchestrator!.onFileBuildError.bind(this.orchestrator),
-      onFileBuilt: this.orchestrator!.onFileBuilt.bind(this.orchestrator),
+      handleBuildError: this.orchestrator!.handleFileBuildError.bind(
+        this.orchestrator,
+      ),
+      handleFileBuilt: this.orchestrator!.handleFileBuilt.bind(
+        this.orchestrator,
+      ),
     });
 
     await this.frontComponentsWatcher.start();

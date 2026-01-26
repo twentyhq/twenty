@@ -15,7 +15,7 @@ const logger = createLogger('dev-mode');
 export type DevModeOrchestratorOptions = {
   appPath: string;
   debounceMs?: number;
-  onManifestBuilt: (result: ManifestBuildResult) => void | Promise<void>;
+  handleManifestBuilt: (result: ManifestBuildResult) => void | Promise<void>;
 };
 
 export class DevModeOrchestrator {
@@ -35,29 +35,29 @@ export class DevModeOrchestrator {
   private syncTimer: NodeJS.Timeout | null = null;
   private isSyncing = false;
 
-  private onManifestBuilt: (
+  private handleManifestBuilt: (
     result: ManifestBuildResult,
   ) => void | Promise<void>;
 
   constructor(options: DevModeOrchestratorOptions) {
     this.appPath = options.appPath;
     this.debounceMs = options.debounceMs ?? 200;
-    this.onManifestBuilt = options.onManifestBuilt;
+    this.handleManifestBuilt = options.handleManifestBuilt;
   }
 
-  async onChangeDetected(filePath: string) {
+  async handleChangeDetected(filePath: string) {
     logger.log(`File changed: ${filePath}`);
     this.scheduleSync();
   }
 
-  onFileBuildError(errors: string[]): void {
+  handleFileBuildError(errors: string[]): void {
     logger.error(`Build failed:`);
     for (const error of errors) {
       logger.error(`  ${error}`);
     }
   }
 
-  onFileBuilt({
+  handleFileBuilt({
     fileFolder,
     builtPath,
     filePath,
@@ -157,7 +157,7 @@ export class DevModeOrchestrator {
 
       logger.success(`Successfully built manifest`);
 
-      await this.onManifestBuilt(result);
+      await this.handleManifestBuilt(result);
 
       if (!this.fileUploader) {
         this.fileUploader = new FileUploader({
