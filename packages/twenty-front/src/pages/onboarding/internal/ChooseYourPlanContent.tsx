@@ -6,11 +6,14 @@ import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessio
 import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionPrice } from '@/billing/components/SubscriptionPrice';
 import { TrialCard } from '@/billing/components/TrialCard';
+import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
+import { useBaseProductByPlanKey } from '@/billing/hooks/useBaseProductByPlanKey';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
@@ -21,9 +24,6 @@ import {
 } from 'twenty-ui/navigation';
 import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { type Billing } from '~/generated/graphql';
-import { AppPath } from 'twenty-shared/types';
-import { useBaseProductByPlanKey } from '@/billing/hooks/useBaseProductByPlanKey';
-import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;

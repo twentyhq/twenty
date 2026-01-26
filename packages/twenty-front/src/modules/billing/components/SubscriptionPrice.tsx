@@ -20,10 +20,23 @@ const StyledPriceUnitSpan = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
+const formatYearlyPriceIfNeccessary = (price: number, type: SubscriptionInterval = SubscriptionInterval.Year): number => {
+  if (type !== SubscriptionInterval.Year) {
+    return price
+  }
+  const monthly = price / 12
+
+  if (Number.isInteger(monthly)) {
+    return monthly
+  }
+
+  return Number(monthly.toFixed(2))
+}
+
 export const SubscriptionPrice = ({ type, price }: SubscriptionPriceProps) => {
   const { t } = useLingui();
   const pricePerSeat =
-    type === SubscriptionInterval.Year ? (price / 12).toFixed(2) : price;
+    type === SubscriptionInterval.Year ? formatYearlyPriceIfNeccessary(price): price;
 
   let priceUnit = '';
   switch (type) {
