@@ -36,7 +36,7 @@ const formatYearlyPriceIfNecessary = (price: number, type: SubscriptionInterval 
 export const SubscriptionPrice = ({ type, price }: SubscriptionPriceProps) => {
   const { t } = useLingui();
   const pricePerSeat =
-    type === SubscriptionInterval.Year ? formatYearlyPriceIfNeccessary(price): price;
+    type === SubscriptionInterval.Year ? formatYearlyPriceIfNeccessary(price) : price;
 
   let priceUnit = '';
   switch (type) {
