@@ -17,7 +17,7 @@ type ExtractedFunctionManifest = Omit<
   ServerlessFunctionManifest,
   'sourceHandlerPath' | 'builtHandlerPath' | 'builtHandlerChecksum'
 > & {
-  handlerPath: string;
+  handler: string;
 };
 
 export class FunctionEntityBuilder
@@ -45,17 +45,17 @@ export class FunctionEntityBuilder
         const extracted =
           await manifestExtractFromFileServer.extractManifestFromFile<ExtractedFunctionManifest>(
             absolutePath,
-            { entryProperty: 'handler' },
           );
 
-        const { handlerPath, ...rest } = extracted;
+        const { handler: _, ...rest } = extracted;
         // builtHandlerPath is computed from filePath (the .function.ts file)
         // since that's what esbuild actually builds, not handlerPath
         const builtHandlerPath = this.computeBuiltHandlerPath(filePath);
 
         manifests.push({
           ...rest,
-          sourceHandlerPath: handlerPath,
+          handlerName: 'handler',
+          sourceHandlerPath: filePath,
           builtHandlerPath,
           builtHandlerChecksum: null,
         });
