@@ -1,14 +1,4 @@
-import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
-
-export const renderGrid = ({
-  ctx,
-  innerWidth,
-  innerHeight,
-  valueTickValues,
-  valueDomain,
-  isVertical,
-  gridColor,
-}: {
+type RenderGridLayerParams = {
   ctx: CanvasRenderingContext2D;
   innerWidth: number;
   innerHeight: number;
@@ -16,13 +6,26 @@ export const renderGrid = ({
   valueDomain: { min: number; max: number };
   isVertical: boolean;
   gridColor: string;
-}): void => {
+  lineWidth: number;
+  dashLength: number;
+  dashGap: number;
+};
+
+export const renderGridLayer = ({
+  ctx,
+  innerWidth,
+  innerHeight,
+  valueTickValues,
+  valueDomain,
+  isVertical,
+  gridColor,
+  lineWidth,
+  dashLength,
+  dashGap,
+}: RenderGridLayerParams): void => {
   ctx.strokeStyle = gridColor;
-  ctx.lineWidth = BAR_CHART_CONSTANTS.GRID_LINE_WIDTH;
-  ctx.setLineDash([
-    BAR_CHART_CONSTANTS.GRID_DASH_LENGTH,
-    BAR_CHART_CONSTANTS.GRID_DASH_GAP,
-  ]);
+  ctx.lineWidth = lineWidth;
+  ctx.setLineDash([dashLength, dashGap]);
 
   const range = valueDomain.max - valueDomain.min;
   if (range === 0) {

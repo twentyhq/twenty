@@ -16,7 +16,8 @@ export const computeValueScale = ({
     if (range === 0) {
       return 0;
     }
-    return ((value - domain.min) / range) * axisLength;
+    const raw = ((value - domain.min) / range) * axisLength;
+    return Math.min(axisLength, Math.max(0, raw));
   };
 
   return { valueToPixel, range };

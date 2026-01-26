@@ -1,32 +1,36 @@
 import { computeBandScale } from '@/page-layout/widgets/graph/chart-core/utils/computeBandScale';
-import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
-import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
-import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-import {
-  formatGraphValue,
-  type GraphValueFormatOptions,
-} from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { BarChartLayout } from '~/generated/graphql';
 
-type BarChartAxisOverlayProps = {
+type AxisLayerConfig = {
+  tickFontSize?: number;
+  legendFontSize?: number;
+  tickPadding: number;
+  rotatedLabelsExtraMargin: number;
+  bottomAxisLegendOffset: number;
+  leftAxisLegendOffsetPadding: number;
+  legendOffsetMarginBuffer: number;
+  categoryPadding: number;
+  categoryOuterPaddingPx: number;
+};
+
+type AxisLayerProps = {
   bottomAxisTickRotation: number;
   categoryValues: (string | number)[];
   categoryTickValues: (string | number)[];
   chartHeight: number;
   chartWidth: number;
-  formatOptions: GraphValueFormatOptions;
+  formatBottomTick: (value: string | number) => string;
+  formatLeftTick: (value: string | number) => string;
   hasNegativeValues: boolean;
-  layout: BarChartLayout;
+  isVertical: boolean;
   margins: ChartMargins;
-  maxBottomAxisTickLabelLength: number;
-  maxLeftAxisTickLabelLength: number;
   valueDomain: { min: number; max: number };
   valueTickValues: number[];
   xAxisLabel?: string;
   yAxisLabel?: string;
+  axisConfig: AxisLayerConfig;
 };
 
 const StyledSvgOverlay = styled.svg`
@@ -37,27 +41,26 @@ const StyledSvgOverlay = styled.svg`
   top: 0;
 `;
 
-export const BarChartAxisOverlay = ({
-  chartWidth,
-  chartHeight,
-  margins,
-  layout,
+export const AxisLayer = ({
+  bottomAxisTickRotation,
   categoryValues,
   categoryTickValues,
-  valueTickValues,
+  chartHeight,
+  chartWidth,
+  formatBottomTick,
+  formatLeftTick,
+  hasNegativeValues,
+  isVertical,
+  margins,
   valueDomain,
+  valueTickValues,
   xAxisLabel,
   yAxisLabel,
-  formatOptions,
-  bottomAxisTickRotation,
-  maxBottomAxisTickLabelLength,
-  maxLeftAxisTickLabelLength,
-  hasNegativeValues,
-}: BarChartAxisOverlayProps) => {
+  axisConfig,
+}: AxisLayerProps) => {
   const theme = useTheme();
-  const tickFontSize = 11;
-  const legendFontSize = 12;
-  const isVertical = layout === BarChartLayout.VERTICAL;
+  const tickFontSize = axisConfig.tickFontSize ?? 11;
+  const legendFontSize = axisConfig.legendFontSize ?? 12;
 
   const innerWidth = chartWidth - margins.left - margins.right;
   const innerHeight = chartHeight - margins.top - margins.bottom;
@@ -69,32 +72,12 @@ export const BarChartAxisOverlay = ({
   const categoryScale = computeBandScale({
     axisLength: isVertical ? innerWidth : innerHeight,
     count: categoryValues.length,
-    padding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
-    outerPaddingPx: BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
+    padding: axisConfig.categoryPadding,
+    outerPaddingPx: axisConfig.categoryOuterPaddingPx,
   });
 
   const bottomTickValues = isVertical ? categoryTickValues : valueTickValues;
   const leftTickValues = isVertical ? valueTickValues : categoryTickValues;
-
-  const formatBottomTick = (value: string | number): string => {
-    if (isVertical) {
-      return truncateTickLabel(String(value), maxBottomAxisTickLabelLength);
-    }
-    return truncateTickLabel(
-      formatGraphValue(Number(value), formatOptions),
-      maxBottomAxisTickLabelLength,
-    );
-  };
-
-  const formatLeftTick = (value: string | number): string => {
-    if (isVertical) {
-      return truncateTickLabel(
-        formatGraphValue(Number(value), formatOptions),
-        maxLeftAxisTickLabelLength,
-      );
-    }
-    return truncateTickLabel(String(value), maxLeftAxisTickLabelLength);
-  };
 
   const computeBottomTickPosition = (
     value: string | number,
@@ -145,29 +128,27 @@ export const BarChartAxisOverlay = ({
   const hasRotation = bottomAxisTickRotation !== 0;
 
   const rotatedLabelsExtraMargin = hasRotation
-    ? BAR_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN
+    ? axisConfig.rotatedLabelsExtraMargin
     : 0;
   const bottomLegendOffset = Math.min(
-    BAR_CHART_CONSTANTS.BOTTOM_AXIS_LEGEND_OFFSET + rotatedLabelsExtraMargin,
-    Math.max(
-      margins.bottom - COMMON_CHART_CONSTANTS.LEGEND_OFFSET_MARGIN_BUFFER,
-      0,
-    ),
+    axisConfig.bottomAxisLegendOffset + rotatedLabelsExtraMargin,
+    Math.max(margins.bottom - axisConfig.legendOffsetMarginBuffer, 0),
   );
 
   const leftLegendOffset =
-    -margins.left + BAR_CHART_CONSTANTS.LEFT_AXIS_LEGEND_OFFSET_PADDING;
+    -margins.left + axisConfig.leftAxisLegendOffsetPadding;
 
   const valueRange = valueDomain.max - valueDomain.min;
-  const zeroRatio = (0 - valueDomain.min) / valueRange;
-  const zeroPosition = isVertical
-    ? innerHeight - zeroRatio * innerHeight
-    : zeroRatio * innerWidth;
+  const shouldRenderZeroLine = hasNegativeValues && valueRange !== 0;
+  const zeroPosition = shouldRenderZeroLine
+    ? isVertical
+      ? innerHeight - ((0 - valueDomain.min) / valueRange) * innerHeight
+      : ((0 - valueDomain.min) / valueRange) * innerWidth
+    : 0;
 
   return (
     <StyledSvgOverlay width={chartWidth} height={chartHeight}>
       <g transform={`translate(${margins.left}, ${margins.top})`}>
-        {/* Bottom axis line */}
         <line
           x1={0}
           y1={innerHeight}
@@ -177,7 +158,6 @@ export const BarChartAxisOverlay = ({
           strokeWidth={1}
         />
 
-        {/* Left axis line */}
         <line
           x1={0}
           y1={0}
@@ -187,8 +167,7 @@ export const BarChartAxisOverlay = ({
           strokeWidth={1}
         />
 
-        {/* Zero marker line */}
-        {hasNegativeValues && (
+        {shouldRenderZeroLine && (
           <line
             x1={isVertical ? 0 : zeroPosition}
             y1={isVertical ? zeroPosition : 0}
@@ -208,7 +187,7 @@ export const BarChartAxisOverlay = ({
               <g key={`bottom-tick-${index}`} transform={`translate(${x}, 0)`}>
                 <text
                   x={0}
-                  y={BAR_CHART_CONSTANTS.TICK_PADDING + tickFontSize}
+                  y={axisConfig.tickPadding + tickFontSize}
                   textAnchor={hasRotation ? 'end' : 'middle'}
                   transform={
                     hasRotation
@@ -224,7 +203,6 @@ export const BarChartAxisOverlay = ({
             );
           })}
 
-          {/* Bottom axis label */}
           {xAxisLabel && (
             <text
               x={innerWidth / 2}
@@ -239,7 +217,6 @@ export const BarChartAxisOverlay = ({
           )}
         </g>
 
-        {/* Left axis ticks */}
         <g>
           {leftTickValues.map((value, index) => {
             const y = computeLeftTickPosition(value, index);
@@ -248,7 +225,7 @@ export const BarChartAxisOverlay = ({
             return (
               <g key={`left-tick-${index}`} transform={`translate(0, ${y})`}>
                 <text
-                  x={-BAR_CHART_CONSTANTS.TICK_PADDING}
+                  x={-axisConfig.tickPadding}
                   y={0}
                   textAnchor="end"
                   dominantBaseline="middle"
@@ -261,7 +238,6 @@ export const BarChartAxisOverlay = ({
             );
           })}
 
-          {/* Left axis label */}
           {yAxisLabel && (
             <text
               x={leftLegendOffset}

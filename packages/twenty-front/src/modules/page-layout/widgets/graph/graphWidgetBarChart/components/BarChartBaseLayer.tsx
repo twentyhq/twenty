@@ -1,9 +1,9 @@
 import { CHART_CORE_CONSTANTS } from '@/page-layout/widgets/graph/chart-core/constants/ChartCoreConstants';
+import { renderGridLayer } from '@/page-layout/widgets/graph/chart-core/utils/renderGridLayer';
 import { computeZeroPixel } from '@/page-layout/widgets/graph/chart-core/utils/computeZeroPixel';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositions';
 import { renderBars } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/renderBars';
-import { renderGrid } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/renderGrid';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -139,7 +139,7 @@ export const BarChartBaseLayer = ({
       ctx.translate(margins.left, margins.top);
 
       if (showGrid) {
-        renderGrid({
+        renderGridLayer({
           ctx,
           innerWidth,
           innerHeight,
@@ -147,6 +147,9 @@ export const BarChartBaseLayer = ({
           valueDomain,
           isVertical,
           gridColor,
+          lineWidth: BAR_CHART_CONSTANTS.GRID_LINE_WIDTH,
+          dashLength: BAR_CHART_CONSTANTS.GRID_DASH_LENGTH,
+          dashGap: BAR_CHART_CONSTANTS.GRID_DASH_GAP,
         });
       }
 

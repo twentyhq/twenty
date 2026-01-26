@@ -1,42 +1,45 @@
-import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
+import { isSidePanelAnimatingState } from '@/command-menu/states/isSidePanelAnimatingState';
+import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
+import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
+import { AxisLayer } from '@/page-layout/widgets/graph/chart-core/layers/AxisLayer';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
+import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { BarChart } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChart';
 import { BarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartTooltip';
 import { BarChartTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartTotalsLayer';
-import { BarChartAxisOverlay } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartAxisOverlay';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { useBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarPositions';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetHoveredSliceIndexComponentState';
 import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
-import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
 import { getBarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartLayout';
 import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
+import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
-import { isSidePanelAnimatingState } from '@/command-menu/states/isSidePanelAnimatingState';
-import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
-import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useRef, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { BarChartLayout } from '~/generated/graphql';
-import { useRecoilValue } from 'recoil';
 
 type GraphWidgetBarChartProps = {
   colorMode: GraphColorMode;
@@ -206,6 +209,8 @@ export const GraphWidgetBarChart = ({
     width: chartWidth,
   });
 
+  const isVertical = layout === BarChartLayout.VERTICAL;
+
   const categoryValues = useMemo(
     () => data.map((item) => String(item[indexBy] ?? '')),
     [data, indexBy],
@@ -296,7 +301,6 @@ export const GraphWidgetBarChart = ({
   };
 
   const categoryTickValues = useMemo(() => {
-    const isVertical = layout === BarChartLayout.VERTICAL;
     if (isVertical) {
       return tickConfig.categoryTickValues;
     }
@@ -305,7 +309,48 @@ export const GraphWidgetBarChart = ({
       return leftTickValues;
     }
     return tickConfig.categoryTickValues;
-  }, [layout, tickConfig.categoryTickValues, axisLeftConfiguration]);
+  }, [tickConfig.categoryTickValues, axisLeftConfiguration, isVertical]);
+
+  const formatBottomTick = (value: string | number): string => {
+    if (isVertical) {
+      return truncateTickLabel(
+        String(value),
+        tickConfig.maxBottomAxisTickLabelLength,
+      );
+    }
+    return truncateTickLabel(
+      formatGraphValue(Number(value), formatOptions),
+      tickConfig.maxBottomAxisTickLabelLength,
+    );
+  };
+
+  const formatLeftTick = (value: string | number): string => {
+    if (isVertical) {
+      return truncateTickLabel(
+        formatGraphValue(Number(value), formatOptions),
+        tickConfig.maxLeftAxisTickLabelLength,
+      );
+    }
+    return truncateTickLabel(
+      String(value),
+      tickConfig.maxLeftAxisTickLabelLength,
+    );
+  };
+
+  const axisConfig = {
+    tickFontSize: 11,
+    legendFontSize: 12,
+    tickPadding: BAR_CHART_CONSTANTS.TICK_PADDING,
+    rotatedLabelsExtraMargin:
+      BAR_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN,
+    bottomAxisLegendOffset: BAR_CHART_CONSTANTS.BOTTOM_AXIS_LEGEND_OFFSET,
+    leftAxisLegendOffsetPadding:
+      BAR_CHART_CONSTANTS.LEFT_AXIS_LEGEND_OFFSET_PADDING,
+    legendOffsetMarginBuffer:
+      COMMON_CHART_CONSTANTS.LEGEND_OFFSET_MARGIN_BUFFER,
+    categoryPadding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
+    categoryOuterPaddingPx: BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
+  };
 
   const innerWidth = chartWidth - margins.left - margins.right;
   const innerHeight = chartHeight - margins.top - margins.bottom;
@@ -347,22 +392,18 @@ export const GraphWidgetBarChart = ({
                 valueDomain={valueDomain}
                 valueTickValues={valueTickValues}
               />
-              <BarChartAxisOverlay
+              <AxisLayer
                 bottomAxisTickRotation={tickConfig.bottomAxisTickRotation}
                 categoryValues={categoryValues}
                 categoryTickValues={categoryTickValues}
                 chartHeight={chartHeight}
                 chartWidth={chartWidth}
-                formatOptions={formatOptions}
+                formatBottomTick={formatBottomTick}
+                formatLeftTick={formatLeftTick}
                 hasNegativeValues={hasNegativeValues}
-                layout={layout}
+                isVertical={isVertical}
                 margins={margins}
-                maxBottomAxisTickLabelLength={
-                  tickConfig.maxBottomAxisTickLabelLength
-                }
-                maxLeftAxisTickLabelLength={
-                  tickConfig.maxLeftAxisTickLabelLength
-                }
+                axisConfig={axisConfig}
                 valueDomain={valueDomain}
                 valueTickValues={valueTickValues}
                 xAxisLabel={xAxisLabel}
