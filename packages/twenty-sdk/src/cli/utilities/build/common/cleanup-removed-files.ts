@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import path from 'path';
 
@@ -17,7 +16,5 @@ export const cleanupRemovedFiles = async (
 
     await fs.remove(outputFile);
     await fs.remove(sourceMapFile);
-
-    console.log(chalk.gray(`  🗑️  Removed ${outputBaseName}`));
   }
 };
