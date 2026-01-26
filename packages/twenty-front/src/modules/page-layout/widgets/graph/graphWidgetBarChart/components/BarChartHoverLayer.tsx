@@ -33,7 +33,7 @@ export const BarChartHoverLayer = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dpr] = useState<number>(
     () =>
-      window.devicePixelRatio ||
+      (typeof window !== 'undefined' ? window.devicePixelRatio : undefined) ||
       CHART_CORE_CONSTANTS.DEFAULT_DEVICE_PIXEL_RATIO,
   );
 
