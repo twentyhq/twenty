@@ -11,10 +11,7 @@ export const defineFunctionsTests = (appPath: string): void => {
         .filter((f) => f.includes('.function.'))
         .sort();
 
-      expect(functionFiles).toEqual([
-        'my.function.mjs',
-        'my.function.mjs.map',
-      ]);
+      expect(functionFiles).toEqual(['my.function.mjs', 'my.function.mjs.map']);
     });
   });
 };
