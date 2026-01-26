@@ -236,73 +236,12 @@ export class FrontComponentService {
     return frontComponent;
   }
 
-  // Mocked implementation - returns Hello World component regardless of id
   async getFrontComponentCode(
     _id: string,
     _workspaceId: string,
   ): Promise<FrontComponentCodeDTO> {
-    // Worker code that communicates with the host via MessageChannel
-    // Uses the @remote-dom mutation protocol to send UI updates
-    const sourceCode = `
-// Remote DOM mutation type constants (from @remote-dom/core)
-const MUTATION_TYPE_INSERT_CHILD = 0;
-const NODE_TYPE_ELEMENT = 1;
-const NODE_TYPE_TEXT = 3;
-const ROOT_ID = '~';
-
-let port = null;
-let idCounter = 0;
-
-const generateId = () => String(++idCounter);
-
-const sendMutation = (records) => {
-  if (port) {
-    port.postMessage({ type: 'mutate', records });
-  }
-};
-
-// Listen for the connect message from the host
-self.onmessage = (event) => {
-  if (event.data.type === 'connect') {
-    port = event.data.port;
-    port.start();
-
-    // Build and send the initial UI tree
-    const containerId = generateId();
-    const textId = generateId();
-
-    // Insert container element as child of root
-    sendMutation([
-      [
-        MUTATION_TYPE_INSERT_CHILD,
-        ROOT_ID,
-        {
-          id: containerId,
-          type: NODE_TYPE_ELEMENT,
-          element: 'remote-element',
-          properties: { type: 'div' },
-          children: [],
-        },
-        0,
-      ],
-    ]);
-
-    // Insert text node as child of container
-    sendMutation([
-      [
-        MUTATION_TYPE_INSERT_CHILD,
-        containerId,
-        {
-          id: textId,
-          type: NODE_TYPE_TEXT,
-          data: 'Hello World from Custom Widget!',
-        },
-        0,
-      ],
-    ]);
-  }
-};
-`;
+    // TODO: get the source code from the front component here, we will implement a mock version for now
+    const sourceCode = '';
 
     return { sourceCode };
   }
