@@ -209,8 +209,8 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
+          recordsAfter: formattedAfter,
+          recordsBefore: formattedBefore,
           authContext: this.authContext,
         }),
       );
@@ -221,8 +221,8 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
+          recordsAfter: formattedAfter,
+          recordsBefore: formattedBefore,
           authContext: this.authContext,
         }),
       );
@@ -388,8 +388,8 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
+          recordsAfter: formattedAfter,
+          recordsBefore: formattedBefore,
           authContext: this.authContext,
         }),
       );
@@ -400,8 +400,8 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
+          recordsAfter: formattedAfter,
+          recordsBefore: formattedBefore,
           authContext: this.authContext,
         }),
       );

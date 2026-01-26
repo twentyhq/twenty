@@ -1,147 +1,147 @@
 ---
-title: APIs
-description: Query and modify your CRM data programmatically using REST or GraphQL.
+title: API
+description: REST または GraphQL を使用して、プログラムから CRM データをクエリおよび変更します。
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Twenty was built to be developer-friendly, offering powerful APIs that adapt to your custom data model. We provide four distinct API types to meet different integration needs.
+Twentyは開発者に優しい設計で、強力なAPIを提供し、カスタムデータモデルに適応します。 異なる統合ニーズに対応する4つの異なるAPIタイプを提供します。 異なる統合ニーズに対応する4つの異なるAPIタイプを提供します。 異なる統合ニーズに対応する4つの異なるAPIタイプを提供します。
 
-## Developer-First Approach
+## 開発者優先アプローチ
 
-Twenty generates APIs specifically for your data model:
+Twenty は、お使いのデータモデルに特化した API を生成します:
 
-* **No long IDs required**: Use your object and field names directly in endpoints
-* **Standard and custom objects treated equally**: Your custom objects get the same API treatment as built-in ones
-* **Dedicated endpoints**: Each object and field gets its own API endpoint
-* **Custom documentation**: Generated specifically for your workspace's data model
+* **長いIDが不要**：オブジェクトとフィールド名をエンドポイントに直接使用
+* **標準とカスタムオブジェクトを同等に扱う**：カスタムオブジェクトも組み込みのものと同じAPI処理を受ける
+* **専用エンドポイント**：各オブジェクトとフィールドに固有のAPIエンドポイントが設けられる
+* **カスタムドキュメント**：ワークスペースのデータモデルに特化して生成
 
 <Note>
-  Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
+  API キー作成後、**Settings → API & Webhooks** でパーソナライズされた API ドキュメントを利用できます。 Twenty はカスタムデータモデルに合致する API を生成するため、ドキュメントはお使いのワークスペース専用です。
 </Note>
 
-## The Two API Types
+## 2 つの API タイプ
 
-### Core API
+### コアAPI
 
-Accessed on `/rest/` or `/graphql/`
+`/rest/` または `/graphql/` でアクセスできます。
 
-Work with your actual **records** (the data):
+実際の **レコード**（データ）を扱います:
 
-* Create, read, update, delete People, Companies, Opportunities, etc.
-* Query and filter data
-* Manage record relationships
+* People、Companies、Opportunities などを作成・読み取り・更新・削除。
+* データのクエリとフィルター
+* レコードの関係管理
 
-### Metadata API
+### メタデータAPI
 
-Accessed on `/rest/metadata/` or `/metadata/`
+`/rest/metadata/` または `/metadata/` でアクセスできます。
 
-Manage your **workspace and data model**:
+**ワークスペースとデータモデル**を管理:
 
-* Create, modify, or delete objects and fields
-* Configure workspace settings
-* Define relationships between objects
+* オブジェクトやフィールドの作成、変更、削除
+* ワークスペース設定の構成
+* オブジェクト間のリレーションシップを定義
 
-## REST vs GraphQL
+## REST と GraphQL の比較
 
-Both Core and Metadata APIs are available in REST and GraphQL formats:
+Core と Metadata の両 API は、REST と GraphQL の形式で利用可能です:
 
-| Format      | Available Operations                                       |
-| ----------- | ---------------------------------------------------------- |
-| **REST**    | CRUD, batch operations, upserts                            |
-| **GraphQL** | Same + **batch upserts**, relationship queries in one call |
+| 形式          | 利用可能な操作                                  |
+| ----------- | ---------------------------------------- |
+| **REST**    | CRUD、バッチ操作、アップサート                        |
+| **GraphQL** | 同様に、**バッチアップサート**、1 回の呼び出しでのリレーションシップクエリ |
 
-Choose based on your needs — both formats access the same data.
+ニーズに合わせて選択してください—どちらの形式でも同じデータにアクセスできます。
 
-## API Endpoints
+## APIエンドポイント
 
-| Environment     | Base URL                  |
-| --------------- | ------------------------- |
-| **Cloud**       | `https://api.twenty.com/` |
-| **Self-Hosted** | `https://{your-domain}/`  |
+| 環境         | ベース URL                   |
+| ---------- | ------------------------- |
+| **クラウド**   | `https://api.twenty.com/` |
+| **セルフホスト** | `https://{your-domain}/`  |
 
-## Authentication
+## 認証
 
-Every API request requires an API key in the header:
+すべての API リクエストにはヘッダーに API キーが必要です:
 
 ```
 Authorization: Bearer YOUR_API_KEY
 ```
 
-### Create an API Key
+### APIキーを作成
 
-1. Go to **Settings → APIs & Webhooks**
-2. Click **+ Create key**
-3. Configure:
-   * **Name**: Descriptive name for the key
-   * **Expiration Date**: When the key expires
-4. Click **Save**
-5. **Copy immediately** — the key is only shown once
+1. **Settings → APIs & Webhooks**に移動
+2. **+ Create key** をクリック
+3. 設定:
+   * **Name**: キーのわかりやすい名前
+   * **Expiration Date**: キーの有効期限
+4. **保存**をクリック
+5. **すぐにコピー** — キーは一度しか表示されません
 
-<VimeoEmbed videoId="928786722" title="Creating API key" />
+<VimeoEmbed videoId="928786722" title="API キーの作成" />
 
 <Warning>
-  Your API key grants access to sensitive data. Don't share it with untrusted services. If compromised, disable it immediately and generate a new one.
+  API キーは機密データへのアクセスを許可します。 信頼できないサービスと共有しないでください。 漏洩した場合は、直ちに無効化して新しいものを生成してください。
 </Warning>
 
-### Assign a Role to an API Key
+### API キーにロールを割り当てる
 
-For better security, assign a specific role to limit access:
+セキュリティを高めるため、アクセスを制限する特定のロールを割り当ててください:
 
-1. Go to **Settings → Roles**
-2. Click on the role to assign
-3. Open the **Assignment** tab
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key
+1. **設定 → 役割** に移動
+2. 割り当てるロールをクリック
+3. **割り当て** タブを開く
+4. **API Keys** の下で、**+ Assign to API key** をクリック
+5. API キーを選択
 
-The key will inherit that role's permissions. See [Permissions](/l/ja/user-guide/permissions-access/capabilities/permissions) for details.
+キーはそのロールの権限を継承します。 詳細は[権限](/l/ja/user-guide/permissions-access/capabilities/permissions)を参照してください。
 
-### Manage API Keys
+### APIキーの管理
 
-**Regenerate**: Settings → APIs & Webhooks → Click key → **Regenerate**
+**Regenerate**: Settings → APIs & Webhooks → キーをクリック → **Regenerate**
 
-**Delete**: Settings → APIs & Webhooks → Click key → **Delete**
+**Delete**: Settings → APIs & Webhooks → キーをクリック → **Delete**
 
-## API Playground
+## API プレイグラウンド
 
-Test your APIs directly in the browser with our built-in playground — available for both **REST** and **GraphQL**.
+組み込みのプレイグラウンドでブラウザから直接 API をテストできます—**REST** と **GraphQL** の両方で利用可能です。
 
-### Access the Playground
+### プレイグラウンドにアクセス
 
-1. Go to **Settings → APIs & Webhooks**
-2. Create an API key (required)
-3. Click on **REST API** or **GraphQL API** to open the playground
+1. **Settings → APIs & Webhooks**に移動
+2. API キーを作成（必須）
+3. プレイグラウンドを開くには **REST API** または **GraphQL API** をクリック
 
-### What You Get
+### 提供内容
 
-* **Interactive documentation**: Generated for your specific data model
-* **Live testing**: Execute real API calls against your workspace
-* **Schema explorer**: Browse available objects, fields, and relationships
-* **Request builder**: Construct queries with autocomplete
+* **インタラクティブなドキュメント**: お使いの特定のデータモデル向けに生成
+* **ライブテスト**: ワークスペースに対して実際の API 呼び出しを実行
+* **スキーマエクスプローラー**: 利用可能なオブジェクト、フィールド、リレーションシップを閲覧
+* **リクエストビルダー**: オートコンプリートでクエリを構築
 
-The playground reflects your custom objects and fields, so documentation is always accurate for your workspace.
+プレイグラウンドはカスタムのオブジェクトとフィールドを反映するため、ドキュメントは常にお使いのワークスペースに対して正確です。
 
-## Batch Operations
+## バッチ操作
 
-Both REST and GraphQL support batch operations:
+REST と GraphQL の両方がバッチ操作をサポートしています:
 
-* **Batch size**: Up to 60 records per request
-* **Operations**: Create, update, delete multiple records
+* **バッチサイズ**：リクエストあたり最大60記録
+* **操作**: 複数のレコードの作成、更新、削除
 
-**GraphQL-only features:**
+**GraphQL のみの機能:**
 
-* **Batch Upsert**: Create or update in one call
-* Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
+* **バッチアップサート**: 1 回の呼び出しで作成または更新
+* 複数形のオブジェクト名を使用（例：`CreateCompany` ではなく `CreateCompanies`）
 
-## Rate Limits
+## API レートリミット
 
-API requests are throttled to ensure platform stability:
+プラットフォームの安定性を確保するため、API リクエストはレート制限されています:
 
-| Limit          | Value                |
-| -------------- | -------------------- |
-| **Requests**   | 100 calls per minute |
-| **Batch size** | 60 records per call  |
+| 制限         | 値                   |
+| ---------- | ------------------- |
+| **リクエスト**  | 1 分あたり 100 回の呼び出し   |
+| **バッチサイズ** | 1 回の呼び出しあたり 60 レコード |
 
 <Tip>
-  Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
+  バッチ操作を使用してスループットを最大化しましょう—個別のリクエストではなく、1 回の API 呼び出しで最大 60 レコードを処理できます。
 </Tip>

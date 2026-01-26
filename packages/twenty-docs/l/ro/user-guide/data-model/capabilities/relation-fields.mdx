@@ -39,11 +39,15 @@ Multe înregistrări din Obiectul A pot fi legate de multe înregistrări din Ob
 
 **Exemplu:** Multe Persoane pot fi legate de multe Proiecte și invers.
 
-<Warning>
-  **Mulți-la-mulți nu este încă acceptat.**
+Relațiile de tip multe-la-multe folosesc un model de tip **obiect de legătură**: un obiect intermediar care conectează ambele părți. Cu funcția de relație cu obiect de legătură, Twenty afișează direct înregistrările finale asociate, ascunzând obiectul intermediar din UI.
 
-  Acest tip de relație este planificat pentru S1 2026. Ca soluție temporară, creați un obiect intermediar de legătură (de ex., „Atribuiri de proiect”) care are relații mulți-la-unu cu ambele obiecte.
+<img src="/images/user-guide/fields/junction-relation-diagram.png" style={{width:'100%'}} />
+
+<Warning>
+  **Funcție de laborator**: Relațiile cu obiect de legătură trebuie activate în **Settings → Updates → Lab** înainte de utilizare.
 </Warning>
+
+Consultați [Cum să creați relații de tip multe-la-multe](/l/ro/user-guide/data-model/how-tos/create-many-to-many-relations) pentru un ghid complet, pas cu pas.
 
 ## Crearea unui câmp de relație
 

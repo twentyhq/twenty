@@ -1,94 +1,94 @@
 ---
-title: Import Relations Between Objects
-description: Import relationships between records via CSV.
+title: Importer des relations entre objets
+description: Importer des relations entre enregistrements via CSV.
 ---
 
-## Overview
+## Vue d'ensemble
 
-Twenty supports importing relationships between objects during CSV import. This allows you to link records (e.g., attach People to Companies) as part of your data migration.
+Twenty prend en charge l'importation de relations entre objets lors de l'importation CSV. Cela vous permet de lier des enregistrements (p. ex., associer des Personnes à des Entreprises) dans le cadre de votre migration de données.
 
-<Note>**Currently supported for import**: One-to-many relations pointing to a single object type on each side (e.g., People → Companies). Relations pointing to multiple object types are not yet supported in import/export.</Note>
+<Note>**Actuellement pris en charge pour l'importation** : Relations un-à-plusieurs pointant vers un seul type d'objet de chaque côté (p. ex., Personnes → Entreprises). Les relations pointant vers plusieurs types d'objet ne sont pas encore prises en charge pour l'import/export.</Note>
 
-## How Relations Work in Twenty
+## Fonctionnement des relations dans Twenty
 
-### One to Many / Many to One
+### Un à plusieurs / Plusieurs à un
 
-Twenty supports standard relations where one record links to many others:
+Twenty prend en charge des relations standard où un enregistrement est lié à plusieurs autres :
 
-* **One Company → Many People**: A company can have multiple employees, but each person belongs to one company
-* **One Company → Many Opportunities**: A company can have multiple deals, but each opportunity belongs to one company
+* **Une Entreprise → Plusieurs Personnes** : Une entreprise peut avoir plusieurs employés, mais chaque personne appartient à une seule entreprise
+* **Une Entreprise → Plusieurs Opportunités** : Une entreprise peut avoir plusieurs affaires, mais chaque opportunité appartient à une seule entreprise
 
-### Relations That Can Point to Multiple Object Types
+### Relations pouvant pointer vers plusieurs types d'objet
 
-Some relations can connect to different types of objects. This works in two ways:
+Certaines relations peuvent se connecter à différents types d'objets. Cela fonctionne de deux façons :
 
-**Pattern 1: Many records linking to one record each from different object types**
+**Modèle 1 : De nombreux enregistrements liés chacun à un enregistrement provenant de différents types d'objets**
 
-Several Notes, Tasks, or Activities can each be attached to multiple object types at once:
+Plusieurs Notes, Tâches ou Activités peuvent chacune être rattachées simultanément à plusieurs types d'objets :
 
-* **Notes** can be linked to one Person, one Company, and one Opportunity simultaneously
-* **Tasks** can be linked to one Person, one Company, and one Opportunity simultaneously
+* **Notes** peuvent être liées à une Personne, une Entreprise et une Opportunité simultanément
+* **Tâches** peuvent être liées à une Personne, une Entreprise et une Opportunité simultanément
 
-Here, the Notes/Tasks are on the "many" side. Each links to one record per object type.
+Ici, les Notes/Tâches sont du côté "plusieurs". Chacune est liée à un enregistrement par type d'objet.
 
 <img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
 
-**Pattern 2: One record receiving links from many records of different object types**
+**Modèle 2 : Un enregistrement recevant des liens de nombreux enregistrements de différents types d'objets**
 
-A Project can receive links from multiple records across different object types:
+Un Projet peut recevoir des liens de plusieurs enregistrements provenant de différents types d'objets :
 
-* **A Project** can have many People linked to it, many Companies linked to it, and many Notes attached to it
+* **Un Projet** peut avoir de nombreuses Personnes qui lui sont liées, de nombreuses Entreprises qui lui sont liées, et de nombreuses Notes qui y sont rattachées
 
-Here, the Project is on the "one" side. Multiple records from different objects can all link to the same Project.
+Ici, le Projet est du côté "un". Plusieurs enregistrements issus d'objets différents peuvent tous être liés au même Projet.
 
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Import/Export limitation**: Relations that point to multiple object types (like Notes → People/Companies/Opportunities) are **not yet supported** in CSV import or export.
+  **Limitation d'import/export** : Les relations qui pointent vers plusieurs types d'objet (comme Notes → Personnes/Entreprises/Opportunités) ne sont **pas encore prises en charge** lors de l'import ou de l'export CSV.
 
-  * **Import**: Only one-to-many relations pointing to a single object type on each side can be imported
-  * **Export**: Columns for relations pointing to multiple object types are currently left empty
+  * **Import** : Seules les relations un-à-plusieurs pointant vers un seul type d'objet de chaque côté peuvent être importées
+  * **Export** : Les colonnes pour les relations pointant vers plusieurs types d'objet sont actuellement laissées vides
 
-  This is on our roadmap.
+  C'est sur notre feuille de route.
 </Warning>
 
-### What's Not Supported Today
+### Ce qui n'est pas pris en charge aujourd'hui
 
-**Many to Many relations** are not yet available. For example, you cannot currently create a relation where:
+**Les relations plusieurs à plusieurs** ne sont pas encore disponibles. Par exemple, vous ne pouvez pas actuellement créer une relation où :
 
-* Many People are linked to many Projects
+* De nombreuses Personnes sont liées à de nombreux Projets
 
-<Note>Many to Many relations are planned for H1 2026.</Note>
+<Note>Les relations plusieurs à plusieurs sont prévues pour S1 2026.</Note>
 
-## Linking Records During Import
+## Lier des enregistrements lors de l'importation
 
-<Note>**Reminder**: Only one-to-many relations pointing to a single object type can be imported (e.g., People → Companies). Relations pointing to multiple object types (e.g., Notes → People/Companies/Opportunities) are not yet supported.</Note>
+<Note>**Rappel** : Seules les relations un-à-plusieurs pointant vers un seul type d'objet peuvent être importées (p. ex., Personnes → Entreprises). Les relations pointant vers plusieurs types d'objet (p. ex., Notes → Personnes/Entreprises/Opportunités) ne sont pas encore prises en charge.</Note>
 
-### Step 1: Identify the "One" and "Many" Sides
+### Étape 1 : Identifier les côtés "un" et "plusieurs"
 
-First, determine which object is on the "one" side and which is on the "many" side of the relationship.
+Commencez par déterminer quel objet est du côté "un" et lequel est du côté "plusieurs" de la relation.
 
-**Example**:
+**Exemple**:
 
-* **Company** is the "one" side (one company has many employees)
-* **People** is the "many" side (each person belongs to one company)
+* **Entreprise** est le côté "un" (une entreprise a de nombreux employés)
+* **Personnes** est le côté "plusieurs" (chaque personne appartient à une seule entreprise)
 
-### Step 2: Ensure the "One" Side Records Exist
+### Étape 2 : Assurez-vous que les enregistrements du côté "un" existent
 
-Before importing the "many" side, the "one" side records must already exist in Twenty.
+Avant d'importer le côté "plusieurs", les enregistrements du côté "un" doivent déjà exister dans Twenty.
 
-* Import or create the "one" side records first (e.g., Companies)
-* Validate their unique identifier. This can be:
-  * The `id` (Twenty's UUID)
-  * A field set as unique (e.g., `domain` for Companies, or an external ID from your previous system)
+* Importez ou créez d'abord les enregistrements du côté "un" (p. ex., Entreprises)
+* Validez leur identifiant unique. Cela peut être :
+  * L'`id` (UUID de Twenty)
+  * Un champ défini comme unique (p. ex., `domain` pour les Entreprises, ou un identifiant externe provenant de votre système précédent)
 
-<Warning>The import will fail if a reference is made to a record that does not exist.</Warning>
+<Warning>L'importation échouera si une référence est faite à un enregistrement inexistant.</Warning>
 
-### Step 3: Prepare Your CSV File
+### Étape 3 : Préparer votre fichier CSV
 
-Add a column in your "many" side CSV file that references the "one" side record.
+Ajoutez une colonne dans votre fichier CSV du côté "plusieurs" qui référence l'enregistrement du côté "un".
 
-**Example**: For a People CSV file linking to Companies:
+**Exemple** : Pour un fichier CSV Personnes lié aux Entreprises :
 
 ```
 firstName,lastName,email,companyDomain
@@ -96,53 +96,53 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-**Important**:
+**Important** :
 
-* The value must **exactly match** the unique field on the Company record
-* For domains, use the **Domain URL** (e.g., `https://acme.com`), not the Domain Label
-* Map only **one** unique identifier per relation: this leads to a smoother import
+* La valeur doit **correspondre exactement** au champ unique de l'enregistrement de l'Entreprise
+* Pour les domaines, utilisez l'**URL de domaine** (p. ex., `https://acme.com`), pas le libellé de domaine
+* N'associez qu'**un seul** identifiant unique par relation : cela rendra l'importation plus fluide
 
-### Step 4: Ensure the Relation Field Exists
+### Étape 4 : Vérifier que le champ de relation existe
 
-Before uploading your file, make sure the relation field exists between your objects.
+Avant de téléverser votre fichier, assurez-vous que le champ de relation existe entre vos objets.
 
-If it doesn't exist:
+S'il n'existe pas :
 
-1. Go to **Settings → Data Model**
-2. Select your object (e.g., People)
-3. Create a relation field pointing to the target object (e.g., Company)
+1. Allez dans **Paramètres → Modèle de données**
+2. Sélectionnez votre objet (p. ex., Personnes)
+3. Créez un champ de relation pointant vers l'objet cible (p. ex., Entreprise)
 
-### Step 5: Upload and Map the Relation
+### Étape 5 : Téléverser et associer la relation
 
-1. Upload your CSV file via the import UI
-2. In the field mapping step, find your relation column (e.g., `companyDomain`)
-3. Map it to the relation field (e.g., Company)
-4. Twenty will automatically link each record to the matching parent
+1. Téléversez votre fichier CSV via l'interface d'importation
+2. À l'étape de correspondance des champs, trouvez votre colonne de relation (p. ex., `companyDomain`)
+3. Associez-la au champ de relation (p. ex., Entreprise)
+4. Twenty liera automatiquement chaque enregistrement au parent correspondant
 
-### Available Unique Fields for Relations
+### Champs uniques disponibles pour les relations
 
-| Object                                | Unique Fields Available                 |
-| ------------------------------------- | --------------------------------------- |
-| **Companies**                         | `id`, `domain`, any custom unique field |
-| **People**                            | `id`, `email`, any custom unique field  |
-| **Workspace Members**                 | `id`, `email` (not name)                |
-| **Other standard and custom objects** | `id`, any field marked as unique        |
+| Objet                                       | Champs uniques disponibles                     |
+| ------------------------------------------- | ---------------------------------------------- |
+| **Entreprises**                             | `id`, `domain`, tout champ unique personnalisé |
+| **Personnes**                               | `id`, `email`, tout champ unique personnalisé  |
+| **Membres de l'espace de travail**          | `id`, `email` (pas le nom)                     |
+| **Autres objets standard et personnalisés** | `id`, tout champ marqué comme unique           |
 
-<Note>**Linking to Workspace Members**: When the relation points to Workspace Members (your team logging into Twenty), reference them by their **email address**, not their name.</Note>
+<Note>**Liaison vers les membres de l'espace de travail** : Lorsque la relation pointe vers des membres de l'espace de travail (votre équipe se connectant à Twenty), référencez-les par leur **adresse e-mail**, et non par leur nom.</Note>
 
-<Note>We recommend using `domain` for Companies and `email` for People, as these are human-readable and easy to maintain in spreadsheets.</Note>
+<Note>Nous recommandons d'utiliser `domain` pour les Entreprises et `email` pour les Personnes, car ces valeurs sont lisibles par l'humain et faciles à maintenir dans les feuilles de calcul.</Note>
 
-<Note>**Reminder**: Soft-deleted records (visible under Command Menu → See deleted records) count toward uniqueness criteria. If you import a record with the same unique value as a deleted record, the deleted record will be restored. See [Uniqueness Constraints](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints) for more details.</Note>
+<Note>**Rappel** : Les enregistrements supprimés de manière logique (visibles sous Menu Commandes → Voir les enregistrements supprimés) comptent pour les critères d'unicité. Si vous importez un enregistrement avec la même valeur unique qu'un enregistrement supprimé, l'enregistrement supprimé sera restauré. Voir [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints) pour plus de détails.</Note>
 
-## Import Order Rule
+## Règle d'ordre d'importation
 
 <Warning>
-  **Always import the "one" side first!**
+  **Importez toujours d'abord le côté "un" !**
 
-  1. **Companies** first (no dependencies)
-  2. **People** second (linked to Companies)
-  3. **Opportunities** third (linked to Companies/People)
-  4. **Custom objects** following their dependencies
+  1. **Entreprises** d'abord (aucune dépendance)
+  2. **Personnes** en second (liées aux Entreprises)
+  3. **Opportunités** en troisième (liées aux Entreprises/Personnes)
+  4. **Objets personnalisés** en suivant leurs dépendances
 
-  The parent record must exist before you can reference it.
+  L'enregistrement parent doit exister avant que vous puissiez y faire référence.
 </Warning>

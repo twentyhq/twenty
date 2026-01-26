@@ -1,60 +1,60 @@
 ---
-title: Create Relation Fields
-description: Step-by-step guide to connecting objects with relation fields.
+title: Crear campos de relación},{
+description: Guía paso a paso para conectar objetos con campos de relación.
 ---
 
-Relation fields connect records from different objects—for example, linking People to Companies.
+Los campos de relación conectan registros de distintos objetos—por ejemplo, vinculando Personas con Empresas.
 
 <Note>
-  **Relation names cannot be changed after creation** (they affect the API). Plan your names carefully.
+  **Los nombres de relación no se pueden cambiar después de la creación** (afectan a la API). Planifica bien los nombres.
 </Note>
 
-## Before You Start
+## Antes de empezar
 
 Decide:
 
-* Which objects are you connecting? (e.g., People → Companies)
-* Which is the "one" side? (e.g., Company)
-* Which is the "many" side? (e.g., People — many people work at one company)
-* What should the field be named on each side?
+* ¿Qué objetos vas a conectar? (p. ej., Personas → Empresas)
+* ¿Cuál es el lado "uno"? (p. ej., Empresa)
+* ¿Cuál es el lado "muchos"? (p. ej., Personas — muchas personas trabajan en una empresa)
+* ¿Qué nombre debería tener el campo en cada lado?
 
-See [Relation Fields](/l/es/user-guide/data-model/capabilities/relation-fields) for relation types explained.
+Consulta [Campos de Relación](/l/es/user-guide/data-model/capabilities/relation-fields) para ver los tipos de relación explicados.
 
-## Steps
+## Pasos
 
-1. Go to **Settings → Data Model**
-2. Select the object where you want the relation (typically the "many" side)
-3. Click **+ Add Field**
-4. Select **Relation** as the field type
-5. Choose the **target object**
-6. Select **One-to-Many** or **Many-to-One**
-7. Enter field names for **both sides** of the relation
-8. Click **Save**
+1. Ve a **Configuración → Modelo de datos**
+2. Selecciona el objeto donde quieres la relación (normalmente el lado "muchos")
+3. Haz clic en **+ Añadir Campo**
+4. Selecciona **Relación** como tipo de campo
+5. Elige el **objeto de destino**
+6. Selecciona **Uno a muchos** o **Muchos a uno**
+7. Introduce nombres de campo para **ambos lados** de la relación
+8. Haga clic en **Guardar**
 
-## Example: People → Companies
+## Ejemplo: Personas → Empresas
 
-* Go to **Settings → Data Model → People**
-* Add a Relation field
-* Target: **Companies**
-* Type: **Many-to-One**
-* Field on People: **Company**
-* Field on Companies: **Employees**
+* Ve a **Configuración → Modelo de datos → Personas**
+* Añade un campo de Relación
+* Destino: **Empresas**
+* Tipo: **Muchos a uno**
+* Campo en Personas: **Empresa**
+* Campo en Empresas: **Empleados**
 
-Now each Person can be linked to a Company, and each Company shows its People.
+Ahora cada persona puede vincularse a una empresa, y cada empresa muestra a sus personas.
 
-## Deleting a Relation
+## Eliminar una relación
 
-1. Go to **Settings → Data Model**
-2. Find the relation field
-3. Click **⋮ → Deactivate**
+1. Ve a **Configuración → Modelo de datos**
+2. Busca el campo de relación
+3. Haz clic en **⋮ → Desactivar**
 
-Links are preserved but hidden. Reactivate to restore.
+Los enlaces se conservan, pero están ocultos. Vuelve a activar para restaurar.
 
 <Note>
-  **Deleting a relation doesn't delete records.** Only the link between them is removed.
+  **Eliminar una relación no elimina registros.** Solo se quita el enlace entre ellos.
 </Note>
 
-## Related
+## Relacionado
 
-* [Relation Fields](/l/es/user-guide/data-model/capabilities/relation-fields) — types and limitations
-* [How to Import Relations](/l/es/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — bulk import linked records
+* [Campos de Relación](/l/es/user-guide/data-model/capabilities/relation-fields) — tipos y limitaciones
+* [Cómo importar relaciones](/l/es/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — importación masiva de registros vinculados

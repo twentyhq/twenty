@@ -1,28 +1,28 @@
 ---
-title: Backend Commands
+title: Commandes Backend
 ---
 
-## Useful commands
+## Commandes utiles
 
-These commands should be executed from packages/twenty-server folder.
-From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+Ces commandes doivent être exécutées depuis le dossier packages/twenty-server.
+Depuis n'importe quel autre dossier, vous pouvez exécuter `npx nx {command} twenty-server` (ou `npx nx run twenty-server:{command}`).
 
-### First time setup
+### Configuration initiale
 
 ```
 npx nx database:reset twenty-server # setup the database with dev seeds
 ```
 
-### Starting the server
+### Démarrer le serveur
 
 ```
 npx nx run twenty-server:start
 ```
 
-### Lint
+### Analyse
 
 ```
-npx nx run twenty-server:lint # pass --fix to fix lint errors
+npx nx run twenty-server:lint # passez --fix pour corriger les erreurs de lint
 ```
 
 ### Test
@@ -32,11 +32,11 @@ npx nx run twenty-server:test:unit          # run unit tests
 npx nx run twenty-server:test:integration   # run integration tests
 ```
 
-Note: you can run `npx nx run twenty-server:test:integration:with-db-reset` in case you need to reset the database before running the integration tests.
+Remarque: vous pouvez exécuter `npx nx run twenty-server:test:integration:with-db-reset` si vous avez besoin de réinitialiser la base de données avant de lancer les tests d'intégration.
 
-### Resetting the database
+### Réinitialiser la base de données
 
-If you want to reset and seed the database, you can run the following command:
+Si vous souhaitez réinitialiser et peupler la base de données, vous pouvez exécuter la commande suivante :
 
 ```bash
 npx nx run twenty-server:database:reset
@@ -44,58 +44,57 @@ npx nx run twenty-server:database:reset
 
 ### Migrations
 
-#### For objects in Core/Metadata schemas (TypeORM)
+#### Pour les objets dans les schémas Core/Metadata (TypeORM)
 
 ```bash
 npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
 ```
 
-#### For Workspace objects
+#### Pour les objets de l'Espace de travail
 
-There are no migrations files, migration are generated automatically for each workspace,
-stored in the database, and applied with this command
+Il n'y a pas de fichiers de migrations, les migrations sont générées automatiquement pour chaque espace de travail, stockées dans la base de données et appliquées avec cette commande
 
 ```bash
 npx nx run twenty-server:command workspace:sync-metadata -f
 ```
 
 <Warning>
-  This will drop the database and re-run the migrations and seed.
+  Cela supprimera la base de données et réexécutera les migrations et l'initialisation des données.
 
-  Make sure to back up any data you want to keep before running this command.
+  Assurez-vous de sauvegarder toutes les données que vous souhaitez conserver avant d'exécuter cette commande.
 </Warning>
 
-## Tech Stack
+## Écosystème Tech
 
-Twenty primarily uses NestJS for the backend.
+Twenty utilise principalement NestJS pour le backend.
 
-Prisma was the first ORM we used. But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. The project now uses TypeORM.
+Prisma a été le premier ORM que nous avons utilisé. Mais pour permettre aux utilisateurs de créer des champs et objets personnalisés, un niveau inférieur avait plus de sens car nous avons besoin d'un contrôle granulaire. Le projet utilise maintenant TypeORM.
 
-Here's what the tech stack now looks like.
+Voici à quoi ressemble maintenant la pile technologique.
 
-**Core**
+**Noyau**
 
 * [NestJS](https://nestjs.com/)
 * [TypeORM](https://typeorm.io/)
 * [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
 
-**Database**
+**Base de données**
 
 * [Postgres](https://www.postgresql.org/)
 
-**Third-party integrations**
+**Intégrations tierces**
 
-* [Sentry](https://sentry.io/welcome/) for tracking bugs
+* [Sentry](https://sentry.io/welcome/) pour suivre les bugs.
 
-**Testing**
+**Tests**
 
 * [Jest](https://jestjs.io/)
 
-**Tooling**
+**Outils**
 
 * [Yarn](https://yarnpkg.com/)
 * [ESLint](https://eslint.org/)
 
-**Development**
+**Développement**
 
 * [AWS EKS](https://aws.amazon.com/eks/)

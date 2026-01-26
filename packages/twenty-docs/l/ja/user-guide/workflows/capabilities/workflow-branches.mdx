@@ -1,66 +1,66 @@
 ---
-title: Workflow Branches
-description: Create parallel paths and conditional logic in your workflows.
+title: ワークフローのブランチ
+description: ワークフロー内で並列パスと条件ロジックを作成します。
 ---
 
-Branches allow you to split your workflow into multiple paths that can run simultaneously or conditionally based on your data.
+ブランチを使用すると、ワークフローを複数のパスに分割でき、データに基づいて同時に、または条件付きで実行できます。
 
 <img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
 
-## How Branches Work
+## ブランチの仕組み
 
-When you create multiple connections from a single node, each path becomes a branch. By default, **all branches execute in parallel**—they don't wait for each other.
+1つのノードから複数の接続を作成すると、各パスがブランチになります。 既定では、**すべてのブランチは並列に実行**され、互いを待ちません。
 
-## Creating Branches
+## ブランチの作成
 
-### Add a New Branch
+### 新しいブランチを追加
 
-1. **Right-click on the main canvas** of the workflow (not on an existing node)
-2. Click **Add node**
-3. Choose the node type for your new branch
-4. Drag an arrow from the bottom of the previous step to the top of this new action
-5. Repeat to add more branches from the same node
-
-<Note>
-  Each branch is independent. Adding a branch doesn't affect other existing paths from that node.
-</Note>
-
-### Visual Layout
-
-Branches appear as parallel paths in the workflow editor. You can drag nodes to rearrange the visual layout without affecting execution.
-
-## Conditional Branches
-
-Since all branches run by default, use **Filter** nodes to control which paths actually execute:
-
-| Branch | Filter Condition      | Action                     |
-| ------ | --------------------- | -------------------------- |
-| A      | Stage = "Won"         | Send congratulations email |
-| B      | Stage = "Lost"        | Create follow-up task      |
-| C      | Stage = "Negotiation" | Notify manager             |
-
-1. Create branches from your trigger or action
-2. Add a **Filter** node as the first step of each branch
-3. Configure each filter with mutually exclusive conditions
-4. Add your actions after each filter
-
-Only the branch(es) where the filter condition is met will continue executing.
-
-## Merging Branches
-
-**Branches don't automatically merge.** Each branch runs independently until it ends. You have full flexibility in how you handle this:
-
-* **Option 1: Keep branches separate**
-  Each branch handles its own follow-up actions independently. This is the simplest approach when branches don't need to converge.
-
-* **Option 2: Merge branches manually**
-  When creating your workflow, you can manually connect multiple branches to the same downstream action. Simply drag arrows from the end of each branch to a common node.
+1. **ワークフローのメインキャンバスを右クリック**（既存のノード上ではありません）
+2. **ノードを追加** をクリック
+3. 新しいブランチのノードタイプを選択
+4. 前のステップの下部から、この新しいアクションの上部へ矢印をドラッグします
+5. 同じノードからさらにブランチを追加するには、これを繰り返します。
 
 <Note>
-  While you can use a [Delay](/l/ja/user-guide/workflows/capabilities/workflow-actions#delay) node to pause execution, it's not currently configurable to wait "until another branch ends."
+  各ブランチは独立しています。 ブランチを追加しても、そのノードからの他の既存のパスには影響しません。
 </Note>
 
-## Related
+### ビジュアルレイアウト
 
-* [How to Use Branches in Workflows](/l/ja/user-guide/workflows/capabilities/use-branches-in-workflows) - Step-by-step guide
-* [Workflow Actions](/l/ja/user-guide/workflows/capabilities/workflow-actions) - Available actions including Filter
+ブランチはワークフローエディター上で並列のパスとして表示されます。 実行に影響を与えることなく、ノードをドラッグしてビジュアルレイアウトを並べ替えることができます。
+
+## 条件付きブランチ
+
+既定ではすべてのブランチが実行されるため、どのパスを実際に実行するかを制御するには **Filter** ノードを使用します:
+
+| ブランチ | フィルター条件     | アクション         |
+| ---- | ----------- | ------------- |
+| A    | ステージ = "受注" | お祝いのメールを送信    |
+| B    | ステージ = "失注" | フォローアップタスクを作成 |
+| C    | ステージ = "交渉" | マネージャーに通知     |
+
+1. トリガーまたはアクションからブランチを作成する
+2. 各ブランチの最初のステップとして **Filter** ノードを追加する
+3. 各 Filter ノードを相互排他的な条件で設定する
+4. 各 Filter の後にアクションを追加する
+
+フィルター条件を満たしたブランチだけが実行を継続します。
+
+## ブランチの統合
+
+**ブランチは自動的には統合されません。** 各ブランチは終了するまで独立して実行されます。 この点の取り扱いは柔軟に設計できます:
+
+* **オプション1: ブランチを分離したままにする**
+  各ブランチがそれぞれのフォローアップアクションを独立して処理します。 ブランチを統合する必要がない場合の最も簡単な方法です。
+
+* **オプション2: ブランチを手動で統合する**
+  ワークフローを作成する際、複数のブランチを同じ下流のアクションに手動で接続できます。 各ブランチの末端から共通のノードへ矢印をドラッグするだけです。
+
+<Note>
+  実行を一時停止するために [Delay](/l/ja/user-guide/workflows/capabilities/workflow-actions#delay) ノードを使用できますが、現在は「別のブランチが終了するまで」待機するように設定することはできません。
+</Note>
+
+## 関連
+
+* [ワークフローでブランチを使用する方法](/l/ja/user-guide/workflows/capabilities/use-branches-in-workflows) - ステップバイステップのガイド
+* [ワークフローアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions) - Filter を含む利用可能なアクション

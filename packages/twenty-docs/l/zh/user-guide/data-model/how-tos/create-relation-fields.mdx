@@ -1,60 +1,60 @@
 ---
-title: Create Relation Fields
-description: Step-by-step guide to connecting objects with relation fields.
+title: 创建关系字段
+description: 通过关系字段逐步将对象连接起来。
 ---
 
-Relation fields connect records from different objects—for example, linking People to Companies.
+关系字段可连接不同对象的记录——例如，将人员链接到公司。
 
 <Note>
-  **Relation names cannot be changed after creation** (they affect the API). Plan your names carefully.
+  **关系名称在创建后无法更改**（它们会影响 API）。 请谨慎规划名称。
 </Note>
 
-## Before You Start
+## 开始之前
 
-Decide:
+请确定：
 
-* Which objects are you connecting? (e.g., People → Companies)
-* Which is the "one" side? (e.g., Company)
-* Which is the "many" side? (e.g., People — many people work at one company)
-* What should the field be named on each side?
+* 要连接哪些对象？ （例如，人员 → 公司）
+* 哪一方是“一”端？ （例如，公司）
+* 哪一方是“多”端？ （例如，人员—许多人在同一家公司工作）
+* 两端的字段应如何命名？
 
-See [Relation Fields](/l/zh/user-guide/data-model/capabilities/relation-fields) for relation types explained.
+请参阅[关系字段](/l/zh/user-guide/data-model/capabilities/relation-fields)，了解关系类型的说明。
 
-## Steps
+## 步骤
 
-1. Go to **Settings → Data Model**
-2. Select the object where you want the relation (typically the "many" side)
-3. Click **+ Add Field**
-4. Select **Relation** as the field type
-5. Choose the **target object**
-6. Select **One-to-Many** or **Many-to-One**
-7. Enter field names for **both sides** of the relation
-8. Click **Save**
+1. 进入 **设置 → 数据模型**
+2. 选择要创建关系的对象（通常为“多”端）
+3. 点击 **+ 添加字段**
+4. 将字段类型选择为 **关系**
+5. 选择**目标对象**
+6. 选择 **一对多** 或 **多对一**
+7. 为关系的**两端**输入字段名称
+8. 单击 **保存**
 
-## Example: People → Companies
+## 示例：人员 → 公司
 
-* Go to **Settings → Data Model → People**
-* Add a Relation field
-* Target: **Companies**
-* Type: **Many-to-One**
-* Field on People: **Company**
-* Field on Companies: **Employees**
+* 进入 **设置 → 数据模型 → 人员**
+* 添加关系字段
+* 目标：**公司**
+* 类型：**多对一**
+* 人员中的字段：**公司**
+* 公司中的字段：**员工**
 
-Now each Person can be linked to a Company, and each Company shows its People.
+现在，每个人员都可以关联到一家公司，每家公司都会显示其人员。
 
-## Deleting a Relation
+## 删除关系
 
-1. Go to **Settings → Data Model**
-2. Find the relation field
-3. Click **⋮ → Deactivate**
+1. 进入 **设置 → 数据模型**
+2. 找到该关系字段
+3. 点击 **⋮ → 停用**
 
-Links are preserved but hidden. Reactivate to restore.
+关联会被保留但隐藏。 重新启用即可恢复。
 
 <Note>
-  **Deleting a relation doesn't delete records.** Only the link between them is removed.
+  **删除关系不会删除记录。** 只会移除它们之间的关联。
 </Note>
 
-## Related
+## 相关内容
 
-* [Relation Fields](/l/zh/user-guide/data-model/capabilities/relation-fields) — types and limitations
-* [How to Import Relations](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — bulk import linked records
+* [关系字段](/l/zh/user-guide/data-model/capabilities/relation-fields) — 类型和限制
+* [如何导入关系](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — 批量导入关联记录

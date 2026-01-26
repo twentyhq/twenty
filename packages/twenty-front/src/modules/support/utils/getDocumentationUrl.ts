@@ -1,15 +1,17 @@
-const DOCUMENTATION_BASE_URL = 'https://docs.twenty.com';
-const DOCUMENTATION_PATH = '/user-guide/introduction';
-
-// Locales that have documentation translations available
-const SUPPORTED_DOC_LOCALES = ['fr', 'pt', 'de', 'es', 'it', 'ja', 'ko', 'zh'];
+import {
+  DOCUMENTATION_BASE_URL,
+  DOCUMENTATION_DEFAULT_LANGUAGE,
+  DOCUMENTATION_DEFAULT_PATH,
+  DOCUMENTATION_SUPPORTED_LANGUAGES,
+  type DocumentationPath,
+} from 'twenty-shared/constants';
 
 export const getDocumentationUrl = ({
   locale,
-  path = DOCUMENTATION_PATH,
+  path = DOCUMENTATION_DEFAULT_PATH,
 }: {
   locale?: string | null;
-  path?: string;
+  path?: DocumentationPath | string;
 }): string => {
   if (!locale) {
     return `${DOCUMENTATION_BASE_URL}${path}`;
@@ -18,7 +20,16 @@ export const getDocumentationUrl = ({
   // Extract language code from locale (e.g., 'fr' from 'fr-FR')
   const langCode = locale.split('-')[0].toLowerCase();
 
-  if (SUPPORTED_DOC_LOCALES.includes(langCode)) {
+  // English content is served at root path (no /l/en/ prefix)
+  if (langCode === DOCUMENTATION_DEFAULT_LANGUAGE) {
+    return `${DOCUMENTATION_BASE_URL}${path}`;
+  }
+
+  const isSupported = DOCUMENTATION_SUPPORTED_LANGUAGES.includes(
+    langCode as (typeof DOCUMENTATION_SUPPORTED_LANGUAGES)[number],
+  );
+
+  if (isSupported) {
     return `${DOCUMENTATION_BASE_URL}/l/${langCode}${path}`;
   }
 

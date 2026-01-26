@@ -182,6 +182,39 @@ export function formatResult<T>(
     newData[dateField.name] = rawUpdatedDate;
   }
 
+  const fieldMetadataItemsOfTypeDateTimeOnly =
+    getFlatFieldsFromFlatObjectMetadata(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    ).filter((field) => field.type === FieldMetadataType.DATE_TIME);
+
+  for (const dateTimeField of fieldMetadataItemsOfTypeDateTimeOnly) {
+    // @ts-expect-error legacy noImplicitAny
+    const rawUpdatedDateTime = newData[dateTimeField.name] as
+      | string
+      | Date
+      | null
+      | undefined;
+
+    if (!isDefined(rawUpdatedDateTime)) {
+      continue;
+    }
+
+    if (typeof rawUpdatedDateTime === 'string') {
+      // @ts-expect-error legacy noImplicitAny
+      newData[dateTimeField.name] = rawUpdatedDateTime;
+    } else if (rawUpdatedDateTime instanceof Date) {
+      const dateIsoString = rawUpdatedDateTime.toISOString();
+
+      // @ts-expect-error legacy noImplicitAny
+      newData[dateTimeField.name] = dateIsoString;
+    } else {
+      throw new Error(
+        `Invalid DATE_TIME field "${dateTimeField.name}", value: "${rawUpdatedDateTime}", it should be a string or Date instance, (current type : ${typeof rawUpdatedDateTime}).`,
+      );
+    }
+  }
+
   return newData as T;
 }
 

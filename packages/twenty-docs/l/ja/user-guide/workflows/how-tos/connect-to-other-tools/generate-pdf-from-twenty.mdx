@@ -1,0 +1,228 @@
+---
+title: Twenty から PDF を生成する
+description: PDF（見積書など）を生成してレコードに添付するワークフローを作成します。
+---
+
+Twenty で PDF を自動生成または取得し、レコードに添付します。 これは、会社、商談、またはその他のオブジェクトに関連付けられた見積書、請求書、レポートを作成する用途で一般的に使用されます。
+
+## 概要
+
+このワークフローでは **手動トリガー** を使用し、選択した任意のレコードに対してオンデマンドで PDF を生成できるようにします。 次を **サーバーレス関数** が処理します:
+
+1. URL（PDF 生成サービスから）から PDF をダウンロードする
+2. ファイルを Twenty にアップロードする
+3. レコードに関連付けられた添付ファイルを作成する
+
+## 前提条件
+
+ワークフローを設定する前に:
+
+1. **API キーを作成**: **Settings → APIs** に移動して新しい API キーを作成します。 サーバーレス関数でこのトークンが必要になります。
+2. **PDF 生成サービスを設定**（任意）：PDF を動的に生成したい場合（例: 見積書）は、Carbone、PDFMonkey、DocuSeal のようなサービスを使用して PDF を作成し、ダウンロード URL を取得します。
+
+## ステップバイステップの設定
+
+### ステップ 1: トリガーを設定
+
+1. **Workflows** に移動し、新しいワークフローを作成します
+2. **手動トリガー** を選択します
+3. PDF を添付したい対象オブジェクト（例: **Company** や **Opportunity**）を選択します
+
+<Tip>
+  手動トリガーを使用すると、レコードを選択すると右上に表示されるボタンからこのワークフローを実行し、PDF を生成して添付できます。
+</Tip>
+
+### ステップ 2: サーバーレス関数を追加する
+
+1. **サーバーレス関数** アクションを追加します
+2. 以下のコードで新しい関数を作成します
+3. 入力パラメーターを設定します
+
+#### 入力パラメーター
+
+| パラメーター      | 値                       |
+| ----------- | ----------------------- |
+| `companyId` | `{{trigger.object.id}}` |
+
+<Note>
+  別のオブジェクト（Person、Opportunity など）に添付する場合は、適切にパラメーター名を変更（例: `personId`、`opportunityId`）し、サーバーレス関数を更新します。
+</Note>
+
+#### サーバーレス関数のコード
+
+```typescript
+export const main = async (
+  params: { companyId: string },
+) => {
+  const { companyId } = params;
+
+  // Replace with your Twenty GraphQL endpoint
+  // Cloud: https://api.twenty.com/graphql
+  // Self-hosted: https://your-domain.com/graphql
+  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  // Replace with your API key from Settings → APIs
+  const authToken = 'YOUR_API_KEY';
+
+  // Replace with your PDF URL
+  // This could be from a PDF generation service or a static URL
+  const pdfUrl = 'https://your-pdf-service.com/generated-quote.pdf';
+  const filename = 'quote.pdf';
+
+  // Step 1: Download the PDF file
+  const pdfResponse = await fetch(pdfUrl);
+
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBlob = await pdfResponse.blob();
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Step 2: Upload the file via GraphQL multipart upload
+  const uploadMutation = `
+    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+      uploadFile(file: $file, fileFolder: $fileFolder) {
+        path
+      }
+    }
+  `;
+
+  const uploadForm = new FormData();
+  uploadForm.append('operations', JSON.stringify({
+    query: uploadMutation,
+    variables: { file: null, fileFolder: 'Attachment' },
+  }));
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
+
+  const uploadResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${authToken}` },
+    body: uploadForm,
+  });
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  }
+
+  const filePath = uploadResult.data?.uploadFile?.path;
+
+  if (!filePath) {
+    throw new Error('No file path returned from upload');
+  }
+
+  // Step 3: Create the attachment linked to the company
+  const attachmentMutation = `
+    mutation CreateAttachment($data: AttachmentCreateInput!) {
+      createAttachment(data: $data) {
+        id
+        name
+      }
+    }
+  `;
+
+  const attachmentResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: attachmentMutation,
+      variables: {
+        data: {
+          name: filename,
+          fullPath: filePath,
+          companyId,
+        },
+      },
+    }),
+  });
+
+  const attachmentResult = await attachmentResponse.json();
+
+  if (attachmentResult.errors?.length) {
+    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+  }
+
+  return attachmentResult.data?.createAttachment;
+};
+```
+
+### ステップ 3: ユースケースに合わせてカスタマイズする
+
+#### 別のオブジェクトに添付する場合
+
+`companyId` を適切なフィールドに置き換えます:
+
+| オブジェクト     | フィールド名               |
+| ---------- | -------------------- |
+| 会社         | `companyId`          |
+| 人物         | `personId`           |
+| 商談         | `opportunityId`      |
+| カスタムオブジェクト | `yourCustomObjectId` |
+
+関数のパラメーターと、添付のミューテーション内の `variables.data` オブジェクトの両方を更新します。
+
+#### 動的な PDF URL を使用する場合
+
+PDF 生成サービスを使用する場合、次のことができます:
+
+1. まず HTTP Request アクションで PDF を生成します
+2. 返された PDF URL をパラメーターとしてサーバーレス関数に渡します
+
+```typescript
+export const main = async (
+  params: { companyId: string; pdfUrl: string; filename: string },
+) => {
+  const { companyId, pdfUrl, filename } = params;
+  // ... rest of the function
+};
+```
+
+### ステップ 4: テストして有効化
+
+1. ワークフローを保存します
+2. Company のレコードに移動します
+3. **⋮** メニューをクリックし、ワークフローを選択します
+4. レコードの **Attachments** セクションを確認し、PDF が添付されたことを確認します
+5. ワークフローを有効化します
+
+## PDF 生成サービスとの連携
+
+動的な見積書や請求書を作成する場合:
+
+### 例: 見積書を生成 → PDF を添付
+
+| 手順 | アクション           | 目的                           |
+| -- | --------------- | ---------------------------- |
+| 1  | 手動トリガー（Company） | ユーザーがレコード上で実行を開始             |
+| 2  | レコード検索          | Opportunity または明細行の詳細を取得     |
+| 3  | HTTPリクエスト       | レコードデータを用いて PDF 生成 API を呼び出す |
+| 4  | サーバーレス関数        | 生成された PDF をダウンロードして添付        |
+
+### 一般的な PDF 生成サービス
+
+* **Carbone** - テンプレートベースのドキュメント生成
+* **PDFMonkey** - テンプレートからの動的な PDF 作成
+* **DocuSeal** - ドキュメント自動化プラットフォーム
+* **Documint** - API ファーストのドキュメント生成
+
+各サービスは PDF URL を返す API を提供しており、その URL をサーバーレス関数に渡すことができます。
+
+## トラブルシューティング
+
+| 問題                   | 解決策                                       |
+| -------------------- | ----------------------------------------- |
+| "PDF のダウンロードに失敗しました" | PDF URL にアクセスでき、有効な PDF が返されることを確認します     |
+| "アップロードに失敗しました"      | API キーが有効で、書き込み権限があることを確認します              |
+| "添付ファイルの作成に失敗しました"   | オブジェクト ID のフィールド名が対象オブジェクトに一致していることを確認します |
+
+## 関連
+
+* [ワークフローのトリガー](/l/ja/user-guide/workflows/capabilities/workflow-triggers)
+* [サーバーレス関数](/l/ja/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Twenty から見積書または請求書を生成する](/l/ja/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
