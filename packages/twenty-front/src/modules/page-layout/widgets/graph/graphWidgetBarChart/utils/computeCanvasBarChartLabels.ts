@@ -32,6 +32,7 @@ export const computeCanvasBarChartStackedLabels = (
       total: number;
       minimumYPosition: number;
       maximumBottomYPosition: number;
+      minimumXPosition: number;
       maximumXPosition: number;
       bars: BarPosition[];
     }
@@ -42,6 +43,7 @@ export const computeCanvasBarChartStackedLabels = (
     const value = bar.value;
     const barTopY = bar.y;
     const barBottomY = bar.y + bar.height;
+    const barLeftX = bar.x;
     const barRightX = bar.x + bar.width;
     const existingGroup = stackData.get(groupKey);
 
@@ -55,6 +57,10 @@ export const computeCanvasBarChartStackedLabels = (
         existingGroup.maximumBottomYPosition,
         barBottomY,
       );
+      existingGroup.minimumXPosition = Math.min(
+        existingGroup.minimumXPosition,
+        barLeftX,
+      );
       existingGroup.maximumXPosition = Math.max(
         existingGroup.maximumXPosition,
         barRightX,
@@ -65,6 +71,7 @@ export const computeCanvasBarChartStackedLabels = (
         total: value,
         minimumYPosition: barTopY,
         maximumBottomYPosition: barBottomY,
+        minimumXPosition: barLeftX,
         maximumXPosition: barRightX,
         bars: [bar],
       });
@@ -80,6 +87,7 @@ export const computeCanvasBarChartStackedLabels = (
         total,
         minimumYPosition,
         maximumBottomYPosition,
+        minimumXPosition,
         maximumXPosition,
         bars: groupBars,
       },
@@ -97,7 +105,7 @@ export const computeCanvasBarChartStackedLabels = (
         value: total,
         verticalX: centerX,
         verticalY: isNegativeTotal ? maximumBottomYPosition : minimumYPosition,
-        horizontalX: maximumXPosition,
+        horizontalX: isNegativeTotal ? minimumXPosition : maximumXPosition,
         horizontalY: centerY,
         shouldRenderBelow: isNegativeTotal,
       };
