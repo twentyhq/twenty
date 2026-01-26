@@ -75,19 +75,25 @@ const computeGroupedBarPositions = ({
   const categoryAxisLength = isVertical ? innerWidth : innerHeight;
   const valueAxisLength = isVertical ? innerHeight : innerWidth;
 
-  const { step: categoryStep, bandwidth: categoryWidth, offset: outerPadding } =
-    computeBandScale({
-      axisLength: categoryAxisLength,
-      count: dataLength,
-      padding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
-      outerPaddingPx: BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
-    });
+  const {
+    step: categoryStep,
+    bandwidth: categoryWidth,
+    offset: outerPadding,
+  } = computeBandScale({
+    axisLength: categoryAxisLength,
+    count: dataLength,
+    padding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
+    outerPaddingPx: BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
+  });
 
   const effectiveInnerPadding = innerPadding;
   const totalInnerPadding = effectiveInnerPadding * (keysLength - 1);
   const availableBarSpace = categoryWidth - totalInnerPadding;
   const barThickness = Math.min(
-    Math.max(availableBarSpace / keysLength, BAR_CHART_CONSTANTS.MINIMUM_BAR_WIDTH),
+    Math.max(
+      availableBarSpace / keysLength,
+      BAR_CHART_CONSTANTS.MINIMUM_BAR_WIDTH,
+    ),
     BAR_CHART_CONSTANTS.MAXIMUM_WIDTH,
   );
   const actualTotalBarWidth = barThickness * keysLength + totalInnerPadding;
@@ -125,7 +131,9 @@ const computeGroupedBarPositions = ({
       const barLength = Math.abs(valuePixel - zeroPixel);
 
       const categoryPosition =
-        categoryStart + groupCenteringOffset + keyIndex * (barThickness + effectiveInnerPadding);
+        categoryStart +
+        groupCenteringOffset +
+        keyIndex * (barThickness + effectiveInnerPadding);
 
       if (isVertical) {
         bars.push({
@@ -197,15 +205,21 @@ const computeStackedBarPositions = ({
   const categoryAxisLength = isVertical ? innerWidth : innerHeight;
   const valueAxisLength = isVertical ? innerHeight : innerWidth;
 
-  const { step: categoryStep, bandwidth: categoryWidth, offset: outerPadding } =
-    computeBandScale({
-      axisLength: categoryAxisLength,
-      count: dataLength,
-      padding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
-      outerPaddingPx: BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
-    });
+  const {
+    step: categoryStep,
+    bandwidth: categoryWidth,
+    offset: outerPadding,
+  } = computeBandScale({
+    axisLength: categoryAxisLength,
+    count: dataLength,
+    padding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
+    outerPaddingPx: BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
+  });
 
-  const barThickness = Math.min(categoryWidth, BAR_CHART_CONSTANTS.MAXIMUM_WIDTH);
+  const barThickness = Math.min(
+    categoryWidth,
+    BAR_CHART_CONSTANTS.MAXIMUM_WIDTH,
+  );
   const categoryBarCenteringOffset = (categoryWidth - barThickness) / 2;
 
   const { valueToPixel } = computeValueScale({
@@ -213,10 +227,11 @@ const computeStackedBarPositions = ({
     axisLength: valueAxisLength,
   });
   const zeroPixel = valueToPixel(0);
-  const { valueToPixel: stackValueToPixel, range: stackRange } = computeValueScale({
-    domain: { min: 0, max: valueDomain.max - valueDomain.min },
-    axisLength: valueAxisLength,
-  });
+  const { valueToPixel: stackValueToPixel, range: stackRange } =
+    computeValueScale({
+      domain: { min: 0, max: valueDomain.max - valueDomain.min },
+      axisLength: valueAxisLength,
+    });
 
   for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
     const dataPoint = data[dataIndex];

@@ -26,9 +26,7 @@ export const getBarChartTooltipData = ({
   enrichedKeys,
   formatOptions,
 }: GetBarChartTooltipDataParameters): BarChartTooltipData | null => {
-  const dataRow = data.find(
-    (row) => String(row[indexBy]) === slice.indexValue,
-  );
+  const dataRow = data.find((row) => String(row[indexBy]) === slice.indexValue);
 
   if (!dataRow) {
     return null;

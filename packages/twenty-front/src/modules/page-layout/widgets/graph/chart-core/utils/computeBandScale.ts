@@ -25,7 +25,10 @@ export const computeBandScale = ({
   const effectiveAxisLength = Math.max(0, axisLength - safeOuterPaddingPx * 2);
 
   const clampedPadding = Math.max(0, Math.min(1, padding));
-  const stepDenominator = Math.max(1, count - clampedPadding + clampedPadding * 2);
+  const stepDenominator = Math.max(
+    1,
+    count - clampedPadding + clampedPadding * 2,
+  );
   const step = effectiveAxisLength / stepDenominator;
   const bandwidth = step * (1 - clampedPadding);
   const offset = safeOuterPaddingPx + step * clampedPadding;
