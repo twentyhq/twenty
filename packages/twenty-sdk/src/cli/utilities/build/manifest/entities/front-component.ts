@@ -44,7 +44,7 @@ export class FrontComponentEntityBuilder
     for (const filePath of componentFiles) {
       try {
         const absolutePath = `${appPath}/${filePath}`;
-        const config =
+        const { manifest: config } =
           await manifestExtractFromFileServer.extractManifestFromFile<FrontComponentConfig>(
             absolutePath,
           );

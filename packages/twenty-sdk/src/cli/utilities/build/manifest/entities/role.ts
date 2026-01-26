@@ -30,11 +30,12 @@ export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
       try {
         const absolutePath = `${appPath}/${filePath}`;
 
-        manifests.push(
+        const { manifest } =
           await manifestExtractFromFileServer.extractManifestFromFile<RoleManifest>(
             absolutePath,
-          ),
-        );
+          );
+
+        manifests.push(manifest);
       } catch (error) {
         throw new Error(
           `Failed to load role from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,

@@ -42,19 +42,24 @@ export class FunctionEntityBuilder
       try {
         const absolutePath = `${appPath}/${filePath}`;
 
-        const extracted =
+        const { manifest, exportName } =
           await manifestExtractFromFileServer.extractManifestFromFile<ExtractedFunctionManifest>(
             absolutePath,
           );
 
-        const { handler: _, ...rest } = extracted;
+        const { handler: _, ...rest } = manifest;
         // builtHandlerPath is computed from filePath (the .function.ts file)
         // since that's what esbuild actually builds, not handlerPath
         const builtHandlerPath = this.computeBuiltHandlerPath(filePath);
 
+        // For default exports, use 'default.handler'
+        // For named exports like 'export const anyName = ...', use 'anyName.handler'
+        const handlerName =
+          exportName !== null ? `${exportName}.handler` : 'default.handler';
+
         manifests.push({
           ...rest,
-          handlerName: 'handler',
+          handlerName,
           sourceHandlerPath: filePath,
           builtHandlerPath,
           builtHandlerChecksum: null,

@@ -34,11 +34,12 @@ export class ObjectEntityBuilder
       try {
         const absolutePath = `${appPath}/${filePath}`;
 
-        manifests.push(
+        const { manifest } =
           await manifestExtractFromFileServer.extractManifestFromFile<ObjectManifest>(
             absolutePath,
-          ),
-        );
+          );
+
+        manifests.push(manifest);
       } catch (error) {
         throw new Error(
           `Failed to load object from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,

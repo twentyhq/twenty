@@ -5,6 +5,11 @@ import * as os from 'os';
 import path from 'path';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+export type ExtractedManifest<TManifest> = {
+  manifest: TManifest;
+  exportName: string | null;
+};
+
 export class ManifestExtractFromFileServer {
   private appPath: string | null = null;
 
@@ -14,7 +19,7 @@ export class ManifestExtractFromFileServer {
 
   async extractManifestFromFile<TManifest>(
     filepath: string,
-  ): Promise<TManifest> {
+  ): Promise<ExtractedManifest<TManifest>> {
     if (!this.appPath) {
       throw new Error(
         'ManifestExtractFromFileServer not initialized. Call init(appPath) first.',
@@ -23,15 +28,15 @@ export class ManifestExtractFromFileServer {
 
     const module = await this.loadModule(filepath);
 
-    const config = this.extractConfigFromModule<TManifest>(module);
+    const result = this.extractConfigFromModule<TManifest>(module);
 
-    if (!config) {
+    if (!result) {
       throw new Error(
         `Config file ${filepath} must export a config object (default export or any named object export)`,
       );
     }
 
-    return config;
+    return result;
   }
 
   private async loadModule(filepath: string): Promise<Record<string, unknown>> {
@@ -91,14 +96,14 @@ export class ManifestExtractFromFileServer {
 
   private extractConfigFromModule<T>(
     module: Record<string, unknown>,
-  ): T | undefined {
+  ): ExtractedManifest<T> | undefined {
     if (isDefined(module.default) && isPlainObject(module.default)) {
-      return module.default as T;
+      return { manifest: module.default as T, exportName: null };
     }
 
-    for (const value of Object.values(module)) {
+    for (const [key, value] of Object.entries(module)) {
       if (isPlainObject(value)) {
-        return value as T;
+        return { manifest: value as T, exportName: key };
       }
     }
 

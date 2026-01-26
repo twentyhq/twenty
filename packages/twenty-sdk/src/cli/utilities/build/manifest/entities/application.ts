@@ -40,7 +40,7 @@ export class ApplicationEntityBuilder
 {
   async build(appPath: string): Promise<EntityBuildResult<Application>> {
     const applicationConfigPath = await findApplicationConfigPath(appPath);
-    const application =
+    const { manifest: application } =
       await manifestExtractFromFileServer.extractManifestFromFile<Application>(
         applicationConfigPath,
       );
