@@ -9,6 +9,7 @@
 
 export { ALLOWED_HTML_ELEMENTS } from './constants/AllowedHtmlElements';
 export { COMMON_HTML_EVENTS } from './constants/CommonHtmlEvents';
+export { FRONT_COMPONENT_WORKER_URL } from './constants/FrontComponentWorkerUrl';
 export { FrontComponentContent } from './host/components/FrontComponentContent';
 export { componentRegistry } from './host/generated/component-registry';
 export { FrontComponentWorkerEffect } from './remote/components/FrontComponentWorkerEffect';

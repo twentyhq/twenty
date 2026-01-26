@@ -1,5 +1,6 @@
 import { RemoteReceiver, RemoteRootRenderer } from '@remote-dom/react/host';
 import React, { useMemo } from 'react';
+import { FRONT_COMPONENT_WORKER_URL } from '../../constants/FrontComponentWorkerUrl';
 import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
 import { componentRegistry } from '../generated';
 
@@ -17,7 +18,7 @@ export const FrontComponentContent = ({
   return (
     <>
       <FrontComponentWorkerEffect
-        workerUrl={new URL('../../remote/worker/worker.ts', import.meta.url)}
+        workerUrl={FRONT_COMPONENT_WORKER_URL}
         componentUrl={componentUrl}
         receiver={receiver}
         onError={() => setHasError(true)}
