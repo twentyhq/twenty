@@ -4,5 +4,6 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 export type FlatObjectMetadata = FlatEntityFrom<
   Omit<ObjectMetadataEntity, 'targetRelationFields' | 'dataSourceId' | 'fields'>
 > & {
+  // TODO deprecate
   fieldMetadataIds: string[];
 };
