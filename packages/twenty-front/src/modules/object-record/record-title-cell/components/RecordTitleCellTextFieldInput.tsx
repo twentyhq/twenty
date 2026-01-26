@@ -16,8 +16,7 @@ export const RecordTitleCellTextFieldInput = ({
   instanceId,
   sizeVariant,
 }: RecordTitleCellTextFieldInputProps) => {
-  const { fieldDefinition, draftValue, setDraftValue, fieldValue } =
-    useTextField();
+  const { fieldDefinition, draftValue, setDraftValue } = useTextField();
 
   const wrapperRef = useRef<HTMLInputElement>(null);
 
@@ -52,9 +51,6 @@ export const RecordTitleCellTextFieldInput = ({
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
     // Ensure draft value is set from field value if it's undefined or empty when focusing
-    if (!isDefined(draftValue) && isDefined(fieldValue) && fieldValue !== '') {
-      setDraftValue(fieldValue);
-    }
     if (isDefined(draftValue)) {
       event.target.select();
     }
