@@ -31,8 +31,10 @@ export const BarChartHoverLayer = ({
 }: BarChartHoverLayerProps) => {
   const theme = useTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [dpr, setDpr] = useState<number>(
-    CHART_CORE_CONSTANTS.DEFAULT_DEVICE_PIXEL_RATIO,
+  const [dpr] = useState<number>(
+    () =>
+      window.devicePixelRatio ||
+      CHART_CORE_CONSTANTS.DEFAULT_DEVICE_PIXEL_RATIO,
   );
 
   const isVertical = layout === BarChartLayout.VERTICAL;
@@ -42,13 +44,6 @@ export const BarChartHoverLayer = ({
     () => ({ width: chartWidth, height: chartHeight }),
     [chartWidth, chartHeight],
   );
-
-  useEffect(() => {
-    setDpr(
-      window.devicePixelRatio ||
-        CHART_CORE_CONSTANTS.DEFAULT_DEVICE_PIXEL_RATIO,
-    );
-  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;

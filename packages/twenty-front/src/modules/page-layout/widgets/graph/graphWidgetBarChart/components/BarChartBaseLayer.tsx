@@ -55,8 +55,10 @@ export const BarChartBaseLayer = ({
 }: BarChartBaseLayerProps) => {
   const theme = useTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [dpr, setDpr] = useState<number>(
-    CHART_CORE_CONSTANTS.DEFAULT_DEVICE_PIXEL_RATIO,
+  const [dpr] = useState<number>(
+    () =>
+      window.devicePixelRatio ||
+      CHART_CORE_CONSTANTS.DEFAULT_DEVICE_PIXEL_RATIO,
   );
   const [previousBars, setPreviousBars] = useState<BarPosition[]>([]);
   const [previousSize, setPreviousSize] = useState<{
@@ -115,13 +117,6 @@ export const BarChartBaseLayer = ({
       highlightedLegendId,
     ],
   );
-
-  useEffect(() => {
-    setDpr(
-      window.devicePixelRatio ||
-        CHART_CORE_CONSTANTS.DEFAULT_DEVICE_PIXEL_RATIO,
-    );
-  }, []);
 
   const animationContext = useMemo(() => {
     const innerWidth = chartWidth - margins.left - margins.right;
