@@ -3,9 +3,9 @@ import { baseWorkflowActionSettingsSchema } from './base-workflow-action-setting
 import { workflowFileSchema } from './workflow-file-action-schema';
 
 export const workflowEmailRecipientsSchema = z.object({
-  to: z.array(z.string()).optional().default([]),
-  cc: z.array(z.string()).optional().default([]),
-  bcc: z.array(z.string()).optional().default([]),
+  to: z.string().optional().default(''),
+  cc: z.string().optional().default(''),
+  bcc: z.string().optional().default(''),
 });
 
 export const workflowSendEmailActionSettingsSchema =

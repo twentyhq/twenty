@@ -121,16 +121,31 @@ export class SendEmailTool implements Tool {
     );
   }
 
+  private parseCommaSeparatedEmails(value: string | undefined): string[] {
+    if (!value) {
+      return [];
+    }
+
+    return value
+      .split(',')
+      .map((email) => email.trim())
+      .filter((email) => email.length > 0);
+  }
+
   private normalizeRecipients(parameters: SendEmailInput): {
     to: string[];
     cc: string[];
     bcc: string[];
   } {
-    if (parameters.recipients && parameters.recipients.to.length > 0) {
+    if (
+      parameters.recipients &&
+      parameters.recipients.to &&
+      parameters.recipients.to.trim().length > 0
+    ) {
       return {
-        to: parameters.recipients.to,
-        cc: parameters.recipients.cc ?? [],
-        bcc: parameters.recipients.bcc ?? [],
+        to: this.parseCommaSeparatedEmails(parameters.recipients.to),
+        cc: this.parseCommaSeparatedEmails(parameters.recipients.cc),
+        bcc: this.parseCommaSeparatedEmails(parameters.recipients.bcc),
       };
     }
 

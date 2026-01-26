@@ -48,6 +48,13 @@ const StyledEditor = styled.div<{
       color: ${({ theme }) => theme.color.blue};
       padding: ${({ theme }) => theme.spacing(1)};
     }
+
+    .text-tag {
+      background-color: ${({ theme }) => theme.color.blue3};
+      border-radius: ${({ theme }) => theme.border.radius.sm};
+      color: ${({ theme }) => theme.color.blue};
+      padding: ${({ theme }) => theme.spacing(1)};
+    }
   }
 
   .ProseMirror-focused {

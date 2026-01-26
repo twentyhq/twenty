@@ -8,6 +8,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { FormMultiItemFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiItemFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -17,7 +18,6 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
-import { EmailRecipientsInput } from '@/workflow/workflow-steps/workflow-actions/components/EmailRecipientsInput';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -58,9 +58,9 @@ type WorkflowFile = {
 };
 
 type EmailRecipients = {
-  to: string[];
-  cc: string[];
-  bcc: string[];
+  to: string;
+  cc: string;
+  bcc: string;
 };
 
 type SendEmailFormData = {
@@ -93,17 +93,17 @@ export const WorkflowEditActionSendEmail = ({
     const inputRecipients = action.settings.input.recipients;
     const legacyEmail = action.settings.input.email;
 
-    const recipients: EmailRecipients = inputRecipients
-      ? {
-          to: inputRecipients.to ?? [],
-          cc: inputRecipients.cc ?? [],
-          bcc: inputRecipients.bcc ?? [],
-        }
-      : {
-          to: legacyEmail ? [legacyEmail] : [],
-          cc: [],
-          bcc: [],
-        };
+    const toValue = inputRecipients?.to;
+    const ccValue = inputRecipients?.cc;
+    const bccValue = inputRecipients?.bcc;
+
+    const recipients: EmailRecipients = {
+      to: Array.isArray(toValue)
+        ? toValue.join(', ')
+        : (toValue ?? legacyEmail ?? ''),
+      cc: Array.isArray(ccValue) ? ccValue.join(', ') : (ccValue ?? ''),
+      bcc: Array.isArray(bccValue) ? bccValue.join(', ') : (bccValue ?? ''),
+    };
 
     return {
       connectedAccountId: action.settings.input.connectedAccountId,
@@ -310,41 +310,44 @@ export const WorkflowEditActionSendEmail = ({
             dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
-          <EmailRecipientsInput
+          <FormMultiItemFieldInput
             label={t`To`}
-            placeholder={t`Enter recipient email`}
+            placeholder={t`Enter emails, comma-separated`}
             readonly={actionOptions.readonly}
             defaultValue={formData.recipients.to}
-            onChange={(emails) => {
+            onChange={(value) => {
               handleFieldChange('recipients', {
                 ...formData.recipients,
-                to: emails,
+                to: value,
               });
             }}
+            VariablePicker={WorkflowVariablePicker}
           />
-          <EmailRecipientsInput
+          <FormMultiItemFieldInput
             label={t`CC`}
-            placeholder={t`Enter CC email (optional)`}
+            placeholder={t`Enter CC emails, comma-separated`}
             readonly={actionOptions.readonly}
             defaultValue={formData.recipients.cc}
-            onChange={(emails) => {
+            onChange={(value) => {
               handleFieldChange('recipients', {
                 ...formData.recipients,
-                cc: emails,
+                cc: value,
               });
             }}
+            VariablePicker={WorkflowVariablePicker}
           />
-          <EmailRecipientsInput
+          <FormMultiItemFieldInput
             label={t`BCC`}
-            placeholder={t`Enter BCC email (optional)`}
+            placeholder={t`Enter BCC emails, comma-separated`}
             readonly={actionOptions.readonly}
             defaultValue={formData.recipients.bcc}
-            onChange={(emails) => {
+            onChange={(value) => {
               handleFieldChange('recipients', {
                 ...formData.recipients,
-                bcc: emails,
+                bcc: value,
               });
             }}
+            VariablePicker={WorkflowVariablePicker}
           />
           <FormTextFieldInput
             label={t`Subject`}

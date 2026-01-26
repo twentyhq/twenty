@@ -25,6 +25,7 @@ import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/comman
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
 import { IdentifyAgentMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-agent-metadata.command';
+import { MigrateSendEmailRecipientsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-migrate-send-email-recipients.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
 import { IdentifyIndexMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-index-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
@@ -107,6 +108,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly makeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly identifyRemainingEntitiesMetadataCommand: IdentifyRemainingEntitiesMetadataCommand,
     protected readonly makeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    protected readonly migrateSendEmailRecipientsCommand: MigrateSendEmailRecipientsCommand,
   ) {
     super(
       workspaceRepository,
@@ -174,6 +176,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.identifyRemainingEntitiesMetadataCommand,
       this
         .makeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+      this.migrateSendEmailRecipientsCommand,
     ];
 
     this.allCommands = {

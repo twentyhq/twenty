@@ -4,19 +4,19 @@ import { z } from 'zod';
 
 export const EmailRecipientsZodSchema = z.object({
   to: z
-    .array(z.string())
-    .describe('Array of recipient email addresses (To)')
-    .default([]),
+    .string()
+    .describe('Comma-separated recipient email addresses (To)')
+    .default(''),
   cc: z
-    .array(z.string())
-    .describe('Array of CC email addresses')
+    .string()
+    .describe('Comma-separated CC email addresses')
     .optional()
-    .default([]),
+    .default(''),
   bcc: z
-    .array(z.string())
-    .describe('Array of BCC email addresses')
+    .string()
+    .describe('Comma-separated BCC email addresses')
     .optional()
-    .default([]),
+    .default(''),
 });
 
 export const SendEmailInputZodSchema = z
@@ -46,7 +46,9 @@ export const SendEmailInputZodSchema = z
   .refine(
     (data) =>
       data.email ||
-      (data.recipients && data.recipients.to && data.recipients.to.length > 0),
+      (data.recipients &&
+        data.recipients.to &&
+        data.recipients.to.trim().length > 0),
     {
       message:
         'Either email or recipients.to must be provided with at least one recipient',
