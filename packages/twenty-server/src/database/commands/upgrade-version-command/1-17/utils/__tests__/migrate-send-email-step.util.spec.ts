@@ -12,7 +12,7 @@ const LEGACY_STEP_FROM_PRODUCTION = {
   position: { x: 0, y: 150 },
   settings: {
     input: {
-      body: '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"bruh"}]}]}',
+      body: '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"sample"}]}]}',
       email: 'sample@gmail.com',
       files: [],
       subject: 'sample',
