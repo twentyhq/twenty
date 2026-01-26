@@ -81,7 +81,7 @@ export class UpdateTaskOnDeleteActionCommand extends ActiveOrSuspendedWorkspaces
     }
 
     const taskTargetFields = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityIds: taskTargetObjectMetadata.fieldMetadataIds,
+      flatEntityIds: taskTargetObjectMetadata.fieldIds,
       flatEntityMaps: flatFieldMetadataMaps,
     });
 

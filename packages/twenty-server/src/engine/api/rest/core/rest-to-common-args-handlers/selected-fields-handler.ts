@@ -72,7 +72,7 @@ export class RestToCommonSelectedFieldsHandler {
 
     let relationsSelectFields: SelectFields = {};
 
-    for (const fieldId of flatObjectMetadata.fieldMetadataIds) {
+    for (const fieldId of flatObjectMetadata.fieldIds) {
       const flatField = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityMaps: flatFieldMetadataMaps,
         flatEntityId: fieldId,

@@ -113,7 +113,7 @@ export const ALL_METADATA_RELATIONS = {
     manyToOne: {
       object: {
         metadataName: 'objectMetadata',
-        flatEntityForeignKeyAggregator: 'fieldMetadataIds',
+        flatEntityForeignKeyAggregator: 'fieldIds',
         foreignKey: 'objectMetadataId',
       },
       workspace: null,

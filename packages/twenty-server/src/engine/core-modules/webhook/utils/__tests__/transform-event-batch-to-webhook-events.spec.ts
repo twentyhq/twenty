@@ -19,7 +19,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   createdAt: new Date(),
   updatedAt: new Date(),
   universalIdentifier: 'id',
-  fieldMetadataIds: [],
+  fieldIds: [],
   indexMetadataIds: [],
   viewIds: [],
   applicationId: null,
