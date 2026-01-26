@@ -3,6 +3,7 @@ import { isPointInChartArea } from '@/page-layout/widgets/graph/chart-core/utils
 import { BarChartBaseLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartBaseLayer';
 import { BarChartHoverLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartHoverLayer';
 import { useBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarPositions';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { computeAllCategorySlices } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeAllCategorySlices';
@@ -18,7 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
 
 type BarChartProps = {
-  data: Record<string, unknown>[];
+  data: BarChartDatum[];
   indexBy: string;
   keys: string[];
   enrichedKeysMap: Map<string, BarChartEnrichedKey>;

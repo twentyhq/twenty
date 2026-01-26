@@ -4,6 +4,7 @@ import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetad
 import { BAR_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/barChartData';
 import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
@@ -27,7 +28,7 @@ type UseGraphBarChartWidgetDataProps = {
 };
 
 type UseGraphBarChartWidgetDataResult = {
-  data: Record<string, unknown>[];
+  data: BarChartDatum[];
   indexBy: string;
   keys: string[];
   series: BarChartSeriesWithColor[];
@@ -80,8 +81,10 @@ export const useGraphBarChartWidgetData = ({
 
   const effectiveQueryData = queryData ?? previousData;
 
+  const indexBy = effectiveQueryData?.barChartData?.indexBy ?? 'id';
+  const keys = effectiveQueryData?.barChartData?.keys ?? [];
   const chartData =
-    (effectiveQueryData?.barChartData?.data as Record<string, unknown>[]) ?? [];
+    (effectiveQueryData?.barChartData?.data as BarChartDatum[]) ?? [];
 
   const formattedToRawLookup = effectiveQueryData?.barChartData
     ?.formattedToRawLookup
@@ -143,8 +146,8 @@ export const useGraphBarChartWidgetData = ({
 
   return {
     data: chartData,
-    indexBy: effectiveQueryData?.barChartData?.indexBy ?? 'id',
-    keys: effectiveQueryData?.barChartData?.keys ?? [],
+    indexBy,
+    keys,
     series,
     xAxisLabel: effectiveQueryData?.barChartData?.xAxisLabel ?? '',
     yAxisLabel: effectiveQueryData?.barChartData?.yAxisLabel ?? '',

@@ -15,6 +15,7 @@ import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChar
 import { useBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarPositions';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetHoveredSliceIndexComponentState';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
@@ -43,7 +44,7 @@ import { BarChartLayout } from '~/generated/graphql';
 
 type GraphWidgetBarChartProps = {
   colorMode: GraphColorMode;
-  data: Record<string, unknown>[];
+  data: BarChartDatum[];
   groupMode?: 'grouped' | 'stacked';
   id: string;
   indexBy: string;
@@ -165,14 +166,8 @@ export const GraphWidgetBarChart = ({
 
   const calculatedValueRange =
     groupMode === 'stacked'
-      ? calculateStackedBarChartValueRange(
-          data as { [key: string]: number | string }[],
-          visibleKeys,
-        )
-      : calculateValueRangeFromBarChartKeys(
-          data as { [key: string]: number | string }[],
-          visibleKeys,
-        );
+      ? calculateStackedBarChartValueRange(data, visibleKeys)
+      : calculateValueRangeFromBarChartKeys(data, visibleKeys);
 
   const hasNoData = data.length === 0 || visibleKeys.length === 0;
 
@@ -189,7 +184,7 @@ export const GraphWidgetBarChart = ({
       axisTheme: chartTheme.axis,
       chartHeight,
       chartWidth,
-      data: data as { [key: string]: number | string }[],
+      data,
       effectiveMaximumValue,
       effectiveMinimumValue,
       formatOptions,
@@ -201,7 +196,7 @@ export const GraphWidgetBarChart = ({
 
   const tickConfig = getBarChartTickConfig({
     axisFontSize: 11,
-    data: data as { [key: string]: number | string }[],
+    data,
     height: chartHeight,
     indexBy,
     layout,

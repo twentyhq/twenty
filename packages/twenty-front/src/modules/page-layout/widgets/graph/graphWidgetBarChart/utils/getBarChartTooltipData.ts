@@ -1,4 +1,5 @@
 import { type GraphWidgetTooltipItem } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import {
@@ -8,7 +9,7 @@ import {
 
 type GetBarChartTooltipDataParameters = {
   slice: BarChartSlice;
-  data: Record<string, unknown>[];
+  data: BarChartDatum[];
   indexBy: string;
   enrichedKeys: BarChartEnrichedKey[];
   formatOptions: GraphValueFormatOptions;

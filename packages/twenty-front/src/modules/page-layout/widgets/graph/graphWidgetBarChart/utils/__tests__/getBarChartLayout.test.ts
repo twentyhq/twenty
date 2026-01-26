@@ -2,7 +2,7 @@ import { TEXT_MARGIN_LIMITS } from '@/page-layout/widgets/graph/constants/TextMa
 import { getBarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartLayout';
 import { type ChartAxisTheme } from '@/page-layout/widgets/graph/types/ChartAxisTheme';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { type BarDatum } from '@nivo/bar';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { BarChartLayout } from '~/generated/graphql';
 
 describe('getBarChartLayout', () => {
@@ -15,7 +15,7 @@ describe('getBarChartLayout', () => {
     displayType: 'number',
   };
 
-  const defaultData: BarDatum[] = [
+  const defaultData: BarChartDatum[] = [
     { category: 'A', value: 10 },
     { category: 'B', value: 20 },
     { category: 'C', value: 30 },

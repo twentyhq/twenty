@@ -1,3 +1,4 @@
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { isNumber } from '@sniptt/guards';
@@ -21,7 +22,7 @@ export type BarPosition = {
 };
 
 type ComputeBarPositionsParams = {
-  data: Record<string, unknown>[];
+  data: BarChartDatum[];
   indexBy: string;
   keys: string[];
   enrichedKeysMap: Map<string, BarChartEnrichedKey>;
@@ -50,7 +51,7 @@ const computeGroupedBarPositions = ({
   shouldRoundFreeEndMap,
   includeZeroValues = false,
 }: {
-  data: Record<string, unknown>[];
+  data: BarChartDatum[];
   indexBy: string;
   keys: string[];
   enrichedKeysMap: Map<string, BarChartEnrichedKey>;
@@ -180,7 +181,7 @@ const computeStackedBarPositions = ({
   shouldRoundFreeEndMap,
   includeZeroValues = false,
 }: {
-  data: Record<string, unknown>[];
+  data: BarChartDatum[];
   indexBy: string;
   keys: string[];
   enrichedKeysMap: Map<string, BarChartEnrichedKey>;
@@ -394,7 +395,7 @@ const computeShouldRoundFreeEndMapLocal = ({
   indexBy,
   groupMode,
 }: {
-  data: Record<string, unknown>[];
+  data: BarChartDatum[];
   keys: string[];
   indexBy: string;
   groupMode?: 'grouped' | 'stacked';

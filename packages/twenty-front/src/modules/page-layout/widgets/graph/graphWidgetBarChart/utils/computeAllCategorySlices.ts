@@ -1,5 +1,6 @@
 import { computeBandScale } from '@/page-layout/widgets/graph/chart-core/utils/computeBandScale';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositions';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
@@ -14,7 +15,7 @@ export const computeAllCategorySlices = ({
   chartHeight,
   margins,
 }: {
-  data: Record<string, unknown>[];
+  data: BarChartDatum[];
   indexBy: string;
   bars: BarPosition[];
   isVerticalLayout: boolean;

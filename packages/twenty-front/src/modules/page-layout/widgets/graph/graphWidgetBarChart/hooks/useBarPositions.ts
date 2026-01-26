@@ -1,4 +1,5 @@
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import {
   computeBarPositions,
   type BarPosition,
@@ -8,7 +9,7 @@ import { useMemo } from 'react';
 import { type BarChartLayout } from '~/generated/graphql';
 
 type UseBarPositionsParams = {
-  data: Record<string, unknown>[];
+  data: BarChartDatum[];
   indexBy: string;
   keys: string[];
   enrichedKeysMap: Map<string, BarChartEnrichedKey>;
