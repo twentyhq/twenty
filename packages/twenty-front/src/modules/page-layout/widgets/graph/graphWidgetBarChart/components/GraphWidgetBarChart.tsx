@@ -27,6 +27,7 @@ import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarCha
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
+import { resolveAxisFontSizes } from '@/page-layout/widgets/graph/utils/resolveAxisFontSizes';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
@@ -155,6 +156,9 @@ export const GraphWidgetBarChart = ({
   };
 
   const chartTheme = useBarChartTheme();
+  const { tickFontSize, legendFontSize } = resolveAxisFontSizes(
+    chartTheme.axis,
+  );
 
   const { enrichedKeysMap, enrichedKeys, legendItems, visibleKeys } =
     useBarChartData({ keys, series, colorRegistry, seriesLabels, colorMode });
@@ -195,7 +199,7 @@ export const GraphWidgetBarChart = ({
     });
 
   const tickConfig = getBarChartTickConfig({
-    axisFontSize: 11,
+    axisFontSize: tickFontSize,
     data,
     height: chartHeight,
     indexBy,
@@ -333,8 +337,8 @@ export const GraphWidgetBarChart = ({
   };
 
   const axisConfig = {
-    tickFontSize: 11,
-    legendFontSize: 12,
+    tickFontSize,
+    legendFontSize,
     tickPadding: BAR_CHART_CONSTANTS.TICK_PADDING,
     rotatedLabelsExtraMargin:
       BAR_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN,

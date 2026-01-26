@@ -1,9 +1,7 @@
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
-import {
-  computeBarPositions,
-  type BarPosition,
-} from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositions';
+import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
+import { computeBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositions';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { useMemo } from 'react';
 import { type BarChartLayout } from '~/generated/graphql';

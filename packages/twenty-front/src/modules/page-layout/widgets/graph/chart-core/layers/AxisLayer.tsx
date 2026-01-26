@@ -4,8 +4,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 type AxisLayerConfig = {
-  tickFontSize?: number;
-  legendFontSize?: number;
+  tickFontSize: number;
+  legendFontSize: number;
   tickPadding: number;
   rotatedLabelsExtraMargin: number;
   bottomAxisLegendOffset: number;
@@ -59,8 +59,8 @@ export const AxisLayer = ({
   axisConfig,
 }: AxisLayerProps) => {
   const theme = useTheme();
-  const tickFontSize = axisConfig.tickFontSize ?? 11;
-  const legendFontSize = axisConfig.legendFontSize ?? 12;
+  const tickFontSize = axisConfig.tickFontSize;
+  const legendFontSize = axisConfig.legendFontSize;
 
   const innerWidth = chartWidth - margins.left - margins.right;
   const innerHeight = chartHeight - margins.top - margins.bottom;

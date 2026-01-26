@@ -1,4 +1,4 @@
-import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositions';
+import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
 
 export type BarChartSlice = {
   indexValue: string;

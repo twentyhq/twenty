@@ -1,5 +1,7 @@
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
+import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
+import { computeShouldRoundFreeEndMap } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeShouldRoundFreeEndMap';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { isNumber } from '@sniptt/guards';
 import { BarChartLayout } from '~/generated/graphql';
@@ -7,19 +9,6 @@ import { BarChartLayout } from '~/generated/graphql';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { computeBandScale } from '@/page-layout/widgets/graph/chart-core/utils/computeBandScale';
 import { computeValueScale } from '@/page-layout/widgets/graph/chart-core/utils/computeValueScale';
-
-export type BarPosition = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  value: number;
-  indexValue: string;
-  seriesId: string;
-  color: string;
-  shouldRoundFreeEnd: boolean;
-  seriesIndex: number;
-};
 
 type ComputeBarPositionsParams = {
   data: BarChartDatum[];
@@ -352,10 +341,12 @@ export const computeBarPositions = ({
     return [];
   }
 
-  const shouldRoundFreeEndMap =
-    groupMode === 'stacked'
-      ? computeShouldRoundFreeEndMapLocal({ data, keys, indexBy, groupMode })
-      : null;
+  const shouldRoundFreeEndMap = computeShouldRoundFreeEndMap({
+    data,
+    keys,
+    indexBy,
+    groupMode,
+  });
 
   if (groupMode === 'stacked') {
     return computeStackedBarPositions({
@@ -387,49 +378,4 @@ export const computeBarPositions = ({
     shouldRoundFreeEndMap,
     includeZeroValues,
   });
-};
-
-const computeShouldRoundFreeEndMapLocal = ({
-  data,
-  keys,
-  indexBy,
-  groupMode,
-}: {
-  data: BarChartDatum[];
-  keys: string[];
-  indexBy: string;
-  groupMode?: 'grouped' | 'stacked';
-}): Map<string, boolean> | null => {
-  if (groupMode !== 'stacked' || !keys?.length || !data?.length || !indexBy) {
-    return null;
-  }
-
-  const map = new Map<string, boolean>();
-
-  for (const dataPoint of data) {
-    const indexValue = dataPoint[indexBy];
-
-    for (let seriesIndex = 0; seriesIndex < keys.length; seriesIndex++) {
-      const key = keys[seriesIndex];
-      const value = dataPoint[key];
-
-      if (!isNumber(value) || value === 0) {
-        continue;
-      }
-
-      const isNegative = value < 0;
-
-      const keysAfterCurrent = keys.slice(seriesIndex + 1);
-      const hasSameSignBarAfter = keysAfterCurrent.some((afterKey) => {
-        const afterValue = dataPoint[afterKey];
-        return (
-          isNumber(afterValue) && (isNegative ? afterValue < 0 : afterValue > 0)
-        );
-      });
-
-      map.set(JSON.stringify([indexValue, key]), !hasSameSignBarAfter);
-    }
-  }
-
-  return map;
 };
