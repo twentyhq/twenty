@@ -1,8 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
@@ -18,17 +16,8 @@ export const useWorkspaceNavigationMenuItems = (): {
   const { workspaceNavigationMenuItems: rawWorkspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
   const coreViews = useRecoilValue(coreViewsState);
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const views = coreViews
-    .map(convertCoreViewToView)
-    .filter(
-      (view) =>
-        view.objectMetadataId !==
-        objectMetadataItems.find(
-          (item) => item.nameSingular === CoreObjectNameSingular.Dashboard,
-        )?.id,
-    );
+  const views = coreViews.map(convertCoreViewToView);
 
   const workspaceNavigationMenuItemViewIds = new Set(
     workspaceNavigationMenuItemsSorted
