@@ -2,26 +2,26 @@ import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/componen
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
-import { type CanvasBarSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findSliceAtCanvasPosition';
-import { getCanvasBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getCanvasBarChartTooltipData';
+import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
+import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTooltipData';
 import { createVirtualElementFromContainerOffset } from '@/page-layout/widgets/graph/utils/createVirtualElementFromContainerOffset';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-type CanvasBarChartTooltipProps = {
+type BarChartTooltipProps = {
   containerRef: RefObject<HTMLDivElement | null>;
   data: Record<string, unknown>[];
   indexBy: string;
   enrichedKeys: BarChartEnrichedKey[];
   formatOptions: GraphValueFormatOptions;
-  onSliceClick?: (slice: CanvasBarSlice) => void;
+  onSliceClick?: (slice: BarChartSlice) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 };
 
-export const CanvasBarChartTooltip = ({
+export const BarChartTooltip = ({
   containerRef,
   data,
   indexBy,
@@ -30,7 +30,7 @@ export const CanvasBarChartTooltip = ({
   onSliceClick,
   onMouseEnter,
   onMouseLeave,
-}: CanvasBarChartTooltipProps) => {
+}: BarChartTooltipProps) => {
   const tooltipState = useRecoilComponentValue(
     graphWidgetBarTooltipComponentState,
   );
@@ -43,15 +43,15 @@ export const CanvasBarChartTooltip = ({
   const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
     ? () => {
         if (isDefined(tooltipState)) {
-          onSliceClick(tooltipState.slice as CanvasBarSlice);
+          onSliceClick(tooltipState.slice as BarChartSlice);
         }
       }
     : undefined;
 
   const tooltipData = !isDefined(tooltipState)
     ? null
-    : getCanvasBarChartTooltipData({
-        slice: tooltipState.slice as CanvasBarSlice,
+    : getBarChartTooltipData({
+        slice: tooltipState.slice as BarChartSlice,
         data,
         indexBy,
         enrichedKeys,

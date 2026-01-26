@@ -2,7 +2,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
-import { type CanvasBarSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findSliceAtCanvasPosition';
+import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { assertBarChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertBarChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
@@ -93,7 +93,7 @@ export const GraphWidgetBarChartRenderer = () => {
   const canRedirectToFilteredView =
     isFilteredViewRedirectionSupported(primaryGroupByField);
 
-  const handleSliceClick = (slice: CanvasBarSlice) => {
+  const handleSliceClick = (slice: BarChartSlice) => {
     const displayValue = slice.indexValue;
     const rawValue = formattedToRawLookup.get(displayValue) ?? null;
 

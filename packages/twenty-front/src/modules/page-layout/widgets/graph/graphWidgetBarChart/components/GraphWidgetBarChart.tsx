@@ -1,10 +1,10 @@
 import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
-import { CanvasBarChart } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CanvasBarChart';
-import { CanvasBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CanvasBarChartTooltip';
-import { CanvasTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CanvasTotalsLayer';
-import { SvgAxisOverlay } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/SvgAxisOverlay';
+import { BarChart } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChart';
+import { BarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartTooltip';
+import { BarChartTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartTotalsLayer';
+import { BarChartAxisOverlay } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartAxisOverlay';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { useBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarPositions';
@@ -13,7 +13,7 @@ import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widget
 import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
-import { type CanvasBarSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findSliceAtCanvasPosition';
+import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
 import { getBarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartLayout';
 import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
@@ -47,7 +47,7 @@ type GraphWidgetBarChartProps = {
   keys: string[];
   layout?: BarChartLayout;
   omitNullValues?: boolean;
-  onSliceClick?: (slice: CanvasBarSlice) => void;
+  onSliceClick?: (slice: BarChartSlice) => void;
   rangeMax?: number;
   rangeMin?: number;
   series?: BarChartSeriesWithColor[];
@@ -273,7 +273,7 @@ export const GraphWidgetBarChart = ({
 
   const handleSliceHover = (
     sliceData: {
-      slice: CanvasBarSlice;
+      slice: BarChartSlice;
       offsetLeft: number;
       offsetTop: number;
     } | null,
@@ -327,7 +327,7 @@ export const GraphWidgetBarChart = ({
         <StyledChartWrapper>
           {chartWidth > 0 && chartHeight > 0 && (
             <>
-              <CanvasBarChart
+              <BarChart
                 allowDataTransitions={allowDataTransitions}
                 chartHeight={chartHeight}
                 chartWidth={chartWidth}
@@ -347,7 +347,7 @@ export const GraphWidgetBarChart = ({
                 valueDomain={valueDomain}
                 valueTickValues={valueTickValues}
               />
-              <SvgAxisOverlay
+              <BarChartAxisOverlay
                 bottomAxisTickRotation={tickConfig.bottomAxisTickRotation}
                 categoryValues={categoryValues}
                 categoryTickValues={categoryTickValues}
@@ -368,7 +368,7 @@ export const GraphWidgetBarChart = ({
                 xAxisLabel={xAxisLabel}
                 yAxisLabel={yAxisLabel}
               />
-              <CanvasTotalsLayer
+              <BarChartTotalsLayer
                 bars={labelBars}
                 chartHeight={chartHeight}
                 chartWidth={chartWidth}
@@ -396,7 +396,7 @@ export const GraphWidgetBarChart = ({
         </StyledChartWrapper>
       </GraphWidgetChartContainer>
 
-      <CanvasBarChartTooltip
+      <BarChartTooltip
         containerRef={containerRef}
         data={data}
         enrichedKeys={enrichedKeys}

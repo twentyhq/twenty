@@ -1,22 +1,22 @@
-import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { CHART_CORE_CONSTANTS } from '@/page-layout/widgets/graph/chart-core/constants/ChartCoreConstants';
 
-type CategoryBandScale = {
+type BandScale = {
   step: number;
   bandwidth: number;
   offset: number;
 };
 
-export const computeCategoryBandScale = ({
+export const computeBandScale = ({
   axisLength,
   count,
-  padding = BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
-  outerPaddingPx = BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
+  padding = CHART_CORE_CONSTANTS.DEFAULT_BAND_PADDING,
+  outerPaddingPx = CHART_CORE_CONSTANTS.DEFAULT_OUTER_PADDING_PX,
 }: {
   axisLength: number;
   count: number;
   padding?: number;
   outerPaddingPx?: number;
-}): CategoryBandScale => {
+}): BandScale => {
   if (axisLength <= 0 || count <= 0) {
     return { step: 0, bandwidth: 0, offset: 0 };
   }

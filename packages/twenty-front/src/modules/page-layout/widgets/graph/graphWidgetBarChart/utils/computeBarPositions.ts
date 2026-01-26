@@ -4,7 +4,8 @@ import { isNumber } from '@sniptt/guards';
 import { BarChartLayout } from '~/generated/graphql';
 
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
-import { computeCategoryBandScale } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeCategoryBandScale';
+import { computeBandScale } from '@/page-layout/widgets/graph/chart-core/utils/computeBandScale';
+import { computeValueScale } from '@/page-layout/widgets/graph/chart-core/utils/computeValueScale';
 
 export type BarPosition = {
   x: number;
@@ -33,18 +34,6 @@ type ComputeBarPositionsParams = {
   fallbackColor: string;
   innerPadding: number;
   includeZeroValues?: boolean;
-};
-
-const computeValueToPixel = (
-  value: number,
-  valueDomain: { min: number; max: number },
-  axisLength: number,
-): number => {
-  const range = valueDomain.max - valueDomain.min;
-  if (range === 0) {
-    return 0;
-  }
-  return ((value - valueDomain.min) / range) * axisLength;
 };
 
 const computeGroupedBarPositions = ({
@@ -87,7 +76,7 @@ const computeGroupedBarPositions = ({
   const valueAxisLength = isVertical ? innerHeight : innerWidth;
 
   const { step: categoryStep, bandwidth: categoryWidth, offset: outerPadding } =
-    computeCategoryBandScale({
+    computeBandScale({
       axisLength: categoryAxisLength,
       count: dataLength,
       padding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
@@ -104,7 +93,11 @@ const computeGroupedBarPositions = ({
   const actualTotalBarWidth = barThickness * keysLength + totalInnerPadding;
   const groupCenteringOffset = (categoryWidth - actualTotalBarWidth) / 2;
 
-  const zeroPixel = computeValueToPixel(0, valueDomain, valueAxisLength);
+  const { valueToPixel } = computeValueScale({
+    domain: valueDomain,
+    axisLength: valueAxisLength,
+  });
+  const zeroPixel = valueToPixel(0);
 
   for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
     const dataPoint = data[dataIndex];
@@ -127,7 +120,7 @@ const computeGroupedBarPositions = ({
       const barKey = JSON.stringify([indexValue, key]);
       const shouldRoundFreeEnd = shouldRoundFreeEndMap?.get(barKey) ?? true;
 
-      const valuePixel = computeValueToPixel(value, valueDomain, valueAxisLength);
+      const valuePixel = valueToPixel(value);
       const barStart = Math.min(zeroPixel, valuePixel);
       const barLength = Math.abs(valuePixel - zeroPixel);
 
@@ -205,7 +198,7 @@ const computeStackedBarPositions = ({
   const valueAxisLength = isVertical ? innerHeight : innerWidth;
 
   const { step: categoryStep, bandwidth: categoryWidth, offset: outerPadding } =
-    computeCategoryBandScale({
+    computeBandScale({
       axisLength: categoryAxisLength,
       count: dataLength,
       padding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
@@ -215,7 +208,15 @@ const computeStackedBarPositions = ({
   const barThickness = Math.min(categoryWidth, BAR_CHART_CONSTANTS.MAXIMUM_WIDTH);
   const categoryBarCenteringOffset = (categoryWidth - barThickness) / 2;
 
-  const zeroPixel = computeValueToPixel(0, valueDomain, valueAxisLength);
+  const { valueToPixel } = computeValueScale({
+    domain: valueDomain,
+    axisLength: valueAxisLength,
+  });
+  const zeroPixel = valueToPixel(0);
+  const { valueToPixel: stackValueToPixel, range: stackRange } = computeValueScale({
+    domain: { min: 0, max: valueDomain.max - valueDomain.min },
+    axisLength: valueAxisLength,
+  });
 
   for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
     const dataPoint = data[dataIndex];
@@ -242,11 +243,8 @@ const computeStackedBarPositions = ({
       const shouldRoundFreeEnd = shouldRoundFreeEndMap?.get(barKey) ?? true;
 
       const isNegative = value < 0;
-      const valuePixelDelta = computeValueToPixel(
-        Math.abs(value),
-        { min: 0, max: valueDomain.max - valueDomain.min },
-        valueAxisLength,
-      );
+      const valuePixelDelta =
+        stackRange === 0 ? 0 : stackValueToPixel(Math.abs(value));
 
       const categoryPosition = categoryStart + categoryBarCenteringOffset;
 

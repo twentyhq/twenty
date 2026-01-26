@@ -1,6 +1,6 @@
+import { computeBandScale } from '@/page-layout/widgets/graph/chart-core/utils/computeBandScale';
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
-import { computeCategoryBandScale } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeCategoryBandScale';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import {
@@ -11,7 +11,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { BarChartLayout } from '~/generated/graphql';
 
-type SvgAxisOverlayProps = {
+type BarChartAxisOverlayProps = {
   bottomAxisTickRotation: number;
   categoryValues: (string | number)[];
   categoryTickValues: (string | number)[];
@@ -37,7 +37,7 @@ const StyledSvgOverlay = styled.svg`
   top: 0;
 `;
 
-export const SvgAxisOverlay = ({
+export const BarChartAxisOverlay = ({
   chartWidth,
   chartHeight,
   margins,
@@ -53,7 +53,7 @@ export const SvgAxisOverlay = ({
   maxBottomAxisTickLabelLength,
   maxLeftAxisTickLabelLength,
   hasNegativeValues,
-}: SvgAxisOverlayProps) => {
+}: BarChartAxisOverlayProps) => {
   const theme = useTheme();
   const tickFontSize = 11;
   const legendFontSize = 12;
@@ -66,7 +66,7 @@ export const SvgAxisOverlay = ({
     categoryValues.map((value, index) => [String(value), index]),
   );
 
-  const categoryScale = computeCategoryBandScale({
+  const categoryScale = computeBandScale({
     axisLength: isVertical ? innerWidth : innerHeight,
     count: categoryValues.length,
     padding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
@@ -200,7 +200,6 @@ export const SvgAxisOverlay = ({
           />
         )}
 
-        {/* Bottom axis ticks */}
         <g transform={`translate(0, ${innerHeight})`}>
           {bottomTickValues.map((value, index) => {
             const x = computeBottomTickPosition(value, index);

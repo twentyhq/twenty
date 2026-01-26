@@ -1,12 +1,18 @@
 import { GraphDataLabel } from '@/page-layout/widgets/graph/components/GraphDataLabel';
 import { type BarChartLabelData } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLabelData';
+import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositions';
 import { computeBarChartGroupedLabels } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartGroupedLabels';
 import { computeBarChartStackedLabels } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartStackedLabels';
+import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { type GraphLabelData } from '@/page-layout/widgets/graph/types/GraphLabelData';
-import { type BarCustomLayerProps, type BarDatum } from '@nivo/bar';
+import styled from '@emotion/styled';
 import { BarChartLayout } from '~/generated/graphql';
 
-type CustomTotalsLayerProps = Pick<BarCustomLayerProps<BarDatum>, 'bars'> & {
+type BarChartTotalsLayerProps = {
+  bars: BarPosition[];
+  margins: ChartMargins;
+  chartWidth: number;
+  chartHeight: number;
   formatValue?: (value: number) => string;
   offset?: number;
   layout?: BarChartLayout;
@@ -14,6 +20,13 @@ type CustomTotalsLayerProps = Pick<BarCustomLayerProps<BarDatum>, 'bars'> & {
   omitNullValues?: boolean;
   showValues: boolean;
 };
+
+const StyledSvgLabels = styled.svg`
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+`;
 
 const convertToGraphLabelData = (
   barChartLabel: BarChartLabelData,
@@ -28,16 +41,19 @@ const convertToGraphLabelData = (
   };
 };
 
-export const CustomTotalsLayer = ({
+export const BarChartTotalsLayer = ({
   bars,
+  margins,
+  chartWidth,
+  chartHeight,
   formatValue,
   offset = 0,
   layout = BarChartLayout.VERTICAL,
   groupMode = 'grouped',
   omitNullValues = false,
   showValues,
-}: CustomTotalsLayerProps) => {
-  if (!showValues) {
+}: BarChartTotalsLayerProps) => {
+  if (!showValues || bars.length === 0) {
     return null;
   }
 
@@ -53,23 +69,25 @@ export const CustomTotalsLayer = ({
     : barChartLabels;
 
   return (
-    <>
-      {barChartLabelsToRender.map((barChartLabel) => {
-        const graphLabel = convertToGraphLabelData(
-          barChartLabel,
-          isVerticalLayout,
-        );
+    <StyledSvgLabels width={chartWidth} height={chartHeight}>
+      <g transform={`translate(${margins.left}, ${margins.top})`}>
+        {barChartLabelsToRender.map((barChartLabel) => {
+          const graphLabel = convertToGraphLabelData(
+            barChartLabel,
+            isVerticalLayout,
+          );
 
-        return (
-          <GraphDataLabel
-            key={graphLabel.key}
-            label={graphLabel}
-            formatValue={formatValue}
-            offset={offset}
-            isVerticalLayout={isVerticalLayout}
-          />
-        );
-      })}
-    </>
+          return (
+            <GraphDataLabel
+              key={graphLabel.key}
+              label={graphLabel}
+              formatValue={formatValue}
+              offset={offset}
+              isVerticalLayout={isVerticalLayout}
+            />
+          );
+        })}
+      </g>
+    </StyledSvgLabels>
   );
 };
