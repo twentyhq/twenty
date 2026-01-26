@@ -4,11 +4,15 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRecoilValue } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 export const useFavoritesMetadata = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const allowRequestsToTwentyIcons = useRecoilValue(
+    allowRequestsToTwentyIconsState,
+  );
   const getObjectRecordIdentifierByNameSingular =
-    useGetObjectRecordIdentifierByNameSingular();
+    useGetObjectRecordIdentifierByNameSingular(allowRequestsToTwentyIcons);
 
   const { objectMetadataItem: favoriteObjectMetadataItem } =
     useObjectMetadataItem({

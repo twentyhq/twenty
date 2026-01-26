@@ -12,6 +12,8 @@ import {
   isDefined,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
+import { useRecoilValue } from 'recoil';
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 type ObjectFilterDropdownRecordSelectProps = {
   recordFilter: RecordFilter;
@@ -21,6 +23,10 @@ type ObjectFilterDropdownRecordSelectProps = {
 export const useComputeRecordRelationFilterLabelValue = ({
   recordFilter,
 }: ObjectFilterDropdownRecordSelectProps) => {
+  const allowRequestsToTwentyIcons = useRecoilValue(
+    allowRequestsToTwentyIconsState,
+  );
+
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const { getRecordFilterChipLabelValue } = useGetRecordFilterChipLabelValue();
@@ -69,6 +75,7 @@ export const useComputeRecordRelationFilterLabelValue = ({
     selectedIds: selectedRecordIds,
     objectNameSingular: relationObjectMetadataNameSingular,
     limit: 10,
+    allowRequestsToTwentyIcons,
   });
 
   if (loading) {

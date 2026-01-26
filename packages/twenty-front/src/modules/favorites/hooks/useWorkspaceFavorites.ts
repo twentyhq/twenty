@@ -10,6 +10,7 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 export const useWorkspaceFavorites = () => {
   const { workspaceFavorites } = usePrefetchedFavoritesData();
@@ -19,8 +20,11 @@ export const useWorkspaceFavorites = () => {
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Favorite,
     });
+  const allowRequestsToTwentyIcons = useRecoilValue(
+    allowRequestsToTwentyIconsState,
+  );
   const getObjectRecordIdentifierByNameSingular =
-    useGetObjectRecordIdentifierByNameSingular();
+    useGetObjectRecordIdentifierByNameSingular(allowRequestsToTwentyIcons);
 
   const favoriteRelationFieldMetadataItems = useMemo(
     () =>
