@@ -1,8 +1,6 @@
-// Must import polyfill FIRST to provide HTMLElement and other DOM globals in the worker
 import '@remote-dom/core/polyfill';
 import '@remote-dom/react/polyfill';
 
-// Import remote elements to register custom elements
 import '../generated/elements';
 
 import { ThreadWebWorker } from '@quilted/threads';
