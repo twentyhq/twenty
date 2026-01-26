@@ -3,7 +3,7 @@ import { useTextField } from '@/object-record/record-field/ui/meta-types/hooks/u
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useContext, useRef, useEffect } from 'react';
+import { useContext, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
@@ -19,13 +19,6 @@ export const RecordTitleCellTextFieldInput = ({
   const { fieldDefinition, draftValue, setDraftValue, fieldValue } = useTextField();
 
   const wrapperRef = useRef<HTMLInputElement>(null);
-
-  // Ensure draft value is initialized from field value if it's undefined or empty
-  useEffect(() => {
-    if (!isDefined(draftValue) && isDefined(fieldValue) && fieldValue !== '') {
-      setDraftValue(fieldValue);
-    }
-  }, [draftValue, fieldValue, setDraftValue]);
 
   const handleChange = (newText: string) => {
     setDraftValue(turnIntoUndefinedIfWhitespacesOnly(newText));
