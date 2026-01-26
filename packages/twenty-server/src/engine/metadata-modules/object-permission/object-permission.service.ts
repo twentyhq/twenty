@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -86,30 +86,49 @@ export class ObjectPermissionService {
         }
       });
 
-      const objectPermissions = input.objectPermissions.map(
-        (objectPermission) => ({
-          ...objectPermission,
+      // Delete permissions that exist in DB but are not in the input
+      const inputObjectMetadataIds = new Set(
+        input.objectPermissions.map((p) => p.objectMetadataId),
+      );
+
+      const existingObjectPermissions = role.objectPermissions ?? [];
+
+      const permissionsToDelete = existingObjectPermissions.filter(
+        (existing) => !inputObjectMetadataIds.has(existing.objectMetadataId),
+      );
+
+      if (isNonEmptyArray(permissionsToDelete)) {
+        await this.objectPermissionRepository.delete({
           roleId: input.roleId,
-          workspaceId,
-        }),
-      );
+          objectMetadataId: In(
+            permissionsToDelete.map((p) => p.objectMetadataId),
+          ),
+        });
+      }
 
-      const result = await this.objectPermissionRepository.upsert(
-        objectPermissions,
-        {
+      // Upsert the remaining permissions
+      if (isNonEmptyArray(input.objectPermissions)) {
+        const objectPermissions = input.objectPermissions.map(
+          (objectPermission) => ({
+            ...objectPermission,
+            roleId: input.roleId,
+            workspaceId,
+          }),
+        );
+
+        await this.objectPermissionRepository.upsert(objectPermissions, {
           conflictPaths: ['objectMetadataId', 'roleId'],
-        },
-      );
-
-      const objectPermissionId = result.generatedMaps?.[0]?.id;
-
-      if (!isDefined(objectPermissionId)) {
-        throw new Error('Failed to upsert object permission');
+        });
       }
 
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'rolesPermissions',
       ]);
+
+      // Return remaining permissions for this role
+      if (!isNonEmptyArray(input.objectPermissions)) {
+        return [];
+      }
 
       return this.objectPermissionRepository.find({
         where: {
