@@ -2,8 +2,8 @@ import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
-import { type FieldMetadataFilesSettings } from 'twenty-shared/types';
 import { z } from 'zod';
+import { type FieldMetadataSettingsMapping } from 'twenty-shared/types';
 
 import {
   CommonQueryRunnerException,
@@ -24,7 +24,7 @@ export type FileItem = z.infer<typeof fileItemSchema>;
 export const validateFilesFieldOrThrow = (
   value: unknown,
   fieldName: string,
-  settings: FieldMetadataFilesSettings,
+  settings: FieldMetadataSettingsMapping['FILES'],
 ): FileItem[] | null => {
   if (isNull(value)) return null;
 

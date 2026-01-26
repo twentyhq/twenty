@@ -6,6 +6,8 @@ import { type ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-m
 import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
+import { type FormatJsonbSerializedRelation } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-jsonb-serialized-relation.type';
 import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
 
 // TODO Handle universal settings
@@ -22,6 +24,7 @@ export type UniversalFlatEntityFrom<
   | ExtractEntityRelatedEntityProperties<TEntity>
   | Extract<MetadataManyToOneJoinColumn<TMetadataName>, keyof TEntity>
   | keyof CastRecordTypeOrmDatePropertiesToString<TEntity>
+  | ExtractJsonbProperties<TEntity>
 > &
   CastRecordTypeOrmDatePropertiesToString<TEntity> & {
     [P in ExtractEntityOneToManyEntityRelationProperties<
@@ -34,4 +37,8 @@ export type UniversalFlatEntityFrom<
       string as `${RemoveSuffix<P, 'Id'>}UniversalIdentifier`]: TEntity[P];
   } & {
     applicationUniversalIdentifier: string;
+  } & {
+    [P in ExtractJsonbProperties<TEntity>]: FormatJsonbSerializedRelation<
+      TEntity[P]
+    >;
   };
