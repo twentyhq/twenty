@@ -1099,10 +1099,14 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-c02d-4124-9d24-ef123456789b',
       },
       note: { universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.note },
-      person: { universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.person },
-      company: { universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.company },
-      opportunity: {
-        universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.opportunity,
+      targetPerson: {
+        universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.targetPerson,
+      },
+      targetCompany: {
+        universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.targetCompany,
+      },
+      targetOpportunity: {
+        universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.targetOpportunity,
       },
     },
     indexes: {
@@ -1517,10 +1521,14 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-a03d-4164-9d64-fabcdefabcde',
       },
       task: { universalIdentifier: TASK_TARGET_STANDARD_FIELD_IDS.task },
-      person: { universalIdentifier: TASK_TARGET_STANDARD_FIELD_IDS.person },
-      company: { universalIdentifier: TASK_TARGET_STANDARD_FIELD_IDS.company },
-      opportunity: {
-        universalIdentifier: TASK_TARGET_STANDARD_FIELD_IDS.opportunity,
+      targetPerson: {
+        universalIdentifier: TASK_TARGET_STANDARD_FIELD_IDS.targetPerson,
+      },
+      targetCompany: {
+        universalIdentifier: TASK_TARGET_STANDARD_FIELD_IDS.targetCompany,
+      },
+      targetOpportunity: {
+        universalIdentifier: TASK_TARGET_STANDARD_FIELD_IDS.targetOpportunity,
       },
     },
     indexes: {

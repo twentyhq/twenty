@@ -8,6 +8,10 @@ export type NoteTarget = {
   updatedAt: string;
   companyId?: string | null;
   personId?: string | null;
+  opportunityId?: string | null;
+  targetCompanyId?: string | null;
+  targetPersonId?: string | null;
+  targetOpportunityId?: string | null;
   note: Pick<Note, 'id' | 'createdAt' | 'updatedAt' | '__typename'>;
   person?: Pick<Person, 'id' | 'name' | 'avatarUrl' | '__typename'> | null;
   company?: Pick<Company, 'id' | 'name' | 'domainName' | '__typename'> | null;

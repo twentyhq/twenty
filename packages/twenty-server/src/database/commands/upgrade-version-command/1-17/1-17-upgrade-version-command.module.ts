@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
+import { MigrateNoteTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-note-target-to-morph-relations.command';
+import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -15,6 +17,8 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
+import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 
 @Module({
   imports: [
@@ -24,6 +28,8 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
       FieldMetadataEntity,
       FeatureFlagEntity,
       AttachmentWorkspaceEntity,
+      NoteTargetWorkspaceEntity,
+      TaskTargetWorkspaceEntity,
     ]),
     DataSourceModule,
     WorkspaceCacheStorageModule,
@@ -34,7 +40,15 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
     ObjectMetadataModule,
     ApplicationModule,
   ],
-  providers: [MigrateAttachmentToMorphRelationsCommand],
-  exports: [MigrateAttachmentToMorphRelationsCommand],
+  providers: [
+    MigrateAttachmentToMorphRelationsCommand,
+    MigrateNoteTargetToMorphRelationsCommand,
+    MigrateTaskTargetToMorphRelationsCommand,
+  ],
+  exports: [
+    MigrateAttachmentToMorphRelationsCommand,
+    MigrateNoteTargetToMorphRelationsCommand,
+    MigrateTaskTargetToMorphRelationsCommand,
+  ],
 })
 export class V1_17_UpgradeVersionCommandModule {}

@@ -6,6 +6,7 @@ import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql
 type FindActivitiesOperationSignatureFactory = {
   objectMetadataItems: ObjectMetadataItem[];
   objectNameSingular: CoreObjectNameSingular;
+  isMorphRelation: boolean;
 };
 
 export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatureFactory<
@@ -13,6 +14,7 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
 > = ({
   objectMetadataItems,
   objectNameSingular,
+  isMorphRelation,
 }: FindActivitiesOperationSignatureFactory) => {
   const body = {
     bodyV2: {
@@ -64,7 +66,10 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
               updatedAt: true,
               note: true,
               noteId: true,
-              ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
+              ...generateActivityTargetMorphFieldKeys(
+                objectMetadataItems,
+                isMorphRelation,
+              ),
             },
           }
         : {
@@ -75,7 +80,10 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
               updatedAt: true,
               task: true,
               taskId: true,
-              ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
+              ...generateActivityTargetMorphFieldKeys(
+                objectMetadataItems,
+                isMorphRelation,
+              ),
             },
           }),
     },
