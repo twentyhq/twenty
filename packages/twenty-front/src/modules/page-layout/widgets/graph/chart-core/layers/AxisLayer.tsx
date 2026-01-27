@@ -1,3 +1,7 @@
+import { AxisLabel } from '@/page-layout/widgets/graph/chart-core/layers/AxisLabel';
+import { BottomAxisTicks } from '@/page-layout/widgets/graph/chart-core/layers/BottomAxisTicks';
+import { LeftAxisTicks } from '@/page-layout/widgets/graph/chart-core/layers/LeftAxisTicks';
+import { ZeroLine } from '@/page-layout/widgets/graph/chart-core/layers/ZeroLine';
 import { computeBandScale } from '@/page-layout/widgets/graph/chart-core/utils/computeBandScale';
 import { computeBottomTickPosition } from '@/page-layout/widgets/graph/chart-core/utils/computeBottomTickPosition';
 import { computeLeftTickPosition } from '@/page-layout/widgets/graph/chart-core/utils/computeLeftTickPosition';
@@ -150,88 +154,52 @@ export const AxisLayer = ({
         />
 
         {shouldRenderZeroLine && (
-          <line
-            x1={isVertical ? 0 : zeroPosition}
-            y1={isVertical ? zeroPosition : 0}
-            x2={isVertical ? innerWidth : zeroPosition}
-            y2={isVertical ? zeroPosition : innerHeight}
-            stroke={theme.border.color.medium}
-            strokeWidth={1}
+          <ZeroLine
+            isVertical={isVertical}
+            zeroPosition={zeroPosition}
+            innerWidth={innerWidth}
+            innerHeight={innerHeight}
           />
         )}
 
         <g transform={`translate(0, ${innerHeight})`}>
-          {bottomTickValues.map((value, index) => {
-            const x = getBottomTickPosition(value, index);
-            const label = formatBottomTick(value);
-
-            return (
-              <g key={`bottom-tick-${index}`} transform={`translate(${x}, 0)`}>
-                <text
-                  x={0}
-                  y={axisConfig.tickPadding + tickFontSize}
-                  textAnchor={hasRotation ? 'end' : 'middle'}
-                  transform={
-                    hasRotation
-                      ? `rotate(${bottomAxisTickRotation}, 0, ${axisConfig.tickPadding + tickFontSize / 2})`
-                      : undefined
-                  }
-                  fill={theme.font.color.secondary}
-                  fontSize={tickFontSize}
-                >
-                  {label}
-                </text>
-              </g>
-            );
-          })}
+          <BottomAxisTicks
+            bottomTickValues={bottomTickValues}
+            getBottomTickPosition={getBottomTickPosition}
+            formatBottomTick={formatBottomTick}
+            hasRotation={hasRotation}
+            bottomAxisTickRotation={bottomAxisTickRotation}
+            tickPadding={axisConfig.tickPadding}
+            tickFontSize={tickFontSize}
+          />
 
           {xAxisLabel && (
-            <text
+            <AxisLabel
+              label={xAxisLabel}
               x={innerWidth / 2}
               y={bottomLegendOffset}
-              textAnchor="middle"
-              fill={theme.font.color.primary}
               fontSize={legendFontSize}
-              fontWeight={theme.font.weight.medium}
-            >
-              {xAxisLabel}
-            </text>
+            />
           )}
         </g>
 
         <g>
-          {leftTickValues.map((value, index) => {
-            const y = getLeftTickPosition(value, index);
-            const label = formatLeftTick(value);
-
-            return (
-              <g key={`left-tick-${index}`} transform={`translate(0, ${y})`}>
-                <text
-                  x={-axisConfig.tickPadding}
-                  y={0}
-                  textAnchor="end"
-                  dominantBaseline="middle"
-                  fill={theme.font.color.secondary}
-                  fontSize={tickFontSize}
-                >
-                  {label}
-                </text>
-              </g>
-            );
-          })}
+          <LeftAxisTicks
+            leftTickValues={leftTickValues}
+            getLeftTickPosition={getLeftTickPosition}
+            formatLeftTick={formatLeftTick}
+            tickPadding={axisConfig.tickPadding}
+            tickFontSize={tickFontSize}
+          />
 
           {yAxisLabel && (
-            <text
+            <AxisLabel
+              label={yAxisLabel}
               x={leftLegendOffset}
               y={innerHeight / 2}
-              textAnchor="middle"
-              transform={`rotate(-90, ${leftLegendOffset}, ${innerHeight / 2})`}
-              fill={theme.font.color.primary}
               fontSize={legendFontSize}
-              fontWeight={theme.font.weight.medium}
-            >
-              {yAxisLabel}
-            </text>
+              rotation={-90}
+            />
           )}
         </g>
       </g>
