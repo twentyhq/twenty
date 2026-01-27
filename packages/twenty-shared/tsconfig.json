@@ -21,5 +21,8 @@
     "**/__mocks__/**/*",
     "jest.config.mjs"
   ],
-  "exclude": ["src/front-component/remote/mock/**/*"]
+  "exclude": [
+    "src/front-component/remote/mock/**/*",
+    "src/front-component/host/generated/component-registry.ts"
+  ]
 }
