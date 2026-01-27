@@ -1,11 +1,11 @@
 import { AddSuffixToEntityManyToOneProperties } from 'src/engine/metadata-modules/flat-entity/types/add-suffix-to-entity-many-to-one-properties.type';
 import { type AddSuffixToEntityOneToManyProperties } from 'src/engine/metadata-modules/flat-entity/types/add-suffix-to-entity-one-to-many-properties.type';
 import { type CastRecordTypeOrmDatePropertiesToString } from 'src/engine/metadata-modules/flat-entity/types/cast-record-typeorm-date-properties-to-string.type';
-import { ExpandJsonbSerializedRelation } from 'src/engine/metadata-modules/flat-entity/types/expand-jsonb-serialized-relation.type';
 import { type ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-related-entity-properties.type';
 import { FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
+import { FormatJsonbSerializedRelation } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-jsonb-serialized-relation.type';
 import { AllMetadataName } from 'twenty-shared/metadata';
 
 export type SyncableFlatEntity = Omit<
@@ -27,7 +27,7 @@ export type Prastoin<
   > & {
     applicationUniversalIdentifier: string;
   } & {
-    [P in ExtractJsonbProperties<TEntity>]: ExpandJsonbSerializedRelation<
+    [P in ExtractJsonbProperties<TEntity>]: FormatJsonbSerializedRelation<
       TEntity[P]
     >;
   };
