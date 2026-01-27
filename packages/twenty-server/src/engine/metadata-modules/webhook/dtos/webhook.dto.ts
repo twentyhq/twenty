@@ -29,7 +29,7 @@ export class WebhookDTO {
 
   @IsString()
   @IsOptional()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   description: string | null;
 
   @IsString()
@@ -53,6 +53,6 @@ export class WebhookDTO {
 
   @IsDateString()
   @IsOptional()
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   deletedAt: Date | null;
 }

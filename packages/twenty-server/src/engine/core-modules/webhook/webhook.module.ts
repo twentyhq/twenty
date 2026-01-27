@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WebhookQueryService } from 'src/engine/core-modules/webhook/webhook.service';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -17,6 +18,7 @@ import { WebhookController } from './controllers/webhook.controller';
     AuthModule,
     WorkspaceCacheStorageModule,
     WebhookModule,
+    PermissionsModule,
   ],
   providers: [WebhookQueryService],
   controllers: [WebhookController],

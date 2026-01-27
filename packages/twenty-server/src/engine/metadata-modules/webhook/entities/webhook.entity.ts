@@ -25,7 +25,7 @@ export class WebhookEntity
   @Column('text', { array: true, default: ['*.*'] })
   operations: string[];
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   description: string | null;
 
   @Column({ nullable: false })

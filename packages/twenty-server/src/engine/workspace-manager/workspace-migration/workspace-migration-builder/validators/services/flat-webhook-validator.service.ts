@@ -139,7 +139,10 @@ export class FlatWebhookValidatorService {
       property: 'targetUrl',
     });
 
-    if (isDefined(targetUrlUpdate) && !this.validateTargetUrl(targetUrlUpdate.to)) {
+    if (
+      isDefined(targetUrlUpdate) &&
+      !this.validateTargetUrl(targetUrlUpdate.to)
+    ) {
       validationResult.errors.push({
         code: WebhookExceptionCode.INVALID_TARGET_URL,
         message: t`Invalid target URL provided`,
