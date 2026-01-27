@@ -15,10 +15,10 @@ import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { computeAllCategorySlices } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeAllCategorySlices';
 import { computeSliceTooltipPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeSliceTooltipPosition';
 import { findSliceAtPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findSliceAtPosition';
-import { hasNegativeValuesInData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/hasNegativeValuesInData';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
 import { getBarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartLayout';
 import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
+import { hasNegativeValuesInData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/hasNegativeValuesInData';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import {
@@ -365,6 +365,13 @@ export const BarChart = ({
       onMouseLeave={onSliceLeave}
       onClick={handleClick}
     >
+      <BarChartHoverLayer
+        hoveredSlice={hoveredSlice}
+        chartHeight={chartHeight}
+        chartWidth={chartWidth}
+        layout={layout}
+        margins={margins}
+      />
       <BarChartBaseLayer
         bars={bars}
         chartHeight={chartHeight}
@@ -376,13 +383,6 @@ export const BarChart = ({
         valueDomain={valueDomain}
         valueTickValues={valueTickValues}
         allowDataTransitions={allowDataTransitions}
-      />
-      <BarChartHoverLayer
-        hoveredSlice={hoveredSlice}
-        chartHeight={chartHeight}
-        chartWidth={chartWidth}
-        layout={layout}
-        margins={margins}
       />
       <AxisLayer
         bottomAxisTickRotation={tickConfig.bottomAxisTickRotation}
