@@ -56,7 +56,7 @@ export class MessagingMessagesImportService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
-    let messageIdsToFetch: string[] = [];
+    let messageExternalIdsToFetch: string[] = [];
 
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -103,12 +103,12 @@ export class MessagingMessagesImportService {
             workspaceId,
           );
 
-          messageIdsToFetch = await this.cacheStorage.setPop(
+          messageExternalIdsToFetch = await this.cacheStorage.setPop(
             `messages-to-import:${workspaceId}:${messageChannel.id}`,
             MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
           );
 
-          if (!messageIdsToFetch?.length) {
+          if (messageExternalIdsToFetch.length === 0) {
             await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
               [messageChannel.id],
               workspaceId,
@@ -120,11 +120,31 @@ export class MessagingMessagesImportService {
             );
           }
 
-          const allMessages =
+          const fetchedMessages =
             await this.messagingGetMessagesService.getMessages(
-              messageIdsToFetch,
+              messageExternalIdsToFetch,
               connectedAccountWithFreshTokens,
             );
+
+          const messageFolders = messageChannel.messageFolders ?? [];
+          const foldersWithExternalId = messageFolders.filter((folder) =>
+            isDefined(folder.externalId),
+          );
+
+          const folderExternalToInternalMap = new Map<string, string>(
+            foldersWithExternalId.map((folder) => [
+              folder.externalId!,
+              folder.id,
+            ]),
+          );
+
+          for (const message of fetchedMessages) {
+            const externalFolderIds = message.messageFolderExternalIds ?? [];
+
+            message.messageFolderIds = externalFolderIds
+              .map((externalId) => folderExternalToInternalMap.get(externalId))
+              .filter(isDefined);
+          }
 
           const blocklist =
             await this.blocklistRepository.getByWorkspaceMemberId(
@@ -149,7 +169,7 @@ export class MessagingMessagesImportService {
           const messagesToSave = filterEmails(
             messageChannel.handle,
             [...connectedAccountWithFreshTokens.handleAliases.split(',')],
-            allMessages,
+            fetchedMessages,
             blocklist
               .map((blocklistItem) => blocklistItem.handle)
               .filter(isDefined),
@@ -166,7 +186,7 @@ export class MessagingMessagesImportService {
           }
 
           if (
-            messageIdsToFetch.length <
+            messageExternalIdsToFetch.length <
             MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE
           ) {
             await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
@@ -204,10 +224,13 @@ export class MessagingMessagesImportService {
           this.logger.error(
             `Error (${error.code}) importing messages for workspace ${workspaceId.slice(0, 8)} and account ${connectedAccount.id.slice(0, 8)}: ${error.message} - ${error.body}`,
           );
-          await this.cacheStorage.setAdd(
-            `messages-to-import:${workspaceId}:${messageChannel.id}`,
-            messageIdsToFetch,
-          );
+
+          if (messageExternalIdsToFetch.length > 0) {
+            await this.cacheStorage.setAdd(
+              `messages-to-import:${workspaceId}:${messageChannel.id}`,
+              messageExternalIdsToFetch,
+            );
+          }
 
           await this.messageImportErrorHandlerService.handleDriverException(
             error,
