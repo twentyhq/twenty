@@ -6,7 +6,7 @@ import {
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
 import {
-  FieldMetadataRelationSettings,
+  FieldMetadataSettingsMapping,
   FieldMetadataType,
   ObjectRecord,
   RelationType,
@@ -256,8 +256,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
         const relationType =
           isDryRun && fieldMetadata.type === FieldMetadataType.RELATION
-            ? (fieldMetadata.settings as FieldMetadataRelationSettings)
-                ?.relationType
+            ? (
+                fieldMetadata.settings as FieldMetadataSettingsMapping['RELATION']
+              )?.relationType
             : undefined;
 
         mergedResult[fieldName] = mergeFieldValues(
@@ -376,7 +377,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       }
 
       const relationSettings = field.settings as
-        | FieldMetadataRelationSettings
+        | FieldMetadataSettingsMapping['RELATION']
         | undefined;
 
       if (

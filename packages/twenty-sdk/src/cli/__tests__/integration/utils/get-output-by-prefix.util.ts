@@ -1,5 +1,6 @@
 export type LogPrefix =
   | 'init'
+  | 'dev-mode'
   | 'manifest-watch'
   | 'functions-watch'
   | 'front-components-watch';

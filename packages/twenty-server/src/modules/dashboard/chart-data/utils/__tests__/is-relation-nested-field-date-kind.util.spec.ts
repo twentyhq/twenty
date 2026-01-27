@@ -23,7 +23,7 @@ const createMockObjectMetadata = (
     id: 'test-object-id',
     nameSingular: 'testObject',
     namePlural: 'testObjects',
-    fieldMetadataIds: [],
+    fieldIds: [],
     universalIdentifier: 'test-object-universal-id',
     ...overrides,
   }) as FlatObjectMetadata;
@@ -51,7 +51,7 @@ describe('isRelationNestedFieldDateKind', () => {
     id: companyObjectId,
     nameSingular: 'company',
     namePlural: 'companies',
-    fieldMetadataIds: [createdAtFieldId, nameFieldId],
+    fieldIds: [createdAtFieldId, nameFieldId],
   });
 
   const relationField = createMockFieldMetadata({
@@ -180,7 +180,7 @@ describe('isRelationNestedFieldDateKind', () => {
       id: 'object-with-date-id',
       nameSingular: 'person',
       namePlural: 'people',
-      fieldMetadataIds: [dateFieldId],
+      fieldIds: [dateFieldId],
     });
 
     const personRelationField = createMockFieldMetadata({

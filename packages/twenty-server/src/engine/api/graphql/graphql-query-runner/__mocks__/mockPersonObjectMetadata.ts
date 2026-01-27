@@ -154,7 +154,7 @@ export const mockPersonFlatObjectMetadata = (
     workspaceId,
     universalIdentifier: objectMetadataId,
     indexMetadataIds: [],
-    fieldMetadataIds: mockFieldMetadatas.map((field) => field.id),
+    fieldIds: mockFieldMetadatas.map((field) => field.id),
     viewIds: [],
     applicationId: 'test-application-id',
     isLabelSyncedWithName: false,

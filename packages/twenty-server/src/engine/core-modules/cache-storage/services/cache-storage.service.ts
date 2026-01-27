@@ -227,11 +227,20 @@ export class CacheStorageService {
       const keys = result.keys;
 
       if (keys.length > 0) {
-        const counts = await Promise.all(
-          keys.map((key) => redisClient.sCard(key)),
-        );
+        const pipeline = redisClient.multi();
 
-        totalCount += counts.reduce((sum, count) => sum + count, 0);
+        for (const key of keys) {
+          pipeline.sCard(key);
+        }
+
+        const results = await pipeline.exec();
+
+        for (const result of results) {
+          if (result instanceof Error) {
+            throw result;
+          }
+          totalCount += result as number;
+        }
       }
     } while (cursor !== 0);
 

@@ -71,7 +71,7 @@ describe('ActorFromAuthContextService', () => {
                   'person-id': {
                     id: 'person-id',
                     nameSingular: 'person',
-                    fieldMetadataIds: ['createdBy-id'],
+                    fieldIds: ['createdBy-id'],
                   },
                 },
               },
