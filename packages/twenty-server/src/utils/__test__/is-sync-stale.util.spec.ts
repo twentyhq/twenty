@@ -1,5 +1,5 @@
 import { MESSAGING_IMPORT_ONGOING_SYNC_TIMEOUT } from 'src/modules/messaging/message-import-manager/constants/messaging-import-ongoing-sync-timeout.constant';
-import { isSyncStale } from 'src/modules/messaging/message-import-manager/utils/is-sync-stale.util';
+import { isSyncStale } from 'src/utils/is-sync-stale.util';
 
 jest.useFakeTimers().setSystemTime(new Date('2024-01-01'));
 
@@ -24,7 +24,19 @@ describe('isSyncStale', () => {
     expect(result).toBe(false);
   });
 
-  it('should return false if syncStageStartedAt is invalid', () => {
+  it('should return false if syncStageStartedAt is undefined', () => {
+    const result = isSyncStale(undefined);
+
+    expect(result).toBe(false);
+  });
+
+  it('should return false if syncStageStartedAt is null', () => {
+    const result = isSyncStale(null);
+
+    expect(result).toBe(false);
+  });
+
+  it('should throw an error if syncStageStartedAt is invalid', () => {
     const syncStageStartedAt = 'invalid-date';
 
     expect(() => {
