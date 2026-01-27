@@ -12,6 +12,7 @@ import { fromRoleTargetEntityToFlatRoleTarget } from 'src/engine/metadata-module
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -46,20 +47,10 @@ export class WorkspaceFlatRoleTargetMapCacheService extends WorkspaceCacheProvid
       }),
     ]);
 
-    const applicationIdToUniversalIdentifierMap = new Map<string, string>();
-
-    for (const application of applications) {
-      applicationIdToUniversalIdentifierMap.set(
-        application.id,
-        application.universalIdentifier,
-      );
-    }
-
-    const roleIdToUniversalIdentifierMap = new Map<string, string>();
-
-    for (const role of roles) {
-      roleIdToUniversalIdentifierMap.set(role.id, role.universalIdentifier);
-    }
+    const applicationIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(applications);
+    const roleIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(roles);
 
     const flatRoleTargetMaps = createEmptyFlatEntityMaps();
 

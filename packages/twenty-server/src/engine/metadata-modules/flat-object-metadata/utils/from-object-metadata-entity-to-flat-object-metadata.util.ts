@@ -1,8 +1,8 @@
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
+    FlatEntityMapsException,
+    FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';

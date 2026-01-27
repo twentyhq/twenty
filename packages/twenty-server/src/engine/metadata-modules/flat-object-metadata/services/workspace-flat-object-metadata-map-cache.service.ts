@@ -15,6 +15,7 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -86,20 +87,10 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);
 
-    const applicationIdToUniversalIdentifierMap = new Map<string, string>();
-
-    for (const application of applications) {
-      applicationIdToUniversalIdentifierMap.set(
-        application.id,
-        application.universalIdentifier,
-      );
-    }
-
-    const fieldIdToUniversalIdentifierMap = new Map<string, string>();
-
-    for (const field of fields) {
-      fieldIdToUniversalIdentifierMap.set(field.id, field.universalIdentifier);
-    }
+    const applicationIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(applications);
+    const fieldIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(fields);
 
     const flatObjectMetadataMaps = createEmptyFlatEntityMaps();
 

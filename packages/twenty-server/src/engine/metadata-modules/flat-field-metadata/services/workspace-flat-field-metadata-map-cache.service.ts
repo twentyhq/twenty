@@ -17,6 +17,7 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -123,32 +124,12 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);
 
-    const fieldIdToUniversalIdentifierMap = new Map<string, string>();
-
-    for (const fieldMetadata of fieldMetadatas) {
-      fieldIdToUniversalIdentifierMap.set(
-        fieldMetadata.id,
-        fieldMetadata.universalIdentifier,
-      );
-    }
-
-    const objectMetadataIdToUniversalIdentifierMap = new Map<string, string>();
-
-    for (const objectMetadata of objectMetadatas) {
-      objectMetadataIdToUniversalIdentifierMap.set(
-        objectMetadata.id,
-        objectMetadata.universalIdentifier,
-      );
-    }
-
-    const applicationIdToUniversalIdentifierMap = new Map<string, string>();
-
-    for (const application of applications) {
-      applicationIdToUniversalIdentifierMap.set(
-        application.id,
-        application.universalIdentifier,
-      );
-    }
+    const fieldIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(fieldMetadatas);
+    const objectMetadataIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(objectMetadatas);
+    const applicationIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(applications);
 
     const flatFieldMetadataMaps = createEmptyFlatEntityMaps();
 
