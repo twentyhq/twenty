@@ -126,14 +126,18 @@ export class UpdateTaskOnDeleteActionCommand extends ActiveOrSuspendedWorkspaces
         onDelete: RelationOnDeleteAction.CASCADE,
       };
 
-      await this.fieldMetadataService.updateOneField({
-        updateFieldInput: {
-          id: taskField.id,
-          settings: updatedSettings,
-        },
-        workspaceId,
-        isSystemBuild: true,
-      });
+      try {
+        await this.fieldMetadataService.updateOneField({
+          updateFieldInput: {
+            id: taskField.id,
+            settings: updatedSettings,
+          },
+          workspaceId,
+          isSystemBuild: true,
+        });
+      } catch (error) {
+        this.logger.debug(`Error details: ${JSON.stringify(error)}`);
+      }
 
       this.logger.log(
         `Successfully updated task relation onDelete to CASCADE in workspace ${workspaceId}`,
