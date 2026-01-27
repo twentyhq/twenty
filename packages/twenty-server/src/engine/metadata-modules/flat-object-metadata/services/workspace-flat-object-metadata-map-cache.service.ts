@@ -101,7 +101,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
           fields: fieldsByObjectId.get(objectMetadataEntity.id) || [],
           indexMetadatas: indexesByObjectId.get(objectMetadataEntity.id) || [],
           views: viewsByObjectId.get(objectMetadataEntity.id) || [],
-        } as ObjectMetadataEntity,
+        },
         applicationIdToUniversalIdentifierMap,
         fieldIdToUniversalIdentifierMap,
       });

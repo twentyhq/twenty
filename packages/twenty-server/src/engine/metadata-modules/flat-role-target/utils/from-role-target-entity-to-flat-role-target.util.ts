@@ -6,13 +6,14 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
 
 export const fromRoleTargetEntityToFlatRoleTarget = ({
   roleTargetEntity,
   applicationIdToUniversalIdentifierMap,
   roleIdToUniversalIdentifierMap,
 }: {
-  roleTargetEntity: RoleTargetEntity;
+  roleTargetEntity: EntityWithRegroupedOneToManyRelations<RoleTargetEntity>;
   applicationIdToUniversalIdentifierMap: Map<string, string>;
   roleIdToUniversalIdentifierMap: Map<string, string>;
 }): FlatRoleTarget => {
