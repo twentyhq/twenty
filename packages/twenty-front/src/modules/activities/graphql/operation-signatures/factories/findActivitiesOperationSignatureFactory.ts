@@ -64,6 +64,7 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
               __typename: true,
               createdAt: true,
               updatedAt: true,
+              deletedAt: true,
               note: true,
               noteId: true,
               ...generateActivityTargetMorphFieldKeys(
@@ -78,6 +79,7 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
               __typename: true,
               createdAt: true,
               updatedAt: true,
+              deletedAt: true,
               task: true,
               taskId: true,
               ...generateActivityTargetMorphFieldKeys(

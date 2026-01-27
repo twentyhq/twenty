@@ -6,6 +6,7 @@ export type NoteTarget = {
   id: string;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
   companyId?: string | null;
   personId?: string | null;
   opportunityId?: string | null;

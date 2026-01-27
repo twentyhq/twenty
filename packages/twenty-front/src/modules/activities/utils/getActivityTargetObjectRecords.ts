@@ -48,6 +48,14 @@ export const getActivityTargetObjectRecords = ({
 
   const activityTargetRelationFields =
     activityTargetObjectMetadata?.fields.filter((field) => {
+      if (
+        field.type === FieldMetadataType.MORPH_RELATION &&
+        isDefined(field.morphRelations) &&
+        field.morphRelations.length > 0
+      ) {
+        return true;
+      }
+
       const targetObjectNameSingular =
         field.relation?.targetObjectMetadata.nameSingular;
 
@@ -69,6 +77,10 @@ export const getActivityTargetObjectRecords = ({
     .map<ActivityTargetWithTargetRecord | undefined>((activityTarget) => {
       if (!isDefined(activityTarget)) {
         throw new Error('Cannot find activity target');
+      }
+
+      if (isDefined(activityTarget.deletedAt)) {
+        return undefined;
       }
 
       let matchingFieldName: string | undefined;

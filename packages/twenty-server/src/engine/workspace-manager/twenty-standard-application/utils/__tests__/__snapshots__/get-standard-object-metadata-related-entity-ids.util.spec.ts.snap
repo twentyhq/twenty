@@ -979,9 +979,6 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
   },
   "noteTarget": {
     "fields": {
-      "company": {
-        "id": "00000000-0000-0000-0000-000000000306",
-      },
       "createdAt": {
         "id": "00000000-0000-0000-0000-000000000301",
       },
@@ -994,10 +991,13 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
       "note": {
         "id": "00000000-0000-0000-0000-000000000304",
       },
-      "opportunity": {
+      "targetCompany": {
+        "id": "00000000-0000-0000-0000-000000000306",
+      },
+      "targetOpportunity": {
         "id": "00000000-0000-0000-0000-000000000307",
       },
-      "person": {
+      "targetPerson": {
         "id": "00000000-0000-0000-0000-000000000305",
       },
       "updatedAt": {
@@ -1417,9 +1417,6 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
   },
   "taskTarget": {
     "fields": {
-      "company": {
-        "id": "00000000-0000-0000-0000-000000000440",
-      },
       "createdAt": {
         "id": "00000000-0000-0000-0000-000000000435",
       },
@@ -1429,10 +1426,13 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
       "id": {
         "id": "00000000-0000-0000-0000-000000000434",
       },
-      "opportunity": {
+      "targetCompany": {
+        "id": "00000000-0000-0000-0000-000000000440",
+      },
+      "targetOpportunity": {
         "id": "00000000-0000-0000-0000-000000000441",
       },
-      "person": {
+      "targetPerson": {
         "id": "00000000-0000-0000-0000-000000000439",
       },
       "task": {
