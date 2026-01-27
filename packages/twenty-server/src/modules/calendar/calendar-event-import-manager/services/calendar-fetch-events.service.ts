@@ -41,6 +41,10 @@ export class CalendarFetchEventsService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
+    this.logger.log(
+      `WorkspaceId: ${workspaceId}, CalendarChannelId: ${calendarChannel.id} - Fetching calendar events`,
+    );
+
     await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchOngoing(
       [calendarChannel.id],
       workspaceId,
@@ -142,9 +146,8 @@ export class CalendarFetchEventsService {
         }
       } catch (error) {
         this.logger.error(
-          `Calendar event fetch error for workspace ${workspaceId} and calendar channel ${calendarChannel.id}`,
+          `WorkspaceId: ${workspaceId}, CalendarChannelId: ${calendarChannel.id} - Calendar event fetch error: ${error.message}`,
         );
-        this.logger.error(error);
         await this.calendarEventImportErrorHandlerService.handleDriverException(
           error,
           CalendarEventImportSyncStep.CALENDAR_EVENT_LIST_FETCH,
