@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with children first (most manyToOne relations first) 1`] = `
 [
@@ -8,24 +8,24 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "pageLayoutWidget",
   "viewField",
   "commandMenuItem",
-  "cronTrigger",
-  "databaseEventTrigger",
   "index",
   "roleTarget",
-  "routeTrigger",
   "rowLevelPermissionPredicateGroup",
   "viewGroup",
   "agent",
+  "cronTrigger",
+  "databaseEventTrigger",
   "frontComponent",
   "pageLayout",
   "pageLayoutTab",
+  "routeTrigger",
+  "serverlessFunction",
   "skill",
   "view",
   "viewFilterGroup",
   "webhook",
   "fieldMetadata",
   "role",
-  "serverlessFunction",
   "objectMetadata",
 ]
 `;
