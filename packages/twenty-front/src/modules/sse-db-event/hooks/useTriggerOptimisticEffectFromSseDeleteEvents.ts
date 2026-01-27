@@ -1,6 +1,4 @@
-import {
-  triggerUpdateRecordOptimisticEffectByBatch
-} from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
+import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
