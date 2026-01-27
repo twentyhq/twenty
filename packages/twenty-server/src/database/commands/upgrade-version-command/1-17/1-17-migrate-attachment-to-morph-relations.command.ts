@@ -5,7 +5,7 @@ import {
   FieldMetadataType,
   type FieldMetadataSettings,
 } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize } from 'twenty-shared/utils';
 import { DataSource, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -17,9 +17,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -135,17 +133,7 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
       const attachmentTargetRelationFields = attachmentFieldMetadatas
         .filter(isMorphOrRelationFlatFieldMetadata)
         .filter((field) => field.type === FieldMetadataType.RELATION)
-        .flatMap((field) => {
-          const relatedObject = this.getRelatedObjectMetadata({
-            field,
-            flatObjectMetadataMaps,
-            workspaceId,
-          });
-
-          if (!isDefined(relatedObject)) {
-            return [];
-          }
-
+        .filter((field) => {
           const isStandardAppField = this.isTwentyStandardApplicationField({
             field,
             flatApplicationMaps,
@@ -160,11 +148,7 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
             !isStandardAppField &&
             field.standardId === ATTACHMENT_STANDARD_FIELD_IDS.targetCustom;
 
-          if (!isStandardTarget && !isCustomTarget) {
-            return [];
-          }
-
-          return [field];
+          return isStandardTarget || isCustomTarget;
         });
 
       const fieldMigrations = attachmentTargetRelationFields.map((field) => {
@@ -312,18 +296,10 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
     flatApplicationMaps,
     workspaceId,
   }: {
-    field: { id: string; name: string; applicationId: string | null };
+    field: { id: string; name: string; applicationId: string };
     flatApplicationMaps: FlatApplicationCacheMaps;
     workspaceId: string;
   }): boolean {
-    if (!field.applicationId) {
-      this.logger.error(
-        `🟥 Missing applicationId for field "${field.name}" (${field.id}) in workspace ${workspaceId}`,
-      );
-
-      return false;
-    }
-
     const application = flatApplicationMaps.byId[field.applicationId];
 
     if (!application) {
@@ -338,40 +314,5 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
       application.universalIdentifier ===
       TWENTY_STANDARD_APPLICATION.universalIdentifier
     );
-  }
-
-  private getRelatedObjectMetadata({
-    field,
-    flatObjectMetadataMaps,
-    workspaceId,
-  }: {
-    field: {
-      id: string;
-      name: string;
-      relationTargetObjectMetadataId?: string | null;
-    };
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    workspaceId: string;
-  }): FlatObjectMetadata | undefined {
-    if (!field.relationTargetObjectMetadataId) {
-      this.logger.error(
-        `🟥 Missing relationTargetObjectMetadataId for field "${field.name}" (${field.id}) in workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    const relatedObject = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: field.relationTargetObjectMetadataId,
-    });
-
-    if (!relatedObject) {
-      this.logger.error(
-        `🟥 Relation target object metadata not found for field "${field.name}" (${field.id}) in workspace ${workspaceId} (relationTargetObjectMetadataId: ${field.relationTargetObjectMetadataId})`,
-      );
-    }
-
-    return relatedObject;
   }
 }
