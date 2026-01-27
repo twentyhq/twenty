@@ -386,28 +386,36 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             };
           }
           case RecordFilterOperand.IS: {
-            const start = resolvedDateTime
-              .toZonedDateTimeISO('UTC')
-              .with({
-                second: 0,
-                millisecond: 0,
-                microsecond: 0,
-                nanosecond: 0,
-              })
-              .toInstant();
+            const timeZone = filterValueDependencies.timeZone || 'UTC';
 
-            const end = start.add({ minutes: 1 });
+            let start: Temporal.Instant;
+            let end: Temporal.Instant;
+
+            const isPlainDate = /^\d{4}-\d{2}-\d{2}$/.test(recordFilter.value);
+
+            if (isPlainDate) {
+              const plainDate = Temporal.PlainDate.from(recordFilter.value);
+              const zonedDateTime = plainDate.toZonedDateTime(timeZone);
+              start = zonedDateTime.toInstant();
+              end = zonedDateTime.add({ days: 1 }).toInstant();
+            } else {
+              const instant = Temporal.Instant.from(recordFilter.value);
+              const zonedDateTime = instant.toZonedDateTimeISO(timeZone);
+              const dayStart = zonedDateTime.startOfDay();
+              start = dayStart.toInstant();
+              end = dayStart.add({ days: 1 }).toInstant();
+            }
 
             return {
               and: [
                 {
                   [correspondingFieldMetadataItem.name]: {
-                    lt: end.toString(),
+                    gte: start.toString(),
                   } as DateTimeFilter,
                 },
                 {
                   [correspondingFieldMetadataItem.name]: {
-                    gte: start.toString(),
+                    lt: end.toString(),
                   } as DateTimeFilter,
                 },
               ],

@@ -20,6 +20,8 @@ import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export type ViewQueryParams = {
   objectNameSingular: string;
@@ -34,6 +36,7 @@ export class ViewQueryParamsService {
   constructor(
     private readonly viewService: ViewService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async resolveViewToQueryParams(
@@ -59,6 +62,26 @@ export class ViewQueryParamsService {
       flatEntityId: view.objectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
     });
+
+    let timeZone = 'UTC';
+
+    if (currentWorkspaceMemberId) {
+      const workspaceMemberRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          workspaceId,
+          'workspaceMember',
+        );
+
+      const workspaceMember = await workspaceMemberRepository.findOne({
+        where: {
+          id: currentWorkspaceMemberId,
+        },
+      });
+
+      if (workspaceMember?.timeZone) {
+        timeZone = workspaceMember.timeZone;
+      }
+    }
 
     const recordFilters: RecordFilter[] = (view.viewFilters ?? [])
       .map((viewFilter) => {
@@ -115,7 +138,7 @@ export class ViewQueryParamsService {
       fields,
       recordFilters,
       recordFilterGroups,
-      filterValueDependencies: { currentWorkspaceMemberId, timeZone: 'UTC' }, // TODO: check if we need to put workspace member timezone here
+      filterValueDependencies: { currentWorkspaceMemberId, timeZone },
     });
 
     const orderBy: ObjectRecordOrderBy = (view.viewSorts ?? [])
