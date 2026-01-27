@@ -979,390 +979,52 @@ export class ApplicationSyncService {
         isTool: serverlessFunctionToCreate.isTool,
       };
 
-      const createdServerlessFunction =
-        await this.serverlessFunctionV2Service.createOne({
-          createServerlessFunctionInput,
-          workspaceId,
-          applicationId,
-        });
-
-      await this.syncDatabaseEventTriggersForServerlessFunction({
-        serverlessFunctionId: createdServerlessFunction.id,
-        triggersToSync: serverlessFunctionToCreate.triggers || [],
+      await this.serverlessFunctionV2Service.createOne({
+        createServerlessFunctionInput,
         workspaceId,
         applicationId,
       });
 
-      await this.syncCronTriggersForServerlessFunction({
-        serverlessFunctionId: createdServerlessFunction.id,
-        triggersToSync: serverlessFunctionToCreate.triggers || [],
-        workspaceId,
-        applicationId,
-      });
-
-      await this.syncRouteTriggersForServerlessFunction({
-        serverlessFunctionId: createdServerlessFunction.id,
-        triggersToSync: serverlessFunctionToCreate.triggers || [],
-        workspaceId,
-        applicationId,
-      });
+      // Trigger settings are now embedded in the serverless function entity
+      // They are handled through the create input
     }
   }
 
-  private async syncDatabaseEventTriggersForServerlessFunction({
-    serverlessFunctionId,
-    triggersToSync,
-    workspaceId,
-    applicationId,
-  }: {
-    serverlessFunctionId: string;
-    triggersToSync: ServerlessFunctionTriggerManifest[];
-    workspaceId: string;
-    applicationId: string;
-  }) {
-    const databaseEventTriggersToSync = triggersToSync.filter(
-      (trigger) => trigger.type === 'databaseEvent',
-    );
+  private extractTriggerSettingsFromManifest(
+    triggers: ServerlessFunctionTriggerManifest[] = [],
+  ): {
+    cronTriggerSettings: CronTriggerSettings | null;
+    databaseEventTriggerSettings: DatabaseEventTriggerSettings | null;
+    httpRouteTriggerSettings: HttpRouteTriggerSettings | null;
+  } {
+    let cronTriggerSettings: CronTriggerSettings | null = null;
+    let databaseEventTriggerSettings: DatabaseEventTriggerSettings | null =
+      null;
+    let httpRouteTriggerSettings: HttpRouteTriggerSettings | null = null;
 
-    const { flatDatabaseEventTriggerMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatDatabaseEventTriggerMaps'],
-        },
-      );
-
-    const existingDatabaseEventTriggers = Object.values(
-      flatDatabaseEventTriggerMaps.byId,
-    ).filter(
-      (trigger) =>
-        isDefined(trigger) &&
-        trigger.serverlessFunctionId === serverlessFunctionId,
-    ) as FlatDatabaseEventTrigger[];
-
-    const triggersToSyncUniversalIdentifiers = databaseEventTriggersToSync.map(
-      (trigger) => trigger.universalIdentifier,
-    );
-
-    const existingTriggersUniversalIdentifiers =
-      existingDatabaseEventTriggers.map(
-        (trigger) => trigger.universalIdentifier,
-      );
-
-    const triggersToDelete = existingDatabaseEventTriggers.filter(
-      (trigger) =>
-        isDefined(trigger.universalIdentifier) &&
-        !triggersToSyncUniversalIdentifiers.includes(
-          trigger.universalIdentifier,
-        ),
-    );
-
-    const triggersToUpdate = existingDatabaseEventTriggers.filter(
-      (trigger) =>
-        isDefined(trigger.universalIdentifier) &&
-        triggersToSyncUniversalIdentifiers.includes(
-          trigger.universalIdentifier,
-        ),
-    );
-
-    const triggersToCreate = databaseEventTriggersToSync.filter(
-      (triggerToSync) =>
-        !existingTriggersUniversalIdentifiers.includes(
-          triggerToSync.universalIdentifier,
-        ),
-    );
-
-    for (const triggerToDelete of triggersToDelete) {
-      await this.databaseEventTriggerV2Service.destroyOne({
-        destroyDatabaseEventTriggerInput: { id: triggerToDelete.id },
-        workspaceId,
-      });
-    }
-
-    for (const triggerToUpdate of triggersToUpdate) {
-      const triggerToSync = databaseEventTriggersToSync.find(
-        (trigger) =>
-          trigger.universalIdentifier === triggerToUpdate.universalIdentifier,
-      );
-
-      if (!triggerToSync || triggerToSync.type !== 'databaseEvent') {
-        throw new ApplicationException(
-          `Failed to find database event trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
-          ApplicationExceptionCode.ENTITY_NOT_FOUND,
-        );
+    for (const trigger of triggers) {
+      if (trigger.type === 'cron') {
+        cronTriggerSettings = { pattern: trigger.pattern };
+      } else if (trigger.type === 'databaseEvent') {
+        databaseEventTriggerSettings = {
+          eventName: trigger.eventName,
+          updatedFields: trigger.updatedFields,
+        };
+      } else if (trigger.type === 'route') {
+        httpRouteTriggerSettings = {
+          path: trigger.path,
+          httpMethod: trigger.httpMethod as HTTPMethod,
+          isAuthRequired: trigger.isAuthRequired,
+          forwardedRequestHeaders: trigger.forwardedRequestHeaders,
+        };
       }
-
-      const updateDatabaseEventTriggerInput = {
-        id: triggerToUpdate.id,
-        update: {
-          settings: {
-            eventName: triggerToSync.eventName,
-            updatedFields: triggerToSync.updatedFields,
-          },
-        },
-      };
-
-      await this.databaseEventTriggerV2Service.updateOne(
-        updateDatabaseEventTriggerInput,
-        workspaceId,
-      );
     }
 
-    for (const triggerToCreate of triggersToCreate) {
-      if (triggerToCreate.type !== 'databaseEvent') {
-        continue;
-      }
-
-      const createDatabaseEventTriggerInput = {
-        settings: {
-          eventName: triggerToCreate.eventName,
-          updatedFields: triggerToCreate.updatedFields,
-        },
-        universalIdentifier: triggerToCreate.universalIdentifier,
-        serverlessFunctionId,
-      };
-
-      await this.databaseEventTriggerV2Service.createOne(
-        createDatabaseEventTriggerInput,
-        workspaceId,
-        applicationId,
-      );
-    }
-  }
-
-  private async syncCronTriggersForServerlessFunction({
-    serverlessFunctionId,
-    triggersToSync,
-    workspaceId,
-    applicationId,
-  }: {
-    serverlessFunctionId: string;
-    triggersToSync: ServerlessFunctionTriggerManifest[];
-    workspaceId: string;
-    applicationId: string;
-  }) {
-    const cronTriggersToSync = triggersToSync.filter(
-      (trigger) => trigger.type === 'cron',
-    );
-
-    const { flatCronTriggerMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatCronTriggerMaps'],
-        },
-      );
-
-    const existingCronTriggers = Object.values(flatCronTriggerMaps.byId).filter(
-      (trigger) =>
-        isDefined(trigger) &&
-        trigger.serverlessFunctionId === serverlessFunctionId,
-    ) as FlatCronTrigger[];
-
-    const triggersToSyncUniversalIdentifiers = cronTriggersToSync.map(
-      (trigger) => trigger.universalIdentifier,
-    );
-
-    const existingTriggersUniversalIdentifiers = existingCronTriggers.map(
-      (trigger) => trigger.universalIdentifier,
-    );
-
-    const triggersToDelete = existingCronTriggers.filter(
-      (trigger) =>
-        isDefined(trigger.universalIdentifier) &&
-        !triggersToSyncUniversalIdentifiers.includes(
-          trigger.universalIdentifier,
-        ),
-    );
-
-    const triggersToUpdate = existingCronTriggers.filter(
-      (trigger) =>
-        isDefined(trigger.universalIdentifier) &&
-        triggersToSyncUniversalIdentifiers.includes(
-          trigger.universalIdentifier,
-        ),
-    );
-
-    const triggersToCreate = cronTriggersToSync.filter(
-      (triggerToSync) =>
-        !existingTriggersUniversalIdentifiers.includes(
-          triggerToSync.universalIdentifier,
-        ),
-    );
-
-    for (const triggerToDelete of triggersToDelete) {
-      await this.cronTriggerV2Service.destroyOne({
-        destroyCronTriggerInput: { id: triggerToDelete.id },
-        workspaceId,
-      });
-    }
-
-    for (const triggerToUpdate of triggersToUpdate) {
-      const triggerToSync = cronTriggersToSync.find(
-        (trigger) =>
-          trigger.universalIdentifier === triggerToUpdate.universalIdentifier,
-      );
-
-      if (!triggerToSync || triggerToSync.type !== 'cron') {
-        throw new ApplicationException(
-          `Failed to find cron trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
-          ApplicationExceptionCode.ENTITY_NOT_FOUND,
-        );
-      }
-
-      const updateCronTriggerInput = {
-        id: triggerToUpdate.id,
-        update: {
-          settings: {
-            pattern: triggerToSync.pattern,
-          },
-        },
-      };
-
-      await this.cronTriggerV2Service.updateOne(
-        updateCronTriggerInput,
-        workspaceId,
-      );
-    }
-
-    for (const triggerToCreate of triggersToCreate) {
-      if (triggerToCreate.type !== 'cron') {
-        continue;
-      }
-
-      const createCronTriggerInput = {
-        settings: {
-          pattern: triggerToCreate.pattern,
-        },
-        universalIdentifier: triggerToCreate.universalIdentifier,
-        serverlessFunctionId,
-      };
-
-      await this.cronTriggerV2Service.createOne(
-        createCronTriggerInput,
-        workspaceId,
-        applicationId,
-      );
-    }
-  }
-
-  private async syncRouteTriggersForServerlessFunction({
-    serverlessFunctionId,
-    triggersToSync,
-    workspaceId,
-    applicationId,
-  }: {
-    serverlessFunctionId: string;
-    triggersToSync: ServerlessFunctionTriggerManifest[];
-    workspaceId: string;
-    applicationId: string;
-  }) {
-    const routeTriggersToSync = triggersToSync.filter(
-      (trigger) => trigger.type === 'route',
-    );
-
-    const { flatRouteTriggerMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRouteTriggerMaps'],
-        },
-      );
-
-    const existingRouteTriggers = Object.values(
-      flatRouteTriggerMaps.byId,
-    ).filter(
-      (trigger) =>
-        isDefined(trigger) &&
-        trigger.serverlessFunctionId === serverlessFunctionId,
-    ) as FlatRouteTrigger[];
-
-    const triggersToSyncUniversalIdentifiers = routeTriggersToSync.map(
-      (trigger) => trigger.universalIdentifier,
-    );
-
-    const existingTriggersUniversalIdentifiers = existingRouteTriggers.map(
-      (trigger) => trigger.universalIdentifier,
-    );
-
-    const triggersToDelete = existingRouteTriggers.filter(
-      (trigger) =>
-        isDefined(trigger.universalIdentifier) &&
-        !triggersToSyncUniversalIdentifiers.includes(
-          trigger.universalIdentifier,
-        ),
-    );
-
-    const triggersToUpdate = existingRouteTriggers.filter(
-      (trigger) =>
-        isDefined(trigger.universalIdentifier) &&
-        triggersToSyncUniversalIdentifiers.includes(
-          trigger.universalIdentifier,
-        ),
-    );
-
-    const triggersToCreate = routeTriggersToSync.filter(
-      (triggerToSync) =>
-        !existingTriggersUniversalIdentifiers.includes(
-          triggerToSync.universalIdentifier,
-        ),
-    );
-
-    for (const triggerToDelete of triggersToDelete) {
-      await this.routeTriggerV2Service.destroyOne({
-        destroyRouteTriggerInput: { id: triggerToDelete.id },
-        workspaceId,
-      });
-    }
-
-    for (const triggerToUpdate of triggersToUpdate) {
-      const triggerToSync = routeTriggersToSync.find(
-        (trigger) =>
-          trigger.universalIdentifier === triggerToUpdate.universalIdentifier,
-      );
-
-      if (!triggerToSync || triggerToSync.type !== 'route') {
-        throw new ApplicationException(
-          `Failed to find route trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
-          ApplicationExceptionCode.ENTITY_NOT_FOUND,
-        );
-      }
-
-      const updateRouteTriggerInput = {
-        id: triggerToUpdate.id,
-        update: {
-          path: triggerToSync.path,
-          httpMethod: triggerToSync.httpMethod as HTTPMethod,
-          isAuthRequired: triggerToSync.isAuthRequired,
-          forwardedRequestHeaders: triggerToSync.forwardedRequestHeaders ?? [],
-        },
-      };
-
-      await this.routeTriggerV2Service.updateOne(
-        updateRouteTriggerInput,
-        workspaceId,
-      );
-    }
-
-    for (const triggerToCreate of triggersToCreate) {
-      if (triggerToCreate.type !== 'route') {
-        continue;
-      }
-
-      const createRouteTriggerInput = {
-        path: triggerToCreate.path,
-        httpMethod: triggerToCreate.httpMethod as HTTPMethod,
-        isAuthRequired: triggerToCreate.isAuthRequired,
-        forwardedRequestHeaders: triggerToCreate.forwardedRequestHeaders ?? [],
-        serverlessFunctionId,
-      };
-
-      await this.routeTriggerV2Service.createOne(
-        createRouteTriggerInput,
-        workspaceId,
-        applicationId,
-      );
-    }
+    return {
+      cronTriggerSettings,
+      databaseEventTriggerSettings,
+      httpRouteTriggerSettings,
+    };
   }
 
   public async uninstallApplication({
