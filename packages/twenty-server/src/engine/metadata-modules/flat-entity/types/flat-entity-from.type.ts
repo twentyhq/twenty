@@ -1,11 +1,10 @@
-import { AddSuffixToEntityManyToOneProperties } from 'src/engine/metadata-modules/flat-entity/types/add-suffix-to-entity-many-to-one-properties.type';
 import { type AddSuffixToEntityOneToManyProperties } from 'src/engine/metadata-modules/flat-entity/types/add-suffix-to-entity-one-to-many-properties.type';
 import { type CastRecordTypeOrmDatePropertiesToString } from 'src/engine/metadata-modules/flat-entity/types/cast-record-typeorm-date-properties-to-string.type';
 import { type ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-related-entity-properties.type';
 import { FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
-import { FormatJsonbSerializedRelation } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-jsonb-serialized-relation.type';
+import { UniversalFlatEntityExtraProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { AllMetadataName } from 'twenty-shared/metadata';
 
 export type SyncableFlatEntity = Omit<
@@ -14,23 +13,6 @@ export type SyncableFlatEntity = Omit<
 > & {
   id: string;
 };
-
-export type Prastoin<
-  TEntity extends SyncableEntity,
-  TMetadataName extends
-    AllMetadataName = FromMetadataEntityToMetadataName<TEntity>,
-> = AddSuffixToEntityOneToManyProperties<TEntity, 'universalIdentifiers'> &
-  AddSuffixToEntityManyToOneProperties<
-    TEntity,
-    TMetadataName,
-    'universalIdentifier'
-  > & {
-    applicationUniversalIdentifier: string;
-  } & {
-    [P in ExtractJsonbProperties<TEntity>]: FormatJsonbSerializedRelation<
-      TEntity[P]
-    >;
-  };
 
 export type FlatEntityFrom<
   TEntity extends SyncableEntity,
@@ -49,5 +31,5 @@ export type FlatEntityFrom<
      * Please avoid any usage or contact me ( prastoin ) before doing so
      * TODO remove with FlatEntity once it has been fully migrated
      */
-    __universal?: Prastoin<TEntity, TMetadataName>;
+    __universal?: UniversalFlatEntityExtraProperties<TEntity, TMetadataName>;
   };

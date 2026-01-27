@@ -8,7 +8,6 @@ import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modul
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
-import { type FormatRecordSerializedRelationProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-record-serialized-relation-properties.type';
 
 export type UniversalSyncableFlatEntity = Omit<
   SyncableEntity,
@@ -16,6 +15,23 @@ export type UniversalSyncableFlatEntity = Omit<
 > & {
   applicationUniversalIdentifier: string;
 };
+
+export type UniversalFlatEntityExtraProperties<
+  TEntity extends SyncableEntity,
+  TMetadataName extends
+    AllMetadataName = FromMetadataEntityToMetadataName<TEntity>,
+> = AddSuffixToEntityOneToManyProperties<TEntity, 'universalIdentifiers'> &
+  AddSuffixToEntityManyToOneProperties<
+    TEntity,
+    TMetadataName,
+    'universalIdentifier'
+  > & {
+    applicationUniversalIdentifier: string;
+  } & {
+    [P in ExtractJsonbProperties<TEntity>]: FormatJsonbSerializedRelation<
+      TEntity[P]
+    >;
+  };
 
 export type UniversalFlatEntityFrom<
   TEntity extends SyncableEntity,
@@ -33,15 +49,4 @@ export type UniversalFlatEntityFrom<
   | ExtractJsonbProperties<TEntity>
 > &
   CastRecordTypeOrmDatePropertiesToString<TEntity> &
-  AddSuffixToEntityOneToManyProperties<TEntity, 'universalIdentifiers'> &
-  AddSuffixToEntityManyToOneProperties<
-    TEntity,
-    TMetadataName,
-    'universalIdentifier'
-  > & {
-    applicationUniversalIdentifier: string;
-  } & {
-    [P in ExtractJsonbProperties<TEntity>]: FormatRecordSerializedRelationProperties<
-      TEntity[P]
-    >;
-  };
+  UniversalFlatEntityExtraProperties<TEntity, TMetadataName>;
