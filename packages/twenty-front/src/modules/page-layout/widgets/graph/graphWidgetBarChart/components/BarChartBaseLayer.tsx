@@ -1,14 +1,15 @@
 import { CHART_CORE_CONSTANTS } from '@/page-layout/widgets/graph/chart-core/constants/ChartCoreConstants';
-import { renderGridLayer } from '@/page-layout/widgets/graph/chart-core/utils/renderGridLayer';
 import { computeZeroPixel } from '@/page-layout/widgets/graph/chart-core/utils/computeZeroPixel';
+import { renderGridLayer } from '@/page-layout/widgets/graph/chart-core/utils/renderGridLayer';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
+import { computeBaselineBar } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBaselineBar';
 import { interpolateBars } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/interpolateBars';
 import { renderBars } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/renderBars';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { BarChartLayout } from '~/generated/graphql';
 
 type BarChartBaseLayerProps = {
@@ -77,99 +78,15 @@ export const BarChartBaseLayer = ({
     isAnimating: false,
   }));
 
-  const renderBase = useCallback(
-    (
-      ctx: CanvasRenderingContext2D,
-      width: number,
-      height: number,
-      barsToRender: BarPosition[],
-    ) => {
-      const innerWidth = width - margins.left - margins.right;
-      const innerHeight = height - margins.top - margins.bottom;
-
-      ctx.clearRect(0, 0, width, height);
-      ctx.save();
-      ctx.translate(margins.left, margins.top);
-
-      if (showGrid) {
-        renderGridLayer({
-          ctx,
-          innerWidth,
-          innerHeight,
-          valueTickValues,
-          valueDomain,
-          isVertical,
-          gridColor,
-          lineWidth: BAR_CHART_CONSTANTS.GRID_LINE_WIDTH,
-          dashLength: BAR_CHART_CONSTANTS.GRID_DASH_LENGTH,
-          dashGap: BAR_CHART_CONSTANTS.GRID_DASH_GAP,
-        });
-      }
-
-      renderBars({
-        ctx,
-        bars: barsToRender,
-        borderRadius,
-        isVertical,
-        highlightedLegendId,
-      });
-
-      ctx.restore();
-    },
-    [
-      margins,
-      showGrid,
-      valueTickValues,
-      valueDomain,
-      isVertical,
-      gridColor,
-      borderRadius,
-      highlightedLegendId,
-    ],
-  );
-
-  const animationContext = useMemo(() => {
-    const innerWidth = chartWidth - margins.left - margins.right;
-    const innerHeight = chartHeight - margins.top - margins.bottom;
-    const axisLength = isVertical ? innerHeight : innerWidth;
-    const zeroPixel = computeZeroPixel({ domain: valueDomain, axisLength });
-    return {
-      innerHeight,
-      zeroPixel,
-    };
-  }, [
-    chartWidth,
-    chartHeight,
-    margins.left,
-    margins.right,
-    margins.top,
-    margins.bottom,
-    isVertical,
-    valueDomain,
-  ]);
+  const innerWidth = chartWidth - margins.left - margins.right;
+  const innerHeight = chartHeight - margins.top - margins.bottom;
+  const axisLength = isVertical ? innerHeight : innerWidth;
+  const zeroPixel = computeZeroPixel({ domain: valueDomain, axisLength });
 
   const toBaselineBar = useCallback(
-    (bar: BarPosition): BarPosition => {
-      const { innerHeight, zeroPixel } = animationContext;
-      const baselineY = innerHeight - zeroPixel;
-
-      if (isVertical) {
-        return {
-          ...bar,
-          y: baselineY,
-          height: 0,
-          value: 0,
-        };
-      }
-
-      return {
-        ...bar,
-        x: zeroPixel,
-        width: 0,
-        value: 0,
-      };
-    },
-    [animationContext, isVertical],
+    (bar: BarPosition): BarPosition =>
+      computeBaselineBar({ bar, innerHeight, zeroPixel, isVertical }),
+    [innerHeight, zeroPixel, isVertical],
   );
 
   useEffect(() => {
@@ -261,11 +178,45 @@ export const BarChartBaseLayer = ({
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+    const render = (barsToRender: BarPosition[]) => {
+      const innerW = chartWidth - margins.left - margins.right;
+      const innerH = chartHeight - margins.top - margins.bottom;
+
+      ctx.clearRect(0, 0, chartWidth, chartHeight);
+      ctx.save();
+      ctx.translate(margins.left, margins.top);
+
+      if (showGrid) {
+        renderGridLayer({
+          ctx,
+          innerWidth: innerW,
+          innerHeight: innerH,
+          valueTickValues,
+          valueDomain,
+          isVertical,
+          gridColor,
+          lineWidth: BAR_CHART_CONSTANTS.GRID_LINE_WIDTH,
+          dashLength: BAR_CHART_CONSTANTS.GRID_DASH_LENGTH,
+          dashGap: BAR_CHART_CONSTANTS.GRID_DASH_GAP,
+        });
+      }
+
+      renderBars({
+        ctx,
+        bars: barsToRender,
+        borderRadius,
+        isVertical,
+        highlightedLegendId,
+      });
+
+      ctx.restore();
+    };
+
     if (
       !animationState.isAnimating ||
       animationState.sourceBars === animationState.targetBars
     ) {
-      renderBase(ctx, chartWidth, chartHeight, animationState.targetBars);
+      render(animationState.targetBars);
       return;
     }
 
@@ -276,7 +227,7 @@ export const BarChartBaseLayer = ({
       const t = Math.min(elapsed / durationMs, 1);
 
       if (t >= 1) {
-        renderBase(ctx, chartWidth, chartHeight, animationState.targetBars);
+        render(animationState.targetBars);
         return;
       }
 
@@ -287,7 +238,7 @@ export const BarChartBaseLayer = ({
         toBaselineBar,
       );
 
-      renderBase(ctx, chartWidth, chartHeight, interpolatedBars);
+      render(interpolatedBars);
 
       frameId = requestAnimationFrame(drawFrame);
     };
@@ -297,13 +248,22 @@ export const BarChartBaseLayer = ({
     return () => cancelAnimationFrame(frameId);
   }, [
     animationState,
-    bars,
+    borderRadius,
     chartHeight,
     chartWidth,
     dpr,
     durationMs,
-    renderBase,
+    gridColor,
+    highlightedLegendId,
+    isVertical,
+    margins.bottom,
+    margins.left,
+    margins.right,
+    margins.top,
+    showGrid,
     toBaselineBar,
+    valueDomain,
+    valueTickValues,
   ]);
 
   return <StyledBaseCanvas ref={canvasRef} />;

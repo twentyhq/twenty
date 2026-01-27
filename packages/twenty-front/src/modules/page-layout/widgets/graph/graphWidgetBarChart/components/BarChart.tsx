@@ -13,8 +13,9 @@ import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { computeAllCategorySlices } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeAllCategorySlices';
-import { findAnchorBarInSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findAnchorBarInSlice';
+import { computeSliceTooltipPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeSliceTooltipPosition';
 import { findSliceAtPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findSliceAtPosition';
+import { hasNegativeValuesInData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/hasNegativeValuesInData';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
 import { getBarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartLayout';
 import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
@@ -28,7 +29,6 @@ import { resolveAxisFontSizes } from '@/page-layout/widgets/graph/utils/resolveA
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isNumber } from '@sniptt/guards';
 import { useMemo, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
@@ -151,12 +151,9 @@ export const BarChart = ({
     margins,
   });
 
-  const categoryValues = useMemo(
-    () => data.map((item) => String(item[indexBy] ?? '')),
-    [data, indexBy],
-  );
+  const categoryValues = data.map((item) => String(item[indexBy] ?? ''));
 
-  const categoryTickValues = useMemo(() => {
+  const categoryTickValues = (() => {
     if (isVertical) {
       return tickConfig.categoryTickValues;
     }
@@ -165,7 +162,7 @@ export const BarChart = ({
       return leftTickValues;
     }
     return tickConfig.categoryTickValues;
-  }, [tickConfig.categoryTickValues, axisLeftConfiguration, isVertical]);
+  })();
 
   const formatBottomTick = (value: string | number): string => {
     if (isVertical) {
@@ -208,17 +205,7 @@ export const BarChart = ({
     categoryOuterPaddingPx: BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
   };
 
-  const hasNegativeValues = useMemo(() => {
-    for (const datum of data) {
-      for (const key of keys) {
-        const value = datum[key];
-        if (isNumber(value) && value < 0) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }, [data, keys]);
+  const hasNegativeValues = hasNegativeValuesInData(data, keys);
 
   const showGrid = axisConfig?.showGrid ?? true;
   const showValues = dataLabelsConfig?.show ?? false;
@@ -272,15 +259,10 @@ export const BarChart = ({
     [data, indexBy, bars, isVertical, chartWidth, chartHeight, margins],
   );
 
-  const hoveredSlice = useMemo(() => {
-    if (!isDefined(hoveredSliceIndexValue)) {
-      return null;
-    }
-    return (
-      slices.find((slice) => slice.indexValue === hoveredSliceIndexValue) ??
-      null
-    );
-  }, [slices, hoveredSliceIndexValue]);
+  const hoveredSlice = isDefined(hoveredSliceIndexValue)
+    ? (slices.find((slice) => slice.indexValue === hoveredSliceIndexValue) ??
+      null)
+    : null;
 
   const innerWidth = chartWidth - margins.left - margins.right;
   const innerHeight = chartHeight - margins.top - margins.bottom;
@@ -326,27 +308,12 @@ export const BarChart = ({
       return;
     }
 
-    let offsetLeft: number;
-    let offsetTop: number;
-
-    if (slice.bars.length === 0) {
-      offsetLeft = isVertical ? slice.sliceCenter + margins.left : margins.left;
-      offsetTop = isVertical
-        ? innerHeight + margins.top
-        : slice.sliceCenter + margins.top;
-    } else {
-      const anchorBar = findAnchorBarInSlice({
-        bars: slice.bars,
-        isVerticalLayout: isVertical,
-      });
-
-      offsetLeft = isVertical
-        ? slice.sliceCenter + margins.left
-        : anchorBar.x + anchorBar.width + margins.left;
-      offsetTop = isVertical
-        ? anchorBar.y + margins.top
-        : slice.sliceCenter + margins.top;
-    }
+    const { offsetLeft, offsetTop } = computeSliceTooltipPosition({
+      slice,
+      margins,
+      innerHeight,
+      isVertical,
+    });
 
     onSliceHover({
       slice,

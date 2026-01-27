@@ -1,4 +1,6 @@
 import { computeBandScale } from '@/page-layout/widgets/graph/chart-core/utils/computeBandScale';
+import { computeBottomTickPosition } from '@/page-layout/widgets/graph/chart-core/utils/computeBottomTickPosition';
+import { computeLeftTickPosition } from '@/page-layout/widgets/graph/chart-core/utils/computeLeftTickPosition';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -81,51 +83,29 @@ export const AxisLayer = ({
   const bottomTickValues = isVertical ? categoryTickValues : valueTickValues;
   const leftTickValues = isVertical ? valueTickValues : categoryTickValues;
 
-  const computeBottomTickPosition = (
-    value: string | number,
-    index: number,
-  ): number => {
-    if (isVertical) {
-      if (categoryValues.length === 0) return 0;
-      const rawIndex =
-        categoryIndexMap.get(String(value)) ??
-        Math.min(index, categoryValues.length - 1);
-      const categoryIndex = Math.min(
-        Math.max(rawIndex, 0),
-        categoryValues.length - 1,
-      );
-      const start = categoryScale.offset + categoryIndex * categoryScale.step;
-      return start + categoryScale.bandwidth / 2;
-    }
-    const range = valueDomain.max - valueDomain.min;
-    if (range === 0) return 0;
-    return ((Number(value) - valueDomain.min) / range) * innerWidth;
-  };
+  const getBottomTickPosition = (value: string | number, index: number) =>
+    computeBottomTickPosition({
+      value,
+      index,
+      isVertical,
+      categoryValues,
+      categoryIndexMap,
+      categoryScale,
+      valueDomain,
+      innerWidth,
+    });
 
-  const computeLeftTickPosition = (
-    value: string | number,
-    index: number,
-  ): number => {
-    if (isVertical) {
-      const range = valueDomain.max - valueDomain.min;
-      if (range === 0) {
-        return innerHeight;
-      }
-      return (
-        innerHeight - ((Number(value) - valueDomain.min) / range) * innerHeight
-      );
-    }
-    const categoryCount = categoryValues.length;
-    if (categoryCount === 0) {
-      return 0;
-    }
-    const rawIndex =
-      categoryIndexMap.get(String(value)) ?? Math.min(index, categoryCount - 1);
-    const clampedIndex = Math.min(Math.max(rawIndex, 0), categoryCount - 1);
-    const effectiveIndex = categoryCount - 1 - clampedIndex;
-    const start = categoryScale.offset + effectiveIndex * categoryScale.step;
-    return start + categoryScale.bandwidth / 2;
-  };
+  const getLeftTickPosition = (value: string | number, index: number) =>
+    computeLeftTickPosition({
+      value,
+      index,
+      isVertical,
+      categoryValues,
+      categoryIndexMap,
+      categoryScale,
+      valueDomain,
+      innerHeight,
+    });
 
   const hasRotation = bottomAxisTickRotation !== 0;
 
@@ -182,7 +162,7 @@ export const AxisLayer = ({
 
         <g transform={`translate(0, ${innerHeight})`}>
           {bottomTickValues.map((value, index) => {
-            const x = computeBottomTickPosition(value, index);
+            const x = getBottomTickPosition(value, index);
             const label = formatBottomTick(value);
 
             return (
@@ -221,7 +201,7 @@ export const AxisLayer = ({
 
         <g>
           {leftTickValues.map((value, index) => {
-            const y = computeLeftTickPosition(value, index);
+            const y = getLeftTickPosition(value, index);
             const label = formatLeftTick(value);
 
             return (
