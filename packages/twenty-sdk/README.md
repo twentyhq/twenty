@@ -15,8 +15,11 @@
 A CLI and SDK to develop, build, and publish applications that extend [Twenty CRM](https://twenty.com).
 
 - Type‑safe client and workspace entity typings
-- Built‑in CLI for auth, generate, dev sync, one‑off sync, and uninstall
+- Built‑in CLI for auth, dev mode (watch & sync), generate, uninstall, and function management
 - Works great with the scaffolder: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app)
+
+## Documentation
+See Twenty application documentation https://docs.twenty.com/developers/extend/capabilities/apps
 
 ## Prerequisites
 - Node.js 24+ (recommended) and Yarn 4
@@ -43,8 +46,17 @@ Options:
   -h, --help           display help for command
 
 Commands:
-  auth                 Authentication commands
-  app                  Application development commands
+  auth:login           Authenticate with Twenty
+  auth:logout          Remove authentication credentials
+  auth:status          Check authentication status
+  auth:switch          Switch the default workspace
+  auth:list            List all configured workspaces
+  app:dev              Watch and sync local application changes
+  app:generate         Generate Twenty client
+  app:uninstall        Uninstall application from Twenty
+  entity:add           Add a new entity to your application
+  function:logs        Watch application function logs
+  function:execute     Execute a serverless function with a JSON payload
   help [command]       display help for command
 ```
 
@@ -108,27 +120,27 @@ twenty auth:switch production
 
 Application development commands.
 
-- `twenty app:sync [appPath]` — One-time sync of the application to your Twenty workspace.
-  - Behavior: Compute your application's manifest and send it to your workspace to sync your application
-
-- `twenty app:dev [appPath]` — Start development mode: sync local application changes.
-  - Options:
-    - `-d, --debounce <ms>`: Debounce delay in milliseconds (default: `1000`).
-  - Behavior: Performs an initial sync, then watches the directory for changes and re-syncs after debounced edits. Press Ctrl+C to stop.
+- `twenty app:dev [appPath]` — Start development mode: watch and sync local application changes.
+  - Behavior: Builds your application (functions and front components), computes the manifest, syncs everything to your workspace, then watches the directory for changes and re-syncs automatically. Displays an interactive UI showing build and sync status in real time. Press Ctrl+C to stop.
 
 - `twenty app:uninstall [appPath]` — Uninstall the application from the current workspace.
-  - Note: `twenty app:delete` exists as a hidden alias for backward compatibility.
+
+- `twenty app:generate [appPath]` — Generate the typed Twenty client for your application.
+
+### Entity
 
 - `twenty entity:add [entityType]` — Add a new entity to your application.
   - Arguments:
-    - `entityType`: one of `function` or `object`. If omitted, an interactive prompt is shown.
+    - `entityType`: one of `function`, `front-component`, `object`, or `role`. If omitted, an interactive prompt is shown.
   - Options:
     - `--path <path>`: The path where the entity file should be created (relative to the current directory).
   - Behavior:
-    - `object`: prompts for singular/plural names and labels, then creates a new object definition file.
-    - `function`: prompts for a name and scaffolds a logic function file.
+    - `object`: prompts for singular/plural names and labels, then creates a `*.object.ts` definition file.
+    - `function`: prompts for a name and scaffolds a `*.function.ts` logic function file.
+    - `front-component`: prompts for a name and scaffolds a `*.front-component.tsx` file.
+    - `role`: prompts for a name and scaffolds a `*.role.ts` role definition file.
 
-- `twenty app:generate [appPath]` — Generate the typed Twenty client for your application.
+### Function
 
 - `twenty function:logs [appPath]` — Stream application function logs.
   - Options:
@@ -144,23 +156,26 @@ Application development commands.
 Examples:
 
 ```bash
-# Start dev mode with default debounce
+# Start dev mode (watch, build, and sync)
 twenty app:dev
 
-# Start dev mode with custom workspace profile
+# Start dev mode with a custom workspace profile
 twenty app:dev --workspace my-custom-workspace
 
-# Dev mode with custom debounce
-twenty app:dev --debounce 1500
-
-# One-time sync of the current directory
-twenty app:sync
-
-# Add a new object interactively
+# Add a new entity interactively
 twenty entity:add
+
+# Add a new function
+twenty entity:add function
+
+# Add a new front component
+twenty entity:add front-component
 
 # Generate client types
 twenty app:generate
+
+# Uninstall the app from the workspace
+twenty app:uninstall
 
 # Watch all function logs
 twenty function:logs
