@@ -87,7 +87,7 @@ export const createWebhook = (input: WebhookInput) => {
 export const deleteWebhook = (id: string) => {
   return makeMetadataAPIRequest({
     query: DELETE_WEBHOOK_MUTATION,
-    variables: { input: { id } },
+    variables: { id },
   });
 };
 
