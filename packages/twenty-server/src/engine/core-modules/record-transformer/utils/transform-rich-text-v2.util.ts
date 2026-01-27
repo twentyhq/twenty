@@ -47,17 +47,38 @@ export const transformRichTextV2Value = async (
           JSON.parse(parsedValue.blocknote),
         )
       : null;
+
+    // Normalize redundant escapes: strips all slashes before newlines and collapses multi-escapes to a single slash (e.g., \\\" -> \")
+    convertedMarkdown =
+      convertedMarkdown?.replace(
+        /\\+([\s\S])|\\+/g,
+        (match: string, char: string) => {
+          if (char === '\n') return '\n';
+          if (!char) return '';
+
+          const slashCount = match.length - 1;
+
+          // Known escapes: reduce to exactly one slash
+          if (/[ntr"']/.test(char)) return '\\' + char;
+
+          // Unknown sequences (like \c or \u):
+          // If there's only 1 slash, keep it (preserves paths).
+          // If there are multiple, halve them (un-escapes the string).
+          const preservedSlashes =
+            slashCount > 1 ? '\\'.repeat(Math.floor(slashCount / 2)) : '\\';
+
+          return preservedSlashes + char;
+        },
+      ) ?? null;
   } catch {
     convertedMarkdown = parsedValue.blocknote || null;
   }
 
   const afterMarkdownConversionTime = performance.now();
 
-  const convertedBlocknote = parsedValue.markdown
+  const convertedBlocknote = convertedMarkdown
     ? JSON.stringify(
-        await serverBlockNoteEditor.tryParseMarkdownToBlocks(
-          parsedValue.markdown,
-        ),
+        await serverBlockNoteEditor.tryParseMarkdownToBlocks(convertedMarkdown),
       )
     : null;
 
@@ -68,7 +89,7 @@ export const transformRichTextV2Value = async (
   );
 
   return {
-    markdown: parsedValue.markdown || convertedMarkdown,
-    blocknote: parsedValue.blocknote || convertedBlocknote,
+    markdown: convertedMarkdown || parsedValue.markdown,
+    blocknote: convertedBlocknote || parsedValue.blocknote,
   };
 };
