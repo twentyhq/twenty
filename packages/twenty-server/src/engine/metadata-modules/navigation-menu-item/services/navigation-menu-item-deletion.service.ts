@@ -26,6 +26,8 @@ export class NavigationMenuItemDeletionService {
         },
       );
 
+    const deletedRecordIdsSet = new Set(deletedRecordIds);
+
     const navigationMenuItemsToDelete = Object.values(
       flatNavigationMenuItemMaps.byId,
     ).filter(
@@ -33,7 +35,7 @@ export class NavigationMenuItemDeletionService {
         isDefined(item) &&
         isDefined(item.targetRecordId) &&
         !isDefined(item.viewId) &&
-        deletedRecordIds.includes(item.targetRecordId),
+        deletedRecordIdsSet.has(item.targetRecordId),
     );
 
     if (navigationMenuItemsToDelete.length === 0) {
