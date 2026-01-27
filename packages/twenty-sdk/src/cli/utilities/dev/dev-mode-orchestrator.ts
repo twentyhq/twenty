@@ -1,4 +1,3 @@
-import { createLogger } from '@/cli/utilities/build/common/logger';
 import {
   type ManifestBuildResult,
   runManifestBuild,
@@ -11,8 +10,8 @@ import { type FileFolder } from 'twenty-shared/types';
 import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
 import type { Location } from 'esbuild';
 import { type UiStateManager } from '@/cli/utilities/ui/ui-state-manager';
-
-const logger = createLogger('dev-mode');
+import { relative } from 'path';
+import { type EventName } from 'chokidar/handler.js';
 
 export type DevModeOrchestratorOptions = {
   appPath: string;
@@ -55,13 +54,18 @@ export class DevModeOrchestrator {
     this.uiStateManager = options.uiStateManager;
   }
 
-  async handleChangeDetected(filePath: string) {
+  async handleChangeDetected(filePath: string, event: EventName) {
+    const normalizedFilePath = this.normalizeFilePath(filePath);
     this.uiStateManager.addEvent({
-      filePath,
-      message: `Change detected: ${filePath}`,
+      filePath: normalizedFilePath,
+      message: `Change detected: ${normalizedFilePath}`,
       status: 'info',
     });
-    this.uiStateManager.updateFileStatus(filePath, 'building');
+    if (event === 'unlink') {
+      this.uiStateManager.removeEntity(normalizedFilePath);
+    } else {
+      this.uiStateManager.updateFileStatus(normalizedFilePath, 'building');
+    }
     this.scheduleSync();
   }
 
@@ -73,7 +77,6 @@ export class DevModeOrchestrator {
       status: 'error',
     });
     for (const error of errors) {
-      logger.error(`  ${error}`);
       this.uiStateManager.addEvent({
         filePath: error.location?.file,
         message: error.error,
@@ -93,13 +96,11 @@ export class DevModeOrchestrator {
     filePath: string;
     checksum: string;
   }): void {
-    logger.success(`✓ Successfully built ${filePath}`);
     this.uiStateManager.addEvent({
       filePath,
       message: `Successfully built ${builtPath}`,
       status: 'success',
     });
-    this.uiStateManager.updateFileStatus(filePath, 'built');
 
     this.builtFileInfos.set(builtPath, {
       checksum,
@@ -113,6 +114,10 @@ export class DevModeOrchestrator {
     }
 
     this.scheduleSync();
+  }
+
+  private normalizeFilePath(filePath: string): string {
+    return relative(this.appPath, filePath);
   }
 
   private uploadFile(
@@ -132,13 +137,26 @@ export class DevModeOrchestrator {
     })
       .then((result) => {
         if (result.success) {
-          logger.success(`Successfully uploaded ${builtPath}`);
+          this.uiStateManager.addEvent({
+            filePath,
+            message: `Successfully uploaded ${builtPath}`,
+            status: 'success',
+          });
+          this.uiStateManager.updateFileStatus(filePath, 'success');
         } else {
-          logger.error(`Failed to upload ${builtPath}: ${result.error}`);
+          this.uiStateManager.addEvent({
+            filePath,
+            message: `Failed to upload ${builtPath}: ${result.error}`,
+            status: 'error',
+          });
         }
       })
       .catch((error) => {
-        logger.error(`Upload failed for ${builtPath}: ${error}`);
+        this.uiStateManager.addEvent({
+          filePath,
+          message: `Upload failed for ${builtPath}: ${error}`,
+          status: 'error',
+        });
       })
       .finally(() => {
         this.activeUploads.delete(uploadPromise);
@@ -176,18 +194,14 @@ export class DevModeOrchestrator {
         status: 'info',
       });
       this.uiStateManager.updateManifestState({
-        status: 'building',
-        manifestError: null,
-        syncError: null,
+        manifestStatus: 'building',
       });
 
       const result = await runManifestBuild(this.appPath);
 
       if (result.error || !result.manifest) {
         this.uiStateManager.updateManifestState({
-          status: 'error',
-          manifestError: result.error ?? 'Unknown error',
-          syncError: null,
+          manifestStatus: 'error',
         });
         this.uiStateManager.addEvent({
           message: result.error ?? 'Unknown error',
@@ -198,11 +212,17 @@ export class DevModeOrchestrator {
 
       const validation = validateManifest(result.manifest);
 
+      this.uiStateManager.updateManifestState({
+        appName: result.manifest.application.displayName,
+      });
+
       if (!validation.isValid) {
-        const messages = validation.errors
-          .map((e) => `  • ${e.path}: ${e.message}`)
-          .join('\n');
-        logger.error(`Invalid manifest:\n${messages}`);
+        for (const e of validation.errors) {
+          this.uiStateManager.addEvent({
+            message: `${e.path}: ${e.message}`,
+            status: 'error',
+          });
+        }
 
         return;
       }
@@ -210,15 +230,13 @@ export class DevModeOrchestrator {
       if (validation.warnings.length > 0) {
         for (const warning of validation.warnings) {
           const path = warning.path ? `${warning.path}: ` : '';
-          logger.warn(`⚠ ${path}${warning.message}`);
+          this.uiStateManager.addEvent({
+            message: `⚠ ${path}${warning.message}`,
+            status: 'warning',
+          });
         }
       }
 
-      this.uiStateManager.updateManifestState({
-        status: 'built',
-        manifestError: null,
-        syncError: null,
-      });
       this.uiStateManager.addEvent({
         message: 'Successfully built manifest',
         status: 'success',
@@ -265,11 +283,11 @@ export class DevModeOrchestrator {
         status: 'info',
       });
       this.uiStateManager.updateManifestState({
-        status: 'syncing',
-        manifestError: null,
-        syncError: null,
+        manifestStatus: 'syncing',
       });
       const syncResult = await this.apiService.syncApplication(manifest);
+
+      this.uiStateManager.updateAllFilesStatus('success');
 
       if (syncResult.success) {
         this.uiStateManager.addEvent({
@@ -277,9 +295,7 @@ export class DevModeOrchestrator {
           status: 'success',
         });
         this.uiStateManager.updateManifestState({
-          status: 'synced',
-          manifestError: null,
-          syncError: null,
+          manifestStatus: 'synced',
         });
       } else {
         this.uiStateManager.addEvent({
@@ -287,9 +303,7 @@ export class DevModeOrchestrator {
           status: 'error',
         });
         this.uiStateManager.updateManifestState({
-          status: 'error',
-          manifestError: null,
-          syncError: JSON.stringify(syncResult.error, null, 2),
+          manifestStatus: 'error',
         });
       }
     } catch (error) {
@@ -298,9 +312,7 @@ export class DevModeOrchestrator {
         status: 'error',
       });
       this.uiStateManager.updateManifestState({
-        status: 'error',
-        manifestError: null,
-        syncError: JSON.stringify(error, null, 2),
+        manifestStatus: 'error',
       });
     } finally {
       this.isSyncing = false;

@@ -11,17 +11,11 @@ export type UiEvent = {
 export type ManifestStatus =
   | 'idle'
   | 'building'
-  | 'built'
   | 'syncing'
   | 'synced'
   | 'error';
 
-export type FileStatus =
-  | 'pending'
-  | 'building'
-  | 'built'
-  | 'uploading'
-  | 'uploaded';
+export type FileStatus = 'pending' | 'building' | 'uploading' | 'success';
 
 export type EntityInfo = {
   name: string;
@@ -37,8 +31,6 @@ export type UiState = {
   appUniversalIdentifier: string | null;
   frontendUrl?: string | null;
   manifestStatus: ManifestStatus;
-  manifestError: string | null;
-  syncError: string | null;
   entities: Map<string, EntityInfo>;
   events: UiEvent[];
 };

@@ -13,17 +13,15 @@ const UPLOAD_FRAMES = ['↑', '⇡', '↟', '⤒'];
 const STATUS_ICONS: Record<FileStatus, string> = {
   pending: '○',
   building: '◐',
-  built: '●',
   uploading: '↑',
-  uploaded: '✓',
+  success: '✓',
 };
 
 const STATUS_COLORS: Record<FileStatus, string> = {
   pending: 'gray',
   building: 'yellow',
-  built: 'blue',
   uploading: 'cyan',
-  uploaded: 'green',
+  success: 'green',
 };
 
 const ENTITY_LABELS: Record<SyncableEntities, string> = {
@@ -50,6 +48,27 @@ const EVENT_ICONS: Record<UiEvent['type'], string> = {
   'file-upload': '☁',
   sync: '↻',
 };*/
+
+const groupEntitiesByType = (
+  entities: Map<string, EntityInfo>,
+): Map<SyncableEntities, EntityInfo[]> => {
+  const grouped = new Map<SyncableEntities, EntityInfo[]>();
+
+  for (const type of ENTITY_ORDER) {
+    grouped.set(type, []);
+  }
+
+  for (const entity of entities.values()) {
+    if (!entity.type) {
+      continue;
+    }
+    const list = grouped.get(entity.type) ?? [];
+    list.push(entity);
+    grouped.set(entity.type, list);
+  }
+
+  return grouped;
+};
 
 const formatTime = (date: Date): string => {
   return date.toLocaleTimeString('en-US', {
@@ -175,22 +194,17 @@ export const renderUI = async (
     const color =
       status === 'synced'
         ? 'green'
-        : status === 'built'
-          ? 'blue'
-          : status === 'building' || status === 'syncing'
-            ? 'yellow'
-            : status === 'error'
-              ? 'red'
-              : 'gray';
+        : status === 'building' || status === 'syncing'
+          ? 'yellow'
+          : status === 'error'
+            ? 'red'
+            : 'gray';
 
     let icon: string;
     let text: string;
     if (status === 'synced') {
-      icon = '+';
+      icon = '✓';
       text = 'Synced';
-    } else if (status === 'built') {
-      icon = '*';
-      text = 'Built';
     } else if (status === 'building') {
       icon = spinnerFrame;
       text = 'Building...';
@@ -217,6 +231,7 @@ export const renderUI = async (
   }: {
     snapshot: UiState;
   }): React.ReactElement => {
+    const groupedEntities = groupEntitiesByType(snapshot.entities);
     const appUrl = getApplicationUrl(snapshot);
 
     return (
@@ -257,26 +272,10 @@ export const renderUI = async (
 
         <Box marginLeft={2} flexDirection="column">
           {ENTITY_ORDER.map((type) => {
-            return (
-              <EntitySection
-                key={type}
-                type={type}
-                entities={Array.from(snapshot.entities.values())}
-              />
-            );
+            const entities = groupedEntities.get(type) ?? [];
+            return <EntitySection key={type} type={type} entities={entities} />;
           })}
         </Box>
-
-        {snapshot.manifestError && (
-          <Box marginTop={1}>
-            <Text color="red">Error: {snapshot.manifestError}</Text>
-          </Box>
-        )}
-        {snapshot.syncError && (
-          <Box marginTop={1}>
-            <Text color="red">Sync Error: {snapshot.syncError}</Text>
-          </Box>
-        )}
       </Box>
     );
   };
@@ -286,11 +285,10 @@ export const renderUI = async (
       <Text dimColor>
         <Text color={STATUS_COLORS.pending}>{STATUS_ICONS.pending}</Text>{' '}
         pending <Text color={STATUS_COLORS.building}>{SPINNER_FRAMES[0]}</Text>{' '}
-        building <Text color={STATUS_COLORS.built}>{STATUS_ICONS.built}</Text>{' '}
-        built <Text color={STATUS_COLORS.uploading}>{UPLOAD_FRAMES[0]}</Text>{' '}
+        building <Text color={STATUS_COLORS.uploading}>{UPLOAD_FRAMES[0]}</Text>{' '}
         uploading{' '}
-        <Text color={STATUS_COLORS.uploaded}>{STATUS_ICONS.uploaded}</Text>{' '}
-        uploaded
+        <Text color={STATUS_COLORS.success}>{STATUS_ICONS.success}</Text>{' '}
+        success
       </Text>
     </Box>
   );

@@ -28,8 +28,6 @@ export class UiStateManager {
       appDescription: null,
       appUniversalIdentifier: null,
       manifestStatus: 'idle',
-      manifestError: null,
-      syncError: null,
       entities: new Map(),
       events: [],
     };
@@ -80,43 +78,63 @@ export class UiStateManager {
       status,
     };
 
-    this.state.events = [
-      ...this.state.events.slice(-MAX_EVENT_NUMBER - 1),
-      event,
-    ];
+    this.state = {
+      ...this.state,
+      events: [...this.state.events.slice(-MAX_EVENT_NUMBER - 1), event],
+    };
 
     this.notify();
   }
 
   updateManifestState({
-    status,
-    manifestError,
-    syncError,
+    manifestStatus,
+    appName,
   }: {
-    status?: ManifestStatus;
-    manifestError?: string | null;
-    syncError?: string | null;
+    manifestStatus?: ManifestStatus;
+    appName?: string;
   }): void {
-    if (status) {
-      this.state.manifestStatus = status;
-    }
-    if (manifestError) {
-      this.state.manifestError = manifestError;
-    }
-    if (syncError) {
-      this.state.syncError = syncError;
-    }
+    this.state = {
+      ...this.state,
+      ...(manifestStatus ? { manifestStatus } : {}),
+      ...(appName ? { appName } : {}),
+    };
 
     this.notify();
   }
 
+  updateAllFilesStatus(status: FileStatus): void {
+    const entities = new Map(this.state.entities);
+
+    for (const [filePath] of entities) {
+      entities.set(filePath, {
+        name: filePath,
+        path: filePath,
+        type: this.getEntityFromPath(filePath),
+        status: status,
+      });
+    }
+    this.state = { ...this.state, entities };
+
+    this.notify();
+  }
+
+  removeEntity(filePath: string) {
+    const entities = new Map(this.state.entities);
+    entities.delete(filePath);
+    this.state = { ...this.state, entities };
+  }
+
   updateFileStatus(filePath: string, status: FileStatus): void {
-    this.state.entities.set(filePath, {
+    const entities = new Map(this.state.entities);
+
+    entities.set(filePath, {
       name: filePath,
       path: filePath,
       type: this.getEntityFromPath(filePath),
       status: status,
     });
+
+    this.state = { ...this.state, entities };
 
     this.notify();
   }
