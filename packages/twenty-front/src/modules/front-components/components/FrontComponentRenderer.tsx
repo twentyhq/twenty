@@ -1,19 +1,18 @@
 import { useState } from 'react';
 import { FrontComponentContent } from 'twenty-shared/front-component';
 
-import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
-import { getFrontComponentUrl } from '@/page-layout/widgets/front-component/utils/getFrontComponentUrl';
+import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-type FrontComponentWidgetContentProps = {
+type FrontComponentRendererProps = {
   frontComponentId: string;
 };
 
-export const FrontComponentWidgetContent = ({
+export const FrontComponentRenderer = ({
   frontComponentId,
-}: FrontComponentWidgetContentProps) => {
+}: FrontComponentRendererProps) => {
   const [hasError, setHasError] = useState(false);
 
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -30,7 +29,7 @@ export const FrontComponentWidgetContent = ({
   };
 
   if (hasError) {
-    return <PageLayoutWidgetNoDataDisplay />;
+    return null;
   }
 
   return (
