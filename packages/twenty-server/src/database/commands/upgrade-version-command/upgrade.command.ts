@@ -24,6 +24,7 @@ import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrad
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
+import { FlushV2CacheAndIncrementMetadataVersionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-flush-v2-cache-and-increment-metadata-version.command';
 import { IdentifyAgentMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-agent-metadata.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
 import { IdentifyIndexMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-index-metadata.command';
@@ -107,6 +108,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly makeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly identifyRemainingEntitiesMetadataCommand: IdentifyRemainingEntitiesMetadataCommand,
     protected readonly makeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    protected readonly flushV2CacheAndIncrementMetadataVersionCommand: FlushV2CacheAndIncrementMetadataVersionCommand,
   ) {
     super(
       workspaceRepository,
@@ -174,6 +176,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.identifyRemainingEntitiesMetadataCommand,
       this
         .makeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+      this.flushV2CacheAndIncrementMetadataVersionCommand,
     ];
 
     this.allCommands = {
