@@ -1,7 +1,6 @@
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { SettingsDatabaseEventsForm } from '@/settings/components/SettingsDatabaseEventsForm';
 import { Table } from '@/ui/layout/table/components/Table';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
@@ -14,12 +13,13 @@ export const StyledRouteTriggerTableRow = styled(TableRow)`
   grid-template-columns: 1fr 120px 120px;
 `;
 
-const StyledTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  gap: ${({ theme }) => theme.spacing(2)};
-  min-width: 0;
-  overflow: hidden;
-`;
+// TODO: @Charles put back with new sources
+// const StyledTableCell = styled(TableCell)`
+//   color: ${({ theme }) => theme.font.color.tertiary};
+//   gap: ${({ theme }) => theme.spacing(2)};
+//   min-width: 0;
+//   overflow: hidden;
+// `;
 
 const StyledRouteTriggerTableHeaderRow = styled(StyledRouteTriggerTableRow)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
@@ -36,7 +36,7 @@ const StyledEmptyState = styled.div`
 `;
 
 export const SettingsServerlessFunctionTriggersTab = ({
-  serverlessFunction,
+  serverlessFunction: _serverlessFunction,
 }: {
   serverlessFunction: ServerlessFunction;
 }) => {

@@ -220,15 +220,12 @@ describe('Successful user and workspace creation', () => {
       'serverlessFunction',
       'serverlessFunctionLayer',
       'agent',
-      'databaseEventTrigger',
       'view',
       'viewField',
       'viewFilter',
       'viewFilterGroup',
       'viewGroup',
       'viewSort',
-      'cronTrigger',
-      'routeTrigger',
     ];
 
     let totalRecordsBefore = 0;
