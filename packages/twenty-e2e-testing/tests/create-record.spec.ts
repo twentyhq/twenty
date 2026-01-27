@@ -58,7 +58,7 @@ test('Create and update record', async ({ page }) => {
     await lastNameInput.press('Enter');
 
     // Focus on recordFieldList
-    const recordFieldList = page.getByTestId('record-fields-list-container');
+    const recordFieldList = page.getByTestId('person-widget-fields');
     await expect(recordFieldList).toBeVisible();
     await recordFieldList.getByText('Emails').first().click();
 
@@ -106,10 +106,11 @@ test('Create and update record', async ({ page }) => {
     recordFieldList.getByText('Work Preference').first().click({force: true});
 
     // Fill company relation
-    const companyRelationHeader = page.getByTestId('company-relation');
-    await expect(companyRelationHeader).toBeVisible();
+    const companyRelationWidget = page.getByTestId('dynamic-relation-widget-Company');
+    await expect(companyRelationWidget).toBeVisible();
 
-    await companyRelationHeader.locator('.tabler-icon-pencil').click();
+    await companyRelationWidget.hover();
+    await companyRelationWidget.locator('.tabler-icon-pencil').click();
     await page.getByRole('textbox', { name: 'Search' }).fill('Goog');
     await expect(page.getByRole('option', { name: 'Google' })).toBeVisible();
     const [updatePersonResponse] = await Promise.all([
