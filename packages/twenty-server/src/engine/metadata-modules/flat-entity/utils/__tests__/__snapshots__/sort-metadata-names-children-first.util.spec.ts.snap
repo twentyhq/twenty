@@ -22,6 +22,7 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "skill",
   "view",
   "viewFilterGroup",
+  "webhook",
   "fieldMetadata",
   "role",
   "serverlessFunction",

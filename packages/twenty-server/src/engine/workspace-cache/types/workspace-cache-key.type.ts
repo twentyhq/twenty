@@ -46,6 +46,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatRowLevelPermissionPredicateGroupMaps:
     'flat-maps:row-level-permission-predicate-group',
   flatFrontComponentMaps: 'flat-maps:front-component',
+  flatWebhookMaps: 'flat-maps:webhook',
   flatWorkspaceMemberMaps: 'flat-maps:workspace-member',
   serverlessFunctionLayerMaps: 'cache:serverless-function-layer',
   applicationVariableMaps: 'cache:application-variable',

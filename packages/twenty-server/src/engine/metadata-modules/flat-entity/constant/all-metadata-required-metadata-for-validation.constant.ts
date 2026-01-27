@@ -90,4 +90,5 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     objectMetadata: true,
   },
   frontComponent: {},
+  webhook: {},
 } as const satisfies MetadataRequiredForValidation;

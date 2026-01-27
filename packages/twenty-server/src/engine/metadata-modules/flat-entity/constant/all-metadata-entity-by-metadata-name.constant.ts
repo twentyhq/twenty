@@ -8,6 +8,7 @@ import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
@@ -51,4 +52,5 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   agent: AgentEntity,
   commandMenuItem: CommandMenuItemEntity,
   navigationMenuItem: NavigationMenuItemEntity,
+  webhook: WebhookEntity,
 } as const satisfies Record<AllMetadataName, EntityTarget<ObjectLiteral>>;
