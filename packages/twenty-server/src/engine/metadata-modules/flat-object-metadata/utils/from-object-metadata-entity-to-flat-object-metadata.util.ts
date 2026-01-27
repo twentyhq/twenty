@@ -83,16 +83,15 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = ({
       fieldUniversalIdentifiers: objectMetadataEntity.fields.map(
         ({ universalIdentifier }) => universalIdentifier,
       ),
-      indexMetadataUniversalIdentifiers: objectMetadataEntity.indexMetadatas.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ),
+      indexMetadataUniversalIdentifiers:
+        objectMetadataEntity.indexMetadatas.map(
+          ({ universalIdentifier }) => universalIdentifier,
+        ),
       viewUniversalIdentifiers: objectMetadataEntity.views.map(
         ({ universalIdentifier }) => universalIdentifier,
       ),
-      standardOverrides:
-        objectMetadataEntityWithoutRelations.standardOverrides,
-      duplicateCriteria:
-        objectMetadataEntityWithoutRelations.duplicateCriteria,
+      standardOverrides: objectMetadataEntityWithoutRelations.standardOverrides,
+      duplicateCriteria: objectMetadataEntityWithoutRelations.duplicateCriteria,
     },
   };
 };
