@@ -3,21 +3,15 @@ import { FrontComponentContent } from 'twenty-shared/front-component';
 
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { FrontComponentInstanceContext } from '@/page-layout/widgets/front-component/states/contexts/FrontComponentInstanceContext';
-import { isFrontComponentInitializedComponentState } from '@/page-layout/widgets/front-component/states/isFrontComponentInitializedComponentState';
 import { getFrontComponentUrl } from '@/page-layout/widgets/front-component/utils/getFrontComponentUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export const FrontComponentWidgetContent = () => {
   const frontComponentId = useAvailableComponentInstanceIdOrThrow(
     FrontComponentInstanceContext,
-  );
-
-  const isFrontComponentInitialized = useRecoilComponentValue(
-    isFrontComponentInitializedComponentState,
   );
 
   const [hasError, setHasError] = useState(false);
@@ -41,7 +35,6 @@ export const FrontComponentWidgetContent = () => {
 
   return (
     <FrontComponentContent
-      isInitialized={isFrontComponentInitialized}
       componentUrl={getFrontComponentUrl(frontComponentId)}
       onError={handleError}
     />

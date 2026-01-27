@@ -1,32 +1,39 @@
-import { RemoteReceiver, RemoteRootRenderer } from '@remote-dom/react/host';
-import React, { useMemo } from 'react';
+import {
+  type RemoteReceiver,
+  RemoteRootRenderer,
+} from '@remote-dom/react/host';
+import React, { useState } from 'react';
+import { isDefined } from '../../../utils/validation/isDefined';
 import { FRONT_COMPONENT_WORKER_URL } from '../../constants/FrontComponentWorkerUrl';
 import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
 import { componentRegistry } from '../generated';
 
 type FrontComponentContentProps = {
-  isInitialized: boolean;
   componentUrl: string;
   onError: (error?: Error) => void;
 };
 
 export const FrontComponentContent = ({
-  isInitialized,
   componentUrl,
   onError,
 }: FrontComponentContentProps) => {
-  const receiver = useMemo(() => new RemoteReceiver(), []);
+  const [receiver, setReceiver] = useState<RemoteReceiver | null>(null);
 
   return (
     <>
       <FrontComponentWorkerEffect
-        isInitialized={isInitialized}
         workerUrl={FRONT_COMPONENT_WORKER_URL}
         componentUrl={componentUrl}
-        receiver={receiver}
+        setReceiver={setReceiver}
         onError={onError}
       />
-      <RemoteRootRenderer receiver={receiver} components={componentRegistry} />
+
+      {isDefined(receiver) && (
+        <RemoteRootRenderer
+          receiver={receiver}
+          components={componentRegistry}
+        />
+      )}
     </>
   );
 };

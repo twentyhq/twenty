@@ -1,52 +1,44 @@
-import { ThreadWebWorker } from '@quilted/threads';
-import { type RemoteReceiver } from '@remote-dom/core/receivers';
+import { ThreadWebWorker, release, retain } from '@quilted/threads';
+import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect } from 'react';
 import { type SandboxAPI } from '../../types/SandboxApi';
 
 type FrontComponentWorkerEffectProps = {
-  isInitialized: boolean;
   workerUrl: URL;
   componentUrl: string;
-  receiver: RemoteReceiver;
+  setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   onError: (error?: Error) => void;
 };
 
 export const FrontComponentWorkerEffect = ({
-  isInitialized,
   workerUrl,
   componentUrl,
-  receiver,
+  setReceiver,
   onError,
 }: FrontComponentWorkerEffectProps) => {
   useEffect(() => {
-    let worker: Worker | null = null;
+    const newReceiver = new RemoteReceiver({ retain, release });
 
-    const runWorker = async () => {
-      if (isInitialized) {
-        return;
-      }
+    const worker = new Worker(workerUrl, { type: 'module' });
 
-      try {
-        worker = new Worker(workerUrl, {
-          type: 'module',
-        });
-
-        const workerSandbox = new ThreadWebWorker<SandboxAPI>(worker);
-
-        await workerSandbox.imports.render(receiver.connection, {
-          componentUrl,
-        });
-      } catch (error) {
-        onError(error);
-      }
+    worker.onerror = (event: ErrorEvent) => {
+      onError(event.error);
     };
 
-    runWorker();
+    const thread = new ThreadWebWorker<SandboxAPI>(worker);
+
+    thread.imports
+      .render(newReceiver.connection, { componentUrl })
+      .catch((error: Error) => {
+        onError(error);
+      });
+
+    setReceiver(newReceiver);
 
     return () => {
-      worker?.terminate();
+      worker.terminate();
     };
-  }, [componentUrl, receiver, onError]);
+  }, [workerUrl, componentUrl, onError, setReceiver]);
 
   return null;
 };
