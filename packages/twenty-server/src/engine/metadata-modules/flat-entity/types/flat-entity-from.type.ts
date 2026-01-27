@@ -44,5 +44,10 @@ export type FlatEntityFrom<
 > &
   CastRecordTypeOrmDatePropertiesToString<TEntity> &
   AddSuffixToEntityOneToManyProperties<TEntity, 'ids'> & {
+    /**
+     * /!\ Under migration the idea is at some point to replace FlatEntity by UniversalFlatEntity /!\
+     * Please avoid any usage or contact me ( prastoin ) before doing so
+     * TODO remove with FlatEntity once it has been fully migrated
+     */
     __universal?: Prastoin<TEntity, TMetadataName>;
   };
