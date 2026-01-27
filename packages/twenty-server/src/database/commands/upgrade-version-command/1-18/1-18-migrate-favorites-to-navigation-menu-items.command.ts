@@ -214,12 +214,13 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     const flatNavigationMenuItemsToCreate: FlatNavigationMenuItem[] = [];
 
     for (const favorite of favorites) {
-      const userWorkspaceId =
-        await this.getUserWorkspaceIdFromWorkspaceMemberId(
-          favorite.forWorkspaceMemberId,
-          workspaceId,
-          authContext,
-        );
+      const userWorkspaceId = !isDefined(favorite.forWorkspaceMemberId)
+        ? null
+        : await this.getUserWorkspaceIdFromWorkspaceMemberId(
+            favorite.forWorkspaceMemberId,
+            workspaceId,
+            authContext,
+          );
 
       const folderId = favorite.favoriteFolderId
         ? (folderIdMapping.get(favorite.favoriteFolderId) ?? null)
@@ -319,6 +320,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       return null;
     }
 
+    if (!isDefined(firstFavorite.forWorkspaceMemberId)) {
+      return null;
+    }
+
     return this.getUserWorkspaceIdFromWorkspaceMemberId(
       firstFavorite.forWorkspaceMemberId,
       workspaceId,
@@ -327,10 +332,13 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
   }
 
   private async getUserWorkspaceIdFromWorkspaceMemberId(
-    workspaceMemberId: string,
+    workspaceMemberId: string | null | undefined,
     workspaceId: string,
     authContext: ReturnType<typeof buildSystemAuthContext>,
   ): Promise<string | null> {
+    if (!isDefined(workspaceMemberId)) {
+      return null;
+    }
     try {
       const workspaceMember =
         await this.twentyORMGlobalManager.executeInWorkspaceContext(
