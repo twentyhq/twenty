@@ -207,7 +207,8 @@ export enum AllMetadataName {
   viewField = 'viewField',
   viewFilter = 'viewFilter',
   viewFilterGroup = 'viewFilterGroup',
-  viewGroup = 'viewGroup'
+  viewGroup = 'viewGroup',
+  webhook = 'webhook'
 }
 
 export type Analytics = {
@@ -1115,6 +1116,7 @@ export type CreateViewSortInput = {
 
 export type CreateWebhookInput = {
   description?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
   operations: Array<Scalars['String']>;
   secret?: InputMaybe<Scalars['String']>;
   targetUrl: Scalars['String'];
@@ -1251,10 +1253,6 @@ export type DeleteViewFilterInput = {
 
 export type DeleteViewGroupInput = {
   /** The id of the view group to delete. */
-  id: Scalars['UUID'];
-};
-
-export type DeleteWebhookInput = {
   id: Scalars['UUID'];
 };
 
@@ -1658,10 +1656,6 @@ export type GetServerlessFunctionSourceCodeInput = {
   version?: Scalars['String'];
 };
 
-export type GetWebhookInput = {
-  id: Scalars['UUID'];
-};
-
 /** Order by options for graph widgets */
 export enum GraphOrderBy {
   FIELD_ASC = 'FIELD_ASC',
@@ -2033,7 +2027,7 @@ export type Mutation = {
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteUserFromWorkspace: UserWorkspace;
-  deleteWebhook: Scalars['Boolean'];
+  deleteWebhook: Webhook;
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   deleteWorkspaceInvitation: Scalars['String'];
@@ -2118,7 +2112,7 @@ export type Mutation = {
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePasswordOutput;
   updateUserEmail: Scalars['Boolean'];
-  updateWebhook?: Maybe<Webhook>;
+  updateWebhook: Webhook;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
@@ -2500,7 +2494,7 @@ export type MutationDeleteUserFromWorkspaceArgs = {
 
 
 export type MutationDeleteWebhookArgs = {
-  input: DeleteWebhookInput;
+  id: Scalars['UUID'];
 };
 
 
@@ -3820,7 +3814,7 @@ export type QueryValidatePasswordResetTokenArgs = {
 
 
 export type QueryWebhookArgs = {
-  input: GetWebhookInput;
+  id: Scalars['UUID'];
 };
 
 export type QueueJob = {
@@ -4770,8 +4764,14 @@ export type UpdateViewSortInput = {
 };
 
 export type UpdateWebhookInput = {
-  description?: InputMaybe<Scalars['String']>;
+  /** The id of the webhook to update */
   id: Scalars['UUID'];
+  /** The webhook fields to update */
+  update: UpdateWebhookInputUpdates;
+};
+
+export type UpdateWebhookInputUpdates = {
+  description?: InputMaybe<Scalars['String']>;
   operations?: InputMaybe<Array<Scalars['String']>>;
   secret?: InputMaybe<Scalars['String']>;
   targetUrl?: InputMaybe<Scalars['String']>;
@@ -5015,6 +5015,7 @@ export enum ViewVisibility {
 
 export type Webhook = {
   __typename?: 'Webhook';
+  applicationId: Scalars['UUID'];
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   description?: Maybe<Scalars['String']>;

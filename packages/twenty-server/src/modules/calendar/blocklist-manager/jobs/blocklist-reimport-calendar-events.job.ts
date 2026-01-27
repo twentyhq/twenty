@@ -36,37 +36,34 @@ export class BlocklistReimportCalendarEventsJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+          workspaceId,
+          'calendarChannel',
+        );
 
-        for (const eventPayload of data.events) {
-          const workspaceMemberId =
-            eventPayload.properties.before.workspaceMemberId;
+      for (const eventPayload of data.events) {
+        const workspaceMemberId =
+          eventPayload.properties.before.workspaceMemberId;
 
-          const calendarChannels = await calendarChannelRepository.find({
-            select: ['id'],
-            where: {
-              connectedAccount: {
-                accountOwnerId: workspaceMemberId,
-              },
-              syncStage: Not(
-                CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-              ),
+        const calendarChannels = await calendarChannelRepository.find({
+          select: ['id'],
+          where: {
+            connectedAccount: {
+              accountOwnerId: workspaceMemberId,
             },
-          });
+            syncStage: Not(
+              CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+            ),
+          },
+        });
 
-          await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
-            calendarChannels.map((calendarChannel) => calendarChannel.id),
-            workspaceId,
-          );
-        }
-      },
-    );
+        await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
+          calendarChannels.map((calendarChannel) => calendarChannel.id),
+          workspaceId,
+        );
+      }
+    }, authContext);
   }
 }

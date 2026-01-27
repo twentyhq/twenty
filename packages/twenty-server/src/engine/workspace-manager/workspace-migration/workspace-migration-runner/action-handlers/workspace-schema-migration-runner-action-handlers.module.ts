@@ -58,6 +58,9 @@ import { CreateFrontComponentActionHandlerService } from 'src/engine/workspace-m
 import { UpdateFrontComponentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/front-component/services/update-front-component-action-handler.service';
 import { DeleteFrontComponentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/front-component/services/delete-front-component-action-handler.service';
 import { UpdateSkillActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/skill/services/update-skill-action-handler.service';
+import { CreateWebhookActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/webhook/services/create-webhook-action-handler.service';
+import { DeleteWebhookActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/webhook/services/delete-webhook-action-handler.service';
+import { UpdateWebhookActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/webhook/services/update-webhook-action-handler.service';
 import { CreateViewFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/create-view-field-action-handler.service';
 import { DeleteViewFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/delete-view-field-action-handler.service';
 import { UpdateViewFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/update-view-field-action-handler.service';
@@ -173,6 +176,10 @@ import { FunctionBuildModule } from 'src/engine/metadata-modules/function-build/
     CreateFrontComponentActionHandlerService,
     UpdateFrontComponentActionHandlerService,
     DeleteFrontComponentActionHandlerService,
+
+    CreateWebhookActionHandlerService,
+    UpdateWebhookActionHandlerService,
+    DeleteWebhookActionHandlerService,
   ],
 })
 export class WorkspaceSchemaMigrationRunnerActionHandlersModule {}

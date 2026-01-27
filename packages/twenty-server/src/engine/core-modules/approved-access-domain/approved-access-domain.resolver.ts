@@ -47,7 +47,6 @@ export class ApprovedAccessDomainResolver {
 
     const workspaceMember =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -62,6 +61,7 @@ export class ApprovedAccessDomainResolver {
             },
           });
         },
+        authContext,
       );
 
     return this.approvedAccessDomainService.createApprovedAccessDomain(

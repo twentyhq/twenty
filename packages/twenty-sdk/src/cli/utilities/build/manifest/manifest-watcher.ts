@@ -1,4 +1,5 @@
 import chokidar, { type FSWatcher } from 'chokidar';
+import { type EventName } from 'chokidar/handler.js';
 
 export type ManifestWatcherOptions = {
   appPath: string;
@@ -7,7 +8,7 @@ export type ManifestWatcherOptions = {
 
 export class ManifestWatcher {
   private appPath: string;
-  private handleChangeDetected: (filePath: string) => void;
+  private handleChangeDetected: (filePath: string, event: EventName) => void;
   private watcher: FSWatcher | null = null;
 
   constructor(options: ManifestWatcherOptions) {
@@ -29,7 +30,7 @@ export class ManifestWatcher {
       if (event === 'addDir') {
         return;
       }
-      this.handleChangeDetected(filePath);
+      this.handleChangeDetected(filePath, event);
     });
   }
 

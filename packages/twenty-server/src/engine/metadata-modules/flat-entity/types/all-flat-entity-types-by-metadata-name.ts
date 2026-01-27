@@ -6,6 +6,7 @@ import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -144,6 +145,11 @@ import {
   type DeleteViewAction,
   type UpdateViewAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
+import {
+  type CreateWebhookAction,
+  type DeleteWebhookAction,
+  type UpdateWebhookAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/types/workspace-migration-webhook-action.type';
 
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {
@@ -361,5 +367,14 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatFrontComponent;
     entity: MetadataEntity<'frontComponent'>;
+  };
+  webhook: {
+    actions: {
+      create: CreateWebhookAction;
+      update: UpdateWebhookAction;
+      delete: DeleteWebhookAction;
+    };
+    flatEntity: FlatWebhook;
+    entity: MetadataEntity<'webhook'>;
   };
 };

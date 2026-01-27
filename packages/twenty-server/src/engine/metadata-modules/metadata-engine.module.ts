@@ -11,6 +11,7 @@ import { DatabaseEventTriggerModule } from 'src/engine/metadata-modules/database
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
@@ -43,6 +44,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     RouteTriggerModule,
     CronTriggerModule,
     DatabaseEventTriggerModule,
+    WebhookModule,
   ],
   providers: [],
   exports: [
@@ -60,6 +62,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     ViewModule,
     RoleModule,
     PermissionsModule,
+    WebhookModule,
   ],
 })
 export class MetadataEngineModule {}

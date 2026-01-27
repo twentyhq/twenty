@@ -62,7 +62,6 @@ export class WorkflowCommonWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -79,6 +78,7 @@ export class WorkflowCommonWorkspaceService {
 
         return this.getValidWorkflowVersionOrFail(workflowVersion);
       },
+      authContext,
     );
   }
 
@@ -165,78 +165,75 @@ export class WorkflowCommonWorkspaceService {
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          workspaceId,
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const workflowRunRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-            workspaceId,
-            'workflowRun',
-            { shouldBypassPermissionChecks: true },
-          );
+      const workflowRunRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+          workspaceId,
+          'workflowRun',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const workflowAutomatedTriggerRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-            workspaceId,
-            'workflowAutomatedTrigger',
-            { shouldBypassPermissionChecks: true },
-          );
+      const workflowAutomatedTriggerRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+          workspaceId,
+          'workflowAutomatedTrigger',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        for (const workflowId of workflowIds) {
-          switch (operation) {
-            case 'delete':
-              await workflowAutomatedTriggerRepository.softDelete({
-                workflowId,
-              });
+      for (const workflowId of workflowIds) {
+        switch (operation) {
+          case 'delete':
+            await workflowAutomatedTriggerRepository.softDelete({
+              workflowId,
+            });
 
-              await workflowRunRepository.softDelete({
-                workflowId,
-              });
+            await workflowRunRepository.softDelete({
+              workflowId,
+            });
 
-              await workflowVersionRepository.softDelete({
-                workflowId,
-              });
+            await workflowVersionRepository.softDelete({
+              workflowId,
+            });
 
-              break;
-            case 'restore':
-              await workflowAutomatedTriggerRepository.restore({
-                workflowId,
-              });
+            break;
+          case 'restore':
+            await workflowAutomatedTriggerRepository.restore({
+              workflowId,
+            });
 
-              await workflowRunRepository.restore({
-                workflowId,
-              });
+            await workflowRunRepository.restore({
+              workflowId,
+            });
 
-              await workflowVersionRepository.restore({
-                workflowId,
-              });
+            await workflowVersionRepository.restore({
+              workflowId,
+            });
 
-              break;
-          }
-
-          await this.deactivateVersionOnDelete({
-            workflowVersionRepository,
-            workflowId,
-            workspaceId,
-            operation,
-          });
-
-          await this.handleServerlessFunctionSubEntities({
-            workflowVersionRepository,
-            workflowId,
-            workspaceId,
-            operation,
-          });
+            break;
         }
-      },
-    );
+
+        await this.deactivateVersionOnDelete({
+          workflowVersionRepository,
+          workflowId,
+          workspaceId,
+          operation,
+        });
+
+        await this.handleServerlessFunctionSubEntities({
+          workflowVersionRepository,
+          workflowId,
+          workspaceId,
+          operation,
+        });
+      }
+    }, authContext);
   }
 
   private async deactivateVersionOnDelete({
