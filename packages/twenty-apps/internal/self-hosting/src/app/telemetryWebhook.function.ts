@@ -1,5 +1,20 @@
-import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
-import { createClient } from '../generated';
+import { defineFunction } from 'twenty-sdk';
+import { createClient } from '../../generated';
+
+// TODO: import from twenty-sdk when 0.4.0 is deployed
+type ServerlessFunctionEvent<TBody = object> = {
+  headers: Record<string, string | undefined>;
+  queryStringParameters: Record<string, string | undefined>;
+  pathParameters: Record<string, string | undefined>;
+  body: TBody | null;
+  isBase64Encoded: boolean;
+  requestContext: {
+    http: {
+      method: string;
+      path: string;
+    };
+  };
+};
 
 type TelemetryEventPayload = {
   action: string;
@@ -22,10 +37,10 @@ type TelemetryEventPayload = {
 };
 
 export const main = async (
-  params: TelemetryEventPayload,
+  params: ServerlessFunctionEvent<TelemetryEventPayload>,
 ): Promise<{ success: boolean; message: string; error?: string }> => {
   try {
-    const { action, payload } = params;
+    const { action, payload } = params.body || {};
 
     if (action !== 'user_signup') {
       return {
@@ -69,7 +84,10 @@ export const main = async (
       createSelfHostingUser: {
         __args: {
           data: {
-            name: payload?.payload?.events?.[0]?.userFirstName + ' ' + payload?.payload?.events?.[0]?.userLastName,
+            name:
+              payload?.payload?.events?.[0]?.userFirstName +
+              ' ' +
+              payload?.payload?.events?.[0]?.userLastName,
             email: {
               primaryEmail: userEmail,
               additionalEmails: null,
@@ -97,10 +115,11 @@ export const main = async (
   }
 };
 
-export const config: ServerlessFunctionConfig = {
+export default defineFunction({
   universalIdentifier: '10104201-622b-4a5e-9f27-8f2af19b2a3c',
   name: 'telemetry-webhook',
   timeoutSeconds: 5,
+  handler: main,
   triggers: [
     {
       universalIdentifier: '7c8e3f5a-9b4c-4d1e-8f2a-1b3c4d5e6f7a',
@@ -110,5 +129,4 @@ export const config: ServerlessFunctionConfig = {
       isAuthRequired: false,
     },
   ],
-};
-
+});

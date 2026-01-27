@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 
-export const getNewObjectFileContent = ({
+export const getObjectBaseFile = ({
   data,
 }: {
   data: {
