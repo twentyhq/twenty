@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatWebhookModule } from 'src/engine/metadata-modules/flat-webhook/flat-webhook.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { WebhookController } from 'src/engine/metadata-modules/webhook/controllers/webhook.controller';
 import { WebhookGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/webhook/interceptors/webhook-graphql-api-exception.interceptor';
 import { WebhookResolver } from 'src/engine/metadata-modules/webhook/webhook.resolver';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
@@ -15,9 +17,11 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
     ApplicationModule,
+    AuthModule,
     PermissionsModule,
     FlatWebhookModule,
   ],
+  controllers: [WebhookController],
   providers: [
     WebhookService,
     WebhookResolver,

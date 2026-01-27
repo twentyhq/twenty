@@ -23,10 +23,6 @@ import { UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/upd
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 
-/**
- * rest/webhooks is deprecated, use rest/metadata/webhooks instead
- * rest/webhooks will be removed in the future
- */
 @Controller(['rest/webhooks', 'rest/metadata/webhooks'])
 @UseGuards(
   JwtAuthGuard,
