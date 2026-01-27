@@ -678,11 +678,7 @@ export type ClientAiModelConfig = {
 export type CommandMenuItem = {
   __typename?: 'CommandMenuItem';
   applicationId?: Maybe<Scalars['UUID']>;
-<<<<<<< HEAD
-  availabilityObjectNameSingular?: Maybe<Scalars['String']>;
-=======
   availabilityObjectMetadataId?: Maybe<Scalars['UUID']>;
->>>>>>> main
   availabilityType: CommandMenuItemAvailabilityType;
   createdAt: Scalars['DateTime'];
   icon?: Maybe<Scalars['String']>;
@@ -927,11 +923,7 @@ export type CreateApprovedAccessDomainInput = {
 };
 
 export type CreateCommandMenuItemInput = {
-<<<<<<< HEAD
-  availabilityObjectNameSingular?: InputMaybe<Scalars['String']>;
-=======
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
->>>>>>> main
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   icon?: InputMaybe<Scalars['String']>;
   isPinned?: InputMaybe<Scalars['Boolean']>;
@@ -1459,11 +1451,8 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
-<<<<<<< HEAD
-=======
   IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED = 'IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED',
   IS_ATTACHMENT_MIGRATED = 'IS_ATTACHMENT_MIGRATED',
->>>>>>> main
   IS_COMMAND_MENU_ITEM_ENABLED = 'IS_COMMAND_MENU_ITEM_ENABLED',
   IS_DASHBOARD_V2_ENABLED = 'IS_DASHBOARD_V2_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
@@ -4724,11 +4713,7 @@ export type UpdateApiKeyInput = {
 };
 
 export type UpdateCommandMenuItemInput = {
-<<<<<<< HEAD
-  availabilityObjectNameSingular?: InputMaybe<Scalars['String']>;
-=======
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
->>>>>>> main
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
@@ -6060,12 +6045,12 @@ export type ListPlansQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ListPlansQuery = { __typename?: 'Query', listPlans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, licensedProducts: Array<{ __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }>, meteredProducts: Array<{ __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceMetered', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTier', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }> }> };
 
-export type CommandMenuItemFieldsFragment = { __typename?: 'CommandMenuItem', id: string, workflowVersionId: string, label: string, icon?: string | null, isPinned: boolean, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectNameSingular?: string | null, createdAt: string, updatedAt: string };
+export type CommandMenuItemFieldsFragment = { __typename?: 'CommandMenuItem', id: string, workflowVersionId: string, label: string, icon?: string | null, isPinned: boolean, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, createdAt: string, updatedAt: string };
 
 export type FindManyCommandMenuItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyCommandMenuItemsQuery = { __typename?: 'Query', commandMenuItems: Array<{ __typename?: 'CommandMenuItem', id: string, workflowVersionId: string, label: string, icon?: string | null, isPinned: boolean, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectNameSingular?: string | null, createdAt: string, updatedAt: string }> };
+export type FindManyCommandMenuItemsQuery = { __typename?: 'Query', commandMenuItems: Array<{ __typename?: 'CommandMenuItem', id: string, workflowVersionId: string, label: string, icon?: string | null, isPinned: boolean, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, createdAt: string, updatedAt: string }> };
 
 export type CreateFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -7455,7 +7440,6 @@ export const BillingPriceMeteredFragmentFragmentDoc = gql`
   }
 }
     `;
-<<<<<<< HEAD
 export const CommandMenuItemFieldsFragmentDoc = gql`
     fragment CommandMenuItemFields on CommandMenuItem {
   id
@@ -7464,8 +7448,11 @@ export const CommandMenuItemFieldsFragmentDoc = gql`
   icon
   isPinned
   availabilityType
-  availabilityObjectNameSingular
-=======
+  availabilityObjectMetadataId
+  createdAt
+  updatedAt
+}
+    `;
 export const NavigationMenuItemFieldsFragmentDoc = gql`
     fragment NavigationMenuItemFields on NavigationMenuItem {
   id
@@ -7477,13 +7464,10 @@ export const NavigationMenuItemFieldsFragmentDoc = gql`
   name
   position
   applicationId
->>>>>>> main
   createdAt
   updatedAt
 }
     `;
-<<<<<<< HEAD
-=======
 export const NavigationMenuItemQueryFieldsFragmentDoc = gql`
     fragment NavigationMenuItemQueryFields on NavigationMenuItem {
   ...NavigationMenuItemFields
@@ -7494,7 +7478,6 @@ export const NavigationMenuItemQueryFieldsFragmentDoc = gql`
   }
 }
     ${NavigationMenuItemFieldsFragmentDoc}`;
->>>>>>> main
 export const ApiKeyFragmentFragmentDoc = gql`
     fragment ApiKeyFragment on ApiKey {
   id

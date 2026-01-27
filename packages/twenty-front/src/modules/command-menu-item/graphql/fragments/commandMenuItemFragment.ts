@@ -8,7 +8,7 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
     icon
     isPinned
     availabilityType
-    availabilityObjectNameSingular
+    availabilityObjectMetadataId
     createdAt
     updatedAt
   }

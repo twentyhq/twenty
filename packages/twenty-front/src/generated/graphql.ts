@@ -678,11 +678,7 @@ export type ClientAiModelConfig = {
 export type CommandMenuItem = {
   __typename?: 'CommandMenuItem';
   applicationId?: Maybe<Scalars['UUID']>;
-<<<<<<< HEAD
-  availabilityObjectNameSingular?: Maybe<Scalars['String']>;
-=======
   availabilityObjectMetadataId?: Maybe<Scalars['UUID']>;
->>>>>>> main
   availabilityType: CommandMenuItemAvailabilityType;
   createdAt: Scalars['DateTime'];
   icon?: Maybe<Scalars['String']>;
@@ -923,11 +919,7 @@ export type CreateApprovedAccessDomainInput = {
 };
 
 export type CreateCommandMenuItemInput = {
-<<<<<<< HEAD
-  availabilityObjectNameSingular?: InputMaybe<Scalars['String']>;
-=======
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
->>>>>>> main
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   icon?: InputMaybe<Scalars['String']>;
   isPinned?: InputMaybe<Scalars['Boolean']>;
@@ -1426,11 +1418,8 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
-<<<<<<< HEAD
-=======
   IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED = 'IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED',
   IS_ATTACHMENT_MIGRATED = 'IS_ATTACHMENT_MIGRATED',
->>>>>>> main
   IS_COMMAND_MENU_ITEM_ENABLED = 'IS_COMMAND_MENU_ITEM_ENABLED',
   IS_DASHBOARD_V2_ENABLED = 'IS_DASHBOARD_V2_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
@@ -4527,11 +4516,7 @@ export type UpdateApiKeyInput = {
 };
 
 export type UpdateCommandMenuItemInput = {
-<<<<<<< HEAD
-  availabilityObjectNameSingular?: InputMaybe<Scalars['String']>;
-=======
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
->>>>>>> main
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
