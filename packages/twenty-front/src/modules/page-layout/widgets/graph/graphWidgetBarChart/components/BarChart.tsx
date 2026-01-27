@@ -25,7 +25,7 @@ import { resolveAxisFontSizes } from '@/page-layout/widgets/graph/utils/resolveA
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useMemo, type MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
 
@@ -203,31 +203,23 @@ export const BarChart = ({
     includeZeroValues: shouldIncludeZeroValuesForLabels,
   });
 
-  const bars = useMemo(
-    () =>
-      shouldIncludeZeroValuesForLabels
-        ? barsWithOptionalZeroValues.filter((bar) => bar.value !== 0)
-        : barsWithOptionalZeroValues,
-    [barsWithOptionalZeroValues, shouldIncludeZeroValuesForLabels],
-  );
+  const bars = shouldIncludeZeroValuesForLabels
+    ? barsWithOptionalZeroValues.filter((bar) => bar.value !== 0)
+    : barsWithOptionalZeroValues;
 
   const labelBars = shouldIncludeZeroValuesForLabels
     ? barsWithOptionalZeroValues
     : bars;
 
-  const slices = useMemo(
-    () =>
-      computeAllCategorySlices({
-        data,
-        indexBy,
-        bars,
-        isVerticalLayout: isVertical,
-        chartWidth,
-        chartHeight,
-        margins,
-      }),
-    [data, indexBy, bars, isVertical, chartWidth, chartHeight, margins],
-  );
+  const slices = computeAllCategorySlices({
+    data,
+    indexBy,
+    bars,
+    isVerticalLayout: isVertical,
+    chartWidth,
+    chartHeight,
+    margins,
+  });
 
   const hoveredSlice = isDefined(hoveredSliceIndexValue)
     ? (slices.find((slice) => slice.indexValue === hoveredSliceIndexValue) ??
