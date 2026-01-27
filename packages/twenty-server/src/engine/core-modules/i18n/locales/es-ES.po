@@ -846,34 +846,6 @@ msgstr "Metadatos del campo creados, metadatos del objeto padre no encontrados"
 msgid "Cron pattern '{pattern}' is invalid"
 msgstr "El patrón Cron '{pattern}' no es válido"
 
-#. js-lingui-id: GuyjcQ
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-msgid "Cron trigger already exists"
-msgstr "El disparador de Cron ya existe"
-
-#. js-lingui-id: MAPqJt
-#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
-msgid "Cron trigger already exists."
-msgstr "El disparador de Cron ya existe."
-
-#. js-lingui-id: Ej90Yp
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-msgid "Cron trigger not found"
-msgstr "Disparador de Cron no encontrado"
-
-#. js-lingui-id: 4bnTs7
-#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
-msgid "Cron trigger not found."
-msgstr "Disparador cron no encontrado."
-
-#. js-lingui-id: vz7B0E
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-msgid "Cron trigger with same id already exists"
-msgstr "El disparador de Cron con el mismo id ya existe"
-
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Custom domain not found."
@@ -908,34 +880,6 @@ msgstr "La versión de los datos no coincide. Actualice y vuelva a intentarlo."
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."
 msgstr "La configuración de la base de datos está deshabilitada."
-
-#. js-lingui-id: K2CQHf
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-msgid "Database event trigger already exists"
-msgstr "El disparador de eventos de la base de datos ya existe"
-
-#. js-lingui-id: RjLvqZ
-#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
-msgid "Database event trigger already exists."
-msgstr "El disparador de eventos de la base de datos ya existe."
-
-#. js-lingui-id: iS6kjG
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-msgid "Database event trigger not found"
-msgstr "El disparador de eventos de la base de datos no se encontró"
-
-#. js-lingui-id: mVe3iD
-#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
-msgid "Database event trigger not found."
-msgstr "Disparador de evento de base de datos no encontrado."
-
-#. js-lingui-id: 0vtv+s
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-msgid "Database event trigger with same id already exists"
-msgstr "El disparador de eventos de la base de datos con el mismo id ya existe"
 
 #. js-lingui-id: r6zgGo
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -1686,11 +1630,6 @@ msgstr "Código de país inválido {countryCode}"
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Invalid data format."
 msgstr "Formato de datos no válido."
-
-#. js-lingui-id: 4xhvWm
-#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
-msgid "Invalid database event trigger."
-msgstr "Disparador de evento de base de datos no válido."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -3267,48 +3206,20 @@ msgstr ""
 msgid "Roles and permissions configuration not found."
 msgstr "No se encontró la configuración de roles y permisos."
 
-#. js-lingui-id: MFW30/
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route already exists"
-msgstr "La ruta ya existe"
-
 #. js-lingui-id: AcyaP/
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Route already exists."
 msgstr "La ruta ya existe."
-
-#. js-lingui-id: ldQZkA
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route not found"
-msgstr "Ruta no encontrada"
 
 #. js-lingui-id: F35apa
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Route not found."
 msgstr "Ruta no encontrada."
 
-#. js-lingui-id: NCQS+K
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route path already exists"
-msgstr "La ruta ya existe"
-
 #. js-lingui-id: mF5BSU
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Route path already exists."
 msgstr "La ruta ya existe."
-
-#. js-lingui-id: v5H7VS
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route with same id already exists"
-msgstr "Ruta con el mismo id ya existe"
-
-#. js-lingui-id: c10Yre
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route with same path already exists"
-msgstr "Ruta con el mismo camino ya existe"
 
 #. js-lingui-id: RwBHMj
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -3405,25 +3316,11 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Serverless function not found"
 msgstr "Función serverless no encontrada"
 
 #. js-lingui-id: 4oHY1L
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
-#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
-#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Serverless function not found."
 msgstr "Función sin servidor no encontrada."

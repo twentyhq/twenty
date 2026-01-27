@@ -5477,7 +5477,6 @@ msgstr "Rată de eșec"
 
 #. js-lingui-id: ocUvR+
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
@@ -12038,7 +12037,6 @@ msgstr "Declanșează funcția cu cerere Http"
 
 #. js-lingui-id: c+xCSz
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
