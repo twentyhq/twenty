@@ -14,12 +14,6 @@ Then, start development mode to sync your app and watch for changes:
 yarn app:dev
 ```
 
-Or run a one-time sync:
-
-```bash
-yarn app:sync
-```
-
 Open your Twenty instance and go to `/settings/applications` section to see the result.
 
 ## Available Commands
@@ -29,11 +23,12 @@ Open your Twenty instance and go to `/settings/applications` section to see the 
 yarn auth:login     # Authenticate with Twenty
 yarn auth:logout    # Remove credentials
 yarn auth:status    # Check auth status
+yarn auth:switch    # Switch default workspace
+yarn auth:list      # List all configured workspaces
 
 # Application
-yarn app:dev        # Start dev mode (sync + watch)
-yarn app:sync       # One-time sync
-yarn entity:add     # Add a new entity (function, object, role)
+yarn app:dev        # Start dev mode (watch, build, and sync)
+yarn entity:add     # Add a new entity (function, front-component, object, role)
 yarn app:generate   # Generate typed Twenty client
 yarn function:logs  # Stream function logs
 yarn function:execute  # Execute a function with JSON payload
