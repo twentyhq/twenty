@@ -7,12 +7,14 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import {
   type ToolProvider,
   type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
@@ -52,16 +54,13 @@ export class DatabaseToolProvider implements ToolProvider {
       return tools;
     }
 
-    const authContext: WorkspaceAuthContext = {
-      user: context.userId ? { id: context.userId } : null,
-      workspace: {
-        id: context.workspaceId,
-      } as WorkspaceAuthContext['workspace'],
-      workspaceMemberId: undefined,
+    const authContext: WorkspaceAuthContext = buildUserAuthContext({
+      workspace: { id: context.workspaceId } as WorkspaceEntity,
       userWorkspaceId: context.userWorkspaceId,
-      apiKey: null,
-      application: null,
-    } as WorkspaceAuthContext;
+      user: undefined,
+      workspaceMemberId: undefined,
+      workspaceMember: undefined,
+    });
 
     const { rolesPermissions } =
       await this.workspaceCacheService.getOrRecompute(context.workspaceId, [

@@ -2,8 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
+import { buildSystemAuthContext } from 'src/engine/core-modules/auth/utils/build-system-auth-context.util';
+import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
@@ -92,14 +94,21 @@ export class McpProtocolService {
     userWorkspaceId?: string,
     apiKey?: ApiKeyEntity,
   ): WorkspaceAuthContext {
-    return {
-      user: null,
-      apiKey: apiKey ?? null,
-      application: null,
-      workspace,
-      workspaceMemberId: undefined,
-      userWorkspaceId: userWorkspaceId ?? undefined,
-    } as WorkspaceAuthContext;
+    if (isDefined(apiKey)) {
+      return buildApiKeyAuthContext({ workspace, apiKey });
+    }
+
+    if (isDefined(userWorkspaceId)) {
+      return buildUserAuthContext({
+        workspace,
+        userWorkspaceId,
+        user: undefined,
+        workspaceMemberId: undefined,
+        workspaceMember: undefined,
+      });
+    }
+
+    return buildSystemAuthContext({ workspace });
   }
 
   async handleMCPCoreQuery(
