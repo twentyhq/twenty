@@ -76,9 +76,9 @@ export const getBarChartAxisConfigs = ({
         legend: yAxisLabel,
         legendOffset:
           -margins.left + BAR_CHART_CONSTANTS.LEFT_AXIS_LEGEND_OFFSET_PADDING,
-        format: (value: number) =>
+        format: (value: string | number) =>
           truncateTickLabel(
-            formatGraphValue(value, formatOptions ?? {}),
+            formatGraphValue(Number(value), formatOptions ?? {}),
             maxLeftAxisTickLabelLength,
           ),
       },
@@ -101,9 +101,9 @@ export const getBarChartAxisConfigs = ({
           0,
         ),
       ),
-      format: (value: number) =>
+      format: (value: string | number) =>
         truncateTickLabel(
-          formatGraphValue(value, formatOptions ?? {}),
+          formatGraphValue(Number(value), formatOptions ?? {}),
           maxBottomAxisTickLabelLength,
         ),
     },

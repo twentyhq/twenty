@@ -1,6 +1,5 @@
 import { AxisLayer } from '@/page-layout/widgets/graph/chart-core/layers/AxisLayer';
 import { getPointerPosition } from '@/page-layout/widgets/graph/chart-core/utils/getPointerPosition';
-import { isPointInChartArea } from '@/page-layout/widgets/graph/chart-core/utils/isPointInChartArea';
 import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { BarChartBaseLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartBaseLayer';
@@ -13,13 +12,10 @@ import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { computeAllCategorySlices } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeAllCategorySlices';
-import { computeSliceTooltipPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeSliceTooltipPosition';
-import { findSliceAtPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findSliceAtPosition';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
 import { getBarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartLayout';
-import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
+import { getSliceHoverDataFromPointerPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getSliceHoverDataFromPointerPosition';
 import { hasNegativeValuesInData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/hasNegativeValuesInData';
-import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import {
   formatGraphValue,
@@ -116,29 +112,24 @@ export const BarChart = ({
     chartTheme.axis,
   );
 
-  const { margins, axisLeftConfiguration, valueTickValues, valueDomain } =
-    getBarChartLayout({
-      axisTheme: chartTheme.axis,
-      chartHeight,
-      chartWidth,
-      data,
-      effectiveMaximumValue: effectiveValueRange.maximum,
-      effectiveMinimumValue: effectiveValueRange.minimum,
-      formatOptions,
-      indexBy,
-      layout,
-      xAxisLabel: axisConfig?.xAxisLabel,
-      yAxisLabel: axisConfig?.yAxisLabel,
-    });
-
-  const tickConfig = getBarChartTickConfig({
-    axisFontSize: tickFontSize,
+  const {
+    margins,
+    axisBottomConfiguration,
+    axisLeftConfiguration,
+    valueTickValues,
+    valueDomain,
+  } = getBarChartLayout({
+    axisTheme: chartTheme.axis,
+    chartHeight,
+    chartWidth,
     data,
-    height: chartHeight,
+    effectiveMaximumValue: effectiveValueRange.maximum,
+    effectiveMinimumValue: effectiveValueRange.minimum,
+    formatOptions,
     indexBy,
     layout,
-    margins,
-    width: chartWidth,
+    xAxisLabel: axisConfig?.xAxisLabel,
+    yAxisLabel: axisConfig?.yAxisLabel,
   });
 
   const innerPadding = getBarChartInnerPadding({
@@ -153,41 +144,25 @@ export const BarChart = ({
 
   const categoryValues = data.map((item) => String(item[indexBy] ?? ''));
 
-  const categoryTickValues = (() => {
-    if (isVertical) {
-      return tickConfig.categoryTickValues;
-    }
-    const leftTickValues = axisLeftConfiguration?.tickValues;
-    if (Array.isArray(leftTickValues)) {
-      return leftTickValues;
-    }
-    return tickConfig.categoryTickValues;
-  })();
+  const categoryTickValues = isVertical
+    ? axisBottomConfiguration.tickValues
+    : axisLeftConfiguration.tickValues;
+  const resolvedCategoryTickValues = Array.isArray(categoryTickValues)
+    ? categoryTickValues
+    : categoryValues;
 
   const formatBottomTick = (value: string | number): string => {
-    if (isVertical) {
-      return truncateTickLabel(
-        String(value),
-        tickConfig.maxBottomAxisTickLabelLength,
-      );
-    }
-    return truncateTickLabel(
-      formatGraphValue(Number(value), formatOptions),
-      tickConfig.maxBottomAxisTickLabelLength,
+    const formattedValue = axisBottomConfiguration.format?.(
+      isVertical ? value : Number(value),
     );
+    return String(formattedValue ?? value);
   };
 
   const formatLeftTick = (value: string | number): string => {
-    if (isVertical) {
-      return truncateTickLabel(
-        formatGraphValue(Number(value), formatOptions),
-        tickConfig.maxLeftAxisTickLabelLength,
-      );
-    }
-    return truncateTickLabel(
-      String(value),
-      tickConfig.maxLeftAxisTickLabelLength,
+    const formattedValue = axisLeftConfiguration.format?.(
+      isVertical ? Number(value) : value,
     );
+    return String(formattedValue ?? value);
   };
 
   const axisLayerConfig = {
@@ -268,58 +243,33 @@ export const BarChart = ({
   const innerHeight = chartHeight - margins.top - margins.bottom;
 
   const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
-    const { x, y } = getPointerPosition({
+    const { x: pointerPositionX, y: pointerPositionY } = getPointerPosition({
       event,
       element: event.currentTarget,
     });
 
-    const relativeX = x - margins.left;
-    const relativeY = y - margins.top;
-
-    if (
-      !isPointInChartArea({
-        x: relativeX,
-        y: relativeY,
-        innerWidth,
-        innerHeight,
-      })
-    ) {
-      if (isDefined(hoveredSliceIndexValue)) {
-        onSliceHover(null);
-      }
-      return;
-    }
-
-    const slice = findSliceAtPosition({
-      mouseX: relativeX,
-      mouseY: relativeY,
+    const sliceHoverData = getSliceHoverDataFromPointerPosition({
+      pointerPositionX,
+      pointerPositionY,
+      margins,
+      innerWidth,
+      innerHeight,
       slices,
       isVerticalLayout: isVertical,
     });
 
-    if (!isDefined(slice)) {
+    if (!isDefined(sliceHoverData)) {
       if (isDefined(hoveredSliceIndexValue)) {
         onSliceHover(null);
       }
       return;
     }
 
-    if (slice.indexValue === hoveredSliceIndexValue) {
+    if (sliceHoverData.slice.indexValue === hoveredSliceIndexValue) {
       return;
     }
 
-    const { offsetLeft, offsetTop } = computeSliceTooltipPosition({
-      slice,
-      margins,
-      innerHeight,
-      isVertical,
-    });
-
-    onSliceHover({
-      slice,
-      offsetLeft,
-      offsetTop,
-    });
+    onSliceHover(sliceHoverData);
   };
 
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -327,34 +277,23 @@ export const BarChart = ({
       return;
     }
 
-    const { x, y } = getPointerPosition({
+    const { x: pointerPositionX, y: pointerPositionY } = getPointerPosition({
       event,
       element: event.currentTarget,
     });
 
-    const relativeX = x - margins.left;
-    const relativeY = y - margins.top;
-
-    if (
-      !isPointInChartArea({
-        x: relativeX,
-        y: relativeY,
-        innerWidth,
-        innerHeight,
-      })
-    ) {
-      return;
-    }
-
-    const slice = findSliceAtPosition({
-      mouseX: relativeX,
-      mouseY: relativeY,
+    const sliceHoverData = getSliceHoverDataFromPointerPosition({
+      pointerPositionX,
+      pointerPositionY,
+      margins,
+      innerWidth,
+      innerHeight,
       slices,
       isVerticalLayout: isVertical,
     });
 
-    if (isDefined(slice)) {
-      onSliceClick(slice);
+    if (isDefined(sliceHoverData)) {
+      onSliceClick(sliceHoverData.slice);
     }
   };
 
@@ -374,20 +313,20 @@ export const BarChart = ({
       />
       <BarChartBaseLayer
         bars={bars}
-        chartHeight={chartHeight}
-        chartWidth={chartWidth}
         highlightedLegendId={highlightedLegendId}
-        layout={layout}
-        margins={margins}
         showGrid={showGrid}
         valueDomain={valueDomain}
         valueTickValues={valueTickValues}
         allowDataTransitions={allowDataTransitions}
+        chartHeight={chartHeight}
+        chartWidth={chartWidth}
+        layout={layout}
+        margins={margins}
       />
       <AxisLayer
-        bottomAxisTickRotation={tickConfig.bottomAxisTickRotation}
+        bottomAxisTickRotation={axisBottomConfiguration.tickRotation}
         categoryValues={categoryValues}
-        categoryTickValues={categoryTickValues}
+        categoryTickValues={resolvedCategoryTickValues}
         chartHeight={chartHeight}
         chartWidth={chartWidth}
         formatBottomTick={formatBottomTick}
