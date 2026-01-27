@@ -58,4 +58,31 @@ describe('stringifySafely', () => {
 
     expect(stringifySafely(bigIntValue)).toBe('9007199254740991');
   });
+
+  it('should fall back to String() for functions', () => {
+    // eslint-disable-next-line func-style, prefer-arrow/prefer-arrow-functions
+    const namedFunction = function myFunction() {
+      return 'test';
+    };
+
+    expect(stringifySafely(namedFunction)).toBe(namedFunction.toString());
+  });
+
+  it('should fall back to String() for arrow functions', () => {
+    const arrowFunction = () => 'test';
+
+    expect(stringifySafely(arrowFunction)).toBe(arrowFunction.toString());
+  });
+
+  it('should fall back to String() for symbols', () => {
+    const symbol = Symbol('testSymbol');
+
+    expect(stringifySafely(symbol)).toBe('Symbol(testSymbol)');
+  });
+
+  it('should fall back to String() for symbols without description', () => {
+    const symbol = Symbol();
+
+    expect(stringifySafely(symbol)).toBe('Symbol()');
+  });
 });

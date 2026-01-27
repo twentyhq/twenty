@@ -12,7 +12,13 @@ export const stringifySafely = (value: unknown): string => {
       return 'NaN';
     }
 
-    return JSON.stringify(value);
+    const stringifiedValue = JSON.stringify(value);
+
+    if (stringifiedValue === undefined) {
+      return String(value);
+    }
+
+    return stringifiedValue;
   } catch {
     return String(value);
   }
