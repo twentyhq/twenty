@@ -5,11 +5,13 @@ import { FrontComponentWorkerEffect } from '../../remote/components/FrontCompone
 import { componentRegistry } from '../generated';
 
 type FrontComponentContentProps = {
+  isInitialized: boolean;
   componentUrl: string;
   onError: (error?: Error) => void;
 };
 
 export const FrontComponentContent = ({
+  isInitialized,
   componentUrl,
   onError,
 }: FrontComponentContentProps) => {
@@ -18,6 +20,7 @@ export const FrontComponentContent = ({
   return (
     <>
       <FrontComponentWorkerEffect
+        isInitialized={isInitialized}
         workerUrl={FRONT_COMPONENT_WORKER_URL}
         componentUrl={componentUrl}
         receiver={receiver}

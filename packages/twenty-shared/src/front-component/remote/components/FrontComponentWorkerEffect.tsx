@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { type SandboxAPI } from '../../types/SandboxApi';
 
 type FrontComponentWorkerEffectProps = {
+  isInitialized: boolean;
   workerUrl: URL;
   componentUrl: string;
   receiver: RemoteReceiver;
@@ -11,6 +12,7 @@ type FrontComponentWorkerEffectProps = {
 };
 
 export const FrontComponentWorkerEffect = ({
+  isInitialized,
   workerUrl,
   componentUrl,
   receiver,
@@ -20,6 +22,10 @@ export const FrontComponentWorkerEffect = ({
     let worker: Worker | null = null;
 
     const runWorker = async () => {
+      if (isInitialized) {
+        return;
+      }
+
       try {
         worker = new Worker(workerUrl, {
           type: 'module',
