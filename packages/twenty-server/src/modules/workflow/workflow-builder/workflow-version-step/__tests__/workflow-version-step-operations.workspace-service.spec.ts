@@ -260,9 +260,9 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         serverlessFunctionLayerId: 'layer-id',
         universalIdentifier: 'universal-id',
         applicationId: 'application-id',
-        cronTriggerIds: [],
-        databaseEventTriggerIds: [],
-        routeTriggerIds: [],
+        cronTriggerSettings: null,
+        databaseEventTriggerSettings: null,
+        httpRouteTriggerSettings: null,
       };
 
       serverlessFunctionService.createOneServerlessFunction.mockResolvedValue(
@@ -340,9 +340,9 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         serverlessFunctionLayerId: 'layer-id',
         universalIdentifier: 'universal-id',
         applicationId: 'application-id',
-        cronTriggerIds: [],
-        databaseEventTriggerIds: [],
-        routeTriggerIds: [],
+        cronTriggerSettings: null,
+        databaseEventTriggerSettings: null,
+        httpRouteTriggerSettings: null,
       };
 
       serverlessFunctionService.duplicateServerlessFunction.mockResolvedValue(

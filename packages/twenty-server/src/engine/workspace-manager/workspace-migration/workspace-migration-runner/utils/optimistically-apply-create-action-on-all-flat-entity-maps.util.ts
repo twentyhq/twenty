@@ -59,9 +59,6 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
     case 'viewFilterGroup':
     case 'index':
     case 'serverlessFunction':
-    case 'cronTrigger':
-    case 'databaseEventTrigger':
-    case 'routeTrigger':
     case 'viewFilter':
     case 'role':
     case 'roleTarget':

@@ -29,10 +29,10 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
   const currentDate = new Date();
 
   return {
-    cronTriggerIds: [],
-    databaseEventTriggerIds: [],
-    routeTriggerIds: [],
     id,
+    cronTriggerSettings: null,
+    databaseEventTriggerSettings: null,
+    httpRouteTriggerSettings: null,
     name: rawCreateServerlessFunctionInput.name,
     description: rawCreateServerlessFunctionInput.description ?? null,
     sourceHandlerPath:

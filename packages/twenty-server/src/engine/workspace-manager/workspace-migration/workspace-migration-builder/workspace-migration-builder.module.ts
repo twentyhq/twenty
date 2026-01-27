@@ -5,8 +5,6 @@ import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modul
 import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
 import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/workspace-migration-command-menu-item-actions-builder.service';
 import { WorkspaceMigrationNavigationMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/workspace-migration-navigation-menu-item-actions-builder.service';
-import { WorkspaceMigrationCronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/cron-trigger/workspace-migration-cron-trigger-action-builder.service';
-import { WorkspaceMigrationDatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/database-event-trigger/workspace-migration-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-field-actions-builder.service';
 import { WorkspaceMigrationIndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/workspace-migration-index-actions-builder.service';
 import { WorkspaceMigrationObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/workspace-migration-object-actions-builder.service';
@@ -15,7 +13,6 @@ import { WorkspaceMigrationPageLayoutWidgetActionsBuilderService } from 'src/eng
 import { WorkspaceMigrationPageLayoutActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/workspace-migration-page-layout-actions-builder.service';
 import { WorkspaceMigrationRoleTargetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/workspace-migration-role-target-actions-builder.service';
 import { WorkspaceMigrationRoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/workspace-migration-role-actions-builder.service';
-import { WorkspaceMigrationRouteTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/route-trigger/workspace-migration-route-trigger-actions-builder.service';
 import { WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/workspace-migration-row-level-permission-predicate-group-actions-builder.service';
 import { WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/workspace-migration-row-level-permission-predicate-actions-builder.service';
 import { WorkspaceMigrationServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/workspace-migration-serverless-function-actions-builder.service';
@@ -41,10 +38,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationViewGroupActionsBuilderService,
     WorkspaceMigrationIndexActionsBuilderService,
     WorkspaceMigrationServerlessFunctionActionsBuilderService,
-    WorkspaceMigrationDatabaseEventTriggerActionsBuilderService,
     WorkspaceMigrationFieldActionsBuilderService,
-    WorkspaceMigrationCronTriggerActionsBuilderService,
-    WorkspaceMigrationRouteTriggerActionsBuilderService,
     WorkspaceMigrationRoleActionsBuilderService,
     WorkspaceMigrationRoleTargetActionsBuilderService,
     WorkspaceMigrationAgentActionsBuilderService,
@@ -69,9 +63,6 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationViewGroupActionsBuilderService,
     WorkspaceMigrationFieldActionsBuilderService,
     WorkspaceMigrationServerlessFunctionActionsBuilderService,
-    WorkspaceMigrationDatabaseEventTriggerActionsBuilderService,
-    WorkspaceMigrationCronTriggerActionsBuilderService,
-    WorkspaceMigrationRouteTriggerActionsBuilderService,
     WorkspaceMigrationRoleActionsBuilderService,
     WorkspaceMigrationRoleTargetActionsBuilderService,
     WorkspaceMigrationAgentActionsBuilderService,

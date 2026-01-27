@@ -7,7 +7,9 @@ import { CronTriggerCronJob } from 'src/engine/metadata-modules/cron-trigger/cro
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([WorkspaceEntity, ServerlessFunctionEntity])],
+  imports: [
+    TypeOrmModule.forFeature([WorkspaceEntity, ServerlessFunctionEntity]),
+  ],
   providers: [CronTriggerCronJob, CronTriggerCronCommand],
   exports: [CronTriggerCronCommand],
 })

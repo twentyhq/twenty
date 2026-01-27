@@ -143,8 +143,7 @@ export class RouteTriggerService {
     const event = buildServerlessFunctionEvent({
       request,
       pathParameters: pathParams,
-      forwardedRequestHeaders:
-        httpRouteSettings?.forwardedRequestHeaders ?? [],
+      forwardedRequestHeaders: httpRouteSettings?.forwardedRequestHeaders ?? [],
     });
 
     const result =
