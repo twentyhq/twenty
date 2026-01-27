@@ -10,7 +10,9 @@ import { type FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-f
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 @Injectable()
-export class LogicFunctionExecutorService implements LogicFunctionExecutorDriver {
+export class LogicFunctionExecutorService
+  implements LogicFunctionExecutorDriver
+{
   constructor(
     @Inject(LOGIC_FUNCTION_EXECUTOR_DRIVER)
     private driver: LogicFunctionExecutorDriver,
