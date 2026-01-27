@@ -52,21 +52,11 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ServerlessFunctionDTO> {
     try {
-      const {
-        flatServerlessFunctionMaps,
-        flatCronTriggerMaps,
-        flatDatabaseEventTriggerMaps,
-        flatRouteTriggerMaps,
-      } =
+      const { flatServerlessFunctionMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: [
-              'flatServerlessFunctionMaps',
-              'flatCronTriggerMaps',
-              'flatDatabaseEventTriggerMaps',
-              'flatRouteTriggerMaps',
-            ],
+            flatMapsKeys: ['flatServerlessFunctionMaps'],
           },
         );
 
@@ -77,9 +67,6 @@ export class ServerlessFunctionResolver {
 
       return fromFlatServerlessFunctionToServerlessFunctionDto({
         flatServerlessFunction,
-        flatCronTriggerMaps,
-        flatDatabaseEventTriggerMaps,
-        flatRouteTriggerMaps,
       });
     } catch (error) {
       return serverlessFunctionGraphQLApiExceptionHandler(error);
@@ -91,21 +78,11 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ServerlessFunctionDTO[]> {
     try {
-      const {
-        flatServerlessFunctionMaps,
-        flatCronTriggerMaps,
-        flatDatabaseEventTriggerMaps,
-        flatRouteTriggerMaps,
-      } =
+      const { flatServerlessFunctionMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: [
-              'flatServerlessFunctionMaps',
-              'flatCronTriggerMaps',
-              'flatDatabaseEventTriggerMaps',
-              'flatRouteTriggerMaps',
-            ],
+            flatMapsKeys: ['flatServerlessFunctionMaps'],
           },
         );
 
@@ -120,9 +97,6 @@ export class ServerlessFunctionResolver {
         .map((flatServerlessFunction) =>
           fromFlatServerlessFunctionToServerlessFunctionDto({
             flatServerlessFunction,
-            flatCronTriggerMaps,
-            flatDatabaseEventTriggerMaps,
-            flatRouteTriggerMaps,
           }),
         );
     } catch (error) {
@@ -168,27 +142,8 @@ export class ServerlessFunctionResolver {
           workspaceId,
         });
 
-      const {
-        flatCronTriggerMaps,
-        flatDatabaseEventTriggerMaps,
-        flatRouteTriggerMaps,
-      } =
-        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: [
-              'flatCronTriggerMaps',
-              'flatDatabaseEventTriggerMaps',
-              'flatRouteTriggerMaps',
-            ],
-          },
-        );
-
       return fromFlatServerlessFunctionToServerlessFunctionDto({
         flatServerlessFunction,
-        flatCronTriggerMaps,
-        flatDatabaseEventTriggerMaps,
-        flatRouteTriggerMaps,
       });
     } catch (error) {
       return serverlessFunctionGraphQLApiExceptionHandler(error);
@@ -209,27 +164,8 @@ export class ServerlessFunctionResolver {
           workspaceId,
         );
 
-      const {
-        flatCronTriggerMaps,
-        flatDatabaseEventTriggerMaps,
-        flatRouteTriggerMaps,
-      } =
-        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: [
-              'flatCronTriggerMaps',
-              'flatDatabaseEventTriggerMaps',
-              'flatRouteTriggerMaps',
-            ],
-          },
-        );
-
       return fromFlatServerlessFunctionToServerlessFunctionDto({
         flatServerlessFunction,
-        flatCronTriggerMaps,
-        flatDatabaseEventTriggerMaps,
-        flatRouteTriggerMaps,
       });
     } catch (error) {
       return serverlessFunctionGraphQLApiExceptionHandler(error);
@@ -250,27 +186,8 @@ export class ServerlessFunctionResolver {
           workspaceId,
         );
 
-      const {
-        flatCronTriggerMaps,
-        flatDatabaseEventTriggerMaps,
-        flatRouteTriggerMaps,
-      } =
-        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: [
-              'flatCronTriggerMaps',
-              'flatDatabaseEventTriggerMaps',
-              'flatRouteTriggerMaps',
-            ],
-          },
-        );
-
       return fromFlatServerlessFunctionToServerlessFunctionDto({
         flatServerlessFunction,
-        flatCronTriggerMaps,
-        flatDatabaseEventTriggerMaps,
-        flatRouteTriggerMaps,
       });
     } catch (error) {
       return serverlessFunctionGraphQLApiExceptionHandler(error);
@@ -312,27 +229,8 @@ export class ServerlessFunctionResolver {
           workspaceId,
         );
 
-      const {
-        flatCronTriggerMaps,
-        flatDatabaseEventTriggerMaps,
-        flatRouteTriggerMaps,
-      } =
-        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: [
-              'flatCronTriggerMaps',
-              'flatDatabaseEventTriggerMaps',
-              'flatRouteTriggerMaps',
-            ],
-          },
-        );
-
       return fromFlatServerlessFunctionToServerlessFunctionDto({
         flatServerlessFunction,
-        flatCronTriggerMaps,
-        flatDatabaseEventTriggerMaps,
-        flatRouteTriggerMaps,
       });
     } catch (error) {
       return serverlessFunctionGraphQLApiExceptionHandler(error);

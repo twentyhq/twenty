@@ -1,24 +1,21 @@
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { transformEventBatchToEventPayloads } from 'src/engine/metadata-modules/database-event-trigger/utils/transform-event-batch-to-event-payloads';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
-const createMockDatabaseEventListener = (
-  overrides: Partial<DatabaseEventTriggerEntity> = {},
-): DatabaseEventTriggerEntity =>
+const createMockServerlessFunction = (
+  overrides: Partial<ServerlessFunctionEntity> = {},
+): ServerlessFunctionEntity =>
   ({
-    id: 'listener-1',
+    id: 'function-1',
     workspaceId: 'workspace-1',
-    settings: {
+    databaseEventTriggerSettings: {
       eventName: 'company.updated',
     },
-    serverlessFunction: {
-      id: 'function-1',
-    },
     ...overrides,
-  }) as DatabaseEventTriggerEntity;
+  }) as ServerlessFunctionEntity;
 
 const createMockEvent = (
   overrides: Partial<ObjectRecordEvent> = {},
@@ -46,13 +43,13 @@ const createMockWorkspaceEventBatch = (
 
 describe('transformEventBatchToEventPayloads', () => {
   describe('basic transformation', () => {
-    it('should transform a single event batch with a single listener', () => {
+    it('should transform a single event batch with a single serverless function', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch();
-      const databaseEventListeners = [createMockDatabaseEventListener()];
+      const serverlessFunctions = [createMockServerlessFunction()];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        serverlessFunctions,
       });
 
       expect(result).toHaveLength(1);
@@ -75,11 +72,11 @@ describe('transformEventBatchToEventPayloads', () => {
           createMockEvent({ recordId: 'record-3' }),
         ],
       });
-      const databaseEventListeners = [createMockDatabaseEventListener()];
+      const serverlessFunctions = [createMockServerlessFunction()];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        serverlessFunctions,
       });
 
       expect(result).toHaveLength(3);
@@ -88,22 +85,20 @@ describe('transformEventBatchToEventPayloads', () => {
       ).toEqual(['record-1', 'record-2', 'record-3']);
     });
 
-    it('should create payloads for each listener', () => {
+    it('should create payloads for each serverless function', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch();
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          id: 'listener-1',
-          serverlessFunction: { id: 'function-1' },
-        } as Partial<DatabaseEventTriggerEntity>),
-        createMockDatabaseEventListener({
-          id: 'listener-2',
-          serverlessFunction: { id: 'function-2' },
-        } as Partial<DatabaseEventTriggerEntity>),
+      const serverlessFunctions = [
+        createMockServerlessFunction({
+          id: 'function-1',
+        }),
+        createMockServerlessFunction({
+          id: 'function-2',
+        }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        serverlessFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -129,15 +124,15 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          settings: { eventName: 'company.updated' },
+      const serverlessFunctions = [
+        createMockServerlessFunction({
+          databaseEventTriggerSettings: { eventName: 'company.updated' },
         }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        serverlessFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -157,15 +152,18 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          settings: { eventName: 'company.updated', updatedFields: [] },
+      const serverlessFunctions = [
+        createMockServerlessFunction({
+          databaseEventTriggerSettings: {
+            eventName: 'company.updated',
+            updatedFields: [],
+          },
         }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        serverlessFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -189,15 +187,18 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          settings: { eventName: 'company.updated', updatedFields: ['name'] },
+      const serverlessFunctions = [
+        createMockServerlessFunction({
+          databaseEventTriggerSettings: {
+            eventName: 'company.updated',
+            updatedFields: ['name'],
+          },
         }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        serverlessFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -224,9 +225,9 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          settings: {
+      const serverlessFunctions = [
+        createMockServerlessFunction({
+          databaseEventTriggerSettings: {
             eventName: 'company.updated',
             updatedFields: ['name', 'address'],
           },
@@ -235,7 +236,7 @@ describe('transformEventBatchToEventPayloads', () => {
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        serverlessFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -258,21 +259,24 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          settings: { eventName: 'company.updated', updatedFields: ['phone'] },
+      const serverlessFunctions = [
+        createMockServerlessFunction({
+          databaseEventTriggerSettings: {
+            eventName: 'company.updated',
+            updatedFields: ['phone'],
+          },
         }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        serverlessFunctions,
       });
 
       expect(result).toHaveLength(0);
     });
 
-    it('should handle different updatedFields filters per listener', () => {
+    it('should handle different updatedFields filters per serverless function', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({
         name: 'company.updated',
         events: [
@@ -286,25 +290,26 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          id: 'listener-1',
-          settings: { eventName: 'company.updated', updatedFields: ['name'] },
-          serverlessFunction: { id: 'function-1' },
-        } as Partial<DatabaseEventTriggerEntity>),
-        createMockDatabaseEventListener({
-          id: 'listener-2',
-          settings: {
+      const serverlessFunctions = [
+        createMockServerlessFunction({
+          id: 'function-1',
+          databaseEventTriggerSettings: {
+            eventName: 'company.updated',
+            updatedFields: ['name'],
+          },
+        }),
+        createMockServerlessFunction({
+          id: 'function-2',
+          databaseEventTriggerSettings: {
             eventName: 'company.updated',
             updatedFields: ['address'],
           },
-          serverlessFunction: { id: 'function-2' },
-        } as Partial<DatabaseEventTriggerEntity>),
+        }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        serverlessFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -329,12 +334,12 @@ describe('transformEventBatchToEventPayloads', () => {
   });
 
   describe('edge cases', () => {
-    it('should return empty array when no listeners provided', () => {
+    it('should return empty array when no serverless functions provided', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch();
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners: [],
+        serverlessFunctions: [],
       });
 
       expect(result).toHaveLength(0);
@@ -344,11 +349,11 @@ describe('transformEventBatchToEventPayloads', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({
         events: [],
       });
-      const databaseEventListeners = [createMockDatabaseEventListener()];
+      const serverlessFunctions = [createMockServerlessFunction()];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        serverlessFunctions,
       });
 
       expect(result).toHaveLength(0);

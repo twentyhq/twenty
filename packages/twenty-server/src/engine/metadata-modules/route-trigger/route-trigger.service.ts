@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Request } from 'express';
 import { match } from 'path-to-regexp';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { HTTPMethod } from 'twenty-shared/types';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
@@ -13,8 +13,8 @@ import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
 } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
-import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { buildServerlessFunctionEvent } from 'src/engine/metadata-modules/route-trigger/utils/build-serverless-function-event.util';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 
 @Injectable()
@@ -23,18 +23,18 @@ export class RouteTriggerService {
     private readonly accessTokenService: AccessTokenService,
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
-    @InjectRepository(RouteTriggerEntity)
-    private readonly routeTriggerRepository: Repository<RouteTriggerEntity>,
+    @InjectRepository(ServerlessFunctionEntity)
+    private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
 
-  private async getOneRouteTriggerWithPathParamsOrFail({
+  private async getServerlessFunctionWithPathParamsOrFail({
     request,
     httpMethod,
   }: {
     request: Request;
     httpMethod: HTTPMethod;
   }): Promise<{
-    routeTrigger: RouteTriggerEntity;
+    serverlessFunction: ServerlessFunctionEntity;
     pathParams: Partial<Record<string, string | string[]>>;
   }> {
     const host = `${request.protocol}://${request.get('host')}`;
@@ -52,26 +52,35 @@ export class RouteTriggerService {
       ),
     );
 
-    const routeTriggers = await this.routeTriggerRepository.find({
-      where: {
-        httpMethod,
-        workspaceId: workspace.id,
-      },
-      relations: ['serverlessFunction'],
-    });
+    const serverlessFunctionsWithHttpRouteTrigger =
+      await this.serverlessFunctionRepository.find({
+        where: {
+          workspaceId: workspace.id,
+          httpRouteTriggerSettings: Not(IsNull()),
+        },
+      });
 
     const requestPath = request.path.replace(/^\/s\//, '/');
 
-    for (const routeTrigger of routeTriggers) {
-      const routeTriggerMatcher = match(routeTrigger.path, {
+    for (const serverlessFunction of serverlessFunctionsWithHttpRouteTrigger) {
+      const httpRouteSettings = serverlessFunction.httpRouteTriggerSettings;
+
+      if (
+        !isDefined(httpRouteSettings) ||
+        httpRouteSettings.httpMethod !== httpMethod
+      ) {
+        continue;
+      }
+
+      const routeMatcher = match(httpRouteSettings.path, {
         decode: decodeURIComponent,
       });
-      const routeTriggerMatched = routeTriggerMatcher(requestPath);
+      const routeMatched = routeMatcher(requestPath);
 
-      if (routeTriggerMatched) {
+      if (routeMatched) {
         return {
-          routeTrigger,
-          pathParams: routeTriggerMatched.params,
+          serverlessFunction,
+          pathParams: routeMatched.params,
         };
       }
     }
@@ -116,30 +125,31 @@ export class RouteTriggerService {
     request: Request;
     httpMethod: HTTPMethod;
   }) {
-    const routeTriggerWithPathParams =
-      await this.getOneRouteTriggerWithPathParamsOrFail({
+    const { serverlessFunction, pathParams } =
+      await this.getServerlessFunctionWithPathParamsOrFail({
         request,
         httpMethod,
       });
 
-    if (routeTriggerWithPathParams.routeTrigger.isAuthRequired) {
+    const httpRouteSettings = serverlessFunction.httpRouteTriggerSettings;
+
+    if (httpRouteSettings?.isAuthRequired) {
       await this.validateWorkspaceFromRequest({
         request,
-        workspaceId: routeTriggerWithPathParams.routeTrigger.workspaceId,
+        workspaceId: serverlessFunction.workspaceId,
       });
     }
 
     const event = buildServerlessFunctionEvent({
       request,
-      pathParameters: routeTriggerWithPathParams.pathParams,
-      forwardedRequestHeaders:
-        routeTriggerWithPathParams.routeTrigger.forwardedRequestHeaders ?? [],
+      pathParameters: pathParams,
+      forwardedRequestHeaders: httpRouteSettings?.forwardedRequestHeaders ?? [],
     });
 
     const result =
       await this.serverlessFunctionService.executeOneServerlessFunction({
-        id: routeTriggerWithPathParams.routeTrigger.serverlessFunction.id,
-        workspaceId: routeTriggerWithPathParams.routeTrigger.workspaceId,
+        id: serverlessFunction.id,
+        workspaceId: serverlessFunction.workspaceId,
         payload: event,
         version: 'draft',
       });

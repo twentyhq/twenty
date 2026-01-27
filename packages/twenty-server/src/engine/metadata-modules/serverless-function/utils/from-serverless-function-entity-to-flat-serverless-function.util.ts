@@ -8,13 +8,7 @@ export const fromServerlessFunctionEntityToFlatServerlessFunction = (
 ): FlatServerlessFunction => {
   const serverlessFunctionWithoutRelations = removePropertiesFromRecord(
     serverlessFunctionEntity,
-    [
-      'databaseEventTriggers',
-      'routeTriggers',
-      'cronTriggers',
-      'serverlessFunctionLayer',
-      'application',
-    ],
+    ['serverlessFunctionLayer', 'application'],
   );
 
   return {
@@ -22,12 +16,6 @@ export const fromServerlessFunctionEntityToFlatServerlessFunction = (
     createdAt: serverlessFunctionEntity.createdAt.toISOString(),
     updatedAt: serverlessFunctionEntity.updatedAt.toISOString(),
     deletedAt: serverlessFunctionEntity.deletedAt?.toISOString() ?? null,
-    cronTriggerIds:
-      serverlessFunctionEntity.cronTriggers.map((el) => el.id) ?? [],
-    routeTriggerIds:
-      serverlessFunctionEntity.routeTriggers.map((el) => el.id) ?? [],
-    databaseEventTriggerIds:
-      serverlessFunctionEntity.databaseEventTriggers.map((el) => el.id) ?? [],
     universalIdentifier: serverlessFunctionEntity.universalIdentifier,
   };
 };

@@ -58,9 +58,6 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
     case 'rowLevelPermissionPredicateGroup':
     case 'viewFilterGroup':
     case 'serverlessFunction':
-    case 'cronTrigger':
-    case 'databaseEventTrigger':
-    case 'routeTrigger':
     case 'viewFilter':
     case 'role':
     case 'roleTarget':

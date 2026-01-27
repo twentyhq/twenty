@@ -19,9 +19,11 @@ import {
 import graphqlTypeJson from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { CronTriggerDTO } from 'src/engine/metadata-modules/cron-trigger/dtos/cron-trigger.dto';
-import { DatabaseEventTriggerDTO } from 'src/engine/metadata-modules/database-event-trigger/dtos/database-event-trigger.dto';
-import { RouteTriggerDTO } from 'src/engine/metadata-modules/route-trigger/dtos/route-trigger.dto';
+import {
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
+} from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 @ObjectType('ServerlessFunction')
 @Authorize({
@@ -86,14 +88,20 @@ export class ServerlessFunctionDTO {
   @Field()
   isTool: boolean;
 
-  @Field(() => [CronTriggerDTO], { nullable: true })
-  cronTriggers?: CronTriggerDTO[];
+  @IsObject()
+  @IsOptional()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  cronTriggerSettings?: CronTriggerSettings;
 
-  @Field(() => [DatabaseEventTriggerDTO], { nullable: true })
-  databaseEventTriggers?: DatabaseEventTriggerDTO[];
+  @IsObject()
+  @IsOptional()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
 
-  @Field(() => [RouteTriggerDTO], { nullable: true })
-  routeTriggers?: RouteTriggerDTO[];
+  @IsObject()
+  @IsOptional()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  httpRouteTriggerSettings?: HttpRouteTriggerSettings;
 
   @IsUUID()
   @IsOptional()
