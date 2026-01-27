@@ -1,8 +1,8 @@
-import { type WebhookFormValues } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import {
   createWebhookCreateInput,
   createWebhookUpdateInput,
 } from '@/settings/developers/utils/createWebhookInput';
+import { type WebhookFormValues } from '@/settings/developers/validation-schemas/webhookFormSchema';
 
 describe('createWebhookInput', () => {
   const mockFormValues: WebhookFormValues = {
@@ -43,8 +43,7 @@ describe('createWebhookInput', () => {
 
   describe('createWebhookUpdateInput', () => {
     it('should create input for webhook update with id', () => {
-      const webhookId = 'test-webhook-id';
-      const result = createWebhookUpdateInput(mockFormValues, webhookId);
+      const result = createWebhookUpdateInput(mockFormValues);
 
       expect(result).toEqual({
         id: 'test-webhook-id',
@@ -60,12 +59,10 @@ describe('createWebhookInput', () => {
         ...mockFormValues,
         targetUrl: '   https://example.com   ',
       };
-      const webhookId = 'test-webhook-id';
 
-      const result = createWebhookUpdateInput(formValues, webhookId);
+      const result = createWebhookUpdateInput(formValues);
 
       expect(result.targetUrl).toBe('https://example.com');
-      expect(result.id).toBe('test-webhook-id');
     });
   });
 });

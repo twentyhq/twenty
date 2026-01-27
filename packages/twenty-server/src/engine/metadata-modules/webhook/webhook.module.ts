@@ -9,6 +9,7 @@ import { WebhookController } from 'src/engine/metadata-modules/webhook/controlle
 import { WebhookGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/webhook/interceptors/webhook-graphql-api-exception.interceptor';
 import { WebhookResolver } from 'src/engine/metadata-modules/webhook/webhook.resolver';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -16,6 +17,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   imports: [
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
+    WorkspaceCacheStorageModule,
     ApplicationModule,
     AuthModule,
     PermissionsModule,

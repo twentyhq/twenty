@@ -1,9 +1,9 @@
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { type CallWebhookJobData } from 'src/engine/core-modules/webhook/jobs/call-webhook.job';
 import { type WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
-import { transformEventToWebhookEvent } from 'src/engine/core-modules/webhook/utils/transform-event-to-webhook-event';
+import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
+import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhook/utils/transform-event-to-webhook-event';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 export const transformEventBatchToWebhookEvents = ({
   workspaceEventBatch,

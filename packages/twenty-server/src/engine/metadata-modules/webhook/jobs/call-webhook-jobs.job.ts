@@ -14,8 +14,8 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import {
   CallWebhookJob,
   type CallWebhookJobData,
-} from 'src/engine/core-modules/webhook/jobs/call-webhook.job';
-import { transformEventBatchToWebhookEvents } from 'src/engine/core-modules/webhook/utils/transform-event-batch-to-webhook-events';
+} from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
+import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 

@@ -207,7 +207,8 @@ export enum AllMetadataName {
   viewField = 'viewField',
   viewFilter = 'viewFilter',
   viewFilterGroup = 'viewFilterGroup',
-  viewGroup = 'viewGroup'
+  viewGroup = 'viewGroup',
+  webhook = 'webhook'
 }
 
 export type Analytics = {
@@ -1148,6 +1149,7 @@ export type CreateViewSortInput = {
 
 export type CreateWebhookInput = {
   description?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
   operations: Array<Scalars['String']>;
   secret?: InputMaybe<Scalars['String']>;
   targetUrl: Scalars['String'];
@@ -1284,10 +1286,6 @@ export type DeleteViewFilterInput = {
 
 export type DeleteViewGroupInput = {
   /** The id of the view group to delete. */
-  id: Scalars['UUID'];
-};
-
-export type DeleteWebhookInput = {
   id: Scalars['UUID'];
 };
 
@@ -1691,10 +1689,6 @@ export type GetServerlessFunctionSourceCodeInput = {
   version?: Scalars['String'];
 };
 
-export type GetWebhookInput = {
-  id: Scalars['UUID'];
-};
-
 /** Order by options for graph widgets */
 export enum GraphOrderBy {
   FIELD_ASC = 'FIELD_ASC',
@@ -2075,7 +2069,7 @@ export type Mutation = {
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteUserFromWorkspace: UserWorkspace;
-  deleteWebhook: Scalars['Boolean'];
+  deleteWebhook: Webhook;
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   deleteWorkspaceInvitation: Scalars['String'];
@@ -2165,7 +2159,7 @@ export type Mutation = {
   updatePasswordViaResetToken: InvalidatePasswordOutput;
   updateSkill: Skill;
   updateUserEmail: Scalars['Boolean'];
-  updateWebhook?: Maybe<Webhook>;
+  updateWebhook: Webhook;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
@@ -2592,7 +2586,7 @@ export type MutationDeleteUserFromWorkspaceArgs = {
 
 
 export type MutationDeleteWebhookArgs = {
-  input: DeleteWebhookInput;
+  id: Scalars['UUID'];
 };
 
 
@@ -4017,7 +4011,7 @@ export type QueryValidatePasswordResetTokenArgs = {
 
 
 export type QueryWebhookArgs = {
-  input: GetWebhookInput;
+  id: Scalars['UUID'];
 };
 
 export type QueueJob = {
@@ -5001,8 +4995,14 @@ export type UpdateViewSortInput = {
 };
 
 export type UpdateWebhookInput = {
-  description?: InputMaybe<Scalars['String']>;
+  /** The id of the webhook to update */
   id: Scalars['UUID'];
+  /** The webhook fields to update */
+  update: UpdateWebhookInputUpdates;
+};
+
+export type UpdateWebhookInputUpdates = {
+  description?: InputMaybe<Scalars['String']>;
   operations?: InputMaybe<Array<Scalars['String']>>;
   secret?: InputMaybe<Scalars['String']>;
   targetUrl?: InputMaybe<Scalars['String']>;
@@ -5246,6 +5246,7 @@ export enum ViewVisibility {
 
 export type Webhook = {
   __typename?: 'Webhook';
+  applicationId: Scalars['UUID'];
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   description?: Maybe<Scalars['String']>;
@@ -6345,11 +6346,11 @@ export type CreateWebhookMutationVariables = Exact<{
 export type CreateWebhookMutation = { __typename?: 'Mutation', createWebhook: { __typename?: 'Webhook', id: string, targetUrl: string, operations: Array<string>, description?: string | null, secret: string } };
 
 export type DeleteWebhookMutationVariables = Exact<{
-  input: DeleteWebhookInput;
+  id: Scalars['UUID'];
 }>;
 
 
-export type DeleteWebhookMutation = { __typename?: 'Mutation', deleteWebhook: boolean };
+export type DeleteWebhookMutation = { __typename?: 'Mutation', deleteWebhook: { __typename?: 'Webhook', id: string, targetUrl: string, operations: Array<string>, description?: string | null, secret: string } };
 
 export type RevokeApiKeyMutationVariables = Exact<{
   input: RevokeApiKeyInput;
@@ -6370,7 +6371,7 @@ export type UpdateWebhookMutationVariables = Exact<{
 }>;
 
 
-export type UpdateWebhookMutation = { __typename?: 'Mutation', updateWebhook?: { __typename?: 'Webhook', id: string, targetUrl: string, operations: Array<string>, description?: string | null, secret: string } | null };
+export type UpdateWebhookMutation = { __typename?: 'Mutation', updateWebhook: { __typename?: 'Webhook', id: string, targetUrl: string, operations: Array<string>, description?: string | null, secret: string } };
 
 export type GetApiKeyQueryVariables = Exact<{
   input: GetApiKeyInput;
@@ -6385,7 +6386,7 @@ export type GetApiKeysQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetApiKeysQuery = { __typename?: 'Query', apiKeys: Array<{ __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } }> };
 
 export type GetWebhookQueryVariables = Exact<{
-  input: GetWebhookInput;
+  id: Scalars['UUID'];
 }>;
 
 
@@ -11989,10 +11990,12 @@ export type CreateWebhookMutationHookResult = ReturnType<typeof useCreateWebhook
 export type CreateWebhookMutationResult = Apollo.MutationResult<CreateWebhookMutation>;
 export type CreateWebhookMutationOptions = Apollo.BaseMutationOptions<CreateWebhookMutation, CreateWebhookMutationVariables>;
 export const DeleteWebhookDocument = gql`
-    mutation DeleteWebhook($input: DeleteWebhookInput!) {
-  deleteWebhook(input: $input)
+    mutation DeleteWebhook($id: UUID!) {
+  deleteWebhook(id: $id) {
+    ...WebhookFragment
+  }
 }
-    `;
+    ${WebhookFragmentFragmentDoc}`;
 export type DeleteWebhookMutationFn = Apollo.MutationFunction<DeleteWebhookMutation, DeleteWebhookMutationVariables>;
 
 /**
@@ -12008,7 +12011,7 @@ export type DeleteWebhookMutationFn = Apollo.MutationFunction<DeleteWebhookMutat
  * @example
  * const [deleteWebhookMutation, { data, loading, error }] = useDeleteWebhookMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -12189,8 +12192,8 @@ export type GetApiKeysQueryHookResult = ReturnType<typeof useGetApiKeysQuery>;
 export type GetApiKeysLazyQueryHookResult = ReturnType<typeof useGetApiKeysLazyQuery>;
 export type GetApiKeysQueryResult = Apollo.QueryResult<GetApiKeysQuery, GetApiKeysQueryVariables>;
 export const GetWebhookDocument = gql`
-    query GetWebhook($input: GetWebhookInput!) {
-  webhook(input: $input) {
+    query GetWebhook($id: UUID!) {
+  webhook(id: $id) {
     ...WebhookFragment
   }
 }
@@ -12208,7 +12211,7 @@ export const GetWebhookDocument = gql`
  * @example
  * const { data, loading, error } = useGetWebhookQuery({
  *   variables: {
- *      input: // value for 'input'
+ *      id: // value for 'id'
  *   },
  * });
  */

@@ -56,14 +56,6 @@ export class FlatWebhookValidatorService {
       });
     }
 
-    if (!isNonEmptyString(flatWebhook.secret)) {
-      validationResult.errors.push({
-        code: WebhookExceptionCode.INVALID_WEBHOOK_INPUT,
-        message: t`Secret is required`,
-        userFriendlyMessage: msg`Secret is required`,
-      });
-    }
-
     return validationResult;
   }
 
