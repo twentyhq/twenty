@@ -232,7 +232,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         : null;
 
       if (isDefined(favorite.viewId)) {
-        // Check if workspace-level navigation menu item already exists for this view
         if (userWorkspaceId === null) {
           const existingItem = Object.values(
             existingFlatNavigationMenuItemMaps.byId,
@@ -292,7 +291,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         continue;
       }
 
-      // Check if workspace-level navigation menu item already exists for this record
       if (userWorkspaceId === null) {
         const existingItem = Object.values(
           existingFlatNavigationMenuItemMaps.byId,
@@ -443,7 +441,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       { field: 'dashboardId', objectName: 'dashboard' },
     ];
 
-    // Check standard object relations first
     for (const { field, objectName } of relationFields) {
       const recordId = (
         favorite as unknown as Record<string, string | undefined>
