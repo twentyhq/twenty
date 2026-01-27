@@ -34,12 +34,12 @@ export const SettingsOptionCardContentButton = ({
           <SettingsOptionIconCustomizer Icon={Icon} />
         </StyledSettingsOptionCardIcon>
       )}
-      <div>
+      <>
         <StyledSettingsOptionCardTitle>{title}</StyledSettingsOptionCardTitle>
         <StyledSettingsOptionCardDescription>
           {description}
         </StyledSettingsOptionCardDescription>
-      </div>
+      </>
       {Button && <StyledButtonContainer>{Button}</StyledButtonContainer>}
     </StyledSettingsOptionCardContent>
   );
