@@ -238,8 +238,6 @@ const createPackageJson = async ({
       'auth:switch': 'twenty auth:switch',
       'auth:list': 'twenty auth:list',
       'app:dev': 'twenty app:dev',
-      'app:build': 'twenty app:build',
-      'app:sync': 'twenty app:sync',
       'entity:add': 'twenty entity:add',
       'app:generate': 'twenty app:generate',
       'function:logs': 'twenty function:logs',
