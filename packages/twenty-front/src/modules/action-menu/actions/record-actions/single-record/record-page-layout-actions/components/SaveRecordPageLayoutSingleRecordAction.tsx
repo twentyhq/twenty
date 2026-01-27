@@ -2,7 +2,7 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { useRecordPageLayoutId } from '@/page-layout/hooks/useRecordPageLayoutId';
+import { useRecordPageLayoutIdFromRecordStoreOrThrow } from '@/page-layout/hooks/useRecordPageLayoutIdFromRecordStore';
 import { useSavePageLayout } from '@/page-layout/hooks/useSavePageLayout';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -17,22 +17,19 @@ export const SaveRecordPageLayoutSingleRecordAction = () => {
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const { pageLayoutId } = useRecordPageLayoutId({
+  const { pageLayoutId } = useRecordPageLayoutIdFromRecordStoreOrThrow({
     id: recordId,
     targetObjectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const { savePageLayout } = useSavePageLayout(pageLayoutId ?? '');
+  const { savePageLayout } = useSavePageLayout(pageLayoutId);
 
-  const { setIsPageLayoutInEditMode } = useSetIsPageLayoutInEditMode(
-    pageLayoutId ?? '',
-  );
+  const { setIsPageLayoutInEditMode } =
+    useSetIsPageLayoutInEditMode(pageLayoutId);
 
   const { closeCommandMenu } = useCommandMenu();
 
   const handleClick = async () => {
-    if (!pageLayoutId) return;
-
     const result = await savePageLayout();
 
     if (result.status === 'successful') {
