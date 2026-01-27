@@ -57,13 +57,12 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends WorkspaceCacheP
     const flatCommandMenuItemMaps = createEmptyFlatEntityMaps();
 
     for (const commandMenuItemEntity of commandMenuItems) {
-      const flatCommandMenuItem = fromCommandMenuItemEntityToFlatCommandMenuItem(
-        {
+      const flatCommandMenuItem =
+        fromCommandMenuItemEntityToFlatCommandMenuItem({
           commandMenuItemEntity,
           applicationIdToUniversalIdentifierMap,
           objectMetadataIdToUniversalIdentifierMap,
-        },
-      );
+        });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
         flatEntity: flatCommandMenuItem,
