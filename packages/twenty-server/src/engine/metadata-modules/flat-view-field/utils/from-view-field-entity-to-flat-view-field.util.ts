@@ -1,4 +1,4 @@
-import { removePropertiesFromRecord } from 'twenty-shared/utils';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import {
   FlatEntityMapsException,
@@ -27,7 +27,7 @@ export const fromViewFieldEntityToFlatViewField = ({
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(viewFieldEntity.applicationId);
 
-  if (!applicationUniversalIdentifier) {
+  if (!isDefined(applicationUniversalIdentifier)) {
     throw new FlatEntityMapsException(
       `Application with id ${viewFieldEntity.applicationId} not found for viewField ${viewFieldEntity.id}`,
       FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
@@ -39,7 +39,7 @@ export const fromViewFieldEntityToFlatViewField = ({
       viewFieldEntity.fieldMetadataId,
     );
 
-  if (!fieldMetadataUniversalIdentifier) {
+  if (!isDefined(fieldMetadataUniversalIdentifier)) {
     throw new FlatEntityMapsException(
       `FieldMetadata with id ${viewFieldEntity.fieldMetadataId} not found for viewField ${viewFieldEntity.id}`,
       FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
@@ -50,7 +50,7 @@ export const fromViewFieldEntityToFlatViewField = ({
     viewFieldEntity.viewId,
   );
 
-  if (!viewUniversalIdentifier) {
+  if (!isDefined(viewUniversalIdentifier)) {
     throw new FlatEntityMapsException(
       `View with id ${viewFieldEntity.viewId} not found for viewField ${viewFieldEntity.id}`,
       FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,

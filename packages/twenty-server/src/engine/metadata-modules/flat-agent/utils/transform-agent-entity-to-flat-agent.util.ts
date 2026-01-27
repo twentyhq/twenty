@@ -1,9 +1,29 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 
-export const transformAgentEntityToFlatAgent = (
-  agentEntity: AgentEntity,
-): FlatAgent => {
+export const transformAgentEntityToFlatAgent = ({
+  agentEntity,
+  applicationIdToUniversalIdentifierMap,
+}: {
+  agentEntity: AgentEntity;
+  applicationIdToUniversalIdentifierMap: Map<string, string>;
+}): FlatAgent => {
+  const applicationUniversalIdentifier =
+    applicationIdToUniversalIdentifierMap.get(agentEntity.applicationId);
+
+  if (!isDefined(applicationUniversalIdentifier)) {
+    throw new FlatEntityMapsException(
+      `Application with id ${agentEntity.applicationId} not found for agent ${agentEntity.id}`,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
+  }
+
   return {
     createdAt: agentEntity.createdAt.toISOString(),
     deletedAt: agentEntity.deletedAt?.toISOString() ?? null,
@@ -23,5 +43,11 @@ export const transformAgentEntityToFlatAgent = (
     applicationId: agentEntity.applicationId,
     modelConfiguration: agentEntity.modelConfiguration,
     evaluationInputs: agentEntity.evaluationInputs,
+    __universal: {
+      universalIdentifier: agentEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+      responseFormat: agentEntity.responseFormat,
+      modelConfiguration: agentEntity.modelConfiguration,
+    },
   };
 };

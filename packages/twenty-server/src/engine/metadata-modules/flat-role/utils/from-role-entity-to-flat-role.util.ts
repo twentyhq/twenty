@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -16,7 +18,7 @@ export const fromRoleEntityToFlatRole = ({
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(roleEntity.applicationId);
 
-  if (!applicationUniversalIdentifier) {
+  if (!isDefined(applicationUniversalIdentifier)) {
     throw new FlatEntityMapsException(
       `Application with id ${roleEntity.applicationId} not found for role ${roleEntity.id}`,
       FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,

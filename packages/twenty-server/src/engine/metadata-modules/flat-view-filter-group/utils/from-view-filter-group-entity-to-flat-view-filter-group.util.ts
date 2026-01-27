@@ -30,7 +30,7 @@ export const fromViewFilterGroupEntityToFlatViewFilterGroup = ({
       viewFilterGroupEntity.applicationId,
     );
 
-  if (!applicationUniversalIdentifier) {
+  if (!isDefined(applicationUniversalIdentifier)) {
     throw new FlatEntityMapsException(
       `Application with id ${viewFilterGroupEntity.applicationId} not found for viewFilterGroup ${viewFilterGroupEntity.id}`,
       FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
@@ -45,7 +45,7 @@ export const fromViewFilterGroupEntityToFlatViewFilterGroup = ({
         viewFilterGroupEntity.parentViewFilterGroupId,
       ) ?? null;
 
-    if (!parentViewFilterGroupUniversalIdentifier) {
+    if (!isDefined(parentViewFilterGroupUniversalIdentifier)) {
       throw new FlatEntityMapsException(
         `ViewFilterGroup with id ${viewFilterGroupEntity.parentViewFilterGroupId} not found for viewFilterGroup ${viewFilterGroupEntity.id}`,
         FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
@@ -57,7 +57,7 @@ export const fromViewFilterGroupEntityToFlatViewFilterGroup = ({
     viewFilterGroupEntity.viewId,
   );
 
-  if (!viewUniversalIdentifier) {
+  if (!isDefined(viewUniversalIdentifier)) {
     throw new FlatEntityMapsException(
       `View with id ${viewFilterGroupEntity.viewId} not found for viewFilterGroup ${viewFilterGroupEntity.id}`,
       FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,

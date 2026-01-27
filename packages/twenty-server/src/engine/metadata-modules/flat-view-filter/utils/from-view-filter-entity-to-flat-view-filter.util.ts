@@ -56,7 +56,7 @@ export const fromViewFilterEntityToFlatViewFilter = ({
         viewFilterEntity.viewFilterGroupId,
       ) ?? null;
 
-    if (!viewFilterGroupUniversalIdentifier) {
+    if (!isDefined(viewFilterGroupUniversalIdentifier)) {
       throw new FlatEntityMapsException(
         `ViewFilterGroup with id ${viewFilterEntity.viewFilterGroupId} not found for viewFilter ${viewFilterEntity.id}`,
         FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,

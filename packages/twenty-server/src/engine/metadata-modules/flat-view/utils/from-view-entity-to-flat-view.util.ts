@@ -28,7 +28,7 @@ export const fromViewEntityToFlatView = ({
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(viewEntity.applicationId);
 
-  if (!applicationUniversalIdentifier) {
+  if (!isDefined(applicationUniversalIdentifier)) {
     throw new FlatEntityMapsException(
       `Application with id ${viewEntity.applicationId} not found for view ${viewEntity.id}`,
       FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
@@ -38,7 +38,7 @@ export const fromViewEntityToFlatView = ({
   const objectMetadataUniversalIdentifier =
     objectMetadataIdToUniversalIdentifierMap.get(viewEntity.objectMetadataId);
 
-  if (!objectMetadataUniversalIdentifier) {
+  if (!isDefined(objectMetadataUniversalIdentifier)) {
     throw new FlatEntityMapsException(
       `ObjectMetadata with id ${viewEntity.objectMetadataId} not found for view ${viewEntity.id}`,
       FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
@@ -54,7 +54,7 @@ export const fromViewEntityToFlatView = ({
         viewEntity.kanbanAggregateOperationFieldMetadataId,
       ) ?? null;
 
-    if (!kanbanAggregateOperationFieldMetadataUniversalIdentifier) {
+    if (!isDefined(kanbanAggregateOperationFieldMetadataUniversalIdentifier)) {
       throw new FlatEntityMapsException(
         `FieldMetadata with id ${viewEntity.kanbanAggregateOperationFieldMetadataId} not found for view ${viewEntity.id}`,
         FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
@@ -70,7 +70,7 @@ export const fromViewEntityToFlatView = ({
         viewEntity.calendarFieldMetadataId,
       ) ?? null;
 
-    if (!calendarFieldMetadataUniversalIdentifier) {
+    if (!isDefined(calendarFieldMetadataUniversalIdentifier)) {
       throw new FlatEntityMapsException(
         `FieldMetadata with id ${viewEntity.calendarFieldMetadataId} not found for view ${viewEntity.id}`,
         FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
@@ -86,7 +86,7 @@ export const fromViewEntityToFlatView = ({
         viewEntity.mainGroupByFieldMetadataId,
       ) ?? null;
 
-    if (!mainGroupByFieldMetadataUniversalIdentifier) {
+    if (!isDefined(mainGroupByFieldMetadataUniversalIdentifier)) {
       throw new FlatEntityMapsException(
         `FieldMetadata with id ${viewEntity.mainGroupByFieldMetadataId} not found for view ${viewEntity.id}`,
         FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
