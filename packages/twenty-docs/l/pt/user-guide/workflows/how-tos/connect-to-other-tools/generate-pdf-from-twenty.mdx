@@ -1,0 +1,228 @@
+---
+title: Gerar um PDF a partir do Twenty
+description: Crie um fluxo de trabalho para gerar e anexar um PDF (como um orçamento) a um registo.
+---
+
+Gere automaticamente ou obtenha um PDF e anexe-o a um registo no Twenty. Isto é normalmente utilizado para criar orçamentos, faturas ou relatórios que estão associados a Empresas, Oportunidades ou outros objetos.
+
+## Visão Geral
+
+Este fluxo de trabalho utiliza um **Gatilho Manual** para que os utilizadores possam gerar um PDF a pedido para qualquer registo selecionado. Uma **Função serverless** trata de:
+
+1. Transferir o PDF a partir de um URL (de um serviço de geração de PDF)
+2. Carregar o ficheiro para o Twenty
+3. Criar um Anexo ligado ao registo
+
+## Pré-requisitos
+
+Antes de configurar o fluxo de trabalho:
+
+1. **Crie uma Chave de API**: Vá a **Definições → APIs** e crie uma nova chave de API. Vai precisar deste token para a função serverless.
+2. **Configure um serviço de geração de PDF** (opcional): Se quiser gerar PDFs dinamicamente (por exemplo, orçamentos), utilize um serviço como o Carbone, o PDFMonkey ou o DocuSeal para criar o PDF e obter um URL de transferência.
+
+## Configuração passo a passo
+
+### Etapa 1: Configurar o gatilho
+
+1. Vá a **Fluxos de Trabalho** e crie um novo fluxo de trabalho
+2. Selecione **Gatilho Manual**
+3. Escolha o objeto ao qual pretende anexar PDFs (por exemplo, **Empresa** ou **Oportunidade**)
+
+<Tip>
+  Com um Gatilho Manual, os utilizadores podem executar este fluxo de trabalho utilizando um botão que aparece no canto superior direito quando um registo é selecionado, para gerar e anexar um PDF.
+</Tip>
+
+### Passo 2: Adicionar uma Função serverless
+
+1. Adicione a ação **Função serverless**
+2. Crie uma nova função com o código abaixo
+3. Configure os parâmetros de entrada
+
+#### Parâmetros de Entrada
+
+| Parâmetro   | Valor                   |
+| ----------- | ----------------------- |
+| `companyId` | `{{trigger.object.id}}` |
+
+<Note>
+  Se estiver a anexar a um objeto diferente (Pessoa, Oportunidade, etc.), renomeie o parâmetro em conformidade (por exemplo, `personId`, `opportunityId`) e atualize a função serverless.
+</Note>
+
+#### Código da Função serverless
+
+```typescript
+export const main = async (
+  params: { companyId: string },
+) => {
+  const { companyId } = params;
+
+  // Replace with your Twenty GraphQL endpoint
+  // Cloud: https://api.twenty.com/graphql
+  // Self-hosted: https://your-domain.com/graphql
+  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  // Replace with your API key from Settings → APIs
+  const authToken = 'YOUR_API_KEY';
+
+  // Replace with your PDF URL
+  // This could be from a PDF generation service or a static URL
+  const pdfUrl = 'https://your-pdf-service.com/generated-quote.pdf';
+  const filename = 'quote.pdf';
+
+  // Step 1: Download the PDF file
+  const pdfResponse = await fetch(pdfUrl);
+
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBlob = await pdfResponse.blob();
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Step 2: Upload the file via GraphQL multipart upload
+  const uploadMutation = `
+    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+      uploadFile(file: $file, fileFolder: $fileFolder) {
+        path
+      }
+    }
+  `;
+
+  const uploadForm = new FormData();
+  uploadForm.append('operations', JSON.stringify({
+    query: uploadMutation,
+    variables: { file: null, fileFolder: 'Attachment' },
+  }));
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
+
+  const uploadResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${authToken}` },
+    body: uploadForm,
+  });
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  }
+
+  const filePath = uploadResult.data?.uploadFile?.path;
+
+  if (!filePath) {
+    throw new Error('No file path returned from upload');
+  }
+
+  // Step 3: Create the attachment linked to the company
+  const attachmentMutation = `
+    mutation CreateAttachment($data: AttachmentCreateInput!) {
+      createAttachment(data: $data) {
+        id
+        name
+      }
+    }
+  `;
+
+  const attachmentResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: attachmentMutation,
+      variables: {
+        data: {
+          name: filename,
+          fullPath: filePath,
+          companyId,
+        },
+      },
+    }),
+  });
+
+  const attachmentResult = await attachmentResponse.json();
+
+  if (attachmentResult.errors?.length) {
+    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+  }
+
+  return attachmentResult.data?.createAttachment;
+};
+```
+
+### Passo 3: Personalizar para o seu caso de utilização
+
+#### Para anexar a um objeto diferente
+
+Substitua `companyId` pelo campo apropriado:
+
+| Objeto               | Nome do Campo        |
+| -------------------- | -------------------- |
+| Empresa              | `companyId`          |
+| Pessoa               | `personId`           |
+| Oportunidade         | `opportunityId`      |
+| Objeto personalizado | `yourCustomObjectId` |
+
+Atualize tanto o parâmetro da função como o objeto `variables.data` na mutação de anexo.
+
+#### Para utilizar um URL de PDF dinâmico
+
+Se utilizar um serviço de geração de PDF, pode:
+
+1. Primeiro, faça uma ação de Pedido HTTP para gerar o PDF
+2. Passe o URL do PDF devolvido para a função serverless como parâmetro
+
+```typescript
+export const main = async (
+  params: { companyId: string; pdfUrl: string; filename: string },
+) => {
+  const { companyId, pdfUrl, filename } = params;
+  // ... rest of the function
+};
+```
+
+### Etapa 4: Testar e ativar
+
+1. Guarde o fluxo de trabalho
+2. Aceda a um registo de Empresa
+3. Clique no menu **⋮** e selecione o seu fluxo de trabalho
+4. Verifique a secção **Anexos** no registo para confirmar que o PDF foi anexado
+5. Ative o fluxo de trabalho
+
+## Combinar com Serviços de Geração de PDF
+
+Para criar orçamentos ou faturas dinâmicos:
+
+### Exemplo: Gerar Orçamento → Anexar PDF
+
+| Etapa | Ação                     | Finalidade                                             |
+| ----- | ------------------------ | ------------------------------------------------------ |
+| 1     | Gatilho Manual (Empresa) | O utilizador inicia num registo                        |
+| 2     | Pesquisar Registo        | Obter detalhes da Oportunidade ou dos itens de linha   |
+| 3     | Requisição HTTP          | Chamar a API de geração de PDF com os dados do registo |
+| 4     | Função serverless        | Transferir e anexar o PDF gerado                       |
+
+### Serviços Populares de Geração de PDF
+
+* **Carbone** - Geração de documentos baseada em modelos
+* **PDFMonkey** - Criação dinâmica de PDF a partir de modelos
+* **DocuSeal** - Plataforma de automatização de documentos
+* **Documint** - Geração de documentos orientada a API
+
+Cada serviço fornece uma API que devolve um URL de PDF, que pode depois passar para a função serverless.
+
+## Resolução de Problemas
+
+| Problema                    | Solução                                                                      |
+| --------------------------- | ---------------------------------------------------------------------------- |
+| "Falha ao transferir PDF"   | Verifique se o URL do PDF é acessível e devolve um PDF válido                |
+| "Falha ao carregar"         | Verifique se a sua chave de API é válida e tem permissões de escrita         |
+| "Falha na criação do anexo" | Garanta que o nome do campo de ID do objeto corresponde ao objeto de destino |
+
+## Relacionados
+
+* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+* [Funções serverless](/l/pt/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Gerar um Orçamento ou Fatura a partir do Twenty](/l/pt/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

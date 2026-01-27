@@ -1,11 +1,11 @@
 ---
-title: Folder Architecture
-info: A detailed look into our folder architecture
+title: フォルダ構成
+info: 当社のフォルダ構造の詳細な解説
 ---
 
-In this guide, you will explore the details of the project directory structure and how it contributes to the organization and maintainability of Twenty.
+このガイドでは、プロジェクトのディレクトリ構成の詳細と、それが Twenty の整理と保守性にどのように寄与するかを解説します。
 
-By following this folder architecture convention, it's easier to find the files related to specific features and ensure that the application is scalable and maintainable.
+このフォルダ構成の規約に従うことで、特定の機能に関連するファイルを見つけやすくなり、アプリケーションのスケーラビリティと保守性を確保できます。
 
 ```
 front
@@ -22,14 +22,14 @@ front
 └───...
 ```
 
-## Pages
+## ページ
 
-Includes the top-level components defined by the application routes. They import more low-level components from the modules folder (more details below).
+アプリケーションのルートで定義されたトップレベルのコンポーネントを含みます。 それらは、modules フォルダからより低レベルのコンポーネントをインポートします（詳細は下記を参照）。
 
-## Modules
+## モジュール
 
-Each module represents a feature or a group of feature, comprising its specific components, states, and operational logic.
-They should all follow the structure below. You can nest modules within modules (referred to as submodules) and the same rules will apply.
+各モジュールは、単一の機能または機能のグループを表し、それぞれ固有のコンポーネント、状態、動作ロジックで構成されています。
+以下の構造に従う必要があります。 モジュール内にモジュール（サブモジュール）をネストでき、同じルールが適用されます。
 
 ```
 module1
@@ -50,60 +50,60 @@ module1
   └───utils
 ```
 
-### Contexts
+### コンテキスト
 
-A context is a way to pass data through the component tree without having to pass props down manually at every level.
+コンテキストは、各レベルでプロップスを手動で渡すことなく、コンポーネントツリーを通じてデータを渡す方法です。
 
-See [React Context](https://react.dev/reference/react#context-hooks) for more details.
+詳細は[Reactコンテキスト](https://react.dev/reference/react#context-hooks)を参照してください。
 
 ### GraphQL
 
-Includes fragments, queries, and mutations.
+フラグメント、クエリ、ミューテーションを含みます。
 
-See [GraphQL](https://graphql.org/learn/) for more details.
+詳細は[GraphQL](https://graphql.org/learn/)を参照してください。
 
-* Fragments
+* フラグメント
 
-A fragment is a reusable piece of a query, which you can use in different places. By using fragments, it's easier to avoid duplicating code.
+フラグメントはクエリの再利用可能な一部分で、さまざまな箇所で使用できます。 フラグメントを使用することで、コードを重複させることを避けやすくなります。
 
-See [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) for more details.
+詳細は[GraphQLフラグメント](https://graphql.org/learn/queries/#fragments)を参照してください。
 
-* Queries
+* クエリ
 
-See [GraphQL Queries](https://graphql.org/learn/queries/) for more details.
+詳細は[GraphQLクエリ](https://graphql.org/learn/queries/)を参照してください。
 
-* Mutations
+* ミューテーション
 
-See [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) for more details.
+詳細は[GraphQLミューテーション](https://graphql.org/learn/queries/#mutations)を参照してください。
 
-### Hooks
+### フック
 
-See [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) for more details.
+詳細は[フック](https://react.dev/learn/reusing-logic-with-custom-hooks)を参照してください。
 
-### States
+### ステート
 
-Contains the state management logic. [RecoilJS](https://recoiljs.org) handles this.
+ステート管理のロジックを含みます。 [RecoilJS](https://recoiljs.org) がこれを管理します。
 
-* Selectors: See [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) for more details.
+* セレクター: 詳細は[RecoilJSセレクター](https://recoiljs.org/docs/basic-tutorial/selectors)を参照してください。
 
-React's built-in state management still handles state within a component.
+Reactの組み込みステート管理は依然としてコンポーネント内のステートを処理します。
 
-### Utils
+### ユーティリティ
 
-Should just contain reusable pure functions. Otherwise, create custom hooks in the `hooks` folder.
+再利用可能な純粋関数のみを含むべきです。 それ以外の場合は、`hooks`フォルダにカスタムフックを作成します。
 
 ## UI
 
-Contains all the reusable UI components used in the application.
+アプリケーションで使用される再利用可能なUIコンポーネントをすべて含みます。
 
-This folder can contain sub-folders, like `data`, `display`, `feedback`, and `input` for specific types of components. Each component should be self-contained and reusable, so that you can use it in different parts of the application.
+このフォルダには、特定の種類のコンポーネント用に `data`、`display`、`feedback`、`input` といったサブフォルダを含めることができます。 各コンポーネントは自己完結型で再利用可能でなければならず、アプリケーションのさまざまな部分で使用できます。
 
-By separating the UI components from the other components in the `modules` folder, it's easier to maintain a consistent design and to make changes to the UI without affecting other parts (business logic) of the codebase.
+UIコンポーネントを`modules`フォルダ内の他のコンポーネントから分離することで、一貫したデザインを維持し、UIの変更がコードベースの他の部分（ビジネスロジック）に影響を与えないようにするのが容易になります。
 
-## Interface and dependencies
+## インターフェースと依存関係
 
-You can import other module code from any module except for the `ui` folder. This will keep its code easy to test.
+`ui` フォルダを除く任意のモジュールから、他のモジュールのコードをインポートできます。 これにより、そのコードは簡単にテストできます。
 
-### Internal
+### 内部
 
-Each part (hooks, states, ...) of a module can have an `internal` folder, which contains parts that are just used within the module.
+各部分（フック、ステート、...） は、モジュール内でのみ使用される部分を含む `internal` フォルダを持つことができます。

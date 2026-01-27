@@ -1,32 +1,39 @@
 import { glob } from 'fast-glob';
 import { type ServerlessFunctionManifest } from 'twenty-shared/application';
-import { createLogger } from '../../common/logger';
-import { FUNCTIONS_DIR } from '../../functions/constants';
-import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
-import { type ValidationError } from '../manifest.types';
+import { createLogger } from '@/cli/utilities/build/common/logger';
+
+import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
+import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 import {
   type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
-} from './entity.interface';
+} from '@/cli/utilities/build/manifest/entities/entity-interface';
 
-const logger = createLogger('manifest-watch');
+const logger = createLogger('manifest-builder');
 
 type ExtractedFunctionManifest = Omit<
   ServerlessFunctionManifest,
   'sourceHandlerPath' | 'builtHandlerPath' | 'builtHandlerChecksum'
 > & {
-  handlerPath: string;
+  handler: string;
 };
 
 export class FunctionEntityBuilder
   implements ManifestEntityBuilder<ServerlessFunctionManifest>
 {
-  async build(appPath: string): Promise<EntityBuildResult<ServerlessFunctionManifest>> {
+  async build(
+    appPath: string,
+  ): Promise<EntityBuildResult<ServerlessFunctionManifest>> {
     const functionFiles = await glob(['**/*.function.ts'], {
       cwd: appPath,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
+      ignore: [
+        '**/node_modules/**',
+        '**/*.d.ts',
+        '**/dist/**',
+        '**/.twenty/**',
+      ],
     });
 
     const manifests: ServerlessFunctionManifest[] = [];
@@ -35,20 +42,25 @@ export class FunctionEntityBuilder
       try {
         const absolutePath = `${appPath}/${filePath}`;
 
-        const extracted =
+        const { manifest, exportName } =
           await manifestExtractFromFileServer.extractManifestFromFile<ExtractedFunctionManifest>(
             absolutePath,
-            { entryProperty: 'handler' },
           );
 
-        const { handlerPath, ...rest } = extracted;
+        const { handler: _, ...rest } = manifest;
         // builtHandlerPath is computed from filePath (the .function.ts file)
         // since that's what esbuild actually builds, not handlerPath
         const builtHandlerPath = this.computeBuiltHandlerPath(filePath);
 
+        // For default exports, use 'default.handler'
+        // For named exports like 'export const anyName = ...', use 'anyName.handler'
+        const handlerName =
+          exportName !== null ? `${exportName}.handler` : 'default.handler';
+
         manifests.push({
           ...rest,
-          sourceHandlerPath: handlerPath,
+          handlerName,
+          sourceHandlerPath: filePath,
           builtHandlerPath,
           builtHandlerChecksum: null,
         });
@@ -63,9 +75,7 @@ export class FunctionEntityBuilder
   }
 
   private computeBuiltHandlerPath(sourceHandlerPath: string): string {
-    const builtPath = sourceHandlerPath.replace(/\.tsx?$/, '.mjs');
-
-    return `${FUNCTIONS_DIR}/${builtPath}`;
+    return sourceHandlerPath.replace(/\.tsx?$/, '.mjs');
   }
 
   validate(

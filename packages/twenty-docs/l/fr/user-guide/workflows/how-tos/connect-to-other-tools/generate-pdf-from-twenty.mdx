@@ -1,0 +1,228 @@
+---
+title: Générer un PDF depuis Twenty
+description: Créez un flux de travail pour générer et joindre un PDF (par exemple un devis) à un enregistrement.
+---
+
+Générez ou récupérez automatiquement un PDF et joignez-le à un enregistrement dans Twenty. Cette fonctionnalité est couramment utilisée pour créer des devis, des factures ou des rapports liés aux Entreprises, aux Opportunités ou à d'autres objets.
+
+## Vue d'ensemble
+
+Ce flux de travail utilise un **Déclencheur manuel** afin que les utilisateurs puissent générer un PDF à la demande pour tout enregistrement sélectionné. Une **Fonction sans serveur** gère :
+
+1. Téléchargement du PDF depuis une URL (provenant d'un service de génération de PDF)
+2. Téléversement du fichier dans Twenty
+3. Création d'une pièce jointe liée à l'enregistrement
+
+## Prérequis
+
+Avant de configurer le flux de travail :
+
+1. **Créer une clé API** : Allez dans **Settings → APIs** et créez une nouvelle clé API. Vous aurez besoin de ce jeton pour la fonction sans serveur.
+2. **Configurer un service de génération de PDF** (facultatif) : Si vous souhaitez générer des PDF dynamiquement (par exemple, des devis), utilisez un service comme Carbone, PDFMonkey ou DocuSeal pour créer le PDF et obtenir une URL de téléchargement.
+
+## Configuration pas à pas
+
+### Étape 1 : Configurer le déclencheur
+
+1. Allez dans **Flux de travail** et créez un nouveau flux de travail
+2. Sélectionnez **Déclencheur manuel**
+3. Choisissez l'objet auquel vous souhaitez joindre des PDF (par exemple, **Entreprise** ou **Opportunité**)
+
+<Tip>
+  Avec un déclencheur manuel, les utilisateurs peuvent exécuter ce flux de travail à l'aide d'un bouton qui apparaît en haut à droite une fois un enregistrement sélectionné, afin de générer et de joindre un PDF.
+</Tip>
+
+### Étape 2 : Ajouter une fonction sans serveur
+
+1. Ajoutez une action **Fonction sans serveur**
+2. Créez une nouvelle fonction avec le code ci-dessous
+3. Configurez les paramètres d'entrée
+
+#### Paramètres d'entrée
+
+| Paramètre   | Valeur                  |
+| ----------- | ----------------------- |
+| `companyId` | `{{trigger.object.id}}` |
+
+<Note>
+  Si vous joignez à un objet différent (Personne, Opportunité, etc.), renommez le paramètre en conséquence (par exemple, `personId`, `opportunityId`) et mettez à jour la fonction sans serveur.
+</Note>
+
+#### Code de la fonction sans serveur
+
+```typescript
+export const main = async (
+  params: { companyId: string },
+) => {
+  const { companyId } = params;
+
+  // Replace with your Twenty GraphQL endpoint
+  // Cloud: https://api.twenty.com/graphql
+  // Self-hosted: https://your-domain.com/graphql
+  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  // Replace with your API key from Settings → APIs
+  const authToken = 'YOUR_API_KEY';
+
+  // Replace with your PDF URL
+  // This could be from a PDF generation service or a static URL
+  const pdfUrl = 'https://your-pdf-service.com/generated-quote.pdf';
+  const filename = 'quote.pdf';
+
+  // Step 1: Download the PDF file
+  const pdfResponse = await fetch(pdfUrl);
+
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBlob = await pdfResponse.blob();
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Step 2: Upload the file via GraphQL multipart upload
+  const uploadMutation = `
+    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+      uploadFile(file: $file, fileFolder: $fileFolder) {
+        path
+      }
+    }
+  `;
+
+  const uploadForm = new FormData();
+  uploadForm.append('operations', JSON.stringify({
+    query: uploadMutation,
+    variables: { file: null, fileFolder: 'Attachment' },
+  }));
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
+
+  const uploadResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${authToken}` },
+    body: uploadForm,
+  });
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  }
+
+  const filePath = uploadResult.data?.uploadFile?.path;
+
+  if (!filePath) {
+    throw new Error('No file path returned from upload');
+  }
+
+  // Step 3: Create the attachment linked to the company
+  const attachmentMutation = `
+    mutation CreateAttachment($data: AttachmentCreateInput!) {
+      createAttachment(data: $data) {
+        id
+        name
+      }
+    }
+  `;
+
+  const attachmentResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: attachmentMutation,
+      variables: {
+        data: {
+          name: filename,
+          fullPath: filePath,
+          companyId,
+        },
+      },
+    }),
+  });
+
+  const attachmentResult = await attachmentResponse.json();
+
+  if (attachmentResult.errors?.length) {
+    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+  }
+
+  return attachmentResult.data?.createAttachment;
+};
+```
+
+### Étape 3 : Personnaliser selon votre cas d'utilisation
+
+#### Pour joindre à un objet différent
+
+Remplacez `companyId` par le champ approprié :
+
+| Objet              | Nom du champ         |
+| ------------------ | -------------------- |
+| Entreprise         | `companyId`          |
+| Personne           | `personId`           |
+| Opportunité        | `opportunityId`      |
+| Objet personnalisé | `yourCustomObjectId` |
+
+Mettez à jour à la fois le paramètre de la fonction et l'objet `variables.data` dans la mutation de pièce jointe.
+
+#### Pour utiliser une URL de PDF dynamique
+
+Si vous utilisez un service de génération de PDF, vous pouvez :
+
+1. Commencez par créer une action HTTP Request pour générer le PDF
+2. Transmettez l'URL du PDF retournée à la fonction sans serveur en tant que paramètre
+
+```typescript
+export const main = async (
+  params: { companyId: string; pdfUrl: string; filename: string },
+) => {
+  const { companyId, pdfUrl, filename } = params;
+  // ... rest of the function
+};
+```
+
+### Étape 4 : Tester et activer
+
+1. Enregistrez le flux de travail
+2. Accédez à un enregistrement d'Entreprise
+3. Cliquez sur le menu **⋮** et sélectionnez votre flux de travail
+4. Vérifiez la section **Pièces jointes** de l'enregistrement pour confirmer que le PDF a été joint
+5. Activez le flux de travail
+
+## Combiner avec des services de génération de PDF
+
+Pour créer des devis ou des factures dynamiques :
+
+### Exemple : Générer un devis → Joindre le PDF
+
+| Étape | Action                          | Objectif                                                                |
+| ----- | ------------------------------- | ----------------------------------------------------------------------- |
+| 1     | Déclencheur manuel (Entreprise) | L'utilisateur lance l'action depuis un enregistrement                   |
+| 2     | Rechercher un enregistrement    | Obtenir les détails de l'Opportunité ou des lignes d'articles           |
+| 3     | Requête HTTP                    | Appeler l'API de génération de PDF avec les données de l'enregistrement |
+| 4     | Fonction sans serveur           | Télécharger et joindre le PDF généré                                    |
+
+### Services populaires de génération de PDF
+
+* **Carbone** - Génération de documents basée sur des modèles
+* **PDFMonkey** - Création de PDF dynamiques à partir de modèles
+* **DocuSeal** - Plateforme d'automatisation de documents
+* **Documint** - Génération de documents axée sur l'API
+
+Chaque service fournit une API qui renvoie une URL de PDF, que vous pouvez ensuite transmettre à la fonction sans serveur.
+
+## Résolution des problèmes
+
+| Problème                                  | Solution                                                                      |
+| ----------------------------------------- | ----------------------------------------------------------------------------- |
+| "Échec du téléchargement du PDF"          | Vérifiez que l'URL du PDF est accessible et renvoie un PDF valide             |
+| "Échec du téléversement"                  | Vérifiez que votre clé API est valide et dispose des autorisations d'écriture |
+| "Échec de la création de la pièce jointe" | Assurez-vous que le nom du champ d'ID d'objet correspond à votre objet cible  |
+
+## Articles connexes
+
+* [Déclencheurs de workflows](/l/fr/user-guide/workflows/capabilities/workflow-triggers)
+* [Fonctions sans serveur](/l/fr/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Générer un devis ou une facture depuis Twenty](/l/fr/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

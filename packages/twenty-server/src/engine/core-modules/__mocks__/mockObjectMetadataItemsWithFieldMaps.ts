@@ -36,7 +36,7 @@ const personFlatObject = getFlatObjectMetadataMock({
   imageIdentifierFieldMetadataId: null,
   workspaceId,
   universalIdentifier: '20202020-8dec-43d5-b2ff-6eef05095bec',
-  fieldMetadataIds: [personNameFieldId],
+  fieldIds: [personNameFieldId],
   indexMetadataIds: [],
   viewIds: [],
 });
@@ -61,7 +61,7 @@ const companyFlatObject = getFlatObjectMetadataMock({
   imageIdentifierFieldMetadataId: null,
   workspaceId,
   universalIdentifier: '20202020-c03c-45d6-a4b0-04afe1357c5c',
-  fieldMetadataIds: [companyNameFieldId, companyDomainNameFieldId],
+  fieldIds: [companyNameFieldId, companyDomainNameFieldId],
   indexMetadataIds: [],
   viewIds: [],
 });
@@ -86,7 +86,7 @@ const customObjectFlatObject = getFlatObjectMetadataMock({
   imageIdentifierFieldMetadataId: customObjectImageFieldId,
   workspaceId,
   universalIdentifier: '20202020-3d75-4aab-bacd-ee176c5f63ca',
-  fieldMetadataIds: [customObjectNameFieldId, customObjectImageFieldId],
+  fieldIds: [customObjectNameFieldId, customObjectImageFieldId],
   indexMetadataIds: [],
   viewIds: [],
 });
@@ -111,7 +111,7 @@ const nonSearchableFlatObject = getFlatObjectMetadataMock({
   imageIdentifierFieldMetadataId: null,
   workspaceId,
   universalIdentifier: '20202020-540c-4397-b872-2a90ea2fb809',
-  fieldMetadataIds: [],
+  fieldIds: [],
   indexMetadataIds: [],
   viewIds: [],
 });

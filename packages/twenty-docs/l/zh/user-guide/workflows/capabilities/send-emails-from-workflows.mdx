@@ -1,149 +1,168 @@
 ---
-title: Send Emails from Workflows
-description: Send personalized emails automatically using workflow actions.
+title: 通过工作流发送电子邮件
+description: 使用工作流操作自动发送个性化电子邮件。
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Automatically send emails when specific events occur in your CRM—welcome new contacts, follow up on opportunities, or notify team members.
+当您的 CRM 中发生特定事件时自动发送电子邮件——欢迎新联系人、跟进机会，或通知团队成员。
 
-## Prerequisites
+## 先决条件
 
-Before you can send emails from workflows:
+在您可以通过工作流发送电子邮件之前：
 
-1. Connect an email account under **Settings → Accounts**
-2. Ensure the account has sending permissions enabled
+1. 在 **Settings → Accounts** 下连接电子邮件帐户
+2. 确保该帐户已启用发送权限
 
-## Basic Email Workflow
+## 基础电子邮件工作流
 
-### Example: Welcome Email for New Contacts
+### 示例：新联系人的欢迎电子邮件
 
-**Goal**: Send a welcome email when a new person is added to the CRM.
+**目标**：当 CRM 中添加新联系人时，发送一封欢迎电子邮件。
 
-**Setup**:
+**设置**：
 
-1. **Create workflow**: Go to **Settings → Workflows** and click **+ New Workflow**
+1. **创建工作流**：转到 **Settings → Workflows** 并点击 **+ New Workflow**
 
-2. **Add trigger**: Select **Record is Created** → **People**
+2. **添加触发器**：选择 **Record is Created** → **People**
 
-3. **Add Send Email action**:
-   * Click **+** to add an action
-   * Select **Send Email**
-   * Configure the email:
+3. **添加 Send Email 操作**：
+   * 点击 **+** 以添加一个操作
+   * 选择 **Send Email**
+   * 配置电子邮件：
 
-| Field       | Value                                  |
-| ----------- | -------------------------------------- |
-| **To**      | `{{trigger.object.email}}`             |
-| **Subject** | `Welcome to {{Your Company Name}}`     |
-| **Body**    | `Hi {{trigger.object.firstName}}, ...` |
+| 字段      | 值                                      |
+| ------- | -------------------------------------- |
+| **收件人** | `{{trigger.object.email}}`             |
+| **主题**  | `欢迎来到 {{Your Company Name}}`           |
+| **正文**  | `Hi {{trigger.object.firstName}}, ...` |
 
-4. **Test and activate**: Test with a sample record, then activate
+4. **测试并激活**：使用示例记录进行测试，然后激活
 
-## Using Variables in Emails
+## 在电子邮件中使用变量
 
-Reference data from previous steps using `{{variable}}` syntax:
+使用 `{{variable}}` 语法引用前面步骤中的数据：
 
 ```text
 Hi {{trigger.object.firstName}},
 
-Thank you for connecting with us!
+感谢与我们建立联系！
 
-Your company, {{trigger.object.company.name}}, is now in our system.
+贵公司 {{trigger.object.company.name}} 现已加入我们的系统。
 
-Best regards,
-The Team
+此致敬礼，
+团队
 ```
 
-### Available Variables from Triggers
+### 触发器中的可用变量
 
-| Trigger Type               | Common Variables                       |
-| -------------------------- | -------------------------------------- |
-| **Record Created/Updated** | `{{trigger.object.fieldName}}`         |
-| **Manual**                 | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook**                | `{{trigger.body.fieldName}}`           |
+| 触发类型          | 常用变量                                   |
+| ------------- | -------------------------------------- |
+| **记录已创建/已更新** | `{{trigger.object.fieldName}}`         |
+| **手动**        | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**   | `{{trigger.body.fieldName}}`           |
 
-## Advanced: Conditional Emails
+## 高级：条件邮件
 
-### Example: Different Emails Based on Lead Source
+### 示例：基于线索来源发送不同邮件
 
-**Goal**: Send different welcome emails based on where the lead came from.
+**目标**：根据线索来源发送不同的欢迎邮件。
 
-**Setup**:
+**设置**：
 
-1. **Trigger**: Record is Created (People)
+1. **触发器**：Record is Created（People）
 
-2. **Add Filter action**:
-   * Condition: `{{trigger.object.source}}` equals `"Website"`
-   * If true → continue to website welcome email
+2. **添加 Filter 操作**：
+   * 条件：`{{trigger.object.source}}` 等于 "Website"
+   * 如果为真 → 继续发送网站渠道的欢迎邮件
 
-3. **Branch for other sources**:
-   * Create parallel branches for different sources
-   * Each branch has its own Send Email action
+3. **其他来源的分支**：
+   * 为不同来源创建并行分支
+   * 每个分支都有其自己的 Send Email 操作
 
-## Sending Emails to Multiple Recipients
+## 向多个收件人发送电子邮件
 
-### Example: Notify Team When Deal Closes
+### 示例：交易达成时通知团队
 
-**Goal**: Email the sales rep and their manager when an opportunity is won.
+**目标**：当机会赢单时，向销售代表及其经理发送电子邮件。
 
-**Setup**:
+**设置**：
 
-1. **Trigger**: Record is Updated (Opportunities, Stage = "Closed Won")
+1. **触发器**：记录已更新（Opportunities，Stage = "Closed Won"）
 
-2. **Search Records**: Find the opportunity owner's manager
+2. **搜索记录**：查找机会所有者的经理
 
-3. **Send Email #1**: To opportunity owner
-   * To: `{{trigger.object.owner.email}}`
-   * Subject: `Congratulations on closing {{trigger.object.name}}!`
+3. **发送邮件 #1**：发送给机会所有者
+   * 收件人：`{{trigger.object.owner.email}}`
+   * 主题：`Congratulations on closing {{trigger.object.name}}!`
 
-4. **Send Email #2**: To manager
-   * To: `{{searchRecords.manager.email}}`
-   * Subject: `Deal Won: {{trigger.object.name}}`
+4. **发送邮件 #2**：发送给经理
+   * 收件人：`{{searchRecords.manager.email}}`
+   * 主题：`Deal Won: {{trigger.object.name}}`
 
-## Scheduled Follow-up Emails
+## 定时跟进邮件
 
-### Example: Follow Up 3 Days After Meeting
+### 示例：会议后 3 天进行跟进
 
-**Goal**: Send a follow-up email 3 days after a meeting is logged.
+**目标**：在会议被记录后 3 天发送一封跟进邮件。
 
-**Setup**:
+**设置**：
 
-1. **Trigger**: Record is Created (Activities, Type = "Meeting")
+1. **触发器**：记录创建（Activities，Type = "Meeting"）
 
-2. **Delay action**: Wait 3 days
+2. **延迟操作**：等待 3 天
 
-3. **Send Email**:
-   * To: Meeting attendee
-   * Subject: Following up on our conversation
-   * Body: Reference meeting details from trigger
+3. **发送邮件**：
+   * 收件人：会议参与者
+   * 主题：就我们的交流进行跟进
+   * 正文：参考触发器中的会议详细信息
 
-## Best Practices
+## 电子邮件附件
 
-### Email Content
+您可以将文件附加到由工作流发送的电子邮件中。 该附件是在配置工作流时上传的静态文件。
 
-* Keep subject lines concise and relevant
-* Personalize with recipient's name
-* Include a clear call to action
-* Test emails before activating
+### 如何添加附件
 
-### Deliverability
+1. 在 **Send Email** 操作中，点击 **Attachments** 按钮
+2. 点击以从您的计算机上传文件
+3. 该文件将附加到此操作发送的所有电子邮件中
 
-* Don't send too many emails too quickly
-* Use professional email signatures
-* Avoid spam trigger words
-* Ensure unsubscribe options for marketing emails
+### 常见使用案例
 
-### Troubleshooting
-
-* Verify email account is connected and active
-* Check recipient email address is valid
-* Review workflow runs for error messages
-* Test with your own email address first
+| 用例       | 示例文件        |
+| -------- | ----------- |
+| **欢迎邮件** | 公司宣传册 (PDF) |
+| **入门序列** | 入门指南        |
+| **销售跟进** | 产品目录或价目表    |
+| **活动确认** | 活动详情或议程     |
 
 <Note>
-  **Coming soon**: Email attachments will be available in Q1 2026.
+  附件是静态的——将向所有收件人发送相同的文件。 对于动态文档（如个性化报价），请使用 [无服务器函数](/l/zh/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty) 生成并附加文件。
 </Note>
 
-## Related
+## 最佳实践
 
-* [Workflow Triggers](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/zh/user-guide/workflows/capabilities/workflow-actions)
+### 电子邮件内容
+
+* 保持主题行简洁且相关
+* 使用收件人姓名进行个性化
+* 包含明确的行动号召
+* 在激活之前测试邮件
+
+### 送达率
+
+* 不要在短时间内发送过多电子邮件
+* 使用专业的电子邮件签名
+* 避免使用垃圾邮件触发词
+* 确保营销邮件提供退订选项
+
+### 故障排除
+
+* 确认电子邮件帐户已连接且处于活动状态
+* 检查收件人的电子邮件地址是否有效
+* 查看工作流运行中的错误消息
+* 先使用您自己的电子邮件地址进行测试
+
+## 相关内容
+
+* [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
+* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)

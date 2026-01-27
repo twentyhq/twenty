@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLEnumType } from 'graphql';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeEnumFieldGqlTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
@@ -13,7 +13,6 @@ import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metad
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
-import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
 export class EnumFieldMetadataGqlEnumTypeGenerator {

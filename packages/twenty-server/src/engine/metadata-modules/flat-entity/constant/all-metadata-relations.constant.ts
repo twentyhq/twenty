@@ -106,6 +106,11 @@ export const ALL_METADATA_RELATIONS = {
         flatEntityForeignKeyAggregator: null,
         foreignKey: 'folderId',
       },
+      view: {
+        metadataName: 'view',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'viewId',
+      },
     },
     oneToMany: {},
   },
@@ -113,7 +118,7 @@ export const ALL_METADATA_RELATIONS = {
     manyToOne: {
       object: {
         metadataName: 'objectMetadata',
-        flatEntityForeignKeyAggregator: 'fieldMetadataIds',
+        flatEntityForeignKeyAggregator: 'fieldIds',
         foreignKey: 'objectMetadataId',
       },
       workspace: null,

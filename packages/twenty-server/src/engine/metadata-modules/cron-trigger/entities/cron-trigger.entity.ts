@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -28,7 +29,7 @@ export class CronTriggerEntity
   id: string;
 
   @Column({ nullable: false, type: 'jsonb' })
-  settings: CronTriggerSettings;
+  settings: JsonbProperty<CronTriggerSettings>;
 
   @ManyToOne(
     () => ServerlessFunctionEntity,

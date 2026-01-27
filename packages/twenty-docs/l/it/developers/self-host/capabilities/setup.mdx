@@ -291,31 +291,31 @@ yarn command:prod cron:workflow:automated-cron-trigger
   **Modalità solo ambiente:** Se imposti `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, aggiungi queste variabili al tuo file `.env` invece.
 </Warning>
 
-## Serverless Functions
+## Funzioni serverless
 
-Twenty supports serverless functions for workflows and custom logic. The execution environment is configured via the `SERVERLESS_TYPE` environment variable.
+Twenty supporta le funzioni serverless per i workflow e la logica personalizzata. L'ambiente di esecuzione è configurato tramite la variabile di ambiente `SERVERLESS_TYPE`.
 
 <Warning>
-  **Security Notice:** The local serverless driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. It should only be used for trusted code in development. For production deployments handling untrusted code, we highly recommend using `SERVERLESS_TYPE=LAMBDA` or `SERVERLESS_TYPE=DISABLED`.
+  **Avviso di sicurezza:** Il driver serverless locale (`SERVERLESS_TYPE=LOCAL`) esegue il codice direttamente sull'host in un processo Node.js senza sandboxing. Dovrebbe essere utilizzato solo per codice attendibile in fase di sviluppo. Per le distribuzioni in produzione che gestiscono codice non attendibile, consigliamo vivamente di usare `SERVERLESS_TYPE=LAMBDA` o `SERVERLESS_TYPE=DISABLED`.
 </Warning>
 
-### Available Drivers
+### Driver disponibili
 
-| Driver   | Environment Variable       | Caso d'uso                            | Security Level                  |
-| -------- | -------------------------- | ------------------------------------- | ------------------------------- |
-| Disabled | `SERVERLESS_TYPE=DISABLED` | Disable serverless functions entirely | N/A                             |
-| Local    | `SERVERLESS_TYPE=LOCAL`    | Development and trusted environments  | Low (no sandboxing)             |
-| Lambda   | `SERVERLESS_TYPE=LAMBDA`   | Production with untrusted code        | High (hardware-level isolation) |
+| Driver       | Variabile di ambiente      | Caso d'uso                                      | Livello di sicurezza                 |
+| ------------ | -------------------------- | ----------------------------------------------- | ------------------------------------ |
+| Disabilitato | `SERVERLESS_TYPE=DISABLED` | Disabilita completamente le funzioni serverless | N/A                                  |
+| Locale       | `SERVERLESS_TYPE=LOCAL`    | Ambienti di sviluppo e attendibili              | Basso (nessuna sandbox)              |
+| Lambda       | `SERVERLESS_TYPE=LAMBDA`   | Produzione con codice non attendibile           | Alto (isolamento a livello hardware) |
 
-### Recommended Configuration
+### Configurazione consigliata
 
-**For development:**
+**Per lo sviluppo:**
 
 ```bash
 SERVERLESS_TYPE=LOCAL  # default
 ```
 
-**For production (AWS):**
+**Per la produzione (AWS):**
 
 ```bash
 SERVERLESS_TYPE=LAMBDA
@@ -325,12 +325,12 @@ SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
 SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**To disable serverless functions:**
+**Per disabilitare le funzioni serverless:**
 
 ```bash
 SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a serverless function will return an error. This is useful if you want to run Twenty without serverless function capabilities.
+  Quando si utilizza `SERVERLESS_TYPE=DISABLED`, qualsiasi tentativo di eseguire una funzione serverless restituirà un errore. Ciò è utile se si desidera eseguire Twenty senza il supporto per le funzioni serverless.
 </Note>

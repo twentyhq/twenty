@@ -1,22 +1,16 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
-  type FieldMetadataMultiItemSettings,
+  type AllFieldMetadataSettings,
+  type FieldMetadataDefaultValueForAnyType,
+  type FieldMetadataDefaultValueMapping,
+  type FieldMetadataOptionForAnyType,
+  type FieldMetadataSettingsMapping,
   type FieldMetadataType,
   type NullablePartial,
-  type AllFieldMetadataSettings,
-  type FieldMetadataDateSettings,
-  type FieldMetadataDateTimeSettings,
-  type FieldMetadataNumberSettings,
-  type FieldMetadataRelationSettings,
-  type FieldMetadataTextSettings,
 } from 'twenty-shared/types';
 import { type Relation as TypeOrmRelation } from 'typeorm';
 
-import {
-  type FieldMetadataDefaultValueForAnyType,
-  type FieldMetadataDefaultValueForType,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
-
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
@@ -138,69 +132,109 @@ type SettingsAssertions = [
   Expect<
     HasAllProperties<
       TextFieldMetadata,
-      { settings: FieldMetadataTextSettings | null }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.TEXT]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       NumberFieldMetadata,
-      { settings: FieldMetadataNumberSettings | null }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.NUMBER]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       DateFieldMetadata,
-      { settings: FieldMetadataDateSettings | null }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.DATE]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       DateTimeFieldMetadata,
-      { settings: FieldMetadataDateTimeSettings | null }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.DATE_TIME]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       ArrayFieldMetadata,
-      { settings: FieldMetadataMultiItemSettings | null }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.ARRAY]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       PhonesFieldMetadata,
-      { settings: FieldMetadataMultiItemSettings | null }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.PHONES]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       EmailsFieldMetadata,
-      { settings: FieldMetadataMultiItemSettings | null }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.EMAILS]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       LinksFieldMetadata,
-      { settings: FieldMetadataMultiItemSettings | null }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.LINKS]
+        >;
+      }
     >
   >,
 
   Expect<
     HasAllProperties<
       RelationFieldMetadata,
-      { settings: FieldMetadataRelationSettings }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.RELATION]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       MorphRelationFieldMetadata,
-      { settings: FieldMetadataRelationSettings }
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.MORPH_RELATION]
+        >;
+      }
     >
   >,
 
   Expect<
     HasAllProperties<
       AbstractFieldMetadata,
-      { settings: AllFieldMetadataSettings | null }
+      { settings: JsonbProperty<AllFieldMetadataSettings> | null }
     >
   >,
 ];
@@ -210,20 +244,30 @@ type DefaultValueAssertions = [
   Expect<
     HasAllProperties<
       UUIDFieldMetadata,
-      { defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.UUID> }
+      {
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.UUID]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       TextFieldMetadata,
-      { defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.TEXT> }
+      {
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.TEXT]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       NumberFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.NUMBER>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.NUMBER]
+        >;
       }
     >
   >,
@@ -231,21 +275,29 @@ type DefaultValueAssertions = [
     HasAllProperties<
       BooleanFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.BOOLEAN>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.BOOLEAN]
+        >;
       }
     >
   >,
   Expect<
     HasAllProperties<
       DateFieldMetadata,
-      { defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.DATE> }
+      {
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.DATE]
+        >;
+      }
     >
   >,
   Expect<
     HasAllProperties<
       DateTimeFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.DATE_TIME>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.DATE_TIME]
+        >;
       }
     >
   >,
@@ -253,7 +305,9 @@ type DefaultValueAssertions = [
     HasAllProperties<
       CurrencyFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.CURRENCY>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.CURRENCY]
+        >;
       }
     >
   >,
@@ -261,7 +315,9 @@ type DefaultValueAssertions = [
     HasAllProperties<
       FullNameFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.FULL_NAME>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.FULL_NAME]
+        >;
       }
     >
   >,
@@ -269,7 +325,9 @@ type DefaultValueAssertions = [
     HasAllProperties<
       RatingFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.RATING>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.RATING]
+        >;
       }
     >
   >,
@@ -277,7 +335,9 @@ type DefaultValueAssertions = [
     HasAllProperties<
       SelectFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.SELECT>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.SELECT]
+        >;
       }
     >
   >,
@@ -285,7 +345,9 @@ type DefaultValueAssertions = [
     HasAllProperties<
       MultiSelectFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.MULTI_SELECT>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.MULTI_SELECT]
+        >;
       }
     >
   >,
@@ -293,7 +355,9 @@ type DefaultValueAssertions = [
     HasAllProperties<
       PositionFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.POSITION>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.POSITION]
+        >;
       }
     >
   >,
@@ -301,7 +365,9 @@ type DefaultValueAssertions = [
     HasAllProperties<
       RawJsonFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.RAW_JSON>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.RAW_JSON]
+        >;
       }
     >
   >,
@@ -309,7 +375,9 @@ type DefaultValueAssertions = [
     HasAllProperties<
       RichTextFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.RICH_TEXT>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.RICH_TEXT]
+        >;
       }
     >
   >,
@@ -317,7 +385,9 @@ type DefaultValueAssertions = [
     HasAllProperties<
       ActorFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.ACTOR>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.ACTOR]
+        >;
       }
     >
   >,
@@ -325,7 +395,9 @@ type DefaultValueAssertions = [
     HasAllProperties<
       ArrayFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.ARRAY>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.ARRAY]
+        >;
       }
     >
   >,
@@ -333,7 +405,9 @@ type DefaultValueAssertions = [
     HasAllProperties<
       PhonesFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.PHONES>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.PHONES]
+        >;
       }
     >
   >,
@@ -341,7 +415,9 @@ type DefaultValueAssertions = [
     HasAllProperties<
       EmailsFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.EMAILS>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.EMAILS]
+        >;
       }
     >
   >,
@@ -349,7 +425,9 @@ type DefaultValueAssertions = [
     HasAllProperties<
       LinksFieldMetadata,
       {
-        defaultValue: FieldMetadataDefaultValueForType<FieldMetadataType.LINKS>;
+        defaultValue: JsonbProperty<
+          FieldMetadataDefaultValueMapping[FieldMetadataType.LINKS]
+        >;
       }
     >
   >,
@@ -364,7 +442,9 @@ type DefaultValueAssertions = [
   Expect<
     HasAllProperties<
       AbstractFieldMetadata,
-      { defaultValue: FieldMetadataDefaultValueForAnyType | null }
+      {
+        defaultValue: JsonbProperty<FieldMetadataDefaultValueForAnyType | null>;
+      }
     >
   >,
 ];
@@ -378,19 +458,19 @@ type OptionsAssertions = [
   Expect<
     HasAllProperties<
       RatingFieldMetadata,
-      { options: FieldMetadataDefaultOption[] }
+      { options: JsonbProperty<FieldMetadataDefaultOption[]> }
     >
   >,
   Expect<
     HasAllProperties<
       SelectFieldMetadata,
-      { options: FieldMetadataComplexOption[] }
+      { options: JsonbProperty<FieldMetadataComplexOption[]> }
     >
   >,
   Expect<
     HasAllProperties<
       MultiSelectFieldMetadata,
-      { options: FieldMetadataComplexOption[] }
+      { options: JsonbProperty<FieldMetadataComplexOption[]> }
     >
   >,
 
@@ -417,9 +497,7 @@ type OptionsAssertions = [
     HasAllProperties<
       AbstractFieldMetadata,
       {
-        options:
-          | null
-          | (FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]);
+        options: JsonbProperty<FieldMetadataOptionForAnyType>;
       }
     >
   >,

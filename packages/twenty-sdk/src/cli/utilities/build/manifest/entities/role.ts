@@ -1,22 +1,27 @@
 import { glob } from 'fast-glob';
 import { type RoleManifest } from 'twenty-shared/application';
-import { createLogger } from '../../common/logger';
-import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
-import { type ValidationError } from '../manifest.types';
+import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
+import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 import {
   type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
-} from './entity.interface';
+} from '@/cli/utilities/build/manifest/entities/entity-interface';
+import { createLogger } from '@/cli/utilities/build/common/logger';
 
-const logger = createLogger('manifest-watch');
+const logger = createLogger('manifest-builder');
 
 export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
   async build(appPath: string): Promise<EntityBuildResult<RoleManifest>> {
     const roleFiles = await glob(['**/*.role.ts'], {
       cwd: appPath,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
+      ignore: [
+        '**/node_modules/**',
+        '**/*.d.ts',
+        '**/dist/**',
+        '**/.twenty/**',
+      ],
     });
 
     const manifests: RoleManifest[] = [];
@@ -25,9 +30,12 @@ export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
       try {
         const absolutePath = `${appPath}/${filePath}`;
 
-        manifests.push(
-          await manifestExtractFromFileServer.extractManifestFromFile<RoleManifest>(absolutePath),
-        );
+        const { manifest } =
+          await manifestExtractFromFileServer.extractManifestFromFile<RoleManifest>(
+            absolutePath,
+          );
+
+        manifests.push(manifest);
       } catch (error) {
         throw new Error(
           `Failed to load role from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,

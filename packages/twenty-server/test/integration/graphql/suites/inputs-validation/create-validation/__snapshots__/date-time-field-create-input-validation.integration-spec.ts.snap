@@ -6,7 +6,7 @@ exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIM
 
 exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":{}} 1`] = `"Invalid value {} for date or date-time field "dateTimeField""`;
 
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":1} 1`] = `"invalid input syntax for type timestamp with time zone: "1""`;
+exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":1} 1`] = `"Invalid DATE_TIME field "dateTimeField", value: "1", it should be a string or Date instance, (current type : number)."`;
 
 exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":true} 1`] = `"Invalid value true for date or date-time field "dateTimeField""`;
 
@@ -16,6 +16,6 @@ exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TI
 
 exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":{}} 1`] = `"["Invalid value {} for date or date-time field \\"dateTimeField\\""]"`;
 
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":1} 1`] = `"["invalid input syntax for type timestamp with time zone: \\"1\\""]"`;
+exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":1} 1`] = `"["Invalid DATE_TIME field \\"dateTimeField\\", value: \\"1\\", it should be a string or Date instance, (current type : number)."]"`;
 
 exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":true} 1`] = `"["Invalid value true for date or date-time field \\"dateTimeField\\""]"`;

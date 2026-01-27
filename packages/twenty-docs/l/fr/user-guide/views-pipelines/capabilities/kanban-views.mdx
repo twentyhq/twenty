@@ -1,99 +1,99 @@
 ---
-title: Kanban Board Views
-description: Learn how to use Kanban views to visualize and manage your workflows.
+title: Vues du tableau Kanban
+description: Apprenez à utiliser les vues Kanban pour visualiser et gérer vos flux de travail.
 image: /images/user-guide/kanban-views/kanban.png
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Kanban Views
+## À propos des Vues Kanban
 
-Kanban views visually map out process flows, where each column stands for a distinct stage and each card represents a record.
+Les vues Kanban cartographient visuellement les flux de processus, où chaque colonne représente une étape distincte et chaque carte représente un enregistrement.
 
-## Move Cards between Stages
+## Déplacer les Cartes entre les Étapes
 
-You can move each card between stages as it goes through your workflow by dragging and dropping. To proceed, hold your click on a card and move it to the next stage.
+Vous pouvez déplacer chaque carte entre les étapes au fur et à mesure qu'elle progresse dans votre flux de travail en la glissant et la déposant. Pour continuer, maintenez votre clic sur une carte et déplacez-la à l'étape suivante.
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="Démonstration vidéo" />
 
-## Add and Delete Stages
+## Ajouter et supprimer des étapes
 
-You can tailor your workflow to suit your needs using stages, which represent a value in a Select Field:
+Vous pouvez adapter votre flux de travail à vos besoins en utilisant des étapes, qui représentent une valeur dans un champ de sélection :
 
-### Add Stages
+### Ajouter des étapes
 
-To add a stage, access the Select field settings by navigating to Settings > Data Model, selecting your object, and then the field your Kanban board depends on.
+Pour ajouter une étape, accédez aux paramètres du champ de sélection en naviguant vers Paramètres > Modèle de données, sélectionnez votre objet, puis le champ dont dépend votre tableau Kanban.
 
-<VimeoEmbed videoId="927890428" title="Video demonstration" />
+<VimeoEmbed videoId="927890428" title="Démonstration vidéo" />
 
-### Remove Stages
+### Supprimer des Étapes
 
-To remove a stage, hover the stage name or the `⋮` icon, click `Edit from settings` in the Select field settings, and then click **Delete** next to the relevant stage.
+Pour supprimer une étape, survolez le nom de l'étape ou l'icône `⋮`, cliquez sur `Modifier depuis les réglages` dans les paramètres du champ de sélection, puis cliquez sur **Supprimer** à côté de l'étape concernée.
 
-## Display Fields
+## Afficher les champs
 
-You can configure your Kanban board to display some fields and hide others. To hide a field, click on **Options** on the top right, then on **Fields** to bring up the list of options. Look for the field needed in the Hidden Fields section and click on the eye button to display the field.
+Vous pouvez configurer votre tableau Kanban pour afficher certains champs et en masquer d'autres. Pour masquer un champ, cliquez sur **Options** en haut à droite, puis sur **Champs** pour faire apparaître la liste des options. Recherchez le champ nécessaire dans la section Champs masqués et cliquez sur l'icône en forme d'œil pour afficher le champ.
 
-You can also rearrange the order of fields by holding down the field name and dragging it to where you want it.
+Vous pouvez également réorganiser l'ordre des champs en maintenant le nom du champ et en le glissant à l'endroit souhaité.
 
 <img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
 
-## Compact View
+## Vue compacte
 
-You can hide all the fields and get an overview of all records at a glance. To enable:
+Vous pouvez masquer tous les champs et obtenir une vue d'ensemble de tous les enregistrements en un coup d'œil. Pour activer :
 
-1. Click **Options** on the top right
-2. Turn on the toggle for **Compact view**
+1. Cliquez sur **Options** en haut à droite
+2. Activez l'option **Vue compacte**
 
 <img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
 
-## Column Aggregations
+## Agrégations de colonnes
 
-Each column in a Kanban view can display aggregated values at the top, helping you understand your data at a glance.
+Chaque colonne d'une vue Kanban peut afficher des valeurs agrégées en haut, ce qui vous aide à comprendre vos données en un coup d'œil.
 
-### Available Aggregations
+### Agrégations disponibles
 
-| Aggregation | Description                                   |
-| ----------- | --------------------------------------------- |
-| **Count**   | Number of records in the column               |
-| **Sum**     | Total of a numeric field (e.g., deal amounts) |
-| **Average** | Average value of a numeric field              |
-| **Min**     | Lowest value                                  |
-| **Max**     | Highest value                                 |
+| Agrégation  | Description                                                     |
+| ----------- | --------------------------------------------------------------- |
+| **Nombre**  | Nombre d'enregistrements dans la colonne                        |
+| **Somme**   | Total d'un champ numérique (par exemple, montants des affaires) |
+| **Moyenne** | Valeur moyenne d'un champ numérique                             |
+| **Min**     | Valeur minimale                                                 |
+| **Max**     | Valeur maximale                                                 |
 
-### Configuring Aggregations
+### Configuration des agrégations
 
-1. Click on the number displayed next to the Stage value, at the top of a column
-2. Select the aggregation type
-3. Choose the field to aggregate
+1. Cliquez sur le nombre affiché à côté de la valeur de l'étape en haut d'une colonne
+2. Sélectionnez le type d'agrégation
+3. Choisissez le champ à agréger
 
-**Example:** Show total deal value per stage by aggregating the Amount field with Sum.
+**Exemple :** Affichez la valeur totale des affaires par étape en agrégeant le champ Montant avec la Somme.
 
-## When to Use Kanban Views
+## Quand utiliser les vues Kanban
 
-Kanban views are ideal for:
+Les vues Kanban sont idéales pour :
 
-* **Sales pipelines**: Track deals through stages from lead to close
-* **Project management**: Monitor tasks through workflow states
-* **Recruitment**: Track candidates through hiring stages
-* **Any staged process**: Visualize any workflow with defined stages
+* **Pipelines de vente** : Suivez les affaires à travers les étapes, du prospect à la conclusion
+* **Gestion de projet** : Suivez les tâches à travers les états du flux de travail
+* **Recrutement** : Suivez les candidats à travers les étapes du recrutement
+* **Tout processus en étapes** : Visualisez tout flux de travail avec des étapes définies
 
-## Best Practices
+## Meilleures pratiques
 
-### Organize Your Stages
+### Organisez vos étapes
 
-* **Limit stages**: 5-7 stages is ideal for visibility
-* **Clear naming**: Use descriptive stage names
-* **Logical order**: Arrange stages in process order
+* **Limitez les étapes** : 5 à 7 étapes sont idéales pour la visibilité
+* **Nommage clair** : Utilisez des noms d'étapes descriptifs
+* **Ordre logique** : Organisez les étapes dans l'ordre du processus
 
-### Optimize Card Display
+### Optimisez l'affichage des cartes
 
-* **Show key fields**: Display only the most important information
-* **Use compact view**: For high-level overviews
-* **Color coding**: Use stage colors to quickly identify status
+* **Affichez les champs clés** : N'affichez que les informations les plus importantes
+* **Utilisez la vue compacte** : Pour des vues d'ensemble de haut niveau
+* **Code couleur** : Utilisez les couleurs d'étape pour identifier rapidement le statut
 
-### Maintain Data Quality
+### Maintenez la qualité des données
 
-* **Update regularly**: Keep cards moving through stages
-* **Archive completed**: Move closed items out of active view
-* **Review stale cards**: Follow up on cards stuck in stages
+* **Mettez à jour régulièrement** : Faites avancer les cartes à travers les étapes
+* **Archivez les éléments terminés** : Déplacez les éléments fermés hors de la vue active
+* **Passez en revue les cartes inactives** : Assurez le suivi des cartes bloquées dans des étapes

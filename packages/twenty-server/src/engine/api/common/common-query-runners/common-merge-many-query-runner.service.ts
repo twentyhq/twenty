@@ -6,7 +6,7 @@ import {
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
 import {
-  FieldMetadataRelationSettings,
+  FieldMetadataSettingsMapping,
   FieldMetadataType,
   ObjectRecord,
   RelationType,
@@ -137,12 +137,12 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       flatFieldMetadataMaps: context.flatFieldMetadataMaps,
     });
 
-    const recordsToMerge = await context.repository.find({
+    const fetchedRecords = (await context.repository.find({
       where: { id: In(args.ids) },
       select: columnsToSelect,
-    });
+    })) as ObjectRecord[];
 
-    if (recordsToMerge.length !== args.ids.length) {
+    if (fetchedRecords.length !== args.ids.length) {
       throw new CommonQueryRunnerException(
         'One or more records not found',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
@@ -150,12 +150,20 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       );
     }
 
+    const orderIndex = new Map(args.ids.map((id, index) => [id, index]));
+
+    fetchedRecords.sort(
+      (a, b) => (orderIndex.get(a.id) ?? 0) - (orderIndex.get(b.id) ?? 0),
+    );
+
+    const recordsToMerge = fetchedRecords;
+
     if (args.dryRun && args.selectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps: context.flatObjectMetadataMaps,
         flatFieldMetadataMaps: context.flatFieldMetadataMaps,
         parentObjectMetadataItem: context.flatObjectMetadata,
-        parentObjectRecords: recordsToMerge as ObjectRecord[],
+        parentObjectRecords: recordsToMerge,
         relations: args.selectedFieldsResult.relations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
@@ -168,7 +176,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       });
     }
 
-    return recordsToMerge as ObjectRecord[];
+    return recordsToMerge;
   }
 
   private validateAndGetPriorityRecord(
@@ -248,8 +256,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
         const relationType =
           isDryRun && fieldMetadata.type === FieldMetadataType.RELATION
-            ? (fieldMetadata.settings as FieldMetadataRelationSettings)
-                ?.relationType
+            ? (
+                fieldMetadata.settings as FieldMetadataSettingsMapping['RELATION']
+              )?.relationType
             : undefined;
 
         mergedResult[fieldName] = mergeFieldValues(
@@ -368,7 +377,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       }
 
       const relationSettings = field.settings as
-        | FieldMetadataRelationSettings
+        | FieldMetadataSettingsMapping['RELATION']
         | undefined;
 
       if (

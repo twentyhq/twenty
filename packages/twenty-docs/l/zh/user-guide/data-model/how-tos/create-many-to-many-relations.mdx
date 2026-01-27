@@ -1,0 +1,180 @@
+---
+title: 创建多对多关系
+description: 当双方都有多个条目时，使用连接对象将记录相互关联。
+---
+
+多对多关系使您能够在关系双方连接多个记录。 例如：许多 People 可以参与许多 Projects，并且每个 Project 可以包含许多 People。
+
+<Warning>
+  **Lab 功能**：连接关系目前位于 Lab 中。 在按照本指南操作之前，请在 **Settings → Updates → Lab** 中启用它们。
+</Warning>
+
+<Note>
+  此功能还需要启用 **Advanced mode**（在 Settings 的右下角切换）。
+</Note>
+
+## 何时使用多对多
+
+当关系双方都可能存在多个关联时，请使用多对多：
+
+| 关系                | 示例                         |
+| ----------------- | -------------------------- |
+| People ↔ Projects | 一个人参与多个项目；一个项目包含多名团队成员     |
+| Companies ↔ Tags  | 一个公司可以拥有多个标签；一个标签可以应用于多家公司 |
+| Products ↔ Orders | 一个产品可以出现在多个订单中；一个订单包含多个产品  |
+
+## 工作原理
+
+Twenty 在多对多关系中使用 **连接对象** 模式。 连接对象位于两个对象之间，并存储它们之间的关联：
+
+```
+People ←→ Project Assignments ←→ Projects
+```
+
+该 **Project Assignments** 对象（连接对象）具有：
+
+* 到 People 的关系（多对一）
+* 到 Projects 的关系（多对一）
+
+启用连接关系开关后，Twenty 将直接显示已关联的记录，而不再展示中间的连接对象记录。
+
+## 先决条件
+
+1. **在 Lab 中启用连接关系**：前往 **Settings → Updates → Lab** 并启用 **Junction Relations**
+2. **启用 Advanced mode**：在 Settings 侧边栏的右下角开启 **Advanced mode**
+3. 规划您的数据模型：
+   * 您要连接哪两个对象？
+   * 连接对象应如何命名？
+
+## 步骤 1：创建连接对象
+
+首先，创建用于保存关联的中间对象。
+
+1. 进入 **设置 → 数据模型**
+2. 点击 **+ 新建对象**
+3. 使用描述性名称（例如，"Project Assignment"、"Team Member"、"Product Order"）
+4. 单击 **保存**
+
+<Tip>
+  **命名约定**：使用能描述关系的名称，例如 "Project Assignment" 或 "Team Membership"。 这会让数据模型更易理解。
+</Tip>
+
+## 步骤 2：从连接对象创建关系
+
+从连接对象向您要连接的两个对象添加关系字段。
+
+### 第一条关系（连接对象 → 对象 A）
+
+1. 在 **Settings → Data Model** 中选择您的连接对象
+2. 点击 **+ 添加字段**
+3. 将字段类型选择为 **Relation**
+4. 选择第一个对象（例如，"People"）
+5. 将关系类型设置为 **Many-to-One**（多个分配可关联到一个人）
+6. 为这些字段命名：
+   * 连接对象上的字段：例如，"Person"
+   * People 上的字段：例如，"Project Assignments"
+7. 单击 **保存**
+
+### 第二条关系（连接对象 → 对象 B）
+
+1. 仍在连接对象中，点击 **+ Add Field**
+2. 将字段类型选择为 **Relation**
+3. 选择第二个对象（例如，"Projects"）
+4. 将关系类型设置为 **Many-to-One**
+5. 为这些字段命名：
+   * 连接对象上的字段：例如，"Project"
+   * Projects 上的字段：例如，"Team Members"
+6. 单击 **保存**
+
+## 步骤 3：配置连接关系的显示方式
+
+现在配置源对象以直接显示已关联的记录，跳过中间的连接对象。
+
+1. 进入 **设置 → 数据模型**
+2. 选择第一个对象（例如，"People"）
+3. 找到指向连接对象的关系字段（例如，"Project Assignments"）
+4. 点击以编辑该字段
+5. 启用 **"This is a relation to a Junction Object"**
+6. 选择 **Target relation**（例如，"Project" —— 连接对象上指向另一侧的字段）
+7. 单击 **保存**
+
+{/* TODO: Add image
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
+*/}
+
+对另一侧对象重复上述操作：
+
+1. 在 Data Model 中选择 "Projects"
+2. 编辑 "Team Members" 关系字段
+3. 启用连接关系开关
+4. 将目标关系选择为 "Person"
+5. 保存
+
+## 结果
+
+配置完成后：
+
+* 在 **Person** 记录中，"Project Assignments" 字段将直接显示 **Projects**（而非分配记录）
+* 在 **Project** 记录中，"Team Members" 字段将直接显示 **People**
+
+连接对象仍然存在并存储关联，但 UI 呈现的是更简洁的多对多视图。
+
+## 示例：People ↔ Projects
+
+以下是完整的操作演示：
+
+### 创建连接对象
+
+* 名称：**Project Assignment**
+* 描述："将人员与其参与的项目关联起来"
+
+### 添加关系
+
+1. **Project Assignment → People**
+   * 类型：Many-to-One
+   * Assignment 上的字段："Person"
+   * People 上的字段："Project Assignments"
+
+2. **Project Assignment → Projects**
+   * 类型：Many-to-One
+   * Assignment 上的字段："Project"
+   * Projects 上的字段："Team Members"
+
+### 配置连接关系显示
+
+1. 在 **People** 对象上：
+   * 编辑 "Project Assignments" 字段
+   * 启用连接关系开关
+   * 目标："Project"
+
+2. 在 **Projects** 对象上：
+   * 编辑 "Team Members" 字段
+   * 启用连接关系开关
+   * 目标："Person"
+
+### 开始使用
+
+* 打开某个 Person 记录 → 直接查看其 Projects
+* 打开某个 Project 记录 → 直接查看其团队成员
+* 可从任一侧创建新的关联
+
+## 为关联添加额外数据
+
+由于连接对象是一个真实对象，您可以添加自定义字段来存储关系相关的信息：
+
+* **角色**："Developer"、"Designer"、"Manager"
+* **开始日期**：他们加入项目的时间
+* **分配时长**：每周在该项目上的工时
+
+要访问这些数据，请直接导航到连接对象，或通过 API 查询。
+
+## 限制
+
+* **CSV 导入/导出**：不支持直接导入多对多关系。 请改为将记录导入连接对象。
+* **筛选器**：按多对多关系进行筛选的选项可能有限。
+
+## 相关内容
+
+* [关系字段](/l/zh/user-guide/data-model/capabilities/relation-fields) — 关系类型说明
+* [创建自定义对象](/l/zh/user-guide/data-model/how-tos/create-custom-objects) — 如何创建对象
+* [创建关系字段](/l/zh/user-guide/data-model/how-tos/create-relation-fields) — 基本关系设置

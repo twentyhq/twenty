@@ -1,0 +1,228 @@
+---
+title: Twenty에서 PDF 생성
+description: "레코드에 PDF(예: 견적서)를 생성해 첨부하는 워크플로우를 만드세요."
+---
+
+Twenty에서 PDF를 자동으로 생성하거나 가져와 레코드에 첨부합니다. 이는 Company, Opportunity 또는 기타 객체에 연결된 견적서, 송장, 보고서를 생성할 때 흔히 사용됩니다.
+
+## 개요
+
+이 워크플로우는 **수동 트리거**를 사용하므로 사용자가 선택한 레코드에 대해 필요할 때 PDF를 생성할 수 있습니다. **서버리스 함수**가 다음을 처리합니다:
+
+1. URL에서 PDF를 다운로드(PDF 생성 서비스에서 제공)
+2. 파일을 Twenty에 업로드
+3. 레코드에 연결된 첨부 파일 생성
+
+## 사전 준비
+
+워크플로우를 설정하기 전에:
+
+1. **API 키 생성**: **Settings → APIs**로 이동하여 새 API 키를 만드세요. 이 토큰은 서버리스 함수에 필요합니다.
+2. **PDF 생성 서비스 설정**(선택 사항): PDF를 동적으로 생성하려면(예: 견적서) Carbone, PDFMonkey, DocuSeal 같은 서비스를 사용해 PDF를 만들고 다운로드 URL을 받으세요.
+
+## 단계별 설정
+
+### 1단계: 트리거 구성
+
+1. **워크플로우**로 이동해 새 워크플로우를 생성합니다
+2. **수동 트리거**를 선택합니다
+3. PDF를 첨부할 객체를 선택하세요(예: **Company** 또는 **Opportunity**).
+
+<Tip>
+  수동 트리거를 사용하면 사용자가 레코드를 선택한 후 우측 상단에 표시되는 버튼으로 이 워크플로우를 실행해 PDF를 생성하고 첨부할 수 있습니다.
+</Tip>
+
+### 2단계: 서버리스 함수 추가
+
+1. **서버리스 함수** 작업을 추가합니다
+2. 아래 코드로 새 함수를 만드세요
+3. 입력 매개변수를 구성하세요
+
+#### 입력 매개변수
+
+| 매개변수        | 값                       |
+| ----------- | ----------------------- |
+| `companyId` | `{{trigger.object.id}}` |
+
+<Note>
+  다른 객체(Person, Opportunity 등)에 첨부하는 경우 해당 매개변수 이름을 바꾸고(예: `personId`, `opportunityId`) 서버리스 함수를 업데이트하세요.
+</Note>
+
+#### 서버리스 함수 코드
+
+```typescript
+export const main = async (
+  params: { companyId: string },
+) => {
+  const { companyId } = params;
+
+  // Replace with your Twenty GraphQL endpoint
+  // Cloud: https://api.twenty.com/graphql
+  // Self-hosted: https://your-domain.com/graphql
+  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  // Replace with your API key from Settings → APIs
+  const authToken = 'YOUR_API_KEY';
+
+  // Replace with your PDF URL
+  // This could be from a PDF generation service or a static URL
+  const pdfUrl = 'https://your-pdf-service.com/generated-quote.pdf';
+  const filename = 'quote.pdf';
+
+  // Step 1: Download the PDF file
+  const pdfResponse = await fetch(pdfUrl);
+
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBlob = await pdfResponse.blob();
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Step 2: Upload the file via GraphQL multipart upload
+  const uploadMutation = `
+    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+      uploadFile(file: $file, fileFolder: $fileFolder) {
+        path
+      }
+    }
+  `;
+
+  const uploadForm = new FormData();
+  uploadForm.append('operations', JSON.stringify({
+    query: uploadMutation,
+    variables: { file: null, fileFolder: 'Attachment' },
+  }));
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
+
+  const uploadResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${authToken}` },
+    body: uploadForm,
+  });
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  }
+
+  const filePath = uploadResult.data?.uploadFile?.path;
+
+  if (!filePath) {
+    throw new Error('No file path returned from upload');
+  }
+
+  // Step 3: Create the attachment linked to the company
+  const attachmentMutation = `
+    mutation CreateAttachment($data: AttachmentCreateInput!) {
+      createAttachment(data: $data) {
+        id
+        name
+      }
+    }
+  `;
+
+  const attachmentResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: attachmentMutation,
+      variables: {
+        data: {
+          name: filename,
+          fullPath: filePath,
+          companyId,
+        },
+      },
+    }),
+  });
+
+  const attachmentResult = await attachmentResponse.json();
+
+  if (attachmentResult.errors?.length) {
+    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+  }
+
+  return attachmentResult.data?.createAttachment;
+};
+```
+
+### 3단계: 사용 사례에 맞게 사용자 지정
+
+#### 다른 객체에 첨부하려면
+
+`companyId`를 해당 필드로 바꾸세요:
+
+| 개체        | 필드 이름                |
+| --------- | -------------------- |
+| 회사        | `companyId`          |
+| 사람        | `personId`           |
+| 기회        | `opportunityId`      |
+| 사용자 지정 개체 | `yourCustomObjectId` |
+
+함수 매개변수와 첨부 생성 mutation의 `variables.data` 객체를 모두 업데이트하세요.
+
+#### 동적 PDF URL을 사용하려면
+
+PDF 생성 서비스를 사용하는 경우 다음을 수행할 수 있습니다:
+
+1. 먼저 PDF를 생성하기 위해 HTTP 요청 작업을 만듭니다
+2. 반환된 PDF URL을 서버리스 함수의 매개변수로 전달합니다
+
+```typescript
+export const main = async (
+  params: { companyId: string; pdfUrl: string; filename: string },
+) => {
+  const { companyId, pdfUrl, filename } = params;
+  // ... rest of the function
+};
+```
+
+### 4단계: 테스트 및 활성화
+
+1. 워크플로우를 저장합니다
+2. Company 레코드로 이동합니다
+3. **⋮** 메뉴를 클릭하고 워크플로우를 선택합니다
+4. 레코드의 **Attachments** 섹션에서 PDF가 첨부되었는지 확인합니다
+5. 워크플로우를 활성화합니다
+
+## PDF 생성 서비스와 결합하기
+
+동적 견적서나 송장을 생성하려면:
+
+### 예시: 견적서 생성 → PDF 첨부
+
+| 단계 | 작업              | 목적                              |
+| -- | --------------- | ------------------------------- |
+| 1  | 수동 트리거(Company) | 사용자가 레코드에서 시작                   |
+| 2  | 레코드 검색          | Opportunity 또는 라인 아이템 세부정보 가져오기 |
+| 3  | HTTP 요청         | 레코드 데이터를 사용해 PDF 생성 API 호출      |
+| 4  | 서버리스 함수         | 생성된 PDF를 다운로드해 첨부               |
+
+### 널리 사용되는 PDF 생성 서비스
+
+* **Carbone** - 템플릿 기반 문서 생성
+* **PDFMonkey** - 템플릿 기반 동적 PDF 생성
+* **DocuSeal** - 문서 자동화 플랫폼
+* **Documint** - API 우선 문서 생성
+
+각 서비스는 PDF URL을 반환하는 API를 제공하며, 이 URL을 서버리스 함수에 전달할 수 있습니다.
+
+## 문제 해결
+
+| 문제            | 해결책                                     |
+| ------------- | --------------------------------------- |
+| "PDF 다운로드 실패" | PDF URL에 접근할 수 있으며 유효한 PDF를 반환하는지 확인하세요 |
+| "업로드 실패"      | API 키가 유효하고 쓰기 권한이 있는지 확인하세요            |
+| "첨부 파일 생성 실패" | 객체 ID 필드 이름이 대상 객체와 일치하는지 확인하세요         |
+
+## 관련 항목
+
+* [워크플로우 트리거](/l/ko/user-guide/workflows/capabilities/workflow-triggers)
+* [서버리스 함수](/l/ko/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Twenty에서 견적서 또는 송장 생성](/l/ko/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

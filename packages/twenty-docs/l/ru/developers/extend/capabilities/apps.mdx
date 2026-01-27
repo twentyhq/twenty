@@ -35,6 +35,10 @@ description: Создавайте и управляйте настройками
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
+# If you don't use yarn@4
+corepack enable
+yarn install
+
 # Authenticate using your API key (you'll be prompted)
 yarn auth:login
 
@@ -45,25 +49,25 @@ yarn app:dev
 Отсюда вы можете:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Добавить новую сущность в ваше приложение (с мастером)
 yarn app:create-entity
 
-# Generate a typed Twenty client and workspace entity types
+# Сгенерировать типизированный клиент Twenty и типы сущностей рабочего пространства
 yarn app:generate
 
-# Run a one‑time sync (instead of watch mode)
+# Выполнить разовую синхронизацию (вместо watch‑режима)
 yarn app:sync
 
-# Watch your application's functions logs
+# Просматривать логи функций вашего приложения
 yarn function:logs
 
-# Execute a function by name
+# Выполнить функцию по имени
 yarn function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# Удалить приложение из текущего рабочего пространства
 yarn app:uninstall
 
-# Display commands' help
+# Показать справку по командам
 yarn app:help
 ```
 
@@ -88,8 +92,6 @@ my-twenty-app/
   .nvmrc
   .yarnrc.yml
   .yarn/
-    releases/
-      yarn-4.9.2.cjs
     install-state.gz
   eslint.config.mjs
   tsconfig.json
@@ -178,31 +180,31 @@ src/app/
 * URL API (по умолчанию http://localhost:3000 или текущий профиль рабочего пространства)
 * Ключ API
 
-Ваши учётные данные хранятся для каждого пользователя в `~/.twenty/config.json`. You can maintain multiple profiles and switch between them.
+Ваши учётные данные хранятся для каждого пользователя в `~/.twenty/config.json`. Вы можете хранить несколько профилей и переключаться между ними.
 
-### Managing workspaces
+### Управление рабочими пространствами
 
 ```bash filename="Terminal"
-# Login interactively (recommended)
+# Войти в интерактивном режиме (рекомендуется)
 yarn auth:login
 
-# Login to a specific workspace profile
+# Войти в профиль конкретного рабочего пространства
 yarn auth:login --workspace my-custom-workspace
 
-# List all configured workspaces
+# Показать список всех настроенных рабочих пространств
 yarn auth:list
 
-# Switch the default workspace (interactive)
+# Переключить рабочее пространство по умолчанию (в интерактивном режиме)
 yarn auth:switch
 
-# Switch to a specific workspace
+# Переключиться на определённое рабочее пространство
 yarn auth:switch production
 
-# Check current authentication status
+# Проверить текущий статус аутентификации
 yarn auth:status
 ```
 
-Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
+После переключения рабочего пространства с помощью `auth:switch` все последующие команды по умолчанию будут использовать это рабочее пространство. Вы по-прежнему можете временно переопределить это с помощью `--workspace <name>`.
 
 ## Используйте ресурсы SDK (типы и конфигурация)
 
