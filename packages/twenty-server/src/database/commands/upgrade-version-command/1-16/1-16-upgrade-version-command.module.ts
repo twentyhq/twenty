@@ -45,6 +45,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { TwentyStandardApplicationModule } from 'src/engine/workspace-manager/twenty-standard-application/twenty-standard-application.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     GlobalWorkspaceDataSourceModule,
     TwentyStandardApplicationModule,
     WorkspaceMigrationModule,
+    WorkspaceMigrationRunnerModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMetadataVersionModule,
     WorkspaceCacheStorageModule,

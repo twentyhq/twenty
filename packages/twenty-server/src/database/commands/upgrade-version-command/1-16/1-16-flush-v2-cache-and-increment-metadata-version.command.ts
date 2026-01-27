@@ -7,11 +7,9 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
-import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
+import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 @Command({
   name: 'upgrade:1-16:flush-v2-cache-and-increment-metadata-version',
@@ -23,9 +21,7 @@ export class FlushV2CacheAndIncrementMetadataVersionCommand extends ActiveOrSusp
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
   ) {
     super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService);
   }
@@ -46,16 +42,8 @@ export class FlushV2CacheAndIncrementMetadataVersionCommand extends ActiveOrSusp
       return;
     }
 
-    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-      workspaceId,
-    });
-
-    await this.workspaceMetadataVersionService.incrementMetadataVersion(
-      workspaceId,
-    );
-
-    await this.workspaceCacheStorageService.flushGraphQLOperation({
-      operationName: FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION,
+    await this.workspaceMigrationRunnerService.invalidateCache({
+      allFlatEntityMapsKeys: ALL_FLAT_ENTITY_MAPS_PROPERTIES,
       workspaceId,
     });
 
