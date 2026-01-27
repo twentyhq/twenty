@@ -9,36 +9,6 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
   const apolloCoreClient = useApolloCoreClient();
   const cache = apolloCoreClient.cache;
 
-  const removeNavigationMenuItemByTargetRecordId = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (targetRecordId: string) => {
-        const currentNavigationMenuItems = snapshot
-          .getLoadable(prefetchNavigationMenuItemsState)
-          .getValue();
-
-        const updatedNavigationMenuItems = currentNavigationMenuItems.filter(
-          (item) => item.targetRecordId !== targetRecordId,
-        );
-
-        set(prefetchNavigationMenuItemsState, updatedNavigationMenuItems);
-
-        cache.updateQuery(
-          { query: FIND_MANY_NAVIGATION_MENU_ITEMS },
-          (data) => {
-            if (!isDefined(data?.navigationMenuItems)) {
-              return data;
-            }
-
-            return {
-              ...data,
-              navigationMenuItems: updatedNavigationMenuItems,
-            };
-          },
-        );
-      },
-    [cache],
-  );
-
   const removeNavigationMenuItemsByTargetRecordIds = useRecoilCallback(
     ({ set, snapshot }) =>
       (targetRecordIds: string[]) => {
@@ -73,7 +43,6 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
   );
 
   return {
-    removeNavigationMenuItemByTargetRecordId,
     removeNavigationMenuItemsByTargetRecordIds,
   };
 };

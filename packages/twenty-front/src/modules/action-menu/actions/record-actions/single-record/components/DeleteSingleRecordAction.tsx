@@ -34,7 +34,7 @@ export const DeleteSingleRecordAction = () => {
   );
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
-  const { removeNavigationMenuItemByTargetRecordId } =
+  const { removeNavigationMenuItemsByTargetRecordIds } =
     useRemoveNavigationMenuItemByTargetRecordId();
 
   const handleDeleteClick = async () => {
@@ -57,7 +57,7 @@ export const DeleteSingleRecordAction = () => {
       ].find((item) => item.targetRecordId === recordId);
 
       if (isDefined(foundNavigationMenuItem)) {
-        removeNavigationMenuItemByTargetRecordId(recordId);
+        removeNavigationMenuItemsByTargetRecordIds([recordId]);
       }
     }
 
