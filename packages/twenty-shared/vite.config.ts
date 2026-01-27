@@ -38,12 +38,6 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
 export default defineConfig(() => {
   const tsConfigPath = path.resolve(__dirname, './tsconfig.lib.json');
 
-  // Externalize both dependencies and peerDependencies to prevent bundling
-  const externalPackages = [
-    ...Object.keys((packageJson as any).dependencies || {}),
-    ...Object.keys((packageJson as any).peerDependencies || {}),
-  ];
-
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-shared',
@@ -62,7 +56,7 @@ export default defineConfig(() => {
       outDir: 'dist',
       lib: { entry: entries, name: 'twenty-shared' },
       rollupOptions: {
-        external: externalPackages,
+        external: Object.keys((packageJson as any).dependencies || {}),
         output: [
           {
             format: 'es',
