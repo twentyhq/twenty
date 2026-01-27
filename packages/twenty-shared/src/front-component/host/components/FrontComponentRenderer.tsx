@@ -13,7 +13,7 @@ type FrontComponentContentProps = {
   onError: (error?: Error) => void;
 };
 
-export const FrontComponentContent = ({
+export const FrontComponentRenderer = ({
   componentUrl,
   onError,
 }: FrontComponentContentProps) => {

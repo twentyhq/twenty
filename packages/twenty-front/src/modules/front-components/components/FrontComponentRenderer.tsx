@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { FrontComponentContent } from 'twenty-shared/front-component';
 
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+
+import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-shared/front-component';
 
 type FrontComponentRendererProps = {
   frontComponentId: string;
@@ -33,7 +34,7 @@ export const FrontComponentRenderer = ({
   }
 
   return (
-    <FrontComponentContent
+    <SharedFrontComponentRenderer
       componentUrl={getFrontComponentUrl(frontComponentId)}
       onError={handleError}
     />
