@@ -7,7 +7,6 @@ import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
-import { FilesFieldSyncService } from 'src/engine/api/common/common-args-processors/data-arg-processor/services/files-field-sync.service';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -34,7 +33,7 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   UpdateManyQueryArgs,
   ObjectRecord[]
 > {
-  constructor(private readonly filesFieldSyncService: FilesFieldSyncService) {
+  constructor() {
     super();
   }
 
