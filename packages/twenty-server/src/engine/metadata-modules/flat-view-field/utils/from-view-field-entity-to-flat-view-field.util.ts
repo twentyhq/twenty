@@ -35,7 +35,9 @@ export const fromViewFieldEntityToFlatViewField = ({
   }
 
   const fieldMetadataUniversalIdentifier =
-    fieldMetadataIdToUniversalIdentifierMap.get(viewFieldEntity.fieldMetadataId);
+    fieldMetadataIdToUniversalIdentifierMap.get(
+      viewFieldEntity.fieldMetadataId,
+    );
 
   if (!fieldMetadataUniversalIdentifier) {
     throw new FlatEntityMapsException(

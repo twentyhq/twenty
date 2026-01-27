@@ -71,8 +71,7 @@ export const fromViewFilterGroupEntityToFlatViewFilterGroup = ({
     deletedAt: viewFilterGroupEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier:
       viewFilterGroupEntityWithoutRelations.universalIdentifier,
-    viewFilterIds:
-      viewFilterGroupEntity.viewFilters?.map(({ id }) => id) ?? [],
+    viewFilterIds: viewFilterGroupEntity.viewFilters?.map(({ id }) => id) ?? [],
     childViewFilterGroupIds:
       viewFilterGroupEntity.childViewFilterGroups?.map(({ id }) => id) ?? [],
     __universal: {
