@@ -6,7 +6,6 @@ import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, InsertResult, ObjectLiteral } from 'typeorm';
 
-import { FilesFieldSyncService } from 'src/engine/api/common/common-args-processors/data-arg-processor/services/files-field-sync.service';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
@@ -46,7 +45,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   CreateManyQueryArgs,
   ObjectRecord[]
 > {
-  constructor(private readonly filesFieldSyncService: FilesFieldSyncService) {
+  constructor() {
     super();
   }
 
@@ -64,8 +63,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         },
       );
     }
-
-    const originalData = structuredClone(args.data);
 
     const {
       repository,

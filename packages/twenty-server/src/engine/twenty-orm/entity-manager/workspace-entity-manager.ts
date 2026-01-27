@@ -50,8 +50,8 @@ import { type DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { getEntityTarget } from 'src/engine/twenty-orm/entity-manager/utils/get-entity-target';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
+import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
 import { type GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
-import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import {
   type OperationType,
   validateOperationIsPermittedOrThrow,
@@ -111,6 +111,7 @@ export class WorkspaceEntityManager extends EntityManager {
       featureFlagsMap: context.featureFlagsMap,
       userWorkspaceRoleMap: context.userWorkspaceRoleMap,
       eventEmitterService: this.eventEmitterService,
+      coreDataSource: this.connection.coreDataSource,
     };
   }
 
@@ -1215,6 +1216,8 @@ export class WorkspaceEntityManager extends EntityManager {
         },
         {} as Record<string, ObjectLiteral>,
       );
+
+      //TODODO : It should call a beforeInsert and a beforeUpdate files field sync operation -
 
       const objectMetadataItem = getObjectMetadataFromEntityTarget(
         entityTarget,

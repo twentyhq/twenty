@@ -143,19 +143,16 @@ export class FileStorageService {
   async deleteByFileId({
     fileId,
     workspaceId,
-    applicationId,
     fileFolder,
   }: {
     fileId: string;
     workspaceId: string;
-    applicationId: string;
     fileFolder: FileFolder;
   }): Promise<void> {
     const file = await this.fileRepository.findOneOrFail({
       where: {
         id: fileId,
         workspaceId,
-        applicationId,
         path: Like(`${fileFolder}/%`),
       },
     });

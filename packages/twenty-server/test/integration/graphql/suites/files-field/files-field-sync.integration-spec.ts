@@ -6,7 +6,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -116,7 +116,7 @@ describe('fileFieldSync - FILES field <> files sync', () => {
 
   const checkFileExistsInDB = async (fileId: string): Promise<boolean> => {
     const result = await global.testDataSource.query(
-      'SELECT id FROM core."file" WHERE id = $1',
+      'SELECT id FROM core."file" WHERE id = $1 AND "deletedAt" IS NULL',
       [fileId],
     );
 
@@ -127,7 +127,7 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     fileId: string,
   ): Promise<boolean> => {
     const result = await global.testDataSource.query(
-      'SELECT path FROM core."file" WHERE id = $1',
+      'SELECT info FROM core."file" WHERE id = $1',
       [fileId],
     );
 
@@ -135,12 +135,12 @@ describe('fileFieldSync - FILES field <> files sync', () => {
       return false;
     }
 
-    return result[0].path.startsWith(FileFolder.FilesField);
+    return result[0].info.isTemporaryFile === false;
   };
 
   const checkFileIsTemporary = async (fileId: string): Promise<boolean> => {
     const result = await global.testDataSource.query(
-      'SELECT path FROM core."file" WHERE id = $1',
+      'SELECT info FROM core."file" WHERE id = $1',
       [fileId],
     );
 
@@ -148,7 +148,7 @@ describe('fileFieldSync - FILES field <> files sync', () => {
       return false;
     }
 
-    return result[0].info.isTemporaryFile;
+    return result[0].info.isTemporaryFile === true;
   };
 
   beforeAll(async () => {
@@ -252,18 +252,16 @@ describe('fileFieldSync - FILES field <> files sync', () => {
         data: [
           {
             name: 'Record with image',
-            filesField: {
-              addFiles: [
-                {
-                  fileId: imageFile.id,
-                  label: 'test-image.png',
-                },
-                {
-                  fileId: textFile.id,
-                  label: 'test-text.txt',
-                },
-              ],
-            },
+            filesField: [
+              {
+                fileId: imageFile.id,
+                label: 'test-image.png',
+              },
+              {
+                fileId: textFile.id,
+                label: 'test-text.txt',
+              },
+            ],
           },
         ],
         upsert: false,
@@ -326,18 +324,16 @@ describe('fileFieldSync - FILES field <> files sync', () => {
         data: [
           {
             name: 'Record to upsert',
-            filesField: {
-              addFiles: [
-                {
-                  fileId: imageFile.id,
-                  label: 'imageFile-label.png',
-                },
-                {
-                  fileId: anotherImageFile.id,
-                  label: 'anotherImageFile-label.png',
-                },
-              ],
-            },
+            filesField: [
+              {
+                fileId: imageFile.id,
+                label: 'imageFile-label.png',
+              },
+              {
+                fileId: anotherImageFile.id,
+                label: 'anotherImageFile-label.png',
+              },
+            ],
           },
         ],
         upsert: false,
@@ -356,14 +352,20 @@ describe('fileFieldSync - FILES field <> files sync', () => {
           {
             id: recordId,
             name: 'Record updated via upsert',
-            filesField: {
-              addFiles: [
-                {
-                  fileId: textFile.id,
-                  label: 'textFile-label.txt',
-                },
-              ],
-            },
+            filesField: [
+              {
+                fileId: textFile.id,
+                label: 'new-added-text-file.txt',
+              },
+              {
+                fileId: imageFile.id,
+                label: 'imageFile-label.png',
+              },
+              {
+                fileId: anotherImageFile.id,
+                label: 'updated-anotherImageFile-label.png',
+              },
+            ],
           },
         ],
         upsert: true,
@@ -377,17 +379,17 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     expect(updatedRecord.id).toBe(recordId);
     expect(updatedRecord.name).toBe('Record updated via upsert');
     expect(updatedRecord.filesField).toHaveLength(3);
-    expect(updatedRecord.filesField[0].fileId).toBe(imageFile.id);
-    expect(updatedRecord.filesField[0].label).toBe('imageFile-label.png');
-    expect(updatedRecord.filesField[0].extension).toBe('.png');
-    expect(updatedRecord.filesField[1].fileId).toBe(anotherImageFile.id);
-    expect(updatedRecord.filesField[1].label).toBe(
-      'anotherImageFile-label.png',
-    );
+    expect(updatedRecord.filesField[1].fileId).toBe(imageFile.id);
+    expect(updatedRecord.filesField[1].label).toBe('imageFile-label.png');
     expect(updatedRecord.filesField[1].extension).toBe('.png');
-    expect(updatedRecord.filesField[2].fileId).toBe(textFile.id);
-    expect(updatedRecord.filesField[2].label).toBe('textFile-label.txt');
-    expect(updatedRecord.filesField[2].extension).toBe('.txt');
+    expect(updatedRecord.filesField[2].fileId).toBe(anotherImageFile.id);
+    expect(updatedRecord.filesField[2].label).toBe(
+      'updated-anotherImageFile-label.png',
+    );
+    expect(updatedRecord.filesField[2].extension).toBe('.png');
+    expect(updatedRecord.filesField[0].fileId).toBe(textFile.id);
+    expect(updatedRecord.filesField[0].label).toBe('new-added-text-file.txt');
+    expect(updatedRecord.filesField[0].extension).toBe('.txt');
 
     expect(await checkFileIsInPermanentStorage(imageFile.id)).toBe(true);
     expect(await checkFileIsInPermanentStorage(anotherImageFile.id)).toBe(true);
@@ -426,14 +428,12 @@ describe('fileFieldSync - FILES field <> files sync', () => {
         data: [
           {
             name: 'Record for updateOne test',
-            filesField: {
-              addFiles: [
-                {
-                  fileId: imageFile.id,
-                  label: 'original-image.png',
-                },
-              ],
-            },
+            filesField: [
+              {
+                fileId: imageFile.id,
+                label: 'original-image.png',
+              },
+            ],
           },
         ],
         upsert: false,
@@ -453,14 +453,16 @@ describe('fileFieldSync - FILES field <> files sync', () => {
         fileSyncTestObjectId: recordId,
         data: {
           name: 'Record updated via updateOne',
-          filesField: {
-            addFiles: [
-              {
-                fileId: textFile.id,
-                label: 'added-text.txt',
-              },
-            ],
-          },
+          filesField: [
+            {
+              fileId: textFile.id,
+              label: 'added-text.txt',
+            },
+            {
+              fileId: imageFile.id,
+              label: 'original-image.png',
+            },
+          ],
         },
       },
     });
@@ -472,10 +474,10 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     expect(updatedRecord.id).toBe(recordId);
     expect(updatedRecord.name).toBe('Record updated via updateOne');
     expect(updatedRecord.filesField).toHaveLength(2);
-    expect(updatedRecord.filesField[0].fileId).toBe(imageFile.id);
-    expect(updatedRecord.filesField[0].label).toBe('original-image.png');
-    expect(updatedRecord.filesField[1].fileId).toBe(textFile.id);
-    expect(updatedRecord.filesField[1].label).toBe('added-text.txt');
+    expect(updatedRecord.filesField[1].fileId).toBe(imageFile.id);
+    expect(updatedRecord.filesField[1].label).toBe('original-image.png');
+    expect(updatedRecord.filesField[0].fileId).toBe(textFile.id);
+    expect(updatedRecord.filesField[0].label).toBe('added-text.txt');
 
     expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
     expect(await checkFileExistsInDB(textFile.id)).toBe(true);
@@ -515,18 +517,16 @@ describe('fileFieldSync - FILES field <> files sync', () => {
         data: [
           {
             name: 'Record for file deletion test',
-            filesField: {
-              addFiles: [
-                {
-                  fileId: imageFile.id,
-                  label: 'image-to-delete.png',
-                },
-                {
-                  fileId: textFile.id,
-                  label: 'text-to-keep.txt',
-                },
-              ],
-            },
+            filesField: [
+              {
+                fileId: imageFile.id,
+                label: 'image-to-delete.png',
+              },
+              {
+                fileId: textFile.id,
+                label: 'text-to-keep.txt',
+              },
+            ],
           },
         ],
         upsert: false,
@@ -544,13 +544,12 @@ describe('fileFieldSync - FILES field <> files sync', () => {
       variables: {
         fileSyncTestObjectId: recordId,
         data: {
-          filesField: {
-            removeFiles: [
-              {
-                fileId: imageFile.id,
-              },
-            ],
-          },
+          filesField: [
+            {
+              fileId: textFile.id,
+              label: 'text-to-keep.txt',
+            },
+          ],
         },
       },
     });
