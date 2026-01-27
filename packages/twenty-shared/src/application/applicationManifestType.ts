@@ -4,6 +4,7 @@ import {
   type ObjectManifest,
   type ServerlessFunctionManifest,
 } from '@/application';
+import { type AssetManifest } from '@/application/assetManifestType';
 import { type FrontComponentManifest } from '@/application/frontComponentManifestType';
 import { type ObjectExtensionManifest } from '@/application/objectExtensionManifestType';
 import { type RoleManifest } from '@/application/roleManifestType';
@@ -16,6 +17,7 @@ export type ApplicationManifest = {
   functions: ServerlessFunctionManifest[];
   frontComponents: FrontComponentManifest[];
   roles?: RoleManifest[];
+  assets?: AssetManifest[];
   sources: Sources;
   packageJson: PackageJson;
   yarnLock: string;

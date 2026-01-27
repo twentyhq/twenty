@@ -7,6 +7,7 @@ import { relative, sep } from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { FileFolder, type Sources } from 'twenty-shared/types';
 import { applicationEntityBuilder } from '@/cli/utilities/build/manifest/entities/application';
+import { assetEntityBuilder } from '@/cli/utilities/build/manifest/entities/asset';
 import { frontComponentEntityBuilder } from '@/cli/utilities/build/manifest/entities/front-component';
 import { functionEntityBuilder } from '@/cli/utilities/build/manifest/entities/function';
 import { objectEntityBuilder } from '@/cli/utilities/build/manifest/entities/object';
@@ -23,6 +24,7 @@ export type EntityFilePaths = {
   functions: string[];
   frontComponents: string[];
   roles: string[];
+  assets: string[];
 };
 
 const loadSources = async (appPath: string): Promise<Sources> => {
@@ -61,6 +63,7 @@ export const EMPTY_FILE_PATHS: EntityFilePaths = {
   functions: [],
   frontComponents: [],
   roles: [],
+  assets: [],
 };
 
 export type ManifestBuildResult = {
@@ -88,7 +91,8 @@ export const updateManifestChecksum = ({
   ] of builtFileInfos.entries()) {
     const rootBuiltPath = relative(OUTPUT_DIR, builtPath);
     if (fileFolder === FileFolder.BuiltFunction) {
-      const fnIndex = result.functions.findIndex(
+      const functions = result.functions ?? [];
+      const fnIndex = functions.findIndex(
         (f) => f.builtHandlerPath === rootBuiltPath,
       );
       if (fnIndex === -1) {
@@ -96,27 +100,45 @@ export const updateManifestChecksum = ({
       }
       result = {
         ...result,
-        functions: result.functions.map((fn, index) =>
+        functions: functions.map((fn, index) =>
           index === fnIndex ? { ...fn, builtHandlerChecksum: checksum } : fn,
         ),
       };
     }
 
-    const componentIndex =
-      result.frontComponents.findIndex(
-        (c) => c.builtComponentPath === rootBuiltPath,
-      ) ?? -1;
-    if (componentIndex === -1) {
+    if (fileFolder === FileFolder.Asset) {
+      const assets = result.assets ?? [];
+      const assetIndex = assets.findIndex((a) => a.filePath === rootBuiltPath);
+      if (assetIndex === -1) {
+        continue;
+      }
+      result = {
+        ...result,
+        assets: assets.map((asset, index) =>
+          index === assetIndex ? { ...asset, checksum } : asset,
+        ),
+      };
       continue;
     }
-    result = {
-      ...result,
-      frontComponents: result.frontComponents.map((component, index) =>
-        index === componentIndex
-          ? { ...component, builtComponentChecksum: checksum }
-          : component,
-      ),
-    };
+
+    if (fileFolder === FileFolder.BuiltFrontComponent) {
+      const frontComponents = result.frontComponents ?? [];
+      const componentIndex =
+        frontComponents.findIndex(
+          (c) => c.builtComponentPath === rootBuiltPath,
+        ) ?? -1;
+      if (componentIndex === -1) {
+        continue;
+      }
+      result = {
+        ...result,
+        frontComponents: frontComponents.map((component, index) =>
+          index === componentIndex
+            ? { ...component, builtComponentChecksum: checksum }
+            : component,
+        ),
+      };
+    }
   }
   return result;
 };
@@ -143,6 +165,7 @@ export const runManifestBuild = async (
       functionBuildResult,
       frontComponentBuildResult,
       roleBuildResult,
+      assetBuildResult,
       sources,
     ] = await Promise.all([
       applicationEntityBuilder.build(appPath),
@@ -151,6 +174,7 @@ export const runManifestBuild = async (
       functionEntityBuilder.build(appPath),
       frontComponentEntityBuilder.build(appPath),
       roleEntityBuilder.build(appPath),
+      assetEntityBuilder.build(appPath),
       loadSources(appPath),
     ]);
 
@@ -160,6 +184,7 @@ export const runManifestBuild = async (
     const functionManifests = functionBuildResult.manifests;
     const frontComponentManifests = frontComponentBuildResult.manifests;
     const roleManifests = roleBuildResult.manifests;
+    const assetManifests = assetBuildResult.manifests;
 
     const filePaths: EntityFilePaths = {
       application: applicationBuildResult.filePaths,
@@ -168,6 +193,7 @@ export const runManifestBuild = async (
       functions: functionBuildResult.filePaths,
       frontComponents: frontComponentBuildResult.filePaths,
       roles: roleBuildResult.filePaths,
+      assets: assetBuildResult.filePaths,
     };
 
     const manifest: ApplicationManifest = {
@@ -177,6 +203,7 @@ export const runManifestBuild = async (
       functions: functionManifests,
       frontComponents: frontComponentManifests,
       roles: roleManifests,
+      assets: assetManifests,
       sources,
       packageJson,
       yarnLock,

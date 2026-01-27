@@ -1,3 +1,4 @@
+import { AssetWatcher } from '@/cli/utilities/build/common/asset-watcher';
 import {
   createFrontComponentsWatcher,
   createFunctionsWatcher,
@@ -23,6 +24,7 @@ export class AppDevCommand {
   private manifestWatcher: ManifestWatcher | null = null;
   private functionsWatcher: EsbuildWatcher | null = null;
   private frontComponentsWatcher: EsbuildWatcher | null = null;
+  private assetWatcher: AssetWatcher | null = null;
   private watchersStarted = false;
   private uiStateManager: DevUiStateManager | null = null;
   private unmountUI: (() => void) | null = null;
@@ -93,6 +95,7 @@ export class AppDevCommand {
     await Promise.all([
       this.startFunctionsWatcher(functions),
       this.startFrontComponentsWatcher(frontComponents),
+      this.startAssetWatcher(),
     ]);
   }
 
@@ -128,6 +131,17 @@ export class AppDevCommand {
     await this.frontComponentsWatcher.start();
   }
 
+  private async startAssetWatcher(): Promise<void> {
+    this.assetWatcher = new AssetWatcher({
+      appPath: this.appPath,
+      handleFileBuilt: this.orchestrator!.handleFileBuilt.bind(
+        this.orchestrator,
+      ),
+    });
+
+    await this.assetWatcher.start();
+  }
+
   private setupGracefulShutdown(): void {
     const shutdown = async () => {
       this.unmountUI?.();
@@ -136,6 +150,7 @@ export class AppDevCommand {
         this.manifestWatcher?.close(),
         this.functionsWatcher?.close(),
         this.frontComponentsWatcher?.close(),
+        this.assetWatcher?.close(),
       ]);
 
       process.exit(0);

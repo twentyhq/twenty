@@ -295,6 +295,7 @@ export class DevModeOrchestrator {
         manifest: result.manifest,
         builtFileInfos: this.builtFileInfos,
       });
+
       this.uiStateManager.addEvent({
         message: 'Manifest checksums set',
         status: 'info',
@@ -311,9 +312,11 @@ export class DevModeOrchestrator {
         message: 'Syncing manifest',
         status: 'info',
       });
+
       this.uiStateManager.updateManifestState({
         manifestStatus: 'syncing',
       });
+
       const syncResult = await this.apiService.syncApplication(manifest);
 
       this.uiStateManager.updateAllFilesStatus('success');

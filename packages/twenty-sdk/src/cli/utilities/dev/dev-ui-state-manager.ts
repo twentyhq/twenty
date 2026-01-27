@@ -102,6 +102,8 @@ export class DevUiStateManager {
         return SyncableEntity.FrontComponent;
       case 'roles':
         return SyncableEntity.Role;
+      case 'assets':
+        return SyncableEntity.Asset;
       default:
         return;
     }
@@ -164,11 +166,17 @@ export class DevUiStateManager {
   updateFileStatus(filePath: string, status: FileStatus): void {
     const entities = new Map(this.state.entities);
 
-    entities.set(filePath, {
-      name: filePath,
-      path: filePath,
-      status: status,
-    });
+    const entity = entities.get(filePath);
+    entities.set(
+      filePath,
+      entity
+        ? { ...entity, status }
+        : {
+            name: filePath,
+            path: filePath,
+            status,
+          },
+    );
 
     this.state = { ...this.state, entities };
 

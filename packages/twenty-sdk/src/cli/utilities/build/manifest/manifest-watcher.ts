@@ -1,3 +1,4 @@
+import { relative } from 'path';
 import chokidar, { type FSWatcher } from 'chokidar';
 import { type EventName } from 'chokidar/handler.js';
 
@@ -18,7 +19,11 @@ export class ManifestWatcher {
 
   async start(): Promise<void> {
     this.watcher = chokidar.watch(this.appPath, {
-      ignored: [/node_modules/, /dist/, /\.twenty/],
+      ignored: (path) =>
+        path.includes('node_modules') ||
+        path.includes('generated') ||
+        path.includes('dist') ||
+        !!relative(this.appPath, path).match(/^\./),
       awaitWriteFinish: {
         stabilityThreshold: 100,
         pollInterval: 50,
