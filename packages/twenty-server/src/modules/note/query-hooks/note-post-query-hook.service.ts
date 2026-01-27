@@ -29,20 +29,17 @@ export class NotePostQueryHookService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext as WorkspaceAuthContext,
-      async () => {
-        const noteTargetRepository =
-          await this.globalWorkspaceOrmManager.getRepository<NoteTargetWorkspaceEntity>(
-            workspace.id,
-            'noteTarget',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const noteTargetRepository =
+        await this.globalWorkspaceOrmManager.getRepository<NoteTargetWorkspaceEntity>(
+          workspace.id,
+          'noteTarget',
+        );
 
-        await noteTargetRepository.softDelete({
-          noteId: In(payload.map((note) => note.id)),
-        });
-      },
-    );
+      await noteTargetRepository.softDelete({
+        noteId: In(payload.map((note) => note.id)),
+      });
+    }, authContext as WorkspaceAuthContext);
   }
 
   async handleNoteTargetsRestore(
@@ -57,19 +54,16 @@ export class NotePostQueryHookService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext as WorkspaceAuthContext,
-      async () => {
-        const noteTargetRepository =
-          await this.globalWorkspaceOrmManager.getRepository<NoteTargetWorkspaceEntity>(
-            workspace.id,
-            'noteTarget',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const noteTargetRepository =
+        await this.globalWorkspaceOrmManager.getRepository<NoteTargetWorkspaceEntity>(
+          workspace.id,
+          'noteTarget',
+        );
 
-        await noteTargetRepository.restore({
-          noteId: In(payload.map((note) => note.id)),
-        });
-      },
-    );
+      await noteTargetRepository.restore({
+        noteId: In(payload.map((note) => note.id)),
+      });
+    }, authContext as WorkspaceAuthContext);
   }
 }

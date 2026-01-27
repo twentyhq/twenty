@@ -39,32 +39,29 @@ export class RunWorkflowJob {
   }: RunWorkflowJobData): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        try {
-          if (lastExecutedStepId) {
-            await this.resumeWorkflowExecution({
-              workspaceId,
-              workflowRunId,
-              lastExecutedStepId,
-            });
-          } else {
-            await this.startWorkflowExecution({
-              workflowRunId,
-              workspaceId,
-            });
-          }
-        } catch (error) {
-          await this.workflowRunWorkspaceService.endWorkflowRun({
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      try {
+        if (lastExecutedStepId) {
+          await this.resumeWorkflowExecution({
             workspaceId,
             workflowRunId,
-            status: WorkflowRunStatus.FAILED,
-            error: error.message,
+            lastExecutedStepId,
+          });
+        } else {
+          await this.startWorkflowExecution({
+            workflowRunId,
+            workspaceId,
           });
         }
-      },
-    );
+      } catch (error) {
+        await this.workflowRunWorkspaceService.endWorkflowRun({
+          workspaceId,
+          workflowRunId,
+          status: WorkflowRunStatus.FAILED,
+          error: error.message,
+        });
+      }
+    }, authContext);
   }
 
   private async startWorkflowExecution({

@@ -19,55 +19,52 @@ export class MessagingCursorService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const messageChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-            workspaceId,
-            'messageChannel',
-          );
-        const folderRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
-            workspaceId,
-            'messageFolder',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+          workspaceId,
+          'messageChannel',
+        );
+      const folderRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
+          workspaceId,
+          'messageFolder',
+        );
 
-        if (!folderId) {
-          await messageChannelRepository.update(
-            {
-              id: messageChannel.id,
-            },
-            {
-              throttleFailureCount: 0,
-              syncStageStartedAt: null,
-              syncCursor:
-                !messageChannel.syncCursor ||
-                nextSyncCursor > messageChannel.syncCursor
-                  ? nextSyncCursor
-                  : messageChannel.syncCursor,
-            },
-          );
-        } else {
-          await folderRepository.update(
-            {
-              id: folderId,
-            },
-            {
-              syncCursor: nextSyncCursor,
-            },
-          );
-          await messageChannelRepository.update(
-            {
-              id: messageChannel.id,
-            },
-            {
-              throttleFailureCount: 0,
-              syncStageStartedAt: null,
-            },
-          );
-        }
-      },
-    );
+      if (!folderId) {
+        await messageChannelRepository.update(
+          {
+            id: messageChannel.id,
+          },
+          {
+            throttleFailureCount: 0,
+            syncStageStartedAt: null,
+            syncCursor:
+              !messageChannel.syncCursor ||
+              nextSyncCursor > messageChannel.syncCursor
+                ? nextSyncCursor
+                : messageChannel.syncCursor,
+          },
+        );
+      } else {
+        await folderRepository.update(
+          {
+            id: folderId,
+          },
+          {
+            syncCursor: nextSyncCursor,
+          },
+        );
+        await messageChannelRepository.update(
+          {
+            id: messageChannel.id,
+          },
+          {
+            throttleFailureCount: 0,
+            syncStageStartedAt: null,
+          },
+        );
+      }
+    }, authContext);
   }
 }

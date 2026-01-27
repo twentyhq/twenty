@@ -90,7 +90,6 @@ export class MessagingProcessFolderActionsService {
       const authContext = buildSystemAuthContext(workspaceId);
 
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workspaceDataSource =
             await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
@@ -128,6 +127,7 @@ export class MessagingProcessFolderActionsService {
             },
           );
         },
+        authContext,
       );
     }
   }
