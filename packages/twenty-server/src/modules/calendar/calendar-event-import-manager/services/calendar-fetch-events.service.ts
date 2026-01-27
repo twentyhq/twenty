@@ -141,7 +141,7 @@ export class CalendarFetchEventsService {
           );
         }
       } catch (error) {
-        this.logger.log(
+        this.logger.error(
           `Calendar event fetch error for workspace ${workspaceId} and calendar channel ${calendarChannel.id}`,
         );
         this.logger.error(error);

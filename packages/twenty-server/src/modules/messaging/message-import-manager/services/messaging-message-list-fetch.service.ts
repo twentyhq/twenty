@@ -198,7 +198,7 @@ export class MessagingMessageListFetchService {
           );
 
           if (messageExternalIdsToImport.length) {
-            this.logger.log(
+            this.logger.debug(
               `messageChannelId: ${freshMessageChannel.id} Adding ${messageExternalIdsToImport.length} message external ids to import in batch ${index + 1}`,
             );
 
@@ -247,7 +247,7 @@ export class MessagingMessageListFetchService {
           const toDeleteChunks = chunk(allMessageExternalIdsToDelete, 200);
 
           for (const [index, toDeleteChunk] of toDeleteChunks.entries()) {
-            this.logger.log(
+            this.logger.debug(
               `messageChannelId: ${freshMessageChannel.id} Deleting ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
             );
 
@@ -276,7 +276,7 @@ export class MessagingMessageListFetchService {
           return;
         }
 
-        this.logger.log(
+        this.logger.debug(
           `messageChannelId: ${freshMessageChannel.id} Scheduling direct messages import`,
         );
 

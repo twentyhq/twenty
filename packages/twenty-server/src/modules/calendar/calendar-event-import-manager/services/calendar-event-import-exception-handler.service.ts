@@ -85,7 +85,7 @@ export class CalendarEventImportErrorHandlerService {
     calendarChannel: Pick<CalendarChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    this.logger.log(
+    this.logger.debug(
       `CalendarChannelId: ${calendarChannel.id} - Sync cursor error, resetting and rescheduling`,
     );
 
@@ -198,7 +198,7 @@ export class CalendarEventImportErrorHandlerService {
       CalendarEventImportExceptionCode.UNKNOWN,
     );
 
-    this.logger.log(exception);
+    this.logger.error(exception);
     this.exceptionHandlerService.captureExceptions(
       [calendarEventImportException],
       {
