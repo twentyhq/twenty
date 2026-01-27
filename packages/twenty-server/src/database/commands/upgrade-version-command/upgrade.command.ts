@@ -47,6 +47,7 @@ import { MakeViewGroupUniversalIdentifierAndApplicationIdNotNullableMigrationCom
 import { MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-universal-identifier-and-application-id-not-nullable-migration.command';
 import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
+import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-favorites-to-navigation-menu-items.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -113,6 +114,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.17 Commands
     protected readonly migrateAttachmentToMorphRelationsCommand: MigrateAttachmentToMorphRelationsCommand,
+
+    // 1.18 Commands
+    protected readonly migrateFavoritesToNavigationMenuItemsCommand: MigrateFavoritesToNavigationMenuItemsCommand,
   ) {
     super(
       workspaceRepository,
@@ -187,6 +191,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.migrateAttachmentToMorphRelationsCommand,
     ];
 
+    const commands_1180: VersionCommands = [
+      this.migrateFavoritesToNavigationMenuItemsCommand,
+    ];
+
     this.allCommands = {
       '1.12.0': commands_1120,
       '1.13.0': commands_1130,
@@ -194,6 +202,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.15.0': commands_1150,
       '1.16.0': commands_1160,
       '1.17.0': commands_1170,
+      '1.18.0': commands_1180,
     };
   }
 
