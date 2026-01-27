@@ -453,7 +453,9 @@ export class SearchService {
           return {
             recordId: record.id,
             objectNameSingular: objectMetadataItem.nameSingular,
-            objectLabelSingular: objectMetadataItem.labelSingular,
+            objectLabelSingular:
+              objectMetadataItem.standardOverrides?.labelSingular ??
+              objectMetadataItem.labelSingular,
             label: this.getLabelIdentifierValue(
               record,
               objectMetadataItem,
