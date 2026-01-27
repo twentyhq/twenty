@@ -96,6 +96,7 @@ export class FlatWebhookValidatorService {
         message: t`Webhook not found`,
         userFriendlyMessage: msg`Webhook not found`,
       });
+    }
 
     return validationResult;
   }
