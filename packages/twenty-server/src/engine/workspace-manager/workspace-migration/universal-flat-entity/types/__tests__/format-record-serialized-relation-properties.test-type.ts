@@ -1,7 +1,7 @@
 import { type Equal, type Expect } from 'twenty-shared/testing';
 import { type SerializedRelation } from 'twenty-shared/types';
 
-import { type FormatJsonbSerializedRelation } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-jsonb-serialized-relation.type';
+import { type FormatRecordSerializedRelationProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-record-serialized-relation-properties.type';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 type ObjectWithRelation = {
@@ -21,7 +21,7 @@ type ObjectAssertions = [
   // Object with SerializedRelation: Id suffix renamed to UniversalIdentifier
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<ObjectWithRelation>,
+      FormatRecordSerializedRelationProperties<ObjectWithRelation>,
       {
         name: string;
         targetFieldMetadataUniversalIdentifier: SerializedRelation;
@@ -32,7 +32,7 @@ type ObjectAssertions = [
   // Branded object with SerializedRelation: renames property, preserves brand key
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<BrandedObjectWithRelation>,
+      FormatRecordSerializedRelationProperties<BrandedObjectWithRelation>,
       {
         name: string;
         targetFieldMetadataUniversalIdentifier: SerializedRelation;
@@ -44,7 +44,7 @@ type ObjectAssertions = [
   // Object without SerializedRelation: no changes
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<ObjectWithoutRelation>,
+      FormatRecordSerializedRelationProperties<ObjectWithoutRelation>,
       ObjectWithoutRelation
     >
   >,
@@ -53,9 +53,9 @@ type ObjectAssertions = [
 // eslint-disable-next-line unused-imports/no-unused-vars
 type PrimitiveAssertions = [
   // Primitives pass through unchanged
-  Expect<Equal<FormatJsonbSerializedRelation<string>, string>>,
-  Expect<Equal<FormatJsonbSerializedRelation<number>, number>>,
-  Expect<Equal<FormatJsonbSerializedRelation<null>, null>>,
+  Expect<Equal<FormatRecordSerializedRelationProperties<string>, string>>,
+  Expect<Equal<FormatRecordSerializedRelationProperties<number>, number>>,
+  Expect<Equal<FormatRecordSerializedRelationProperties<null>, null>>,
 ];
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -63,7 +63,7 @@ type ArrayAssertions = [
   // Array of objects with relation: transforms each element
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<ObjectWithRelation[]>,
+      FormatRecordSerializedRelationProperties<ObjectWithRelation[]>,
       {
         name: string;
         targetFieldMetadataUniversalIdentifier: SerializedRelation;
@@ -74,18 +74,18 @@ type ArrayAssertions = [
   // Array of objects without relation: passes through unchanged
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<ObjectWithoutRelation[]>,
+      FormatRecordSerializedRelationProperties<ObjectWithoutRelation[]>,
       ObjectWithoutRelation[]
     >
   >,
 
   // Array of primitives: passes through unchanged
-  Expect<Equal<FormatJsonbSerializedRelation<string[]>, string[]>>,
+  Expect<Equal<FormatRecordSerializedRelationProperties<string[]>, string[]>>,
 
   // Nested array of objects: transforms innermost elements
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<ObjectWithRelation[][]>,
+      FormatRecordSerializedRelationProperties<ObjectWithRelation[][]>,
       {
         name: string;
         targetFieldMetadataUniversalIdentifier: SerializedRelation;
@@ -99,7 +99,7 @@ type UnionAssertions = [
   // Union with null: transforms object, keeps null
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<ObjectWithRelation | null>,
+      FormatRecordSerializedRelationProperties<ObjectWithRelation | null>,
       {
         name: string;
         targetFieldMetadataUniversalIdentifier: SerializedRelation;
@@ -110,7 +110,7 @@ type UnionAssertions = [
   // Array of union: transforms elements appropriately
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<(ObjectWithRelation | null)[]>,
+      FormatRecordSerializedRelationProperties<(ObjectWithRelation | null)[]>,
       ({
         name: string;
         targetFieldMetadataUniversalIdentifier: SerializedRelation;
@@ -131,7 +131,7 @@ type MultipleRelationsAssertions = [
   // Multiple SerializedRelation properties: all get renamed
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<MultipleRelationsObject>,
+      FormatRecordSerializedRelationProperties<MultipleRelationsObject>,
       {
         name: string;
         sourceFieldUniversalIdentifier: SerializedRelation;
@@ -186,7 +186,7 @@ type NestedObjectAssertions = [
   // Simple nested object: transforms relation inside nested object
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<NestedObjectWithRelation>,
+      FormatRecordSerializedRelationProperties<NestedObjectWithRelation>,
       {
         name: string;
         nested: {
@@ -199,7 +199,7 @@ type NestedObjectAssertions = [
   // Deeply nested object: transforms relation at any depth
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<DeeplyNestedObjectWithRelation>,
+      FormatRecordSerializedRelationProperties<DeeplyNestedObjectWithRelation>,
       {
         name: string;
         level1: {
@@ -214,7 +214,7 @@ type NestedObjectAssertions = [
   // Mixed: transforms both direct and nested relations
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<MixedNestedObject>,
+      FormatRecordSerializedRelationProperties<MixedNestedObject>,
       {
         name: string;
         directRelationUniversalIdentifier: SerializedRelation;
@@ -229,7 +229,7 @@ type NestedObjectAssertions = [
   // Nullable nested object: transforms relation inside, preserves union with null
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<NullableNestedObject>,
+      FormatRecordSerializedRelationProperties<NullableNestedObject>,
       {
         name: string;
         nested: {
@@ -242,7 +242,7 @@ type NestedObjectAssertions = [
   // Nested with array of objects: transforms relations inside array elements
   Expect<
     Equal<
-      FormatJsonbSerializedRelation<NestedWithArrayOfObjects>,
+      FormatRecordSerializedRelationProperties<NestedWithArrayOfObjects>,
       {
         name: string;
         items: {
