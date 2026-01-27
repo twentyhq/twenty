@@ -6,12 +6,12 @@ import { componentRegistry } from '../generated';
 
 type FrontComponentContentProps = {
   componentUrl: string;
-  setHasError: (hasError: boolean) => void;
+  onError: (error?: Error) => void;
 };
 
 export const FrontComponentContent = ({
   componentUrl,
-  setHasError,
+  onError,
 }: FrontComponentContentProps) => {
   const receiver = useMemo(() => new RemoteReceiver(), []);
 
@@ -21,7 +21,7 @@ export const FrontComponentContent = ({
         workerUrl={FRONT_COMPONENT_WORKER_URL}
         componentUrl={componentUrl}
         receiver={receiver}
-        onError={() => setHasError(true)}
+        onError={onError}
       />
       <RemoteRootRenderer receiver={receiver} components={componentRegistry} />
     </>

@@ -7,7 +7,7 @@ type FrontComponentWorkerEffectProps = {
   workerUrl: URL;
   componentUrl: string;
   receiver: RemoteReceiver;
-  onError: () => void;
+  onError: (error?: Error) => void;
 };
 
 export const FrontComponentWorkerEffect = ({
@@ -31,8 +31,7 @@ export const FrontComponentWorkerEffect = ({
           componentUrl,
         });
       } catch (error) {
-        console.error(error);
-        onError();
+        onError(error);
       }
     };
 
