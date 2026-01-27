@@ -4,7 +4,6 @@ import {
   type Application,
   type ApplicationVariables,
 } from 'twenty-shared/application';
-import { createLogger } from '../../common/logger';
 import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
 import {
   type EntityBuildResult,
@@ -13,8 +12,6 @@ import {
   type ManifestWithoutSources,
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
 import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
-
-const logger = createLogger('manifest-watch');
 
 const findApplicationConfigPath = async (appPath: string): Promise<string> => {
   const files = await glob('**/application.config.ts', {
@@ -40,7 +37,7 @@ export class ApplicationEntityBuilder
 {
   async build(appPath: string): Promise<EntityBuildResult<Application>> {
     const applicationConfigPath = await findApplicationConfigPath(appPath);
-    const application =
+    const { manifest: application } =
       await manifestExtractFromFileServer.extractManifestFromFile<Application>(
         applicationConfigPath,
       );
@@ -66,12 +63,6 @@ export class ApplicationEntityBuilder
         message: 'Application must have a universalIdentifier',
       });
     }
-  }
-
-  display(applications: Application[]): void {
-    const application = applications[0];
-    const appName = application?.displayName ?? 'Application';
-    logger.success(`✓ Loaded "${appName}"`);
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {

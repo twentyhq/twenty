@@ -1,7 +1,7 @@
-import { type FieldMetadataDefaultSerializableValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { type FieldMetadataDefaultValueForAnyType } from 'twenty-shared/types';
 
 export const unserializeDefaultValue = (
-  serializedDefaultValue: FieldMetadataDefaultSerializableValue,
+  serializedDefaultValue: FieldMetadataDefaultValueForAnyType,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
   if (serializedDefaultValue === undefined || serializedDefaultValue === null) {

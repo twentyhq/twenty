@@ -18,4 +18,5 @@ export type ApplicationManifest = {
   roles?: RoleManifest[];
   sources: Sources;
   packageJson: PackageJson;
+  yarnLock: string;
 };

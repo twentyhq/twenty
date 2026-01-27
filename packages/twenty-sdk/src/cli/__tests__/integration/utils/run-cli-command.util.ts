@@ -33,7 +33,10 @@ export const runCliCommand = (
       {
         cwd: CLI_DIR,
         stdio: ['ignore', 'pipe', 'pipe'],
-        env: { ...process.env, FORCE_COLOR: '0' },
+        env: {
+          ...process.env,
+          FORCE_COLOR: '0',
+        },
       },
     );
 

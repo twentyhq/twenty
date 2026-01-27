@@ -78,36 +78,33 @@ export class WorkflowStatusesUpdateJob {
   async handle(event: WorkflowVersionBatchEvent): Promise<void> {
     const authContext = buildSystemAuthContext(event.workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        switch (event.type) {
-          case WorkflowVersionEventType.CREATE:
-          case WorkflowVersionEventType.DELETE:
-            await Promise.all(
-              event.workflowIds.map((workflowId) =>
-                this.handleWorkflowVersionCreatedOrDeleted({
-                  workflowId,
-                  workspaceId: event.workspaceId,
-                }),
-              ),
-            );
-            break;
-          case WorkflowVersionEventType.STATUS_UPDATE:
-            await Promise.all(
-              event.statusUpdates.map((statusUpdate) =>
-                this.handleWorkflowVersionStatusUpdated({
-                  statusUpdate,
-                  workspaceId: event.workspaceId,
-                }),
-              ),
-            );
-            break;
-          default:
-            break;
-        }
-      },
-    );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      switch (event.type) {
+        case WorkflowVersionEventType.CREATE:
+        case WorkflowVersionEventType.DELETE:
+          await Promise.all(
+            event.workflowIds.map((workflowId) =>
+              this.handleWorkflowVersionCreatedOrDeleted({
+                workflowId,
+                workspaceId: event.workspaceId,
+              }),
+            ),
+          );
+          break;
+        case WorkflowVersionEventType.STATUS_UPDATE:
+          await Promise.all(
+            event.statusUpdates.map((statusUpdate) =>
+              this.handleWorkflowVersionStatusUpdated({
+                statusUpdate,
+                workspaceId: event.workspaceId,
+              }),
+            ),
+          );
+          break;
+        default:
+          break;
+      }
+    }, authContext);
   }
 
   private async handleWorkflowVersionCreatedOrDeleted({

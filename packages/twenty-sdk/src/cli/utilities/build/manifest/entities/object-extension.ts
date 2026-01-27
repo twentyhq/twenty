@@ -33,11 +33,12 @@ export class ObjectExtensionEntityBuilder
       try {
         const absolutePath = `${appPath}/${filePath}`;
 
-        manifests.push(
+        const { manifest } =
           await manifestExtractFromFileServer.extractManifestFromFile<ObjectExtensionManifest>(
             absolutePath,
-          ),
-        );
+          );
+
+        manifests.push(manifest);
       } catch (error) {
         throw new Error(
           `Failed to load object extension from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
@@ -128,10 +129,6 @@ export class ObjectExtensionEntityBuilder
         }
       }
     }
-  }
-
-  display(_extensions: ObjectExtensionManifest[]): void {
-    // Object extensions don't have a dedicated display - they're part of the manifest
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {

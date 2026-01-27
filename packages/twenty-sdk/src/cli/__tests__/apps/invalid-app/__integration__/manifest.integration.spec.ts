@@ -1,9 +1,10 @@
 import { runAppDev } from '@/cli/__tests__/integration/utils/run-app-dev.util';
 import * as fs from 'fs-extra';
 import { join } from 'path';
+import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 
 const APP_PATH = join(__dirname, '..');
-const MANIFEST_OUTPUT_PATH = join(APP_PATH, '.twenty/output/manifest.json');
+const MANIFEST_OUTPUT_PATH = join(APP_PATH, OUTPUT_DIR, 'ioi', 'manifest.json');
 
 describe('invalid-app manifest', () => {
   it('should fail to build manifest due to duplicate universalIdentifier', async () => {

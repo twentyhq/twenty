@@ -16,11 +16,16 @@ import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunFavoriteQueriesEffect = () => {
+  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  );
   const showAuthModal = useShowAuthModal();
   const isSettingsPage = useIsSettingsPage();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -55,14 +60,22 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
     objectNameSingular: CoreObjectNameSingular.Favorite,
     filter: findAllFavoritesOperationSignature.variables.filter,
     recordGqlFields: findAllFavoritesOperationSignature.fields,
-    skip: showAuthModal || isSettingsPage || !isWorkspaceActive,
+    skip:
+      showAuthModal ||
+      isSettingsPage ||
+      !isWorkspaceActive ||
+      isNavigationMenuItemEnabled,
   });
 
   const { records: favoriteFolders } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
     filter: findAllFavoriteFoldersOperationSignature.variables.filter,
     recordGqlFields: findAllFavoriteFoldersOperationSignature.fields,
-    skip: showAuthModal || isSettingsPage || !isWorkspaceActive,
+    skip:
+      showAuthModal ||
+      isSettingsPage ||
+      !isWorkspaceActive ||
+      isNavigationMenuItemEnabled,
   });
 
   const setPrefetchFavoritesState = useRecoilCallback(

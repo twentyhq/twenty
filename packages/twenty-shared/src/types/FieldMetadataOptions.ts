@@ -30,11 +30,15 @@ type FieldMetadataOptionsMapping = {
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataComplexOption[];
 };
 
+export type FieldMetadataOptionForAnyType =
+  | null
+  | FieldMetadataOptionsMapping[keyof FieldMetadataOptionsMapping];
+
 export type FieldMetadataOptions<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? null | (FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]) // Could be improved to be | unknown
+    ? FieldMetadataOptionForAnyType
     : T extends keyof FieldMetadataOptionsMapping
       ? FieldMetadataOptionsMapping[T]
       : never | null;

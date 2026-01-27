@@ -1,185 +1,113 @@
+import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
+import { createRequire } from 'module';
+import * as os from 'os';
 import path from 'path';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
-import { createServer, type ViteDevServer } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
-export type ExtractManifestOptions = {
-  entryProperty?: string;
+export type ExtractedManifest<TManifest> = {
+  manifest: TManifest;
+  exportName: string | null;
 };
 
 export class ManifestExtractFromFileServer {
-  private server: ViteDevServer | null = null;
   private appPath: string | null = null;
 
   init(appPath: string): void {
-    if (this.appPath !== appPath) {
-      this.closeViteServer();
-    }
     this.appPath = appPath;
   }
 
   async extractManifestFromFile<TManifest>(
     filepath: string,
-    options: ExtractManifestOptions = {},
-  ): Promise<TManifest> {
+  ): Promise<ExtractedManifest<TManifest>> {
     if (!this.appPath) {
       throw new Error(
         'ManifestExtractFromFileServer not initialized. Call init(appPath) first.',
       );
     }
 
-    const { entryProperty } = options;
-    const server = await this.getServer();
-    const module = (await server.ssrLoadModule(filepath)) as Record<
-      string,
-      unknown
-    >;
+    const module = await this.loadModule(filepath);
 
-    const config = this.extractConfigFromModule<Record<string, unknown>>(
-      module,
-      entryProperty,
-    );
+    const result = this.extractConfigFromModule<TManifest>(module);
 
-    if (!config) {
-      const expectedExport = entryProperty
-        ? `a config object with a "${entryProperty}" property`
-        : 'a config object (default export or any named object export)';
-      throw new Error(`Config file ${filepath} must export ${expectedExport}`);
-    }
-
-    if (!entryProperty) {
-      return config as TManifest;
-    }
-
-    const entryFunction = config[entryProperty] as Function;
-    const entryName = entryFunction.name;
-
-    if (!entryName) {
+    if (!result) {
       throw new Error(
-        `${entryProperty} function in ${filepath} must be a named function`,
+        `Config file ${filepath} must export a config object (default export or any named object export)`,
       );
     }
 
-    const importSource = await this.resolveEntryPath(filepath, entryName);
-    const entryPath =
-      importSource ?? path.relative(this.appPath, filepath).replace(/\\/g, '/');
-
-    const { [entryProperty]: _, ...configWithoutEntry } = config;
-
-    return {
-      ...configWithoutEntry,
-      [`${entryProperty}Name`]: entryName,
-      [`${entryProperty}Path`]: entryPath,
-    } as TManifest;
+    return result;
   }
 
-  async closeViteServer(): Promise<void> {
-    if (this.server) {
-      await this.server.close();
-      this.server = null;
-    }
-  }
-
-  private async getServer(): Promise<ViteDevServer> {
+  private async loadModule(filepath: string): Promise<Record<string, unknown>> {
     if (!this.appPath) {
       throw new Error(
         'ManifestExtractFromFileServer not initialized. Call init(appPath) first.',
       );
     }
 
-    if (this.server) {
-      return this.server;
+    const tsconfigPath = path.join(this.appPath, 'tsconfig.json');
+    const hasTsconfig = await fs.pathExists(tsconfigPath);
+
+    // Resolve react from the app's node_modules for the alias
+    const appRequire = createRequire(path.join(this.appPath, 'package.json'));
+    let reactPath: string | undefined;
+    let reactDomPath: string | undefined;
+
+    try {
+      reactPath = path.dirname(appRequire.resolve('react/package.json'));
+      reactDomPath = path.dirname(appRequire.resolve('react-dom/package.json'));
+    } catch {
+      // React not installed in app, will be bundled if used
     }
 
-    this.server = await createServer({
-      root: this.appPath,
-      plugins: [tsconfigPaths({ root: this.appPath })],
-      server: { middlewareMode: true },
-      optimizeDeps: { disabled: true },
+    const result = await esbuild.build({
+      entryPoints: [filepath],
+      bundle: true,
+      write: false,
+      format: 'cjs',
+      platform: 'node',
+      target: 'node18',
+      jsx: 'automatic',
+      tsconfig: hasTsconfig ? tsconfigPath : undefined,
+      // Use alias to resolve react from app's node_modules
+      alias: {
+        ...(reactPath && { react: reactPath }),
+        ...(reactDomPath && { 'react-dom': reactDomPath }),
+      },
       logLevel: 'silent',
-      configFile: false,
-      esbuild: { jsx: 'automatic' },
     });
 
-    return this.server;
+    const code = result.outputFiles[0].text;
+
+    const tempDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), 'twenty-manifest-'),
+    );
+    const tempFile = path.join(tempDir, 'module.cjs');
+
+    try {
+      await fs.writeFile(tempFile, code);
+
+      return require(tempFile) as Record<string, unknown>;
+    } finally {
+      await fs.remove(tempDir);
+    }
   }
 
   private extractConfigFromModule<T>(
     module: Record<string, unknown>,
-    entryProperty?: string,
-  ): T | undefined {
-    const hasValidEntry = (value: unknown): boolean =>
-      isPlainObject(value) &&
-      typeof (value as Record<string, unknown>)[entryProperty!] === 'function';
-
-    if (
-      isDefined(module.default) &&
-      (!entryProperty || hasValidEntry(module.default))
-    ) {
-      return module.default as T;
+  ): ExtractedManifest<T> | undefined {
+    if (isDefined(module.default) && isPlainObject(module.default)) {
+      return { manifest: module.default as T, exportName: null };
     }
 
-    for (const value of Object.values(module)) {
-      if (isPlainObject(value) && (!entryProperty || hasValidEntry(value))) {
-        return value as T;
+    for (const [key, value] of Object.entries(module)) {
+      if (isPlainObject(value)) {
+        return { manifest: value as T, exportName: key };
       }
     }
 
     return undefined;
-  }
-
-  private async resolveEntryPath(
-    filepath: string,
-    entryName: string,
-  ): Promise<string | null> {
-    if (!this.appPath) {
-      return null;
-    }
-
-    const source = await fs.readFile(filepath, 'utf8');
-
-    const patterns = [
-      new RegExp(
-        `import\\s*\\{[^}]*\\b${entryName}\\b[^}]*\\}\\s*from\\s*['"]([^'"]+)['"]`,
-      ),
-      new RegExp(`import\\s+${entryName}\\s+from\\s*['"]([^'"]+)['"]`),
-    ];
-
-    let importSpecifier: string | null = null;
-    for (const pattern of patterns) {
-      const match = source.match(pattern);
-      if (match) {
-        importSpecifier = match[1];
-        break;
-      }
-    }
-
-    if (!importSpecifier) {
-      return null;
-    }
-
-    const server = await this.getServer();
-    const resolved = await server.pluginContainer.resolveId(
-      importSpecifier,
-      filepath,
-    );
-    if (resolved?.id) {
-      return path.relative(this.appPath, resolved.id).replace(/\\/g, '/');
-    }
-
-    if (importSpecifier.startsWith('.')) {
-      const absolutePath = path.resolve(
-        path.dirname(filepath),
-        importSpecifier,
-      );
-      const relativePath = path.relative(this.appPath, absolutePath);
-      return (
-        relativePath.endsWith('.ts') ? relativePath : `${relativePath}.ts`
-      ).replace(/\\/g, '/');
-    }
-
-    return null;
   }
 }
 

@@ -42,6 +42,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 [
   "objectMetadata",
   "navigationMenuItem",
+  "view",
 ]
 `;
 
@@ -161,3 +162,5 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "view",
 ]
 `;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for webhook 1`] = `[]`;

@@ -55,7 +55,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   const { loading, error } = useGetWebhookQuery({
     skip: isCreationMode || !webhookId,
     variables: {
-      input: { id: webhookId || '' },
+      id: webhookId || '',
     },
     onCompleted: (data) => {
       const webhook = data.webhook;
@@ -119,8 +119,10 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     }
 
     try {
-      const input = createWebhookUpdateInput(formValues, webhookId);
-      const { data } = await updateWebhook({ variables: { input } });
+      const input = createWebhookUpdateInput(formValues);
+      const { data } = await updateWebhook({
+        variables: { input: { id: webhookId, update: input } },
+      });
       const updatedWebhook = data?.updateWebhook;
 
       formConfig.reset(formValues);
@@ -182,7 +184,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
     try {
       await deleteWebhook({
-        variables: { input: { id: webhookId } },
+        variables: { id: webhookId },
       });
       enqueueSuccessSnackBar({
         message: t`Webhook deleted successfully`,

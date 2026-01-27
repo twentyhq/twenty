@@ -12,6 +12,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
@@ -47,7 +48,7 @@ export class ViewFilterEntity
   operand: ViewFilterOperand;
 
   @Column({ nullable: false, type: 'jsonb' })
-  value: ViewFilterValue;
+  value: JsonbProperty<ViewFilterValue>;
 
   @Column({ nullable: true, type: 'uuid' })
   viewFilterGroupId: string | null;

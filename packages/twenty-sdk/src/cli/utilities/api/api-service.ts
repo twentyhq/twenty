@@ -18,7 +18,8 @@ export class ApiService {
   private client: AxiosInstance;
   private configService: ConfigService;
 
-  constructor() {
+  constructor(options?: { disableInterceptors: boolean }) {
+    const { disableInterceptors = false } = options || {};
     this.configService = new ConfigService();
     this.client = axios.create();
 
@@ -33,6 +34,10 @@ export class ApiService {
 
       return config;
     });
+
+    if (disableInterceptors) {
+      return;
+    }
 
     this.client.interceptors.response.use(
       (response) => response,
@@ -88,13 +93,7 @@ export class ApiService {
     }
   }
 
-  async syncApplication({
-    manifest,
-    yarnLock,
-  }: {
-    manifest: ApplicationManifest;
-    yarnLock: string;
-  }): Promise<ApiResponse> {
+  async syncApplication(manifest: ApplicationManifest): Promise<ApiResponse> {
     try {
       const mutation = `
         mutation SyncApplication($manifest: JSON!, $packageJson: JSON!, $yarnLock: String!) {
@@ -105,7 +104,7 @@ export class ApiService {
       const variables = {
         manifest,
         packageJson: manifest.packageJson,
-        yarnLock,
+        yarnLock: manifest.yarnLock,
       };
 
       const response: AxiosResponse = await this.client.post(

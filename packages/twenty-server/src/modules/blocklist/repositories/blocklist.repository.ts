@@ -17,7 +17,6 @@ export class BlocklistRepository {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const blockListRepository =
           await this.globalWorkspaceOrmManager.getRepository(
@@ -32,6 +31,7 @@ export class BlocklistRepository {
           id,
         });
       },
+      authContext,
     );
   }
 
@@ -42,7 +42,6 @@ export class BlocklistRepository {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const blockListRepository =
           await this.globalWorkspaceOrmManager.getRepository(
@@ -56,6 +55,7 @@ export class BlocklistRepository {
           },
         });
       },
+      authContext,
     );
   }
 }

@@ -100,7 +100,6 @@ export class GoogleAPIsService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const connectedAccountRepository =
           await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
@@ -258,6 +257,7 @@ export class GoogleAPIsService {
 
         return newOrExistingConnectedAccountId;
       },
+      authContext,
     );
   }
 }

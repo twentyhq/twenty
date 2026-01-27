@@ -8,7 +8,7 @@ export type EntityIdWithLocation = {
 
 export type ManifestWithoutSources = Omit<
   ApplicationManifest,
-  'sources' | 'packageJson'
+  'sources' | 'packageJson' | 'yarnLock'
 >;
 
 export type EntityBuildResult<TManifest> = {
@@ -19,6 +19,5 @@ export type EntityBuildResult<TManifest> = {
 export type ManifestEntityBuilder<EntityManifest> = {
   build(appPath: string): Promise<EntityBuildResult<EntityManifest>>;
   validate(data: EntityManifest[], errors: ValidationError[]): void;
-  display(data: EntityManifest[]): void;
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[];
 };

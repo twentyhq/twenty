@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
-  FieldMetadataRelationSettings,
+  FieldMetadataSettingsMapping,
   FieldMetadataType,
   RelationOnDeleteAction,
 } from 'twenty-shared/types';
@@ -106,7 +106,7 @@ export class UpdateTaskOnDeleteActionCommand extends ActiveOrSuspendedWorkspaces
     }
 
     const taskFieldSettings =
-      taskField.settings as FieldMetadataRelationSettings;
+      taskField.settings as FieldMetadataSettingsMapping['RELATION'];
 
     if (taskFieldSettings?.onDelete === RelationOnDeleteAction.CASCADE) {
       this.logger.log(
@@ -121,19 +121,25 @@ export class UpdateTaskOnDeleteActionCommand extends ActiveOrSuspendedWorkspaces
     );
 
     if (!isDryRun) {
-      const updatedSettings: FieldMetadataRelationSettings = {
+      const updatedSettings: FieldMetadataSettingsMapping['RELATION'] = {
         ...taskFieldSettings,
         onDelete: RelationOnDeleteAction.CASCADE,
       };
 
-      await this.fieldMetadataService.updateOneField({
-        updateFieldInput: {
-          id: taskField.id,
-          settings: updatedSettings,
-        },
-        workspaceId,
-        isSystemBuild: true,
-      });
+      try {
+        await this.fieldMetadataService.updateOneField({
+          updateFieldInput: {
+            id: taskField.id,
+            settings: updatedSettings,
+          },
+          workspaceId,
+          isSystemBuild: true,
+        });
+      } catch (error) {
+        this.logger.debug(`Error details: ${JSON.stringify(error)}`);
+
+        throw error;
+      }
 
       this.logger.log(
         `Successfully updated task relation onDelete to CASCADE in workspace ${workspaceId}`,

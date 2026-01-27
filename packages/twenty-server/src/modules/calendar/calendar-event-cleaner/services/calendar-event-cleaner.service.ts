@@ -15,37 +15,34 @@ export class CalendarEventCleanerService {
   public async cleanWorkspaceCalendarEvents(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarEventRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            'calendarEvent',
-          );
-
-        await deleteUsingPagination(
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarEventRepository =
+        await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
-          500,
-          async (limit, offset) => {
-            const nonAssociatedCalendarEvents =
-              await calendarEventRepository.find({
-                where: {
-                  calendarChannelEventAssociations: {
-                    id: IsNull(),
-                  },
-                },
-                take: limit,
-                skip: offset,
-              });
-
-            return nonAssociatedCalendarEvents.map(({ id }) => id);
-          },
-          async (ids) => {
-            await calendarEventRepository.delete({ id: Any(ids) });
-          },
+          'calendarEvent',
         );
-      },
-    );
+
+      await deleteUsingPagination(
+        workspaceId,
+        500,
+        async (limit, offset) => {
+          const nonAssociatedCalendarEvents =
+            await calendarEventRepository.find({
+              where: {
+                calendarChannelEventAssociations: {
+                  id: IsNull(),
+                },
+              },
+              take: limit,
+              skip: offset,
+            });
+
+          return nonAssociatedCalendarEvents.map(({ id }) => id);
+        },
+        async (ids) => {
+          await calendarEventRepository.delete({ id: Any(ids) });
+        },
+      );
+    }, authContext);
   }
 }
