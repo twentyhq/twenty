@@ -1,6 +1,8 @@
 import { Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
+import { ArrayContains, IsNull, Repository } from 'typeorm';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
@@ -13,9 +15,9 @@ import {
   CallWebhookJob,
   type CallWebhookJobData,
 } from 'src/engine/core-modules/webhook/jobs/call-webhook.job';
-import { WebhookQueryService } from 'src/engine/core-modules/webhook/webhook.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { transformEventBatchToWebhookEvents } from 'src/engine/core-modules/webhook/utils/transform-event-batch-to-webhook-events';
+import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
 
@@ -25,7 +27,8 @@ export class CallWebhookJobsJob {
   constructor(
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly webhookQueryService: WebhookQueryService,
+    @InjectRepository(WebhookEntity)
+    private readonly webhookRepository: Repository<WebhookEntity>,
   ) {}
 
   @Process(CallWebhookJobsJob.name)
@@ -39,15 +42,20 @@ export class CallWebhookJobsJob {
 
     const [nameSingular, operation] = workspaceEventBatch.name.split('.');
 
-    const webhooks = await this.webhookQueryService.findByOperations(
-      workspaceEventBatch.workspaceId,
-      [
-        `${nameSingular}.${operation}`,
-        `*.${operation}`,
-        `${nameSingular}.*`,
-        '*.*',
-      ],
-    );
+    const operations = [
+      `${nameSingular}.${operation}`,
+      `*.${operation}`,
+      `${nameSingular}.*`,
+      '*.*',
+    ];
+
+    const webhooks = await this.webhookRepository.find({
+      where: operations.map((op) => ({
+        workspaceId: workspaceEventBatch.workspaceId,
+        operations: ArrayContains([op]),
+        deletedAt: IsNull(),
+      })),
+    });
 
     const webhookEvents = transformEventBatchToWebhookEvents({
       workspaceEventBatch,
