@@ -1,4 +1,5 @@
 import { useTheme } from '@emotion/react';
+import { isDefined } from 'twenty-shared/utils';
 
 type AxisLabelProps = {
   label: string;
@@ -22,7 +23,9 @@ export const AxisLabel = ({
       x={x}
       y={y}
       textAnchor="middle"
-      transform={rotation !== undefined ? `rotate(${rotation}, ${x}, ${y})` : undefined}
+      transform={
+        isDefined(rotation) ? `rotate(${rotation}, ${x}, ${y})` : undefined
+      }
       fill={theme.font.color.primary}
       fontSize={fontSize}
       fontWeight={theme.font.weight.medium}

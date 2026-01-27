@@ -1,9 +1,8 @@
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
-import { computeGroupedBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeGroupedBarPositions';
+import { computeBarPositionsByGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositionsByGroupMode';
 import { computeShouldRoundFreeEndMap } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeShouldRoundFreeEndMap';
-import { computeStackedBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeStackedBarPositions';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { type BarChartLayout } from '~/generated/graphql';
 
@@ -52,23 +51,7 @@ export const computeBarPositions = ({
     groupMode,
   });
 
-  if (groupMode === 'stacked') {
-    return computeStackedBarPositions({
-      data,
-      indexBy,
-      keys,
-      enrichedKeysMap,
-      innerWidth,
-      innerHeight,
-      layout,
-      valueDomain,
-      fallbackColor,
-      shouldRoundFreeEndMap,
-      includeZeroValues,
-    });
-  }
-
-  return computeGroupedBarPositions({
+  return computeBarPositionsByGroupMode({
     data,
     indexBy,
     keys,
@@ -76,6 +59,7 @@ export const computeBarPositions = ({
     innerWidth,
     innerHeight,
     layout,
+    groupMode,
     valueDomain,
     fallbackColor,
     innerPadding,
