@@ -157,6 +157,7 @@ describe('computeAllCategorySlices', () => {
       expect(result[0].bars[0].indexValue).toBe('A');
       expect(result[1].bars).toHaveLength(1);
       expect(result[1].bars[0].indexValue).toBe('B');
+      expect(result[0].sliceLeft).toBeGreaterThan(result[1].sliceLeft);
     });
   });
 
