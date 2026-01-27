@@ -170,6 +170,11 @@ msgstr "Došlo k chybě skupiny zobrazení."
 msgid "A view sort error occurred."
 msgstr "Došlo k chybě řazení zobrazení."
 
+#. js-lingui-id: SMhyGZ
+#: src/engine/metadata-modules/webhook/webhook.exception.ts
+msgid "A webhook with this configuration already exists."
+msgstr ""
+
 #. js-lingui-id: Bk+qoW
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
@@ -1947,10 +1952,16 @@ msgstr "Neplatná položka předplatného."
 msgid "Invalid subscription."
 msgstr "Neplatné předplatné."
 
-#. js-lingui-id: LWhrAo
-#: src/engine/core-modules/webhook/webhook.exception.ts
-msgid "Invalid target URL."
-msgstr "Neplatná cílová adresa URL."
+#. js-lingui-id: WreNd7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
+msgid "Invalid target URL provided"
+msgstr ""
+
+#. js-lingui-id: 9mW6V7
+#: src/engine/metadata-modules/webhook/webhook.exception.ts
+msgid "Invalid target URL. Please provide a valid HTTP or HTTPS URL."
+msgstr ""
 
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2088,6 +2099,11 @@ msgstr "Neplatný ověřovací kód."
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Neplatný ověřovací kód. Zkuste to prosím znovu."
+
+#. js-lingui-id: z68tnU
+#: src/engine/metadata-modules/webhook/webhook.exception.ts
+msgid "Invalid webhook input."
+msgstr ""
 
 #. js-lingui-id: c4NCfN
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
@@ -2949,11 +2965,11 @@ msgstr "Zkontrolujte prosím své nastavení připojení. Ujistěte se, že serv
 msgid "Please confirm your updated email"
 msgstr ""
 
-#. js-lingui-id: v0iiWr
-#: src/engine/core-modules/webhook/webhook.service.ts
-#: src/engine/core-modules/webhook/webhook.service.ts
-msgid "Please provide a valid HTTP or HTTPS URL."
-msgstr "Zadejte platnou HTTP nebo HTTPS URL."
+#. js-lingui-id: NR22yi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
+msgid "Please provide a valid HTTP or HTTPS URL"
+msgstr ""
 
 #. js-lingui-id: RDvKTq
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -3559,6 +3575,12 @@ msgstr ""
 #. js-lingui-id: xLsFda
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not reference this field"
+msgstr ""
+
+#. js-lingui-id: /HKzKW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
+msgid "Target URL is required"
 msgstr ""
 
 #. js-lingui-id: 9Q/KBa
@@ -4393,8 +4415,16 @@ msgstr "Nemohli jsme se přihlásit k vašemu e-mailovému účtu. Zkontrolujte 
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Narazili jsme na problém s připojením ke vašemu e-mailovému účtu. Zkontrolujte prosím nastavení a zkuste to znovu."
 
+#. js-lingui-id: mnANRQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
+msgid "Webhook not found"
+msgstr ""
+
 #. js-lingui-id: b8g3PG
-#: src/engine/core-modules/webhook/webhook.exception.ts
+#: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "Webhook not found."
 msgstr "Webhook nenalezen."
 

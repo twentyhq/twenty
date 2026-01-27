@@ -12812,6 +12812,11 @@ msgstr ""
 msgid "Web Search"
 msgstr "웹 검색"
 
+#. js-lingui-id: Dq7Z5R
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "webhook"
+msgstr ""
+
 #. js-lingui-id: Tvdycs
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
 msgid "Webhook {targetUrl} created successfully"
