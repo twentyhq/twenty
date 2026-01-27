@@ -1,23 +1,27 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
-import { buildSystemAuthContext } from 'src/engine/core-modules/auth/utils/build-system-auth-context.util';
-import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
+import { buildSystemAuthContext } from 'src/engine/core-modules/auth/utils/build-system-auth-context.util';
+import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class McpProtocolService {
@@ -27,6 +31,9 @@ export class McpProtocolService {
     private readonly userRoleService: UserRoleService,
     private readonly mcpToolExecutorService: McpToolExecutorService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async checkAiEnabled(workspaceId: string): Promise<void> {
@@ -89,22 +96,50 @@ export class McpProtocolService {
     return roleId;
   }
 
-  private buildAuthContext(
+  private async buildAuthContext(
     workspace: WorkspaceEntity,
     userWorkspaceId?: string,
     apiKey?: ApiKeyEntity,
-  ): WorkspaceAuthContext {
+  ): Promise<WorkspaceAuthContext> {
     if (isDefined(apiKey)) {
       return buildApiKeyAuthContext({ workspace, apiKey });
     }
 
     if (isDefined(userWorkspaceId)) {
+      const user = await this.userRepository.findOne({
+        where: {
+          id: userWorkspaceId,
+        },
+      });
+
+      if (!isDefined(user)) {
+        throw new HttpException('User not found', HttpStatus.FORBIDDEN);
+      }
+
+      const { flatWorkspaceMemberMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspace.id, [
+          'flatWorkspaceMemberMaps',
+        ]);
+
+      const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[user.id];
+
+      const workspaceMember = isDefined(workspaceMemberId)
+        ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
+        : undefined;
+
+      if (!isDefined(workspaceMemberId) || !isDefined(workspaceMember)) {
+        throw new HttpException(
+          'Workspace member not found',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
       return buildUserAuthContext({
         workspace,
         userWorkspaceId,
-        user: undefined,
-        workspaceMemberId: undefined,
-        workspaceMember: undefined,
+        user,
+        workspaceMemberId,
+        workspaceMember,
       });
     }
 
@@ -146,7 +181,7 @@ export class McpProtocolService {
         apiKey,
       );
 
-      const authContext = this.buildAuthContext(
+      const authContext = await this.buildAuthContext(
         workspace,
         userWorkspaceId,
         apiKey,

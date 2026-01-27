@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ToolSet } from 'ai';
 import {
@@ -6,22 +7,28 @@ import {
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import {
   type ToolProvider,
   type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { createDirectRecordToolsFactory } from 'src/engine/core-modules/record-crud/tool-factory/direct-record-tools.factory';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
@@ -38,6 +45,8 @@ export class DatabaseToolProvider implements ToolProvider {
     private readonly updateRecordService: UpdateRecordService,
     private readonly deleteRecordService: DeleteRecordService,
     private readonly findRecordsService: FindRecordsService,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async isAvailable(_context: ToolProviderContext): Promise<boolean> {
@@ -54,12 +63,43 @@ export class DatabaseToolProvider implements ToolProvider {
       return tools;
     }
 
+    const user = await this.userRepository.findOne({
+      where: {
+        id: context.userId,
+      },
+    });
+
+    if (!isDefined(user)) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[user.id];
+
+    const workspaceMember = isDefined(workspaceMemberId)
+      ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
+      : undefined;
+
+    if (!isDefined(workspaceMemberId) || !isDefined(workspaceMember)) {
+      throw new AuthException(
+        'Workspace member not found',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+
     const authContext: WorkspaceAuthContext = buildUserAuthContext({
       workspace: { id: context.workspaceId } as WorkspaceEntity,
       userWorkspaceId: context.userWorkspaceId,
-      user: undefined,
-      workspaceMemberId: undefined,
-      workspaceMember: undefined,
+      user,
+      workspaceMemberId,
+      workspaceMember,
     });
 
     const { rolesPermissions } =

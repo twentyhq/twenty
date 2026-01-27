@@ -4,9 +4,9 @@ import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/type
 type UserAuthContextInput = {
   workspace: NonNullable<AuthContext['workspace']>;
   userWorkspaceId: NonNullable<AuthContext['userWorkspaceId']>;
-  user: AuthContext['user'];
-  workspaceMemberId: AuthContext['workspaceMemberId'];
-  workspaceMember: AuthContext['workspaceMember'];
+  user: NonNullable<AuthContext['user']>;
+  workspaceMemberId: NonNullable<AuthContext['workspaceMemberId']>;
+  workspaceMember: NonNullable<AuthContext['workspaceMember']>;
   workspaceMetadataVersion?: string;
 };
 
