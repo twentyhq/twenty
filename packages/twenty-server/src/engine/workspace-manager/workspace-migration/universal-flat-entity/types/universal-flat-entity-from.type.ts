@@ -38,6 +38,7 @@ export type UniversalFlatEntityFrom<
   } & {
     applicationUniversalIdentifier: string;
   } & {
-    [P in ExtractJsonbProperties<TEntity>]:
-      FormatJsonbSerializedRelation<TEntity[P]>
+    [P in ExtractJsonbProperties<TEntity>]: FormatJsonbSerializedRelation<
+      TEntity[P]
+    >;
   };
