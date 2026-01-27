@@ -28,9 +28,8 @@ type AnimationState = {
   sourceBars: BarPosition[];
   targetBars: BarPosition[];
   startTime: number;
-  durationMs: number;
   isAnimating: boolean;
-} | null;
+};
 
 const StyledBaseCanvas = styled.canvas`
   display: block;
@@ -54,16 +53,6 @@ export const BarChartBaseLayer = ({
 }: BarChartBaseLayerProps) => {
   const theme = useTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [dpr] = useState<number>(
-    () =>
-      (typeof window !== 'undefined' ? window.devicePixelRatio : undefined) ||
-      CHART_CORE_CONSTANTS.DEFAULT_DEVICE_PIXEL_RATIO,
-  );
-  const [chartSize, setChartSize] = useState<{
-    width: number;
-    height: number;
-  } | null>(null);
-  const [animationState, setAnimationState] = useState<AnimationState>(null);
 
   const borderRadius = parseInt(theme.border.radius.sm);
   const gridColor = theme.border.color.light;
@@ -71,6 +60,22 @@ export const BarChartBaseLayer = ({
   const durationMs =
     theme.animation.duration.normal *
     CHART_CORE_CONSTANTS.MILLISECONDS_PER_SECOND;
+
+  const [dpr] = useState<number>(
+    () =>
+      (typeof window !== 'undefined' ? window.devicePixelRatio : undefined) ||
+      CHART_CORE_CONSTANTS.DEFAULT_DEVICE_PIXEL_RATIO,
+  );
+  const [chartSize, setChartSize] = useState(() => ({
+    width: chartWidth,
+    height: chartHeight,
+  }));
+  const [animationState, setAnimationState] = useState<AnimationState>(() => ({
+    sourceBars: bars,
+    targetBars: bars,
+    startTime: performance.now(),
+    isAnimating: false,
+  }));
 
   const renderBase = useCallback(
     (
@@ -169,9 +174,7 @@ export const BarChartBaseLayer = ({
 
   useEffect(() => {
     const sizeIsStable =
-      chartSize !== null &&
-      chartSize.width === chartWidth &&
-      chartSize.height === chartHeight;
+      chartSize.width === chartWidth && chartSize.height === chartHeight;
 
     if (!sizeIsStable) {
       setChartSize({ width: chartWidth, height: chartHeight });
@@ -179,7 +182,6 @@ export const BarChartBaseLayer = ({
         sourceBars: bars,
         targetBars: bars,
         startTime: performance.now(),
-        durationMs,
         isAnimating: false,
       });
       return;
@@ -190,7 +192,6 @@ export const BarChartBaseLayer = ({
         sourceBars: bars,
         targetBars: bars,
         startTime: performance.now(),
-        durationMs,
         isAnimating: false,
       });
       return;
@@ -198,16 +199,6 @@ export const BarChartBaseLayer = ({
 
     setAnimationState((prev) => {
       const now = performance.now();
-
-      if (!prev) {
-        return {
-          sourceBars: bars,
-          targetBars: bars,
-          startTime: now,
-          durationMs,
-          isAnimating: false,
-        };
-      }
 
       if (prev.targetBars === bars) {
         return prev;
@@ -218,7 +209,6 @@ export const BarChartBaseLayer = ({
           sourceBars: bars,
           targetBars: bars,
           startTime: now,
-          durationMs,
           isAnimating: false,
         };
       }
@@ -227,7 +217,7 @@ export const BarChartBaseLayer = ({
         ? interpolateBars(
             prev.sourceBars,
             prev.targetBars,
-            Math.min((now - prev.startTime) / prev.durationMs, 1),
+            Math.min((now - prev.startTime) / durationMs, 1),
             toBaselineBar,
           )
         : prev.targetBars;
@@ -236,7 +226,6 @@ export const BarChartBaseLayer = ({
         sourceBars,
         targetBars: bars,
         startTime: now,
-        durationMs,
         isAnimating: true,
       };
     });
@@ -272,14 +261,11 @@ export const BarChartBaseLayer = ({
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    const staticBars = animationState?.targetBars ?? bars;
-
     if (
-      !animationState ||
       !animationState.isAnimating ||
       animationState.sourceBars === animationState.targetBars
     ) {
-      renderBase(ctx, chartWidth, chartHeight, staticBars);
+      renderBase(ctx, chartWidth, chartHeight, animationState.targetBars);
       return;
     }
 
@@ -287,7 +273,7 @@ export const BarChartBaseLayer = ({
 
     const drawFrame = () => {
       const elapsed = performance.now() - animationState.startTime;
-      const t = Math.min(elapsed / animationState.durationMs, 1);
+      const t = Math.min(elapsed / durationMs, 1);
 
       if (t >= 1) {
         renderBase(ctx, chartWidth, chartHeight, animationState.targetBars);
@@ -315,6 +301,7 @@ export const BarChartBaseLayer = ({
     chartHeight,
     chartWidth,
     dpr,
+    durationMs,
     renderBase,
     toBaselineBar,
   ]);
