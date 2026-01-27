@@ -211,6 +211,11 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       return;
     }
 
+    const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatNavigationMenuItemMaps',
+      ]);
+
     const flatNavigationMenuItemsToCreate: FlatNavigationMenuItem[] = [];
 
     for (const favorite of favorites) {
@@ -227,6 +232,28 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         : null;
 
       if (isDefined(favorite.viewId)) {
+        // Check if workspace-level navigation menu item already exists for this view
+        if (userWorkspaceId === null) {
+          const existingItem = Object.values(
+            existingFlatNavigationMenuItemMaps.byId,
+          ).find(
+            (item) =>
+              isDefined(item) &&
+              item.workspaceId === workspaceId &&
+              item.userWorkspaceId === null &&
+              item.viewId === favorite.viewId &&
+              item.folderId === folderId,
+          );
+
+          if (isDefined(existingItem)) {
+            this.logger.log(
+              `Skipping favorite ${favorite.id} - workspace-level navigation menu item already exists for view ${favorite.viewId}`,
+            );
+
+            continue;
+          }
+        }
+
         const newId = uuidv4();
         const now = new Date().toISOString();
 
@@ -265,6 +292,29 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         continue;
       }
 
+      // Check if workspace-level navigation menu item already exists for this record
+      if (userWorkspaceId === null) {
+        const existingItem = Object.values(
+          existingFlatNavigationMenuItemMaps.byId,
+        ).find(
+          (item) =>
+            isDefined(item) &&
+            item.workspaceId === workspaceId &&
+            item.userWorkspaceId === null &&
+            item.targetRecordId === targetRecordId &&
+            item.targetObjectMetadataId === targetObjectMetadataId &&
+            item.folderId === folderId,
+        );
+
+        if (isDefined(existingItem)) {
+          this.logger.log(
+            `Skipping favorite ${favorite.id} - workspace-level navigation menu item already exists for record ${targetRecordId}`,
+          );
+
+          continue;
+        }
+      }
+
       const newId = uuidv4();
       const now = new Date().toISOString();
 
@@ -286,11 +336,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     }
 
     if (flatNavigationMenuItemsToCreate.length > 0) {
-      const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatNavigationMenuItemMaps',
-        ]);
-
       await this.createNavigationMenuItems(
         workspaceId,
         flatNavigationMenuItemsToCreate,
