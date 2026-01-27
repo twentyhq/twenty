@@ -8,7 +8,6 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
   name: string;
   properties: Record<string, PropertySchema>;
 }> = [
-  // Container elements
   { tag: 'html-div', name: 'HtmlDiv', properties: {} },
   { tag: 'html-span', name: 'HtmlSpan', properties: {} },
   { tag: 'html-section', name: 'HtmlSection', properties: {} },
@@ -18,8 +17,6 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
   { tag: 'html-main', name: 'HtmlMain', properties: {} },
   { tag: 'html-nav', name: 'HtmlNav', properties: {} },
   { tag: 'html-aside', name: 'HtmlAside', properties: {} },
-
-  // Text elements
   { tag: 'html-p', name: 'HtmlP', properties: {} },
   { tag: 'html-h1', name: 'HtmlH1', properties: {} },
   { tag: 'html-h2', name: 'HtmlH2', properties: {} },
@@ -33,8 +30,6 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
   { tag: 'html-code', name: 'HtmlCode', properties: {} },
   { tag: 'html-pre', name: 'HtmlPre', properties: {} },
   { tag: 'html-blockquote', name: 'HtmlBlockquote', properties: {} },
-
-  // Links & media
   {
     tag: 'html-a',
     name: 'HtmlA',
@@ -54,13 +49,9 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
       height: { type: 'number', optional: true },
     },
   },
-
-  // Lists
   { tag: 'html-ul', name: 'HtmlUl', properties: {} },
   { tag: 'html-ol', name: 'HtmlOl', properties: {} },
   { tag: 'html-li', name: 'HtmlLi', properties: {} },
-
-  // Forms
   {
     tag: 'html-form',
     name: 'HtmlForm',
@@ -129,8 +120,6 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
       disabled: { type: 'boolean', optional: true },
     },
   },
-
-  // Table elements
   { tag: 'html-table', name: 'HtmlTable', properties: {} },
   { tag: 'html-thead', name: 'HtmlThead', properties: {} },
   { tag: 'html-tbody', name: 'HtmlTbody', properties: {} },
@@ -152,8 +141,6 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
       rowSpan: { type: 'number', optional: true },
     },
   },
-
-  // Other
   { tag: 'html-br', name: 'HtmlBr', properties: {} },
   { tag: 'html-hr', name: 'HtmlHr', properties: {} },
 ] as const;
