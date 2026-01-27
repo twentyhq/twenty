@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,8 +10,6 @@ import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/d
 
 @Injectable()
 export class SecretEncryptionService {
-  private readonly logger = new Logger(SecretEncryptionService.name);
-
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
   ) {}
@@ -25,17 +23,9 @@ export class SecretEncryptionService {
       return value;
     }
 
-    try {
-      const appSecret = this.getAppSecret();
+    const appSecret = this.getAppSecret();
 
-      return encryptText(value, appSecret);
-    } catch (error) {
-      this.logger.debug(
-        `Encryption failed: ${error.message}. Using original value.`,
-      );
-
-      return value;
-    }
+    return encryptText(value, appSecret);
   }
 
   public decrypt(value: string): string {
@@ -43,16 +33,29 @@ export class SecretEncryptionService {
       return value;
     }
 
-    try {
-      const appSecret = this.getAppSecret();
+    const appSecret = this.getAppSecret();
 
-      return decryptText(value, appSecret);
-    } catch (error) {
-      this.logger.debug(
-        `Decryption failed: ${error.message}. Using original value.`,
-      );
+    return decryptText(value, appSecret);
+  }
 
+  public decryptAndMask({
+    value,
+    mask,
+  }: {
+    value: string;
+    mask: string;
+  }): string {
+    if (!isDefined(value)) {
       return value;
     }
+
+    const decryptedValue = this.decrypt(value);
+
+    const visibleCharsCount = Math.min(
+      5,
+      Math.floor(decryptedValue.length / 10),
+    );
+
+    return `${decryptedValue.slice(0, visibleCharsCount)}${mask}`;
   }
 }

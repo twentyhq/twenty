@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ApplicationVariables } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
-import { ApplicationVariables } from 'twenty-shared/application';
 
 import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
 import {
@@ -36,16 +36,10 @@ export class ApplicationVariableEntityService {
       return applicationVariable.value;
     }
 
-    const decryptedValue = this.secretEncryptionService.decrypt(
-      applicationVariable.value,
-    );
-
-    const visibleCharsCount = Math.min(
-      5,
-      Math.floor(decryptedValue.length / 10),
-    );
-
-    return `${decryptedValue.slice(0, visibleCharsCount)}${SECRET_APPLICATION_VARIABLE_MASK}`;
+    return this.secretEncryptionService.decryptAndMask({
+      value: applicationVariable.value,
+      mask: SECRET_APPLICATION_VARIABLE_MASK,
+    });
   }
 
   async update({
@@ -122,6 +116,7 @@ export class ApplicationVariableEntityService {
             applicationId,
           },
           {
+            value: encryptedValue,
             description: description ?? '',
             isSecret: isSecretValue,
           },
