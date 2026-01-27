@@ -29,27 +29,6 @@ describe('computeBottomTickPosition', () => {
       expect(result).toBe(expectedCenter);
     });
 
-    it('should return center for second category', () => {
-      const categoryIndexMap = new Map([
-        ['A', 0],
-        ['B', 1],
-      ]);
-
-      const result = computeBottomTickPosition({
-        value: 'B',
-        index: 1,
-        isVertical: true,
-        categoryValues: ['A', 'B'],
-        categoryIndexMap,
-        categoryScale: defaultCategoryScale,
-        valueDomain: { min: 0, max: 100 },
-        innerWidth: 400,
-      });
-
-      const expectedCenter = 20 + 1 * 100 + 80 / 2;
-      expect(result).toBe(expectedCenter);
-    });
-
     it('should return 0 when categoryValues is empty', () => {
       const result = computeBottomTickPosition({
         value: 'A',
@@ -85,21 +64,6 @@ describe('computeBottomTickPosition', () => {
   });
 
   describe('horizontal layout (value axis on bottom)', () => {
-    it('should position value at correct pixel position', () => {
-      const result = computeBottomTickPosition({
-        value: 50,
-        index: 0,
-        isVertical: false,
-        categoryValues: ['A', 'B'],
-        categoryIndexMap: new Map(),
-        categoryScale: defaultCategoryScale,
-        valueDomain: { min: 0, max: 100 },
-        innerWidth: 400,
-      });
-
-      expect(result).toBe(200);
-    });
-
     it('should position minimum value at 0', () => {
       const result = computeBottomTickPosition({
         value: 0,

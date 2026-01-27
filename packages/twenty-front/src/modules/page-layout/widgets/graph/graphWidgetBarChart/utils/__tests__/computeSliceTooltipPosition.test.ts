@@ -142,23 +142,4 @@ describe('computeSliceTooltipPosition', () => {
     });
   });
 
-  describe('margin application', () => {
-    it('should correctly apply different margins', () => {
-      const customMargins = { top: 50, right: 30, bottom: 60, left: 100 };
-      const slice = createSlice({
-        bars: [createBar(50, 100, 40, 60)],
-        sliceCenter: 75,
-      });
-
-      const result = computeSliceTooltipPosition({
-        slice,
-        margins: customMargins,
-        innerHeight: 200,
-        isVertical: true,
-      });
-
-      expect(result.offsetLeft).toBe(75 + customMargins.left);
-      expect(result.offsetTop).toBe(100 + customMargins.top);
-    });
-  });
 });

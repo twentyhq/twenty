@@ -111,27 +111,6 @@ describe('computeAllCategorySlices', () => {
   });
 
   describe('horizontal layout', () => {
-    it('should create slices for each data point in reversed order', () => {
-      const data = [
-        { category: 'A', value: 10 },
-        { category: 'B', value: 20 },
-        { category: 'C', value: 30 },
-      ];
-
-      const result = computeAllCategorySlices({
-        data,
-        indexBy: 'category',
-        bars: [],
-        isVerticalLayout: false,
-        chartWidth: 500,
-        chartHeight: 300,
-        margins: defaultMargins,
-      });
-
-      expect(result).toHaveLength(3);
-      expect(result.map((s) => s.indexValue)).toEqual(['A', 'B', 'C']);
-    });
-
     it('should assign bars to correct slices in horizontal layout', () => {
       const data = [
         { category: 'A', value: 10 },

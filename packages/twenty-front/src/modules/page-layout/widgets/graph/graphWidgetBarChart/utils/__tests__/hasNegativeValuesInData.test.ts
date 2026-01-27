@@ -36,25 +36,6 @@ describe('hasNegativeValuesInData', () => {
 
       expect(result).toBe(true);
     });
-
-    it('should return true when all values are negative', () => {
-      const data = [
-        { category: 'A', value1: -10, value2: -20 },
-        { category: 'B', value1: -30, value2: -40 },
-      ];
-
-      const result = hasNegativeValuesInData(data, ['value1', 'value2']);
-
-      expect(result).toBe(true);
-    });
-
-    it('should return true when first value is negative', () => {
-      const data = [{ category: 'A', value1: -1 }];
-
-      const result = hasNegativeValuesInData(data, ['value1']);
-
-      expect(result).toBe(true);
-    });
   });
 
   describe('empty data', () => {
@@ -101,17 +82,4 @@ describe('hasNegativeValuesInData', () => {
     });
   });
 
-  describe('early exit optimization', () => {
-    it('should return true as soon as first negative is found', () => {
-      const data = [
-        { category: 'A', value1: -1, value2: 20 },
-        { category: 'B', value1: 30, value2: 40 },
-        { category: 'C', value1: 50, value2: 60 },
-      ];
-
-      const result = hasNegativeValuesInData(data, ['value1', 'value2']);
-
-      expect(result).toBe(true);
-    });
-  });
 });

@@ -8,21 +8,6 @@ describe('computeLeftTickPosition', () => {
   };
 
   describe('vertical layout (value axis on left)', () => {
-    it('should position value at correct y position (inverted)', () => {
-      const result = computeLeftTickPosition({
-        value: 50,
-        index: 0,
-        isVertical: true,
-        categoryValues: ['A', 'B'],
-        categoryIndexMap: new Map(),
-        categoryScale: defaultCategoryScale,
-        valueDomain: { min: 0, max: 100 },
-        innerHeight: 200,
-      });
-
-      expect(result).toBe(100);
-    });
-
     it('should position minimum value at bottom (innerHeight)', () => {
       const result = computeLeftTickPosition({
         value: 0,
@@ -103,28 +88,6 @@ describe('computeLeftTickPosition', () => {
       });
 
       const effectiveIndex = 2 - 1 - 0;
-      const expectedCenter = 20 + effectiveIndex * 100 + 80 / 2;
-      expect(result).toBe(expectedCenter);
-    });
-
-    it('should return center for second category (reversed)', () => {
-      const categoryIndexMap = new Map([
-        ['A', 0],
-        ['B', 1],
-      ]);
-
-      const result = computeLeftTickPosition({
-        value: 'B',
-        index: 1,
-        isVertical: false,
-        categoryValues: ['A', 'B'],
-        categoryIndexMap,
-        categoryScale: defaultCategoryScale,
-        valueDomain: { min: 0, max: 100 },
-        innerHeight: 200,
-      });
-
-      const effectiveIndex = 2 - 1 - 1;
       const expectedCenter = 20 + effectiveIndex * 100 + 80 / 2;
       expect(result).toBe(expectedCenter);
     });

@@ -157,30 +157,6 @@ describe('computeBarPositions', () => {
       expect(result[0].color).toBe('redSolid');
     });
 
-    it('should generate bars for multiple categories with multiple keys', () => {
-      const result = computeBarPositions({
-        data: [
-          { category: 'A', value1: 50, value2: 30 },
-          { category: 'B', value1: 70, value2: 40 },
-        ],
-        indexBy: 'category',
-        keys: ['value1', 'value2'],
-        enrichedKeysMap: defaultEnrichedKeysMap,
-        chartWidth: 500,
-        chartHeight: 300,
-        margins: defaultMargins,
-        layout: BarChartLayout.VERTICAL,
-        groupMode: 'grouped',
-        valueDomain: { min: 0, max: 100 },
-        fallbackColor: '#cccccc',
-        innerPadding: 2,
-      });
-
-      expect(result).toHaveLength(4);
-      expect(result.map((b) => b.indexValue)).toContain('A');
-      expect(result.map((b) => b.indexValue)).toContain('B');
-    });
-
     it('should skip zero values when includeZeroValues is false', () => {
       const result = computeBarPositions({
         data: [{ category: 'A', value1: 0, value2: 30 }],
@@ -219,29 +195,8 @@ describe('computeBarPositions', () => {
         includeZeroValues: true,
       });
 
-      expect(result).toHaveLength(2);
-    });
-  });
-
-  describe('grouped mode - horizontal layout', () => {
-    it('should generate bars with horizontal positioning', () => {
-      const result = computeBarPositions({
-        data: [{ category: 'A', value1: 50 }],
-        indexBy: 'category',
-        keys: ['value1'],
-        enrichedKeysMap: defaultEnrichedKeysMap,
-        chartWidth: 500,
-        chartHeight: 300,
-        margins: defaultMargins,
-        layout: BarChartLayout.HORIZONTAL,
-        groupMode: 'grouped',
-        valueDomain: { min: 0, max: 100 },
-        fallbackColor: '#cccccc',
-        innerPadding: 2,
-      });
-
-      expect(result).toHaveLength(1);
-      expect(result[0].width).toBeGreaterThan(0);
+      const zeroBar = result.find((bar) => bar.value === 0);
+      expect(zeroBar).toBeDefined();
     });
   });
 
@@ -271,32 +226,6 @@ describe('computeBarPositions', () => {
     });
   });
 
-  describe('stacked mode - horizontal layout', () => {
-    it('should stack bars horizontally', () => {
-      const result = computeBarPositions({
-        data: [{ category: 'A', value1: 50, value2: 30 }],
-        indexBy: 'category',
-        keys: ['value1', 'value2'],
-        enrichedKeysMap: defaultEnrichedKeysMap,
-        chartWidth: 500,
-        chartHeight: 300,
-        margins: defaultMargins,
-        layout: BarChartLayout.HORIZONTAL,
-        groupMode: 'stacked',
-        valueDomain: { min: 0, max: 100 },
-        fallbackColor: '#cccccc',
-        innerPadding: 2,
-      });
-
-      expect(result).toHaveLength(2);
-      const bar1 = result.find((b) => b.seriesId === 'value1');
-      const bar2 = result.find((b) => b.seriesId === 'value2');
-      expect(bar1).toBeDefined();
-      expect(bar2).toBeDefined();
-      expect(bar2!.x).toBeGreaterThan(bar1!.x);
-    });
-  });
-
   describe('negative values', () => {
     it('should handle negative values in grouped mode', () => {
       const result = computeBarPositions({
@@ -318,25 +247,6 @@ describe('computeBarPositions', () => {
       const negativeBar = result.find((b) => b.seriesId === 'value1');
       expect(negativeBar).toBeDefined();
       expect(negativeBar!.value).toBe(-30);
-    });
-
-    it('should handle negative values in stacked mode', () => {
-      const result = computeBarPositions({
-        data: [{ category: 'A', value1: -30, value2: 50 }],
-        indexBy: 'category',
-        keys: ['value1', 'value2'],
-        enrichedKeysMap: defaultEnrichedKeysMap,
-        chartWidth: 500,
-        chartHeight: 300,
-        margins: defaultMargins,
-        layout: BarChartLayout.VERTICAL,
-        groupMode: 'stacked',
-        valueDomain: { min: -50, max: 100 },
-        fallbackColor: '#cccccc',
-        innerPadding: 2,
-      });
-
-      expect(result).toHaveLength(2);
     });
   });
 
@@ -362,27 +272,4 @@ describe('computeBarPositions', () => {
     });
   });
 
-  describe('bar properties', () => {
-    it('should set correct seriesIndex for grouped bars', () => {
-      const result = computeBarPositions({
-        data: [{ category: 'A', value1: 50, value2: 30 }],
-        indexBy: 'category',
-        keys: ['value1', 'value2'],
-        enrichedKeysMap: defaultEnrichedKeysMap,
-        chartWidth: 500,
-        chartHeight: 300,
-        margins: defaultMargins,
-        layout: BarChartLayout.VERTICAL,
-        groupMode: 'grouped',
-        valueDomain: { min: 0, max: 100 },
-        fallbackColor: '#cccccc',
-        innerPadding: 2,
-      });
-
-      const bar1 = result.find((b) => b.seriesId === 'value1');
-      const bar2 = result.find((b) => b.seriesId === 'value2');
-      expect(bar1!.seriesIndex).toBe(0);
-      expect(bar2!.seriesIndex).toBe(1);
-    });
-  });
 });

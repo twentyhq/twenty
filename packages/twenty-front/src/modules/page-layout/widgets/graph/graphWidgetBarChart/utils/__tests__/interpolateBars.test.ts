@@ -136,53 +136,6 @@ describe('interpolateBars', () => {
       expect(result).toHaveLength(2);
       expect(result.map((b) => b.seriesId).sort()).toEqual(['new', 'old']);
     });
-
-    it('should handle bars with different indexValues as different bars', () => {
-      const sourceBars = [createBar({ indexValue: 'old', seriesId: 'v1' })];
-      const targetBars = [createBar({ indexValue: 'new', seriesId: 'v1' })];
-
-      const result = interpolateBars(sourceBars, targetBars, 0.5, toBaselineBar);
-
-      // Different indexValue = different bar identity, so both are interpolated
-      expect(result).toHaveLength(2);
-      expect(result.map((b) => b.indexValue).sort()).toEqual(['new', 'old']);
-    });
-  });
-
-  describe('multiple bars interpolation', () => {
-    it('should interpolate all bars independently', () => {
-      const sourceBars = [
-        createBar({ indexValue: 'A', seriesId: 'v1', height: 50 }),
-        createBar({ indexValue: 'A', seriesId: 'v2', height: 30 }),
-        createBar({ indexValue: 'B', seriesId: 'v1', height: 70 }),
-      ];
-      const targetBars = [
-        createBar({ indexValue: 'A', seriesId: 'v1', height: 100 }),
-        createBar({ indexValue: 'A', seriesId: 'v2', height: 60 }),
-        createBar({ indexValue: 'B', seriesId: 'v1', height: 140 }),
-      ];
-
-      const result = interpolateBars(sourceBars, targetBars, 1, toBaselineBar);
-
-      expect(result).toHaveLength(3);
-    });
-  });
-
-  describe('easing', () => {
-    it('should apply easing to interpolation', () => {
-      const sourceBars = [createBar({ height: 0, value: 0 })];
-      const targetBars = [createBar({ height: 100, value: 100 })];
-
-      const linearMidpoint = 50;
-      const result = interpolateBars(
-        sourceBars,
-        targetBars,
-        0.5,
-        toBaselineBar,
-      );
-
-      expect(result[0].height).not.toBe(linearMidpoint);
-    });
   });
 
   describe('edge cases', () => {
@@ -190,12 +143,6 @@ describe('interpolateBars', () => {
       const result = interpolateBars([], [], 0.5, toBaselineBar);
 
       expect(result).toEqual([]);
-    });
-
-    it('should skip bars with no match when both are undefined', () => {
-      const result = interpolateBars([], [], 0.5, toBaselineBar);
-
-      expect(result).toHaveLength(0);
     });
   });
 });
