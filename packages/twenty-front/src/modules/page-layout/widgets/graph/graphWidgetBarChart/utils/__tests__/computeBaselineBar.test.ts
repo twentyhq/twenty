@@ -1,5 +1,5 @@
-import { computeBaselineBar } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBaselineBar';
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
+import { computeBaselineBar } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBaselineBar';
 
 describe('computeBaselineBar', () => {
   const createBar = (overrides: Partial<BarPosition> = {}): BarPosition => ({
@@ -10,7 +10,7 @@ describe('computeBaselineBar', () => {
     value: 50,
     indexValue: 'A',
     seriesId: 'value1',
-    color: '#ff0000',
+    color: 'red',
     shouldRoundFreeEnd: true,
     seriesIndex: 0,
     ...overrides,
@@ -50,7 +50,7 @@ describe('computeBaselineBar', () => {
       const bar = createBar({
         indexValue: 'B',
         seriesId: 'value2',
-        color: '#00ff00',
+        color: 'green',
         shouldRoundFreeEnd: false,
         seriesIndex: 2,
       });
@@ -64,7 +64,7 @@ describe('computeBaselineBar', () => {
 
       expect(result.indexValue).toBe('B');
       expect(result.seriesId).toBe('value2');
-      expect(result.color).toBe('#00ff00');
+      expect(result.color).toBe('green');
       expect(result.shouldRoundFreeEnd).toBe(false);
       expect(result.seriesIndex).toBe(2);
     });

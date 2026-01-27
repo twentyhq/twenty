@@ -1,5 +1,5 @@
-import { computeSliceTooltipPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeSliceTooltipPosition';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
+import { computeSliceTooltipPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeSliceTooltipPosition';
 
 describe('computeSliceTooltipPosition', () => {
   const defaultMargins = { top: 20, right: 20, bottom: 40, left: 60 };
@@ -23,7 +23,7 @@ describe('computeSliceTooltipPosition', () => {
     value: 50,
     indexValue: 'A',
     seriesId: 'value1',
-    color: '#ff0000',
+    color: 'red',
     shouldRoundFreeEnd: true,
     seriesIndex: 0,
   });
@@ -48,10 +48,7 @@ describe('computeSliceTooltipPosition', () => {
 
     it('should use the topmost bar as anchor when multiple bars exist', () => {
       const slice = createSlice({
-        bars: [
-          createBar(50, 150, 40, 30),
-          createBar(95, 80, 40, 100),
-        ],
+        bars: [createBar(50, 150, 40, 30), createBar(95, 80, 40, 100)],
         sliceCenter: 75,
       });
 
@@ -86,10 +83,7 @@ describe('computeSliceTooltipPosition', () => {
 
     it('should use the rightmost bar as anchor when multiple bars exist', () => {
       const slice = createSlice({
-        bars: [
-          createBar(0, 50, 80, 40),
-          createBar(0, 95, 120, 40),
-        ],
+        bars: [createBar(0, 50, 80, 40), createBar(0, 95, 120, 40)],
         sliceCenter: 70,
       });
 
@@ -141,5 +135,4 @@ describe('computeSliceTooltipPosition', () => {
       expect(result.offsetTop).toBe(70 + defaultMargins.top);
     });
   });
-
 });

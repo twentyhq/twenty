@@ -22,9 +22,7 @@ export const computeSliceTooltipPosition = ({
 }: ComputeSliceTooltipPositionParams): SliceTooltipPosition => {
   if (slice.bars.length === 0) {
     return {
-      offsetLeft: isVertical
-        ? slice.sliceCenter + margins.left
-        : margins.left,
+      offsetLeft: isVertical ? slice.sliceCenter + margins.left : margins.left,
       offsetTop: isVertical
         ? innerHeight + margins.top
         : slice.sliceCenter + margins.top,

@@ -81,5 +81,4 @@ describe('hasNegativeValuesInData', () => {
       expect(result).toBe(false);
     });
   });
-
 });

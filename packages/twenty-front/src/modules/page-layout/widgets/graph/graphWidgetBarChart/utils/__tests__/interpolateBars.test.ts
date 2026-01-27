@@ -1,5 +1,5 @@
-import { interpolateBars } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/interpolateBars';
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
+import { interpolateBars } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/interpolateBars';
 
 describe('interpolateBars', () => {
   const createBar = (overrides: Partial<BarPosition> = {}): BarPosition => ({
@@ -10,7 +10,7 @@ describe('interpolateBars', () => {
     value: 50,
     indexValue: 'A',
     seriesId: 'value1',
-    color: '#ff0000',
+    color: 'red',
     shouldRoundFreeEnd: true,
     seriesIndex: 0,
     ...overrides,
@@ -50,7 +50,12 @@ describe('interpolateBars', () => {
       const sourceBars = [createBar({ x: 0, y: 100, height: 0, value: 0 })];
       const targetBars = [createBar({ x: 0, y: 0, height: 100, value: 100 })];
 
-      const result = interpolateBars(sourceBars, targetBars, 0.5, toBaselineBar);
+      const result = interpolateBars(
+        sourceBars,
+        targetBars,
+        0.5,
+        toBaselineBar,
+      );
 
       expect(result[0].y).toBeGreaterThan(0);
       expect(result[0].y).toBeLessThan(100);
@@ -118,19 +123,29 @@ describe('interpolateBars', () => {
 
   describe('property preservation', () => {
     it('should preserve target color', () => {
-      const sourceBars = [createBar({ color: '#ff0000' })];
-      const targetBars = [createBar({ color: '#00ff00' })];
+      const sourceBars = [createBar({ color: 'red' })];
+      const targetBars = [createBar({ color: 'green' })];
 
-      const result = interpolateBars(sourceBars, targetBars, 0.5, toBaselineBar);
+      const result = interpolateBars(
+        sourceBars,
+        targetBars,
+        0.5,
+        toBaselineBar,
+      );
 
-      expect(result[0].color).toBe('#00ff00');
+      expect(result[0].color).toBe('green');
     });
 
     it('should handle bars with different seriesIds as different bars', () => {
       const sourceBars = [createBar({ indexValue: 'A', seriesId: 'old' })];
       const targetBars = [createBar({ indexValue: 'A', seriesId: 'new' })];
 
-      const result = interpolateBars(sourceBars, targetBars, 0.5, toBaselineBar);
+      const result = interpolateBars(
+        sourceBars,
+        targetBars,
+        0.5,
+        toBaselineBar,
+      );
 
       // Different seriesId = different bar identity, so both are interpolated
       expect(result).toHaveLength(2);

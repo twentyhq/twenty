@@ -70,8 +70,14 @@ describe('computeBarPositions', () => {
   };
 
   const defaultEnrichedKeysMap = new Map<string, BarChartEnrichedKey>([
-    ['value1', { key: 'value1', label: 'Value 1', colorScheme: redColorScheme }],
-    ['value2', { key: 'value2', label: 'Value 2', colorScheme: greenColorScheme }],
+    [
+      'value1',
+      { key: 'value1', label: 'Value 1', colorScheme: redColorScheme },
+    ],
+    [
+      'value2',
+      { key: 'value2', label: 'Value 2', colorScheme: greenColorScheme },
+    ],
   ]);
 
   describe('empty data handling', () => {
@@ -87,7 +93,7 @@ describe('computeBarPositions', () => {
         layout: BarChartLayout.VERTICAL,
         groupMode: 'grouped',
         valueDomain: { min: 0, max: 100 },
-        fallbackColor: '#cccccc',
+        fallbackColor: 'gray',
         innerPadding: 2,
       });
 
@@ -106,7 +112,7 @@ describe('computeBarPositions', () => {
         layout: BarChartLayout.VERTICAL,
         groupMode: 'grouped',
         valueDomain: { min: 0, max: 100 },
-        fallbackColor: '#cccccc',
+        fallbackColor: 'gray',
         innerPadding: 2,
       });
 
@@ -125,7 +131,7 @@ describe('computeBarPositions', () => {
         layout: BarChartLayout.VERTICAL,
         groupMode: 'grouped',
         valueDomain: { min: 0, max: 100 },
-        fallbackColor: '#cccccc',
+        fallbackColor: 'gray',
         innerPadding: 2,
       });
 
@@ -146,7 +152,7 @@ describe('computeBarPositions', () => {
         layout: BarChartLayout.VERTICAL,
         groupMode: 'grouped',
         valueDomain: { min: 0, max: 100 },
-        fallbackColor: '#cccccc',
+        fallbackColor: 'gray',
         innerPadding: 2,
       });
 
@@ -169,7 +175,7 @@ describe('computeBarPositions', () => {
         layout: BarChartLayout.VERTICAL,
         groupMode: 'grouped',
         valueDomain: { min: 0, max: 100 },
-        fallbackColor: '#cccccc',
+        fallbackColor: 'gray',
         innerPadding: 2,
         includeZeroValues: false,
       });
@@ -190,7 +196,7 @@ describe('computeBarPositions', () => {
         layout: BarChartLayout.VERTICAL,
         groupMode: 'grouped',
         valueDomain: { min: 0, max: 100 },
-        fallbackColor: '#cccccc',
+        fallbackColor: 'gray',
         innerPadding: 2,
         includeZeroValues: true,
       });
@@ -213,7 +219,7 @@ describe('computeBarPositions', () => {
         layout: BarChartLayout.VERTICAL,
         groupMode: 'stacked',
         valueDomain: { min: 0, max: 100 },
-        fallbackColor: '#cccccc',
+        fallbackColor: 'gray',
         innerPadding: 2,
       });
 
@@ -239,7 +245,7 @@ describe('computeBarPositions', () => {
         layout: BarChartLayout.VERTICAL,
         groupMode: 'grouped',
         valueDomain: { min: -50, max: 100 },
-        fallbackColor: '#cccccc',
+        fallbackColor: 'gray',
         innerPadding: 2,
       });
 
@@ -263,13 +269,12 @@ describe('computeBarPositions', () => {
         layout: BarChartLayout.VERTICAL,
         groupMode: 'grouped',
         valueDomain: { min: 0, max: 100 },
-        fallbackColor: '#cccccc',
+        fallbackColor: 'gray',
         innerPadding: 2,
       });
 
       expect(result).toHaveLength(1);
-      expect(result[0].color).toBe('#cccccc');
+      expect(result[0].color).toBe('gray');
     });
   });
-
 });
