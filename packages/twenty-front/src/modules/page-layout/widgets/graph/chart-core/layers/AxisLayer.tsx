@@ -41,6 +41,8 @@ const StyledSvgOverlay = styled.svg`
   top: 0;
 `;
 
+const STROKE_ALIGNMENT_OFFSET = 0.5 as const;
+
 export const AxisLayer = ({
   bottomAxisTickRotation,
   categoryValues,
@@ -151,9 +153,9 @@ export const AxisLayer = ({
       <g transform={`translate(${margins.left}, ${margins.top})`}>
         <line
           x1={0}
-          y1={innerHeight}
+          y1={innerHeight + STROKE_ALIGNMENT_OFFSET}
           x2={innerWidth}
-          y2={innerHeight}
+          y2={innerHeight + STROKE_ALIGNMENT_OFFSET}
           stroke={theme.border.color.light}
           strokeWidth={1}
         />
