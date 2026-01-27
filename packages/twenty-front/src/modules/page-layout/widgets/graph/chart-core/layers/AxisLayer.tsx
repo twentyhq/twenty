@@ -191,7 +191,7 @@ export const AxisLayer = ({
                   textAnchor={hasRotation ? 'end' : 'middle'}
                   transform={
                     hasRotation
-                      ? `rotate(${bottomAxisTickRotation})`
+                      ? `rotate(${bottomAxisTickRotation}, 0, ${axisConfig.tickPadding + tickFontSize / 2})`
                       : undefined
                   }
                   fill={theme.font.color.secondary}
