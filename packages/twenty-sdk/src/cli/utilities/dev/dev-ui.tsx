@@ -1,11 +1,11 @@
 import {
   type UiEvent,
-  type UiState,
+  type DevUiState,
   type FileStatus,
   type EntityInfo,
-} from '@/cli/utilities/ui/ui-state';
+} from '@/cli/utilities/dev/dev-ui-state';
 import { SyncableEntities } from 'twenty-shared/application';
-import { type UiStateManager } from '@/cli/utilities/ui/ui-state-manager';
+import { type DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
 
 const SPINNER_FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 const UPLOAD_FRAMES = ['↑', '⇡', '↟', '⤒'];
@@ -40,14 +40,6 @@ const EVENT_COLORS: Record<UiEvent['status'], string> = {
   error: 'red',
   warning: 'yellow',
 };
-/*
-const EVENT_ICONS: Record<UiEvent['type'], string> = {
-  'file-change': '→',
-  'manifest-build': '◆',
-  'file-build': '●',
-  'file-upload': '☁',
-  sync: '↻',
-};*/
 
 const groupEntitiesByType = (
   entities: Map<string, EntityInfo>,
@@ -86,15 +78,15 @@ const shortenPath = (path: string, maxLength = 40): string => {
   return `.../${parts.slice(-2).join('/')}`;
 };
 
-const getApplicationUrl = (snapshot: UiState): string | null => {
+const getApplicationUrl = (snapshot: DevUiState): string | null => {
   if (!snapshot.frontendUrl || !snapshot.appUniversalIdentifier) {
     return null;
   }
   return `${snapshot.frontendUrl}/settings/applications`;
 };
 
-export const renderUI = async (
-  uiStateManager: UiStateManager,
+export const renderDevUI = async (
+  uiStateManager: DevUiStateManager,
 ): Promise<{ unmount: () => void }> => {
   const [React, ink] = await Promise.all([import('react'), import('ink')]);
 
@@ -122,7 +114,6 @@ export const renderUI = async (
     return (
       <Box>
         <Text dimColor>{time} </Text>
-        {/*<Text color={color}>{icon} </Text>*/}
         <Text color={color}>{event.message}</Text>
       </Box>
     );
@@ -136,16 +127,14 @@ export const renderUI = async (
     const buildingFrame = useSpinner(SPINNER_FRAMES, 80);
     const uploadingFrame = useSpinner(UPLOAD_FRAMES, 150);
 
-    let icon: string;
-    if (status === 'building') {
-      icon = buildingFrame;
-    } else if (status === 'uploading') {
-      icon = uploadingFrame;
-    } else {
-      icon = STATUS_ICONS[status];
-    }
+    const iconByStatus: Record<FileStatus, string> = {
+      building: buildingFrame,
+      uploading: uploadingFrame,
+      pending: STATUS_ICONS.pending,
+      success: STATUS_ICONS.success,
+    };
 
-    return <Text color={STATUS_COLORS[status]}>{icon} </Text>;
+    return <Text color={STATUS_COLORS[status]}>{iconByStatus[status]} </Text>;
   };
 
   const EntityRow = ({
@@ -183,45 +172,26 @@ export const renderUI = async (
     );
   };
 
+  const MANIFEST_STATUS_CONFIG = {
+    synced: { color: 'green', icon: '✓', text: 'Synced' },
+    building: { color: 'yellow', icon: null, text: 'Building...' },
+    syncing: { color: 'yellow', icon: null, text: 'Syncing...' },
+    error: { color: 'red', icon: 'x', text: 'Error' },
+    idle: { color: 'gray', icon: 'o', text: 'Idle' },
+  } as const;
+
   const UnifiedStatusIndicator = ({
     snapshot,
   }: {
-    snapshot: UiState;
+    snapshot: DevUiState;
   }): React.ReactElement => {
     const spinnerFrame = useSpinner(SPINNER_FRAMES, 80);
-    const status = snapshot.manifestStatus;
-
-    const color =
-      status === 'synced'
-        ? 'green'
-        : status === 'building' || status === 'syncing'
-          ? 'yellow'
-          : status === 'error'
-            ? 'red'
-            : 'gray';
-
-    let icon: string;
-    let text: string;
-    if (status === 'synced') {
-      icon = '✓';
-      text = 'Synced';
-    } else if (status === 'building') {
-      icon = spinnerFrame;
-      text = 'Building...';
-    } else if (status === 'syncing') {
-      icon = spinnerFrame;
-      text = 'Syncing...';
-    } else if (status === 'error') {
-      icon = 'x';
-      text = 'Error';
-    } else {
-      icon = 'o';
-      text = 'Idle';
-    }
+    const config = MANIFEST_STATUS_CONFIG[snapshot.manifestStatus];
+    const icon = config.icon ?? spinnerFrame;
 
     return (
-      <Text color={color}>
-        {icon} {text}
+      <Text color={config.color}>
+        {icon} {config.text}
       </Text>
     );
   };
@@ -229,7 +199,7 @@ export const renderUI = async (
   const ApplicationPanel = ({
     snapshot,
   }: {
-    snapshot: UiState;
+    snapshot: DevUiState;
   }): React.ReactElement => {
     const groupedEntities = groupEntitiesByType(snapshot.entities);
     const appUrl = getApplicationUrl(snapshot);
@@ -293,8 +263,8 @@ export const renderUI = async (
     </Box>
   );
 
-  const UI = (): React.ReactElement => {
-    const [snapshot, setSnapshot] = useState<UiState>(
+  const DevUI = (): React.ReactElement => {
+    const [snapshot, setSnapshot] = useState<DevUiState>(
       uiStateManager.getSnapshot(),
     );
 
@@ -316,6 +286,6 @@ export const renderUI = async (
     );
   };
 
-  const { unmount } = render(<UI />);
+  const { unmount } = render(<DevUI />);
   return { unmount };
 };

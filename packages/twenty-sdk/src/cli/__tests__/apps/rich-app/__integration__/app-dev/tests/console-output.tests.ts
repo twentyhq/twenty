@@ -1,7 +1,5 @@
 import { type RunCliCommandResult } from '@/cli/__tests__/integration/utils/run-cli-command.util';
-
-const sanitizeAnsi = (output: string): string =>
-  output.replace(/\x1B\[[0-9;]*[a-zA-Z]/g, '');
+import { sanitizeAnsi } from '@/cli/__tests__/integration/utils/sanitize-ansi.util';
 
 export const defineConsoleOutputTests = (
   getResult: () => RunCliCommandResult,

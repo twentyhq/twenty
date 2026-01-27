@@ -24,7 +24,7 @@ export type EntityInfo = {
   status: FileStatus;
 };
 
-export type UiState = {
+export type DevUiState = {
   appPath: string;
   appName: string | null;
   appDescription: string | null;
@@ -35,4 +35,4 @@ export type UiState = {
   events: UiEvent[];
 };
 
-export type Listener = (state: UiState) => void;
+export type Listener = (state: DevUiState) => void;

@@ -4,13 +4,13 @@ import {
   type Listener,
   type ManifestStatus,
   type UiEvent,
-  type UiState,
-} from '@/cli/utilities/ui/ui-state';
+  type DevUiState,
+} from '@/cli/utilities/dev/dev-ui-state';
 
 const MAX_EVENT_NUMBER = 200;
 
-export class UiStateManager {
-  private state: UiState;
+export class DevUiStateManager {
+  private state: DevUiState;
   private eventIdCounter = 0;
   private listeners = new Set<Listener>();
 
@@ -33,7 +33,7 @@ export class UiStateManager {
     };
   }
 
-  getSnapshot(): UiState {
+  getSnapshot(): DevUiState {
     return this.state;
   }
 
@@ -49,26 +49,29 @@ export class UiStateManager {
     }
   }
 
-  private getEntityFromPath(path?: string): SyncableEntities | undefined {
-    if (!path) {
+  private getEntityFromPath(
+    sourceFilePath?: string,
+  ): SyncableEntities | undefined {
+    if (!sourceFilePath) {
       return;
     }
     return (Object.values(SyncableEntities) as SyncableEntities[]).find(
       (entity) =>
-        path.includes(`${entity}.ts`) || path.includes(`${entity}.tsx`),
+        sourceFilePath.includes(`${entity}.ts`) ||
+        sourceFilePath.includes(`${entity}.tsx`),
     );
   }
 
   addEvent({
-    filePath,
+    sourcePath,
     message,
     status = 'info',
   }: {
-    filePath?: string;
+    sourcePath?: string;
     message: string;
     status: UiEvent['status'];
   }): void {
-    const entity = this.getEntityFromPath(filePath);
+    const entity = this.getEntityFromPath(sourcePath);
 
     const event: UiEvent = {
       id: ++this.eventIdCounter,

@@ -12,8 +12,8 @@ import { ApiService } from '@/cli/utilities/api/api-service';
 import path from 'path';
 import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 import * as fs from 'fs-extra';
-import { UiStateManager } from '@/cli/utilities/ui/ui-state-manager';
-import { renderUI } from '@/cli/utilities/ui/ui';
+import { DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
+import { renderDevUI } from '@/cli/utilities/dev/dev-ui';
 
 const initLogger = createLogger('init');
 
@@ -29,7 +29,7 @@ export class AppDevCommand {
   private frontComponentsWatcher: EsbuildWatcher | null = null;
   private watchersStarted = false;
   private apiService = new ApiService();
-  private uiStateManager: UiStateManager | null = null;
+  private uiStateManager: DevUiStateManager | null = null;
   private unmountUI: (() => void) | null = null;
 
   async execute(options: AppDevOptions): Promise<void> {
@@ -42,12 +42,12 @@ export class AppDevCommand {
 
     await this.cleanOutputDir();
 
-    this.uiStateManager = new UiStateManager({
+    this.uiStateManager = new DevUiStateManager({
       appPath: this.appPath,
       frontendUrl: process.env.FRONTEND_URL,
     });
 
-    const { unmount } = await renderUI(this.uiStateManager);
+    const { unmount } = await renderDevUI(this.uiStateManager);
 
     this.unmountUI = unmount;
 

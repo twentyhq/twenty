@@ -9,7 +9,7 @@ import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { type FileFolder } from 'twenty-shared/types';
 import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
 import type { Location } from 'esbuild';
-import { type UiStateManager } from '@/cli/utilities/ui/ui-state-manager';
+import { type DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
 import { relative } from 'path';
 import { type EventName } from 'chokidar/handler.js';
 
@@ -17,7 +17,7 @@ export type DevModeOrchestratorOptions = {
   appPath: string;
   debounceMs?: number;
   handleManifestBuilt: (result: ManifestBuildResult) => void | Promise<void>;
-  uiStateManager: UiStateManager;
+  uiStateManager: DevUiStateManager;
 };
 
 export class DevModeOrchestrator {
@@ -29,7 +29,7 @@ export class DevModeOrchestrator {
     {
       checksum: string;
       builtPath: string;
-      filePath: string;
+      sourcePath: string;
       fileFolder: FileFolder;
     }
   >();
@@ -41,7 +41,7 @@ export class DevModeOrchestrator {
 
   private syncTimer: NodeJS.Timeout | null = null;
   private isSyncing = false;
-  private uiStateManager: UiStateManager;
+  private uiStateManager: DevUiStateManager;
 
   private handleManifestBuilt: (
     result: ManifestBuildResult,
@@ -54,17 +54,17 @@ export class DevModeOrchestrator {
     this.uiStateManager = options.uiStateManager;
   }
 
-  async handleChangeDetected(filePath: string, event: EventName) {
-    const normalizedFilePath = this.normalizeFilePath(filePath);
+  async handleChangeDetected(sourcePath: string, event: EventName) {
+    const normalizedSourcePath = this.normalizeFilePath(sourcePath);
     this.uiStateManager.addEvent({
-      filePath: normalizedFilePath,
-      message: `Change detected: ${normalizedFilePath}`,
+      sourcePath: normalizedSourcePath,
+      message: `Change detected: ${normalizedSourcePath}`,
       status: 'info',
     });
     if (event === 'unlink') {
-      this.uiStateManager.removeEntity(normalizedFilePath);
+      this.uiStateManager.removeEntity(normalizedSourcePath);
     } else {
-      this.uiStateManager.updateFileStatus(normalizedFilePath, 'building');
+      this.uiStateManager.updateFileStatus(normalizedSourcePath, 'building');
     }
     this.scheduleSync();
   }
@@ -78,7 +78,7 @@ export class DevModeOrchestrator {
     });
     for (const error of errors) {
       this.uiStateManager.addEvent({
-        filePath: error.location?.file,
+        sourcePath: error.location?.file,
         message: error.error,
         status: 'error',
       });
@@ -88,16 +88,16 @@ export class DevModeOrchestrator {
   handleFileBuilt({
     fileFolder,
     builtPath,
-    filePath,
+    sourcePath,
     checksum,
   }: {
     fileFolder: FileFolder;
     builtPath: string;
-    filePath: string;
+    sourcePath: string;
     checksum: string;
   }): void {
     this.uiStateManager.addEvent({
-      filePath,
+      sourcePath,
       message: `Successfully built ${builtPath}`,
       status: 'success',
     });
@@ -105,12 +105,12 @@ export class DevModeOrchestrator {
     this.builtFileInfos.set(builtPath, {
       checksum,
       builtPath,
-      filePath,
+      sourcePath,
       fileFolder,
     });
 
     if (this.fileUploader) {
-      this.uploadFile(builtPath, filePath, fileFolder);
+      this.uploadFile(builtPath, sourcePath, fileFolder);
     }
 
     this.scheduleSync();
@@ -122,15 +122,15 @@ export class DevModeOrchestrator {
 
   private uploadFile(
     builtPath: string,
-    filePath: string,
+    sourcePath: string,
     fileFolder: FileFolder,
   ): void {
     this.uiStateManager.addEvent({
-      filePath,
+      sourcePath,
       message: `Uploading ${builtPath}`,
       status: 'info',
     });
-    this.uiStateManager.updateFileStatus(filePath, 'uploading');
+    this.uiStateManager.updateFileStatus(sourcePath, 'uploading');
     const uploadPromise = this.fileUploader!.uploadFile({
       builtPath,
       fileFolder,
@@ -138,14 +138,14 @@ export class DevModeOrchestrator {
       .then((result) => {
         if (result.success) {
           this.uiStateManager.addEvent({
-            filePath,
+            sourcePath: sourcePath,
             message: `Successfully uploaded ${builtPath}`,
             status: 'success',
           });
-          this.uiStateManager.updateFileStatus(filePath, 'success');
+          this.uiStateManager.updateFileStatus(sourcePath, 'success');
         } else {
           this.uiStateManager.addEvent({
-            filePath,
+            sourcePath: sourcePath,
             message: `Failed to upload ${builtPath}: ${result.error}`,
             status: 'error',
           });
@@ -153,7 +153,7 @@ export class DevModeOrchestrator {
       })
       .catch((error) => {
         this.uiStateManager.addEvent({
-          filePath,
+          sourcePath: sourcePath,
           message: `Upload failed for ${builtPath}: ${error}`,
           status: 'error',
         });
@@ -252,9 +252,9 @@ export class DevModeOrchestrator {
         });
         for (const [
           builtPath,
-          { fileFolder, filePath },
+          { fileFolder, sourcePath },
         ] of this.builtFileInfos.entries()) {
-          this.uploadFile(builtPath, filePath, fileFolder);
+          this.uploadFile(builtPath, sourcePath, fileFolder);
         }
       }
 
