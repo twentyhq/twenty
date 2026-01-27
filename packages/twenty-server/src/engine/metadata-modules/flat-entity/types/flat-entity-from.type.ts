@@ -14,20 +14,27 @@ export type SyncableFlatEntity = Omit<
 };
 
 export type FlatEntityFrom<
-  TEntity extends SyncableEntity,
-  TMetadataName extends
-    AllMetadataName = FromMetadataEntityToMetadataName<TEntity>,
+  TEntity,
+  TMetadataName extends AllMetadataName | undefined = undefined,
 > = Omit<
   TEntity,
   | ExtractEntityRelatedEntityProperties<TEntity>
   | keyof CastRecordTypeOrmDatePropertiesToString<TEntity>
 > &
   CastRecordTypeOrmDatePropertiesToString<TEntity> &
-  AddSuffixToEntityOneToManyProperties<TEntity, 'ids'> & {
-    /**
-     * /!\ Under migration the idea is at some point to replace FlatEntity by UniversalFlatEntity /!\
-     * Please avoid any usage or contact me ( prastoin ) before doing so
-     * TODO remove with FlatEntity once it has been fully migrated
-     */
-    __universal?: UniversalFlatEntityExtraProperties<TEntity, TMetadataName>;
-  };
+  AddSuffixToEntityOneToManyProperties<TEntity, 'ids'> &
+  (TEntity extends SyncableEntity
+    ? {
+        /**
+         * /!\ Under migration the idea is at some point to replace FlatEntity by UniversalFlatEntity /!\
+         * Please avoid any usage or contact me ( prastoin ) before doing so
+         * TODO remove with FlatEntity once it has been fully migrated
+         */
+        __universal?: UniversalFlatEntityExtraProperties<
+          TEntity,
+          TMetadataName extends undefined
+            ? FromMetadataEntityToMetadataName<TEntity>
+            : TMetadataName
+        >;
+      }
+    : {});

@@ -8,5 +8,6 @@ export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
     Omit<
       FieldMetadataEntity<T>,
       'relationTargetFieldMetadata' | 'relationTargetObjectMetadata'
-    >
+    >,
+    'fieldMetadata'
   >;
