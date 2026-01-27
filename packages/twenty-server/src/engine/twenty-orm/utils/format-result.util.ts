@@ -6,7 +6,7 @@ import {
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, stringifySafely } from 'twenty-shared/utils';
 
 import {
   DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE,
@@ -215,8 +215,10 @@ export function formatResult<T>(
       // @ts-expect-error legacy noImplicitAny
       newData[dateTimeField.name] = plainObjectValue;
     } else {
+      const stringifiedUnknownValue = stringifySafely(rawUpdatedDateTime);
+
       throw new Error(
-        `Invalid DATE_TIME field "${dateTimeField.name}", value: "${JSON.stringify(rawUpdatedDateTime)}", it should be a string, Date instance or plain object, (current type : ${typeof rawUpdatedDateTime}).`,
+        `Invalid DATE_TIME field "${dateTimeField.name}", value: "${stringifiedUnknownValue}", it should be a string, Date instance or plain object, (current type : ${typeof rawUpdatedDateTime}).`,
       );
     }
   }
