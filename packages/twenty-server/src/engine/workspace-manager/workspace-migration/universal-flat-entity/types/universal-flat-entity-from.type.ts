@@ -10,11 +10,10 @@ import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
 import { type FormatRecordSerializedRelationProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-record-serialized-relation-properties.type';
 
-export type SyncableFlatEntity = Omit<
+export type UniversalSyncableFlatEntity = Omit<
   SyncableEntity,
-  'application' | 'applicationId' | 'workspace'
+  'application' | 'applicationId' | 'workspace' | 'workspaceId'
 > & {
-  id: string;
   applicationUniversalIdentifier: string;
 };
 
