@@ -13,13 +13,3 @@ export type ValidationResult = {
   errors: ValidationError[];
   warnings: ValidationWarning[];
 };
-
-export class ManifestValidationError extends Error {
-  constructor(public readonly errors: ValidationError[]) {
-    const messages = errors
-      .map((e) => `  • ${e.path}: ${e.message}`)
-      .join('\n');
-    super(`Manifest validation failed:\n${messages}`);
-    this.name = 'ManifestValidationError';
-  }
-}

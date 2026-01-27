@@ -8,7 +8,7 @@ export const getFlatFieldsFromFlatObjectMetadata = (
   flatObjectMetadata: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ): FlatFieldMetadata[] => {
-  return flatObjectMetadata.fieldMetadataIds
+  return flatObjectMetadata.fieldIds
     .map((fieldId) => flatFieldMetadataMaps.byId[fieldId])
     .filter(isDefined);
 };

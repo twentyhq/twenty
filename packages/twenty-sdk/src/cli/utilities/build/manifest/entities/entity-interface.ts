@@ -8,7 +8,7 @@ export type EntityIdWithLocation = {
 
 export type ManifestWithoutSources = Omit<
   ApplicationManifest,
-  'sources' | 'packageJson'
+  'sources' | 'packageJson' | 'yarnLock'
 >;
 
 export type EntityBuildResult<TManifest> = {

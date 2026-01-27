@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -63,7 +64,7 @@ export class ObjectMetadataEntity
   icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides: ObjectStandardOverridesDTO | null;
+  standardOverrides: JsonbProperty<ObjectStandardOverridesDTO> | null;
 
   /**
    * @deprecated
@@ -93,7 +94,7 @@ export class ObjectMetadataEntity
   isSearchable: boolean;
 
   @Column({ type: 'jsonb', nullable: true })
-  duplicateCriteria: WorkspaceEntityDuplicateCriteria[] | null;
+  duplicateCriteria: JsonbProperty<WorkspaceEntityDuplicateCriteria[]> | null;
 
   @Column({ nullable: true, type: 'varchar' })
   shortcut: string | null;

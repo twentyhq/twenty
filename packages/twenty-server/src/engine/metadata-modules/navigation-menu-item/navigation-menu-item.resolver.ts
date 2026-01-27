@@ -1,5 +1,17 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
+
+import { isDefined } from 'twenty-shared/utils';
+
+import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -12,6 +24,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
 import { NavigationMenuItemDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/navigation-menu-item.dto';
+import { RecordIdentifierDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/record-identifier.dto';
 import { UpdateOneNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 import { NavigationMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/navigation-menu-item/interceptors/navigation-menu-item-graphql-api-exception.interceptor';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
@@ -103,6 +116,27 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
+    });
+  }
+
+  @ResolveField(() => RecordIdentifierDTO, { nullable: true })
+  async targetRecordIdentifier(
+    @Parent() navigationMenuItem: NavigationMenuItemDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: { req: WorkspaceAuthContext },
+  ): Promise<RecordIdentifierDTO | null> {
+    if (
+      !isDefined(navigationMenuItem.targetRecordId) ||
+      !isDefined(navigationMenuItem.targetObjectMetadataId)
+    ) {
+      return null;
+    }
+
+    return await this.navigationMenuItemService.findTargetRecord({
+      targetRecordId: navigationMenuItem.targetRecordId,
+      targetObjectMetadataId: navigationMenuItem.targetObjectMetadataId,
+      workspaceId: workspace.id,
+      authContext: context.req,
     });
   }
 }

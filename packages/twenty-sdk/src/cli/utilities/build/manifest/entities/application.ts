@@ -14,7 +14,7 @@ import {
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
 import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 
-const logger = createLogger('manifest-watch');
+const logger = createLogger('manifest-builder');
 
 const findApplicationConfigPath = async (appPath: string): Promise<string> => {
   const files = await glob('**/application.config.ts', {
@@ -40,7 +40,7 @@ export class ApplicationEntityBuilder
 {
   async build(appPath: string): Promise<EntityBuildResult<Application>> {
     const applicationConfigPath = await findApplicationConfigPath(appPath);
-    const application =
+    const { manifest: application } =
       await manifestExtractFromFileServer.extractManifestFromFile<Application>(
         applicationConfigPath,
       );

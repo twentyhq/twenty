@@ -370,7 +370,7 @@ export class DataloaderService {
               });
             const objectFlatFieldMetadatas =
               findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-                flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+                flatEntityIds: flatObjectMetadata.fieldIds,
                 flatEntityMaps: flatFieldMetadataMaps,
               });
 

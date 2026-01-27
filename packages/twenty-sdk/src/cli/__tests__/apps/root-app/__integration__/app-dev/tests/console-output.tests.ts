@@ -14,34 +14,23 @@ export const defineConsoleOutputTests = (
       expect(output).toContain('[init] 📁 App Path:');
     });
 
-    it('should contain manifest-watch messages', () => {
-      const output = getOutputByPrefix(getResult().output, 'manifest-watch');
+    it('should contain dev-mode build messages', () => {
+      const output = getOutputByPrefix(getResult().output, 'dev-mode');
 
-      expect(output).toContain('[manifest-watch] 🔄 Building...');
-      expect(output).toContain('[manifest-watch] ✓ Loaded "Root App"');
-      expect(output).toContain('[manifest-watch] ✓ Found 1 object(s)');
-      expect(output).toContain('[manifest-watch] ✓ Found 1 function(s)');
-      expect(output).toContain('[manifest-watch] ✓ Found 1 front component(s)');
-      expect(output).toContain('[manifest-watch] ✓ Found 1 role(s)');
-      expect(output).toContain('[manifest-watch] ✓ Written to');
-      expect(output).toContain('[manifest-watch] 📂 Watcher started');
+      expect(output).toContain('[dev-mode] Building manifest...');
+      expect(output).toContain('[dev-mode] Successfully built manifest');
     });
 
-    it('should contain functions-watch messages', () => {
-      const output = getOutputByPrefix(getResult().output, 'functions-watch');
+    it('should contain dev-mode function build messages', () => {
+      const output = getOutputByPrefix(getResult().output, 'dev-mode');
 
-      expect(output).toContain('[functions-watch] 📦 Building...');
-      expect(output).toContain('[functions-watch] ✓ Built');
+      expect(output).toContain('[dev-mode] ✓ Successfully built');
     });
 
-    it('should contain front-components-watch messages', () => {
-      const output = getOutputByPrefix(
-        getResult().output,
-        'front-components-watch',
-      );
+    it('should contain dev-mode sync messages', () => {
+      const output = getOutputByPrefix(getResult().output, 'dev-mode');
 
-      expect(output).toContain('[front-components-watch] 🎨 Building...');
-      expect(output).toContain('[front-components-watch] ✓ Built');
+      expect(output).toContain('[dev-mode] ✓ Synced');
     });
   });
 };
