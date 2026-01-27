@@ -1,6 +1,33 @@
 import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 import { createClient } from '../generated';
 
+type ServerlessFunctionEvent<TBody = object> = {
+  /** HTTP headers (filtered by forwardedRequestHeaders in route trigger) */
+  headers: Record<string, string | undefined>;
+
+  /** Query string parameters (multiple values are joined with commas, e.g., "1,2,3") */
+  queryStringParameters: Record<string, string | undefined>;
+
+  /** Path parameters extracted from the route pattern (e.g., /users/:id → { id: '123' }). Multiple values are joined with commas. */
+  pathParameters: Record<string, string | undefined>;
+
+  /** Request body */
+  body: TBody | null;
+
+  /** Whether the body is base64 encoded */
+  isBase64Encoded: boolean;
+
+  /** Request context containing HTTP method, path, and other metadata */
+  requestContext: {
+    http: {
+      /** HTTP method (GET, POST, PUT, PATCH, DELETE) */
+      method: string;
+      /** Raw request path (e.g., /users/123) */
+      path: string;
+    };
+  };
+};
+
 type TelemetryEventPayload = {
   action: string;
   timestamp: string;
@@ -22,10 +49,10 @@ type TelemetryEventPayload = {
 };
 
 export const main = async (
-  params: TelemetryEventPayload,
+  params: ServerlessFunctionEvent<TelemetryEventPayload>,
 ): Promise<{ success: boolean; message: string; error?: string }> => {
   try {
-    const { action, payload } = params;
+    const { action, payload } = params.body || {};
 
     if (action !== 'user_signup') {
       return {
@@ -69,7 +96,10 @@ export const main = async (
       createSelfHostingUser: {
         __args: {
           data: {
-            name: payload?.payload?.events?.[0]?.userFirstName + ' ' + payload?.payload?.events?.[0]?.userLastName,
+            name:
+              payload?.payload?.events?.[0]?.userFirstName +
+              ' ' +
+              payload?.payload?.events?.[0]?.userLastName,
             email: {
               primaryEmail: userEmail,
               additionalEmails: null,
@@ -111,4 +141,3 @@ export const config: ServerlessFunctionConfig = {
     },
   ],
 };
-
