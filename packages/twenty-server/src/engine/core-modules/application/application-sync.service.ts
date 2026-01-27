@@ -23,11 +23,7 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
-import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
-import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
-import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -39,13 +35,16 @@ import { FieldPermissionService } from 'src/engine/metadata-modules/object-permi
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
-import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import {
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
+} from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -60,9 +59,6 @@ export class ApplicationSyncService {
     private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
-    private readonly databaseEventTriggerV2Service: DatabaseEventTriggerV2Service,
-    private readonly cronTriggerV2Service: CronTriggerV2Service,
-    private readonly routeTriggerV2Service: RouteTriggerV2Service,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly roleService: RoleService,
     private readonly objectPermissionService: ObjectPermissionService,
@@ -960,26 +956,8 @@ export class ApplicationSyncService {
         workspaceId,
       );
 
-      await this.syncDatabaseEventTriggersForServerlessFunction({
-        serverlessFunctionId: serverlessFunctionToUpdate.id,
-        triggersToSync: serverlessFunctionToSync.triggers || [],
-        workspaceId,
-        applicationId,
-      });
-
-      await this.syncCronTriggersForServerlessFunction({
-        serverlessFunctionId: serverlessFunctionToUpdate.id,
-        triggersToSync: serverlessFunctionToSync.triggers || [],
-        workspaceId,
-        applicationId,
-      });
-
-      await this.syncRouteTriggersForServerlessFunction({
-        serverlessFunctionId: serverlessFunctionToUpdate.id,
-        triggersToSync: serverlessFunctionToSync.triggers || [],
-        workspaceId,
-        applicationId,
-      });
+      // Trigger settings are now embedded in the serverless function entity
+      // They are handled through the update input
     }
 
     for (const serverlessFunctionToCreate of serverlessFunctionsToCreate) {

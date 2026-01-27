@@ -1,3 +1,4 @@
+import { HTTPMethod } from 'twenty-shared/types';
 import {
   Check,
   Column,
@@ -7,18 +8,30 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
-import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
-import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
-import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+
+export type CronTriggerSettings = {
+  pattern: string;
+};
+
+export type DatabaseEventTriggerSettings = {
+  eventName: string;
+  updatedFields?: string[];
+};
+
+export type HttpRouteTriggerSettings = {
+  path: string;
+  httpMethod: HTTPMethod;
+  isAuthRequired: boolean;
+  forwardedRequestHeaders?: string[];
+};
 
 const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
 
@@ -89,32 +102,14 @@ export class ServerlessFunctionEntity
   @JoinColumn({ name: 'serverlessFunctionLayerId' })
   serverlessFunctionLayer: Relation<ServerlessFunctionLayerEntity>;
 
-  @OneToMany(
-    () => CronTriggerEntity,
-    (cronTrigger) => cronTrigger.serverlessFunction,
-    {
-      cascade: true,
-    },
-  )
-  cronTriggers: CronTriggerEntity[];
+  @Column({ nullable: true, type: 'jsonb' })
+  cronTriggerSettings: JsonbProperty<CronTriggerSettings> | null;
 
-  @OneToMany(
-    () => DatabaseEventTriggerEntity,
-    (databaseEventTrigger) => databaseEventTrigger.serverlessFunction,
-    {
-      cascade: true,
-    },
-  )
-  databaseEventTriggers: DatabaseEventTriggerEntity[];
+  @Column({ nullable: true, type: 'jsonb' })
+  databaseEventTriggerSettings: JsonbProperty<DatabaseEventTriggerSettings> | null;
 
-  @OneToMany(
-    () => RouteTriggerEntity,
-    (routeTrigger) => routeTrigger.serverlessFunction,
-    {
-      cascade: true,
-    },
-  )
-  routeTriggers: RouteTriggerEntity[];
+  @Column({ nullable: true, type: 'jsonb' })
+  httpRouteTriggerSettings: JsonbProperty<HttpRouteTriggerSettings> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
