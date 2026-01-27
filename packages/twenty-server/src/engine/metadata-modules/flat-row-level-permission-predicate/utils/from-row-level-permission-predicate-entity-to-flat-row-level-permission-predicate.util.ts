@@ -11,15 +11,8 @@ import { type RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modu
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
 
-export const fromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredicate =
-  ({
-    rowLevelPermissionPredicateEntity,
-    applicationIdToUniversalIdentifierMap,
-    fieldMetadataIdToUniversalIdentifierMap,
-    objectMetadataIdToUniversalIdentifierMap,
-    roleIdToUniversalIdentifierMap,
-    rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap,
-  }: {
+type FromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredicateArgs =
+  {
     rowLevelPermissionPredicateEntity: EntityWithRegroupedOneToManyRelations<RowLevelPermissionPredicateEntity>;
     applicationIdToUniversalIdentifierMap: Map<string, string>;
     fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
@@ -29,7 +22,17 @@ export const fromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredic
       string,
       string
     >;
-  }): FlatRowLevelPermissionPredicate => {
+  };
+
+export const fromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredicate =
+  ({
+    rowLevelPermissionPredicateEntity,
+    applicationIdToUniversalIdentifierMap,
+    fieldMetadataIdToUniversalIdentifierMap,
+    objectMetadataIdToUniversalIdentifierMap,
+    roleIdToUniversalIdentifierMap,
+    rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap,
+  }: FromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredicateArgs): FlatRowLevelPermissionPredicate => {
     const rowLevelPermissionPredicateEntityWithoutRelations =
       removePropertiesFromRecord(rowLevelPermissionPredicateEntity, [
         ...ROW_LEVEL_PERMISSION_PREDICATE_ENTITY_RELATION_PROPERTIES,
@@ -85,7 +88,9 @@ export const fromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredic
     let workspaceMemberFieldMetadataUniversalIdentifier: string | null = null;
 
     if (
-      isDefined(rowLevelPermissionPredicateEntity.workspaceMemberFieldMetadataId)
+      isDefined(
+        rowLevelPermissionPredicateEntity.workspaceMemberFieldMetadataId,
+      )
     ) {
       workspaceMemberFieldMetadataUniversalIdentifier =
         fieldMetadataIdToUniversalIdentifierMap.get(
