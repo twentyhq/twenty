@@ -12,6 +12,8 @@ import { ApiService } from '@/cli/utilities/api/api-service';
 import path from 'path';
 import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 import * as fs from 'fs-extra';
+import { UiStateManager } from '@/cli/utilities/ui/ui-state-manager';
+import { renderUI } from '@/cli/utilities/ui/ui';
 
 const initLogger = createLogger('init');
 
@@ -27,6 +29,8 @@ export class AppDevCommand {
   private frontComponentsWatcher: EsbuildWatcher | null = null;
   private watchersStarted = false;
   private apiService = new ApiService();
+  private uiStateManager: UiStateManager | null = null;
+  private unmountUI: (() => void) | null = null;
 
   async execute(options: AppDevOptions): Promise<void> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
@@ -38,9 +42,19 @@ export class AppDevCommand {
 
     await this.cleanOutputDir();
 
+    this.uiStateManager = new UiStateManager({
+      appPath: this.appPath,
+      frontendUrl: process.env.FRONTEND_URL,
+    });
+
+    const { unmount } = await renderUI(this.uiStateManager);
+
+    this.unmountUI = unmount;
+
     this.orchestrator = new DevModeOrchestrator({
       appPath: this.appPath,
       handleManifestBuilt: this.handleWatcherRestarts.bind(this),
+      uiStateManager: this.uiStateManager,
     });
 
     await this.startManifestWatcher();
@@ -141,8 +155,7 @@ export class AppDevCommand {
 
   private setupGracefulShutdown(): void {
     const shutdown = async () => {
-      console.log('');
-      initLogger.warn('🛑 Stopping...');
+      this.unmountUI?.();
 
       await Promise.all([
         this.manifestWatcher?.close(),

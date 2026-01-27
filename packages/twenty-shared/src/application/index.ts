@@ -12,6 +12,7 @@ export type { Application } from './applicationType';
 export type { ApplicationVariables } from './applicationVariablesType';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
+export { SyncableEntities } from './enums/syncable-entities.enum';
 export type { FieldManifest } from './fieldManifestType';
 export type { FrontComponentManifest } from './frontComponentManifestType';
 export type { ObjectExtensionManifest } from './objectExtensionManifestType';

@@ -9,6 +9,8 @@ import { ApiService } from '@/cli/utilities/api/api-service';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { type FileFolder } from 'twenty-shared/types';
 import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
+import type { Location } from 'esbuild';
+import { type UiStateManager } from '@/cli/utilities/ui/ui-state-manager';
 
 const logger = createLogger('dev-mode');
 
@@ -16,6 +18,7 @@ export type DevModeOrchestratorOptions = {
   appPath: string;
   debounceMs?: number;
   handleManifestBuilt: (result: ManifestBuildResult) => void | Promise<void>;
+  uiStateManager: UiStateManager;
 };
 
 export class DevModeOrchestrator {
@@ -24,7 +27,12 @@ export class DevModeOrchestrator {
 
   private builtFileInfos = new Map<
     string,
-    { checksum: string; builtPath: string; fileFolder: FileFolder }
+    {
+      checksum: string;
+      builtPath: string;
+      filePath: string;
+      fileFolder: FileFolder;
+    }
   >();
 
   private fileUploader: FileUploader | null = null;
@@ -34,6 +42,7 @@ export class DevModeOrchestrator {
 
   private syncTimer: NodeJS.Timeout | null = null;
   private isSyncing = false;
+  private uiStateManager: UiStateManager;
 
   private handleManifestBuilt: (
     result: ManifestBuildResult,
@@ -43,17 +52,33 @@ export class DevModeOrchestrator {
     this.appPath = options.appPath;
     this.debounceMs = options.debounceMs ?? 200;
     this.handleManifestBuilt = options.handleManifestBuilt;
+    this.uiStateManager = options.uiStateManager;
   }
 
   async handleChangeDetected(filePath: string) {
-    logger.log(`File changed: ${filePath}`);
+    this.uiStateManager.addEvent({
+      filePath,
+      message: `Change detected: ${filePath}`,
+      status: 'info',
+    });
+    this.uiStateManager.updateFileStatus(filePath, 'building');
     this.scheduleSync();
   }
 
-  handleFileBuildError(errors: string[]): void {
-    logger.error(`Build failed:`);
+  handleFileBuildError(
+    errors: { error: string; location: Location | null }[],
+  ): void {
+    this.uiStateManager.addEvent({
+      message: 'Build failed:',
+      status: 'error',
+    });
     for (const error of errors) {
       logger.error(`  ${error}`);
+      this.uiStateManager.addEvent({
+        filePath: error.location?.file,
+        message: error.error,
+        status: 'error',
+      });
     }
   }
 
@@ -69,18 +94,38 @@ export class DevModeOrchestrator {
     checksum: string;
   }): void {
     logger.success(`✓ Successfully built ${filePath}`);
+    this.uiStateManager.addEvent({
+      filePath,
+      message: `Successfully built ${builtPath}`,
+      status: 'success',
+    });
+    this.uiStateManager.updateFileStatus(filePath, 'built');
 
-    this.builtFileInfos.set(builtPath, { checksum, builtPath, fileFolder });
+    this.builtFileInfos.set(builtPath, {
+      checksum,
+      builtPath,
+      filePath,
+      fileFolder,
+    });
 
     if (this.fileUploader) {
-      this.uploadFile(builtPath, fileFolder);
+      this.uploadFile(builtPath, filePath, fileFolder);
     }
 
     this.scheduleSync();
   }
 
-  private uploadFile(builtPath: string, fileFolder: FileFolder): void {
-    logger.log(`Uploading ${builtPath}...`);
+  private uploadFile(
+    builtPath: string,
+    filePath: string,
+    fileFolder: FileFolder,
+  ): void {
+    this.uiStateManager.addEvent({
+      filePath,
+      message: `Uploading ${builtPath}`,
+      status: 'info',
+    });
+    this.uiStateManager.updateFileStatus(filePath, 'uploading');
     const uploadPromise = this.fileUploader!.uploadFile({
       builtPath,
       fileFolder,
@@ -126,14 +171,28 @@ export class DevModeOrchestrator {
     this.isSyncing = true;
 
     try {
-      logger.log(`Building manifest...`);
+      this.uiStateManager.addEvent({
+        message: 'Building manifest',
+        status: 'info',
+      });
+      this.uiStateManager.updateManifestState({
+        status: 'building',
+        manifestError: null,
+        syncError: null,
+      });
 
       const result = await runManifestBuild(this.appPath);
 
       if (result.error || !result.manifest) {
-        logger.error(
-          `Failed to build manifest: ${result.error ?? 'Unknown error'}`,
-        );
+        this.uiStateManager.updateManifestState({
+          status: 'error',
+          manifestError: result.error ?? 'Unknown error',
+          syncError: null,
+        });
+        this.uiStateManager.addEvent({
+          message: result.error ?? 'Unknown error',
+          status: 'error',
+        });
         return;
       }
 
@@ -155,7 +214,15 @@ export class DevModeOrchestrator {
         }
       }
 
-      logger.success(`Successfully built manifest`);
+      this.uiStateManager.updateManifestState({
+        status: 'built',
+        manifestError: null,
+        syncError: null,
+      });
+      this.uiStateManager.addEvent({
+        message: 'Successfully built manifest',
+        status: 'success',
+      });
 
       await this.handleManifestBuilt(result);
 
@@ -167,9 +234,9 @@ export class DevModeOrchestrator {
         });
         for (const [
           builtPath,
-          { fileFolder },
+          { fileFolder, filePath },
         ] of this.builtFileInfos.entries()) {
-          this.uploadFile(builtPath, fileFolder);
+          this.uploadFile(builtPath, filePath, fileFolder);
         }
       }
 
@@ -181,21 +248,60 @@ export class DevModeOrchestrator {
         manifest: result.manifest,
         builtFileInfos: this.builtFileInfos,
       });
+      this.uiStateManager.addEvent({
+        message: 'Manifest checksums set',
+        status: 'info',
+      });
 
       await writeManifestToOutput(this.appPath, manifest);
 
-      logger.log('Syncing...');
+      this.uiStateManager.addEvent({
+        message: 'Manifest saved to output directory',
+        status: 'info',
+      });
+
+      this.uiStateManager.addEvent({
+        message: 'Syncing manifest',
+        status: 'info',
+      });
+      this.uiStateManager.updateManifestState({
+        status: 'syncing',
+        manifestError: null,
+        syncError: null,
+      });
       const syncResult = await this.apiService.syncApplication(manifest);
 
       if (syncResult.success) {
-        logger.success('✓ Synced');
+        this.uiStateManager.addEvent({
+          message: '✓ Synced',
+          status: 'success',
+        });
+        this.uiStateManager.updateManifestState({
+          status: 'synced',
+          manifestError: null,
+          syncError: null,
+        });
       } else {
-        logger.error(
-          `✗ Sync failed: ${JSON.stringify(syncResult.error, null, 2)}`,
-        );
+        this.uiStateManager.addEvent({
+          message: `Sync failed: ${JSON.stringify(syncResult.error, null, 2)}`,
+          status: 'error',
+        });
+        this.uiStateManager.updateManifestState({
+          status: 'error',
+          manifestError: null,
+          syncError: JSON.stringify(syncResult.error, null, 2),
+        });
       }
     } catch (error) {
-      logger.error(`✗ Sync failed: ${JSON.stringify(error)}`);
+      this.uiStateManager.addEvent({
+        message: `Sync failed: ${JSON.stringify(error, null, 2)}`,
+        status: 'error',
+      });
+      this.uiStateManager.updateManifestState({
+        status: 'error',
+        manifestError: null,
+        syncError: JSON.stringify(error, null, 2),
+      });
     } finally {
       this.isSyncing = false;
     }
