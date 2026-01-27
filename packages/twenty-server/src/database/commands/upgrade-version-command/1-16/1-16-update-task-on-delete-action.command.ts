@@ -137,6 +137,8 @@ export class UpdateTaskOnDeleteActionCommand extends ActiveOrSuspendedWorkspaces
         });
       } catch (error) {
         this.logger.debug(`Error details: ${JSON.stringify(error)}`);
+
+        throw error;
       }
 
       this.logger.log(
