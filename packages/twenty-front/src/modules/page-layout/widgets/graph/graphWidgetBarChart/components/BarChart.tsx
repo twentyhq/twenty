@@ -8,7 +8,7 @@ import { BarChartHoverLayer } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { BarChartTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartTotalsLayer';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
-import { useBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarPositions';
+import { useMemoizedBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useMemoizedBarPositions';
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
@@ -211,7 +211,7 @@ export const BarChart = ({
   const showValues = dataLabelsConfig?.show ?? false;
   const omitNullValues = dataLabelsConfig?.omitNullValues ?? false;
 
-  const bars = useBarPositions({
+  const bars = useMemoizedBarPositions({
     data,
     indexBy,
     keys,
@@ -226,7 +226,7 @@ export const BarChart = ({
     innerPadding,
   });
 
-  const labelBarsWithZeros = useBarPositions({
+  const labelBarsWithZeros = useMemoizedBarPositions({
     chartHeight,
     chartWidth,
     data,

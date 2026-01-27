@@ -23,7 +23,7 @@ type UseBarPositionsParams = {
   enabled?: boolean;
 };
 
-export const useBarPositions = ({
+export const useMemoizedBarPositions = ({
   data,
   indexBy,
   keys,
