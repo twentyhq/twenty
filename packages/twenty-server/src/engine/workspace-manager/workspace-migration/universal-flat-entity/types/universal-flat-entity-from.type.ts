@@ -8,7 +8,6 @@ import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/fl
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
 import { type FormatJsonbSerializedRelation } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-jsonb-serialized-relation.type';
-import { JSONB_PROPERTY_BRAND } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
 
 // TODO Handle universal settings
@@ -39,7 +38,6 @@ export type UniversalFlatEntityFrom<
   } & {
     applicationUniversalIdentifier: string;
   } & {
-    [P in ExtractJsonbProperties<TEntity>]: Omit<FormatJsonbSerializedRelation<
-      TEntity[P]
-    >, typeof JSONB_PROPERTY_BRAND>;
+    [P in ExtractJsonbProperties<TEntity>]:
+      FormatJsonbSerializedRelation<TEntity[P]>
   };

@@ -99,6 +99,7 @@ type NarrowedExpectedResult = {
   onDelete?: RelationOnDeleteAction | undefined;
   joinColumnName?: string | null | undefined;
   junctionTargetFieldUniversalIdentifier?: SerializedRelation | undefined;
+  __JsonbPropertyBrand__?: undefined;
 };
 
 type SettingsTestCase = UniversalFlatFieldMetadata<
@@ -111,14 +112,17 @@ type SettingsExpectedResult =
       onDelete?: RelationOnDeleteAction | undefined;
       joinColumnName?: string | null | undefined;
       junctionTargetFieldUniversalIdentifier?: SerializedRelation | undefined;
+      __JsonbPropertyBrand__?: undefined;
     }
   | {
       dataType?: NumberDataType | undefined;
       decimals?: number | undefined;
       type?: FieldNumberVariant | undefined;
+      __JsonbPropertyBrand__?: undefined;
     }
   | {
       displayedMaxRows?: number | undefined;
+      __JsonbPropertyBrand__?: undefined;
     }
   | null;
 
@@ -137,11 +141,13 @@ type DefaultValueExpectedResult =
   | {
       amountMicros: string | null;
       currencyCode: string | null;
+      __JsonbPropertyBrand__?: undefined;
     }
   | {
       primaryLinkLabel: string | null;
       primaryLinkUrl: string | null;
       secondaryLinks: LinkMetadata[] | null;
+      __JsonbPropertyBrand__?: undefined;
     };
 
 type OptionsTestCase =
