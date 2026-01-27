@@ -1,24 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import { IsNull, Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { fromCreateWebhookInputToFlatWebhookToCreate } from 'src/engine/metadata-modules/flat-webhook/utils/from-create-webhook-input-to-flat-webhook-to-create.util';
 import { fromDeleteWebhookInputToFlatWebhookOrThrow } from 'src/engine/metadata-modules/flat-webhook/utils/from-delete-webhook-input-to-flat-webhook-or-throw.util';
 import { fromFlatWebhookToWebhookDto } from 'src/engine/metadata-modules/flat-webhook/utils/from-flat-webhook-to-webhook-dto.util';
 import { fromUpdateWebhookInputToFlatWebhookToUpdateOrThrow } from 'src/engine/metadata-modules/flat-webhook/utils/from-update-webhook-input-to-flat-webhook-to-update-or-throw.util';
+import { fromWebhookEntityToFlatWebhook } from 'src/engine/metadata-modules/flat-webhook/utils/from-webhook-entity-to-flat-webhook.util';
 import { type CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { type UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
+import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class WebhookService {
   constructor(
+    @InjectRepository(WebhookEntity)
+    private readonly webhookRepository: Repository<WebhookEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -35,42 +40,26 @@ export class WebhookService {
   }
 
   async findAll(workspaceId: string): Promise<WebhookDTO[]> {
-    const { flatWebhookMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatWebhookMaps'],
-        },
-      );
+    const webhooks = await this.webhookRepository.find({
+      where: { workspaceId, deletedAt: IsNull() },
+      order: { createdAt: 'ASC' },
+    });
 
-    return Object.values(flatWebhookMaps.byId)
-      .filter(isDefined)
-      .sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-      )
+    return webhooks
+      .map(fromWebhookEntityToFlatWebhook)
       .map(fromFlatWebhookToWebhookDto);
   }
 
   async findById(id: string, workspaceId: string): Promise<WebhookDTO | null> {
-    const { flatWebhookMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatWebhookMaps'],
-        },
-      );
-
-    const flatWebhook = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: id,
-      flatEntityMaps: flatWebhookMaps,
+    const webhook = await this.webhookRepository.findOne({
+      where: { id, workspaceId, deletedAt: IsNull() },
     });
 
-    if (!isDefined(flatWebhook)) {
+    if (!isDefined(webhook)) {
       return null;
     }
 
-    return fromFlatWebhookToWebhookDto(flatWebhook);
+    return fromFlatWebhookToWebhookDto(fromWebhookEntityToFlatWebhook(webhook));
   }
 
   async create(
@@ -134,13 +123,15 @@ export class WebhookService {
     input: UpdateWebhookInput,
     workspaceId: string,
   ): Promise<WebhookDTO> {
-    if (isDefined(input.update.targetUrl)) {
-      const normalizedTargetUrl = this.normalizeTargetUrl(
-        input.update.targetUrl,
-      );
-
-      input.update.targetUrl = normalizedTargetUrl;
-    }
+    const normalizedInput = {
+      ...input,
+      update: {
+        ...input.update,
+        ...(isDefined(input.update.targetUrl) && {
+          targetUrl: this.normalizeTargetUrl(input.update.targetUrl),
+        }),
+      },
+    };
 
     const { flatWebhookMaps: existingFlatWebhookMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -153,7 +144,7 @@ export class WebhookService {
     const flatWebhookToUpdate =
       fromUpdateWebhookInputToFlatWebhookToUpdateOrThrow({
         flatWebhookMaps: existingFlatWebhookMaps,
-        updateWebhookInput: input,
+        updateWebhookInput: normalizedInput,
       });
 
     const validateAndBuildResult =
