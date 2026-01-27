@@ -75,7 +75,7 @@ export class MessagingMessageListFetchService {
         );
 
         this.logger.log(
-          `messageChannelId: ${messageChannel.id} Processing message list fetch`,
+          `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Processing message list fetch`,
         );
 
         const messageChannelRepository =
@@ -96,7 +96,7 @@ export class MessagingMessageListFetchService {
 
         if (!isDefined(freshMessageChannel)) {
           this.logger.error(
-            `error processing message list fetch: messageChannelId: ${messageChannel.id} Message channel not found`,
+            `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Message channel not found`,
           );
 
           return;
@@ -157,11 +157,7 @@ export class MessagingMessageListFetchService {
         let totalMessagesToImportCount = 0;
 
         this.logger.log(
-          `messageChannelId: ${freshMessageChannel.id} Is full sync: ${isFullSync} and toImportCount: ${messageExternalIds.length}, toDeleteCount: ${messageExternalIdsToDelete.length}, cursors: ${messageLists.map(
-            (messageList) => {
-              messageList.nextSyncCursor;
-            },
-          )}`,
+          `WorkspaceId: ${workspaceId}, MessageChannelId: ${freshMessageChannel.id} - Is full sync: ${isFullSync}, toImportCount: ${messageExternalIds.length}, toDeleteCount: ${messageExternalIdsToDelete.length}`,
         );
 
         const messageChannelMessageAssociationRepository =
@@ -198,7 +194,7 @@ export class MessagingMessageListFetchService {
           );
 
           if (messageExternalIdsToImport.length) {
-            this.logger.log(
+            this.logger.debug(
               `messageChannelId: ${freshMessageChannel.id} Adding ${messageExternalIdsToImport.length} message external ids to import in batch ${index + 1}`,
             );
 
@@ -241,13 +237,13 @@ export class MessagingMessageListFetchService {
 
         if (allMessageExternalIdsToDelete.length) {
           this.logger.log(
-            `messageChannelId: ${freshMessageChannel.id} Deleting ${allMessageExternalIdsToDelete.length} message channel message associations`,
+            `WorkspaceId: ${workspaceId}, MessageChannelId: ${freshMessageChannel.id} - Deleting ${allMessageExternalIdsToDelete.length} message channel message associations`,
           );
 
           const toDeleteChunks = chunk(allMessageExternalIdsToDelete, 200);
 
           for (const [index, toDeleteChunk] of toDeleteChunks.entries()) {
-            this.logger.log(
+            this.logger.debug(
               `messageChannelId: ${freshMessageChannel.id} Deleting ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
             );
 
@@ -264,7 +260,7 @@ export class MessagingMessageListFetchService {
         }
 
         this.logger.log(
-          `messageChannelId: ${freshMessageChannel.id} Total messages to import count: ${totalMessagesToImportCount}`,
+          `WorkspaceId: ${workspaceId}, MessageChannelId: ${freshMessageChannel.id} - Total messages to import count: ${totalMessagesToImportCount}`,
         );
 
         if (totalMessagesToImportCount === 0) {
@@ -276,7 +272,7 @@ export class MessagingMessageListFetchService {
           return;
         }
 
-        this.logger.log(
+        this.logger.debug(
           `messageChannelId: ${freshMessageChannel.id} Scheduling direct messages import`,
         );
 

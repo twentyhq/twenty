@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Any } from 'typeorm';
@@ -32,6 +32,8 @@ import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-acco
 
 @Injectable()
 export class CalendarEventsImportService {
+  private readonly logger = new Logger(CalendarEventsImportService.name);
+
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
     private readonly cacheStorage: CacheStorageService,
@@ -51,6 +53,10 @@ export class CalendarEventsImportService {
     workspaceId: string,
     fetchedCalendarEvents?: FetchedCalendarEvent[],
   ): Promise<void> {
+    this.logger.log(
+      `WorkspaceId: ${workspaceId}, CalendarChannelId: ${calendarChannel.id} - Starting calendar events import`,
+    );
+
     await this.calendarChannelSyncStatusService.markAsCalendarEventsImportOngoing(
       [calendarChannel.id],
       workspaceId,
