@@ -182,6 +182,7 @@ export class CalendarChannelSyncStatusService {
       await calendarChannelRepository.update(calendarChannelIds, {
         syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING,
         syncStatus: CalendarChannelSyncStatus.ONGOING,
+        syncStageStartedAt: new Date().toISOString(),
       });
     }, authContext);
   }
