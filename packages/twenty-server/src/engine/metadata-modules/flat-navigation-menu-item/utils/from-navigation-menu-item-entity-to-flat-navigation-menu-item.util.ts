@@ -1,9 +1,70 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
+import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
 
-export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = (
-  navigationMenuItemEntity: NavigationMenuItemEntity,
-): FlatNavigationMenuItem => {
+type FromNavigationMenuItemEntityToFlatNavigationMenuItemArgs = {
+  navigationMenuItemEntity: EntityWithRegroupedOneToManyRelations<NavigationMenuItemEntity>;
+  applicationIdToUniversalIdentifierMap: Map<string, string>;
+  objectMetadataIdToUniversalIdentifierMap: Map<string, string>;
+  navigationMenuItemIdToUniversalIdentifierMap: Map<string, string>;
+};
+
+export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
+  navigationMenuItemEntity,
+  applicationIdToUniversalIdentifierMap,
+  objectMetadataIdToUniversalIdentifierMap,
+  navigationMenuItemIdToUniversalIdentifierMap,
+}: FromNavigationMenuItemEntityToFlatNavigationMenuItemArgs): FlatNavigationMenuItem => {
+  const applicationUniversalIdentifier =
+    applicationIdToUniversalIdentifierMap.get(
+      navigationMenuItemEntity.applicationId,
+    );
+
+  if (!isDefined(applicationUniversalIdentifier)) {
+    throw new FlatEntityMapsException(
+      `Application with id ${navigationMenuItemEntity.applicationId} not found for navigationMenuItem ${navigationMenuItemEntity.id}`,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
+  }
+
+  let targetObjectMetadataUniversalIdentifier: string | null = null;
+
+  if (isDefined(navigationMenuItemEntity.targetObjectMetadataId)) {
+    targetObjectMetadataUniversalIdentifier =
+      objectMetadataIdToUniversalIdentifierMap.get(
+        navigationMenuItemEntity.targetObjectMetadataId,
+      ) ?? null;
+
+    if (!isDefined(targetObjectMetadataUniversalIdentifier)) {
+      throw new FlatEntityMapsException(
+        `ObjectMetadata with id ${navigationMenuItemEntity.targetObjectMetadataId} not found for navigationMenuItem ${navigationMenuItemEntity.id}`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+  }
+
+  let folderUniversalIdentifier: string | null = null;
+
+  if (isDefined(navigationMenuItemEntity.folderId)) {
+    folderUniversalIdentifier =
+      navigationMenuItemIdToUniversalIdentifierMap.get(
+        navigationMenuItemEntity.folderId,
+      ) ?? null;
+
+    if (!isDefined(folderUniversalIdentifier)) {
+      throw new FlatEntityMapsException(
+        `NavigationMenuItem (folder) with id ${navigationMenuItemEntity.folderId} not found for navigationMenuItem ${navigationMenuItemEntity.id}`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+  }
+
   return {
     id: navigationMenuItemEntity.id,
     userWorkspaceId: navigationMenuItemEntity.userWorkspaceId,
@@ -18,5 +79,11 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = (
     applicationId: navigationMenuItemEntity.applicationId,
     createdAt: navigationMenuItemEntity.createdAt.toISOString(),
     updatedAt: navigationMenuItemEntity.updatedAt.toISOString(),
+    __universal: {
+      universalIdentifier: navigationMenuItemEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+      targetObjectMetadataUniversalIdentifier,
+      folderUniversalIdentifier,
+    },
   };
 };
