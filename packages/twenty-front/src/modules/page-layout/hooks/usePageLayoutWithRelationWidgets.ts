@@ -15,7 +15,7 @@ const createRelationFieldWidget = (
   tabId: string,
 ): PageLayoutWidget => ({
   __typename: 'PageLayoutWidget' as const,
-  id: `dynamic-relation-widget-${field.id}`,
+  id: `dynamic-relation-widget-${field.id}-${field.label}`,
   pageLayoutTabId: tabId,
   title: field.label,
   type: WidgetType.FIELD,
