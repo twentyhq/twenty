@@ -13,7 +13,7 @@ describe('computeSchemaComponents', () => {
     const flatObjectMetadata: FlatObjectMetadata = {
       ...objectMetadataItemMock,
       universalIdentifier: 'objectName',
-      fieldMetadataIds: objectMetadataItemMock.fields.map((f) => f.id),
+      fieldIds: objectMetadataItemMock.fields.map((f) => f.id),
     } as any;
 
     const flatFieldMetadataMaps = {
@@ -29,7 +29,7 @@ describe('computeSchemaComponents', () => {
       nameSingular: 'relationTargetObject',
       namePlural: 'relationTargetObjects',
       universalIdentifier: 'relationTargetObject',
-      fieldMetadataIds: [],
+      fieldIds: [],
     } as any;
 
     const flatObjectMetadataMaps = {
@@ -53,7 +53,7 @@ describe('computeSchemaComponents', () => {
     "description": "Object description",
     "example": {
       "fieldCurrency": {
-        "amountMicros": 284000000,
+        "amountMicros": "284000000",
         "currencyCode": "EUR",
       },
       "fieldEmails": {
@@ -554,7 +554,7 @@ describe('computeSchemaComponents', () => {
     "description": "Object description",
     "example": {
       "fieldCurrency": {
-        "amountMicros": 253000000,
+        "amountMicros": "253000000",
         "currencyCode": "EUR",
       },
       "fieldEmails": {
@@ -858,7 +858,7 @@ describe('computeSchemaComponents', () => {
       nameSingular: 'objectName',
       namePlural: 'objectsName',
       universalIdentifier: 'objectName',
-      fieldMetadataIds: [field.id],
+      fieldIds: [field.id],
     } as any;
 
     const flatFieldMetadataMaps = {

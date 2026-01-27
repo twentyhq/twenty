@@ -10,15 +10,14 @@ import {
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
-import { FUNCTIONS_DIR } from '@/cli/utilities/build/functions/constants';
 
-const logger = createLogger('manifest-watch');
+const logger = createLogger('manifest-builder');
 
 type ExtractedFunctionManifest = Omit<
   ServerlessFunctionManifest,
   'sourceHandlerPath' | 'builtHandlerPath' | 'builtHandlerChecksum'
 > & {
-  handlerPath: string;
+  handler: string;
 };
 
 export class FunctionEntityBuilder
@@ -43,20 +42,25 @@ export class FunctionEntityBuilder
       try {
         const absolutePath = `${appPath}/${filePath}`;
 
-        const extracted =
+        const { manifest, exportName } =
           await manifestExtractFromFileServer.extractManifestFromFile<ExtractedFunctionManifest>(
             absolutePath,
-            { entryProperty: 'handler' },
           );
 
-        const { handlerPath, ...rest } = extracted;
+        const { handler: _, ...rest } = manifest;
         // builtHandlerPath is computed from filePath (the .function.ts file)
         // since that's what esbuild actually builds, not handlerPath
         const builtHandlerPath = this.computeBuiltHandlerPath(filePath);
 
+        // For default exports, use 'default.handler'
+        // For named exports like 'export const anyName = ...', use 'anyName.handler'
+        const handlerName =
+          exportName !== null ? `${exportName}.handler` : 'default.handler';
+
         manifests.push({
           ...rest,
-          sourceHandlerPath: handlerPath,
+          handlerName,
+          sourceHandlerPath: filePath,
           builtHandlerPath,
           builtHandlerChecksum: null,
         });
@@ -71,9 +75,7 @@ export class FunctionEntityBuilder
   }
 
   private computeBuiltHandlerPath(sourceHandlerPath: string): string {
-    const builtPath = sourceHandlerPath.replace(/\.tsx?$/, '.mjs');
-
-    return `${FUNCTIONS_DIR}/${builtPath}`;
+    return sourceHandlerPath.replace(/\.tsx?$/, '.mjs');
   }
 
   validate(

@@ -1637,6 +1637,17 @@ export type FrontComponent = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type FrontComponentCode = {
+  __typename?: 'FrontComponentCode';
+  sourceCode: Scalars['String'];
+};
+
+export type FrontComponentConfiguration = {
+  __typename?: 'FrontComponentConfiguration';
+  configurationType: WidgetConfigurationType;
+  frontComponentId: Scalars['UUID'];
+};
+
 export type FullName = {
   __typename?: 'FullName';
   firstName: Scalars['String'];
@@ -3611,6 +3622,7 @@ export type Query = {
   getCoreViews: Array<CoreView>;
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
+  getFrontComponentCode: FrontComponentCode;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
@@ -3836,6 +3848,11 @@ export type QueryGetCoreViewsArgs = {
 
 export type QueryGetDatabaseConfigVariableArgs = {
   key: Scalars['String'];
+};
+
+
+export type QueryGetFrontComponentCodeArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -5230,7 +5247,7 @@ export type Webhook = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | NotesConfiguration | PieChartConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration;
+export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FrontComponentConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | NotesConfiguration | PieChartConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration;
 
 export enum WidgetConfigurationType {
   AGGREGATE_CHART = 'AGGREGATE_CHART',
@@ -5241,6 +5258,7 @@ export enum WidgetConfigurationType {
   FIELDS = 'FIELDS',
   FIELD_RICH_TEXT = 'FIELD_RICH_TEXT',
   FILES = 'FILES',
+  FRONT_COMPONENT = 'FRONT_COMPONENT',
   GAUGE_CHART = 'GAUGE_CHART',
   IFRAME = 'IFRAME',
   LINE_CHART = 'LINE_CHART',
@@ -5262,6 +5280,7 @@ export enum WidgetType {
   FIELDS = 'FIELDS',
   FIELD_RICH_TEXT = 'FIELD_RICH_TEXT',
   FILES = 'FILES',
+  FRONT_COMPONENT = 'FRONT_COMPONENT',
   GRAPH = 'GRAPH',
   IFRAME = 'IFRAME',
   NOTES = 'NOTES',
@@ -6091,6 +6110,34 @@ export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]
 
 
 export type SkipSyncEmailOnboardingStepMutation = { __typename?: 'Mutation', skipSyncEmailOnboardingStep: { __typename?: 'OnboardingStepSuccess', success: boolean } };
+
+export type GetFrontComponentCodeQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type GetFrontComponentCodeQuery = { __typename?: 'Query', getFrontComponentCode: { __typename?: 'FrontComponentCode', sourceCode: string } };
+
+export type BarChartDataQueryVariables = Exact<{
+  input: BarChartDataInput;
+}>;
+
+
+export type BarChartDataQuery = { __typename?: 'Query', barChartData: { __typename?: 'BarChartDataOutput', data: Array<any>, indexBy: string, keys: Array<string>, xAxisLabel: string, yAxisLabel: string, showLegend: boolean, showDataLabels: boolean, layout: BarChartLayout, groupMode: BarChartGroupMode, hasTooManyGroups: boolean, formattedToRawLookup: any, series: Array<{ __typename?: 'BarChartSeries', key: string, label: string }> } };
+
+export type LineChartDataQueryVariables = Exact<{
+  input: LineChartDataInput;
+}>;
+
+
+export type LineChartDataQuery = { __typename?: 'Query', lineChartData: { __typename?: 'LineChartDataOutput', xAxisLabel: string, yAxisLabel: string, showLegend: boolean, showDataLabels: boolean, hasTooManyGroups: boolean, formattedToRawLookup: any, series: Array<{ __typename?: 'LineChartSeries', id: string, label: string, data: Array<{ __typename?: 'LineChartDataPoint', x: string, y: number }> }> } };
+
+export type PieChartDataQueryVariables = Exact<{
+  input: PieChartDataInput;
+}>;
+
+
+export type PieChartDataQuery = { __typename?: 'Query', pieChartData: { __typename?: 'PieChartDataOutput', showLegend: boolean, showDataLabels: boolean, showCenterMetric: boolean, hasTooManyGroups: boolean, formattedToRawLookup: any, data: Array<{ __typename?: 'PieChartDataItem', id: string, value: number }> } };
 
 export type SaveImapSmtpCaldavAccountMutationVariables = Exact<{
   accountOwnerId: Scalars['UUID'];
@@ -10669,6 +10716,181 @@ export function useSkipSyncEmailOnboardingStepMutation(baseOptions?: Apollo.Muta
 export type SkipSyncEmailOnboardingStepMutationHookResult = ReturnType<typeof useSkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationResult = Apollo.MutationResult<SkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationOptions = Apollo.BaseMutationOptions<SkipSyncEmailOnboardingStepMutation, SkipSyncEmailOnboardingStepMutationVariables>;
+export const GetFrontComponentCodeDocument = gql`
+    query GetFrontComponentCode($id: UUID!) {
+  getFrontComponentCode(id: $id) {
+    sourceCode
+  }
+}
+    `;
+
+/**
+ * __useGetFrontComponentCodeQuery__
+ *
+ * To run a query within a React component, call `useGetFrontComponentCodeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFrontComponentCodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFrontComponentCodeQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetFrontComponentCodeQuery(baseOptions: Apollo.QueryHookOptions<GetFrontComponentCodeQuery, GetFrontComponentCodeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFrontComponentCodeQuery, GetFrontComponentCodeQueryVariables>(GetFrontComponentCodeDocument, options);
+      }
+export function useGetFrontComponentCodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFrontComponentCodeQuery, GetFrontComponentCodeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFrontComponentCodeQuery, GetFrontComponentCodeQueryVariables>(GetFrontComponentCodeDocument, options);
+        }
+export type GetFrontComponentCodeQueryHookResult = ReturnType<typeof useGetFrontComponentCodeQuery>;
+export type GetFrontComponentCodeLazyQueryHookResult = ReturnType<typeof useGetFrontComponentCodeLazyQuery>;
+export type GetFrontComponentCodeQueryResult = Apollo.QueryResult<GetFrontComponentCodeQuery, GetFrontComponentCodeQueryVariables>;
+export const BarChartDataDocument = gql`
+    query BarChartData($input: BarChartDataInput!) {
+  barChartData(input: $input) {
+    data
+    indexBy
+    keys
+    series {
+      key
+      label
+    }
+    xAxisLabel
+    yAxisLabel
+    showLegend
+    showDataLabels
+    layout
+    groupMode
+    hasTooManyGroups
+    formattedToRawLookup
+  }
+}
+    `;
+
+/**
+ * __useBarChartDataQuery__
+ *
+ * To run a query within a React component, call `useBarChartDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBarChartDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBarChartDataQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBarChartDataQuery(baseOptions: Apollo.QueryHookOptions<BarChartDataQuery, BarChartDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<BarChartDataQuery, BarChartDataQueryVariables>(BarChartDataDocument, options);
+      }
+export function useBarChartDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BarChartDataQuery, BarChartDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<BarChartDataQuery, BarChartDataQueryVariables>(BarChartDataDocument, options);
+        }
+export type BarChartDataQueryHookResult = ReturnType<typeof useBarChartDataQuery>;
+export type BarChartDataLazyQueryHookResult = ReturnType<typeof useBarChartDataLazyQuery>;
+export type BarChartDataQueryResult = Apollo.QueryResult<BarChartDataQuery, BarChartDataQueryVariables>;
+export const LineChartDataDocument = gql`
+    query LineChartData($input: LineChartDataInput!) {
+  lineChartData(input: $input) {
+    series {
+      id
+      label
+      data {
+        x
+        y
+      }
+    }
+    xAxisLabel
+    yAxisLabel
+    showLegend
+    showDataLabels
+    hasTooManyGroups
+    formattedToRawLookup
+  }
+}
+    `;
+
+/**
+ * __useLineChartDataQuery__
+ *
+ * To run a query within a React component, call `useLineChartDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLineChartDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLineChartDataQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useLineChartDataQuery(baseOptions: Apollo.QueryHookOptions<LineChartDataQuery, LineChartDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LineChartDataQuery, LineChartDataQueryVariables>(LineChartDataDocument, options);
+      }
+export function useLineChartDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LineChartDataQuery, LineChartDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LineChartDataQuery, LineChartDataQueryVariables>(LineChartDataDocument, options);
+        }
+export type LineChartDataQueryHookResult = ReturnType<typeof useLineChartDataQuery>;
+export type LineChartDataLazyQueryHookResult = ReturnType<typeof useLineChartDataLazyQuery>;
+export type LineChartDataQueryResult = Apollo.QueryResult<LineChartDataQuery, LineChartDataQueryVariables>;
+export const PieChartDataDocument = gql`
+    query PieChartData($input: PieChartDataInput!) {
+  pieChartData(input: $input) {
+    data {
+      id
+      value
+    }
+    showLegend
+    showDataLabels
+    showCenterMetric
+    hasTooManyGroups
+    formattedToRawLookup
+  }
+}
+    `;
+
+/**
+ * __usePieChartDataQuery__
+ *
+ * To run a query within a React component, call `usePieChartDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePieChartDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePieChartDataQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function usePieChartDataQuery(baseOptions: Apollo.QueryHookOptions<PieChartDataQuery, PieChartDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PieChartDataQuery, PieChartDataQueryVariables>(PieChartDataDocument, options);
+      }
+export function usePieChartDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PieChartDataQuery, PieChartDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PieChartDataQuery, PieChartDataQueryVariables>(PieChartDataDocument, options);
+        }
+export type PieChartDataQueryHookResult = ReturnType<typeof usePieChartDataQuery>;
+export type PieChartDataLazyQueryHookResult = ReturnType<typeof usePieChartDataLazyQuery>;
+export type PieChartDataQueryResult = Apollo.QueryResult<PieChartDataQuery, PieChartDataQueryVariables>;
 export const SaveImapSmtpCaldavAccountDocument = gql`
     mutation SaveImapSmtpCaldavAccount($accountOwnerId: UUID!, $handle: String!, $connectionParameters: EmailAccountConnectionParameters!, $id: UUID) {
   saveImapSmtpCaldavAccount(

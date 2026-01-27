@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FlatCacheInvalidateCommand } from 'src/engine/core-modules/cache-storage/commands/flat-cache-invalidate.command';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspaceFlatFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-field-metadata/services/workspace-flat-field-metadata-map-cache.service';
@@ -34,7 +37,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     WorkspaceCacheModule,
+    DataSourceModule,
     TypeOrmModule.forFeature([
+      WorkspaceEntity,
       ViewEntity,
       ViewFieldEntity,
       ViewFilterEntity,
@@ -66,6 +71,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatPageLayoutWidgetMapCacheService,
     WorkspaceFlatRowLevelPermissionPredicateMapCacheService,
     WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService,
+    FlatCacheInvalidateCommand,
   ],
   exports: [
     WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -82,6 +88,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatPageLayoutWidgetMapCacheService,
     WorkspaceFlatRowLevelPermissionPredicateMapCacheService,
     WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService,
+    FlatCacheInvalidateCommand,
   ],
 })
 export class WorkspaceManyOrAllFlatEntityMapsCacheModule {}

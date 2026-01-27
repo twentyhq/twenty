@@ -10,9 +10,8 @@ import {
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
-import { FRONT_COMPONENTS_DIR } from '@/cli/utilities/build/front-components/constants';
 
-const logger = createLogger('manifest-watch');
+const logger = createLogger('manifest-builder');
 
 type FrontComponentConfig = Omit<
   FrontComponentManifest,
@@ -45,7 +44,7 @@ export class FrontComponentEntityBuilder
     for (const filePath of componentFiles) {
       try {
         const absolutePath = `${appPath}/${filePath}`;
-        const config =
+        const { manifest: config } =
           await manifestExtractFromFileServer.extractManifestFromFile<FrontComponentConfig>(
             absolutePath,
           );
@@ -71,9 +70,7 @@ export class FrontComponentEntityBuilder
   }
 
   private computeBuiltComponentPath(sourceComponentPath: string): string {
-    const builtPath = sourceComponentPath.replace(/\.tsx?$/, '.mjs');
-
-    return `${FRONT_COMPONENTS_DIR}/${builtPath}`;
+    return sourceComponentPath.replace(/\.tsx?$/, '.mjs');
   }
 
   validate(

@@ -36,7 +36,7 @@ export const handleLabelIdentifierChangesDuringFieldUpdate = ({
   const objectFlatFieldMetadatas =
     findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+      flatEntityIds: flatObjectMetadata.fieldIds,
     });
 
   const searchVectorField = findOrThrow(

@@ -38,7 +38,7 @@ export const isRelationNestedFieldDateKind = ({
 
   const nestedFieldName = relationNestedFieldName.split('.')[0];
 
-  const targetFieldIds = targetObjectMetadata.fieldMetadataIds;
+  const targetFieldIds = targetObjectMetadata.fieldIds;
 
   const nestedFieldMetadata = targetFieldIds
     .map((fieldId: string) => flatFieldMetadataMaps.byId[fieldId])

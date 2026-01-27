@@ -33,11 +33,12 @@ export class ObjectExtensionEntityBuilder
       try {
         const absolutePath = `${appPath}/${filePath}`;
 
-        manifests.push(
+        const { manifest } =
           await manifestExtractFromFileServer.extractManifestFromFile<ObjectExtensionManifest>(
             absolutePath,
-          ),
-        );
+          );
+
+        manifests.push(manifest);
       } catch (error) {
         throw new Error(
           `Failed to load object extension from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,

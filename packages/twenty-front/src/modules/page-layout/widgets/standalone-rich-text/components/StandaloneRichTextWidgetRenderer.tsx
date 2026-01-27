@@ -1,5 +1,5 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { lazy, Suspense } from 'react';
 
 const StandaloneRichTextWidget = lazy(() =>
@@ -18,7 +18,7 @@ export const StandaloneRichTextWidgetRenderer = ({
   widget,
 }: StandaloneRichTextWidgetRendererProps) => {
   return (
-    <Suspense fallback={<ChartSkeletonLoader />}>
+    <Suspense fallback={<WidgetSkeletonLoader />}>
       <StandaloneRichTextWidget widget={widget} />
     </Suspense>
   );

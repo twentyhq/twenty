@@ -107,7 +107,7 @@ describe('WorkspaceEntityManager', () => {
       isSystem: false,
       isActive: true,
       targetTableName: 'test_entity',
-      fieldMetadataIds: ['field-id'],
+      fieldIds: ['field-id'],
       indexMetadataIds: [],
       viewIds: [],
       universalIdentifier: 'test-entity-id',

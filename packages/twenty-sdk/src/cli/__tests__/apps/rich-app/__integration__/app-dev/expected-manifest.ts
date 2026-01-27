@@ -4,6 +4,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 export const EXPECTED_MANIFEST: ApplicationManifest = {
   sources: {},
+  yarnLock: '',
   application: {
     applicationVariables: {
       DEFAULT_RECIPIENT_NAME: {
@@ -21,7 +22,7 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
   },
   frontComponents: [
     {
-      builtComponentPath: 'front-components/src/root.front-component.mjs',
+      builtComponentPath: 'src/root.front-component.mjs',
       builtComponentChecksum: '[checksum]',
       componentName: 'RootComponent',
       description: 'A root-level front component',
@@ -30,8 +31,7 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
       universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000001',
     },
     {
-      builtComponentPath:
-        'front-components/src/components/card.front-component.mjs',
+      builtComponentPath: 'src/components/card.front-component.mjs',
       builtComponentChecksum: '[checksum]',
       componentName: 'CardDisplay',
       description: 'A component using an external component file',
@@ -40,8 +40,7 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
       universalIdentifier: 'i0i1i2i3-i4i5-4000-8000-000000000001',
     },
     {
-      builtComponentPath:
-        'front-components/src/components/greeting.front-component.mjs',
+      builtComponentPath: 'src/components/greeting.front-component.mjs',
       builtComponentChecksum: '[checksum]',
       componentName: 'GreetingComponent',
       description: 'A component that uses greeting utility',
@@ -50,8 +49,7 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
       universalIdentifier: 'h0h1h2h3-h4h5-4000-8000-000000000001',
     },
     {
-      builtComponentPath:
-        'front-components/src/components/test.front-component.mjs',
+      builtComponentPath: 'src/components/test.front-component.mjs',
       builtComponentChecksum: '[checksum]',
       componentName: 'TestComponent',
       description: 'A test front component',
@@ -293,8 +291,8 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
   functions: [
     {
       builtHandlerChecksum: '[checksum]',
-      builtHandlerPath: 'functions/src/root.function.mjs',
-      handlerName: 'rootHandler',
+      builtHandlerPath: 'src/root.function.mjs',
+      handlerName: 'default.handler',
       name: 'root-function',
       sourceHandlerPath: 'src/root.function.ts',
       timeoutSeconds: 5,
@@ -311,8 +309,8 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
     },
     {
       builtHandlerChecksum: '[checksum]',
-      builtHandlerPath: 'functions/src/functions/greeting.function.mjs',
-      handlerName: 'greetingHandler',
+      builtHandlerPath: 'src/functions/greeting.function.mjs',
+      handlerName: 'default.handler',
       name: 'greeting-function',
       sourceHandlerPath: 'src/functions/greeting.function.ts',
       timeoutSeconds: 5,
@@ -322,17 +320,17 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
           isAuthRequired: false,
           path: '/greet',
           type: 'route',
-          universalIdentifier: 'g0g1g2g3-g4g5-4000-8000-000000000002',
+          universalIdentifier: 'f7b12160-3d25-4c92-a13f-a325dd60eb04',
         },
       ],
-      universalIdentifier: 'g0g1g2g3-g4g5-4000-8000-000000000001',
+      universalIdentifier: '9d412d9e-2caf-487c-8b66-d1585883dd4e',
     },
     {
       builtHandlerChecksum: '[checksum]',
-      builtHandlerPath: 'functions/src/functions/test-function-2.function.mjs',
-      handlerName: 'testFunction2',
+      builtHandlerPath: 'src/functions/test-function-2.function.mjs',
+      handlerName: 'config.handler',
       name: 'test-function-2',
-      sourceHandlerPath: 'src/utils/test-function-2.util.ts',
+      sourceHandlerPath: 'src/functions/test-function-2.function.ts',
       timeoutSeconds: 2,
       triggers: [
         {
@@ -345,8 +343,8 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
     },
     {
       builtHandlerChecksum: '[checksum]',
-      builtHandlerPath: 'functions/src/functions/test-function.function.mjs',
-      handlerName: 'handler',
+      builtHandlerPath: 'src/functions/test-function.function.mjs',
+      handlerName: 'default.handler',
       name: 'test-function',
       sourceHandlerPath: 'src/functions/test-function.function.ts',
       timeoutSeconds: 2,
