@@ -144,9 +144,11 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
             attachmentTargetFieldUniversalIdentifiers.has(
               field.universalIdentifier,
             );
+          const targetObjectMetadata = field.relationTargetObjectMetadataId
+            ? flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId]
+            : undefined;
           const isCustomTarget =
-            !isStandardAppField &&
-            field.standardId === ATTACHMENT_STANDARD_FIELD_IDS.targetCustom;
+            !isStandardAppField && targetObjectMetadata?.isCustom === true;
 
           return isStandardTarget || isCustomTarget;
         });
