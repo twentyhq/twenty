@@ -17,7 +17,6 @@ type ComputeBarPositionsParams = {
   layout: BarChartLayout;
   groupMode: 'grouped' | 'stacked';
   valueDomain: { min: number; max: number };
-  fallbackColor: string;
   innerPadding: number;
   includeZeroValues?: boolean;
 };
@@ -33,7 +32,6 @@ export const computeBarPositions = ({
   layout,
   groupMode,
   valueDomain,
-  fallbackColor,
   innerPadding,
   includeZeroValues = false,
 }: ComputeBarPositionsParams): BarPosition[] => {
@@ -61,7 +59,6 @@ export const computeBarPositions = ({
     layout,
     groupMode,
     valueDomain,
-    fallbackColor,
     innerPadding,
     shouldRoundFreeEndMap,
     includeZeroValues,

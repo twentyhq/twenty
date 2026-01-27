@@ -104,7 +104,6 @@ export const BarChart = ({
     graphWidgetHighlightedLegendIdComponentState,
   );
 
-  const fallbackColor = theme.border.color.light;
   const isVertical = layout === BarChartLayout.VERTICAL;
 
   const chartTheme = useBarChartTheme();
@@ -200,7 +199,6 @@ export const BarChart = ({
     layout,
     groupMode,
     valueDomain,
-    fallbackColor,
     innerPadding,
     includeZeroValues: shouldIncludeZeroValuesForLabels,
   });

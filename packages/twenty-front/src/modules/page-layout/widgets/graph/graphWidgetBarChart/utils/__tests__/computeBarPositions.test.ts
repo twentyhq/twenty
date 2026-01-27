@@ -92,7 +92,6 @@ describe('computeBarPositions', () => {
       layout: BarChartLayout.VERTICAL,
       groupMode: 'grouped',
       valueDomain: { min: 0, max: 100 },
-      fallbackColor: 'gray',
       innerPadding: 2,
     });
 
@@ -111,7 +110,6 @@ describe('computeBarPositions', () => {
       layout: BarChartLayout.VERTICAL,
       groupMode: 'grouped',
       valueDomain: { min: 0, max: 100 },
-      fallbackColor: 'gray',
       innerPadding: 2,
     });
 
@@ -134,7 +132,6 @@ describe('computeBarPositions', () => {
       layout: BarChartLayout.VERTICAL,
       groupMode: 'stacked',
       valueDomain: { min: 0, max: 100 },
-      fallbackColor: 'gray',
       innerPadding: 2,
     });
 

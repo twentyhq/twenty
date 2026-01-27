@@ -17,7 +17,6 @@ type UseBarPositionsParams = {
   layout: BarChartLayout;
   groupMode: 'grouped' | 'stacked';
   valueDomain: { min: number; max: number };
-  fallbackColor: string;
   innerPadding: number;
   includeZeroValues?: boolean;
   enabled?: boolean;
@@ -34,7 +33,6 @@ export const useMemoizedBarPositions = ({
   layout,
   groupMode,
   valueDomain,
-  fallbackColor,
   innerPadding,
   includeZeroValues = false,
   enabled = true,
@@ -55,7 +53,6 @@ export const useMemoizedBarPositions = ({
       layout,
       groupMode,
       valueDomain,
-      fallbackColor,
       innerPadding,
       includeZeroValues,
     });
@@ -70,7 +67,6 @@ export const useMemoizedBarPositions = ({
     layout,
     groupMode,
     valueDomain,
-    fallbackColor,
     innerPadding,
     includeZeroValues,
     enabled,

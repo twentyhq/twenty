@@ -26,7 +26,6 @@ type ComputeBarPositionsByGroupModeParams = {
   layout: BarChartLayout;
   groupMode: 'grouped' | 'stacked';
   valueDomain: { min: number; max: number };
-  fallbackColor: string;
   innerPadding: number;
   shouldRoundFreeEndMap: Map<string, boolean> | null;
   includeZeroValues?: boolean;
@@ -48,7 +47,6 @@ type BuildBarsParams = {
   indexBy: string;
   keys: string[];
   enrichedKeysMap: Map<string, BarChartEnrichedKey>;
-  fallbackColor: string;
   shouldRoundFreeEndMap: Map<string, boolean> | null;
   includeZeroValues: boolean;
   getDimensions: (params: {
@@ -66,7 +64,6 @@ const buildBars = ({
   indexBy,
   keys,
   enrichedKeysMap,
-  fallbackColor,
   shouldRoundFreeEndMap,
   includeZeroValues,
   getDimensions,
@@ -94,8 +91,10 @@ const buildBars = ({
       }
 
       const value = rawValue;
-      const enrichedKey = enrichedKeysMap.get(key);
-      const color = enrichedKey?.colorScheme.solid ?? fallbackColor;
+      const enrichedKeyForSeries = enrichedKeysMap.get(
+        key,
+      ) as BarChartEnrichedKey;
+      const color = enrichedKeyForSeries.colorScheme.solid;
       const barKey = JSON.stringify([indexValue, key]);
       const shouldRoundFreeEnd = shouldRoundFreeEndMap?.get(barKey) ?? true;
 
@@ -133,7 +132,6 @@ export const computeBarPositionsByGroupMode = ({
   layout,
   groupMode,
   valueDomain,
-  fallbackColor,
   innerPadding,
   shouldRoundFreeEndMap,
   includeZeroValues = false,
@@ -159,7 +157,6 @@ export const computeBarPositionsByGroupMode = ({
       indexBy,
       keys,
       enrichedKeysMap,
-      fallbackColor,
       shouldRoundFreeEndMap,
       includeZeroValues,
       getDimensions: ({ ctx, categoryStart, value, stackState }) => {
@@ -190,7 +187,6 @@ export const computeBarPositionsByGroupMode = ({
     indexBy,
     keys,
     enrichedKeysMap,
-    fallbackColor,
     shouldRoundFreeEndMap,
     includeZeroValues,
     getDimensions: ({ ctx, categoryStart, keyIndex, value, stackState }) => ({
