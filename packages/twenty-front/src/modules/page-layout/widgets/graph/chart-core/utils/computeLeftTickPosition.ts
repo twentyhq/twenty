@@ -1,3 +1,5 @@
+import { computeCategoryTickCenterPosition } from '@/page-layout/widgets/graph/chart-core/utils/computeCategoryTickCenterPosition';
+
 type CategoryScale = {
   offset: number;
   step: number;
@@ -34,14 +36,13 @@ export const computeLeftTickPosition = ({
       innerHeight - ((Number(value) - valueDomain.min) / range) * innerHeight
     );
   }
-  const categoryCount = categoryValues.length;
-  if (categoryCount === 0) {
-    return 0;
-  }
-  const rawIndex =
-    categoryIndexMap.get(String(value)) ?? Math.min(index, categoryCount - 1);
-  const clampedIndex = Math.min(Math.max(rawIndex, 0), categoryCount - 1);
-  const effectiveIndex = categoryCount - 1 - clampedIndex;
-  const start = categoryScale.offset + effectiveIndex * categoryScale.step;
-  return start + categoryScale.bandwidth / 2;
+
+  return computeCategoryTickCenterPosition({
+    value,
+    index,
+    categoryValues,
+    categoryIndexMap,
+    categoryScale,
+    reverse: true,
+  });
 };

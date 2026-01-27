@@ -1,5 +1,5 @@
 import { CHART_CORE_CONSTANTS } from '@/page-layout/widgets/graph/chart-core/constants/ChartCoreConstants';
-import { computeZeroPixel } from '@/page-layout/widgets/graph/chart-core/utils/computeZeroPixel';
+import { computeValueScale } from '@/page-layout/widgets/graph/chart-core/utils/computeValueScale';
 import { renderGridLayer } from '@/page-layout/widgets/graph/chart-core/utils/renderGridLayer';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
@@ -81,7 +81,11 @@ export const BarChartBaseLayer = ({
   const innerWidth = chartWidth - margins.left - margins.right;
   const innerHeight = chartHeight - margins.top - margins.bottom;
   const axisLength = isVertical ? innerHeight : innerWidth;
-  const zeroPixel = computeZeroPixel({ domain: valueDomain, axisLength });
+  const { valueToPixel } = computeValueScale({
+    domain: valueDomain,
+    axisLength,
+  });
+  const zeroPixel = valueToPixel(0);
 
   const toBaselineBar = useCallback(
     (bar: BarPosition): BarPosition =>
