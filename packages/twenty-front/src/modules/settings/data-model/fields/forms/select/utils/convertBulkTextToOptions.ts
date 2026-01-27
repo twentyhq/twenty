@@ -25,7 +25,7 @@ export const convertBulkTextToOptions = (
       (opt) => opt.label.toLowerCase() === label.toLowerCase(),
     );
 
-    if (existingOption != null) {
+    if (isDefined(existingOption)) {
       // reuse existing option meta (including original label), just update position
       newBulkSelectOptions.push({
         ...existingOption,
