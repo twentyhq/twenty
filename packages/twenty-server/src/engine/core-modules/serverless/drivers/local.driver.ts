@@ -2,6 +2,8 @@ import { promises as fs } from 'fs';
 import { spawn } from 'node:child_process';
 import { join } from 'path';
 
+import { FileFolder } from 'twenty-shared/types';
+
 import {
   type ServerlessDriver,
   type ServerlessExecuteResult,
@@ -9,14 +11,13 @@ import {
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
-import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
-import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
 import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
-import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/get-serverless-folder-or-throw.utils';
+import { type FlatServerlessFunctionLayer } from 'src/engine/metadata-modules/serverless-function-layer/types/flat-serverless-function-layer.type';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
-import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -30,54 +31,57 @@ export class LocalDriver implements ServerlessDriver {
   }
 
   private getInMemoryLayerFolderPath = (
-    serverlessFunction: ServerlessFunctionEntity,
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer,
   ) => {
-    return join(
-      SERVERLESS_TMPDIR_FOLDER,
-      serverlessFunction.serverlessFunctionLayer.checksum,
-    );
+    return join(SERVERLESS_TMPDIR_FOLDER, flatServerlessFunctionLayer.checksum);
   };
 
   private async createLayerIfNotExists(
-    serverlessFunction: ServerlessFunctionEntity,
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer,
   ) {
-    const inMemoryLayerFolderPath =
-      this.getInMemoryLayerFolderPath(serverlessFunction);
+    const inMemoryLayerFolderPath = this.getInMemoryLayerFolderPath(
+      flatServerlessFunctionLayer,
+    );
 
     try {
       await fs.access(inMemoryLayerFolderPath);
     } catch {
       await copyAndBuildDependencies(
         inMemoryLayerFolderPath,
-        serverlessFunction,
+        flatServerlessFunctionLayer,
       );
     }
   }
 
   async delete() {}
 
-  private async build(serverlessFunction: ServerlessFunctionEntity) {
-    await this.createLayerIfNotExists(serverlessFunction);
+  private async build(
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer,
+  ) {
+    await this.createLayerIfNotExists(flatServerlessFunctionLayer);
   }
 
   async execute({
-    serverlessFunction,
+    flatServerlessFunction,
+    flatServerlessFunctionLayer,
     payload,
     version,
     env,
   }: {
-    serverlessFunction: ServerlessFunctionEntity;
+    flatServerlessFunction: FlatServerlessFunction;
+    flatServerlessFunctionLayer: FlatServerlessFunctionLayer;
     payload: object;
     version: string;
     env?: Record<string, string>;
   }): Promise<ServerlessExecuteResult> {
-    await this.build(serverlessFunction);
+    await this.build(flatServerlessFunctionLayer);
 
     const startTime = Date.now();
 
-    const folderPath = getServerlessFolder({
-      serverlessFunction,
+    const builtHandlerFolderPath = getServerlessFolderOrThrow({
+      flatServerlessFunction,
       version,
+      fileFolder: FileFolder.BuiltFunction,
     });
 
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
@@ -86,25 +90,20 @@ export class LocalDriver implements ServerlessDriver {
       const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
       await this.fileStorageService.download({
-        from: { folderPath },
-        to: { folderPath: sourceTemporaryDir },
+        from: {
+          folderPath: builtHandlerFolderPath,
+          filename: flatServerlessFunction.builtHandlerPath,
+        },
+        to: {
+          folderPath: sourceTemporaryDir,
+          filename: flatServerlessFunction.builtHandlerPath,
+        },
       });
-
-      let builtBundleFilePath = '';
-
-      try {
-        builtBundleFilePath = await buildServerlessFunctionInMemory({
-          sourceTemporaryDir,
-          handlerPath: serverlessFunction.handlerPath,
-        });
-      } catch (error) {
-        return formatBuildError(error, startTime);
-      }
 
       try {
         await fs.symlink(
           join(
-            this.getInMemoryLayerFolderPath(serverlessFunction),
+            this.getInMemoryLayerFolderPath(flatServerlessFunctionLayer),
             'node_modules',
           ),
           join(sourceTemporaryDir, 'node_modules'),
@@ -150,10 +149,15 @@ export class LocalDriver implements ServerlessDriver {
       });
 
       try {
+        const builtBundleFilePath = join(
+          sourceTemporaryDir,
+          flatServerlessFunction.builtHandlerPath,
+        );
+
         const runnerPath = await this.writeBootstrapRunner({
           dir: sourceTemporaryDir,
           builtFileAbsPath: builtBundleFilePath,
-          handlerName: serverlessFunction.handlerName,
+          handlerName: flatServerlessFunction.handlerName,
         });
 
         const { ok, result, error, stack, stdout, stderr } =
@@ -284,9 +288,13 @@ export class LocalDriver implements ServerlessDriver {
       stack?: string;
       stdout: string;
       stderr: string;
-    }>((resolve, _) => {
+    }>((resolve) => {
+      // Strip NODE_OPTIONS to prevent tsx loader from being inherited
+      const { NODE_OPTIONS: _n1, ...cleanProcessEnv } = process.env;
+      const { NODE_OPTIONS: _n2, ...cleanUserEnv } = env;
+
       const child = spawn(process.execPath, [runnerPath], {
-        env: { ...process.env, ...env },
+        env: { ...cleanProcessEnv, ...cleanUserEnv },
         stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
       });
 

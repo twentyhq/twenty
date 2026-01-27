@@ -55,59 +55,48 @@ export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export type { ExcludeFunctions } from './ExcludeFunctions';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
+export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties.type';
 export type {
   FieldMetadataDefaultValueFunctionNames,
-  FieldMetadataClassValidation,
-  FieldMetadataFunctionDefaultValue,
-  FieldMetadataDefaultValueForType,
-  FieldMetadataDefaultValueForAnyType,
-  FieldMetadataDefaultValue,
-  FieldMetadataDefaultSerializableValue,
-} from './FieldMetadataDefaultValue';
-export {
-  fieldMetadataDefaultValueFunctionName,
-  FieldMetadataDefaultValueString,
-  FieldMetadataDefaultValueRawJson,
-  FieldMetadataDefaultValueRichTextV2,
-  FieldMetadataDefaultValueRichText,
-  FieldMetadataDefaultValueNumber,
-  FieldMetadataDefaultValueBoolean,
-  FieldMetadataDefaultValueStringArray,
-  FieldMetadataDefaultValueDateTime,
-  FieldMetadataDefaultValueDate,
-  FieldMetadataDefaultValueCurrency,
-  FieldMetadataDefaultValueFullName,
   FieldMetadataDefaultValueUuidFunction,
   FieldMetadataDefaultValueNowFunction,
+  FieldMetadataDefaultValueRichTextV2,
+  FieldMetadataDefaultValueCurrency,
+  FieldMetadataDefaultValueFullName,
   FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueLinks,
   FieldMetadataDefaultActor,
   FieldMetadataDefaultValueEmails,
   FieldMetadataDefaultValuePhones,
-  FieldMetadataDefaultArray,
+  FieldMetadataDefaultValueMapping,
+  FieldMetadataFunctionDefaultValue,
+  FieldMetadataDefaultValueForAnyType,
+  FieldMetadataDefaultValue,
 } from './FieldMetadataDefaultValue';
+export { fieldMetadataDefaultValueFunctionName } from './FieldMetadataDefaultValue';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export { FieldMetadataSettingsOnClickAction } from './FieldMetadataMultiItemSettings';
-export type { TagColor, FieldMetadataOptions } from './FieldMetadataOptions';
+export type {
+  TagColor,
+  FieldMetadataOptionForAnyType,
+  FieldMetadataOptions,
+} from './FieldMetadataOptions';
 export {
   FieldMetadataDefaultOption,
   FieldMetadataComplexOption,
 } from './FieldMetadataOptions';
 export type {
   FieldNumberVariant,
-  FieldMetadataNumberSettings,
-  FieldMetadataTextSettings,
-  FieldMetadataDateSettings,
-  FieldMetadataDateTimeSettings,
-  FieldMetadataRelationSettings,
-  FieldMetadataAddressSettings,
-  FieldMetadataTsVectorSettings,
+  FieldMetadataSettingsMapping,
   AllFieldMetadataSettings,
   FieldMetadataSettings,
 } from './FieldMetadataSettings';
 export { NumberDataType, DateDisplayFormat } from './FieldMetadataSettings';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldRatingValue } from './FieldRatingValue';
+export type { FileCategory } from './FileCategory';
+export { FILE_CATEGORIES } from './FileCategory';
+export { FileFolder } from './FileFolder';
 export type {
   FilterableFieldType,
   FilterableAndTSVectorFieldType,
@@ -188,6 +177,17 @@ export { RelationType } from './RelationType';
 export type { RelationUpdatePayload } from './RelationUpdatePayload';
 export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
+export type { RowLevelPermissionPredicate } from './RowLevelPermissionPredicate';
+export type { RowLevelPermissionPredicateGroup } from './RowLevelPermissionPredicateGroup';
+export { RowLevelPermissionPredicateGroupLogicalOperator } from './RowLevelPermissionPredicateGroupLogicalOperator';
+export { RowLevelPermissionPredicateOperand } from './RowLevelPermissionPredicateOperand';
+export type {
+  RelationPredicateValue,
+  RowLevelPermissionPredicateValue,
+} from './RowLevelPermissionPredicateValue';
+export type { SerializedRelation } from './SerializedRelation.type';
+export { SERIALIZED_RELATION_BRAND } from './SerializedRelation.type';
+export type { ServerlessFunctionEvent } from './ServerlessFunctionEvent';
 export { SettingsPath } from './SettingsPath';
 export type { Sources } from './SourcesType';
 export type {

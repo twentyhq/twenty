@@ -18,6 +18,7 @@ export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   shortcut?: string | null;
   duplicateCriteria?: string[][] | null;
   labelIdentifierFieldMetadataName: AllStandardObjectFieldName<O>;
+  imageIdentifierFieldMetadataName?: AllStandardObjectFieldName<O>;
 };
 
 export type CreateStandardObjectArgs<
@@ -45,6 +46,7 @@ export const createStandardObjectFlatMetadata = <
     shortcut = null,
     duplicateCriteria = null,
     labelIdentifierFieldMetadataName,
+    imageIdentifierFieldMetadataName,
   },
   workspaceId,
   standardObjectMetadataRelatedEntityIds,
@@ -76,9 +78,13 @@ export const createStandardObjectFlatMetadata = <
     standardObjectMetadataRelatedEntityIds[nameSingular].fields[
       labelIdentifierFieldMetadataName
     ].id,
-  imageIdentifierFieldMetadataId: null,
+  imageIdentifierFieldMetadataId: imageIdentifierFieldMetadataName
+    ? standardObjectMetadataRelatedEntityIds[nameSingular].fields[
+        imageIdentifierFieldMetadataName
+      ].id
+    : null,
   targetTableName: 'DEPRECATED',
-  fieldMetadataIds: [],
+  fieldIds: [],
   indexMetadataIds: [],
   viewIds: [],
   createdAt: now,

@@ -1,76 +1,76 @@
 ---
-title: Error Handling & Validation
-description: Review and fix import errors directly in the UI before confirming.
+title: Zpracování chyb a validace
+description: Zkontrolujte a opravte chyby importu přímo v uživatelském rozhraní (UI) před potvrzením.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Pre-Import Validation
+## Ověření před importem
 
-After uploading your file and mapping fields, Twenty validates your data **before** importing. This allows you to catch and fix errors without affecting your existing data.
+Po nahrání souboru a namapování polí Twenty vaše data ověří **před** importem. Díky tomu můžete chyby odhalit a opravit, aniž by to ovlivnilo vaše stávající data.
 
 ## Jak to funguje
 
-1. **Upload** your CSV file
-2. **Map** your columns to Twenty fields
-3. **Review** the potential errors highlighted in yellow
-4. **Fix errors** directly in the UI
-5. **Confirm** the import
+1. **Nahrajte** svůj soubor CSV
+2. **Namapujte** své sloupce na pole Twenty
+3. **Zkontrolujte** možné chyby zvýrazněné žlutě
+4. **Opravte chyby** přímo v uživatelském rozhraní (UI)
+5. **Potvrďte** import
 
-<VimeoEmbed videoId="1145273857" title="Video demonstration" />
+<VimeoEmbed videoId="1145273857" title="Ukázka videa" />
 
-## Error Display
+## Zobrazení chyb
 
-Rows with issues are highlighted in **yellow**. You can:
+Řádky s problémy jsou zvýrazněny **žlutě**. Můžete:
 
-* **Edit the cell directly** to fix the error
-* **Remove the row** to skip it entirely
+* **Přímo upravte buňku**, abyste chybu opravili
+* **Odstraňte řádek**, abyste jej zcela přeskočili
 
-This inline editing saves time—no need to go back to your spreadsheet, fix errors, and re-upload.
+Tato přímá úprava šetří čas—nemusíte se vracet do tabulky, opravovat chyby a soubor znovu nahrávat.
 
-## Common Error Types
+## Běžné typy chyb
 
-### Duplicate Values
+### Duplicitní hodnoty
 
-**Cause**: A unique field (email, domain) already exists in Twenty or appears twice in your file.
+**Příčina**: Jedinečné pole (e-mail, doména) už v Twenty existuje nebo se ve vašem souboru vyskytuje dvakrát.
 
-**Fix**:
+**Oprava**:
 
-* Edit the duplicate value in the import UI
-* Remove one of the duplicate rows
+* Upravte duplicitní hodnotu v rozhraní importu
+* Odstraňte jeden z duplicitních řádků
 
-See [Uniqueness Constraints](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints) for more details on how uniqueness is enforced.
+Podrobnosti o tom, jak se vynucuje jedinečnost, viz [Omezení jedinečnosti](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints).
 
-### Invalid Format
+### Neplatný formát
 
-**Cause**: Data doesn't match the expected format (e.g., invalid email, wrong date format).
+**Příčina**: Data neodpovídají očekávanému formátu (např. neplatný e-mail, nesprávný formát data).
 
-**Fix**: Edit the cell to use the correct format.
+**Oprava**: Upravte buňku tak, aby používala správný formát.
 
-See [Field Mapping](/l/cs/user-guide/data-migration/capabilities/field-mapping) for the expected format of each field type.
+Viz [Mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping) pro očekávaný formát každého typu pole.
 
-### Missing Required Fields
+### Chybějící povinná pole
 
-**Cause**: A required field is empty.
+**Příčina**: Povinné pole je prázdné.
 
-**Fix**: Enter a value in the required field or remove the row.
+**Oprava**: Zadejte hodnotu do povinného pole, nebo řádek odstraňte.
 
-### Relation Not Found
+### Vztah nebyl nalezen
 
-**Cause**: The referenced record doesn't exist (e.g., a Company domain that wasn't imported).
+**Příčina**: Odkazovaný záznam neexistuje (např. doména společnosti, která nebyla importována).
 
-**Fix**:
+**Oprava**:
 
-* Import the parent records first
-* Or correct the reference value
+* Nejprve importujte nadřazené záznamy
+* Nebo opravte referenční hodnotu
 
-See [Import Relations](/l/cs/user-guide/data-migration/capabilities/import-relations) for the correct import order and how to link records.
+Viz [Import relací](/l/cs/user-guide/data-migration/capabilities/import-relations) pro správné pořadí importu a postup propojení záznamů.
 
-## Tips for Fewer Errors
+## Tipy pro méně chyb
 
-1. **Download the template** to see expected format prior to importing your file
-2. **Clean your data** in the spreadsheet first
-3. **Import files in correct order** to import relations (Companies → People → Opportunities)
-4. **Test with small batches** before full import
-5. **Check for duplicates** before uploading
-6. **Limit the size of your file to 10,000 records** per file
+1. **Stáhněte si šablonu**, abyste před importem souboru viděli očekávaný formát
+2. **Nejprve vyčistěte svá data** v tabulce
+3. **Importujte soubory ve správném pořadí**, abyste importovali relace (Společnosti → Lidé → Příležitosti)
+4. **Otestujte s malými dávkami** před plným importem
+5. **Zkontrolujte duplicity** před nahráním
+6. **Omezte počet záznamů v souboru na 10 000**

@@ -24,7 +24,9 @@ import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverles
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { WorkspaceFlatServerlessFunctionMapCacheService } from 'src/engine/metadata-modules/serverless-function/services/workspace-flat-serverless-function-map-cache.service';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { FunctionBuildModule } from 'src/engine/metadata-modules/function-build/function-build.module';
 
 @Module({
   imports: [
@@ -44,8 +46,10 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     PermissionsModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
+    FunctionBuildModule,
     ServerlessFunctionLayerModule,
     SubscriptionsModule,
+    WorkspaceCacheModule,
     TokenModule,
   ],
   providers: [

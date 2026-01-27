@@ -14,6 +14,7 @@ type GraphLineChartTooltipProps = {
   containerRef: RefObject<HTMLDivElement>;
   enrichedSeries: LineChartEnrichedSeries[];
   formatOptions: GraphValueFormatOptions;
+  isStacked?: boolean;
   onSliceClick?: (point: Point<LineSeries>) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
@@ -23,6 +24,7 @@ export const GraphLineChartTooltip = ({
   containerRef,
   enrichedSeries,
   formatOptions,
+  isStacked = false,
   onSliceClick,
   onMouseEnter,
   onMouseLeave,
@@ -57,6 +59,7 @@ export const GraphLineChartTooltip = ({
         slice: tooltipState.slice,
         enrichedSeries,
         formatOptions,
+        isStacked,
       });
 
   const reference = !isDefined(tooltipState)

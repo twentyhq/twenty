@@ -13,10 +13,13 @@ import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMor
 import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIncrementalFetchAndMutateRecords';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
-import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
+import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/hooks/useRemoveNavigationMenuItemByTargetRecordId';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback } from 'react';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
@@ -40,7 +43,6 @@ export const useIncrementalDeleteManyRecords = <T>({
   delayInMsBetweenMutations = DEFAULT_DELAY_BETWEEN_MUTATIONS_MS,
   skipOptimisticEffect = false,
 }: UseIncrementalDeleteManyRecordsParams<T>) => {
-  const { registerObjectOperation } = useRegisterObjectOperation();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const mutationPageSize = pageSize;
@@ -61,9 +63,12 @@ export const useIncrementalDeleteManyRecords = <T>({
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
+  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  );
+  const { removeNavigationMenuItemsByTargetRecordIds } =
+    useRemoveNavigationMenuItemByTargetRecordId();
 
   const { incrementalFetchAndMutate, progress, isProcessing, updateProgress } =
     useIncrementalFetchAndMutateRecords<T>({
@@ -222,21 +227,32 @@ export const useIncrementalDeleteManyRecords = <T>({
 
   const incrementalDeleteManyRecords = async () => {
     let totalDeletedCount = 0;
+    const allDeletedRecordIds: string[] = [];
 
     await incrementalFetchAndMutate(
       async ({ recordIds, totalCount, abortSignal }) => {
         await deleteManyRecordsBatch(recordIds, abortSignal);
 
+        allDeletedRecordIds.push(...recordIds);
         totalDeletedCount += recordIds.length;
 
         updateProgress(totalDeletedCount, totalCount);
       },
     );
 
-    await refetchAggregateQueries();
+    await refetchAggregateQueries({
+      objectMetadataNamePlural: objectMetadataItem.namePlural,
+    });
 
-    registerObjectOperation(objectMetadataItem, {
-      type: 'delete-many',
+    if (isNavigationMenuItemEnabled) {
+      removeNavigationMenuItemsByTargetRecordIds(allDeletedRecordIds);
+    }
+
+    dispatchObjectRecordOperationBrowserEvent({
+      objectMetadataItem,
+      operation: {
+        type: 'delete-many',
+      },
     });
 
     return totalDeletedCount;

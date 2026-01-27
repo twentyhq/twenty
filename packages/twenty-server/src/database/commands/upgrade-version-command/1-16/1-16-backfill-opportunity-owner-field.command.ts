@@ -15,7 +15,11 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
@@ -96,7 +100,7 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
     }
 
     const flatFieldMetadatas = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityIds: opportunityObjectMetadata.fieldMetadataIds,
+      flatEntityIds: opportunityObjectMetadata.fieldIds,
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
@@ -113,6 +117,24 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
       );
 
       return;
+    }
+
+    const customOwnerField =
+      flatFieldMetadatas.find(
+        (field) =>
+          field.name === 'owner' &&
+          field.universalIdentifier !== ownerUniversalIdentifier,
+        // Some self hoster might have run the name renaming successfully but not the joinColumnName
+        // Rather than asking them to restore db also grabbing them here
+      ) ?? flatFieldMetadatas.find((field) => field.name === 'ownerOld');
+
+    if (isDefined(customOwnerField)) {
+      await this.renameCustomOwnerFieldToOwnerOld({
+        customOwnerField,
+        flatFieldMetadataMaps,
+        workspaceId,
+        dryRun: options.dryRun,
+      });
     }
 
     if (options.dryRun) {
@@ -203,5 +225,97 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
       );
       throw error;
     }
+  }
+
+  private async renameCustomOwnerFieldToOwnerOld({
+    customOwnerField,
+    flatFieldMetadataMaps,
+    workspaceId,
+    dryRun,
+  }: {
+    customOwnerField: FlatFieldMetadata;
+    flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+    workspaceId: string;
+    dryRun?: boolean;
+  }): Promise<void> {
+    if (dryRun) {
+      this.logger.log(
+        `[DRY RUN] Would rename custom owner field to 'ownerOld' in workspace and search for colliding foreignKey ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    const isMorphOrRelationField =
+      isMorphOrRelationFlatFieldMetadata(customOwnerField);
+    const hasCollidingJoinColumnName =
+      isMorphOrRelationField &&
+      isDefined(customOwnerField.settings.joinColumnName) &&
+      customOwnerField.settings.joinColumnName === 'ownerId';
+
+    await this.fieldMetadataService.updateOneField({
+      updateFieldInput: {
+        id: customOwnerField.id,
+        name: 'ownerOld',
+        label: 'Owner (Old)',
+        ...(hasCollidingJoinColumnName
+          ? {
+              settings: {
+                ...customOwnerField.settings,
+                joinColumnName: `ownerOldId`,
+              },
+            }
+          : {}),
+      },
+      workspaceId,
+      isSystemBuild: true,
+    });
+    this.logger.log(
+      `Renamed custom owner field to 'ownerOld' in workspace ${workspaceId}`,
+    );
+
+    if (!isMorphOrRelationField || hasCollidingJoinColumnName) {
+      return;
+    }
+
+    const relatedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: customOwnerField.relationTargetFieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (
+      !isDefined(relatedFlatFieldMetadata) ||
+      !isMorphOrRelationFlatFieldMetadata(relatedFlatFieldMetadata)
+    ) {
+      this.logger.error(
+        `Could not find custom owner relation target field ${customOwnerField.relationTargetFieldMetadataId}`,
+      );
+
+      return;
+    }
+
+    const targetHasCollidingJoinColumnName =
+      isDefined(relatedFlatFieldMetadata.settings.joinColumnName) &&
+      relatedFlatFieldMetadata.settings.joinColumnName === 'ownerId';
+
+    if (!targetHasCollidingJoinColumnName) {
+      return;
+    }
+
+    await this.fieldMetadataService.updateOneField({
+      updateFieldInput: {
+        id: relatedFlatFieldMetadata.id,
+        settings: {
+          ...relatedFlatFieldMetadata.settings,
+          joinColumnName: `ownerOldId`,
+        },
+      },
+      workspaceId,
+      isSystemBuild: true,
+    });
+
+    this.logger.log(
+      `Renamed custom owner field target related field join column name to 'ownerOldId' in workspace ${workspaceId}`,
+    );
   }
 }

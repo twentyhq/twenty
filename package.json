@@ -72,19 +72,20 @@
     "@graphql-codegen/typescript": "^3.0.4",
     "@graphql-codegen/typescript-operations": "^3.0.4",
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
-    "@nx/eslint": "22.0.3",
-    "@nx/eslint-plugin": "22.0.3",
-    "@nx/jest": "22.0.3",
-    "@nx/js": "22.0.3",
-    "@nx/react": "22.0.3",
-    "@nx/storybook": "22.0.3",
-    "@nx/vite": "22.0.3",
-    "@nx/web": "22.0.3",
+    "@nx/eslint": "22.3.3",
+    "@nx/eslint-plugin": "22.3.3",
+    "@nx/jest": "22.3.3",
+    "@nx/js": "22.3.3",
+    "@nx/react": "22.3.3",
+    "@nx/storybook": "22.3.3",
+    "@nx/vite": "22.3.3",
+    "@nx/web": "22.3.3",
     "@sentry/types": "^8",
     "@storybook-community/storybook-addon-cookie": "^5.0.0",
     "@storybook/addon-coverage": "^3.0.0",
     "@storybook/addon-docs": "^10.1.11",
     "@storybook/addon-links": "^10.1.11",
+    "@storybook/addon-vitest": "^10.1.11",
     "@storybook/icons": "^2.0.1",
     "@storybook/react-vite": "^10.1.11",
     "@storybook/test-runner": "^0.24.2",
@@ -134,7 +135,11 @@
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.39.0",
     "@typescript-eslint/utils": "^8.39.0",
+    "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "@vitejs/plugin-react-swc": "3.11.0",
+    "@vitest/browser-playwright": "^4.0.17",
+    "@vitest/coverage-istanbul": "^4.0.17",
+    "@vitest/coverage-v8": "^4.0.17",
     "@yarnpkg/types": "^4.0.0",
     "chromatic": "^6.18.0",
     "concurrently": "^8.2.2",
@@ -163,9 +168,9 @@
     "jest-environment-node": "^29.4.1",
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "~22.1.0",
-    "msw": "^2.0.11",
-    "msw-storybook-addon": "^2.0.5",
-    "nx": "22.0.3",
+    "msw": "^2.12.7",
+    "msw-storybook-addon": "^2.0.6",
+    "nx": "22.3.3",
     "prettier": "^3.1.1",
     "raw-loader": "^4.0.2",
     "rimraf": "^5.0.5",
@@ -179,7 +184,8 @@
     "ts-node": "10.9.1",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.17.0",
-    "vite": "^7.0.0"
+    "vite": "^7.0.0",
+    "vitest": "^4.0.17"
   },
   "engines": {
     "node": "^24.5.0",
@@ -195,13 +201,16 @@
     "typescript": "5.9.2",
     "graphql-redis-subscriptions/ioredis": "^5.6.0",
     "prosemirror-view": "1.40.0",
-    "prosemirror-transform": "1.10.4"
+    "prosemirror-transform": "1.10.4",
+    "@lingui/core": "5.1.2",
+    "@types/qs": "6.9.16"
   },
   "version": "0.2.1",
   "nx": {},
   "scripts": {
     "docs:generate": "tsx packages/twenty-docs/scripts/generate-docs-json.ts",
     "docs:generate-navigation-template": "tsx packages/twenty-docs/scripts/generate-navigation-template.ts",
+    "docs:generate-paths": "tsx packages/twenty-docs/scripts/generate-documentation-paths.ts",
     "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'"
   },
   "workspaces": {
@@ -220,7 +229,7 @@
       "packages/twenty-apps",
       "packages/twenty-cli",
       "packages/create-twenty-app",
-      "tools/eslint-rules"
+      "packages/twenty-eslint-rules"
     ]
   },
   "prettier": {

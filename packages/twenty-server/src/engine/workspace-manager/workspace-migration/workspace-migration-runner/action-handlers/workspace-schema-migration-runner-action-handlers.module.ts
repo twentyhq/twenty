@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { FunctionBuildModule } from 'src/engine/metadata-modules/function-build/function-build.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { CreateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/create-agent-action-handler.service';
 import { DeleteAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/delete-agent-action-handler.service';
@@ -16,9 +17,15 @@ import { UpdateDatabaseEventTriggerActionHandlerService } from 'src/engine/works
 import { CreateFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/create-field-action-handler.service';
 import { DeleteFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/delete-field-action-handler.service';
 import { UpdateFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/update-field-action-handler.service';
+import { CreateFrontComponentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/front-component/services/create-front-component-action-handler.service';
+import { DeleteFrontComponentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/front-component/services/delete-front-component-action-handler.service';
+import { UpdateFrontComponentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/front-component/services/update-front-component-action-handler.service';
 import { CreateIndexActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/services/create-index-action-handler.service';
 import { DeleteIndexActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/services/delete-index-action-handler.service';
 import { UpdateIndexActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/services/update-index-action-handler.service';
+import { CreateNavigationMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/navigation-menu-item/services/create-navigation-menu-item-action-handler.service';
+import { DeleteNavigationMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/navigation-menu-item/services/delete-navigation-menu-item-action-handler.service';
+import { UpdateNavigationMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/navigation-menu-item/services/update-navigation-menu-item-action-handler.service';
 import { CreateObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/create-object-action-handler.service';
 import { DeleteObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/delete-object-action-handler.service';
 import { UpdateObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/update-object-action-handler.service';
@@ -69,7 +76,7 @@ import { DeleteViewActionHandlerService } from 'src/engine/workspace-manager/wor
 import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/update-view-action-handler.service';
 
 @Module({
-  imports: [WorkspaceSchemaManagerModule],
+  imports: [WorkspaceSchemaManagerModule, FunctionBuildModule],
   providers: [
     CreateFieldActionHandlerService,
     UpdateFieldActionHandlerService,
@@ -139,6 +146,10 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     UpdateCommandMenuItemActionHandlerService,
     DeleteCommandMenuItemActionHandlerService,
 
+    CreateNavigationMenuItemActionHandlerService,
+    UpdateNavigationMenuItemActionHandlerService,
+    DeleteNavigationMenuItemActionHandlerService,
+
     CreatePageLayoutActionHandlerService,
     UpdatePageLayoutActionHandlerService,
     DeletePageLayoutActionHandlerService,
@@ -158,6 +169,10 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     CreateRowLevelPermissionPredicateGroupActionHandlerService,
     UpdateRowLevelPermissionPredicateGroupActionHandlerService,
     DeleteRowLevelPermissionPredicateGroupActionHandlerService,
+
+    CreateFrontComponentActionHandlerService,
+    UpdateFrontComponentActionHandlerService,
+    DeleteFrontComponentActionHandlerService,
   ],
 })
 export class WorkspaceSchemaMigrationRunnerActionHandlersModule {}

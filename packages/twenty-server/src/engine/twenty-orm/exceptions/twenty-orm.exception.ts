@@ -25,6 +25,8 @@ export enum TwentyORMExceptionCode {
   TOO_MANY_RECORDS_TO_UPDATE = 'TOO_MANY_RECORDS_TO_UPDATE',
   INVALID_INPUT = 'INVALID_INPUT',
   ORM_EVENT_DATA_CORRUPTED = 'ORM_EVENT_DATA_CORRUPTED',
+  RLS_VALIDATION_FAILED = 'RLS_VALIDATION_FAILED',
+  NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'NO_ROLE_FOUND_FOR_USER_WORKSPACE',
 }
 
 const getTwentyORMExceptionUserFriendlyMessage = (
@@ -65,9 +67,13 @@ const getTwentyORMExceptionUserFriendlyMessage = (
       return msg`Too many records to update at once.`;
     case TwentyORMExceptionCode.INVALID_INPUT:
       return msg`Invalid input provided.`;
+    case TwentyORMExceptionCode.RLS_VALIDATION_FAILED:
+      return msg`Record does not satisfy security constraints.`;
     case TwentyORMExceptionCode.ENUM_TYPE_NAME_NOT_FOUND:
     case TwentyORMExceptionCode.ORM_EVENT_DATA_CORRUPTED:
       return STANDARD_ERROR_MESSAGE;
+    case TwentyORMExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE:
+      return msg`No role found for user.`;
     default:
       assertUnreachable(code);
   }

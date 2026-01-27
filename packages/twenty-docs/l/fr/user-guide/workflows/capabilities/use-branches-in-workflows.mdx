@@ -1,90 +1,90 @@
 ---
-title: Use Branches in Workflows
-description: Understand how branches work and how to control which path is executed.
+title: Utiliser les branches dans les flux de travail
+description: Comprendre le fonctionnement des branches et comment contrôler le chemin exécuté.
 ---
 
-## How Branches Work
+## Fonctionnement des branches
 
-In the workflow editor, you can create multiple paths (branches) going out from a single node. This allows you to build complex automations with different outcomes.
+Dans l'éditeur de flux de travail, vous pouvez créer plusieurs chemins (branches) partant d'un seul nœud. Cela vous permet de créer des automatisations complexes avec des résultats différents.
 
-**Important**: When a workflow runs, **all branches execute in parallel by default**. There is no built-in "if/else" logic to choose one branch over another—every path will run simultaneously.
+**Important** : Lorsqu'un flux de travail s'exécute, **toutes les branches s'exécutent en parallèle par défaut**. Il n'existe pas de logique "if/else" intégrée pour choisir une branche plutôt qu'une autre — chaque chemin s'exécutera simultanément.
 
-## Controlling Which Branch Runs
+## Contrôler quelle branche s'exécute
 
-To execute only one branch based on specific conditions, **add a Filter node at the beginning of each branch**.
+Pour exécuter une seule branche selon des conditions spécifiques, **ajoutez un nœud Filter au début de chaque branche**.
 
-### Example Setup
+### Exemple de configuration
 
-1. Create your workflow with multiple branches from a single node
-2. Add a **Filter** node as the first step in each branch
-3. Set conditions on each Filter to determine when that branch should continue
-4. Only the branch(es) whose Filter conditions are met will proceed
+1. Créez votre flux de travail avec plusieurs branches à partir d'un seul nœud
+2. Ajoutez un nœud **Filter** comme première étape de chaque branche
+3. Définissez des conditions sur chaque Filter pour déterminer quand cette branche doit continuer
+4. Seules les branches dont les conditions du Filter sont satisfaites continueront
 
 <img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
 
-### How Filters Work
+### Fonctionnement des nœuds Filter
 
-* If the Filter condition is **met**: The branch continues executing
-* If the Filter condition is **not met**: The branch stops at the Filter node
+* Si la condition du Filter est **remplie** : La branche continue son exécution
+* Si la condition du Filter **n'est pas remplie** : La branche s'arrête au nœud Filter
 
-This effectively creates conditional logic where only the appropriate branch runs based on your data.
+Cela crée effectivement une logique conditionnelle où seule la branche appropriée s'exécute en fonction de vos données.
 
-## Example: Route by Deal Size
+## Exemple : Routage selon le montant de l'affaire
 
-**Scenario**: When a deal is closed, send different notifications based on deal size.
+**Scénario** : Lorsqu'une affaire est conclue, envoyez différentes notifications selon le montant de l'affaire.
 
-1. **Trigger**: Opportunity updated (Stage = Closed Won)
-2. **Branch 1**: Filter for Amount > $10,000 → Send Slack message to #big-deals
-3. **Branch 2**: Filter for Amount ≤ $10,000 → Send email to sales manager
+1. **Déclencheur** : Opportunité mise à jour (Étape = Fermée gagnée)
+2. **Branche 1** : Filter pour Montant > 10 000 $ → Envoyer un message Slack dans #big-deals
+3. **Branche 2** : Filter pour Montant ≤ 10 000 $ → Envoyer un e-mail au responsable commercial
 
-Both branches start, but only the one matching the deal amount will continue past its Filter.
+Les deux branches démarrent, mais seule celle qui correspond au montant de l'affaire continuera au-delà de son Filter.
 
-## Creating Branches
+## Création de branches
 
 <Note>
-  To create a new branch from an existing step, click the **+** button on the step and add your action. You can add multiple branches by clicking **+** multiple times.
+  Pour créer une nouvelle branche à partir d'une étape existante, cliquez sur le bouton **+** sur l'étape et ajoutez votre action. Vous pouvez ajouter plusieurs branches en cliquant plusieurs fois sur **+**.
 </Note>
 
-1. In the workflow editor, select the step you want to branch from
-2. Click the **+** button to add an action
-3. This creates one branch
-4. Click **+** again on the same step to create additional branches
-5. Each branch can have its own sequence of actions
+1. Dans l'éditeur de flux de travail, sélectionnez l'étape à partir de laquelle vous souhaitez créer une branche
+2. Cliquez sur le bouton **+** pour ajouter une action
+3. Cela crée une branche
+4. Cliquez de nouveau sur **+** sur la même étape pour créer d'autres branches
+5. Chaque branche peut avoir sa propre séquence d'actions
 
-## Merging Branches Back Together
+## Fusionner les branches
 
-After parallel branches complete their work, you can merge them back into a single path:
+Une fois que les branches parallèles ont terminé leur travail, vous pouvez les fusionner de nouveau en un seul chemin :
 
-1. Complete your branched actions
-2. Add a new step that should run after all branches
-3. Drag a connection from the last step of each branch to this new step
-4. The merged step waits for all connected branches to complete before executing
+1. Terminez vos actions dans les branches
+2. Ajoutez une nouvelle étape qui doit s'exécuter après toutes les branches
+3. Faites glisser une connexion depuis la dernière étape de chaque branche vers cette nouvelle étape
+4. L'étape fusionnée attend que toutes les branches connectées soient terminées avant de s'exécuter
 
-### Example: Process Then Notify
+### Exemple : Traiter puis notifier
 
 ```
-Trigger
+Déclencheur
    │
-   ├── Branch A: Update Customer Record
+   ├── Branche A : Mettre à jour l'enregistrement client
    │
-   └── Branch B: Create Support Ticket
+   └── Branche B : Créer un ticket d'assistance
 
        ↘  ↙
 
-   Merged Step: Send Confirmation Email
+   Étape fusionnée : Envoyer un e-mail de confirmation
 ```
 
-The confirmation email sends only after both the customer update and ticket creation are done.
+L'e-mail de confirmation n'est envoyé qu'après la mise à jour du client et la création du ticket.
 
-## Best Practices
+## Meilleures pratiques
 
-* Always use **Filter nodes** at the start of branches when you want conditional execution
-* Keep branch conditions **mutually exclusive** to avoid duplicate actions
-* Test your workflows with different data to ensure the correct branches run
-* **Rename branch steps** descriptively so it's clear what each path does
-* **Merge branches** when you need a final action after parallel processing
+* Utilisez toujours des **nœuds Filter** au début des branches lorsque vous souhaitez une exécution conditionnelle
+* Gardez des conditions de branche **mutuellement exclusives** pour éviter les actions en double
+* Testez vos flux de travail avec différentes données pour vous assurer que les bonnes branches s'exécutent
+* **Renommez les étapes de branche** de manière descriptive afin qu'il soit clair ce que fait chaque chemin
+* **Fusionnez les branches** lorsque vous avez besoin d'une action finale après un traitement en parallèle
 
-## Related
+## Articles connexes
 
-* [Workflows FAQ](/l/fr/user-guide/workflows/how-tos/need-more-help/workflows-faq) — answers about parallel execution
-* [Workflow Actions](/l/fr/user-guide/workflows/capabilities/workflow-actions) — available actions for branches
+* [FAQ sur les flux de travail](/l/fr/user-guide/workflows/how-tos/need-more-help/workflows-faq) — réponses concernant l'exécution parallèle
+* [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions) — actions disponibles pour les branches

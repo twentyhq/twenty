@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -10,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -18,7 +20,7 @@ import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/obj
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('objectMetadata')
 @Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [
@@ -29,8 +31,9 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   'namePlural',
   'workspaceId',
 ])
+@Index('IDX_OBJECT_METADATA_DATA_SOURCE_ID', ['dataSourceId'])
 export class ObjectMetadataEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<ObjectMetadataEntity>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -61,7 +64,7 @@ export class ObjectMetadataEntity
   icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides: ObjectStandardOverridesDTO | null;
+  standardOverrides: JsonbProperty<ObjectStandardOverridesDTO> | null;
 
   /**
    * @deprecated
@@ -91,7 +94,7 @@ export class ObjectMetadataEntity
   isSearchable: boolean;
 
   @Column({ type: 'jsonb', nullable: true })
-  duplicateCriteria: WorkspaceEntityDuplicateCriteria[] | null;
+  duplicateCriteria: JsonbProperty<WorkspaceEntityDuplicateCriteria[]> | null;
 
   @Column({ nullable: true, type: 'varchar' })
   shortcut: string | null;

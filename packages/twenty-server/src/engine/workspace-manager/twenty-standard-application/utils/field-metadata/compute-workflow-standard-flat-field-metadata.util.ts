@@ -374,7 +374,7 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       targetObjectName: 'attachment',
-      targetFieldName: 'workflow',
+      targetFieldName: 'targetWorkflow',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

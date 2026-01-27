@@ -1,9 +1,8 @@
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
-import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useGraphLineChartWidgetData';
-import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { assertLineChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertLineChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
@@ -19,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { AxisNameDisplay, type LineChartDataPoint } from '~/generated/graphql';
 
 const GraphWidgetLineChart = lazy(() =>
   import(
@@ -67,6 +67,19 @@ export const GraphWidgetLineChartRenderer = () => {
       ? 'stacked'
       : undefined;
 
+  const axisNameDisplay = configuration.axisNameDisplay;
+
+  const showXAxis =
+    axisNameDisplay === AxisNameDisplay.X ||
+    axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const showYAxis =
+    axisNameDisplay === AxisNameDisplay.Y ||
+    axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const displayXAxisLabel = showXAxis ? xAxisLabel : undefined;
+  const displayYAxisLabel = showYAxis ? yAxisLabel : undefined;
+
   const chartFilterKey = generateChartAggregateFilterKey(
     configuration.rangeMin,
     configuration.rangeMax,
@@ -112,11 +125,11 @@ export const GraphWidgetLineChartRenderer = () => {
   };
 
   if (loading) {
-    return <ChartSkeletonLoader />;
+    return <WidgetSkeletonLoader />;
   }
 
   return (
-    <Suspense fallback={<ChartSkeletonLoader />}>
+    <Suspense fallback={<WidgetSkeletonLoader />}>
       <GraphWidgetChartHasTooManyGroupsEffect
         hasTooManyGroups={hasTooManyGroups}
       />
@@ -124,8 +137,8 @@ export const GraphWidgetLineChartRenderer = () => {
         key={chartFilterKey}
         id={widget.id}
         data={series}
-        xAxisLabel={xAxisLabel}
-        yAxisLabel={yAxisLabel}
+        xAxisLabel={displayXAxisLabel}
+        yAxisLabel={displayYAxisLabel}
         enablePointLabel={showDataLabels}
         showLegend={showLegend}
         rangeMin={configuration.rangeMin ?? undefined}

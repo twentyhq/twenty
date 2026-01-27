@@ -1,4 +1,4 @@
-import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { WORKER_QUEUE_METRICS_SELECT_OPTIONS } from '@/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions';
 import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
@@ -76,7 +76,7 @@ export const SettingsAdminWorkerQueueMetricsSection = ({
           </StyledRightControls>
         </StyledControlsContainer>
       </Section>
-      <Suspense fallback={<ChartSkeletonLoader />}>
+      <Suspense fallback={<WidgetSkeletonLoader />}>
         <SettingsAdminWorkerMetricsGraph
           queueName={queue.queueName}
           timeRange={timeRange}

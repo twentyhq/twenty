@@ -1,11 +1,60 @@
 import { faker } from '@faker-js/faker';
 import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 
 describe('CommandMenuItem creation should succeed', () => {
   let createdCommandMenuItemId: string;
+  let companyObjectMetadataId: string;
+  let personObjectMetadataId: string;
+
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: {
+        filter: {},
+        paging: { first: 1000 },
+      },
+      gqlFields: `
+        id
+        nameSingular
+      `,
+    });
+
+    jestExpectToBeDefined(objects);
+
+    const companyObjectMetadata = objects.find(
+      (object: { nameSingular: string }) => object.nameSingular === 'company',
+    );
+    const personObjectMetadata = objects.find(
+      (object: { nameSingular: string }) => object.nameSingular === 'person',
+    );
+
+    jestExpectToBeDefined(companyObjectMetadata);
+    jestExpectToBeDefined(personObjectMetadata);
+
+    companyObjectMetadataId = companyObjectMetadata.id;
+    personObjectMetadataId = personObjectMetadata.id;
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+  });
 
   afterEach(async () => {
     if (createdCommandMenuItemId) {
@@ -37,7 +86,7 @@ describe('CommandMenuItem creation should succeed', () => {
       icon: null,
       isPinned: false,
       availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-      availabilityObjectNameSingular: null,
+      availabilityObjectMetadataId: null,
     });
   });
 
@@ -52,7 +101,7 @@ describe('CommandMenuItem creation should succeed', () => {
         icon: 'IconSparkles',
         isPinned: true,
         availabilityType: CommandMenuItemAvailabilityType.SINGLE_RECORD,
-        availabilityObjectNameSingular: 'company',
+        availabilityObjectMetadataId: companyObjectMetadataId,
       },
     });
 
@@ -65,7 +114,7 @@ describe('CommandMenuItem creation should succeed', () => {
       icon: 'IconSparkles',
       isPinned: true,
       availabilityType: CommandMenuItemAvailabilityType.SINGLE_RECORD,
-      availabilityObjectNameSingular: 'company',
+      availabilityObjectMetadataId: companyObjectMetadataId,
     });
   });
 
@@ -78,7 +127,7 @@ describe('CommandMenuItem creation should succeed', () => {
         workflowVersionId,
         label: 'Bulk Records Command',
         availabilityType: CommandMenuItemAvailabilityType.BULK_RECORDS,
-        availabilityObjectNameSingular: 'person',
+        availabilityObjectMetadataId: personObjectMetadataId,
       },
     });
 
@@ -89,7 +138,7 @@ describe('CommandMenuItem creation should succeed', () => {
       workflowVersionId,
       label: 'Bulk Records Command',
       availabilityType: CommandMenuItemAvailabilityType.BULK_RECORDS,
-      availabilityObjectNameSingular: 'person',
+      availabilityObjectMetadataId: personObjectMetadataId,
     });
   });
 

@@ -62,7 +62,13 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     role: true,
   },
   skill: {},
-  commandMenuItem: {},
+  commandMenuItem: {
+    objectMetadata: true,
+  },
+  navigationMenuItem: {
+    objectMetadata: true,
+    view: true,
+  },
   pageLayout: {
     objectMetadata: true,
   },
@@ -83,4 +89,5 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     role: true,
     objectMetadata: true,
   },
+  frontComponent: {},
 } as const satisfies MetadataRequiredForValidation;

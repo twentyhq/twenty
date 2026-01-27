@@ -16,6 +16,7 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { type RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { type RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
@@ -37,6 +38,7 @@ import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 export class WorkspaceUpdateQueryBuilder<
@@ -175,6 +177,21 @@ export class WorkspaceUpdateQueryBuilder<
 
       this.applyRowLevelPermissionPredicates();
 
+      const valuesSet = this.expressionMap.valuesSet ?? {};
+      const updatedRecords: T[] = before.map(
+        (record, index) =>
+          ({
+            ...record,
+            ...(Array.isArray(valuesSet)
+              ? (valuesSet[index] ?? valuesSet[0] ?? {})
+              : valuesSet),
+          }) as T,
+      );
+
+      this.validateRLSPredicatesForUpdate({
+        updatedRecords,
+      });
+
       const result = await super.execute();
 
       const after = await eventSelectQueryBuilder.getMany();
@@ -192,8 +209,8 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
+          recordsAfter: formattedAfter,
+          recordsBefore: formattedBefore,
           authContext: this.authContext,
         }),
       );
@@ -204,8 +221,8 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
+          recordsAfter: formattedAfter,
+          recordsBefore: formattedBefore,
           authContext: this.authContext,
         }),
       );
@@ -323,11 +340,33 @@ export class WorkspaceUpdateQueryBuilder<
         }));
       }
 
+      const beforeRecordById = new Map<string, T>();
+
+      for (const beforeRecord of formattedBefore) {
+        if (isDefined(beforeRecord.id)) {
+          beforeRecordById.set(beforeRecord.id, beforeRecord);
+        }
+      }
+
       for (const input of this.manyInputs) {
         this.expressionMap.valuesSet = input.partialEntity;
         this.where({ id: input.criteria });
 
         this.applyRowLevelPermissionPredicates();
+
+        const beforeRecord = beforeRecordById.get(input.criteria);
+        const updatedRecords = beforeRecord
+          ? [
+              {
+                ...beforeRecord,
+                ...input.partialEntity,
+              } as T,
+            ]
+          : [];
+
+        this.validateRLSPredicatesForUpdate({
+          updatedRecords,
+        });
 
         const result = await super.execute();
 
@@ -349,8 +388,8 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
+          recordsAfter: formattedAfter,
+          recordsBefore: formattedBefore,
           authContext: this.authContext,
         }),
       );
@@ -361,8 +400,8 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
+          recordsAfter: formattedAfter,
+          recordsBefore: formattedBefore,
           authContext: this.authContext,
         }),
       );
@@ -502,6 +541,14 @@ export class WorkspaceUpdateQueryBuilder<
   }
 
   private applyRowLevelPermissionPredicates(): void {
+    if (
+      this.featureFlagMap[
+        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
+      ] !== true
+    ) {
+      return;
+    }
+
     if (this.shouldBypassPermissionChecks) {
       return;
     }
@@ -519,6 +566,43 @@ export class WorkspaceUpdateQueryBuilder<
       internalContext: this.internalContext,
       authContext: this.authContext,
       featureFlagMap: this.featureFlagMap,
+    });
+  }
+
+  private validateRLSPredicatesForUpdate({
+    updatedRecords,
+  }: {
+    updatedRecords: T[];
+  }): void {
+    if (
+      this.featureFlagMap[
+        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
+      ] !== true
+    ) {
+      return;
+    }
+
+    const mainAliasTarget = this.getMainAliasTarget();
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const updatedRecordsFormatted = formatResult<T[]>(
+      updatedRecords,
+      objectMetadata,
+      this.internalContext.flatObjectMetadataMaps,
+      this.internalContext.flatFieldMetadataMaps,
+    );
+
+    validateRLSPredicatesForRecords({
+      records: updatedRecordsFormatted,
+      objectMetadata,
+      internalContext: this.internalContext,
+      authContext: this.authContext,
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      errorMessage:
+        'Updated record does not satisfy row-level security constraints of your current role',
     });
   }
 }

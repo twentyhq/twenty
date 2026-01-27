@@ -10,15 +10,20 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 export type DatabaseEventTriggerSettings = {
   eventName: string;
+  updatedFields?: string[];
 };
 
 @Entity('databaseEventTrigger')
 @Index('IDX_DATABASE_EVENT_TRIGGER_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_DATABASE_EVENT_TRIGGER_SERVERLESS_FUNCTION_ID', [
+  'serverlessFunctionId',
+])
 export class DatabaseEventTriggerEntity
   extends SyncableEntity
   implements Required<DatabaseEventTriggerEntity>
@@ -27,7 +32,7 @@ export class DatabaseEventTriggerEntity
   id: string;
 
   @Column({ nullable: false, type: 'jsonb' })
-  settings: DatabaseEventTriggerSettings;
+  settings: JsonbProperty<DatabaseEventTriggerSettings>;
 
   @ManyToOne(
     () => ServerlessFunctionEntity,

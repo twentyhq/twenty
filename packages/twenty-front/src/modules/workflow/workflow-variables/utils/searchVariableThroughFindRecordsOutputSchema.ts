@@ -3,7 +3,10 @@ import type { FindRecordsOutputSchema } from '@/workflow/workflow-variables/type
 import { searchRecordOutputSchema as searchRecordOutputSchemaUtil } from '@/workflow/workflow-variables/utils/searchVariableThroughRecordOutputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
+import {
+  CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
+  parseVariablePath,
+} from 'twenty-shared/workflow';
 
 type SearchResultKey = 'first' | 'all' | 'totalCount';
 
@@ -18,7 +21,7 @@ const parseVariableName = (rawVariableName: string) => {
     (_, variableName) => variableName,
   );
 
-  const parts = variableWithoutBrackets.split('.');
+  const parts = parseVariablePath(variableWithoutBrackets);
   const stepId = parts.at(0);
   const searchResultKey = parts.at(1) as SearchResultKey;
   const remainingParts = parts.slice(2);

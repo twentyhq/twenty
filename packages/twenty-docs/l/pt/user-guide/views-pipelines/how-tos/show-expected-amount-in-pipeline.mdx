@@ -1,149 +1,149 @@
 ---
-title: Show Expected Amount in Your Pipeline
-description: Calculate and display weighted deal values based on stage probability.
+title: Mostrar o Valor Esperado no seu pipeline
+description: Calcule e exiba valores ponderados de negócios com base na probabilidade da etapa.
 ---
 
-The Expected Amount is a calculated value: **Amount × Probability**. This helps you forecast revenue by weighting deals based on how likely they are to close.
+O Valor Esperado é um valor calculado: **Amount × Probability**. Isso ajuda você a prever a receita, ponderando os negócios com base na probabilidade de fechamento.
 
 <Tip>
-  This is an example of creating [Formula Fields](/l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields) using workflows.
+  Este é um exemplo de criação de [Campos de fórmula](/l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields) usando fluxos de trabalho.
 </Tip>
 
-This guide walks you through setting up the custom fields and workflows needed to calculate and display expected amounts in your pipeline.
+Este guia orienta você na configuração dos campos personalizados e fluxos de trabalho necessários para calcular e exibir valores esperados no seu pipeline.
 
-## Step 1: Create Custom Fields
+## Etapa 1: Criar campos personalizados
 
-You need two custom fields on the Opportunities object.
+Você precisa de dois campos personalizados no objeto Oportunidades.
 
-### Create the Probability Field
+### Crie o campo Probability
 
-1. Go to **Settings → Data Model → Opportunities**
-2. Click **+ Add Field**
-3. Configure:
-   * **Name**: Probability
-   * **Type**: Number
-   * **Description**: Stage-based probability (0-100%)
-4. Click **Save**
+1. Acesse **Configurações → Modelo de Dados → Oportunidades**
+2. Clique em **+ Adicionar campo**
+3. Configurar:
+   * **Nome**: Probability
+   * **Tipo**: Número
+   * **Descrição**: Probabilidade baseada na etapa (0-100%)
+4. Clique em **Salvar**
 
-### Create the Expected Amount Field
+### Crie o campo Expected Amount
 
-1. Click **+ Add Field**
-2. Configure:
-   * **Name**: Expected Amount
-   * **Type**: Currency
-   * **Description**: Calculated: Amount × Probability
-3. Click **Save**
+1. Clique em **+ Adicionar campo**
+2. Configurar:
+   * **Nome**: Expected Amount
+   * **Tipo**: Moeda
+   * **Descrição**: Calculado: Amount × Probability
+3. Clique em **Salvar**
 
-### Optional: Make Fields Read-Only for Users
+### Opcional: tornar os campos somente leitura para os usuários
 
-If you don't want users manually editing these calculated fields:
+Se você não quiser que os usuários editem manualmente esses campos calculados:
 
-1. Go to **Settings → Roles**
-2. Select the role to configure
-3. Find the Opportunities object
-4. Set **Probability** and **Expected Amount** fields to read-only
+1. Vá para **Configurações → Funções**
+2. Selecione a função a configurar
+3. Encontre o objeto Oportunidades
+4. Defina os campos **Probability** e **Expected Amount** como somente leitura
 
-This ensures only the workflows can update these values.
+Isso garante que apenas os fluxos de trabalho possam atualizar esses valores.
 
-## Step 2: Create Workflow #1 — Update Probability on Stage Change
+## Etapa 2: Criar o fluxo de trabalho nº 1 — Atualizar Probability na alteração de etapa
 
-This workflow automatically sets the Probability when an opportunity moves to a new stage.
+Este fluxo de trabalho define automaticamente o campo Probability quando uma oportunidade é movida para uma nova etapa.
 
-### Create the Workflow
+### Criar o fluxo de trabalho
 
-1. Go to **Workflows**
-2. Click **+ New Workflow**
-3. Name it "Update Probability on Stage Change"
+1. Acesse **Fluxos de trabalho**
+2. Clique em **+ Novo fluxo de trabalho**
+3. Nomeie como "Update Probability on Stage Change"
 
-### Configure the Trigger
+### Configurar o gatilho
 
-1. Add a **Record Created or Updated** trigger
-2. Select **Opportunities** as the object
-3. Filter on: **Stage** field is updated
+1. Adicione um gatilho **Registro criado ou atualizado**
+2. Selecione **Oportunidades** como o objeto
+3. Filtre por: o campo **Stage** é atualizado
 
-### Add Branches for Each Stage
+### Adicione ramificações para cada etapa
 
-Create a branch for each stage with its probability:
+Crie uma ramificação para cada etapa com sua probabilidade:
 
-| Stage       | Probability |
-| ----------- | ----------- |
-| New         | 10%         |
-| Qualified   | 25%         |
-| Meeting     | 40%         |
-| Proposal    | 60%         |
-| Negotiation | 80%         |
-| Closed Won  | 100%        |
-| Closed Lost | 0%          |
+| Etapa       | Probabilidade |
+| ----------- | ------------- |
+| Novo        | 10%           |
+| Qualificado | 25%           |
+| Meeting     | 40%           |
+| Proposal    | 60%           |
+| Negotiation | 80%           |
+| Closed Won  | 100%          |
+| Closed Lost | 0%            |
 
 <Note>
-  To create a new branch, right click on the workflow canvas and click **New action**. Then, link this action to the previous node by dragging the arrow from the previous node to this new action.
+  Para criar uma nova ramificação, clique com o botão direito na tela do fluxo de trabalho e clique em **Nova ação**. Em seguida, vincule essa ação ao nó anterior arrastando a seta do nó anterior para esta nova ação.
 </Note>
 
-For each stage:
+Para cada etapa:
 
-1. Add a **Filter** node: Stage = [stage name]
-2. Add an **Update Record** action:
-   * Record: The triggering Opportunity
-   * Field: Probability
-   * Value: [probability for that stage]
+1. Adicione um nó **Filtro**: Stage = [nome da etapa]
+2. Adicione uma ação **Atualizar registro**:
+   * Registro: a Oportunidade que acionou
+   * Campo: Probability
+   * Valor: [probabilidade para essa etapa]
 
-### Calculate Expected Amount
+### Calcular o Valor Esperado
 
-After the branches rejoin:
+Depois que as ramificações se unirem:
 
-1. Add a **Filter** node: Amount is not empty
-2. Add an **Update Record** action:
-   * Record: The triggering Opportunity
-   * Field: Expected Amount
-   * Value: Amount × Probability
+1. Adicione um nó **Filtro**: Amount não está vazio
+2. Adicione uma ação **Atualizar registro**:
+   * Registro: a Oportunidade que acionou
+   * Campo: Expected Amount
+   * Valor: Amount × Probability
 
-## Step 3: Create Workflow #2 — Recalculate on Amount Change
+## Etapa 3: Criar o fluxo de trabalho nº 2 — Recalcular na alteração de Amount
 
-This workflow updates the Expected Amount when the deal Amount changes.
+Este fluxo de trabalho atualiza o campo Expected Amount quando o Amount do negócio é alterado.
 
-### Create the Workflow
+### Criar o fluxo de trabalho
 
-1. Go to **Workflows**
-2. Click **+ New Workflow**
-3. Name it "Recalculate Expected Amount on Amount Change"
+1. Acesse **Fluxos de trabalho**
+2. Clique em **+ Novo fluxo de trabalho**
+3. Nomeie como "Recalculate Expected Amount on Amount Change"
 
-### Configure the Trigger
+### Configurar o gatilho
 
-1. Add a **Record Created or Updated** trigger
-2. Select **Opportunities** as the object
-3. Filter on: **Amount** field is updated
+1. Adicione um gatilho **Registro criado ou atualizado**
+2. Selecione **Oportunidades** como o objeto
+3. Filtre por: o campo **Amount** é atualizado
 
-### Add the Logic
+### Adicione a lógica
 
-1. Add a **Filter** node: Amount is not empty
-2. Add an **Update Record** action:
-   * Record: The triggering Opportunity
-   * Field: Expected Amount
-   * Value: Amount × Probability
+1. Adicione um nó **Filtro**: Amount não está vazio
+2. Adicione uma ação **Atualizar registro**:
+   * Registro: a Oportunidade que acionou
+   * Campo: Expected Amount
+   * Valor: Amount × Probability
 
-## Step 4: Display in Your Pipeline
+## Etapa 4: Exibir no seu pipeline
 
-Now show the Expected Amount totals in your Kanban view:
+Agora mostre os totais de Expected Amount na sua visualização Kanban:
 
-1. Open your **Sales Pipeline** Kanban view
-2. Click the **number** next to any Stage name at the top of a column
-3. Select **Sum**
-4. Choose **Expected Amount**
+1. Abra a visualização Kanban do seu **Pipeline de Vendas**
+2. Clique no **número** ao lado de qualquer nome de Stage no topo de uma coluna
+3. Selecione **Soma**
+4. Escolha **Expected Amount**
 
-Each column now shows the total weighted pipeline value for that stage.
+Cada coluna agora mostra o valor total ponderado do pipeline para essa etapa.
 
-## Summary
+## Resumo
 
-| Component                 | Purpose                                                                   |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Probability field**     | Stores the stage-based win probability                                    |
-| **Expected Amount field** | Stores Amount × Probability                                               |
-| **Workflow #1**           | Updates Probability when Stage changes, then recalculates Expected Amount |
-| **Workflow #2**           | Recalculates Expected Amount when Amount changes                          |
-| **Aggregation**           | Displays Sum of Expected Amount per stage                                 |
+| Componente                 | Finalidade                                                                        |
+| -------------------------- | --------------------------------------------------------------------------------- |
+| **Campo Probability**      | Armazena a probabilidade de ganho baseada na etapa                                |
+| **Campo Expected Amount**  | Armazena Amount × Probability                                                     |
+| **Fluxo de trabalho nº 1** | Atualiza Probability quando a Stage muda e, em seguida, recalcula Expected Amount |
+| **Fluxo de trabalho nº 2** | Recalcula Expected Amount quando Amount muda                                      |
+| **Agregação**              | Exibe a soma de Expected Amount por etapa                                         |
 
-## Related
+## Relacionados
 
-* [Formula Fields](/l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields) — create calculated fields using workflows
-* [Kanban Views](/l/pt/user-guide/views-pipelines/capabilities/kanban-views) — column aggregations
-* [How to Create Custom Fields](/l/pt/user-guide/data-model/how-tos/create-custom-fields) — field configuration
+* [Campos de fórmula](/l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields) — crie campos calculados usando fluxos de trabalho
+* [Visualizações de Kanban](/l/pt/user-guide/views-pipelines/capabilities/kanban-views) — agregações por coluna
+* [Como criar campos personalizados](/l/pt/user-guide/data-model/how-tos/create-custom-fields) — configuração de campos

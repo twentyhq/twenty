@@ -14,13 +14,12 @@ import {
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'viewField', schema: 'core' })
 @Index('IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-@Index('IDX_VIEW_FIELD_VIEW_ID', ['viewId'], {
-  where: '"deletedAt" IS NULL',
-})
+@Index('IDX_VIEW_FIELD_VIEW_ID', ['viewId'])
+@Index('IDX_VIEW_FIELD_FIELD_METADATA_ID', ['fieldMetadataId'])
 @Index(
   'IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE',
   ['fieldMetadataId', 'viewId'],
@@ -30,7 +29,7 @@ import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/synca
   },
 )
 export class ViewFieldEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<ViewFieldEntity>
 {
   @PrimaryGeneratedColumn('uuid')

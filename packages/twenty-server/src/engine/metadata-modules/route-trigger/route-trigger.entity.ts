@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +12,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -20,6 +22,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'httpMethod',
   'workspaceId',
 ])
+@Index('IDX_ROUTE_TRIGGER_SERVERLESS_FUNCTION_ID', ['serverlessFunctionId'])
 export class RouteTriggerEntity
   extends SyncableEntity
   implements Required<RouteTriggerEntity>
@@ -40,6 +43,9 @@ export class RouteTriggerEntity
     nullable: false,
   })
   httpMethod: HTTPMethod;
+
+  @Column({ nullable: false, type: 'jsonb', default: [] })
+  forwardedRequestHeaders: JsonbProperty<string[]>;
 
   @ManyToOne(
     () => ServerlessFunctionEntity,

@@ -1,20 +1,7 @@
 import { isObject } from '@sniptt/guards';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isMatchingArrayFilter } from '@/object-record/record-filter/utils/isMatchingArrayFilter';
-import { isMatchingBooleanFilter } from '@/object-record/record-filter/utils/isMatchingBooleanFilter';
-import { isMatchingCurrencyFilter } from '@/object-record/record-filter/utils/isMatchingCurrencyFilter';
-import { isMatchingDateFilter } from '@/object-record/record-filter/utils/isMatchingDateFilter';
-import { isMatchingFloatFilter } from '@/object-record/record-filter/utils/isMatchingFloatFilter';
-import { isMatchingMultiSelectFilter } from '@/object-record/record-filter/utils/isMatchingMultiSelectFilter';
-import { isMatchingRatingFilter } from '@/object-record/record-filter/utils/isMatchingRatingFilter';
-import { isMatchingRawJsonFilter } from '@/object-record/record-filter/utils/isMatchingRawJsonFilter';
-import { isMatchingRichTextV2Filter } from '@/object-record/record-filter/utils/isMatchingRichTextV2Filter';
-import { isMatchingSelectFilter } from '@/object-record/record-filter/utils/isMatchingSelectFilter';
-import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
-import { isMatchingTSVectorFilter } from '@/object-record/record-filter/utils/isMatchingTSVectorFilter';
-import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
 import {
+  FieldMetadataType,
   type ActorFilter,
   type AddressFilter,
   type AndObjectRecordFilter,
@@ -40,8 +27,27 @@ import {
   type TSVectorFilter,
   type UUIDFilter,
 } from 'twenty-shared/types';
-import { isDefined, isEmptyObject } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  isDefined,
+  isEmptyObject,
+  isMatchingArrayFilter,
+  isMatchingBooleanFilter,
+  isMatchingCurrencyFilter,
+  isMatchingDateFilter,
+  isMatchingFloatFilter,
+  isMatchingMultiSelectFilter,
+  isMatchingRatingFilter,
+  isMatchingRawJsonFilter,
+  isMatchingRichTextV2Filter,
+  isMatchingSelectFilter,
+  isMatchingStringFilter,
+  isMatchingTSVectorFilter,
+  isMatchingUUIDFilter,
+} from 'twenty-shared/utils';
+
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
@@ -55,6 +61,27 @@ const isAndFilter = (
 
 const isImplicitAndFilter = (filter: RecordGqlOperationFilter) =>
   Object.keys(filter).length > 1;
+
+const isMorphRelationJoinColumnKey = ({
+  fieldMetadataItem,
+  key,
+}: {
+  fieldMetadataItem: FieldMetadataItem;
+  key: string;
+}): boolean => {
+  if (!fieldMetadataItem.morphRelations?.length) {
+    return false;
+  }
+
+  const possibleJoinColumnNames = computePossibleMorphGqlFieldForFieldName({
+    fieldMetadata: {
+      morphRelations: fieldMetadataItem.morphRelations,
+      fieldName: fieldMetadataItem.name,
+    },
+  }).map((name) => `${name}Id`);
+
+  return possibleJoinColumnNames.includes(key);
+};
 
 const isOrFilter = (
   filter: RecordGqlOperationFilter,
@@ -172,8 +199,17 @@ export const isRecordMatchingFilter = ({
       objectMetadataItem.fields.find((field) => field.name === filterKey) ??
       objectMetadataItem.fields.find(
         (field) =>
-          field.type === FieldMetadataType.RELATION &&
+          (field.type === FieldMetadataType.RELATION ||
+            field.type === FieldMetadataType.MORPH_RELATION) &&
           field.settings?.joinColumnName === filterKey,
+      ) ??
+      objectMetadataItem.fields.find(
+        (field) =>
+          field.type === FieldMetadataType.MORPH_RELATION &&
+          isMorphRelationJoinColumnKey({
+            fieldMetadataItem: field,
+            key: filterKey,
+          }),
       );
 
     if (!isDefined(objectMetadataField)) {
@@ -363,9 +399,15 @@ export const isRecordMatchingFilter = ({
           });
         });
       }
-      case FieldMetadataType.RELATION: {
+      case FieldMetadataType.RELATION:
+      case FieldMetadataType.MORPH_RELATION: {
         const isJoinColumn =
-          objectMetadataField.settings?.joinColumnName === filterKey;
+          objectMetadataField.settings?.joinColumnName === filterKey ||
+          (objectMetadataField.type === FieldMetadataType.MORPH_RELATION &&
+            isMorphRelationJoinColumnKey({
+              fieldMetadataItem: objectMetadataField,
+              key: filterKey,
+            }));
 
         if (isJoinColumn) {
           return isMatchingUUIDFilter({

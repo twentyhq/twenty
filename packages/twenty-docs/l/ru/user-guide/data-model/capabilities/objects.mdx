@@ -1,6 +1,6 @@
 ---
 title: Объекты
-description: Learn about standard and custom objects in Twenty.
+description: Узнайте о стандартных и пользовательских объектах в Twenty.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
@@ -25,11 +25,11 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ### Заметки
 
-The `Notes` object stores free-form notes that can be attached to People, Companies, Opportunities, and other records. Use notes to capture meeting summaries, important details, or any contextual information.
+Объект `Notes` хранит произвольные заметки, которые можно прикреплять к записям «Люди», «Компании», «Сделки» и другим записям. Используйте заметки, чтобы фиксировать итоги встреч, важные подробности и другую контекстную информацию.
 
 ### Задачи
 
-The `Tasks` object stores to-dos and action items. Tasks can be linked to People, Companies, Opportunities, and other records. Track due dates, assignees, and completion status to stay on top of your follow-ups.
+Объект `Tasks` хранит задачи и поручения. Задачи можно связывать с записями «Люди», «Компании», «Сделки» и другими записями. Отслеживайте сроки, исполнителей и статус выполнения, чтобы не упускать последующие действия.
 
 ## Пользовательские объекты
 
@@ -37,55 +37,55 @@ The `Tasks` object stores to-dos and action items. Tasks can be linked to People
 
 <img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
 
-### Creating a New Custom Object
+### Создание нового пользовательского объекта
 
 Чтобы создать новый пользовательский объект:
 
 1. Перейдите в Настройки в боковой панели слева.
-2. Under Workspace, go to Data model. Здесь вы сможете увидеть обзор всех ваших существующих Стандартных и Пользовательских объектов (как активных, так и отключенных).
+2. В разделе «Рабочее пространство» перейдите к «Модели данных». Здесь вы сможете увидеть обзор всех ваших существующих Стандартных и Пользовательских объектов (как активных, так и отключенных).
 
 <VimeoEmbed videoId="926288174" title="Видеодемонстрация" />
 
 3. Нажмите на `+ Новый объект` вверху. Введите имя (как в единственном, так и во множественном числе), выберите значок и добавьте описание для вашего пользовательского объекта, а затем нажмите Сохранить (в правом верхнем углу). Используя Листинг как пример пользовательского объекта, единственное число будет "листинг", а множественное - "листинги", вместе с описанием, например, "Листинги, которые хозяева создали для показа своей собственности."
 
-4. Your custom object is now created and will appear in your sidebar. You can start adding records to it right away.
+4. Ваш пользовательский объект создан и появится в боковой панели. Вы можете сразу начать добавлять в него записи.
 
-## Managing Objects
+## Управление объектами
 
-### Deactivating Objects
+### Деактивация объектов
 
-If you don't need a standard or custom object:
+Если вам не нужен стандартный или пользовательский объект:
 
-1. Go to Settings → Data Model
-2. Find the object you want to deactivate
-3. Click the toggle to deactivate it
-4. The object will be hidden from your workspace but data is preserved
+1. Перейдите в Настройки → Модель данных
+2. Найдите объект, который нужно деактивировать
+3. Щелкните переключатель, чтобы деактивировать его
+4. Объект будет скрыт в вашем рабочем пространстве, но данные сохранятся
 
-### Reactivating Objects
+### Повторная активация объектов
 
-To bring back a deactivated object:
+Чтобы вернуть деактивированный объект:
 
-1. Go to Settings → Data Model
-2. Look for deactivated objects (they'll be grayed out)
-3. Click the toggle to reactivate it
-4. The object and all its data will be restored
+1. Перейдите в Настройки → Модель данных
+2. Найдите деактивированные объекты (они отображаются серым цветом)
+3. Щелкните переключатель, чтобы активировать его снова
+4. Объект и все его данные будут восстановлены
 
 ## Лучшие практики
 
-### When to Create Custom Objects
+### Когда создавать пользовательские объекты
 
-* **Unique business entities**: Things specific to your industry or process
-* **Complex relationships**: When you need to track connections between multiple entities
-* **Scalable data**: When you might have many instances of something
+* **Уникальные бизнес-сущности**: Объекты, специфичные для вашей отрасли или процесса
+* **Сложные связи**: Когда нужно отслеживать связи между несколькими сущностями
+* **Масштабируемые данные**: Когда у чего-то может быть много экземпляров
 
-### When to Use Fields Instead
+### Когда лучше использовать поля
 
-* **Simple attributes**: Properties that describe existing objects
-* **Categories or labels**: Ways to classify existing records
-* **Single values**: Information that doesn't need its own lifecycle
+* **Простые атрибуты**: Свойства, описывающие существующие объекты
+* **Категории или метки**: Способы классификации существующих записей
+* **Одиночные значения**: Информация, которой не требуется собственный жизненный цикл
 
-### Object Naming
+### Именование объектов
 
-* **Use clear, descriptive names**: Make it obvious what the object represents
-* **Follow conventions**: Use singular for the object name, plural for the collection
-* **Consider your team**: Choose names everyone will understand
+* **Используйте понятные, описательные названия**: Сделайте очевидным, что представляет собой объект
+* **Следуйте соглашениям**: Используйте единственное число для названия объекта и множественное — для коллекции
+* **Учитывайте свою команду**: Выбирайте названия, которые будут понятны всем

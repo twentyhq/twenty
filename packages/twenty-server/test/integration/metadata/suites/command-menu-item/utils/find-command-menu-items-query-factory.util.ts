@@ -8,7 +8,7 @@ const DEFAULT_COMMAND_MENU_ITEM_GQL_FIELDS = `
   icon
   isPinned
   availabilityType
-  availabilityObjectNameSingular
+  availabilityObjectMetadataId
   applicationId
   createdAt
   updatedAt

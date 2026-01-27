@@ -5,8 +5,9 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { deleteFlatNavigationMenuItemFromMapsAndIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/delete-flat-navigation-menu-item-from-maps-and-index.util';
 
 type DeleteAction<TMetadataName extends AllMetadataName> =
   AllFlatEntityTypesByMetadataName[TMetadataName]['actions']['delete'];
@@ -46,11 +47,12 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = <
     case 'pageLayout':
     case 'pageLayoutWidget':
     case 'pageLayoutTab':
-    case 'commandMenuItem': {
-      const flatEntityToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow<
+    case 'commandMenuItem':
+    case 'frontComponent': {
+      const flatEntityToDelete = findFlatEntityByUniversalIdentifierOrThrow<
         MetadataFlatEntity<typeof action.metadataName>
       >({
-        flatEntityId: action.entityId,
+        universalIdentifier: action.universalIdentifier,
         flatEntityMaps:
           allFlatEntityMaps[getMetadataFlatEntityMapsKey(action.metadataName)],
       });
@@ -59,6 +61,21 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = <
         flatEntity: flatEntityToDelete,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
         metadataName: action.metadataName,
+      });
+
+      return allFlatEntityMaps;
+    }
+    case 'navigationMenuItem': {
+      const flatNavigationMenuItemToDelete =
+        findFlatEntityByUniversalIdentifierOrThrow({
+          universalIdentifier: action.universalIdentifier,
+          flatEntityMaps: allFlatEntityMaps.flatNavigationMenuItemMaps,
+        });
+
+      deleteFlatNavigationMenuItemFromMapsAndIndex({
+        flatNavigationMenuItem: flatNavigationMenuItemToDelete,
+        flatNavigationMenuItemMaps:
+          allFlatEntityMaps.flatNavigationMenuItemMaps,
       });
 
       return allFlatEntityMaps;

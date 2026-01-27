@@ -1,16 +1,16 @@
 {
   "tabs": {
     "userGuide": {
-      "label": "User Guide",
+      "label": "Руководство пользователя",
       "groups": {
         "discoverTwenty": {
-          "label": "Discover Twenty",
+          "label": "Откройте Twenty",
           "groups": {
             "gettingStartedCapabilities": {
-              "label": "Capabilities"
+              "label": "Возможности"
             },
             "gettingStartedHowTos": {
-              "label": "How-Tos"
+              "label": "Инструкции"
             }
           }
         },
@@ -18,32 +18,32 @@
           "label": "Модель данных",
           "groups": {
             "dataModelCapabilities": {
-              "label": "Capabilities"
+              "label": "Возможности"
             },
             "dataModelHowTos": {
-              "label": "How-Tos"
+              "label": "Инструкции"
             }
           }
         },
         "dataMigration": {
-          "label": "Data Migration",
+          "label": "Миграция данных",
           "groups": {
             "dataMigrationCapabilities": {
-              "label": "Capabilities"
+              "label": "Возможности"
             },
             "dataMigrationHowTos": {
-              "label": "How-Tos"
+              "label": "Инструкции"
             }
           }
         },
         "calendarEmails": {
-          "label": "Calendar & Emails",
+          "label": "Календарь и электронная почта",
           "groups": {
             "calendarEmailsCapabilities": {
-              "label": "Capabilities"
+              "label": "Возможности"
             },
             "calendarEmailsHowTos": {
-              "label": "How-Tos"
+              "label": "Инструкции"
             }
           }
         },
@@ -51,19 +51,19 @@
           "label": "Рабочие процессы",
           "groups": {
             "workflowsCapabilities": {
-              "label": "Capabilities"
+              "label": "Возможности"
             },
             "workflowsHowTos": {
-              "label": "How-Tos",
+              "label": "Инструкции",
               "groups": {
                 "crmAutomations": {
-                  "label": "CRM Automations"
+                  "label": "Автоматизации CRM"
                 },
                 "connectToOtherTools": {
-                  "label": "Connect to Other Tools"
+                  "label": "Подключение к другим инструментам"
                 },
                 "advancedConfigurations": {
-                  "label": "Advanced Configurations"
+                  "label": "Расширенные настройки"
                 },
                 "needMoreHelp": {
                   "label": "Нужна дополнительная помощь"
@@ -76,10 +76,10 @@
           "label": "ИИ",
           "groups": {
             "aiCapabilities": {
-              "label": "Capabilities"
+              "label": "Возможности"
             },
             "aiHowTos": {
-              "label": "How-Tos"
+              "label": "Инструкции"
             }
           }
         },
@@ -87,10 +87,10 @@
           "label": "Представления и воронки",
           "groups": {
             "viewsPipelinesCapabilities": {
-              "label": "Capabilities"
+              "label": "Возможности"
             },
             "viewsPipelinesHowTos": {
-              "label": "How-Tos"
+              "label": "Инструкции"
             }
           }
         },
@@ -98,21 +98,21 @@
           "label": "Панели управления",
           "groups": {
             "dashboardsCapabilities": {
-              "label": "Capabilities"
+              "label": "Возможности"
             },
             "dashboardsHowTos": {
-              "label": "How-Tos"
+              "label": "Инструкции"
             }
           }
         },
         "permissionsAccess": {
-          "label": "Permissions & Access",
+          "label": "Разрешения и доступ",
           "groups": {
             "permissionsAccessCapabilities": {
-              "label": "Capabilities"
+              "label": "Возможности"
             },
             "permissionsAccessHowTos": {
-              "label": "How-Tos"
+              "label": "Инструкции"
             }
           }
         },
@@ -120,10 +120,10 @@
           "label": "Биллинг",
           "groups": {
             "billingCapabilities": {
-              "label": "Capabilities"
+              "label": "Возможности"
             },
             "billingHowTos": {
-              "label": "How-Tos"
+              "label": "Инструкции"
             }
           }
         },
@@ -131,10 +131,10 @@
           "label": "Настройки",
           "groups": {
             "settingsCapabilities": {
-              "label": "Capabilities"
+              "label": "Возможности"
             },
             "settingsHowTos": {
-              "label": "How-Tos"
+              "label": "Инструкции"
             }
           }
         }
@@ -147,26 +147,26 @@
           "label": "Разработчики"
         },
         "extend": {
-          "label": "Extend",
+          "label": "Расширяйте",
           "groups": {
             "extendCapabilities": {
-              "label": "Capabilities"
+              "label": "Возможности"
             }
           }
         },
         "selfHost": {
-          "label": "Self-Host",
+          "label": "Самостоятельный хостинг",
           "groups": {
             "selfHostCapabilities": {
-              "label": "Capabilities"
+              "label": "Возможности"
             }
           }
         },
         "contribute": {
-          "label": "Contribute",
+          "label": "Внести вклад",
           "groups": {
             "contributeCapabilities": {
-              "label": "Capabilities",
+              "label": "Возможности",
               "groups": {
                 "frontendDevelopment": {
                   "label": "Разработка интерфейса",

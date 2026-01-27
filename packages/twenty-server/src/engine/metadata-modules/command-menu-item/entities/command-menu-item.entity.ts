@@ -3,11 +3,15 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntityRequired } from 'src/engine/workspace-manager/types/syncable-entity-required.interface';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 export enum CommandMenuItemAvailabilityType {
   GLOBAL = 'GLOBAL',
@@ -15,13 +19,16 @@ export enum CommandMenuItemAvailabilityType {
   BULK_RECORDS = 'BULK_RECORDS',
 }
 
-@Entity('commandMenuItem')
+@Entity({ name: 'commandMenuItem', schema: 'core' })
 @Index('IDX_COMMAND_MENU_ITEM_WORKFLOW_VERSION_ID_WORKSPACE_ID', [
   'workflowVersionId',
   'workspaceId',
 ])
+@Index('IDX_COMMAND_MENU_ITEM_AVAILABILITY_OBJECT_METADATA_ID', [
+  'availabilityObjectMetadataId',
+])
 export class CommandMenuItemEntity
-  extends SyncableEntityRequired
+  extends SyncableEntity
   implements Required<CommandMenuItemEntity>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -47,8 +54,15 @@ export class CommandMenuItemEntity
   })
   availabilityType: CommandMenuItemAvailabilityType;
 
-  @Column({ nullable: true, type: 'varchar' })
-  availabilityObjectNameSingular: string | null;
+  @Column({ nullable: true, type: 'uuid' })
+  availabilityObjectMetadataId: string | null;
+
+  @ManyToOne(() => ObjectMetadataEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'availabilityObjectMetadataId' })
+  availabilityObjectMetadata: Relation<ObjectMetadataEntity> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

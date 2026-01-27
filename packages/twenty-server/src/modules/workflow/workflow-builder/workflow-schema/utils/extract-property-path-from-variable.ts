@@ -1,4 +1,7 @@
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
+import {
+  CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
+  parseVariablePath,
+} from 'twenty-shared/workflow';
 
 export const extractPropertyPathFromVariable = (
   rawVariableName: string,
@@ -8,7 +11,7 @@ export const extractPropertyPathFromVariable = (
     (_, variableName) => variableName,
   );
 
-  const parts = variableWithoutBrackets.split('.');
+  const parts = parseVariablePath(variableWithoutBrackets);
 
   return parts.slice(1);
 };

@@ -5,12 +5,12 @@ title: Comandi Backend
 ## Comandi utili
 
 Questi comandi devono essere eseguiti dalla cartella packages/twenty-server.
-From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+Da qualsiasi altra cartella puoi eseguire `npx nx {command} twenty-server` (oppure `npx nx run twenty-server:{command}`).
 
 ### Impostazione iniziale
 
 ```
-npx nx database:reset twenty-server # setup the database with dev seeds
+npx nx database:reset twenty-server # configura il database con dati di esempio per lo sviluppo
 ```
 
 ### Avvio del server
@@ -59,7 +59,7 @@ npx nx run twenty-server:command workspace:sync-metadata -f
 ```
 
 <Warning>
-  This will drop the database and re-run the migrations and seed.
+  Questo eliminerà il database e rieseguirà le migrazioni e il popolamento dei dati.
 
   Assicurati di eseguire il backup dei dati che vuoi mantenere prima di eseguire questo comando.
 </Warning>

@@ -1,7 +1,6 @@
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
+import { type PieChartDataItem } from '~/generated/graphql';
 
-export type PieChartDataItem = {
-  id: string;
-  value: number;
+export type PieChartDataItemWithColor = PieChartDataItem & {
   color?: GraphColor;
 };

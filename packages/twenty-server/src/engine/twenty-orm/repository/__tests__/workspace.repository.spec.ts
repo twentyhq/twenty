@@ -145,6 +145,8 @@ describe('WorkspaceRepository', () => {
         canSoftDeleteObjectRecords: false,
         canDestroyObjectRecords: false,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       },
     };
     mockQueryRunner = {} as QueryRunner;
@@ -165,7 +167,7 @@ describe('WorkspaceRepository', () => {
         id: 'test-metadata-id',
         nameSingular: 'test-entity',
         namePlural: 'test-entities',
-        fieldMetadataIds: ['test-field-id'],
+        fieldIds: ['test-field-id'],
         fieldIdByName: {
           id: 'test-field-id',
         },

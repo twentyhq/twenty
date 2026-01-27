@@ -1,56 +1,56 @@
 ---
-title: Send Email Alerts with Tasks Due
-description: Automatically notify team members about their upcoming or overdue tasks.
+title: 期限のタスクに関するメールアラートを送信
+description: 差し迫ったタスクや期限超過のタスクについてチームメンバーに自動通知します。
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
 
-Send daily email reminders to each team member about their tasks due today.
+本日が期限のタスクについて、各チームメンバーに毎日メールでリマインダーを送信します。
 
-## Overview
+## 概要
 
-This workflow runs on a schedule and:
+このワークフローはスケジュールで実行され、以下を実行します:
 
-1. Fetches all workspace members
-2. Loops through each member
-3. Finds their tasks due today
-4. Formats and sends a personalized email
+1. すべてのワークスペースメンバーを取得
+2. 各メンバーを順に処理
+3. 各メンバーの本日が期限のタスクを検索
+4. 整形し、パーソナライズされたメールを送信
 
-## Step-by-Step Setup
+## ステップバイステップの設定
 
-<VimeoEmbed videoId="1147463514" title="Video demonstration" />
+<VimeoEmbed videoId="1147463514" title="デモ動画" />
 
-### Step 1: Configure the Trigger
+### ステップ 1: トリガーを設定
 
-1. Go to **Settings → Workflows** and create a new workflow
-2. Select **On a Schedule** as the trigger
-3. Use a cron expression for daily at 8:00 AM: `0 8 * * *`
+1. 「**Settings → Workflows**」に移動し、新しいワークフローを作成します
+2. トリガーとして「**On a Schedule**」を選択します
+3. 毎日 8:00 の cron 式を使用します: `0 8 * * *`
 
-### Step 2: Search for All Workspace Members
+### ステップ 2: すべてのワークスペースメンバーを検索
 
-1. Add a **Search Records** action
-2. Select **Workspace Members** (under advanced objects)
-3. No filters needed — this returns all members
+1. 「**Search Records**」アクションを追加します
+2. 「**Workspace Members**」（advanced objects 内）を選択します
+3. フィルターは不要です—すべてのメンバーが取得されます
 
-### Step 3: Add an Iterator
+### ステップ 3: Iterator を追加
 
-1. Add an **Iterator** action
-2. Set the input array to the workspace members from the previous step
-3. All actions inside the iterator will run once per member
+1. 「**Iterator**」アクションを追加します
+2. 入力配列を前のステップのワークスペースメンバーに設定します
+3. Iterator 内のすべてのアクションはメンバーごとに1回実行されます
 
-### Step 4: Search for Tasks Due Today (Inside Iterator)
+### ステップ 4: 本日が期限のタスクを検索（Iterator 内）
 
-1. Inside the iterator, add a **Search Records** action
-2. Select **Tasks** as the object
-3. Add filters:
-   * **Assignee** = current workspace member (from the iterator)
-   * **Due Date** = today
+1. Iterator 内で「**Search Records**」アクションを追加します
+2. オブジェクトとして「**Tasks**」を選択します
+3. フィルターを追加:
+   * **Assignee** = 現在のワークスペースメンバー（Iterator から）
+   * **Due Date** = 今日
 
-### Step 5: Format Tasks into Email Body (Inside Iterator)
+### ステップ 5: タスクをメール本文に整形（Iterator 内）
 
-Add a **Code** action to format the tasks into a readable list with links:
+タスクをリンク付きの読みやすいリストに整形するために「**Code**」アクションを追加します:
 
 ```javascript
 export const main = async (params: {
@@ -79,28 +79,28 @@ export const main = async (params: {
 ```
 
 <Note>
-  Replace `yourSubDomain` with your actual Twenty workspace subdomain.
+  `yourSubDomain` を実際の Twenty ワークスペースのサブドメインに置き換えてください。
 </Note>
 
-### Step 6: Send Email (Inside Iterator)
+### ステップ 6: メールを送信（Iterator 内）
 
-1. Add a **Send Email** action (still inside the iterator)
-2. Configure:
+1. 「**Send Email**」アクションを追加します（引き続き Iterator 内）
+2. 設定:
 
-| Field       | Value                                                           |
-| ----------- | --------------------------------------------------------------- |
-| **To**      | `{{iterator.currentItem.userEmail}}` (workspace member's email) |
-| **Subject** | Your Tasks Due Today                                            |
-| **Body**    | `{{code.formattedTasks}}`                                       |
+| フィールド  | 値                                                         |
+| ------ | --------------------------------------------------------- |
+| **宛先** | `{{iterator.currentItem.userEmail}}`（ワークスペースメンバーのメールアドレス） |
+| **件名** | 本日が期限のタスク                                                 |
+| **本文** | `{{code.formattedTasks}}`                                 |
 
-### Step 7: Test and Activate
+### ステップ 7: テストして有効化
 
-1. Click **Test** to run the workflow manually
-2. Check inboxes for the emails
-3. Activate the workflow
+1. ワークフローを手動で実行するには「**Test**」をクリックします
+2. 受信トレイでメールを確認します
+3. ワークフローを有効化します
 
-## Related
+## 関連
 
-* [Workflow Actions](/l/ja/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/ja/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Handle Arrays in Code Actions](/l/ja/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [ワークフローからメールを送信](/l/ja/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Code アクションで配列を扱う](/l/ja/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

@@ -14,19 +14,14 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
 
   return {
     ...objectMetadataEntityWithoutRelations,
-    // TODO remove once MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand has been run once
     universalIdentifier:
-      objectMetadataEntityWithoutRelations.universalIdentifier ??
-      objectMetadataEntityWithoutRelations.standardId ??
-      objectMetadataEntityWithoutRelations.id,
+      objectMetadataEntityWithoutRelations.universalIdentifier,
     createdAt: objectMetadataEntity.createdAt.toISOString(),
     updatedAt: objectMetadataEntity.updatedAt.toISOString(),
     viewIds: objectMetadataEntity.views.map((viewEntity) => viewEntity.id),
     indexMetadataIds: objectMetadataEntity.indexMetadatas.map(
       (indexEntity) => indexEntity.id,
     ),
-    fieldMetadataIds: objectMetadataEntity.fields.map(
-      (fieldEntity) => fieldEntity.id,
-    ),
+    fieldIds: objectMetadataEntity.fields.map((fieldEntity) => fieldEntity.id),
   };
 };

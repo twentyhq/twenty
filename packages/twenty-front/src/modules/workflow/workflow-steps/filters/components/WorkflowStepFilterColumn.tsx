@@ -14,6 +14,8 @@ type WorkflowStepFilterColumnProps = {
   stepFilter: StepFilter;
   stepFilterIndex: number;
   firstFilterLabel?: string;
+  elseIfIndex?: number;
+  preventDeletion?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -28,10 +30,12 @@ export const WorkflowStepFilterColumn = ({
   stepFilter,
   stepFilterIndex,
   firstFilterLabel,
+  elseIfIndex,
+  preventDeletion = false,
 }: WorkflowStepFilterColumnProps) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
 
-  const shouldShowDropdown = !readonly;
+  const shouldShowDropdown = !readonly && !preventDeletion;
 
   return (
     <AdvancedFilterCommandMenuColumn>
@@ -40,6 +44,7 @@ export const WorkflowStepFilterColumn = ({
           index={stepFilterIndex}
           stepFilterGroup={stepFilterGroup}
           firstFilterLabel={firstFilterLabel}
+          elseIfIndex={elseIfIndex}
         />
         {shouldShowDropdown && (
           <WorkflowStepFilterOptionsDropdown stepFilterId={stepFilter.id} />

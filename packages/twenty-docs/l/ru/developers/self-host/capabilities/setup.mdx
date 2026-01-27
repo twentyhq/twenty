@@ -60,61 +60,61 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 3. Перезапустите контейнеры, чтобы изменения вступили в силу
 4. Панель администратора будет показывать текущие значения, но не сможет их изменить
 
-## Multi-Workspace Mode
+## Режим нескольких рабочих пространств
 
-By default, Twenty runs in **single-workspace mode** — ideal for most self-hosted deployments where you need one CRM instance for your organization.
+По умолчанию Twenty работает в **режиме одного рабочего пространства** — оптимально для большинства развертываний с самостоятельным размещением, где вашей организации нужен один экземпляр CRM.
 
-### Single-Workspace Mode (Default)
+### Режим одного рабочего пространства (по умолчанию)
 
 ```bash
 IS_MULTIWORKSPACE_ENABLED=false  # default
 ```
 
-* One workspace per Twenty instance
-* First user automatically becomes admin with full privileges (`canImpersonate` and `canAccessFullAdminPanel`)
-* New signups are disabled after the first workspace is created
-* Simple URL structure: `https://your-domain.com`
+* Одно рабочее пространство на один экземпляр Twenty
+* Первый пользователь автоматически становится администратором с полными привилегиями (`canImpersonate` и `canAccessFullAdminPanel`)
+* Новые регистрации отключаются после создания первого рабочего пространства
+* Простая структура URL: `https://your-domain.com`
 
-### Enabling Multi-Workspace Mode
+### Включение режима нескольких рабочих пространств
 
 ```bash
 IS_MULTIWORKSPACE_ENABLED=true
 DEFAULT_SUBDOMAIN=app  # default value
 ```
 
-Enable multi-workspace mode for SaaS-like deployments where multiple independent teams need their own workspaces on the same Twenty instance.
+Включите режим нескольких рабочих пространств для развертываний, похожих на SaaS, где нескольким независимым командам нужны собственные рабочие пространства на одном экземпляре Twenty.
 
-**Key differences from single-workspace mode:**
+**Ключевые отличия от режима одного рабочего пространства:**
 
-* Multiple workspaces can be created on the same instance
-* Each workspace gets its own subdomain (e.g., `sales.your-domain.com`, `marketing.your-domain.com`)
-* Users sign up and log in at `{DEFAULT_SUBDOMAIN}.your-domain.com` (e.g., `app.your-domain.com`)
-* No automatic admin privileges — first user in each workspace is a regular user
-* Workspace-specific settings like subdomain and custom domain become available in workspace settings
+* На одном экземпляре можно создать несколько рабочих пространств
+* Каждое рабочее пространство получает собственный поддомен (например, `sales.your-domain.com`, `marketing.your-domain.com`)
+* Пользователи регистрируются и входят на `{DEFAULT_SUBDOMAIN}.your-domain.com` (например, `app.your-domain.com`)
+* Нет автоматических привилегий администратора — первый пользователь в каждом рабочем пространстве является обычным пользователем
+* Параметры, специфичные для рабочего пространства, такие как поддомен и пользовательский домен, становятся доступны в настройках рабочего пространства
 
 <Warning>
-  **Environment-only setting:** `IS_MULTIWORKSPACE_ENABLED` can only be configured via `.env` file and requires a restart. It cannot be changed through the admin panel.
+  **Параметр только среды:** `IS_MULTIWORKSPACE_ENABLED` можно настроить только через файл `.env`; требуется перезапуск. Его нельзя изменить через панель администратора.
 </Warning>
 
-### DNS Configuration for Multi-Workspace
+### Настройка DNS для режима нескольких рабочих пространств
 
-When using multi-workspace mode, configure your DNS with a wildcard record to allow dynamic subdomain creation:
+При использовании режима нескольких рабочих пространств настройте DNS с помощью подстановочной записи, чтобы разрешить динамическое создание поддоменов:
 
 ```
 *.your-domain.com -> your-server-ip
 ```
 
-This enables automatic subdomain routing for new workspaces without manual DNS configuration.
+Это включает автоматическую маршрутизацию поддоменов для новых рабочих пространств без ручной настройки DNS.
 
-### Restricting Workspace Creation
+### Ограничение создания рабочих пространств
 
-In multi-workspace mode, you may want to limit who can create new workspaces:
+В режиме нескольких рабочих пространств вы можете ограничить круг пользователей, которые могут создавать новые рабочие пространства:
 
 ```bash
 IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 ```
 
-When enabled, only users with `canAccessFullAdminPanel` can create additional workspaces. Users can still create their first workspace during initial signup.
+Если включено, только пользователи с правом `canAccessFullAdminPanel` могут создавать дополнительные рабочие пространства. Пользователи все равно могут создать свое первое рабочее пространство во время первоначальной регистрации.
 
 ## Интеграция Gmail и Google Calendar
 
@@ -133,8 +133,8 @@ When enabled, only users with `canAccessFullAdminPanel` can create additional wo
 1. Перейдите к [Учётные данные](https://console.cloud.google.com/apis/credentials)
 2. Создайте OAuth 2.0 Client ID
 3. Добавьте эти URI перенаправления:
-   * `https://{your-domain}/auth/google/redirect` (for SSO)
-   * `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+   * `https://{your-domain}/auth/google/redirect` (для SSO)
+   * `https://{your-domain}/auth/google-apis/get-access-token` (для интеграций)
 
 ### Настройка в Twenty
 
@@ -193,7 +193,7 @@ When enabled, only users with `canAccessFullAdminPanel` can create additional wo
 
 Вам нужно добавить следующие URI перенаправления в ваш проект:
 
-* `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+* `https://{your-domain}/auth/microsoft/redirect` если вы хотите использовать Microsoft SSO
 * `https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 ### Настройка в Twenty
@@ -213,7 +213,7 @@ When enabled, only users with `canAccessFullAdminPanel` can create additional wo
   **Режим только для среды:** если вы установили `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, добавьте эти переменные в свой `.env` файл вместо этого.
 </Warning>
 
-### Configure scopes
+### Настройка областей доступа
 
 соответствующий исходный код](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
 
@@ -290,3 +290,47 @@ yarn command:prod cron:workflow:automated-cron-trigger
 <Warning>
   **Режим только для среды:** если вы установили `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, добавьте эти переменные в свой `.env` файл вместо этого.
 </Warning>
+
+## Бессерверные функции
+
+Twenty поддерживает бессерверные функции для рабочих процессов и пользовательской логики. Среда выполнения настраивается через переменную окружения `SERVERLESS_TYPE`.
+
+<Warning>
+  **Уведомление о безопасности:** локальный драйвер бессерверных функций (`SERVERLESS_TYPE=LOCAL`) выполняет код напрямую на хосте в процессе Node.js без изоляции. Его следует использовать только для доверенного кода в разработке. Для промышленных развертываний, обрабатывающих недоверенный код, настоятельно рекомендуем использовать `SERVERLESS_TYPE=LAMBDA` или `SERVERLESS_TYPE=DISABLED`.
+</Warning>
+
+### Доступные драйверы
+
+| Драйвер   | Переменная окружения       | Сценарий использования                   | Уровень безопасности                      |
+| --------- | -------------------------- | ---------------------------------------- | ----------------------------------------- |
+| Отключено | `SERVERLESS_TYPE=DISABLED` | Полностью отключить бессерверные функции | Н/Д                                       |
+| Локальный | `SERVERLESS_TYPE=LOCAL`    | Разработка и доверенные среды            | Низкий (без изоляции)                     |
+| Lambda    | `SERVERLESS_TYPE=LAMBDA`   | Продакшн с недоверенным кодом            | Высокий (изоляция на уровне оборудования) |
+
+### Рекомендуемая конфигурация
+
+**Для разработки:**
+
+```bash
+SERVERLESS_TYPE=LOCAL  # default
+```
+
+**Для продакшна (AWS):**
+
+```bash
+SERVERLESS_TYPE=LAMBDA
+SERVERLESS_LAMBDA_REGION=us-east-1
+SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
+SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+```
+
+**Чтобы отключить бессерверные функции:**
+
+```bash
+SERVERLESS_TYPE=DISABLED
+```
+
+<Note>
+  При использовании `SERVERLESS_TYPE=DISABLED` любая попытка выполнить бессерверную функцию вернет ошибку. Это полезно, если вы хотите запускать Twenty без возможностей бессерверных функций.
+</Note>

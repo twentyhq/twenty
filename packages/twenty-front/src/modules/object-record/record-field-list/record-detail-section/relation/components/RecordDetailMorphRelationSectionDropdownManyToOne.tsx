@@ -91,7 +91,10 @@ export const RecordDetailMorphRelationSectionDropdownManyToOne = ({
   ) => {
     closeDropdown(dropdownId);
 
-    if (!selectedMorphItem?.recordId) return;
+    if (!isDefined(selectedMorphItem)) {
+      onSubmit?.({ newValue: null });
+      return;
+    }
 
     onSubmit?.({
       newValue: {

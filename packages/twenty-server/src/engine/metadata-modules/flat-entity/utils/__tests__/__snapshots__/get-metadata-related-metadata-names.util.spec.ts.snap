@@ -2,7 +2,11 @@
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for agent 1`] = `[]`;
 
-exports[`getMetadataRelatedMetadataNames should return related metadata names for commandMenuItem 1`] = `[]`;
+exports[`getMetadataRelatedMetadataNames should return related metadata names for commandMenuItem 1`] = `
+[
+  "objectMetadata",
+]
+`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for cronTrigger 1`] = `
 [
@@ -26,9 +30,19 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for frontComponent 1`] = `[]`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for index 1`] = `
 [
   "objectMetadata",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for navigationMenuItem 1`] = `
+[
+  "objectMetadata",
+  "navigationMenuItem",
+  "view",
 ]
 `;
 
@@ -64,6 +78,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 exports[`getMetadataRelatedMetadataNames should return related metadata names for role 1`] = `
 [
   "roleTarget",
+  "rowLevelPermissionPredicate",
+  "rowLevelPermissionPredicateGroup",
 ]
 `;
 

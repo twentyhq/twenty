@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with children first (most manyToOne relations first) 1`] = `
+[
+  "rowLevelPermissionPredicate",
+  "navigationMenuItem",
+  "viewFilter",
+  "pageLayoutWidget",
+  "viewField",
+  "commandMenuItem",
+  "cronTrigger",
+  "databaseEventTrigger",
+  "index",
+  "roleTarget",
+  "routeTrigger",
+  "rowLevelPermissionPredicateGroup",
+  "viewGroup",
+  "agent",
+  "frontComponent",
+  "pageLayout",
+  "pageLayoutTab",
+  "skill",
+  "view",
+  "viewFilterGroup",
+  "fieldMetadata",
+  "role",
+  "serverlessFunction",
+  "objectMetadata",
+]
+`;

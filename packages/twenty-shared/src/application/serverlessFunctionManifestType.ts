@@ -24,7 +24,9 @@ export type ServerlessFunctionManifest = SyncableEntityOptions & {
   description?: string;
   timeoutSeconds?: number;
   triggers: ServerlessFunctionTriggerManifest[];
-  handlerPath: string;
+  sourceHandlerPath: string;
+  builtHandlerPath: string;
+  builtHandlerChecksum: string | null;
   handlerName: string;
   toolInputSchema?: InputJsonSchema;
   isTool?: boolean;
@@ -33,6 +35,7 @@ export type ServerlessFunctionManifest = SyncableEntityOptions & {
 export type DatabaseEventTrigger = {
   type: 'databaseEvent';
   eventName: string;
+  updatedFields?: string[];
 };
 
 export type CronTrigger = {
@@ -45,6 +48,7 @@ export type RouteTrigger = {
   path: string;
   httpMethod: `${HTTPMethod}`;
   isAuthRequired: boolean;
+  forwardedRequestHeaders?: string[];
 };
 
 export type ServerlessFunctionTriggerManifest = SyncableEntityOptions &

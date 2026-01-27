@@ -7,7 +7,9 @@ import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engi
 import { WorkspaceMigrationCronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/cron-trigger/workspace-migration-cron-trigger-action-builder.service';
 import { WorkspaceMigrationDatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/database-event-trigger/workspace-migration-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-field-actions-builder.service';
+import { WorkspaceMigrationFrontComponentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/workspace-migration-front-component-actions-builder.service';
 import { WorkspaceMigrationIndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/workspace-migration-index-actions-builder.service';
+import { WorkspaceMigrationNavigationMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/workspace-migration-navigation-menu-item-actions-builder.service';
 import { WorkspaceMigrationObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/workspace-migration-object-actions-builder.service';
 import { WorkspaceMigrationPageLayoutTabActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/workspace-migration-page-layout-tab-actions-builder.service';
 import { WorkspaceMigrationPageLayoutWidgetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/workspace-migration-page-layout-widget-actions-builder.service';
@@ -47,11 +49,13 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationAgentActionsBuilderService,
     WorkspaceMigrationSkillActionsBuilderService,
     WorkspaceMigrationCommandMenuItemActionsBuilderService,
+    WorkspaceMigrationNavigationMenuItemActionsBuilderService,
     WorkspaceMigrationPageLayoutActionsBuilderService,
     WorkspaceMigrationPageLayoutWidgetActionsBuilderService,
     WorkspaceMigrationPageLayoutTabActionsBuilderService,
     WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
     WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
+    WorkspaceMigrationFrontComponentActionsBuilderService,
   ],
   exports: [
     WorkspaceMigrationViewActionsBuilderService,
@@ -71,12 +75,14 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationAgentActionsBuilderService,
     WorkspaceMigrationSkillActionsBuilderService,
     WorkspaceMigrationCommandMenuItemActionsBuilderService,
+    WorkspaceMigrationNavigationMenuItemActionsBuilderService,
     WorkspaceMigrationPageLayoutActionsBuilderService,
     WorkspaceMigrationPageLayoutWidgetActionsBuilderService,
     WorkspaceMigrationPageLayoutTabActionsBuilderService,
     WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
     WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
     FlatFieldMetadataTypeValidatorService,
+    WorkspaceMigrationFrontComponentActionsBuilderService,
   ],
 })
 export class WorkspaceMigrationBuilderModule {}

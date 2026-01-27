@@ -7,7 +7,7 @@ import {
   CronTriggerExceptionCode,
 } from 'src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception';
 
-export const cronTriggerGraphQLApiExceptionHandler = (error: Error): void => {
+export const cronTriggerGraphQLApiExceptionHandler = (error: Error): never => {
   if (error instanceof CronTriggerException) {
     switch (error.code) {
       case CronTriggerExceptionCode.CRON_TRIGGER_NOT_FOUND:

@@ -83,6 +83,34 @@ export const ALL_METADATA_RELATIONS = {
     manyToOne: {
       workspace: null,
       application: null,
+      availabilityObjectMetadata: {
+        metadataName: 'objectMetadata',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'availabilityObjectMetadataId',
+      },
+    },
+    oneToMany: {},
+  },
+  navigationMenuItem: {
+    manyToOne: {
+      workspace: null,
+      userWorkspace: null,
+      application: null,
+      targetObjectMetadata: {
+        metadataName: 'objectMetadata',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'targetObjectMetadataId',
+      },
+      folder: {
+        metadataName: 'navigationMenuItem',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'folderId',
+      },
+      view: {
+        metadataName: 'view',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'viewId',
+      },
     },
     oneToMany: {},
   },
@@ -90,7 +118,7 @@ export const ALL_METADATA_RELATIONS = {
     manyToOne: {
       object: {
         metadataName: 'objectMetadata',
-        flatEntityForeignKeyAggregator: 'fieldMetadataIds',
+        flatEntityForeignKeyAggregator: 'fieldIds',
         foreignKey: 'objectMetadataId',
       },
       workspace: null,
@@ -291,6 +319,12 @@ export const ALL_METADATA_RELATIONS = {
       objectPermissions: null,
       permissionFlags: null,
       fieldPermissions: null,
+      rowLevelPermissionPredicates: {
+        metadataName: 'rowLevelPermissionPredicate',
+      },
+      rowLevelPermissionPredicateGroups: {
+        metadataName: 'rowLevelPermissionPredicateGroup',
+      },
     },
   },
   roleTarget: {
@@ -436,6 +470,13 @@ export const ALL_METADATA_RELATIONS = {
         metadataName: 'viewFilter',
       },
     },
+  },
+  frontComponent: {
+    manyToOne: {
+      workspace: null,
+      application: null,
+    },
+    oneToMany: {},
   },
 } as const satisfies MetadataRelationsProperties;
 

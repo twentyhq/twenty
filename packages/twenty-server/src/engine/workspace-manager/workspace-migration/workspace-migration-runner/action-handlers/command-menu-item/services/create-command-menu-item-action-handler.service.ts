@@ -26,7 +26,7 @@ export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigratio
         CommandMenuItemEntity,
       );
 
-    await commandMenuItemRepository.save({
+    await commandMenuItemRepository.insert({
       ...flatEntity,
       workspaceId,
     });

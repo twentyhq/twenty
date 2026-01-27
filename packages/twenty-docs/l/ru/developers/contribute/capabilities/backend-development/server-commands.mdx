@@ -5,12 +5,12 @@ title: Команды бекэнда
 ## Полезные команды
 
 Эти команды следует выполнять из папки packages/twenty-server.
-From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+Из любой другой папки можно запускать `npx nx {command} twenty-server` (или `npx nx run twenty-server:{command}`).
 
 ### Первоначальная настройка
 
 ```
-npx nx database:reset twenty-server # setup the database with dev seeds
+npx nx database:reset twenty-server # настроить базу данных с начальными данными для разработки
 ```
 
 ### Запуск сервера
@@ -36,7 +36,7 @@ npx nx run twenty-server:test:integration # запуск интеграцион�
 
 ### Сброс базы данных
 
-If you want to reset and seed the database, you can run the following command:
+Если вы хотите сбросить и заполнить базу данных начальными данными, выполните следующую команду:
 
 ```bash
 npx nx run twenty-server:database:reset

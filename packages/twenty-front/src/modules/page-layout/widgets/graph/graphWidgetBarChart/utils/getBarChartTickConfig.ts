@@ -1,8 +1,7 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
-import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateWidthPerTick';
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
 import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
-import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
+import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { computeMaxLabelLengthForMargin } from '@/page-layout/widgets/graph/utils/computeMaxLabelLengthForMargin';
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
 import { type BarDatum } from '@nivo/bar';
@@ -21,19 +20,17 @@ export const getBarChartTickConfig = ({
   height,
   data,
   indexBy,
-  xAxisLabel,
-  yAxisLabel,
   axisFontSize,
   layout,
+  margins,
 }: {
   width: number;
   height: number;
   data: BarDatum[];
   indexBy: string;
-  xAxisLabel?: string;
-  yAxisLabel?: string;
   axisFontSize: number;
   layout: BarChartLayout;
+  margins: ChartMargins;
 }): BarChartTickConfig => {
   const clampValueTickCount = (tickCount: number) =>
     Math.min(
@@ -46,12 +43,9 @@ export const getBarChartTickConfig = ({
     axisFontSize,
     data,
     indexBy,
-    xAxisLabel,
-    yAxisLabel,
+    margins,
     layout,
   });
-
-  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
 
   const availableWidth = width - (margins.left + margins.right);
   const availableHeight = height - (margins.top + margins.bottom);
@@ -65,23 +59,17 @@ export const getBarChartTickConfig = ({
     }),
   );
 
-  const widthPerTick = calculateWidthPerTick({
-    layout,
-    availableWidth,
-    categoryTickCount: categoryTickValues.length,
-    valueTickCount: numberOfValueTicks,
-  });
-
-  const actualDataPointCount = data.length;
-  const widthPerDataPoint =
-    layout === BarChartLayout.VERTICAL &&
-    actualDataPointCount > 0 &&
-    availableWidth > 0
-      ? availableWidth / actualDataPointCount
-      : widthPerTick;
+  const bottomTickCount =
+    layout === BarChartLayout.VERTICAL
+      ? categoryTickValues.length
+      : numberOfValueTicks;
+  const widthPerBottomTick =
+    bottomTickCount > 0 && availableWidth > 0
+      ? availableWidth / bottomTickCount
+      : 0;
 
   const tickRotationConfig = getTickRotationConfig({
-    widthPerTick: widthPerDataPoint,
+    widthPerTick: widthPerBottomTick,
     axisFontSize,
   });
 

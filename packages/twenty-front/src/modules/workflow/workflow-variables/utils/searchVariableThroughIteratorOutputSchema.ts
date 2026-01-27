@@ -6,20 +6,27 @@ import { searchBaseOutputSchema } from '@/workflow/workflow-variables/utils/sear
 import { searchRecordOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughRecordOutputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
+import {
+  CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
+  parseVariablePath,
+} from 'twenty-shared/workflow';
 
 type IteratorResultKey =
   | 'currentItem'
   | 'currentItemIndex'
   | 'hasProcessedAllItems';
 
+/**
+ * Parses a variable name to extract its components
+ * Example: "{{step1.currentItem.field}}" -> { stepId: "step1", iteratorResultKey: "currentItem", pathSegments: [], fieldName: "field" }
+ */
 const parseVariableName = (rawVariableName: string) => {
   const variableWithoutBrackets = rawVariableName.replace(
     CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
     (_, variableName) => variableName,
   );
 
-  const parts = variableWithoutBrackets.split('.');
+  const parts = parseVariablePath(variableWithoutBrackets);
   const stepId = parts.at(0);
   const iteratorResultKey = parts.at(1) as IteratorResultKey;
   const remainingParts = parts.slice(2);

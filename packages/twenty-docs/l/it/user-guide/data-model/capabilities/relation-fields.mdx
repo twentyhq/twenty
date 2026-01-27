@@ -39,11 +39,15 @@ Molti record nell'Oggetto A possono essere collegati a molti record nell'Oggetto
 
 **Esempio:** Molte Persone possono essere collegate a molti Progetti, e viceversa.
 
-<Warning>
-  **Molti-a-molti non è ancora supportato.**
+Le relazioni molti-a-molti utilizzano lo schema dell'**oggetto di giunzione**: un oggetto intermedio che collega entrambe le parti. Con la funzionalità delle relazioni di giunzione, Twenty visualizza direttamente i record collegati finali, nascondendo l'oggetto intermedio dall'interfaccia utente.
 
-  Questo tipo di relazione è previsto per H1 2026. Come soluzione temporanea, crea un oggetto intermedio "di giunzione" (ad es., "Assegnazioni di progetto") che abbia relazioni Molti-a-uno con entrambi gli oggetti.
+<img src="/images/user-guide/fields/junction-relation-diagram.png" style={{width:'100%'}} />
+
+<Warning>
+  **Funzionalità di laboratorio**: le relazioni di giunzione devono essere abilitate in **Impostazioni → Aggiornamenti → Lab** prima dell'uso.
 </Warning>
+
+See [How to Create Many-to-Many Relations](/l/it/user-guide/data-model/how-tos/create-many-to-many-relations) for a complete step-by-step guide.
 
 ## Creazione di un campo di relazione
 

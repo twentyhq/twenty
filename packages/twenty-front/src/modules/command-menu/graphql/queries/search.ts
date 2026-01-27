@@ -21,6 +21,7 @@ export const SEARCH_QUERY = gql`
         node {
           recordId
           objectNameSingular
+          objectLabelSingular
           label
           imageUrl
           tsRankCD

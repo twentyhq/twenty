@@ -145,7 +145,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             {
               "code": "FIELD_METADATA_RELATION_MALFORMED",
               "message": "Morph relation creation payloads must not target source object metadata",
-              "userFriendlyMessage": "Morph relation creation payloads must only contain relation to other object metadata",
+              "userFriendlyMessage": "An error occurred.",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -179,7 +179,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             {
               "code": "FIELD_METADATA_RELATION_MALFORMED",
               "message": "Morph relation creation payloads must have only relation to the same object metadata",
-              "userFriendlyMessage": "Morph relation creation payloads must only contain relation to the same object metadata",
+              "userFriendlyMessage": "An error occurred.",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -620,7 +620,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             {
               "code": "FIELD_METADATA_RELATION_MALFORMED",
               "message": "Morph relation creation payloads must have the same relation type",
-              "userFriendlyMessage": "Morph relation creation payloads must have the same relation type",
+              "userFriendlyMessage": "An error occurred.",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -654,7 +654,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             {
               "code": "FIELD_METADATA_RELATION_MALFORMED",
               "message": "Morph relation creation payloads must have the same relation type",
-              "userFriendlyMessage": "Morph relation creation payloads must have the same relation type",
+              "userFriendlyMessage": "An error occurred.",
             },
           ],
           "flatEntityMinimalInformation": {

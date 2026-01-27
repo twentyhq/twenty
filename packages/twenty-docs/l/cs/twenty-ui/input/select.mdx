@@ -24,10 +24,10 @@ Umožňuje uživatelům vybrat hodnotu z nabídky předdefinovaných možností.
           <Select
             className
             disabled={false}
-            label="Select an option"
+            label="Vyberte možnost"
             options={[
-              { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
-              { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+              { value: 'option1', label: 'Možnost A', Icon: IconTwentyStar },
+              { value: 'option2', label: 'Možnost B', Icon: IconTwentyStar },
             ]}
             value="option1"
           />
@@ -39,13 +39,13 @@ Umožňuje uživatelům vybrat hodnotu z nabídky předdefinovaných možností.
   </Tab>
 
   <Tab title="Vlastnosti">
-    | Vlastnosti | Typ                | Popis                                                                                                                                                                                                    |
-    | ---------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | className  | řetězec            | Volitelná CSS třída pro dodatečné stylování.                                                                                                                                                             |
-    | neaktivní  | booleovská hodnota | Pokud je nastaveno na `true`, zakáže interakci uživatele s komponentou.                                                                                                                                  |
-    | štítek     | textový řetězec    | Štítek popisující účel komponenty `Vybrat`.                                                                                                                                                              |
-    | onChange   | funkce             | Funkce volaná při změně vybraných hodnot.                                                                                                                                                                |
-    | možnosti   | pole               | Represents the options available for the `Selected` component. It's an array of objects where each object has a `value` (the unique identifier), `label` (the unique identifier), and an optional `Icon` |
-    | hodnota    | řetězec            | Reprezentuje aktuálně vybranou hodnotu. Měla by odpovídat jedné z `hodnot` v poli `možnosti`.                                                                                                            |
+    | Vlastnosti | Typ                | Popis                                                                                                                                                                                    |
+    | ---------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className  | řetězec            | Volitelná CSS třída pro dodatečné stylování.                                                                                                                                             |
+    | neaktivní  | booleovská hodnota | Pokud je nastaveno na `true`, zakáže interakci uživatele s komponentou.                                                                                                                  |
+    | štítek     | textový řetězec    | Štítek popisující účel komponenty `Vybrat`.                                                                                                                                              |
+    | onChange   | funkce             | Funkce volaná při změně vybraných hodnot.                                                                                                                                                |
+    | možnosti   | pole               | Představuje možnosti dostupné pro komponentu `Selected`. Je to pole objektů, kde každý objekt má `value` (jedinečný identifikátor), `label` (jedinečný identifikátor) a volitelný `Icon` |
+    | hodnota    | řetězec            | Reprezentuje aktuálně vybranou hodnotu. Měla by odpovídat jedné z `hodnot` v poli `možnosti`.                                                                                            |
   </Tab>
 </Tabs>

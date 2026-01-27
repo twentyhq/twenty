@@ -17,9 +17,6 @@ export const CommandMenuWorkflowSelectAction = ({
   onActionSelected: (actionType: WorkflowActionType) => void;
 }) => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-  const isIfElseEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_IF_ELSE_ENABLED,
-  );
 
   const { t } = useLingui();
 
@@ -49,9 +46,7 @@ export const CommandMenuWorkflowSelectAction = ({
         {t`Flow`}
       </RightDrawerWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
-        actions={FLOW_ACTIONS.filter(
-          (action) => action.type !== 'IF_ELSE' || isIfElseEnabled,
-        )}
+        actions={FLOW_ACTIONS}
         onClick={onActionSelected}
       />
 

@@ -32,4 +32,10 @@ export const StyledSettingsOptionCardTitle = styled.div`
 export const StyledSettingsOptionCardDescription = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
+
+  a {
+    position: relative;
+    z-index: 1;
+    pointer-events: auto;
+  }
 `;

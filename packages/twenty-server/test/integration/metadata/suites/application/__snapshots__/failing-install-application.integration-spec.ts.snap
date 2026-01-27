@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Install application should fail when entity does not exist should fail with execution error when deleting non-existent field metadata 1`] = `
+{
+  "eventId": Any<String>,
+  "extensions": {
+    "action": {
+      "metadataName": "fieldMetadata",
+      "type": "delete",
+      "universalIdentifier": Any<String>,
+    },
+    "code": "APPLICATION_INSTALLATION_FAILED",
+    "errors": {
+      "metadata": {
+        "code": "ENTITY_NOT_FOUND",
+        "message": "Could not find flat entity with universal identifier 20202020-6110-4547-9fd0-2525257a2c3f",
+      },
+      "workspaceSchema": {
+        "code": "ENTITY_NOT_FOUND",
+        "message": "Could not find flat entity in maps",
+      },
+    },
+    "exceptionEventId": Any<String>,
+    "userFriendlyMessage": "Migration execution failed.",
+  },
+  "message": "Migration action 'delete' for 'fieldMetadata' failed",
+  "name": "GraphQLError",
+}
+`;

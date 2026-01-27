@@ -47,6 +47,7 @@ export enum PermissionsExceptionCode {
   COMPOSITE_TYPE_NOT_FOUND = 'COMPOSITE_TYPE_NOT_FOUND',
   ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET = 'ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET',
   ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'ROLE_CANNOT_BE_ASSIGNED_TO_USERS',
+  APPLICATION_ROLE_NOT_FOUND = 'APPLICATION_ROLE_NOT_FOUND',
 }
 
 const getPermissionsExceptionUserFriendlyMessage = (
@@ -137,6 +138,8 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`Role must have at least one target.`;
     case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS:
       return msg`This role cannot be assigned to users.`;
+    case PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND:
+      return msg`No role assigned to the application.`;
     default:
       assertUnreachable(code);
   }
@@ -184,4 +187,5 @@ export enum PermissionsExceptionMessage {
   EMPTY_FIELD_PERMISSION_NOT_ALLOWED = 'Empty field permission not allowed',
   ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET = 'Role must be assignable to at least one target type',
   ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'Role cannot be assigned to users',
+  APPLICATION_ROLE_NOT_FOUND = 'Application role not found',
 }

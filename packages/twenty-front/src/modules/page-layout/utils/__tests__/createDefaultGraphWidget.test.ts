@@ -30,12 +30,13 @@ describe('createDefaultGraphWidget', () => {
         __typename: 'BarChartConfiguration',
         configurationType: WidgetConfigurationType.BAR_CHART,
         layout: BarChartLayout.VERTICAL,
-        displayDataLabel: false,
-        color: 'blue',
+        displayDataLabel: true,
+        displayLegend: true,
+        color: 'auto',
         primaryAxisGroupByFieldMetadataId: 'field-2',
         aggregateFieldMetadataId: 'field-1',
         aggregateOperation: AggregateOperations.SUM,
-        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_POSITION_ASC,
         axisNameDisplay: AxisNameDisplay.NONE,
       });
     });

@@ -10,8 +10,8 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
   icon: flatCommandMenuItem.icon ?? undefined,
   isPinned: flatCommandMenuItem.isPinned,
   availabilityType: flatCommandMenuItem.availabilityType,
-  availabilityObjectNameSingular:
-    flatCommandMenuItem.availabilityObjectNameSingular ?? undefined,
+  availabilityObjectMetadataId:
+    flatCommandMenuItem.availabilityObjectMetadataId ?? undefined,
   workspaceId: flatCommandMenuItem.workspaceId,
   applicationId: flatCommandMenuItem.applicationId ?? undefined,
   createdAt: new Date(flatCommandMenuItem.createdAt),

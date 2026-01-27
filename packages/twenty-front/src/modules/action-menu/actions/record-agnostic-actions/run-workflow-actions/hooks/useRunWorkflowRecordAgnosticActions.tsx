@@ -3,6 +3,8 @@ import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useFilteredCommandMenuItems } from '@/command-menu-item/hooks/useFilteredCommandMenuItems';
+import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
@@ -10,11 +12,15 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRunWorkflowRecordAgnosticActions = () => {
   const { getIcon } = useIcons();
+
+  const isPageInEditMode = useRecoilComponentValue(
+    contextStoreIsPageInEditModeComponentState,
+  );
 
   const { actionMenuType } = useContext(ActionMenuContext);
 
@@ -58,7 +64,9 @@ export const useRunWorkflowRecordAgnosticActions = () => {
         label: name,
         shortLabel: name,
         position: index,
-        isPinned: activeWorkflowVersion.trigger?.settings?.isPinned,
+        isPinned:
+          !isPageInEditMode &&
+          activeWorkflowVersion.trigger?.settings?.isPinned,
         Icon,
         shouldBeRegistered: () => true,
         component: (

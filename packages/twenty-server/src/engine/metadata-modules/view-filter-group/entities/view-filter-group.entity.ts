@@ -19,9 +19,8 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 
 @Entity({ name: 'viewFilterGroup', schema: 'core' })
 @Index('IDX_VIEW_FILTER_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-@Index('IDX_VIEW_FILTER_GROUP_VIEW_ID', ['viewId'], {
-  where: '"deletedAt" IS NULL',
-})
+@Index('IDX_VIEW_FILTER_GROUP_VIEW_ID', ['viewId'])
+@Index('IDX_VIEW_FILTER_GROUP_PARENT_ID', ['parentViewFilterGroupId'])
 export class ViewFilterGroupEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

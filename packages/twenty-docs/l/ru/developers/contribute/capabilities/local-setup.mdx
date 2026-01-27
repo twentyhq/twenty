@@ -114,7 +114,7 @@ cd twenty
     **Опция 2:** Если у вас установлен docker:
 
     ```bash
-    make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
@@ -170,10 +170,17 @@ cd twenty
 
     Это создает роль суперпользователя с именем `postgres` с доступом для входа.
 
+    ```bash
+    Role name | Attributes  | Member of
+    -----------+-------------+-----------
+    postgres  | Superuser   | {}
+    john      | Superuser   | {}
+    ```
+
     **Опция 2:** Если у вас установлен docker:
 
     ```bash
-    make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
@@ -194,7 +201,7 @@ cd twenty
     Используйте эту опцию только если вы комфортно себя чувствуете с дополнительными шагами, включая включение [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
 
     ```bash
-    make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 </Tabs>
@@ -213,7 +220,7 @@ Twenty требует кэша Redis для обеспечения наилуч�
     **Опция 2:** Если у вас установлен docker:
 
     ```bash
-    make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
@@ -230,7 +237,7 @@ Twenty требует кэша Redis для обеспечения наилуч�
     **Опция 2:** Если у вас установлен docker:
 
     ```bash
-    make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
@@ -241,7 +248,7 @@ Twenty требует кэша Redis для обеспечения наилуч�
     **Опция 2:** Если у вас установлен docker:
 
     ```bash
-    make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 </Tabs>
@@ -250,7 +257,7 @@ Twenty требует кэша Redis для обеспечения наилуч�
 
 ## Шаг 5: Настройка переменных окружения
 
-Используйте переменные окружения или файлы `.env` для настройки вашего проекта. More info [here](/l/ru/developers/self-host/capabilities/setup)
+Используйте переменные окружения или файлы `.env` для настройки вашего проекта. Подробнее [здесь](/l/ru/developers/self-host/capabilities/setup)
 
 Скопируйте `.env.example` файлы в `/front` и `/server`:
 
@@ -260,7 +267,7 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/ru/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+  **Режим нескольких рабочих пространств:** По умолчанию Twenty работает в режиме одного рабочего пространства, где можно создать только одно рабочее пространство. Чтобы включить поддержку нескольких рабочих пространств (полезно для тестирования функций, основанных на поддоменах), установите `IS_MULTIWORKSPACE_ENABLED=true` в файле `.env` вашего сервера. См. [Режим нескольких рабочих пространств](/l/ru/developers/self-host/capabilities/setup#multi-workspace-mode) для подробностей.
 </Info>
 
 ## Шаг 6: Установка зависимостей
