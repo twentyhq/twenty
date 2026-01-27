@@ -316,7 +316,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteCommandMenuItemAction;
     };
     flatEntity: FlatCommandMenuItem;
-    entity: MetadataEntity<'commandMenuItem'>;
+    entity: CommandMenuItemEntity;
   };
   navigationMenuItem: {
     actions: {
@@ -326,15 +326,6 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatNavigationMenuItem;
     entity: NavigationMenuItemEntity;
-  };
-  commandMenuItem: {
-    actions: {
-      create: CreateCommandMenuItemAction;
-      update: UpdateCommandMenuItemAction;
-      delete: DeleteCommandMenuItemAction;
-    };
-    flatEntity: FlatCommandMenuItem;
-    entity: CommandMenuItemEntity;
   };
   pageLayout: {
     actions: {
