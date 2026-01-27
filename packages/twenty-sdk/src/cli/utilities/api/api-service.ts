@@ -18,7 +18,8 @@ export class ApiService {
   private client: AxiosInstance;
   private configService: ConfigService;
 
-  constructor() {
+  constructor(options?: { disableInterceptors: boolean }) {
+    const { disableInterceptors = false } = options || {};
     this.configService = new ConfigService();
     this.client = axios.create();
 
@@ -33,6 +34,10 @@ export class ApiService {
 
       return config;
     });
+
+    if (disableInterceptors) {
+      return;
+    }
 
     this.client.interceptors.response.use(
       (response) => response,

@@ -13,7 +13,6 @@ describe('rich-app app:dev', () => {
 
   beforeAll(async () => {
     result = await runAppDev({ appPath: APP_PATH });
-
     expect(result.success).toBe(true);
   }, 60000);
 
