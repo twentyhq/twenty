@@ -1,5 +1,6 @@
 import { Logger, Scope } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -56,39 +57,52 @@ export class CalendarOngoingStaleJob {
         });
 
         for (const calendarChannel of calendarChannels) {
-          if (
-            calendarChannel.syncStageStartedAt &&
-            isSyncStale(calendarChannel.syncStageStartedAt)
-          ) {
-            await this.calendarChannelSyncStatusService.resetSyncStageStartedAt(
-              [calendarChannel.id],
-              workspaceId,
-            );
+          const isStale =
+            isDefined(calendarChannel.syncStageStartedAt) &&
+            isSyncStale(calendarChannel.syncStageStartedAt);
 
-            switch (calendarChannel.syncStage) {
-              case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING:
-              case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED:
-                this.logger.log(
-                  `Sync for calendar channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to CALENDAR_EVENT_LIST_FETCH_PENDING`,
-                );
-                await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
-                  [calendarChannel.id],
-                  workspaceId,
-                );
-                break;
-              case CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING:
-              case CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED:
-                this.logger.log(
-                  `Sync for calendar channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to CALENDAR_EVENTS_IMPORT_PENDING`,
-                );
-                await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
-                  [calendarChannel.id],
-                  workspaceId,
-                );
-                break;
-              default:
-                break;
-            }
+          const isMissingSyncStageStartedAt = !isDefined(
+            calendarChannel.syncStageStartedAt,
+          );
+
+          if (!isStale && !isMissingSyncStageStartedAt) {
+            continue;
+          }
+
+          if (isMissingSyncStageStartedAt) {
+            this.logger.log(
+              `Calendar channel ${calendarChannel.id} in workspace ${workspaceId} is stuck in ${calendarChannel.syncStage} with no syncStageStartedAt. Resetting to pending state.`,
+            );
+          }
+
+          await this.calendarChannelSyncStatusService.resetSyncStageStartedAt(
+            [calendarChannel.id],
+            workspaceId,
+          );
+
+          switch (calendarChannel.syncStage) {
+            case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING:
+            case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED:
+              this.logger.log(
+                `Sync for calendar channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to CALENDAR_EVENT_LIST_FETCH_PENDING`,
+              );
+              await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
+                [calendarChannel.id],
+                workspaceId,
+              );
+              break;
+            case CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING:
+            case CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED:
+              this.logger.log(
+                `Sync for calendar channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to CALENDAR_EVENTS_IMPORT_PENDING`,
+              );
+              await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
+                [calendarChannel.id],
+                workspaceId,
+              );
+              break;
+            default:
+              break;
           }
         }
       },

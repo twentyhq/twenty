@@ -1,5 +1,6 @@
 import { Logger, Scope } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -56,39 +57,52 @@ export class MessagingOngoingStaleJob {
         });
 
         for (const messageChannel of messageChannels) {
-          if (
-            messageChannel.syncStageStartedAt &&
-            isSyncStale(messageChannel.syncStageStartedAt)
-          ) {
-            await this.messageChannelSyncStatusService.resetSyncStageStartedAt(
-              [messageChannel.id],
-              workspaceId,
-            );
+          const isStale =
+            isDefined(messageChannel.syncStageStartedAt) &&
+            isSyncStale(messageChannel.syncStageStartedAt);
 
-            switch (messageChannel.syncStage) {
-              case MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING:
-              case MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED:
-                this.logger.log(
-                  `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGE_LIST_FETCH_PENDING`,
-                );
-                await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
-                  [messageChannel.id],
-                  workspaceId,
-                );
-                break;
-              case MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING:
-              case MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED:
-                this.logger.log(
-                  `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGES_IMPORT_PENDING`,
-                );
-                await this.messageChannelSyncStatusService.markAsMessagesImportPending(
-                  [messageChannel.id],
-                  workspaceId,
-                );
-                break;
-              default:
-                break;
-            }
+          const isMissingSyncStageStartedAt = !isDefined(
+            messageChannel.syncStageStartedAt,
+          );
+
+          if (!isStale && !isMissingSyncStageStartedAt) {
+            continue;
+          }
+
+          if (isMissingSyncStageStartedAt) {
+            this.logger.log(
+              `Message channel ${messageChannel.id} in workspace ${workspaceId} is stuck in ${messageChannel.syncStage} with no syncStageStartedAt. Resetting to pending state.`,
+            );
+          }
+
+          await this.messageChannelSyncStatusService.resetSyncStageStartedAt(
+            [messageChannel.id],
+            workspaceId,
+          );
+
+          switch (messageChannel.syncStage) {
+            case MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING:
+            case MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED:
+              this.logger.log(
+                `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGE_LIST_FETCH_PENDING`,
+              );
+              await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
+                [messageChannel.id],
+                workspaceId,
+              );
+              break;
+            case MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING:
+            case MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED:
+              this.logger.log(
+                `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGES_IMPORT_PENDING`,
+              );
+              await this.messageChannelSyncStatusService.markAsMessagesImportPending(
+                [messageChannel.id],
+                workspaceId,
+              );
+              break;
+            default:
+              break;
           }
         }
       },
