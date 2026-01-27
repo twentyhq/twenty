@@ -46,7 +46,6 @@ describe('createWebhookInput', () => {
       const result = createWebhookUpdateInput(mockFormValues);
 
       expect(result).toEqual({
-        id: 'test-webhook-id',
         targetUrl: 'https://test.com/webhook',
         operations: ['person.created', 'company.updated'],
         description: 'Test webhook',
