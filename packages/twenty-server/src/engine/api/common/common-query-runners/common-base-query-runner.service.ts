@@ -141,7 +141,6 @@ export abstract class CommonBaseQueryRunnerService<
     } as CommonExtendedInput<Args>;
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () =>
         this.executeQueryAndEnrichResults(
           processedArgs,
@@ -149,6 +148,7 @@ export abstract class CommonBaseQueryRunnerService<
           queryRunnerContext,
           commonQueryParser,
         ),
+      authContext,
     );
   }
 

@@ -57,7 +57,6 @@ export class WorkflowRunWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowRunRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
@@ -136,6 +135,7 @@ export class WorkflowRunWorkspaceService {
 
         return workflowRun.id;
       },
+      authContext,
     );
   }
 
@@ -346,7 +346,6 @@ export class WorkflowRunWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowRunRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
@@ -359,6 +358,7 @@ export class WorkflowRunWorkspaceService {
           where: { id: workflowRunId },
         });
       },
+      authContext,
     );
   }
 
@@ -395,35 +395,32 @@ export class WorkflowRunWorkspaceService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workflowRunRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-            workspaceId,
-            'workflowRun',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const workflowRunToUpdate = await workflowRunRepository.findOneBy({
-          id: workflowRunId,
-        });
-
-        if (!workflowRunToUpdate) {
-          throw new WorkflowRunException(
-            `workflowRun ${workflowRunId} not found`,
-            WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
-          );
-        }
-
-        await workflowRunRepository.update(
-          workflowRunToUpdate.id,
-          partialUpdate,
-          undefined,
-          ['id'],
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowRunRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+          workspaceId,
+          'workflowRun',
+          { shouldBypassPermissionChecks: true },
         );
-      },
-    );
+
+      const workflowRunToUpdate = await workflowRunRepository.findOneBy({
+        id: workflowRunId,
+      });
+
+      if (!workflowRunToUpdate) {
+        throw new WorkflowRunException(
+          `workflowRun ${workflowRunId} not found`,
+          WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
+        );
+      }
+
+      await workflowRunRepository.update(
+        workflowRunToUpdate.id,
+        partialUpdate,
+        undefined,
+        ['id'],
+      );
+    }, authContext);
   }
 
   private getInitState(

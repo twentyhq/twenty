@@ -15,7 +15,7 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { UpdateWorkspaceMemberEmailJob } from 'src/engine/core-modules/user/jobs/update-workspace-member-email.job';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
-import { WebhookJobModule } from 'src/engine/core-modules/webhook/jobs/webhook-job.module';
+import { WebhookJobModule } from 'src/engine/metadata-modules/webhook/jobs/webhook-job.module';
 import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -34,6 +34,7 @@ import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/cale
 import { CalendarModule } from 'src/modules/calendar/calendar.module';
 import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/contact-creation-manager/jobs/auto-companies-and-contacts-creation-job.module';
 import { FavoriteModule } from 'src/modules/favorite/favorite.module';
+import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
@@ -62,6 +63,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     WebhookJobModule,
     WorkflowModule,
     FavoriteModule,
+    NavigationMenuItemModule,
     WorkspaceCleanerModule,
     SubscriptionsModule,
     AuditJobModule,

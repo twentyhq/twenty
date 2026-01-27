@@ -106,6 +106,11 @@ export const ALL_METADATA_RELATIONS = {
         flatEntityForeignKeyAggregator: null,
         foreignKey: 'folderId',
       },
+      view: {
+        metadataName: 'view',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'viewId',
+      },
     },
     oneToMany: {},
   },
@@ -467,6 +472,13 @@ export const ALL_METADATA_RELATIONS = {
     },
   },
   frontComponent: {
+    manyToOne: {
+      workspace: null,
+      application: null,
+    },
+    oneToMany: {},
+  },
+  webhook: {
     manyToOne: {
       workspace: null,
       application: null,

@@ -1,4 +1,5 @@
 import { type FileFolder } from 'twenty-shared/types';
+import { type Location } from 'esbuild';
 
 export interface RestartableWatcher {
   restart(sourcePaths: string[]): Promise<void>;
@@ -14,7 +15,9 @@ export type OnFileBuiltCallback = (options: {
   checksum: string;
 }) => void | Promise<void>;
 
-export type OnBuildErrorCallback = (errors: string[]) => void | Promise<void>;
+export type OnBuildErrorCallback = (
+  errors: { error: string; location: Location | null }[],
+) => void | Promise<void>;
 
 export type RestartableWatcherOptions = {
   appPath: string;

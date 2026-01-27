@@ -4,7 +4,6 @@ import {
   Module,
   RequestMethod,
 } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
@@ -24,6 +23,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { WorkspaceAuthContextMiddleware } from 'src/engine/core-modules/auth/middlewares/workspace-auth-context.middleware';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
 import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware';
@@ -48,10 +48,6 @@ const MIGRATED_REST_METHODS = [
 @Module({
   imports: [
     SentryModule.forRoot(),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
-    }),
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
       imports: [GraphQLConfigModule, MetricsModule, DataloaderModule],
@@ -116,16 +112,22 @@ export class AppModule {
 
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(GraphQLHydrateRequestFromTokenMiddleware)
+      .apply(
+        GraphQLHydrateRequestFromTokenMiddleware,
+        WorkspaceAuthContextMiddleware,
+      )
       .forRoutes({ path: 'graphql', method: RequestMethod.ALL });
 
     consumer
-      .apply(GraphQLHydrateRequestFromTokenMiddleware)
+      .apply(
+        GraphQLHydrateRequestFromTokenMiddleware,
+        WorkspaceAuthContextMiddleware,
+      )
       .forRoutes({ path: 'metadata', method: RequestMethod.ALL });
 
     for (const method of MIGRATED_REST_METHODS) {
       consumer
-        .apply(RestCoreMiddleware)
+        .apply(RestCoreMiddleware, WorkspaceAuthContextMiddleware)
         .forRoutes({ path: 'rest/*path', method });
     }
   }

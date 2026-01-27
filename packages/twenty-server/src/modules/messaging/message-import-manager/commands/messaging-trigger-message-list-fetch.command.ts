@@ -51,63 +51,60 @@ export class MessagingTriggerMessageListFetchCommand extends CommandRunner {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const messageChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+          workspaceId,
+          'messageChannel',
+        );
+
+      const whereCondition: Record<string, unknown> = {
+        isSyncEnabled: true,
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+      };
+
+      if (messageChannelId) {
+        whereCondition.id = messageChannelId;
+      }
+
+      const messageChannels =
+        await messageChannelRepository.find(whereCondition);
+
+      if (messageChannels.length === 0) {
+        this.logger.warn(
+          'No message channels found with MESSAGE_LIST_FETCH_PENDING status',
+        );
+
+        return;
+      }
+
+      this.logger.log(
+        `Found ${messageChannels.length} message channel(s) to process`,
+      );
+
+      for (const messageChannel of messageChannels) {
+        await messageChannelRepository.update(messageChannel.id, {
+          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
+          syncStageStartedAt: new Date().toISOString(),
+        });
+
+        await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+          MessagingMessageListFetchJob.name,
+          {
+            messageChannelId: messageChannel.id,
             workspaceId,
-            'messageChannel',
-          );
-
-        const whereCondition: Record<string, unknown> = {
-          isSyncEnabled: true,
-          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-        };
-
-        if (messageChannelId) {
-          whereCondition.id = messageChannelId;
-        }
-
-        const messageChannels =
-          await messageChannelRepository.find(whereCondition);
-
-        if (messageChannels.length === 0) {
-          this.logger.warn(
-            'No message channels found with MESSAGE_LIST_FETCH_PENDING status',
-          );
-
-          return;
-        }
-
-        this.logger.log(
-          `Found ${messageChannels.length} message channel(s) to process`,
+          },
         );
 
-        for (const messageChannel of messageChannels) {
-          await messageChannelRepository.update(messageChannel.id, {
-            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
-            syncStageStartedAt: new Date().toISOString(),
-          });
-
-          await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-            MessagingMessageListFetchJob.name,
-            {
-              messageChannelId: messageChannel.id,
-              workspaceId,
-            },
-          );
-
-          this.logger.log(
-            `Triggered fetch for message channel ${messageChannel.id}`,
-          );
-        }
-
         this.logger.log(
-          `Successfully triggered ${messageChannels.length} message list fetch job(s)`,
+          `Triggered fetch for message channel ${messageChannel.id}`,
         );
-      },
-    );
+      }
+
+      this.logger.log(
+        `Successfully triggered ${messageChannels.length} message list fetch job(s)`,
+      );
+    }, authContext);
   }
 
   @Option({

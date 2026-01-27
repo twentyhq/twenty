@@ -206,27 +206,24 @@ const createDashboardRecord = async (
 ): Promise<string> => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
-  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-    authContext,
-    async () => {
-      const dashboardRepository =
-        await deps.globalWorkspaceOrmManager.getRepository(
-          context.workspaceId,
-          'dashboard',
-          { shouldBypassPermissionChecks: true },
-        );
+  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    const dashboardRepository =
+      await deps.globalWorkspaceOrmManager.getRepository(
+        context.workspaceId,
+        'dashboard',
+        { shouldBypassPermissionChecks: true },
+      );
 
-      const position = await deps.recordPositionService.buildRecordPosition({
-        value: 'first',
-        objectMetadata: { isCustom: false, nameSingular: 'dashboard' },
-        workspaceId: context.workspaceId,
-      });
+    const position = await deps.recordPositionService.buildRecordPosition({
+      value: 'first',
+      objectMetadata: { isCustom: false, nameSingular: 'dashboard' },
+      workspaceId: context.workspaceId,
+    });
 
-      const dashboard = { id: uuidv4(), title, pageLayoutId, position };
+    const dashboard = { id: uuidv4(), title, pageLayoutId, position };
 
-      await dashboardRepository.insert(dashboard);
+    await dashboardRepository.insert(dashboard);
 
-      return dashboard.id;
-    },
-  );
+    return dashboard.id;
+  }, authContext);
 };

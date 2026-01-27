@@ -5,6 +5,7 @@ import { buildStandardFlatFieldMetadataMaps } from 'src/engine/workspace-manager
 import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 import { getStandardPageLayoutMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-page-layout-metadata-related-entity-ids.util';
 import { buildStandardFlatIndexMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-flat-index-metadata-maps.util';
+import { buildStandardFlatNavigationMenuItemMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/build-standard-flat-navigation-menu-item-maps.util';
 import { buildStandardFlatObjectMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/build-standard-flat-object-metadata-maps.util';
 import { buildStandardFlatPageLayoutTabMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-tab/build-standard-flat-page-layout-tab-metadata-maps.util';
 import { buildStandardFlatPageLayoutWidgetMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-widget/build-standard-flat-page-layout-widget-metadata-maps.util';
@@ -161,6 +162,15 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
       standardPageLayoutMetadataRelatedEntityIds,
     });
 
+  const flatNavigationMenuItemMaps = buildStandardFlatNavigationMenuItemMaps({
+    now,
+    workspaceId,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps: {
+      flatViewMaps,
+    },
+  });
+
   return {
     flatViewFieldMaps,
     flatViewFilterMaps,
@@ -169,6 +179,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatIndexMaps,
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
+    flatNavigationMenuItemMaps,
     flatRoleMaps,
     flatAgentMaps,
     flatSkillMaps,

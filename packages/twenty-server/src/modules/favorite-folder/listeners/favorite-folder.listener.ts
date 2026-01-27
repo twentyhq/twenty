@@ -25,22 +25,19 @@ export class FavoriteFolderDeletionListener {
     const workspaceId = payload.workspaceId;
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        for (const eventPayload of payload.events) {
-          const favoriteRepository =
-            await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
-              workspaceId,
-              'favorite',
-            );
-
-          await favoriteRepository.update(
-            { favoriteFolderId: eventPayload.recordId },
-            { deletedAt: new Date().toISOString() },
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      for (const eventPayload of payload.events) {
+        const favoriteRepository =
+          await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
+            workspaceId,
+            'favorite',
           );
-        }
-      },
-    );
+
+        await favoriteRepository.update(
+          { favoriteFolderId: eventPayload.recordId },
+          { deletedAt: new Date().toISOString() },
+        );
+      }
+    }, authContext);
   }
 }

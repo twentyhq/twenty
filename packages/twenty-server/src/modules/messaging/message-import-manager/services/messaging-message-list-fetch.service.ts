@@ -58,254 +58,250 @@ export class MessagingMessageListFetchService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        try {
-          const pendingGroupEmailActionsProcessed =
-            await this.processPendingGroupEmailActions(
-              messageChannel,
-              workspaceId,
-            );
-
-          const pendingFolderActionsProcessed =
-            await this.processPendingFolderActions(messageChannel, workspaceId);
-
-          await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
-            [messageChannel.id],
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      try {
+        const pendingGroupEmailActionsProcessed =
+          await this.processPendingGroupEmailActions(
+            messageChannel,
             workspaceId,
           );
 
-          this.logger.log(
-            `messageChannelId: ${messageChannel.id} Processing message list fetch`,
+        const pendingFolderActionsProcessed =
+          await this.processPendingFolderActions(messageChannel, workspaceId);
+
+        await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
+          [messageChannel.id],
+          workspaceId,
+        );
+
+        this.logger.log(
+          `messageChannelId: ${messageChannel.id} Processing message list fetch`,
+        );
+
+        const messageChannelRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+            workspaceId,
+            'messageChannel',
           );
 
-          const messageChannelRepository =
-            await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+        const freshMessageChannel =
+          pendingGroupEmailActionsProcessed || pendingFolderActionsProcessed
+            ? await messageChannelRepository.findOne({
+                where: {
+                  id: messageChannel.id,
+                },
+                relations: ['connectedAccount', 'messageFolders'],
+              })
+            : messageChannel;
+
+        if (!isDefined(freshMessageChannel)) {
+          this.logger.error(
+            `error processing message list fetch: messageChannelId: ${messageChannel.id} Message channel not found`,
+          );
+
+          return;
+        }
+
+        const { accessToken, refreshToken } =
+          await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
+            {
+              connectedAccount: freshMessageChannel.connectedAccount,
               workspaceId,
-              'messageChannel',
-            );
-
-          const freshMessageChannel =
-            pendingGroupEmailActionsProcessed || pendingFolderActionsProcessed
-              ? await messageChannelRepository.findOne({
-                  where: {
-                    id: messageChannel.id,
-                  },
-                  relations: ['connectedAccount', 'messageFolders'],
-                })
-              : messageChannel;
-
-          if (!isDefined(freshMessageChannel)) {
-            this.logger.error(
-              `error processing message list fetch: messageChannelId: ${messageChannel.id} Message channel not found`,
-            );
-
-            return;
-          }
-
-          const { accessToken, refreshToken } =
-            await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
-              {
-                connectedAccount: freshMessageChannel.connectedAccount,
-                workspaceId,
-                messageChannelId: freshMessageChannel.id,
-              },
-            );
-
-          const messageChannelWithFreshTokens = {
-            ...freshMessageChannel,
-            connectedAccount: {
-              ...freshMessageChannel.connectedAccount,
-              accessToken,
-              refreshToken,
+              messageChannelId: freshMessageChannel.id,
             },
-          };
+          );
 
-          const messageFolders =
-            await this.syncMessageFoldersService.syncMessageFolders({
-              messageChannel: messageChannelWithFreshTokens,
-              workspaceId,
+        const messageChannelWithFreshTokens = {
+          ...freshMessageChannel,
+          connectedAccount: {
+            ...freshMessageChannel.connectedAccount,
+            accessToken,
+            refreshToken,
+          },
+        };
+
+        const messageFolders =
+          await this.syncMessageFoldersService.syncMessageFolders({
+            messageChannel: messageChannelWithFreshTokens,
+            workspaceId,
+          });
+
+        const messageFoldersToSync = messageFolders.filter(
+          (folder) =>
+            folder.pendingSyncAction === MessageFolderPendingSyncAction.NONE,
+        );
+
+        const messageLists =
+          await this.messagingGetMessageListService.getMessageLists(
+            messageChannelWithFreshTokens,
+            messageFoldersToSync,
+          );
+
+        await this.cacheStorage.del(
+          `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
+        );
+
+        const messageExternalIds = messageLists.flatMap(
+          (messageList) => messageList.messageExternalIds,
+        );
+
+        const messageExternalIdsToDelete = messageLists.flatMap(
+          (messageList) => messageList.messageExternalIdsToDelete,
+        );
+
+        const isFullSync =
+          messageLists.every(
+            (messageList) => !isNonEmptyString(messageList.previousSyncCursor),
+          ) && !isNonEmptyString(freshMessageChannel.syncCursor);
+
+        let totalMessagesToImportCount = 0;
+
+        this.logger.log(
+          `messageChannelId: ${freshMessageChannel.id} Is full sync: ${isFullSync} and toImportCount: ${messageExternalIds.length}, toDeleteCount: ${messageExternalIdsToDelete.length}, cursors: ${messageLists.map(
+            (messageList) => {
+              messageList.nextSyncCursor;
+            },
+          )}`,
+        );
+
+        const messageChannelMessageAssociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            workspaceId,
+            'messageChannelMessageAssociation',
+          );
+
+        const messageExternalIdsChunks = chunk(messageExternalIds, 200);
+
+        for (const [
+          index,
+          messageExternalIdsChunk,
+        ] of messageExternalIdsChunks.entries()) {
+          const existingMessageChannelMessageAssociations =
+            await messageChannelMessageAssociationRepository.find({
+              where: {
+                messageChannelId: freshMessageChannel.id,
+                messageExternalId: In(messageExternalIdsChunk),
+              },
             });
 
-          const messageFoldersToSync = messageFolders.filter(
-            (folder) =>
-              folder.pendingSyncAction === MessageFolderPendingSyncAction.NONE,
-          );
-
-          const messageLists =
-            await this.messagingGetMessageListService.getMessageLists(
-              messageChannelWithFreshTokens,
-              messageFoldersToSync,
-            );
-
-          await this.cacheStorage.del(
-            `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
-          );
-
-          const messageExternalIds = messageLists.flatMap(
-            (messageList) => messageList.messageExternalIds,
-          );
-
-          const messageExternalIdsToDelete = messageLists.flatMap(
-            (messageList) => messageList.messageExternalIdsToDelete,
-          );
-
-          const isFullSync =
-            messageLists.every(
-              (messageList) =>
-                !isNonEmptyString(messageList.previousSyncCursor),
-            ) && !isNonEmptyString(freshMessageChannel.syncCursor);
-
-          let totalMessagesToImportCount = 0;
-
-          this.logger.log(
-            `messageChannelId: ${freshMessageChannel.id} Is full sync: ${isFullSync} and toImportCount: ${messageExternalIds.length}, toDeleteCount: ${messageExternalIdsToDelete.length}, cursors: ${messageLists.map(
-              (messageList) => {
-                messageList.nextSyncCursor;
-              },
-            )}`,
-          );
-
-          const messageChannelMessageAssociationRepository =
-            await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-              workspaceId,
-              'messageChannelMessageAssociation',
-            );
-
-          const messageExternalIdsChunks = chunk(messageExternalIds, 200);
-
-          for (const [
-            index,
-            messageExternalIdsChunk,
-          ] of messageExternalIdsChunks.entries()) {
-            const existingMessageChannelMessageAssociations =
-              await messageChannelMessageAssociationRepository.find({
-                where: {
-                  messageChannelId: freshMessageChannel.id,
-                  messageExternalId: In(messageExternalIdsChunk),
-                },
-              });
-
-            const existingMessageChannelMessageAssociationsExternalIds =
-              existingMessageChannelMessageAssociations.map(
-                (messageChannelMessageAssociation) =>
-                  messageChannelMessageAssociation.messageExternalId,
-              );
-
-            const messageExternalIdsToImport = messageExternalIdsChunk.filter(
-              (messageExternalId) =>
-                !existingMessageChannelMessageAssociationsExternalIds.includes(
-                  messageExternalId,
-                ),
-            );
-
-            if (messageExternalIdsToImport.length) {
-              this.logger.log(
-                `messageChannelId: ${freshMessageChannel.id} Adding ${messageExternalIdsToImport.length} message external ids to import in batch ${index + 1}`,
-              );
-
-              totalMessagesToImportCount += messageExternalIdsToImport.length;
-
-              await this.cacheStorage.setAdd(
-                `messages-to-import:${workspaceId}:${messageChannelWithFreshTokens.id}`,
-                messageExternalIdsToImport,
-                ONE_WEEK_IN_MILLISECONDS,
-              );
-            }
-          }
-
-          for (const messageList of messageLists) {
-            const { nextSyncCursor, folderId } = messageList;
-
-            await this.messagingCursorService.updateCursor(
-              messageChannelWithFreshTokens,
-              nextSyncCursor,
-              workspaceId,
-              folderId,
-            );
-          }
-
-          const fullSyncMessageChannelMessageAssociationsToDelete = isFullSync
-            ? await this.computeFullSyncMessageChannelMessageAssociationsToDelete(
-                freshMessageChannel,
-                messageExternalIds,
-                workspaceId,
-              )
-            : [];
-
-          const allMessageExternalIdsToDelete = [
-            ...messageExternalIdsToDelete,
-            ...fullSyncMessageChannelMessageAssociationsToDelete.map(
+          const existingMessageChannelMessageAssociationsExternalIds =
+            existingMessageChannelMessageAssociations.map(
               (messageChannelMessageAssociation) =>
                 messageChannelMessageAssociation.messageExternalId,
-            ),
-          ];
+            );
 
-          if (allMessageExternalIdsToDelete.length) {
+          const messageExternalIdsToImport = messageExternalIdsChunk.filter(
+            (messageExternalId) =>
+              !existingMessageChannelMessageAssociationsExternalIds.includes(
+                messageExternalId,
+              ),
+          );
+
+          if (messageExternalIdsToImport.length) {
             this.logger.log(
-              `messageChannelId: ${freshMessageChannel.id} Deleting ${allMessageExternalIdsToDelete.length} message channel message associations`,
+              `messageChannelId: ${freshMessageChannel.id} Adding ${messageExternalIdsToImport.length} message external ids to import in batch ${index + 1}`,
             );
 
-            const toDeleteChunks = chunk(allMessageExternalIdsToDelete, 200);
+            totalMessagesToImportCount += messageExternalIdsToImport.length;
 
-            for (const [index, toDeleteChunk] of toDeleteChunks.entries()) {
-              this.logger.log(
-                `messageChannelId: ${freshMessageChannel.id} Deleting ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
-              );
-
-              await this.messagingMessageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
-                {
-                  workspaceId,
-                  messageExternalIds: toDeleteChunk.filter(
-                    (messageExternalId) => isNonEmptyString(messageExternalId),
-                  ),
-                  messageChannelId: messageChannelWithFreshTokens.id,
-                },
-              );
-            }
+            await this.cacheStorage.setAdd(
+              `messages-to-import:${workspaceId}:${messageChannelWithFreshTokens.id}`,
+              messageExternalIdsToImport,
+              ONE_WEEK_IN_MILLISECONDS,
+            );
           }
+        }
 
-          this.logger.log(
-            `messageChannelId: ${freshMessageChannel.id} Total messages to import count: ${totalMessagesToImportCount}`,
+        for (const messageList of messageLists) {
+          const { nextSyncCursor, folderId } = messageList;
+
+          await this.messagingCursorService.updateCursor(
+            messageChannelWithFreshTokens,
+            nextSyncCursor,
+            workspaceId,
+            folderId,
           );
+        }
 
-          if (totalMessagesToImportCount === 0) {
-            await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
-              [messageChannelWithFreshTokens.id],
+        const fullSyncMessageChannelMessageAssociationsToDelete = isFullSync
+          ? await this.computeFullSyncMessageChannelMessageAssociationsToDelete(
+              freshMessageChannel,
+              messageExternalIds,
               workspaceId,
-            );
+            )
+          : [];
 
-            return;
-          }
+        const allMessageExternalIdsToDelete = [
+          ...messageExternalIdsToDelete,
+          ...fullSyncMessageChannelMessageAssociationsToDelete.map(
+            (messageChannelMessageAssociation) =>
+              messageChannelMessageAssociation.messageExternalId,
+          ),
+        ];
 
+        if (allMessageExternalIdsToDelete.length) {
           this.logger.log(
-            `messageChannelId: ${freshMessageChannel.id} Scheduling direct messages import`,
+            `messageChannelId: ${freshMessageChannel.id} Deleting ${allMessageExternalIdsToDelete.length} message channel message associations`,
           );
 
-          await this.messageChannelSyncStatusService.markAsMessagesImportScheduled(
+          const toDeleteChunks = chunk(allMessageExternalIdsToDelete, 200);
+
+          for (const [index, toDeleteChunk] of toDeleteChunks.entries()) {
+            this.logger.log(
+              `messageChannelId: ${freshMessageChannel.id} Deleting ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
+            );
+
+            await this.messagingMessageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
+              {
+                workspaceId,
+                messageExternalIds: toDeleteChunk.filter((messageExternalId) =>
+                  isNonEmptyString(messageExternalId),
+                ),
+                messageChannelId: messageChannelWithFreshTokens.id,
+              },
+            );
+          }
+        }
+
+        this.logger.log(
+          `messageChannelId: ${freshMessageChannel.id} Total messages to import count: ${totalMessagesToImportCount}`,
+        );
+
+        if (totalMessagesToImportCount === 0) {
+          await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
             [messageChannelWithFreshTokens.id],
             workspaceId,
           );
 
-          await this.messagingMessagesImportService.processMessageBatchImport(
-            {
-              ...messageChannelWithFreshTokens,
-              syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
-            },
-            messageChannelWithFreshTokens.connectedAccount,
-            workspaceId,
-          );
-        } catch (error) {
-          await this.messageImportErrorHandlerService.handleDriverException(
-            error,
-            MessageImportSyncStep.MESSAGE_LIST_FETCH,
-            messageChannel,
-            workspaceId,
-          );
+          return;
         }
-      },
-    );
+
+        this.logger.log(
+          `messageChannelId: ${freshMessageChannel.id} Scheduling direct messages import`,
+        );
+
+        await this.messageChannelSyncStatusService.markAsMessagesImportScheduled(
+          [messageChannelWithFreshTokens.id],
+          workspaceId,
+        );
+
+        await this.messagingMessagesImportService.processMessageBatchImport(
+          {
+            ...messageChannelWithFreshTokens,
+            syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+          },
+          messageChannelWithFreshTokens.connectedAccount,
+          workspaceId,
+        );
+      } catch (error) {
+        await this.messageImportErrorHandlerService.handleDriverException(
+          error,
+          MessageImportSyncStep.MESSAGE_LIST_FETCH,
+          messageChannel,
+          workspaceId,
+        );
+      }
+    }, authContext);
   }
 
   private async processPendingGroupEmailActions(

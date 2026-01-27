@@ -14,7 +14,6 @@ import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/wor
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration';
-import { WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
@@ -35,19 +34,18 @@ export class WorkspaceMigrationRunnerService {
   ) {}
 
   private getLegacyCacheInvalidationPromises({
-    workspaceMigration: { actions, workspaceId },
+    allFlatEntityMapsKeys,
+    workspaceId,
   }: {
-    workspaceMigration: Omit<WorkspaceMigration, 'relatedFlatEntityMapsKeys'>;
+    allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
+    workspaceId: string;
   }): Promise<void>[] {
     const asyncOperations: Promise<void>[] = [];
-    const shouldIncrementMetadataGraphqlSchemaVersion = actions.some(
-      (action) => {
-        return (
-          action.metadataName === 'objectMetadata' ||
-          action.metadataName === 'fieldMetadata'
-        );
-      },
-    );
+    const flatMapsKeysSet = new Set(allFlatEntityMapsKeys);
+
+    const shouldIncrementMetadataGraphqlSchemaVersion =
+      flatMapsKeysSet.has('flatObjectMetadataMaps') ||
+      flatMapsKeysSet.has('flatFieldMetadataMaps');
 
     if (shouldIncrementMetadataGraphqlSchemaVersion) {
       asyncOperations.push(
@@ -57,16 +55,15 @@ export class WorkspaceMigrationRunnerService {
       );
     }
 
-    const viewRelatedMetadataNames = [
-      'view',
-      'viewFilter',
-      'viewGroup',
-      'viewField',
-      'viewFilterGroup',
+    const viewRelatedFlatMapsKeys: (keyof AllFlatEntityMaps)[] = [
+      'flatViewMaps',
+      'flatViewFilterMaps',
+      'flatViewGroupMaps',
+      'flatViewFieldMaps',
+      'flatViewFilterGroupMaps',
     ];
-    const shouldInvalidFindCoreViewsGraphqlCacheOperation = actions.some(
-      (action) => viewRelatedMetadataNames.includes(action.metadataName),
-    );
+    const shouldInvalidFindCoreViewsGraphqlCacheOperation =
+      viewRelatedFlatMapsKeys.some((key) => flatMapsKeysSet.has(key));
 
     if (
       shouldInvalidFindCoreViewsGraphqlCacheOperation ||
@@ -80,11 +77,9 @@ export class WorkspaceMigrationRunnerService {
       );
     }
 
-    const shouldInvalidateRoleMapCache = actions.some((action) => {
-      return (
-        action.metadataName === 'role' || action.metadataName === 'roleTarget'
-      );
-    });
+    const shouldInvalidateRoleMapCache =
+      flatMapsKeysSet.has('flatRoleMaps') ||
+      flatMapsKeysSet.has('flatRoleTargetMaps');
 
     if (
       shouldIncrementMetadataGraphqlSchemaVersion ||
@@ -105,14 +100,12 @@ export class WorkspaceMigrationRunnerService {
     return asyncOperations;
   }
 
-  private async invalidateCachePostExecution({
+  async invalidateCache({
     allFlatEntityMapsKeys,
     workspaceId,
-    actions,
   }: {
     allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
     workspaceId: string;
-    actions: WorkspaceMigrationAction[];
   }): Promise<void> {
     this.logger.time(
       'Runner',
@@ -126,10 +119,8 @@ export class WorkspaceMigrationRunnerService {
 
     const invalidationResults = await Promise.allSettled(
       this.getLegacyCacheInvalidationPromises({
-        workspaceMigration: {
-          actions,
-          workspaceId,
-        },
+        allFlatEntityMapsKeys,
+        workspaceId,
       }),
     );
 
@@ -214,10 +205,9 @@ export class WorkspaceMigrationRunnerService {
 
       this.logger.timeEnd('Runner', 'Transaction execution');
 
-      await this.invalidateCachePostExecution({
+      await this.invalidateCache({
         allFlatEntityMapsKeys,
         workspaceId,
-        actions,
       });
 
       this.logger.timeEnd('Runner', 'Total execution');

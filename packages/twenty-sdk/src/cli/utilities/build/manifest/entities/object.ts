@@ -2,7 +2,6 @@ import { glob } from 'fast-glob';
 import { type ObjectManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { createLogger } from '@/cli/utilities/build/common/logger';
 import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
 import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 import {
@@ -11,8 +10,6 @@ import {
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
-
-const logger = createLogger('manifest-builder');
 
 export class ObjectEntityBuilder
   implements ManifestEntityBuilder<ObjectManifest>
@@ -111,10 +108,6 @@ export class ObjectEntityBuilder
         }
       }
     }
-  }
-
-  display(objects: ObjectManifest[]): void {
-    logger.success(`✓ Found ${objects.length} object(s)`);
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {

@@ -150,24 +150,21 @@ export class MessageImportExceptionHandlerService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const messageChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-            workspaceId,
-            'messageChannel',
-          );
-
-        await messageChannelRepository.increment(
-          { id: messageChannel.id },
-          'throttleFailureCount',
-          1,
-          undefined,
-          ['throttleFailureCount', 'id'],
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+          workspaceId,
+          'messageChannel',
         );
-      },
-    );
+
+      await messageChannelRepository.increment(
+        { id: messageChannel.id },
+        'throttleFailureCount',
+        1,
+        undefined,
+        ['throttleFailureCount', 'id'],
+      );
+    }, authContext);
 
     switch (syncStep) {
       case MessageImportSyncStep.MESSAGE_LIST_FETCH:

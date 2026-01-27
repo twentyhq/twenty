@@ -44,7 +44,6 @@ export class DashboardDuplicationService {
     const workspaceId = workspace.id;
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext as WorkspaceAuthContext,
       async () => {
         const dashboardRepository =
           await this.globalWorkspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
@@ -108,6 +107,7 @@ export class DashboardDuplicationService {
           throw error;
         }
       },
+      authContext as WorkspaceAuthContext,
     );
   }
 

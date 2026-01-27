@@ -28,7 +28,6 @@ export class ApplyMessagesVisibilityRestrictionsService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const messageChannelMessageAssociationRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
@@ -128,6 +127,7 @@ export class ApplyMessagesVisibilityRestrictionsService {
 
         return messages;
       },
+      authContext,
     );
   }
 }

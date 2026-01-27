@@ -131,10 +131,6 @@ export class ObjectExtensionEntityBuilder
     }
   }
 
-  display(_extensions: ObjectExtensionManifest[]): void {
-    // Object extensions don't have a dedicated display - they're part of the manifest
-  }
-
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const extensions = manifest.objectExtensions ?? [];
     const objects = manifest.objects ?? [];
