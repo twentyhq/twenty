@@ -24,22 +24,6 @@ import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/stand
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-/**
- * Migration command to migrate favorites and favoriteFolders to navigationMenuItems.
- *
- * Testing commands:
- * - Dry run (test without making changes):
- *   npx nx run twenty-server:command upgrade:1-18:migrate-favorites-to-navigation-menu-items --dry-run
- *
- * - Run on a specific workspace:
- *   npx nx run twenty-server:command upgrade:1-18:migrate-favorites-to-navigation-menu-items --workspace-id <workspace-id>
- *
- * - Run on all active/suspended workspaces:
- *   npx nx run twenty-server:command upgrade:1-18:migrate-favorites-to-navigation-menu-items
- *
- * - Verbose output:
- *   npx nx run twenty-server:command upgrade:1-18:migrate-favorites-to-navigation-menu-items --verbose
- */
 @Command({
   name: 'upgrade:1-18:migrate-favorites-to-navigation-menu-items',
   description: 'Migrate favorites and favoriteFolders to navigationMenuItems',
