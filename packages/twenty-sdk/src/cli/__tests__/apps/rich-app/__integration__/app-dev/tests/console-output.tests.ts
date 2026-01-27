@@ -8,10 +8,9 @@ export const defineConsoleOutputTests = (
     it('should contain init messages', () => {
       const output = sanitizeAnsi(getResult().output);
 
-      expect(output).toContain(
-        '[init] 🚀 Starting Twenty Application Development Mode',
-      );
-      expect(output).toContain('[init] 📁 App Path:');
+      expect(output).toContain('Application');
+      expect(output).toContain('Name: Loading...');
+      expect(output).toContain('Status: o Idle');
     });
 
     it('should contain dev-mode build messages', () => {

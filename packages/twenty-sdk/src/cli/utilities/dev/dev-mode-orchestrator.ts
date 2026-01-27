@@ -35,13 +35,15 @@ export class DevModeOrchestrator {
   >();
 
   private fileUploader: FileUploader | null = null;
-  private apiService = new ApiService();
+  private apiService = new ApiService({ disableInterceptors: true });
 
   private activeUploads = new Set<Promise<void>>();
 
   private syncTimer: NodeJS.Timeout | null = null;
   private isSyncing = false;
   private uiStateManager: DevUiStateManager;
+  private serverChecked = false;
+  private serverCheckedLogged = false;
 
   private handleManifestBuilt: (
     result: ManifestBuildResult,
@@ -54,18 +56,44 @@ export class DevModeOrchestrator {
     this.uiStateManager = options.uiStateManager;
   }
 
+  private async checkServer(): Promise<void> {
+    this.serverChecked = await this.apiService.validateAuth();
+
+    if (!this.serverChecked && !this.serverCheckedLogged) {
+      this.uiStateManager.addEvent({
+        message:
+          'Please check your server is up and your credentials are correct: "yarn auth:login"',
+        status: 'error',
+      });
+      this.uiStateManager.updateManifestState({
+        manifestStatus: 'error',
+      });
+      this.serverCheckedLogged = true;
+    }
+  }
+
   async handleChangeDetected(sourcePath: string, event: EventName) {
+    if (!this.serverChecked) {
+      await this.checkServer();
+    }
+
+    if (!this.serverChecked) {
+      return;
+    }
+
     const normalizedSourcePath = this.normalizeFilePath(sourcePath);
+
     this.uiStateManager.addEvent({
-      sourcePath: normalizedSourcePath,
       message: `Change detected: ${normalizedSourcePath}`,
       status: 'info',
     });
+
     if (event === 'unlink') {
       this.uiStateManager.removeEntity(normalizedSourcePath);
     } else {
       this.uiStateManager.updateFileStatus(normalizedSourcePath, 'building');
     }
+
     this.scheduleSync();
   }
 
@@ -78,7 +106,6 @@ export class DevModeOrchestrator {
     });
     for (const error of errors) {
       this.uiStateManager.addEvent({
-        sourcePath: error.location?.file,
         message: error.error,
         status: 'error',
       });
@@ -97,7 +124,6 @@ export class DevModeOrchestrator {
     checksum: string;
   }): void {
     this.uiStateManager.addEvent({
-      sourcePath,
       message: `Successfully built ${builtPath}`,
       status: 'success',
     });
@@ -126,7 +152,6 @@ export class DevModeOrchestrator {
     fileFolder: FileFolder,
   ): void {
     this.uiStateManager.addEvent({
-      sourcePath,
       message: `Uploading ${builtPath}`,
       status: 'info',
     });
@@ -138,14 +163,12 @@ export class DevModeOrchestrator {
       .then((result) => {
         if (result.success) {
           this.uiStateManager.addEvent({
-            sourcePath: sourcePath,
             message: `Successfully uploaded ${builtPath}`,
             status: 'success',
           });
           this.uiStateManager.updateFileStatus(sourcePath, 'success');
         } else {
           this.uiStateManager.addEvent({
-            sourcePath: sourcePath,
             message: `Failed to upload ${builtPath}: ${result.error}`,
             status: 'error',
           });
@@ -153,7 +176,6 @@ export class DevModeOrchestrator {
       })
       .catch((error) => {
         this.uiStateManager.addEvent({
-          sourcePath: sourcePath,
           message: `Upload failed for ${builtPath}: ${error}`,
           status: 'error',
         });
@@ -216,11 +238,18 @@ export class DevModeOrchestrator {
         appName: result.manifest.application.displayName,
       });
 
+      this.uiStateManager.updateAllFilesTypes({
+        manifestFilePaths: result.filePaths,
+      });
+
       if (!validation.isValid) {
         for (const e of validation.errors) {
           this.uiStateManager.addEvent({
             message: `${e.path}: ${e.message}`,
             status: 'error',
+          });
+          this.uiStateManager.updateManifestState({
+            manifestStatus: 'error',
           });
         }
 

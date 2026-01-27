@@ -1,4 +1,4 @@
-import { SyncableEntities } from 'twenty-shared/application';
+import { SyncableEntity } from 'twenty-shared/application';
 import {
   type FileStatus,
   type Listener,
@@ -6,6 +6,7 @@ import {
   type UiEvent,
   type DevUiState,
 } from '@/cli/utilities/dev/dev-ui-state';
+import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-build';
 
 const MAX_EVENT_NUMBER = 200;
 
@@ -49,34 +50,16 @@ export class DevUiStateManager {
     }
   }
 
-  private getEntityFromPath(
-    sourceFilePath?: string,
-  ): SyncableEntities | undefined {
-    if (!sourceFilePath) {
-      return;
-    }
-    return (Object.values(SyncableEntities) as SyncableEntities[]).find(
-      (entity) =>
-        sourceFilePath.includes(`${entity}.ts`) ||
-        sourceFilePath.includes(`${entity}.tsx`),
-    );
-  }
-
   addEvent({
-    sourcePath,
     message,
     status = 'info',
   }: {
-    sourcePath?: string;
     message: string;
     status: UiEvent['status'];
   }): void {
-    const entity = this.getEntityFromPath(sourcePath);
-
     const event: UiEvent = {
       id: ++this.eventIdCounter,
       timestamp: new Date(),
-      entity,
       message,
       status,
     };
@@ -105,14 +88,65 @@ export class DevUiStateManager {
     this.notify();
   }
 
+  convertEntityTypeToSyncableEntity(
+    entityType: string,
+  ): SyncableEntity | undefined {
+    switch (entityType) {
+      case 'objects':
+        return SyncableEntity.Object;
+      case 'objectExtensions':
+        return SyncableEntity.ObjectExtension;
+      case 'functions':
+        return SyncableEntity.Function;
+      case 'frontComponents':
+        return SyncableEntity.FrontComponent;
+      case 'roles':
+        return SyncableEntity.Role;
+      default:
+        return;
+    }
+  }
+
+  updateAllFilesTypes({
+    manifestFilePaths,
+  }: {
+    manifestFilePaths: EntityFilePaths;
+  }): void {
+    const entityMaps = new Map<string, SyncableEntity>();
+
+    (Object.entries(manifestFilePaths) as [SyncableEntity, string[]][]).forEach(
+      ([entityType, filePaths]) => {
+        filePaths.forEach((filePath) => {
+          const syncableEntity =
+            this.convertEntityTypeToSyncableEntity(entityType);
+
+          if (!syncableEntity) {
+            return;
+          }
+          entityMaps.set(filePath, syncableEntity);
+        });
+      },
+    );
+
+    const entities = new Map(this.state.entities);
+
+    for (const [filePath, entity] of entities) {
+      entities.set(filePath, {
+        ...entity,
+        type: entityMaps.get(filePath),
+      });
+    }
+    this.state = { ...this.state, entities };
+
+    this.notify();
+  }
+
   updateAllFilesStatus(status: FileStatus): void {
     const entities = new Map(this.state.entities);
 
-    for (const [filePath] of entities) {
+    for (const [filePath, entity] of entities) {
       entities.set(filePath, {
-        name: filePath,
-        path: filePath,
-        type: this.getEntityFromPath(filePath),
+        ...entity,
         status: status,
       });
     }
@@ -133,7 +167,6 @@ export class DevUiStateManager {
     entities.set(filePath, {
       name: filePath,
       path: filePath,
-      type: this.getEntityFromPath(filePath),
       status: status,
     });
 

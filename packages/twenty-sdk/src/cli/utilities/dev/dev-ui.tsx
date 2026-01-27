@@ -4,7 +4,7 @@ import {
   type FileStatus,
   type EntityInfo,
 } from '@/cli/utilities/dev/dev-ui-state';
-import { SyncableEntities } from 'twenty-shared/application';
+import { SyncableEntity } from 'twenty-shared/application';
 import { type DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
 
 const SPINNER_FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
@@ -24,15 +24,15 @@ const STATUS_COLORS: Record<FileStatus, string> = {
   success: 'green',
 };
 
-const ENTITY_LABELS: Record<SyncableEntities, string> = {
-  [SyncableEntities.Object]: 'Objects',
-  [SyncableEntities.ObjectExtension]: 'Object Extensions',
-  [SyncableEntities.Function]: 'Functions',
-  [SyncableEntities.FrontComponent]: 'Front Components',
-  [SyncableEntities.Role]: 'Roles',
+const ENTITY_LABELS: Record<SyncableEntity, string> = {
+  [SyncableEntity.Object]: 'Objects',
+  [SyncableEntity.ObjectExtension]: 'Object Extensions',
+  [SyncableEntity.Function]: 'Functions',
+  [SyncableEntity.FrontComponent]: 'Front Components',
+  [SyncableEntity.Role]: 'Roles',
 };
 
-const ENTITY_ORDER = Object.keys(ENTITY_LABELS) as SyncableEntities[];
+const ENTITY_ORDER = Object.keys(ENTITY_LABELS) as SyncableEntity[];
 
 const EVENT_COLORS: Record<UiEvent['status'], string> = {
   info: 'gray',
@@ -43,8 +43,8 @@ const EVENT_COLORS: Record<UiEvent['status'], string> = {
 
 const groupEntitiesByType = (
   entities: Map<string, EntityInfo>,
-): Map<SyncableEntities, EntityInfo[]> => {
-  const grouped = new Map<SyncableEntities, EntityInfo[]>();
+): Map<SyncableEntity, EntityInfo[]> => {
+  const grouped = new Map<SyncableEntity, EntityInfo[]>();
 
   for (const type of ENTITY_ORDER) {
     grouped.set(type, []);
@@ -124,8 +124,8 @@ export const renderDevUI = async (
   }: {
     status: FileStatus;
   }): React.ReactElement => {
-    const buildingFrame = useSpinner(SPINNER_FRAMES, 80);
-    const uploadingFrame = useSpinner(UPLOAD_FRAMES, 150);
+    const buildingFrame = useSpinner(SPINNER_FRAMES, 200);
+    const uploadingFrame = useSpinner(UPLOAD_FRAMES, 200);
 
     const iconByStatus: Record<FileStatus, string> = {
       building: buildingFrame,
@@ -146,7 +146,9 @@ export const renderDevUI = async (
       <Box>
         <StatusIcon status={entity.status} />
         <Text>{entity.name}</Text>
-        <Text dimColor> ({shortenPath(entity.path)})</Text>
+        {entity.path !== entity.name && (
+          <Text dimColor> ({shortenPath(entity.path)})</Text>
+        )}
       </Box>
     );
   };
@@ -155,7 +157,7 @@ export const renderDevUI = async (
     type,
     entities,
   }: {
-    type: SyncableEntities;
+    type: SyncableEntity;
     entities: EntityInfo[];
   }): React.ReactElement | null => {
     if (entities.length === 0) return null;

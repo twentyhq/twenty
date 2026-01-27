@@ -1,4 +1,4 @@
-export enum SyncableEntities {
+export enum SyncableEntity {
   Object = 'object',
   ObjectExtension = 'objectExtension',
   Function = 'function',

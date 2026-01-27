@@ -1,4 +1,3 @@
-import { createLogger } from '@/cli/utilities/build/common/logger';
 import {
   createFrontComponentsWatcher,
   createFunctionsWatcher,
@@ -8,14 +7,11 @@ import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifes
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { DevModeOrchestrator } from '@/cli/utilities/dev/dev-mode-orchestrator';
-import { ApiService } from '@/cli/utilities/api/api-service';
 import path from 'path';
 import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 import * as fs from 'fs-extra';
 import { DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
 import { renderDevUI } from '@/cli/utilities/dev/dev-ui';
-
-const initLogger = createLogger('init');
 
 export type AppDevOptions = {
   appPath?: string;
@@ -28,17 +24,11 @@ export class AppDevCommand {
   private functionsWatcher: EsbuildWatcher | null = null;
   private frontComponentsWatcher: EsbuildWatcher | null = null;
   private watchersStarted = false;
-  private apiService = new ApiService();
   private uiStateManager: DevUiStateManager | null = null;
   private unmountUI: (() => void) | null = null;
 
   async execute(options: AppDevOptions): Promise<void> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
-    await this.checkServer();
-
-    initLogger.log('🚀 Starting Twenty Application Development Mode');
-    initLogger.log(`📁 App Path: ${this.appPath}`);
-    console.log('');
 
     await this.cleanOutputDir();
 
@@ -59,21 +49,6 @@ export class AppDevCommand {
 
     await this.startManifestWatcher();
     this.setupGracefulShutdown();
-  }
-
-  private async checkServer(): Promise<void> {
-    if (process.env.TWENTY_SKIP_SERVER_CHECK === 'true') {
-      return;
-    }
-
-    const isAuthenticated = await this.apiService.validateAuth();
-
-    if (!isAuthenticated) {
-      initLogger.error(
-        'Please check your server is up and your credentials are correct.',
-      );
-      process.exit(1);
-    }
   }
 
   private async cleanOutputDir() {

@@ -1,9 +1,8 @@
-import { type SyncableEntities } from 'twenty-shared/application';
+import { type SyncableEntity } from 'twenty-shared/application';
 
 export type UiEvent = {
   id: number;
   timestamp: Date;
-  entity?: SyncableEntities;
   message: string;
   status: 'info' | 'success' | 'error' | 'warning';
 };
@@ -20,7 +19,7 @@ export type FileStatus = 'pending' | 'building' | 'uploading' | 'success';
 export type EntityInfo = {
   name: string;
   path: string;
-  type?: SyncableEntities;
+  type?: SyncableEntity;
   status: FileStatus;
 };
 
