@@ -25,10 +25,12 @@ import {
   NavigationMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { NavigationMenuItemAccessService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service';
+import { getMinimalSelectForRecordIdentifier } from 'src/engine/metadata-modules/navigation-menu-item/utils/get-minimal-select-for-record-identifier.util';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -418,6 +420,11 @@ export class NavigationMenuItemService {
         unionOf: [roleId],
       };
 
+      const minimalSelectColumns = getMinimalSelectForRecordIdentifier({
+        flatObjectMetadata: objectMetadata,
+        flatFieldMetadataMaps,
+      });
+
       const record =
         await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
           authContext,
@@ -429,9 +436,31 @@ export class NavigationMenuItemService {
                 rolePermissionConfig,
               );
 
-            return await repository.findOneBy({
-              id: targetRecordId,
-            });
+            const alias = objectMetadata.nameSingular;
+            const queryBuilder = repository.createQueryBuilder(alias);
+
+            queryBuilder.select([]);
+
+            for (const column of minimalSelectColumns) {
+              queryBuilder.addSelect(`"${alias}"."${column}"`, column);
+            }
+
+            const rawResult = await queryBuilder
+              .where(`${alias}.id = :id`, { id: targetRecordId })
+              .getRawOne();
+
+            if (!isDefined(rawResult)) {
+              return null;
+            }
+
+            const formattedRecord = formatResult<Record<string, unknown>>(
+              rawResult,
+              objectMetadata,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+            );
+
+            return formattedRecord;
           },
         );
 
@@ -457,7 +486,7 @@ export class NavigationMenuItemService {
       });
 
       return {
-        id: record.id,
+        id: record.id as string,
         labelIdentifier,
         imageIdentifier,
       };
