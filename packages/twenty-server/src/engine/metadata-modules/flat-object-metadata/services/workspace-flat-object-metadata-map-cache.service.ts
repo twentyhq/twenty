@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -25,6 +26,8 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
   constructor(
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(IndexMetadataEntity)
@@ -38,27 +41,33 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
   async computeForCache(
     workspaceId: string,
   ): Promise<FlatEntityMaps<FlatObjectMetadata>> {
-    const [objectMetadatas, fields, indexMetadatas, views] = await Promise.all([
-      this.objectMetadataRepository.find({
-        where: { workspaceId },
-        withDeleted: true,
-      }),
-      this.fieldMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'objectMetadataId'],
-        withDeleted: true,
-      }),
-      this.indexMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'objectMetadataId'],
-        withDeleted: true,
-      }),
-      this.viewRepository.find({
-        where: { workspaceId },
-        select: ['id', 'objectMetadataId'],
-        withDeleted: true,
-      }),
-    ]);
+    const [objectMetadatas, applications, fields, indexMetadatas, views] =
+      await Promise.all([
+        this.objectMetadataRepository.find({
+          where: { workspaceId },
+          withDeleted: true,
+        }),
+        this.applicationRepository.find({
+          where: { workspaceId },
+          select: ['id', 'universalIdentifier'],
+          withDeleted: true,
+        }),
+        this.fieldMetadataRepository.find({
+          where: { workspaceId },
+          select: ['id', 'universalIdentifier', 'objectMetadataId'],
+          withDeleted: true,
+        }),
+        this.indexMetadataRepository.find({
+          where: { workspaceId },
+          select: ['id', 'universalIdentifier', 'objectMetadataId'],
+          withDeleted: true,
+        }),
+        this.viewRepository.find({
+          where: { workspaceId },
+          select: ['id', 'universalIdentifier', 'objectMetadataId'],
+          withDeleted: true,
+        }),
+      ]);
 
     const [fieldsByObjectId, indexesByObjectId, viewsByObjectId] = (
       [
@@ -77,15 +86,34 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);
 
+    const applicationIdToUniversalIdentifierMap = new Map<string, string>();
+
+    for (const application of applications) {
+      applicationIdToUniversalIdentifierMap.set(
+        application.id,
+        application.universalIdentifier,
+      );
+    }
+
+    const fieldIdToUniversalIdentifierMap = new Map<string, string>();
+
+    for (const field of fields) {
+      fieldIdToUniversalIdentifierMap.set(field.id, field.universalIdentifier);
+    }
+
     const flatObjectMetadataMaps = createEmptyFlatEntityMaps();
 
     for (const objectMetadataEntity of objectMetadatas) {
       const flatObjectMetadata = fromObjectMetadataEntityToFlatObjectMetadata({
-        ...objectMetadataEntity,
-        fields: fieldsByObjectId.get(objectMetadataEntity.id) || [],
-        indexMetadatas: indexesByObjectId.get(objectMetadataEntity.id) || [],
-        views: viewsByObjectId.get(objectMetadataEntity.id) || [],
-      } as ObjectMetadataEntity);
+        objectMetadataEntity: {
+          ...objectMetadataEntity,
+          fields: fieldsByObjectId.get(objectMetadataEntity.id) || [],
+          indexMetadatas: indexesByObjectId.get(objectMetadataEntity.id) || [],
+          views: viewsByObjectId.get(objectMetadataEntity.id) || [],
+        } as ObjectMetadataEntity,
+        applicationIdToUniversalIdentifierMap,
+        fieldIdToUniversalIdentifierMap,
+      });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
         flatEntity: flatObjectMetadata,
