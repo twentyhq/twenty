@@ -46,7 +46,9 @@ export class FlatWebhookValidatorService {
         message: t`Target URL is required`,
         userFriendlyMessage: msg`Target URL is required`,
       });
-    } else if (!this.validateTargetUrl(flatWebhook.targetUrl)) {
+    }
+
+    if (!this.validateTargetUrl(flatWebhook.targetUrl)) {
       validationResult.errors.push({
         code: WebhookExceptionCode.INVALID_TARGET_URL,
         message: t`Invalid target URL provided`,
@@ -94,9 +96,6 @@ export class FlatWebhookValidatorService {
         message: t`Webhook not found`,
         userFriendlyMessage: msg`Webhook not found`,
       });
-
-      return validationResult;
-    }
 
     return validationResult;
   }

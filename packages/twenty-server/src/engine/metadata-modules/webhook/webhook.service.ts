@@ -13,10 +13,6 @@ import { fromUpdateWebhookInputToFlatWebhookToUpdateOrThrow } from 'src/engine/m
 import { type CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { type UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
-import {
-  WebhookException,
-  WebhookExceptionCode,
-} from 'src/engine/metadata-modules/webhook/webhook.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -35,16 +31,6 @@ export class WebhookService {
       return url.toString();
     } catch {
       return targetUrl;
-    }
-  }
-
-  private validateTargetUrl(targetUrl: string): boolean {
-    try {
-      const url = new URL(targetUrl);
-
-      return url.protocol === 'http:' || url.protocol === 'https:';
-    } catch {
-      return false;
     }
   }
 
@@ -93,13 +79,6 @@ export class WebhookService {
   ): Promise<WebhookDTO> {
     const normalizedTargetUrl = this.normalizeTargetUrl(input.targetUrl);
 
-    if (!this.validateTargetUrl(normalizedTargetUrl)) {
-      throw new WebhookException(
-        'Invalid target URL provided',
-        WebhookExceptionCode.INVALID_TARGET_URL,
-      );
-    }
-
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -125,7 +104,6 @@ export class WebhookService {
             },
           },
           workspaceId,
-          isSystemBuild: false,
         },
       );
 
@@ -161,13 +139,6 @@ export class WebhookService {
         input.update.targetUrl,
       );
 
-      if (!this.validateTargetUrl(normalizedTargetUrl)) {
-        throw new WebhookException(
-          'Invalid target URL provided',
-          WebhookExceptionCode.INVALID_TARGET_URL,
-        );
-      }
-
       input.update.targetUrl = normalizedTargetUrl;
     }
 
@@ -196,7 +167,6 @@ export class WebhookService {
             },
           },
           workspaceId,
-          isSystemBuild: false,
         },
       );
 
@@ -248,7 +218,6 @@ export class WebhookService {
             },
           },
           workspaceId,
-          isSystemBuild: false,
         },
       );
 
@@ -260,18 +229,5 @@ export class WebhookService {
     }
 
     return fromFlatWebhookToWebhookDto(flatWebhookToDelete);
-  }
-
-  async findByIdOrThrow(id: string, workspaceId: string): Promise<WebhookDTO> {
-    const webhook = await this.findById(id, workspaceId);
-
-    if (!isDefined(webhook)) {
-      throw new WebhookException(
-        'Webhook not found',
-        WebhookExceptionCode.WEBHOOK_NOT_FOUND,
-      );
-    }
-
-    return webhook;
   }
 }
