@@ -1,28 +1,16 @@
-import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
-import { createClient } from '../generated';
+import { defineFunction } from 'twenty-sdk';
+import { createClient } from '../../generated';
 
+// TODO: import from twenty-sdk when 0.4.0 is deployed
 type ServerlessFunctionEvent<TBody = object> = {
-  /** HTTP headers (filtered by forwardedRequestHeaders in route trigger) */
   headers: Record<string, string | undefined>;
-
-  /** Query string parameters (multiple values are joined with commas, e.g., "1,2,3") */
   queryStringParameters: Record<string, string | undefined>;
-
-  /** Path parameters extracted from the route pattern (e.g., /users/:id → { id: '123' }). Multiple values are joined with commas. */
   pathParameters: Record<string, string | undefined>;
-
-  /** Request body */
   body: TBody | null;
-
-  /** Whether the body is base64 encoded */
   isBase64Encoded: boolean;
-
-  /** Request context containing HTTP method, path, and other metadata */
   requestContext: {
     http: {
-      /** HTTP method (GET, POST, PUT, PATCH, DELETE) */
       method: string;
-      /** Raw request path (e.g., /users/123) */
       path: string;
     };
   };
@@ -127,10 +115,11 @@ export const main = async (
   }
 };
 
-export const config: ServerlessFunctionConfig = {
+export default defineFunction({
   universalIdentifier: '10104201-622b-4a5e-9f27-8f2af19b2a3c',
   name: 'telemetry-webhook',
   timeoutSeconds: 5,
+  handler: main,
   triggers: [
     {
       universalIdentifier: '7c8e3f5a-9b4c-4d1e-8f2a-1b3c4d5e6f7a',
@@ -140,4 +129,4 @@ export const config: ServerlessFunctionConfig = {
       isAuthRequired: false,
     },
   ],
-};
+});
