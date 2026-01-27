@@ -1,19 +1,19 @@
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { applicationEntityBuilder } from './entities/application';
 import {
   type EntityIdWithLocation,
   type ManifestWithoutSources,
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
-import {
-  type ValidationError,
-  type ValidationResult,
-  type ValidationWarning,
-} from '@/cli/utilities/build/manifest/manifest-types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
-import { applicationEntityBuilder } from './entities/application';
 import { frontComponentEntityBuilder } from './entities/front-component';
 import { functionEntityBuilder } from './entities/function';
 import { objectEntityBuilder } from './entities/object';
 import { objectExtensionEntityBuilder } from './entities/object-extension';
 import { roleEntityBuilder } from './entities/role';
+import {
+  type ValidationError,
+  type ValidationResult,
+  type ValidationWarning,
+} from '@/cli/utilities/build/manifest/manifest-types';
 
 const collectAllDuplicates = (
   manifest: ManifestWithoutSources,
@@ -34,15 +34,18 @@ export const validateManifest = (
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
-  applicationEntityBuilder.validate([manifest.application], errors);
-  objectEntityBuilder.validate(manifest.objects, errors);
+  applicationEntityBuilder.validate(
+    manifest.application ? [manifest.application] : [],
+    errors,
+  );
+  objectEntityBuilder.validate(manifest.objects ?? [], errors);
   objectExtensionEntityBuilder.validate(
     manifest.objectExtensions ?? [],
     errors,
   );
-  functionEntityBuilder.validate(manifest.functions, errors);
+  functionEntityBuilder.validate(manifest.functions ?? [], errors);
   roleEntityBuilder.validate(manifest.roles ?? [], errors);
-  frontComponentEntityBuilder.validate(manifest.frontComponents, errors);
+  frontComponentEntityBuilder.validate(manifest.frontComponents ?? [], errors);
 
   const duplicates = collectAllDuplicates(manifest);
   for (const dup of duplicates) {
