@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
+import { FlushV2CacheAndIncrementMetadataVersionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-flush-v2-cache-and-increment-metadata-version.command';
 import { IdentifyAgentMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-agent-metadata.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
 import { IdentifyIndexMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-index-metadata.command';
@@ -39,7 +40,9 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { TwentyStandardApplicationModule } from 'src/engine/workspace-manager/twenty-standard-application/twenty-standard-application.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -65,6 +68,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     TwentyStandardApplicationModule,
     WorkspaceMigrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    WorkspaceMetadataVersionModule,
+    WorkspaceCacheStorageModule,
   ],
   providers: [
     UpdateTaskOnDeleteActionCommand,
@@ -90,6 +95,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MakeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     IdentifyRemainingEntitiesMetadataCommand,
+    FlushV2CacheAndIncrementMetadataVersionCommand,
   ],
   exports: [
     UpdateTaskOnDeleteActionCommand,
@@ -115,6 +121,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MakeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MakeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     IdentifyRemainingEntitiesMetadataCommand,
+    FlushV2CacheAndIncrementMetadataVersionCommand,
   ],
 })
 export class V1_16_UpgradeVersionCommandModule {}
