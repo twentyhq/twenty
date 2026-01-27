@@ -87,8 +87,9 @@ export class FlatCacheInvalidateCommand extends ActiveOrSuspendedWorkspacesMigra
       return;
     }
 
-    this.flatMapsKeysToFlush =
-      this.computeFlatMapsKeysWithRelated(validatedMetadataNames);
+    this.flatMapsKeysToFlush = this.computeFlatMapsKeysWithRelated(
+      validatedMetadataNames,
+    );
 
     this.logger.log(
       `Will flush cache for the following flat maps keys: ${this.flatMapsKeysToFlush.join(', ')}`,
