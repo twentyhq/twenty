@@ -106,7 +106,7 @@ test('Create and update record', async ({ page }) => {
     recordFieldList.getByText('Work Preference').first().click({force: true});
 
     // Fill company relation
-    const companyRelationWidget = page.getByTestId('dynamic-relation-widget-Company');
+    const companyRelationWidget = page.getByTestId(/dynamic-relation-widget-.+-Company/);
     await expect(companyRelationWidget).toBeVisible();
 
     await companyRelationWidget.hover();
