@@ -1,5 +1,5 @@
+import { PageLayoutUnmountCleanupEffect } from '@/page-layout/components/PageLayoutUnmountCleanupEffect';
 import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/PageLayoutInitializationQueryEffect';
-
 import { PageLayoutRendererContent } from '@/page-layout/components/PageLayoutRendererContent';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -39,6 +39,7 @@ export const PageLayoutRenderer = ({
           instanceId: getTabListInstanceIdFromPageLayoutId(pageLayoutId),
         }}
       >
+        <PageLayoutUnmountCleanupEffect pageLayoutId={pageLayoutId} />
         <PageLayoutInitializationQueryEffect
           pageLayoutId={pageLayoutId}
           onInitialized={onInitialized}
