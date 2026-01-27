@@ -126,7 +126,7 @@ Application development commands.
     - `--path <path>`: The path where the entity file should be created (relative to the current directory).
   - Behavior:
     - `object`: prompts for singular/plural names and labels, then creates a new object definition file.
-    - `function`: prompts for a name and scaffolds a serverless function file.
+    - `function`: prompts for a name and scaffolds a logic function file.
 
 - `twenty app:generate [appPath]` — Generate the typed Twenty client for your application.
 
@@ -135,7 +135,7 @@ Application development commands.
     - `-u, --functionUniversalIdentifier <id>`: Only show logs for a specific function universal ID.
     - `-n, --functionName <name>`: Only show logs for a specific function name.
 
-- `twenty function:execute [appPath]` — Execute a serverless function with a JSON payload.
+- `twenty function:execute [appPath]` — Execute a logic function with a JSON payload.
   - Options:
     - `-n, --functionName <name>`: Name of the function to execute (required if `-u` not provided).
     - `-u, --functionUniversalIdentifier <id>`: Universal ID of the function to execute (required if `-n` not provided).

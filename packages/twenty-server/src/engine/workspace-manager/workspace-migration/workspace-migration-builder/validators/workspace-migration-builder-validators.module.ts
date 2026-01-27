@@ -17,7 +17,7 @@ import { FlatRoleTargetValidatorService } from 'src/engine/workspace-manager/wor
 import { FlatRoleValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service';
 import { FlatRowLevelPermissionPredicateGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service';
 import { FlatRowLevelPermissionPredicateValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service';
-import { FlatServerlessFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service';
+import { FlatLogicFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service';
 import { FlatSkillValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service';
 import { FlatViewFilterGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service';
@@ -37,7 +37,7 @@ import { FlatWebhookValidatorService } from 'src/engine/workspace-manager/worksp
     FlatIndexValidatorService,
     FlatFieldMetadataValidatorService,
     FlatObjectMetadataValidatorService,
-    FlatServerlessFunctionValidatorService,
+    FlatLogicFunctionValidatorService,
     FlatFieldMetadataTypeValidatorService,
     FlatPageLayoutWidgetTypeValidatorService,
     FlatRoleValidatorService,
@@ -63,7 +63,7 @@ import { FlatWebhookValidatorService } from 'src/engine/workspace-manager/worksp
     FlatIndexValidatorService,
     FlatFieldMetadataValidatorService,
     FlatObjectMetadataValidatorService,
-    FlatServerlessFunctionValidatorService,
+    FlatLogicFunctionValidatorService,
     FlatFieldMetadataTypeValidatorService,
     FlatRoleValidatorService,
     FlatRoleTargetValidatorService,

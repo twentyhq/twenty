@@ -4,7 +4,7 @@ import { executeServerlessFunction } from 'test/integration/metadata/suites/serv
 import { publishServerlessFunction } from 'test/integration/metadata/suites/serverless-function/utils/publish-serverless-function.util';
 import { updateServerlessFunction } from 'test/integration/metadata/suites/serverless-function/utils/update-serverless-function.util';
 
-import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
 // Test function using external packages from default layer (lodash.groupby)
 const EXTERNAL_PACKAGES_FUNCTION_CODE = {
@@ -79,11 +79,11 @@ describe('Serverless Function Execution', () => {
 
     const result = executeData?.executeOneServerlessFunction;
 
-    if (result?.status !== ServerlessFunctionExecutionStatus.SUCCESS) {
+    if (result?.status !== LogicFunctionExecutionStatus.SUCCESS) {
       throw new Error(JSON.stringify(result?.error, null, 2));
     }
 
-    expect(result?.status).toBe(ServerlessFunctionExecutionStatus.SUCCESS);
+    expect(result?.status).toBe(LogicFunctionExecutionStatus.SUCCESS);
     expect(result?.data).toMatchObject({
       message: 'Hello, input: hello and 42',
     });
@@ -139,11 +139,11 @@ describe('Serverless Function Execution', () => {
 
     const result = executeData?.executeOneServerlessFunction;
 
-    if (result?.status !== ServerlessFunctionExecutionStatus.SUCCESS) {
+    if (result?.status !== LogicFunctionExecutionStatus.SUCCESS) {
       throw new Error(JSON.stringify(result?.error, null, 2));
     }
 
-    expect(result?.status).toBe(ServerlessFunctionExecutionStatus.SUCCESS);
+    expect(result?.status).toBe(LogicFunctionExecutionStatus.SUCCESS);
 
     const data = result?.data as unknown as {
       grouped: Record<string, Array<{ category: string; name: string }>>;
@@ -204,7 +204,7 @@ describe('Serverless Function Execution', () => {
     });
 
     expect(successData?.executeOneServerlessFunction?.status).toBe(
-      ServerlessFunctionExecutionStatus.SUCCESS,
+      LogicFunctionExecutionStatus.SUCCESS,
     );
     expect(successData?.executeOneServerlessFunction?.data).toMatchObject({
       success: true,
@@ -221,7 +221,7 @@ describe('Serverless Function Execution', () => {
 
     const errorResult = errorData?.executeOneServerlessFunction;
 
-    expect(errorResult?.status).toBe(ServerlessFunctionExecutionStatus.ERROR);
+    expect(errorResult?.status).toBe(LogicFunctionExecutionStatus.ERROR);
     expect(errorResult?.error).toMatchObject({
       errorType: 'UnhandledError',
       errorMessage: expect.stringContaining('Intentional test error'),

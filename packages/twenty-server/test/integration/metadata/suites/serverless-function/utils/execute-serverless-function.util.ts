@@ -7,7 +7,7 @@ import { type CommonResponseBody } from 'test/integration/metadata/types/common-
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type ServerlessFunctionExecutionResultDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import { type LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
 export const executeServerlessFunction = async ({
   input,
@@ -20,7 +20,7 @@ export const executeServerlessFunction = async ({
   expectToFail?: boolean;
   token?: string;
 }): CommonResponseBody<{
-  executeOneServerlessFunction: ServerlessFunctionExecutionResultDTO;
+  executeOneServerlessFunction: LogicFunctionExecutionResultDTO;
 }> => {
   const graphqlOperation = executeServerlessFunctionQueryFactory({
     input,

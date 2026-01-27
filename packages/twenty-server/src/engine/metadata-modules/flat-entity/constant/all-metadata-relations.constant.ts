@@ -261,35 +261,11 @@ export const ALL_METADATA_RELATIONS = {
       indexFieldMetadatas: null,
     },
   },
-  serverlessFunction: {
+  logicFunction: {
     manyToOne: {
       workspace: null,
       application: null,
-      serverlessFunctionLayer: null,
-    },
-    oneToMany: {},
-  },
-  cronTrigger: {
-    manyToOne: {
-      application: null,
-      serverlessFunctionLayer: null,
-      workspace: null,
-    },
-    oneToMany: {},
-  },
-  databaseEventTrigger: {
-    manyToOne: {
-      application: null,
-      serverlessFunctionLayer: null,
-      workspace: null,
-    },
-    oneToMany: {},
-  },
-  routeTrigger: {
-    manyToOne: {
-      application: null,
-      serverlessFunctionLayer: null,
-      workspace: null,
+      logicFunctionLayer: null,
     },
     oneToMany: {},
   },

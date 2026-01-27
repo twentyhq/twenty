@@ -15,8 +15,8 @@ import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permi
 import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
-import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
-import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
+import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.module';
+import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
@@ -32,8 +32,8 @@ import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-commo
     ObjectMetadataModule,
     FieldMetadataModule,
     DataSourceModule,
-    ServerlessFunctionLayerModule,
-    ServerlessFunctionModule,
+    LogicFunctionLayerModule,
+    LogicFunctionModule,
     WorkspaceMigrationModule,
     PermissionsModule,
     RoleModule,

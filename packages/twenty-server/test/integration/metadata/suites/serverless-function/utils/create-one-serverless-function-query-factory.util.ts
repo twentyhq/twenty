@@ -1,10 +1,9 @@
 import gql from 'graphql-tag';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-import { type CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
+import { type CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
 
-export type CreateOneServerlessFunctionFactoryInput =
-  CreateServerlessFunctionInput;
+export type CreateOneServerlessFunctionFactoryInput = CreateLogicFunctionInput;
 
 const DEFAULT_SERVERLESS_FUNCTION_GQL_FIELDS = `
   id

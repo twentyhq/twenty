@@ -22,10 +22,10 @@ export type { RelationFieldManifest } from './relationFieldManifestType';
 export type { RoleManifest } from './roleManifestType';
 export type {
   InputJsonSchema,
-  ServerlessFunctionManifest,
+  LogicFunctionManifest,
   DatabaseEventTrigger,
   CronTrigger,
   RouteTrigger,
-  ServerlessFunctionTriggerManifest,
+  LogicFunctionTriggerManifest,
 } from './serverlessFunctionManifestType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';

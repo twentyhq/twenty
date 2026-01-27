@@ -68,13 +68,13 @@ export class EntityAddCommand {
         // Use *.function.ts naming convention
         const functionFileName = `${kebabcase(entityName)}.function.ts`;
 
-        const decoratedServerlessFunction = getFunctionBaseFile({
+        const decoratedLogicFunction = getFunctionBaseFile({
           name: entityName,
         });
 
         const filePath = join(appPath, functionFileName);
 
-        await fs.writeFile(filePath, decoratedServerlessFunction);
+        await fs.writeFile(filePath, decoratedLogicFunction);
 
         console.log(
           chalk.green(`✓ Created function:`),

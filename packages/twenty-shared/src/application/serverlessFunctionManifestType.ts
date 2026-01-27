@@ -19,11 +19,11 @@ export type InputJsonSchema = {
   additionalProperties?: boolean | InputJsonSchema;
 };
 
-export type ServerlessFunctionManifest = SyncableEntityOptions & {
+export type LogicFunctionManifest = SyncableEntityOptions & {
   name?: string;
   description?: string;
   timeoutSeconds?: number;
-  triggers: ServerlessFunctionTriggerManifest[];
+  triggers: LogicFunctionTriggerManifest[];
   sourceHandlerPath: string;
   builtHandlerPath: string;
   builtHandlerChecksum: string | null;
@@ -51,5 +51,5 @@ export type RouteTrigger = {
   forwardedRequestHeaders?: string[];
 };
 
-export type ServerlessFunctionTriggerManifest = SyncableEntityOptions &
+export type LogicFunctionTriggerManifest = SyncableEntityOptions &
   (CronTrigger | DatabaseEventTrigger | RouteTrigger);
