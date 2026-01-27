@@ -526,23 +526,20 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const favoriteRepository =
-          await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
-            workspaceId,
-            'favorite',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const favoriteRepository =
+        await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
+          workspaceId,
+          'favorite',
+        );
 
-        const favoriteCount = await favoriteRepository.count();
+      const favoriteCount = await favoriteRepository.count();
 
-        await favoriteRepository.insert({
-          viewId: view.id,
-          position: favoriteCount,
-        });
-      },
-    );
+      await favoriteRepository.insert({
+        viewId: view.id,
+        position: favoriteCount,
+      });
+    }, authContext);
   }
 
   public async deleteWorkspaceAllObjectMetadata({
