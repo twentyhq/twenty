@@ -186,7 +186,10 @@ export const BarChart = ({
   const showValues = dataLabelsConfig?.show ?? false;
   const omitNullValues = dataLabelsConfig?.omitNullValues ?? false;
 
-  const bars = useMemoizedBarPositions({
+  const shouldIncludeZeroValuesForLabels =
+    showValues && !hasNoData && !omitNullValues;
+
+  const barsWithOptionalZeroValues = useMemoizedBarPositions({
     data,
     indexBy,
     keys,
@@ -199,26 +202,20 @@ export const BarChart = ({
     valueDomain,
     fallbackColor,
     innerPadding,
+    includeZeroValues: shouldIncludeZeroValuesForLabels,
   });
 
-  const labelBarsWithZeros = useMemoizedBarPositions({
-    chartHeight,
-    chartWidth,
-    data,
-    enrichedKeysMap,
-    fallbackColor,
-    groupMode,
-    includeZeroValues: true,
-    indexBy,
-    innerPadding,
-    keys,
-    layout,
-    margins,
-    valueDomain,
-    enabled: showValues && !hasNoData && !omitNullValues,
-  });
+  const bars = useMemo(
+    () =>
+      shouldIncludeZeroValuesForLabels
+        ? barsWithOptionalZeroValues.filter((bar) => bar.value !== 0)
+        : barsWithOptionalZeroValues,
+    [barsWithOptionalZeroValues, shouldIncludeZeroValuesForLabels],
+  );
 
-  const labelBars = omitNullValues ? bars : labelBarsWithZeros;
+  const labelBars = shouldIncludeZeroValuesForLabels
+    ? barsWithOptionalZeroValues
+    : bars;
 
   const slices = useMemo(
     () =>
