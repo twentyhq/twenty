@@ -12,7 +12,7 @@ import {
   MessageChannelSyncStage,
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { isSyncStale } from 'src/utils/is-sync-stale.util';
+import { isSyncStale } from 'src/modules/messaging/message-import-manager/utils/is-sync-stale.util';
 
 export type MessagingOngoingStaleJobData = {
   workspaceId: string;
