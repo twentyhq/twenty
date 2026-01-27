@@ -1426,6 +1426,7 @@ export enum FeatureFlagKey {
   IS_FILES_FIELD_ENABLED = 'IS_FILES_FIELD_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
+  IS_NAVIGATION_MENU_ITEM_ENABLED = 'IS_NAVIGATION_MENU_ITEM_ENABLED',
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
   IS_RECORD_PAGE_LAYOUT_ENABLED = 'IS_RECORD_PAGE_LAYOUT_ENABLED',
   IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED = 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED',
@@ -3066,6 +3067,7 @@ export type NavigationMenuItem = {
   position: Scalars['Float'];
   targetObjectMetadataId?: Maybe<Scalars['UUID']>;
   targetRecordId?: Maybe<Scalars['UUID']>;
+  targetRecordIdentifier?: Maybe<RecordIdentifier>;
   updatedAt: Scalars['DateTime'];
   userWorkspaceId?: Maybe<Scalars['UUID']>;
   viewId?: Maybe<Scalars['UUID']>;
@@ -3887,6 +3889,13 @@ export type RatioAggregateConfig = {
   __typename?: 'RatioAggregateConfig';
   fieldMetadataId: Scalars['UUID'];
   optionValue: Scalars['String'];
+};
+
+export type RecordIdentifier = {
+  __typename?: 'RecordIdentifier';
+  id: Scalars['UUID'];
+  imageIdentifier?: Maybe<Scalars['String']>;
+  labelIdentifier: Scalars['String'];
 };
 
 export type Relation = {
