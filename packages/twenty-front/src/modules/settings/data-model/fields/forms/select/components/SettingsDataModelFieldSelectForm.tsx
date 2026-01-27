@@ -8,6 +8,8 @@ import { selectOptionsSchema } from '@/object-metadata/validation-schemas/select
 import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/multiSelectFieldDefaultValueSchema';
 import { selectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/selectFieldDefaultValueSchema';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
+import { convertBulkTextToOptions } from '@/settings/data-model/fields/forms/select/utils/convertBulkTextToOptions';
+import { convertOptionsToBulkText } from '@/settings/data-model/fields/forms/select/utils/convertOptionsToBulkText';
 import { generateNewSelectOption } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOption';
 import { isSelectOptionDefaultValue } from '@/settings/data-model/utils/isSelectOptionDefaultValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -19,6 +21,7 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
+import { TextArea } from '@/ui/input/components/TextArea';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
@@ -26,7 +29,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus, IconPoint } from 'twenty-ui/display';
+import { IconList, IconPlus, IconPoint } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
 import { CardContent, CardFooter } from 'twenty-ui/layout';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
@@ -111,6 +114,30 @@ const StyledButton = styled(LightButton)`
   width: 100%;
 `;
 
+const StyledToggleContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledToggleButton = styled(LightButton)<{ isActive: boolean }>`
+  background-color: ${({ theme, isActive }) =>
+    isActive ? theme.background.transparent.light : 'transparent'};
+  color: ${({ theme }) => theme.font.color.secondary};
+  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledTextAreaContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledHelpText = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const SettingsDataModelFieldSelectForm = ({
   existingFieldMetadataId,
   fieldType,
@@ -137,6 +164,8 @@ export const SettingsDataModelFieldSelectForm = ({
   } = useFormContext<SettingsDataModelFieldSelectFormValues>();
 
   const [hasAppliedNewOption, setHasAppliedNewOption] = useState(false);
+  const [isBulkInputMode, setIsBulkInputMode] = useState(false);
+  const [bulkInputText, setBulkInputText] = useState('');
 
   useEffect(() => {
     const newOptionValue = searchParams.get('newOption');
@@ -253,6 +282,27 @@ export const SettingsDataModelFieldSelectForm = ({
     setFormValue('options', newOptions, { shouldDirty: true });
   };
 
+  const handleToggleBulkInput = () => {
+    const currentOptions = getValues('options');
+    if (!isBulkInputMode) {
+      // Switching to bulk mode - populate textarea with current options
+      setBulkInputText(convertOptionsToBulkText(currentOptions));
+    } else {
+      // Switching to single mode - parse textarea and update options
+      const newOptions = convertBulkTextToOptions(
+        bulkInputText,
+        currentOptions,
+      );
+      setFormValue('options', newOptions, { shouldDirty: true });
+    }
+
+    setIsBulkInputMode((prevState) => !prevState);
+  };
+
+  const handleBulkInputChange = (value: string) => {
+    setBulkInputText(value);
+  };
+
   const theme = useTheme();
 
   return (
@@ -270,109 +320,143 @@ export const SettingsDataModelFieldSelectForm = ({
         render={({ field: { onChange, value: options } }) => (
           <>
             <StyledContainer>
-              <StyledLabelContainer>
-                <AdvancedSettingsWrapper animationDimension="width" hideDot>
-                  <StyledApiKeyContainer>
-                    <StyledIconContainer>
-                      <StyledIconPoint
-                        size={12}
-                        color={theme.color.yellow}
-                        fill={theme.color.yellow}
-                      />
-                    </StyledIconContainer>
-                    <StyledApiKey>{t`API values`}</StyledApiKey>
-                  </StyledApiKeyContainer>
-                </AdvancedSettingsWrapper>
-                <StyledOptionsLabel
-                  isAdvancedModeEnabled={isAdvancedModeEnabled}
-                >
-                  {t`Options`}
-                </StyledOptionsLabel>
-              </StyledLabelContainer>
-              <DraggableList
-                onDragEnd={(result) =>
-                  !disabled
-                    ? handleDragEnd(options, result, onChange)
-                    : undefined
-                }
-                draggableItems={
-                  <>
-                    {options.map((option, index) => (
-                      <DraggableItem
-                        isInsideScrollableContainer
-                        key={option.id}
-                        draggableId={option.id}
-                        index={index}
-                        isDragDisabled={options.length === 1}
-                        itemComponent={
-                          <SettingsDataModelFieldSelectFormOptionRow
-                            key={option.id}
-                            option={option}
-                            isNewRow={index === options.length - 1}
-                            onChange={(nextOption) => {
-                              if (disabled) {
-                                return;
-                              }
-                              const nextOptions = toSpliced(
-                                options,
-                                index,
-                                1,
-                                nextOption,
-                              );
-                              onChange(nextOptions);
+              {!disabled && (
+                <StyledToggleContainer>
+                  <StyledToggleButton
+                    title={
+                      isBulkInputMode
+                        ? t`Back to single mode`
+                        : t`Switch to bulk mode`
+                    }
+                    Icon={IconList}
+                    onClick={handleToggleBulkInput}
+                    isActive={isBulkInputMode}
+                  />
+                </StyledToggleContainer>
+              )}
 
-                              // Update option value in defaultValue if value has changed
-                              if (
-                                nextOption.value !== option.value &&
-                                isOptionDefaultValue(option.value)
-                              ) {
-                                handleRemoveOptionAsDefault(option.value);
-                                handleSetOptionAsDefault(nextOption.value);
-                              }
-                            }}
-                            onRemove={() => {
-                              if (disabled) {
-                                return;
-                              }
-                              const nextOptions = toSpliced(
-                                options,
-                                index,
-                                1,
-                              ).map((option, nextOptionIndex) => ({
-                                ...option,
-                                position: nextOptionIndex,
-                              }));
-                              onChange(nextOptions);
-                            }}
-                            isDefault={isOptionDefaultValue(option.value)}
-                            fieldIsNullable={!!isNullable}
-                            onSetAsDefault={() => {
-                              if (disabled) {
-                                return;
-                              }
-                              handleSetOptionAsDefault(option.value);
-                            }}
-                            onRemoveAsDefault={() => {
-                              if (disabled) {
-                                return;
-                              }
-                              handleRemoveOptionAsDefault(option.value);
-                            }}
-                            onInputEnter={() => {
-                              if (disabled) {
-                                return;
-                              }
-                              handleInputEnter();
-                            }}
+              {isBulkInputMode ? (
+                <StyledTextAreaContainer>
+                  <TextArea
+                    textAreaId="bulk-options-input"
+                    placeholder={t`Enter one option per line`}
+                    value={bulkInputText}
+                    onChange={handleBulkInputChange}
+                    minRows={5}
+                    maxRows={15}
+                    disabled={disabled}
+                  />
+                  <StyledHelpText>
+                    {t`Enter one option per line. Each line will become a new option.`}
+                  </StyledHelpText>
+                </StyledTextAreaContainer>
+              ) : (
+                <>
+                  <StyledLabelContainer>
+                    <AdvancedSettingsWrapper animationDimension="width" hideDot>
+                      <StyledApiKeyContainer>
+                        <StyledIconContainer>
+                          <StyledIconPoint
+                            size={12}
+                            color={theme.color.yellow}
+                            fill={theme.color.yellow}
                           />
-                        }
-                      />
-                    ))}
-                  </>
-                }
-              />
+                        </StyledIconContainer>
+                        <StyledApiKey>{t`API values`}</StyledApiKey>
+                      </StyledApiKeyContainer>
+                    </AdvancedSettingsWrapper>
+                    <StyledOptionsLabel
+                      isAdvancedModeEnabled={isAdvancedModeEnabled}
+                    >
+                      {t`Options`}
+                    </StyledOptionsLabel>
+                  </StyledLabelContainer>
+                  <DraggableList
+                    onDragEnd={(result) =>
+                      !disabled
+                        ? handleDragEnd(options, result, onChange)
+                        : undefined
+                    }
+                    draggableItems={
+                      <>
+                        {options.map((option, index) => (
+                          <DraggableItem
+                            isInsideScrollableContainer
+                            key={option.id}
+                            draggableId={option.id}
+                            index={index}
+                            isDragDisabled={options.length === 1}
+                            itemComponent={
+                              <SettingsDataModelFieldSelectFormOptionRow
+                                key={option.id}
+                                option={option}
+                                isNewRow={index === options.length - 1}
+                                onChange={(nextOption) => {
+                                  if (disabled) {
+                                    return;
+                                  }
+                                  const nextOptions = toSpliced(
+                                    options,
+                                    index,
+                                    1,
+                                    nextOption,
+                                  );
+                                  onChange(nextOptions);
+
+                                  // Update option value in defaultValue if value has changed
+                                  if (
+                                    nextOption.value !== option.value &&
+                                    isOptionDefaultValue(option.value)
+                                  ) {
+                                    handleRemoveOptionAsDefault(option.value);
+                                    handleSetOptionAsDefault(nextOption.value);
+                                  }
+                                }}
+                                onRemove={() => {
+                                  if (disabled) {
+                                    return;
+                                  }
+                                  const nextOptions = toSpliced(
+                                    options,
+                                    index,
+                                    1,
+                                  ).map((option, nextOptionIndex) => ({
+                                    ...option,
+                                    position: nextOptionIndex,
+                                  }));
+                                  onChange(nextOptions);
+                                }}
+                                isDefault={isOptionDefaultValue(option.value)}
+                                fieldIsNullable={!!isNullable}
+                                onSetAsDefault={() => {
+                                  if (disabled) {
+                                    return;
+                                  }
+                                  handleSetOptionAsDefault(option.value);
+                                }}
+                                onRemoveAsDefault={() => {
+                                  if (disabled) {
+                                    return;
+                                  }
+                                  handleRemoveOptionAsDefault(option.value);
+                                }}
+                                onInputEnter={() => {
+                                  if (disabled) {
+                                    return;
+                                  }
+                                  handleInputEnter();
+                                }}
+                              />
+                            }
+                          />
+                        ))}
+                      </>
+                    }
+                  />
+                </>
+              )}
             </StyledContainer>
-            {!disabled && (
+            {!disabled && !isBulkInputMode && (
               <StyledFooter>
                 <StyledButton
                   title={t`Add option`}
