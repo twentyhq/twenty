@@ -42,6 +42,15 @@ describe('ApplicationVariableEntityService', () => {
             decrypt: jest.fn((value: string) =>
               value.replace('encrypted_', ''),
             ),
+            decryptAndMask: jest.fn(
+              ({
+                value: _value,
+                mask: _mask,
+              }: {
+                value: string;
+                mask: string;
+              }) => '********',
+            ),
           },
         },
         {
@@ -259,7 +268,11 @@ describe('ApplicationVariableEntityService', () => {
 
       expect(repository.update).toHaveBeenCalledWith(
         { key: 'EXISTING_VAR', applicationId: mockApplicationId },
-        { description: 'Updated description', isSecret: true },
+        {
+          description: 'Updated description',
+          isSecret: true,
+          value: 'encrypted_new-value',
+        },
       );
       expect(repository.save).not.toHaveBeenCalled();
     });
@@ -293,86 +306,24 @@ describe('ApplicationVariableEntityService', () => {
       const result = service.getDisplayValue(variable);
 
       expect(result).toBe('https://example.com');
-      expect(secretEncryptionService.decrypt).not.toHaveBeenCalled();
+      expect(secretEncryptionService.decryptAndMask).not.toHaveBeenCalled();
     });
 
-    it('should return masked value for short secrets (length <= 10)', () => {
+    it('should call decryptAndMask for secret variables', () => {
       const variable = {
         id: '1',
-        key: 'SHORT_SECRET',
+        key: 'SECRET_KEY',
         value: 'encrypted_value',
         isSecret: true,
         applicationId: mockApplicationId,
       } as ApplicationVariableEntity;
 
-      const result = service.getDisplayValue(variable);
+      service.getDisplayValue(variable);
 
-      // "value" has 5 chars, floor(5/10) = 0, min(5, 0) = 0, slice(0,0) = ""
-      expect(result).toBe(SECRET_APPLICATION_VARIABLE_MASK);
-      expect(secretEncryptionService.decrypt).toHaveBeenCalledWith(
-        'encrypted_value',
-      );
-    });
-
-    it('should return partial value + mask for medium secrets (10 < length <= 50)', () => {
-      const variable = {
-        id: '1',
-        key: 'MEDIUM_SECRET',
-        value: 'encrypted_sk-abc123def456',
-        isSecret: true,
-        applicationId: mockApplicationId,
-      } as ApplicationVariableEntity;
-
-      const result = service.getDisplayValue(variable);
-
-      // "sk-abc123def456" has 15 chars, floor(15/10) = 1, min(5, 1) = 1
-      expect(result).toBe(`s${SECRET_APPLICATION_VARIABLE_MASK}`);
-    });
-
-    it('should return partial value + mask for longer secrets', () => {
-      const variable = {
-        id: '1',
-        key: 'LONG_SECRET',
-        value: 'encrypted_sk-abcdefghij1234567890',
-        isSecret: true,
-        applicationId: mockApplicationId,
-      } as ApplicationVariableEntity;
-
-      const result = service.getDisplayValue(variable);
-
-      // "sk-abcdefghij1234567890" has 23 chars, floor(23/10) = 2, min(5, 2) = 2
-      expect(result).toBe(`sk${SECRET_APPLICATION_VARIABLE_MASK}`);
-    });
-
-    it('should cap visible chars at 5 for very long secrets', () => {
-      const longSecret = 'a'.repeat(100);
-      const variable = {
-        id: '1',
-        key: 'VERY_LONG_SECRET',
-        value: `encrypted_${longSecret}`,
-        isSecret: true,
-        applicationId: mockApplicationId,
-      } as ApplicationVariableEntity;
-
-      const result = service.getDisplayValue(variable);
-
-      // 100 chars, floor(100/10) = 10, min(5, 10) = 5
-      expect(result).toBe(`aaaaa${SECRET_APPLICATION_VARIABLE_MASK}`);
-    });
-
-    it('should handle empty secret values', () => {
-      const variable = {
-        id: '1',
-        key: 'EMPTY_SECRET',
-        value: 'encrypted_',
-        isSecret: true,
-        applicationId: mockApplicationId,
-      } as ApplicationVariableEntity;
-
-      const result = service.getDisplayValue(variable);
-
-      // "" has 0 chars, floor(0/10) = 0, min(5, 0) = 0
-      expect(result).toBe(SECRET_APPLICATION_VARIABLE_MASK);
+      expect(secretEncryptionService.decryptAndMask).toHaveBeenCalledWith({
+        value: 'encrypted_value',
+        mask: SECRET_APPLICATION_VARIABLE_MASK,
+      });
     });
   });
 });
