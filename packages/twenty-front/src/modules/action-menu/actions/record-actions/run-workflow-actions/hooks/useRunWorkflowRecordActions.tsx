@@ -63,7 +63,7 @@ export const useRunWorkflowRecordActions = ({
       CommandMenuItemAvailabilityType.SINGLE_RECORD,
       CommandMenuItemAvailabilityType.BULK_RECORDS,
     ],
-    objectNameSingular: objectMetadataItem.nameSingular,
+    objectMetadataId: objectMetadataItem.id,
     skip: skip || !isCommandMenuItemEnabled,
   });
 

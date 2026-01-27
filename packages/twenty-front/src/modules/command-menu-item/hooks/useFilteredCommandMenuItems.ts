@@ -8,13 +8,13 @@ import {
 
 type UseFilteredCommandMenuItemsParams = {
   availabilityTypes: CommandMenuItemAvailabilityType[];
-  objectNameSingular?: string;
+  objectMetadataId?: string;
   skip?: boolean;
 };
 
 export const useFilteredCommandMenuItems = ({
   availabilityTypes,
-  objectNameSingular,
+  objectMetadataId,
   skip,
 }: UseFilteredCommandMenuItemsParams): {
   commandMenuItems: CommandMenuItem[];
@@ -34,8 +34,8 @@ export const useFilteredCommandMenuItems = ({
       }
 
       if (
-        isDefined(objectNameSingular) &&
-        item.availabilityObjectNameSingular !== objectNameSingular
+        isDefined(objectMetadataId) &&
+        item.availabilityObjectMetadataId !== objectMetadataId
       ) {
         return false;
       }
