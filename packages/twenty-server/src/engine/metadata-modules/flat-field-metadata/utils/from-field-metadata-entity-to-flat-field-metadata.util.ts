@@ -110,6 +110,7 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = ({
     viewFieldIds: fieldMetadataEntity.viewFields.map(({ id }) => id),
     viewFilterIds: fieldMetadataEntity.viewFilters.map(({ id }) => id),
     __universal: {
+      universalIdentifier: fieldMetadataWithoutRelations.universalIdentifier,
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
       relationTargetObjectMetadataUniversalIdentifier,

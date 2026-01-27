@@ -2,8 +2,7 @@ import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/typ
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 type BaseFlatObjectMetadata = FlatEntityFrom<
-  Omit<ObjectMetadataEntity, 'targetRelationFields' | 'dataSourceId'>,
-  'objectMetadata'
+  Omit<ObjectMetadataEntity, 'targetRelationFields' | 'dataSourceId'>
 >;
 export type FlatObjectMetadata = Omit<BaseFlatObjectMetadata, '__universal'> & {
   __universal?: BaseFlatObjectMetadata['__universal'] & {

@@ -36,6 +36,6 @@ export type FlatEntityFrom<
           TMetadataName extends undefined
             ? FromMetadataEntityToMetadataName<TEntity>
             : TMetadataName
-        >;
+        > & { universalIdentifier: string };
       }
     : {});

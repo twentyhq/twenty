@@ -1,19 +1,57 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 
-export const fromRoleTargetsEntityToFlatRoleTarget = (
-  roleTarget: RoleTargetEntity,
-): FlatRoleTarget => {
+export const fromRoleTargetEntityToFlatRoleTarget = ({
+  roleTargetEntity,
+  applicationIdToUniversalIdentifierMap,
+  roleIdToUniversalIdentifierMap,
+}: {
+  roleTargetEntity: RoleTargetEntity;
+  applicationIdToUniversalIdentifierMap: Map<string, string>;
+  roleIdToUniversalIdentifierMap: Map<string, string>;
+}): FlatRoleTarget => {
+  const applicationUniversalIdentifier =
+    applicationIdToUniversalIdentifierMap.get(roleTargetEntity.applicationId);
+
+  if (!isDefined(applicationUniversalIdentifier)) {
+    throw new FlatEntityMapsException(
+      `Application with id ${roleTargetEntity.applicationId} not found when building flat role target for role target ${roleTargetEntity.id}`,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
+  }
+
+  const roleUniversalIdentifier = roleIdToUniversalIdentifierMap.get(
+    roleTargetEntity.roleId,
+  );
+
+  if (!isDefined(roleUniversalIdentifier)) {
+    throw new FlatEntityMapsException(
+      `Role with id ${roleTargetEntity.roleId} not found when building flat role target for role target ${roleTargetEntity.id}`,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
+  }
+
   return {
-    id: roleTarget.id,
-    workspaceId: roleTarget.workspaceId,
-    roleId: roleTarget.roleId,
-    userWorkspaceId: roleTarget.userWorkspaceId,
-    agentId: roleTarget.agentId,
-    apiKeyId: roleTarget.apiKeyId,
-    applicationId: roleTarget.applicationId,
-    universalIdentifier: roleTarget.universalIdentifier,
-    createdAt: roleTarget.createdAt.toISOString(),
-    updatedAt: roleTarget.updatedAt.toISOString(),
+    id: roleTargetEntity.id,
+    workspaceId: roleTargetEntity.workspaceId,
+    roleId: roleTargetEntity.roleId,
+    userWorkspaceId: roleTargetEntity.userWorkspaceId,
+    agentId: roleTargetEntity.agentId,
+    apiKeyId: roleTargetEntity.apiKeyId,
+    applicationId: roleTargetEntity.applicationId,
+    universalIdentifier: roleTargetEntity.universalIdentifier,
+    createdAt: roleTargetEntity.createdAt.toISOString(),
+    updatedAt: roleTargetEntity.updatedAt.toISOString(),
+    __universal: {
+      universalIdentifier: roleTargetEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+      roleUniversalIdentifier,
+    },
   };
 };

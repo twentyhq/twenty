@@ -77,6 +77,8 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = ({
     indexMetadataIds: objectMetadataEntity.indexMetadatas.map(({ id }) => id),
     fieldIds: objectMetadataEntity.fields.map(({ id }) => id),
     __universal: {
+      universalIdentifier:
+        objectMetadataEntityWithoutRelations.universalIdentifier,
       applicationUniversalIdentifier,
       labelIdentifierFieldMetadataUniversalIdentifier,
       imageIdentifierFieldMetadataUniversalIdentifier,
