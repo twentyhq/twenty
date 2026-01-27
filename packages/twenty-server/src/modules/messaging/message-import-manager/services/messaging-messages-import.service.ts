@@ -69,10 +69,6 @@ export class MessagingMessagesImportService {
           return;
         }
 
-        this.logger.log(
-          `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Starting message batch import`,
-        );
-
         await this.messagingMonitoringService.track({
           eventName: 'messages_import.started',
           workspaceId,
