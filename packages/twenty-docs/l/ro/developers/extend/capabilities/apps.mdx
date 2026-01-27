@@ -49,26 +49,23 @@ yarn app:dev
 De aici puteți:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
-yarn app:create-entity
+# Adaugă o entitate nouă în aplicația ta (ghidat)
+yarn entity:add
 
-# Generate a typed Twenty client and workspace entity types
+# Generează un client Twenty tipat și tipurile de entități ale spațiului de lucru
 yarn app:generate
 
-# Run a one‑time sync (instead of watch mode)
-yarn app:sync
-
-# Watch your application's functions logs
+# Urmărește jurnalele funcțiilor aplicației tale
 yarn function:logs
 
-# Execute a function by name
+# Execută o funcție după nume
 yarn function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# Dezinstalează aplicația din spațiul de lucru curent
 yarn app:uninstall
 
-# Display commands' help
-yarn app:help},{
+# Afișează ajutorul pentru comenzi
+yarn help},{
 ```
 
 Consultați și: paginile de referință CLI pentru [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) și [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -97,22 +94,23 @@ my-twenty-app/
   tsconfig.json
   README.md
   src/
-    app/
-      application.config.ts     # Obligatoriu - configurația principală a aplicației
-      default-function.role.ts  # Rolul implicit pentru funcțiile serverless
-      // entitățile tale (*.object.ts, *.function.ts, *.role.ts)
-    utils/                      # Opțional - implementări de handleri și utilitare
+    application.config.ts          # Obligatoriu - configurația principală a aplicației
+    default-function.role.ts       # Rolul implicit pentru funcțiile serverless
+    hello-world.function.ts        # Exemplu de funcție serverless
+    hello-world.front-component.tsx # Exemplu de componentă de interfață
+    // entitățile tale (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### Convenție în locul configurării
 
 Aplicațiile folosesc o abordare bazată pe convenție în locul configurării, în care entitățile sunt detectate după sufixul fișierului. Aceasta permite o organizare flexibilă în folderul `src/app/`:
 
-| Sufixul fișierului | Tipul entității                    |
-| ------------------ | ---------------------------------- |
-| `*.object.ts`      | Definiții de obiecte personalizate |
-| `*.function.ts`    | Definiții de funcții serverless    |
-| `*.role.ts`        | Definiții de rol                   |
+| Sufixul fișierului      | Tipul entității                          |
+| ----------------------- | ---------------------------------------- |
+| `*.object.ts`           | Definiții de obiecte personalizate       |
+| `*.function.ts`         | Definiții de funcții serverless          |
+| `*.front-component.tsx` | Definiții ale componentelor de interfață |
+| `*.role.ts`             | Definiții de rol                         |
 
 ### Structuri de foldere acceptate
 
@@ -121,12 +119,14 @@ Vă puteți organiza entitățile în oricare dintre aceste modele:
 **Tradițional (după tip):**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── objects/
 │   └── postCard.object.ts
 ├── functions/
 │   └── createPostCard.function.ts
+├── components/
+│   └── card.front-component.tsx
 └── roles/
     └── admin.role.ts
 ```
@@ -134,44 +134,45 @@ src/app/
 **Bazat pe funcționalități:**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 └── post-card/
     ├── postCard.object.ts
     ├── createPostCard.function.ts
+    ├── card.front-component.tsx
     └── postCardAdmin.role.ts
 ```
 
 **Plat:**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── postCard.object.ts
 ├── createPostCard.function.ts
+├── card.front-component.tsx
 └── admin.role.ts
 ```
 
 Pe scurt:
 
-* **package.json**: Declară numele aplicației, versiunea, motoarele (Node 24+, Yarn 4) și adaugă `twenty-sdk` plus scripturi precum `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall` și `auth` care deleagă către CLI-ul local `twenty`.
+* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and `auth:login` that delegate to the local `twenty` CLI.
 * **.gitignore**: Ignoră artefacte comune precum `node_modules`, `.yarn`, `generated/` (client tipizat), `dist/`, `build/`, foldere de coverage, fișiere jurnal și fișiere `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Blochează și configurează lanțul de instrumente Yarn 4 folosit de proiect.
 * **.nvmrc**: Fixează versiunea Node.js așteptată de proiect.
 * **eslint.config.mjs** și **tsconfig.json**: Oferă linting și configurație TypeScript pentru fișierele TypeScript ale aplicației.
 * **README.md**: Un README scurt în rădăcina aplicației, cu instrucțiuni de bază.
-* **src/app/**: Locul principal unde vă definiți aplicația sub formă de cod:
+* **src/**: The main place where you define your application-as-code:
   * `application.config.ts`: Configurație globală pentru aplicație (metadate și conectare la runtime). Vezi "Configurația aplicației" mai jos.
   * `*.role.ts`: Definiții de rol folosite de funcțiile dvs. serverless. Vezi "Rol implicit pentru funcții" mai jos.
   * `*.object.ts`: Definiții de obiecte personalizate.
   * `*.function.ts`: Definiții de funcții serverless.
-* **src/utils/**: Folder opțional pentru implementări de handleri și utilitare.
+  * `*.front-component.tsx`: Front component definitions.
 
 Comenzile ulterioare vor adăuga mai multe fișiere și foldere:
 
 * `yarn app:generate` va crea un folder `generated/` (client Twenty tipizat + tipuri pentru spațiul de lucru).
-* `yarn app:create-entity` va adăuga fișiere de definire a entităților în `src/app/` pentru obiectele, funcțiile sau rolurile personalizate.
-  l
+* `yarn entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
 
 ## Autentificare
 
@@ -302,62 +303,11 @@ Puncte cheie:
 * `universalIdentifier` trebuie să fie unic și stabil între implementări.
 * Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
 * Matricea `fields` este opțională — puteți defini obiecte fără câmpuri personalizate.
-* Puteți genera obiecte noi folosind `yarn app:create-entity`, care vă ghidează prin denumire, câmpuri și relații.
+* You can scaffold new objects using `yarn entity:add`, which guides you through naming, fields, and relationships.
 
 <Note>
   **Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard precum `name`, `createdAt`, `updatedAt`, `createdBy`, `position` și `deletedAt`. Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile personalizate proprii.
 </Note>
-
-<Accordion title="Alternativă: Sintaxă bazată pe decoratori">
-  Puteți defini obiecte și folosind decoratori TypeScript. Această abordare folosește o sintaxă bazată pe clase cu decoratorii `@Object`, `@Field` și `@Relation`:
-
-  ```typescript
-  import {
-    type AddressField,
-    Field,
-    FieldType,
-    type FullNameField,
-    Object,
-    OnDeleteAction,
-    Relation,
-    RelationType,
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-  } from 'twenty-sdk';
-  import { type Note } from '../../generated';
-
-  @Object({
-    universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
-    nameSingular: 'postCard',
-    namePlural: 'postCards',
-    labelSingular: 'Post card',
-    labelPlural: 'Post cards',
-    description: 'A post card object',
-    icon: 'IconMail',
-  })
-  export class PostCard {
-    @Field({
-      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-      type: FieldType.TEXT,
-      label: 'Content',
-      description: "Postcard's content",
-      icon: 'IconAbc',
-    })
-    content: string;
-
-    @Relation({
-      universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
-      type: RelationType.ONE_TO_MANY,
-      label: 'Notes',
-      icon: 'IconComment',
-      inverseSideTargetUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
-      onDelete: OnDeleteAction.CASCADE,
-    })
-    notes: Note[];
-  }
-  ```
-
-  Notă: Abordarea cu decoratori necesită `experimentalDecorators` în configurația TypeScript.
-</Accordion>
 
 ### Configurația aplicației (application.config.ts)
 
@@ -469,14 +419,9 @@ Fiecare fișier de funcție folosește `defineFunction()` pentru a exporta o con
 // src/app/createPostCard.function.ts
 import { defineFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '../../generated';
+import Twenty, { type Person } from '~/generated';
 
-const handler = async (
-  params:
-    | RoutePayload
-    | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
-    | CronPayload,
-) => {
+const handler = async (params: RoutePayload) => {
   const client = new Twenty(); // generated typed client
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
@@ -507,18 +452,18 @@ export default defineFunction({
       isAuthRequired: false,
     },
     // Cron trigger (CRON pattern)
-    {
-      universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-      type: 'cron',
-      pattern: '0 0 1 1 *',
-    },
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
     // Database event trigger
-    {
-      universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-      type: 'databaseEvent',
-      eventName: 'person.updated',
-      updatedFields: ['name'],
-    },
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
   ],
 });
 ```
@@ -633,7 +578,7 @@ const handler = async (event: RoutePayload) => {
 
 Puteți crea funcții noi în două moduri:
 
-* **Generat**: Rulați `yarn app:create-entity` și alegeți opțiunea de a adăuga o funcție nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
+* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new function. Aceasta generează un fișier inițial cu un handler și o configurație.
 * **Manual**: Creați un fișier nou `*.function.ts` și folosiți `defineFunction()`, urmând același model.
 
 ### Client tipizat generat
@@ -641,13 +586,13 @@ Puteți crea funcții noi în două moduri:
 Rulați yarn app:generate pentru a crea un client tipizat local în generated/, pe baza schemei spațiului de lucru. Folosiți-l în funcțiile dvs.:
 
 ```typescript
-import Twenty from './generated';
+import Twenty from '~/generated';
 
 const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Clientul este regenerat de `yarn app:generate`. Rulați din nou după ce vă modificați obiectele și rulați `yarn app:sync` sau când vă integrați într-un spațiu de lucru nou.
+Clientul este regenerat de `yarn app:generate`. Re-run after changing your objects or when onboarding to a new workspace.
 
 #### Acreditări la runtime în funcțiile serverless
 
@@ -679,25 +624,29 @@ Apoi adăugați scripturi ca acestea:
 ```json filename="package.json"
 {
   "scripts": {
-    "auth": "twenty auth login",
-    "generate": "twenty app generate",
-    "dev": "twenty app dev",
-    "sync": "twenty app sync",
-    "uninstall": "twenty app uninstall",
-    "logs": "twenty app logs",
-    "create-entity": "twenty app add",
-    "help": "twenty --help"
+    "auth:login": "twenty auth:login",
+    "auth:logout": "twenty auth:logout",
+    "auth:status": "twenty auth:status",
+    "auth:switch": "twenty auth:switch",
+    "auth:list": "twenty auth:list",
+    "app:dev": "twenty app:dev",
+    "app:generate": "twenty app:generate",
+    "app:uninstall": "twenty app:uninstall",
+    "entity:add": "twenty entity:add",
+    "function:logs": "twenty function:logs",
+    "function:execute": "twenty function:execute",
+    "help": "twenty help"
   }
 }
 ```
 
-Acum puteți rula aceleași comenzi prin Yarn, de ex. `yarn app:dev`, `yarn app:sync`, etc.
+Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:generate`, etc.
 
 ## Depanare
 
 * Erori de autentificare: rulați `yarn auth:login` și asigurați-vă că cheia API are permisiunile necesare.
 * Nu se poate conecta la server: verificați URL-ul API și că serverul Twenty este accesibil.
-* Tipuri sau client lipsă/învechite: rulați `yarn app:generate` și apoi `yarn app:dev`.
+* Types or client missing/outdated: run `yarn app:generate`.
 * Modul dev nu sincronizează: asigurați-vă că `yarn app:dev` rulează și că modificările nu sunt ignorate de mediul dvs.
 
 Canal de ajutor pe Discord: https://discord.com/channels/1130383047699738754/1130386664812982322
