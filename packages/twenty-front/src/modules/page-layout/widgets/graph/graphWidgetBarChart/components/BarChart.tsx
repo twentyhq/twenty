@@ -63,8 +63,8 @@ type BarChartProps = {
   hasNoData?: boolean;
 };
 
-const StyledCanvasContainer = styled.div<{ $isClickable: boolean }>`
-  cursor: ${({ $isClickable }) => ($isClickable ? 'pointer' : 'default')};
+const StyledCanvasContainer = styled.div<{ isClickable: boolean }>`
+  cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'default')};
   height: 100%;
   position: relative;
   width: 100%;
@@ -286,7 +286,7 @@ export const BarChart = ({
 
   return (
     <StyledCanvasContainer
-      $isClickable={isDefined(onSliceClick)}
+      isClickable={isDefined(onSliceClick)}
       onMouseMove={handleMouseMove}
       onMouseLeave={onSliceLeave}
       onClick={handleClick}
