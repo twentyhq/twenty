@@ -165,7 +165,12 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
           />
         )}
 
-        <WidgetCardContent variant={variant} hasHeader={showHeader}>
+        <WidgetCardContent
+          variant={variant}
+          hasHeader={showHeader}
+          isEditable={isPageLayoutInEditMode}
+          onClick={isPageLayoutInEditMode ? handleClick : undefined}
+        >
           {hasAccess ? (
             <ErrorBoundary
               FallbackComponent={PageLayoutWidgetInvalidConfigDisplay}
