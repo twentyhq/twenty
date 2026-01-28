@@ -143,7 +143,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     ];
 
     const commands_1160: VersionCommands = [
-      this.updateTaskOnDeleteActionCommand,
       this.identifyAgentMetadataCommand,
       this.identifyFieldMetadataCommand,
       this.identifyObjectMetadataCommand,
@@ -177,6 +176,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this
         .makeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this.flushV2CacheAndIncrementMetadataVersionCommand,
+      this.updateTaskOnDeleteActionCommand,
     ];
 
     this.allCommands = {
