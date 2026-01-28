@@ -3,38 +3,40 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { type FunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/types/FunctionInput';
-import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { isObject } from '@sniptt/guards';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   display: flex;
   gap: ${({ theme }) => theme.spacing(3)};
   flex-wrap: wrap;
 
   > * {
     flex: 1;
-    min-width: 200px;
+    min-width: ${({ fullWidth }) => (fullWidth ? '100%' : '200px')};
   }
 `;
 
-type WorkflowEditActionLogicFunctionFieldsProps = {
+type WorkflowEditActionCodeFieldsProps = {
   functionInput: FunctionInput;
   path?: string[];
   readonly?: boolean;
   onInputChange?: (value: any, path: string[]) => void | Promise<void>;
   VariablePicker?: VariablePickerComponent;
+  fullWidth?: boolean;
 };
 
-export const WorkflowEditActionLogicFunctionFields = ({
+export const WorkflowEditActionCodeFields = ({
   functionInput,
   path = [],
   readonly,
   onInputChange,
   VariablePicker,
-}: WorkflowEditActionLogicFunctionFieldsProps) => {
+  fullWidth,
+}: WorkflowEditActionCodeFieldsProps) => {
   return (
-    <StyledContainer>
+    <StyledContainer fullWidth={fullWidth}>
       {Object.entries(functionInput).map(([inputKey, inputValue]) => {
         const currentPath = [...path, inputKey];
         const pathKey = currentPath.join('.');
@@ -44,12 +46,13 @@ export const WorkflowEditActionLogicFunctionFields = ({
             <div key={pathKey}>
               <InputLabel>{inputKey}</InputLabel>
               <FormNestedFieldInputContainer>
-                <WorkflowEditActionLogicFunctionFields
+                <WorkflowEditActionCodeFields
                   functionInput={inputValue}
                   path={currentPath}
                   readonly={readonly}
                   onInputChange={onInputChange}
                   VariablePicker={VariablePicker}
+                  fullWidth={fullWidth}
                 />
               </FormNestedFieldInputContainer>
             </div>

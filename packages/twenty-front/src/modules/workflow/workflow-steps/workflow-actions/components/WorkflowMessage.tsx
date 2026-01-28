@@ -2,7 +2,6 @@ import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-ty
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 
 const StyledMessageContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(4)};
@@ -40,24 +39,28 @@ const StyledFieldContainer = styled.div`
   width: 100%;
 `;
 
-export const WorkflowFormEmptyMessage = () => {
-  const { t } = useLingui();
-
+export const WorkflowMessage = ({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) => {
   return (
     <StyledMessageContainer>
       <FormFieldInputContainer>
         <FormFieldInputRowContainer multiline maxHeight={124}>
           <FormFieldInputInnerContainer
-            formFieldInputInstanceId="empty-form-message"
+            formFieldInputInstanceId="workflow-message"
             hasRightElement={false}
           >
             <StyledFieldContainer>
               <StyledMessageContentContainer>
-                <StyledMessageTitle data-testid="empty-form-message-title">
-                  {t`Add inputs to your form`}
+                <StyledMessageTitle data-testid="workflow-message-title">
+                  {title}
                 </StyledMessageTitle>
-                <StyledMessageDescription data-testid="empty-form-message-description">
-                  {t`Click on "Add Field" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page.`}
+                <StyledMessageDescription data-testid="workflow-message-description">
+                  {description}
                 </StyledMessageDescription>
               </StyledMessageContentContainer>
             </StyledFieldContainer>
