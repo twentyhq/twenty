@@ -112,15 +112,10 @@ export class WorkspaceMigrationRunnerService {
       `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
     );
 
-    try {
-      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-        workspaceId,
-        flatMapsKeys: allFlatEntityMapsKeys,
-      });
-    } catch (e) {
-      console.log(JSON.stringify(e, null, 2));
-      throw e;
-    }
+    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: allFlatEntityMapsKeys,
+    });
 
     const invalidationResults = await Promise.allSettled(
       this.getLegacyCacheInvalidationPromises({
