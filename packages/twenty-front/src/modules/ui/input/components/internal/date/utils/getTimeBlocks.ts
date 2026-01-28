@@ -17,5 +17,8 @@ export const getTimeBlocks = (timeFormat: TimeFormat) => {
       to: 59,
       maxLength: 2,
     },
+    aa: {
+      mask: '**',
+    },
   };
 };
