@@ -72,7 +72,7 @@ export class PageLayoutWidgetEntity<
   objectMetadata: Relation<ObjectMetadataEntity> | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  conditionalDisplay: PageLayoutWidgetConditionalDisplay | null;
+  conditionalDisplay: JsonbProperty<PageLayoutWidgetConditionalDisplay | null>;
 
   @Column({ type: 'jsonb', nullable: false })
   gridPosition: JsonbProperty<GridPosition>;
