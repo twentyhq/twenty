@@ -105,7 +105,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
     const folderIdMapping = await this.migrateFavoriteFolders({
       workspaceId,
-      authContext,
       applicationId: workspaceCustomFlatApplication.id,
     });
 
@@ -143,11 +142,9 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
   private async migrateFavoriteFolders({
     workspaceId,
-    authContext,
     applicationId,
   }: {
     workspaceId: string;
-    authContext: ReturnType<typeof buildSystemAuthContext>;
     applicationId: string;
   }): Promise<Map<string, string>> {
     const favoriteFolderRepository =
