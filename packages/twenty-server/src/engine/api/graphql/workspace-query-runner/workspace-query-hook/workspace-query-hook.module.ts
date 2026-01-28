@@ -11,7 +11,6 @@ import { ConnectedAccountQueryHookModule } from 'src/modules/connected-account/q
 import { DashboardQueryHookModule } from 'src/modules/dashboard/query-hooks/dashboard-query-hook.module';
 import { MessagingQueryHookModule } from 'src/modules/messaging/common/query-hooks/messaging-query-hook.module';
 import { NoteQueryHookModule } from 'src/modules/note/query-hooks/note-query-hook.module';
-import { PersonQueryHookModule } from 'src/modules/person/query-hooks/person-query-hook.module';
 import { TaskQueryHookModule } from 'src/modules/task/query-hooks/task-query-hook.module';
 import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/query-hooks/workspace-member-query-hook.module';
 
@@ -24,7 +23,6 @@ import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/que
     BlocklistQueryHookModule,
     WorkspaceMemberQueryHookModule,
     NoteQueryHookModule,
-    PersonQueryHookModule,
     TaskQueryHookModule,
     DiscoveryModule,
   ],
