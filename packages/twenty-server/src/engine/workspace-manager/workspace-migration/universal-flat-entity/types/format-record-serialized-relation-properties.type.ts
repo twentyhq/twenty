@@ -1,6 +1,6 @@
 import {
   type ExtractSerializedRelationProperties,
-  IsSerializedRelation
+  type IsSerializedRelation,
 } from 'twenty-shared/types';
 
 import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
