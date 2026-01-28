@@ -117,10 +117,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.17 Commands
     protected readonly migrateAttachmentToMorphRelationsCommand: MigrateAttachmentToMorphRelationsCommand,
-    protected readonly identifyWebhookMetadataCommand: IdentifyWebhookMetadataCommand,
-    protected readonly makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly migrateNoteTargetToMorphRelationsCommand: MigrateNoteTargetToMorphRelationsCommand,
     protected readonly migrateTaskTargetToMorphRelationsCommand: MigrateTaskTargetToMorphRelationsCommand,
+    protected readonly identifyWebhookMetadataCommand: IdentifyWebhookMetadataCommand,
+    protected readonly makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ) {
     super(
       workspaceRepository,
@@ -193,11 +193,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     const commands_1170: VersionCommands = [
       this.migrateAttachmentToMorphRelationsCommand,
+      this.migrateNoteTargetToMorphRelationsCommand,
+      this.migrateTaskTargetToMorphRelationsCommand,
       this.identifyWebhookMetadataCommand,
       this
         .makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-      this.migrateNoteTargetToMorphRelationsCommand,
-      this.migrateTaskTargetToMorphRelationsCommand,
     ];
 
     this.allCommands = {

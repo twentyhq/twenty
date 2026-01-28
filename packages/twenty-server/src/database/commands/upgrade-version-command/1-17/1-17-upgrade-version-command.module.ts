@@ -45,20 +45,16 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
     ApplicationModule,
   ],
   providers: [
-
     MigrateAttachmentToMorphRelationsCommand,
     MigrateNoteTargetToMorphRelationsCommand,
     MigrateTaskTargetToMorphRelationsCommand,
-  ,
     IdentifyWebhookMetadataCommand,
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
   exports: [
-
     MigrateAttachmentToMorphRelationsCommand,
     MigrateNoteTargetToMorphRelationsCommand,
     MigrateTaskTargetToMorphRelationsCommand,
-  ,
     IdentifyWebhookMetadataCommand,
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
