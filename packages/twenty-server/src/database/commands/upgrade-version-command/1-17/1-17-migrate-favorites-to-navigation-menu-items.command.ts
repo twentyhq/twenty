@@ -81,8 +81,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       return;
     }
 
-    const authContext = buildSystemAuthContext(workspaceId);
-
     if (options.dryRun) {
       this.logger.log(
         `[DRY RUN] Would migrate favorites to navigation menu items for workspace ${workspaceId}`,
@@ -111,7 +109,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
     const migratedFavoriteIds = await this.migrateFavorites({
       workspaceId,
-      authContext,
       workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       flatObjectMetadataMaps,
       flatViewMaps,
@@ -120,13 +117,11 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
     await this.softDeleteMigratedFavorites({
       workspaceId,
-      authContext,
       favoriteIds: migratedFavoriteIds,
     });
 
     await this.softDeleteMigratedFavoriteFolders({
       workspaceId,
-      authContext,
       favoriteFolderIds: Array.from(folderIdMapping.keys()),
     });
 
@@ -222,14 +217,12 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
   private async migrateFavorites({
     workspaceId,
-    authContext,
     workspaceCustomApplicationId,
     flatObjectMetadataMaps,
     flatViewMaps,
     folderIdMapping,
   }: {
     workspaceId: string;
-    authContext: ReturnType<typeof buildSystemAuthContext>;
     workspaceCustomApplicationId: string;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatViewMaps: FlatEntityMaps<FlatView>;
@@ -307,7 +300,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         : await this.getUserWorkspaceIdFromWorkspaceMemberId(
             favorite.forWorkspaceMemberId,
             workspaceId,
-            authContext,
           );
 
       if (
@@ -447,11 +439,12 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
   private async getUserWorkspaceIdFromWorkspaceMemberId(
     workspaceMemberId: string | null | undefined,
     workspaceId: string,
-    authContext: ReturnType<typeof buildSystemAuthContext>,
   ): Promise<string | null> {
     if (!isDefined(workspaceMemberId)) {
       return null;
     }
+    const authContext = buildSystemAuthContext(workspaceId);
+
     try {
       const workspaceMember =
         await this.twentyORMGlobalManager.executeInWorkspaceContext(
@@ -559,16 +552,16 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
   private async softDeleteMigratedFavorites({
     workspaceId,
-    authContext,
     favoriteIds,
   }: {
     workspaceId: string;
-    authContext: ReturnType<typeof buildSystemAuthContext>;
     favoriteIds: string[];
   }): Promise<void> {
     if (favoriteIds.length === 0) {
       return;
     }
+
+    const authContext = buildSystemAuthContext(workspaceId);
 
     await this.twentyORMGlobalManager.executeInWorkspaceContext(
       authContext,
@@ -587,16 +580,16 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
   private async softDeleteMigratedFavoriteFolders({
     workspaceId,
-    authContext,
     favoriteFolderIds,
   }: {
     workspaceId: string;
-    authContext: ReturnType<typeof buildSystemAuthContext>;
     favoriteFolderIds: string[];
   }): Promise<void> {
     if (favoriteFolderIds.length === 0) {
       return;
     }
+
+    const authContext = buildSystemAuthContext(workspaceId);
 
     await this.twentyORMGlobalManager.executeInWorkspaceContext(
       authContext,
