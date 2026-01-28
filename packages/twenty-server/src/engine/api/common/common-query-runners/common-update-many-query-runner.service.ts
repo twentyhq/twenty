@@ -32,10 +32,6 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   UpdateManyQueryArgs,
   ObjectRecord[]
 > {
-  constructor() {
-    super();
-  }
-
   protected readonly operationName = CommonQueryNames.UPDATE_MANY;
 
   async run(
