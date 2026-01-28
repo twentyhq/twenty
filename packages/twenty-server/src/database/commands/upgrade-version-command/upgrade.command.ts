@@ -49,6 +49,8 @@ import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-v
 import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-identify-webhook-metadata.command';
 import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
+import { MigrateNoteTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-note-target-to-morph-relations.command';
+import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -115,6 +117,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.17 Commands
     protected readonly migrateAttachmentToMorphRelationsCommand: MigrateAttachmentToMorphRelationsCommand,
+    protected readonly migrateNoteTargetToMorphRelationsCommand: MigrateNoteTargetToMorphRelationsCommand,
+    protected readonly migrateTaskTargetToMorphRelationsCommand: MigrateTaskTargetToMorphRelationsCommand,
     protected readonly identifyWebhookMetadataCommand: IdentifyWebhookMetadataCommand,
     protected readonly makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ) {
@@ -189,6 +193,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     const commands_1170: VersionCommands = [
       this.migrateAttachmentToMorphRelationsCommand,
+      this.migrateNoteTargetToMorphRelationsCommand,
+      this.migrateTaskTargetToMorphRelationsCommand,
       this.identifyWebhookMetadataCommand,
       this
         .makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,

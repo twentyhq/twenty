@@ -15,11 +15,11 @@ describe('noteTargetsResolver (e2e)', () => {
                 updatedAt
                 deletedAt
                 noteId
-                personId
-                companyId
-                opportunityId
-                petId
-                surveyResultId
+                targetPersonId
+                targetCompanyId
+                targetOpportunityId
+                targetPetId
+                targetSurveyResultId
               }
             }
           }
@@ -52,11 +52,11 @@ describe('noteTargetsResolver (e2e)', () => {
           expect(noteTargets).toHaveProperty('updatedAt');
           expect(noteTargets).toHaveProperty('deletedAt');
           expect(noteTargets).toHaveProperty('noteId');
-          expect(noteTargets).toHaveProperty('personId');
-          expect(noteTargets).toHaveProperty('companyId');
-          expect(noteTargets).toHaveProperty('opportunityId');
-          expect(noteTargets).toHaveProperty('petId');
-          expect(noteTargets).toHaveProperty('surveyResultId');
+          expect(noteTargets).toHaveProperty('targetPersonId');
+          expect(noteTargets).toHaveProperty('targetCompanyId');
+          expect(noteTargets).toHaveProperty('targetOpportunityId');
+          expect(noteTargets).toHaveProperty('targetPetId');
+          expect(noteTargets).toHaveProperty('targetSurveyResultId');
         }
       });
   });
