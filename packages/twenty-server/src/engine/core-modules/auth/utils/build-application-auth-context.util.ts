@@ -11,6 +11,7 @@ export const buildApplicationAuthContext = (
   input: ApplicationAuthContextInput,
 ): ApplicationWorkspaceAuthContext => {
   return {
+    type: 'application',
     workspace: input.workspace,
     application: input.application,
     workspaceMetadataVersion: input.workspaceMetadataVersion,

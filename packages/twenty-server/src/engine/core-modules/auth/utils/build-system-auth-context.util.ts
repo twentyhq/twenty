@@ -10,6 +10,7 @@ export const buildSystemAuthContext = (
   input: SystemAuthContextInput,
 ): SystemWorkspaceAuthContext => {
   return {
+    type: 'system',
     workspace: input.workspace,
     workspaceMetadataVersion: input.workspaceMetadataVersion,
   };

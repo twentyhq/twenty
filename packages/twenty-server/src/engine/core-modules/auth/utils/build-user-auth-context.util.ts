@@ -14,6 +14,7 @@ export const buildUserAuthContext = (
   input: UserAuthContextInput,
 ): UserWorkspaceAuthContext => {
   return {
+    type: 'user',
     workspace: input.workspace,
     userWorkspaceId: input.userWorkspaceId,
     user: input.user,

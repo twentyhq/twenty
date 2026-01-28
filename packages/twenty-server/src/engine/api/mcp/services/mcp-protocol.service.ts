@@ -18,7 +18,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -31,8 +31,8 @@ export class McpProtocolService {
     private readonly userRoleService: UserRoleService,
     private readonly mcpToolExecutorService: McpToolExecutorService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -106,11 +106,16 @@ export class McpProtocolService {
     }
 
     if (isDefined(userWorkspaceId)) {
-      const user = await this.userRepository.findOne({
+      const userWorkspace = await this.userWorkspaceRepository.findOne({
         where: {
           id: userWorkspaceId,
         },
+        relations: {
+          user: true,
+        },
       });
+
+      const user = userWorkspace?.user;
 
       if (!isDefined(user)) {
         throw new HttpException('User not found', HttpStatus.FORBIDDEN);

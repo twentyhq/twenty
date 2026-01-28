@@ -57,9 +57,8 @@ export class DatabaseToolProvider implements ToolProvider {
   async generateTools(context: ToolProviderContext): Promise<ToolSet> {
     const tools: ToolSet = {};
 
-    // Build authContext from available context info
-    // userWorkspaceId is required for user-based tool generation
-    if (!context.userWorkspaceId) {
+    // Both userId and userWorkspaceId are required for user-based tool generation
+    if (!context.userId || !context.userWorkspaceId) {
       return tools;
     }
 

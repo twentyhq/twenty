@@ -7,7 +7,6 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { RestToCommonSelectedFieldsHandler } from 'src/engine/api/rest/core/rest-to-common-args-handlers/selected-fields-handler';
@@ -16,7 +15,10 @@ import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.typ
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
@@ -87,19 +89,12 @@ export abstract class RestApiBaseHandler {
   private getObjectsPermissions = async (authContext: WorkspaceAuthContext) => {
     let roleId: string;
 
-    if (isDefined(authContext.apiKey)) {
+    if (isApiKeyAuthContext(authContext)) {
       roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         authContext.apiKey.id,
         authContext.workspace.id,
       );
-    } else {
-      if (!isDefined(authContext.userWorkspaceId)) {
-        throw new PermissionsException(
-          'No user workspace ID found in authentication context',
-          PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
-        );
-      }
-
+    } else if (isUserAuthContext(authContext)) {
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({
           userWorkspaceId: authContext.userWorkspaceId,
@@ -114,6 +109,11 @@ export abstract class RestApiBaseHandler {
       }
 
       roleId = userWorkspaceRoleId;
+    } else {
+      throw new PermissionsException(
+        'Authentication context is invalid',
+        PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+      );
     }
 
     const { rolesPermissions } =

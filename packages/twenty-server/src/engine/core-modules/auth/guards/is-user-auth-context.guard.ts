@@ -6,5 +6,5 @@ import {
 export const isUserAuthContext = (
   context: WorkspaceAuthContext,
 ): context is UserWorkspaceAuthContext => {
-  return context.userWorkspaceId !== undefined;
+  return context.type === 'user';
 };

@@ -6,9 +6,5 @@ import {
 export const isSystemAuthContext = (
   context: WorkspaceAuthContext,
 ): context is SystemWorkspaceAuthContext => {
-  return (
-    context.apiKey === undefined &&
-    context.userWorkspaceId === undefined &&
-    context.application === undefined
-  );
+  return context.type === 'system';
 };

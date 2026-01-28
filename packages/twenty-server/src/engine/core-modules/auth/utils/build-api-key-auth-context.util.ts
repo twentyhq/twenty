@@ -11,6 +11,7 @@ export const buildApiKeyAuthContext = (
   input: ApiKeyAuthContextInput,
 ): ApiKeyWorkspaceAuthContext => {
   return {
+    type: 'apiKey',
     workspace: input.workspace,
     apiKey: input.apiKey,
     workspaceMetadataVersion: input.workspaceMetadataVersion,

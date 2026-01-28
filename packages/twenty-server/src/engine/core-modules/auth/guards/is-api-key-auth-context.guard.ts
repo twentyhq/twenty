@@ -6,5 +6,5 @@ import {
 export const isApiKeyAuthContext = (
   context: WorkspaceAuthContext,
 ): context is ApiKeyWorkspaceAuthContext => {
-  return context.apiKey !== undefined;
+  return context.type === 'apiKey';
 };

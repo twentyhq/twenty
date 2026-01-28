@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -355,18 +358,21 @@ export class NavigationMenuItemService {
     authContext: WorkspaceAuthContext,
     workspaceId: string,
   ): Promise<string | undefined> {
-    if (isDefined(authContext.apiKey)) {
+    if (isApiKeyAuthContext(authContext)) {
       return this.apiKeyRoleService.getRoleIdForApiKeyId(
         authContext.apiKey.id,
         workspaceId,
       );
     }
 
-    if (isDefined(authContext.application?.defaultServerlessFunctionRoleId)) {
+    if (
+      isApplicationAuthContext(authContext) &&
+      isDefined(authContext.application.defaultServerlessFunctionRoleId)
+    ) {
       return authContext.application.defaultServerlessFunctionRoleId;
     }
 
-    if (isDefined(authContext.userWorkspaceId)) {
+    if (isUserAuthContext(authContext)) {
       try {
         return await this.userRoleService.getRoleIdForUserWorkspace({
           userWorkspaceId: authContext.userWorkspaceId,

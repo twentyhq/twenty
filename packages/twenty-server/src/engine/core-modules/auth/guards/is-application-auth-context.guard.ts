@@ -6,5 +6,5 @@ import {
 export const isApplicationAuthContext = (
   context: WorkspaceAuthContext,
 ): context is ApplicationWorkspaceAuthContext => {
-  return context.application !== undefined;
+  return context.type === 'application';
 };
