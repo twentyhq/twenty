@@ -57,6 +57,9 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
       roleTargets,
       objectPermissions,
       permissionFlags,
+      fieldPermissions,
+      rowLevelPermissionPredicates,
+      rowLevelPermissionPredicateGroups,
     ] = await Promise.all([
       this.roleRepository.find({
         where: { workspaceId },
@@ -70,6 +73,21 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
       this.roleTargetRepository.find({
         where: { workspaceId },
         select: ['id', 'universalIdentifier', 'roleId'],
+        withDeleted: true,
+      }),
+      this.objectPermissionRepository.find({
+        where: { workspaceId },
+        select: ['id', 'roleId'],
+        withDeleted: true,
+      }),
+      this.permissionFlagRepository.find({
+        where: { workspaceId },
+        select: ['id', 'roleId'],
+        withDeleted: true,
+      }),
+      this.fieldPermissionRepository.find({
+        where: { workspaceId },
+        select: ['id', 'roleId'],
         withDeleted: true,
       }),
       this.rowLevelPermissionPredicateRepository.find({
@@ -86,6 +104,9 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
 
     const [
       roleTargetsByRoleId,
+      objectPermissionsByRoleId,
+      permissionFlagsByRoleId,
+      fieldPermissionsByRoleId,
       rowLevelPermissionPredicatesByRoleId,
       rowLevelPermissionPredicateGroupsByRoleId,
     ] = (
@@ -102,6 +123,18 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
           entities: permissionFlags,
           foreignKey: 'roleId',
         },
+        {
+          entities: fieldPermissions,
+          foreignKey: 'roleId',
+        },
+        {
+          entities: rowLevelPermissionPredicates,
+          foreignKey: 'roleId',
+        },
+        {
+          entities: rowLevelPermissionPredicateGroups,
+          foreignKey: 'roleId',
+        },
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);
 
@@ -115,6 +148,9 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
         entity: {
           ...roleEntity,
           roleTargets: roleTargetsByRoleId.get(roleEntity.id) || [],
+          objectPermissions: objectPermissionsByRoleId.get(roleEntity.id) || [],
+          permissionFlags: permissionFlagsByRoleId.get(roleEntity.id) || [],
+          fieldPermissions: fieldPermissionsByRoleId.get(roleEntity.id) || [],
           rowLevelPermissionPredicates:
             rowLevelPermissionPredicatesByRoleId.get(roleEntity.id) || [],
           rowLevelPermissionPredicateGroups:

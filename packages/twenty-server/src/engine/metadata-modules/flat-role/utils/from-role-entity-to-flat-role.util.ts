@@ -4,13 +4,27 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+import { EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
+import { EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
+import { RegroupedEntity } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
+
+type FromRoleEntityToFlatRoleArgs = {
+  entity: Omit<
+    EntityWithRegroupedOneToManyRelations<MetadataEntity<'role'>>,
+    'objectPermissions' | 'permissionFlags' | 'fieldPermissions'
+  > & {
+    objectPermissions: RegroupedEntity[];
+    permissionFlags: RegroupedEntity[];
+    fieldPermissions: RegroupedEntity[];
+  };
+} & EntityManyToOneIdByUniversalIdentifierMaps<'role'>;
 
 export const fromRoleEntityToFlatRole = ({
   entity: roleEntity,
   applicationIdToUniversalIdentifierMap,
-}: FromEntityToFlatEntityArgs<'role'>): FlatRole => {
+}: FromRoleEntityToFlatRoleArgs): FlatRole => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(roleEntity.applicationId);
 
