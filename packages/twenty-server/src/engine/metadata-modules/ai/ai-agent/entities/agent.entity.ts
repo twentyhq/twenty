@@ -15,6 +15,7 @@ import {
   ModelId,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { FormatRecordSerializedRelationProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-record-serialized-relation-properties.type';
 import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity('agent')

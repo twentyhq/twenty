@@ -24,13 +24,14 @@ export const ALL_JSONB_PROPERTIES_BY_METADATA_NAME = {
   roleTarget: {},
   rowLevelPermissionPredicate: { value: 'value' },
   rowLevelPermissionPredicateGroup: {},
-  serverlessFunction: {
+  logicFunction: {
+    cronTriggerSettings: 'cronTriggerSettings',
+    databaseEventTriggerSettings: 'databaseEventTriggerSettings',
+    httpRouteTriggerSettings: 'httpRouteTriggerSettings',
     publishedVersions: 'publishedVersions',
     toolInputSchema: 'toolInputSchema',
   },
-  cronTrigger: { settings: 'settings' },
-  databaseEventTrigger: { settings: 'settings' },
-  routeTrigger: { forwardedRequestHeaders: 'forwardedRequestHeaders' },
+  webhook: {},
   agent: {
     responseFormat: 'responseFormat',
     modelConfiguration: 'modelConfiguration',

@@ -8,7 +8,7 @@ import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modul
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type AllJsonbPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-by-metadata-name.constant';
-import { type FormatJsonbSerializedRelation } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-jsonb-serialized-relation.type';
+import { FormatRecordSerializedRelationProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-record-serialized-relation-properties.type';
 
 export type UniversalSyncableFlatEntity = Omit<
   SyncableEntity,
@@ -30,7 +30,7 @@ export type UniversalFlatEntityExtraProperties<
     applicationUniversalIdentifier: string;
   } & {
     [P in AllJsonbPropertiesForMetadataName<TMetadataName> &
-      keyof TEntity]: FormatJsonbSerializedRelation<TEntity[P]>;
+      keyof TEntity]: FormatRecordSerializedRelationProperties<TEntity[P]>;
   };
 
 export type UniversalFlatEntityFrom<

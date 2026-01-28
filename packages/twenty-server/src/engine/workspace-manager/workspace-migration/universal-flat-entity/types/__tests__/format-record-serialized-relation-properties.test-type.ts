@@ -252,3 +252,79 @@ type NestedObjectAssertions = [
     >
   >,
 ];
+
+// JSON Schema-like structures with Record<string, X> properties
+// These should NOT have their 'properties' key renamed
+type JsonSchemaLikeObject = {
+  type: 'object';
+  properties: Record<string, { type: string; description?: string }>;
+  required?: string[];
+};
+
+type JsonSchemaUnion =
+  | { type: 'text' }
+  | {
+      type: 'json';
+      schema: JsonSchemaLikeObject;
+    };
+
+type BrandedJsonSchemaUnion = JsonbProperty<JsonSchemaUnion>;
+
+// eslint-disable-next-line unused-imports/no-unused-vars
+type RecordPropertyAssertions = [
+  // Object with 'properties' key containing Record<string, X>:
+  // The 'properties' key should NOT be renamed to 'propertiesUniversalIdentifier'
+  Expect<
+    Equal<
+      FormatRecordSerializedRelationProperties<JsonSchemaLikeObject>,
+      {
+        type: 'object';
+        properties: Record<string, { type: string; description?: string }>;
+        required?: string[];
+      }
+    >
+  >,
+
+  // Union type with JSON schema: properties inside schema should stay as 'properties'
+  Expect<
+    Equal<
+      FormatRecordSerializedRelationProperties<JsonSchemaUnion>,
+      | { type: 'text' }
+      | {
+          type: 'json';
+          schema: {
+            type: 'object';
+            properties: Record<string, { type: string; description?: string }>;
+            required?: string[];
+          };
+        }
+    >
+  >,
+
+  // Branded JSON schema union: should preserve structure, only add brand
+  Expect<
+    Equal<
+      FormatRecordSerializedRelationProperties<BrandedJsonSchemaUnion>,
+      | { type: 'text'; __JsonbPropertyBrand__?: undefined }
+      | {
+          type: 'json';
+          schema: {
+            type: 'object';
+            properties: Record<string, { type: string; description?: string }>;
+            required?: string[];
+          };
+          __JsonbPropertyBrand__?: undefined;
+        }
+    >
+  >,
+
+  // Plain Record<string, X> should pass through unchanged
+  Expect<
+    Equal<
+      FormatRecordSerializedRelationProperties<
+        Record<string, { value: number }>
+      >,
+      Record<string, { value: number }>
+    >
+  >,
+];
