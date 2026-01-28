@@ -7,7 +7,7 @@ Automatisch ein PDF generieren oder abrufen und an einen Datensatz in Twenty anh
 
 ## Übersicht
 
-Dieser Workflow verwendet einen **Manuellen Auslöser**, damit Benutzer bei Bedarf für jeden ausgewählten Datensatz ein PDF generieren können. Eine **Serverlose Funktion** übernimmt:
+Dieser Workflow verwendet einen **Manuellen Auslöser**, damit Benutzer bei Bedarf für jeden ausgewählten Datensatz ein PDF generieren können. A **Logic Function** handles:
 
 1. Das Herunterladen des PDFs von einer URL (von einem PDF-Generierungsdienst)
 2. Das Hochladen der Datei in Twenty
@@ -17,7 +17,7 @@ Dieser Workflow verwendet einen **Manuellen Auslöser**, damit Benutzer bei Beda
 
 Bevor Sie den Workflow einrichten:
 
-1. **API-Schlüssel erstellen**: Gehen Sie zu **Einstellungen → APIs** und erstellen Sie einen neuen API-Schlüssel. Sie benötigen dieses Token für die serverlose Funktion.
+1. **API-Schlüssel erstellen**: Gehen Sie zu **Einstellungen → APIs** und erstellen Sie einen neuen API-Schlüssel. You'll need this token for the logic function.
 2. **Richten Sie einen PDF-Generierungsdienst ein** (optional): Wenn Sie PDFs dynamisch generieren möchten (z. B. Angebote), verwenden Sie einen Dienst wie Carbone, PDFMonkey oder DocuSeal, um das PDF zu erstellen und eine Download-URL zu erhalten.
 
 ## Schritt-für-Schritt-Einrichtung
@@ -32,9 +32,9 @@ Bevor Sie den Workflow einrichten:
   Mit einem manuellen Auslöser können Benutzer diesen Workflow über eine Schaltfläche ausführen, die oben rechts erscheint, sobald ein Datensatz ausgewählt ist, um ein PDF zu generieren und anzuhängen.
 </Tip>
 
-### Schritt 2: Serverlose Funktion hinzufügen
+### Step 2: Add a Logic Function
 
-1. Fügen Sie eine **Serverlose Funktion**-Aktion hinzu
+1. Add a **Code** action (logic function)
 2. Erstellen Sie eine neue Funktion mit dem folgenden Code
 3. Konfigurieren Sie die Eingabeparameter
 
@@ -45,10 +45,10 @@ Bevor Sie den Workflow einrichten:
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  Wenn Sie an ein anderes Objekt anhängen (Person, Opportunity usw.), benennen Sie den Parameter entsprechend um (z. B. `personId`, `opportunityId`) und aktualisieren Sie die serverlose Funktion.
+  If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic function.
 </Note>
 
-#### Code der serverlosen Funktion
+#### Logic Function Code
 
 ```typescript
 export const main = async (
@@ -172,7 +172,7 @@ Aktualisieren Sie sowohl den Funktionsparameter als auch das Objekt `variables.d
 Wenn Sie einen PDF-Generierungsdienst verwenden, können Sie:
 
 1. Führen Sie zuerst eine HTTP-Request-Aktion aus, um das PDF zu generieren
-2. Übergeben Sie die zurückgegebene PDF-URL als Parameter an die serverlose Funktion
+2. Pass the returned PDF URL to the logic function as a parameter
 
 ```typescript
 export const main = async (
@@ -211,7 +211,7 @@ Zum Erstellen dynamischer Angebote oder Rechnungen:
 * **DocuSeal** – Plattform für Dokumentenautomatisierung
 * **Documint** – API-first-Dokumentenerstellung
 
-Jeder Dienst stellt eine API bereit, die eine PDF-URL zurückgibt, die Sie anschließend an die serverlose Funktion übergeben können.
+Each service provides an API that returns a PDF URL, which you can then pass to the logic function.
 
 ## Fehlerbehebung
 
@@ -224,5 +224,5 @@ Jeder Dienst stellt eine API bereit, die eine PDF-URL zurückgibt, die Sie ansch
 ## Verwandt
 
 * [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
-* [Serverlose Funktionen](/l/de/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Logic Functions](/l/de/user-guide/workflows/capabilities/workflow-actions#code)
 * [Ein Angebot oder eine Rechnung aus Twenty generieren](/l/de/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

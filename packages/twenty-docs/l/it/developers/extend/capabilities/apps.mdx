@@ -9,12 +9,12 @@ description: Crea e gestisci le personalizzazioni di Twenty come codice.
 
 ## Cosa sono le app?
 
-Le app ti consentono di creare e gestire le personalizzazioni di Twenty **come codice**. Invece di configurare tutto tramite l'interfaccia utente, definisci in codice il modello dati e le funzioni serverless — rendendo più veloce creare, mantenere e distribuire su più spazi di lavoro.
+Le app ti consentono di creare e gestire le personalizzazioni di Twenty **come codice**. Instead of configuring everything through the UI, you define your data model and logic functions in code — making it faster to build, maintain, and roll out to multiple workspaces.
 
 **Cosa puoi fare oggi:**
 
 * Definisci oggetti e campi personalizzati come codice (modello dati gestito)
-* Crea funzioni serverless con trigger personalizzati
+* Build logic functions with custom triggers
 * Distribuisci la stessa app su più spazi di lavoro
 
 **In arrivo:**
@@ -164,9 +164,9 @@ A livello generale:
 * **README.md**: Un breve README nella radice dell'app con istruzioni di base.
 * **src/**: The main place where you define your application-as-code:
   * `application.config.ts`: Configurazione globale della tua app (metadati e collegamenti di runtime). Vedi "Configurazione dell'applicazione" qui sotto.
-  * `*.role.ts`: Definizioni di ruoli usate dalle tue funzioni serverless. Vedi "Ruolo funzione predefinito" qui sotto.
+  * `*.role.ts`: Role definitions used by your logic functions. Vedi "Ruolo funzione predefinito" qui sotto.
   * `*.object.ts`: Definizioni di oggetti personalizzati.
-  * `*.function.ts`: Definizioni di funzioni serverless.
+  * `*.function.ts`: Logic function definitions.
   * `*.front-component.tsx`: Front component definitions.
 
 Comandi successivi aggiungeranno altri file e cartelle:
@@ -219,7 +219,7 @@ L'SDK fornisce quattro funzioni helper con convalida integrata per definire le e
 | ------------------ | ------------------------------------------------------- |
 | `defineApp()`      | Configura i metadati dell'applicazione                  |
 | `defineObject()`   | Definisci oggetti personalizzati con campi              |
-| `defineFunction()` | Definisci funzioni serverless con handler               |
+| `defineFunction()` | Define logic functions with handlers                    |
 | `defineRole()`     | Configura i permessi dei ruoli e l'accesso agli oggetti |
 
 Queste funzioni convalidano la configurazione a runtime e offrono un migliore completamento automatico nell'IDE e una maggiore sicurezza dei tipi.
@@ -349,7 +349,7 @@ Note:
 
 #### Ruoli e permessi
 
-Le applicazioni possono definire ruoli che incapsulano i permessi sugli oggetti e sulle azioni del tuo spazio di lavoro. Il campo `functionRoleUniversalIdentifier` in `application.config.ts` designa il ruolo predefinito utilizzato dalle funzioni serverless della tua app.
+Le applicazioni possono definire ruoli che incapsulano i permessi sugli oggetti e sulle azioni del tuo spazio di lavoro. The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
 
 * La chiave API di runtime iniettata come `TWENTY_API_KEY` è derivata da questo ruolo funzione predefinito.
 * Il client tipizzato sarà limitato ai permessi concessi a quel ruolo.
@@ -411,7 +411,7 @@ Note:
 * `permissionFlags` controllano l'accesso alle funzionalità a livello di piattaforma. Mantienili al minimo; aggiungi solo ciò che ti serve.
 * Vedi un esempio funzionante nell'app Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
-### Configurazione e punto di ingresso della funzione serverless
+### Logic function config and entrypoint
 
 Ogni file di funzione usa `defineFunction()` per esportare una configurazione con un handler e trigger opzionali. Usa il suffisso di file `*.function.ts` per il rilevamento automatico.
 
@@ -510,7 +510,7 @@ Note:
   **Per migrare le funzioni esistenti:** Aggiorna l'handler per estrarre i dati da `event.body`, `event.queryStringParameters` o `event.pathParameters` invece che direttamente dall'oggetto `params`.
 </Warning>
 
-Quando un trigger di route invoca la tua funzione, questa riceve un oggetto `RoutePayload` che segue il formato AWS HTTP API v2. Importa il tipo da `twenty-sdk`:
+When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Importa il tipo da `twenty-sdk`:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -540,7 +540,7 @@ Il tipo `RoutePayload` ha la seguente struttura:
 
 ### Inoltro delle intestazioni HTTP
 
-Per impostazione predefinita, le intestazioni HTTP delle richieste in ingresso non vengono passate alla tua funzione serverless per motivi di sicurezza. Per accedere a intestazioni specifiche, elencale esplicitamente nell'array `forwardedRequestHeaders`:
+By default, HTTP headers from incoming requests are **not** passed to your logic function for security reasons. Per accedere a intestazioni specifiche, elencale esplicitamente nell'array `forwardedRequestHeaders`:
 
 ```typescript
 export default defineFunction({
@@ -594,7 +594,7 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 
 Il client viene rigenerato da `yarn app:generate`. Re-run after changing your objects or when onboarding to a new workspace.
 
-#### Credenziali di runtime nelle funzioni serverless
+#### Runtime credentials in logic functions
 
 Quando la tua funzione viene eseguita su Twenty, la piattaforma inietta le credenziali come variabili d'ambiente prima dell'esecuzione del tuo codice:
 
@@ -604,7 +604,7 @@ Quando la tua funzione viene eseguita su Twenty, la piattaforma inietta le crede
 Note:
 
 * Non è necessario passare URL o chiave API al client generato. Legge `TWENTY_API_URL` e `TWENTY_API_KEY` da process.env in fase di esecuzione.
-* I permessi della chiave API sono determinati dal ruolo referenziato in `application.config.ts` tramite `functionRoleUniversalIdentifier`. Questo è il ruolo predefinito utilizzato dalle funzioni serverless della tua applicazione.
+* I permessi della chiave API sono determinati dal ruolo referenziato in `application.config.ts` tramite `functionRoleUniversalIdentifier`. This is the default role used by logic functions of your application.
 * Le applicazioni possono definire ruoli per seguire il principio del privilegio minimo. Concedi solo i permessi necessari alle tue funzioni, quindi punta `functionRoleUniversalIdentifier` all'identificatore universale di quel ruolo.
 
 ### Esempio Hello World

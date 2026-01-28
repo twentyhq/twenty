@@ -292,21 +292,21 @@ yarn command:prod cron:workflow:automated-cron-trigger
   **وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`، فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
 </Warning>
 
-## وظائف بلا خادم
+## Logic Functions
 
-تدعم Twenty وظائف بلا خادم لعمليات سير العمل والمنطق المخصص. يتم تكوين بيئة التنفيذ عبر متغير البيئة `SERVERLESS_TYPE`.
+Twenty supports logic functions for workflows and custom logic. يتم تكوين بيئة التنفيذ عبر متغير البيئة `SERVERLESS_TYPE`.
 
 <Warning>
-  **ملاحظة أمنية:** يقوم برنامج التشغيل المحلي لوظائف بلا خادم (`SERVERLESS_TYPE=LOCAL`) بتشغيل الشيفرة مباشرةً على المضيف ضمن عملية Node.js من دون عزل. يجب استخدامه فقط للشيفرة الموثوقة أثناء التطوير. بالنسبة لعمليات النشر الإنتاجية التي تتعامل مع شيفرة غير موثوق بها، نوصي بشدة باستخدام `SERVERLESS_TYPE=LAMBDA` أو `SERVERLESS_TYPE=DISABLED`.
+  **Security Notice:** The local driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. يجب استخدامه فقط للشيفرة الموثوقة أثناء التطوير. بالنسبة لعمليات النشر الإنتاجية التي تتعامل مع شيفرة غير موثوق بها، نوصي بشدة باستخدام `SERVERLESS_TYPE=LAMBDA` أو `SERVERLESS_TYPE=DISABLED`.
 </Warning>
 
 ### برامج التشغيل المتاحة
 
-| برنامج التشغيل | متغير البيئة               | حالة الاستخدام                  | مستوى الأمان                  |
-| -------------- | -------------------------- | ------------------------------- | ----------------------------- |
-| معطل           | `SERVERLESS_TYPE=DISABLED` | تعطيل وظائف بلا خادم بالكامل    | غير متاح                      |
-| محلي           | `SERVERLESS_TYPE=LOCAL`    | بيئات التطوير والبيئات الموثوقة | منخفض (من دون عزل)            |
-| Lambda         | `SERVERLESS_TYPE=LAMBDA`   | الإنتاج مع شيفرة غير موثوق بها  | مرتفع (عزل على مستوى الأجهزة) |
+| برنامج التشغيل | متغير البيئة               | حالة الاستخدام                   | مستوى الأمان                  |
+| -------------- | -------------------------- | -------------------------------- | ----------------------------- |
+| معطل           | `SERVERLESS_TYPE=DISABLED` | Disable logic functions entirely | غير متاح                      |
+| محلي           | `SERVERLESS_TYPE=LOCAL`    | بيئات التطوير والبيئات الموثوقة  | منخفض (من دون عزل)            |
+| Lambda         | `SERVERLESS_TYPE=LAMBDA`   | الإنتاج مع شيفرة غير موثوق بها   | مرتفع (عزل على مستوى الأجهزة) |
 
 ### التكوين الموصى به
 
@@ -326,12 +326,12 @@ SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
 SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**لتعطيل وظائف بلا خادم:**
+**To disable logic functions:**
 
 ```bash
 SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  عند استخدام `SERVERLESS_TYPE=DISABLED`، ستؤدي أي محاولة لتنفيذ وظيفة بلا خادم إلى إرجاع خطأ. يكون هذا مفيدًا إذا كنت ترغب في تشغيل Twenty من دون قدرات وظائف بلا خادم.
+  When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a logic function will return an error. This is useful if you want to run Twenty without logic function capabilities.
 </Note>

@@ -7,7 +7,7 @@ Twenty'de PDF'yi otomatik olarak oluşturun veya edinin ve bir kayda ekleyin. Bu
 
 ## Genel Bakış
 
-Bu iş akışı, kullanıcıların seçilen herhangi bir kayıt için isteğe bağlı olarak PDF oluşturabilmesi için **Manuel Tetikleyici** kullanır. Bir **Sunucusuz İşlev** şunları gerçekleştirir:
+Bu iş akışı, kullanıcıların seçilen herhangi bir kayıt için isteğe bağlı olarak PDF oluşturabilmesi için **Manuel Tetikleyici** kullanır. A **Logic Function** handles:
 
 1. PDF'yi bir URL'den indirme (bir PDF oluşturma hizmetinden)
 2. Dosyayı Twenty'ye yükleme
@@ -17,7 +17,7 @@ Bu iş akışı, kullanıcıların seçilen herhangi bir kayıt için isteğe ba
 
 İş akışını kurmadan önce:
 
-1. **Bir API Anahtarı oluşturun**: **Ayarlar → API'ler**'e gidin ve yeni bir API anahtarı oluşturun. Sunucusuz işlev için bu anahtara ihtiyacınız olacak.
+1. **Bir API Anahtarı oluşturun**: **Ayarlar → API'ler**'e gidin ve yeni bir API anahtarı oluşturun. You'll need this token for the logic function.
 2. **Bir PDF oluşturma hizmeti kurun** (isteğe bağlı): PDF'leri dinamik olarak oluşturmak istiyorsanız (ör. teklifler), PDF'yi oluşturmak ve bir indirme URL'si almak için Carbone, PDFMonkey veya DocuSeal gibi bir hizmet kullanın.
 
 ## Adım Adım Kurulum
@@ -32,9 +32,9 @@ Bu iş akışı, kullanıcıların seçilen herhangi bir kayıt için isteğe ba
   Manuel Tetikleyici ile kullanıcılar, bir kayıt seçildiğinde sağ üstte görünen bir düğmeyi kullanarak bu iş akışını çalıştırıp bir PDF oluşturabilir ve ekleyebilir.
 </Tip>
 
-### Adım 2: Bir Sunucusuz İşlev ekleyin
+### Step 2: Add a Logic Function
 
-1. Bir **Sunucusuz İşlev** eylemi ekleyin
+1. Add a **Code** action (logic function)
 2. Aşağıdaki kodla yeni bir işlev oluşturun
 3. Girdi parametrelerini yapılandırın
 
@@ -45,10 +45,10 @@ Bu iş akışı, kullanıcıların seçilen herhangi bir kayıt için isteğe ba
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  Farklı bir nesneye (Person, Opportunity vb.) ekliyorsanız, parametreyi buna göre yeniden adlandırın (ör. `personId`, `opportunityId`) ve sunucusuz işlevi güncelleyin.
+  If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic function.
 </Note>
 
-#### Sunucusuz İşlev Kodu
+#### Logic Function Code
 
 ```typescript
 export const main = async (
@@ -172,7 +172,7 @@ Ek oluşturma mutasyonunda hem işlev parametresini hem de `variables.data` nesn
 Bir PDF oluşturma hizmeti kullanıyorsanız şunları yapabilirsiniz:
 
 1. Önce PDF'yi oluşturmak için bir HTTP İsteği eylemi yapın
-2. Döndürülen PDF URL'sini sunucusuz işleve bir parametre olarak iletin
+2. Pass the returned PDF URL to the logic function as a parameter
 
 ```typescript
 export const main = async (
@@ -211,7 +211,7 @@ Dinamik teklifler veya faturalar oluşturmak için:
 * **DocuSeal** - Belge otomasyon platformu
 * **Documint** - API-öncelikli belge oluşturma
 
-Her hizmet, bir PDF URL'si döndüren bir API sağlar; ardından bunu sunucusuz işleve iletebilirsiniz.
+Each service provides an API that returns a PDF URL, which you can then pass to the logic function.
 
 ## Sorun Giderme
 
@@ -224,5 +224,5 @@ Her hizmet, bir PDF URL'si döndüren bir API sağlar; ardından bunu sunucusuz 
 ## İlgili
 
 * [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
-* [Sunucusuz İşlevler](/l/tr/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Logic Functions](/l/tr/user-guide/workflows/capabilities/workflow-actions#code)
 * [Twenty'den Teklif veya Fatura Oluşturun](/l/tr/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

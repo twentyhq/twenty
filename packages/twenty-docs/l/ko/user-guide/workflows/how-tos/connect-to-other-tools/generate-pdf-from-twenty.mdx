@@ -7,7 +7,7 @@ Twenty에서 PDF를 자동으로 생성하거나 가져와 레코드에 첨부�
 
 ## 개요
 
-이 워크플로우는 **수동 트리거**를 사용하므로 사용자가 선택한 레코드에 대해 필요할 때 PDF를 생성할 수 있습니다. **서버리스 함수**가 다음을 처리합니다:
+이 워크플로우는 **수동 트리거**를 사용하므로 사용자가 선택한 레코드에 대해 필요할 때 PDF를 생성할 수 있습니다. A **Logic Function** handles:
 
 1. URL에서 PDF를 다운로드(PDF 생성 서비스에서 제공)
 2. 파일을 Twenty에 업로드
@@ -17,7 +17,7 @@ Twenty에서 PDF를 자동으로 생성하거나 가져와 레코드에 첨부�
 
 워크플로우를 설정하기 전에:
 
-1. **API 키 생성**: **Settings → APIs**로 이동하여 새 API 키를 만드세요. 이 토큰은 서버리스 함수에 필요합니다.
+1. **API 키 생성**: **Settings → APIs**로 이동하여 새 API 키를 만드세요. You'll need this token for the logic function.
 2. **PDF 생성 서비스 설정**(선택 사항): PDF를 동적으로 생성하려면(예: 견적서) Carbone, PDFMonkey, DocuSeal 같은 서비스를 사용해 PDF를 만들고 다운로드 URL을 받으세요.
 
 ## 단계별 설정
@@ -32,9 +32,9 @@ Twenty에서 PDF를 자동으로 생성하거나 가져와 레코드에 첨부�
   수동 트리거를 사용하면 사용자가 레코드를 선택한 후 우측 상단에 표시되는 버튼으로 이 워크플로우를 실행해 PDF를 생성하고 첨부할 수 있습니다.
 </Tip>
 
-### 2단계: 서버리스 함수 추가
+### Step 2: Add a Logic Function
 
-1. **서버리스 함수** 작업을 추가합니다
+1. Add a **Code** action (logic function)
 2. 아래 코드로 새 함수를 만드세요
 3. 입력 매개변수를 구성하세요
 
@@ -45,10 +45,10 @@ Twenty에서 PDF를 자동으로 생성하거나 가져와 레코드에 첨부�
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  다른 객체(Person, Opportunity 등)에 첨부하는 경우 해당 매개변수 이름을 바꾸고(예: `personId`, `opportunityId`) 서버리스 함수를 업데이트하세요.
+  If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic function.
 </Note>
 
-#### 서버리스 함수 코드
+#### Logic Function Code
 
 ```typescript
 export const main = async (
@@ -172,7 +172,7 @@ export const main = async (
 PDF 생성 서비스를 사용하는 경우 다음을 수행할 수 있습니다:
 
 1. 먼저 PDF를 생성하기 위해 HTTP 요청 작업을 만듭니다
-2. 반환된 PDF URL을 서버리스 함수의 매개변수로 전달합니다
+2. Pass the returned PDF URL to the logic function as a parameter
 
 ```typescript
 export const main = async (
@@ -211,7 +211,7 @@ export const main = async (
 * **DocuSeal** - 문서 자동화 플랫폼
 * **Documint** - API 우선 문서 생성
 
-각 서비스는 PDF URL을 반환하는 API를 제공하며, 이 URL을 서버리스 함수에 전달할 수 있습니다.
+Each service provides an API that returns a PDF URL, which you can then pass to the logic function.
 
 ## 문제 해결
 
@@ -224,5 +224,5 @@ export const main = async (
 ## 관련 항목
 
 * [워크플로우 트리거](/l/ko/user-guide/workflows/capabilities/workflow-triggers)
-* [서버리스 함수](/l/ko/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Logic Functions](/l/ko/user-guide/workflows/capabilities/workflow-actions#code)
 * [Twenty에서 견적서 또는 송장 생성](/l/ko/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

@@ -9,12 +9,12 @@ description: Создавайте и управляйте настройками
 
 ## Что такое приложения?
 
-Приложения позволяют создавать и управлять настройками Twenty **в виде кода**. Вместо настройки всего через интерфейс вы определяете модель данных и бессерверные функции в коде — так быстрее создавать, поддерживать и развёртывать в нескольких рабочих пространствах.
+Приложения позволяют создавать и управлять настройками Twenty **в виде кода**. Instead of configuring everything through the UI, you define your data model and logic functions in code — making it faster to build, maintain, and roll out to multiple workspaces.
 
 **Что вы можете делать уже сегодня:**
 
 * Определяйте пользовательские объекты и поля в виде кода (управляемая модель данных)
-* Создавайте бессерверные функции с пользовательскими триггерами
+* Build logic functions with custom triggers
 * Развёртывайте одно и то же приложение в нескольких рабочих пространствах
 
 **Скоро:**
@@ -164,9 +164,9 @@ src/
 * **README.md**: Короткий README в корне приложения с базовыми инструкциями.
 * **src/**: The main place where you define your application-as-code:
   * `application.config.ts`: Глобальная конфигурация вашего приложения (метаданные и параметры выполнения). См. раздел «Конфигурация приложения» ниже.
-  * `*.role.ts`: Определения ролей, используемых вашими бессерверными функциями. См. раздел «Роль функции по умолчанию» ниже.
+  * `*.role.ts`: Role definitions used by your logic functions. См. раздел «Роль функции по умолчанию» ниже.
   * `*.object.ts`: Определения пользовательских объектов.
-  * `*.function.ts`: Определения бессерверных функций.
+  * `*.function.ts`: Logic function definitions.
   * `*.front-component.tsx`: Front component definitions.
 
 Позднее команды добавят больше файлов и папок:
@@ -215,12 +215,12 @@ yarn auth:status
 
 SDK предоставляет четыре вспомогательных функции с встроенной валидацией для определения сущностей вашего приложения:
 
-| Функция            | Назначение                                      |
-| ------------------ | ----------------------------------------------- |
-| `defineApp()`      | Настраивает метаданные приложения               |
-| `defineObject()`   | Определяет пользовательские объекты с полями    |
-| `defineFunction()` | Определяет бессерверные функции с обработчиками |
-| `defineRole()`     | Настраивает права роли и доступ к объектам      |
+| Функция            | Назначение                                   |
+| ------------------ | -------------------------------------------- |
+| `defineApp()`      | Настраивает метаданные приложения            |
+| `defineObject()`   | Определяет пользовательские объекты с полями |
+| `defineFunction()` | Define logic functions with handlers         |
+| `defineRole()`     | Настраивает права роли и доступ к объектам   |
 
 Эти функции проверяют вашу конфигурацию во время выполнения и обеспечивают лучшую автодополняемость в IDE и безопасность типов.
 
@@ -349,7 +349,7 @@ export default defineApp({
 
 #### Роли и разрешения
 
-Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. Поле `functionRoleUniversalIdentifier` в `application.config.ts` обозначает роль по умолчанию, используемую бессерверными функциями вашего приложения.
+Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
 
 * Ключ API во время выполнения, подставляемый как `TWENTY_API_KEY`, получается из этой роли функции по умолчанию.
 * Типизированный клиент будет ограничен правами, предоставленными этой ролью.
@@ -411,7 +411,7 @@ export default defineRole({
 * `permissionFlags` управляют доступом к возможностям на уровне платформы. Держите их минимальными; добавляйте только то, что нужно.
 * См. рабочий пример в приложении Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
-### Конфигурация бессерверной функции и точка входа
+### Logic function config and entrypoint
 
 Каждый файл функции использует `defineFunction()` для экспорта конфигурации с обработчиком и необязательными триггерами. Используйте суффикс файла `*.function.ts` для автоматического обнаружения.
 
@@ -510,7 +510,7 @@ export default defineFunction({
   **Чтобы мигрировать существующие функции:** Обновите обработчик, чтобы деструктурировать из `event.body`, `event.queryStringParameters` или `event.pathParameters` вместо прямого доступа к объекту params.
 </Warning>
 
-Когда триггер маршрута вызывает вашу функцию, она получает объект `RoutePayload`, соответствующий формату AWS HTTP API v2. Импортируйте тип из `twenty-sdk`:
+When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Импортируйте тип из `twenty-sdk`:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -540,7 +540,7 @@ const handler = async (event: RoutePayload) => {
 
 ### Проброс HTTP-заголовков
 
-По умолчанию HTTP-заголовки из входящих запросов **не** передаются в вашу бессерверную функцию по соображениям безопасности. Чтобы получить доступ к определённым заголовкам, явно перечислите их в массиве `forwardedRequestHeaders`:
+By default, HTTP headers from incoming requests are **not** passed to your logic function for security reasons. Чтобы получить доступ к определённым заголовкам, явно перечислите их в массиве `forwardedRequestHeaders`:
 
 ```typescript
 export default defineFunction({
@@ -594,7 +594,7 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 
 Клиент повторно генерируется командой `yarn app:generate`. Re-run after changing your objects or when onboarding to a new workspace.
 
-#### Учётные данные времени выполнения в бессерверных функциях
+#### Runtime credentials in logic functions
 
 Когда ваша функция запускается на Twenty, платформа подставляет учётные данные как переменные окружения перед выполнением вашего кода:
 
@@ -604,7 +604,7 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 Заметки:
 
 * Вам не нужно передавать URL или ключ API сгенерированному клиенту. Он читает `TWENTY_API_URL` и `TWENTY_API_KEY` из process.env во время выполнения.
-* Права ключа API определяются ролью, на которую ссылается ваш `application.config.ts` через `functionRoleUniversalIdentifier`. Это роль по умолчанию, используемая бессерверными функциями вашего приложения.
+* Права ключа API определяются ролью, на которую ссылается ваш `application.config.ts` через `functionRoleUniversalIdentifier`. This is the default role used by logic functions of your application.
 * Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Выдавайте только те права, которые нужны вашим функциям, затем укажите в `functionRoleUniversalIdentifier` универсальный идентификатор этой роли.
 
 ### Пример Hello World

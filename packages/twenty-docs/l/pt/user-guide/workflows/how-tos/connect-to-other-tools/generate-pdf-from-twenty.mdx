@@ -7,7 +7,7 @@ Gere automaticamente ou obtenha um PDF e anexe-o a um registo no Twenty. Isto é
 
 ## Visão Geral
 
-Este fluxo de trabalho utiliza um **Gatilho Manual** para que os utilizadores possam gerar um PDF a pedido para qualquer registo selecionado. Uma **Função serverless** trata de:
+Este fluxo de trabalho utiliza um **Gatilho Manual** para que os utilizadores possam gerar um PDF a pedido para qualquer registo selecionado. A **Logic Function** handles:
 
 1. Transferir o PDF a partir de um URL (de um serviço de geração de PDF)
 2. Carregar o ficheiro para o Twenty
@@ -17,7 +17,7 @@ Este fluxo de trabalho utiliza um **Gatilho Manual** para que os utilizadores po
 
 Antes de configurar o fluxo de trabalho:
 
-1. **Crie uma Chave de API**: Vá a **Definições → APIs** e crie uma nova chave de API. Vai precisar deste token para a função serverless.
+1. **Crie uma Chave de API**: Vá a **Definições → APIs** e crie uma nova chave de API. You'll need this token for the logic function.
 2. **Configure um serviço de geração de PDF** (opcional): Se quiser gerar PDFs dinamicamente (por exemplo, orçamentos), utilize um serviço como o Carbone, o PDFMonkey ou o DocuSeal para criar o PDF e obter um URL de transferência.
 
 ## Configuração passo a passo
@@ -32,9 +32,9 @@ Antes de configurar o fluxo de trabalho:
   Com um Gatilho Manual, os utilizadores podem executar este fluxo de trabalho utilizando um botão que aparece no canto superior direito quando um registo é selecionado, para gerar e anexar um PDF.
 </Tip>
 
-### Passo 2: Adicionar uma Função serverless
+### Step 2: Add a Logic Function
 
-1. Adicione a ação **Função serverless**
+1. Add a **Code** action (logic function)
 2. Crie uma nova função com o código abaixo
 3. Configure os parâmetros de entrada
 
@@ -45,10 +45,10 @@ Antes de configurar o fluxo de trabalho:
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  Se estiver a anexar a um objeto diferente (Pessoa, Oportunidade, etc.), renomeie o parâmetro em conformidade (por exemplo, `personId`, `opportunityId`) e atualize a função serverless.
+  If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic function.
 </Note>
 
-#### Código da Função serverless
+#### Logic Function Code
 
 ```typescript
 export const main = async (
@@ -172,7 +172,7 @@ Atualize tanto o parâmetro da função como o objeto `variables.data` na mutaç
 Se utilizar um serviço de geração de PDF, pode:
 
 1. Primeiro, faça uma ação de Pedido HTTP para gerar o PDF
-2. Passe o URL do PDF devolvido para a função serverless como parâmetro
+2. Pass the returned PDF URL to the logic function as a parameter
 
 ```typescript
 export const main = async (
@@ -211,7 +211,7 @@ Para criar orçamentos ou faturas dinâmicos:
 * **DocuSeal** - Plataforma de automatização de documentos
 * **Documint** - Geração de documentos orientada a API
 
-Cada serviço fornece uma API que devolve um URL de PDF, que pode depois passar para a função serverless.
+Each service provides an API that returns a PDF URL, which you can then pass to the logic function.
 
 ## Resolução de Problemas
 
@@ -224,5 +224,5 @@ Cada serviço fornece uma API que devolve um URL de PDF, que pode depois passar 
 ## Relacionados
 
 * [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
-* [Funções serverless](/l/pt/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Logic Functions](/l/pt/user-guide/workflows/capabilities/workflow-actions#code)
 * [Gerar um Orçamento ou Fatura a partir do Twenty](/l/pt/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
