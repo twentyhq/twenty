@@ -9,12 +9,12 @@ description: Создавайте и управляйте настройками
 
 ## Что такое приложения?
 
-Приложения позволяют создавать и управлять настройками Twenty **в виде кода**. Instead of configuring everything through the UI, you define your data model and logic functions in code — making it faster to build, maintain, and roll out to multiple workspaces.
+Приложения позволяют создавать и управлять настройками Twenty **в виде кода**. Вместо настройки всего через интерфейс вы определяете модель данных и логические функции в коде — так быстрее создавать, поддерживать и развёртывать в нескольких рабочих пространствах.
 
 **Что вы можете делать уже сегодня:**
 
 * Определяйте пользовательские объекты и поля в виде кода (управляемая модель данных)
-* Build logic functions with custom triggers
+* Создавайте логические функции с пользовательскими триггерами
 * Развёртывайте одно и то же приложение в нескольких рабочих пространствах
 
 **Скоро:**
@@ -156,23 +156,23 @@ src/
 
 В общих чертах:
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and `auth:login` that delegate to the local `twenty` CLI.
+* **package.json**: Объявляет имя приложения, версию, движки (Node 24+, Yarn 4) и добавляет `twenty-sdk`, а также скрипты вроде `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` и `auth:login`, которые делегируют выполнение локальному CLI `twenty`.
 * **.gitignore**: Игнорирует распространённые артефакты, такие как `node_modules`, `.yarn`, `generated/` (типизированный клиент), `dist/`, `build/`, каталоги coverage, файлы журналов и файлы `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Фиксируют и настраивают используемый в проекте инструментарий Yarn 4.
 * **.nvmrc**: Фиксирует версию Node.js, ожидаемую проектом.
 * **eslint.config.mjs** и **tsconfig.json**: Обеспечивают линтинг и конфигурацию TypeScript для исходников вашего приложения на TypeScript.
 * **README.md**: Короткий README в корне приложения с базовыми инструкциями.
-* **src/**: The main place where you define your application-as-code:
+* **src/**: Основное место, где вы определяете приложение как код:
   * `application.config.ts`: Глобальная конфигурация вашего приложения (метаданные и параметры выполнения). См. раздел «Конфигурация приложения» ниже.
-  * `*.role.ts`: Role definitions used by your logic functions. См. раздел «Роль функции по умолчанию» ниже.
+  * `*.role.ts`: Определения ролей, используемых вашими логическими функциями. См. раздел «Роль функции по умолчанию» ниже.
   * `*.object.ts`: Определения пользовательских объектов.
-  * `*.function.ts`: Logic function definitions.
-  * `*.front-component.tsx`: Front component definitions.
+  * `*.function.ts`: Определения логических функций.
+  * `*.front-component.tsx`: Определения фронтенд-компонентов.
 
 Позднее команды добавят больше файлов и папок:
 
 * `yarn app:generate` создаст папку `generated/` (типизированный клиент Twenty + типы рабочего пространства).
-* `yarn entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
+* `yarn entity:add` добавит файлы определений сущностей в `src/` для ваших пользовательских объектов, функций, фронтенд-компонентов или ролей.
 
 ## Аутентификация
 
@@ -215,12 +215,12 @@ yarn auth:status
 
 SDK предоставляет четыре вспомогательных функции с встроенной валидацией для определения сущностей вашего приложения:
 
-| Функция            | Назначение                                   |
-| ------------------ | -------------------------------------------- |
-| `defineApp()`      | Настраивает метаданные приложения            |
-| `defineObject()`   | Определяет пользовательские объекты с полями |
-| `defineFunction()` | Define logic functions with handlers         |
-| `defineRole()`     | Настраивает права роли и доступ к объектам   |
+| Функция            | Назначение                                     |
+| ------------------ | ---------------------------------------------- |
+| `defineApp()`      | Настраивает метаданные приложения              |
+| `defineObject()`   | Определяет пользовательские объекты с полями   |
+| `defineFunction()` | Определение логических функций с обработчиками |
+| `defineRole()`     | Настраивает права роли и доступ к объектам     |
 
 Эти функции проверяют вашу конфигурацию во время выполнения и обеспечивают лучшую автодополняемость в IDE и безопасность типов.
 
@@ -303,7 +303,7 @@ export default defineObject({
 * `universalIdentifier` должен быть уникальным и стабильным между развёртываниями.
 * Каждому полю требуются `name`, `type`, `label` и собственный стабильный `universalIdentifier`.
 * Массив `fields` необязателен — вы можете определять объекты без пользовательских полей.
-* You can scaffold new objects using `yarn entity:add`, which guides you through naming, fields, and relationships.
+* Вы можете сгенерировать новые объекты с помощью `yarn entity:add`, который проведёт вас через выбор именования, полей и связей.
 
 <Note>
   **Базовые поля создаются автоматически.** Когда вы определяете пользовательский объект, Twenty автоматически добавляет стандартные поля, такие как `name`, `createdAt`, `updatedAt`, `createdBy`, `position` и `deletedAt`. Вам не нужно определять их в массиве `fields` — добавляйте только свои пользовательские поля.
@@ -349,7 +349,7 @@ export default defineApp({
 
 #### Роли и разрешения
 
-Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
+Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. Поле `functionRoleUniversalIdentifier` в `application.config.ts` обозначает роль по умолчанию, используемую логическими функциями вашего приложения.
 
 * Ключ API во время выполнения, подставляемый как `TWENTY_API_KEY`, получается из этой роли функции по умолчанию.
 * Типизированный клиент будет ограничен правами, предоставленными этой ролью.
@@ -411,7 +411,7 @@ export default defineRole({
 * `permissionFlags` управляют доступом к возможностям на уровне платформы. Держите их минимальными; добавляйте только то, что нужно.
 * См. рабочий пример в приложении Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
-### Logic function config and entrypoint
+### Конфигурация логической функции и точка входа
 
 Каждый файл функции использует `defineFunction()` для экспорта конфигурации с обработчиком и необязательными триггерами. Используйте суффикс файла `*.function.ts` для автоматического обнаружения.
 
@@ -510,7 +510,7 @@ export default defineFunction({
   **Чтобы мигрировать существующие функции:** Обновите обработчик, чтобы деструктурировать из `event.body`, `event.queryStringParameters` или `event.pathParameters` вместо прямого доступа к объекту params.
 </Warning>
 
-When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Импортируйте тип из `twenty-sdk`:
+Когда триггер маршрута вызывает вашу логическую функцию, она получает объект `RoutePayload`, соответствующий формату AWS HTTP API v2. Импортируйте тип из `twenty-sdk`:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -540,7 +540,7 @@ const handler = async (event: RoutePayload) => {
 
 ### Проброс HTTP-заголовков
 
-By default, HTTP headers from incoming requests are **not** passed to your logic function for security reasons. Чтобы получить доступ к определённым заголовкам, явно перечислите их в массиве `forwardedRequestHeaders`:
+По умолчанию HTTP-заголовки из входящих запросов **не** передаются в вашу логическую функцию по соображениям безопасности. Чтобы получить доступ к определённым заголовкам, явно перечислите их в массиве `forwardedRequestHeaders`:
 
 ```typescript
 export default defineFunction({
@@ -578,7 +578,7 @@ const handler = async (event: RoutePayload) => {
 
 Вы можете создать новые функции двумя способами:
 
-* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new function. Это создаёт стартовый файл с обработчиком и конфигурацией.
+* **Сгенерировано**: Запустите `yarn entity:add` и выберите опцию добавления новой функции. Это создаёт стартовый файл с обработчиком и конфигурацией.
 * **Вручную**: Создайте новый файл `*.function.ts` и используйте `defineFunction()`, следуя тому же шаблону.
 
 ### Сгенерированный типизированный клиент
@@ -592,9 +592,9 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Клиент повторно генерируется командой `yarn app:generate`. Re-run after changing your objects or when onboarding to a new workspace.
+Клиент повторно генерируется командой `yarn app:generate`. Запускайте повторно после изменения ваших объектов или при подключении к новому рабочему пространству.
 
-#### Runtime credentials in logic functions
+#### Учётные данные времени выполнения в логических функциях
 
 Когда ваша функция запускается на Twenty, платформа подставляет учётные данные как переменные окружения перед выполнением вашего кода:
 
@@ -604,7 +604,7 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 Заметки:
 
 * Вам не нужно передавать URL или ключ API сгенерированному клиенту. Он читает `TWENTY_API_URL` и `TWENTY_API_KEY` из process.env во время выполнения.
-* Права ключа API определяются ролью, на которую ссылается ваш `application.config.ts` через `functionRoleUniversalIdentifier`. This is the default role used by logic functions of your application.
+* Права ключа API определяются ролью, на которую ссылается ваш `application.config.ts` через `functionRoleUniversalIdentifier`. Это роль по умолчанию, используемая логическими функциями вашего приложения.
 * Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Выдавайте только те права, которые нужны вашим функциям, затем укажите в `functionRoleUniversalIdentifier` универсальный идентификатор этой роли.
 
 ### Пример Hello World
@@ -640,13 +640,13 @@ yarn add -D twenty-sdk
 }
 ```
 
-Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:generate`, etc.
+Теперь вы можете запускать те же команды через Yarn, например, `yarn app:dev`, `yarn app:generate` и т. д.
 
 ## Устранение неполадок
 
 * Ошибки аутентификации: выполните `yarn auth:login` и убедитесь, что у вашего ключа API есть необходимые права.
 * Не удаётся подключиться к серверу: проверьте URL API и доступность сервера Twenty.
-* Types or client missing/outdated: run `yarn app:generate`.
+* Типы или клиент отсутствуют/устарели: выполните `yarn app:generate`.
 * Режим разработки не синхронизируется: убедитесь, что запущен `yarn app:dev`, и что ваша среда не игнорирует изменения.
 
 Канал помощи в Discord: https://discord.com/channels/1130383047699738754/1130386664812982322
