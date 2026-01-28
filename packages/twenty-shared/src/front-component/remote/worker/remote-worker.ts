@@ -15,7 +15,7 @@ import { type WorkerExports } from '../../types/WorkerExports';
 
 const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
-  context: HostToWorkerRenderContext,
+  renderContext: HostToWorkerRenderContext,
 ) => {
   const batchedConnection = new BatchingRemoteConnection(connection);
   const root = document.createElement('remote-root') as RemoteRootElement;
@@ -23,7 +23,7 @@ const render: WorkerExports['render'] = async (
   document.body.append(root);
 
   // TODO: Add a way to verify the component URL is valid (signed URL, content hash, etc.)
-  const componentModule = await import(context.componentUrl);
+  const componentModule = await import(renderContext.componentUrl);
 
   const reactRoot = createRoot(root);
   reactRoot.render(componentModule.default);
