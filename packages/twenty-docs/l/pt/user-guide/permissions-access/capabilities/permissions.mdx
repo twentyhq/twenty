@@ -1,198 +1,198 @@
 ---
-title: Permissions
-description: Control access to objects, fields, and settings with role-based permissions.
+title: Permissões
+description: Controle o acesso a objetos, campos e configurações com permissões baseadas em função.
 image: /images/user-guide/permissions/permissions.png
 ---
 
-Twenty's permission system allows you to control access to three main areas:
+O sistema de permissões do Twenty permite que você controle o acesso a três áreas principais:
 
-* **Objects and Fields**: Control who can view, edit, or delete records and individual fields
-* **Settings**: Manage access to workspace configuration and administrative functions
-* **Actions**: Control general workspace actions like importing data or sending emails
+* **Objetos e Campos**: Controle quem pode visualizar, editar ou excluir registros e campos individuais
+* **Configurações**: Gerencie o acesso à configuração do espaço de trabalho e funções administrativas
+* **Ações**: Controle ações gerais do espaço de trabalho, como importar dados ou enviar e-mails
 
-## Create a Role
+## Criar uma Função
 
-To create a new role:
+Para criar uma nova função:
 
-1. Go to **Settings → Roles**
-2. Under **All Roles**, click on **+ Create Role**
-3. Enter a role name
-4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
-5. Click **Save** to finish
+1. Vá para **Configurações → Funções**
+2. Em **Todas as Funções**, clique em **+ Criar Função**
+3. Digite um nome para a função
+4. Na aba padrão **Permissões**, [configure as permissões](#customize-permissions)
+5. Clique em **Salvar** para finalizar
 
-## Delete a Role
+## Excluir uma Função
 
-To delete a role:
+Para excluir uma função:
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to remove
-3. Open the **Settings** tab, then click **Delete Role**
-4. Click **Confirm** in the modal
+1. Vá para **Configurações → Funções**
+2. Clique na função que deseja remover
+3. Abra a aba de **Configurações** e clique em **Excluir Função**
+4. Clique em **Confirmar** no modal
 
 <Note>
-  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
+  Se uma função for excluída, qualquer membro do espaço de trabalho atribuído a ela será automaticamente reatribuído à função padrão. Todas, exceto a função **Admin**, podem ser excluídas. Deve sempre haver pelo menos um membro atribuído à função **Admin**.
 </Note>
 
-## Assign Roles to Members
+## Atribuir Funções a Membros
 
-### View Current Assignments
+### Visualizar Atribuições Atuais
 
-* Go to **Settings → Roles**
-* See all roles and how many members are assigned to each
-* View which members have which roles
+* Vá para **Configurações → Funções**
+* Veja todas as funções e quantos membros estão atribuídos a cada uma
+* Veja quais membros têm quais funções
 
-### Assign a Role to a Member
+### Atribuir uma Função a um Membro
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Click **+ Assign to member**
-5. Select the workspace member from the list
-6. Confirm the assignment
+1. Vá para **Configurações → Funções**
+2. Clique na função que deseja atribuir
+3. Abra a aba de **Atribuição**
+4. Clique em **+ Atribuir a membro**
+5. Selecione o membro do espaço de trabalho da lista
+6. Confirme a atribuição
 
-### Set Default Role
+### Definir Função Padrão
 
-1. Go to **Settings → Roles**
-2. In the **Options** section, find **Default Role**
-3. Select which role new members should automatically receive
-4. New workspace members will be assigned this role when they join
+1. Vá para **Configurações → Funções**
+2. Na seção **Opções**, encontre **Função Padrão**
+3. Selecione qual função novos membros devem receber automaticamente
+4. Novos membros do espaço de trabalho serão atribuídos a essa função ao ingressar
 
 <Note>
-  You can only assign roles to existing workspace members. To invite new members, use [Member Management](/l/pt/user-guide/settings/capabilities/member-management).
+  Você só pode atribuir funções a membros existentes do espaço de trabalho. Para convidar novos membros, use [Gestão de Membros](/l/pt/user-guide/settings/capabilities/member-management).
 </Note>
 
-## Customize Permissions
+## Personalizar Permissões
 
-Permissions determine what each role can access or modify within your workspace, including workspace objects records, settings, and actions.
+As permissões determinam o que cada função pode acessar ou modificar dentro do seu espaço de trabalho, incluindo registros de objetos do espaço de trabalho, configurações e ações.
 
-### Object Permissions
+### Permissões de Objetos
 
-The **Objects** section controls what this role can do with records across your workspace.
+A seção **Objetos** controla o que esta função pode fazer com registros em todo o seu espaço de trabalho.
 
-#### Set Default Permissions (All Objects)
+#### Definir permissões padrão (Todos os objetos)
 
-First, configure the baseline permissions that apply to **all objects** by default:
+Primeiro, configure as permissões básicas que se aplicam a **todos os objetos** por padrão:
 
-| Permission                         | Description                            |
-| ---------------------------------- | -------------------------------------- |
-| **See Records on All Objects**     | View records in lists and detail pages |
-| **Edit Records on All Objects**    | Modify existing records                |
-| **Delete Records on All Objects**  | Soft-delete records (can be restored)  |
-| **Destroy Records on All Objects** | Permanently delete records             |
+| Permissão                                  | Descrição                                                 |
+| ------------------------------------------ | --------------------------------------------------------- |
+| **Ver registros em todos os objetos**      | Visualizar registros em listas e páginas de detalhes      |
+| **Editar registros em todos os objetos**   | Modificar registros existentes                            |
+| **Excluir registros em todos os objetos**  | Excluir registros de forma lógica (podem ser restaurados) |
+| **Destruir registros em todos os objetos** | Excluir registros permanentemente                         |
 
-Select or unselect based on what should be the default behavior for this role.
+Selecione ou desmarque com base no que deve ser o comportamento padrão desta função.
 
 <Note>
-  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+  **Exemplo — função de Estagiário**: Um estagiário deve poder ver todos os objetos, mas não editá-los por padrão. Ative "Ver registros em todos os objetos", mas deixe "Editar registros em todos os objetos" desmarcado.
 </Note>
 
-#### Add Object-Level Exceptions
+#### Adicionar exceções em nível de objeto
 
-After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+Após definir os padrões, use a subseção **Em nível de objeto** para adicionar regras que substituem os padrões para objetos específicos.
 
-Click **+ Add rule** and select an object to create an exception.
+Clique em **+ Adicionar regra** e selecione um objeto para criar uma exceção.
 
-**Example rules for an Intern role:**
+**Regras de exemplo para uma função de Estagiário:**
 
-| Rule                                  | Effect                                                 |
-| ------------------------------------- | ------------------------------------------------------ |
-| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
-| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+| Regra                                     | Efeito                                                                    |
+| ----------------------------------------- | ------------------------------------------------------------------------- |
+| Oportunidades → desativar "Ver registros" | O estagiário não consegue ver o objeto Oportunidades.                     |
+| Pessoas → ativar "Editar registros"       | O estagiário pode editar registros de Pessoas (mas não de outros objetos) |
 
-### Field Permissions
+### Permissões de Campos
 
-Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+Em cada regra em nível de objeto, você pode ir além e configurar **permissões em nível de campo** para controlar o acesso a campos específicos.
 
-| Permission     | Description                |
-| -------------- | -------------------------- |
-| **See Field**  | View the field value       |
-| **Edit Field** | Modify the field value     |
-| **No Access**  | Field is completely hidden |
+| Permissão        | Descrição                      |
+| ---------------- | ------------------------------ |
+| **Ver campo**    | Visualizar o valor do campo    |
+| **Editar campo** | Modificar o valor do campo     |
+| **Sem acesso**   | O campo fica totalmente oculto |
 
-**Example — Restrict sensitive fields:**
+**Exemplo — Restringir campos sensíveis:**
 
-For the Intern role with People edit access, you might want to restrict certain fields:
+Para a função de Estagiário com acesso de edição em Pessoas, talvez você queira restringir certos campos:
 
-* People → Email → **See Field** only (cannot edit)
-* People → Address → **No Access** (completely hidden)
+* Pessoas → E-mail → apenas **Ver campo** (não pode editar)
+* Pessoas → Endereço → **Sem acesso** (totalmente oculto)
 
-This allows the intern to edit most People fields while protecting sensitive information.
+Isso permite que o estagiário edite a maioria dos campos de Pessoas enquanto protege informações sensíveis.
 
-### How Permission Inheritance Works
+### Como funciona a herança de permissões
 
-Permissions cascade from general to specific:
+As permissões se propagam do geral para o específico:
 
-1. **All Objects** → sets the baseline for all objects
-2. **Object-Level rules** → override the baseline for specific objects
-3. **Field-Level rules** → override the object setting for specific fields
+1. **Todos os objetos** → define a base para todos os objetos
+2. **Regras em nível de objeto** → substituem a base para objetos específicos
+3. **Regras em nível de campo** → substituem a configuração do objeto para campos específicos
 
-More specific settings always take precedence.
+Configurações mais específicas sempre têm precedência.
 
-### Managing Permission Overrides
+### Gerenciando Substituições de Permissões
 
-To override inherited permissions:
+Para substituir permissões herdadas:
 
-1. Click **X** to remove the inherited rule
-2. Select the specific permissions you want
-3. Click the orange **Undo** icon (circular arrow) to revert changes
+1. Clique em **X** para remover a regra herdada
+2. Selecione as permissões específicas que você deseja
+3. Clique no ícone laranja de **Desfazer** (seta circular) para reverter alterações
 
-When done, click **Finish**, then **Save** once redirected to the role page.
+Quando terminar, clique em **Finalizar**, em seguida, **Salvar** ao redirecionar para a página de função.
 
-### Workspace Settings Permissions
+### Permissões de Configurações do Espaço de Trabalho
 
-Control access to workspace settings in two ways:
+Controle o acesso às configurações do espaço de trabalho de duas maneiras:
 
-* Toggle **Settings All Access** to grant full access
-* Or enable specific permissions (e.g., API key generation, workspace preferences, role assignment, data model configuration, security settings, and workflow management)
+* Ative **Acesso Total a Configurações** para conceder acesso total
+* Ou ative permissões específicas (por exemplo, geração de chave API, preferências do espaço de trabalho, atribuição de funções, configuração do modelo de dados, configurações de segurança e gestão de fluxos de trabalho)
 
 <Note>
-  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+  **Limitação atual**: O acesso ao gerenciamento de fluxos de trabalho é atualmente necessário para acionar fluxos de trabalho manualmente. Esse comportamento pode mudar em versões futuras.
 </Note>
 
-### Workspace Action Permissions
+### Permissões de Ação do Espaço de Trabalho
 
-Control access to general workspace actions:
+Controle o acesso a ações gerais do espaço de trabalho:
 
-* Toggle **Application All Access** to grant full permissions
-* Or enable individual actions such as **Send Email**, **Import CSV**, and **Export CSV**
+* Ative **Acesso Total à Aplicação** para conceder permissões totais
+* Ou habilite ações individuais como **Enviar Email**, **Importar CSV** e **Exportar CSV**
 
-## Assigning Roles to API Keys and AI Agents
+## Atribuindo funções a chaves de API e agentes de IA
 
-Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+Além dos membros do espaço de trabalho, funções também podem ser atribuídas a **Chaves de API** e **Agentes de IA**. Isso é particularmente útil para equipes que desejam controlar exatamente "quem" pode fazer o quê em seu espaço de trabalho — incluindo processos automatizados e integrações.
 
-### Why Assign Roles to API Keys and AI Agents?
+### Por que atribuir funções a chaves de API e agentes de IA?
 
-* **Security**: Limit what automated processes can access or modify
-* **Compliance**: Ensure integrations only touch the data they need
-* **Control**: Prevent accidental data changes from misconfigured automations
-* **Auditability**: Track which actions were performed by which integration or agent
+* **Segurança**: Limite o que os processos automatizados podem acessar ou modificar
+* **Conformidade**: Garanta que as integrações acessem apenas os dados de que precisam
+* **Controle**: Evite alterações acidentais de dados causadas por automações mal configuradas
+* **Auditabilidade**: Acompanhe quais ações foram realizadas por qual integração ou agente
 
-### Assign a Role to an API Key
+### Atribuir uma função a uma chave de API
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key from the list
-6. Confirm the assignment
+1. Vá para **Configurações → Funções**
+2. Clique na função que deseja atribuir
+3. Abra a aba de **Atribuição**
+4. Em **Chaves de API**, clique em **+ Atribuir à chave de API**
+5. Selecione a chave de API na lista
+6. Confirme a atribuição
 
-The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+A chave de API agora herdará todas as permissões definidas por essa função. Qualquer chamada de API feita com essa chave será restringida de acordo.
 
 <Note>
-  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+  Chaves de API sem uma função atribuída usam permissões padrão. Para maior segurança, sempre atribua uma função específica às chaves de API de produção.
 </Note>
 
-### Assign a Role to an AI Agent
+### Atribuir uma função a um agente de IA
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Under **AI Agents**, click **+ Assign to AI agent**
-5. Select the AI agent from the list
-6. Confirm the assignment
+1. Vá para **Configurações → Funções**
+2. Clique na função que deseja atribuir
+3. Abra a aba de **Atribuição**
+4. Em **Agentes de IA**, clique em **+ Atribuir ao agente de IA**
+5. Selecione o agente de IA na lista
+6. Confirme a atribuição
 
-The AI agent will only be able to access data and perform actions allowed by its assigned role.
+O agente de IA só poderá acessar dados e executar ações permitidas pela função que lhe foi atribuída.
 
 <Note>
-  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+  Para agentes de IA executados em fluxos de trabalho, isso garante que o agente não possa acessar ou modificar dados fora do seu escopo pretendido — mesmo que o fluxo de trabalho tenha permissões mais amplas.
 </Note>

@@ -20,7 +20,7 @@ const mockObjectMetadata = {
   isAuditLogged: true,
   isSearchable: true,
   indexMetadataIds: [],
-  fieldMetadataIds: [],
+  fieldIds: [],
   viewIds: [],
   applicationId: 'test-application-id',
   isLabelSyncedWithName: false,

@@ -38,14 +38,15 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   updatedBy: '376239d1-3e65-4cb6-b5d8-e0917d43cc93',
   author: '20202020-6501-4ac5-a4ef-b2f8522ef6cd',
   activity: '20202020-b569-481b-a13f-9b94e47e54fe',
-  task: '20202020-51e5-4621-9cf8-215487951c4b',
-  note: '20202020-4f4b-4503-a6fc-6b982f3dffb5',
-  person: '20202020-0158-4aa2-965c-5cdafe21ffa2',
-  company: '20202020-ceab-4a28-b546-73b06b4c08d5',
-  opportunity: '20202020-7374-499d-bea3-9354890755b5',
-  dashboard: '20202020-5324-43f3-9dbf-1a33e7de0ce6',
-  workflow: '20202020-f1e8-4c9d-8a7b-3f5e1d2c9a8b',
-  custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
+  targetTask: '20202020-51e5-4621-9cf8-215487951c4b',
+  targetNote: '20202020-4f4b-4503-a6fc-6b982f3dffb5',
+  targetPerson: '20202020-0158-4aa2-965c-5cdafe21ffa2',
+  targetCompany: '20202020-ceab-4a28-b546-73b06b4c08d5',
+  targetOpportunity: '20202020-7374-499d-bea3-9354890755b5',
+  targetDashboard: '20202020-5324-43f3-9dbf-1a33e7de0ce6',
+  targetWorkflow: '20202020-f1e8-4c9d-8a7b-3f5e1d2c9a8b',
+  targetCustom: '20202020-302d-43b3-9aea-aa4f89282a9f',
+  targetMorphId: '20202020-f634-435d-ab8d-e1168b375c69',
 } as const;
 
 export const BASE_OBJECT_STANDARD_FIELD_IDS = {

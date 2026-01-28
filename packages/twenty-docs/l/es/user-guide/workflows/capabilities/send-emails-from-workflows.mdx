@@ -1,46 +1,46 @@
 ---
-title: Send Emails from Workflows
-description: Send personalized emails automatically using workflow actions.
+title: Enviar correos electrónicos desde flujos de trabajo
+description: Envía correos electrónicos personalizados automáticamente utilizando acciones de flujos de trabajo.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Automatically send emails when specific events occur in your CRM—welcome new contacts, follow up on opportunities, or notify team members.
+Envía correos electrónicos automáticamente cuando se produzcan eventos específicos en tu CRM—da la bienvenida a nuevos contactos, haz seguimiento de oportunidades o notifica a los miembros del equipo.
 
-## Prerequisites
+## Prerrequisitos
 
-Before you can send emails from workflows:
+Antes de poder enviar correos electrónicos desde flujos de trabajo:
 
-1. Connect an email account under **Settings → Accounts**
-2. Ensure the account has sending permissions enabled
+1. Conecta una cuenta de correo electrónico en **Configuración → Cuentas**
+2. Asegúrate de que la cuenta tenga habilitados los permisos de envío
 
-## Basic Email Workflow
+## Flujo de trabajo de correo electrónico básico
 
-### Example: Welcome Email for New Contacts
+### Ejemplo: Correo de bienvenida para nuevos contactos
 
-**Goal**: Send a welcome email when a new person is added to the CRM.
+**Objetivo**: Enviar un correo de bienvenida cuando se agregue una persona nueva al CRM.
 
-**Setup**:
+**Configuración**:
 
-1. **Create workflow**: Go to **Settings → Workflows** and click **+ New Workflow**
+1. **Crear flujo de trabajo**: Ve a **Configuración → Flujos de trabajo** y haz clic en **+ Nuevo flujo de trabajo**
 
-2. **Add trigger**: Select **Record is Created** → **People**
+2. **Agregar disparador**: Selecciona **Se crea el registro** → **Personas**
 
-3. **Add Send Email action**:
-   * Click **+** to add an action
-   * Select **Send Email**
-   * Configure the email:
+3. **Agregar la acción Enviar correo electrónico**:
+   * Haz clic en **+** para agregar una acción
+   * Selecciona **Enviar correo electrónico**
+   * Configura el correo electrónico:
 
-| Field       | Value                                  |
-| ----------- | -------------------------------------- |
-| **To**      | `{{trigger.object.email}}`             |
-| **Subject** | `Welcome to {{Your Company Name}}`     |
-| **Body**    | `Hi {{trigger.object.firstName}}, ...` |
+| Campo      | Valor                                  |
+| ---------- | -------------------------------------- |
+| **Para**   | `{{trigger.object.email}}`             |
+| **Asunto** | `Bienvenido a {{Your Company Name}}`   |
+| **Cuerpo** | `Hi {{trigger.object.firstName}}, ...` |
 
-4. **Test and activate**: Test with a sample record, then activate
+4. **Probar y activar**: Prueba con un registro de ejemplo y luego actívalo
 
-## Using Variables in Emails
+## Uso de variables en correos electrónicos
 
-Reference data from previous steps using `{{variable}}` syntax:
+Haz referencia a datos de pasos anteriores usando la sintaxis `{{variable}}`:
 
 ```text
 Hi {{trigger.object.firstName}},
@@ -53,97 +53,116 @@ Best regards,
 The Team
 ```
 
-### Available Variables from Triggers
+### Variables disponibles de los disparadores
 
-| Trigger Type               | Common Variables                       |
-| -------------------------- | -------------------------------------- |
-| **Record Created/Updated** | `{{trigger.object.fieldName}}`         |
-| **Manual**                 | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook**                | `{{trigger.body.fieldName}}`           |
+| Tipo de disparador              | Variables comunes                      |
+| ------------------------------- | -------------------------------------- |
+| **Registro creado/actualizado** | `{{trigger.object.fieldName}}`         |
+| **Manual**                      | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                     | `{{trigger.body.fieldName}}`           |
 
-## Advanced: Conditional Emails
+## Avanzado: correos electrónicos condicionales
 
-### Example: Different Emails Based on Lead Source
+### Ejemplo: Correos diferentes según el origen del lead
 
-**Goal**: Send different welcome emails based on where the lead came from.
+**Objetivo**: Enviar correos de bienvenida diferentes según de dónde provenga el lead.
 
-**Setup**:
+**Configuración**:
 
-1. **Trigger**: Record is Created (People)
+1. **Disparador**: Se crea el registro (Personas)
 
-2. **Add Filter action**:
-   * Condition: `{{trigger.object.source}}` equals `"Website"`
-   * If true → continue to website welcome email
+2. **Agregar la acción de filtro**:
+   * Condición: `{{trigger.object.source}}` es igual a `"Website"`
+   * Si es verdadero → continúa al correo de bienvenida del sitio web
 
-3. **Branch for other sources**:
-   * Create parallel branches for different sources
-   * Each branch has its own Send Email action
+3. **Rama para otras fuentes**:
+   * Crea ramas paralelas para diferentes fuentes
+   * Cada rama tiene su propia acción Enviar correo electrónico
 
-## Sending Emails to Multiple Recipients
+## Envío de correos electrónicos a múltiples destinatarios
 
-### Example: Notify Team When Deal Closes
+### Ejemplo: Notificar al equipo cuando se cierre una oportunidad
 
-**Goal**: Email the sales rep and their manager when an opportunity is won.
+**Objetivo**: Enviar un correo al representante de ventas y a su gerente cuando se gane una oportunidad.
 
-**Setup**:
+**Configuración**:
 
-1. **Trigger**: Record is Updated (Opportunities, Stage = "Closed Won")
+1. **Disparador**: Se actualiza el registro (Oportunidades, Etapa = "Cerrado Ganado")
 
-2. **Search Records**: Find the opportunity owner's manager
+2. **Buscar registros**: Busca al gerente del propietario de la oportunidad
 
-3. **Send Email #1**: To opportunity owner
-   * To: `{{trigger.object.owner.email}}`
-   * Subject: `Congratulations on closing {{trigger.object.name}}!`
+3. **Enviar correo electrónico #1**: Al propietario de la oportunidad
+   * Para: `{{trigger.object.owner.email}}`
+   * Asunto: `Congratulations on closing {{trigger.object.name}}!`
 
-4. **Send Email #2**: To manager
-   * To: `{{searchRecords.manager.email}}`
-   * Subject: `Deal Won: {{trigger.object.name}}`
+4. **Enviar correo electrónico #2**: Al gerente
+   * Para: `{{searchRecords.manager.email}}`
+   * Asunto: `Deal Won: {{trigger.object.name}}`
 
-## Scheduled Follow-up Emails
+## Correos de seguimiento programados
 
-### Example: Follow Up 3 Days After Meeting
+### Ejemplo: Hacer seguimiento 3 días después de la reunión
 
-**Goal**: Send a follow-up email 3 days after a meeting is logged.
+**Objetivo**: Enviar un correo de seguimiento 3 días después de registrar una reunión.
 
-**Setup**:
+**Configuración**:
 
-1. **Trigger**: Record is Created (Activities, Type = "Meeting")
+1. **Disparador**: Se crea el registro (Actividades, Tipo = "Reunión")
 
-2. **Delay action**: Wait 3 days
+2. **Acción de retraso**: Espera 3 días
 
-3. **Send Email**:
-   * To: Meeting attendee
-   * Subject: Following up on our conversation
-   * Body: Reference meeting details from trigger
+3. **Enviar correo electrónico**:
+   * Para: Asistente a la reunión
+   * Asunto: Seguimiento de nuestra conversación
+   * Cuerpo: Consulta los detalles de la reunión a partir del disparador
 
-## Best Practices
+## Archivos adjuntos de correo electrónico
 
-### Email Content
+Puedes adjuntar archivos a los correos electrónicos enviados desde los flujos de trabajo. El archivo adjunto es un archivo estático que cargas al configurar el flujo de trabajo.
 
-* Keep subject lines concise and relevant
-* Personalize with recipient's name
-* Include a clear call to action
-* Test emails before activating
+### Cómo añadir un archivo adjunto
 
-### Deliverability
+1. En la acción **Enviar correo electrónico**, haz clic en el botón **Archivos adjuntos**
+2. Haz clic para cargar un archivo desde tu equipo
+3. El archivo se adjuntará a todos los correos electrónicos enviados por esta acción
 
-* Don't send too many emails too quickly
-* Use professional email signatures
-* Avoid spam trigger words
-* Ensure unsubscribe options for marketing emails
+### Casos de Uso Comunes
 
-### Troubleshooting
-
-* Verify email account is connected and active
-* Check recipient email address is valid
-* Review workflow runs for error messages
-* Test with your own email address first
+| Caso de uso                     | Archivo de ejemplo                       |
+| ------------------------------- | ---------------------------------------- |
+| **Correos de bienvenida**       | Folleto de la empresa (PDF)              |
+| **Secuencias de incorporación** | Guía de primeros pasos                   |
+| **Seguimientos de ventas**      | Catálogo de productos o lista de precios |
+| **Confirmaciones de eventos**   | Detalles o agenda del evento             |
 
 <Note>
-  **Coming soon**: Email attachments will be available in Q1 2026.
+  Los archivos adjuntos son estáticos—se envía el mismo archivo a todos los destinatarios. Para documentos dinámicos (como presupuestos personalizados), genera y adjunta archivos usando una [Función lógica](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
 </Note>
 
-## Related
+## Mejores prácticas
 
-* [Workflow Triggers](/l/es/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/es/user-guide/workflows/capabilities/workflow-actions)
+### Contenido del correo electrónico
+
+* Mantén las líneas de asunto concisas y relevantes
+* Personaliza con el nombre del destinatario
+* Incluye una llamada a la acción clara
+* Prueba los correos antes de activar
+
+### Entregabilidad
+
+* No envíes demasiados correos demasiado rápido
+* Usa firmas de correo profesionales
+* Evita palabras que activan filtros de spam
+* Asegúrate de incluir opciones para darse de baja en los correos de marketing
+
+### Solución de Problemas
+
+* Verifica que la cuenta de correo esté conectada y activa
+* Comprueba que la dirección de correo del destinatario sea válida
+* Revisa las ejecuciones del flujo de trabajo para ver mensajes de error
+* Prueba primero con tu propia dirección de correo electrónico
+
+## Relacionado
+
+* [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)

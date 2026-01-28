@@ -1,7 +1,18 @@
-import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
+  type Equal,
+  type Expect,
+  type HasAllProperties,
+} from 'twenty-shared/testing';
+import {
+  type FieldMetadataDefaultOption,
   type FieldMetadataType,
+  type FieldNumberVariant,
+  type LinkMetadata,
   type NullablePartial,
+  type NumberDataType,
+  type RelationOnDeleteAction,
+  type RelationType,
+  type SerializedRelation,
 } from 'twenty-shared/types';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -78,4 +89,76 @@ type UniversalFlatTransformationAssertions = [
       OneToManyUniversalIdentifierArrays
     >
   >,
+];
+
+type NarrowedTestCase =
+  UniversalFlatFieldMetadata<FieldMetadataType.RELATION>['settings'];
+
+type NarrowedExpectedResult = {
+  relationType: RelationType;
+  onDelete?: RelationOnDeleteAction | undefined;
+  joinColumnName?: string | null | undefined;
+  junctionTargetFieldUniversalIdentifier?: SerializedRelation | undefined;
+  __JsonbPropertyBrand__?: undefined;
+};
+
+type SettingsTestCase = UniversalFlatFieldMetadata<
+  FieldMetadataType.RELATION | FieldMetadataType.NUMBER | FieldMetadataType.TEXT
+>['settings'];
+
+type SettingsExpectedResult =
+  | {
+      relationType: RelationType;
+      onDelete?: RelationOnDeleteAction | undefined;
+      joinColumnName?: string | null | undefined;
+      junctionTargetFieldUniversalIdentifier?: SerializedRelation | undefined;
+      __JsonbPropertyBrand__?: undefined;
+    }
+  | {
+      dataType?: NumberDataType | undefined;
+      decimals?: number | undefined;
+      type?: FieldNumberVariant | undefined;
+      __JsonbPropertyBrand__?: undefined;
+    }
+  | {
+      displayedMaxRows?: number | undefined;
+      __JsonbPropertyBrand__?: undefined;
+    }
+  | null;
+
+type DefaultValueTestCase = UniversalFlatFieldMetadata<
+  | FieldMetadataType.RELATION
+  | FieldMetadataType.NUMBER
+  | FieldMetadataType.TEXT
+  | FieldMetadataType.LINKS
+  | FieldMetadataType.CURRENCY
+>['defaultValue'];
+
+type DefaultValueExpectedResult =
+  | string
+  | number
+  | null
+  | {
+      amountMicros: string | null;
+      currencyCode: string | null;
+      __JsonbPropertyBrand__?: undefined;
+    }
+  | {
+      primaryLinkLabel: string | null;
+      primaryLinkUrl: string | null;
+      secondaryLinks: LinkMetadata[] | null;
+      __JsonbPropertyBrand__?: undefined;
+    };
+
+type OptionsTestCase =
+  UniversalFlatFieldMetadata<FieldMetadataType.RATING>['options'];
+
+type OptionsExpectedResult = FieldMetadataDefaultOption[];
+
+// eslint-disable-next-line unused-imports/no-unused-vars
+type Assertions = [
+  Expect<Equal<SettingsTestCase, SettingsExpectedResult>>,
+  Expect<Equal<NarrowedTestCase, NarrowedExpectedResult>>,
+  Expect<Equal<DefaultValueTestCase, DefaultValueExpectedResult>>,
+  Expect<Equal<OptionsTestCase, OptionsExpectedResult>>,
 ];

@@ -98,9 +98,9 @@ describe('computeWorkflowVersionStepChanges', () => {
         type: WorkflowActionType.CODE,
         settings: {
           input: {
-            serverlessFunctionId: '',
-            serverlessFunctionVersion: '',
-            serverlessFunctionInput: {},
+            logicFunctionId: '',
+            logicFunctionVersion: '',
+            logicFunctionInput: {},
           },
           errorHandlingOptions: {
             continueOnFailure: { value: false },

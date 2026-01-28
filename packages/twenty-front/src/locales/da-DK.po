@@ -495,7 +495,7 @@ msgid "20,000 workflow node executions"
 msgstr "20.000 workflow node eksekveringer"
 
 #. js-lingui-id: 8aH7ml
-#: src/modules/serverless-functions/components/ServerlessFunctionExecutionResult.tsx
+#: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 msgid "200 OK - {duration}ms"
 msgstr "200 OK - {duration}ms"
 
@@ -520,7 +520,7 @@ msgid "2FA Method Reset"
 msgstr "2FA-metode nulstilling"
 
 #. js-lingui-id: 4lbHin
-#: src/modules/serverless-functions/components/ServerlessFunctionExecutionResult.tsx
+#: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 msgid "500 Error - {duration}ms"
 msgstr "500 Fejl - {duration}ms"
 
@@ -569,6 +569,11 @@ msgstr "Mulighed for at tilføje mere end én URL"
 msgid "Ability to edit all settings"
 msgstr "Evne til at ændre alle indstillinger"
 
+#. js-lingui-id: MjUIIf
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "Ability to filter the records a user can interact with"
+msgstr ""
+
 #. js-lingui-id: 7J3Y++
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 msgid "Ability to filter the records a user can interact with."
@@ -588,7 +593,7 @@ msgstr "Afbryd"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
-#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionNewForm.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
@@ -615,7 +620,7 @@ msgid "Access your workspace data from your favorite MCP client like Claude Desk
 msgstr "Adgang til dine arbejdsdata fra din foretrukne MCP-klient som Claude Desktop, Windsurf eller Cursor."
 
 #. js-lingui-id: u2Cycw
-#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
 msgid "Accessible in your function via process.env.KEY"
 msgstr "Tilgængelig i din funktion via process.env.KEY"
 
@@ -766,7 +771,6 @@ msgstr "Tilføj en udløser"
 
 #. js-lingui-id: MPPZ54
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
-#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
@@ -1160,8 +1164,8 @@ msgid "Aggregate Chart"
 msgstr ""
 
 #. js-lingui-id: jsQZMk
-#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
+#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -1419,9 +1423,9 @@ msgstr "Der opstod en fejl under upload af billedet."
 #: src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
-#: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
-#: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
-#: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
+#: src/modules/settings/logic-functions/hooks/usePersistLogicFunction.ts
+#: src/modules/settings/logic-functions/hooks/usePersistLogicFunction.ts
+#: src/modules/settings/logic-functions/hooks/usePersistLogicFunction.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
 #: src/modules/object-metadata/hooks/useUpdateOneObjectMetadataItem.ts
 #: src/modules/object-metadata/hooks/useUpdateOneFieldMetadataItem.ts
@@ -1596,7 +1600,7 @@ msgid "Applicability"
 msgstr "Anvendelighed"
 
 #. js-lingui-id: bw50Pz
-#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
 msgid "application detail page"
 msgstr "applikationens detaljeside"
 
@@ -1611,7 +1615,7 @@ msgid "Application successfully uninstalled."
 msgstr ""
 
 #. js-lingui-id: fL7WXr
-#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
+#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -1851,7 +1855,7 @@ msgid "Auth"
 msgstr "Autentificering"
 
 #. js-lingui-id: DzqB0O
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Auth Required"
 msgstr "Godkendelse krævet"
 
@@ -2080,6 +2084,11 @@ msgstr "Bronze"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Brown"
 msgstr "Brun"
+
+#. js-lingui-id: 8SlslB
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
+msgid "Build many-to-many relations. <0>Learn more</0>"
+msgstr ""
 
 #. js-lingui-id: +7fBMP
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
@@ -2524,18 +2533,18 @@ msgid "Close command menu"
 msgstr "Luk kommandomenu"
 
 #. js-lingui-id: EWPtMO
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Code"
 msgstr "Kode"
 
 #. js-lingui-id: /8PmQ9
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "Code Editor"
 msgstr "Kodeeditor"
 
 #. js-lingui-id: bKJYIa
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
 msgid "Code your function"
 msgstr "Kodedin funktion"
 
@@ -2723,7 +2732,7 @@ msgid "Configure this widget to display fields"
 msgstr "Konfigurer denne widget til at vise felter"
 
 #. js-lingui-id: NF6Bfa
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Configure when this function should be executed"
 msgstr ""
 
@@ -3282,14 +3291,9 @@ msgid "Crimson"
 msgstr "Karmosinrød"
 
 #. js-lingui-id: 6Oaeoc
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Cron"
 msgstr "Cron"
-
-#. js-lingui-id: t87/Oe
-#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-msgid "cron trigger"
-msgstr "cron udløser"
 
 #. js-lingui-id: zovbHa
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -3520,14 +3524,9 @@ msgid "Database configuration is currently disabled."
 msgstr "Databasekonfiguration er i øjeblikket deaktiveret."
 
 #. js-lingui-id: lP42oc
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Database event"
 msgstr "Databasehændelse"
-
-#. js-lingui-id: 3GUKXi
-#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-msgid "database trigger"
-msgstr "database udløser"
 
 #. js-lingui-id: mYGY3B
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -3760,8 +3759,8 @@ msgstr "slet"
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -3775,6 +3774,7 @@ msgstr "slet"
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
+#: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
@@ -3857,6 +3857,7 @@ msgid "Delete field"
 msgstr "Slet felt"
 
 #. js-lingui-id: 97QUV6
+#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
 msgid "Delete Folder"
 msgstr "Slet mappe"
@@ -4003,9 +4004,9 @@ msgstr "Beskriv, hvad du vil have AI'en til at gøre..."
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
-#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionNewForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Description"
@@ -4285,8 +4286,8 @@ msgstr "eddy@gmail.com, @apple.com"
 
 #. js-lingui-id: ePK91l
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
@@ -4374,7 +4375,7 @@ msgid "Editable Profile Fields"
 msgstr ""
 
 #. js-lingui-id: uBAxNB
-#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
+#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Editor"
 msgstr "Editor"
 
@@ -4775,7 +4776,7 @@ msgid "Enter user ID or email address"
 msgstr "Indtast bruger-id eller e-mail-adresse"
 
 #. js-lingui-id: pubQie
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunctionFields.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunctionFields.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput.tsx
@@ -4806,7 +4807,7 @@ msgid "Entity ID copied to clipboard"
 msgstr "Enheds-id kopieret til udklipsholder"
 
 #. js-lingui-id: 3IeauL
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 msgid "Env Variable Options"
 msgstr "Indstillinger for miljøvariabel"
 
@@ -4816,12 +4817,12 @@ msgid "Environment variable"
 msgstr "Miljøvariabel"
 
 #. js-lingui-id: wqJ4zc
-#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
 msgid "Environment Variables"
 msgstr "Miljøvariabler"
 
 #. js-lingui-id: AP93Bl
-#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
 msgid "Environment variables are defined at application level for all functions. Please check <0/>."
 msgstr "Miljøvariabler er defineret på applikationsniveau for alle funktioner. Tjek venligst <0/>."
 
@@ -5131,7 +5132,7 @@ msgid "Expand folder"
 msgstr "Fold mappe ud"
 
 #. js-lingui-id: Y7w75u
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowServerlessFunctionCodeEditor.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowLogicFunctionCodeEditor.tsx
 msgid "Expand to Full Screen"
 msgstr "Udvid til fuld skærm"
 
@@ -5287,7 +5288,7 @@ msgstr "Eksportér arbejdsprocesser"
 
 #. js-lingui-id: 1JBTZV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Expression"
 msgstr "Udtryk"
 
@@ -5466,7 +5467,6 @@ msgstr "Fejlrate"
 
 #. js-lingui-id: ocUvR+
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
@@ -5486,6 +5486,7 @@ msgid "Fast model updated successfully"
 msgstr ""
 
 #. js-lingui-id: X9kySA
+#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFolders.tsx
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
 msgid "Favorites"
 msgstr "Favoritter"
@@ -5627,6 +5628,11 @@ msgstr "Afslut"
 msgid "Finish flow with errors"
 msgstr "Afslut med fejl"
 
+#. js-lingui-id: 8BwQeU
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
+msgid "Finish Setup"
+msgstr ""
+
 #. js-lingui-id: eYwdpC
 #: src/modules/ai/components/ReasoningSummaryDisplay.tsx
 msgid "Finished thinking"
@@ -5708,7 +5714,7 @@ msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "Format f.eks. d-MMM-y (qqq''yy)"
 
 #. js-lingui-id: xMJhWJ
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
 msgstr "Format: [Minut] [Time] [Dag i Måneden] [Måned] [Ugedag]"
 
@@ -5754,7 +5760,7 @@ msgid "Full access"
 msgstr "Fuld adgang"
 
 #. js-lingui-id: AHOl4W
-#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionLabelContainer.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionLabelContainer.tsx
 msgid "Function name"
 msgstr ""
 
@@ -5790,7 +5796,7 @@ msgid "General - Settings"
 msgstr "Generelt - Indstillinger"
 
 #. js-lingui-id: CjKOAP
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "Generate Function Output"
 msgstr "Generér funktionsoutput"
 
@@ -6137,7 +6143,7 @@ msgid "How your system is doing"
 msgstr "Hvordan dit system klarer sig"
 
 #. js-lingui-id: gwfyXo
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Http"
 msgstr "Http"
 
@@ -6403,7 +6409,7 @@ msgstr "Info"
 #. js-lingui-id: XU5AOg
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStepContent.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
@@ -6428,7 +6434,7 @@ msgid "Input settings"
 msgstr "Indstillingsinput"
 
 #. js-lingui-id: T8avpe
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Insert a JSON input, then press \"Run\" to test your function."
 msgstr "Indsæt en JSON input, og tryk derefter på \"Kør\" for at teste din funktion."
 
@@ -7171,6 +7177,16 @@ msgstr "Log ud"
 msgid "Logged in as {impersonatedUser}"
 msgstr "Logget ind som {impersonatedUser}"
 
+#. js-lingui-id: sTlKkx
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "logic function"
+msgstr ""
+
+#. js-lingui-id: RXhDe7
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Logic functions powering this app"
+msgstr ""
+
 #. js-lingui-id: VLuNNu
 #: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
 msgid "Login token missing. Two Factor Authentication setup can not be initiated."
@@ -7183,8 +7199,8 @@ msgstr "Logud"
 
 #. js-lingui-id: w/bY7R
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Logs"
 msgstr "Logfiler"
@@ -7285,10 +7301,10 @@ msgstr "Administrer din app"
 msgid "Manage your internet accounts."
 msgstr "Administrer dine internetkonti."
 
-#. js-lingui-id: bolPo/
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab.tsx
-msgid "Managed serverless functions are not editable"
-msgstr "Administrerede serverløse funktioner kan ikke redigeres"
+#. js-lingui-id: D1bqKd
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
+msgid "Managed logic functions are not editable"
+msgstr ""
 
 #. js-lingui-id: BWTzAb
 #: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
@@ -7470,7 +7486,7 @@ msgid "Metered tier switching has been cancelled."
 msgstr "Skift til målt niveau er blevet annulleret."
 
 #. js-lingui-id: fiPesM
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Method"
 msgstr "Metode"
 
@@ -7645,9 +7661,6 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
-#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionsTable.tsx
-#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionNewForm.tsx
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -7659,6 +7672,9 @@ msgstr ""
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
@@ -7669,7 +7685,7 @@ msgid "Name"
 msgstr "Navn"
 
 #. js-lingui-id: LPBy3P
-#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionNewForm.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 msgid "Name and describe your function"
 msgstr "Navngiv og beskriv din funktion"
 
@@ -8289,7 +8305,7 @@ msgid "No Select field"
 msgstr "Ingen vælg felt"
 
 #. js-lingui-id: fBsRs5
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "No triggers configured for this function."
 msgstr ""
 
@@ -8730,6 +8746,7 @@ msgid "Ordered List"
 msgstr ""
 
 #. js-lingui-id: ucgZ0o
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 #: src/modules/billing/hooks/useBillingWording.ts
 #: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Organization"
@@ -8784,7 +8801,7 @@ msgstr "Nedetid"
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
-#: src/modules/serverless-functions/components/ServerlessFunctionExecutionResult.tsx
+#: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStepContent.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/TerminalOutput.tsx
@@ -8883,7 +8900,7 @@ msgid "Paste the code below"
 msgstr "Indsæt koden nedenfor"
 
 #. js-lingui-id: I6gXOa
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Path"
 msgstr "Sti"
 
@@ -9486,6 +9503,7 @@ msgstr "Posttype"
 
 #. js-lingui-id: uMOyEH
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 msgid "Record-level"
 msgstr ""
 
@@ -9591,6 +9609,16 @@ msgstr "Fjern {favoriteCount} favorit?"
 msgid "Remove {favoriteCount} favorites?"
 msgstr "Fjern {favoriteCount} favoritter?"
 
+#. js-lingui-id: 0Urj9q
+#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
+msgid "Remove {navigationMenuItemCount} navigation menu item?"
+msgstr ""
+
+#. js-lingui-id: Ef5jwi
+#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
+msgid "Remove {navigationMenuItemCount} navigation menu items?"
+msgstr ""
+
 #. js-lingui-id: 1O32oy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -9654,6 +9682,7 @@ msgid "Remove variable"
 msgstr "Fjern variabel"
 
 #. js-lingui-id: 2wxgft
+#: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Rename"
@@ -9805,7 +9834,7 @@ msgid "Restore Records"
 msgstr "Gendan poster"
 
 #. js-lingui-id: RD6AE9
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "Result"
 msgstr "Resultat"
 
@@ -9917,11 +9946,6 @@ msgstr ""
 msgid "Romanian"
 msgstr "Rumænsk"
 
-#. js-lingui-id: gcbflV
-#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-msgid "route trigger"
-msgstr "rutetrigger"
-
 #. js-lingui-id: Eb/I7b
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Routing decision"
@@ -9958,12 +9982,12 @@ msgid "Run a workflow and return here to view its executions"
 msgstr "Kør en arbejdsproces og vend tilbage hertil for at se dens eksekveringer"
 
 #. js-lingui-id: UPaWvi
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "Kør funktion"
 
 #. js-lingui-id: iXw832
-#: src/modules/serverless-functions/components/ServerlessFunctionExecutionResult.tsx
+#: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 msgid "Running function"
 msgstr "Kører funktion"
 
@@ -9973,7 +9997,7 @@ msgid "Running..."
 msgstr "Kører..."
 
 #. js-lingui-id: eo1n1s
-#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionsTable.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
 msgid "Runtime"
 msgstr "Runtime"
 
@@ -10491,7 +10515,7 @@ msgid "Select the default value for this boolean field"
 msgstr "Vælg standardværdien for dette booleske felt"
 
 #. js-lingui-id: E3D4LZ
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Select the events that should trigger the function"
 msgstr "Vælg de begivenheder der skal udløse funktionen"
 
@@ -10566,16 +10590,6 @@ msgstr "Sendt og modtaget"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
 msgstr "Serbisk (Cyrillisk)"
-
-#. js-lingui-id: QsydvO
-#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-msgid "serverless function"
-msgstr "serverløs funktion"
-
-#. js-lingui-id: 0WOel+
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Serverless functions powering this app"
-msgstr "Serverløse funktioner, der driver denne app"
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -10654,7 +10668,7 @@ msgid "Setting up your database..."
 msgstr "Opsætning af din database..."
 
 #. js-lingui-id: Tz0i8g
-#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
+#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -11435,12 +11449,12 @@ msgid "Terms of Service"
 msgstr "Servicevilkår"
 
 #. js-lingui-id: NnH3pK
-#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
+#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Test"
 msgstr "Test"
@@ -11451,7 +11465,7 @@ msgid "Test Workflow"
 msgstr "Testarbejdsproces"
 
 #. js-lingui-id: 3nWPN6
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Test your function"
 msgstr "Test din funktion"
 
@@ -11677,10 +11691,25 @@ msgstr "Denne handling vil slette denne favoritmappe og alle de {favoriteCount} 
 msgid "This action will delete this favorite folder and the favorite inside. Do you want to continue?"
 msgstr "Denne handling vil slette denne favoritmappe og favoritten i den. Vil du fortsætte?"
 
+#. js-lingui-id: lAHIY2
+#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
+msgid "This action will delete this folder and all {navigationMenuItemCount} navigation menu items inside. Do you want to continue?"
+msgstr ""
+
+#. js-lingui-id: gSO0+U
+#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
+msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
+msgstr ""
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
 msgstr "Denne databaseværdi overskriver miljøindstillingerne."
+
+#. js-lingui-id: qHAJQ2
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "This feature is part of the Organization Plan"
+msgstr ""
 
 #. js-lingui-id: own57K
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -11978,24 +12007,23 @@ msgid "Trigger Type"
 msgstr "Udløsertype"
 
 #. js-lingui-id: 34nxyb
-#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Triggers"
 msgstr "Udløsere"
 
 #. js-lingui-id: zk64Yo
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Triggers the function at regular intervals"
 msgstr "Udløser funktionen med regelmæssige intervaller"
 
 #. js-lingui-id: juqoz0
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Triggers the function with Http request"
 msgstr "Udløser funktionen med Http-anmodning"
 
 #. js-lingui-id: c+xCSz
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
@@ -12281,7 +12309,7 @@ msgstr "Uden titel rolle"
 
 #. js-lingui-id: p1M9l4
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "Untitled Workflow"
 msgstr "Uden titel workflow"
 
@@ -12347,6 +12375,7 @@ msgid "Updates"
 msgstr "Opdateringer"
 
 #. js-lingui-id: kwkhPe
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Upgrade"
@@ -12356,6 +12385,11 @@ msgstr "Opgrader"
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Upgrade Plan"
 msgstr "Opgrader planen"
+
+#. js-lingui-id: ggd+Ee
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "Upgrade to access"
+msgstr ""
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -12484,7 +12518,7 @@ msgstr "Valider data"
 #. js-lingui-id: wMHvYH
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -12763,6 +12797,11 @@ msgstr ""
 msgid "Web Search"
 msgstr "Websøgning"
 
+#. js-lingui-id: Dq7Z5R
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "webhook"
+msgstr ""
+
 #. js-lingui-id: Tvdycs
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
 msgid "Webhook {targetUrl} created successfully"
@@ -12853,11 +12892,6 @@ msgstr "Hvor"
 msgid "Widget type"
 msgstr "Widget type"
 
-#. js-lingui-id: erVUKK
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
-msgid "Will show linked records directly instead of intermediate junction record"
-msgstr ""
-
 #. js-lingui-id: bB8dFW
 #: src/modules/billing/components/TrialCard.tsx
 msgid "With Credit Card"
@@ -12897,14 +12931,14 @@ msgstr "Arbejdsgange"
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
-#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
-#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
+#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
+#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -12942,6 +12976,7 @@ msgstr "Arbejdsgange"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
 msgstr "Arbejdsområde"
@@ -13012,7 +13047,7 @@ msgid "Write a description for this agent"
 msgstr "Skriv en beskrivelse for denne agent"
 
 #. js-lingui-id: zeCIJi
-#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
 msgid "Write your function (in typescript) below"
 msgstr "Skriv din funktion (i typescript) nedenfor"
 

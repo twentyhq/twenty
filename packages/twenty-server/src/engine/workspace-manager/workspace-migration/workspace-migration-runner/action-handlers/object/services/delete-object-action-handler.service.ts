@@ -77,7 +77,7 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     const objectFlatFieldMetadatas =
       findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+        flatEntityIds: flatObjectMetadata.fieldIds,
       });
     const enumOrCompositeFlatFieldMetadatas = objectFlatFieldMetadatas.filter(
       (field) =>

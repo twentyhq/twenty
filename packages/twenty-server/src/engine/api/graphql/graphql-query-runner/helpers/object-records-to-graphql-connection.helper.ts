@@ -173,7 +173,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const processedObjectRecord: Record<string, any> = {};
 
-    for (const fieldId of flatObjectMetadata.fieldMetadataIds) {
+    for (const fieldId of flatObjectMetadata.fieldIds) {
       const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: fieldId,
         flatEntityMaps: this.flatFieldMetadataMaps,

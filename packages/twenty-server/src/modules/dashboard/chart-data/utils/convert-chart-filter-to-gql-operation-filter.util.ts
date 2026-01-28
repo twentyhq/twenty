@@ -43,8 +43,8 @@ export const convertChartFilterToGqlOperationFilter = ({
     return {};
   }
 
-  const fieldMetadataIds = flatObjectMetadata.fieldMetadataIds ?? [];
-  const fields: PartialFieldMetadataItem[] = fieldMetadataIds
+  const fieldIds = flatObjectMetadata.fieldIds ?? [];
+  const fields: PartialFieldMetadataItem[] = fieldIds
     .map((fieldId: string) => {
       const field = flatFieldMetadataMaps.byId[fieldId];
 

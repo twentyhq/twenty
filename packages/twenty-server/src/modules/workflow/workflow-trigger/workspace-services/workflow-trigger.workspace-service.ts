@@ -82,7 +82,6 @@ export class WorkflowTriggerWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -132,6 +131,7 @@ export class WorkflowTriggerWorkspaceService {
 
         return true;
       },
+      authContext,
     );
   }
 
@@ -142,7 +142,6 @@ export class WorkflowTriggerWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -159,6 +158,7 @@ export class WorkflowTriggerWorkspaceService {
 
         return true;
       },
+      authContext,
     );
   }
 

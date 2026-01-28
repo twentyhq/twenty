@@ -1,4 +1,4 @@
-import { defineFrontComponent } from '../front-components/define-front-component';
+import { defineFrontComponent } from '@/application';
 
 // Mock component for testing
 const MockComponent = () => null;

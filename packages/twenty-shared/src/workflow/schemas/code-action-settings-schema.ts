@@ -4,8 +4,8 @@ import { baseWorkflowActionSettingsSchema } from './base-workflow-action-setting
 export const workflowCodeActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      serverlessFunctionId: z.string(),
-      serverlessFunctionVersion: z.string(),
-      serverlessFunctionInput: z.record(z.string(), z.any()),
+      logicFunctionId: z.string(),
+      logicFunctionVersion: z.string(),
+      logicFunctionInput: z.record(z.string(), z.any()),
     }),
   });

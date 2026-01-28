@@ -1,18 +1,18 @@
 ---
-title: Buttons
+title: 버튼들
 image: /images/user-guide/views/filter.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/views/filter.png" alt="Header" />
+  <img src="/images/user-guide/views/filter.png" alt="헤더" />
 </Frame>
 
-A list of buttons and button groups used throughout the app.
+앱 전반에 걸쳐 사용되는 버튼 및 버튼 그룹의 목록.
 
-## Button
+## 버튼
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { Button } from "@/ui/input/button/components/Button";
 
@@ -21,7 +21,7 @@ A list of buttons and button groups used throughout the app.
         <Button
           className
           Icon={null}
-          title="Title"
+          title="제목"
           fullWidth={false}
           variant="primary"
           size="medium"
@@ -37,28 +37,28 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type                  | Description                                                                                                          |
-    | --------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
-    | className | string                | Optional class name for additional styling                                                                           |
-    | Icon      | `React.ComponentType` | An optional icon component that's displayed within the button                                                        |
-    | title     | string                | The text content of the button                                                                                       |
-    | fullWidth | boolean               | Defines whether the button should span the whole width of its container                                              |
-    | variant   | string                | The visual style variant of the button. Options include `primary`, `secondary`, and `tertiary`                       |
-    | size      | string                | The size of the button. Has two options: `small` and `medium`                                                        |
-    | position  | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
-    | accent    | string                | The accent color of the button. Options include: `default`, `blue`, and `danger`                                     |
-    | soon      | boolean               | Indicates if the button is marked as "soon" (such as for upcoming features)                                          |
-    | disabled  | boolean               | Specifies whether the button is disabled or not                                                                      |
-    | focus     | boolean               | Determines if the button has focus                                                                                   |
-    | onClick   | function              | A callback function that triggers when the user clicks on the button                                                 |
+  <Tab title="프로퍼티">
+    | 프로퍼티      | 유형                    | 설명                                                                                           |
+    | --------- | --------------------- | -------------------------------------------------------------------------------------------- |
+    | 클래스 네임    | 문자열                   | 추가 스타일을 위한 선택적 클래스 이름                                                                        |
+    | 아이콘       | `React.ComponentType` | 버튼 내에 표시되는 선택적 아이콘 구성 요소                                                                     |
+    | 제목        | 문자열                   | 버튼의 텍스트 내용                                                                                   |
+    | fullWidth | 부울                    | 버튼이 컨테이너의 전체 너비를 차지할 것인지 정의합니다                                                               |
+    | 변형        | 문자열                   | 버튼의 시각적 스타일 변형. 옵션에는 `primary`, `secondary` 및 `tertiary`가 포함됩니다                              |
+    | 크기        | 문자열                   | 버튼의 크기. 두 가지 옵션이 있습니다: `small` 및 `medium`                                                    |
+    | 위치        | 문자열                   | 버튼의 위치가 형제 요소와의 관계에서 어디에 존재하는지 나타냅니다. 옵션에는: `standalone`, `left`, `right`, 및 `middle`가 포함됩니다 |
+    | 강조        | 문자열                   | 버튼의 강조 색상. 옵션에는: `default`, `blue`, 및 `danger`가 포함됩니다                                        |
+    | 곧         | 부울                    | 버튼이 "곧 출시"로 표시되는지 여부를 나타냅니다 (예: 곧 출시할 기능)                                                    |
+    | 비활성       | 부울                    | 버튼이 비활성 상태인지 여부를 지정합니다                                                                       |
+    | 포커스       | 부울                    | 버튼에 포커스가 있는지 나타냅니다                                                                           |
+    | onClick   | function              | 사용자가 버튼을 클릭할 때 트리거되는 콜백 함수                                                                   |
   </Tab>
 </Tabs>
 
-## Button Group
+## 버튼 그룹
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { Button } from "@/ui/input/button/components/Button";
     import { ButtonGroup } from "@/ui/input/button/components/ButtonGroup";
@@ -69,7 +69,7 @@ A list of buttons and button groups used throughout the app.
           <Button
             className
             Icon={null}
-            title="Button 1"
+            title="버튼 1"
             fullWidth={false}
             variant="primary"
             size="medium"
@@ -83,7 +83,7 @@ A list of buttons and button groups used throughout the app.
           <Button
             className
             Icon={null}
-            title="Button 2"
+            title="버튼 2"
             fullWidth={false}
             variant="secondary"
             size="medium"
@@ -97,7 +97,7 @@ A list of buttons and button groups used throughout the app.
           <Button
             className
             Icon={null}
-            title="Button 3"
+            title="버튼 3"
             fullWidth={false}
             variant="tertiary"
             size="medium"
@@ -115,21 +115,21 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type      | Description                                                                                                      |
-    | --------- | --------- | ---------------------------------------------------------------------------------------------------------------- |
-    | variant   | string    | The visual style variant of the buttons within the group. Options include `primary`, `secondary`, and `tertiary` |
-    | size      | string    | The size of the buttons within the group. Has two options: `medium` and `small`                                  |
-    | accent    | string    | The accent color of the buttons within the group. Options include `default`, `blue` and `danger`                 |
-    | className | string    | Optional class name for additional styling                                                                       |
-    | children  | ReactNode | An array of React elements representing the individual buttons within the group                                  |
+  <Tab title="프로퍼티">
+    | 프로퍼티     | 유형        | 설명                                                                    |
+    | -------- | --------- | --------------------------------------------------------------------- |
+    | 변형       | 문자열       | 그룹 내 버튼의 시각적 스타일 변형. 옵션에는 `primary`, `secondary`, 및 `tertiary`가 포함됩니다 |
+    | 크기       | 문자열       | 그룹 내 버튼의 크기. 두 가지 옵션이 있습니다: `medium` 및 `small`                        |
+    | 강조       | 문자열       | 그룹 내 버튼의 강조 색상. 옵션에는 `default`, `blue` 및 `danger`가 포함됩니다              |
+    | 클래스 네임   | 문자열       | 추가 스타일을 위한 선택적 클래스 이름                                                 |
+    | children | ReactNode | 그룹 내 각 버튼을 나타내는 React 요소의 배열                                          |
   </Tab>
 </Tabs>
 
-## Floating Button
+## 떠 있는 버튼
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -139,7 +139,7 @@ A list of buttons and button groups used throughout the app.
         <FloatingButton
           className
           Icon={IconSearch}
-          title="Title"
+          title="제목"
           size="medium"
           position="standalone"
           applyShadow={true}
@@ -152,25 +152,25 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type                  | Description                                                                                                      |
-    | ----------- | --------------------- | ---------------------------------------------------------------------------------------------------------------- |
-    | className   | string                | Optional name for additional styling                                                                             |
-    | Icon        | `React.ComponentType` | An optional icon component that's displayed within the button                                                    |
-    | title       | string                | The text content of the button                                                                                   |
-    | size        | string                | The size of the button. Has two options: `small` and `medium`                                                    |
-    | position    | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `middle`, `right` |
-    | applyShadow | boolean               | Determines whether to apply shadow to a button                                                                   |
-    | applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                                          |
-    | disabled    | boolean               | Determines whether the button is disabled                                                                        |
-    | focus       | boolean               | Indicates if the button has focus                                                                                |
+  <Tab title="프로퍼티">
+    | 프로퍼티   | 유형                    | 설명                                                                                           |
+    | ------ | --------------------- | -------------------------------------------------------------------------------------------- |
+    | 클래스 네임 | 문자열                   | 추가 스타일을 위한 선택적 이름                                                                            |
+    | 아이콘    | `React.ComponentType` | 버튼 내에 표시되는 선택적 아이콘 구성 요소                                                                     |
+    | 제목     | 문자열                   | 버튼의 텍스트 내용                                                                                   |
+    | 크기     | 문자열                   | 버튼의 크기. 두 가지 옵션이 있습니다: `small` 및 `medium`                                                    |
+    | 위치     | 문자열                   | 버튼의 위치가 형제 요소와의 관계에서 어디에 존재하는지 나타냅니다. 옵션에는: `standalone`, `left`, `middle`, 및 `right`가 포함됩니다 |
+    | 그림자 적용 | 부울                    | 버튼에 그림자를 적용할지 여부를 결정합니다                                                                      |
+    | 블러 적용  | 부울                    | 버튼에 블러 효과를 적용할지 여부를 결정합니다                                                                    |
+    | 비활성    | 부울                    | 버튼이 비활성 상태인지 여부를 결정합니다                                                                       |
+    | 포커스    | 부울                    | 버튼에 포커스가 있는지 나타냅니다                                                                           |
   </Tab>
 </Tabs>
 
-## Floating Button Group
+## 떠 있는 버튼 그룹
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
     import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
@@ -206,18 +206,18 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props    | Type      | Description                                                                     | Default |
-    | -------- | --------- | ------------------------------------------------------------------------------- | ------- |
-    | size     | string    | The size of the button. Has two options: `small` and `medium`                   | small   |
-    | children | ReactNode | An array of React elements representing the individual buttons within the group |         |
+  <Tab title="프로퍼티">
+    | 프로퍼티     | 유형        | 설명                                        | 기본값 |
+    | -------- | --------- | ----------------------------------------- | --- |
+    | 크기       | 문자열       | 버튼의 크기. 두 가지 옵션이 있습니다: `small` 및 `medium` | 작은  |
+    | children | ReactNode | 그룹 내 각 버튼을 나타내는 React 요소의 배열              |     |
   </Tab>
 </Tabs>
 
-## Floating Icon Button
+## 떠 있는 아이콘 버튼
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -241,26 +241,26 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type                  | Description                                                                                                          |
-    | ----------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
-    | className   | string                | Optional name for additional styling                                                                                 |
-    | Icon        | `React.ComponentType` | An optional icon component that's displayed within the button                                                        |
-    | size        | string                | The size of the button. Has two options: `small` and `medium`                                                        |
-    | position    | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
-    | applyShadow | boolean               | Determines whether to apply shadow to a button                                                                       |
-    | applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                                              |
-    | disabled    | boolean               | Determines whether the button is disabled                                                                            |
-    | focus       | boolean               | Indicates if the button has focus                                                                                    |
-    | onClick     | function              | A callback function that triggers when the user clicks on the button                                                 |
-    | isActive    | boolean               | Determines if the button is in an active state                                                                       |
+  <Tab title="프로퍼티">
+    | 프로퍼티       | 유형                    | 설명                                                                                           |
+    | ---------- | --------------------- | -------------------------------------------------------------------------------------------- |
+    | 클래스 네임     | 문자열                   | 추가 스타일을 위한 선택적 이름                                                                            |
+    | 아이콘        | `React.ComponentType` | 버튼 내에 표시되는 선택적 아이콘 구성 요소                                                                     |
+    | 크기         | 문자열                   | 버튼의 크기. 두 가지 옵션이 있습니다: `small` 및 `medium`                                                    |
+    | 위치         | 문자열                   | 버튼의 위치가 형제 요소와의 관계에서 어디에 존재하는지 나타냅니다. 옵션에는: `standalone`, `left`, `right`, 및 `middle`가 포함됩니다 |
+    | 그림자 적용     | 부울                    | 버튼에 그림자를 적용할지 여부를 결정합니다                                                                      |
+    | 블러 적용      | 부울                    | 버튼에 블러 효과를 적용할지 여부를 결정합니다                                                                    |
+    | 비활성        | 부울                    | 버튼이 비활성 상태인지 여부를 결정합니다                                                                       |
+    | 포커스        | 부울                    | 버튼에 포커스가 있는지 나타냅니다                                                                           |
+    | onClick    | function              | 사용자가 버튼을 클릭할 때 트리거되는 콜백 함수                                                                   |
+    | 활성 상태인지 여부 | 부울                    | 버튼이 활성 상태인지 여부를 결정합니다                                                                        |
   </Tab>
 </Tabs>
 
-## Floating Icon Button Group
+## 떠 있는 아이콘 버튼 그룹
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
     import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
@@ -290,19 +290,19 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type   | Description                                                                                                                                                                                                                                                          |
-    | ----------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | className   | string | Optional name for additional styling                                                                                                                                                                                                                                 |
-    | size        | string | The size of the button. Has two options: `small` and `medium`                                                                                                                                                                                                        |
-    | iconButtons | array  | An array of objects, each representing an icon button in the group. Each object should include the icon component you want to display in the button, the function you want to call when a user clicks on the button, and whether the button should be active or not. |
+  <Tab title="프로퍼티">
+    | 프로퍼티   | 유형  | 설명                                                                                                        |
+    | ------ | --- | --------------------------------------------------------------------------------------------------------- |
+    | 클래스 네임 | 문자열 | 추가 스타일을 위한 선택적 이름                                                                                         |
+    | 크기     | 문자열 | 버튼의 크기. 두 가지 옵션이 있습니다: `small` 및 `medium`                                                                 |
+    | 아이콘 버튼 | 배열  | 그룹 내 각 아이콘 버튼을 나타내는 객체의 배열. 각 객체에는 버튼에 표시할 아이콘 컴포넌트, 사용자가 버튼을 클릭할 때 호출할 함수, 그리고 버튼이 활성 상태인지 여부를 포함해야 합니다. |
   </Tab>
 </Tabs>
 
-## Light Button
+## 라이트 버튼
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { LightButton } from "@/ui/input/button/components/LightButton";
 
@@ -310,7 +310,7 @@ A list of buttons and button groups used throughout the app.
       return <LightButton
       className
       icon={null}
-      title="Title"
+      title="제목"
       accent="secondary"
       active={false}
       disabled={false}
@@ -321,24 +321,24 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type              | Description                                                                 |
-    | --------- | ----------------- | --------------------------------------------------------------------------- |
-    | className | string            | Optional name for additional styling                                        |
-    | icon      | `React.ReactNode` | The icon you want to display in the button                                  |
-    | title     | string            | The text content of the button                                              |
-    | accent    | string            | The accent color of the button. Options include: `secondary` and `tertiary` |
-    | active    | boolean           | Determines if the button is in an active state                              |
-    | disabled  | boolean           | Determines whether the button is disabled                                   |
-    | focus     | boolean           | Indicates if the button has focus                                           |
-    | onClick   | function          | A callback function that triggers when the user clicks on the button        |
+  <Tab title="프로퍼티">
+    | 프로퍼티    | 유형                | 설명                                               |
+    | ------- | ----------------- | ------------------------------------------------ |
+    | 클래스 네임  | 문자열               | 추가 스타일을 위한 선택적 이름                                |
+    | 아이콘     | `React.ReactNode` | 버튼에 표시할 아이콘                                      |
+    | 제목      | 문자열               | 버튼의 텍스트 내용                                       |
+    | 강조      | 문자열               | 버튼의 강조 색상. 옵션에는: `secondary` 및 `tertiary`가 포함됩니다 |
+    | 활성      | 부울                | 버튼이 활성 상태인지 여부를 결정합니다                            |
+    | 비활성     | 부울                | 버튼이 비활성 상태인지 여부를 결정합니다                           |
+    | 포커스     | 부울                | 버튼에 포커스가 있는지 나타냅니다                               |
+    | onClick | 기능                | 사용자가 버튼을 클릭할 때 트리거되는 콜백 함수                       |
   </Tab>
 </Tabs>
 
-## Light Icon Button
+## 라이트 아이콘 버튼
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -349,7 +349,7 @@ A list of buttons and button groups used throughout the app.
           className
           testId="test1"
           Icon={IconSearch}
-          title="Title"
+          title="제목"
           size="small"
           accent="secondary"
           active={true}
@@ -362,26 +362,26 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type                  | Description                                                                 |
-    | --------- | --------------------- | --------------------------------------------------------------------------- |
-    | className | string                | Optional name for additional styling                                        |
-    | testId    | string                | Test identifier for the button                                              |
-    | Icon      | `React.ComponentType` | An optional icon component that's displayed within the button               |
-    | title     | string                | The text content of the button                                              |
-    | size      | string                | The size of the button. Has two options: `small` and `medium`               |
-    | accent    | string                | The accent color of the button. Options include: `secondary` and `tertiary` |
-    | active    | boolean               | Determines if the button is in an active state                              |
-    | disabled  | boolean               | Determines whether the button is disabled                                   |
-    | focus     | boolean               | Indicates if the button has focus                                           |
-    | onClick   | function              | A callback function that triggers when the user clicks on the button        |
+  <Tab title="프로퍼티">
+    | 프로퍼티    | 유형                    | 설명                                               |
+    | ------- | --------------------- | ------------------------------------------------ |
+    | 클래스 네임  | 문자열                   | 추가 스타일을 위한 선택적 이름                                |
+    | 테스트ID   | 문자열                   | 버튼의 테스트 식별자                                      |
+    | 아이콘     | `React.ComponentType` | 버튼 내에 표시되는 선택적 아이콘 구성 요소                         |
+    | 제목      | 문자열                   | 버튼의 텍스트 내용                                       |
+    | 크기      | 문자열                   | 버튼의 크기. 두 가지 옵션이 있습니다: `small` 및 `medium`        |
+    | 강조      | 문자열                   | 버튼의 강조 색상. 옵션에는: `secondary` 및 `tertiary`가 포함됩니다 |
+    | 활성      | 부울                    | 버튼이 활성 상태인지 여부를 결정합니다                            |
+    | 비활성     | 부울                    | 버튼이 비활성 상태인지 여부를 결정합니다                           |
+    | 포커스     | 부울                    | 버튼에 포커스가 있는지 나타냅니다                               |
+    | onClick | 기능                    | 사용자가 버튼을 클릭할 때 트리거되는 콜백 함수                       |
   </Tab>
 </Tabs>
 
-## Main Button
+## 메인 버튼
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { MainButton } from "@/ui/input/button/components/MainButton";
     import { IconCheckbox } from "@tabler/icons-react";
@@ -389,7 +389,7 @@ A list of buttons and button groups used throughout the app.
     export const MyComponent = () => {
       return (
         <MainButton
-          title="Checkbox"
+          title="체크박스"
           fullWidth={false}
           variant="primary"
           soon={false}
@@ -400,22 +400,22 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props                | Type                             | Description                                                                       |
-    | -------------------- | -------------------------------- | --------------------------------------------------------------------------------- |
-    | title                | string                           | The text content of the button                                                    |
-    | fullWidth            | boolean                          | Defines whether the button should span the whole width of its container           |
-    | variant              | string                           | The visual style variant of the button. Options include `primary` and `secondary` |
-    | soon                 | boolean                          | Indicates if the button is marked as "soon" (such as for upcoming features)       |
-    | Icon                 | `React.ComponentType`            | An optional icon component that's displayed within the button                     |
-    | React `button` props | `React.ComponentProps<'button'>` | All standard HTML button props are supported                                      |
+  <Tab title="프로퍼티">
+    | 프로퍼티              | 유형                               | 설명                                                  |
+    | ----------------- | -------------------------------- | --------------------------------------------------- |
+    | 제목                | 문자열                              | 버튼의 텍스트 내용                                          |
+    | 전체 폭              | 부울                               | 버튼이 컨테이너의 전체 너비를 차지할 것인지 정의합니다                      |
+    | 변형                | 문자열                              | 버튼의 시각적 스타일 변형. 옵션에는 `primary` 및 `secondary`가 포함됩니다 |
+    | 곧                 | 부울                               | 버튼이 "곧 출시"로 표시되는지 여부를 나타냅니다 (예: 곧 출시할 기능)           |
+    | 아이콘               | `React.ComponentType`            | 버튼 내에 표시되는 선택적 아이콘 구성 요소                            |
+    | React `button` 속성 | `React.ComponentProps<'button'>` | 모든 표준 HTML 버튼 속성을 지원합니다                             |
   </Tab>
 </Tabs>
 
-## Rounded Icon Button
+## 둥근 아이콘 버튼
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -430,10 +430,10 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props                | Type                                            | Description |
-    | -------------------- | ----------------------------------------------- | ----------- |
-    | Icon                 | `React.ComponentType`                           |             |
-    | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |             |
+  <Tab title="프로퍼티">
+    | 프로퍼티              | 유형                                              | 설명 |
+    | ----------------- | ----------------------------------------------- | -- |
+    | 아이콘               | `React.ComponentType`                           |    |
+    | React `button` 속성 | `React.ButtonHTMLAttributes<HTMLButtonElement>` |    |
   </Tab>
 </Tabs>

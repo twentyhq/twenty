@@ -1,6 +1,6 @@
-import { ApiService } from '@/cli/utilities/api/services/api.service';
+import { ApiService } from '@/cli/utilities/api/api-service';
 import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -37,7 +37,7 @@ export class FunctionExecuteCommand {
         process.exit(1);
       }
 
-      const functionsResult = await this.apiService.findServerlessFunctions();
+      const functionsResult = await this.apiService.findLogicFunctions();
       if (!functionsResult.success) {
         console.error(
           chalk.red('Failed to fetch functions:'),
@@ -92,7 +92,7 @@ export class FunctionExecuteCommand {
       console.log(chalk.gray(`   Payload: ${JSON.stringify(parsedPayload)}`));
       console.log('');
 
-      const result = await this.apiService.executeServerlessFunction({
+      const result = await this.apiService.executeLogicFunction({
         functionId: targetFunction.id,
         payload: parsedPayload,
         version: 'draft',

@@ -1,67 +1,67 @@
 ---
-title: Widget FAQ
-description: Common questions and error messages explained.
+title: Domande frequenti sui widget
+description: Domande comuni e messaggi di errore spiegati.
 ---
 
 <AccordionGroup>
-  <Accordion title="How do I show percentages instead of counts?">
-    Three options:
+  <Accordion title="Come faccio a mostrare le percentuali invece dei conteggi?">
+    Tre opzioni:
 
-    * **Percent empty/not empty**: Under Data on display, select Percent empty or Percent not empty
-    * **Ratio**: For Select or Checkbox fields, enable Ratio to show a specific option as a percentage of all records
-    * **Suffix**: For aggregate charts, add `%` as a Suffix in Style settings
+    * **Percentuale vuoti/non vuoti**: In Dati visualizzati, seleziona Percentuale di valori vuoti oppure Percentuale di valori non vuoti
+    * **Rapporto**: Per i campi Selezione o Casella di controllo, abilita Rapporto per mostrare un'opzione specifica come percentuale di tutti i record
+    * **Suffisso**: Per i grafici aggregati, aggiungi `%` come suffisso nelle impostazioni di stile
   </Accordion>
 
-  <Accordion title="What's the difference between grouped and stacked bars?">
-    When using **Group by**, you can display series two ways:
+  <Accordion title="Qual è la differenza tra barre raggruppate e impilate?">
+    Quando usi **Raggruppa per**, puoi visualizzare le serie in due modi:
 
-    * **Grouped**: Bars side by side—best for comparing exact values
-    * **Stacked**: Bars on top of each other—best for showing composition
+    * **Raggruppate**: Barre affiancate—ideale per confrontare valori esatti
+    * **Impilate**: Barre una sopra l'altra—ideale per mostrare la composizione
 
-    Toggle **Stacked** in Style settings to switch.
+    Attiva/disattiva **Impilato** nelle impostazioni di stile per cambiare.
   </Accordion>
 
-  <Accordion title="Why can't I see Sum or Average options?">
-    Available operations depend on **field type**:
+  <Accordion title="Perché non vedo le opzioni Somma o Media?">
+    Le operazioni disponibili dipendono dal **tipo di campo**:
 
-    * **Number fields**: Sum, Average, Min, Max
-    * **Date fields**: Earliest, Latest (aggregate charts only)
-    * **Checkbox fields**: Count true, Count false
+    * **Campi numerici**: Somma, Media, Minimo, Massimo
+    * **Campi data**: Più antico, Più recente (solo grafici aggregati)
+    * **Campi casella di controllo**: Conta valori veri, Conta valori falsi
 
-    If you don't see an option, check that you've selected a compatible field type.
+    Se non vedi un'opzione, verifica di aver selezionato un tipo di campo compatibile.
   </Accordion>
 
-  <Accordion title="Why are some settings grayed out or missing?">
-    Many settings only appear when prerequisites are met:
+  <Accordion title="Perché alcune impostazioni sono disattivate o non disponibili?">
+    Molte impostazioni compaiono solo quando sono soddisfatti i prerequisiti:
 
-    * **Date granularity**: Select a date field first
-    * **Group by, Legend, Stacked**: Set Source first
-    * **Legend, Stacked toggles**: Set Group by first
+    * **Granularità della data**: seleziona prima un campo data
+    * **Raggruppa per, Legenda, Impilato**: imposta prima Origine
+    * **Interruttori Legenda e Impilato**: imposta prima Raggruppa per
 
-    If a setting is missing, configure its prerequisite first.
+    Se un'impostazione non è presente, configura prima il relativo prerequisito.
   </Accordion>
 
-  <Accordion title="What does 'No data' mean?">
-    The chart found no records matching your configuration.
+  <Accordion title="Cosa significa 'Nessun dato'?">
+    Il grafico non ha trovato record che corrispondono alla tua configurazione.
 
-    **To fix:** Remove or adjust filters, verify you selected the correct Source object, or check that records exist for your date range.
+    **Per risolvere:** Rimuovi o modifica i filtri, verifica di aver selezionato l'oggetto Origine corretto o controlla che esistano record per il tuo intervallo di date.
   </Accordion>
 
-  <Accordion title="What does 'Invalid configuration' mean?">
-    A required setting is missing or incompatible.
+  <Accordion title="Cosa significa 'Configurazione non valida'?">
+    Manca un'impostazione obbligatoria o è incompatibile.
 
-    **To fix:** Ensure Source is set, Data on display is configured, and any required grouping fields are selected.
+    **Per risolvere:** Assicurati che Origine sia impostata, che Dati visualizzati sia configurato e che eventuali campi di raggruppamento richiesti siano selezionati.
   </Accordion>
 
-  <Accordion title="What does 'Undisplayed data' mean?">
-    Your data exceeds display limits (100 bars, 100 data points, or 100 slices).
+  <Accordion title="Cosa significa 'Dati non visualizzati'?">
+    I tuoi dati superano i limiti di visualizzazione (100 barre, 100 punti dati o 100 spicchi).
 
-    **To fix:** Add filters to narrow your data, or change date granularity from Day to Week or Month.
+    **Per risolvere:** Aggiungi filtri per restringere i dati oppure cambia la granularità della data da Giorno a Settimana o Mese.
   </Accordion>
 
-  <Accordion title="Why is one axis showing no data?">
-    The selected field has no values for the records in your filter, or the field type doesn't match the expected data.
+  <Accordion title="Perché un asse non mostra dati?">
+    Il campo selezionato non ha valori per i record nel tuo filtro oppure il tipo di campo non corrisponde ai dati previsti.
 
-    **To fix:** Try a different field, or check that records have values for the selected field.
+    **Per risolvere:** Prova un campo diverso oppure verifica che i record abbiano valori per il campo selezionato.
   </Accordion>
 </AccordionGroup>

@@ -39,9 +39,9 @@ describe('insertStep', () => {
     type: WorkflowActionType.CODE,
     settings: {
       input: {
-        serverlessFunctionId: 'test',
-        serverlessFunctionVersion: '1.0.0',
-        serverlessFunctionInput: {},
+        logicFunctionId: 'test',
+        logicFunctionVersion: '1.0.0',
+        logicFunctionInput: {},
       },
       outputSchema: {},
       errorHandlingOptions: {

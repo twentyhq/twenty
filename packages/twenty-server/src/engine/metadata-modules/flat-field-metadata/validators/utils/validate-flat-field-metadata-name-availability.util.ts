@@ -51,7 +51,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
   const objectFlatFieldMetadatas =
     findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+      flatEntityIds: flatObjectMetadata.fieldIds,
     });
   const reservedCompositeFieldsNames = getReservedCompositeFieldNames(
     objectFlatFieldMetadatas,

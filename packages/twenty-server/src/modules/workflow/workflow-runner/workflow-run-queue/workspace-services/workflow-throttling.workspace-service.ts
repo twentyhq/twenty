@@ -80,7 +80,6 @@ export class WorkflowThrottlingWorkspaceService {
 
     const currentlyNotStartedWorkflowRunCount =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workflowRunRepository =
             await this.globalWorkspaceOrmManager.getRepository(
@@ -95,6 +94,7 @@ export class WorkflowThrottlingWorkspaceService {
             },
           });
         },
+        authContext,
       );
 
     await this.setWorkflowRunNotStartedCount(
@@ -113,7 +113,6 @@ export class WorkflowThrottlingWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowRunRepository =
           await this.globalWorkspaceOrmManager.getRepository(
@@ -128,6 +127,7 @@ export class WorkflowThrottlingWorkspaceService {
           },
         });
       },
+      authContext,
     );
   }
 

@@ -1,81 +1,85 @@
 ---
-title: Twenty Apps
-description: Build and manage Twenty customizations as code.
+title: Twenty 앱
+description: Twenty 맞춤설정을 코드로 구축하고 관리하세요.
 ---
 
 <Warning>
-  Apps are currently in alpha testing. The feature is functional but still evolving.
+  앱은 현재 알파 테스트 중입니다. 해당 기능은 작동하지만 아직 발전 중입니다.
 </Warning>
 
-## What Are Apps?
+## 앱이란 무엇인가요?
 
-Apps let you build and manage Twenty customizations **as code**. Instead of configuring everything through the UI, you define your data model and serverless functions in code — making it faster to build, maintain, and roll out to multiple workspaces.
+앱을 사용하면 Twenty 맞춤설정을 **코드로** 구축하고 관리할 수 있습니다. 모든 것을 UI에서 구성하는 대신, 데이터 모델과 로직 함수를 코드로 정의합니다 — 이를 통해 더 빠르게 구축·유지 관리하고 여러 워크스페이스에 배포할 수 있습니다.
 
-**What you can do today:**
+**현재 가능한 작업:**
 
-* Define custom objects and fields as code (managed data model)
-* Build serverless functions with custom triggers
-* Deploy the same app across multiple workspaces
+* 사용자 정의 객체와 필드를 코드로 정의하기(관리형 데이터 모델)
+* 사용자 정의 트리거로 로직 함수 구축
+* 동일한 앱을 여러 워크스페이스에 배포
 
-**Coming soon:**
+**곧 제공 예정:**
 
-* Custom UI layouts and components
+* 사용자 정의 UI 레이아웃 및 컴포넌트
 
-## Prerequisites
+## 사전 준비
 
-* Node.js 24+ and Yarn 4
-* A Twenty workspace and an API key (create one at https://app.twenty.com/settings/api-webhooks)
+* Node.js 24+ 및 Yarn 4
+* Twenty 워크스페이스와 API 키(https://app.twenty.com/settings/api-webhooks에서 생성)
 
-## Getting Started
+## 시작하기
 
-Create a new app using the official scaffolder, then authenticate and start developing:
+공식 스캐폴더를 사용해 새 앱을 만든 다음, 인증하고 개발을 시작하세요:
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# 새 앱 초기 구조 생성
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# Authenticate using your API key (you'll be prompted)
-yarn auth
+# yarn@4를 사용하지 않는 경우
+corepack enable
+yarn install
 
-# Start dev mode: automatically syncs local changes to your workspace
-yarn dev
+# API 키로 인증합니다(입력하라는 메시지가 표시됩니다)
+yarn auth:login
+
+# 개발 모드 시작: 로컬 변경 사항이 워크스페이스와 자동으로 동기화됩니다
+yarn app:dev
 ```
 
-From here you can:
+여기에서 다음 작업을 수행할 수 있습니다:
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn create-entity
+yarn entity:add
 
 # Generate a typed Twenty client and workspace entity types
-yarn generate
+yarn app:generate
 
-# Run a one‑time sync (instead of watch mode)
-yarn sync
+# Watch your application's function logs
+yarn function:logs
 
-# Watch your application's functions logs
-yarn logs
+# Execute a function by name
+yarn function:execute -n my-function -p '{"name": "test"}'
 
 # Uninstall the application from the current workspace
-yarn uninstall
+yarn app:uninstall
 
 # Display commands' help
 yarn help
 ```
 
-See also: the CLI reference pages for [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) and [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
+참고: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) 및 [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk)의 CLI 참고 페이지도 확인하세요.
 
-## Project structure (scaffolded)
+## 프로젝트 구조(스캐폴딩됨)
 
-When you run `npx create-twenty-app@latest my-twenty-app`, the scaffolder:
+`npx create-twenty-app@latest my-twenty-app`를 실행하면, 스캐폴더가 다음을 수행합니다:
 
-* Copies a minimal base application into `my-twenty-app/`
-* Adds a local `twenty-sdk` dependency and Yarn 4 configuration
-* Creates config files and scripts wired to the `twenty` CLI
-* Generates a default application config and a default function role
+* `my-twenty-app/`에 최소한의 기본 애플리케이션을 복사합니다
+* 로컬 `twenty-sdk` 종속성과 Yarn 4 구성을 추가합니다
+* `twenty` CLI와 연결된 설정 파일과 스크립트를 생성합니다
+* 기본 애플리케이션 구성과 기본 함수 역할을 생성합니다
 
-A freshly scaffolded app looks like this:
+새로 스캐폴딩된 앱은 다음과 같습니다:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -85,79 +89,148 @@ my-twenty-app/
   .nvmrc
   .yarnrc.yml
   .yarn/
-    releases/
-      yarn-4.9.2.cjs
     install-state.gz
   eslint.config.mjs
   tsconfig.json
   README.md
   src/
-    application.config.ts
-    role.config.ts
-    // your entities, actions, and other app files
+    application.config.ts          # Required - main application configuration
+    default-function.role.ts       # Default role for serverless functions
+    hello-world.function.ts        # Example serverless function
+    hello-world.front-component.tsx # Example front component
+    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
-At a high level:
+### 설정보다 관례
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall`, and `auth` that delegate to the local `twenty` CLI.
-* **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `generated/` (typed client), `dist/`, `build/`, coverage folders, log files, and `.env*` files.
-* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Lock and configure the Yarn 4 toolchain used by the project.
-* **.nvmrc**: Pins the Node.js version expected by the project.
-* **eslint.config.mjs** and **tsconfig.json**: Provide linting and TypeScript configuration for your app’s TypeScript sources.
-* **README.md**: A short README in the app root with basic instructions.
-* **src/**: The main place where you define your application-as-code:
-  * `application.config.ts`: Global configuration for your app (metadata and runtime wiring). See “Application config” below.
-  * `role.config.ts`: Default function role used by your serverless functions. See “Default function role” below.
-  * Future entities, actions/functions, and any supporting code you add.
+애플리케이션은 파일 접미사로 엔티티를 감지하는 **관례 우선** 접근 방식을 사용합니다. 이를 통해 `src/app/` 폴더 내에서 유연하게 구성할 수 있습니다:
 
-Later commands will add more files and folders:
+| 파일 접미사                  | 엔티티 유형       |
+| ----------------------- | ------------ |
+| `*.object.ts`           | 사용자 정의 객체 정의 |
+| `*.function.ts`         | 서버리스 함수 정의   |
+| `*.front-component.tsx` | 프런트 컴포넌트 정의  |
+| `*.role.ts`             | 역할 정의        |
 
-* `yarn generate` will create a `generated/` folder (typed Twenty client + workspace types).
-* `yarn create-entity` will add entity definition files under `src/` for your custom objects.
+### 지원되는 폴더 구성 방식
 
-## Authentication
+엔티티를 다음 패턴 중 어느 것으로든 구성할 수 있습니다:
 
-The first time you run `yarn auth`, you'll be prompted for:
+**전통적(유형별):**
 
-* API URL (defaults to http://localhost:3000 or your current workspace profile)
-* API key
+```text
+src/
+├── application.config.ts
+├── objects/
+│   └── postCard.object.ts
+├── functions/
+│   └── createPostCard.function.ts
+├── components/
+│   └── card.front-component.tsx
+└── roles/
+    └── admin.role.ts
+```
 
-Your credentials are stored per-user in `~/.twenty/config.json`. You can maintain multiple profiles and switch using `--workspace <name>`.
+**기능 기반:**
 
-Examples:
+```text
+src/
+├── application.config.ts
+└── post-card/
+    ├── postCard.object.ts
+    ├── createPostCard.function.ts
+    ├── card.front-component.tsx
+    └── postCardAdmin.role.ts
+```
+
+**플랫:**
+
+```text
+src/
+├── application.config.ts
+├── postCard.object.ts
+├── createPostCard.function.ts
+├── card.front-component.tsx
+└── admin.role.ts
+```
+
+개요:
+
+* **package.json**: 앱 이름, 버전, 엔진(Node 24+, Yarn 4)을 선언하고, `twenty-sdk`와 함께 `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, `auth:login` 같은 스크립트를 추가합니다. 이 스크립트들은 로컬 `twenty` CLI에 위임됩니다.
+* **.gitignore**: `node_modules`, `.yarn`, `generated/`(타입드 클라이언트), `dist/`, `build/`, 커버리지 폴더, 로그 파일, `.env*` 파일 등의 일반 산출물을 무시합니다.
+* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: 프로젝트에서 사용하는 Yarn 4 툴체인을 고정하고 구성합니다.
+* **.nvmrc**: 프로젝트에서 예상하는 Node.js 버전을 고정합니다.
+* **eslint.config.mjs** 및 **tsconfig.json**: 앱의 TypeScript 소스에 대한 린팅 및 TypeScript 구성을 제공합니다.
+* **README.md**: 앱 루트에 기본 안내를 담은 간단한 README입니다.
+* **src/**: 애플리케이션을 코드로 정의하는 주요 위치:
+  * `application.config.ts`: 앱의 전역 구성(메타데이터 및 런타임 연결)입니다. 아래의 "Application config"를 참조하세요.
+  * `*.role.ts`: 로직 함수에서 사용하는 역할 정의. 아래의 "Default function role"을 참조하세요.
+  * `*.object.ts`: 사용자 정의 객체 정의.
+  * `*.function.ts`: 로직 함수 정의.
+  * `*.front-component.tsx`: 프런트 컴포넌트 정의.
+
+이후 명령을 실행하면 더 많은 파일과 폴더가 추가됩니다:
+
+* `yarn app:generate`는 `generated/` 폴더를 생성합니다(타입드 Twenty 클라이언트 + 워크스페이스 타입).
+* `yarn entity:add`는 사용자 정의 객체, 함수, 프런트 컴포넌트 또는 역할에 대한 엔티티 정의 파일을 `src/` 아래에 추가합니다.
+
+## 인증
+
+처음 `yarn auth:login`을 실행하면 다음을 입력하라는 프롬프트가 표시됩니다:
+
+* API URL(기본값은 http://localhost:3000 또는 현재 워크스페이스 프로필)
+* API 키
+
+자격 증명은 사용자별로 `~/.twenty/config.json`에 저장됩니다. 여러 프로필을 유지하고 프로필 간에 전환할 수 있습니다.
+
+### 작업 공간 관리
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
-yarn auth
+yarn auth:login
 
-# Use a specific workspace profile
-yarn auth --workspace my-custom-workspace
+# Login to a specific workspace profile
+yarn auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn auth:list
+
+# Switch the default workspace (interactive)
+yarn auth:switch
+
+# Switch to a specific workspace
+yarn auth:switch production
+
+# Check current authentication status
+yarn auth:status
 ```
 
-## Use the SDK resources (types & config)
+한 번 `auth:switch`로 작업 공간을 전환하면, 이후의 모든 명령은 기본적으로 해당 작업 공간을 사용합니다. 여전히 `--workspace <name>`로 일시적으로 재정의할 수 있습니다.
 
-The twenty-sdk provides typed building blocks you use inside your app. Below are the key pieces you'll touch most often.
+## SDK 리소스(타입 및 구성) 사용
 
-### Defining objects
+twenty-sdk는 앱 내부에서 사용하는 타입드 빌딩 블록과 헬퍼 함수를 제공합니다. 가장 자주 사용하게 될 핵심 요소는 다음과 같습니다.
 
-Custom objects are regular TypeScript classes annotated with decorators from `twenty-sdk`. They live under `src/objects/` in your app and describe both schema and behavior for records in your workspace.
+### 헬퍼 함수
 
-Here is an example `postCard` object from the Hello World app:
+SDK는 앱 엔티티를 정의할 때 사용할 수 있는, 내장 검증이 포함된 네 가지 헬퍼 함수를 제공합니다:
+
+| 함수                 | 목적                  |
+| ------------------ | ------------------- |
+| `defineApp()`      | 애플리케이션 메타데이터 구성     |
+| `defineObject()`   | 필드가 있는 사용자 정의 객체 정의 |
+| `defineFunction()` | 핸들러가 있는 로직 함수 정의    |
+| `defineRole()`     | 역할 권한과 객체 접근 구성     |
+
+이 함수들은 런타임에 구성을 검증하고, 더 나은 IDE 자동 완성과 타입 안정성을 제공합니다.
+
+### 객체 정의하기
+
+사용자 정의 객체는 워크스페이스의 레코드에 대한 스키마와 동작을 모두 정의합니다. `defineObject()`를 사용해 내장 검증과 함께 객체를 정의하세요:
 
 ```typescript
-import { type Note } from '../../generated';
-
-import {
-  type AddressField,
-  Field,
-  FieldType,
-  type FullNameField,
-  Object,
-  OnDeleteAction,
-  Relation,
-  RelationType,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk';
+// src/app/postCard.object.ts
+import { defineObject, FieldType } from 'twenty-sdk';
 
 enum PostCardStatus {
   DRAFT = 'DRAFT',
@@ -166,176 +239,135 @@ enum PostCardStatus {
   RETURNED = 'RETURNED',
 }
 
-@Object({
+export default defineObject({
   universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
   nameSingular: 'postCard',
   namePlural: 'postCards',
-  labelSingular: 'Post card',
-  labelPlural: 'Post cards',
-  description: ' A post card object',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
   icon: 'IconMail',
-})
-export class PostCard {
-  @Field({
-    universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-    type: FieldType.TEXT,
-    label: 'Content',
-    description: "Postcard's content",
-    icon: 'IconAbc',
-  })
-  content: string;
-
-  @Field({
-    universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
-    type: FieldType.FULL_NAME,
-    label: 'Recipient name',
-    icon: 'IconUser',
-  })
-  recipientName: FullNameField;
-
-  @Field({
-    universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
-    type: FieldType.ADDRESS,
-    label: 'Recipient address',
-    icon: 'IconHome',
-  })
-  recipientAddress: AddressField;
-
-  @Field({
-    universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
-    type: FieldType.SELECT,
-    label: 'Status',
-    icon: 'IconSend',
-    defaultValue: `'${PostCardStatus.DRAFT}'`,
-    options: [
-      { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
-      { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
-      { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
-      { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
-    ],
-  })
-  status: PostCardStatus;
-
-  @Relation({
-    universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
-    type: RelationType.ONE_TO_MANY,
-    label: 'Notes',
-    icon: 'IconComment',
-    inverseSideTargetUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
-    onDelete: OnDeleteAction.CASCADE,
-  })
-  notes: Note[];
-
-  @Field({
-    universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
-    type: FieldType.DATE_TIME,
-    label: 'Delivered at',
-    icon: 'IconCheck',
-    isNullable: true,
-    defaultValue: null,
-  })
-  deliveredAt?: Date;
-}
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
 ```
 
-Key points:
+핵심 요점:
 
-* The `@Object` decorator defines the object identity and labels used across the workspace; its `universalIdentifier` must be unique and stable across deployments.
-* Each `@Field` decorator defines a field on the object with a type, label, and its own stable `universalIdentifier`.
-* `@Relation` wires this object to other objects (standard or custom) and controls cascade behavior with `onDelete`.
-* You can scaffold new objects using `yarn create-entity`, which guides you through naming, fields, and relationships, then generates object files similar to the `postCard` example.
+* 내장 검증과 더 나은 IDE 지원을 위해 `defineObject()`를 사용하세요.
+* `universalIdentifier`는 배포 전반에서 고유하고 안정적이어야 합니다.
+* 각 필드는 `name`, `type`, `label` 및 고유하고 안정적인 `universalIdentifier`가 필요합니다.
+* `fields` 배열은 선택 사항입니다. 사용자 정의 필드 없이도 객체를 정의할 수 있습니다.
+* `yarn entity:add`를 사용하여 새 객체를 스캐폴딩할 수 있으며, 이름, 필드, 관계 설정 과정을 안내합니다.
 
-### Application config (application.config.ts)
+<Note>
+  **기본 필드는 자동으로 생성됩니다.** 사용자 정의 객체를 정의하면 Twenty가 `name`, `createdAt`, `updatedAt`, `createdBy`, `position`, `deletedAt` 등의 표준 필드를 자동으로 추가합니다. 이 필드들은 `fields` 배열에 정의할 필요가 없습니다. 사용자 정의 필드만 추가하세요.
+</Note>
 
-Every app has a single `application.config.ts` file that describes:
+### 애플리케이션 구성(application.config.ts)
 
-* **Who the app is**: identifiers, display name, and description.
-* **How its functions run**: which role they use for permissions.
-* **(Optional) variables**: key–value pairs exposed to your functions as environment variables.
+모든 앱에는 다음을 설명하는 단일 `application.config.ts` 파일이 있습니다:
 
-When you scaffold a new app, you start with a minimal config:
+* **앱에 대한 정보**: 식별자, 표시 이름, 설명.
+* **함수가 실행되는 방식**: 권한을 위해 사용하는 역할.
+* **(선택 사항) 변수**: 함수에 환경 변수로 노출되는 키–값 쌍.
+
+`defineApp()`을 사용해 애플리케이션 구성을 정의하세요:
 
 ```typescript
-import { type ApplicationConfig } from 'twenty-sdk';
+// src/app/application.config.ts
+import { defineApp } from 'twenty-sdk';
+import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-const config: ApplicationConfig = {
-  universalIdentifier: '<generated-app-uuid>',
+export default defineApp({
+  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
-  functionRoleUniversalIdentifier: '<generated-role-uuid>',
-};
-
-export default config;
-```
-
-You can gradually extend this file as your app grows. For example, you can add an icon and application-scoped variables:
-
-```typescript
-import { type ApplicationConfig } from 'twenty-sdk';
-
-const config: ApplicationConfig = {
-  universalIdentifier: '<your-app-uuid>',
-  displayName: 'My App',
-  description: 'What your app does',
-  icon: 'IconWorld', // Choose an icon by name
+  icon: 'IconWorld',
   applicationVariables: {
     DEFAULT_RECIPIENT_NAME: {
-      universalIdentifier: '<uuid>',
-      description: 'Default recipient used by functions',
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
       value: 'Jane Doe',
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: '<your-role-uuid>',
-};
-
-export default config;
+  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+});
 ```
 
-Notes:
+노트:
 
-* `universalIdentifier` fields are deterministic IDs you own; generate them once and keep them stable across syncs.
-* `applicationVariables` become environment variables for your functions (for example, `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` must match the role you define in `role.config.ts` (see below).
+* `universalIdentifier` 필드는 고유하고 결정적인 ID입니다. 한 번 생성한 후 동기화 전반에 걸쳐 안정적으로 유지하세요.
+* `applicationVariables`는 함수의 환경 변수가 됩니다(예: `DEFAULT_RECIPIENT_NAME`는 `process.env.DEFAULT_RECIPIENT_NAME`로 사용 가능).
+* `functionRoleUniversalIdentifier`는 `*.role.ts` 파일에서 정의한 역할과 일치해야 합니다(아래 참조).
 
-#### Roles and permissions
+#### 역할 및 권한
 
-Applications can define roles that encapsulate permissions on your workspace’s objects and actions. The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app’s serverless functions.
+애플리케이션은 워크스페이스의 객체와 작업에 대한 권한을 캡슐화하는 역할을 정의할 수 있습니다. `application.config.ts`의 `functionRoleUniversalIdentifier` 필드는 앱의 로직 함수가 사용하는 기본 역할을 지정합니다.
 
-* The runtime API key injected as `TWENTY_API_KEY` is derived from this default function role.
-* The typed client will be restricted to the permissions granted to that role.
-* Follow least‑privilege: create a dedicated role with only the permissions your functions need, then reference its universal identifier.
+* `TWENTY_API_KEY`로 주입되는 런타임 API 키는 이 기본 함수 역할에서 파생됩니다.
+* 타입드 클라이언트는 해당 역할에 부여된 권한으로 제한됩니다.
+* 최소 권한 원칙을 따르세요. 함수에 필요한 권한만 가진 전용 역할을 만들고, 해당 역할의 universal identifier를 참조하세요.
 
-##### Default function role (role.config.ts)
+##### 기본 함수 역할(\*.role.ts)
 
-When you scaffold a new app, the CLI also creates `src/role.config.ts`. This file exports the default role your serverless functions will use at runtime:
-
-```typescript
-import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
-
-export const functionRole: RoleConfig = {
-  universalIdentifier: '<generated-role-uuid>',
-  label: 'My Twenty App default function role',
-  description: 'My Twenty App default function role',
-  canReadAllObjectRecords: true,
-  canUpdateAllObjectRecords: true,
-  canSoftDeleteAllObjectRecords: true,
-  canDestroyAllObjectRecords: false,
-};
-```
-
-The `universalIdentifier` of this role is automatically wired into `application.config.ts` as `functionRoleUniversalIdentifier`. In other words:
-
-* **role.config.ts** defines what the default function role can do.
-* **application.config.ts** points to that role so your functions inherit its permissions.
-
-As you move beyond the initial scaffold, you should tighten this role and make it explicit about what it can access. A more production-ready role might look closer to:
+새 앱을 스캐폴딩하면, CLI가 기본 역할 파일도 생성합니다. `defineRole()`을 사용해 내장 검증과 함께 역할을 정의하세요:
 
 ```typescript
-import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
+// src/app/default-function.role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const functionRole: RoleConfig = {
-  universalIdentifier: '<your-role-uuid>',
+export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -363,41 +395,36 @@ export const functionRole: RoleConfig = {
       canUpdateFieldValue: false,
     },
   ],
-  permissionFlags: ['APPLICATIONS'],
-};
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
 ```
 
-Notes:
+이 역할의 `universalIdentifier`는 `application.config.ts`에서 `functionRoleUniversalIdentifier`로 참조됩니다. 다시 말해:
 
-* Start from the scaffolded role, then progressively restrict it following least‑privilege.
-* Replace the `objectPermissions` and `fieldPermissions` with the objects/fields your functions need.
-* `permissionFlags` control access to platform-level capabilities. Keep them minimal; add only what you need.
-* See a working example in the Hello World app: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+* **\*.role.ts**는 기본 함수 역할이 수행할 수 있는 작업을 정의합니다.
+* **application.config.ts**는 해당 역할을 가리키므로, 함수는 그 권한을 상속받습니다.
 
-### Serverless function config and entrypoint
+노트:
 
-Each function exports a main handler and a config describing its triggers. You can mix multiple trigger types.
+* 스캐폴딩된 역할에서 시작하여, 최소 권한 원칙에 따라 점진적으로 제한하세요.
+* `objectPermissions`와 `fieldPermissions`를 함수에 필요한 객체/필드로 교체하세요.
+* `permissionFlags`는 플랫폼 수준 기능에 대한 액세스를 제어합니다. 최소한으로 유지하고, 필요한 것만 추가하세요.
+* Hello World 앱의 동작 예제를 참조하세요: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+### 로직 함수 구성과 엔트리포인트
+
+각 함수 파일은 `defineFunction()`을 사용해 핸들러와 선택적 트리거가 포함된 구성을 내보냅니다. 자동 감지를 위해 `*.function.ts` 파일 접미사를 사용하세요.
 
 ```typescript
-// src/actions/create-new-post-card.ts
-import type {
-  FunctionConfig,
-  DatabaseEventPayload,
-  ObjectRecordCreateEvent,
-  CronPayload,
-} from 'twenty-sdk';
-import Twenty, { type Person } from '../generated';
+// src/app/createPostCard.function.ts
+import { defineFunction } from 'twenty-sdk';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
+import Twenty, { type Person } from '~/generated';
 
-// main handler can accept parameters from route, cron, or database events
-export const main = async (
-  params:
-    | { name?: string }
-    | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
-    | CronPayload,
-) => {
+const handler = async (params: RoutePayload) => {
   const client = new Twenty(); // generated typed client
-  const name = 'name' in params
-    ? params.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
     : 'Hello world';
 
   const result = await client.mutation({
@@ -410,113 +437,216 @@ export const main = async (
   return result;
 };
 
-export const config: FunctionConfig = {
-  universalIdentifier: '<function-uuid>',
+export default defineFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'create-new-post-card',
   timeoutSeconds: 2,
+  handler,
   triggers: [
     // Public HTTP route trigger '/s/post-card/create'
     {
-      universalIdentifier: '<route-trigger-uuid>',
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
       type: 'route',
       path: '/post-card/create',
       httpMethod: 'GET',
       isAuthRequired: false,
     },
     // Cron trigger (CRON pattern)
-    {
-      universalIdentifier: '<cron-trigger-uuid>',
-      type: 'cron',
-      pattern: '0 0 1 1 *',
-    },
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
     // Database event trigger
-    {
-      universalIdentifier: '<db-trigger-uuid>',
-      type: 'databaseEvent',
-      eventName: 'person.created',
-    },
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
   ],
+});
+```
+
+일반적인 트리거 유형:
+
+* **route**: **`/s/` 엔드포인트** 아래에서 HTTP 경로와 메서드로 함수를 노출합니다:
+
+> 예: `path: '/post-card/create',` -> `<APP_URL>/s/post-card/create`에서 호출
+
+* **cron**: CRON 식을 사용하여 예약된 일정으로 함수를 실행합니다.
+* **databaseEvent**: 워크스페이스 객체 라이프사이클 이벤트에서 실행됩니다. 이벤트 작업이 `updated`인 경우, 수신할 특정 필드를 `updatedFields` 배열에 지정할 수 있습니다. 정의하지 않거나 비워두면, 어떤 업데이트든 함수가 트리거됩니다.
+
+> 예: `person.updated`
+
+노트:
+
+* `triggers` 배열은 선택 사항입니다. 트리거가 없는 함수는 다른 함수에서 호출되는 유틸리티 함수로 사용할 수 있습니다.
+* 하나의 함수에서 여러 트리거 유형을 혼합할 수 있습니다.
+
+### 라우트 트리거 페이로드
+
+<Warning>
+  **호환성 파괴적 변경(v1.16, 2026년 1월):** 라우트 트리거 페이로드 형식이 변경되었습니다. v1.16 이전에는 쿼리 매개변수, 경로 매개변수, 그리고 본문이 페이로드로 직접 전송되었습니다. v1.16부터는 이들이 구조화된 `RoutePayload` 객체 내부에 중첩됩니다.
+
+  **v1.16 이전:**
+
+  ```typescript
+  const handler = async (params) => {
+    const { param1, param2 } = params; // Direct access
+  };
+  ```
+
+  **v1.16 이후:**
+
+  ```typescript
+  const handler = async (event: RoutePayload) => {
+    const { param1, param2 } = event.body; // Access via .body
+    const { queryParam } = event.queryStringParameters;
+    const { id } = event.pathParameters;
+  };
+  ```
+
+  **기존 함수 마이그레이션 방법:** 핸들러에서 params 객체에서 직접 구조 분해하는 대신 `event.body`, `event.queryStringParameters`, 또는 `event.pathParameters`에서 구조 분해하도록 업데이트하세요.
+</Warning>
+
+라우트 트리거가 로직 함수를 호출하면, AWS HTTP API v2 형식을 따르는 `RoutePayload` 객체를 받습니다. `twenty-sdk`에서 해당 타입을 임포트하세요:
+
+```typescript
+import { defineFunction, type RoutePayload } from 'twenty-sdk';
+
+const handler = async (event: RoutePayload) => {
+  // Access request data
+  const { headers, queryStringParameters, pathParameters, body } = event;
+
+  // HTTP method and path are available in requestContext
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
 };
 ```
 
-Common trigger types:
+`RoutePayload` 타입은 다음과 같은 구조입니다:
 
-* route: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
+| 속성                           | 유형                                    | 설명                                                      |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP 헤더(`forwardedRequestHeaders`에 나열된 항목만)             |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | 쿼리 문자열 매개변수(여러 값은 쉼표로 연결됨)                              |
+| `pathParameters`             | `Record<string, string \| undefined>` | 라우트 패턴에서 추출된 경로 매개변수(예: `/users/:id` → `{ id: '123' }`) |
+| `본문`                         | `object \| null`                      | 파싱된 요청 본문(JSON)                                         |
+| `isBase64Encoded`            | `부울`                                  | 본문이 base64로 인코딩되었는지 여부                                  |
+| `requestContext.http.method` | `string`                              | HTTP 메서드(GET, POST, PUT, PATCH, DELETE)                 |
+| `requestContext.http.path`   | `string`                              | 원시 요청 경로                                                |
 
-> e.g. `path: '/post-card/create',` -> call on `<APP_URL>/s/post-card/create`
+### HTTP 헤더 전달
 
-* cron: Runs your function on a schedule using a CRON expression.
-* databaseEvent: Runs on workspace object lifecycle events
-
-> e.g. `person.created`
-
-You can create new functions in two ways:
-
-* **Scaffolded**: Run `yarn create-entity --path <custom-path>` and choose the option to add a new function. This generates a starter file under `<custom-path>` with a `main` handler and a `config` block similar to the example above.
-* **Manual**: Create a new file and export `main` and `config` yourself, following the same pattern.
-
-### Generated typed client
-
-Run yarn generate to create a local typed client in generated/ based on your workspace schema. Use it in your functions:
+기본적으로 보안상의 이유로 들어오는 요청의 HTTP 헤더는 로직 함수로 **전달되지 않습니다**. 특정 헤더에 접근하려면 `forwardedRequestHeaders` 배열에 명시적으로 나열하세요:
 
 ```typescript
-import Twenty from './generated';
+export default defineFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  triggers: [
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/webhook',
+      httpMethod: 'POST',
+      isAuthRequired: false,
+      forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+    },
+  ],
+});
+```
+
+핸들러에서 다음과 같이 해당 헤더에 접근할 수 있습니다:
+
+```typescript
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+  헤더 이름은 소문자로 정규화됩니다. 소문자 키를 사용해 접근하세요(예: `event.headers['content-type']`).
+</Note>
+
+새 함수를 만드는 방법은 두 가지입니다:
+
+* **스캐폴딩**: `yarn entity:add`를 실행하고 새 함수를 추가하는 옵션을 선택하세요. 이렇게 하면 핸들러와 구성이 포함된 시작 파일이 생성됩니다.
+* **수동**: 새 `*.function.ts` 파일을 만들고 동일한 패턴에 따라 `defineFunction()`을 사용하세요.
+
+### 생성된 타입드 클라이언트
+
+워크스페이스 스키마를 기반으로 generated/에 로컬 타입드 클라이언트를 생성하려면 yarn app:generate를 실행하세요. 함수에서 사용하세요:
+
+```typescript
+import Twenty from '~/generated';
 
 const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated by `yarn generate`. Re-run after changing your objects and `yarn sync` or when onboarding to a new workspace.
+클라이언트는 `yarn app:generate`로 다시 생성됩니다. 객체를 변경한 후 또는 새 워크스페이스에 온보딩할 때 다시 실행하세요.
 
-#### Runtime credentials in serverless functions
+#### 로직 함수의 런타임 자격 증명
 
-When your function runs on Twenty, the platform injects credentials as environment variables before your code executes:
+함수가 Twenty에서 실행될 때, 플랫폼은 코드가 실행되기 전에 자격 증명을 환경 변수로 주입합니다:
 
-* `TWENTY_API_URL`: Base URL of the Twenty API your app targets.
-* `TWENTY_API_KEY`: Short‑lived key scoped to your application’s default function role.
+* `TWENTY_API_URL`: 앱이 대상으로 하는 Twenty API의 기본 URL.
+* `TWENTY_API_KEY`: 애플리케이션의 기본 함수 역할 범위로 제한된 단기 키.
 
-Notes:
+노트:
 
-* You do not need to pass URL or API key to the generated client. It reads `TWENTY_API_URL` and `TWENTY_API_KEY` from process.env at runtime.
-* The API key’s permissions are determined by the role referenced in your `application.config.ts` via `functionRoleUniversalIdentifier`. This is the default role used by serverless functions of your application.
-* Applications can define roles to follow least‑privilege. Grant only the permissions your functions need, then point `functionRoleUniversalIdentifier` to that role’s universal identifier.
+* 생성된 클라이언트에 URL이나 API 키를 전달할 필요가 없습니다. 런타임에 process.env에서 `TWENTY_API_URL`과 `TWENTY_API_KEY`를 읽습니다.
+* API 키의 권한은 `application.config.ts`에서 `functionRoleUniversalIdentifier`를 통해 참조된 역할에 의해 결정됩니다. 이는 애플리케이션의 로직 함수에서 사용하는 기본 역할입니다.
+* 애플리케이션은 최소 권한 원칙을 따르도록 역할을 정의할 수 있습니다. 함수에 필요한 권한만 부여하고, `functionRoleUniversalIdentifier`를 해당 역할의 universal identifier로 지정하세요.
 
-### Hello World example
+### Hello World 예제
 
-Explore a minimal, end-to-end example that demonstrates objects, functions, and multiple triggers [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+객체, 함수, 여러 트리거를 보여주는 최소한의 엔드투엔드 예제를 [여기](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world)에서 살펴보세요:
 
-## Manual setup (without the scaffolder)
+## 수동 설정(스캐폴더 없이)
 
-While we recommend using `create-twenty-app` for the best getting-started experience, you can also set up a project manually. Do not install the CLI globally. Instead, add `twenty-sdk` as a local dependency and wire scripts in your package.json:
+최적의 시작 경험을 위해 `create-twenty-app` 사용을 권장하지만, 프로젝트를 수동으로 설정할 수도 있습니다. CLI를 전역으로 설치하지 마세요. 대신 `twenty-sdk`를 로컬 종속성으로 추가하고 package.json에 스크립트를 연결하세요:
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-Then add scripts like these:
+그런 다음 다음과 같은 스크립트를 추가하세요:
 
 ```json filename="package.json"
 {
   "scripts": {
-    "auth": "twenty auth login",
-    "generate": "twenty app generate",
-    "dev": "twenty app dev",
-    "sync": "twenty app sync",
-    "uninstall": "twenty app uninstall",
-    "logs": "twenty app logs",
-    "create-entity": "twenty app add",
-    "help": "twenty --help"
+    "auth:login": "twenty auth:login",
+    "auth:logout": "twenty auth:logout",
+    "auth:status": "twenty auth:status",
+    "auth:switch": "twenty auth:switch",
+    "auth:list": "twenty auth:list",
+    "app:dev": "twenty app:dev",
+    "app:generate": "twenty app:generate",
+    "app:uninstall": "twenty app:uninstall",
+    "entity:add": "twenty entity:add",
+    "function:logs": "twenty function:logs",
+    "function:execute": "twenty function:execute",
+    "help": "twenty help"
   }
 }
 ```
 
-Now you can run the same commands via Yarn, e.g. `yarn dev`, `yarn sync`, etc.
+이제 Yarn을 통해 동일한 명령을 실행할 수 있습니다. 예: `yarn app:dev`, `yarn app:generate` 등.
 
-## Troubleshooting
+## 문제 해결
 
-* Authentication errors: run `yarn auth` and ensure your API key has the required permissions.
-* Cannot connect to server: verify the API URL and that the Twenty server is reachable.
-* Types or client missing/outdated: run `yarn generate` and then `yarn dev`.
-* Dev mode not syncing: ensure `yarn dev` is running and that changes are not ignored by your environment.
+* 인증 오류: `yarn auth:login`를 실행하고 API 키에 필요한 권한이 있는지 확인하세요.
+* 서버에 연결할 수 없음: API URL과 Twenty 서버에 접근 가능한지 확인하세요.
+* 타입 또는 클라이언트가 없거나 오래된 경우: `yarn app:generate`를 실행하세요.
+* 개발 모드가 동기화되지 않음: `yarn app:dev`가 실행 중인지, 환경에서 변경 사항을 무시하지 않는지 확인하세요.
 
-Discord Help Channel: https://discord.com/channels/1130383047699738754/1130386664812982322
+Discord 도움말 채널: https://discord.com/channels/1130383047699738754/1130386664812982322

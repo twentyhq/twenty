@@ -84,7 +84,7 @@ export const createStandardObjectFlatMetadata = <
       ].id
     : null,
   targetTableName: 'DEPRECATED',
-  fieldMetadataIds: [],
+  fieldIds: [],
   indexMetadataIds: [],
   viewIds: [],
   createdAt: now,

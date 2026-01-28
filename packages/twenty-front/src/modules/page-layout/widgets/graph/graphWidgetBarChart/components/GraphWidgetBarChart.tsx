@@ -19,7 +19,6 @@ import { computeShouldRoundFreeEndMap } from '@/page-layout/widgets/graph/graphW
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
 import { getBarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartLayout';
-import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
@@ -28,7 +27,6 @@ import {
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -117,14 +115,6 @@ export const GraphWidgetBarChart = ({
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const highlightedLegendId = useRecoilComponentValue(
-    graphWidgetHighlightedLegendIdComponentState,
-  );
-
-  const hoveredSliceIndex = useRecoilComponentValue(
-    graphWidgetHoveredSliceIndexComponentState,
-  );
-
   const formatOptions: GraphValueFormatOptions = {
     displayType,
     decimals,
@@ -135,16 +125,8 @@ export const GraphWidgetBarChart = ({
 
   const chartTheme = useBarChartTheme();
 
-  const { barConfigs, enrichedKeys, legendItems, visibleKeys } =
-    useBarChartData({
-      data,
-      indexBy,
-      keys,
-      series,
-      colorRegistry,
-      seriesLabels,
-      colorMode,
-    });
+  const { enrichedKeysMap, enrichedKeys, legendItems, visibleKeys } =
+    useBarChartData({ keys, series, colorRegistry, seriesLabels, colorMode });
 
   const orderedKeys =
     groupMode === 'stacked' && layout === BarChartLayout.VERTICAL
@@ -255,35 +237,18 @@ export const GraphWidgetBarChart = ({
       const shouldRoundFreeEnd = shouldRoundFreeEndMap?.get(barKey) ?? true;
       const seriesIndex = keyToIndexMap.get(String(props.bar.data.id)) ?? -1;
 
-      const isDimmed =
-        isDefined(highlightedLegendId) &&
-        String(highlightedLegendId) !== String(props.bar.data.id);
-
-      const isSliceHovered =
-        isDefined(hoveredSliceIndex) &&
-        String(hoveredSliceIndex) === String(props.bar.data.indexValue);
-
       return (
         <CustomBarItem
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...props}
           shouldRoundFreeEnd={shouldRoundFreeEnd}
           seriesIndex={seriesIndex}
-          isDimmed={isDimmed}
-          isSliceHovered={isSliceHovered}
           layout={layout}
           chartId={id}
         />
       );
     },
-    [
-      shouldRoundFreeEndMap,
-      keyToIndexMap,
-      highlightedLegendId,
-      hoveredSliceIndex,
-      layout,
-      id,
-    ],
+    [shouldRoundFreeEndMap, keyToIndexMap, layout, id],
   );
 
   const TotalsLayer = ({
@@ -377,7 +342,7 @@ export const GraphWidgetBarChart = ({
             clamp: true,
           }}
           indexScale={{ type: 'band', round: true }}
-          colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
+          colors={(datum) => getBarChartColor(datum, enrichedKeysMap, theme)}
           animate
           motionConfig={CHART_MOTION_CONFIG}
           layers={[

@@ -1,131 +1,149 @@
 ---
-title: Widgets
-description: Explore the widget types and visualization options in Twenty.
+title: ウィジェット
+description: Twentyのウィジェットの種類と可視化オプションを確認します。
 ---
 
-## Available Widgets
+import { ChartIcon } from '/snippets/chart-icon.mdx';
 
-Twenty provides various widget types to visualize your CRM data.
+## 利用可能なウィジェット
 
-### Bar Charts
+Twentyは、CRMデータを可視化するためのさまざまなウィジェットタイプを提供します。
 
-Display data as horizontal or vertical bars.
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Bar Charts</span>
 
-**Best for:**
+データを横棒または縦棒で表示します。
 
-* Comparing values across categories
-* Showing rankings
-* Tracking metrics by time period
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Bar chart" />
+</Frame>
 
-**Example uses:**
+**最適な用途:**
 
-* Deals by stage
-* Revenue by sales rep
-* Contacts added per month
+* カテゴリ間の値を比較する
+* ランキングを表示する
+* 期間別の指標を追跡する
 
-<Note>
-  **Display limits**: Bar charts can show a maximum of 100 bars (horizontal) or 50 bars (vertical). If you see the warning "Undisplayed data: max X bars per chart", add filters to narrow down your data or change the grouping (e.g., group by week instead of days).
-</Note>
+**使用例:**
 
-### Pie Charts
-
-Show proportions of a whole.
-
-**Best for:**
-
-* Showing composition or distribution
-* Comparing parts to whole
-* Highlighting major segments
-
-**Example uses:**
-
-* Deal distribution by source
-* Contact breakdown by industry
-* Pipeline composition by owner
-
-### Line Charts
-
-Display trends over time.
-
-**Best for:**
-
-* Tracking changes over time
-* Identifying trends
-* Comparing multiple metrics
-
-**Example uses:**
-
-* Monthly deal count trend
-* Revenue growth over quarters
-* Activity levels over time
-
-### Number Metrics
-
-Display single key values prominently.
-
-**Best for:**
-
-* Highlighting KPIs
-* Showing totals or averages
-* Quick status checks
-
-**Example uses:**
-
-* Total pipeline value
-* Number of open opportunities
-* Conversion rate
-
-**Advanced options:**
-
-* **Ratio**: For Select fields, calculate ratios between values. Go to **Data on display** → select your field → enable the **Ratio** option.
-* **Prefix & Suffix**: Add custom text before or after the number (e.g., "$" prefix or "%" suffix) for better readability.
-
-### iFrames
-
-Embed external tools and content directly in your dashboard.
-
-**Best for:**
-
-* Displaying external reports or dashboards
-* Integrating third-party sales tools
-* Showing live content from other systems
-
-**Example uses:**
-
-* Metrics from your Support tool
-* Metrics from your dialer
-* Live content from your Sales sequence tool
+* ステージ別の商談
+* 営業担当者別の売上
+* 月別のコンタクト追加数
 
 <Note>
-  **Coming soon**: Gauge charts and tables are not yet available but are on our roadmap.
+  **Display limits**: Bar charts can show a maximum of 100 bars, and 50 groups per bar when using Group By. 警告 "Undisplayed data: max X bars per chart" が表示された場合は、フィルターを追加してデータを絞り込むか、グルーピングを変更します（例: 日単位ではなく週単位でグループ化）。
 </Note>
 
-## Configuring Widgets
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Pie Charts</span>
 
-### Data Source
+全体に占める割合を表示します。
 
-1. Select the object to visualize (Opportunities, People, etc.)
-2. Choose the metric to display (count, sum, average)
-3. Apply filters to focus on specific data
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Pie chart" />
+</Frame>
 
-### Grouping
+**最適な用途:**
 
-Group data by:
+* 構成や分布を示す
+* 部分と全体を比較する
+* 主要セグメントを強調する
 
-* Fields (stage, owner, industry)
-* Time periods (day, week, month, quarter)
-* Custom segments
+**使用例:**
 
-### Styling
+* ソース別の商談分布
+* 業種別のコンタクト内訳
+* 担当者別のパイプライン構成
 
-Customize your charts with:
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Line Charts</span>
 
-* Colors and themes
-* Labels and legends
-* Size and positioning
+時間の経過に伴う傾向を表示します。
 
-### Duplicating Widgets
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Line chart" />
+</Frame>
 
-1. Click on the widget
-2. Open **Options**
-3. Click **Duplicate widget**
+**最適な用途:**
+
+* 時間経過による変化を追跡する
+* トレンドを把握する
+* 複数の指標を比較する
+
+**使用例:**
+
+* 月次の商談数の推移
+* 四半期ごとの売上成長
+* 活動量の推移
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Aggregate Charts</span>
+
+重要な単一値を目立つ形で表示します。
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Aggregate chart" />
+</Frame>
+
+**最適な用途:**
+
+* KPIを強調する
+* 合計や平均を表示する
+* ステータスを素早く確認する
+
+**使用例:**
+
+* パイプラインの合計金額
+* オープンな商談数
+* コンバージョン率
+
+**高度なオプション:**
+
+* **比率**: Select フィールドで、値同士の比率を計算します。 **Data on display** → フィールドを選択 → **Ratio** オプションを有効にします。
+* **Prefix & Suffix**: 可読性を高めるために、数値の前後にカスタムテキストを追加します（例: "$" のプレフィックスや "%" のサフィックス）。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
+
+外部ツールやコンテンツをダッシュボードに直接埋め込みます。
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
+
+**最適な用途:**
+
+* 外部のレポートやダッシュボードを表示する
+* サードパーティのセールスツールを統合する
+* 他システムのライブコンテンツを表示する
+
+**使用例:**
+
+* サポートツールの指標
+* ダイヤラーの指標
+* セールスシーケンスツールのライブコンテンツ
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Rich Text</span>
+
+Add formatted text and content directly to your dashboard.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Rich text" />
+</Frame>
+
+**最適な用途:**
+
+* Adding context or instructions
+* Dashboard descriptions
+* Notes and annotations
+
+**Features:**
+
+* Rich text formatting (bold, italic, lists, etc.)
+* Image and file uploads
+* Markdown-style editing
+
+<Note>
+  **近日提供予定**: ゲージチャートとテーブルはまだ利用できませんが、ロードマップに含まれています。
+</Note>
+
+### ウィジェットの複製
+
+1. ウィジェットをクリックします
+2. **Options** を開きます
+3. **Duplicate widget** をクリックします

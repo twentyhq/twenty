@@ -63,7 +63,6 @@ export class WorkspaceMemberDeleteOnePostQueryHook
 
     const workspaceMember =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext as WorkspaceAuthContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -78,6 +77,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook
             withDeleted: true,
           });
         },
+        authContext as WorkspaceAuthContext,
       );
 
     if (!isDefined(workspaceMember)) {

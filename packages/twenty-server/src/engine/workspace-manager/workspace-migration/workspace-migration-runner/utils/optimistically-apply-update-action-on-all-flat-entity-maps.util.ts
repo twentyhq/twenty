@@ -57,10 +57,7 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
     case 'rowLevelPermissionPredicate':
     case 'rowLevelPermissionPredicateGroup':
     case 'viewFilterGroup':
-    case 'serverlessFunction':
-    case 'cronTrigger':
-    case 'databaseEventTrigger':
-    case 'routeTrigger':
+    case 'logicFunction':
     case 'viewFilter':
     case 'role':
     case 'roleTarget':
@@ -70,7 +67,8 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
     case 'pageLayoutWidget':
     case 'pageLayoutTab':
     case 'commandMenuItem':
-    case 'frontComponent': {
+    case 'frontComponent':
+    case 'webhook': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         action.metadataName,
       );

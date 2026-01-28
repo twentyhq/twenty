@@ -53,38 +53,35 @@ export class DeleteWorkflowRunsCommand extends ActiveOrSuspendedWorkspacesMigrat
   }: RunOnWorkspaceArgs): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        try {
-          const workflowRunRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-              workspaceId,
-              'workflowRun',
-              { shouldBypassPermissionChecks: true },
-            );
-
-          const createdAtCondition = {
-            createdAt: LessThan(
-              this.createdBeforeDate || new Date().toISOString(),
-            ),
-          };
-
-          const workflowRunCount = await workflowRunRepository.count({
-            where: createdAtCondition,
-          });
-
-          if (!options.dryRun && workflowRunCount > 0) {
-            await workflowRunRepository.delete(createdAtCondition);
-          }
-
-          this.logger.log(
-            `${options.dryRun ? ' (DRY RUN): ' : ''}Deleted ${workflowRunCount} workflow runs`,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      try {
+        const workflowRunRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+            workspaceId,
+            'workflowRun',
+            { shouldBypassPermissionChecks: true },
           );
-        } catch (error) {
-          this.logger.error('Error while deleting workflowRun', error);
+
+        const createdAtCondition = {
+          createdAt: LessThan(
+            this.createdBeforeDate || new Date().toISOString(),
+          ),
+        };
+
+        const workflowRunCount = await workflowRunRepository.count({
+          where: createdAtCondition,
+        });
+
+        if (!options.dryRun && workflowRunCount > 0) {
+          await workflowRunRepository.delete(createdAtCondition);
         }
-      },
-    );
+
+        this.logger.log(
+          `${options.dryRun ? ' (DRY RUN): ' : ''}Deleted ${workflowRunCount} workflow runs`,
+        );
+      } catch (error) {
+        this.logger.error('Error while deleting workflowRun', error);
+      }
+    }, authContext);
   }
 }

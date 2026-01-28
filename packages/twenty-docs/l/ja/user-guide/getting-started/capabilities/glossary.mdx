@@ -1,108 +1,104 @@
 ---
-title: Glossary
-description: Get familiar with essential terminology used in Twenty.
+title: 用語集
+description: Twentyで使用される基本的な用語に慣れましょう。
 ---
 
 ## API
 
-API (Application Programming Interface) allows you to connect Twenty with other software systems and build custom integrations.
+API（アプリケーションプログラミングインターフェース）は、Twentyを他のソフトウェアシステムと接続し、カスタム統合を構築することを可能にします。
 
-## Apps
+## アプリ
 
-Apps are custom extensions built as code that can define data models and serverless functions. They enable developers to create reusable customizations that can be deployed across multiple workspaces.
+Apps are custom extensions built as code that can define data models and logic functions. これにより、開発者は複数のワークスペースにデプロイ可能な再利用可能なカスタマイズを作成できます。
 
-## Code Actions
+## コードアクション
 
-Code Actions are workflow steps that let you write custom JavaScript to transform data, make calculations, or perform complex logic that isn't possible with built-in actions.
+コードアクションは、データの変換、計算、組み込みアクションでは実現できない複雑なロジックの実行のために、カスタムの JavaScript を記述できるワークフローのステップです。
 
-## Command Menu
+## コマンドメニュー
 
-The Command Menu is a quick-access interface (opened with `Cmd + K` on Mac and `Ctrl + K` on Windows) that lets you perform actions, create records, and navigate your workspace efficiently.
+コマンドメニューは、`Cmd + K`（Macの場合）、`Ctrl + K`（Windowsの場合）で開くことができるクイックアクセスインターフェースであり、操作を実行したり、レコードを作成したり、ワークスペースを効率的に移動したりすることを可能にします。
 
-## Company & People
+## Company と People
 
-The CRM has two fundamental types of records:
+CRMには基本的な2つの種類のレコードがあります：
 
-* A `Company` represents a business or organization.
-* `People` represent your company's current and prospective customers or clients.
+* `Company`は企業や組織を表します。
+* `People`はあなたの企業の現在および潜在的な顧客を表します。
 
-## Custom Fields
+## カスタムフィールド
 
-Custom Fields are data fields you create to capture information specific to your business needs and processes.
+カスタムフィールドは、ビジネスのニーズとプロセスに特化した情報をキャプチャするために作成されたデータフィールドです。
 
-## Data Model
+## データモデル
 
-A Data Model is the structure that defines how information is organized in your CRM, including what objects exist, their properties (fields), and how they relate to each other.
+データモデルとは、CRMで情報がどのように編成されているかを定義する構造であり、どのオブジェクトが存在するか、それらのプロパティ（フィールド）、およびそれらがどのように関連しているかを含みます。
 
-## Favorites
+## お気に入り
 
-Favorites are records you've marked for quick access, appearing in your sidebar for instant navigation to important data.
+お気に入りとは、すぐにアクセスできるようにマークされたレコードであり、サイドバーに表示され、重要なデータへの即時ナビゲーションを可能にします。
 
-## Field
+## フィールド
 
-A field refers to a specific area where particular data is stored for an entity.
+フィールドとは、エンティティに特定のデータが保存される特定の領域を指します。
 
-## Integration
+## イテレータ
 
-Integrations are built-in tools that allow you to link Twenty with other software or systems.
+イテレーターは、アイテムの配列をループし、リスト内の各アイテムに対して後続のアクションを実行するワークフローアクションです。
 
-## Iterator
+## カンバン
 
-An Iterator is a workflow action that loops through an array of items, executing subsequent actions for each item in the list.
+`Kanban`は、カードと列を使ってビジネスプロセスを視覚的に追跡する方法です。 各列はプロセスの各ステージ（例：新規、進行中、成約、失注）を表し、進行に応じてレコードをこれらのステージへ移動します。
 
-## Kanban
+## オブジェクト
 
-A `Kanban` is a visual way to track your business processes using cards and columns. Each column represents a stage in your process (for example: new, ongoing, won, lost), and you move records through these stages as they progress.
+オブジェクトは、CRMで特定の種類のエンティティを表すデータ構造です（例：People、Companies、Opportunities）。 オブジェクトには、標準（ビルトイン）とカスタム（ユーザー作成）があります。
 
-## Object
+## 商談
 
-An Object is a data structure that represents a specific type of entity in your CRM (like People, Companies, or Opportunities). Objects can be standard (built-in) or custom (created by you).
+Twenty CRMの商談は、アカウントや連絡先との潜在的な取引や販売を指します。
 
-## Opportunities
+## レコード
 
-Opportunities in Twenty CRM are potential deals or sales with accounts or contacts.
+レコードとは、特定のオブジェクトのインスタンスを示します。例：特定のアカウントまたは連絡先。
 
-## Record
+## リレーションフィールド
 
-A Record indicates an instance of an object, like a specific account or contact.
+リレーションフィールドは異なるオブジェクト間の接続を作成し、レコード同士をリンクできます（例：人を会社に関連付ける）。
 
-## Relation Fields
+## 標準フィールド
 
-Relation Fields create connections between different objects, allowing you to link records together (like connecting a Person to a Company).
+標準フィールドは、デフォルトでオブジェクトに付属する事前に構築されたデータフィールドであり、すべてのワークスペースで共通の機能を提供します。
 
-## Standard Fields
+## タスク
 
-Standard Fields are pre-built data fields that come with objects by default and provide common functionality across all workspaces.
+Twenty CRMのタスクは、連絡先、アカウント、または商談に関連する、担当者に割り当てられるアクティビティです。
 
-## Tasks
+## トリガー
 
-Tasks in Twenty CRM are assigned activities relating to contacts, accounts, or opportunities.
+トリガーはワークフローの開始点、すなわち自動化を開始するイベントまたは条件です。 例としては、レコードの作成、レコードの更新、Webhook、スケジュールされた時刻などがあります。
 
-## Triggers
+## ビュー
 
-Triggers are the starting point of a workflow — the event or condition that initiates the automation. Examples include record creation, record updates, webhooks, or scheduled times.
+ビューを使用してレコードの表示をカスタマイズし、フィルター、レイアウト、並べ替えオプションを各ビューに設定することができます。
 
-## Views
+## アップサート
 
-You can customize the display of your records using views, setting different filters, layouts and sorting options for each view.
+アップサートは「update」と「insert」を組み合わせた操作で、一致が見つかった場合は既存のレコードを更新し、一致が存在しない場合は新しいレコードを作成します。
 
-## Upsert
+## ウェブフック
 
-Upsert is an operation that combines "update" and "insert" — it updates an existing record if a match is found, or creates a new record if no match exists.
+ウェブフックは、特定のイベントが発生したときにTwentyから他のアプリケーションへ送信される自動メッセージで、リアルタイムのデータ同期を可能にします。
 
-## Webhooks
+## ワークフロー
 
-Webhooks are automated messages sent from Twenty to other applications when specific events occur, enabling real-time data synchronization.
+ワークフローは特定の条件に基づいてアクションをトリガーする自動プロセスであり、繰り返しのタスクやビジネスプロセスを自動化するのに役立ちます。
 
-## Workflows
+## ワークスペース
 
-Workflows are automated processes that trigger actions based on specific conditions, helping you automate repetitive tasks and business processes.
+`Workspace`は通常、Twentyを使用している企業を表します。 そこには、あなたやチームメンバーがTwentyに追加したすべてのレコードとデータが保存されます。
+ワークスペースには、通常、従業員のメールアドレスに使われる会社のドメイン名が1つ設定されています。
 
-## Workspace
+## ワークスペースメンバー
 
-A `Workspace` typically represents a company using Twenty. It holds all the records and data that you and your team members add to Twenty.
-It has a single domain name, which is typically the domain name your company uses for employee email addresses.
-
-## Workspace Members
-
-Workspace Members are the Twenty users from your team who have access to your workspace. They can be assigned as owners or assignees for records.
+ワークスペースメンバーは、ワークスペースにアクセスできるあなたのチームのTwentyユーザーです。 レコードの所有者または担当者として割り当てることができます。

@@ -1,7 +1,7 @@
 import { join } from 'path';
 
-import { runAppDev } from '../../../../integration/utils/run-app-dev.util';
-import { type RunCliCommandResult } from '../../../../integration/utils/run-cli-command.util';
+import { runAppDev } from '@/cli/__tests__/integration/utils/run-app-dev.util';
+import { type RunCliCommandResult } from '@/cli/__tests__/integration/utils/run-cli-command.util';
 import { defineConsoleOutputTests } from './tests/console-output.tests';
 import { defineFrontComponentsTests } from './tests/front-components.tests';
 import { defineFunctionsTests } from './tests/functions.tests';
@@ -14,7 +14,6 @@ describe('root-app app:dev', () => {
 
   beforeAll(async () => {
     result = await runAppDev({ appPath: APP_PATH });
-
     expect(result.success).toBe(true);
   }, 60000);
 

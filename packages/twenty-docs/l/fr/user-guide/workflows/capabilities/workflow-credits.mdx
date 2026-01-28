@@ -1,76 +1,76 @@
 ---
-title: Workflow Credits
-description: Understand workflow credit consumption and management.
+title: Crédits de flux de travail
+description: Comprendre la consommation et la gestion des crédits de flux de travail.
 ---
 
-Workflow credits power your automations in Twenty. Understanding how they work helps you optimize costs and manage your automation budget effectively.
+Les crédits de flux de travail alimentent vos automatisations dans Twenty. Comprendre comment ils fonctionnent vous aide à optimiser les coûts et gérer efficacement votre budget d'automatisation.
 
-## Credit Allocation
+## Allocation des crédits
 
-Workflow credits are allocated based on your billing cycle, not your plan tier:
+Les crédits de flux de travail sont alloués en fonction de votre cycle de facturation, et non de votre niveau de forfait :
 
-| Billing Cycle            | Credits                     |
-| ------------------------ | --------------------------- |
-| **Monthly subscription** | 5 million credits per month |
-| **Yearly subscription**  | 50 million credits per year |
+| Cycle de facturation   | Crédits                        |
+| ---------------------- | ------------------------------ |
+| **Abonnement mensuel** | 5 millions de crédits par mois |
+| **Abonnement annuel**  | 50 millions de crédits par an  |
 
 <Note>
-  5 million monthly credits are generous for standard automations. Most teams won't exceed this limit with typical workflow usage. Additional credits are primarily needed for advanced Code actions and AI-powered workflows.
+  5 millions de crédits mensuels suffisent largement pour les automatisations standard. La plupart des équipes ne dépasseront pas cette limite avec une utilisation typique des flux de travail. Des crédits supplémentaires sont principalement nécessaires pour les actions de Code avancées et les flux de travail alimentés par l'IA.
 </Note>
 
-## How Credit Consumption Works
+## Comment fonctionne la consommation de crédits
 
-Credits are consumed when workflows execute, not when you create them. Each workflow action consumes credits based on its complexity:
+Les crédits sont consommés lors de l'exécution des flux de travail, et non lors de leur création. Chaque action du flux de travail consomme des crédits en fonction de sa complexité :
 
-### Credit Consumption by Action Type
+### Consommation de crédits par type d'action
 
-* **Basic internal operations**: Very low credit consumption
-  * Search Records
-  * Create Record
-  * Update Record
-  * Delete Record
-  * Form actions
+* **Opérations internes de base** : Très faible consommation de crédits
+  * Rechercher des enregistrements
+  * Créer un enregistrement
+  * Mettre à jour un enregistrement
+  * Supprimer un enregistrement
+  * Actions de formulaire
 
-* **Complex operations**: Higher credit consumption
-  * Code actions (JavaScript execution)
-  * HTTP Requests to external services
+* **Opérations complexes** : Consommation de crédits plus élevée
+  * Actions de code (exécution JavaScript)
+  * Requêtes HTTP vers des services externes
 
-* **AI features**: Higher credit consumption
-  * AI Agent actions consume credits based on the AI model used
-  * More complex prompts and longer outputs use more credits
+* **Fonctionnalités d'IA** : Consommation de crédits plus élevée
+  * Les actions de l'agent IA consomment des crédits en fonction du modèle d'IA utilisé
+  * Des requêtes plus complexes et des réponses plus longues utilisent davantage de crédits
 
-* **Delay actions**: Minimal credit consumption
-  * The Delay node consumes **1 credit** when it executes
-  * **No credits are consumed** during the wait period
-  * A 5-minute delay costs the same as a 5-day delay
+* **Actions de type Delay** : Consommation de crédits minimale
+  * Le nœud Delay consomme **1 crédit** lors de son exécution
+  * **Aucun crédit n'est consommé** pendant la période d'attente
+  * Un délai de 5 minutes coûte autant qu'un délai de 5 jours
 
-### Real-Time Deduction
+### Déduction en temps réel
 
-Credits are deducted in real-time as workflows execute. This means:
+Les crédits sont déduits en temps réel au fur et à mesure des exécutions des flux de travail. Cela signifie :
 
-* Draft workflows don't consume credits
-* Only active, running workflows use your credit allocation
-* Failed workflows still consume credits for completed steps
+* Les flux de travail en brouillon ne consomment pas de crédits
+* Seuls les flux de travail actifs et en cours d'exécution utilisent votre allocation de crédits
+* Les flux de travail échoués consomment tout de même des crédits pour les étapes complétées
 
-## Managing Credits
+## Gestion des crédits
 
-### Check Credit Usage
+### Vérifier l'utilisation des crédits
 
-1. Go to **Settings → Billing**
-2. View your current credit consumption and remaining balance
-3. Monitor usage patterns to optimize your workflows
+1. Allez dans **Paramètres → Facturation**
+2. Consultez votre consommation actuelle de crédits et votre solde restant
+3. Surveillez les habitudes d'utilisation pour optimiser vos flux de travail
 
-### Purchasing Additional Credits
+### Achat de crédits supplémentaires
 
-If you need more credits beyond your plan allocation:
+Si vous avez besoin de plus de crédits que votre allocation de plan :
 
-1. Go to **Settings → Billing**
-2. Click on the option to purchase additional credits. Packages of different sizes are available.
-3. Credits are added to your current balance
+1. Allez dans **Paramètres → Facturation**
+2. Cliquez sur l'option pour acheter des crédits supplémentaires. Des forfaits de différentes tailles sont disponibles.
+3. Les crédits sont ajoutés à votre solde actuel
 
-## Best Practices
+## Meilleures pratiques
 
-* **Batch Processing**: Use bulk operations and Iterator actions efficiently
-* **Manual Trigger Optimization**: For manual triggers, choose `Bulk` availability to process multiple records in a single workflow run
-* Optimize Code actions for efficiency
-* Batch operations to reduce individual action calls
+* **Traitement par lots** : Utilisez efficacement les opérations en masse et les actions d'itérateur
+* **Optimisation du déclencheur manuel** : Pour les déclencheurs manuels, choisissez `Bulk` pour traiter plusieurs enregistrements en une seule exécution de flux de travail
+* Optimisez les actions de code pour l'efficacité
+* Opérations par lots pour réduire les appels d'actions individuels

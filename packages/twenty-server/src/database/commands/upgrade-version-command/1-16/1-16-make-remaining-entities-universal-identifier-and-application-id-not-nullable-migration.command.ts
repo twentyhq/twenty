@@ -13,7 +13,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 @Command({
   name: 'upgrade:1-16:make-remaining-entities-universal-identifier-and-application-id-not-nullable-migration',
   description:
-    'Make universalIdentifier and applicationId columns NOT NULL on remaining entities (roleTarget, rowLevelPermissionPredicate, rowLevelPermissionPredicateGroup, viewFilterGroup, viewSort, cronTrigger, databaseEventTrigger, routeTrigger, serverlessFunction, skill, pageLayoutWidget, pageLayout, pageLayoutTab)',
+    'Make universalIdentifier and applicationId columns NOT NULL on remaining entities (roleTarget, rowLevelPermissionPredicate, rowLevelPermissionPredicateGroup, viewFilterGroup, viewSort, cronTrigger, databaseEventTrigger, routeTrigger, logicFunction, skill, pageLayoutWidget, pageLayout, pageLayoutTab)',
 })
 export class MakeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   private hasRunOnce = false;

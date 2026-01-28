@@ -1,5 +1,5 @@
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
-import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
@@ -118,11 +118,11 @@ export const GraphWidgetBarChartRenderer = () => {
   };
 
   if (loading) {
-    return <ChartSkeletonLoader />;
+    return <WidgetSkeletonLoader />;
   }
 
   return (
-    <Suspense fallback={<ChartSkeletonLoader />}>
+    <Suspense fallback={<WidgetSkeletonLoader />}>
       <GraphWidgetChartHasTooManyGroupsEffect
         hasTooManyGroups={hasTooManyGroups}
       />

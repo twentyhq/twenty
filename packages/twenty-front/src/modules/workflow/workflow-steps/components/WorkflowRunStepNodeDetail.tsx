@@ -5,7 +5,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowEditActionAiAgent } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent';
-import { WorkflowActionServerlessFunction } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionServerlessFunction';
+import { WorkflowActionLogicFunction } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionLogicFunction';
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
 import { WorkflowEditActionEmpty } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmpty';
@@ -106,7 +106,7 @@ export const WorkflowRunStepNodeDetail = ({
       switch (stepDefinition.definition.type) {
         case 'CODE': {
           return (
-            <WorkflowActionServerlessFunction
+            <WorkflowActionLogicFunction
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{

@@ -27,9 +27,9 @@ import {
   type MonitoringTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
 import {
-  type SERVERLESS_FUNCTION_EXECUTED_EVENT,
-  type ServerlessFunctionExecutedTrackEvent,
-} from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
+  type LOGIC_FUNCTION_EXECUTED_EVENT,
+  type LogicFunctionExecutedTrackEvent,
+} from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
 import {
   type USER_SIGNUP_EVENT,
   type UserSignupTrackEvent,
@@ -47,7 +47,7 @@ import {
 export type TrackEventName =
   | typeof CUSTOM_DOMAIN_ACTIVATED_EVENT
   | typeof CUSTOM_DOMAIN_DEACTIVATED_EVENT
-  | typeof SERVERLESS_FUNCTION_EXECUTED_EVENT
+  | typeof LOGIC_FUNCTION_EXECUTED_EVENT
   | typeof WEBHOOK_RESPONSE_EVENT
   | typeof WORKSPACE_ENTITY_CREATED_EVENT
   | typeof MONITORING_EVENT
@@ -61,7 +61,7 @@ export type TrackEventName =
 export interface TrackEvents {
   [CUSTOM_DOMAIN_ACTIVATED_EVENT]: CustomDomainActivatedTrackEvent;
   [CUSTOM_DOMAIN_DEACTIVATED_EVENT]: CustomDomainDeactivatedTrackEvent;
-  [SERVERLESS_FUNCTION_EXECUTED_EVENT]: ServerlessFunctionExecutedTrackEvent;
+  [LOGIC_FUNCTION_EXECUTED_EVENT]: LogicFunctionExecutedTrackEvent;
   [WEBHOOK_RESPONSE_EVENT]: WebhookResponseTrackEvent;
   [WORKSPACE_ENTITY_CREATED_EVENT]: WorkspaceEntityCreatedTrackEvent;
   [USER_SIGNUP_EVENT]: UserSignupTrackEvent;

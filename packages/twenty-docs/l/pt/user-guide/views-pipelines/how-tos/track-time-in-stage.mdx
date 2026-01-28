@@ -1,104 +1,104 @@
 ---
-title: Track How Long Opportunities Stay in Each Stage
-description: Monitor deal velocity by tracking when opportunities enter each stage.
+title: Acompanhe por quanto tempo as oportunidades permanecem em cada etapa.
+description: Monitore a velocidade do negócio acompanhando quando as oportunidades entram em cada etapa.
 ---
 
 <Tip>
-  This is an example of creating [Formula Fields](/l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields) using workflows — specifically date calculations.
+  Este é um exemplo de criação de [Campos de fórmula](/l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields) usando fluxos de trabalho — especificamente cálculos de datas.
 </Tip>
 
-Tracking when opportunities enter each stage helps you identify bottlenecks and measure deal velocity.
+Acompanhar quando as oportunidades entram em cada etapa ajuda a identificar gargalos e medir a velocidade do negócio.
 
-This guide walks you through setting up custom fields and a workflow to automatically record when an opportunity moves to each stage, and calculate how many days it spent in the previous stage.
+Este guia orienta você na configuração de campos personalizados e de um fluxo de trabalho para registrar automaticamente quando uma oportunidade passa para cada etapa e calcular quantos dias ela passou na etapa anterior.
 
-## Step 1: Create Custom Fields
+## Etapa 1: Criar campos personalizados
 
-You need two types of fields for each stage:
+Você precisa de dois tipos de campos para cada etapa:
 
-* **Date & Time fields**: Record when the opportunity entered each stage
-* **Number fields**: Store how many days the opportunity spent in each stage
+* **Campos de Data e hora**: registrar quando a oportunidade entrou em cada etapa
+* **Campos de Número**: armazenar quantos dias a oportunidade passou em cada etapa
 
-### Create the "Last Entered" Fields
+### Criar os campos "Última entrada"
 
-1. Go to **Settings → Data Model → Opportunities**
-2. For each stage, click **+ Add Field** and configure:
-   * **Name**: Last Entered [Stage Name] (e.g., "Last Entered New", "Last Entered Qualified")
-   * **Type**: Date & Time
-   * **Description**: Timestamp when opportunity entered this stage
-3. Click **Save**
+1. Acesse **Configurações → Modelo de Dados → Oportunidades**
+2. Para cada etapa, clique em **+ Adicionar campo** e configure:
+   * **Nome**: Última entrada em [Nome da etapa] (por exemplo, "Última entrada em Novo", "Última entrada em Qualificado")
+   * **Tipo**: Data e hora
+   * **Descrição**: Carimbo de data/hora de quando a oportunidade entrou nesta etapa
+3. Clique em **Salvar**
 
-Create these fields:
+Crie estes campos:
 
-* Last Entered New
-* Last Entered Qualified
-* Last Entered Meeting
-* Last Entered Proposal
-* Last Entered Negotiation
-* Last Entered Closed Won
-* Last Entered Closed Lost
+* Última entrada em Novo
+* Última entrada em Qualificado
+* Última entrada em Reunião
+* Última entrada em Proposta
+* Última entrada em Negociação
+* Última entrada em Fechado Ganho
+* Última entrada em Fechado Perdido
 
-### Create the "Days in Stage" Fields
+### Criar os campos "Dias na etapa"
 
-1. For each stage, click **+ Add Field** and configure:
-   * **Name**: Days in [Stage Name] (e.g., "Days in New", "Days in Qualified")
-   * **Type**: Number
-   * **Description**: Number of days spent in this stage
-2. Click **Save**
+1. Para cada etapa, clique em **+ Adicionar campo** e configure:
+   * **Nome**: Dias em [Nome da etapa] (por exemplo, "Dias em Novo", "Dias em Qualificado")
+   * **Tipo**: Número
+   * **Descrição**: Número de dias passados nesta etapa
+2. Clique em **Salvar**
 
-Create these fields:
+Crie estes campos:
 
-* Days in New
-* Days in Qualified
-* Days in Meeting
-* Days in Proposal
-* Days in Negotiation
+* Dias em Novo
+* Dias em Qualificado
+* Dias em Reunião
+* Dias em Proposta
+* Dias em Negociação
 
 <Note>
-  You don't need "Days in" fields for Closed Won and Closed Lost since those are final stages.
+  Você não precisa de campos "Dias em" para Fechado Ganho e Fechado Perdido, pois são etapas finais.
 </Note>
 
-### Optional: Make Fields Read-Only
+### Opcional: tornar os campos somente leitura
 
-If you don't want users manually editing these calculated fields:
+Se você não quiser que os usuários editem manualmente esses campos calculados:
 
-1. Go to **Settings → Roles**
-2. Select the role to configure
-3. Find the Opportunities object
-4. Set the "Last Entered" and "Days in" fields to read-only
+1. Vá para **Configurações → Funções**
+2. Selecione a função a configurar
+3. Encontre o objeto Oportunidades
+4. Defina os campos "Última entrada" e "Dias em" como somente leitura
 
-## Step 2: Create the Workflow
+## Etapa 2: Criar o fluxo de trabalho
 
-This single workflow handles both tasks:
+Este único fluxo de trabalho trata das duas tarefas:
 
-* Records the timestamp when entering a new stage
-* Calculates days spent in the previous stage
+* Registra o carimbo de data/hora ao entrar em uma nova etapa
+* Calcula os dias passados na etapa anterior
 
-### Create the Workflow
+### Criar o fluxo de trabalho
 
-1. Go to **Workflows**
-2. Click **+ New Workflow**
-3. Name it "Track Stage Time"
+1. Acesse **Fluxos de trabalho**
+2. Clique em **+ Novo fluxo de trabalho**
+3. Dê o nome "Acompanhar tempo por etapa"
 
-### Configure the Trigger
+### Configurar o gatilho
 
-1. Add a **Record Updated** trigger
-2. Select **Opportunities** as the object
-3. Filter on: **Stage** field is updated
+1. Adicione um gatilho **Registro atualizado**
+2. Selecione **Oportunidades** como o objeto
+3. Filtrar em: o campo **Fase** é atualizado
 
-### Add Branches for Each Stage
+### Adicionar ramificações para cada fase
 
 <Note>
-  To create a new branch, right click on the workflow canvas and click **New action**. Then, link this action to the previous node by dragging the arrow from the previous node to this new action.
+  Para criar uma nova ramificação, clique com o botão direito no canvas do workflow e clique em **Nova ação**. Em seguida, vincule esta ação ao nó anterior arrastando a seta do nó anterior para esta nova ação.
 </Note>
 
 ---
 
-**Branch 1: Stage = New (first stage)**
+**Ramificação 1: Fase = Novo (primeira fase)**
 
-Since this is the first stage, we only record the entry timestamp—no previous stage to calculate.
+Como esta é a primeira fase, registramos apenas o carimbo de data e hora de entrada — não há fase anterior para calcular.
 
-1. Add a **Filter** node: Stage = New
-2. Add a **Code** action:
+1. Adicione um nó de **Filtro**: Fase = Novo
+2. Adicione uma ação de **Código**:
 
 ```javascript
 export const main = async (): Promise<object> => {
@@ -106,19 +106,19 @@ export const main = async (): Promise<object> => {
 };
 ```
 
-3. Add an **Update Record** action:
-   * Record: The triggering Opportunity
-   * Field: Last Entered New
-   * Value: `now` from Code node
+3. Adicione uma ação de **Atualizar registro**:
+   * Registro: A Oportunidade disparadora
+   * Campo: Última entrada em Novo
+   * Valor: `now` do nó de Código
 
 ---
 
-**Branch 2: Stage = Qualified**
+**Ramificação 2: Fase = Qualificado**
 
-When moving to Qualified, record entry time AND calculate days spent in New.
+Ao mover para Qualificado, registre o momento de entrada E calcule os dias passados em Novo.
 
-1. Add a **Filter** node: Stage = Qualified
-2. Add a **Code** action:
+1. Adicione um nó de **Filtro**: Fase = Qualificado
+2. Adicione uma ação de **Código**:
 
 ```javascript
 export const main = async (params: {
@@ -138,21 +138,21 @@ export const main = async (params: {
 };
 ```
 
-3. Configure the Code node input: map `lastEnteredPreviousStage` to the **Last Entered New** field
-4. Add an **Update Record** action:
-   * Record: The triggering Opportunity
-   * Fields to update:
-     * Last Entered Qualified = `now`
-     * Days in New = `daysInPreviousStage`
+3. Configure a entrada do nó de Código: mapeie `lastEnteredPreviousStage` para o campo **Última entrada em Novo**
+4. Adicione uma ação de **Atualizar registro**:
+   * Registro: A Oportunidade disparadora
+   * Campos a atualizar:
+     * Última entrada em Qualificado = `now`
+     * Dias em Novo = `daysInPreviousStage`
 
 ---
 
-**Branch 3: Stage = Meeting**
+**Ramificação 3: Fase = Reunião**
 
-When moving to Meeting, record entry time AND calculate days spent in Qualified.
+Ao mover para Reunião, registre o momento de entrada E calcule os dias passados em Qualificado.
 
-1. Add a **Filter** node: Stage = Meeting
-2. Add a **Code** action:
+1. Adicione um nó de **Filtro**: Fase = Reunião
+2. Adicione uma ação de **Código**:
 
 ```javascript
 export const main = async (params: {
@@ -172,60 +172,60 @@ export const main = async (params: {
 };
 ```
 
-3. Configure the Code node input: map `lastEnteredPreviousStage` to the **Last Entered Qualified** field
-4. Add an **Update Record** action:
-   * Record: The triggering Opportunity
-   * Fields to update:
-     * Last Entered Meeting = `now`
-     * Days in Qualified = `daysInPreviousStage`
+3. Configure a entrada do nó de Código: mapeie `lastEnteredPreviousStage` para o campo **Última entrada em Qualificado**
+4. Adicione uma ação de **Atualizar registro**:
+   * Registro: A Oportunidade disparadora
+   * Campos a atualizar:
+     * Última entrada em Reunião = `now`
+     * Dias em Qualificado = `daysInPreviousStage`
 
 ---
 
-**Continue for remaining stages:**
+**Continue para as fases restantes:**
 
-| Stage       | Records                  | Calculates          |
-| ----------- | ------------------------ | ------------------- |
-| Proposal    | Last Entered Proposal    | Days in Meeting     |
-| Negotiation | Last Entered Negotiation | Days in Proposal    |
-| Closed Won  | Last Entered Closed Won  | Days in Negotiation |
-| Closed Lost | Last Entered Closed Lost | Days in Negotiation |
+| Etapa             | Registra                          | Calcula            |
+| ----------------- | --------------------------------- | ------------------ |
+| Proposta          | Última entrada em Proposta        | Dias em Reunião    |
+| Negociação        | Última entrada em Negociação      | Dias em Proposta   |
+| Fechado - Ganho   | Última entrada em Fechado Ganho   | Dias em Negociação |
+| Fechado - Perdido | Última entrada em Fechado Perdido | Dias em Negociação |
 
-The branches do not need to rejoin—each runs independently when its stage condition is met.
+As ramificações não precisam se reunir — cada uma é executada independentemente quando a condição da sua fase é atendida.
 
-## Step 3: Analyze Time in Stage
+## Etapa 3: Analisar o tempo na fase
 
-With timestamps and day counts recorded, you can now analyze deal velocity.
+Com carimbos de data e hora e contagens de dias registrados, você pode agora analisar a velocidade dos negócios.
 
-### Create a "Slow Deals" View
+### Criar uma visualização "Negócios lentos"
 
-1. Create a Table view of Opportunities
-2. Add columns: Name, Stage, Days in [previous stage], Amount
-3. Sort by "Days in" field (descending)
-4. Filter by Stage to focus on one stage at a time
+1. Crie uma visualização de Tabela de Oportunidades
+2. Adicione colunas: Nome, Fase, Dias em [fase anterior], Valor
+3. Classifique pelo campo "Dias em" (descendente)
+4. Filtre por Fase para focar em uma fase por vez
 
-Deals at the top spent the most time in the previous stage.
+Os negócios no topo passaram mais tempo na fase anterior.
 
-### Use Aggregations
+### Use agregações
 
-In your pipeline Kanban view:
+Na sua visualização Kanban do pipeline:
 
-1. Click the number next to a Stage name
-2. Select **Average**
-3. Choose a "Days in" field
+1. Clique no número ao lado do nome de uma Fase
+2. Selecione **Média**
+3. Escolha um campo "Dias em"
 
-This shows the average time deals spend in each stage.
+Isso mostra o tempo médio que os negócios passam em cada fase.
 
-## Summary
+## Resumo
 
-| Component                | Purpose                                           |
-| ------------------------ | ------------------------------------------------- |
-| **Last Entered fields**  | Store when opportunity entered each stage         |
-| **Days in fields**       | Store how many days spent in each stage           |
-| **Workflow**             | Records timestamp AND calculates days in one pass |
-| **Views & Aggregations** | Analyze deal velocity and identify bottlenecks    |
+| Componente                     | Finalidade                                                        |
+| ------------------------------ | ----------------------------------------------------------------- |
+| **Campos "Última entrada em"** | Armazena quando a oportunidade entrou em cada fase                |
+| **Campos "Dias em"**           | Armazena quantos dias foram passados em cada fase                 |
+| **Workflow**                   | Registra o carimbo de data e hora E calcula os dias de uma só vez |
+| **Visualizações e agregações** | Analise a velocidade dos negócios e identifique gargalos          |
 
-## Related
+## Relacionados
 
-* [Workflows](/l/pt/user-guide/workflows/overview) — automation basics
-* [How to Create Custom Fields](/l/pt/user-guide/data-model/how-tos/create-custom-fields) — field configuration
-* [Kanban Views](/l/pt/user-guide/views-pipelines/capabilities/kanban-views) — aggregations
+* [Workflows](/l/pt/user-guide/workflows/overview) — noções básicas de automação
+* [Como criar campos personalizados](/l/pt/user-guide/data-model/how-tos/create-custom-fields) — configuração de campos
+* [Visualizações de Kanban](/l/pt/user-guide/views-pipelines/capabilities/kanban-views) — agregações

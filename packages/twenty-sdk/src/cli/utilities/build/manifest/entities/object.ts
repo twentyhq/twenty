@@ -2,17 +2,14 @@ import { glob } from 'fast-glob';
 import { type ObjectManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { createLogger } from '../../common/logger';
-import { manifestExtractFromFileServer } from '../manifest-extract-from-file-server';
-import { type ValidationError } from '../manifest.types';
+import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
+import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
 import {
   type EntityBuildResult,
   type EntityIdWithLocation,
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
-} from './entity.interface';
-
-const logger = createLogger('manifest-watch');
+} from '@/cli/utilities/build/manifest/entities/entity-interface';
 
 export class ObjectEntityBuilder
   implements ManifestEntityBuilder<ObjectManifest>
@@ -20,7 +17,12 @@ export class ObjectEntityBuilder
   async build(appPath: string): Promise<EntityBuildResult<ObjectManifest>> {
     const objectFiles = await glob(['**/*.object.ts'], {
       cwd: appPath,
-      ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
+      ignore: [
+        '**/node_modules/**',
+        '**/*.d.ts',
+        '**/dist/**',
+        '**/.twenty/**',
+      ],
     });
 
     const manifests: ObjectManifest[] = [];
@@ -29,9 +31,12 @@ export class ObjectEntityBuilder
       try {
         const absolutePath = `${appPath}/${filePath}`;
 
-        manifests.push(
-          await manifestExtractFromFileServer.extractManifestFromFile<ObjectManifest>(absolutePath),
-        );
+        const { manifest } =
+          await manifestExtractFromFileServer.extractManifestFromFile<ObjectManifest>(
+            absolutePath,
+          );
+
+        manifests.push(manifest);
       } catch (error) {
         throw new Error(
           `Failed to load object from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
@@ -103,10 +108,6 @@ export class ObjectEntityBuilder
         }
       }
     }
-  }
-
-  display(objects: ObjectManifest[]): void {
-    logger.success(`✓ Found ${objects.length} object(s)`);
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {

@@ -1,6 +1,6 @@
-import { ApiService } from '@/cli/utilities/api/services/api.service';
+import { ApiService } from '@/cli/utilities/api/api-service';
 import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 
 export class FunctionLogsCommand {
@@ -16,7 +16,7 @@ export class FunctionLogsCommand {
     functionName?: string;
   }): Promise<void> {
     try {
-      const { manifest } = await runManifestBuild(appPath, { display: false, writeOutput: false });
+      const { manifest } = await runManifestBuild(appPath);
 
       if (!manifest) {
         process.exit(1);
