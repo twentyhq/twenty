@@ -58,7 +58,7 @@ export class DatabaseToolProvider implements ToolProvider {
     const tools: ToolSet = {};
 
     // Both userId and userWorkspaceId are required for user-based tool generation
-    if (!context.userId || !context.userWorkspaceId) {
+    if (!isDefined(context.userId) || !isDefined(context.userWorkspaceId)) {
       return tools;
     }
 
