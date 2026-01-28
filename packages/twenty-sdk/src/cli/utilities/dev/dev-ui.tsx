@@ -177,10 +177,10 @@ export const renderDevUI = async (
 
   const MANIFEST_STATUS_CONFIG = {
     synced: { color: 'green', icon: '✓', text: 'Synced' },
-    building: { color: 'yellow', icon: null, text: 'Building...' },
-    syncing: { color: 'yellow', icon: null, text: 'Syncing...' },
-    error: { color: 'red', icon: '', text: 'Error' },
-    idle: { color: 'gray', icon: '', text: 'Idle' },
+    building: { color: 'yellow', icon: 'spinner', text: 'Building...' },
+    syncing: { color: 'yellow', icon: 'spinner', text: 'Syncing...' },
+    error: { color: 'red', icon: null, text: 'Error' },
+    idle: { color: 'gray', icon: null, text: 'Idle' },
   } as const;
 
   const UnifiedStatusIndicator = ({
@@ -190,11 +190,12 @@ export const renderDevUI = async (
   }): React.ReactElement => {
     const spinnerFrame = useSpinner(SPINNER_FRAMES, 80);
     const config = MANIFEST_STATUS_CONFIG[snapshot.manifestStatus];
-    const icon = config.icon ?? spinnerFrame;
+    const icon = config.icon === 'spinner' ? spinnerFrame : config.icon;
 
     return (
       <Text color={config.color}>
-        {icon} {config.text}
+        {icon ?? ''}
+        {config.text}
         {snapshot.error && `: ${snapshot.error}`}
       </Text>
     );

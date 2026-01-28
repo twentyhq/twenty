@@ -11,6 +11,8 @@ export const defineEntitiesTests = (appPath: string): void => {
 
       expect(sortedFiles).toEqual([
         'manifest.json',
+        'public',
+        'public/favicon.png',
         'src',
         'src/components',
         'src/components/card.front-component.mjs',

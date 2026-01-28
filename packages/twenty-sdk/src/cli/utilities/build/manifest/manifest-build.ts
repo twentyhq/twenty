@@ -109,14 +109,14 @@ export const updateManifestChecksum = ({
     }
 
     if (fileFolder === FileFolder.PublicAsset) {
-      const assets = result.assets ?? [];
+      const assets = result.publicAssets ?? [];
       const assetIndex = assets.findIndex((a) => a.filePath === rootBuiltPath);
       if (assetIndex === -1) {
         continue;
       }
       result = {
         ...result,
-        assets: assets.map((asset, index) =>
+        publicAssets: assets.map((asset, index) =>
           index === assetIndex ? { ...asset, checksum } : asset,
         ),
       };
@@ -205,7 +205,7 @@ export const runManifestBuild = async (
       functions: functionManifests,
       frontComponents: frontComponentManifests,
       roles: roleManifests,
-      assets: assetManifests,
+      publicAssets: assetManifests,
       sources,
       packageJson,
       yarnLock,

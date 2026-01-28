@@ -17,7 +17,7 @@ export type ApplicationManifest = {
   functions: ServerlessFunctionManifest[];
   frontComponents: FrontComponentManifest[];
   roles?: RoleManifest[];
-  assets?: AssetManifest[];
+  publicAssets?: AssetManifest[];
   sources: Sources;
   packageJson: PackageJson;
   yarnLock: string;
