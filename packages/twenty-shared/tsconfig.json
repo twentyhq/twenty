@@ -23,6 +23,8 @@
   ],
   "exclude": [
     "src/front-component/remote/mock/**/*",
-    "src/front-component/host/generated/component-registry.ts"
+    "src/front-component/host/generated/host-component-registry.ts",
+    "src/front-component/remote/generated/remote-components.ts",
+    "src/front-component/remote/generated/remote-elements.ts"
   ]
 }
