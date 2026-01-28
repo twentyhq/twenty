@@ -13,19 +13,19 @@ import { createRoot } from 'react-dom/client';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
 
-ThreadWebWorker.self.export<WorkerExports>({
-  render: async (
-    connection: RemoteConnection,
-    context: HostToWorkerRenderContext,
-  ) => {
-    const batchedConnection = new BatchingRemoteConnection(connection);
-    const root = document.createElement('remote-root') as RemoteRootElement;
-    root.connect(batchedConnection);
-    document.body.append(root);
+const render: WorkerExports['render'] = async (
+  connection: RemoteConnection,
+  context: HostToWorkerRenderContext,
+) => {
+  const batchedConnection = new BatchingRemoteConnection(connection);
+  const root = document.createElement('remote-root') as RemoteRootElement;
+  root.connect(batchedConnection);
+  document.body.append(root);
 
-    const componentModule = await import(context.componentUrl);
+  const componentModule = await import(context.componentUrl);
 
-    const reactRoot = createRoot(root);
-    reactRoot.render(componentModule.default);
-  },
-});
+  const reactRoot = createRoot(root);
+  reactRoot.render(componentModule.default);
+};
+
+ThreadWebWorker.self.export({ render });
