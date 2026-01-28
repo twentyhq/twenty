@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { plural } from '@lingui/core/macro';
-import { useMemo, useRef, useState, type MouseEvent } from 'react';
+import { useMemo, useState, useCallback, type MouseEvent } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -96,14 +96,13 @@ export const SettingsMorphRelationMultiSelect = ({
   hasRightElement,
   error,
 }: SettingsMorphRelationMultiSelectProps) => {
-  const selectContainerRef = useRef<HTMLDivElement>(null);
-
   const [searchInputValue, setSearchInputValue] = useState('');
+  const [lastDeselectedId, setLastDeselectedId] = useState<string | null>(null);
+  const [containerWidth, setContainerWidth] = useState<number | undefined>(
+    undefined,
+  );
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
-
-  const [localSelectedObjectMetadataIds, setLocalSelectedObjectMetadataIds] =
-    useState<string[]>(selectedObjectMetadataIds);
 
   const { getIcon } = useIcons();
   const options = activeObjectMetadataItems
@@ -118,7 +117,7 @@ export const SettingsMorphRelationMultiSelect = ({
     }));
 
   const selectedOptions = options.filter((option) =>
-    localSelectedObjectMetadataIds.includes(option.objectMetadataId),
+    selectedObjectMetadataIds.includes(option.objectMetadataId),
   );
 
   const filteredOptions = useMemo(
@@ -138,9 +137,7 @@ export const SettingsMorphRelationMultiSelect = ({
   const { closeDropdown } = useCloseDropdown();
 
   const dropDownMenuWidth =
-    dropdownWidthAuto && selectContainerRef.current?.clientWidth
-      ? selectContainerRef.current?.clientWidth
-      : dropdownWidth;
+    dropdownWidthAuto && containerWidth ? containerWidth : dropdownWidth;
 
   const selectableItemIdArray = filteredOptions.map((option) => option.label);
 
@@ -157,23 +154,86 @@ export const SettingsMorphRelationMultiSelect = ({
     }
   };
 
-  const addOrRemoveFromArray = (array: string[], item: string) => {
-    let newArray = new Set(array);
-    if (newArray.has(item)) {
-      newArray.delete(item);
-    } else {
-      newArray.add(item);
-    }
-    return Array.from(newArray);
-  };
+  const handleToggleSelection = useCallback(
+    (objectMetadataId: string) => {
+      const isCurrentlySelected =
+        selectedObjectMetadataIds.includes(objectMetadataId);
+
+      if (isCurrentlySelected) {
+        // Remove the item
+        const newSelectedObjectMetadataIds = selectedObjectMetadataIds.filter(
+          (id) => id !== objectMetadataId,
+        );
+        // Track the deselected item only if selection becomes empty
+        if (newSelectedObjectMetadataIds.length === 0) {
+          setLastDeselectedId(objectMetadataId);
+        } else {
+          setLastDeselectedId(null);
+        }
+        onChange?.(newSelectedObjectMetadataIds);
+      } else {
+        // Add the item
+        // If we recently deselected an item and it's back in the selection
+        // (likely reverted by form validation), replace the entire selection
+        // with just the new item to prevent the old item from being included
+        if (
+          isDefined(lastDeselectedId) &&
+          selectedObjectMetadataIds.includes(lastDeselectedId)
+        ) {
+          // The form reverted to include the deselected item, so replace it entirely
+          onChange?.([objectMetadataId]);
+          setLastDeselectedId(null);
+        } else {
+          // Normal case: add the item
+          const newSelectedObjectMetadataIds = Array.from(
+            new Set([...selectedObjectMetadataIds, objectMetadataId]),
+          );
+          onChange?.(newSelectedObjectMetadataIds);
+          setLastDeselectedId(null);
+        }
+      }
+    },
+    [selectedObjectMetadataIds, onChange, lastDeselectedId],
+  );
+
+  const handleContainerRef = useCallback(
+    (element: HTMLDivElement | null) => {
+      if (isDefined(element) && dropdownWidthAuto) {
+        setContainerWidth(element.clientWidth);
+      }
+    },
+    [dropdownWidthAuto],
+  );
+
+  const handleContainerBlur = useCallback(
+    (event: React.FocusEvent<HTMLDivElement>) => {
+      // Check if focus is moving outside the container
+      const currentTarget = event.currentTarget;
+      const relatedTarget = event.relatedTarget as Node | null;
+
+      if (
+        !currentTarget.contains(relatedTarget) &&
+        selectedObjectMetadataIds.length === 0 &&
+        isDefined(lastDeselectedId)
+      ) {
+        // Dropdown closed with 0 selections, re-add the last deselected item
+        // Only do this if the prop actually reflects 0 selections (not stale)
+        onChange?.([lastDeselectedId]);
+        setLastDeselectedId(null);
+      }
+
+      onBlur?.();
+    },
+    [selectedObjectMetadataIds, lastDeselectedId, onChange, onBlur],
+  );
 
   return (
     <StyledContainer
       className={className}
       fullWidth={fullWidth}
       tabIndex={0}
-      onBlur={onBlur}
-      ref={selectContainerRef}
+      onBlur={handleContainerBlur}
+      ref={handleContainerRef}
     >
       {!!label && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
@@ -239,15 +299,7 @@ export const SettingsMorphRelationMultiSelect = ({
                         key={`${option.objectMetadataId}-${option.label}`}
                         itemId={option.label}
                         onEnter={() => {
-                          const newSelectedObjectMetadataIds =
-                            addOrRemoveFromArray(
-                              localSelectedObjectMetadataIds,
-                              option.objectMetadataId,
-                            );
-                          setLocalSelectedObjectMetadataIds(
-                            newSelectedObjectMetadataIds,
-                          );
-                          onChange?.(newSelectedObjectMetadataIds);
+                          handleToggleSelection(option.objectMetadataId);
                           onBlur?.();
                           closeDropdown(dropdownId);
                         }}
@@ -263,15 +315,7 @@ export const SettingsMorphRelationMultiSelect = ({
                           )}
                           isKeySelected={selectedItemId === option.label}
                           onSelectChange={() => {
-                            let newSelectedObjectMetadataIds =
-                              addOrRemoveFromArray(
-                                localSelectedObjectMetadataIds,
-                                option.objectMetadataId,
-                              );
-                            setLocalSelectedObjectMetadataIds(
-                              newSelectedObjectMetadataIds,
-                            );
-                            onChange?.(newSelectedObjectMetadataIds);
+                            handleToggleSelection(option.objectMetadataId);
                             onBlur?.();
                           }}
                         />

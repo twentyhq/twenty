@@ -150,7 +150,7 @@ export const SettingsDataModelFieldRelationForm = ({
               dropdownId="object-destination-select"
               fullWidth
               disabled={disableRelationEdition}
-              selectedObjectMetadataIds={value}
+              selectedObjectMetadataIds={value ?? []}
               withSearchInput={true}
               onChange={onChange}
               error={
