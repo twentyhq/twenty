@@ -10,11 +10,12 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 
 const StyledVerticalListContainer = styled.div<{
   variant: PageLayoutVerticalListViewerVariant;
+  shouldUseWhiteBackground: boolean;
 }>`
-  background: ${({ theme, variant }) =>
-    variant === 'side-column'
-      ? theme.background.secondary
-      : theme.background.primary};
+  background: ${({ theme, shouldUseWhiteBackground }) =>
+    shouldUseWhiteBackground
+      ? theme.background.primary
+      : theme.background.secondary};
   display: flex;
   flex-direction: column;
   gap: ${({ theme, variant }) =>
@@ -41,7 +42,10 @@ export const PageLayoutVerticalListViewer = ({
   });
 
   return (
-    <StyledVerticalListContainer variant={variant}>
+    <StyledVerticalListContainer
+      variant={variant}
+      shouldUseWhiteBackground={isMobile || isInRightDrawer}
+    >
       {widgets.map((widget) => (
         <div key={widget.id}>
           <WidgetRenderer widget={widget} />

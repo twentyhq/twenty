@@ -18,11 +18,12 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledVerticalListContainer = styled.div<{
   variant: PageLayoutVerticalListViewerVariant;
+  shouldUseWhiteBackground: boolean;
 }>`
-  background: ${({ theme, variant }) =>
-    variant === 'side-column'
-      ? theme.background.secondary
-      : theme.background.primary};
+  background: ${({ theme, shouldUseWhiteBackground }) =>
+    shouldUseWhiteBackground
+      ? theme.background.primary
+      : theme.background.secondary};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(4)};
@@ -79,6 +80,7 @@ export const PageLayoutVerticalListEditor = ({
           <StyledVerticalListContainer
             ref={provided.innerRef}
             variant={variant}
+            shouldUseWhiteBackground={isMobile || isInRightDrawer}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
