@@ -4,5 +4,3 @@ export type FileFieldSettings = {
 };
 
 export type FileSettings = FileFieldSettings;
-
-export type FileInfo = FileFieldSettings;
