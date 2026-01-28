@@ -1,24 +1,28 @@
 import {
-  type CreateOneServerlessFunctionFactoryInput,
-  createOneServerlessFunctionQueryFactory,
-} from 'test/integration/metadata/suites/serverless-function/utils/create-one-serverless-function-query-factory.util';
+  type ExecuteLogicFunctionFactoryInput,
+  executeLogicFunctionQueryFactory,
+} from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
+import { type LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
-export const createOneServerlessFunction = async ({
+export const executeLogicFunction = async ({
   input,
   gqlFields,
   expectToFail = false,
   token,
-}: PerformMetadataQueryParams<CreateOneServerlessFunctionFactoryInput>): CommonResponseBody<{
-  createOneServerlessFunction: LogicFunctionDTO;
+}: {
+  input: ExecuteLogicFunctionFactoryInput;
+  gqlFields?: string;
+  expectToFail?: boolean;
+  token?: string;
+}): CommonResponseBody<{
+  executeOneLogicFunction: LogicFunctionExecutionResultDTO;
 }> => {
-  const graphqlOperation = createOneServerlessFunctionQueryFactory({
+  const graphqlOperation = executeLogicFunctionQueryFactory({
     input,
     gqlFields,
   });
@@ -29,14 +33,14 @@ export const createOneServerlessFunction = async ({
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage:
-        'Serverless Function creation should have failed but did not',
+        'Logic Function execution should have failed but did not',
     });
   }
 
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       response,
-      errorMessage: 'Serverless Function creation has failed but should not',
+      errorMessage: 'Logic Function execution has failed but should not',
     });
   }
 

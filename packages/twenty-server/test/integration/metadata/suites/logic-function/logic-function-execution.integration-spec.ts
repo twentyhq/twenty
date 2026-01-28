@@ -1,8 +1,8 @@
-import { createOneServerlessFunction } from 'test/integration/metadata/suites/serverless-function/utils/create-one-serverless-function.util';
-import { deleteServerlessFunction } from 'test/integration/metadata/suites/serverless-function/utils/delete-serverless-function.util';
-import { executeServerlessFunction } from 'test/integration/metadata/suites/serverless-function/utils/execute-serverless-function.util';
-import { publishServerlessFunction } from 'test/integration/metadata/suites/serverless-function/utils/publish-serverless-function.util';
-import { updateServerlessFunction } from 'test/integration/metadata/suites/serverless-function/utils/update-serverless-function.util';
+import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-one-logic-function.util';
+import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/delete-logic-function.util';
+import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
+import { publishLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/publish-logic-function.util';
+import { updateLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function.util';
 
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
@@ -29,14 +29,14 @@ const ERROR_FUNCTION_CODE = {
 };`,
 };
 
-describe('Serverless Function Execution', () => {
+describe('Logic Function Execution', () => {
   const createdFunctionIds: string[] = [];
 
   afterAll(async () => {
     // Clean up all created functions
     for (const functionId of createdFunctionIds) {
       try {
-        await deleteServerlessFunction({
+        await deleteLogicFunction({
           input: { id: functionId },
           expectToFail: false,
         });
@@ -46,30 +46,30 @@ describe('Serverless Function Execution', () => {
     }
   });
 
-  it('should execute the default serverless function template', async () => {
+  it('should execute the default logic function template', async () => {
     // Create the function (uses default template)
-    const { data: createData } = await createOneServerlessFunction({
+    const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'Test Default Function',
       },
       expectToFail: false,
     });
 
-    const functionId = createData?.createOneServerlessFunction?.id;
+    const functionId = createData?.createOneLogicFunction?.id;
 
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
 
     // Publish the function
-    const { data: publishData } = await publishServerlessFunction({
+    const { data: publishData } = await publishLogicFunction({
       input: { id: functionId },
       expectToFail: false,
     });
 
-    expect(publishData?.publishServerlessFunction?.latestVersion).toBeDefined();
+    expect(publishData?.publishLogicFunction?.latestVersion).toBeDefined();
 
     // Execute with the default template's expected params: { a: string, b: number }
-    const { data: executeData } = await executeServerlessFunction({
+    const { data: executeData } = await executeLogicFunction({
       input: {
         id: functionId,
         payload: { a: 'hello', b: 42 },
@@ -77,7 +77,7 @@ describe('Serverless Function Execution', () => {
       expectToFail: false,
     });
 
-    const result = executeData?.executeOneServerlessFunction;
+    const result = executeData?.executeOneLogicFunction;
 
     if (result?.status !== LogicFunctionExecutionStatus.SUCCESS) {
       throw new Error(JSON.stringify(result?.error, null, 2));
@@ -92,20 +92,20 @@ describe('Serverless Function Execution', () => {
 
   it('should execute a function with external packages (lodash.groupby)', async () => {
     // Create the function (uses default template initially)
-    const { data: createData } = await createOneServerlessFunction({
+    const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'External Packages Test',
       },
       expectToFail: false,
     });
 
-    const functionId = createData?.createOneServerlessFunction?.id;
+    const functionId = createData?.createOneLogicFunction?.id;
 
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
 
     // Update with custom code using external packages
-    await updateServerlessFunction({
+    await updateLogicFunction({
       input: {
         id: functionId,
         update: {
@@ -117,13 +117,13 @@ describe('Serverless Function Execution', () => {
     });
 
     // Publish the function
-    await publishServerlessFunction({
+    await publishLogicFunction({
       input: { id: functionId },
       expectToFail: false,
     });
 
     // Execute the function with items to group
-    const { data: executeData } = await executeServerlessFunction({
+    const { data: executeData } = await executeLogicFunction({
       input: {
         id: functionId,
         payload: {
@@ -137,7 +137,7 @@ describe('Serverless Function Execution', () => {
       expectToFail: false,
     });
 
-    const result = executeData?.executeOneServerlessFunction;
+    const result = executeData?.executeOneLogicFunction;
 
     if (result?.status !== LogicFunctionExecutionStatus.SUCCESS) {
       throw new Error(JSON.stringify(result?.error, null, 2));
@@ -162,22 +162,22 @@ describe('Serverless Function Execution', () => {
     );
   });
 
-  it('should handle errors thrown by serverless functions', async () => {
+  it('should handle errors thrown by logic functions', async () => {
     // Create the function
-    const { data: createData } = await createOneServerlessFunction({
+    const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'Error Test Function',
       },
       expectToFail: false,
     });
 
-    const functionId = createData?.createOneServerlessFunction?.id;
+    const functionId = createData?.createOneLogicFunction?.id;
 
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
 
     // Update with error-throwing code
-    await updateServerlessFunction({
+    await updateLogicFunction({
       input: {
         id: functionId,
         update: {
@@ -189,13 +189,13 @@ describe('Serverless Function Execution', () => {
     });
 
     // Publish the function
-    await publishServerlessFunction({
+    await publishLogicFunction({
       input: { id: functionId },
       expectToFail: false,
     });
 
     // Execute with shouldFail = false (should succeed)
-    const { data: successData } = await executeServerlessFunction({
+    const { data: successData } = await executeLogicFunction({
       input: {
         id: functionId,
         payload: { shouldFail: false },
@@ -203,15 +203,15 @@ describe('Serverless Function Execution', () => {
       expectToFail: false,
     });
 
-    expect(successData?.executeOneServerlessFunction?.status).toBe(
+    expect(successData?.executeOneLogicFunction?.status).toBe(
       LogicFunctionExecutionStatus.SUCCESS,
     );
-    expect(successData?.executeOneServerlessFunction?.data).toMatchObject({
+    expect(successData?.executeOneLogicFunction?.data).toMatchObject({
       success: true,
     });
 
     // Execute with shouldFail = true (should return error status)
-    const { data: errorData } = await executeServerlessFunction({
+    const { data: errorData } = await executeLogicFunction({
       input: {
         id: functionId,
         payload: { shouldFail: true },
@@ -219,7 +219,7 @@ describe('Serverless Function Execution', () => {
       expectToFail: false, // The GraphQL call succeeds, but the function execution fails
     });
 
-    const errorResult = errorData?.executeOneServerlessFunction;
+    const errorResult = errorData?.executeOneLogicFunction;
 
     expect(errorResult?.status).toBe(LogicFunctionExecutionStatus.ERROR);
     expect(errorResult?.error).toMatchObject({

@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export type ExecuteServerlessFunctionFactoryInput = {
+export type ExecuteLogicFunctionFactoryInput = {
   id: string;
   payload: Record<string, unknown>;
   version?: string;
@@ -14,16 +14,16 @@ const DEFAULT_EXECUTION_RESULT_GQL_FIELDS = `
   error
 `;
 
-export const executeServerlessFunctionQueryFactory = ({
+export const executeLogicFunctionQueryFactory = ({
   input,
   gqlFields = DEFAULT_EXECUTION_RESULT_GQL_FIELDS,
 }: {
-  input: ExecuteServerlessFunctionFactoryInput;
+  input: ExecuteLogicFunctionFactoryInput;
   gqlFields?: string;
 }) => ({
   query: gql`
-    mutation ExecuteOneServerlessFunction($input: ExecuteServerlessFunctionInput!) {
-      executeOneServerlessFunction(input: $input) {
+    mutation ExecuteOneLogicFunction($input: ExecuteLogicFunctionInput!) {
+      executeOneLogicFunction(input: $input) {
         ${gqlFields}
       }
     }

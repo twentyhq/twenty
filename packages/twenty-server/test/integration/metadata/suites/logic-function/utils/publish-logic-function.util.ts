@@ -1,28 +1,28 @@
 import {
-  type ExecuteServerlessFunctionFactoryInput,
-  executeServerlessFunctionQueryFactory,
-} from 'test/integration/metadata/suites/serverless-function/utils/execute-serverless-function-query-factory.util';
+  type PublishLogicFunctionFactoryInput,
+  publishLogicFunctionQueryFactory,
+} from 'test/integration/metadata/suites/logic-function/utils/publish-logic-function-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import { type LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 
-export const executeServerlessFunction = async ({
+export const publishLogicFunction = async ({
   input,
   gqlFields,
   expectToFail = false,
   token,
 }: {
-  input: ExecuteServerlessFunctionFactoryInput;
+  input: PublishLogicFunctionFactoryInput;
   gqlFields?: string;
   expectToFail?: boolean;
   token?: string;
 }): CommonResponseBody<{
-  executeOneServerlessFunction: LogicFunctionExecutionResultDTO;
+  publishLogicFunction: LogicFunctionDTO;
 }> => {
-  const graphqlOperation = executeServerlessFunctionQueryFactory({
+  const graphqlOperation = publishLogicFunctionQueryFactory({
     input,
     gqlFields,
   });
@@ -33,14 +33,14 @@ export const executeServerlessFunction = async ({
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage:
-        'Serverless Function execution should have failed but did not',
+        'Logic Function publish should have failed but did not',
     });
   }
 
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       response,
-      errorMessage: 'Serverless Function execution has failed but should not',
+      errorMessage: 'Logic Function publish has failed but should not',
     });
   }
 

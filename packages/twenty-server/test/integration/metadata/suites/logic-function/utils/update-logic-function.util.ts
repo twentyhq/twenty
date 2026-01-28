@@ -1,7 +1,7 @@
 import {
-  type UpdateServerlessFunctionFactoryInput,
-  updateServerlessFunctionQueryFactory,
-} from 'test/integration/metadata/suites/serverless-function/utils/update-serverless-function-query-factory.util';
+  type UpdateLogicFunctionFactoryInput,
+  updateLogicFunctionQueryFactory,
+} from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
@@ -9,20 +9,20 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 
 import { type LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 
-export const updateServerlessFunction = async ({
+export const updateLogicFunction = async ({
   input,
   gqlFields,
   expectToFail = false,
   token,
 }: {
-  input: UpdateServerlessFunctionFactoryInput;
+  input: UpdateLogicFunctionFactoryInput;
   gqlFields?: string;
   expectToFail?: boolean;
   token?: string;
 }): CommonResponseBody<{
-  updateOneServerlessFunction: LogicFunctionDTO;
+  updateOneLogicFunction: LogicFunctionDTO;
 }> => {
-  const graphqlOperation = updateServerlessFunctionQueryFactory({
+  const graphqlOperation = updateLogicFunctionQueryFactory({
     input,
     gqlFields,
   });
@@ -32,14 +32,14 @@ export const updateServerlessFunction = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage: 'Serverless Function update should have failed but did not',
+      errorMessage: 'Logic Function update should have failed but did not',
     });
   }
 
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       response,
-      errorMessage: 'Serverless Function update has failed but should not',
+      errorMessage: 'Logic Function update has failed but should not',
     });
   }
 

@@ -3,9 +3,9 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 
 import { type CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
 
-export type CreateOneServerlessFunctionFactoryInput = CreateLogicFunctionInput;
+export type CreateOneLogicFunctionFactoryInput = CreateLogicFunctionInput;
 
-const DEFAULT_SERVERLESS_FUNCTION_GQL_FIELDS = `
+const DEFAULT_LOGIC_FUNCTION_GQL_FIELDS = `
   id
   name
   description
@@ -16,13 +16,13 @@ const DEFAULT_SERVERLESS_FUNCTION_GQL_FIELDS = `
   updatedAt
 `;
 
-export const createOneServerlessFunctionQueryFactory = ({
+export const createOneLogicFunctionQueryFactory = ({
   input,
-  gqlFields = DEFAULT_SERVERLESS_FUNCTION_GQL_FIELDS,
-}: PerformMetadataQueryParams<CreateOneServerlessFunctionFactoryInput>) => ({
+  gqlFields = DEFAULT_LOGIC_FUNCTION_GQL_FIELDS,
+}: PerformMetadataQueryParams<CreateOneLogicFunctionFactoryInput>) => ({
   query: gql`
-    mutation CreateOneServerlessFunction($input: CreateServerlessFunctionInput!) {
-      createOneServerlessFunction(input: $input) {
+    mutation CreateOneLogicFunction($input: CreateLogicFunctionInput!) {
+      createOneLogicFunction(input: $input) {
         ${gqlFields}
       }
     }
