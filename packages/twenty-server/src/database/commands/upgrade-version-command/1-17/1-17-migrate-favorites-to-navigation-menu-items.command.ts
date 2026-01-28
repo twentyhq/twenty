@@ -18,6 +18,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -275,7 +276,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
     const favoriteRelationFieldMap = new Map<
       string,
-      { name: string; relationTargetObjectMetadataId: string }
+      { name: string; relationTargetUniversalIdentifier: string }
     >();
 
     for (const field of favoriteRelationFields) {
@@ -284,10 +285,16 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         field.name !== 'favoriteFolder' &&
         isDefined(field.relationTargetObjectMetadataId)
       ) {
-        favoriteRelationFieldMap.set(field.name, {
-          name: field.name,
-          relationTargetObjectMetadataId: field.relationTargetObjectMetadataId,
-        });
+        const targetObjectMetadata =
+          flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId];
+
+        if (isDefined(targetObjectMetadata)) {
+          favoriteRelationFieldMap.set(field.name, {
+            name: field.name,
+            relationTargetUniversalIdentifier:
+              targetObjectMetadata.universalIdentifier,
+          });
+        }
       }
     }
 
@@ -488,7 +495,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     favoriteRelationFieldMap: Map<
       string,
-      { name: string; relationTargetObjectMetadataId: string }
+      { name: string; relationTargetUniversalIdentifier: string }
     >,
   ): {
     targetRecordId: string | null;
@@ -496,7 +503,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
   } {
     for (const [
       fieldName,
-      { relationTargetObjectMetadataId },
+      { relationTargetUniversalIdentifier },
     ] of favoriteRelationFieldMap.entries()) {
       const fieldIdName = `${fieldName}Id`;
       const recordId = (
@@ -507,12 +514,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         continue;
       }
 
-      const targetObjectMetadata = Object.values(
-        flatObjectMetadataMaps.byId,
-      ).find(
-        (obj): obj is FlatObjectMetadata =>
-          isDefined(obj) && obj.id === relationTargetObjectMetadataId,
-      );
+      const targetObjectMetadata = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier: relationTargetUniversalIdentifier,
+      });
 
       if (isDefined(targetObjectMetadata)) {
         return {
