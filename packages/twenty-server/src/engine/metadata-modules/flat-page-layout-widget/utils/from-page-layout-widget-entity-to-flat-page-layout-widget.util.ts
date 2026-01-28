@@ -70,7 +70,6 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
     fromPageLayoutWidgetConfigurationToUniversalConfiguration({
       configuration: pageLayoutWidgetEntityWithoutRelations.configuration,
       fieldMetadataIdToUniversalIdentifierMap,
-      pageLayoutWidgetId: pageLayoutWidgetEntity.id,
     });
 
   return {

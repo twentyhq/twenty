@@ -1,4 +1,7 @@
-import { type ExtractSerializedRelationProperties } from 'twenty-shared/types';
+import {
+  type ExtractSerializedRelationProperties,
+  IsSerializedRelation
+} from 'twenty-shared/types';
 
 import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
 
@@ -18,7 +21,10 @@ export type FormatRecordSerializedRelationProperties<T> = T extends unknown
   ? T extends (infer U)[]
     ? FormatRecordSerializedRelationProperties<U>[]
     : T extends string
-      ? T
+      ? // By definition we assume that any SerializedRelation is not pg synched, which means stored id might resolve to null
+        IsSerializedRelation<T> extends true
+        ? T | null
+        : T
       : T extends object
         ? {
             [P in keyof T as ShouldTransformToUniversalIdentifier<

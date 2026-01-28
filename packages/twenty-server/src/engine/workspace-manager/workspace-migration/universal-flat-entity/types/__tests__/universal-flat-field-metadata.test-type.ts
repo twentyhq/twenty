@@ -98,7 +98,7 @@ type NarrowedExpectedResult = {
   relationType: RelationType;
   onDelete?: RelationOnDeleteAction | undefined;
   joinColumnName?: string | null | undefined;
-  junctionTargetFieldUniversalIdentifier?: SerializedRelation | undefined;
+  junctionTargetFieldUniversalIdentifier?: SerializedRelation | null | undefined;
   __JsonbPropertyBrand__?: undefined;
 };
 
@@ -111,7 +111,7 @@ type SettingsExpectedResult =
       relationType: RelationType;
       onDelete?: RelationOnDeleteAction | undefined;
       joinColumnName?: string | null | undefined;
-      junctionTargetFieldUniversalIdentifier?: SerializedRelation | undefined;
+      junctionTargetFieldUniversalIdentifier?: SerializedRelation | null | undefined;
       __JsonbPropertyBrand__?: undefined;
     }
   | {
