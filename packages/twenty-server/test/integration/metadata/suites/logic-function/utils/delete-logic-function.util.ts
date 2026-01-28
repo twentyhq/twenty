@@ -27,8 +27,7 @@ export const deleteLogicFunction = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage:
-        'Logic Function deletion should have failed but did not',
+      errorMessage: 'Logic Function deletion should have failed but did not',
     });
   }
 

@@ -32,8 +32,7 @@ export const publishLogicFunction = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage:
-        'Logic Function publish should have failed but did not',
+      errorMessage: 'Logic Function publish should have failed but did not',
     });
   }
 

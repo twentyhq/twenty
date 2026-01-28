@@ -28,8 +28,7 @@ export const createOneLogicFunction = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage:
-        'Logic Function creation should have failed but did not',
+      errorMessage: 'Logic Function creation should have failed but did not',
     });
   }
 

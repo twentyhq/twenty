@@ -32,8 +32,7 @@ export const executeLogicFunction = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage:
-        'Logic Function execution should have failed but did not',
+      errorMessage: 'Logic Function execution should have failed but did not',
     });
   }
 
