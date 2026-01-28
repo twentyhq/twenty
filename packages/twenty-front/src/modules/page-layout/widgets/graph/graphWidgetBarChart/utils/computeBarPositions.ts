@@ -3,6 +3,7 @@ import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidge
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
 import { computeBarPositionsByGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositionsByGroupMode';
 import { computeShouldRoundFreeEndMap } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeShouldRoundFreeEndMap';
+import { getChartInnerDimensions } from '@/page-layout/widgets/graph/chart-core/utils/getChartInnerDimensions';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { type BarChartLayout } from '~/generated/graphql';
 
@@ -35,8 +36,11 @@ export const computeBarPositions = ({
   innerPadding,
   includeZeroValues = false,
 }: ComputeBarPositionsParams): BarPosition[] => {
-  const innerWidth = chartWidth - margins.left - margins.right;
-  const innerHeight = chartHeight - margins.top - margins.bottom;
+  const { innerWidth, innerHeight } = getChartInnerDimensions({
+    chartWidth,
+    chartHeight,
+    margins,
+  });
 
   if (innerWidth <= 0 || innerHeight <= 0) {
     return [];

@@ -11,6 +11,7 @@ import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widget
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
+import { type BarChartSliceHoverData } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSliceHoverData';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
@@ -168,13 +169,7 @@ export const GraphWidgetBarChart = ({
 
   const handleTooltipMouseLeave = debouncedHideTooltip;
 
-  const handleSliceHover = (
-    sliceData: {
-      slice: BarChartSlice;
-      offsetLeft: number;
-      offsetTop: number;
-    } | null,
-  ) => {
+  const handleSliceHover = (sliceData: BarChartSliceHoverData | null) => {
     if (isDefined(sliceData)) {
       debouncedHideTooltip.cancel();
       setHoveredSliceIndex(sliceData.slice.indexValue);

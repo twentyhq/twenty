@@ -2,24 +2,11 @@ import { AxisLabel } from '@/page-layout/widgets/graph/chart-core/layers/AxisLab
 import { BottomAxisTicks } from '@/page-layout/widgets/graph/chart-core/layers/BottomAxisTicks';
 import { LeftAxisTicks } from '@/page-layout/widgets/graph/chart-core/layers/LeftAxisTicks';
 import { ZeroLine } from '@/page-layout/widgets/graph/chart-core/layers/ZeroLine';
-import { computeBandScale } from '@/page-layout/widgets/graph/chart-core/utils/computeBandScale';
-import { computeBottomTickPosition } from '@/page-layout/widgets/graph/chart-core/utils/computeBottomTickPosition';
-import { computeLeftTickPosition } from '@/page-layout/widgets/graph/chart-core/utils/computeLeftTickPosition';
+import { type AxisLayerConfig } from '@/page-layout/widgets/graph/chart-core/types/AxisLayerConfig';
+import { getAxisLayerLayout } from '@/page-layout/widgets/graph/chart-core/utils/getAxisLayerLayout';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
-type AxisLayerConfig = {
-  tickFontSize: number;
-  legendFontSize: number;
-  tickPadding: number;
-  rotatedLabelsExtraMargin: number;
-  bottomAxisLegendOffset: number;
-  leftAxisLegendOffsetPadding: number;
-  legendOffsetMarginBuffer: number;
-  categoryPadding: number;
-  categoryOuterPaddingPx: number;
-};
 
 type AxisLayerProps = {
   bottomAxisTickRotation: number;
@@ -70,67 +57,31 @@ export const AxisLayer = ({
   const tickFontSize = axisConfig.tickFontSize;
   const legendFontSize = axisConfig.legendFontSize;
 
-  const innerWidth = chartWidth - margins.left - margins.right;
-  const innerHeight = chartHeight - margins.top - margins.bottom;
-
-  const categoryIndexMap = new Map<string, number>(
-    categoryValues.map((value, index) => [String(value), index]),
-  );
-
-  const categoryScale = computeBandScale({
-    axisLength: isVertical ? innerWidth : innerHeight,
-    count: categoryValues.length,
-    padding: axisConfig.categoryPadding,
-    outerPaddingPx: axisConfig.categoryOuterPaddingPx,
+  const {
+    innerWidth,
+    innerHeight,
+    bottomTickValues,
+    leftTickValues,
+    getBottomTickPosition,
+    getLeftTickPosition,
+    hasRotation,
+    bottomLegendOffset,
+    leftLegendOffset,
+    shouldRenderZeroLine,
+    zeroPosition,
+  } = getAxisLayerLayout({
+    bottomAxisTickRotation,
+    categoryValues,
+    categoryTickValues,
+    chartHeight,
+    chartWidth,
+    hasNegativeValues,
+    isVertical,
+    margins,
+    valueDomain,
+    valueTickValues,
+    axisConfig,
   });
-
-  const bottomTickValues = isVertical ? categoryTickValues : valueTickValues;
-  const leftTickValues = isVertical ? valueTickValues : categoryTickValues;
-
-  const getBottomTickPosition = (value: string | number, index: number) =>
-    computeBottomTickPosition({
-      value,
-      index,
-      isVertical,
-      categoryValues,
-      categoryIndexMap,
-      categoryScale,
-      valueDomain,
-      innerWidth,
-    });
-
-  const getLeftTickPosition = (value: string | number, index: number) =>
-    computeLeftTickPosition({
-      value,
-      index,
-      isVertical,
-      categoryValues,
-      categoryIndexMap,
-      categoryScale,
-      valueDomain,
-      innerHeight,
-    });
-
-  const hasRotation = bottomAxisTickRotation !== 0;
-
-  const rotatedLabelsExtraMargin = hasRotation
-    ? axisConfig.rotatedLabelsExtraMargin
-    : 0;
-  const bottomLegendOffset = Math.min(
-    axisConfig.bottomAxisLegendOffset + rotatedLabelsExtraMargin,
-    Math.max(margins.bottom - axisConfig.legendOffsetMarginBuffer, 0),
-  );
-
-  const leftLegendOffset =
-    -margins.left + axisConfig.leftAxisLegendOffsetPadding;
-
-  const valueRange = valueDomain.max - valueDomain.min;
-  const shouldRenderZeroLine = hasNegativeValues && valueRange !== 0;
-  const zeroPosition = shouldRenderZeroLine
-    ? isVertical
-      ? innerHeight - ((0 - valueDomain.min) / valueRange) * innerHeight
-      : ((0 - valueDomain.min) / valueRange) * innerWidth
-    : 0;
 
   return (
     <StyledSvgOverlay width={chartWidth} height={chartHeight}>

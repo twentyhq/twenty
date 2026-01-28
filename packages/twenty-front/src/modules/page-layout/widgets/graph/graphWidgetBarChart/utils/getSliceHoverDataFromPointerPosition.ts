@@ -1,14 +1,9 @@
 import { isPointInChartArea } from '@/page-layout/widgets/graph/chart-core/utils/isPointInChartArea';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
+import { type BarChartSliceHoverData } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSliceHoverData';
 import { computeSliceTooltipPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeSliceTooltipPosition';
 import { findSliceAtPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findSliceAtPosition';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-
-type SliceHoverData = {
-  slice: BarChartSlice;
-  offsetLeft: number;
-  offsetTop: number;
-};
 
 type GetSliceHoverDataFromPointerPositionParams = {
   pointerPositionX: number;
@@ -28,7 +23,7 @@ export const getSliceHoverDataFromPointerPosition = ({
   innerHeight,
   slices,
   isVerticalLayout,
-}: GetSliceHoverDataFromPointerPositionParams): SliceHoverData | null => {
+}: GetSliceHoverDataFromPointerPositionParams): BarChartSliceHoverData | null => {
   const relativePointerPositionX = pointerPositionX - margins.left;
   const relativePointerPositionY = pointerPositionY - margins.top;
 
