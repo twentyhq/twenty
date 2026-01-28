@@ -22,6 +22,7 @@ const render: WorkerExports['render'] = async (
   root.connect(batchedConnection);
   document.body.append(root);
 
+  // TODO: Add a way to verify the component URL is valid (signed URL, content hash, etc.)
   const componentModule = await import(context.componentUrl);
 
   const reactRoot = createRoot(root);
