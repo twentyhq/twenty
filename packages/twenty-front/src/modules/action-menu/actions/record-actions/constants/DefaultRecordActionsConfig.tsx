@@ -750,7 +750,6 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'N'],
   },
 
-  // Record Page Layout Actions (for non-Dashboard record pages)
   [RecordPageLayoutSingleRecordActionKeys.EDIT_RECORD_PAGE_LAYOUT]: {
     key: RecordPageLayoutSingleRecordActionKeys.EDIT_RECORD_PAGE_LAYOUT,
     label: msg`Edit Page Layout`,
@@ -770,7 +769,6 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       !selectedRecord?.isRemote &&
       !isDefined(selectedRecord?.deletedAt) &&
       objectPermissions.canUpdateObjectRecords &&
-      // Exclude Dashboard since it has its own edit actions
       objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
     availableOn: [ActionViewType.SHOW_PAGE],
     component: <EditRecordPageLayoutSingleRecordAction />,
@@ -795,7 +793,6 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       !selectedRecord?.isRemote &&
       !isDefined(selectedRecord?.deletedAt) &&
       objectPermissions.canUpdateObjectRecords &&
-      // Exclude Dashboard since it has its own save actions
       objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
     availableOn: [ActionViewType.PAGE_EDIT_MODE],
     component: <SaveRecordPageLayoutSingleRecordAction />,
@@ -819,7 +816,6 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       !selectedRecord?.isRemote &&
       !isDefined(selectedRecord?.deletedAt) &&
       objectPermissions.canUpdateObjectRecords &&
-      // Exclude Dashboard since it has its own cancel actions
       objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
     availableOn: [ActionViewType.PAGE_EDIT_MODE],
     component: <CancelRecordPageLayoutSingleRecordAction />,
