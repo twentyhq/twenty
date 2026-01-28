@@ -49,23 +49,23 @@ yarn app:dev
 そこで次のことができます：
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# アプリケーションに新しいエンティティを追加（ガイド付き）
 yarn entity:add
 
-# Generate a typed Twenty client and workspace entity types
+# 型付きの Twenty クライアントとワークスペースのエンティティ型を生成
 yarn app:generate
 
-# Watch your application's function logs
+# アプリケーションの関数のログを監視
 yarn function:logs
 
-# Execute a function by name
+# 名前で関数を実行
 yarn function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# 現在のワークスペースからアプリケーションをアンインストール
 yarn app:uninstall
 
-# Display commands' help
-yarn help
+# コマンドのヘルプを表示
+yarn help},{
 ```
 
 参考: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) および [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk) の CLI リファレンスページをご覧ください。
@@ -105,12 +105,12 @@ my-twenty-app/
 
 アプリケーションは **コンベンション優先（設定より規約）** のアプローチを採用し、エンティティはファイルのサフィックスで検出されます。 これにより、`src/app/` フォルダー内を柔軟に構成できます：
 
-| ファイルサフィックス              | エンティティタイプ                   |
-| ----------------------- | --------------------------- |
-| `*.object.ts`           | カスタムオブジェクトの定義               |
-| `*.function.ts`         | サーバーレス関数の定義                 |
-| `*.front-component.tsx` | Front component definitions |
-| `*.role.ts`             | ロールの定義                      |
+| ファイルサフィックス              | エンティティタイプ         |
+| ----------------------- | ----------------- |
+| `*.object.ts`           | カスタムオブジェクトの定義     |
+| `*.function.ts`         | サーバーレス関数の定義       |
+| `*.front-component.tsx` | フロントエンドコンポーネントの定義 |
+| `*.role.ts`             | ロールの定義            |
 
 ### サポートされるフォルダー構成
 

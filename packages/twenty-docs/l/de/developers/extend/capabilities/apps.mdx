@@ -49,22 +49,22 @@ yarn app:dev
 Von hier aus können Sie:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Eine neue Entität zu deiner Anwendung hinzufügen (geführt)
 yarn entity:add
 
-# Generate a typed Twenty client and workspace entity types
+# Einen typisierten Twenty-Client und Entitätstypen für den Arbeitsbereich generieren
 yarn app:generate
 
-# Watch your application's function logs
+# Die Funktionsprotokolle deiner Anwendung überwachen
 yarn function:logs
 
-# Execute a function by name
+# Eine Funktion anhand ihres Namens ausführen
 yarn function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# Die Anwendung aus dem aktuellen Arbeitsbereich deinstallieren
 yarn app:uninstall
 
-# Display commands' help
+# Hilfe zu Befehlen anzeigen
 yarn help
 ```
 
@@ -94,11 +94,11 @@ my-twenty-app/
   tsconfig.json
   README.md
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # Erforderlich – Hauptkonfiguration der Anwendung
+    default-function.role.ts       # Standardrolle für serverlose Funktionen
+    hello-world.function.ts        # Beispiel für eine serverlose Funktion
+    hello-world.front-component.tsx # Beispiel für eine Frontend-Komponente
+    // Ihre Entitäten (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### Konvention vor Konfiguration
@@ -109,7 +109,7 @@ Anwendungen verwenden einen Ansatz **Konvention vor Konfiguration**, bei dem Ent
 | ----------------------- | ------------------------------------- |
 | `*.object.ts`           | Benutzerdefinierte Objektdefinitionen |
 | `*.function.ts`         | Definitionen serverloser Funktionen   |
-| `*.front-component.tsx` | Front component definitions           |
+| `*.front-component.tsx` | Definitionen von Frontend-Komponenten |
 | `*.role.ts`             | Rollendefinitionen                    |
 
 ### Unterstützte Ordnerorganisationen

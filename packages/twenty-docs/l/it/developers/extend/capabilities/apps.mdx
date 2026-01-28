@@ -49,22 +49,22 @@ yarn app:dev
 Da qui puoi:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Aggiungi una nuova entità alla tua applicazione (guidata)
 yarn entity:add
 
-# Generate a typed Twenty client and workspace entity types
+# Genera un client Twenty tipizzato e i tipi di entità dell'area di lavoro
 yarn app:generate
 
-# Watch your application's function logs
+# Monitora i log delle funzioni della tua applicazione
 yarn function:logs
 
-# Execute a function by name
+# Esegui una funzione per nome
 yarn function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# Disinstalla l'applicazione dallo spazio di lavoro corrente
 yarn app:uninstall
 
-# Display commands' help
+# Mostra l'aiuto dei comandi
 yarn help
 ```
 
@@ -94,11 +94,11 @@ my-twenty-app/
   tsconfig.json
   README.md
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # Obbligatorio - configurazione principale dell'applicazione
+    default-function.role.ts       # Ruolo predefinito per le funzioni serverless
+    hello-world.function.ts        # Funzione serverless di esempio
+    hello-world.front-component.tsx # Componente front-end di esempio
+    // le tue entità (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### Convenzioni invece della configurazione
@@ -109,7 +109,7 @@ Le applicazioni usano un approccio basato sulle **convenzioni invece della confi
 | ----------------------- | ------------------------------------- |
 | `*.object.ts`           | Definizioni di oggetti personalizzati |
 | `*.function.ts`         | Definizioni di funzioni serverless    |
-| `*.front-component.tsx` | Front component definitions           |
+| `*.front-component.tsx` | Definizioni dei componenti front-end  |
 | `*.role.ts`             | Definizioni di ruoli                  |
 
 ### Organizzazioni di cartelle supportate
