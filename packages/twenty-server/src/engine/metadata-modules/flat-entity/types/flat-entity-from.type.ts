@@ -1,26 +1,42 @@
-import { type CastRecordTypeOrmDatePropertiesToString } from 'src/engine/metadata-modules/flat-entity/types/cast-record-typeorm-date-properties-to-string.type';
-import { type ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-one-to-many-entity-relation-properties.type';
-import { type ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-related-entity-properties.type';
-import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
-import { type NonNullableProperties } from 'src/types/non-nullable-properties.type';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 
-export type SyncableFlatEntity = NonNullableProperties<
-  Omit<SyncableEntity, 'application' | 'applicationId' | 'workspace'>
+import { type AddSuffixToEntityOneToManyProperties } from 'src/engine/metadata-modules/flat-entity/types/add-suffix-to-entity-one-to-many-properties.type';
+import { type CastRecordTypeOrmDatePropertiesToString } from 'src/engine/metadata-modules/flat-entity/types/cast-record-typeorm-date-properties-to-string.type';
+import { type ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-related-entity-properties.type';
+import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
+import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type UniversalFlatEntityExtraProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
+
+export type SyncableFlatEntity = Omit<
+  SyncableEntity,
+  'application' | 'workspace'
 > & {
   id: string;
-  applicationId: string | null;
 };
 
-export type FlatEntityFrom<TEntity> = Omit<
+export type FlatEntityFrom<
+  TEntity,
+  TMetadataName extends AllMetadataName | undefined = undefined,
+> = Omit<
   TEntity,
   | ExtractEntityRelatedEntityProperties<TEntity>
   | keyof CastRecordTypeOrmDatePropertiesToString<TEntity>
 > &
-  CastRecordTypeOrmDatePropertiesToString<TEntity> & {
-    [P in ExtractEntityOneToManyEntityRelationProperties<
-      TEntity,
-      SyncableEntity
-    > &
-      string as `${RemoveSuffix<P, 's'>}Ids`]: string[];
-  };
+  CastRecordTypeOrmDatePropertiesToString<TEntity> &
+  AddSuffixToEntityOneToManyProperties<TEntity, 'ids'> &
+  (TEntity extends SyncableEntity
+    ? {
+        /**
+         * /!\ Under migration the idea is at some point to replace FlatEntity by UniversalFlatEntity /!\
+         * Please avoid any usage or contact me ( prastoin ) before doing so
+         * TODO remove with FlatEntity once it has been fully migrated
+         */
+        __universal?: UniversalFlatEntityExtraProperties<
+          TEntity,
+          TMetadataName extends undefined
+            ? FromMetadataEntityToMetadataName<TEntity>
+            : TMetadataName
+        > & { universalIdentifier: string };
+      }
+    : // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+      {});

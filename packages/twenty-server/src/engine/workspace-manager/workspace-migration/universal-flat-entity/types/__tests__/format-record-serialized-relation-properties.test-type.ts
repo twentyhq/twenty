@@ -18,24 +18,24 @@ type BrandedObjectWithRelation = JsonbProperty<ObjectWithRelation>;
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 type ObjectAssertions = [
-  // Object with SerializedRelation: Id suffix renamed to UniversalIdentifier
+  // Object with SerializedRelation: Id suffix renamed to UniversalIdentifier, value becomes nullable
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<ObjectWithRelation>,
       {
         name: string;
-        targetFieldMetadataUniversalIdentifier: SerializedRelation;
+        targetFieldMetadataUniversalIdentifier: SerializedRelation | null;
       }
     >
   >,
 
-  // Branded object with SerializedRelation: renames property, preserves brand key
+  // Branded object with SerializedRelation: renames property, preserves brand key, value becomes nullable
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<BrandedObjectWithRelation>,
       {
         name: string;
-        targetFieldMetadataUniversalIdentifier: SerializedRelation;
+        targetFieldMetadataUniversalIdentifier: SerializedRelation | null;
         __JsonbPropertyBrand__?: undefined;
       }
     >
@@ -56,6 +56,13 @@ type PrimitiveAssertions = [
   Expect<Equal<FormatRecordSerializedRelationProperties<string>, string>>,
   Expect<Equal<FormatRecordSerializedRelationProperties<number>, number>>,
   Expect<Equal<FormatRecordSerializedRelationProperties<null>, null>>,
+  // SerializedRelation becomes nullable
+  Expect<
+    Equal<
+      FormatRecordSerializedRelationProperties<SerializedRelation>,
+      SerializedRelation | null
+    >
+  >,
 ];
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -66,7 +73,7 @@ type ArrayAssertions = [
       FormatRecordSerializedRelationProperties<ObjectWithRelation[]>,
       {
         name: string;
-        targetFieldMetadataUniversalIdentifier: SerializedRelation;
+        targetFieldMetadataUniversalIdentifier: SerializedRelation | null;
       }[]
     >
   >,
@@ -88,7 +95,7 @@ type ArrayAssertions = [
       FormatRecordSerializedRelationProperties<ObjectWithRelation[][]>,
       {
         name: string;
-        targetFieldMetadataUniversalIdentifier: SerializedRelation;
+        targetFieldMetadataUniversalIdentifier: SerializedRelation | null;
       }[][]
     >
   >,
@@ -102,7 +109,7 @@ type UnionAssertions = [
       FormatRecordSerializedRelationProperties<ObjectWithRelation | null>,
       {
         name: string;
-        targetFieldMetadataUniversalIdentifier: SerializedRelation;
+        targetFieldMetadataUniversalIdentifier: SerializedRelation | null;
       } | null
     >
   >,
@@ -113,7 +120,7 @@ type UnionAssertions = [
       FormatRecordSerializedRelationProperties<(ObjectWithRelation | null)[]>,
       ({
         name: string;
-        targetFieldMetadataUniversalIdentifier: SerializedRelation;
+        targetFieldMetadataUniversalIdentifier: SerializedRelation | null;
       } | null)[]
     >
   >,
@@ -128,14 +135,14 @@ type MultipleRelationsObject = {
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 type MultipleRelationsAssertions = [
-  // Multiple SerializedRelation properties: all get renamed
+  // Multiple SerializedRelation properties: all get renamed and become nullable
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<MultipleRelationsObject>,
       {
         name: string;
-        sourceFieldUniversalIdentifier: SerializedRelation;
-        targetFieldUniversalIdentifier: SerializedRelation;
+        sourceFieldUniversalIdentifier: SerializedRelation | null;
+        targetFieldUniversalIdentifier: SerializedRelation | null;
         regularId: string;
       }
     >
@@ -190,7 +197,7 @@ type NestedObjectAssertions = [
       {
         name: string;
         nested: {
-          fieldMetadataUniversalIdentifier: SerializedRelation;
+          fieldMetadataUniversalIdentifier: SerializedRelation | null;
         };
       }
     >
@@ -204,7 +211,7 @@ type NestedObjectAssertions = [
         name: string;
         level1: {
           level2: {
-            targetUniversalIdentifier: SerializedRelation;
+            targetUniversalIdentifier: SerializedRelation | null;
           };
         };
       }
@@ -217,9 +224,9 @@ type NestedObjectAssertions = [
       FormatRecordSerializedRelationProperties<MixedNestedObject>,
       {
         name: string;
-        directRelationUniversalIdentifier: SerializedRelation;
+        directRelationUniversalIdentifier: SerializedRelation | null;
         nested: {
-          nestedRelationUniversalIdentifier: SerializedRelation;
+          nestedRelationUniversalIdentifier: SerializedRelation | null;
           plainField: string;
         };
       }
@@ -233,7 +240,7 @@ type NestedObjectAssertions = [
       {
         name: string;
         nested: {
-          relationUniversalIdentifier: SerializedRelation;
+          relationUniversalIdentifier: SerializedRelation | null;
         } | null;
       }
     >
@@ -246,9 +253,85 @@ type NestedObjectAssertions = [
       {
         name: string;
         items: {
-          itemRelationUniversalIdentifier: SerializedRelation;
+          itemRelationUniversalIdentifier: SerializedRelation | null;
         }[];
       }
+    >
+  >,
+];
+
+// JSON Schema-like structures with Record<string, X> properties
+// These should NOT have their 'properties' key renamed
+type JsonSchemaLikeObject = {
+  type: 'object';
+  properties: Record<string, { type: string; description?: string }>;
+  required?: string[];
+};
+
+type JsonSchemaUnion =
+  | { type: 'text' }
+  | {
+      type: 'json';
+      schema: JsonSchemaLikeObject;
+    };
+
+type BrandedJsonSchemaUnion = JsonbProperty<JsonSchemaUnion>;
+
+// eslint-disable-next-line unused-imports/no-unused-vars
+type RecordPropertyAssertions = [
+  // Object with 'properties' key containing Record<string, X>:
+  // The 'properties' key should NOT be renamed to 'propertiesUniversalIdentifier'
+  Expect<
+    Equal<
+      FormatRecordSerializedRelationProperties<JsonSchemaLikeObject>,
+      {
+        type: 'object';
+        properties: Record<string, { type: string; description?: string }>;
+        required?: string[];
+      }
+    >
+  >,
+
+  // Union type with JSON schema: properties inside schema should stay as 'properties'
+  Expect<
+    Equal<
+      FormatRecordSerializedRelationProperties<JsonSchemaUnion>,
+      | { type: 'text' }
+      | {
+          type: 'json';
+          schema: {
+            type: 'object';
+            properties: Record<string, { type: string; description?: string }>;
+            required?: string[];
+          };
+        }
+    >
+  >,
+
+  // Branded JSON schema union: should preserve structure, only add brand
+  Expect<
+    Equal<
+      FormatRecordSerializedRelationProperties<BrandedJsonSchemaUnion>,
+      | { type: 'text'; __JsonbPropertyBrand__?: undefined }
+      | {
+          type: 'json';
+          schema: {
+            type: 'object';
+            properties: Record<string, { type: string; description?: string }>;
+            required?: string[];
+          };
+          __JsonbPropertyBrand__?: undefined;
+        }
+    >
+  >,
+
+  // Plain Record<string, X> should pass through unchanged
+  Expect<
+    Equal<
+      FormatRecordSerializedRelationProperties<
+        Record<string, { value: number }>
+      >,
+      Record<string, { value: number }>
     >
   >,
 ];

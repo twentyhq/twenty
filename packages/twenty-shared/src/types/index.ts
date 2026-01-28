@@ -107,6 +107,7 @@ export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
 export type { IsEmptyRecord } from './IsEmptyRecord.type';
 export type { IsExactly } from './IsExactly';
+export type { IsSerializedRelation } from './IsSerializedRelation.type';
 export type { LogicFunctionEvent } from './LogicFunctionEvent';
 export { MessageParticipantRole } from './MessageParticipantRole';
 export type { ModifiedProperties } from './ModifiedProperties';

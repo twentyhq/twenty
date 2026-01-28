@@ -2,10 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
 import { getRecordImageIdentifier } from 'src/engine/core-modules/record-crud/utils/get-record-image-identifier.util';
@@ -356,18 +358,21 @@ export class NavigationMenuItemService {
     authContext: WorkspaceAuthContext,
     workspaceId: string,
   ): Promise<string | undefined> {
-    if (isDefined(authContext.apiKey)) {
+    if (isApiKeyAuthContext(authContext)) {
       return this.apiKeyRoleService.getRoleIdForApiKeyId(
         authContext.apiKey.id,
         workspaceId,
       );
     }
 
-    if (isDefined(authContext.application?.defaultLogicFunctionRoleId)) {
+    if (
+      isApplicationAuthContext(authContext) &&
+      isDefined(authContext.application.defaultLogicFunctionRoleId)
+    ) {
       return authContext.application.defaultLogicFunctionRoleId;
     }
 
-    if (isDefined(authContext.userWorkspaceId)) {
+    if (isUserAuthContext(authContext)) {
       try {
         return await this.userRoleService.getRoleIdForUserWorkspace({
           userWorkspaceId: authContext.userWorkspaceId,
