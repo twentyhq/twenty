@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -155,6 +155,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       );
 
     const favoriteFolders = await favoriteFolderRepository.find({
+      where: { deletedAt: IsNull() },
       order: { position: 'ASC' },
     });
 
@@ -241,6 +242,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       );
 
     const favorites = await favoriteRepository.find({
+      where: { deletedAt: IsNull() },
       order: { position: 'ASC' },
     });
 
