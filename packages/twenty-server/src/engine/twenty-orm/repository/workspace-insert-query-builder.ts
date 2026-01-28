@@ -168,7 +168,7 @@ export class WorkspaceInsertQueryBuilder<
         : [this.expressionMap.valuesSet];
 
       const filesFieldDiffByEntityIndex =
-        await this.filesFieldSync.prepareFilesFieldSyncBeforeInsert(
+        this.filesFieldSync.prepareFilesFieldSyncBeforeInsert(
           entities as QueryDeepPartialEntityWithNestedRelationFields<T>[],
           mainAliasTarget,
         );
