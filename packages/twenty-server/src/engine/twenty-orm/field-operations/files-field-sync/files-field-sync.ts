@@ -324,7 +324,10 @@ export class FilesFieldSync {
       if (!isDefined(existingFile)) {
         toAdd.push(newFile);
       } else {
-        toUpdate.push(newFile);
+        toUpdate.push({
+          ...existingFile,
+          label: newFile.label,
+        });
       }
     }
 
@@ -499,8 +502,6 @@ export class FilesFieldSync {
               },
             );
           }
-
-          file.extension = path.extname(fileEntity.path);
         }
       }
     }
@@ -517,25 +518,37 @@ export class FilesFieldSync {
     fileIdToApplicationId: Map<string, string>,
   ): Promise<void> {
     if (fileIds.toAdd.size > 0) {
-      for (const fileId of fileIds.toAdd) {
-        const applicationId = fileIdToApplicationId.get(fileId);
+      const fileIdsByApplicationId = Array.from(fileIds.toAdd).reduce(
+        (acc, fileId) => {
+          const applicationId = fileIdToApplicationId.get(fileId);
 
-        if (!applicationId) {
-          throw new TwentyORMException(
-            `Application ID not found for file ${fileId}`,
-            TwentyORMExceptionCode.INVALID_INPUT,
-          );
-        }
+          if (!applicationId) {
+            throw new TwentyORMException(
+              `Application ID not found for file ${fileId}`,
+              TwentyORMExceptionCode.INVALID_INPUT,
+            );
+          }
 
-        await this.fileRepository
-          .createQueryBuilder()
-          .update()
-          .set({
-            settings: () => `jsonb_set(settings, '{isTemporaryFile}', 'false')`,
+          acc[applicationId] = [...(acc[applicationId] || []), fileId];
+
+          return acc;
+        },
+        {} as Record<string, string[]>,
+      );
+
+      for (const [applicationId, fileIds] of Object.entries(
+        fileIdsByApplicationId,
+      )) {
+        await this.fileRepository.update(
+          { id: In(fileIds) },
+          {
+            settings: {
+              isTemporaryFile: false,
+              toDelete: false,
+            },
             applicationId,
-          })
-          .where('id = :id', { id: fileId })
-          .execute();
+          },
+        );
       }
     }
 

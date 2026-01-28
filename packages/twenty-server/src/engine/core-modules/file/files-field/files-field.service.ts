@@ -4,6 +4,11 @@ import { FileFolder } from 'twenty-shared/types';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
+import {
+  FilesFieldException,
+  FilesFieldExceptionCode,
+} from './files-field.exception';
+
 @Injectable()
 export class FilesFieldService {
   constructor(private readonly fileStorageService: FileStorageService) {}
@@ -15,10 +20,17 @@ export class FilesFieldService {
     fileId: string;
     workspaceId: string;
   }): Promise<void> {
-    await this.fileStorageService.deleteByFileId({
-      fileId,
-      workspaceId,
-      fileFolder: FileFolder.FilesField,
-    });
+    try {
+      await this.fileStorageService.deleteByFileId({
+        fileId,
+        workspaceId,
+        fileFolder: FileFolder.FilesField,
+      });
+    } catch (error) {
+      throw new FilesFieldException(
+        `Failed to delete file ${fileId}: ${error.message}`,
+        FilesFieldExceptionCode.FILE_DELETION_FAILED,
+      );
+    }
   }
 }
