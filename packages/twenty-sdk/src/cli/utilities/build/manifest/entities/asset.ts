@@ -4,7 +4,7 @@ import { type AssetManifest } from 'twenty-shared/application';
 
 import { type EntityBuildResult } from '@/cli/utilities/build/manifest/entities/entity-interface';
 
-const ASSETS_DIR = 'assets';
+export const ASSETS_DIR = 'assets';
 
 export class AssetEntityBuilder {
   async build(appPath: string): Promise<EntityBuildResult<AssetManifest>> {

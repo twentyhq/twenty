@@ -10,7 +10,6 @@ import { type FileFolder } from 'twenty-shared/types';
 import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
 import type { Location } from 'esbuild';
 import { type DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
-import { relative } from 'path';
 import { type EventName } from 'chokidar/handler.js';
 
 export type DevModeOrchestratorOptions = {
@@ -81,17 +80,15 @@ export class DevModeOrchestrator {
       return;
     }
 
-    const normalizedSourcePath = this.normalizeFilePath(sourcePath);
-
     this.uiStateManager.addEvent({
-      message: `Change detected: ${normalizedSourcePath}`,
+      message: `Change detected: ${sourcePath}`,
       status: 'info',
     });
 
     if (event === 'unlink') {
-      this.uiStateManager.removeEntity(normalizedSourcePath);
+      this.uiStateManager.removeEntity(sourcePath);
     } else {
-      this.uiStateManager.updateFileStatus(normalizedSourcePath, 'building');
+      this.uiStateManager.updateFileStatus(sourcePath, 'building');
     }
 
     this.scheduleSync();
@@ -140,10 +137,6 @@ export class DevModeOrchestrator {
     }
 
     this.scheduleSync();
-  }
-
-  private normalizeFilePath(filePath: string): string {
-    return relative(this.appPath, filePath);
   }
 
   private uploadFile(

@@ -4,8 +4,7 @@ import * as fs from 'fs-extra';
 import path from 'path';
 import { FileFolder } from 'twenty-shared/types';
 import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
-
-const ASSETS_DIR = 'assets';
+import { ASSETS_DIR } from '@/cli/utilities/build/manifest/entities/asset';
 
 export type AssetWatcherOptions = {
   appPath: string;
@@ -15,19 +14,16 @@ export type AssetWatcherOptions = {
     sourcePath: string;
     checksum: string;
   }) => void;
-  handleAssetDeleted?: (sourcePath: string) => void;
 };
 
 export class AssetWatcher {
   private appPath: string;
   private watcher: FSWatcher | null = null;
   private handleFileBuilt: AssetWatcherOptions['handleFileBuilt'];
-  private handleAssetDeleted?: AssetWatcherOptions['handleAssetDeleted'];
 
   constructor(options: AssetWatcherOptions) {
     this.appPath = options.appPath;
     this.handleFileBuilt = options.handleFileBuilt;
-    this.handleAssetDeleted = options.handleAssetDeleted;
   }
 
   async start(): Promise<void> {
@@ -91,7 +87,5 @@ export class AssetWatcher {
     const absoluteBuiltPath = path.join(this.appPath, builtPath);
 
     await fs.remove(absoluteBuiltPath);
-
-    this.handleAssetDeleted?.(sourcePath);
   }
 }
