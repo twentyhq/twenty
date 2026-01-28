@@ -27,6 +27,7 @@ import { FlatViewFilterGroupValidatorService } from 'src/engine/workspace-manage
 import { FlatViewFilterValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service';
 import { FlatViewGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service';
 import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service';
+import { FlatWebhookValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service';
 
 @Module({
   imports: [FeatureFlagModule],
@@ -57,6 +58,7 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatRowLevelPermissionPredicateValidatorService,
     FlatRowLevelPermissionPredicateGroupValidatorService,
     FlatFrontComponentValidatorService,
+    FlatWebhookValidatorService,
   ],
   exports: [
     FlatViewValidatorService,
@@ -84,6 +86,7 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatRowLevelPermissionPredicateValidatorService,
     FlatRowLevelPermissionPredicateGroupValidatorService,
     FlatFrontComponentValidatorService,
+    FlatWebhookValidatorService,
   ],
 })
 export class WorkspaceMigrationBuilderValidatorsModule {}

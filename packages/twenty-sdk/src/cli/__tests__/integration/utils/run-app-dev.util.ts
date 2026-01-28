@@ -16,7 +16,7 @@ export const runAppDev = (
   return runCliCommand({
     command: 'app:dev',
     args: [appPath],
-    waitForOutput: ['[dev-mode] ✓ Synced'],
+    waitForOutput: ['✓ Synced'],
     timeout,
   });
 };

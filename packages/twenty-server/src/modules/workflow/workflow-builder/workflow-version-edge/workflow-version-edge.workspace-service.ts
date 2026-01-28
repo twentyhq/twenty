@@ -45,7 +45,6 @@ export class WorkflowVersionEdgeWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -96,6 +95,7 @@ export class WorkflowVersionEdgeWorkspaceService {
           });
         }
       },
+      authContext,
     );
   }
 
@@ -115,7 +115,6 @@ export class WorkflowVersionEdgeWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -166,6 +165,7 @@ export class WorkflowVersionEdgeWorkspaceService {
           });
         }
       },
+      authContext,
     );
   }
 

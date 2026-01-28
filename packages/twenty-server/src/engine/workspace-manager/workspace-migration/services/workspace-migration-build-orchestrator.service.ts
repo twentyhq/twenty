@@ -38,6 +38,7 @@ import { WorkspaceMigrationViewFilterGroupActionsBuilderService } from 'src/engi
 import { WorkspaceMigrationViewFilterActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter/workspace-migration-view-filter-actions-builder.service';
 import { WorkspaceMigrationViewGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/workspace-migration-view-group-actions-builder.service';
 import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/workspace-migration-view-actions-builder.service';
+import { WorkspaceMigrationWebhookActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/workspace-migration-webhook-actions-builder.service';
 
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
@@ -66,6 +67,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationRowLevelPermissionPredicateActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
     private readonly workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
     private readonly workspaceMigrationFrontComponentActionsBuilderService: WorkspaceMigrationFrontComponentActionsBuilderService,
+    private readonly workspaceMigrationWebhookActionsBuilderService: WorkspaceMigrationWebhookActionsBuilderService,
   ) {}
 
   private setupOptimisticCache({
@@ -168,6 +170,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatPageLayoutWidgetMaps,
       flatPageLayoutTabMaps,
       flatFrontComponentMaps,
+      flatWebhookMaps,
     } = fromToAllFlatEntityMaps;
 
     if (isDefined(flatObjectMetadataMaps)) {
@@ -1049,6 +1052,37 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatWebhookMaps)) {
+      const { from: fromFlatWebhookMaps, to: toFlatWebhookMaps } =
+        flatWebhookMaps;
+
+      const webhookResult =
+        await this.workspaceMigrationWebhookActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatWebhookMaps,
+            to: toFlatWebhookMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: undefined,
+            workspaceId,
+          },
+        );
+
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            webhookResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
+
+      if (webhookResult.status === 'fail') {
+        orchestratorFailureReport.webhook.push(...webhookResult.errors);
+      } else {
+        orchestratorActionsReport.webhook = webhookResult.actions;
+      }
+    }
+
     const allErrors = Object.values(orchestratorFailureReport);
 
     if (allErrors.some((report) => report.length > 0)) {
@@ -1199,6 +1233,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.frontComponent.delete,
           ...aggregatedOrchestratorActionsReport.frontComponent.create,
           ...aggregatedOrchestratorActionsReport.frontComponent.update,
+          ///
+
+          // Webhooks
+          ...aggregatedOrchestratorActionsReport.webhook.delete,
+          ...aggregatedOrchestratorActionsReport.webhook.create,
+          ...aggregatedOrchestratorActionsReport.webhook.update,
           ///
         ],
         workspaceId,

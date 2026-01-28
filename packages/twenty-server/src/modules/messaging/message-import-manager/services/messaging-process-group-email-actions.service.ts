@@ -30,25 +30,22 @@ export class MessagingProcessGroupEmailActionsService {
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const messageChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-            workspaceId,
-            'messageChannel',
-          );
-
-        await messageChannelRepository.update(
-          { id: messageChannel.id },
-          { pendingGroupEmailsAction },
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+          workspaceId,
+          'messageChannel',
         );
 
-        this.logger.log(
-          `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Marked message channel as pending group emails action: ${pendingGroupEmailsAction}`,
-        );
-      },
-    );
+      await messageChannelRepository.update(
+        { id: messageChannel.id },
+        { pendingGroupEmailsAction },
+      );
+
+      this.logger.log(
+        `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Marked message channel as pending group emails action: ${pendingGroupEmailsAction}`,
+      );
+    }, authContext);
   }
 
   async processGroupEmailActions(
@@ -70,61 +67,58 @@ export class MessagingProcessGroupEmailActionsService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workspaceDataSource =
-          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceDataSource =
+        await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-        await workspaceDataSource?.transaction(
-          async (transactionManager: WorkspaceEntityManager) => {
-            try {
-              const messageChannelRepository =
-                await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+      await workspaceDataSource?.transaction(
+        async (transactionManager: WorkspaceEntityManager) => {
+          try {
+            const messageChannelRepository =
+              await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+                workspaceId,
+                'messageChannel',
+              );
+
+            switch (pendingGroupEmailsAction) {
+              case MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION:
+                await this.handleGroupEmailsDeletion(
                   workspaceId,
-                  'messageChannel',
+                  messageChannel.id,
+                  transactionManager,
                 );
-
-              switch (pendingGroupEmailsAction) {
-                case MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION:
-                  await this.handleGroupEmailsDeletion(
-                    workspaceId,
-                    messageChannel.id,
-                    transactionManager,
-                  );
-                  break;
-                case MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_IMPORT:
-                  await this.handleGroupEmailsImport(
-                    workspaceId,
-                    messageChannel.id,
-                    transactionManager,
-                  );
-                  break;
-              }
-
-              await messageChannelRepository.update(
-                { id: messageChannel.id },
-                {
-                  pendingGroupEmailsAction:
-                    MessageChannelPendingGroupEmailsAction.NONE,
-                },
-                transactionManager,
-              );
-
-              this.logger.log(
-                `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Reset pendingGroupEmailsAction to NONE`,
-              );
-            } catch (error) {
-              this.logger.error(
-                `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Error processing group email action: ${error.message}`,
-                error.stack,
-              );
-              throw error;
+                break;
+              case MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_IMPORT:
+                await this.handleGroupEmailsImport(
+                  workspaceId,
+                  messageChannel.id,
+                  transactionManager,
+                );
+                break;
             }
-          },
-        );
-      },
-    );
+
+            await messageChannelRepository.update(
+              { id: messageChannel.id },
+              {
+                pendingGroupEmailsAction:
+                  MessageChannelPendingGroupEmailsAction.NONE,
+              },
+              transactionManager,
+            );
+
+            this.logger.log(
+              `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Reset pendingGroupEmailsAction to NONE`,
+            );
+          } catch (error) {
+            this.logger.error(
+              `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Error processing group email action: ${error.message}`,
+              error.stack,
+            );
+            throw error;
+          }
+        },
+      );
+    }, authContext);
   }
 
   private async handleGroupEmailsDeletion(

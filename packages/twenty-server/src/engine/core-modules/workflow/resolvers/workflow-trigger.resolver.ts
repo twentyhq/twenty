@@ -77,7 +77,6 @@ export class WorkflowTriggerResolver {
 
     const workspaceMember =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -92,6 +91,7 @@ export class WorkflowTriggerResolver {
             },
           });
         },
+        authContext,
       );
 
     return this.workflowTriggerWorkspaceService.runWorkflowVersion({

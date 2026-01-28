@@ -3,8 +3,8 @@
 exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with children first (most manyToOne relations first) 1`] = `
 [
   "rowLevelPermissionPredicate",
-  "viewFilter",
   "navigationMenuItem",
+  "viewFilter",
   "pageLayoutWidget",
   "viewField",
   "commandMenuItem",
@@ -22,6 +22,7 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "skill",
   "view",
   "viewFilterGroup",
+  "webhook",
   "fieldMetadata",
   "role",
   "serverlessFunction",

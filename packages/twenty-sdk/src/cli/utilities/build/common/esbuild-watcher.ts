@@ -137,7 +137,14 @@ export class EsbuildWatcher implements RestartableWatcher {
           build.onEnd(async (result) => {
             try {
               if (result.errors.length > 0) {
-                await this.onBuildError?.(result.errors.map((err) => err.text));
+                if (!result.errors[0].text.includes('Could not resolve')) {
+                  await this.onBuildError?.(
+                    result.errors.map((err) => ({
+                      error: err.text,
+                      location: err.location,
+                    })),
+                  );
+                }
                 return;
               }
 

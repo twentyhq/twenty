@@ -391,7 +391,6 @@ export class UserResolver {
 
     const workspaceMemberToDelete =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -406,6 +405,7 @@ export class UserResolver {
             },
           });
         },
+        authContext,
       );
 
     if (!isDefined(workspaceMemberToDelete)) {

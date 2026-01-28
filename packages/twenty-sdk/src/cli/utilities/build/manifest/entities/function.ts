@@ -1,6 +1,5 @@
 import { glob } from 'fast-glob';
 import { type ServerlessFunctionManifest } from 'twenty-shared/application';
-import { createLogger } from '@/cli/utilities/build/common/logger';
 
 import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
 import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
@@ -10,8 +9,6 @@ import {
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
-
-const logger = createLogger('manifest-builder');
 
 type ExtractedFunctionManifest = Omit<
   ServerlessFunctionManifest,
@@ -144,18 +141,6 @@ export class FunctionEntityBuilder
             }
             break;
         }
-      }
-    }
-  }
-
-  display(functions: ServerlessFunctionManifest[]): void {
-    logger.success(`✓ Found ${functions.length} function(s)`);
-
-    if (functions.length > 0) {
-      logger.log('📍 Entry points:');
-      for (const fn of functions) {
-        const name = fn.name || fn.universalIdentifier;
-        logger.log(`   - ${name} (${fn.sourceHandlerPath})`);
       }
     }
   }

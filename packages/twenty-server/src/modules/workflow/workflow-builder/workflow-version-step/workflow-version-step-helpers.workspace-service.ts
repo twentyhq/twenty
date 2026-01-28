@@ -46,28 +46,25 @@ export class WorkflowVersionStepHelpersWorkspaceService {
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          workspaceId,
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const updateData: Partial<WorkflowVersionWorkspaceEntity> = {};
+      const updateData: Partial<WorkflowVersionWorkspaceEntity> = {};
 
-        if (steps !== undefined) {
-          updateData.steps = steps;
-        }
+      if (steps !== undefined) {
+        updateData.steps = steps;
+      }
 
-        if (trigger !== undefined) {
-          updateData.trigger = trigger;
-        }
+      if (trigger !== undefined) {
+        updateData.trigger = trigger;
+      }
 
-        await workflowVersionRepository.update(workflowVersionId, updateData);
-      },
-    );
+      await workflowVersionRepository.update(workflowVersionId, updateData);
+    }, authContext);
   }
 }

@@ -1,36 +1,35 @@
-import { getOutputByPrefix } from '@/cli/__tests__/integration/utils/get-output-by-prefix.util';
 import { type RunCliCommandResult } from '@/cli/__tests__/integration/utils/run-cli-command.util';
+import { sanitizeAnsi } from '@/cli/__tests__/integration/utils/sanitize-ansi.util';
 
 export const defineConsoleOutputTests = (
   getResult: () => RunCliCommandResult,
 ): void => {
   describe('console output', () => {
     it('should contain init messages', () => {
-      const output = getOutputByPrefix(getResult().output, 'init');
+      const output = sanitizeAnsi(getResult().output);
 
-      expect(output).toContain(
-        '[init] 🚀 Starting Twenty Application Development Mode',
-      );
-      expect(output).toContain('[init] 📁 App Path:');
+      expect(output).toContain('Application');
+      expect(output).toContain('Name: Loading...');
+      expect(output).toContain('Status: o Idle');
     });
 
     it('should contain dev-mode build messages', () => {
-      const output = getOutputByPrefix(getResult().output, 'dev-mode');
+      const output = sanitizeAnsi(getResult().output);
 
-      expect(output).toContain('[dev-mode] Building manifest...');
-      expect(output).toContain('[dev-mode] Successfully built manifest');
+      expect(output).toContain('Building manifest');
+      expect(output).toContain('Successfully built manifest');
     });
 
     it('should contain dev-mode function build messages', () => {
-      const output = getOutputByPrefix(getResult().output, 'dev-mode');
+      const output = sanitizeAnsi(getResult().output);
 
-      expect(output).toContain('[dev-mode] ✓ Successfully built');
+      expect(output).toContain('Successfully built');
     });
 
     it('should contain dev-mode sync messages', () => {
-      const output = getOutputByPrefix(getResult().output, 'dev-mode');
+      const output = sanitizeAnsi(getResult().output);
 
-      expect(output).toContain('[dev-mode] ✓ Synced');
+      expect(output).toContain('✓ Synced');
     });
   });
 };

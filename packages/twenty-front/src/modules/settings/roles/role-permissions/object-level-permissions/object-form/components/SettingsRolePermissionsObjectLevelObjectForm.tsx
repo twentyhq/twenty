@@ -60,9 +60,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     ) ?? false;
 
   const isRowLevelPermissionPredicatesEnabled =
-    featureFlagsMap[
-      FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-    ] && isRLSBillingEntitlementEnabled;
+    featureFlagsMap[FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED];
 
   const objectMetadataItem = objectMetadata.objectMetadataItem;
 
@@ -170,6 +168,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           <SettingsRolePermissionsObjectLevelRecordLevelSection
             objectMetadataItem={objectMetadataItem}
             roleId={roleId}
+            hasOrganizationPlan={isRLSBillingEntitlementEnabled}
           />
         )}
       </SettingsPageContainer>

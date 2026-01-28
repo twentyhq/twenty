@@ -76,11 +76,9 @@ export class WorkflowCleanWorkflowRunsJob {
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workflowRunsToDelete = await this.coreDataSource.query(
-          `
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowRunsToDelete = await this.coreDataSource.query(
+        `
           WITH ranked_runs AS (
             SELECT id,
                    ROW_NUMBER() OVER (
@@ -95,23 +93,22 @@ export class WorkflowCleanWorkflowRunsJob {
           WHERE rn > ${NUMBER_OF_WORKFLOW_RUNS_TO_KEEP}
              OR "createdAt" < NOW() - INTERVAL '14 days';
         `,
+      );
+
+      const workflowRunRepository =
+        await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          WorkflowRunWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
         );
 
-        const workflowRunRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            WorkflowRunWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
+      for (const workflowRunToDelete of workflowRunsToDelete) {
+        await workflowRunRepository.delete(workflowRunToDelete.id);
+      }
 
-        for (const workflowRunToDelete of workflowRunsToDelete) {
-          await workflowRunRepository.delete(workflowRunToDelete.id);
-        }
-
-        this.logger.log(
-          `Deleted ${workflowRunsToDelete.length} workflow runs for workspace ${workspaceId}`,
-        );
-      },
-    );
+      this.logger.log(
+        `Deleted ${workflowRunsToDelete.length} workflow runs for workspace ${workspaceId}`,
+      );
+    }, authContext);
   }
 }

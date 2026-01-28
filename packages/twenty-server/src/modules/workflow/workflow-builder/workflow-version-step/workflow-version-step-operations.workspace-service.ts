@@ -533,7 +533,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const responseKeys = Object.keys(response);
 
@@ -598,6 +597,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           return acc;
         }, {});
       },
+      authContext,
     );
   }
 
@@ -727,7 +727,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -777,6 +776,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
         return emptyNodeStep;
       },
+      authContext,
     );
   }
 
@@ -797,7 +797,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -878,6 +877,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           branches,
         };
       },
+      authContext,
     );
   }
 
