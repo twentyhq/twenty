@@ -1,4 +1,4 @@
-import { Equal, Expect } from '@/testing';
+import { type Equal, type Expect } from '@/testing';
 import { type ExtractSerializedRelationProperties } from '@/types/ExtractSerializedRelationProperties.type';
 import { type SerializedRelation } from '@/types/SerializedRelation.type';
 
@@ -66,4 +66,20 @@ type Assertions = [
       'rel'
     >
   >,
+
+  // Types with string index signatures should return never
+  // (string index signatures shouldn't be mistaken for the brand)
+  Expect<
+    Equal<ExtractSerializedRelationProperties<Record<string, string>>, never>
+  >,
+  Expect<
+    Equal<
+      ExtractSerializedRelationProperties<
+        Record<string, { type: string; description?: string }>
+      >,
+      never
+    >
+  >,
 ];
+
+

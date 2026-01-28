@@ -81,7 +81,6 @@ export class MicrosoftAPIsService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const connectedAccountRepository =
           await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
@@ -247,6 +246,7 @@ export class MicrosoftAPIsService {
 
         return newOrExistingConnectedAccountId;
       },
+      authContext,
     );
   }
 }

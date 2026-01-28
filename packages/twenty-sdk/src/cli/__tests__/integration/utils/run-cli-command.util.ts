@@ -36,7 +36,6 @@ export const runCliCommand = (
         env: {
           ...process.env,
           FORCE_COLOR: '0',
-          TWENTY_SKIP_SERVER_CHECK: 'true',
         },
       },
     );

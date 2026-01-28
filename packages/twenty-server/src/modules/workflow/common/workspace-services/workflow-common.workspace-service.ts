@@ -7,7 +7,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -41,7 +41,7 @@ export type ObjectMetadataInfo = {
 export class WorkflowCommonWorkspaceService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly serverlessFunctionService: ServerlessFunctionService,
+    private readonly logicFunctionService: LogicFunctionService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -62,7 +62,6 @@ export class WorkflowCommonWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -79,6 +78,7 @@ export class WorkflowCommonWorkspaceService {
 
         return this.getValidWorkflowVersionOrFail(workflowVersion);
       },
+      authContext,
     );
   }
 
@@ -165,78 +165,75 @@ export class WorkflowCommonWorkspaceService {
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          workspaceId,
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const workflowRunRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-            workspaceId,
-            'workflowRun',
-            { shouldBypassPermissionChecks: true },
-          );
+      const workflowRunRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+          workspaceId,
+          'workflowRun',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const workflowAutomatedTriggerRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-            workspaceId,
-            'workflowAutomatedTrigger',
-            { shouldBypassPermissionChecks: true },
-          );
+      const workflowAutomatedTriggerRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+          workspaceId,
+          'workflowAutomatedTrigger',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        for (const workflowId of workflowIds) {
-          switch (operation) {
-            case 'delete':
-              await workflowAutomatedTriggerRepository.softDelete({
-                workflowId,
-              });
+      for (const workflowId of workflowIds) {
+        switch (operation) {
+          case 'delete':
+            await workflowAutomatedTriggerRepository.softDelete({
+              workflowId,
+            });
 
-              await workflowRunRepository.softDelete({
-                workflowId,
-              });
+            await workflowRunRepository.softDelete({
+              workflowId,
+            });
 
-              await workflowVersionRepository.softDelete({
-                workflowId,
-              });
+            await workflowVersionRepository.softDelete({
+              workflowId,
+            });
 
-              break;
-            case 'restore':
-              await workflowAutomatedTriggerRepository.restore({
-                workflowId,
-              });
+            break;
+          case 'restore':
+            await workflowAutomatedTriggerRepository.restore({
+              workflowId,
+            });
 
-              await workflowRunRepository.restore({
-                workflowId,
-              });
+            await workflowRunRepository.restore({
+              workflowId,
+            });
 
-              await workflowVersionRepository.restore({
-                workflowId,
-              });
+            await workflowVersionRepository.restore({
+              workflowId,
+            });
 
-              break;
-          }
-
-          await this.deactivateVersionOnDelete({
-            workflowVersionRepository,
-            workflowId,
-            workspaceId,
-            operation,
-          });
-
-          await this.handleServerlessFunctionSubEntities({
-            workflowVersionRepository,
-            workflowId,
-            workspaceId,
-            operation,
-          });
+            break;
         }
-      },
-    );
+
+        await this.deactivateVersionOnDelete({
+          workflowVersionRepository,
+          workflowId,
+          workspaceId,
+          operation,
+        });
+
+        await this.handleLogicFunctionSubEntities({
+          workflowVersionRepository,
+          workflowId,
+          workspaceId,
+          operation,
+        });
+      }
+    }, authContext);
   }
 
   private async deactivateVersionOnDelete({
@@ -295,7 +292,7 @@ export class WorkflowCommonWorkspaceService {
     }
   }
 
-  async handleServerlessFunctionSubEntities({
+  async handleLogicFunctionSubEntities({
     workflowVersionRepository,
     workflowId,
     workspaceId,
@@ -318,21 +315,21 @@ export class WorkflowCommonWorkspaceService {
         if (step.type === WorkflowActionType.CODE) {
           switch (operation) {
             case 'delete':
-              await this.serverlessFunctionService.deleteOneServerlessFunction({
-                id: step.settings.input.serverlessFunctionId,
+              await this.logicFunctionService.deleteOneLogicFunction({
+                id: step.settings.input.logicFunctionId,
                 workspaceId,
                 softDelete: true,
               });
               break;
             case 'restore':
-              await this.serverlessFunctionService.restoreOneServerlessFunction(
-                step.settings.input.serverlessFunctionId,
+              await this.logicFunctionService.restoreOneLogicFunction(
+                step.settings.input.logicFunctionId,
                 workspaceId,
               );
               break;
             case 'destroy':
-              await this.serverlessFunctionService.deleteOneServerlessFunction({
-                id: step.settings.input.serverlessFunctionId,
+              await this.logicFunctionService.deleteOneLogicFunction({
+                id: step.settings.input.logicFunctionId,
                 workspaceId,
                 softDelete: false,
               });

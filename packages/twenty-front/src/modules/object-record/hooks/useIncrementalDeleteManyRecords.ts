@@ -1,4 +1,5 @@
 import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
+import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/hooks/useRemoveNavigationMenuItemByTargetRecordId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -16,11 +17,10 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
-import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/hooks/useRemoveNavigationMenuItemByTargetRecordId';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback } from 'react';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { sleep } from '~/utils/sleep';
 
 const DEFAULT_DELAY_BETWEEN_MUTATIONS_MS = 50;
@@ -252,6 +252,7 @@ export const useIncrementalDeleteManyRecords = <T>({
       objectMetadataItem,
       operation: {
         type: 'delete-many',
+        deletedRecordIds: allDeletedRecordIds,
       },
     });
 

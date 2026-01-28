@@ -1,10 +1,11 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a created entity 1`] = `
 {
   "createdFlatEntityMaps": {
     "byId": {
       "field-id-1": {
+        "__universal": {},
         "applicationId": "application-id-1",
         "calendarViewIds": [],
         "createdAt": "2024-01-01T00:00:00.000Z",
@@ -69,6 +70,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a dele
   "deletedFlatEntityMaps": {
     "byId": {
       "field-id-1": {
+        "__universal": {},
         "applicationId": "application-id-1",
         "calendarViewIds": [],
         "createdAt": "2024-01-01T00:00:00.000Z",
@@ -151,6 +153,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
   "createdFlatEntityMaps": {
     "byId": {
       "field-id-3": {
+        "__universal": {},
         "applicationId": "application-id-1",
         "calendarViewIds": [],
         "createdAt": "2024-01-01T00:00:00.000Z",
@@ -197,6 +200,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
   "deletedFlatEntityMaps": {
     "byId": {
       "field-id-2": {
+        "__universal": {},
         "applicationId": "application-id-1",
         "calendarViewIds": [],
         "createdAt": "2024-01-01T00:00:00.000Z",

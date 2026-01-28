@@ -206,38 +206,35 @@ const createWorkflow = async ({
 }): Promise<string> => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
-  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-    authContext,
-    async () => {
-      const workflowRepository =
-        await deps.globalWorkspaceOrmManager.getRepository(
-          context.workspaceId,
-          'workflow',
-          context.rolePermissionConfig,
-        );
+  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    const workflowRepository =
+      await deps.globalWorkspaceOrmManager.getRepository(
+        context.workspaceId,
+        'workflow',
+        context.rolePermissionConfig,
+      );
 
-      const workflowPosition =
-        await deps.recordPositionService.buildRecordPosition({
-          value: 'first',
-          objectMetadata: {
-            isCustom: false,
-            nameSingular: 'workflow',
-          },
-          workspaceId: context.workspaceId,
-        });
+    const workflowPosition =
+      await deps.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: {
+          isCustom: false,
+          nameSingular: 'workflow',
+        },
+        workspaceId: context.workspaceId,
+      });
 
-      const workflow = {
-        id: uuidv4(),
-        name,
-        statuses: [WorkflowStatus.DRAFT],
-        position: workflowPosition,
-      };
+    const workflow = {
+      id: uuidv4(),
+      name,
+      statuses: [WorkflowStatus.DRAFT],
+      position: workflowPosition,
+    };
 
-      await workflowRepository.insert(workflow);
+    await workflowRepository.insert(workflow);
 
-      return workflow.id;
-    },
-  );
+    return workflow.id;
+  }, authContext);
 };
 
 const createWorkflowVersion = async ({
@@ -255,41 +252,38 @@ const createWorkflowVersion = async ({
 }): Promise<string> => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
-  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-    authContext,
-    async () => {
-      const workflowVersionRepository =
-        await deps.globalWorkspaceOrmManager.getRepository(
-          context.workspaceId,
-          'workflowVersion',
-          context.rolePermissionConfig,
-        );
+  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    const workflowVersionRepository =
+      await deps.globalWorkspaceOrmManager.getRepository(
+        context.workspaceId,
+        'workflowVersion',
+        context.rolePermissionConfig,
+      );
 
-      const versionPosition =
-        await deps.recordPositionService.buildRecordPosition({
-          value: 'first',
-          objectMetadata: {
-            isCustom: false,
-            nameSingular: 'workflowVersion',
-          },
-          workspaceId: context.workspaceId,
-        });
+    const versionPosition =
+      await deps.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: {
+          isCustom: false,
+          nameSingular: 'workflowVersion',
+        },
+        workspaceId: context.workspaceId,
+      });
 
-      const workflowVersion = {
-        id: uuidv4(),
-        workflowId,
-        name: 'v1',
-        status: WorkflowVersionStatus.DRAFT,
-        trigger,
-        steps,
-        position: versionPosition,
-      };
+    const workflowVersion = {
+      id: uuidv4(),
+      workflowId,
+      name: 'v1',
+      status: WorkflowVersionStatus.DRAFT,
+      trigger,
+      steps,
+      position: versionPosition,
+    };
 
-      await workflowVersionRepository.insert(workflowVersion);
+    await workflowVersionRepository.insert(workflowVersion);
 
-      return workflowVersion.id;
-    },
-  );
+    return workflowVersion.id;
+  }, authContext);
 };
 
 const updateWorkflowStatus = async ({
@@ -305,20 +299,17 @@ const updateWorkflowStatus = async ({
 }) => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
-  await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-    authContext,
-    async () => {
-      const workflowRepository =
-        await deps.globalWorkspaceOrmManager.getRepository(
-          context.workspaceId,
-          'workflow',
-          context.rolePermissionConfig,
-        );
+  await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    const workflowRepository =
+      await deps.globalWorkspaceOrmManager.getRepository(
+        context.workspaceId,
+        'workflow',
+        context.rolePermissionConfig,
+      );
 
-      await workflowRepository.update(workflowId, {
-        statuses: [WorkflowStatus.ACTIVE],
-        lastPublishedVersionId: workflowVersionId,
-      });
-    },
-  );
+    await workflowRepository.update(workflowId, {
+      statuses: [WorkflowStatus.ACTIVE],
+      lastPublishedVersionId: workflowVersionId,
+    });
+  }, authContext);
 };

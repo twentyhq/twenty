@@ -292,21 +292,21 @@ yarn command:prod cron:workflow:automated-cron-trigger
   **Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
 </Warning>
 
-## Funcții serverless
+## Funcții logice
 
-Twenty acceptă funcții serverless pentru fluxuri de lucru și logică personalizată. Mediul de execuție este configurat prin variabila de mediu `SERVERLESS_TYPE`.
+Twenty acceptă funcții logice pentru fluxuri de lucru și logică personalizată. Mediul de execuție este configurat prin variabila de mediu `SERVERLESS_TYPE`.
 
 <Warning>
-  **Atenționare de securitate:** Driverul serverless local (`SERVERLESS_TYPE=LOCAL`) rulează codul direct pe gazdă într-un proces Node.js, fără sandboxing. Ar trebui utilizat doar pentru cod de încredere, în dezvoltare. Pentru implementări de producție care gestionează cod neverificat, recomandăm cu tărie utilizarea `SERVERLESS_TYPE=LAMBDA` sau `SERVERLESS_TYPE=DISABLED`.
+  **Atenționare de securitate:** Driverul local (`SERVERLESS_TYPE=LOCAL`) rulează codul direct pe gazdă într-un proces Node.js, fără sandboxing. Ar trebui utilizat doar pentru cod de încredere, în dezvoltare. Pentru implementări de producție care gestionează cod neverificat, recomandăm cu tărie utilizarea `SERVERLESS_TYPE=LAMBDA` sau `SERVERLESS_TYPE=DISABLED`.
 </Warning>
 
 ### Drivere disponibile
 
-| Driver     | Variabilă de mediu         | Caz de utilizare                          | Nivel de securitate                    |
-| ---------- | -------------------------- | ----------------------------------------- | -------------------------------------- |
-| Dezactivat | `SERVERLESS_TYPE=DISABLED` | Dezactivează complet funcțiile serverless | N/A                                    |
-| Local      | `SERVERLESS_TYPE=LOCAL`    | Dezvoltare și medii de încredere          | Scăzut (fără sandboxing)               |
-| Lambda     | `SERVERLESS_TYPE=LAMBDA`   | Producție cu cod neverificat              | Ridicat (izolare la nivel de hardware) |
+| Driver     | Variabilă de mediu         | Caz de utilizare                      | Nivel de securitate                    |
+| ---------- | -------------------------- | ------------------------------------- | -------------------------------------- |
+| Dezactivat | `SERVERLESS_TYPE=DISABLED` | Dezactivează complet funcțiile logice | N/A                                    |
+| Local      | `SERVERLESS_TYPE=LOCAL`    | Dezvoltare și medii de încredere      | Scăzut (fără sandboxing)               |
+| Lambda     | `SERVERLESS_TYPE=LAMBDA`   | Producție cu cod neverificat          | Ridicat (izolare la nivel de hardware) |
 
 ### Configurație recomandată
 
@@ -326,12 +326,12 @@ SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
 SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**Pentru a dezactiva funcțiile serverless:**
+**Pentru a dezactiva funcțiile logice:**
 
 ```bash
 SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  Când se utilizează `SERVERLESS_TYPE=DISABLED`, orice încercare de a executa o funcție serverless va returna o eroare. Acest lucru este util dacă doriți să rulați Twenty fără capabilități de funcții serverless.
+  Când se utilizează `SERVERLESS_TYPE=DISABLED`, orice încercare de a executa o funcție logică va returna o eroare. Acest lucru este util dacă doriți să rulați Twenty fără capabilități de funcții logice.
 </Note>

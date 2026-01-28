@@ -410,26 +410,23 @@ export class PageLayoutService {
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const dashboardRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            'dashboard',
-            { shouldBypassPermissionChecks: true },
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const dashboardRepository =
+        await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          'dashboard',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const dashboards = await dashboardRepository.find({
-          where: {
-            pageLayoutId,
-          },
-        });
+      const dashboards = await dashboardRepository.find({
+        where: {
+          pageLayoutId,
+        },
+      });
 
-        for (const dashboard of dashboards) {
-          await dashboardRepository.delete(dashboard.id);
-        }
-      },
-    );
+      for (const dashboard of dashboards) {
+        await dashboardRepository.delete(dashboard.id);
+      }
+    }, authContext);
   }
 }

@@ -11,7 +11,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -21,6 +20,7 @@ import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permis
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity('objectMetadata')
 @Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [
@@ -100,6 +100,7 @@ export class ObjectMetadataEntity
   shortcut: string | null;
 
   // TODO: This should not be nullable - legacy field introduced when label identifier was nullable
+  // TODO: This should be a joinColumn and we should have a FK on this too
   @Column({ nullable: true, type: 'uuid' })
   labelIdentifierFieldMetadataId: string | null;
 

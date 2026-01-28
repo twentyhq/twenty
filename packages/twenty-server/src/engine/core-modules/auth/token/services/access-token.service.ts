@@ -84,7 +84,6 @@ export class AccessTokenService {
 
       tokenWorkspaceMemberId =
         await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          authContext,
           async () => {
             const workspaceMemberRepository =
               await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -112,6 +111,7 @@ export class AccessTokenService {
 
             return workspaceMember.id;
           },
+          authContext,
         );
     }
     const userWorkspace = await this.userWorkspaceRepository.findOne({

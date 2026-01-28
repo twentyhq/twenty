@@ -18,5 +18,6 @@ export type UpdateFieldAction =
 
 export type DeleteFieldAction =
   BaseDeleteWorkspaceMigrationAction<'fieldMetadata'> & {
+    // Remove this
     objectMetadataId: string;
   };

@@ -20,7 +20,7 @@ describe('RecordPositionService', () => {
       getRepository: jest.fn().mockResolvedValue(mockRepository),
       executeInWorkspaceContext: jest
         .fn()
-        .mockImplementation((_authContext: any, fn: () => any) => fn()),
+        .mockImplementation((fn: () => any, _authContext?: any) => fn()),
     } as unknown as jest.Mocked<GlobalWorkspaceOrmManager>;
 
     const module: TestingModule = await Test.createTestingModule({
