@@ -13,6 +13,7 @@ type FromNavigationMenuItemEntityToFlatNavigationMenuItemArgs = {
   applicationIdToUniversalIdentifierMap: Map<string, string>;
   objectMetadataIdToUniversalIdentifierMap: Map<string, string>;
   navigationMenuItemIdToUniversalIdentifierMap: Map<string, string>;
+  viewIdToUniversalIdentifierMap: Map<string, string>;
 };
 
 export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
@@ -20,6 +21,7 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
   applicationIdToUniversalIdentifierMap,
   objectMetadataIdToUniversalIdentifierMap,
   navigationMenuItemIdToUniversalIdentifierMap,
+  viewIdToUniversalIdentifierMap,
 }: FromNavigationMenuItemEntityToFlatNavigationMenuItemArgs): FlatNavigationMenuItem => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(
@@ -65,6 +67,21 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
     }
   }
 
+  let viewUniversalIdentifier: string | null = null;
+
+  if (isDefined(navigationMenuItemEntity.viewId)) {
+    viewUniversalIdentifier =
+      viewIdToUniversalIdentifierMap.get(navigationMenuItemEntity.viewId) ??
+      null;
+
+    if (!isDefined(viewUniversalIdentifier)) {
+      throw new FlatEntityMapsException(
+        `View with id ${navigationMenuItemEntity.viewId} not found for navigationMenuItem ${navigationMenuItemEntity.id}`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+  }
+
   return {
     id: navigationMenuItemEntity.id,
     userWorkspaceId: navigationMenuItemEntity.userWorkspaceId,
@@ -84,6 +101,7 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
       applicationUniversalIdentifier,
       targetObjectMetadataUniversalIdentifier,
       folderUniversalIdentifier,
+      viewUniversalIdentifier,
     },
   };
 };
