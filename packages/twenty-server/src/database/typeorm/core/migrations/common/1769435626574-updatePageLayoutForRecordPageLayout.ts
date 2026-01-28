@@ -10,7 +10,7 @@ export class UpdatePageLayoutForRecordPageLayout1769435626574
       `ALTER TABLE "core"."pageLayoutWidget" ADD "conditionalDisplay" jsonb`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."pageLayout" ADD "defaultTabIdToFocusOnMobileAndSidePanel" uuid`,
+      `ALTER TABLE "core"."pageLayout" ADD "defaultTabToFocusOnMobileAndSidePanelId" uuid`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."pageLayoutTab" ADD "icon" character varying`,
@@ -22,7 +22,7 @@ export class UpdatePageLayoutForRecordPageLayout1769435626574
       `ALTER TABLE "core"."pageLayoutTab" ADD "layoutMode" "core"."pageLayoutTab_layoutmode_enum" NOT NULL DEFAULT 'GRID'`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."pageLayout" ADD CONSTRAINT "FK_f48f2ddccb74426c3d1a150de85" FOREIGN KEY ("defaultTabIdToFocusOnMobileAndSidePanel") REFERENCES "core"."pageLayoutTab"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."pageLayout" ADD CONSTRAINT "FK_f48f2ddccb74426c3d1a150de85" FOREIGN KEY ("defaultTabToFocusOnMobileAndSidePanelId") REFERENCES "core"."pageLayoutTab"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
     );
   }
 
@@ -38,7 +38,7 @@ export class UpdatePageLayoutForRecordPageLayout1769435626574
       `ALTER TABLE "core"."pageLayoutTab" DROP COLUMN "icon"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."pageLayout" DROP COLUMN "defaultTabIdToFocusOnMobileAndSidePanel"`,
+      `ALTER TABLE "core"."pageLayout" DROP COLUMN "defaultTabToFocusOnMobileAndSidePanelId"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."pageLayoutWidget" DROP COLUMN "conditionalDisplay"`,

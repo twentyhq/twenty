@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { SerializedRelation } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
@@ -29,7 +30,7 @@ export class PageLayoutDTO {
   tabs?: PageLayoutTabDTO[] | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  defaultTabIdToFocusOnMobileAndSidePanel?: string | null;
+  defaultTabToFocusOnMobileAndSidePanelId?: SerializedRelation;
 
   @Field()
   createdAt: Date;
