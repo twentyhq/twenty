@@ -9,7 +9,7 @@ import { Like, Repository } from 'typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileInfo } from 'src/engine/core-modules/file/types/file-settings.types';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 
 @Injectable()
 //TODO: Implement storage driver interface when removing v1
@@ -60,7 +60,7 @@ export class FileStorageService {
     applicationUniversalIdentifier: string;
     workspaceId: string;
     fileId?: string;
-    settings: FileInfo;
+    settings: FileSettings;
   }): Promise<FileEntity> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
