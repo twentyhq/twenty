@@ -15,15 +15,16 @@ export const HtmlElementConfigZ = z.object({
 
 export const HtmlElementConfigArrayZ = z.array(HtmlElementConfigZ);
 
+export const ComponentSchemaZ = z.object({
+  name: z.string().min(1),
+  tagName: z.string().min(1),
+  customElementName: z.string().min(1),
+  properties: z.record(z.string(), PropertySchemaZ),
+  events: z.array(z.string()).readonly(),
+  isHtmlElement: z.boolean(),
+  htmlTag: z.string().min(1),
+});
+
 export type PropertySchema = z.infer<typeof PropertySchemaZ>;
 export type HtmlElementConfig = z.infer<typeof HtmlElementConfigZ>;
-
-export type ComponentSchema = {
-  name: string;
-  tagName: string;
-  customElementName: string;
-  properties: Record<string, PropertySchema>;
-  events: readonly string[];
-  isHtmlElement: boolean;
-  htmlTag: string;
-};
+export type ComponentSchema = z.infer<typeof ComponentSchemaZ>;

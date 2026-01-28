@@ -5,12 +5,28 @@ import {
   type WriterFunction,
 } from 'ts-morph';
 
+import {
+  CUSTOM_ELEMENT_NAMES,
+  INTERNAL_ELEMENT_CLASSES,
+  TYPE_NAMES,
+} from './constants';
 import { type ComponentSchema, type PropertySchema } from './schemas';
 import {
   addFileHeader,
+  generatePropertiesConfig,
   schemaTypeToConstructor,
   schemaTypeToTs,
 } from './utils';
+
+type ElementGenerationOptions = {
+  useSharedEvents: boolean;
+  useSharedPropertiesConfig: boolean;
+};
+
+type ComponentWithSpecificProps = {
+  component: ComponentSchema;
+  specificProperties: Record<string, PropertySchema>;
+};
 
 const getElementSpecificProperties = (
   component: ComponentSchema,
@@ -43,7 +59,7 @@ const generateCommonPropertiesType = (
 
   sourceFile.addTypeAlias({
     isExported: true,
-    name: 'HtmlCommonProperties',
+    name: TYPE_NAMES.COMMON_PROPERTIES,
     type: (writer) => {
       writer.block(() => {
         for (const entry of entries) {
@@ -64,7 +80,7 @@ const generateCommonEventsType = (
 
   sourceFile.addTypeAlias({
     isExported: true,
-    name: 'HtmlCommonEvents',
+    name: TYPE_NAMES.COMMON_EVENTS,
     type: (writer) => {
       writer.block(() => {
         for (const event of events) {
@@ -78,7 +94,7 @@ const generateCommonEventsType = (
     declarationKind: VariableDeclarationKind.Const,
     declarations: [
       {
-        name: 'HTML_COMMON_EVENTS_ARRAY',
+        name: TYPE_NAMES.COMMON_EVENTS_ARRAY,
         initializer: (writer) => {
           writer.write('[');
           writer.newLine();
@@ -102,7 +118,7 @@ const generateCommonPropertiesConfig = (
     declarationKind: VariableDeclarationKind.Const,
     declarations: [
       {
-        name: 'HTML_COMMON_PROPERTIES_CONFIG',
+        name: TYPE_NAMES.COMMON_PROPERTIES_CONFIG,
         initializer: (writer) => {
           writer.block(() => {
             for (const [name, schema] of Object.entries(commonProperties)) {
@@ -129,7 +145,7 @@ const generateElementPropertyType = (
       isExported: true,
       name: `${component.name}Properties`,
       type: (writer) => {
-        writer.write('HtmlCommonProperties & ');
+        writer.write(`${TYPE_NAMES.COMMON_PROPERTIES} & `);
         writer.block(() => {
           for (const entry of entries) {
             writer.writeLine(`${entry};`);
@@ -140,16 +156,11 @@ const generateElementPropertyType = (
   }
 };
 
-const generatePropertiesConfigWriter = (
+const createPropertiesConfigWriter = (
   properties: Record<string, PropertySchema>,
 ): WriterFunction => {
   return (writer) => {
-    writer.block(() => {
-      for (const [name, schema] of Object.entries(properties)) {
-        const constructorType = schemaTypeToConstructor(schema.type);
-        writer.writeLine(`'${name}': { type: ${constructorType} },`);
-      }
-    });
+    writer.write(generatePropertiesConfig(properties));
   };
 };
 
@@ -157,9 +168,9 @@ const generateElementDefinition = (
   sourceFile: SourceFile,
   component: ComponentSchema,
   specificProperties: Record<string, PropertySchema>,
-  useSharedEvents: boolean,
-  useSharedPropertiesConfig: boolean,
+  options: ElementGenerationOptions,
 ): void => {
+  const { useSharedEvents, useSharedPropertiesConfig } = options;
   const hasEvents = component.events.length > 0;
   const hasSpecificProps = Object.keys(specificProperties).length > 0;
   const hasProps = Object.keys(component.properties).length > 0;
@@ -167,11 +178,13 @@ const generateElementDefinition = (
   const propsType = hasSpecificProps
     ? `${component.name}Properties`
     : hasProps
-      ? 'HtmlCommonProperties'
-      : 'Record<string, never>';
+      ? TYPE_NAMES.COMMON_PROPERTIES
+      : TYPE_NAMES.EMPTY_RECORD;
 
   const eventsType =
-    hasEvents && useSharedEvents ? 'HtmlCommonEvents' : 'Record<string, never>';
+    hasEvents && useSharedEvents
+      ? TYPE_NAMES.COMMON_EVENTS
+      : TYPE_NAMES.EMPTY_RECORD;
 
   sourceFile.addVariableStatement({
     isExported: true,
@@ -203,7 +216,9 @@ const generateElementDefinition = (
               if (hasSpecificProps) {
                 writer.write('properties: ');
                 writer.block(() => {
-                  writer.writeLine('...HTML_COMMON_PROPERTIES_CONFIG,');
+                  writer.writeLine(
+                    `...${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`,
+                  );
                   for (const [name, schema] of Object.entries(
                     specificProperties,
                   )) {
@@ -218,11 +233,13 @@ const generateElementDefinition = (
                 writer.write(',');
                 writer.newLine();
               } else if (useSharedPropertiesConfig) {
-                writer.write('properties: HTML_COMMON_PROPERTIES_CONFIG,');
+                writer.write(
+                  `properties: ${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`,
+                );
                 writer.newLine();
               } else {
                 writer.write('properties: ');
-                generatePropertiesConfigWriter(component.properties)(writer);
+                createPropertiesConfigWriter(component.properties)(writer);
                 writer.write(',');
                 writer.newLine();
               }
@@ -230,7 +247,7 @@ const generateElementDefinition = (
             if (hasEvents) {
               writer.write(
                 useSharedEvents
-                  ? 'events: [...HTML_COMMON_EVENTS_ARRAY],'
+                  ? `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}],`
                   : `events: [${component.events.map((event) => `'${event}'`).join(', ')}],`,
               );
               writer.newLine();
@@ -253,10 +270,10 @@ const generateCustomElementRegistrations = (
     );
   }
   sourceFile.addStatements(
-    `customElements.define('remote-root', RemoteRootElement);`,
+    `customElements.define('${CUSTOM_ELEMENT_NAMES.ROOT}', ${INTERNAL_ELEMENT_CLASSES.ROOT});`,
   );
   sourceFile.addStatements(
-    `customElements.define('remote-fragment', RemoteFragmentElement);`,
+    `customElements.define('${CUSTOM_ELEMENT_NAMES.FRAGMENT}', ${INTERNAL_ELEMENT_CLASSES.FRAGMENT});`,
   );
 };
 
@@ -275,16 +292,29 @@ const generateTagNameMapDeclaration = (
           );
         }
         writer.writeLine(
-          `'remote-root': InstanceType<typeof RemoteRootElement>;`,
+          `'${CUSTOM_ELEMENT_NAMES.ROOT}': InstanceType<typeof ${INTERNAL_ELEMENT_CLASSES.ROOT}>;`,
         );
         writer.writeLine(
-          `'remote-fragment': InstanceType<typeof RemoteFragmentElement>;`,
+          `'${CUSTOM_ELEMENT_NAMES.FRAGMENT}': InstanceType<typeof ${INTERNAL_ELEMENT_CLASSES.FRAGMENT}>;`,
         );
       });
       writer.writeLine('}');
     });
     writer.writeLine('}');
   });
+};
+
+const prepareComponentsWithSpecificProps = (
+  components: ComponentSchema[],
+  commonPropertyNames: Set<string>,
+): ComponentWithSpecificProps[] => {
+  return components.map((component) => ({
+    component,
+    specificProperties: getElementSpecificProperties(
+      component,
+      commonPropertyNames,
+    ),
+  }));
 };
 
 export const generateRemoteElements = (
@@ -298,18 +328,28 @@ export const generateRemoteElements = (
   });
 
   const useSharedEvents = commonEvents.length > 0;
+  const useSharedPropertiesConfig = Object.keys(commonProperties).length > 0;
+
+  const options: ElementGenerationOptions = {
+    useSharedEvents,
+    useSharedPropertiesConfig,
+  };
 
   sourceFile.addImportDeclaration({
     moduleSpecifier: '@remote-dom/core/elements',
     namedImports: [
       'createRemoteElement',
-      'RemoteRootElement',
-      'RemoteFragmentElement',
+      INTERNAL_ELEMENT_CLASSES.ROOT,
+      INTERNAL_ELEMENT_CLASSES.FRAGMENT,
       { name: 'RemoteEvent', isTypeOnly: true },
     ],
   });
 
   const commonPropertyNames = new Set(Object.keys(commonProperties));
+  const componentsWithProps = prepareComponentsWithSpecificProps(
+    components,
+    commonPropertyNames,
+  );
 
   generateCommonPropertiesType(sourceFile, commonProperties);
 
@@ -317,37 +357,27 @@ export const generateRemoteElements = (
     generateCommonEventsType(sourceFile, commonEvents);
   }
 
-  const useSharedPropertiesConfig = Object.keys(commonProperties).length > 0;
   if (useSharedPropertiesConfig) {
     generateCommonPropertiesConfig(sourceFile, commonProperties);
   }
 
-  for (const component of components) {
-    const specificProps = getElementSpecificProperties(
-      component,
-      commonPropertyNames,
-    );
-    generateElementPropertyType(sourceFile, component, specificProps);
-  }
-
-  for (const component of components) {
-    const specificProps = getElementSpecificProperties(
-      component,
-      commonPropertyNames,
-    );
+  for (const { component, specificProperties } of componentsWithProps) {
+    generateElementPropertyType(sourceFile, component, specificProperties);
     generateElementDefinition(
       sourceFile,
       component,
-      specificProps,
-      useSharedEvents,
-      useSharedPropertiesConfig,
+      specificProperties,
+      options,
     );
   }
 
   generateCustomElementRegistrations(sourceFile, components);
 
   sourceFile.addExportDeclaration({
-    namedExports: ['RemoteRootElement', 'RemoteFragmentElement'],
+    namedExports: [
+      INTERNAL_ELEMENT_CLASSES.ROOT,
+      INTERNAL_ELEMENT_CLASSES.FRAGMENT,
+    ],
   });
 
   generateTagNameMapDeclaration(sourceFile, components);

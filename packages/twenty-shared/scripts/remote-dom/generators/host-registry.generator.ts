@@ -1,5 +1,6 @@
 import type { Project, SourceFile } from 'ts-morph';
 
+import { CUSTOM_ELEMENT_NAMES } from './constants';
 import { type ComponentSchema } from './schemas';
 import { addFileHeader, addStatement } from './utils';
 
@@ -80,7 +81,7 @@ const generateRegistryMap = (components: ComponentSchema[]): string => {
 
   return `export const componentRegistry = new Map<string, ReturnType<typeof createRemoteComponentRenderer>>([
 ${entries}
-  ['remote-fragment', RemoteFragmentRenderer],
+  ['${CUSTOM_ELEMENT_NAMES.FRAGMENT}', RemoteFragmentRenderer],
 ]);`;
 };
 

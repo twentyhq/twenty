@@ -4,23 +4,23 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IndentationText, Project, QuoteKind } from 'ts-morph';
 
-import { ALLOWED_HTML_ELEMENTS } from '../src/front-component/constants/AllowedHtmlElements';
-import { COMMON_HTML_EVENTS } from '../src/front-component/constants/CommonHtmlEvents';
-import { EVENT_TO_REACT } from '../src/front-component/constants/EventToReact';
-import { HTML_COMMON_PROPERTIES } from '../src/front-component/constants/HtmlCommonProperties';
+import { ALLOWED_HTML_ELEMENTS } from '../../src/front-component/constants/AllowedHtmlElements';
+import { COMMON_HTML_EVENTS } from '../../src/front-component/constants/CommonHtmlEvents';
+import { EVENT_TO_REACT } from '../../src/front-component/constants/EventToReact';
+import { HTML_COMMON_PROPERTIES } from '../../src/front-component/constants/HtmlCommonProperties';
 
 import {
   type ComponentSchema,
-  type PropertySchema,
   extractHtmlTag,
   generateHostRegistry,
   generateRemoteComponents,
   generateRemoteElements,
   HtmlElementConfigArrayZ,
+  OUTPUT_FILES,
 } from './generators';
 
 const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname);
-const PACKAGE_PATH = path.resolve(SCRIPT_DIR, '..');
+const PACKAGE_PATH = path.resolve(SCRIPT_DIR, '../..');
 const FRONT_COMPONENT_PATH = path.join(PACKAGE_PATH, 'src/front-component');
 const HOST_GENERATED_DIR = path.join(FRONT_COMPONENT_PATH, 'host/generated');
 const REMOTE_GENERATED_DIR = path.join(
@@ -28,19 +28,31 @@ const REMOTE_GENERATED_DIR = path.join(
   'remote/generated',
 );
 
-const getHtmlElementSchemas = (): ComponentSchema[] => {
-  const validatedElements = HtmlElementConfigArrayZ.parse(
-    ALLOWED_HTML_ELEMENTS,
-  );
+const formatZodError = (error: {
+  issues: { path: PropertyKey[]; message: string }[];
+}): string => {
+  return error.issues
+    .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
+    .join('\n');
+};
 
-  return validatedElements.map((element) => ({
+const getHtmlElementSchemas = (): ComponentSchema[] => {
+  const result = HtmlElementConfigArrayZ.safeParse(ALLOWED_HTML_ELEMENTS);
+
+  if (!result.success) {
+    throw new Error(
+      `Invalid HTML element configuration:\n${formatZodError(result.error)}`,
+    );
+  }
+
+  return result.data.map((element) => ({
     name: element.name,
     tagName: element.name,
     customElementName: element.tag,
     properties: {
       ...HTML_COMMON_PROPERTIES,
       ...element.properties,
-    } as Record<string, PropertySchema>,
+    },
     events: COMMON_HTML_EVENTS,
     isHtmlElement: true,
     htmlTag: extractHtmlTag(element.tag),
@@ -115,7 +127,7 @@ const main = (): void => {
   );
   writeGeneratedFile(
     HOST_GENERATED_DIR,
-    'host-component-registry.ts',
+    OUTPUT_FILES.HOST_REGISTRY,
     hostRegistry.getFullText(),
   );
 
@@ -128,14 +140,14 @@ const main = (): void => {
   );
   writeGeneratedFile(
     REMOTE_GENERATED_DIR,
-    'remote-elements.ts',
+    OUTPUT_FILES.REMOTE_ELEMENTS,
     remoteElements.getFullText(),
   );
 
   const remoteComponents = generateRemoteComponents(project, htmlElements);
   writeGeneratedFile(
     REMOTE_GENERATED_DIR,
-    'remote-components.ts',
+    OUTPUT_FILES.REMOTE_COMPONENTS,
     remoteComponents.getFullText(),
   );
 

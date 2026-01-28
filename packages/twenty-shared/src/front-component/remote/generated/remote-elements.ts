@@ -81,67 +81,6 @@ const HTML_COMMON_PROPERTIES_CONFIG = {
   'aria-hidden': { type: Boolean },
   'data-testid': { type: String },
 };
-
-export type HtmlAProperties = HtmlCommonProperties & {
-  href?: string;
-  target?: string;
-  rel?: string;
-};
-export type HtmlImgProperties = HtmlCommonProperties & {
-  src?: string;
-  alt?: string;
-  width?: number;
-  height?: number;
-};
-export type HtmlFormProperties = HtmlCommonProperties & {
-  action?: string;
-  method?: string;
-};
-export type HtmlLabelProperties = HtmlCommonProperties & {
-  htmlFor?: string;
-};
-export type HtmlInputProperties = HtmlCommonProperties & {
-  type?: string;
-  name?: string;
-  value?: string;
-  placeholder?: string;
-  disabled?: boolean;
-  checked?: boolean;
-  readOnly?: boolean;
-};
-export type HtmlTextareaProperties = HtmlCommonProperties & {
-  name?: string;
-  value?: string;
-  placeholder?: string;
-  disabled?: boolean;
-  readOnly?: boolean;
-  rows?: number;
-  cols?: number;
-};
-export type HtmlSelectProperties = HtmlCommonProperties & {
-  name?: string;
-  value?: string;
-  disabled?: boolean;
-  multiple?: boolean;
-};
-export type HtmlOptionProperties = HtmlCommonProperties & {
-  value?: string;
-  disabled?: boolean;
-  selected?: boolean;
-};
-export type HtmlButtonProperties = HtmlCommonProperties & {
-  type?: string;
-  disabled?: boolean;
-};
-export type HtmlThProperties = HtmlCommonProperties & {
-  colSpan?: number;
-  rowSpan?: number;
-};
-export type HtmlTdProperties = HtmlCommonProperties & {
-  colSpan?: number;
-  rowSpan?: number;
-};
-
 export const HtmlDivElement = createRemoteElement<
   HtmlCommonProperties,
   Record<string, never>,
@@ -340,6 +279,13 @@ export const HtmlBlockquoteElement = createRemoteElement<
   properties: HTML_COMMON_PROPERTIES_CONFIG,
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type HtmlAProperties = HtmlCommonProperties & {
+  href?: string;
+  target?: string;
+  rel?: string;
+};
+
 export const HtmlAElement = createRemoteElement<
   HtmlAProperties,
   Record<string, never>,
@@ -354,6 +300,14 @@ export const HtmlAElement = createRemoteElement<
   },
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type HtmlImgProperties = HtmlCommonProperties & {
+  src?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+};
+
 export const HtmlImgElement = createRemoteElement<
   HtmlImgProperties,
   Record<string, never>,
@@ -396,6 +350,12 @@ export const HtmlLiElement = createRemoteElement<
   properties: HTML_COMMON_PROPERTIES_CONFIG,
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type HtmlFormProperties = HtmlCommonProperties & {
+  action?: string;
+  method?: string;
+};
+
 export const HtmlFormElement = createRemoteElement<
   HtmlFormProperties,
   Record<string, never>,
@@ -409,6 +369,11 @@ export const HtmlFormElement = createRemoteElement<
   },
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type HtmlLabelProperties = HtmlCommonProperties & {
+  htmlFor?: string;
+};
+
 export const HtmlLabelElement = createRemoteElement<
   HtmlLabelProperties,
   Record<string, never>,
@@ -421,6 +386,17 @@ export const HtmlLabelElement = createRemoteElement<
   },
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type HtmlInputProperties = HtmlCommonProperties & {
+  type?: string;
+  name?: string;
+  value?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  checked?: boolean;
+  readOnly?: boolean;
+};
+
 export const HtmlInputElement = createRemoteElement<
   HtmlInputProperties,
   Record<string, never>,
@@ -439,6 +415,17 @@ export const HtmlInputElement = createRemoteElement<
   },
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type HtmlTextareaProperties = HtmlCommonProperties & {
+  name?: string;
+  value?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  readOnly?: boolean;
+  rows?: number;
+  cols?: number;
+};
+
 export const HtmlTextareaElement = createRemoteElement<
   HtmlTextareaProperties,
   Record<string, never>,
@@ -457,6 +444,14 @@ export const HtmlTextareaElement = createRemoteElement<
   },
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type HtmlSelectProperties = HtmlCommonProperties & {
+  name?: string;
+  value?: string;
+  disabled?: boolean;
+  multiple?: boolean;
+};
+
 export const HtmlSelectElement = createRemoteElement<
   HtmlSelectProperties,
   Record<string, never>,
@@ -472,6 +467,13 @@ export const HtmlSelectElement = createRemoteElement<
   },
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type HtmlOptionProperties = HtmlCommonProperties & {
+  value?: string;
+  disabled?: boolean;
+  selected?: boolean;
+};
+
 export const HtmlOptionElement = createRemoteElement<
   HtmlOptionProperties,
   Record<string, never>,
@@ -486,6 +488,12 @@ export const HtmlOptionElement = createRemoteElement<
   },
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type HtmlButtonProperties = HtmlCommonProperties & {
+  type?: string;
+  disabled?: boolean;
+};
+
 export const HtmlButtonElement = createRemoteElement<
   HtmlButtonProperties,
   Record<string, never>,
@@ -544,6 +552,12 @@ export const HtmlTrElement = createRemoteElement<
   properties: HTML_COMMON_PROPERTIES_CONFIG,
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type HtmlThProperties = HtmlCommonProperties & {
+  colSpan?: number;
+  rowSpan?: number;
+};
+
 export const HtmlThElement = createRemoteElement<
   HtmlThProperties,
   Record<string, never>,
@@ -557,6 +571,12 @@ export const HtmlThElement = createRemoteElement<
   },
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type HtmlTdProperties = HtmlCommonProperties & {
+  colSpan?: number;
+  rowSpan?: number;
+};
+
 export const HtmlTdElement = createRemoteElement<
   HtmlTdProperties,
   Record<string, never>,
