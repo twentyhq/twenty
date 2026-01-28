@@ -303,6 +303,17 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
             authContext,
           );
 
+      if (
+        isDefined(favorite.forWorkspaceMemberId) &&
+        !isDefined(userWorkspaceId)
+      ) {
+        this.logger.warn(
+          `Skipping favorite ${favorite.id} - forWorkspaceMemberId ${favorite.forWorkspaceMemberId} did not resolve to a userWorkspaceId`,
+        );
+
+        continue;
+      }
+
       const folderId = favorite.favoriteFolderId
         ? (folderIdMapping.get(favorite.favoriteFolderId) ?? null)
         : null;
