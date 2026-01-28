@@ -89,10 +89,10 @@ export const CONFIG_VARIABLES_GROUP_METADATA: Record<
       'Configure the LLM provider and model to use for the app. This is experimental and not linked to any public feature.',
     isHiddenOnLoad: true,
   },
-  [ConfigVariablesGroup.SERVERLESS_CONFIG]: {
+  [ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG]: {
     position: 1500,
     description:
-      'In our multi-tenant cloud app, we offload untrusted custom code from workflows to a serverless system (Lambda) for enhanced security and scalability. Self-hosters with a single tenant can typically ignore this configuration.',
+      'In our multi-tenant cloud app, we offload untrusted custom code from workflows to a function execution system (Lambda) for enhanced security and scalability. Self-hosters with a single tenant can typically ignore this configuration.',
     isHiddenOnLoad: true,
   },
   [ConfigVariablesGroup.CODE_INTERPRETER_CONFIG]: {

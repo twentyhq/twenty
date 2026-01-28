@@ -2,27 +2,19 @@ import { findPathFile } from '@/cli/utilities/file/file-find';
 import { parseJsoncFile } from '@/cli/utilities/file/file-jsonc';
 import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';
+import { readFile } from 'fs-extra';
 import { relative, sep } from 'path';
 import { type ApplicationManifest } from 'twenty-shared/application';
-import { type Sources } from 'twenty-shared/types';
+import { FileFolder, type Sources } from 'twenty-shared/types';
 import { applicationEntityBuilder } from '@/cli/utilities/build/manifest/entities/application';
 import { frontComponentEntityBuilder } from '@/cli/utilities/build/manifest/entities/front-component';
 import { functionEntityBuilder } from '@/cli/utilities/build/manifest/entities/function';
 import { objectEntityBuilder } from '@/cli/utilities/build/manifest/entities/object';
 import { objectExtensionEntityBuilder } from '@/cli/utilities/build/manifest/entities/object-extension';
 import { roleEntityBuilder } from '@/cli/utilities/build/manifest/entities/role';
-import {
-  displayEntitySummary,
-  displayErrors,
-  displayWarnings,
-} from '@/cli/utilities/build/manifest/manifest-display';
-import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
-import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
-import { ManifestValidationError } from '@/cli/utilities/build/manifest/manifest-types';
-import { createLogger } from '@/cli/utilities/build/common/logger';
-import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
 
-const logger = createLogger('manifest-watch');
+import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
+import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 
 export type EntityFilePaths = {
   application: string[];
@@ -62,12 +54,7 @@ const loadSources = async (appPath: string): Promise<Sources> => {
   return sources;
 };
 
-export type RunManifestBuildOptions = {
-  display?: boolean;
-  writeOutput?: boolean;
-};
-
-const EMPTY_FILE_PATHS: EntityFilePaths = {
+export const EMPTY_FILE_PATHS: EntityFilePaths = {
   application: [],
   objects: [],
   objectExtensions: [],
@@ -79,70 +66,74 @@ const EMPTY_FILE_PATHS: EntityFilePaths = {
 export type ManifestBuildResult = {
   manifest: ApplicationManifest | null;
   filePaths: EntityFilePaths;
+  error?: string;
 };
-
-export type ManifestEntityType = 'function' | 'frontComponent';
 
 export type UpdateManifestChecksumParams = {
   manifest: ApplicationManifest;
-  entityType: ManifestEntityType;
-  builtPath: string;
-  checksum: string;
+  builtFileInfos: Map<
+    string,
+    { checksum: string; builtPath: string; fileFolder: FileFolder }
+  >;
 };
 
 export const updateManifestChecksum = ({
   manifest,
-  entityType,
-  builtPath,
-  checksum,
-}: UpdateManifestChecksumParams): ApplicationManifest | null => {
-  if (entityType === 'function') {
-    const fnIndex = manifest.functions.findIndex(
-      (f) => f.builtHandlerPath === builtPath,
-    );
-    if (fnIndex === -1) {
-      return null;
+  builtFileInfos,
+}: UpdateManifestChecksumParams): ApplicationManifest => {
+  let result = structuredClone(manifest);
+  for (const [
+    builtPath,
+    { fileFolder, checksum },
+  ] of builtFileInfos.entries()) {
+    const rootBuiltPath = relative(OUTPUT_DIR, builtPath);
+    if (fileFolder === FileFolder.BuiltFunction) {
+      const fnIndex = result.functions.findIndex(
+        (f) => f.builtHandlerPath === rootBuiltPath,
+      );
+      if (fnIndex === -1) {
+        continue;
+      }
+      result = {
+        ...result,
+        functions: result.functions.map((fn, index) =>
+          index === fnIndex ? { ...fn, builtHandlerChecksum: checksum } : fn,
+        ),
+      };
     }
-    return {
-      ...manifest,
-      functions: manifest.functions.map((fn, index) =>
-        index === fnIndex ? { ...fn, builtHandlerChecksum: checksum } : fn,
+
+    const componentIndex =
+      result.frontComponents.findIndex(
+        (c) => c.builtComponentPath === rootBuiltPath,
+      ) ?? -1;
+    if (componentIndex === -1) {
+      continue;
+    }
+    result = {
+      ...result,
+      frontComponents: result.frontComponents.map((component, index) =>
+        index === componentIndex
+          ? { ...component, builtComponentChecksum: checksum }
+          : component,
       ),
     };
   }
-
-  const componentIndex =
-    manifest.frontComponents.findIndex(
-      (c) => c.builtComponentPath === builtPath,
-    ) ?? -1;
-  if (componentIndex === -1) {
-    return null;
-  }
-  return {
-    ...manifest,
-    frontComponents: manifest.frontComponents.map((component, index) =>
-      index === componentIndex
-        ? { ...component, builtComponentChecksum: checksum }
-        : component,
-    ),
-  };
+  return result;
 };
 
 export const runManifestBuild = async (
   appPath: string,
-  options: RunManifestBuildOptions = {},
 ): Promise<ManifestBuildResult> => {
-  const { display = true, writeOutput = true } = options;
-
-  if (display) {
-    logger.log('🔄 Building...');
-  }
-
   try {
     manifestExtractFromFileServer.init(appPath);
 
     const packageJson = await parseJsoncFile(
       await findPathFile(appPath, 'package.json'),
+    );
+
+    const yarnLock = await readFile(
+      await findPathFile(appPath, 'yarn.lock'),
+      'utf8',
     );
 
     const [
@@ -188,44 +179,15 @@ export const runManifestBuild = async (
       roles: roleManifests,
       sources,
       packageJson,
+      yarnLock,
     };
-
-    const validation = validateManifest({
-      application,
-      objects: objectManifests,
-      objectExtensions: objectExtensionManifests,
-      functions: functionManifests,
-      frontComponents: frontComponentManifests,
-      roles: roleManifests,
-    });
-
-    if (!validation.isValid) {
-      throw new ManifestValidationError(validation.errors);
-    }
-
-    if (display) {
-      displayEntitySummary(manifest);
-      if (validation.warnings.length > 0) {
-        displayWarnings(validation.warnings);
-      }
-    }
-
-    if (writeOutput) {
-      const manifestPath = await writeManifestToOutput(appPath, manifest);
-      logger.success(`✓ Written to ${manifestPath}`);
-    }
 
     return { manifest, filePaths };
   } catch (error) {
-    if (display) {
-      if (error instanceof ManifestValidationError) {
-        displayErrors(error);
-      } else {
-        logger.error(
-          `✗ Build failed: ${error instanceof Error ? error.message : error}`,
-        );
-      }
-    }
-    return { manifest: null, filePaths: EMPTY_FILE_PATHS };
+    return {
+      manifest: null,
+      filePaths: EMPTY_FILE_PATHS,
+      error: error instanceof Error ? error.message : `${error}`,
+    };
   }
 };

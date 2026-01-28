@@ -56,7 +56,6 @@ export class CreateCompanyService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const companyRepository =
           await this.globalWorkspaceOrmManager.getRepository(
@@ -157,6 +156,7 @@ export class CreateCompanyService {
             : {}),
         };
       },
+      authContext,
     );
   }
 

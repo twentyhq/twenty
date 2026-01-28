@@ -2,8 +2,8 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -49,11 +49,11 @@ describe('WorkflowStatusesUpdate', () => {
     executeInWorkspaceContext: jest
       .fn()
 
-      .mockImplementation((_authContext: any, fn: () => any) => fn()),
+      .mockImplementation((fn: () => any, _authContext?: any) => fn()),
   };
 
-  const mockServerlessFunctionService = {
-    publishOneServerlessFunctionOrFail: jest.fn(),
+  const mockLogicFunctionService = {
+    publishOneLogicFunctionOrFail: jest.fn(),
     findOneOrFail: jest.fn(),
   };
 
@@ -66,8 +66,8 @@ describe('WorkflowStatusesUpdate', () => {
           useValue: mockGlobalWorkspaceOrmManager,
         },
         {
-          provide: ServerlessFunctionService,
-          useValue: mockServerlessFunctionService,
+          provide: LogicFunctionService,
+          useValue: mockLogicFunctionService,
         },
         {
           provide: getRepositoryToken(ObjectMetadataEntity),
@@ -78,7 +78,7 @@ describe('WorkflowStatusesUpdate', () => {
           },
         },
         {
-          provide: getRepositoryToken(ServerlessFunctionEntity),
+          provide: getRepositoryToken(LogicFunctionEntity),
           useValue: {
             findOneOrFail: jest.fn().mockResolvedValue({
               latestVersion: 'v2',
@@ -193,7 +193,7 @@ describe('WorkflowStatusesUpdate', () => {
         expect(mockWorkflowRepository.update).toHaveBeenCalledTimes(0);
       });
 
-      test('when WorkflowVersionStatus.DRAFT to WorkflowVersionStatus.ACTIVE, should activate and publish serverless functions', async () => {
+      test('when WorkflowVersionStatus.DRAFT to WorkflowVersionStatus.ACTIVE, should activate and publish logic functions', async () => {
         const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.STATUS_UPDATE,
@@ -220,15 +220,15 @@ describe('WorkflowStatusesUpdate', () => {
               type: 'CODE',
               settings: {
                 input: {
-                  serverlessFunctionId: 'serverless-1',
+                  logicFunctionId: 'logic-function-1',
                 },
               },
             },
           ],
         };
 
-        const mockServerlessFunction = {
-          id: 'serverless-1',
+        const mockLogicFunction = {
+          id: 'logic-function-1',
           latestVersion: 'v2',
         };
 
@@ -239,11 +239,11 @@ describe('WorkflowStatusesUpdate', () => {
         mockWorkflowVersionRepository.find.mockResolvedValue([
           { status: WorkflowVersionStatus.ACTIVE },
         ]);
-        mockServerlessFunctionService.findOneOrFail.mockResolvedValue(
-          mockServerlessFunction,
+        mockLogicFunctionService.findOneOrFail.mockResolvedValue(
+          mockLogicFunction,
         );
-        mockServerlessFunctionService.publishOneServerlessFunctionOrFail.mockResolvedValue(
-          mockServerlessFunction,
+        mockLogicFunctionService.publishOneLogicFunctionOrFail.mockResolvedValue(
+          mockLogicFunction,
         );
 
         await job.handle(event);
@@ -253,16 +253,16 @@ describe('WorkflowStatusesUpdate', () => {
           mockWorkflowVersionRepository.findOneOrFail,
         ).toHaveBeenCalledTimes(1);
         expect(
-          mockServerlessFunctionService.publishOneServerlessFunctionOrFail,
-        ).toHaveBeenCalledWith('serverless-1', '1');
+          mockLogicFunctionService.publishOneLogicFunctionOrFail,
+        ).toHaveBeenCalledWith('logic-function-1', '1');
         expect(mockWorkflowVersionRepository.update).toHaveBeenCalledWith('1', {
           steps: [
             {
               type: 'CODE',
               settings: {
                 input: {
-                  serverlessFunctionId: 'serverless-1',
-                  serverlessFunctionVersion: 'v2',
+                  logicFunctionId: 'logic-function-1',
+                  logicFunctionVersion: 'v2',
                 },
               },
             },

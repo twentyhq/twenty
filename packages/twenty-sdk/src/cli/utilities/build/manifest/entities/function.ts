@@ -1,6 +1,5 @@
 import { glob } from 'fast-glob';
-import { type ServerlessFunctionManifest } from 'twenty-shared/application';
-import { createLogger } from '@/cli/utilities/build/common/logger';
+import { type LogicFunctionManifest } from 'twenty-shared/application';
 
 import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
 import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
@@ -10,23 +9,20 @@ import {
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
-import { FUNCTIONS_DIR } from '@/cli/utilities/build/functions/constants';
-
-const logger = createLogger('manifest-watch');
 
 type ExtractedFunctionManifest = Omit<
-  ServerlessFunctionManifest,
+  LogicFunctionManifest,
   'sourceHandlerPath' | 'builtHandlerPath' | 'builtHandlerChecksum'
 > & {
-  handlerPath: string;
+  handler: string;
 };
 
 export class FunctionEntityBuilder
-  implements ManifestEntityBuilder<ServerlessFunctionManifest>
+  implements ManifestEntityBuilder<LogicFunctionManifest>
 {
   async build(
     appPath: string,
-  ): Promise<EntityBuildResult<ServerlessFunctionManifest>> {
+  ): Promise<EntityBuildResult<LogicFunctionManifest>> {
     const functionFiles = await glob(['**/*.function.ts'], {
       cwd: appPath,
       ignore: [
@@ -37,26 +33,31 @@ export class FunctionEntityBuilder
       ],
     });
 
-    const manifests: ServerlessFunctionManifest[] = [];
+    const manifests: LogicFunctionManifest[] = [];
 
     for (const filePath of functionFiles) {
       try {
         const absolutePath = `${appPath}/${filePath}`;
 
-        const extracted =
+        const { manifest, exportName } =
           await manifestExtractFromFileServer.extractManifestFromFile<ExtractedFunctionManifest>(
             absolutePath,
-            { entryProperty: 'handler' },
           );
 
-        const { handlerPath, ...rest } = extracted;
+        const { handler: _, ...rest } = manifest;
         // builtHandlerPath is computed from filePath (the .function.ts file)
         // since that's what esbuild actually builds, not handlerPath
         const builtHandlerPath = this.computeBuiltHandlerPath(filePath);
 
+        // For default exports, use 'default.handler'
+        // For named exports like 'export const anyName = ...', use 'anyName.handler'
+        const handlerName =
+          exportName !== null ? `${exportName}.handler` : 'default.handler';
+
         manifests.push({
           ...rest,
-          sourceHandlerPath: handlerPath,
+          handlerName,
+          sourceHandlerPath: filePath,
           builtHandlerPath,
           builtHandlerChecksum: null,
         });
@@ -71,13 +72,11 @@ export class FunctionEntityBuilder
   }
 
   private computeBuiltHandlerPath(sourceHandlerPath: string): string {
-    const builtPath = sourceHandlerPath.replace(/\.tsx?$/, '.mjs');
-
-    return `${FUNCTIONS_DIR}/${builtPath}`;
+    return sourceHandlerPath.replace(/\.tsx?$/, '.mjs');
   }
 
   validate(
-    functions: ServerlessFunctionManifest[],
+    functions: LogicFunctionManifest[],
     errors: ValidationError[],
   ): void {
     for (const fn of functions) {
@@ -142,18 +141,6 @@ export class FunctionEntityBuilder
             }
             break;
         }
-      }
-    }
-  }
-
-  display(functions: ServerlessFunctionManifest[]): void {
-    logger.success(`✓ Found ${functions.length} function(s)`);
-
-    if (functions.length > 0) {
-      logger.log('📍 Entry points:');
-      for (const fn of functions) {
-        const name = fn.name || fn.universalIdentifier;
-        logger.log(`   - ${name} (${fn.sourceHandlerPath})`);
       }
     }
   }

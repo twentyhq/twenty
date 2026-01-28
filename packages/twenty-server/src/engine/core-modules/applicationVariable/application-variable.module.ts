@@ -7,6 +7,7 @@ import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVa
 import { ApplicationVariableEntityResolver } from 'src/engine/core-modules/applicationVariable/application-variable.resolver';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { WorkspaceApplicationVariableMapCacheService } from 'src/engine/core-modules/applicationVariable/services/workspace-application-variable-map-cache.service';
+import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -16,6 +17,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     TypeOrmModule.forFeature([ApplicationVariableEntity]),
     PermissionsModule,
     WorkspaceCacheModule,
+    SecretEncryptionModule,
   ],
   providers: [
     ApplicationVariableEntityService,

@@ -38,31 +38,28 @@ export class WorkflowCreateOnePostQueryHook
 
     const workflow = payload[0];
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext as WorkspaceAuthContext,
-      async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspace.id,
-            'workflowVersion',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          workspace.id,
+          'workflowVersion',
+        );
 
-        const position = await this.recordPositionService.buildRecordPosition({
-          value: 'first',
-          objectMetadata: {
-            isCustom: false,
-            nameSingular: 'workflowVersion',
-          },
-          workspaceId: workspace.id,
-        });
+      const position = await this.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: {
+          isCustom: false,
+          nameSingular: 'workflowVersion',
+        },
+        workspaceId: workspace.id,
+      });
 
-        await workflowVersionRepository.insert({
-          workflowId: workflow.id,
-          status: WorkflowVersionStatus.DRAFT,
-          name: 'v1',
-          position,
-        });
-      },
-    );
+      await workflowVersionRepository.insert({
+        workflowId: workflow.id,
+        status: WorkflowVersionStatus.DRAFT,
+        name: 'v1',
+        position,
+      });
+    }, authContext as WorkspaceAuthContext);
   }
 }

@@ -94,6 +94,7 @@ export default defineConfig(() => {
           'stream',
           'util',
           'os',
+          'module',
         ],
         output: [
           {
