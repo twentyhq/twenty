@@ -13,7 +13,9 @@ export const fromLogicFunctionEntityToFlatLogicFunction = ({
   applicationIdToUniversalIdentifierMap,
 }: FromEntityToFlatEntityArgs<'logicFunction'>): FlatLogicFunction => {
   const applicationUniversalIdentifier =
-    applicationIdToUniversalIdentifierMap.get(logicFunctionEntity.applicationId);
+    applicationIdToUniversalIdentifierMap.get(
+      logicFunctionEntity.applicationId,
+    );
 
   if (!isDefined(applicationUniversalIdentifier)) {
     throw new FlatEntityMapsException(

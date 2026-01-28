@@ -14,7 +14,9 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = ({
   objectMetadataIdToUniversalIdentifierMap,
 }: FromEntityToFlatEntityArgs<'index'>): FlatIndexMetadata => {
   const applicationUniversalIdentifier =
-    applicationIdToUniversalIdentifierMap.get(indexMetadataEntity.applicationId);
+    applicationIdToUniversalIdentifierMap.get(
+      indexMetadataEntity.applicationId,
+    );
 
   if (!isDefined(applicationUniversalIdentifier)) {
     throw new FlatEntityMapsException(
