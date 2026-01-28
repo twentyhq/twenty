@@ -7,17 +7,19 @@ import {
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
 import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
+
+type FromObjectMetadataEntityToFlatObjectMetadataArgs = {
+  objectMetadataEntity: EntityWithRegroupedOneToManyRelations<ObjectMetadataEntity>;
+  fieldIdToUniversalIdentifierMap: Map<string, string>;
+} & EntityManyToOneIdByUniversalIdentifierMaps<'objectMetadata'>;
 
 export const fromObjectMetadataEntityToFlatObjectMetadata = ({
   objectMetadataEntity,
   applicationIdToUniversalIdentifierMap,
   fieldIdToUniversalIdentifierMap,
-}: {
-  objectMetadataEntity: EntityWithRegroupedOneToManyRelations<ObjectMetadataEntity>;
-  applicationIdToUniversalIdentifierMap: Map<string, string>;
-  fieldIdToUniversalIdentifierMap: Map<string, string>;
-}): FlatObjectMetadata => {
+}: FromObjectMetadataEntityToFlatObjectMetadataArgs): FlatObjectMetadata => {
   const objectMetadataEntityWithoutRelations = removePropertiesFromRecord(
     objectMetadataEntity,
     getMetadataEntityRelationProperties('objectMetadata'),

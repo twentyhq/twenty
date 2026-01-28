@@ -6,13 +6,12 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { type PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
+import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
 import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
 
 type TransformPageLayoutEntityToFlatPageLayoutArgs = {
   pageLayoutEntity: EntityWithRegroupedOneToManyRelations<PageLayoutEntity>;
-  applicationIdToUniversalIdentifierMap: Map<string, string>;
-  objectMetadataIdToUniversalIdentifierMap: Map<string, string>;
-};
+} & EntityManyToOneIdByUniversalIdentifierMaps<'pageLayout'>;
 
 export const transformPageLayoutEntityToFlatPageLayout = ({
   pageLayoutEntity,

@@ -9,20 +9,13 @@ import {
 import { ROW_LEVEL_PERMISSION_PREDICATE_ENTITY_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/constants/row-level-permission-predicate-entity-relation-properties.constant';
 import { type RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
+import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
 import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
 
 type FromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredicateArgs =
   {
     rowLevelPermissionPredicateEntity: EntityWithRegroupedOneToManyRelations<RowLevelPermissionPredicateEntity>;
-    applicationIdToUniversalIdentifierMap: Map<string, string>;
-    fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
-    objectMetadataIdToUniversalIdentifierMap: Map<string, string>;
-    roleIdToUniversalIdentifierMap: Map<string, string>;
-    rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap: Map<
-      string,
-      string
-    >;
-  };
+  } & EntityManyToOneIdByUniversalIdentifierMaps<'rowLevelPermissionPredicate'>;
 
 export const fromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredicate =
   ({

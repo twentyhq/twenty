@@ -9,7 +9,17 @@ import {
 import { ROW_LEVEL_PERMISSION_PREDICATE_GROUP_ENTITY_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/constants/row-level-permission-predicate-group-entity-relation-properties.constant';
 import { type RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
+import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
 import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
+
+type FromRowLevelPermissionPredicateGroupEntityToFlatRowLevelPermissionPredicateGroupArgs =
+  {
+    rowLevelPermissionPredicateGroupEntity: EntityWithRegroupedOneToManyRelations<RowLevelPermissionPredicateGroupEntity>;
+    rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap: Map<
+      string,
+      string
+    >;
+  } & EntityManyToOneIdByUniversalIdentifierMaps<'rowLevelPermissionPredicateGroup'>;
 
 export const fromRowLevelPermissionPredicateGroupEntityToFlatRowLevelPermissionPredicateGroup =
   ({
@@ -18,16 +28,7 @@ export const fromRowLevelPermissionPredicateGroupEntityToFlatRowLevelPermissionP
     objectMetadataIdToUniversalIdentifierMap,
     roleIdToUniversalIdentifierMap,
     rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap,
-  }: {
-    rowLevelPermissionPredicateGroupEntity: EntityWithRegroupedOneToManyRelations<RowLevelPermissionPredicateGroupEntity>;
-    applicationIdToUniversalIdentifierMap: Map<string, string>;
-    objectMetadataIdToUniversalIdentifierMap: Map<string, string>;
-    roleIdToUniversalIdentifierMap: Map<string, string>;
-    rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap: Map<
-      string,
-      string
-    >;
-  }): FlatRowLevelPermissionPredicateGroup => {
+  }: FromRowLevelPermissionPredicateGroupEntityToFlatRowLevelPermissionPredicateGroupArgs): FlatRowLevelPermissionPredicateGroup => {
     const rowLevelPermissionPredicateGroupEntityWithoutRelations =
       removePropertiesFromRecord(rowLevelPermissionPredicateGroupEntity, [
         ...ROW_LEVEL_PERMISSION_PREDICATE_GROUP_ENTITY_RELATION_PROPERTIES,

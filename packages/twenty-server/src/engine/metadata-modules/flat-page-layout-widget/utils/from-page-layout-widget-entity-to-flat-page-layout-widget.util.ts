@@ -8,15 +8,15 @@ import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { type PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
-import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
+import { EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
+import {
+  type EntityWithRegroupedOneToManyRelations,
+} from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
 
 type FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs = {
   pageLayoutWidgetEntity: EntityWithRegroupedOneToManyRelations<PageLayoutWidgetEntity>;
-  applicationIdToUniversalIdentifierMap: Map<string, string>;
-  pageLayoutTabIdToUniversalIdentifierMap: Map<string, string>;
-  objectMetadataIdToUniversalIdentifierMap: Map<string, string>;
   fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
-};
+} & EntityManyToOneIdByUniversalIdentifierMaps<'pageLayoutWidget'>;
 
 export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
   pageLayoutWidgetEntity,

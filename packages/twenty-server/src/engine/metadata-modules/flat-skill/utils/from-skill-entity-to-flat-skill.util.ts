@@ -6,14 +6,16 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { type SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
+import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
+
+type FromSkillEntityToFlatSkillArgs = {
+  skillEntity: SkillEntity;
+} & EntityManyToOneIdByUniversalIdentifierMaps<'skill'>;
 
 export const fromSkillEntityToFlatSkill = ({
   skillEntity,
   applicationIdToUniversalIdentifierMap,
-}: {
-  skillEntity: SkillEntity;
-  applicationIdToUniversalIdentifierMap: Map<string, string>;
-}): FlatSkill => {
+}: FromSkillEntityToFlatSkillArgs): FlatSkill => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(skillEntity.applicationId);
 

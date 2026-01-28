@@ -124,7 +124,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);
 
-    const fieldIdToUniversalIdentifierMap =
+    const fieldMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(fieldMetadatas);
     const objectMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(objectMetadatas);
@@ -147,8 +147,8 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
             mainGroupByFieldMetadataViewsByFieldId.get(
               fieldMetadataEntity.id,
             ) || [],
-        } as FieldMetadataEntity,
-        fieldIdToUniversalIdentifierMap,
+        },
+        fieldMetadataIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,
         applicationIdToUniversalIdentifierMap,
       });

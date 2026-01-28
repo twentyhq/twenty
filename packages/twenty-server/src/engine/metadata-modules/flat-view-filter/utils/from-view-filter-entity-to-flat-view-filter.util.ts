@@ -7,6 +7,11 @@ import {
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
+import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
+
+type FromViewFilterEntityToFlatViewFilterArgs = {
+  viewFilterEntity: ViewFilterEntity;
+} & EntityManyToOneIdByUniversalIdentifierMaps<'viewFilter'>;
 
 export const fromViewFilterEntityToFlatViewFilter = ({
   viewFilterEntity,
@@ -14,13 +19,7 @@ export const fromViewFilterEntityToFlatViewFilter = ({
   fieldMetadataIdToUniversalIdentifierMap,
   viewFilterGroupIdToUniversalIdentifierMap,
   viewIdToUniversalIdentifierMap,
-}: {
-  viewFilterEntity: ViewFilterEntity;
-  applicationIdToUniversalIdentifierMap: Map<string, string>;
-  fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
-  viewFilterGroupIdToUniversalIdentifierMap: Map<string, string>;
-  viewIdToUniversalIdentifierMap: Map<string, string>;
-}): FlatViewFilter => {
+}: FromViewFilterEntityToFlatViewFilterArgs): FlatViewFilter => {
   const viewFilterEntityWithoutRelations = removePropertiesFromRecord(
     viewFilterEntity,
     getMetadataEntityRelationProperties('viewFilter'),

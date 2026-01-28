@@ -9,18 +9,19 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
 import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
+
+type FromFieldMetadataEntityToFlatFieldMetadataArgs = {
+  fieldMetadataEntity: EntityWithRegroupedOneToManyRelations<FieldMetadataEntity>;
+} & EntityManyToOneIdByUniversalIdentifierMaps<'fieldMetadata'>;
+
 export const fromFieldMetadataEntityToFlatFieldMetadata = ({
   fieldMetadataEntity,
-  fieldIdToUniversalIdentifierMap,
+  fieldMetadataIdToUniversalIdentifierMap,
   objectMetadataIdToUniversalIdentifierMap,
   applicationIdToUniversalIdentifierMap,
-}: {
-  fieldMetadataEntity: EntityWithRegroupedOneToManyRelations<FieldMetadataEntity>;
-  fieldIdToUniversalIdentifierMap: Map<string, string>;
-  objectMetadataIdToUniversalIdentifierMap: Map<string, string>;
-  applicationIdToUniversalIdentifierMap: Map<string, string>;
-}): FlatFieldMetadata => {
+}: FromFieldMetadataEntityToFlatFieldMetadataArgs): FlatFieldMetadata => {
   const fieldMetadataWithoutRelations = removePropertiesFromRecord(
     fieldMetadataEntity,
     getMetadataEntityRelationProperties('fieldMetadata'),
@@ -69,7 +70,7 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = ({
 
   if (isDefined(fieldMetadataEntity.relationTargetFieldMetadataId)) {
     relationTargetFieldMetadataUniversalIdentifier =
-      fieldIdToUniversalIdentifierMap.get(
+      fieldMetadataIdToUniversalIdentifierMap.get(
         fieldMetadataEntity.relationTargetFieldMetadataId,
       ) ?? null;
 
@@ -91,7 +92,9 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = ({
         ...settings,
         ...(isDefined(settings.junctionTargetFieldId) && {
           junctionTargetFieldUniversalIdentifier:
-            fieldIdToUniversalIdentifierMap.get(settings.junctionTargetFieldId),
+            fieldMetadataIdToUniversalIdentifierMap.get(
+              settings.junctionTargetFieldId,
+            ),
         }),
       }
     : settings;

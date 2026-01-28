@@ -6,14 +6,16 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
+
+type TransformAgentEntityToFlatAgentArgs = {
+  agentEntity: AgentEntity;
+} & EntityManyToOneIdByUniversalIdentifierMaps<'agent'>;
 
 export const transformAgentEntityToFlatAgent = ({
   agentEntity,
   applicationIdToUniversalIdentifierMap,
-}: {
-  agentEntity: AgentEntity;
-  applicationIdToUniversalIdentifierMap: Map<string, string>;
-}): FlatAgent => {
+}: TransformAgentEntityToFlatAgentArgs): FlatAgent => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(agentEntity.applicationId);
 

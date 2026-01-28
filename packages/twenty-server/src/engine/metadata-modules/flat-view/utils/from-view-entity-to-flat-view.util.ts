@@ -7,19 +7,20 @@ import {
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
 import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
+
+type FromViewEntityToFlatViewArgs = {
+  viewEntity: EntityWithRegroupedOneToManyRelations<ViewEntity>;
+  fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
+} & EntityManyToOneIdByUniversalIdentifierMaps<'view'>;
 
 export const fromViewEntityToFlatView = ({
   viewEntity,
   applicationIdToUniversalIdentifierMap,
   objectMetadataIdToUniversalIdentifierMap,
   fieldMetadataIdToUniversalIdentifierMap,
-}: {
-  viewEntity: EntityWithRegroupedOneToManyRelations<ViewEntity>;
-  applicationIdToUniversalIdentifierMap: Map<string, string>;
-  objectMetadataIdToUniversalIdentifierMap: Map<string, string>;
-  fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
-}): FlatView => {
+}: FromViewEntityToFlatViewArgs): FlatView => {
   const viewEntityWithoutRelations = removePropertiesFromRecord(
     viewEntity,
     getMetadataEntityRelationProperties('view'),

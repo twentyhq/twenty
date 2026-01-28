@@ -6,15 +6,12 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
+import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
 import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
 
 type FromNavigationMenuItemEntityToFlatNavigationMenuItemArgs = {
   navigationMenuItemEntity: EntityWithRegroupedOneToManyRelations<NavigationMenuItemEntity>;
-  applicationIdToUniversalIdentifierMap: Map<string, string>;
-  objectMetadataIdToUniversalIdentifierMap: Map<string, string>;
-  navigationMenuItemIdToUniversalIdentifierMap: Map<string, string>;
-  viewIdToUniversalIdentifierMap: Map<string, string>;
-};
+} & EntityManyToOneIdByUniversalIdentifierMaps<'navigationMenuItem'>;
 
 export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
   navigationMenuItemEntity,

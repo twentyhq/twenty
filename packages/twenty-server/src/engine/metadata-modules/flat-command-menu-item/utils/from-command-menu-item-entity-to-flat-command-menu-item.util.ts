@@ -6,13 +6,12 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
 import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
 
 type FromCommandMenuItemEntityToFlatCommandMenuItemArgs = {
   commandMenuItemEntity: EntityWithRegroupedOneToManyRelations<CommandMenuItemEntity>;
-  applicationIdToUniversalIdentifierMap: Map<string, string>;
-  objectMetadataIdToUniversalIdentifierMap: Map<string, string>;
-};
+} & EntityManyToOneIdByUniversalIdentifierMaps<'commandMenuItem'>;
 
 export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
   commandMenuItemEntity,

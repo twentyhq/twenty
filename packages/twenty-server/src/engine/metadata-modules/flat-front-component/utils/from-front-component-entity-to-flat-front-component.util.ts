@@ -6,12 +6,12 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
+import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
 import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
 
 type FromFrontComponentEntityToFlatFrontComponentArgs = {
   frontComponentEntity: EntityWithRegroupedOneToManyRelations<FrontComponentEntity>;
-  applicationIdToUniversalIdentifierMap: Map<string, string>;
-};
+} & EntityManyToOneIdByUniversalIdentifierMaps<'frontComponent'>;
 
 export const fromFrontComponentEntityToFlatFrontComponent = ({
   frontComponentEntity,
