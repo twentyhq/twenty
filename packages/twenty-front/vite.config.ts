@@ -159,6 +159,13 @@ export default defineConfig(({ command, mode }) => {
     ],
 
     optimizeDeps: {
+      include: [
+        '@remote-dom/core',
+        '@remote-dom/core/elements',
+        '@remote-dom/core/polyfill',
+        '@remote-dom/react',
+        '@remote-dom/react/polyfill',
+      ],
       exclude: [
         '../../node_modules/.vite',
         '../../node_modules/.cache',
@@ -277,7 +284,6 @@ export default defineConfig(({ command, mode }) => {
         // https://github.com/twentyhq/twenty/pull/10782/files
         // This will likely be migrated to twenty-ui package when built separately
         '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
-        // Resolve twenty-shared front-component to source for proper worker handling
         'twenty-shared/front-component': path.resolve(
           __dirname,
           '../twenty-shared/src/front-component/index.ts',
