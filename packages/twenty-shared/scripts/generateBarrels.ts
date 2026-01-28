@@ -105,7 +105,15 @@ const partitionFileExportsByType = (declarations: DeclarationOccurrence[]) => {
 
 const generateModuleIndexFiles = (exportByBarrel: ExportByBarrel[]) => {
   return exportByBarrel.map<createTypeScriptFileArgs>(
-    ({ barrel: { moduleDirectory }, allFileExports }) => {
+    ({ barrel: { moduleDirectory, moduleName }, allFileExports }) => {
+      if (moduleName === 'front-component') {
+        return {
+          content: `export { FrontComponentRenderer } from './host/components/FrontComponentRenderer'`,
+          path: moduleDirectory,
+          filename: INDEX_FILENAME,
+        };
+      }
+
       const content = allFileExports
         .sort((a, b) => a.file.localeCompare(b.file))
         .map(({ exports, file }) => {

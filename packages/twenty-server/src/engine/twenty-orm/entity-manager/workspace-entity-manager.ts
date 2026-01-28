@@ -33,10 +33,10 @@ import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/tr
 import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';

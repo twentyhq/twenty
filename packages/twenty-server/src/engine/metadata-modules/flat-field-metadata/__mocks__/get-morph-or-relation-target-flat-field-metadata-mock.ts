@@ -65,5 +65,6 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     defaultValue: null,
     options: null,
     applicationId: faker.string.uuid(),
+    __universal: undefined,
   };
 };
