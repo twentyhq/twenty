@@ -58,37 +58,36 @@ export class DevModeOrchestrator {
   private async checkServer(): Promise<void> {
     const validateAuth = await this.apiService.validateAuth();
 
-    if (this.serverErrorLogged) {
-      return;
-    }
-
-    this.serverErrorLogged = true;
-
     if (!validateAuth.serverUp) {
-      this.uiStateManager.addEvent({
-        message: 'Cannot reach server',
-        status: 'error',
-      });
-      this.uiStateManager.updateManifestState({
-        manifestStatus: 'error',
-        error: 'Cannot connect to Twenty server. Is it running?',
-      });
+      if (!this.serverErrorLogged) {
+        this.uiStateManager.addEvent({
+          message: 'Cannot reach server',
+          status: 'error',
+        });
+        this.uiStateManager.updateManifestState({
+          manifestStatus: 'error',
+          error: 'Cannot connect to Twenty server. Is it running?',
+        });
+        this.serverErrorLogged = true;
+      }
       return;
     }
-
     if (!validateAuth.authValid) {
-      this.uiStateManager.addEvent({
-        message: 'Authentication failed',
-        status: 'error',
-      });
-      this.uiStateManager.updateManifestState({
-        manifestStatus: 'error',
-        error:
-          'Cannot authenticate. Check your credentials are correct with "yarn auth:login"',
-      });
+      if (!this.serverErrorLogged) {
+        this.uiStateManager.addEvent({
+          message: 'Authentication failed',
+          status: 'error',
+        });
+        this.uiStateManager.updateManifestState({
+          manifestStatus: 'error',
+          error:
+            'Cannot authenticate. Check your credentials are correct with "yarn auth:login"',
+        });
+        this.serverErrorLogged = true;
+      }
       return;
     }
-
+    this.serverErrorLogged = false;
     this.serverReady = true;
   }
 
