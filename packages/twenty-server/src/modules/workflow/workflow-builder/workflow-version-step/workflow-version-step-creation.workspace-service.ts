@@ -38,8 +38,7 @@ export class WorkflowVersionStepCreationWorkspaceService {
       position,
       parentStepConnectionOptions,
       id,
-      logicFunctionId,
-      name,
+      defaultSettings,
     } = input;
 
     const workflowVersion =
@@ -61,8 +60,7 @@ export class WorkflowVersionStepCreationWorkspaceService {
           position,
           workflowVersionId,
           id,
-          logicFunctionId,
-          name,
+          defaultSettings,
         },
       );
 
