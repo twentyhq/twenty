@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { FileFolder } from 'twenty-shared/types';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -30,6 +31,9 @@ export class FilesFieldService {
       throw new FilesFieldException(
         `Failed to delete file ${fileId}: ${error.message}`,
         FilesFieldExceptionCode.FILE_DELETION_FAILED,
+        {
+          userFriendlyMessage: msg`Failed to delete file ${fileId}`,
+        },
       );
     }
   }
