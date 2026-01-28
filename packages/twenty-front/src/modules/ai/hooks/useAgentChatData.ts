@@ -13,6 +13,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import {
   type AgentChatThread,
+  useCreateChatThreadMutation,
   useGetChatMessagesQuery,
   useGetChatThreadsQuery,
 } from '~/generated-metadata/graphql';
@@ -46,6 +47,12 @@ export const useAgentChatData = () => {
 
   const { scrollToBottom } = useAgentChatScrollToBottom();
 
+  const [createChatThread] = useCreateChatThreadMutation({
+    onCompleted: (data) => {
+      setCurrentAIChatThread(data.createChatThread.id);
+    },
+  });
+
   const { loading: threadsLoading } = useGetChatThreadsQuery({
     skip: isDefined(currentAIChatThread),
     onCompleted: (data) => {
@@ -54,6 +61,8 @@ export const useAgentChatData = () => {
 
         setCurrentAIChatThread(firstThread.id);
         setUsageFromThread(firstThread, setAgentChatUsage);
+      } else {
+        createChatThread();
       }
     },
   });
