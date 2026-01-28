@@ -51,14 +51,9 @@ export const RecordTitleCellTextFieldInput = ({
   });
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-    // Ensure draft value is set from field value if it's undefined or empty when focusing
-    if (!isDefined(draftValue) && isDefined(fieldValue) && fieldValue !== '') {
-      setDraftValue(fieldValue);
-    }
+    const currentValue = event.target.value;
 
-    const valueToSelect = isDefined(draftValue) ? draftValue : fieldValue;
-
-    if (isDefined(valueToSelect) && valueToSelect !== '') {
+    if (currentValue !== '') {
       event.target.select();
     }
   };
