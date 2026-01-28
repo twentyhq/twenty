@@ -292,19 +292,19 @@ yarn command:prod cron:workflow:automated-cron-trigger
   **Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
 </Warning>
 
-## Logic Functions
+## Logické funkce
 
-Twenty supports logic functions for workflows and custom logic. Běhové prostředí se konfiguruje pomocí proměnné prostředí `SERVERLESS_TYPE`.
+Twenty podporuje logické funkce pro pracovní postupy a vlastní logiku. Běhové prostředí se konfiguruje pomocí proměnné prostředí `SERVERLESS_TYPE`.
 
 <Warning>
-  **Security Notice:** The local driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. Měl by být používán pouze pro důvěryhodný kód při vývoji. Pro produkční nasazení, která pracují s nedůvěryhodným kódem, důrazně doporučujeme použít `SERVERLESS_TYPE=LAMBDA` nebo `SERVERLESS_TYPE=DISABLED`.
+  **Upozornění na zabezpečení:** Místní ovladač (`SERVERLESS_TYPE=LOCAL`) spouští kód přímo na hostiteli v procesu Node.js bez sandboxu. Měl by být používán pouze pro důvěryhodný kód při vývoji. Pro produkční nasazení, která pracují s nedůvěryhodným kódem, důrazně doporučujeme použít `SERVERLESS_TYPE=LAMBDA` nebo `SERVERLESS_TYPE=DISABLED`.
 </Warning>
 
 ### Dostupné ovladače
 
 | Ovladač   | Proměnná prostředí         | Případ použití                             | Úroveň zabezpečení                  |
 | --------- | -------------------------- | ------------------------------------------ | ----------------------------------- |
-| Neaktivní | `SERVERLESS_TYPE=DISABLED` | Disable logic functions entirely           | N/A                                 |
+| Neaktivní | `SERVERLESS_TYPE=DISABLED` | Úplně zakázat logické funkce               | N/A                                 |
 | Lokální   | `SERVERLESS_TYPE=LOCAL`    | Vývojová a důvěryhodná prostředí           | Nízká (bez sandboxu)                |
 | Lambda    | `SERVERLESS_TYPE=LAMBDA`   | Produkční prostředí s nedůvěryhodným kódem | Vysoká (izolace na úrovni hardwaru) |
 
@@ -326,12 +326,12 @@ SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
 SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**To disable logic functions:**
+**Pro zakázání logických funkcí:**
 
 ```bash
 SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a logic function will return an error. This is useful if you want to run Twenty without logic function capabilities.
+  Při použití `SERVERLESS_TYPE=DISABLED` skončí každý pokus o spuštění logické funkce chybou. To je užitečné, pokud chcete provozovat Twenty bez podpory logických funkcí.
 </Note>

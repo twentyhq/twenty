@@ -7,7 +7,7 @@ Automaticky vygenerujte nebo získejte PDF a připojte ho k záznamu v Twenty. T
 
 ## Přehled
 
-Tento pracovní postup používá **Ruční spouštěč**, takže uživatelé mohou na požádání vygenerovat PDF pro libovolný vybraný záznam. A **Logic Function** handles:
+Tento pracovní postup používá **Ruční spouštěč**, takže uživatelé mohou na požádání vygenerovat PDF pro libovolný vybraný záznam. O zpracování se stará **logická funkce**:
 
 1. Stažení PDF z adresy URL (ze služby pro generování PDF)
 2. Nahrání souboru do Twenty
@@ -17,7 +17,7 @@ Tento pracovní postup používá **Ruční spouštěč**, takže uživatelé mo
 
 Než nastavíte pracovní postup:
 
-1. **Vytvořte klíč API**: Přejděte do **Nastavení → API** a vytvořte nový klíč API. You'll need this token for the logic function.
+1. **Vytvořte klíč API**: Přejděte do **Nastavení → API** a vytvořte nový klíč API. Tento token budete potřebovat pro logickou funkci.
 2. **Nastavte službu pro generování PDF** (volitelné): Pokud chcete dynamicky generovat PDF (např. nabídky), použijte službu jako Carbone, PDFMonkey nebo DocuSeal k vytvoření PDF a získání adresy URL pro stažení.
 
 ## Nastavení krok za krokem
@@ -32,9 +32,9 @@ Než nastavíte pracovní postup:
   S **Ručním spouštěčem** mohou uživatelé spustit tento pracovní postup pomocí tlačítka, které se zobrazí vpravo nahoře po výběru záznamu, aby vygenerovali a připojili PDF.
 </Tip>
 
-### Step 2: Add a Logic Function
+### Krok 2: Přidejte logickou funkci
 
-1. Add a **Code** action (logic function)
+1. Přidejte akci **Code** (logická funkce)
 2. Vytvořte novou funkci pomocí kódu níže
 3. Nakonfigurujte vstupní parametry
 
@@ -45,10 +45,10 @@ Než nastavíte pracovní postup:
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic function.
+  Pokud připojujete k jinému objektu (Osoba, Příležitost apod.), přejmenujte parametr podle toho (např. `personId`, `opportunityId`) a aktualizujte logickou funkci.
 </Note>
 
-#### Logic Function Code
+#### Kód logické funkce
 
 ```typescript
 export const main = async (
@@ -172,7 +172,7 @@ Aktualizujte jak parametr funkce, tak objekt `variables.data` v mutaci přílohy
 Pokud používáte službu pro generování PDF, můžete:
 
 1. Nejprve proveďte akci HTTP Request pro vygenerování PDF
-2. Pass the returned PDF URL to the logic function as a parameter
+2. Předejte vrácenou adresu URL PDF logické funkci jako parametr
 
 ```typescript
 export const main = async (
@@ -211,7 +211,7 @@ Pro vytváření dynamických nabídek nebo faktur:
 * **DocuSeal** - Platforma pro automatizaci dokumentů
 * **Documint** - Generování dokumentů primárně přes API
 
-Each service provides an API that returns a PDF URL, which you can then pass to the logic function.
+Každá služba poskytuje API, které vrací adresu URL PDF, kterou pak můžete předat logické funkci.
 
 ## Řešení potíží
 
@@ -224,5 +224,5 @@ Each service provides an API that returns a PDF URL, which you can then pass to 
 ## Související
 
 * [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
-* [Logic Functions](/l/cs/user-guide/workflows/capabilities/workflow-actions#code)
+* [Logické funkce](/l/cs/user-guide/workflows/capabilities/workflow-actions#code)
 * [Vygenerujte nabídku nebo fakturu z Twenty](/l/cs/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
