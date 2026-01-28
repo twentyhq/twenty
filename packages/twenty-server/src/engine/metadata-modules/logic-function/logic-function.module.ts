@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
@@ -30,7 +31,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   imports: [
     FileUploadModule,
     NestjsQueryTypeOrmModule.forFeature([LogicFunctionEntity]),
-    TypeOrmModule.forFeature([FeatureFlagEntity]),
+    TypeOrmModule.forFeature([ApplicationEntity, FeatureFlagEntity]),
     FileModule,
     ThrottlerModule,
     ApplicationModule,
