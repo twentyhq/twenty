@@ -68,7 +68,7 @@ export class WorkspaceFlatViewFieldMapCacheService extends WorkspaceCacheProvide
 
     for (const viewFieldEntity of viewFields) {
       const flatViewField = fromViewFieldEntityToFlatViewField({
-        viewFieldEntity,
+        entity: viewFieldEntity,
         applicationIdToUniversalIdentifierMap,
         fieldMetadataIdToUniversalIdentifierMap,
         viewIdToUniversalIdentifierMap,

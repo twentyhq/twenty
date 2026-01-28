@@ -46,7 +46,7 @@ export class WorkspaceFlatSkillMapCacheService extends WorkspaceCacheProvider<Fl
 
     for (const skillEntity of skills) {
       const flatSkill = fromSkillEntityToFlatSkill({
-        skillEntity,
+        entity: skillEntity,
         applicationIdToUniversalIdentifierMap,
       });
 

@@ -46,7 +46,7 @@ export class WorkspaceFlatAgentMapCacheService extends WorkspaceCacheProvider<Fl
 
     for (const agentEntity of agents) {
       const flatAgent = transformAgentEntityToFlatAgent({
-        agentEntity,
+        entity: agentEntity,
         applicationIdToUniversalIdentifierMap,
       });
 

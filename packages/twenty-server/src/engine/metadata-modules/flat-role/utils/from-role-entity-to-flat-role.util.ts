@@ -5,18 +5,12 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
-import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
-
-type FromRoleEntityToFlatRoleArgs = {
-  roleEntity: EntityWithRegroupedOneToManyRelations<RoleEntity>;
-} & EntityManyToOneIdByUniversalIdentifierMaps<'role'>;
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 export const fromRoleEntityToFlatRole = ({
-  roleEntity,
+  entity: roleEntity,
   applicationIdToUniversalIdentifierMap,
-}: FromRoleEntityToFlatRoleArgs): FlatRole => {
+}: FromEntityToFlatEntityArgs<'role'>): FlatRole => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(roleEntity.applicationId);
 

@@ -89,21 +89,21 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
-    const fieldIdToUniversalIdentifierMap =
+    const fieldMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(fields);
 
     const flatObjectMetadataMaps = createEmptyFlatEntityMaps();
 
     for (const objectMetadataEntity of objectMetadatas) {
       const flatObjectMetadata = fromObjectMetadataEntityToFlatObjectMetadata({
-        objectMetadataEntity: {
+        entity: {
           ...objectMetadataEntity,
           fields: fieldsByObjectId.get(objectMetadataEntity.id) || [],
           indexMetadatas: indexesByObjectId.get(objectMetadataEntity.id) || [],
           views: viewsByObjectId.get(objectMetadataEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
-        fieldIdToUniversalIdentifierMap,
+        fieldMetadataIdToUniversalIdentifierMap,
       });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

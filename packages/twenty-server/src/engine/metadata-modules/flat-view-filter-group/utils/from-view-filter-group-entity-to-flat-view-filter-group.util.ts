@@ -6,17 +6,15 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
-import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
-import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
-import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
-type FromViewFilterGroupEntityToFlatViewFilterGroupArgs = {
-  viewFilterGroupEntity: EntityWithRegroupedOneToManyRelations<ViewFilterGroupEntity>;
-  viewFilterGroupIdToUniversalIdentifierMap: Map<string, string>;
-} & EntityManyToOneIdByUniversalIdentifierMaps<'viewFilterGroup'>;
+type FromViewFilterGroupEntityToFlatViewFilterGroupArgs =
+  FromEntityToFlatEntityArgs<'viewFilterGroup'> & {
+    viewFilterGroupIdToUniversalIdentifierMap: Map<string, string>;
+  };
 
 export const fromViewFilterGroupEntityToFlatViewFilterGroup = ({
-  viewFilterGroupEntity,
+  entity: viewFilterGroupEntity,
   applicationIdToUniversalIdentifierMap,
   viewFilterGroupIdToUniversalIdentifierMap,
   viewIdToUniversalIdentifierMap,

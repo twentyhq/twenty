@@ -1,7 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import {
   FlatEntityMapsException,
@@ -9,19 +8,14 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
-import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
-
-type FromFieldMetadataEntityToFlatFieldMetadataArgs = {
-  fieldMetadataEntity: EntityWithRegroupedOneToManyRelations<FieldMetadataEntity>;
-} & EntityManyToOneIdByUniversalIdentifierMaps<'fieldMetadata'>;
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 export const fromFieldMetadataEntityToFlatFieldMetadata = ({
-  fieldMetadataEntity,
+  entity: fieldMetadataEntity,
   fieldMetadataIdToUniversalIdentifierMap,
   objectMetadataIdToUniversalIdentifierMap,
   applicationIdToUniversalIdentifierMap,
-}: FromFieldMetadataEntityToFlatFieldMetadataArgs): FlatFieldMetadata => {
+}: FromEntityToFlatEntityArgs<'fieldMetadata'>): FlatFieldMetadata => {
   const fieldMetadataWithoutRelations = removePropertiesFromRecord(
     fieldMetadataEntity,
     getMetadataEntityRelationProperties('fieldMetadata'),

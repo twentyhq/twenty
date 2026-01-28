@@ -98,7 +98,7 @@ export class WorkspaceFlatRowLevelPermissionPredicateMapCacheService extends Wor
     for (const rowLevelPermissionPredicateEntity of rowLevelPermissionPredicates) {
       const flatRowLevelPermissionPredicate =
         fromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredicate({
-          rowLevelPermissionPredicateEntity,
+          entity: rowLevelPermissionPredicateEntity,
           applicationIdToUniversalIdentifierMap,
           fieldMetadataIdToUniversalIdentifierMap,
           objectMetadataIdToUniversalIdentifierMap,

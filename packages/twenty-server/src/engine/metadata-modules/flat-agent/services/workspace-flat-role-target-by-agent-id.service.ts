@@ -63,7 +63,7 @@ export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceCacheProvi
         NonNullableRequired<Pick<RoleTargetEntity, 'agentId'>>
     >) {
       const flatRoleTarget = fromRoleTargetEntityToFlatRoleTarget({
-        roleTargetEntity,
+        entity: roleTargetEntity,
         applicationIdToUniversalIdentifierMap,
         roleIdToUniversalIdentifierMap,
       });

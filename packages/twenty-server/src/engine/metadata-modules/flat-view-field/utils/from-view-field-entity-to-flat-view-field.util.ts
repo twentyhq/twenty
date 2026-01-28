@@ -6,19 +6,14 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
-import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
-
-type FromViewFieldEntityToFlatViewFieldArgs = {
-  viewFieldEntity: ViewFieldEntity;
-} & EntityManyToOneIdByUniversalIdentifierMaps<'viewField'>;
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 export const fromViewFieldEntityToFlatViewField = ({
-  viewFieldEntity,
+  entity: viewFieldEntity,
   applicationIdToUniversalIdentifierMap,
   fieldMetadataIdToUniversalIdentifierMap,
   viewIdToUniversalIdentifierMap,
-}: FromViewFieldEntityToFlatViewFieldArgs): FlatViewField => {
+}: FromEntityToFlatEntityArgs<'viewField'>): FlatViewField => {
   const viewFieldEntityWithoutRelations = removePropertiesFromRecord(
     viewFieldEntity,
     getMetadataEntityRelationProperties('viewField'),

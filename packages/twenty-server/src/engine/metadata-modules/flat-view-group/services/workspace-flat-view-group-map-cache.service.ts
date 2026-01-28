@@ -56,7 +56,7 @@ export class WorkspaceFlatViewGroupMapCacheService extends WorkspaceCacheProvide
 
     for (const viewGroupEntity of viewGroups) {
       const flatViewGroup = fromViewGroupEntityToFlatViewGroup({
-        viewGroupEntity,
+        entity: viewGroupEntity,
         applicationIdToUniversalIdentifierMap,
         viewIdToUniversalIdentifierMap,
       });

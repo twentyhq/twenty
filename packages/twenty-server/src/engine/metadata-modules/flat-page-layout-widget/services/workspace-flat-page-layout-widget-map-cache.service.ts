@@ -85,7 +85,7 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
     for (const pageLayoutWidgetEntity of existingPageLayoutWidgets) {
       const flatPageLayoutWidget =
         fromPageLayoutWidgetEntityToFlatPageLayoutWidget({
-          pageLayoutWidgetEntity,
+          entity: pageLayoutWidgetEntity,
           applicationIdToUniversalIdentifierMap,
           pageLayoutTabIdToUniversalIdentifierMap,
           objectMetadataIdToUniversalIdentifierMap,

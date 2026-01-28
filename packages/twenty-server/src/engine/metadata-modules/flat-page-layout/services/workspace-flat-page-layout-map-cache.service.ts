@@ -75,7 +75,7 @@ export class WorkspaceFlatPageLayoutMapCacheService extends WorkspaceCacheProvid
 
     for (const pageLayoutEntity of pageLayouts) {
       const flatPageLayout = transformPageLayoutEntityToFlatPageLayout({
-        pageLayoutEntity: {
+        entity: {
           ...pageLayoutEntity,
           tabs: pageLayoutTabsByPageLayoutId.get(pageLayoutEntity.id) || [],
         },

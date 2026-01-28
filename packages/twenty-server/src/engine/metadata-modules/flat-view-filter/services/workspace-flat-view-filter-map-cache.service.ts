@@ -77,7 +77,7 @@ export class WorkspaceFlatViewFilterMapCacheService extends WorkspaceCacheProvid
 
     for (const viewFilterEntity of viewFilters) {
       const flatViewFilter = fromViewFilterEntityToFlatViewFilter({
-        viewFilterEntity,
+        entity: viewFilterEntity,
         applicationIdToUniversalIdentifierMap,
         fieldMetadataIdToUniversalIdentifierMap,
         viewFilterGroupIdToUniversalIdentifierMap,

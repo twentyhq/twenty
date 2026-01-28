@@ -7,23 +7,20 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { ROW_LEVEL_PERMISSION_PREDICATE_GROUP_ENTITY_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/constants/row-level-permission-predicate-group-entity-relation-properties.constant';
-import { type RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
-import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
-import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 type FromRowLevelPermissionPredicateGroupEntityToFlatRowLevelPermissionPredicateGroupArgs =
-  {
-    rowLevelPermissionPredicateGroupEntity: EntityWithRegroupedOneToManyRelations<RowLevelPermissionPredicateGroupEntity>;
+  FromEntityToFlatEntityArgs<'rowLevelPermissionPredicateGroup'> & {
     rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap: Map<
       string,
       string
     >;
-  } & EntityManyToOneIdByUniversalIdentifierMaps<'rowLevelPermissionPredicateGroup'>;
+  };
 
 export const fromRowLevelPermissionPredicateGroupEntityToFlatRowLevelPermissionPredicateGroup =
   ({
-    rowLevelPermissionPredicateGroupEntity,
+    entity: rowLevelPermissionPredicateGroupEntity,
     applicationIdToUniversalIdentifierMap,
     objectMetadataIdToUniversalIdentifierMap,
     roleIdToUniversalIdentifierMap,

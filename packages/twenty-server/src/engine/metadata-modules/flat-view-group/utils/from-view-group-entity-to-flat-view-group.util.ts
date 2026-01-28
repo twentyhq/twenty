@@ -6,18 +6,13 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
-import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
-import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
-
-type FromViewGroupEntityToFlatViewGroupArgs = {
-  viewGroupEntity: ViewGroupEntity;
-} & EntityManyToOneIdByUniversalIdentifierMaps<'viewGroup'>;
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 export const fromViewGroupEntityToFlatViewGroup = ({
-  viewGroupEntity,
+  entity: viewGroupEntity,
   applicationIdToUniversalIdentifierMap,
   viewIdToUniversalIdentifierMap,
-}: FromViewGroupEntityToFlatViewGroupArgs): FlatViewGroup => {
+}: FromEntityToFlatEntityArgs<'viewGroup'>): FlatViewGroup => {
   const viewGroupEntityWithoutRelations = removePropertiesFromRecord(
     viewGroupEntity,
     getMetadataEntityRelationProperties('viewGroup'),

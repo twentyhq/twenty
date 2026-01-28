@@ -75,7 +75,7 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCac
     for (const navigationMenuItemEntity of navigationMenuItems) {
       const flatNavigationMenuItem =
         fromNavigationMenuItemEntityToFlatNavigationMenuItem({
-          navigationMenuItemEntity,
+          entity: navigationMenuItemEntity,
           applicationIdToUniversalIdentifierMap,
           objectMetadataIdToUniversalIdentifierMap,
           navigationMenuItemIdToUniversalIdentifierMap,

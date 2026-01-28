@@ -7,25 +7,18 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { ROW_LEVEL_PERMISSION_PREDICATE_ENTITY_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/constants/row-level-permission-predicate-entity-relation-properties.constant';
-import { type RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
-import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
-import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
-
-type FromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredicateArgs =
-  {
-    rowLevelPermissionPredicateEntity: EntityWithRegroupedOneToManyRelations<RowLevelPermissionPredicateEntity>;
-  } & EntityManyToOneIdByUniversalIdentifierMaps<'rowLevelPermissionPredicate'>;
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 export const fromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredicate =
   ({
-    rowLevelPermissionPredicateEntity,
+    entity: rowLevelPermissionPredicateEntity,
     applicationIdToUniversalIdentifierMap,
     fieldMetadataIdToUniversalIdentifierMap,
     objectMetadataIdToUniversalIdentifierMap,
     roleIdToUniversalIdentifierMap,
     rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap,
-  }: FromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredicateArgs): FlatRowLevelPermissionPredicate => {
+  }: FromEntityToFlatEntityArgs<'rowLevelPermissionPredicate'>): FlatRowLevelPermissionPredicate => {
     const rowLevelPermissionPredicateEntityWithoutRelations =
       removePropertiesFromRecord(rowLevelPermissionPredicateEntity, [
         ...ROW_LEVEL_PERMISSION_PREDICATE_ENTITY_RELATION_PROPERTIES,

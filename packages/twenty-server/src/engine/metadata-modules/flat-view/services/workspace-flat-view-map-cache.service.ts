@@ -134,7 +134,7 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
 
     for (const viewEntity of views) {
       const flatView = fromViewEntityToFlatView({
-        viewEntity: {
+        entity: {
           ...viewEntity,
           viewFields: viewFieldsByViewId.get(viewEntity.id) || [],
           viewFilters: viewFiltersByViewId.get(viewEntity.id) || [],

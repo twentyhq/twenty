@@ -135,7 +135,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
 
     for (const fieldMetadataEntity of fieldMetadatas) {
       const flatFieldMetadata = fromFieldMetadataEntityToFlatFieldMetadata({
-        fieldMetadataEntity: {
+        entity: {
           ...fieldMetadataEntity,
           viewFields: viewFieldsByFieldId.get(fieldMetadataEntity.id) || [],
           viewFilters: viewFiltersByFieldId.get(fieldMetadataEntity.id) || [],

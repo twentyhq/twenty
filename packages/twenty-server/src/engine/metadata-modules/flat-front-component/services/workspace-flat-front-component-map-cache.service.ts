@@ -45,7 +45,7 @@ export class WorkspaceFlatFrontComponentMapCacheService extends WorkspaceCachePr
 
     for (const frontComponentEntity of frontComponents) {
       const flatFrontComponent = fromFrontComponentEntityToFlatFrontComponent({
-        frontComponentEntity,
+        entity: frontComponentEntity,
         applicationIdToUniversalIdentifierMap,
       });
 

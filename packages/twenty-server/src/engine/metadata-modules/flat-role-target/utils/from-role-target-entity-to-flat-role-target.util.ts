@@ -5,19 +5,13 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
-import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
-import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
-
-type FromRoleTargetEntityToFlatRoleTargetArgs = {
-  roleTargetEntity: EntityWithRegroupedOneToManyRelations<RoleTargetEntity>;
-} & EntityManyToOneIdByUniversalIdentifierMaps<'roleTarget'>;
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 export const fromRoleTargetEntityToFlatRoleTarget = ({
-  roleTargetEntity,
+  entity: roleTargetEntity,
   applicationIdToUniversalIdentifierMap,
   roleIdToUniversalIdentifierMap,
-}: FromRoleTargetEntityToFlatRoleTargetArgs): FlatRoleTarget => {
+}: FromEntityToFlatEntityArgs<'roleTarget'>): FlatRoleTarget => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(roleTargetEntity.applicationId);
 

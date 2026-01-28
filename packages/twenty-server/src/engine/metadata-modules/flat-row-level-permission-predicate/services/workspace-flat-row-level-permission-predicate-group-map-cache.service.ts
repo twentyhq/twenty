@@ -110,7 +110,7 @@ export class WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService extend
       const flatRowLevelPermissionPredicateGroup =
         fromRowLevelPermissionPredicateGroupEntityToFlatRowLevelPermissionPredicateGroup(
           {
-            rowLevelPermissionPredicateGroupEntity: {
+            entity: {
               ...rowLevelPermissionPredicateGroupEntity,
               childRowLevelPermissionPredicateGroups:
                 childRowLevelPermissionPredicateGroupsByParentId.get(

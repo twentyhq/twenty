@@ -5,19 +5,13 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
-import { type PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
-import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
-import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
-
-type TransformPageLayoutTabEntityToFlatPageLayoutTabArgs = {
-  pageLayoutTabEntity: EntityWithRegroupedOneToManyRelations<PageLayoutTabEntity>;
-} & EntityManyToOneIdByUniversalIdentifierMaps<'pageLayoutTab'>;
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 export const transformPageLayoutTabEntityToFlatPageLayoutTab = ({
-  pageLayoutTabEntity,
+  entity: pageLayoutTabEntity,
   applicationIdToUniversalIdentifierMap,
   pageLayoutIdToUniversalIdentifierMap,
-}: TransformPageLayoutTabEntityToFlatPageLayoutTabArgs): FlatPageLayoutTab => {
+}: FromEntityToFlatEntityArgs<'pageLayoutTab'>): FlatPageLayoutTab => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(
       pageLayoutTabEntity.applicationId,

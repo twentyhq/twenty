@@ -82,7 +82,7 @@ export class WorkspaceFlatViewFilterGroupMapCacheService extends WorkspaceCacheP
     for (const viewFilterGroupEntity of viewFilterGroups) {
       const flatViewFilterGroup =
         fromViewFilterGroupEntityToFlatViewFilterGroup({
-          viewFilterGroupEntity: {
+          entity: {
             ...viewFilterGroupEntity,
             viewFilters:
               viewFiltersByViewFilterGroupId.get(viewFilterGroupEntity.id) ||

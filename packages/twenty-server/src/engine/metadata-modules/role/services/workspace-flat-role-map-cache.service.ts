@@ -112,7 +112,7 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
 
     for (const roleEntity of roles) {
       const flatRole = fromRoleEntityToFlatRole({
-        roleEntity: {
+        entity: {
           ...roleEntity,
           roleTargets: roleTargetsByRoleId.get(roleEntity.id) || [],
           rowLevelPermissionPredicates:

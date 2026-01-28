@@ -1,23 +1,17 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
-import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
-
-type FromCommandMenuItemEntityToFlatCommandMenuItemArgs = {
-  commandMenuItemEntity: EntityWithRegroupedOneToManyRelations<CommandMenuItemEntity>;
-} & EntityManyToOneIdByUniversalIdentifierMaps<'commandMenuItem'>;
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
-  commandMenuItemEntity,
+  entity: commandMenuItemEntity,
   applicationIdToUniversalIdentifierMap,
   objectMetadataIdToUniversalIdentifierMap,
-}: FromCommandMenuItemEntityToFlatCommandMenuItemArgs): FlatCommandMenuItem => {
+}: FromEntityToFlatEntityArgs<'commandMenuItem'>): FlatCommandMenuItem => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(
       commandMenuItemEntity.applicationId,

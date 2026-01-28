@@ -1,21 +1,16 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
-
-type TransformAgentEntityToFlatAgentArgs = {
-  agentEntity: AgentEntity;
-} & EntityManyToOneIdByUniversalIdentifierMaps<'agent'>;
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 export const transformAgentEntityToFlatAgent = ({
-  agentEntity,
+  entity: agentEntity,
   applicationIdToUniversalIdentifierMap,
-}: TransformAgentEntityToFlatAgentArgs): FlatAgent => {
+}: FromEntityToFlatEntityArgs<'agent'>): FlatAgent => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(agentEntity.applicationId);
 

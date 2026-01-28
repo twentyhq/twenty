@@ -5,19 +5,13 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
-import { type PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
-import { type EntityManyToOneIdByUniversalIdentifierMaps } from 'src/engine/workspace-cache/types/entity-many-to-one-id-by-universal-identifier-maps.type';
-import { type EntityWithRegroupedOneToManyRelations } from 'src/engine/workspace-cache/types/entity-with-regrouped-one-to-many-relations.type';
-
-type TransformPageLayoutEntityToFlatPageLayoutArgs = {
-  pageLayoutEntity: EntityWithRegroupedOneToManyRelations<PageLayoutEntity>;
-} & EntityManyToOneIdByUniversalIdentifierMaps<'pageLayout'>;
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 export const transformPageLayoutEntityToFlatPageLayout = ({
-  pageLayoutEntity,
+  entity: pageLayoutEntity,
   applicationIdToUniversalIdentifierMap,
   objectMetadataIdToUniversalIdentifierMap,
-}: TransformPageLayoutEntityToFlatPageLayoutArgs): FlatPageLayout => {
+}: FromEntityToFlatEntityArgs<'pageLayout'>): FlatPageLayout => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(pageLayoutEntity.applicationId);
 

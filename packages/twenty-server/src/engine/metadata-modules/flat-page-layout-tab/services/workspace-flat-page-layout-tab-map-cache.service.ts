@@ -76,7 +76,7 @@ export class WorkspaceFlatPageLayoutTabMapCacheService extends WorkspaceCachePro
     for (const pageLayoutTabEntity of pageLayoutTabs) {
       const flatPageLayoutTab = transformPageLayoutTabEntityToFlatPageLayoutTab(
         {
-          pageLayoutTabEntity: {
+          entity: {
             ...pageLayoutTabEntity,
             widgets:
               pageLayoutWidgetsByPageLayoutTabId.get(pageLayoutTabEntity.id) ||

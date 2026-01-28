@@ -59,7 +59,7 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends WorkspaceCacheP
     for (const commandMenuItemEntity of commandMenuItems) {
       const flatCommandMenuItem =
         fromCommandMenuItemEntityToFlatCommandMenuItem({
-          commandMenuItemEntity,
+          entity: commandMenuItemEntity,
           applicationIdToUniversalIdentifierMap,
           objectMetadataIdToUniversalIdentifierMap,
         });

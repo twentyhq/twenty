@@ -56,7 +56,7 @@ export class WorkspaceFlatRoleTargetMapCacheService extends WorkspaceCacheProvid
 
     for (const roleTargetEntity of roleTargets) {
       const flatRoleTarget = fromRoleTargetEntityToFlatRoleTarget({
-        roleTargetEntity,
+        entity: roleTargetEntity,
         applicationIdToUniversalIdentifierMap,
         roleIdToUniversalIdentifierMap,
       });
