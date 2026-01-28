@@ -14,8 +14,8 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
-import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
-import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
+import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.module';
+import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
@@ -27,8 +27,8 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     FrontComponentModule,
     ObjectMetadataModule,
     SearchFieldMetadataModule,
-    ServerlessFunctionModule,
-    ServerlessFunctionLayerModule,
+    LogicFunctionModule,
+    LogicFunctionLayerModule,
     SkillModule,
     CommandMenuItemModule,
     NavigationMenuItemModule,
@@ -49,7 +49,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     FrontComponentModule,
     ObjectMetadataModule,
     SearchFieldMetadataModule,
-    ServerlessFunctionModule,
+    LogicFunctionModule,
     SkillModule,
     CommandMenuItemModule,
     NavigationMenuItemModule,

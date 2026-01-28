@@ -1,4 +1,4 @@
-import { Equal, Expect } from '@/testing';
+import { type Equal, type Expect } from '@/testing';
 import { type ExtractSerializedRelationProperties } from '@/types/ExtractSerializedRelationProperties.type';
 import { type SerializedRelation } from '@/types/SerializedRelation.type';
 

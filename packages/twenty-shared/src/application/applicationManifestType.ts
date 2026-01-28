@@ -2,7 +2,7 @@ import {
   type PackageJson,
   type Application,
   type ObjectManifest,
-  type ServerlessFunctionManifest,
+  type LogicFunctionManifest,
 } from '@/application';
 import { type AssetManifest } from '@/application/assetManifestType';
 import { type FrontComponentManifest } from '@/application/frontComponentManifestType';
@@ -14,7 +14,7 @@ export type ApplicationManifest = {
   application: Application;
   objects: ObjectManifest[];
   objectExtensions?: ObjectExtensionManifest[];
-  functions: ServerlessFunctionManifest[];
+  functions: LogicFunctionManifest[];
   frontComponents: FrontComponentManifest[];
   roles?: RoleManifest[];
   publicAssets?: AssetManifest[];

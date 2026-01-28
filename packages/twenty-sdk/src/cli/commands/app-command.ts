@@ -161,7 +161,7 @@ export const registerCommands = (program: Command): void => {
       '-n, --functionName <functionName>',
       'Name of the function to execute',
     )
-    .description('Execute a serverless function with a JSON payload')
+    .description('Execute a logic function with a JSON payload')
     .action(
       async (
         appPath?: string,

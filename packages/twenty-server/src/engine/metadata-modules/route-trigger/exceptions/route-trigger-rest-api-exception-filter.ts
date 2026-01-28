@@ -27,7 +27,7 @@ export class RouteTriggerRestApiExceptionFilter implements ExceptionFilter {
       case RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND:
       case RouteTriggerExceptionCode.ROUTE_NOT_FOUND:
       case RouteTriggerExceptionCode.TRIGGER_NOT_FOUND:
-      case RouteTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND:
+      case RouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
           response,
@@ -39,7 +39,7 @@ export class RouteTriggerRestApiExceptionFilter implements ExceptionFilter {
           response,
           403,
         );
-      case RouteTriggerExceptionCode.SERVERLESS_FUNCTION_EXECUTION_ERROR:
+      case RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
           response,

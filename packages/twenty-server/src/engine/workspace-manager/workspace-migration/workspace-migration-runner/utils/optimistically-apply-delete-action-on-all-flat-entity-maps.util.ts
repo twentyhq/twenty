@@ -35,7 +35,7 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = <
     case 'rowLevelPermissionPredicateGroup':
     case 'viewFilterGroup':
     case 'index':
-    case 'serverlessFunction':
+    case 'logicFunction':
     case 'viewFilter':
     case 'role':
     case 'roleTarget':

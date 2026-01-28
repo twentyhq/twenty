@@ -20,7 +20,7 @@ import { FLAT_VIEW_FILTER_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-
 import { FLAT_VIEW_FILTER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-filter/constants/flat-view-filter-editable-properties.constant';
 import { FLAT_VIEW_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-group/constants/flat-view-group-editable-properties.constant';
 import { FLAT_VIEW_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view/constants/flat-view-editable-properties.constant';
-import { FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/serverless-function/constants/flat-serverless-function-editable-properties.constant';
+import { FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/logic-function/constants/flat-logic-function-editable-properties.constant';
 
 type OneFlatEntityConfiguration<T extends AllMetadataName> = {
   propertiesToCompare: (keyof MetadataFlatEntity<T>)[];
@@ -73,9 +73,9 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
     ],
     propertiesToStringify: ['flatIndexFieldMetadatas'],
   },
-  serverlessFunction: {
+  logicFunction: {
     propertiesToCompare: [
-      ...FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES.filter(
+      ...FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES.filter(
         (property) => property !== 'code',
       ),
       'deletedAt',
@@ -83,18 +83,6 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
       'publishedVersions',
     ],
     propertiesToStringify: ['toolInputSchema', 'publishedVersions'],
-  },
-  cronTrigger: {
-    propertiesToCompare: [],
-    propertiesToStringify: [],
-  },
-  databaseEventTrigger: {
-    propertiesToCompare: [],
-    propertiesToStringify: [],
-  },
-  routeTrigger: {
-    propertiesToCompare: [],
-    propertiesToStringify: [],
   },
   viewFilter: {
     propertiesToCompare: [

@@ -28,7 +28,7 @@ import { WorkspaceMigrationRoleTargetActionsBuilderService } from 'src/engine/wo
 import { WorkspaceMigrationRoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/workspace-migration-role-actions-builder.service';
 import { WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/workspace-migration-row-level-permission-predicate-group-actions-builder.service';
 import { WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/workspace-migration-row-level-permission-predicate-actions-builder.service';
-import { WorkspaceMigrationServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/workspace-migration-serverless-function-actions-builder.service';
+import { WorkspaceMigrationLogicFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/workspace-migration-logic-function-actions-builder.service';
 import { WorkspaceMigrationSkillActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/workspace-migration-skill-actions-builder.service';
 import { WorkspaceMigrationViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/workspace-migration-view-field-actions-builder.service';
 import { WorkspaceMigrationViewFilterGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/workspace-migration-view-filter-group-actions-builder.service';
@@ -47,7 +47,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationViewFilterActionsBuilderService: WorkspaceMigrationViewFilterActionsBuilderService,
     private readonly workspaceMigrationViewFilterGroupActionsBuilderService: WorkspaceMigrationViewFilterGroupActionsBuilderService,
     private readonly workspaceMigrationViewGroupActionsBuilderService: WorkspaceMigrationViewGroupActionsBuilderService,
-    private readonly workspaceMigrationServerlessFunctionActionsBuilderService: WorkspaceMigrationServerlessFunctionActionsBuilderService,
+    private readonly workspaceMigrationLogicFunctionActionsBuilderService: WorkspaceMigrationLogicFunctionActionsBuilderService,
     private readonly workspaceMigrationRoleTargetActionsBuilderService: WorkspaceMigrationRoleTargetActionsBuilderService,
     private readonly workspaceMigrationFieldActionsBuilderService: WorkspaceMigrationFieldActionsBuilderService,
     private readonly workspaceMigrationRoleActionsBuilderService: WorkspaceMigrationRoleActionsBuilderService,
@@ -144,7 +144,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatViewFieldMaps,
       flatViewMaps,
       flatIndexMaps,
-      flatServerlessFunctionMaps,
+      flatLogicFunctionMaps,
       flatFieldMetadataMaps,
       flatViewFilterMaps,
       flatViewFilterGroupMaps,
@@ -546,18 +546,16 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
-    if (isDefined(flatServerlessFunctionMaps)) {
-      const {
-        from: fromFlatServerlessFunctionMaps,
-        to: toFlatServerlessFunctionMaps,
-      } = flatServerlessFunctionMaps;
+    if (isDefined(flatLogicFunctionMaps)) {
+      const { from: fromFlatLogicFunctionMaps, to: toFlatLogicFunctionMaps } =
+        flatLogicFunctionMaps;
 
-      const serverlessFunctionResult =
-        await this.workspaceMigrationServerlessFunctionActionsBuilderService.validateAndBuild(
+      const logicFunctionResult =
+        await this.workspaceMigrationLogicFunctionActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
-            from: fromFlatServerlessFunctionMaps,
-            to: toFlatServerlessFunctionMaps,
+            from: fromFlatLogicFunctionMaps,
+            to: toFlatLogicFunctionMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: undefined,
             workspaceId,
@@ -568,17 +566,16 @@ export class WorkspaceMigrationBuildOrchestratorService {
         {
           allFlatEntityMaps: optimisticAllFlatEntityMaps,
           flatEntityMapsAndRelatedFlatEntityMaps:
-            serverlessFunctionResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+            logicFunctionResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
         },
       );
 
-      if (serverlessFunctionResult.status === 'fail') {
-        orchestratorFailureReport.serverlessFunction.push(
-          ...serverlessFunctionResult.errors,
+      if (logicFunctionResult.status === 'fail') {
+        orchestratorFailureReport.logicFunction.push(
+          ...logicFunctionResult.errors,
         );
       } else {
-        orchestratorActionsReport.serverlessFunction =
-          serverlessFunctionResult.actions;
+        orchestratorActionsReport.logicFunction = logicFunctionResult.actions;
       }
     }
 
@@ -1015,28 +1012,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.viewGroup.update,
           ///
 
-          // Serverless functions
-          ...aggregatedOrchestratorActionsReport.serverlessFunction.delete,
-          ...aggregatedOrchestratorActionsReport.serverlessFunction.create,
-          ...aggregatedOrchestratorActionsReport.serverlessFunction.update,
-          ///
-
-          // Database event triggers
-          ...aggregatedOrchestratorActionsReport.databaseEventTrigger.delete,
-          ...aggregatedOrchestratorActionsReport.databaseEventTrigger.create,
-          ...aggregatedOrchestratorActionsReport.databaseEventTrigger.update,
-          ///
-
-          // Cron triggers
-          ...aggregatedOrchestratorActionsReport.cronTrigger.delete,
-          ...aggregatedOrchestratorActionsReport.cronTrigger.create,
-          ...aggregatedOrchestratorActionsReport.cronTrigger.update,
-          ///
-
-          // Route triggers
-          ...aggregatedOrchestratorActionsReport.routeTrigger.delete,
-          ...aggregatedOrchestratorActionsReport.routeTrigger.create,
-          ...aggregatedOrchestratorActionsReport.routeTrigger.update,
+          // Logic functions
+          ...aggregatedOrchestratorActionsReport.logicFunction.delete,
+          ...aggregatedOrchestratorActionsReport.logicFunction.create,
+          ...aggregatedOrchestratorActionsReport.logicFunction.update,
           ///
 
           // Roles

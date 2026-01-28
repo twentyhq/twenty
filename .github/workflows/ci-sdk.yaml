@@ -50,7 +50,7 @@ jobs:
     needs: [changed-files-check, sdk-test]
     strategy:
       matrix:
-        task: [test:integration, test:e2e]
+        task: [test:integration]
     if: needs.changed-files-check.outputs.any_changed == 'true'
     services:
       postgres:

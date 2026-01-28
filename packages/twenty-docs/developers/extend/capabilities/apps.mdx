@@ -9,11 +9,11 @@ Apps are currently in alpha testing. The feature is functional but still evolvin
 
 ## What Are Apps?
 
-Apps let you build and manage Twenty customizations **as code**. Instead of configuring everything through the UI, you define your data model and serverless functions in code — making it faster to build, maintain, and roll out to multiple workspaces.
+Apps let you build and manage Twenty customizations **as code**. Instead of configuring everything through the UI, you define your data model and logic functions in code — making it faster to build, maintain, and roll out to multiple workspaces.
 
 **What you can do today:**
 - Define custom objects and fields as code (managed data model)
-- Build serverless functions with custom triggers
+- Build logic functions with custom triggers
 - Deploy the same app across multiple workspaces
 
 **Coming soon:**
@@ -161,9 +161,9 @@ At a high level:
 - **public/**: A folder for storing public assets (images, fonts, static files) that will be served with your application. Files placed here are uploaded during sync and accessible at runtime.
 - **src/**: The main place where you define your application-as-code:
   - `application.config.ts`: Global configuration for your app (metadata and runtime wiring). See "Application config" below.
-  - `*.role.ts`: Role definitions used by your serverless functions. See "Default function role" below.
+  - `*.role.ts`: Role definitions used by your logic functions. See "Default function role" below.
   - `*.object.ts`: Custom object definitions.
-  - `*.function.ts`: Serverless function definitions.
+  - `*.function.ts`: Logic function definitions.
   - `*.front-component.tsx`: Front component definitions.
 
 Later commands will add more files and folders:
@@ -216,7 +216,7 @@ The SDK provides four helper functions with built-in validation for defining you
 |----------|---------|
 | `defineApp()` | Configure application metadata |
 | `defineObject()` | Define custom objects with fields |
-| `defineFunction()` | Define serverless functions with handlers |
+| `defineFunction()` | Define logic functions with handlers |
 | `defineRole()` | Configure role permissions and object access |
 
 These functions validate your configuration at runtime and provide better IDE autocompletion and type safety.
@@ -346,7 +346,7 @@ Notes:
 
 #### Roles and permissions
 
-Applications can define roles that encapsulate permissions on your workspace's objects and actions. The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's serverless functions.
+Applications can define roles that encapsulate permissions on your workspace's objects and actions. The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
 
 - The runtime API key injected as `TWENTY_API_KEY` is derived from this default function role.
 - The typed client will be restricted to the permissions granted to that role.
@@ -407,7 +407,7 @@ Notes:
 - `permissionFlags` control access to platform-level capabilities. Keep them minimal; add only what you need.
 - See a working example in the Hello World app: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
-### Serverless function config and entrypoint
+### Logic function config and entrypoint
 
 Each function file uses `defineFunction()` to export a configuration with a handler and optional triggers. Use the `*.function.ts` file suffix for automatic detection.
 
@@ -499,7 +499,7 @@ const handler = async (event: RoutePayload) => {
 **To migrate existing functions:** Update your handler to destructure from `event.body`, `event.queryStringParameters`, or `event.pathParameters` instead of directly from the params object.
 </Warning>
 
-When a route trigger invokes your function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Import the type from `twenty-sdk`:
+When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Import the type from `twenty-sdk`:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -529,7 +529,7 @@ The `RoutePayload` type has the following structure:
 
 ### Forwarding HTTP headers
 
-By default, HTTP headers from incoming requests are **not** passed to your serverless function for security reasons. To access specific headers, explicitly list them in the `forwardedRequestHeaders` array:
+By default, HTTP headers from incoming requests are **not** passed to your logic function for security reasons. To access specific headers, explicitly list them in the `forwardedRequestHeaders` array:
 
 ```typescript
 export default defineFunction({
@@ -583,7 +583,7 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 
 The client is re-generated by `yarn app:generate`. Re-run after changing your objects or when onboarding to a new workspace.
 
-#### Runtime credentials in serverless functions
+#### Runtime credentials in logic functions
 
 When your function runs on Twenty, the platform injects credentials as environment variables before your code executes:
 
@@ -592,7 +592,7 @@ When your function runs on Twenty, the platform injects credentials as environme
 
 Notes:
 - You do not need to pass URL or API key to the generated client. It reads `TWENTY_API_URL` and `TWENTY_API_KEY` from process.env at runtime.
-- The API key's permissions are determined by the role referenced in your `application.config.ts` via `functionRoleUniversalIdentifier`. This is the default role used by serverless functions of your application.
+- The API key's permissions are determined by the role referenced in your `application.config.ts` via `functionRoleUniversalIdentifier`. This is the default role used by logic functions of your application.
 - Applications can define roles to follow least‑privilege. Grant only the permissions your functions need, then point `functionRoleUniversalIdentifier` to that role's universal identifier.
 
 

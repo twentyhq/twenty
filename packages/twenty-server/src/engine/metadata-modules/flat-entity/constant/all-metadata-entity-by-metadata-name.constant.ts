@@ -16,7 +16,7 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
@@ -36,14 +36,11 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   view: ViewEntity,
   index: IndexMetadataEntity,
   pageLayoutTab: PageLayoutTabEntity,
-  routeTrigger: ServerlessFunctionEntity,
-  cronTrigger: ServerlessFunctionEntity,
-  databaseEventTrigger: ServerlessFunctionEntity,
   frontComponent: FrontComponentEntity,
   fieldMetadata: FieldMetadataEntity,
   pageLayout: PageLayoutEntity,
   skill: SkillEntity,
-  serverlessFunction: ServerlessFunctionEntity,
+  logicFunction: LogicFunctionEntity,
   objectMetadata: ObjectMetadataEntity,
   role: RoleEntity,
   agent: AgentEntity,

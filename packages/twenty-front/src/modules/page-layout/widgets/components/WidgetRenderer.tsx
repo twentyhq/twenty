@@ -84,11 +84,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const isRichTextWidget = widget.type === WidgetType.STANDALONE_RICH_TEXT;
   const hideRichTextHeader = isRichTextWidget && !isPageLayoutInEditMode;
 
-  const showHeader =
-    layoutMode !== 'canvas' &&
-    !hideRichTextHeader &&
-    // TODO: use a more generic approach after record page layout v1 release
-    widget.type !== WidgetType.FIELDS;
+  const showHeader = layoutMode !== 'canvas' && !hideRichTextHeader;
 
   const handleClick = () => {
     handleEditWidget({

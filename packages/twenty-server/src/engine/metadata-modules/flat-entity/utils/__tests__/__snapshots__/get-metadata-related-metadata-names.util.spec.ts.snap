@@ -8,10 +8,6 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
-exports[`getMetadataRelatedMetadataNames should return related metadata names for cronTrigger 1`] = `[]`;
-
-exports[`getMetadataRelatedMetadataNames should return related metadata names for databaseEventTrigger 1`] = `[]`;
-
 exports[`getMetadataRelatedMetadataNames should return related metadata names for fieldMetadata 1`] = `
 [
   "objectMetadata",
@@ -29,6 +25,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "objectMetadata",
 ]
 `;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for logicFunction 1`] = `[]`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for navigationMenuItem 1`] = `
 [
@@ -81,8 +79,6 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
-exports[`getMetadataRelatedMetadataNames should return related metadata names for routeTrigger 1`] = `[]`;
-
 exports[`getMetadataRelatedMetadataNames should return related metadata names for rowLevelPermissionPredicate 1`] = `
 [
   "role",
@@ -100,8 +96,6 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "rowLevelPermissionPredicate",
 ]
 `;
-
-exports[`getMetadataRelatedMetadataNames should return related metadata names for serverlessFunction 1`] = `[]`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for skill 1`] = `[]`;
 

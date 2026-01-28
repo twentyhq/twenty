@@ -393,7 +393,7 @@ ${preloadedTools.length > 0 ? preloadedTools.map((t) => `- \`${t}\` ✓`).join('
       'DASHBOARD',
       'METADATA',
       'VIEW',
-      'SERVERLESS_FUNCTION',
+      'LOGIC_FUNCTION',
     ];
 
     for (const category of categoryOrder) {
@@ -439,8 +439,8 @@ ${tools
         return 'View Tools (query views)';
       case 'DASHBOARD':
         return 'Dashboard Tools (create/manage dashboards)';
-      case 'SERVERLESS_FUNCTION':
-        return 'Serverless Functions (custom tools)';
+      case 'LOGIC_FUNCTION':
+        return 'Logic Functions (custom tools)';
       default:
         return category;
     }

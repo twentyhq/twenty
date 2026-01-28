@@ -2,12 +2,12 @@ import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { transformEventBatchToEventPayloads } from 'src/engine/metadata-modules/database-event-trigger/utils/transform-event-batch-to-event-payloads';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
-const createMockServerlessFunction = (
-  overrides: Partial<ServerlessFunctionEntity> = {},
-): ServerlessFunctionEntity =>
+const createMockLogicFunction = (
+  overrides: Partial<LogicFunctionEntity> = {},
+): LogicFunctionEntity =>
   ({
     id: 'function-1',
     workspaceId: 'workspace-1',
@@ -15,7 +15,7 @@ const createMockServerlessFunction = (
       eventName: 'company.updated',
     },
     ...overrides,
-  }) as ServerlessFunctionEntity;
+  }) as LogicFunctionEntity;
 
 const createMockEvent = (
   overrides: Partial<ObjectRecordEvent> = {},
@@ -43,18 +43,18 @@ const createMockWorkspaceEventBatch = (
 
 describe('transformEventBatchToEventPayloads', () => {
   describe('basic transformation', () => {
-    it('should transform a single event batch with a single serverless function', () => {
+    it('should transform a single event batch with a single logic function', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch();
-      const serverlessFunctions = [createMockServerlessFunction()];
+      const logicFunctions = [createMockLogicFunction()];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        serverlessFunctions,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual({
-        serverlessFunctionId: 'function-1',
+        logicFunctionId: 'function-1',
         workspaceId: 'workspace-1',
         payload: expect.objectContaining({
           name: 'company.updated',
@@ -72,11 +72,11 @@ describe('transformEventBatchToEventPayloads', () => {
           createMockEvent({ recordId: 'record-3' }),
         ],
       });
-      const serverlessFunctions = [createMockServerlessFunction()];
+      const logicFunctions = [createMockLogicFunction()];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        serverlessFunctions,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(3);
@@ -85,24 +85,24 @@ describe('transformEventBatchToEventPayloads', () => {
       ).toEqual(['record-1', 'record-2', 'record-3']);
     });
 
-    it('should create payloads for each serverless function', () => {
+    it('should create payloads for each logic function', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch();
-      const serverlessFunctions = [
-        createMockServerlessFunction({
+      const logicFunctions = [
+        createMockLogicFunction({
           id: 'function-1',
         }),
-        createMockServerlessFunction({
+        createMockLogicFunction({
           id: 'function-2',
         }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        serverlessFunctions,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(2);
-      expect(result.map((r) => r.serverlessFunctionId)).toEqual([
+      expect(result.map((r) => r.logicFunctionId)).toEqual([
         'function-1',
         'function-2',
       ]);
@@ -124,15 +124,15 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const serverlessFunctions = [
-        createMockServerlessFunction({
+      const logicFunctions = [
+        createMockLogicFunction({
           databaseEventTriggerSettings: { eventName: 'company.updated' },
         }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        serverlessFunctions,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -152,8 +152,8 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const serverlessFunctions = [
-        createMockServerlessFunction({
+      const logicFunctions = [
+        createMockLogicFunction({
           databaseEventTriggerSettings: {
             eventName: 'company.updated',
             updatedFields: [],
@@ -163,7 +163,7 @@ describe('transformEventBatchToEventPayloads', () => {
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        serverlessFunctions,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -187,8 +187,8 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const serverlessFunctions = [
-        createMockServerlessFunction({
+      const logicFunctions = [
+        createMockLogicFunction({
           databaseEventTriggerSettings: {
             eventName: 'company.updated',
             updatedFields: ['name'],
@@ -198,7 +198,7 @@ describe('transformEventBatchToEventPayloads', () => {
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        serverlessFunctions,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -225,8 +225,8 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const serverlessFunctions = [
-        createMockServerlessFunction({
+      const logicFunctions = [
+        createMockLogicFunction({
           databaseEventTriggerSettings: {
             eventName: 'company.updated',
             updatedFields: ['name', 'address'],
@@ -236,7 +236,7 @@ describe('transformEventBatchToEventPayloads', () => {
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        serverlessFunctions,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -259,8 +259,8 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const serverlessFunctions = [
-        createMockServerlessFunction({
+      const logicFunctions = [
+        createMockLogicFunction({
           databaseEventTriggerSettings: {
             eventName: 'company.updated',
             updatedFields: ['phone'],
@@ -270,13 +270,13 @@ describe('transformEventBatchToEventPayloads', () => {
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        serverlessFunctions,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(0);
     });
 
-    it('should handle different updatedFields filters per serverless function', () => {
+    it('should handle different updatedFields filters per logic function', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({
         name: 'company.updated',
         events: [
@@ -290,15 +290,15 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const serverlessFunctions = [
-        createMockServerlessFunction({
+      const logicFunctions = [
+        createMockLogicFunction({
           id: 'function-1',
           databaseEventTriggerSettings: {
             eventName: 'company.updated',
             updatedFields: ['name'],
           },
         }),
-        createMockServerlessFunction({
+        createMockLogicFunction({
           id: 'function-2',
           databaseEventTriggerSettings: {
             eventName: 'company.updated',
@@ -309,16 +309,16 @@ describe('transformEventBatchToEventPayloads', () => {
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        serverlessFunctions,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(2);
 
       const function1Payloads = result.filter(
-        (r) => r.serverlessFunctionId === 'function-1',
+        (r) => r.logicFunctionId === 'function-1',
       );
       const function2Payloads = result.filter(
-        (r) => r.serverlessFunctionId === 'function-2',
+        (r) => r.logicFunctionId === 'function-2',
       );
 
       expect(function1Payloads).toHaveLength(1);
@@ -334,12 +334,12 @@ describe('transformEventBatchToEventPayloads', () => {
   });
 
   describe('edge cases', () => {
-    it('should return empty array when no serverless functions provided', () => {
+    it('should return empty array when no logic functions provided', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch();
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        serverlessFunctions: [],
+        logicFunctions: [],
       });
 
       expect(result).toHaveLength(0);
@@ -349,11 +349,11 @@ describe('transformEventBatchToEventPayloads', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({
         events: [],
       });
-      const serverlessFunctions = [createMockServerlessFunction()];
+      const logicFunctions = [createMockLogicFunction()];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        serverlessFunctions,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(0);

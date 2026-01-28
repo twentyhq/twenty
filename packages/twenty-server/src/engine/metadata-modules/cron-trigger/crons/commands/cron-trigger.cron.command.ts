@@ -9,8 +9,7 @@ import {
 } from 'src/engine/metadata-modules/cron-trigger/crons/jobs/cron-trigger.cron.job';
 @Command({
   name: 'cron:trigger:start-cron-trigger',
-  description:
-    'Starts a cron job to trigger cron triggered serverless functions',
+  description: 'Starts a cron job to trigger cron triggered logic functions',
 })
 export class CronTriggerCronCommand extends CommandRunner {
   constructor(
