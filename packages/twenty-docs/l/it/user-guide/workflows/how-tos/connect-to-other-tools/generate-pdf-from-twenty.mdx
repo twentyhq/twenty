@@ -7,7 +7,7 @@ Genera o recupera automaticamente un PDF e allegalo a un record in Twenty. Quest
 
 ## Panoramica
 
-Questo flusso di lavoro usa un **Attivatore manuale** così gli utenti possono generare un PDF su richiesta per qualsiasi record selezionato. A **Logic Function** handles:
+Questo flusso di lavoro usa un **Attivatore manuale** così gli utenti possono generare un PDF su richiesta per qualsiasi record selezionato. Una **Funzione logica** gestisce:
 
 1. Scaricare il PDF da un URL (da un servizio di generazione di PDF)
 2. Caricare il file su Twenty
@@ -17,7 +17,7 @@ Questo flusso di lavoro usa un **Attivatore manuale** così gli utenti possono g
 
 Prima di configurare il flusso di lavoro:
 
-1. **Crea una chiave API**: vai su **Impostazioni → API** e crea una nuova chiave API. You'll need this token for the logic function.
+1. **Crea una chiave API**: vai su **Impostazioni → API** e crea una nuova chiave API. Ti servirà questo token per la funzione logica.
 2. **Configura un servizio di generazione PDF** (opzionale): se vuoi generare dinamicamente PDF (ad es. preventivi), usa un servizio come Carbone, PDFMonkey o DocuSeal per creare il PDF e ottenere un URL di download.
 
 ## Configurazione passo-passo
@@ -32,9 +32,9 @@ Prima di configurare il flusso di lavoro:
   Con un **Attivatore manuale**, gli utenti possono eseguire questo flusso di lavoro utilizzando un pulsante che appare in alto a destra una volta selezionato un record, per generare e allegare un PDF.
 </Tip>
 
-### Step 2: Add a Logic Function
+### Passaggio 2: aggiungi una Funzione logica
 
-1. Add a **Code** action (logic function)
+1. Aggiungi un'azione **Code** (funzione logica)
 2. Crea una nuova funzione con il codice seguente
 3. Configura i parametri di input
 
@@ -45,10 +45,10 @@ Prima di configurare il flusso di lavoro:
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic function.
+  Se alleghi a un oggetto diverso (Person, Opportunity, ecc.), rinomina di conseguenza il parametro (ad es. `personId`, `opportunityId`) e aggiorna la funzione logica.
 </Note>
 
-#### Logic Function Code
+#### Codice della Funzione logica
 
 ```typescript
 export const main = async (
@@ -172,7 +172,7 @@ Aggiorna sia il parametro della funzione sia l'oggetto `variables.data` nella mu
 Se usi un servizio di generazione PDF, puoi:
 
 1. Per prima cosa esegui un'azione HTTP Request per generare il PDF
-2. Pass the returned PDF URL to the logic function as a parameter
+2. Passa l'URL PDF restituito alla funzione logica come parametro
 
 ```typescript
 export const main = async (
@@ -211,7 +211,7 @@ Per creare preventivi o fatture dinamici:
 * **DocuSeal** - Piattaforma di automazione dei documenti
 * **Documint** - Generazione di documenti API-first
 
-Each service provides an API that returns a PDF URL, which you can then pass to the logic function.
+Ogni servizio fornisce un'API che restituisce un URL PDF, che puoi quindi passare alla funzione logica.
 
 ## Risoluzione dei problemi
 
@@ -224,5 +224,5 @@ Each service provides an API that returns a PDF URL, which you can then pass to 
 ## Correlati
 
 * [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
-* [Logic Functions](/l/it/user-guide/workflows/capabilities/workflow-actions#code)
+* [Funzioni logiche](/l/it/user-guide/workflows/capabilities/workflow-actions#code)
 * [Genera un preventivo o una fattura da Twenty](/l/it/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
