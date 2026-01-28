@@ -1,7 +1,7 @@
 import { ThreadWebWorker, release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect } from 'react';
-import { type SandboxAPI } from '../../types/SandboxApi';
+import { type WorkerExports } from '../../types/WorkerExports';
 
 type FrontComponentWorkerEffectProps = {
   workerUrl: URL;
@@ -25,7 +25,7 @@ export const FrontComponentWorkerEffect = ({
       onError(event.error);
     };
 
-    const thread = new ThreadWebWorker<SandboxAPI>(worker);
+    const thread = new ThreadWebWorker<WorkerExports>(worker);
 
     thread.imports
       .render(newReceiver.connection, { componentUrl })
