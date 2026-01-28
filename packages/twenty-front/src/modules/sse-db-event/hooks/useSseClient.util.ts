@@ -40,11 +40,11 @@ export const useSseClient = () => {
         },
         retryAttempts: Infinity,
         retry: async () => {
-          const randoWaitTimeInMsToSpaceAllClientsReconnection = Math.round(
+          const randomWaitTimeInMsToSpaceAllClientsReconnection = Math.round(
             Math.random() * SSE_CONNECTION_RETRY_MAX_WAIT_TIME_IN_MS,
           );
 
-          await sleep(randoWaitTimeInMsToSpaceAllClientsReconnection);
+          await sleep(randomWaitTimeInMsToSpaceAllClientsReconnection);
         },
       }),
 
