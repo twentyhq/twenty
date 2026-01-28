@@ -11,9 +11,7 @@ export default defineConfig({
   test: {
     name: 'twenty-sdk-e2e',
     environment: 'node',
-    // TODO: Re-enable e2e tests after fixing authentication issues
-    include: [],
-    // include: ['src/**/*.e2e-spec.ts'],
+    include: ['src/**/*.e2e-spec.ts'],
     globals: true,
     testTimeout: 30000,
     hookTimeout: 30000,

@@ -26,6 +26,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for logicFunction 1`] = `[]`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for navigationMenuItem 1`] = `
 [
   "objectMetadata",
@@ -94,8 +96,6 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "rowLevelPermissionPredicate",
 ]
 `;
-
-exports[`getMetadataRelatedMetadataNames should return related metadata names for serverlessFunction 1`] = `[]`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for skill 1`] = `[]`;
 
