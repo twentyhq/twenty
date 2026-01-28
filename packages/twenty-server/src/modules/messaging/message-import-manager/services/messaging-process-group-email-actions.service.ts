@@ -42,7 +42,7 @@ export class MessagingProcessGroupEmailActionsService {
         { pendingGroupEmailsAction },
       );
 
-      this.logger.log(
+      this.logger.debug(
         `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Marked message channel as pending group emails action: ${pendingGroupEmailsAction}`,
       );
     }, authContext);
@@ -61,7 +61,7 @@ export class MessagingProcessGroupEmailActionsService {
       return;
     }
 
-    this.logger.log(
+    this.logger.debug(
       `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Processing group email action: ${pendingGroupEmailsAction}`,
     );
 
@@ -106,7 +106,7 @@ export class MessagingProcessGroupEmailActionsService {
               transactionManager,
             );
 
-            this.logger.log(
+            this.logger.debug(
               `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Reset pendingGroupEmailsAction to NONE`,
             );
           } catch (error) {
@@ -137,7 +137,7 @@ export class MessagingProcessGroupEmailActionsService {
       transactionManager,
     });
 
-    this.logger.log(
+    this.logger.debug(
       `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannelId} - Completed GROUP_EMAILS_DELETION action`,
     );
   }
@@ -153,7 +153,7 @@ export class MessagingProcessGroupEmailActionsService {
       transactionManager,
     });
 
-    this.logger.log(
+    this.logger.debug(
       `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannelId} - Completed GROUP_EMAILS_IMPORT action`,
     );
   }
