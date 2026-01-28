@@ -108,8 +108,10 @@ export class UpdateTaskOnDeleteActionCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
+    this.logger.log(JSON.stringify(taskTargetObjectMetadata, null, 2));
+
     this.logger.log(
-      `[Step 2/4] Found taskTarget object metadata with id ${taskTargetObjectMetadata.id} that has ${taskTargetObjectMetadata.fieldIds.length} field(s) in workspace ${workspaceId}`,
+      `[Step 2/4] Found taskTarget object metadata with id ${taskTargetObjectMetadata.id} in workspace ${workspaceId}`,
     );
 
     this.logger.log(
