@@ -278,11 +278,18 @@ export class MigrateNoteTargetToMorphRelationsCommand extends ActiveOrSuspendedW
       this.logger.log(`Flush cache for workspace ${workspaceId}`);
       await this.workspaceCacheStorageService.flush(workspaceId);
     } catch (error) {
-      await queryRunner.rollbackTransaction();
-      this.logger.error(
-        `Error migrating noteTarget to morph relations (rolled transaction back on ${workspaceId})`,
-        error,
-      );
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+        this.logger.error(
+          `Error migrating noteTarget to morph relations (rolled transaction back on ${workspaceId})`,
+          error,
+        );
+      } else {
+        this.logger.error(
+          `Error migrating noteTarget to morph relations after commit on ${workspaceId}`,
+          error,
+        );
+      }
       throw error;
     } finally {
       await queryRunner.release();
