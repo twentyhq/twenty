@@ -177,14 +177,8 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
     );
   }
 
-  const fieldType =
-    recordFilter.type === FieldMetadataType.DATE_TIME &&
-    recordFilter.operand === RecordFilterOperand.IS
-      ? FieldMetadataType.DATE
-      : (recordFilter.type as FieldMetadataType);
-
   const field = {
-    type: fieldType,
+    type: recordFilter.type as FieldMetadataType,
     label: '',
     metadata: fieldDefinition?.metadata as FieldMetadata,
   };
