@@ -10,6 +10,13 @@ import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-bu
 
 const MAX_EVENT_NUMBER = 200;
 
+const FILE_STATUS_TRANSITION_MATRIX: Record<FileStatus, FileStatus[]> = {
+  pending: ['building', 'uploading', 'success'],
+  building: ['pending', 'uploading', 'success'],
+  uploading: ['pending', 'success'],
+  success: ['pending', 'building', 'uploading'],
+};
+
 export class DevUiStateManager {
   private state: DevUiState;
   private eventIdCounter = 0;
@@ -167,6 +174,16 @@ export class DevUiStateManager {
     const entities = new Map(this.state.entities);
 
     const entity = entities.get(filePath);
+
+    if (
+      entity?.status &&
+      !FILE_STATUS_TRANSITION_MATRIX[entity.status].find(
+        (nextStatus) => nextStatus === status,
+      )
+    ) {
+      return;
+    }
+
     entities.set(
       filePath,
       entity
