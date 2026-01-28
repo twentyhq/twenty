@@ -119,6 +119,11 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       return new Map();
     }
 
+    const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatNavigationMenuItemMaps',
+      ]);
+
     const folderIdMapping = new Map<string, string>();
     const flatNavigationMenuItemsToCreate: FlatNavigationMenuItem[] = [];
 
@@ -128,6 +133,30 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         workspaceId,
         authContext,
       );
+
+      const existingFolder = Object.values(
+        existingFlatNavigationMenuItemMaps.byId,
+      ).find(
+        (item) =>
+          isDefined(item) &&
+          item.workspaceId === workspaceId &&
+          item.userWorkspaceId === userWorkspaceId &&
+          item.name === favoriteFolder.name &&
+          !isDefined(item.targetRecordId) &&
+          !isDefined(item.targetObjectMetadataId) &&
+          !isDefined(item.viewId) &&
+          !isDefined(item.folderId),
+      );
+
+      if (isDefined(existingFolder)) {
+        this.logger.log(
+          `Skipping favorite folder ${favoriteFolder.id} - navigation menu item folder already exists with name "${favoriteFolder.name}"`,
+        );
+
+        folderIdMapping.set(favoriteFolder.id, existingFolder.id);
+
+        continue;
+      }
 
       const newId = uuidv4();
       const now = new Date().toISOString();
@@ -152,11 +181,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     }
 
     if (flatNavigationMenuItemsToCreate.length > 0) {
-      const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatNavigationMenuItemMaps',
-        ]);
-
       await this.createNavigationMenuItems(
         workspaceId,
         flatNavigationMenuItemsToCreate,
@@ -216,25 +240,23 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         : null;
 
       if (isDefined(favorite.viewId)) {
-        if (userWorkspaceId === null) {
-          const existingItem = Object.values(
-            existingFlatNavigationMenuItemMaps.byId,
-          ).find(
-            (item) =>
-              isDefined(item) &&
-              item.workspaceId === workspaceId &&
-              item.userWorkspaceId === null &&
-              item.viewId === favorite.viewId &&
-              item.folderId === folderId,
+        const existingItem = Object.values(
+          existingFlatNavigationMenuItemMaps.byId,
+        ).find(
+          (item) =>
+            isDefined(item) &&
+            item.workspaceId === workspaceId &&
+            item.userWorkspaceId === userWorkspaceId &&
+            item.viewId === favorite.viewId &&
+            item.folderId === folderId,
+        );
+
+        if (isDefined(existingItem)) {
+          this.logger.log(
+            `Skipping favorite ${favorite.id} - navigation menu item already exists for view ${favorite.viewId}`,
           );
 
-          if (isDefined(existingItem)) {
-            this.logger.log(
-              `Skipping favorite ${favorite.id} - workspace-level navigation menu item already exists for view ${favorite.viewId}`,
-            );
-
-            continue;
-          }
+          continue;
         }
 
         const newId = uuidv4();
@@ -275,26 +297,24 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         continue;
       }
 
-      if (userWorkspaceId === null) {
-        const existingItem = Object.values(
-          existingFlatNavigationMenuItemMaps.byId,
-        ).find(
-          (item) =>
-            isDefined(item) &&
-            item.workspaceId === workspaceId &&
-            item.userWorkspaceId === null &&
-            item.targetRecordId === targetRecordId &&
-            item.targetObjectMetadataId === targetObjectMetadataId &&
-            item.folderId === folderId,
+      const existingItem = Object.values(
+        existingFlatNavigationMenuItemMaps.byId,
+      ).find(
+        (item) =>
+          isDefined(item) &&
+          item.workspaceId === workspaceId &&
+          item.userWorkspaceId === userWorkspaceId &&
+          item.targetRecordId === targetRecordId &&
+          item.targetObjectMetadataId === targetObjectMetadataId &&
+          item.folderId === folderId,
+      );
+
+      if (isDefined(existingItem)) {
+        this.logger.log(
+          `Skipping favorite ${favorite.id} - navigation menu item already exists for record ${targetRecordId}`,
         );
 
-        if (isDefined(existingItem)) {
-          this.logger.log(
-            `Skipping favorite ${favorite.id} - workspace-level navigation menu item already exists for record ${targetRecordId}`,
-          );
-
-          continue;
-        }
+        continue;
       }
 
       const newId = uuidv4();
