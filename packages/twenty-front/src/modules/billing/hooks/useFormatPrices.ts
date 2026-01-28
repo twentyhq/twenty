@@ -25,14 +25,26 @@ export const useFormatPrices = () => {
     SubscriptionInterval.Month,
   );
 
+  const formatAmount = (amountInCents: number | undefined) => {
+    if (typeof amountInCents !== 'number') {
+      return undefined;
+    }
+
+    return (amountInCents / 100).toFixed(2);
+  };
+
   const formatPrices = {
     [BillingPlanKey.ENTERPRISE]: {
-      [SubscriptionInterval.Year]: enterpriseYearPrice?.unitAmount / 100 / 12,
-      [SubscriptionInterval.Month]: enterpriseMonthPrice?.unitAmount / 100,
+      [SubscriptionInterval.Year]: formatAmount(
+        enterpriseYearPrice?.unitAmount / 12,
+      ),
+      [SubscriptionInterval.Month]: formatAmount(
+        enterpriseMonthPrice?.unitAmount,
+      ),
     },
     [BillingPlanKey.PRO]: {
-      [SubscriptionInterval.Year]: proYearPrice?.unitAmount / 100 / 12,
-      [SubscriptionInterval.Month]: proMonthPrice?.unitAmount / 100,
+      [SubscriptionInterval.Year]: formatAmount(proYearPrice?.unitAmount / 12),
+      [SubscriptionInterval.Month]: formatAmount(proMonthPrice?.unitAmount),
     },
   };
 
