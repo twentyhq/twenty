@@ -537,10 +537,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         `Failed to create navigation menu items: ${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
     }
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatNavigationMenuItemMaps',
-    ]);
   }
 
   private async softDeleteMigratedFavorites({
