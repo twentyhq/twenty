@@ -26,7 +26,7 @@ export const useFormatPrices = () => {
   );
 
   const formatAmount = (amountInCents: number | undefined) => {
-    if (typeof amountInCents !== 'number') {
+    if (typeof amountInCents !== 'number' || Number.isNaN(amountInCents)) {
       return undefined;
     }
 
