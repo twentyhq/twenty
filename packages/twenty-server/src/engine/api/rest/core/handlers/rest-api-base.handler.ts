@@ -17,6 +17,7 @@ import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/servi
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -79,12 +80,6 @@ export abstract class RestApiBaseHandler {
   ): Promise<
     FormatResult | { data: FormatResult[] } | CommonGroupByOutputItem[]
   >;
-
-  public getAuthContextFromRequest(
-    request: AuthenticatedRequest,
-  ): WorkspaceAuthContext {
-    return request;
-  }
 
   private getObjectsPermissions = async (authContext: WorkspaceAuthContext) => {
     let roleId: string;
@@ -160,7 +155,7 @@ export abstract class RestApiBaseHandler {
       objectIdByNameSingular,
     } = await this.getObjectMetadata(request, parsedObject);
 
-    const authContext = this.getAuthContextFromRequest(request);
+    const authContext = getWorkspaceAuthContext();
 
     return {
       authContext,
