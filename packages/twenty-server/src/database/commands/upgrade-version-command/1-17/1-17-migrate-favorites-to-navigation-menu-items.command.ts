@@ -185,7 +185,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         authContext,
       );
 
-      // If folder has no favorites, use fallback userWorkspaceId to make it user-level and visible
       if (!isDefined(userWorkspaceId) && isDefined(fallbackUserWorkspaceId)) {
         userWorkspaceId = fallbackUserWorkspaceId;
       }
