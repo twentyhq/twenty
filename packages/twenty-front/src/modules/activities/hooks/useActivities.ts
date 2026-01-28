@@ -71,9 +71,11 @@ export const useActivities = <T extends Task | Note>({
 
     updateActivitiesInStore(activityTargets);
 
-    return activityTargets.map((activityTarget) => {
-      return activityTarget[objectNameSingular];
-    }) as T[];
+    return activityTargets
+      .map((activityTarget) => {
+        return activityTarget[objectNameSingular];
+      })
+      .filter(isDefined) as T[];
   };
 
   return {
