@@ -42,7 +42,7 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.BuiltFrontComponent]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.Asset]: {
+  [FileFolder.PublicAsset]: {
     ignoreExpirationToken: true,
   },
   [FileFolder.Source]: {

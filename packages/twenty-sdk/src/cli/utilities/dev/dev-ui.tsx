@@ -30,7 +30,7 @@ const ENTITY_LABELS: Record<SyncableEntity, string> = {
   [SyncableEntity.Function]: 'Functions',
   [SyncableEntity.FrontComponent]: 'Front Components',
   [SyncableEntity.Role]: 'Roles',
-  [SyncableEntity.Asset]: 'Assets',
+  [SyncableEntity.PublicAsset]: 'Public Assets',
 };
 
 const ENTITY_ORDER = Object.keys(ENTITY_LABELS) as SyncableEntity[];

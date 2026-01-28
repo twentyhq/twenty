@@ -74,7 +74,7 @@ export class AssetWatcher {
     const checksum = crypto.createHash('md5').update(content).digest('hex');
 
     this.handleFileBuilt({
-      fileFolder: FileFolder.Asset,
+      fileFolder: FileFolder.PublicAsset,
       builtPath: outputPath,
       sourcePath,
       checksum,

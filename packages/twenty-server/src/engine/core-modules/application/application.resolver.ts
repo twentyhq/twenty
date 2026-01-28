@@ -154,7 +154,7 @@ export class ApplicationResolver {
     const allowedApplicationFileFolders: FileFolder[] = [
       FileFolder.BuiltFunction,
       FileFolder.BuiltFrontComponent,
-      FileFolder.Asset,
+      FileFolder.PublicAsset,
       FileFolder.Source,
     ];
 

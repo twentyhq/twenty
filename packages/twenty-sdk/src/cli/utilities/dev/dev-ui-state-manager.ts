@@ -110,7 +110,7 @@ export class DevUiStateManager {
       case 'roles':
         return SyncableEntity.Role;
       case 'assets':
-        return SyncableEntity.Asset;
+        return SyncableEntity.PublicAsset;
       default:
         return;
     }

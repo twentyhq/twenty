@@ -106,7 +106,7 @@ export const updateManifestChecksum = ({
       };
     }
 
-    if (fileFolder === FileFolder.Asset) {
+    if (fileFolder === FileFolder.PublicAsset) {
       const assets = result.assets ?? [];
       const assetIndex = assets.findIndex((a) => a.filePath === rootBuiltPath);
       if (assetIndex === -1) {

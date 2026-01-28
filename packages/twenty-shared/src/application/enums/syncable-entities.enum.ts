@@ -4,5 +4,5 @@ export enum SyncableEntity {
   Function = 'function',
   FrontComponent = 'frontComponent',
   Role = 'role',
-  Asset = 'asset',
+  PublicAsset = 'publicAsset',
 }
