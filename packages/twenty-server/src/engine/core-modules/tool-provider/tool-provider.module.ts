@@ -8,7 +8,7 @@ import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/pro
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
 import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
-import { ServerlessFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/serverless-function-tool.provider';
+import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
@@ -18,7 +18,7 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
+import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -44,7 +44,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ViewModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    ServerlessFunctionModule,
+    LogicFunctionModule,
     UserRoleModule,
   ],
   providers: [
@@ -54,7 +54,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     DatabaseToolProvider,
     MetadataToolProvider,
     NativeModelToolProvider,
-    ServerlessFunctionToolProvider,
+    LogicFunctionToolProvider,
     ViewToolProvider,
     WorkflowToolProvider,
     {
@@ -65,7 +65,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         databaseProvider: DatabaseToolProvider,
         metadataProvider: MetadataToolProvider,
         nativeModelProvider: NativeModelToolProvider,
-        serverlessFunctionProvider: ServerlessFunctionToolProvider,
+        logicFunctionProvider: LogicFunctionToolProvider,
         viewProvider: ViewToolProvider,
         workflowProvider: WorkflowToolProvider,
       ) => [
@@ -74,7 +74,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         databaseProvider,
         metadataProvider,
         nativeModelProvider,
-        serverlessFunctionProvider,
+        logicFunctionProvider,
         viewProvider,
         workflowProvider,
       ],
@@ -84,7 +84,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         DatabaseToolProvider,
         MetadataToolProvider,
         NativeModelToolProvider,
-        ServerlessFunctionToolProvider,
+        LogicFunctionToolProvider,
         ViewToolProvider,
         WorkflowToolProvider,
       ],

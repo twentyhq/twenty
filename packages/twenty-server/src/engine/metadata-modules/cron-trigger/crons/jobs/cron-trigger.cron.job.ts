@@ -12,10 +12,10 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-  ServerlessFunctionTriggerJob,
-  ServerlessFunctionTriggerJobData,
-} from 'src/engine/metadata-modules/serverless-function/jobs/serverless-function-trigger.job';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+  LogicFunctionTriggerJob,
+  LogicFunctionTriggerJobData,
+} from 'src/engine/metadata-modules/logic-function/jobs/logic-function-trigger.job';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { shouldRunNow } from 'src/utils/should-run-now.utils';
 
 export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
@@ -23,12 +23,12 @@ export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 @Processor(MessageQueue.cronQueue)
 export class CronTriggerCronJob {
   constructor(
-    @InjectMessageQueue(MessageQueue.serverlessFunctionQueue)
+    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(ServerlessFunctionEntity)
-    private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
+    @InjectRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -44,8 +44,8 @@ export class CronTriggerCronJob {
     const now = new Date();
 
     for (const activeWorkspace of activeWorkspaces) {
-      const serverlessFunctionsWithCronTrigger =
-        await this.serverlessFunctionRepository.find({
+      const logicFunctionsWithCronTrigger =
+        await this.logicFunctionRepository.find({
           where: {
             workspaceId: activeWorkspace.id,
             cronTriggerSettings: Not(IsNull()),
@@ -53,8 +53,8 @@ export class CronTriggerCronJob {
           select: ['id', 'cronTriggerSettings', 'workspaceId'],
         });
 
-      for (const serverlessFunction of serverlessFunctionsWithCronTrigger) {
-        const cronSettings = serverlessFunction.cronTriggerSettings;
+      for (const logicFunction of logicFunctionsWithCronTrigger) {
+        const cronSettings = logicFunction.cronTriggerSettings;
 
         if (!isDefined(cronSettings?.pattern)) {
           continue;
@@ -64,12 +64,12 @@ export class CronTriggerCronJob {
           continue;
         }
 
-        await this.messageQueueService.add<ServerlessFunctionTriggerJobData[]>(
-          ServerlessFunctionTriggerJob.name,
+        await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+          LogicFunctionTriggerJob.name,
           [
             {
-              serverlessFunctionId: serverlessFunction.id,
-              workspaceId: serverlessFunction.workspaceId,
+              logicFunctionId: logicFunction.id,
+              workspaceId: logicFunction.workspaceId,
               payload: {},
             },
           ],

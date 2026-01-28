@@ -15,7 +15,7 @@ import { WorkspaceMigrationRoleTargetActionsBuilderService } from 'src/engine/wo
 import { WorkspaceMigrationRoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/workspace-migration-role-actions-builder.service';
 import { WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/workspace-migration-row-level-permission-predicate-group-actions-builder.service';
 import { WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/workspace-migration-row-level-permission-predicate-actions-builder.service';
-import { WorkspaceMigrationServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/workspace-migration-serverless-function-actions-builder.service';
+import { WorkspaceMigrationLogicFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/workspace-migration-logic-function-actions-builder.service';
 import { WorkspaceMigrationSkillActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/workspace-migration-skill-actions-builder.service';
 import { WorkspaceMigrationFrontComponentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/workspace-migration-front-component-actions-builder.service';
 import { WorkspaceMigrationViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/workspace-migration-view-field-actions-builder.service';
@@ -37,7 +37,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationViewFilterGroupActionsBuilderService,
     WorkspaceMigrationViewGroupActionsBuilderService,
     WorkspaceMigrationIndexActionsBuilderService,
-    WorkspaceMigrationServerlessFunctionActionsBuilderService,
+    WorkspaceMigrationLogicFunctionActionsBuilderService,
     WorkspaceMigrationFieldActionsBuilderService,
     WorkspaceMigrationRoleActionsBuilderService,
     WorkspaceMigrationRoleTargetActionsBuilderService,
@@ -62,7 +62,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationViewFilterGroupActionsBuilderService,
     WorkspaceMigrationViewGroupActionsBuilderService,
     WorkspaceMigrationFieldActionsBuilderService,
-    WorkspaceMigrationServerlessFunctionActionsBuilderService,
+    WorkspaceMigrationLogicFunctionActionsBuilderService,
     WorkspaceMigrationRoleActionsBuilderService,
     WorkspaceMigrationRoleTargetActionsBuilderService,
     WorkspaceMigrationAgentActionsBuilderService,

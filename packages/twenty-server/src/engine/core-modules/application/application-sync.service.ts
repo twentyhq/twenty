@@ -9,8 +9,8 @@ import {
   ObjectManifest,
   RelationFieldManifest,
   RoleManifest,
-  ServerlessFunctionManifest,
-  ServerlessFunctionTriggerManifest,
+  LogicFunctionManifest,
+  LogicFunctionTriggerManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType, HTTPMethod, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -35,16 +35,16 @@ import { FieldPermissionService } from 'src/engine/metadata-modules/object-permi
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
-import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
-import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { LogicFunctionLayerService } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.service';
+import { LogicFunctionV2Service } from 'src/engine/metadata-modules/logic-function/services/logic-function-v2.service';
+import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import {
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
-} from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -53,10 +53,10 @@ export class ApplicationSyncService {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
-    private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
+    private readonly logicFunctionLayerService: LogicFunctionLayerService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
+    private readonly logicFunctionV2Service: LogicFunctionV2Service,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -102,19 +102,19 @@ export class ApplicationSyncService {
     }
 
     if (manifest.functions.length > 0) {
-      if (!isDefined(application.serverlessFunctionLayerId)) {
+      if (!isDefined(application.logicFunctionLayerId)) {
         throw new ApplicationException(
-          `Failed to sync serverless function, could not find a serverless function layer.`,
+          `Failed to sync logic function, could not find a logic function layer.`,
           ApplicationExceptionCode.FIELD_NOT_FOUND,
         );
       }
 
-      await this.syncServerlessFunctions({
-        serverlessFunctionsToSync: manifest.functions,
+      await this.syncLogicFunctions({
+        logicFunctionsToSync: manifest.functions,
         code: manifest.sources,
         workspaceId,
         applicationId: application.id,
-        serverlessFunctionLayerId: application.serverlessFunctionLayerId,
+        logicFunctionLayerId: application.logicFunctionLayerId,
       });
     }
 
@@ -147,17 +147,17 @@ export class ApplicationSyncService {
         description: manifest.application.description,
         version: packageJson.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
-        serverlessFunctionLayerId: null,
-        defaultServerlessFunctionRoleId: null,
+        logicFunctionLayerId: null,
+        defaultLogicFunctionRoleId: null,
         workspaceId,
       }));
 
-    let serverlessFunctionLayerId = application.serverlessFunctionLayerId;
+    let logicFunctionLayerId = application.logicFunctionLayerId;
 
     if (manifest.functions.length > 0) {
-      if (!isDefined(serverlessFunctionLayerId)) {
-        serverlessFunctionLayerId = (
-          await this.serverlessFunctionLayerService.create(
+      if (!isDefined(logicFunctionLayerId)) {
+        logicFunctionLayerId = (
+          await this.logicFunctionLayerService.create(
             {
               packageJson,
               yarnLock,
@@ -167,8 +167,8 @@ export class ApplicationSyncService {
         ).id;
       }
 
-      await this.serverlessFunctionLayerService.update(
-        serverlessFunctionLayerId,
+      await this.logicFunctionLayerService.update(
+        logicFunctionLayerId,
         {
           packageJson,
           yarnLock,
@@ -189,8 +189,8 @@ export class ApplicationSyncService {
       name,
       description: manifest.application.description,
       version: packageJson.version,
-      serverlessFunctionLayerId,
-      defaultServerlessFunctionRoleId: null,
+      logicFunctionLayerId,
+      defaultLogicFunctionRoleId: null,
     });
   }
 
@@ -203,7 +203,7 @@ export class ApplicationSyncService {
     workspaceId: string;
     applicationId: string;
   }) {
-    let defaultServerlessFunctionRoleId: string | null = null;
+    let defaultLogicFunctionRoleId: string | null = null;
 
     for (const role of manifest.roles ?? []) {
       let existingRole = await this.roleService.getRoleByUniversalIdentifier({
@@ -237,13 +237,13 @@ export class ApplicationSyncService {
         existingRole.universalIdentifier ===
         manifest.application.functionRoleUniversalIdentifier
       ) {
-        defaultServerlessFunctionRoleId = existingRole.id;
+        defaultLogicFunctionRoleId = existingRole.id;
       }
     }
 
-    if (isDefined(defaultServerlessFunctionRoleId)) {
+    if (isDefined(defaultLogicFunctionRoleId)) {
       await this.applicationService.update(applicationId, {
-        defaultServerlessFunctionRoleId: defaultServerlessFunctionRoleId,
+        defaultLogicFunctionRoleId: defaultLogicFunctionRoleId,
       });
     }
   }
@@ -849,149 +849,147 @@ export class ApplicationSyncService {
     }
   }
 
-  private async syncServerlessFunctions({
-    serverlessFunctionsToSync,
+  private async syncLogicFunctions({
+    logicFunctionsToSync,
     code,
     workspaceId,
     applicationId,
-    serverlessFunctionLayerId,
+    logicFunctionLayerId,
   }: {
-    serverlessFunctionsToSync: ServerlessFunctionManifest[];
+    logicFunctionsToSync: LogicFunctionManifest[];
     workspaceId: string;
     code: Sources;
     applicationId: string;
-    serverlessFunctionLayerId: string;
+    logicFunctionLayerId: string;
   }) {
-    const { flatServerlessFunctionMaps } =
+    const { flatLogicFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatLogicFunctionMaps'],
         },
       );
 
-    const applicationServerlessFunctions = Object.values(
-      flatServerlessFunctionMaps.byId,
+    const applicationLogicFunctions = Object.values(
+      flatLogicFunctionMaps.byId,
     ).filter(
-      (serverlessFunction) =>
-        isDefined(serverlessFunction) &&
-        serverlessFunction.applicationId === applicationId,
-    ) as FlatServerlessFunction[];
+      (logicFunction) =>
+        isDefined(logicFunction) &&
+        logicFunction.applicationId === applicationId,
+    ) as FlatLogicFunction[];
 
-    const serverlessFunctionsToSyncUniversalIdentifiers =
-      serverlessFunctionsToSync.map(
-        (serverlessFunction) => serverlessFunction.universalIdentifier,
+    const logicFunctionsToSyncUniversalIdentifiers = logicFunctionsToSync.map(
+      (logicFunction) => logicFunction.universalIdentifier,
+    );
+
+    const applicationLogicFunctionsUniversalIdentifiers =
+      applicationLogicFunctions.map(
+        (logicFunction) => logicFunction.universalIdentifier,
       );
 
-    const applicationServerlessFunctionsUniversalIdentifiers =
-      applicationServerlessFunctions.map(
-        (serverlessFunction) => serverlessFunction.universalIdentifier,
-      );
-
-    const serverlessFunctionsToDelete = applicationServerlessFunctions.filter(
-      (serverlessFunction) =>
-        isDefined(serverlessFunction.universalIdentifier) &&
-        !serverlessFunctionsToSyncUniversalIdentifiers.includes(
-          serverlessFunction.universalIdentifier,
+    const logicFunctionsToDelete = applicationLogicFunctions.filter(
+      (logicFunction) =>
+        isDefined(logicFunction.universalIdentifier) &&
+        !logicFunctionsToSyncUniversalIdentifiers.includes(
+          logicFunction.universalIdentifier,
         ),
     );
 
-    const serverlessFunctionsToUpdate = applicationServerlessFunctions.filter(
-      (serverlessFunction) =>
-        isDefined(serverlessFunction.universalIdentifier) &&
-        serverlessFunctionsToSyncUniversalIdentifiers.includes(
-          serverlessFunction.universalIdentifier,
+    const logicFunctionsToUpdate = applicationLogicFunctions.filter(
+      (logicFunction) =>
+        isDefined(logicFunction.universalIdentifier) &&
+        logicFunctionsToSyncUniversalIdentifiers.includes(
+          logicFunction.universalIdentifier,
         ),
     );
 
-    const serverlessFunctionsToCreate = serverlessFunctionsToSync.filter(
-      (serverlessFunctionToSync) =>
-        !applicationServerlessFunctionsUniversalIdentifiers.includes(
-          serverlessFunctionToSync.universalIdentifier,
+    const logicFunctionsToCreate = logicFunctionsToSync.filter(
+      (logicFunctionToSync) =>
+        !applicationLogicFunctionsUniversalIdentifiers.includes(
+          logicFunctionToSync.universalIdentifier,
         ),
     );
 
-    for (const serverlessFunctionToDelete of serverlessFunctionsToDelete) {
-      await this.serverlessFunctionV2Service.destroyOne({
-        destroyServerlessFunctionInput: { id: serverlessFunctionToDelete.id },
+    for (const logicFunctionToDelete of logicFunctionsToDelete) {
+      await this.logicFunctionV2Service.destroyOne({
+        destroyLogicFunctionInput: { id: logicFunctionToDelete.id },
         workspaceId,
         isSystemBuild: true,
       });
     }
 
-    for (const serverlessFunctionToUpdate of serverlessFunctionsToUpdate) {
-      const serverlessFunctionToSync = serverlessFunctionsToSync.find(
-        (serverlessFunction) =>
-          serverlessFunction.universalIdentifier ===
-          serverlessFunctionToUpdate.universalIdentifier,
+    for (const logicFunctionToUpdate of logicFunctionsToUpdate) {
+      const logicFunctionToSync = logicFunctionsToSync.find(
+        (logicFunction) =>
+          logicFunction.universalIdentifier ===
+          logicFunctionToUpdate.universalIdentifier,
       );
 
-      if (!serverlessFunctionToSync) {
+      if (!logicFunctionToSync) {
         throw new ApplicationException(
-          `Failed to find serverlessFunction to sync with universalIdentifier ${serverlessFunctionToUpdate.universalIdentifier}`,
-          ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+          `Failed to find logicFunction to sync with universalIdentifier ${logicFunctionToUpdate.universalIdentifier}`,
+          ApplicationExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
         );
       }
 
       const name =
-        serverlessFunctionToSync.name ??
-        parse(serverlessFunctionToSync.handlerName).name;
+        logicFunctionToSync.name ?? parse(logicFunctionToSync.handlerName).name;
 
-      const updateServerlessFunctionInput = {
-        id: serverlessFunctionToUpdate.id,
+      const updateLogicFunctionInput = {
+        id: logicFunctionToUpdate.id,
         update: {
           name,
           code,
-          timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
-          sourceHandlerPath: serverlessFunctionToSync.sourceHandlerPath,
-          builtHandlerPath: serverlessFunctionToSync.builtHandlerPath,
-          handlerName: serverlessFunctionToSync.handlerName,
-          toolInputSchema: serverlessFunctionToSync.toolInputSchema,
-          isTool: serverlessFunctionToSync.isTool,
+          timeoutSeconds: logicFunctionToSync.timeoutSeconds,
+          sourceHandlerPath: logicFunctionToSync.sourceHandlerPath,
+          builtHandlerPath: logicFunctionToSync.builtHandlerPath,
+          handlerName: logicFunctionToSync.handlerName,
+          toolInputSchema: logicFunctionToSync.toolInputSchema,
+          isTool: logicFunctionToSync.isTool,
         },
       };
 
-      await this.serverlessFunctionV2Service.updateOne(
-        updateServerlessFunctionInput,
+      await this.logicFunctionV2Service.updateOne(
+        updateLogicFunctionInput,
         workspaceId,
       );
 
-      // Trigger settings are now embedded in the serverless function entity
+      // Trigger settings are now embedded in the logic function entity
       // They are handled through the update input
     }
 
-    for (const serverlessFunctionToCreate of serverlessFunctionsToCreate) {
+    for (const logicFunctionToCreate of logicFunctionsToCreate) {
       const name =
-        serverlessFunctionToCreate.name ??
-        parse(serverlessFunctionToCreate.handlerName).name;
+        logicFunctionToCreate.name ??
+        parse(logicFunctionToCreate.handlerName).name;
 
-      const createServerlessFunctionInput = {
+      const createLogicFunctionInput = {
         name,
         code,
-        universalIdentifier: serverlessFunctionToCreate.universalIdentifier,
-        timeoutSeconds: serverlessFunctionToCreate.timeoutSeconds,
-        sourceHandlerPath: serverlessFunctionToCreate.sourceHandlerPath,
-        handlerName: serverlessFunctionToCreate.handlerName,
-        builtHandlerPath: serverlessFunctionToCreate.builtHandlerPath,
+        universalIdentifier: logicFunctionToCreate.universalIdentifier,
+        timeoutSeconds: logicFunctionToCreate.timeoutSeconds,
+        sourceHandlerPath: logicFunctionToCreate.sourceHandlerPath,
+        handlerName: logicFunctionToCreate.handlerName,
+        builtHandlerPath: logicFunctionToCreate.builtHandlerPath,
         applicationId,
-        serverlessFunctionLayerId,
-        toolInputSchema: serverlessFunctionToCreate.toolInputSchema,
-        isTool: serverlessFunctionToCreate.isTool,
+        logicFunctionLayerId,
+        toolInputSchema: logicFunctionToCreate.toolInputSchema,
+        isTool: logicFunctionToCreate.isTool,
       };
 
-      await this.serverlessFunctionV2Service.createOne({
-        createServerlessFunctionInput,
+      await this.logicFunctionV2Service.createOne({
+        createLogicFunctionInput,
         workspaceId,
         applicationId,
       });
 
-      // Trigger settings are now embedded in the serverless function entity
+      // Trigger settings are now embedded in the logic function entity
       // They are handled through the create input
     }
   }
 
   private extractTriggerSettingsFromManifest(
-    triggers: ServerlessFunctionTriggerManifest[] = [],
+    triggers: LogicFunctionTriggerManifest[] = [],
   ): {
     cronTriggerSettings: CronTriggerSettings | null;
     databaseEventTriggerSettings: DatabaseEventTriggerSettings | null;

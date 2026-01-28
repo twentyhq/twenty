@@ -13,10 +13,10 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { transformEventBatchToEventPayloads } from 'src/engine/metadata-modules/database-event-trigger/utils/transform-event-batch-to-event-payloads';
 import {
-  ServerlessFunctionTriggerJob,
-  ServerlessFunctionTriggerJobData,
-} from 'src/engine/metadata-modules/serverless-function/jobs/serverless-function-trigger.job';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+  LogicFunctionTriggerJob,
+  LogicFunctionTriggerJobData,
+} from 'src/engine/metadata-modules/logic-function/jobs/logic-function-trigger.job';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 const DATABASE_EVENT_JOBS_CHUNK_SIZE = 20;
@@ -24,16 +24,16 @@ const DATABASE_EVENT_JOBS_CHUNK_SIZE = 20;
 @Processor(MessageQueue.triggerQueue)
 export class CallDatabaseEventTriggerJobsJob {
   constructor(
-    @InjectMessageQueue(MessageQueue.serverlessFunctionQueue)
+    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(ServerlessFunctionEntity)
-    private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
+    @InjectRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
   async handle(workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>) {
-    const serverlessFunctionsWithDatabaseEventTrigger =
-      await this.serverlessFunctionRepository.find({
+    const logicFunctionsWithDatabaseEventTrigger =
+      await this.logicFunctionRepository.find({
         where: {
           workspaceId: workspaceEventBatch.workspaceId,
           databaseEventTriggerSettings: Not(IsNull()),
@@ -41,34 +41,34 @@ export class CallDatabaseEventTriggerJobsJob {
         select: ['id', 'databaseEventTriggerSettings', 'workspaceId'],
       });
 
-    const serverlessFunctionsToTrigger =
-      serverlessFunctionsWithDatabaseEventTrigger.filter((serverlessFunction) =>
+    const logicFunctionsToTrigger =
+      logicFunctionsWithDatabaseEventTrigger.filter((logicFunction) =>
         this.shouldTriggerJob({
           workspaceEventBatch,
-          eventName: isDefined(serverlessFunction.databaseEventTriggerSettings)
-            ? serverlessFunction.databaseEventTriggerSettings.eventName
+          eventName: isDefined(logicFunction.databaseEventTriggerSettings)
+            ? logicFunction.databaseEventTriggerSettings.eventName
             : '',
         }),
       );
 
-    const serverlessFunctionPayloads = transformEventBatchToEventPayloads({
-      serverlessFunctions: serverlessFunctionsToTrigger,
+    const logicFunctionPayloads = transformEventBatchToEventPayloads({
+      logicFunctions: logicFunctionsToTrigger,
       workspaceEventBatch,
     });
 
-    if (serverlessFunctionPayloads.length === 0) {
+    if (logicFunctionPayloads.length === 0) {
       return;
     }
 
-    const serverlessFunctionPayloadsChunks = chunk(
-      serverlessFunctionPayloads,
+    const logicFunctionPayloadsChunks = chunk(
+      logicFunctionPayloads,
       DATABASE_EVENT_JOBS_CHUNK_SIZE,
     );
 
-    for (const serverlessFunctionPayloadsChunk of serverlessFunctionPayloadsChunks) {
-      await this.messageQueueService.add<ServerlessFunctionTriggerJobData[]>(
-        ServerlessFunctionTriggerJob.name,
-        serverlessFunctionPayloadsChunk,
+    for (const logicFunctionPayloadsChunk of logicFunctionPayloadsChunks) {
+      await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+        LogicFunctionTriggerJob.name,
+        logicFunctionPayloadsChunk,
         { retryLimit: 3 },
       );
     }

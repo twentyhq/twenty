@@ -13,28 +13,28 @@ import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
 } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
-import { buildServerlessFunctionEvent } from 'src/engine/metadata-modules/route-trigger/utils/build-serverless-function-event.util';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { buildLogicFunctionEvent } from 'src/engine/metadata-modules/route-trigger/utils/build-logic-function-event.util';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 
 @Injectable()
 export class RouteTriggerService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly serverlessFunctionService: ServerlessFunctionService,
+    private readonly logicFunctionService: LogicFunctionService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
-    @InjectRepository(ServerlessFunctionEntity)
-    private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
+    @InjectRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
   ) {}
 
-  private async getServerlessFunctionWithPathParamsOrFail({
+  private async getLogicFunctionWithPathParamsOrFail({
     request,
     httpMethod,
   }: {
     request: Request;
     httpMethod: HTTPMethod;
   }): Promise<{
-    serverlessFunction: ServerlessFunctionEntity;
+    logicFunction: LogicFunctionEntity;
     pathParams: Partial<Record<string, string | string[]>>;
   }> {
     const host = `${request.protocol}://${request.get('host')}`;
@@ -52,8 +52,8 @@ export class RouteTriggerService {
       ),
     );
 
-    const serverlessFunctionsWithHttpRouteTrigger =
-      await this.serverlessFunctionRepository.find({
+    const logicFunctionsWithHttpRouteTrigger =
+      await this.logicFunctionRepository.find({
         where: {
           workspaceId: workspace.id,
           httpRouteTriggerSettings: Not(IsNull()),
@@ -62,8 +62,8 @@ export class RouteTriggerService {
 
     const requestPath = request.path.replace(/^\/s\//, '/');
 
-    for (const serverlessFunction of serverlessFunctionsWithHttpRouteTrigger) {
-      const httpRouteSettings = serverlessFunction.httpRouteTriggerSettings;
+    for (const logicFunction of logicFunctionsWithHttpRouteTrigger) {
+      const httpRouteSettings = logicFunction.httpRouteTriggerSettings;
 
       if (
         !isDefined(httpRouteSettings) ||
@@ -79,7 +79,7 @@ export class RouteTriggerService {
 
       if (routeMatched) {
         return {
-          serverlessFunction,
+          logicFunction,
           pathParams: routeMatched.params,
         };
       }
@@ -125,34 +125,33 @@ export class RouteTriggerService {
     request: Request;
     httpMethod: HTTPMethod;
   }) {
-    const { serverlessFunction, pathParams } =
-      await this.getServerlessFunctionWithPathParamsOrFail({
+    const { logicFunction, pathParams } =
+      await this.getLogicFunctionWithPathParamsOrFail({
         request,
         httpMethod,
       });
 
-    const httpRouteSettings = serverlessFunction.httpRouteTriggerSettings;
+    const httpRouteSettings = logicFunction.httpRouteTriggerSettings;
 
     if (httpRouteSettings?.isAuthRequired) {
       await this.validateWorkspaceFromRequest({
         request,
-        workspaceId: serverlessFunction.workspaceId,
+        workspaceId: logicFunction.workspaceId,
       });
     }
 
-    const event = buildServerlessFunctionEvent({
+    const event = buildLogicFunctionEvent({
       request,
       pathParameters: pathParams,
       forwardedRequestHeaders: httpRouteSettings?.forwardedRequestHeaders ?? [],
     });
 
-    const result =
-      await this.serverlessFunctionService.executeOneServerlessFunction({
-        id: serverlessFunction.id,
-        workspaceId: serverlessFunction.workspaceId,
-        payload: event,
-        version: 'draft',
-      });
+    const result = await this.logicFunctionService.executeOneLogicFunction({
+      id: logicFunction.id,
+      workspaceId: logicFunction.workspaceId,
+      payload: event,
+      version: 'draft',
+    });
 
     if (!isDefined(result)) {
       return result;
@@ -161,7 +160,7 @@ export class RouteTriggerService {
     if (result.error) {
       throw new RouteTriggerException(
         result.error.errorMessage,
-        RouteTriggerExceptionCode.SERVERLESS_FUNCTION_EXECUTION_ERROR,
+        RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR,
       );
     }
 

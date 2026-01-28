@@ -21,7 +21,7 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { type NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
-import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import {
   type CreateAgentAction,
   type DeleteAgentAction,
@@ -93,10 +93,10 @@ import {
   type UpdateRowLevelPermissionPredicateAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
 import {
-  type CreateServerlessFunctionAction,
-  type DeleteServerlessFunctionAction,
-  type UpdateServerlessFunctionAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
+  type CreateLogicFunctionAction,
+  type DeleteLogicFunctionAction,
+  type UpdateLogicFunctionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   type CreateSkillAction,
   type DeleteSkillAction,
@@ -215,41 +215,14 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatIndexMetadata;
     entity: MetadataEntity<'index'>;
   };
-  serverlessFunction: {
+  logicFunction: {
     actions: {
-      create: CreateServerlessFunctionAction;
-      update: UpdateServerlessFunctionAction;
-      delete: DeleteServerlessFunctionAction;
+      create: CreateLogicFunctionAction;
+      update: UpdateLogicFunctionAction;
+      delete: DeleteLogicFunctionAction;
     };
-    flatEntity: FlatServerlessFunction;
-    entity: MetadataEntity<'serverlessFunction'>;
-  };
-  cronTrigger: {
-    actions: {
-      create: never;
-      update: never;
-      delete: never;
-    };
-    flatEntity: FlatServerlessFunction;
-    entity: MetadataEntity<'serverlessFunction'>;
-  };
-  databaseEventTrigger: {
-    actions: {
-      create: never;
-      update: never;
-      delete: never;
-    };
-    flatEntity: FlatServerlessFunction;
-    entity: MetadataEntity<'serverlessFunction'>;
-  };
-  routeTrigger: {
-    actions: {
-      create: never;
-      update: never;
-      delete: never;
-    };
-    flatEntity: FlatServerlessFunction;
-    entity: MetadataEntity<'serverlessFunction'>;
+    flatEntity: FlatLogicFunction;
+    entity: MetadataEntity<'logicFunction'>;
   };
   viewFilter: {
     actions: {
