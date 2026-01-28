@@ -15,6 +15,7 @@ import {
   ModelId,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity('agent')
 @Index('IDX_AGENT_ID_DELETED_AT', ['id', 'deletedAt'])
@@ -52,7 +53,7 @@ export class AgentEntity
 
   // Should not be nullable
   @Column({ nullable: true, type: 'jsonb', default: { type: 'text' } })
-  responseFormat: AgentResponseFormat;
+  responseFormat: JsonbProperty<AgentResponseFormat>;
 
   @Column({ default: false })
   isCustom: boolean;
@@ -67,7 +68,7 @@ export class AgentEntity
   deletedAt: Date | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  modelConfiguration: ModelConfiguration | null;
+  modelConfiguration: JsonbProperty<ModelConfiguration> | null;
 
   @Column({ type: 'text', array: true, default: '{}' })
   evaluationInputs: string[];

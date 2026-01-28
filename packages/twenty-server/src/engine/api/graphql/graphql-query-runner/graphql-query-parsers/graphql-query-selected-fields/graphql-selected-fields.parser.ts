@@ -94,7 +94,7 @@ export class GraphqlQuerySelectedFieldsParser {
     accumulator: GraphqlQuerySelectedFieldsResult,
     isFromOneToManyRelation?: boolean,
   ): void {
-    for (const fieldMetadataId of flatObjectMetadata.fieldMetadataIds) {
+    for (const fieldMetadataId of flatObjectMetadata.fieldIds) {
       const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: fieldMetadataId,
         flatEntityMaps: this.flatFieldMetadataMaps,

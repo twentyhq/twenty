@@ -56,7 +56,6 @@ export class MessageChannelUpdateOnePreQueryHook
     const systemAuthContext = buildSystemAuthContext(workspace.id);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      systemAuthContext,
       async () => {
         const messageChannelRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
@@ -144,6 +143,7 @@ export class MessageChannelUpdateOnePreQueryHook
 
         return payload;
       },
+      systemAuthContext,
     );
   }
 }

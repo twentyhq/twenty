@@ -18,7 +18,8 @@ export class ApiService {
   private client: AxiosInstance;
   private configService: ConfigService;
 
-  constructor() {
+  constructor(options?: { disableInterceptors: boolean }) {
+    const { disableInterceptors = false } = options || {};
     this.configService = new ConfigService();
     this.client = axios.create();
 
@@ -33,6 +34,10 @@ export class ApiService {
 
       return config;
     });
+
+    if (disableInterceptors) {
+      return;
+    }
 
     this.client.interceptors.response.use(
       (response) => response,
@@ -88,13 +93,7 @@ export class ApiService {
     }
   }
 
-  async syncApplication({
-    manifest,
-    yarnLock,
-  }: {
-    manifest: ApplicationManifest;
-    yarnLock: string;
-  }): Promise<ApiResponse> {
+  async syncApplication(manifest: ApplicationManifest): Promise<ApiResponse> {
     try {
       const mutation = `
         mutation SyncApplication($manifest: JSON!, $packageJson: JSON!, $yarnLock: String!) {
@@ -105,7 +104,7 @@ export class ApiService {
       const variables = {
         manifest,
         packageJson: manifest.packageJson,
-        yarnLock,
+        yarnLock: manifest.yarnLock,
       };
 
       const response: AxiosResponse = await this.client.post(
@@ -236,7 +235,7 @@ export class ApiService {
     }
   }
 
-  async findServerlessFunctions(): Promise<
+  async findLogicFunctions(): Promise<
     ApiResponse<
       Array<{
         id: string;
@@ -248,8 +247,8 @@ export class ApiService {
   > {
     try {
       const query = `
-        query FindManyServerlessFunctions {
-          findManyServerlessFunctions {
+        query FindManyLogicFunctions {
+          findManyLogicFunctions {
             id
             name
             universalIdentifier
@@ -279,7 +278,7 @@ export class ApiService {
 
       return {
         success: true,
-        data: response.data.data.findManyServerlessFunctions,
+        data: response.data.data.findManyLogicFunctions,
       };
     } catch (error) {
       return {
@@ -289,7 +288,7 @@ export class ApiService {
     }
   }
 
-  async executeServerlessFunction({
+  async executeLogicFunction({
     functionId,
     payload,
     version = 'latest',
@@ -312,8 +311,8 @@ export class ApiService {
   > {
     try {
       const mutation = `
-        mutation ExecuteOneServerlessFunction($input: ExecuteServerlessFunctionInput!) {
-          executeOneServerlessFunction(input: $input) {
+        mutation ExecuteOneLogicFunction($input: ExecuteLogicFunctionInput!) {
+          executeOneLogicFunction(input: $input) {
             data
             logs
             duration
@@ -350,13 +349,13 @@ export class ApiService {
           success: false,
           error:
             response.data.errors[0]?.message ||
-            'Failed to execute serverless function',
+            'Failed to execute logic function',
         };
       }
 
       return {
         success: true,
-        data: response.data.data.executeOneServerlessFunction,
+        data: response.data.data.executeOneLogicFunction,
       };
     } catch (error) {
       return {
@@ -387,8 +386,8 @@ export class ApiService {
     });
 
     const query = `
-        subscription SubscribeToLogs($input: ServerlessFunctionLogsInput!) {
-          serverlessFunctionLogs(input: $input) {
+        subscription SubscribeToLogs($input: LogicFunctionLogsInput!) {
+          logicFunctionLogs(input: $input) {
             logs
           }
         }
@@ -402,13 +401,13 @@ export class ApiService {
       },
     };
 
-    wsClient.subscribe<{ serverlessFunctionLogs: { logs: string } }>(
+    wsClient.subscribe<{ logicFunctionLogs: { logs: string } }>(
       {
         query,
         variables,
       },
       {
-        next: ({ data }) => console.log(data?.serverlessFunctionLogs.logs),
+        next: ({ data }) => console.log(data?.logicFunctionLogs.logs),
         error: (err: unknown) => console.error(err),
         complete: () => console.log('Completed'),
       },

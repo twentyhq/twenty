@@ -25,7 +25,7 @@ export type ToolIndexEntry = {
     | 'METADATA'
     | 'VIEW'
     | 'DASHBOARD'
-    | 'SERVERLESS_FUNCTION';
+    | 'LOGIC_FUNCTION';
   objectName?: string;
   operation?: string;
   inputSchema?: object;
@@ -40,7 +40,7 @@ export type ToolSearchOptions = {
     | 'METADATA'
     | 'VIEW'
     | 'DASHBOARD'
-    | 'SERVERLESS_FUNCTION';
+    | 'LOGIC_FUNCTION';
 };
 
 export type ToolContext = {
@@ -259,7 +259,7 @@ export class ToolRegistryService {
       NATIVE_MODEL: 'ACTION',
       VIEW: 'VIEW',
       DASHBOARD: 'DASHBOARD',
-      SERVERLESS_FUNCTION: 'SERVERLESS_FUNCTION',
+      LOGIC_FUNCTION: 'LOGIC_FUNCTION',
     };
 
     return Object.entries(tools).map(([name, tool]) => {

@@ -7,7 +7,7 @@ import { In } from 'typeorm';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -71,43 +71,40 @@ export class WorkflowStatusesUpdateJob {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly serverlessFunctionService: ServerlessFunctionService,
+    private readonly logicFunctionService: LogicFunctionService,
   ) {}
 
   @Process(WorkflowStatusesUpdateJob.name)
   async handle(event: WorkflowVersionBatchEvent): Promise<void> {
     const authContext = buildSystemAuthContext(event.workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        switch (event.type) {
-          case WorkflowVersionEventType.CREATE:
-          case WorkflowVersionEventType.DELETE:
-            await Promise.all(
-              event.workflowIds.map((workflowId) =>
-                this.handleWorkflowVersionCreatedOrDeleted({
-                  workflowId,
-                  workspaceId: event.workspaceId,
-                }),
-              ),
-            );
-            break;
-          case WorkflowVersionEventType.STATUS_UPDATE:
-            await Promise.all(
-              event.statusUpdates.map((statusUpdate) =>
-                this.handleWorkflowVersionStatusUpdated({
-                  statusUpdate,
-                  workspaceId: event.workspaceId,
-                }),
-              ),
-            );
-            break;
-          default:
-            break;
-        }
-      },
-    );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      switch (event.type) {
+        case WorkflowVersionEventType.CREATE:
+        case WorkflowVersionEventType.DELETE:
+          await Promise.all(
+            event.workflowIds.map((workflowId) =>
+              this.handleWorkflowVersionCreatedOrDeleted({
+                workflowId,
+                workspaceId: event.workspaceId,
+              }),
+            ),
+          );
+          break;
+        case WorkflowVersionEventType.STATUS_UPDATE:
+          await Promise.all(
+            event.statusUpdates.map((statusUpdate) =>
+              this.handleWorkflowVersionStatusUpdated({
+                statusUpdate,
+                workspaceId: event.workspaceId,
+              }),
+            ),
+          );
+          break;
+        default:
+          break;
+      }
+    }, authContext);
   }
 
   private async handleWorkflowVersionCreatedOrDeleted({
@@ -157,7 +154,7 @@ export class WorkflowStatusesUpdateJob {
     );
   }
 
-  private async handlePublishServerlessFunction({
+  private async handlePublishLogicFunction({
     statusUpdate,
     workspaceId,
     workflowVersion,
@@ -182,23 +179,23 @@ export class WorkflowStatusesUpdateJob {
         const newStep = { ...step };
 
         if (step.type === WorkflowActionType.CODE) {
-          const serverlessFunction =
-            await this.serverlessFunctionService.publishOneServerlessFunctionOrFail(
-              step.settings.input.serverlessFunctionId,
+          const logicFunction =
+            await this.logicFunctionService.publishOneLogicFunctionOrFail(
+              step.settings.input.logicFunctionId,
               workspaceId,
             );
 
           const newStepSettings = { ...step.settings };
 
-          if (!isDefined(serverlessFunction.latestVersion)) {
+          if (!isDefined(logicFunction.latestVersion)) {
             throw new WorkflowVersionStepException(
-              `Fail to publish serverless function ${serverlessFunction.id}. Latest version is null`,
+              `Fail to publish logic function ${logicFunction.id}. Latest version is null`,
               WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE,
             );
           }
 
-          newStepSettings.input.serverlessFunctionVersion =
-            serverlessFunction.latestVersion;
+          newStepSettings.input.logicFunctionVersion =
+            logicFunction.latestVersion;
 
           newStep.settings = newStepSettings;
         }
@@ -243,7 +240,7 @@ export class WorkflowStatusesUpdateJob {
       where: { id: statusUpdate.workflowVersionId },
     });
 
-    await this.handlePublishServerlessFunction({
+    await this.handlePublishLogicFunction({
       workflowVersion,
       workflowVersionRepository,
       workspaceId,

@@ -45,7 +45,7 @@ describe('ActorFromAuthContextService', () => {
     getRepository: jest.fn().mockResolvedValue(mockWorkspaceMemberRepository),
     executeInWorkspaceContext: jest
       .fn()
-      .mockImplementation((_authContext: any, fn: () => any) => fn()),
+      .mockImplementation((fn: () => any, _authContext?: any) => fn()),
   };
 
   beforeEach(async () => {
@@ -71,7 +71,7 @@ describe('ActorFromAuthContextService', () => {
                   'person-id': {
                     id: 'person-id',
                     nameSingular: 'person',
-                    fieldMetadataIds: ['createdBy-id'],
+                    fieldIds: ['createdBy-id'],
                   },
                 },
               },

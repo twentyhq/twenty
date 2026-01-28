@@ -1,6 +1,5 @@
 import { glob } from 'fast-glob';
 import { type FrontComponentManifest } from 'twenty-shared/application';
-import { createLogger } from '@/cli/utilities/build/common/logger';
 
 import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
 import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
@@ -10,9 +9,6 @@ import {
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
-import { FRONT_COMPONENTS_DIR } from '@/cli/utilities/build/front-components/constants';
-
-const logger = createLogger('manifest-watch');
 
 type FrontComponentConfig = Omit<
   FrontComponentManifest,
@@ -45,7 +41,7 @@ export class FrontComponentEntityBuilder
     for (const filePath of componentFiles) {
       try {
         const absolutePath = `${appPath}/${filePath}`;
-        const config =
+        const { manifest: config } =
           await manifestExtractFromFileServer.extractManifestFromFile<FrontComponentConfig>(
             absolutePath,
           );
@@ -71,9 +67,7 @@ export class FrontComponentEntityBuilder
   }
 
   private computeBuiltComponentPath(sourceComponentPath: string): string {
-    const builtPath = sourceComponentPath.replace(/\.tsx?$/, '.mjs');
-
-    return `${FRONT_COMPONENTS_DIR}/${builtPath}`;
+    return sourceComponentPath.replace(/\.tsx?$/, '.mjs');
   }
 
   validate(
@@ -88,18 +82,6 @@ export class FrontComponentEntityBuilder
           path: componentPath,
           message: 'Front component must have a universalIdentifier',
         });
-      }
-    }
-  }
-
-  display(components: FrontComponentManifest[]): void {
-    logger.success(`✓ Found ${components.length} front component(s)`);
-
-    if (components.length > 0) {
-      logger.log('📍 Entry points:');
-      for (const component of components) {
-        const name = component.name || component.universalIdentifier;
-        logger.log(`   - ${name} (${component.sourceComponentPath})`);
       }
     }
   }

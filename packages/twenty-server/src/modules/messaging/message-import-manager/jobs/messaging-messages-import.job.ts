@@ -43,64 +43,61 @@ export class MessagingMessagesImportJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const messageChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-            workspaceId,
-            'messageChannel',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+          workspaceId,
+          'messageChannel',
+        );
 
-        const messageChannel = await messageChannelRepository.findOne({
-          where: {
-            id: messageChannelId,
-          },
-          relations: ['connectedAccount'],
+      const messageChannel = await messageChannelRepository.findOne({
+        where: {
+          id: messageChannelId,
+        },
+        relations: ['connectedAccount'],
+      });
+
+      if (!messageChannel) {
+        await this.messagingMonitoringService.track({
+          eventName: 'messages_import.error.message_channel_not_found',
+          messageChannelId,
+          workspaceId,
         });
 
-        if (!messageChannel) {
-          await this.messagingMonitoringService.track({
-            eventName: 'messages_import.error.message_channel_not_found',
-            messageChannelId,
-            workspaceId,
-          });
+        return;
+      }
 
-          return;
-        }
+      if (!messageChannel?.isSyncEnabled) {
+        return;
+      }
 
-        if (!messageChannel?.isSyncEnabled) {
-          return;
-        }
+      if (
+        messageChannel.syncStage !==
+        MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
+      ) {
+        return;
+      }
 
-        if (
-          messageChannel.syncStage !==
-          MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
-        ) {
-          return;
-        }
-
-        if (
-          isThrottled(
-            messageChannel.syncStageStartedAt,
-            messageChannel.throttleFailureCount,
-          )
-        ) {
-          await this.messageChannelSyncStatusService.markAsMessagesImportPending(
-            [messageChannel.id],
-            workspaceId,
-            true,
-          );
-
-          return;
-        }
-
-        await this.messagingMessagesImportService.processMessageBatchImport(
-          messageChannel,
-          messageChannel.connectedAccount,
+      if (
+        isThrottled(
+          messageChannel.syncStageStartedAt,
+          messageChannel.throttleFailureCount,
+        )
+      ) {
+        await this.messageChannelSyncStatusService.markAsMessagesImportPending(
+          [messageChannel.id],
           workspaceId,
+          true,
         );
-      },
-    );
+
+        return;
+      }
+
+      await this.messagingMessagesImportService.processMessageBatchImport(
+        messageChannel,
+        messageChannel.connectedAccount,
+        workspaceId,
+      );
+    }, authContext);
   }
 }

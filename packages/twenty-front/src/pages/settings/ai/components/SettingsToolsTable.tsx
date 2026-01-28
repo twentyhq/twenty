@@ -4,8 +4,8 @@ import { useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
-import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
-import { usePersistServerlessFunction } from '@/settings/serverless-functions/hooks/usePersistServerlessFunction';
+import { useGetManyLogicFunctions } from '@/settings/logic-functions/hooks/useGetManyLogicFunctions';
+import { usePersistLogicFunction } from '@/settings/logic-functions/hooks/usePersistLogicFunction';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -59,9 +59,9 @@ const DEFAULT_TOOL_INPUT_SCHEMA = {
 };
 
 export const SettingsToolsTable = () => {
-  const { serverlessFunctions, loading } = useGetManyServerlessFunctions();
+  const { logicFunctions, loading } = useGetManyLogicFunctions();
   const { toolIndex, loading: toolIndexLoading } = useGetToolIndex();
-  const { createServerlessFunction } = usePersistServerlessFunction();
+  const { createLogicFunction } = usePersistLogicFunction();
 
   const { t } = useLingui();
   const theme = useTheme();
@@ -71,10 +71,10 @@ export const SettingsToolsTable = () => {
   const [builtInSearchTerm, setBuiltInSearchTerm] = useState('');
   const [isCreating, setIsCreating] = useState(false);
 
-  // Filter to only show serverless functions that are marked as tools
+  // Filter to only show logic functions that are marked as tools
   const tools = useMemo(
-    () => serverlessFunctions.filter((fn) => fn.isTool === true),
-    [serverlessFunctions],
+    () => logicFunctions.filter((fn) => fn.isTool === true),
+    [logicFunctions],
   );
 
   const filteredTools = useMemo(
@@ -92,11 +92,11 @@ export const SettingsToolsTable = () => {
     [tools, customSearchTerm],
   );
 
-  // System tools from the tool index (excluding serverless function tools which are shown separately)
+  // System tools from the tool index (excluding logic function tools which are shown separately)
   const systemTools = useMemo(
     () =>
       toolIndex.filter(
-        (systemTool) => systemTool.category !== 'SERVERLESS_FUNCTION',
+        (systemTool) => systemTool.category !== 'LOGIC_FUNCTION',
       ),
     [toolIndex],
   );
@@ -121,7 +121,7 @@ export const SettingsToolsTable = () => {
   const handleCreateTool = async () => {
     setIsCreating(true);
     try {
-      const result = await createServerlessFunction({
+      const result = await createLogicFunction({
         input: {
           name: 'new-tool',
           isTool: true,
@@ -130,24 +130,24 @@ export const SettingsToolsTable = () => {
       });
 
       if (result.status === 'successful' && isDefined(result.response?.data)) {
-        const newFunction = result.response.data.createOneServerlessFunction;
+        const newFunction = result.response.data.createOneLogicFunction;
         enqueueSuccessSnackBar({ message: t`Tool created` });
 
-        // Navigate to the serverless function detail page
+        // Navigate to the logic function detail page
         // The applicationId might be null for workspace-level functions
         const applicationId = (newFunction as { applicationId?: string })
           .applicationId;
         if (isDefined(applicationId)) {
           navigate(
-            getSettingsPath(SettingsPath.ApplicationServerlessFunctionDetail, {
+            getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
               applicationId,
-              serverlessFunctionId: newFunction.id,
+              logicFunctionId: newFunction.id,
             }),
           );
         } else {
           navigate(
-            getSettingsPath(SettingsPath.ServerlessFunctionDetail, {
-              serverlessFunctionId: newFunction.id,
+            getSettingsPath(SettingsPath.LogicFunctionDetail, {
+              logicFunctionId: newFunction.id,
             }),
           );
         }
@@ -162,13 +162,13 @@ export const SettingsToolsTable = () => {
   const getToolLink = (tool: (typeof tools)[0]) => {
     const applicationId = (tool as { applicationId?: string }).applicationId;
     if (isDefined(applicationId)) {
-      return getSettingsPath(SettingsPath.ApplicationServerlessFunctionDetail, {
+      return getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
         applicationId,
-        serverlessFunctionId: tool.id,
+        logicFunctionId: tool.id,
       });
     }
-    return getSettingsPath(SettingsPath.ServerlessFunctionDetail, {
-      serverlessFunctionId: tool.id,
+    return getSettingsPath(SettingsPath.LogicFunctionDetail, {
+      logicFunctionId: tool.id,
     });
   };
 

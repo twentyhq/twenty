@@ -8,11 +8,11 @@ export enum RouteTriggerExceptionCode {
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
   ROUTE_NOT_FOUND = 'ROUTE_NOT_FOUND',
   TRIGGER_NOT_FOUND = 'TRIGGER_NOT_FOUND',
-  SERVERLESS_FUNCTION_NOT_FOUND = 'SERVERLESS_FUNCTION_NOT_FOUND',
+  LOGIC_FUNCTION_NOT_FOUND = 'LOGIC_FUNCTION_NOT_FOUND',
   ROUTE_ALREADY_EXIST = 'ROUTE_ALREADY_EXIST',
   ROUTE_PATH_ALREADY_EXIST = 'ROUTE_PATH_ALREADY_EXIST',
   FORBIDDEN_EXCEPTION = 'FORBIDDEN_EXCEPTION',
-  SERVERLESS_FUNCTION_EXECUTION_ERROR = 'SERVERLESS_FUNCTION_EXECUTION_ERROR',
+  LOGIC_FUNCTION_EXECUTION_ERROR = 'LOGIC_FUNCTION_EXECUTION_ERROR',
 }
 
 const getRouteTriggerExceptionUserFriendlyMessage = (
@@ -25,16 +25,16 @@ const getRouteTriggerExceptionUserFriendlyMessage = (
       return msg`Route not found.`;
     case RouteTriggerExceptionCode.TRIGGER_NOT_FOUND:
       return msg`Trigger not found.`;
-    case RouteTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND:
-      return msg`Serverless function not found.`;
+    case RouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
+      return msg`Logic function not found.`;
     case RouteTriggerExceptionCode.ROUTE_ALREADY_EXIST:
       return msg`Route already exists.`;
     case RouteTriggerExceptionCode.ROUTE_PATH_ALREADY_EXIST:
       return msg`Route path already exists.`;
     case RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION:
       return msg`You do not have permission to perform this action.`;
-    case RouteTriggerExceptionCode.SERVERLESS_FUNCTION_EXECUTION_ERROR:
-      return msg`Serverless function execution failed.`;
+    case RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR:
+      return msg`Logic function execution failed.`;
     default:
       assertUnreachable(code);
   }

@@ -20,7 +20,6 @@ export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheP
   async computeForCache(workspaceId: string): Promise<FlatWorkspaceMemberMaps> {
     const flatWorkspaceMemberMaps =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        buildSystemAuthContext(workspaceId),
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -45,6 +44,7 @@ export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheP
 
           return flatWorkspaceMemberMaps;
         },
+        buildSystemAuthContext(workspaceId),
       );
 
     return flatWorkspaceMemberMaps;

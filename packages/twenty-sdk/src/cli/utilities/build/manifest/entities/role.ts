@@ -8,9 +8,6 @@ import {
   type ManifestEntityBuilder,
   type ManifestWithoutSources,
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
-import { createLogger } from '@/cli/utilities/build/common/logger';
-
-const logger = createLogger('manifest-watch');
 
 export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
   async build(appPath: string): Promise<EntityBuildResult<RoleManifest>> {
@@ -30,11 +27,12 @@ export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
       try {
         const absolutePath = `${appPath}/${filePath}`;
 
-        manifests.push(
+        const { manifest } =
           await manifestExtractFromFileServer.extractManifestFromFile<RoleManifest>(
             absolutePath,
-          ),
-        );
+          );
+
+        manifests.push(manifest);
       } catch (error) {
         throw new Error(
           `Failed to load role from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
@@ -63,10 +61,6 @@ export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
         });
       }
     }
-  }
-
-  display(roles: RoleManifest[]): void {
-    logger.success(`✓ Found ${roles?.length ?? 'no'} role(s)`);
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {

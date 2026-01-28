@@ -65,7 +65,6 @@ export class SendEmailTool implements Tool {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const connectedAccountRepository =
           await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
@@ -91,6 +90,7 @@ export class SendEmailTool implements Tool {
 
         return connectedAccount;
       },
+      authContext,
     );
   }
 
@@ -100,7 +100,6 @@ export class SendEmailTool implements Tool {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const connectedAccountRepository =
           await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
@@ -118,6 +117,7 @@ export class SendEmailTool implements Tool {
 
         return allAccounts[0].id;
       },
+      authContext,
     );
   }
 
