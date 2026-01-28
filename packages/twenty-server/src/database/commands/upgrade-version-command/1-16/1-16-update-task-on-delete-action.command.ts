@@ -191,6 +191,7 @@ export class UpdateTaskOnDeleteActionCommand extends ActiveOrSuspendedWorkspaces
               isSystemBuild: true,
             },
           );
+
         this.logger.error(
           `[Step 4/4] Validation result: ${JSON.stringify(validateAndBuildResult, null, 2)}`,
         );
