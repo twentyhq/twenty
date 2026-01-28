@@ -91,6 +91,7 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
     application.config.ts          # Required - main application configuration
     default-function.role.ts       # Default role for serverless functions
@@ -157,6 +158,7 @@ At a high level:
 - **.nvmrc**: Pins the Node.js version expected by the project.
 - **eslint.config.mjs** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
 - **README.md**: A short README in the app root with basic instructions.
+- **public/**: A folder for storing public assets (images, fonts, static files) that will be served with your application. Files placed here are uploaded during sync and accessible at runtime.
 - **src/**: The main place where you define your application-as-code:
   - `application.config.ts`: Global configuration for your app (metadata and runtime wiring). See "Application config" below.
   - `*.role.ts`: Role definitions used by your serverless functions. See "Default function role" below.
