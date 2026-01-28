@@ -16,10 +16,9 @@ import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-re
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
-import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
@@ -88,27 +87,18 @@ export abstract class RestApiBaseHandler {
   }
 
   private getObjectsPermissions = async (authContext: WorkspaceAuthContext) => {
-    const workspaceId = authContext.workspace.id;
     let roleId: string;
 
     if (isApiKeyAuthContext(authContext)) {
       roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         authContext.apiKey.id,
-        workspaceId,
+        authContext.workspace.id,
       );
-    } else if (isApplicationAuthContext(authContext)) {
-      if (!isDefined(authContext.application.defaultLogicFunctionRoleId)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.APPLICATION_ROLE_NOT_FOUND,
-          PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND,
-        );
-      }
-      roleId = authContext.application.defaultLogicFunctionRoleId;
     } else if (isUserAuthContext(authContext)) {
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({
           userWorkspaceId: authContext.userWorkspaceId,
-          workspaceId,
+          workspaceId: authContext.workspace.id,
         });
 
       if (!isDefined(userWorkspaceRoleId)) {
@@ -121,15 +111,16 @@ export abstract class RestApiBaseHandler {
       roleId = userWorkspaceRoleId;
     } else {
       throw new PermissionsException(
-        PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
+        'Authentication context is invalid',
         PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
       );
     }
 
     const { rolesPermissions } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'rolesPermissions',
-      ]);
+      await this.workspaceCacheService.getOrRecompute(
+        authContext.workspace.id,
+        ['rolesPermissions'],
+      );
 
     return { objectsPermissions: rolesPermissions[roleId] };
   };
