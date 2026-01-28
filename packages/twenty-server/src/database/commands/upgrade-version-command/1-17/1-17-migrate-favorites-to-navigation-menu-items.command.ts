@@ -17,12 +17,10 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -89,29 +87,27 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       return;
     }
 
-    const { workspaceCustomFlatApplication } =
+    const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
         },
       );
 
-    const { flatObjectMetadataMaps, flatViewMaps } =
+    const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
-        'flatViewMaps',
       ]);
 
     const folderIdMapping = await this.migrateFavoriteFolders({
       workspaceId,
-      applicationId: workspaceCustomFlatApplication.id,
+      applicationId: twentyStandardFlatApplication.id,
     });
 
     const migratedFavoriteIds = await this.migrateFavorites({
       workspaceId,
-      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      twentyStandardApplicationId: twentyStandardFlatApplication.id,
       flatObjectMetadataMaps,
-      flatViewMaps,
       folderIdMapping,
     });
 
@@ -217,15 +213,13 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
   private async migrateFavorites({
     workspaceId,
-    workspaceCustomApplicationId,
+    twentyStandardApplicationId,
     flatObjectMetadataMaps,
-    flatViewMaps,
     folderIdMapping,
   }: {
     workspaceId: string;
-    workspaceCustomApplicationId: string;
+    twentyStandardApplicationId: string;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatViewMaps: FlatEntityMaps<FlatView>;
     folderIdMapping: Map<string, string>;
   }): Promise<string[]> {
     const favoriteRepository =
@@ -337,24 +331,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           continue;
         }
 
-        let applicationId = workspaceCustomApplicationId;
-
-        if (userWorkspaceId === null) {
-          try {
-            const flatView = findFlatEntityByIdInFlatEntityMapsOrThrow({
-              flatEntityMaps: flatViewMaps,
-              flatEntityId: favorite.viewId,
-            });
-
-            applicationId =
-              flatView.applicationId ?? workspaceCustomApplicationId;
-          } catch {
-            this.logger.warn(
-              `Could not find view ${favorite.viewId} in flatViewMaps, using workspace custom application ID`,
-            );
-          }
-        }
-
         const newId = uuidv4();
         const now = new Date().toISOString();
 
@@ -369,7 +345,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           name: null,
           position: favorite.position,
           workspaceId,
-          applicationId,
+          applicationId: twentyStandardApplicationId,
           createdAt: now,
           updatedAt: now,
         });
@@ -417,7 +393,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         name: null,
         position: favorite.position,
         workspaceId,
-        applicationId: workspaceCustomApplicationId,
+        applicationId: twentyStandardApplicationId,
         createdAt: now,
         updatedAt: now,
       });
@@ -448,7 +424,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     try {
       const workspaceMember =
         await this.twentyORMGlobalManager.executeInWorkspaceContext(
-          authContext,
           async () => {
             const workspaceMemberRepository =
               await this.twentyORMGlobalManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -461,6 +436,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
               where: { id: workspaceMemberId },
             });
           },
+          authContext,
         );
 
       if (!isDefined(workspaceMember)) {
@@ -563,19 +539,16 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.twentyORMGlobalManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const favoriteRepository =
-          await this.twentyORMGlobalManager.getRepository<FavoriteWorkspaceEntity>(
-            workspaceId,
-            'favorite',
-            { shouldBypassPermissionChecks: true },
-          );
+    await this.twentyORMGlobalManager.executeInWorkspaceContext(async () => {
+      const favoriteRepository =
+        await this.twentyORMGlobalManager.getRepository<FavoriteWorkspaceEntity>(
+          workspaceId,
+          'favorite',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        await favoriteRepository.softDelete(favoriteIds);
-      },
-    );
+      await favoriteRepository.softDelete(favoriteIds);
+    }, authContext);
   }
 
   private async softDeleteMigratedFavoriteFolders({
@@ -591,18 +564,15 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.twentyORMGlobalManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const favoriteFolderRepository =
-          await this.twentyORMGlobalManager.getRepository<FavoriteFolderWorkspaceEntity>(
-            workspaceId,
-            'favoriteFolder',
-            { shouldBypassPermissionChecks: true },
-          );
+    await this.twentyORMGlobalManager.executeInWorkspaceContext(async () => {
+      const favoriteFolderRepository =
+        await this.twentyORMGlobalManager.getRepository<FavoriteFolderWorkspaceEntity>(
+          workspaceId,
+          'favoriteFolder',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        await favoriteFolderRepository.softDelete(favoriteFolderIds);
-      },
-    );
+      await favoriteFolderRepository.softDelete(favoriteFolderIds);
+    }, authContext);
   }
 }
