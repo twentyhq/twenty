@@ -10,7 +10,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/services/workspace-user-workspace-role-map-cache.service';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
-import { type ServerlessFunctionLayerCacheMaps } from 'src/engine/metadata-modules/serverless-function-layer/types/serverless-function-layer-cache-maps.type';
+import { type LogicFunctionLayerCacheMaps } from 'src/engine/metadata-modules/logic-function-layer/types/logic-function-layer-cache-maps.type';
 
 export const WORKSPACE_CACHE_KEYS_V2 = {
   flatObjectMetadataMaps: 'flat-maps:object-metadata',
@@ -21,10 +21,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatViewGroupMaps: 'flat-maps:view-group',
   flatViewFilterMaps: 'flat-maps:view-filter',
   flatViewFilterGroupMaps: 'flat-maps:view-filter-group',
-  flatServerlessFunctionMaps: 'flat-maps:serverless-function',
-  flatCronTriggerMaps: 'flat-maps:cron-trigger',
-  flatDatabaseEventTriggerMaps: 'flat-maps:database-event-trigger',
-  flatRouteTriggerMaps: 'flat-maps:route-trigger',
+  flatLogicFunctionMaps: 'flat-maps:logic-function',
   featureFlagsMap: 'feature-flag:feature-flags-map',
   rolesPermissions: 'metadata:permissions:roles-permissions',
   userWorkspaceRoleMap: 'metadata:permissions:user-workspace-role-map',
@@ -46,8 +43,9 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatRowLevelPermissionPredicateGroupMaps:
     'flat-maps:row-level-permission-predicate-group',
   flatFrontComponentMaps: 'flat-maps:front-component',
+  flatWebhookMaps: 'flat-maps:webhook',
   flatWorkspaceMemberMaps: 'flat-maps:workspace-member',
-  serverlessFunctionLayerMaps: 'cache:serverless-function-layer',
+  logicFunctionLayerMaps: 'cache:logic-function-layer',
   applicationVariableMaps: 'cache:application-variable',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
@@ -62,7 +60,7 @@ export type AdditionalCacheDataMaps = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
-  serverlessFunctionLayerMaps: ServerlessFunctionLayerCacheMaps;
+  logicFunctionLayerMaps: LogicFunctionLayerCacheMaps;
   applicationVariableMaps: ApplicationVariableCacheMaps;
 };
 

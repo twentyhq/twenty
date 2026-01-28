@@ -213,7 +213,7 @@ describe('MessagingMessageListFetchService', () => {
             executeInWorkspaceContext: jest
               .fn()
 
-              .mockImplementation((_authContext: any, fn: () => any) => fn()),
+              .mockImplementation((fn: () => any, _authContext?: any) => fn()),
             getRepository: jest.fn().mockImplementation((workspaceId, name) => {
               if (name === 'messageChannel') {
                 return {

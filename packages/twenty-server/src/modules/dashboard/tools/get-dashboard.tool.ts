@@ -27,7 +27,6 @@ export const createGetDashboardTool = (
 
       const dashboard =
         await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          authContext,
           async () => {
             const repo = await deps.globalWorkspaceOrmManager.getRepository(
               context.workspaceId,
@@ -37,6 +36,7 @@ export const createGetDashboardTool = (
 
             return repo.findOne({ where: { id: parameters.dashboardId } });
           },
+          authContext,
         );
 
       if (!isDefined(dashboard)) {

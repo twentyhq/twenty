@@ -1,13 +1,21 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { ApplicationVariableEntityExceptionFilter } from 'src/engine/core-modules/applicationVariable/application-variable-exception-filter';
+import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
+import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/applicationVariable/dtos/application-variable.dto';
 import { UpdateApplicationVariableEntityInput } from 'src/engine/core-modules/applicationVariable/dtos/update-application-variable.input';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
@@ -15,12 +23,17 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
-@Resolver()
+@Resolver(() => ApplicationVariableEntityDTO)
 @UseFilters(ApplicationVariableEntityExceptionFilter)
 export class ApplicationVariableEntityResolver {
   constructor(
     private readonly applicationVariableService: ApplicationVariableEntityService,
   ) {}
+
+  @ResolveField(() => String)
+  value(@Parent() applicationVariable: ApplicationVariableEntity): string {
+    return this.applicationVariableService.getDisplayValue(applicationVariable);
+  }
 
   @Mutation(() => Boolean)
   async updateOneApplicationVariable(
@@ -29,7 +42,7 @@ export class ApplicationVariableEntityResolver {
   ) {
     await this.applicationVariableService.update({
       key,
-      value,
+      plainTextValue: value,
       applicationId,
       workspaceId,
     });

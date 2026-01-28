@@ -146,6 +146,7 @@ export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromC
 export { appendCopySuffix } from './strings/appendCopySuffix';
 export { capitalize } from './strings/capitalize';
 export { pascalCase } from './strings/pascalCase';
+export { stringifySafely } from './strings/stringifySafely';
 export { uncapitalize } from './strings/uncapitalize';
 export type {
   TipTapMarkType,

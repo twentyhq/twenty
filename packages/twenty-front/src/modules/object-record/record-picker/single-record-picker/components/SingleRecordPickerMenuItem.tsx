@@ -85,7 +85,7 @@ export const SingleRecordPickerMenuItem = ({
         }
         contextualText={
           showObjectName
-            ? capitalize(searchRecord.objectNameSingular)
+            ? capitalize(searchRecord.objectLabelSingular)
             : undefined
         }
       />

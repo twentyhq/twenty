@@ -35,63 +35,57 @@ export class MessagingOngoingStaleJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const messageChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+          workspaceId,
+          'messageChannel',
+        );
+
+      const messageChannels = await messageChannelRepository.find({
+        where: {
+          syncStage: In([
+            MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
+            MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
+            MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+            MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
+          ]),
+        },
+      });
+
+      for (const messageChannel of messageChannels) {
+        if (isSyncStale(messageChannel.syncStageStartedAt)) {
+          await this.messageChannelSyncStatusService.resetSyncStageStartedAt(
+            [messageChannel.id],
             workspaceId,
-            'messageChannel',
           );
 
-        const messageChannels = await messageChannelRepository.find({
-          where: {
-            syncStage: In([
-              MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
-              MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
-              MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
-              MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
-            ]),
-          },
-        });
-
-        for (const messageChannel of messageChannels) {
-          if (
-            messageChannel.syncStageStartedAt &&
-            isSyncStale(messageChannel.syncStageStartedAt)
-          ) {
-            await this.messageChannelSyncStatusService.resetSyncStageStartedAt(
-              [messageChannel.id],
-              workspaceId,
-            );
-
-            switch (messageChannel.syncStage) {
-              case MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING:
-              case MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED:
-                this.logger.log(
-                  `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGE_LIST_FETCH_PENDING`,
-                );
-                await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
-                  [messageChannel.id],
-                  workspaceId,
-                );
-                break;
-              case MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING:
-              case MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED:
-                this.logger.log(
-                  `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGES_IMPORT_PENDING`,
-                );
-                await this.messageChannelSyncStatusService.markAsMessagesImportPending(
-                  [messageChannel.id],
-                  workspaceId,
-                );
-                break;
-              default:
-                break;
-            }
+          switch (messageChannel.syncStage) {
+            case MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING:
+            case MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED:
+              this.logger.log(
+                `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGE_LIST_FETCH_PENDING`,
+              );
+              await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
+                [messageChannel.id],
+                workspaceId,
+              );
+              break;
+            case MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING:
+            case MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED:
+              this.logger.log(
+                `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGES_IMPORT_PENDING`,
+              );
+              await this.messageChannelSyncStatusService.markAsMessagesImportPending(
+                [messageChannel.id],
+                workspaceId,
+              );
+              break;
+            default:
+              break;
           }
         }
-      },
-    );
+      }
+    }, authContext);
   }
 }
