@@ -41,8 +41,8 @@ export class DevModeOrchestrator {
   private syncTimer: NodeJS.Timeout | null = null;
   private isSyncing = false;
   private uiStateManager: DevUiStateManager;
-  private serverChecked = false;
-  private serverCheckedLogged = false;
+  private serverReady = false;
+  private serverErrorLogged = false;
 
   private handleManifestBuilt: (
     result: ManifestBuildResult,
@@ -56,27 +56,48 @@ export class DevModeOrchestrator {
   }
 
   private async checkServer(): Promise<void> {
-    this.serverChecked = await this.apiService.validateAuth();
+    const validateAuth = await this.apiService.validateAuth();
 
-    if (!this.serverChecked && !this.serverCheckedLogged) {
+    if (this.serverErrorLogged) {
+      return;
+    }
+
+    this.serverErrorLogged = true;
+
+    if (!validateAuth.serverUp) {
       this.uiStateManager.addEvent({
-        message:
-          'Please check your server is up and your credentials are correct: "yarn auth:login"',
+        message: 'Cannot reach server',
         status: 'error',
       });
       this.uiStateManager.updateManifestState({
         manifestStatus: 'error',
+        error: 'Cannot connect to Twenty server. Is it running?',
       });
-      this.serverCheckedLogged = true;
+      return;
     }
+
+    if (!validateAuth.authValid) {
+      this.uiStateManager.addEvent({
+        message: 'Authentication failed',
+        status: 'error',
+      });
+      this.uiStateManager.updateManifestState({
+        manifestStatus: 'error',
+        error:
+          'Cannot authenticate. Check your credentials are correct with "yarn auth:login"',
+      });
+      return;
+    }
+
+    this.serverReady = true;
   }
 
   async handleChangeDetected(sourcePath: string, event: EventName) {
-    if (!this.serverChecked) {
+    if (!this.serverReady) {
       await this.checkServer();
     }
 
-    if (!this.serverChecked) {
+    if (!this.serverReady) {
       return;
     }
 

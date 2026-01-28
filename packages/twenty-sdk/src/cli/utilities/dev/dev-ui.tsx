@@ -179,8 +179,8 @@ export const renderDevUI = async (
     synced: { color: 'green', icon: '✓', text: 'Synced' },
     building: { color: 'yellow', icon: null, text: 'Building...' },
     syncing: { color: 'yellow', icon: null, text: 'Syncing...' },
-    error: { color: 'red', icon: 'x', text: 'Error' },
-    idle: { color: 'gray', icon: 'o', text: 'Idle' },
+    error: { color: 'red', icon: '', text: 'Error' },
+    idle: { color: 'gray', icon: '', text: 'Idle' },
   } as const;
 
   const UnifiedStatusIndicator = ({
@@ -195,6 +195,7 @@ export const renderDevUI = async (
     return (
       <Text color={config.color}>
         {icon} {config.text}
+        {snapshot.error && `: ${snapshot.error}`}
       </Text>
     );
   };

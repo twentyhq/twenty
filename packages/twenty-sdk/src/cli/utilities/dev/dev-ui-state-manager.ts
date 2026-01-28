@@ -82,14 +82,17 @@ export class DevUiStateManager {
   updateManifestState({
     manifestStatus,
     appName,
+    error,
   }: {
     manifestStatus?: ManifestStatus;
     appName?: string;
+    error?: string;
   }): void {
     this.state = {
       ...this.state,
       ...(manifestStatus ? { manifestStatus } : {}),
       ...(appName ? { appName } : {}),
+      ...(error ? { error } : {}),
     };
 
     this.notify();
