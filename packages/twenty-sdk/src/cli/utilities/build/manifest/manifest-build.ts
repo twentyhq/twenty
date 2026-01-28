@@ -4,7 +4,10 @@ import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';
 import { readFile } from 'fs-extra';
 import { relative, sep } from 'path';
-import { type ApplicationManifest } from 'twenty-shared/application';
+import {
+  type ApplicationManifest,
+  OUTPUT_DIR,
+} from 'twenty-shared/application';
 import { FileFolder, type Sources } from 'twenty-shared/types';
 import { applicationEntityBuilder } from '@/cli/utilities/build/manifest/entities/application';
 import { assetEntityBuilder } from '@/cli/utilities/build/manifest/entities/asset';
@@ -15,7 +18,6 @@ import { objectExtensionEntityBuilder } from '@/cli/utilities/build/manifest/ent
 import { roleEntityBuilder } from '@/cli/utilities/build/manifest/entities/role';
 
 import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
-import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 
 export type EntityFilePaths = {
   application: string[];

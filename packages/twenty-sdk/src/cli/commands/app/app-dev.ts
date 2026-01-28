@@ -9,10 +9,10 @@ import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { DevModeOrchestrator } from '@/cli/utilities/dev/dev-mode-orchestrator';
 import path from 'path';
-import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 import * as fs from 'fs-extra';
 import { DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
 import { renderDevUI } from '@/cli/utilities/dev/dev-ui';
+import { OUTPUT_DIR } from 'twenty-shared/application';
 
 export type AppDevOptions = {
   appPath?: string;

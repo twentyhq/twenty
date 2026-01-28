@@ -4,7 +4,7 @@ import { existsSync } from 'fs';
 import { inspect } from 'util';
 import { join } from 'path';
 import { runAppDev } from '@/cli/__tests__/integration/utils/run-app-dev.util';
-import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
+import { OUTPUT_DIR } from 'twenty-shared/application';
 
 inspect.defaultOptions.depth = 10;
 

@@ -1,10 +1,8 @@
 import { glob } from 'fast-glob';
 import path from 'path';
-import { type AssetManifest } from 'twenty-shared/application';
+import { type AssetManifest, ASSETS_DIR } from 'twenty-shared/application';
 
 import { type EntityBuildResult } from '@/cli/utilities/build/manifest/entities/entity-interface';
-
-export const ASSETS_DIR = 'public';
 
 export class AssetEntityBuilder {
   async build(appPath: string): Promise<EntityBuildResult<AssetManifest>> {

@@ -3,8 +3,7 @@ import crypto from 'crypto';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { FileFolder } from 'twenty-shared/types';
-import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
-import { ASSETS_DIR } from '@/cli/utilities/build/manifest/entities/asset';
+import { ASSETS_DIR, OUTPUT_DIR } from 'twenty-shared/application';
 
 export type AssetWatcherOptions = {
   appPath: string;

@@ -1,7 +1,7 @@
 import { relative } from 'path';
 import chokidar, { type FSWatcher } from 'chokidar';
 import { type EventName } from 'chokidar/handler.js';
-import { ASSETS_DIR } from '@/cli/utilities/build/manifest/entities/asset';
+import { ASSETS_DIR } from 'twenty-shared/application';
 
 export type ManifestWatcherOptions = {
   appPath: string;
