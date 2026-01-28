@@ -244,7 +244,7 @@ export class FileUploadService {
       applicationId,
       workspaceId,
       fileId,
-      info: {
+      settings: {
         isTemporaryFile: true,
         toDelete: false,
       },

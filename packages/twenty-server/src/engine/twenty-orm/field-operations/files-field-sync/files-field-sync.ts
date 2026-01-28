@@ -59,6 +59,18 @@ export class FilesFieldSync {
     target: EntityTarget<Entity>,
     existingRecords: ObjectLiteral[],
   ): FilesFieldDiffByEntityIndex | null {
+    return this.computeFilesFieldDiffBeforeUpdate(
+      entities,
+      target,
+      existingRecords,
+    );
+  }
+
+  computeFilesFieldDiffBeforeUpdate<Entity extends ObjectLiteral>(
+    entities: QueryDeepPartialEntity<Entity>[],
+    target: EntityTarget<Entity>,
+    existingRecords: ObjectLiteral[],
+  ): FilesFieldDiffByEntityIndex | null {
     const objectMetadata = getObjectMetadataFromEntityTarget(
       target,
       this.internalContext,
@@ -82,43 +94,16 @@ export class FilesFieldSync {
       );
 
       for (const filesField of filesFields) {
-        const entityAny = entity as Record<string, unknown>;
-        const newFilesValue = entityAny[filesField.name] as
-          | FileItem[]
-          | null
-          | undefined;
-
-        if (!isDefined(newFilesValue)) {
-          continue;
-        }
-
-        const filesFieldMaxNumberOfValues = (
-          filesField.settings as FieldMetadataSettingsMapping[FieldMetadataType.FILES]
-        ).maxNumberOfValues;
-
-        if (newFilesValue.length > filesFieldMaxNumberOfValues) {
-          throw new TwentyORMException(
-            `Max number of files is ${filesFieldMaxNumberOfValues}`,
-            TwentyORMExceptionCode.INVALID_INPUT,
-            {
-              userFriendlyMessage: msg`Max number of files is ${filesFieldMaxNumberOfValues}`,
-            },
-          );
-        }
-
         const existingFilesValue = (existingRecord?.[filesField.name] ??
           []) as FileItem[];
 
-        const diff = this.computeFilesFieldDiff(
+        const diff = this.validateAndComputeFilesFieldDiff(
+          entity as Record<string, unknown>,
+          filesField,
           existingFilesValue,
-          newFilesValue,
         );
 
-        if (
-          diff.toAdd.length > 0 ||
-          diff.toUpdate.length > 0 ||
-          diff.toRemove.length > 0
-        ) {
+        if (diff) {
           if (!filesFieldDiffByEntityIndex[index]) {
             filesFieldDiffByEntityIndex[index] = {};
           }
@@ -132,7 +117,7 @@ export class FilesFieldSync {
       : null;
   }
 
-  prepareFilesFieldSyncBeforeUpdateOne<Entity extends ObjectLiteral>(
+  computeFilesFieldDiffBeforeUpdateOne<Entity extends ObjectLiteral>(
     updatePayload: QueryDeepPartialEntity<Entity>,
     target: EntityTarget<Entity>,
     existingRecords: ObjectLiteral[],
@@ -148,57 +133,30 @@ export class FilesFieldSync {
       return null;
     }
 
+    if (existingRecords.length !== 1) {
+      throw new TwentyORMException(
+        `Cannot update multiple records with files field at once`,
+        TwentyORMExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`You can only update one record with files field at once.`,
+        },
+      );
+    }
+
     const filesFieldDiffByEntityIndex: FilesFieldDiffByEntityIndex = {};
+    const existingRecord = existingRecords[0];
 
     for (const filesField of filesFields) {
-      const updatePayloadAny = updatePayload as Record<string, unknown>;
-      const newFilesValue = updatePayloadAny[filesField.name] as
-        | FileItem[]
-        | null
-        | undefined;
-
-      if (!isDefined(newFilesValue)) {
-        continue;
-      }
-
-      const filesFieldMaxNumberOfValues = (
-        filesField.settings as FieldMetadataSettingsMapping[FieldMetadataType.FILES]
-      ).maxNumberOfValues;
-
-      if (newFilesValue.length > filesFieldMaxNumberOfValues) {
-        throw new TwentyORMException(
-          `Max number of files is ${filesFieldMaxNumberOfValues}`,
-          TwentyORMExceptionCode.INVALID_INPUT,
-          {
-            userFriendlyMessage: msg`Max number of files is ${filesFieldMaxNumberOfValues}`,
-          },
-        );
-      }
-
-      if (existingRecords.length !== 1) {
-        throw new TwentyORMException(
-          `Cannot update multiple records with files field at once`,
-          TwentyORMExceptionCode.INVALID_INPUT,
-          {
-            userFriendlyMessage: msg`You can only update one record with files field at once.`,
-          },
-        );
-      }
-
-      const existingRecord = existingRecords[0];
       const existingFilesValue = (existingRecord?.[filesField.name] ??
         []) as FileItem[];
 
-      const diff = this.computeFilesFieldDiff(
+      const diff = this.validateAndComputeFilesFieldDiff(
+        updatePayload as Record<string, unknown>,
+        filesField,
         existingFilesValue,
-        newFilesValue,
       );
 
-      if (
-        diff.toAdd.length > 0 ||
-        diff.toUpdate.length > 0 ||
-        diff.toRemove.length > 0
-      ) {
+      if (diff) {
         if (!filesFieldDiffByEntityIndex[0]) {
           filesFieldDiffByEntityIndex[0] = {};
         }
@@ -211,7 +169,7 @@ export class FilesFieldSync {
       : null;
   }
 
-  prepareFilesFieldSyncBeforeInsert<Entity extends ObjectLiteral>(
+  computeFilesFieldDiffBeforeInsert<Entity extends ObjectLiteral>(
     entities: QueryDeepPartialEntity<Entity>[],
     target: EntityTarget<Entity>,
   ): FilesFieldDiffByEntityIndex | null {
@@ -230,33 +188,13 @@ export class FilesFieldSync {
 
     entities.forEach((entity, index) => {
       for (const filesField of filesFields) {
-        const entityAny = entity as Record<string, unknown>;
-        const newFilesValue = entityAny[filesField.name] as
-          | FileItem[]
-          | null
-          | undefined;
+        const diff = this.validateAndComputeFilesFieldDiff(
+          entity as Record<string, unknown>,
+          filesField,
+          [],
+        );
 
-        if (!isDefined(newFilesValue)) {
-          continue;
-        }
-
-        const filesFieldMaxNumberOfValues = (
-          filesField.settings as FieldMetadataSettingsMapping[FieldMetadataType.FILES]
-        ).maxNumberOfValues;
-
-        if (newFilesValue.length > filesFieldMaxNumberOfValues) {
-          throw new TwentyORMException(
-            `Max number of files is ${filesFieldMaxNumberOfValues}`,
-            TwentyORMExceptionCode.INVALID_INPUT,
-            {
-              userFriendlyMessage: msg`Max number of files is ${filesFieldMaxNumberOfValues}`,
-            },
-          );
-        }
-
-        const diff = this.computeFilesFieldDiff([], newFilesValue);
-
-        if (diff.toAdd.length > 0) {
+        if (diff) {
           if (!filesFieldDiffByEntityIndex[index]) {
             filesFieldDiffByEntityIndex[index] = {};
           }
@@ -270,7 +208,7 @@ export class FilesFieldSync {
       : null;
   }
 
-  prepareFilesFieldSyncBeforeUpsert<Entity extends ObjectLiteral>(
+  computeFilesFieldDiffBeforeUpsert<Entity extends ObjectLiteral>(
     entities: QueryDeepPartialEntity<Entity>[],
     target: EntityTarget<Entity>,
     existingRecordsMapById: Record<string, ObjectLiteral>,
@@ -295,30 +233,17 @@ export class FilesFieldSync {
         : undefined;
 
       for (const filesField of filesFields) {
-        const entityAny = entity as Record<string, unknown>;
-        const newFilesValue = entityAny[filesField.name] as
-          | FileItem[]
-          | null
-          | undefined;
-
-        if (!isDefined(newFilesValue)) {
-          continue;
-        }
-
         const existingFilesValue = existingRecord
           ? ((existingRecord[filesField.name] ?? []) as FileItem[])
           : [];
 
-        const diff = this.computeFilesFieldDiff(
+        const diff = this.validateAndComputeFilesFieldDiff(
+          entity as Record<string, unknown>,
+          filesField,
           existingFilesValue,
-          newFilesValue,
         );
 
-        if (
-          diff.toAdd.length > 0 ||
-          diff.toUpdate.length > 0 ||
-          diff.toRemove.length > 0
-        ) {
+        if (diff) {
           if (!filesFieldDiffByEntityIndex[index]) {
             filesFieldDiffByEntityIndex[index] = {};
           }
@@ -330,6 +255,54 @@ export class FilesFieldSync {
     return Object.keys(filesFieldDiffByEntityIndex).length > 0
       ? filesFieldDiffByEntityIndex
       : null;
+  }
+
+  private validateFilesFieldMaxValues(
+    filesField: FlatFieldMetadata,
+    newFilesValue: FileItem[],
+  ): void {
+    const filesFieldMaxNumberOfValues = (
+      filesField.settings as FieldMetadataSettingsMapping[FieldMetadataType.FILES]
+    ).maxNumberOfValues;
+
+    if (newFilesValue.length > filesFieldMaxNumberOfValues) {
+      throw new TwentyORMException(
+        `Max number of files is ${filesFieldMaxNumberOfValues}`,
+        TwentyORMExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Max number of files is ${filesFieldMaxNumberOfValues}`,
+        },
+      );
+    }
+  }
+
+  private validateAndComputeFilesFieldDiff(
+    entity: Record<string, unknown>,
+    filesField: FlatFieldMetadata,
+    existingFilesValue: FileItem[],
+  ): FilesFieldDiff | null {
+    const newFilesValue = entity[filesField.name] as
+      | FileItem[]
+      | null
+      | undefined;
+
+    if (!isDefined(newFilesValue)) {
+      return null;
+    }
+
+    this.validateFilesFieldMaxValues(filesField, newFilesValue);
+
+    const diff = this.computeFilesFieldDiff(existingFilesValue, newFilesValue);
+
+    if (
+      diff.toAdd.length > 0 ||
+      diff.toUpdate.length > 0 ||
+      diff.toRemove.length > 0
+    ) {
+      return diff;
+    }
+
+    return null;
   }
 
   private computeFilesFieldDiff(
@@ -368,10 +341,12 @@ export class FilesFieldSync {
     entities,
     filesFieldDiffByEntityIndex,
     workspaceId,
+    target,
   }: {
     entities: QueryDeepPartialEntity<Entity>[];
     filesFieldDiffByEntityIndex: FilesFieldDiffByEntityIndex;
     workspaceId: string;
+    target: EntityTarget<Entity>;
   }): Promise<{
     entities: QueryDeepPartialEntity<Entity>[];
     fileIds: {
@@ -379,6 +354,7 @@ export class FilesFieldSync {
       toUpdate: Set<string>;
       toRemove: Set<string>;
     };
+    fileIdToApplicationId: Map<string, string>;
   }> {
     if (Object.keys(filesFieldDiffByEntityIndex).length === 0) {
       return {
@@ -388,32 +364,43 @@ export class FilesFieldSync {
           toUpdate: new Set<string>(),
           toRemove: new Set<string>(),
         },
+        fileIdToApplicationId: new Map(),
       };
     }
 
-    const fileIds = await this.validateAndEnrichFileDiffs(
-      filesFieldDiffByEntityIndex,
-      workspaceId,
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      target,
+      this.internalContext,
     );
 
-    const updatedEntities = this.updateEntitiesWithFileChanges(
+    const { toAdd, toUpdate, toRemove, fileIdToApplicationId } =
+      await this.validateAndEnrichFileDiffs(
+        filesFieldDiffByEntityIndex,
+        workspaceId,
+        objectMetadata.id,
+      );
+
+    const updatedEntities = this.updateEntitiesWithEnrichedFilesFieldValues(
       entities,
       filesFieldDiffByEntityIndex,
     );
 
     return {
       entities: updatedEntities,
-      fileIds,
+      fileIds: { toAdd, toUpdate, toRemove },
+      fileIdToApplicationId,
     };
   }
 
   private async validateAndEnrichFileDiffs(
     filesFieldDiffByEntityIndex: FilesFieldDiffByEntityIndex,
     workspaceId: string,
+    objectMetadataId: string,
   ): Promise<{
     toAdd: Set<string>;
     toUpdate: Set<string>;
     toRemove: Set<string>;
+    fileIdToApplicationId: Map<string, string>;
   }> {
     const allFileIds = {
       toAdd: new Set<string>(),
@@ -421,13 +408,24 @@ export class FilesFieldSync {
       toRemove: new Set<string>(),
     };
 
+    const fileIdToApplicationId = new Map<string, string>();
     const allFileIdsToFetch = new Set<string>();
 
+    const filesFields = this.getFilesFields(objectMetadataId);
+    const fieldNameToApplicationId = new Map(
+      filesFields.map((field) => [field.name, field.applicationId]),
+    );
+
     for (const entityDiffs of Object.values(filesFieldDiffByEntityIndex)) {
-      for (const diff of Object.values(entityDiffs)) {
+      for (const [fieldName, diff] of Object.entries(entityDiffs)) {
+        const fieldApplicationId = fieldNameToApplicationId.get(fieldName);
+
         diff.toAdd.forEach((file) => {
           allFileIds.toAdd.add(file.fileId);
           allFileIdsToFetch.add(file.fileId);
+          if (fieldApplicationId) {
+            fileIdToApplicationId.set(file.fileId, fieldApplicationId);
+          }
         });
         diff.toUpdate.forEach((file) => {
           allFileIds.toUpdate.add(file.fileId);
@@ -440,7 +438,7 @@ export class FilesFieldSync {
     }
 
     if (allFileIdsToFetch.size === 0 && allFileIds.toRemove.size === 0) {
-      return allFileIds;
+      return { ...allFileIds, fileIdToApplicationId };
     }
 
     const existingFiles = await this.fileRepository.find({
@@ -448,7 +446,7 @@ export class FilesFieldSync {
         id: In([...allFileIdsToFetch, ...allFileIds.toRemove]),
         workspaceId,
       },
-      select: ['id', 'path', 'info'],
+      select: ['id', 'path', 'settings'],
     });
 
     const existingFileMap = new Map(
@@ -467,7 +465,7 @@ export class FilesFieldSync {
             );
           }
 
-          if (!fileEntity.info?.isTemporaryFile) {
+          if (!fileEntity.settings?.isTemporaryFile) {
             const fileId = file.fileId;
 
             throw new TwentyORMException(
@@ -492,7 +490,7 @@ export class FilesFieldSync {
             );
           }
 
-          if (fileEntity.info?.isTemporaryFile) {
+          if (fileEntity.settings?.isTemporaryFile) {
             throw new TwentyORMException(
               `File ${file.fileId} to update should not be a temporary file`,
               TwentyORMExceptionCode.INVALID_INPUT,
@@ -507,24 +505,38 @@ export class FilesFieldSync {
       }
     }
 
-    return allFileIds;
+    return { ...allFileIds, fileIdToApplicationId };
   }
 
-  ///TODODO should update applicationId
-  async updateFileEntityRecords(fileIds: {
-    toAdd: Set<string>;
-    toUpdate: Set<string>;
-    toRemove: Set<string>;
-  }): Promise<void> {
+  async updateFileEntityRecords(
+    fileIds: {
+      toAdd: Set<string>;
+      toUpdate: Set<string>;
+      toRemove: Set<string>;
+    },
+    fileIdToApplicationId: Map<string, string>,
+  ): Promise<void> {
     if (fileIds.toAdd.size > 0) {
-      await this.fileRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          info: () => `jsonb_set(info, '{isTemporaryFile}', 'false')`,
-        })
-        .where('id IN (:...ids)', { ids: [...fileIds.toAdd] })
-        .execute();
+      for (const fileId of fileIds.toAdd) {
+        const applicationId = fileIdToApplicationId.get(fileId);
+
+        if (!applicationId) {
+          throw new TwentyORMException(
+            `Application ID not found for file ${fileId}`,
+            TwentyORMExceptionCode.INVALID_INPUT,
+          );
+        }
+
+        await this.fileRepository
+          .createQueryBuilder()
+          .update()
+          .set({
+            settings: () => `jsonb_set(settings, '{isTemporaryFile}', 'false')`,
+            applicationId,
+          })
+          .where('id = :id', { id: fileId })
+          .execute();
+      }
     }
 
     if (fileIds.toRemove.size > 0) {
@@ -532,7 +544,9 @@ export class FilesFieldSync {
     }
   }
 
-  private updateEntitiesWithFileChanges<Entity extends ObjectLiteral>(
+  private updateEntitiesWithEnrichedFilesFieldValues<
+    Entity extends ObjectLiteral,
+  >(
     entities: QueryDeepPartialEntity<Entity>[],
     filesFieldDiffByEntityIndex: FilesFieldDiffByEntityIndex,
   ): QueryDeepPartialEntity<Entity>[] {

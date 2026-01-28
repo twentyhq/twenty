@@ -233,6 +233,9 @@ describe('WorkspaceEntityManager', () => {
         emitDatabaseBatchEvent: jest.fn(),
         emitCustomBatchEvent: jest.fn(),
       } as any,
+      coreDataSource: {
+        getRepository: jest.fn(),
+      } as any,
     } as WorkspaceInternalContext;
 
     mockDataSource = {
