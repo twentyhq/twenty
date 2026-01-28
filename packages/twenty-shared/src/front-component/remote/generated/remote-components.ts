@@ -53,7 +53,7 @@ import {
   HtmlTdElement,
   HtmlBrElement,
   HtmlHrElement,
-} from './elements';
+} from './remote-elements';
 
 // =============================================================================
 // HTML Element Remote Components

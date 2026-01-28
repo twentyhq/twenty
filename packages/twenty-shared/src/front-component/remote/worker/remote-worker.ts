@@ -1,7 +1,7 @@
 import '@remote-dom/core/polyfill';
 import '@remote-dom/react/polyfill';
 
-import '../generated/elements';
+import '../generated/remote-elements';
 
 import { ThreadWebWorker } from '@quilted/threads';
 import {

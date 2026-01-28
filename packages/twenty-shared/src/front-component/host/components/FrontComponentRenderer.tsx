@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { isDefined } from '../../../utils/validation/isDefined';
 import { FRONT_COMPONENT_WORKER_URL } from '../../constants/FrontComponentWorkerUrl';
 import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
-import { componentRegistry } from '../generated';
+import { componentRegistry } from '../generated/host-component-registry';
 
 type FrontComponentContentProps = {
   componentUrl: string;

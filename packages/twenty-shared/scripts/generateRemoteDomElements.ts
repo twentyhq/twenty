@@ -273,7 +273,7 @@ import { createRemoteComponent } from '@remote-dom/react';
 
 import {
   ${htmlImports},
-} from './elements';
+} from './remote-elements';
 
 // =============================================================================
 // HTML Element Remote Components
@@ -419,15 +419,15 @@ ${htmlEntries}
 const generateHostIndex = (): string => {
   return `${FILE_HEADER}
 
-export { componentRegistry } from './component-registry';
+export { componentRegistry } from './host-component-registry';
 `;
 };
 
 const generateRemoteIndex = (): string => {
   return `${FILE_HEADER}
 
-export * from './elements';
-export * from './components';
+export * from './remote-elements';
+export * from './remote-components';
 `;
 };
 
@@ -470,24 +470,24 @@ const main = () => {
   console.log('Host files:');
   writeGeneratedFile(
     HOST_GENERATED_DIR,
-    'component-registry.ts',
+    'host-component-registry.ts',
     generateHostRegistry(htmlElements),
   );
-  writeGeneratedFile(HOST_GENERATED_DIR, 'index.ts', generateHostIndex());
+  writeGeneratedFile(HOST_GENERATED_DIR, 'host-index.ts', generateHostIndex());
 
   // Generate remote files
   console.log('\nRemote files:');
   writeGeneratedFile(
     REMOTE_GENERATED_DIR,
-    'elements.ts',
+    'remote-elements.ts',
     generateRemoteElements(htmlElements),
   );
   writeGeneratedFile(
     REMOTE_GENERATED_DIR,
-    'components.ts',
+    'remote-components.ts',
     generateRemoteComponents(htmlElements),
   );
-  writeGeneratedFile(REMOTE_GENERATED_DIR, 'index.ts', generateRemoteIndex());
+  writeGeneratedFile(REMOTE_GENERATED_DIR, 'remote-index.ts', generateRemoteIndex());
 
   console.log('\n✅ All generated files created');
   console.log(`   Host: ${HOST_GENERATED_DIR}`);
