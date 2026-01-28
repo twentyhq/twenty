@@ -45,6 +45,8 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     applicationId: faker.string.uuid(),
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
+    // TODO or ignore lint
+    __universal: {} as any,
     ...overrides,
   };
 };
