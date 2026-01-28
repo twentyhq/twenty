@@ -12,6 +12,7 @@ import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metad
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
@@ -89,21 +90,31 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
-    const { objectMetadataId, entityId, updates } = action;
+    const { entityId, updates } = action;
 
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: objectMetadataId,
+    const currentFlatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: entityId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    const objectMetadataUniversalIdentifier =
+      currentFlatFieldMetadata.__universal?.objectMetadataUniversalIdentifier;
+
+    if (!objectMetadataUniversalIdentifier) {
+      throw new WorkspaceMigrationActionExecutionException({
+        message: `objectMetadataUniversalIdentifier is not defined for field metadata ${entityId}`,
+        code: WorkspaceMigrationActionExecutionExceptionCode.NOT_SUPPORTED,
+      });
+    }
+
+    const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
+      universalIdentifier: objectMetadataUniversalIdentifier,
     });
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
       workspaceId,
       flatObjectMetadata,
-    });
-
-    const currentFlatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: entityId,
-      flatEntityMaps: flatFieldMetadataMaps,
     });
 
     let optimisticFlatFieldMetadata = structuredClone(currentFlatFieldMetadata);
