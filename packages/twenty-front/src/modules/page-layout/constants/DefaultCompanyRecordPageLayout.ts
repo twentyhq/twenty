@@ -59,7 +59,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
       title: 'Timeline',
       icon: 'IconTimelineEvent',
       position: 200,
-      layoutMode: 'vertical-list',
+      layoutMode: 'canvas',
       pageLayoutId: DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
