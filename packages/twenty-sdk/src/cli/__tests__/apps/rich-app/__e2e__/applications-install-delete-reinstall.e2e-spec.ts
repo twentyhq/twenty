@@ -8,7 +8,7 @@ import { inspect } from 'util';
 
 inspect.defaultOptions.depth = 10;
 
-describe('Application: install delete and reinstall rich-app', () => {
+xdescribe('Application: install delete and reinstall rich-app', () => {
   const applicationName = 'rich-app';
   const deleteCommand = new AppUninstallCommand();
   const appPath = getTestedApplicationPath(applicationName);
@@ -27,13 +27,13 @@ describe('Application: install delete and reinstall rich-app', () => {
   //   expect(result.success).toBe(true);
   // });
 
-  xit(`should successfully install ${applicationName} application`, async () => {
+  it(`should successfully install ${applicationName} application`, async () => {
     await runAppDev({ appPath });
 
     expect(existsSync(join(appPath, OUTPUT_DIR, 'manifest.json'))).toBe(true);
   });
 
-  xit(`should successfully delete ${applicationName} application`, async () => {
+  it(`should successfully delete ${applicationName} application`, async () => {
     const result = await deleteCommand.execute({
       appPath,
       askForConfirmation: false,
@@ -42,7 +42,7 @@ describe('Application: install delete and reinstall rich-app', () => {
     expect(result.success).toBe(true);
   });
 
-  xit(`should successfully re-install ${applicationName} application`, async () => {
+  it(`should successfully re-install ${applicationName} application`, async () => {
     await runAppDev({ appPath });
 
     expect(existsSync(join(appPath, OUTPUT_DIR, 'manifest.json'))).toBe(true);
