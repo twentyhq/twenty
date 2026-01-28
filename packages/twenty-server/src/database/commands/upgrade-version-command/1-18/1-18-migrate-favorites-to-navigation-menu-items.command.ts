@@ -124,6 +124,12 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       favoriteIds: migratedFavoriteIds,
     });
 
+    await this.softDeleteMigratedFavoriteFolders({
+      workspaceId,
+      authContext,
+      favoriteFolderIds: Array.from(folderIdMapping.keys()),
+    });
+
     await this.featureFlagService.upsertWorkspaceFeatureFlag({
       workspaceId,
       featureFlag: FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
@@ -167,12 +173,22 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     const folderIdMapping = new Map<string, string>();
     const flatNavigationMenuItemsToCreate: FlatNavigationMenuItem[] = [];
 
+    const fallbackUserWorkspaceId = await this.getFallbackUserWorkspaceId(
+      workspaceId,
+      authContext,
+    );
+
     for (const favoriteFolder of favoriteFolders) {
-      const userWorkspaceId = await this.getUserWorkspaceIdFromFavoriteFolder(
+      let userWorkspaceId = await this.getUserWorkspaceIdFromFavoriteFolder(
         favoriteFolder.id,
         workspaceId,
         authContext,
       );
+
+      // If folder has no favorites, use fallback userWorkspaceId to make it user-level and visible
+      if (!isDefined(userWorkspaceId) && isDefined(fallbackUserWorkspaceId)) {
+        userWorkspaceId = fallbackUserWorkspaceId;
+      }
 
       const existingFolder = Object.values(
         existingFlatNavigationMenuItemMaps.byId,
@@ -203,7 +219,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
       folderIdMapping.set(favoriteFolder.id, newId);
 
-      flatNavigationMenuItemsToCreate.push({
+      const folderToCreate = {
         id: newId,
         universalIdentifier: newId,
         userWorkspaceId,
@@ -217,7 +233,9 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         applicationId,
         createdAt: now,
         updatedAt: now,
-      });
+      };
+
+      flatNavigationMenuItemsToCreate.push(folderToCreate);
     }
 
     if (flatNavigationMenuItemsToCreate.length > 0) {
@@ -473,11 +491,71 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       return null;
     }
 
-    return this.getUserWorkspaceIdFromWorkspaceMemberId(
+    const userWorkspaceId = await this.getUserWorkspaceIdFromWorkspaceMemberId(
       firstFavorite.forWorkspaceMemberId,
       workspaceId,
       authContext,
     );
+
+    return userWorkspaceId;
+  }
+
+  private async getFallbackUserWorkspaceId(
+    workspaceId: string,
+    authContext: ReturnType<typeof buildSystemAuthContext>,
+  ): Promise<string | null> {
+    const favoriteRepository =
+      await this.twentyORMGlobalManager.getRepository<FavoriteWorkspaceEntity>(
+        workspaceId,
+        'favorite',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const allFavorites = await favoriteRepository.find({
+      order: { position: 'ASC' },
+    });
+
+    const firstUserLevelFavorite = allFavorites.find((favorite) =>
+      isDefined(favorite.forWorkspaceMemberId),
+    );
+
+    if (isDefined(firstUserLevelFavorite)) {
+      const userWorkspaceId =
+        await this.getUserWorkspaceIdFromWorkspaceMemberId(
+          firstUserLevelFavorite.forWorkspaceMemberId,
+          workspaceId,
+          authContext,
+        );
+
+      return userWorkspaceId;
+    }
+
+    // If no user-level favorites exist, get the first workspace member as fallback
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        workspaceId,
+        'workspaceMember',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const workspaceMembers = await workspaceMemberRepository.find({
+      order: { createdAt: 'ASC' },
+      take: 1,
+    });
+
+    if (workspaceMembers.length === 0) {
+      return null;
+    }
+
+    const firstWorkspaceMember = workspaceMembers[0];
+
+    const userWorkspaceId = await this.getUserWorkspaceIdFromWorkspaceMemberId(
+      firstWorkspaceMember.id,
+      workspaceId,
+      authContext,
+    );
+
+    return userWorkspaceId;
   }
 
   private async getUserWorkspaceIdFromWorkspaceMemberId(
@@ -623,6 +701,34 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           );
 
         await favoriteRepository.softDelete(favoriteIds);
+      },
+    );
+  }
+
+  private async softDeleteMigratedFavoriteFolders({
+    workspaceId,
+    authContext,
+    favoriteFolderIds,
+  }: {
+    workspaceId: string;
+    authContext: ReturnType<typeof buildSystemAuthContext>;
+    favoriteFolderIds: string[];
+  }): Promise<void> {
+    if (favoriteFolderIds.length === 0) {
+      return;
+    }
+
+    await this.twentyORMGlobalManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const favoriteFolderRepository =
+          await this.twentyORMGlobalManager.getRepository<FavoriteFolderWorkspaceEntity>(
+            workspaceId,
+            'favoriteFolder',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        await favoriteFolderRepository.softDelete(favoriteFolderIds);
       },
     );
   }
